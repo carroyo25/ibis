@@ -1,0 +1,147 @@
+
+@import "modals.css";
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+body {
+    background: #ABE2DE;
+    font-family: "Helvetica Neue",Helvetica,Arial;
+}
+
+.cabecera,.pie{
+    width: 100%;
+    background-color: #000;
+}
+
+.cabecera {
+    height: 4rem;
+}
+
+.landZone{
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    column-gap: 10px;
+    width:70%;
+    margin: 10rem auto;
+
+   .presentacion{
+       text-align: center;
+
+       p{
+           font-size: 2rem;
+       }
+       h1 {
+           font-size: 3rem;
+       }
+
+       .circulos {
+            position: relative;
+            height: 15rem;
+            margin-top: 6rem;
+            
+
+            div {
+                height:4rem;
+                width: 4rem;
+                border-radius: 50%;
+                position: absolute;
+                box-shadow: 2px 3px 5px #c2c2c2;
+
+                &:nth-child(1) {
+                    background: red;
+                    left:45%;
+                }
+
+                &:nth-child(2) {
+                    background: yellow;
+                    left:49%;
+                    top: 2rem;
+                }
+
+                &:nth-child(3) {
+                    background: green;
+                    top: 2rem;
+                    left:41%;
+                }
+
+                &:nth-child(4) {
+                    background: blue;
+                    left: 45%;
+                    top: 4rem;
+                }
+            }
+        }
+   }
+
+   .ingreso{
+       text-align: center;
+       border-radius: 20px;
+       border: 6px solid #98D0DF;
+       background:#8DAFE0;
+       width:80%;
+       line-height: 2rem;
+       padding: 0 20px;
+
+       h1{
+           margin-top: 2rem;
+       }
+
+       .entradaTexto{
+           width:100%;
+           background: #fff;
+           margin-top: 3rem;
+           line-height: 3rem;
+
+           input {
+               outline: none;
+               background:transparent;
+               border: none;
+               width: 80%;
+               font-size: 1.5rem;
+               margin-left: 10px;
+           }
+       }
+
+       .entradaCheck{
+           color: #fff;
+           font-size:.8rem;
+           margin-top: 30px;
+       }
+
+       .opciones {
+           button {
+               border: none;
+               padding: 1rem;
+               width: 100%;
+               margin-top: 25px;
+               border-radius: 8px;
+               color: #fff;
+               background:#518FFB;
+               transition: .3s;
+
+               &:hover{
+                   box-shadow: 2px 3px 5px #000;
+               }
+           }
+       }
+   }
+}
+
+
+.pie {
+    height:2rem;
+    color: #FFF;
+    background: #000;
+    position:absolute; /*El div será ubicado con relación a la pantalla*/
+    bottom:0px; /*Abajo deje un espacio de 0px*/
+}
+
+.wrap{
+    position: relative;
+    height: 100vh;
+}

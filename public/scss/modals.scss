@@ -1,0 +1,34 @@
+.mensaje{
+    position: fixed;
+    height: 4rem;
+    z-index: 99;
+    width: 20%;
+    right: -100%;
+    padding: 1rem;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    bottom: 5%;
+    transition:.5s;
+    color: #fff;
+    font-size: 1.2rem;
+}
+
+.mensaje_error{
+    background: #8d0404a1;
+}
+
+.mensaje_correcto{
+    background:rgb(6, 138, 6);
+}
+
+.modal{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,.6);
+    z-index: 2;
+    display: none;
+}

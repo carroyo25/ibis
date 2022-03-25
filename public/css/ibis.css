@@ -1,0 +1,234 @@
+@charset "UTF-8";
+@import "modals.css";
+@import "modulo.css";
+@import "tamanio.css";
+* {
+  margin: 0;
+  padding: 0;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  border: 0;
+  vertical-align: baseline;
+}
+
+a {
+  text-decoration: none;
+  color: #000;
+}
+
+body {
+  background: #fff;
+  font-family: "Helvetica Neue", Helvetica, Arial;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+ul, li {
+  list-style: none;
+}
+
+input[type=text], input[type=mail], input[type=password], input[type=date] {
+  padding-left: 10px;
+}
+
+.activo {
+  background: #7DCB3D;
+}
+
+.acordeon {
+  color: #fff;
+  background: #4b4a4a;
+  padding: 15px;
+  font-family: Futura, "Trebuchet MS", Arial, sans-serif;
+  height: 94%;
+}
+.acordeon .link {
+  display: block;
+  display: block;
+  padding: 10px 15px 15px 4px;
+  color: white;
+  font-size: 0.9rem;
+  border-bottom: 1px solid #ccc;
+  position: relative;
+  font-weight: 700;
+  cursor: pointer;
+}
+.acordeon .link span {
+  padding-left: 10px;
+}
+.acordeon .link .fa-chevron-down {
+  position: absolute;
+  right: 0;
+  top: 12px;
+}
+.acordeon .submenu {
+  font-size: 0.9rem;
+  display: none;
+}
+.acordeon .submenu li {
+  position: relative;
+  margin-top: 10px;
+}
+.acordeon .submenu a {
+  padding: 6px;
+  padding-left: 15px;
+  -webkit-transition: all 0.25s ease;
+  transition: all 0.25s ease;
+  display: block;
+}
+.acordeon .submenu a:hover {
+  background-color: lightgrey;
+  color: #000;
+  border-left: 3px solid black;
+  font-weight: bold;
+}
+.acordeon .submenu .visitado {
+  background-color: #000;
+  color: #fff;
+}
+.acordeon .open .link {
+  color: #fff;
+  background: #296384;
+  /* fallback for old browsers */
+  /* Chrome 10-25, Safari 5.1-6 */
+  background: -webkit-gradient(linear, left top, right top, from(#190A05), to(#201f1f));
+  background: linear-gradient(to right, #190A05, #201f1f);
+  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  font-size: 0.9rem;
+}
+.acordeon .open i {
+  color: #fff;
+}
+.acordeon .open .fa-chevron-down {
+  -webkit-transform: rotate(180deg);
+          transform: rotate(180deg);
+}
+
+.inactivo {
+  background: #B10417;
+}
+
+.areaTrabajo {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 15% 85%;
+  grid-template-columns: 15% 85%;
+  background: #c2c2c2;
+  height: 90%;
+}
+.areaTrabajo .menu {
+  background-color: #000;
+  color: #fff;
+}
+.areaTrabajo .menu a {
+  color: #fff;
+}
+.areaTrabajo .menu div:nth-child(1) {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  padding: 0 15px;
+  border-top: 1px solid #fff;
+}
+.areaTrabajo .menu div:nth-child(1) i {
+  font-size: 1.5rem;
+  margin-right: 10px;
+}
+.areaTrabajo .menu .catalogo {
+  color: #fff;
+}
+.areaTrabajo .ventana .cargaModulo {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  padding: 20px;
+}
+
+.cabecera, .pie {
+  width: 100%;
+  background-color: #000;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  color: #fff;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
+.cabecera div, .pie div {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  padding-right: 30px;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+.cabecera div h1, .pie div h1 {
+  background: #B461A3;
+  font-size: 1.2rem;
+  padding: 9px 7px;
+  border-radius: 50%;
+}
+
+.mayusculas {
+  text-transform: uppercase;
+}
+
+.minusculas {
+  text-transform: lowercase;
+}
+
+.cabecera {
+  height: 4rem;
+}
+
+.pl5px {
+  padding-left: 5px;
+}
+
+.pl10px {
+  padding-left: 10px;
+}
+
+.pl20px {
+  padding-left: 20px;
+}
+
+.pie {
+  height: 2rem;
+  color: #fff;
+  background: #000;
+  position: absolute;
+  /*El div será ubicado con relación a la pantalla*/
+  bottom: 0px;
+  /*Abajo deje un espacio de 0px*/
+}
+
+.stickytop {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #000;
+}
+
+.textoCentro {
+  text-align: center;
+}
+
+.oculto {
+  display: none;
+}
+
+.wrap {
+  position: relative;
+  height: 100vh;
+}

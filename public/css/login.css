@@ -1,0 +1,136 @@
+@charset "UTF-8";
+@import "modals.css";
+* {
+  margin: 0;
+  padding: 0;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+body {
+  background: #ABE2DE;
+  font-family: "Helvetica Neue", Helvetica, Arial;
+}
+
+.cabecera, .pie {
+  width: 100%;
+  background-color: #000;
+}
+
+.cabecera {
+  height: 4rem;
+}
+
+.landZone {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 2fr 10px 1fr;
+  grid-template-columns: 2fr 1fr;
+  -webkit-column-gap: 10px;
+     -moz-column-gap: 10px;
+          column-gap: 10px;
+  width: 70%;
+  margin: 10rem auto;
+}
+.landZone .presentacion {
+  text-align: center;
+}
+.landZone .presentacion p {
+  font-size: 2rem;
+}
+.landZone .presentacion h1 {
+  font-size: 3rem;
+}
+.landZone .presentacion .circulos {
+  position: relative;
+  height: 15rem;
+  margin-top: 6rem;
+}
+.landZone .presentacion .circulos div {
+  height: 4rem;
+  width: 4rem;
+  border-radius: 50%;
+  position: absolute;
+  -webkit-box-shadow: 2px 3px 5px #c2c2c2;
+          box-shadow: 2px 3px 5px #c2c2c2;
+}
+.landZone .presentacion .circulos div:nth-child(1) {
+  background: red;
+  left: 45%;
+}
+.landZone .presentacion .circulos div:nth-child(2) {
+  background: yellow;
+  left: 49%;
+  top: 2rem;
+}
+.landZone .presentacion .circulos div:nth-child(3) {
+  background: green;
+  top: 2rem;
+  left: 41%;
+}
+.landZone .presentacion .circulos div:nth-child(4) {
+  background: blue;
+  left: 45%;
+  top: 4rem;
+}
+.landZone .ingreso {
+  text-align: center;
+  border-radius: 20px;
+  border: 6px solid #98D0DF;
+  background: #8DAFE0;
+  width: 80%;
+  line-height: 2rem;
+  padding: 0 20px;
+}
+.landZone .ingreso h1 {
+  margin-top: 2rem;
+}
+.landZone .ingreso .entradaTexto {
+  width: 100%;
+  background: #fff;
+  margin-top: 3rem;
+  line-height: 3rem;
+}
+.landZone .ingreso .entradaTexto input {
+  outline: none;
+  background: transparent;
+  border: none;
+  width: 80%;
+  font-size: 1.5rem;
+  margin-left: 10px;
+}
+.landZone .ingreso .entradaCheck {
+  color: #fff;
+  font-size: 0.8rem;
+  margin-top: 30px;
+}
+.landZone .ingreso .opciones button {
+  border: none;
+  padding: 1rem;
+  width: 100%;
+  margin-top: 25px;
+  border-radius: 8px;
+  color: #fff;
+  background: #518FFB;
+  -webkit-transition: 0.3s;
+  transition: 0.3s;
+}
+.landZone .ingreso .opciones button:hover {
+  -webkit-box-shadow: 2px 3px 5px #000;
+          box-shadow: 2px 3px 5px #000;
+}
+
+.pie {
+  height: 2rem;
+  color: #FFF;
+  background: #000;
+  position: absolute;
+  /*El div será ubicado con relación a la pantalla*/
+  bottom: 0px;
+  /*Abajo deje un espacio de 0px*/
+}
+
+.wrap {
+  position: relative;
+  height: 100vh;
+}

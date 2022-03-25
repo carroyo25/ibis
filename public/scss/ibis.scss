@@ -1,0 +1,247 @@
+@import "modals.css";
+@import "modulo.css";
+@import "tamanio.css";
+
+//colores 
+$blanco: #fff;
+$transparente_negro: rgba(0,0,0,0.5);
+$transparente_blanco: rgba(255,255,255,0.1);
+$fondo_menus:#005D84;
+$negro:#000;
+$notificacion:#B10417;
+$iniciales:#B461A3;
+$activo:#7DCB3D;
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    border: 0;
+    vertical-align:baseline;
+}
+
+a {
+    text-decoration: none;
+    color: $negro;
+}
+
+body {
+    background:$blanco;
+    font-family: "Helvetica Neue",Helvetica,Arial;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+
+ul,li {
+    list-style: none;
+}
+
+input[type="text"],input[type="mail"],input[type="password"],input[type="date"]{
+    padding-left: 10px;
+}
+
+.activo {
+    background:$activo;
+}
+
+.acordeon{
+    color: #fff;
+    background: #4b4a4a;
+    padding: 15px;
+    font-family: Futura, 'Trebuchet MS', Arial, sans-serif;
+    height: 94%;
+    
+    .link{
+        display: block;
+        display: block;
+        padding: 10px 15px 15px 4px;
+        color: white;
+        font-size: .9rem;
+        border-bottom: 1px solid #ccc;
+        position: relative;
+        font-weight: 700;
+        cursor: pointer;
+
+        span{
+            padding-left: 10px;
+        }
+
+        .fa-chevron-down {
+            position: absolute;
+            right: 0;
+            top: 12px;
+        }
+
+    }
+
+    .submenu{
+        font-size: .9rem;
+        display: none;
+        
+        li {
+            position: relative;
+            margin-top: 10px;
+        }
+
+        a {
+            padding: 6px;
+            padding-left: 15px;
+            transition: all .25s ease;
+            display: block;
+
+            &:hover {
+                background-color:lightgrey;
+                color: #000;
+                border-left: 3px solid black;
+                font-weight: bold;
+            }
+        }
+
+        .visitado{
+            background-color:$negro;
+            color:$blanco;
+        }
+    }
+
+    .open  {
+        .link{
+            color: #fff;
+            background: #296384;  /* fallback for old browsers */
+            background: -webkit-linear-gradient(to right, #190A05, #201f1f);  /* Chrome 10-25, Safari 5.1-6 */
+            background: linear-gradient(to right, #190A05, #201f1f); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+            font-size: .9rem;
+        }
+
+        i {
+            color: #fff;	
+        }
+
+        .fa-chevron-down{
+            transform: rotate(180deg);
+        }
+    }
+}
+
+.inactivo {
+    background:$notificacion;
+}
+
+.areaTrabajo{
+    display:grid;
+    grid-template-columns: 15% 85%;
+    background:#c2c2c2;
+    height: 90%;
+
+    .menu {
+        background-color: $negro;
+        color:$blanco;
+
+        a{
+            color:$blanco;
+        }
+
+        div:nth-child(1){
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding:0 15px;
+            border-top:1px solid $blanco;
+
+            i {
+                font-size: 1.5rem;
+                margin-right: 10px;
+            }
+        }
+
+        .catalogo{
+            color:$blanco;
+            
+        }
+    }
+
+    .ventana {
+        .cargaModulo{
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            padding: 20px;
+        }
+    }
+}
+
+.cabecera,.pie{
+    width: 100%;
+    background-color: $negro;
+    display: flex;
+    color: $blanco;
+    justify-content: space-between;
+
+    div {
+        display: flex;
+        padding-right:30px;
+        align-items: center;
+
+        h1{
+            background:$iniciales;
+            font-size:1.2rem;
+            padding: 9px 7px;
+            border-radius: 50%;
+        }
+    }
+}
+
+.mayusculas{
+    text-transform: uppercase;
+}
+
+.minusculas{
+    text-transform: lowercase;
+}
+
+.cabecera {
+    height: 4rem;
+}
+
+.pl5px{
+    padding-left: 5px;
+}
+
+.pl10px{
+    padding-left: 10px;
+}
+
+.pl20px{
+    padding-left: 20px;
+}
+
+
+.pie {
+    height:2rem;
+    color: $blanco;
+    background: $negro;
+    position:absolute; /*El div será ubicado con relación a la pantalla*/
+    bottom:0px; /*Abajo deje un espacio de 0px*/
+}
+
+.stickytop {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: $negro;
+}
+
+.textoCentro{
+    text-align: center;
+}
+
+.oculto{
+    display: none;
+}
+
+.wrap{
+    position: relative;
+    height: 100vh;
+}

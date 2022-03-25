@@ -1,0 +1,315 @@
+.cabezaModulo {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+.cabezaModulo h1 {
+  color: #797777;
+}
+.cabezaModulo a {
+  color: #000;
+  font-size: 1.5rem;
+}
+.cabezaModulo a:nth-child(1) {
+  margin-right: 10px;
+}
+
+.column2 {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 5rem 1fr;
+  grid-template-columns: 5rem 1fr;
+  position: relative;
+  padding: 5px;
+}
+
+.column4 {
+  position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  padding: 5px;
+}
+
+.direccion_columna {
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+
+.barraTrabajo {
+  line-height: 3rem;
+  border-top: 3px solid #012B3F;
+  background: #0078D4;
+}
+.barraTrabajo .unaConsulta {
+  color: #fff;
+  padding: 5px 15px;
+}
+.barraTrabajo .unaConsulta input {
+  width: 90%;
+  height: 2rem;
+  outline: none;
+  border: none;
+  padding-left: 20px;
+}
+
+.itemsTabla {
+  width: 100%;
+  margin-top: 5px;
+}
+.itemsTabla table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.itemsTabla table thead {
+  background: #000;
+  color: #fff;
+  line-height: 2rem;
+  font-size: 0.8rem;
+}
+.itemsTabla table tbody tr {
+  cursor: pointer;
+  height: 35px;
+}
+.itemsTabla table tbody tr td {
+  border: 1px solid #616161;
+  line-height: 1.5rem;
+  font-size: 0.8rem;
+}
+.itemsTabla table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.lista {
+  width: 85%;
+  position: absolute;
+  background: #fff;
+  left: 65px;
+  top: 39px;
+  z-index: 3;
+  border: 1px solid #c3c3c3;
+  font-size: 0.8rem;
+  -webkit-box-shadow: 3px 2px 6px;
+          box-shadow: 3px 2px 6px;
+  line-height: 1.5rem;
+  padding: 2px;
+  -webkit-transition: 0.3s;
+  transition: 0.3s;
+  display: none;
+  max-height: 20rem;
+  overflow: auto;
+}
+.lista a {
+  display: block;
+}
+.lista a:hover {
+  background: #c2c2c2;
+}
+
+.ventanaProceso, .ventanaOpciones, .ventanaBusqueda, .ventanaPregunta {
+  background: #fff;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+  -webkit-box-shadow: 5px 8px 5px #000;
+          box-shadow: 5px 8px 5px #000;
+}
+
+.tabs_labels {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  line-height: 1.5rem;
+  display: flex;
+  -ms-flex-pack: distribute;
+      justify-content: space-around;
+}
+.tabs_labels a {
+  display: block;
+}
+
+.ventanaProceso .seccion_izquierda {
+  width: 100%;
+}
+.ventanaProceso .barraOpciones {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  background: #0078D4;
+  padding: 5px;
+}
+.ventanaProceso .barraOpciones > span {
+  color: #fff;
+  line-height: 2rem;
+}
+.ventanaProceso .barraOpciones button {
+  height: 35px;
+  padding: 10px;
+}
+.ventanaProceso .dataProceso {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+.ventanaProceso .dataProceso input {
+  height: 35px;
+  border: none;
+  border: 1px solid #c2c2c2;
+  margin-top: 3px;
+}
+.ventanaProceso .dataProceso label {
+  font-size: 0.7rem;
+  font-weight: bold;
+  margin-top: 10px;
+}
+.ventanaProceso table tbody tr {
+  height: 30px;
+}
+.ventanaProceso table tbody input {
+  border: none !important;
+  height: 1rem !important;
+  width: 100%;
+  outline: none;
+}
+
+.ventanaBusqueda {
+  width: 65%;
+}
+.ventanaBusqueda input {
+  height: 35px;
+  border: none;
+  border: 1px solid #c2c2c2;
+  width: 90%;
+}
+.ventanaBusqueda .tablaBusqueda {
+  height: 20rem;
+  overflow: auto;
+  padding: 0 10px;
+}
+.ventanaBusqueda .tituloVentana {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  margin-bottom: 10px;
+  background: #CF677E;
+  height: 2rem;
+  padding: 7px;
+  color: #fff;
+  font-weight: bold;
+}
+.ventanaBusqueda .textoBusqueda {
+  padding: 10px;
+}
+
+.ventanaPregunta {
+  width: 20%;
+  text-align: center;
+  padding: 20px;
+  line-height: 3rem;
+}
+.ventanaPregunta button {
+  border: none;
+  width: 45%;
+  line-height: 2.5rem;
+  background: #797777;
+  color: #fff;
+  -webkit-transition: 0.5s;
+  transition: 0.5s;
+}
+.ventanaPregunta button:hover {
+  color: #000;
+  background: #005D84;
+}
+
+.pestanasUsuario {
+  height: 20rem;
+  overflow: auto;
+}
+
+.separadorItem {
+  background: #005D84;
+  color: #fff;
+}
+
+.tablaPointer {
+  cursor: pointer;
+}
+
+.tabla3columnas th:nth-child(1), .tabla3columnas th:nth-child(3) {
+  width: 5%;
+  padding-left: 20px;
+}
+
+.tablainterna3columnas th:nth-child(1), .tablainterna3columnas th:nth-child(3) {
+  width: 10%;
+}
+
+.tablainterna4columnas th:nth-child(1), .tablainterna4columnas th:nth-child(3) {
+  width: 15%;
+}
+
+.tabla4columnas th:nth-child(1), .tabla4columnas th:nth-child(2), .tabla4columnas th:nth-child(4) {
+  width: 5% !important;
+}
+
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+.tabla thead {
+  background: #000;
+  color: #fff;
+  height: 35px;
+  font-size: 0.8rem;
+  line-height: 2rem;
+}
+.tabla thead tr th:nth-child(1) {
+  width: 5rem;
+}
+.tabla tbody tr td {
+  border: 1px solid #616161;
+  line-height: 1.5rem;
+}
+
+.tabs_labels a {
+  display: block;
+  width: 19rem;
+  text-align: center;
+  -webkit-transition: 0.5s;
+  transition: 0.5s;
+}
+.tabs_labels a:hover {
+  background: #c2c2c2;
+}
+.tabs_labels .seleccionado {
+  color: #fff;
+  background: #000;
+}
+
+.w35por {
+  width: 35%;
+}
+
+.w65por {
+  width: 65%;
+}

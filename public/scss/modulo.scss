@@ -1,0 +1,359 @@
+//colores 
+$blanco: #fff;
+$transparente_negro: rgba(0,0,0,0.5);
+$transparente_blanco: rgba(255,255,255,0.1);
+$fondo_menus:#005D84;
+$negro:#000;
+$notificacion:#B10417;
+$iniciales:#B461A3;
+$lineaBarra:#012B3F;
+$fondoBarra:#0078D4;
+$lineasTabla:#616161;
+$tituloModulo: #797777;
+$sobreElemento:#c2c2c2;
+$sombra:#c3c3c3;
+$barraVentana:#CF677E;
+$fondoBotones:#797777;
+
+.cabezaModulo{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    h1 {
+        color: $tituloModulo;
+    }
+
+    a {
+        color:$negro;
+        font-size:1.5rem;
+        
+        &:nth-child(1){
+            margin-right: 10px;
+        }
+    }
+}
+
+.column2{
+    display:grid;
+    grid-template-columns: 5rem 1fr;
+    position: relative;
+    padding: 5px;
+}
+
+.column4{
+    position: relative;
+    display: flex;
+    padding: 5px;
+}
+
+.direccion_columna{
+    flex-direction: column;
+}
+
+.barraTrabajo {
+    line-height: 3rem;
+    border-top: 3px solid $lineaBarra;
+    background: $fondoBarra;
+
+    .unaConsulta {
+        color: $blanco;
+        padding: 5px 15px;
+
+        input{
+            width: 90%;
+            height: 2rem;
+            outline: none;
+            border:none;
+            padding-left: 20px;
+        }
+    }
+}
+
+.itemsTabla{
+    width: 100%;
+    margin-top: 5px;
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+
+        thead {
+            background:$negro;
+            color:$blanco;
+            line-height: 2rem;
+            font-size: .8rem;
+        }
+
+        tbody {
+            tr{
+                cursor: pointer;
+                height: 35px;
+                td{
+                    border: 1px solid  $lineasTabla;
+                    line-height:1.5rem;
+                    font-size: 0.8rem;
+                }
+                
+                &:hover {
+                    background:rgba(255,255,255,0.5);
+                }
+            };
+        }
+    }
+}
+
+.lista{
+    width: 85%;
+    position: absolute;
+    background: $blanco;
+    left: 65px;
+    top: 39px;
+    z-index: 3;
+    border: 1px solid $sombra;
+    font-size: .8rem;
+    box-shadow: 3px 2px 6px;
+    line-height: 1.5rem;
+    padding: 2px;
+    transition: .3s;
+    display: none;
+    max-height: 20rem;
+    overflow: auto;
+
+    a {
+        display: block;
+        
+        &:hover{
+            background:$sobreElemento;
+        }
+    }
+}
+
+.ventanaProceso,.ventanaOpciones,.ventanaBusqueda,.ventanaPregunta{
+    background:$blanco;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 5px 8px 5px #000;
+}
+
+.tabs_labels{
+    display: flex;
+    line-height: 1.5rem;
+    display: flex;
+    justify-content: space-around;
+
+    a{
+        display: block;
+    }
+}
+
+//clase para la ventana de proceso
+.ventanaProceso {
+    //aca cambiar para el media query
+    //width: 65%;
+
+    .seccion_izquierda{
+        width: 100%;
+    }
+
+    .barraOpciones {
+        display: flex;
+        justify-content:space-between;
+        background:$fondoBarra;
+        padding: 5px;
+        
+        >span {
+            color:$blanco;
+            line-height:2rem;
+        }
+
+        button {
+            height:35px;
+            padding:10px;
+        }
+    }
+
+    .dataProceso{
+        display: flex;
+
+        input {
+            height: 35px;
+            border:none;
+            border:1px solid #c2c2c2;
+            margin-top: 3px;
+        }
+
+        label {
+            font-size: 0.7rem;
+            font-weight: bold;
+            margin-top: 10px;
+        }  
+    }
+
+    table {
+        tbody{
+            tr{
+                height: 30px;
+            }
+            input{
+                border: none !important;
+                height: 1rem !important;
+                width: 100%;
+                outline: none;
+            }
+        }
+    }
+}
+
+.ventanaBusqueda{
+    width:65%;
+
+    input {
+        height: 35px;
+        border:none;
+        border:1px solid #c2c2c2;
+        width: 90%;
+    }
+
+    .tablaBusqueda{
+        height: 20rem;
+        overflow:auto;
+        padding: 0 10px;
+    }
+
+    .tituloVentana {
+        display:flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+        background:$barraVentana;
+        height: 2rem;
+        padding: 7px;
+        color: $blanco;
+        font-weight: bold;
+    }
+
+    .textoBusqueda{
+        padding:10px;
+    }
+}
+
+.ventanaPregunta{
+    width: 20%;
+    text-align: center;
+    padding: 20px;
+    line-height: 3rem;
+    
+    button {
+        border:none;
+        width: 45%;
+        line-height: 2.5rem;
+        background:$fondoBotones;
+        color:$blanco;
+        transition:.5s;
+        
+        &:hover{
+            color: $negro;
+            background:$fondo_menus;
+        }
+    }
+}
+
+.pestanasUsuario{
+    height: 20rem;
+    overflow: auto;
+}
+
+
+.separadorItem{
+    background:$fondo_menus;
+    color: $blanco;
+}
+
+.tablaPointer{
+    cursor: pointer;
+}
+
+.tabla3columnas{
+    th:nth-child(1),th:nth-child(3) {
+        width:5% ;
+        padding-left: 20px;
+    }
+}
+
+.tablainterna3columnas{
+    th:nth-child(1),th:nth-child(3) {
+        width:10%;
+    }
+}
+
+.tablainterna4columnas{
+    th:nth-child(1),th:nth-child(3) {
+        width:15%;
+    }
+}
+
+.tabla4columnas{
+    th:nth-child(1),th:nth-child(2),th:nth-child(4) {
+        width:5% !important;
+    }
+}
+
+.tabla{
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+
+    thead {
+        background:$negro;
+        color:$blanco;
+        height: 35px;
+        font-size: .8rem;
+        line-height: 2rem;
+
+        tr {
+            th:nth-child(1) {
+                width: 5rem;
+            }
+        }
+    }
+
+    tbody {
+        
+        tr{
+            td{
+                border: 1px solid  $lineasTabla;
+                line-height:1.5rem;
+            }
+        }
+    }
+}
+
+.tabs_labels {
+    a {
+        display: block;
+        width: 19rem;
+        text-align: center;
+        transition: .5s;
+
+        &:hover{
+            background: $sobreElemento;
+        }
+    }
+
+    .seleccionado {
+        color: $blanco;
+        background:$negro;
+    }
+}
+
+
+.w35por{
+    width: 35%;
+}
+
+.w65por{
+    width: 65%;
+}
