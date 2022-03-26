@@ -20,7 +20,7 @@ $.strPad = function(i,l,s) {
     return o;
 };
 
-function mostrarMensaje(mensaje,clase){
+mostrarMensaje = (mensaje,clase) => {
     $(".mensaje p")
         .empty()
         .text(mensaje);
@@ -36,7 +36,7 @@ function mostrarMensaje(mensaje,clase){
 
 }
 
-function fillTables(table,idx){
+fillTables = (table,idx) => {
     var item = 0;
 
     table.each(function(){
@@ -46,7 +46,7 @@ function fillTables(table,idx){
     });
 }
 
-function checkExistTable(table,item,indice){
+checkExistTable = (table,item,indice) => {
     var itenExist = false;
 
     table.each(function(){

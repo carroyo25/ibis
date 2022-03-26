@@ -17,8 +17,10 @@
         function nuevoUsuario(){
             $cabecera = $_POST['cabecera'];
             $modulos = $_POST['modulos'];
+            $costos = $_POST['costos'];
+            $almacenes = $_POST['almacenes'];
 
-            $resultado = $this->model->insertarUsuario($cabecera,$modulos);
+            $resultado = $this->model->insertarUsuario($cabecera,$modulos,$costos,$almacenes);
 
             echo json_encode($resultado);
         }
@@ -26,8 +28,10 @@
         function actualizaUsuario(){
             $cabecera = $_POST['cabecera'];
             $modulos = $_POST['modulos'];
+            $costos = $_POST['costos'];
+            $almacenes = $_POST['almacenes'];
 
-            $resultado = $this->model->actualizarUsuario($cabecera,$modulos);
+            $resultado = $this->model->actualizarUsuario($cabecera,$modulos,$costos,$almacenes);
 
             echo json_encode($resultado);
         }
@@ -39,7 +43,6 @@
 
             echo json_encode($resultado);
         }
-        
 
         function actualizaListado(){
             $resultado = $this->model->listarUsuarios();
@@ -57,6 +60,13 @@
 
         function almacen(){
             echo $this->model->listarAlmacen();
+        }
+
+        function desactivaItem(){
+            $id = $_POST['id'];
+            $query = $_POST['query'];
+
+            echo $this->model->quitarItem($id,$query);
         }
     }
 ?>

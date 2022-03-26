@@ -153,7 +153,7 @@
             }
         }
         
-        public function insertarUsuario($cabecera){
+        public function insertarUsuario($cabecera,$modulos,$costos,$almacenes){
             $salida = false;
             try {
 
@@ -187,6 +187,11 @@
                     $rowcount = $sql->rowcount();
     
                     if ($rowcount) {
+                        
+                        $this->grabarModulos($id,$modulos);
+                        $this->grabarCostos($id,$costos);
+                        $this->grabarAlmacenes($id,$almacenes);
+                        
                         $salida = array("respuesta"=>true,
                                         "mensaje"=>"Usuario creado correctammente");
                     }else {
@@ -243,14 +248,15 @@
 
                 return array("cabecera"=>$docData,
                             "modulos"=>$this->listarModulosUsuario($id),
-                            "almacen"=>$this->listarAlmacenUsuario($id));
+                            "almacen"=>$this->listarAlmacenUsuario($id),
+                            "costos"=>$this->listarCostosUsuario($id));
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
             }
         }
 
-        public function actualizarUsuario($cabecera,$modulos){
+        public function actualizarUsuario($cabecera,$modulos,$costos,$almacenes){
             try {
                 if ( $cabecera['old_pass']  == $cabecera['clave']){
                     $clave_actual = $cabecera['clave'];
@@ -282,12 +288,32 @@
                                 "iniciales"=>$cabecera['iniciales']]);
 
                 $this->grabarModulos($cabecera['cod_user'],$modulos);
+                $this->grabarCostos($cabecera['cod_user'],$costos);
+                $this->grabarAlmacenes($cabecera['cod_user'],$almacenes);
 
                 $salida = array("respuesta"=>true,
                                 "mensaje"=>"Usuario modificado");
                 
                 return $salida;
 
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function quitarItem($id,$query){
+            try {
+                $sql = $this->db->connect()->prepare($query);
+                $sql->execute(["id"=>$id]);
+                $rowCount=$sql->fetchAll();
+
+                if ($rowCount > 0){
+                    echo "borrado";
+                }else {
+                    echo 'Huy problemas';
+                }
+                
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
@@ -329,16 +355,30 @@
             }
         }
 
-        private function grabarProyectos($codigo,$proyectos){
-
+        private function grabarCostos($codigo,$costos){
+            $data = json_decode($costos);
+            try {
+                for ($i=0; $i < count($data); $i++) { 
+                    $sql = $this->db->connect()->prepare("INSERT INTO tb_costusu SET ncodproy=:cod,id_cuser=:usr,nflgactivo=:est");
+                    $sql->execute(["cod"=>$data[$i]->codpr,
+                                    "usr"=>$codigo,
+                                    "est"=>1]);
+                }
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
         }
 
         private function grabarAlmacenes($codigo,$almacenes){
-            $salida = "";
-
-            return $salida;
+            $data = json_decode($almacenes);
             try {
-                //code...
+                for ($i=0; $i < count($data); $i++) { 
+                    $sql = $this->db->connect()->prepare("INSERT INTO tb_almausu SET nalmacen=:cod,id_cuser=:usr,nflgactivo=:est");
+                    $sql->execute(["cod"=>$data[$i]->codalm,
+                                    "usr"=>$codigo,
+                                    "est"=>1]);
+                }
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
@@ -348,7 +388,28 @@
         private function listarAlmacenUsuario($codigo) {
             $salida = "";
             try {
-                //code...
+                $sql = $this->db->connect()->prepare("SELECT
+                                                            tb_almausu.ncodalm,
+                                                            UPPER( tb_almacen.cdesalm ) AS descripcion 
+                                                        FROM
+                                                            tb_almausu
+                                                            INNER JOIN tb_almacen ON tb_almausu.ncodalm = tb_almacen.ncodalm 
+                                                        WHERE
+                                                            tb_almausu.id_cuser =:id
+                                                        AND tb_almausu.nflgactivo = 1");
+                $sql->execute(["id"=>$codigo]);
+                $rowCount = $sql->rowCount();
+                $filas = 1;
+
+                if($rowCount > 0) {
+                    while ($rs = $sql->fetch()) {
+                        $salida .= '<tr data-grabado="1" data-codigo="'.$rs['ncodalm'].'">
+                                            <td class="textoCentro"><a href="'.$rs['ncodalm'].'"><i class="fas fa-eraser"></i></a> </td>
+                                            <td class="textoCentro">'.str_pad($filas++,2,0,STR_PAD_LEFT).'</td>
+                                            <td class="pl10px">'.$rs['descripcion'].'</td>
+                                    </tr>';
+                    }
+                }
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
@@ -376,7 +437,8 @@
                                                         tb_usermod
                                                         INNER JOIN sysmenu ON tb_usermod.ncodmod = sysmenu.ncodmenu 
                                                     WHERE
-                                                        iduser = :id ");
+                                                        iduser = :id
+                                                    AND flgactivo = 1");
                 $sql->execute(["id"=>$codigo]);
                 $rowCount = $sql->rowCount();
                 $filas = 1;
@@ -416,12 +478,36 @@
         private function listarCostosUsuario($codigo) {
             $salida = "";
             try {
-                //code...
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        tb_costusu.ncodcos,
+                                                        UPPER( tb_ccostos.cdescos ) AS descripcion,
+                                                        tb_ccostos.ccodcos 
+                                                    FROM
+                                                        tb_costusu
+                                                        INNER JOIN tb_ccostos ON tb_costusu.ncodproy = tb_ccostos.ncodcos 
+                                                    WHERE
+                                                        tb_costusu.id_cuser = :id
+                                                    AND tb_costusu.nflgactivo = 1");
+                $sql->execute(["id"=>$codigo]);
+                $rowCount = $sql->rowCount();
+                $filas = 1;
+
+                if($rowCount > 0) {
+                    while ($rs = $sql->fetch()) {
+                        $salida .= '<tr data-grabado="1" data-codigo="'.$rs['ncodcos'].'">
+                                            <td class="textoCentro"><a href="'.$rs['ncodcos'].'"><i class="fas fa-eraser"></i></a> </td>
+                                            <td class="textoCentro">'.$rs['ccodcos'].'</td>
+                                            <td class="pl10px">'.$rs['descripcion'].'</td>
+                                    </tr>';
+                    }
+                }
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
             }
             return $salida;
         }
+
+        
     }
 ?>

@@ -6,77 +6,7 @@
             $this->db = new Database();
         }
 
-        //Aca va el acordeon
-        public function acordeon($user){
-            try {
-                $sql_ul = $this->db->connect()->prepare("SELECT
-                                                        tb_sysmodulo.cdesmenu,
-                                                        tb_sysmodulo.cicono,
-                                                        tb_sysmodulo.ccodmenu 
-                                                    FROM
-                                                        tb_sysacceso
-                                                        INNER JOIN tb_sysmodulo ON tb_sysacceso.ncodmodu = tb_sysmodulo.ncodmodu 
-                                                    WHERE
-                                                        tb_sysacceso.id_cuser =:usr 
-                                                        AND tb_sysacceso.nflgactivo = 1 
-                                                    GROUP BY
-                                                        tb_sysmodulo.cdesmenu 
-                                                    ORDER BY
-                                                        tb_sysmodulo.ccodmenu ASC");
-                $sql_ul->execute(["usr"=>$user]);
-                $rowcount = $sql_ul->rowcount();
-
-                $sql_li = $this->db->connect()->prepare("SELECT
-                                                                tb_sysmodulo.ccodopcion,
-                                                                tb_sysmodulo.cdesmodu,
-                                                                tb_sysmodulo.cruta,
-                                                                tb_sysmodulo.ncodmodu,
-                                                                tb_sysmodulo.ccodmenu 
-                                                            FROM
-                                                                tb_sysacceso
-                                                                INNER JOIN tb_sysmodulo ON tb_sysacceso.ncodmodu = tb_sysmodulo.ncodmodu 
-                                                            WHERE
-                                                                tb_sysacceso.id_cuser =:usr 
-                                                                AND tb_sysacceso.nflgactivo = 1");
-                $sql_li->execute(["usr"=>$user]);
-
-                $salida = "";
-                $cont = 0;
-                
-
-                if ($rowcount > 0 ) {
-                    $result_ul = $sql_ul->fetchAll();
-                    $result_li = $sql_li->fetchAll();
-
-                    foreach ($result_ul as $ru) {
-                        $submenu = 0;
-                        $salida.= '<li>
-                                        <a class="link">
-                                            <i class="'.$ru['cicono'].'"></i>'.$ru['cdesmenu'].'<i class="fa fa-chevron-down"></i>
-                                        </a>
-                                        <ul class="submenu">';
-                                        
-                                        foreach ($result_li as $ri) {
-                                            if ( $ru['ccodmenu'] === $ri['ccodmenu'] ){
-                                                $salida .= '<li data-opt="'.$ri['ncodmodu'].'">
-                                                                <a href="'.constant('URL').$ri['cruta'].'#'.$cont.$submenu.'">'.$ri['cdesmodu'].'</a>
-                                                            </li>';
-                                                $submenu++;
-                                            }
-                                        }
-                        $salida .=		'</ul>
-                                    </li>';
-                        $cont++;
-                    }
-                }
-
-                return $salida;
-
-            } catch (PDOException $e) {
-                echo $e->getMessage();
-                return false;
-            }
-        }
+        
 
         //funcion para convertir numeros
         public function unidad($numuero){

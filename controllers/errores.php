@@ -3,8 +3,8 @@
         function __construct()
         {
             parent::__construct();
-            $this->view->render('errores/index');
             $this->view->mensaje="Error al cargar el recurso";
+            $this->view->render('errores/index');
         }
     }
 ?>

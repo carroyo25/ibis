@@ -56,9 +56,6 @@
                             <button type="button" id="saveItem" title="Grabar Datos">
                                 <span><i class="far fa-save"></i> Grabar Registro</span> 
                             </button>
-                            <button type="button" id="cancelItem" title="Cancelar">
-                                <i class="fas fa-ban"></i> Cancelar Registro
-                            </button>
                             <button type="button" id="closeProcess" title="Cerrar">
                                 <i class="fas fa-window-close"></i>
                             </button>

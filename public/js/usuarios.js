@@ -11,8 +11,7 @@ $(function(){
 
         return false;
     });
-
-    
+   
     $(".tabs_labels").on("click","a", function (e) {
         e.preventDefault();
 
@@ -113,7 +112,7 @@ $(function(){
 
             ///checkExistTable(tabla destino,variable de busqueda,columna donde va a buscar)
             if (!checkExistTable($("#costos tbody tr"),costo,2)){
-                let row = `<tr data-grabado="0" data-codigo="${codigo_costo}"">
+                let row = `<tr data-grabado="0" data-codigo="${codigo_costo}">
                                 <td class="textoCentro"><a href="#"><i class="fas fa-eraser"></i></a> </td>
                                 <td class="pl10px">${codigo}</td>
                                 <td class="pl10px">${costo}</td>
@@ -126,10 +125,11 @@ $(function(){
         }else if( tabActive == "tab3") {
             let codigo      = $(this).children('td:eq(0)').text();
             let almacen     = $(this).children('td:eq(1)').text();
+            let codigo_almacen = $(this).data('id');
 
             ///checkExistTable(tabla destino,variable de busqueda,columna donde va a buscar)
             if (!checkExistTable($("#almacen tbody tr"),almacen,2)){
-                let row = `<tr data-grabado="0" data-codigo="${codigo}"">
+                let row = `<tr data-grabado="0" data-codigo="${codigo_almacen}">
                                 <td class="textoCentro"><a href="#"><i class="fas fa-eraser"></i></a> </td>
                                 <td class="pl10px">${codigo}</td>
                                 <td class="pl10px">${almacen}</td>
@@ -140,8 +140,6 @@ $(function(){
                 mostrarMensaje("Almacen, asignado","mensaje_error")
             }
         }
-            
-
         return false;
     });
 
@@ -223,7 +221,9 @@ $(function(){
 
         if( accion == 'n'){
             $.post(RUTA+"usuarios/nuevoUsuario", {cabecera:result,
-                                                modulos:JSON.stringify(obtenerModulos())},
+                                                  modulos:JSON.stringify(obtenerModulos()),
+                                                  costos:JSON.stringify(obtenerCostos()),
+                                                  almacenes:JSON.stringify(obtenerAlmacenes())},
                 function (data, textStatus, jqXHR) {
                     
                     if (data.respuesta) {
@@ -236,7 +236,9 @@ $(function(){
             );
         } else{
             $.post(RUTA+"usuarios/actualizaUsuario", {cabecera:result,
-                                                modulos:JSON.stringify(obtenerModulos())},
+                                                        modulos:JSON.stringify(obtenerModulos()),
+                                                        costos:JSON.stringify(obtenerCostos()),
+                                                        almacenes:JSON.stringify(obtenerAlmacenes())},
                 function (data, textStatus, jqXHR) {
 
                     if (data.respuesta) {
@@ -291,9 +293,9 @@ $(function(){
                     $("#desde").val(data.cabecera[0].fvigdesde);
                     $("#hasta").val(data.cabecera[0].fvighasta);
 
-                    $("#modulos tbody")
-                        .empty()
-                        .append(data.modulos);
+                    $("#modulos tbody").empty().append(data.modulos);
+                    $("#almacen tbody").empty().append(data.almacen);
+                    $("#costos tbody").empty().append(data.costos);
 
                     $("#proceso").fadeIn();
                 },
@@ -313,6 +315,59 @@ $(function(){
         buscar(_this); // arrow function para activa el buscador
     });
 
+    $("#modulos tbody").on("click","a", function (e) {
+        e.preventDefault();
+
+        let parent = $(this).parent().parent();
+        parent.remove();
+
+        if (parent.data("grabado") == 1){
+            $.post(RUTA+"usuarios/desactivaItem", {id:$(this).attr("href"),query:"UPDATE tb_usermod SET flgactivo = 0 WHERE ncodmod =:id"},
+                function (data, textStatus, jqXHR) {
+                    fillTables($("#modulos tbody > tr"),1);
+                },
+                "text"
+            );
+        } 
+
+        return false
+    });
+
+    $("#costos tbody").on("click","a", function (e) {
+        e.preventDefault();
+
+        let parent = $(this).parent().parent();
+        parent.remove();
+
+        if (parent.data("grabado") == 1){
+            $.post(RUTA+"usuarios/desactivaItem", {id:$(this).attr("href"),query:"UPDATE tb_costusu SET nflgactivo = 0 WHERE ncodcos =:id"},
+                function (data, textStatus, jqXHR) {
+                    //fillTables($("#costos tbody > tr"),1);
+                },
+                "text"
+            );
+        } 
+
+        return false
+    });
+
+    $("#almacenes tbody").on("click","a", function (e) {
+        e.preventDefault();
+
+        let parent = $(this).parent().parent();
+        parent.remove();
+
+        if (parent.data("grabado") == 1){
+            $.post(RUTA+"usuarios/desactivaItem", {id:$(this).attr("href"),query:"UPDATE tb_almausu SET nflgactivo = 0 WHERE ncodalm =:id"},
+                function (data, textStatus, jqXHR) {
+                    //fillTables($("#almacenes tbody > tr"),1);
+                },
+                "text"
+            );
+        } 
+
+        return false
+    });
 })
 
 obtenerModulos = () =>{
@@ -354,8 +409,46 @@ obtenerModulos = () =>{
     return MODULOS;
 }
 
-obtenerProyectos = () => {}
+obtenerCostos = () => {
+    let PROYECTOS = [];
+    let TABLA = $("#costos tbody > tr");
 
-obtenerAlmacen = () => {}
+    TABLA.each(function(){
+        var CODPR  = $(this).data("codigo"),
+            ESTADO = $(this).data("grabado"),
+            
+            item={};
+
+            if (ESTADO == '0'){
+
+                item["codpr"]  = CODPR;
+                
+                PROYECTOS.push(item);
+            }    
+    })
+
+    return PROYECTOS;
+}
+
+obtenerAlmacenes = () => {
+    let ALMACENES = [];
+    let TABLA = $("#almacen tbody > tr");
+
+    TABLA.each(function(){
+        var CODALM  = $(this).data("codigo"),
+            ESTADO = $(this).data("grabado"),
+            
+            item={};
+
+            if (ESTADO == '0'){
+
+                item["codalm"]  = CODALM;
+                
+                ALMACENES.push(item);
+            }    
+    })
+
+    return ALMACENES;
+}
 
 obtenerAprobacion = () => {}
