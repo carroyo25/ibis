@@ -27,14 +27,11 @@
                 <form action="#" autocomplete="off" id="formProceso">
                     <input type="hidden" name="ubigeo" id="ubigeo">
                     <input type="hidden" name="codigo" id="codigo">
-                    <div class="barraOpciones">
+                    <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
                         <div>
                             <button type="button" id="grabarItem" title="Grabar Datos">
                                 <span><i class="far fa-save"></i> Grabar Registro</span> 
-                            </button>
-                            <button type="button" id="cancelarItem" title="Cancelar">
-                                <i class="fas fa-ban"></i> Cancelar Registro
                             </button>
                             <button type="button" id="cerrarVentana" title="Cerrar">
                                 <i class="fas fa-window-close"></i>
@@ -108,7 +105,7 @@
         </div>
     </div>
     <div class="cabezaModulo">
-        <h1>Almacen</h1>
+        <h1>Catalogo Almacénes</h1>
         <div>
             <a href="#" id="nuevoRegistro"><i class="far fa-file"></i></a>
             <a href="#" id="irInicio"><i class="fas fa-home"></i></a>

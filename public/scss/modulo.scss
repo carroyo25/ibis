@@ -19,8 +19,9 @@ $fondoBotones:#797777;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 25px;
 
-    h1 {
+    h3,h1,h2 {
         color: $tituloModulo;
     }
 
@@ -41,10 +42,29 @@ $fondoBotones:#797777;
     padding: 5px;
 }
 
+.column4items{
+    display: -ms-grid;
+    display: grid;
+    grid-template-columns: 20px 1fr;
+    grid-template-rows: 1fr 1fr;
+    position: relative;
+    padding: 0 13px;
+    row-gap: -5px;
+    border: 1px solid #c2c2c2;
+    margin-top: 10px;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+
+    label {
+        margin-top: 14px !important;
+    }
+}
+
 .column4{
     position: relative;
     display: flex;
     padding: 5px;
+    margin-left: -4px;
 }
 
 .direccion_columna{
@@ -66,6 +86,7 @@ $fondoBotones:#797777;
             outline: none;
             border:none;
             padding-left: 20px;
+            border-radius: 8px;
         }
     }
 }
@@ -138,6 +159,14 @@ $fondoBotones:#797777;
     box-shadow: 5px 8px 5px #000;
 }
 
+.ventanaProceso {
+    border-radius: 8px;
+
+    .primeraBarra{
+        border-radius: 8px 8px 0 0;;
+    }
+}
+
 .tabs_labels{
     display: flex;
     line-height: 1.5rem;
@@ -153,6 +182,10 @@ $fondoBotones:#797777;
 .ventanaProceso {
     //aca cambiar para el media query
     //width: 65%;
+
+    .seccion_izquierda,.seccion_medio,.seccion_derecha{
+        padding: 0 1rem;
+    }
 
     .seccion_izquierda{
         width: 100%;
@@ -183,6 +216,9 @@ $fondoBotones:#797777;
             border:none;
             border:1px solid #c2c2c2;
             margin-top: 3px;
+            font-size: .7rem;
+            border-radius: 8px;
+
         }
 
         label {
@@ -196,12 +232,20 @@ $fondoBotones:#797777;
         tbody{
             tr{
                 height: 30px;
+                font-size: 0.7rem;
             }
-            input{
+
+            input[type="text"]{
                 border: none !important;
                 height: 1rem !important;
                 width: 100%;
                 outline: none;
+            }
+
+            select{
+                width: 100%;
+                height: 2rem;
+                outline:none;
             }
         }
     }
@@ -276,13 +320,8 @@ $fondoBotones:#797777;
     cursor: pointer;
 }
 
-.tabla3columnas{
-    th:nth-child(1),th:nth-child(3) {
-        width:5% ;
-        padding-left: 20px;
-    }
-}
 
+//tablas en  los formularios
 .tablainterna3columnas{
     th:nth-child(1),th:nth-child(3) {
         width:10%;
@@ -295,8 +334,22 @@ $fondoBotones:#797777;
     }
 }
 
+//tabla Principak
+.tabla3columnas{
+    th:nth-child(1),th:nth-child(3) {
+        width:5% ;
+        padding-left: 20px;
+    }
+}
+
 .tabla4columnas{
     th:nth-child(1),th:nth-child(2),th:nth-child(4) {
+        width:5% !important;
+    }
+}
+
+.tabla7columnas{
+    th:nth-child(1),th:nth-child(6),th:nth-child(7) {
         width:5% !important;
     }
 }

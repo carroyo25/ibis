@@ -27,7 +27,7 @@
                 <form action="#" autocomplete="off" id="formProceso">
                     <input type="hidden" name="ubigeo" id="ubigeo">
                     <input type="hidden" name="codproy" id="codproy">
-                    <div class="barraOpciones">
+                    <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
                         <div>
                             <button type="button" id="grabarItem" title="Grabar Datos">
@@ -48,7 +48,7 @@
                                 <input type="text" name="descripcion" id="descripcion" class="mayusculas obligatorio" autocomplete="off">
                             </div>
                         </div>
-                        <div class="barraOpciones">
+                        <div class="barraOpciones ">
                             <span>Nombre Abreviado</span>
                         </div>
                         <div class="seccion_medio">
@@ -115,7 +115,7 @@
         </div>
     </div>
     <div class="cabezaModulo">
-        <h1>Proyectos</h1>
+        <h1>Catalogo Proyectos</h1>
         <div>
             <a href="#" id="nuevoRegistro"><i class="far fa-file"></i></a>
             <a href="#" id="irInicio"><i class="fas fa-home"></i></a>

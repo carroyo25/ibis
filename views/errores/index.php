@@ -9,6 +9,6 @@
     <title>Document</title>
 </head>
 <body>
-    <?php echo $this->mensaje ?>
+    <?php echo $this->mensaje?>
 </body>
 </html>

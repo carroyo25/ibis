@@ -46,8 +46,6 @@ $(function(){
             mostrarMensaje(error,'mensaje_error');
         }
 
-        console.log(getItems());
-
         return false;
     });
 

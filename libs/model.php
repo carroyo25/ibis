@@ -397,6 +397,29 @@
             }
         }
 
+        public function listarPais() {
+            try {
+                $salida = "";
+                $query = $this->db->connect()->query("SELECT ncodpais,cdespais 
+                                                        FROM tb_pais
+                                                        ORDER BY cdespais");
+                $query->execute();
+                $rowcount = $query->rowcount();
+
+                if ($rowcount > 0) {
+                    while ($row = $query->fetch()) {
+                        $salida.='<li>
+                                    <a href="'.$row['ncodpais'].'">'.$row['cdespais'].'</a>
+                                 </li>';
+                    }
+                }
+                return $salida;
+            } catch (PDOException $e) {
+                echo $e->getMessage();
+                return false;
+            }
+        }
+
         public function listarAquarius(){
             try {
                 $salida = "";
@@ -438,31 +461,55 @@
        }
 
        public function getUbigeo($nivel,$prefijo){
-        try {
-            $salida = "";
-            $query= $this->db->connect()->prepare("SELECT
-                tb_ubigeo.ccubigeo,
-                tb_ubigeo.cdubigeo
-            FROM
-                tb_ubigeo
-            WHERE
-                tb_ubigeo.nnivel = :nivel AND
-                tb_ubigeo.ccubigeo LIKE :prefijo");
-            $query->execute(['nivel'=>$nivel,'prefijo'=>$prefijo]);
-            $rowcount = $query->rowCount();
-            if ($rowcount > 0 ){
-                while ($row = $query->fetch()) {
-                    $salida.='<li><a href="'.$row['ccubigeo'].'">'.$row['cdubigeo'].'</a></li>';
+            try {
+                $salida = "";
+                $query= $this->db->connect()->prepare("SELECT
+                    tb_ubigeo.ccubigeo,
+                    tb_ubigeo.cdubigeo
+                FROM
+                    tb_ubigeo
+                WHERE
+                    tb_ubigeo.nnivel = :nivel AND
+                    tb_ubigeo.ccubigeo LIKE :prefijo");
+                $query->execute(['nivel'=>$nivel,'prefijo'=>$prefijo]);
+                $rowcount = $query->rowCount();
+                if ($rowcount > 0 ){
+                    while ($row = $query->fetch()) {
+                        $salida.='<li><a href="'.$row['ccubigeo'].'">'.$row['cdubigeo'].'</a></li>';
+                    }
                 }
-            }
 
-            return $salida;
-            
-        } catch (PDOException $e) {
-            echo $e->getMessage();
-            return false;
+                return $salida;
+                
+            } catch (PDOException $e) {
+                echo $e->getMessage();
+                return false;
+            }
         }
-    }
-   
+
+        public function llamarParametrosSelect($clase){
+            try {
+                $salida = '<option value="-1">Elija una opción</option>';
+                $sql = $this->db->connect()->prepare("SELECT nidreg,cclase,ccod,cdescripcion,cabrevia
+                                                        FROM tb_parametros
+                                                        WHERE cclase=:clase 
+                                                        AND nactivo = 1
+                                                        AND ccod !='00' 
+                                                        ORDER BY cdescripcion");
+                $sql->execute(["clase"=>$clase]);
+                $rowcount = $sql->rowCount();
+
+                if($rowcount > 0){
+                    while ($rs = $sql->fetch()) {
+                        $salida .= '<option value="'.$rs['nidreg'].'" data-abrevia"">'.$rs['cdescripcion'].'</option>';
+                    }
+                } 
+
+                return $salida;
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
     }
 ?>

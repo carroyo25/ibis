@@ -1,6 +1,5 @@
 @import "modals.css";
 @import "modulo.css";
-@import "tamanio.css";
 
 //colores 
 $blanco: #fff;
@@ -27,7 +26,7 @@ a {
 
 body {
     background:$blanco;
-    font-family: "Helvetica Neue",Helvetica,Arial;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
 html {
@@ -132,7 +131,7 @@ input[type="text"],input[type="mail"],input[type="password"],input[type="date"]{
 .areaTrabajo{
     display:grid;
     grid-template-columns: 15% 85%;
-    background:#c2c2c2;
+    background:$blanco;
     height: 90%;
 
     .menu {
