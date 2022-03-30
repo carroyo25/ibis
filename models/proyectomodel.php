@@ -210,8 +210,6 @@
                     return false;
                 } 
             }
-
-            
         }
 
         private function consultarDetalles($id){

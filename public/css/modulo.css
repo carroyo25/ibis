@@ -124,10 +124,10 @@
 .itemsTabla table tbody tr td {
   border: 1px solid #616161;
   line-height: 1.5rem;
-  font-size: 0.8rem;
+  font-size: 0.7rem;
 }
 .itemsTabla table tbody tr:hover {
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 43, 0.7);
 }
 
 .lista {
@@ -331,8 +331,21 @@
   width: 5% !important;
 }
 
+.tabla6columnas th:nth-child(1), .tabla6columnas th:nth-child(6) {
+  width: 5% !important;
+}
+.tabla6columnas th:nth-child(2), .tabla6columnas th:nth-child(4) {
+  width: 20% !important;
+}
+
 .tabla7columnas th:nth-child(1), .tabla7columnas th:nth-child(6), .tabla7columnas th:nth-child(7) {
   width: 5% !important;
+}
+
+.celdaAsignado {
+  word-break: break-all !important;
+  white-space: nowrap !important;
+  width: 150px !important;
 }
 
 .tabla {
@@ -353,6 +366,8 @@
 .tabla tbody tr td {
   border: 1px solid #616161;
   line-height: 1.5rem;
+  width: 1%;
+  white-space: nowrap;
 }
 
 .tabs_labels a {

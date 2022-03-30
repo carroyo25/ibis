@@ -113,11 +113,11 @@ $fondoBotones:#797777;
                 td{
                     border: 1px solid  $lineasTabla;
                     line-height:1.5rem;
-                    font-size: 0.8rem;
+                    font-size: 0.7rem;
                 }
                 
                 &:hover {
-                    background:rgba(255,255,255,0.5);
+                    background:rgba(255,255,43,.7);
                 }
             };
         }
@@ -348,10 +348,26 @@ $fondoBotones:#797777;
     }
 }
 
+.tabla6columnas{
+    th:nth-child(1),th:nth-child(6) {
+        width:5% !important;
+    }
+
+    th:nth-child(2),th:nth-child(4) {
+        width:20% !important;
+    }
+}
+
 .tabla7columnas{
     th:nth-child(1),th:nth-child(6),th:nth-child(7) {
         width:5% !important;
     }
+}
+
+.celdaAsignado{
+    word-break: break-all !important;
+    white-space: nowrap !important;
+    width : 150px !important;
 }
 
 .tabla{
@@ -379,6 +395,8 @@ $fondoBotones:#797777;
             td{
                 border: 1px solid  $lineasTabla;
                 line-height:1.5rem;
+                width: 1%;
+    white-space: nowrap;
             }
         }
     }

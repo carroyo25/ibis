@@ -89,12 +89,14 @@ $(function() {
             if (result['direccion'] == '') throw "Ingrese la dirección";
             
             if (accion == 'n') {
-                /*$.post(RUTA+"proyecto/nuevoProyecto", {datos:result,costos:JSON.stringify(getItems())},
+                $.post(RUTA+"proveedores/nuevaEntidad", {datos:result,
+                                                     contactos:JSON.stringify(obtenerContactos()),
+                                                     bancos:JSON.stringify(obtenerBancos())},
                     function (data, textStatus, jqXHR) {
                         mostrarMensaje(data.mensaje,data.clase);
                     },
                     "json"
-                );*/
+                );
             }
             else {
                 /*$.post(RUTA+"proyecto/modificaProyecto", {datos:result,costos:JSON.stringify(getItems())},
@@ -159,12 +161,77 @@ $(function() {
 
         return false;
     });
+
+    $("#closeProcess").click(function (e) { 
+        e.preventDefault();
+
+        /*$.post(RUTA+"proveedores/actualizaListado",
+            function (data, textStatus, jqXHR) {
+                $(".itemsTabla  table tbody")
+                    .empty()
+                    .append(data);
+                
+                $("#proceso").fadeOut();
+            },
+            "text"
+        );*/
+
+        $("form")[0].reset();
+        $("#bancos tbody,#contatos tbody").empty();
+        $("#proceso").fadeOut();
+
+        return false;
+    });
 })
 
-bancos = () =>{
+obtenerBancos = () =>{
+    DATA = [];
+    let TABLA = $("#bancos tbody > tr");
 
+    TABLA.each(function(){
+        let NOMBRE   = $(this).find('td').eq(2).children().val(),
+            CUENTA   = $(this).find('td').eq(3).children().val(),
+            NUMERO   = $(this).find('td').eq(4).children().val(),
+            ACTIVO   = $(this).find('td').eq(5).children().prop('checked'),
+            ESTADO = $(this).data('grabado');
+
+        item= {};
+
+        if ( ESTADO == 0 ) {
+            item["nombre"] = NOMBRE;
+            item["cuenta"] = CUENTA;
+            item["numero"] = NUMERO;
+            item["activo"] = ACTIVO;
+
+            DATA.push(item);
+        }  
+    })
+
+    return DATA;
 }
 
-contactos = () => {
+obtenerContactos = () => {
+    DATA = [];
+    let TABLA = $("#contactos tbody > tr");
 
+    TABLA.each(function(){
+        let NOMBRE   = $(this).find('td').eq(2).children().val(),
+            TELEFONO = $(this).find('td').eq(3).children().val(),
+            CORREO   = $(this).find('td').eq(4).children().val(),
+            ACTIVO   = $(this).find('td').eq(5).children().prop('checked'),
+            ESTADO = $(this).data('grabado');
+
+        item= {};
+
+        if ( ESTADO == 0 ) {
+            item["nombre"]      = NOMBRE;
+            item["telefono"] = TELEFONO;
+            item["correo"]     = CORREO;
+            item["activo"]     = ACTIVO;
+
+            DATA.push(item);
+        }  
+    })
+
+    return DATA;
 }

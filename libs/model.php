@@ -489,7 +489,7 @@
 
         public function llamarParametrosSelect($clase){
             try {
-                $salida = '<option value="-1">Elija una opción</option>';
+                $salida = '<option value="-1" class="oculto">Elija una opción</option>';
                 $sql = $this->db->connect()->prepare("SELECT nidreg,cclase,ccod,cdescripcion,cabrevia
                                                         FROM tb_parametros
                                                         WHERE cclase=:clase 

@@ -6,7 +6,7 @@
         }
 
         function render(){
-            $this->view->listaProveedores = "";
+            $this->view->listaProveedores =  $this->model->listarProveedores();
             $this->view->listaBancos = $this->model->llamarParametrosSelect("02");
             $this->view->listaMonedas = $this->model->llamarParametrosSelect("03");
             $this->view->listaTipos = $this->model->listarParametros("05");
@@ -23,6 +23,14 @@
                             "monedas"=>$this->model->llamarParametrosSelect($tipo));
 
             echo json_encode($return);
+        }
+
+        function nuevaEntidad(){
+            $bancos = $_POST['bancos'];
+            $contactos = $_POST['contactos'];
+            $datos = $_POST['datos'];
+
+            echo json_encode($this->model->insertar($datos,$bancos,$contactos));
         }
         
     }

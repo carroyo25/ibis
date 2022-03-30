@@ -59,6 +59,7 @@
                     $rc = $sql->rowcount();
 
                     if ($rc > 0) {
+                        
                         $respuesta = true;
                         $mensaje = "Se registro correctamente";
                         $clase = "mensaje_correcto";

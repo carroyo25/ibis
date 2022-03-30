@@ -42,7 +42,6 @@
                             </button>
                         </div>
                     </div>
-                
                 <div class="dataProceso">
                     <div class="seccion_izquierda">
                         <div class="column2">
@@ -134,6 +133,7 @@
                                 <th>Nombre</th>
                                 <th>Telefono</th>
                                 <th>Email</th>
+                                <th>Activo</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -174,20 +174,19 @@
         </div>
     </div>
     <div class="itemsTabla">
-        <table id="tablaPrincipal tabla7columnas">
+        <table id="tablaPrincipal">
             <thead>
                 <tr>
                     <th>Item</th>
-                    <th>Nombre</th>
-                    <th>Dirección</th>
+                    <th width="10%">Nro. Documento</th>
+                    <th>Razón Social</th>
+                    <th width="10%">Teléfono</th>
                     <th>Correo</th>
-                    <th>Estado</th>
-                    <th>...</th>
                     <th>...</th>
                 </tr>
             </thead>
             <tbody>
-                
+                <?php echo $this->listaProveedores;?>
             </tbody>
         </table>
     </div>
