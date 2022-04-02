@@ -16,7 +16,7 @@
 
                 if ($rc > 0){
                     while( $rs = $sql->fetch()) {
-                        $salida .='<tr data-id="'.$rs['ncodalm'].'">
+                        $salida .='<tr data-id="'.$rs['ncodalm'].'" class="pointer">
                                         <td class="textoCentro">'.str_pad($item,3,0,STR_PAD_LEFT).'</td>
                                         <td class="pl20px">'.strtoupper($rs['cdesalm']).'</td>
                                         <td class="textoCentro"><a href="'.$rs['ncodalm'].'"><i class="fas fa-trash-alt"></i></a></td>

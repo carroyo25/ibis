@@ -14,6 +14,8 @@ $sobreElemento:#c2c2c2;
 $sombra:#c3c3c3;
 $barraVentana:#CF677E;
 $fondoBotones:#797777;
+$bordeCajas:#E0E0E0;
+
 
 .cabezaModulo{
     display: flex;
@@ -35,11 +37,29 @@ $fondoBotones:#797777;
     }
 }
 
-.column2{
+.controles_lineal{
+    border: 1px solid $bordeCajas;
+    margin-top: 10px;
+    display: grid;
+    grid-template-columns: 30px 0.3fr 30px 1fr;
+    grid-template-rows: 1fr;
+    padding: 0 19px;
+    border-radius: 8px;
+
+}
+
+.column2,.column2_9{
     display:grid;
-    grid-template-columns: 5rem 1fr;
     position: relative;
     padding: 5px;
+}
+
+.column2{
+    grid-template-columns: 5rem 1fr;
+}
+
+.column2_9{
+    grid-template-columns: 9rem 1fr;
 }
 
 .column4items{
@@ -50,7 +70,7 @@ $fondoBotones:#797777;
     position: relative;
     padding: 0 13px;
     row-gap: -5px;
-    border: 1px solid #c2c2c2;
+    border: 1px solid $sobreElemento;
     margin-top: 10px;
     border-radius: 8px;
     margin-bottom: 1rem;
@@ -91,6 +111,14 @@ $fondoBotones:#797777;
     }
 }
 
+.tituloClase{
+    background:$fondo_menus;
+    color:$blanco;
+    font-weight: bold;
+    line-height:2rem;
+    font-size: 0.7rem;
+}
+
 .itemsTabla{
     width: 100%;
     margin-top: 5px;
@@ -107,12 +135,12 @@ $fondoBotones:#797777;
         }
 
         tbody {
-            tr{
+            .pointer{
                 cursor: pointer;
-                height: 35px;
+                height: 25px;
                 td{
                     border: 1px solid  $lineasTabla;
-                    line-height:1.5rem;
+                    line-height:1rem;
                     font-size: 0.7rem;
                 }
                 

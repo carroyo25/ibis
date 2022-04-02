@@ -128,7 +128,7 @@
                     <table class="tabla" id="contactos">
                         <thead>
                             <tr>
-                                <th>...</th>
+                                <th width="10%">...</th>
                                 <th>Item</th>
                                 <th>Nombre</th>
                                 <th>Telefono</th>

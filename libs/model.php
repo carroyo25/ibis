@@ -460,6 +460,54 @@
            }
        }
 
+        public function llamarParametrosSelect($clase){
+            try {
+                $salida = '<option value="-1" class="oculto">Elija una opción</option>';
+                $sql = $this->db->connect()->prepare("SELECT nidreg,cclase,ccod,cdescripcion,cabrevia
+                                                        FROM tb_parametros
+                                                        WHERE cclase=:clase 
+                                                        AND nactivo = 1
+                                                        AND ccod !='00' 
+                                                        ORDER BY cdescripcion");
+                $sql->execute(["clase"=>$clase]);
+                $rowcount = $sql->rowCount();
+
+                if($rowcount > 0){
+                    while ($rs = $sql->fetch()) {
+                        $salida .= '<option value="'.$rs['nidreg'].'" data-abrevia"">'.$rs['cdescripcion'].'</option>';
+                    }
+                } 
+
+                return $salida;
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function obtenerGrupos(){
+            $salida = "";
+            try {
+                $sql = $this->db->connect()->query("SELECT ncodclase,ccodcata,cdescrip 
+                                                    FROM tb_clase 
+                                                    WHERE nflgactivo=1 
+                                                    ORDER BY cdescrip ASC");
+                $sql->execute();
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0) {
+                    while ( $rs = $sql->fetch()){
+                        $salida .='<li><a href="'.$rs['ncodclase'].'">'.$rs['ccodcata'] .' - '.strtoupper($rs['cdescrip']).'</a></li>';
+                    }
+                }
+
+                return $salida;
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
        public function getUbigeo($nivel,$prefijo){
             try {
                 $salida = "";
@@ -483,31 +531,6 @@
                 
             } catch (PDOException $e) {
                 echo $e->getMessage();
-                return false;
-            }
-        }
-
-        public function llamarParametrosSelect($clase){
-            try {
-                $salida = '<option value="-1" class="oculto">Elija una opción</option>';
-                $sql = $this->db->connect()->prepare("SELECT nidreg,cclase,ccod,cdescripcion,cabrevia
-                                                        FROM tb_parametros
-                                                        WHERE cclase=:clase 
-                                                        AND nactivo = 1
-                                                        AND ccod !='00' 
-                                                        ORDER BY cdescripcion");
-                $sql->execute(["clase"=>$clase]);
-                $rowcount = $sql->rowCount();
-
-                if($rowcount > 0){
-                    while ($rs = $sql->fetch()) {
-                        $salida .= '<option value="'.$rs['nidreg'].'" data-abrevia"">'.$rs['cdescripcion'].'</option>';
-                    }
-                } 
-
-                return $salida;
-            } catch (PDOException $th) {
-                echo $th->getMessage();
                 return false;
             }
         }

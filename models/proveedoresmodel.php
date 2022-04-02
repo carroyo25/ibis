@@ -25,7 +25,7 @@
                     while ($row = $query->fetch()) {
 
 
-                        $salida .= '<tr class="pointertr" data-id="'.$row['id_centi'].'">
+                        $salida .= '<tr class="pointer" data-id="'.$row['id_centi'].'">
                                         <td class="textoCentro">'.str_pad($contador++,3,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.strtoupper($row['cnumdoc']).'</td>
                                         <td class="pl20px">'.strtoupper($row['crazonsoc']).'</td>
@@ -85,6 +85,68 @@
             }
             
             return $salida;
+        }
+
+        public function consultarDatos($id){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        cm_entidad.id_centi,
+                                                        cm_entidad.ctipdoc,
+                                                        cm_entidad.ctipper,
+                                                        cm_entidad.cnumdoc,
+                                                        cm_entidad.crazonsoc,
+                                                        cm_entidad.cviadireccion,
+                                                        cm_entidad.ctelefono,
+                                                        cm_entidad.nagenret,
+                                                        cm_entidad.cemail,
+                                                        cm_entidad.nflgactivo,
+                                                        documentos.cdescripcion AS documento,
+                                                        tipo_personas.cdescripcion AS tipo_persona,
+                                                        tb_pais.cdespais,
+                                                    IF
+                                                        ( cm_entidad.nflgactivo = 1, 'ACTIVO', 'INACTIVO' ) AS estado,
+                                                        cm_entidad.ncodpais 
+                                                    FROM
+                                                        cm_entidad
+                                                        INNER JOIN tb_parametros AS documentos ON cm_entidad.ctipdoc = documentos.nidreg
+                                                        INNER JOIN tb_parametros AS tipo_personas ON cm_entidad.ctipper = tipo_personas.nidreg
+                                                        INNER JOIN tb_pais ON cm_entidad.ncodpais = tb_pais.ncodpais 
+                                                    WHERE
+                                                        cm_entidad.id_centi = :id");
+                $sql->execute(["id"=>$id]);
+                $rowCount = $sql->rowCount();
+                
+                if ($rowCount > 0) {
+                    $docData = array();
+                    while($row=$sql->fetch(PDO::FETCH_ASSOC)){
+                        $docData[] = $row;
+                    } 
+                }
+
+                return array("proveedor"=>$docData,
+                            "contactos"=>$this->consultarContactos($id),
+                            "bancos"=>$this->consultarBancos($id));
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        public function borrarProveedor($id){
+            try {
+                $sql=$this->db->connect()->prepare("UPDATE cm_entidad SET nflgactivo = 0 WHERE id_centi=:id");
+                $sql->execute(["id"=>$id]);
+                $rc = $sql->rowcount();
+
+                if ($rc > 0) {
+                    $salida = $this->listarProveedores();
+                }
+
+                return $salida;
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
         }
 
         private function grabarBancos($codigo,$bancos){
@@ -164,5 +226,92 @@
                 return false;
             }
         }
+
+        private function consultarContactos($id){
+            try {
+                $salida = "";
+                $contador = 1;
+                $sql = $this->db->connect()->prepare("SELECT
+                                                    cm_entidadcon.cnombres, 
+                                                    cm_entidadcon.cemail, 
+                                                    cm_entidadcon.ctelefono1, 
+                                                    cm_entidadcon.nflgactivo, 
+                                                    cm_entidadcon.id_centi,
+                                                    cm_entidadcon.nidcontact
+                                                FROM
+                                                    cm_entidadcon
+                                                WHERE
+                                                    cm_entidadcon.id_centi = :id
+                                                AND cm_entidadcon.nflgactivo = 1");
+                $sql->execute(["id"=>$id]);
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0){
+                    while ($rs = $sql->fetch()){
+                        $sw = $rs['nflgactivo'] == 1 ? "checked":"";
+                        $salida = '<tr data-grabado="0">
+                                        <td class="textoCentro"><a href="'.$rs['nidcontact'].'"><i class="far fa-trash-alt"></i></a></td>
+                                        <td class="textoCentro">'.str_pad($contador++,2,0,STR_PAD_LEFT).'</td>
+                                        <td class="pl20px">'.strtoupper($rs['cnombres']).'</td>
+                                        <td class="textoCentro">'.$rs['ctelefono1'].'</td>
+                                        <td class="pl20px">'.$rs['cemail'].'</td>
+                                        <td class="textoCentro"><input type="checkbox" '.$sw.'></td>
+                                    </tr>';
+                    }
+
+                    return $salida;
+                }
+
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        private function consultarBancos($id){
+            try {
+                $salida = "";
+                $contador = 1;
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        cm_entidadbco.ncodbco,
+                                                        cm_entidadbco.cnrocta,
+                                                        cm_entidadbco.cmoneda,
+                                                        cm_entidadbco.nflgactivo,
+                                                        cm_entidadbco.id_centi,
+                                                        bancos.cdescripcion AS banco,
+                                                        monedas.cdescripcion AS moneda,
+                                                        monedas.cabrevia 
+                                                    FROM
+                                                        cm_entidadbco
+                                                        INNER JOIN tb_parametros AS bancos ON cm_entidadbco.ncodbco = bancos.nidreg
+                                                        INNER JOIN tb_parametros AS monedas ON cm_entidadbco.cmoneda = monedas.nidreg 
+                                                    WHERE
+                                                        cm_entidadbco.id_centi = :id 
+                                                        AND cm_entidadbco.nflgactivo = 1");
+                $sql->execute(["id"=>$id]);
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0){
+                    while ($rs = $sql->fetch()){
+                        $sw = $rs['nflgactivo'] == 1 ? "checked":"";
+                        $salida = '<tr data-grabado="0">
+                                    <td class="textoCentro"><a href="'.$rs['ncodbco'].'"><i class="far fa-trash-alt"></i></a></td>
+                                    <td class="textoCentro">'.str_pad($contador++,2,0,STR_PAD_LEFT).'</td>
+                                    <td class="pl20px">'.strtoupper($rs['banco']).'</td>
+                                    <td class="pl20px">'.strtoupper($rs['moneda']).'</td>
+                                    <td class="textoCentro">'.strtoupper($rs['cnrocta']).'</td>
+                                    <td class="textoCentro"><input type="checkbox" '.$sw.'></td>
+                                </tr>';
+                    }
+
+                    return $salida;
+                }
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        
     }
 ?>

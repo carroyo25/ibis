@@ -16,7 +16,7 @@
 
                 if ($rc > 0){
                     while( $rs = $sql->fetch()) {
-                        $salida .='<tr data-id="'.$rs['nidreg'].'">
+                        $salida .='<tr data-id="'.$rs['nidreg'].'" class="pointer">
                                         <td class="textoCentro">'.str_pad($item,3,0,STR_PAD_LEFT).'</td>
                                         <td class="pl20px">'.strtoupper($rs['ccodproy']).'</td>
                                         <td class="pl20px">'.strtoupper($rs['cdesproy']).'</td>
@@ -247,7 +247,5 @@
                 return false;
             }
         }
-
-        
     }
 ?>

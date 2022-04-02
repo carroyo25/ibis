@@ -32,6 +32,16 @@
 
             echo json_encode($this->model->insertar($datos,$bancos,$contactos));
         }
+
+        function consultaId(){
+            $id = $_POST['id'];
+
+            echo json_encode($this->model->consultarDatos($id));
+        }
+
+        function desactivaProveedor(){
+            echo $this->model->borrarProveedor($_POST['id']);
+        }
         
     }
 ?>

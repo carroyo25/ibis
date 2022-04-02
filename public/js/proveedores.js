@@ -1,20 +1,18 @@
 $(function() {
-    var titulo = "Módulos";
     var tabActive = "tab1";
     var accion = "";
-    var bancos
+    var index = "";
 
-    $("#nuevoRegistro").click(function (e) { 
-        e.preventDefault();
-
-        //llama los valores para los selects
-        $.post(RUTA+"proveedores/obtenerValores", {bancos:"02",tipo:"03"},
+    $.post(RUTA+"proveedores/obtenerValores", {bancos:"02",tipo:"03"},
             function (data, textStatus, jqXHR) {
                 bancos = data.bancos;
                 monedas = data.monedas;
             },
             "json"
-        );
+    );
+
+    $("#nuevoRegistro").click(function (e) { 
+        e.preventDefault();
 
         $("#proceso").fadeIn();
 
@@ -181,6 +179,79 @@ $(function() {
         $("#proceso").fadeOut();
 
         return false;
+    });
+
+    $("#tablaPrincipal tbody").on("click","tr", function (e) {
+        e.preventDefault();
+
+        $.post(RUTA+"proveedores/consultaId", {id:$(this).data("id")},
+            function (data, textStatus, jqXHR) {
+                $("#codigo_entidad").val(data.proveedor[0].id_centi);
+                $("#codigo_documento").val(data.proveedor[0].ctipdoc);
+                $("#codigo_tipo").val(data.proveedor[0].ctipper);
+                $("#codigo_pais").val(data.proveedor[0].ncodpais);
+                $("#razon").val(data.proveedor[0].crazonsoc);
+                $("#tipo_ent").val(data.proveedor[0].tipo_persona);
+                $("#tipo_doc").val(data.proveedor[0].documento);
+                $("#nrodoc").val(data.proveedor[0].cnumdoc);
+                $("#direccion").val(data.proveedor[0].cviadireccion);
+                $("#telefono").val(data.proveedor[0].ctelefono);
+                $("#pais").val(data.proveedor[0].cdespais);
+                $("#agente").val(data.proveedor[0].nagenret);
+                $("#estado").val(data.proveedor[0].estado);
+                $("#correo").val(data.proveedor[0].cemail);
+
+                $("input[name=agente][value='"+data.proveedor[0].nagenret+"']").prop("checked",true);
+
+                $("#contactos tbody").empty().append(data.contactos);
+                $("#bancos tbody").empty().append(data.bancos);
+            },
+            "json"
+        );
+        accion = "u";
+        $("#proceso").fadeIn();
+
+        return false;
+    });
+
+    $("#tablaPrincipal tbody").on("click","a", function (e) {
+        e.preventDefault();
+
+        index = $(this).attr("href");
+
+        $("#pregunta").fadeIn();
+        
+        return false;
+    });
+
+    $("#btnCancelarPregunta").click(function (e) { 
+        e.preventDefault();
+        
+        $("#pregunta").fadeOut();
+
+        return false;
+    });
+
+    $("#btnAceptarPregunta").click(function (e) { 
+        e.preventDefault();
+
+        $.post(RUTA+"proveedores/desactivaProveedor", {id:index},
+            function (data, textStatus, jqXHR) {
+                $("#tablaPrincipal tbody")
+                    .empty()
+                    .append(data);
+
+                $("#pregunta").fadeOut();
+            },
+            "text"
+        );
+        
+        return false;
+    });
+
+    $("#consulta").keyup(function(){
+        _this = this;
+        buscar(_this); // arrow function para activa el buscador
     });
 })
 
