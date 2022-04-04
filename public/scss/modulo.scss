@@ -15,6 +15,7 @@ $sombra:#c3c3c3;
 $barraVentana:#CF677E;
 $fondoBotones:#797777;
 $bordeCajas:#E0E0E0;
+$subtitulo:#33B71F;
 
 
 .cabezaModulo{
@@ -111,17 +112,27 @@ $bordeCajas:#E0E0E0;
     }
 }
 
-.tituloClase{
-    background:$fondo_menus;
+.tituloGrupo,.tituloClase{
     color:$blanco;
     font-weight: bold;
     line-height:2rem;
     font-size: 0.7rem;
 }
 
+.tituloGrupo{
+    background:$fondo_menus;
+}
+
+.tituloClase{
+    background:$tituloModulo;
+}
+
 .itemsTabla{
     width: 100%;
+    height: 73vh;
     margin-top: 5px;
+    overflow-x: hidden;
+    overflow-y: auto;
     
     table {
         width: 100%;

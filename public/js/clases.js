@@ -11,7 +11,7 @@ $(function(){
         return false;
     });
 
-    $("#clase").click(function (e) { 
+    $("#grupo").click(function (e) { 
         e.preventDefault();
         
         $(this).next().slideDown();
@@ -30,7 +30,7 @@ $(function(){
         destino.val($(this).text());
         id = destino.attr("id");
 
-        $("#codclase").val($(this).attr("href"));
+        $("#codgrupo").val($(this).attr("href"));
 
         return false;
     });
@@ -96,7 +96,7 @@ $(function(){
             function (data, textStatus, jqXHR) {
                 $("#codclase").val(data.clase[0].ncodclase);
                 $("#codgrupo").val(data.clase[0].ncodgrupo);
-                $("#clase").val(data.clase[0].nombre_clase);
+                $("#grupo").val(data.clase[0].nombre_grupo);
                 $("#codigo").val(data.clase[0].ccodcata);
                 $("#descripcion").val(data.clase[0].cdescrip);
 

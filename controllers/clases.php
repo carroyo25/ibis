@@ -6,7 +6,7 @@
         }
 
         function render(){
-            $this->view->listaGrupo = $this->model->obtenerGrupos();
+            $this->view->listaGrupos = $this->model->obtenerGrupos();
             $this->view->listaClases = $this->model->listarTitulosGrupos();
             $this->view->render('clases/index');
         }

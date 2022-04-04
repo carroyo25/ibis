@@ -10,19 +10,19 @@
             try {
                 $salida = "";
 
-                $sql = $this->db->connect()->query("SELECT ccodcata,cdescrip,ncodclase 
-                                            FROM tb_clase 
+                $sql = $this->db->connect()->query("SELECT ccodcata,cdescrip,ncodgrupo 
+                                            FROM tb_grupo 
                                             WHERE nflgactivo = 1
-                                            ORDER BY cdescrip");
+                                            ORDER BY ccodcata");
                 $sql->execute();
                 $rowCount = $sql->rowcount();
 
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()){
-                        $salida .='<tr data-id ="'.$rs['ncodclase'].'" class="pointer">
+                        $salida .='<tr data-id ="'.$rs['ncodgrupo'].'" class="pointer">
                                         <td class="textoCentro">'.$rs['ccodcata'].'</td>
                                         <td class="pl20px">'.strtoupper($rs['cdescrip']).'</td>
-                                        <td class="textoCentro"><a href="'.$rs['ncodclase'].'"><i class="fas fa-trash-alt"></i></a></td>
+                                        <td class="textoCentro"><a href="'.$rs['ncodgrupo'].'"><i class="fas fa-trash-alt"></i></a></td>
                                     </tr>';
                     }
                 }else{
@@ -52,7 +52,7 @@
                 }else{
                     $tipo = $datos['tipoClase'] == NULL ? 1:0;
 
-                    $sql = $this->db->connect()->prepare("INSERT INTO tb_clase 
+                    $sql = $this->db->connect()->prepare("INSERT INTO tb_grupo 
                                                             SET ccodcata=:cod,cdescrip=:descrip,nnivclas=:niv,
                                                                 ntipclase=:tipo");
                     $sql->execute(["cod"=>strtoupper($datos['codigo']),
@@ -83,12 +83,12 @@
                 $mensaje = "Error al actualizar el registro";
                 $clase = "mensaje_error";
 
-                $sql = $this->db->connect()->prepare("UPDATE tb_clase 
+                $sql = $this->db->connect()->prepare("UPDATE tb_grupo 
                                                         SET cdescrip=:descrip,ntipclase=:tipo
                                                         WHERE ncodclase=:id");
                 $sql->execute(["descrip"=>$datos['descripcion'],
                                 "tipo"=>$datos['ntipclase'],
-                                "id"=>$datos['ncodclase']]);
+                                "id"=>$datos['ncodgrupo']]);
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0) {
@@ -108,7 +108,7 @@
 
         public function eliminar($id){
             try {
-                $sql = $this->db->connect()->prepare("UPDATE tb_clase SET nflgactivo = 0 WHERE ncodclase=:id");
+                $sql = $this->db->connect()->prepare("UPDATE tb_grupo SET nflgactivo = 0 WHERE ncodgrupo=:id");
                 $sql->execute([$id]);
 
                 return $this->listarGrupos();
@@ -120,9 +120,9 @@
 
         public function consultarId($id){
             try {
-                $sql = $this->db->connect()->prepare("SELECT ncodclase,ccodcata,cdescrip,ntipclase
-                                                        FROM tb_clase
-                                                        WHERE ncodclase =:id");
+                $sql = $this->db->connect()->prepare("SELECT ncodgrupo,ccodcata,cdescrip,ntipclase
+                                                        FROM tb_grupo
+                                                        WHERE ncodgrupo =:id");
                 $sql->execute(["id"=>$id]);
                 $rowCount = $sql->rowCount();
                 
@@ -143,7 +143,7 @@
 
         private function existeItem($codigo){
             try {
-                $sql = $this->db->connect()->prepare("SELECT ncodclase FROM tb_clase WHERE ccodcata =:codigo");
+                $sql = $this->db->connect()->prepare("SELECT ncodgrupo FROM tb_clase WHERE ccodcata =:codigo");
                 $sql->execute(["codigo"=>$codigo]);
                 $rowcount = $sql->rowcount();
 

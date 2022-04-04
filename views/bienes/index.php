@@ -7,6 +7,6 @@
     <title>Document</title>
 </head>
 <body>
-    <?php echo $this->mensaje?>
+    <h1>Catálogo de Bienes</h1>
 </body>
 </html>

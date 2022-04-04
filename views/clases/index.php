@@ -25,8 +25,9 @@
         <div class="ventanaProceso w35por">
             <div class="cabezaProceso">
                 <form action="#" autocomplete="off" id="formProceso">
-                    <input type="hidden" name="codclase" id="codclase">
                     <input type="hidden" name="codgrupo" id="codgrupo">
+                    <input type="hidden" name="codclase" id="codclase">
+                    
                     <div class="barraOpciones primeraBarra">
                         <span>Datos del grupo</span>
                         <div>
@@ -42,11 +43,11 @@
                     <div class="dataProceso direccion_columna">
                         <div class="seccion_izquierda">
                             <div class="column2_9">
-                                <label for="clase">Clase:</label>
-                                <input type="text" name="clase" id="clase" class="mostrarLista obligatorio" placeholder="Seleccione una opcion">
-                                <div class="lista" id="listaGrupo">
+                                <label for="clase">Grupo:</label>
+                                <input type="text" name="grupo" id="grupo" class="mostrarLista obligatorio" placeholder="Seleccione una opcion">
+                                <div class="lista" id="listaClase">
                                     <ul>
-                                        <?php echo $this->listaGrupo?>
+                                        <?php echo $this->listaGrupos?>
                                     </ul> 
                                 </div>
                             </div>
@@ -56,9 +57,9 @@
                         </div>
                         <div class="seccion_derecha">
                         <div class="column2_9">
-                                <label for="codigo">Codigo grupo:</label>
+                                <label for="codigo">Codigo Clase:</label>
                                 <input type="text" name="codigo" id="codigo" class="mayusculas obligatorio" autocomplete="off">
-                                <label for="clave">Nombre grupo:</label>
+                                <label for="clave">Nombre Clase:</label>
                                 <input type="text" name="descripcion" id="descripcion" class="mayusculas obligatorio" autocomplete="off">
                             </div>
                         </div>

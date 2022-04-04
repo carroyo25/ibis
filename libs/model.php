@@ -488,11 +488,34 @@
         public function obtenerGrupos(){
             $salida = "";
             try {
-                $sql = $this->db->connect()->query("SELECT ncodclase,ccodcata,cdescrip 
-                                                    FROM tb_clase 
+                $sql = $this->db->connect()->query("SELECT ncodgrupo,ccodcata,cdescrip 
+                                                    FROM tb_grupo 
                                                     WHERE nflgactivo=1 
                                                     ORDER BY cdescrip ASC");
                 $sql->execute();
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0) {
+                    while ( $rs = $sql->fetch()){
+                        $salida .='<li><a href="'.$rs['ncodgrupo'].'">'.$rs['ccodcata'] .' - '.strtoupper($rs['cdescrip']).'</a></li>';
+                    }
+                }
+
+                return $salida;
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function obtenerClases($grupo) {
+            $salida = "";
+            try {
+                $sql = $this->db->connect()->prepare("SELECT ncodgrupo,ncodclase,ccodcata,cdescrip 
+                                                    FROM tb_clase 
+                                                    WHERE nflgactivo=1 AND ncodgrupo = :grupo 
+                                                    ORDER BY cdescrip ASC");
+                $sql->execute(["grupo"=>$grupo]);
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0) {
@@ -506,6 +529,10 @@
                 echo $th->getMessage();
                 return false;
             }
+        }
+
+        public function obtenerFamilias() {
+            
         }
 
        public function getUbigeo($nivel,$prefijo){
@@ -534,5 +561,63 @@
                 return false;
             }
         }
+
+        public function listarClases($grupo){
+            try {
+                $salida = "";
+                $sql = $this->db->connect()->prepare("SELECT ncodclase,ccodcata,cdescrip 
+                                                        FROM tb_clase
+                                                        WHERE ncodgrupo =:grupo AND nflgactivo = 1
+                                                        ORDER BY cdescrip DESC");
+                $sql->execute(['grupo'=>$grupo]);
+                $rowCount = $sql->rowCount();
+
+                if($rowCount > 0) {
+                    while($rs = $sql->fetch()){
+                        $salida .='<tr class="pointer" data-id="'.$rs['ncodclase'].'">
+                                        <td class="textoCentro">'.$rs['ccodcata'].'</td>
+                                        <td class="pl20px">'.$rs['cdescrip'].'</td>
+                                        <td class="textoCentro"><a href="'.$rs['ncodclase'].'"><i class="fas fa-trash-alt"></i></a></td>
+                                    </tr>';
+
+                    }
+                }
+                
+                return $salida;
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function listarGrupos(){
+            try {
+                $salida = "";
+                $sql = $this->db->connect()->query("SELECT ncodgrupo,ccodcata,cdescrip 
+                                                        FROM tb_grupo
+                                                        WHERE nflgactivo = 1
+                                                        ORDER BY cdescrip DESC");
+                $sql->execute();
+                $rowCount = $sql->rowCount();
+
+                if($rowCount > 0) {
+                    while($rs = $sql->fetch()){
+                        $salida .='<tr class="pointer" data-id="'.$rs['ncodgrupo'].'">
+                                        <td class="textoCentro">'.$rs['ccodcata'].'</td>
+                                        <td class="pl20px">'.$rs['cdescrip'].'</td>
+                                        <td class="textoCentro"><a href="'.$rs['ccodcata'].'"><i class="fas fa-trash-alt"></i></a></td>
+                                    </tr>';
+
+                    }
+                }
+                
+                return $salida;
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        
     }
 ?>
