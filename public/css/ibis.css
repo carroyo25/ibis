@@ -24,12 +24,25 @@ html {
   scroll-behavior: smooth;
 }
 
+img {
+  display: block;
+}
+
 ul, li {
   list-style: none;
 }
 
 input[type=text], input[type=mail], input[type=password], input[type=date] {
   padding-left: 10px;
+}
+
+.flex_center {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
 }
 
 .activo {
@@ -210,6 +223,13 @@ input[type=text], input[type=mail], input[type=password], input[type=date] {
   /*El div será ubicado con relación a la pantalla*/
   bottom: 0px;
   /*Abajo deje un espacio de 0px*/
+}
+
+.resaltado {
+  background: yellow;
+  border: 3px solid black !important;
+  text-align: center !important;
+  font-size: 1.2rem !important;
 }
 
 .stickytop {

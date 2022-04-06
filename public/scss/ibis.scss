@@ -33,6 +33,9 @@ html {
     scroll-behavior: smooth;
 }
 
+img{
+    display: block;
+}
 
 ul,li {
     list-style: none;
@@ -40,6 +43,11 @@ ul,li {
 
 input[type="text"],input[type="mail"],input[type="password"],input[type="date"]{
     padding-left: 10px;
+}
+
+.flex_center{
+    display: flex;
+    align-items: center;
 }
 
 .activo {
@@ -216,13 +224,19 @@ input[type="text"],input[type="mail"],input[type="password"],input[type="date"]{
     padding-left: 20px;
 }
 
-
 .pie {
     height:2rem;
     color: $blanco;
     background: $negro;
     position:absolute; /*El div será ubicado con relación a la pantalla*/
     bottom:0px; /*Abajo deje un espacio de 0px*/
+}
+
+.resaltado{
+    background: yellow;
+    border: 3px solid black !important;
+    text-align: center !important;
+    font-size: 1.2rem !important;
 }
 
 .stickytop {

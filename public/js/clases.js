@@ -45,7 +45,7 @@ $(function(){
         })
         
         try {
-            if (result['codclase'] == '') throw "Escoja una clase";
+            if (result['codGrupo'] == '') throw "Escoja una clase";
             if (result['codigo'] == '') throw "Ingrese el codigo de la clase";
             if (result['descripcion'] == '') throw "Ingrese el nombre de la clase";
             

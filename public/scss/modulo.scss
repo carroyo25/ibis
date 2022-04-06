@@ -16,6 +16,16 @@ $barraVentana:#CF677E;
 $fondoBotones:#797777;
 $bordeCajas:#E0E0E0;
 $subtitulo:#33B71F;
+$bienes:chartreuse;
+$servicios:chocolate;
+
+.bienes {
+    background:$bienes;
+}
+
+.servicios {
+    background:$servicios;
+}
 
 
 .cabezaModulo{
@@ -86,6 +96,29 @@ $subtitulo:#33B71F;
     display: flex;
     padding: 5px;
     margin-left: -4px;
+}
+
+.column4_1{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border: 1px solid #c2c2c2;
+    border-radius: 8px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+
+    div {
+        display: flex;
+        padding: 0 10px;
+
+        input{
+            margin-right: 20px;
+        }
+
+        label {
+            margin-top: 20px;
+            display: inline-block
+        }
+    }
 }
 
 .direccion_columna{
@@ -167,7 +200,7 @@ $subtitulo:#33B71F;
     width: 85%;
     position: absolute;
     background: $blanco;
-    left: 65px;
+    left: 88px;
     top: 39px;
     z-index: 3;
     border: 1px solid $sombra;
@@ -462,6 +495,10 @@ $subtitulo:#33B71F;
 
 .w35por{
     width: 35%;
+}
+
+.w50por{
+    width: 50%;
 }
 
 .w65por{

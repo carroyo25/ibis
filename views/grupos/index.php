@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -47,9 +47,9 @@
                                 <input type="text" name="descripcion" id="descripcion" class="mayusculas obligatorio" autocomplete="off">
                                 <label>Tipo</label>
                                 <div class="controles_lineal">
-                                    <input type="radio" name="tipoClase" id="bien" value=1>
+                                    <input type="radio" name="tipoClase" id="bien" value="37">
                                     <label for="bien">Bien</label>
-                                    <input type="radio" name="tipoClase" id="servicio" value=2>
+                                    <input type="radio" name="tipoClase" id="servicio" value="38">
                                     <label for="servicio">Servicio</label>
                                 </div>
                             </div>

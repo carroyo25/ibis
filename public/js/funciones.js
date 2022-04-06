@@ -70,4 +70,10 @@ buscar = (_this) => {
         });
 }
 
+previewImg = (event,img) => {
+    $('#foto').attr('src', event.target.result)
+    	.attr('width', '300px')
+    	.attr('height', '250px');
+};
+
 

@@ -1,3 +1,11 @@
+.bienes {
+  background: chartreuse;
+}
+
+.servicios {
+  background: chocolate;
+}
+
 .cabezaModulo {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -119,6 +127,30 @@
   margin-left: -4px;
 }
 
+.column4_1 {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
+  border: 1px solid #c2c2c2;
+  border-radius: 8px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.column4_1 div {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  padding: 0 10px;
+}
+.column4_1 div input {
+  margin-right: 20px;
+}
+.column4_1 div label {
+  margin-top: 20px;
+  display: inline-block;
+}
+
 .direccion_columna {
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
@@ -193,7 +225,7 @@
   width: 85%;
   position: absolute;
   background: #fff;
-  left: 65px;
+  left: 88px;
   top: 39px;
   z-index: 3;
   border: 1px solid #c3c3c3;
@@ -446,6 +478,10 @@
 
 .w35por {
   width: 35%;
+}
+
+.w50por {
+  width: 50%;
 }
 
 .w65por {

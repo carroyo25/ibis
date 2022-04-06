@@ -450,7 +450,7 @@
             
         }
 
-       public function crearMenu($user){
+        public function crearMenu($user){
            $salida = "";
            try {
                $ul = ['CATALOGOS',];
@@ -458,7 +458,7 @@
                echo $th->getMessage();
                return false;
            }
-       }
+        }
 
         public function llamarParametrosSelect($clase){
             try {
@@ -477,6 +477,27 @@
                         $salida .= '<option value="'.$rs['nidreg'].'" data-abrevia"">'.$rs['cdescripcion'].'</option>';
                     }
                 } 
+
+                return $salida;
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function obtenerUnidades(){
+            try {
+                $salida = '';
+                $sql = $this->db->connect()->query("SELECT ncodmed,ccodmed,cdesmed,cabrevia,nfactor
+                                                    FROM tb_unimed");
+                $sql->execute();
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0) {
+                    while ( $rs = $sql->fetch()){
+                        $salida .='<li><a href="'.$rs['ncodmed'].'">'.$rs['ccodmed'] .' - '.strtoupper($rs['cdesmed']).'</a></li>';
+                    }
+                }
 
                 return $salida;
             } catch (PDOException $th) {
@@ -520,7 +541,7 @@
 
                 if ($rowCount > 0) {
                     while ( $rs = $sql->fetch()){
-                        $salida .='<li><a href="'.$rs['ncodclase'].'">'.$rs['ccodcata'] .' - '.strtoupper($rs['cdescrip']).'</a></li>';
+                        $salida .='<li><a href="'.$rs['ncodclase'].'" data-catalogo="'.$rs['ccodcata'] .'">'.$rs['ccodcata'] .' - '.strtoupper($rs['cdescrip']).'</a></li>';
                     }
                 }
 
@@ -531,37 +552,32 @@
             }
         }
 
-        public function obtenerFamilias() {
-            
-        }
-
-       public function getUbigeo($nivel,$prefijo){
+        public function obtenerFamilias($grupo,$clase) {
+            $salida = "";
             try {
-                $salida = "";
-                $query= $this->db->connect()->prepare("SELECT
-                    tb_ubigeo.ccubigeo,
-                    tb_ubigeo.cdubigeo
-                FROM
-                    tb_ubigeo
-                WHERE
-                    tb_ubigeo.nnivel = :nivel AND
-                    tb_ubigeo.ccubigeo LIKE :prefijo");
-                $query->execute(['nivel'=>$nivel,'prefijo'=>$prefijo]);
-                $rowcount = $query->rowCount();
-                if ($rowcount > 0 ){
-                    while ($row = $query->fetch()) {
-                        $salida.='<li><a href="'.$row['ccubigeo'].'">'.$row['cdubigeo'].'</a></li>';
+                $sql = $this->db->connect()->prepare("SELECT ncodgrupo,ncodclase,ncodfamilia,ccodcata,cdescrip 
+                                                    FROM tb_familia 
+                                                    WHERE nflgactivo=1 
+                                                    AND ncodgrupo = :grupo
+                                                    AND ncodclase = :clase 
+                                                    ORDER BY cdescrip ASC");
+                $sql->execute(["grupo"=>$grupo,
+                                "clase"=>$clase]);
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0) {
+                    while ( $rs = $sql->fetch()){
+                        $salida .='<li><a href="'.$rs['ncodclase'].'" data-catalogo="'.$rs['ccodcata'] .'">'.$rs['ccodcata'] .' - '.strtoupper($rs['cdescrip']).'</a></li>';
                     }
                 }
 
                 return $salida;
-                
-            } catch (PDOException $e) {
-                echo $e->getMessage();
+            } catch (PDOException $th) {
+                echo $th->getMessage();
                 return false;
             }
         }
-
+      
         public function listarClases($grupo){
             try {
                 $salida = "";
@@ -618,6 +634,31 @@
             }
         }
 
-        
+        public function getUbigeo($nivel,$prefijo){
+            try {
+                $salida = "";
+                $query= $this->db->connect()->prepare("SELECT
+                    tb_ubigeo.ccubigeo,
+                    tb_ubigeo.cdubigeo
+                FROM
+                    tb_ubigeo
+                WHERE
+                    tb_ubigeo.nnivel = :nivel AND
+                    tb_ubigeo.ccubigeo LIKE :prefijo");
+                $query->execute(['nivel'=>$nivel,'prefijo'=>$prefijo]);
+                $rowcount = $query->rowCount();
+                if ($rowcount > 0 ){
+                    while ($row = $query->fetch()) {
+                        $salida.='<li><a href="'.$row['ccubigeo'].'">'.$row['cdubigeo'].'</a></li>';
+                    }
+                }
+
+                return $salida;
+                
+            } catch (PDOException $e) {
+                echo $e->getMessage();
+                return false;
+            }
+        }
     }
 ?>
