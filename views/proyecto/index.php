@@ -115,7 +115,7 @@
         </div>
     </div>
     <div class="cabezaModulo">
-        <h1>Catalogo Proyectos</h1>
+        <h1>Catalogo Centros Costos</h1>
         <div>
             <a href="#" id="nuevoRegistro"><i class="far fa-file"></i></a>
             <a href="#" id="irInicio"><i class="fas fa-home"></i></a>

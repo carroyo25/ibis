@@ -36,6 +36,11 @@ input[type=text], input[type=mail], input[type=password], input[type=date] {
   padding-left: 10px;
 }
 
+textarea {
+  resize: none;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
 .flex_center {
   display: -webkit-box;
   display: -ms-flexbox;

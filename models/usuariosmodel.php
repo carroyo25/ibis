@@ -41,7 +41,7 @@
 
                 if ($rc > 0){
                     while ($rs = $sql->fetch()) {
-                        $salida.='<tr data-user="'.$rs['iduser'].'">
+                        $salida.='<tr data-user="'.$rs['iduser'].'" class="pointer">
                                     <td class="textoCentro">'.str_pad($c++,3,0,STR_PAD_LEFT).'</td>
                                     <td class="pl10px">'.strtoupper($rs['cnameuser']).'</td>
                                     <td class="pl10px">'.strtoupper($rs['nombres'].' '.$rs['apellidos']).'</td>
@@ -96,14 +96,14 @@
         public function listarCostos() {
             try {
                 $salida = "";
-                $sql= $this->db->connect()->query("SELECT ncodcos,ccodcos,cdescos FROM tb_ccostos WHERE nflgactivo = 1");
+                $sql= $this->db->connect()->query("SELECT nidreg,ccodproy,cdesproy FROM tb_proyectos WHERE nflgactivo = 1");
                 $sql->execute();
 
                 if ($sql->rowcount() > 0){
                     while ($rs = $sql->fetch()) {
-                        $salida .='<tr data-id="'.$rs['ncodcos'].'" class="tablaPointer">
-                                    <td class="textoCentro">'.$rs['ccodcos'].'</td>
-                                    <td class="pl10px">'.$rs['cdescos'].'</td>
+                        $salida .='<tr data-id="'.$rs['nidreg'].'" class="tablaPointer">
+                                    <td class="textoCentro">'.$rs['ccodproy'].'</td>
+                                    <td class="pl10px">'.strtoupper($rs['cdesproy']).'</td>
                                  </tr>';
                     }
                 }
@@ -480,11 +480,11 @@
             try {
                 $sql = $this->db->connect()->prepare("SELECT
                                                         tb_costusu.ncodcos,
-                                                        UPPER( tb_ccostos.cdescos ) AS descripcion,
-                                                        tb_ccostos.ccodcos 
+                                                        UPPER( tb_proyectos.cdesproy ) AS descripcion,
+                                                        tb_proyectos.ccodproy 
                                                     FROM
                                                         tb_costusu
-                                                        INNER JOIN tb_ccostos ON tb_costusu.ncodproy = tb_ccostos.ncodcos 
+                                                        INNER JOIN tb_proyectos ON tb_costusu.ncodproy = tb_proyectos.nidreg 
                                                     WHERE
                                                         tb_costusu.id_cuser = :id
                                                     AND tb_costusu.nflgactivo = 1");
@@ -496,7 +496,7 @@
                     while ($rs = $sql->fetch()) {
                         $salida .= '<tr data-grabado="1" data-codigo="'.$rs['ncodcos'].'">
                                             <td class="textoCentro"><a href="'.$rs['ncodcos'].'"><i class="fas fa-eraser"></i></a> </td>
-                                            <td class="textoCentro">'.$rs['ccodcos'].'</td>
+                                            <td class="textoCentro">'.$rs['ccodproy'].'</td>
                                             <td class="pl10px">'.$rs['descripcion'].'</td>
                                     </tr>';
                     }

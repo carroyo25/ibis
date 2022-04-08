@@ -62,7 +62,7 @@
   -ms-grid-column: 4;
 }
 
-.column2, .column2_9 {
+.column2, .column2_9, .column2_46, .column2_3957 {
   display: -ms-grid;
   display: grid;
   position: relative;
@@ -77,6 +77,16 @@
 .column2_9 {
   -ms-grid-columns: 9rem 1fr;
   grid-template-columns: 9rem 1fr;
+}
+
+.column2_46 {
+  -ms-grid-columns: 40% 60%;
+  grid-template-columns: 40% 60%;
+}
+
+.column2_3957 {
+  -ms-grid-columns: 39% 57%;
+  grid-template-columns: 39% 57%;
 }
 
 .column4items {
@@ -127,6 +137,13 @@
   margin-left: -4px;
 }
 
+.column4_55 {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 50% 50%;
+  grid-template-columns: 50% 50%;
+}
+
 .column4_1 {
   display: -ms-grid;
   display: grid;
@@ -159,7 +176,6 @@
 }
 
 .barraTrabajo {
-  line-height: 3rem;
   border-top: 3px solid #012B3F;
   background: #0078D4;
 }
@@ -174,6 +190,33 @@
   border: none;
   padding-left: 20px;
   border-radius: 8px;
+}
+.barraTrabajo .variasConsultas {
+  color: #fff;
+  padding: 5px 15px;
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 0.3fr 10px 1.5fr 10px 0.3fr 10px 0.3fr 10px 0.3fr;
+  grid-template-columns: 0.3fr 1.5fr 0.3fr 0.3fr 0.3fr;
+  -webkit-column-gap: 10px;
+     -moz-column-gap: 10px;
+          column-gap: 10px;
+}
+.barraTrabajo .variasConsultas label {
+  line-height: 2rem;
+}
+.barraTrabajo .variasConsultas input, .barraTrabajo .variasConsultas select {
+  height: 2rem;
+  outline: none;
+  border: none;
+  padding-left: 20px;
+  border-radius: 8px;
+}
+.barraTrabajo .variasConsultas div:nth-child(2) input {
+  width: 70%;
+}
+.barraTrabajo .variasConsultas div:nth-child(3) input, .barraTrabajo .variasConsultas div:nth-child(4) input {
+  width: 65%;
 }
 
 .tituloGrupo, .tituloClase {
@@ -279,7 +322,7 @@
 }
 
 .ventanaProceso .seccion_izquierda, .ventanaProceso .seccion_medio, .ventanaProceso .seccion_derecha {
-  padding: 0 1rem;
+  padding: 0;
 }
 .ventanaProceso .seccion_izquierda {
   width: 100%;
@@ -301,13 +344,31 @@
 .ventanaProceso .barraOpciones button {
   height: 35px;
   padding: 10px;
+  border: 2px solid transparent;
+  -webkit-transition: 0.5s;
+  transition: 0.5s;
+}
+.ventanaProceso .barraOpciones button:hover {
+  border: 2px solid #000;
+}
+.ventanaProceso .textAreaEnter textarea {
+  width: 100%;
+  border: 1px solid #c2c2c2;
+  height: 3rem;
+  padding: 5px;
+}
+.ventanaProceso .dataProceso_2 {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
 }
 .ventanaProceso .dataProceso {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
 }
-.ventanaProceso .dataProceso input {
+.ventanaProceso .dataProceso input, .ventanaProceso .dataProceso_2 input {
   height: 35px;
   border: none;
   border: 1px solid #c2c2c2;
@@ -315,7 +376,7 @@
   font-size: 0.7rem;
   border-radius: 8px;
 }
-.ventanaProceso .dataProceso label {
+.ventanaProceso .dataProceso label, .ventanaProceso .dataProceso_2 label {
   font-size: 0.7rem;
   font-weight: bold;
   margin-top: 10px;
@@ -486,4 +547,16 @@
 
 .w65por {
   width: 65%;
+}
+
+.w75por {
+  width: 75%;
+}
+
+.tamanioProceso {
+  width: 70%;
+}
+
+.mininoTablaInterna {
+  min-height: 15rem;
 }

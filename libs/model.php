@@ -6,8 +6,6 @@
             $this->db = new Database();
         }
 
-        
-
         //funcion para convertir numeros
         public function unidad($numuero){
             switch ($numuero)
@@ -386,7 +384,7 @@
                 if ($rowcount > 0) {
                     while ($row = $query->fetch()) {
                         $salida.='<li>
-                                    <a href="'.$row['nidreg'].'">'.$row['cdescripcion'].'</a>
+                                    <a href="'.$row['nidreg'].'">'.$row['nidreg'].' '.$row['cdescripcion'].'</a>
                                  </li>';
                     }
                 }
@@ -628,6 +626,59 @@
                 }
                 
                 return $salida;
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function costosPorUsuario($id){
+            try {
+                $salida = "";
+
+                $sql = $this->db->connect()->prepare("SELECT
+                                                    UPPER( tb_proyectos.ccodproy ) AS codigo_costos,
+                                                    UPPER( tb_proyectos.cdesproy ) AS descripcion_costos,
+                                                    tb_costusu.ncodproy 
+                                                FROM
+                                                    tb_costusu
+                                                    INNER JOIN tb_proyectos ON tb_costusu.ncodproy = tb_proyectos.nidreg 
+                                                WHERE
+                                                    tb_costusu.id_cuser = :id 
+                                                    AND tb_proyectos.nflgactivo = 1");
+                $sql->execute(["id"=>$id]);
+                $rowCount = $sql->rowCount(); 
+
+                if ($rowCount > 0){
+                    while ($rs = $sql->fetch()){
+                        $salida .='<li><a href="'.$rs['ncodproy'].'">'.$rs['codigo_costos']." ".$rs['descripcion_costos'].'</a></li>';
+                    }
+
+                    return $salida;
+                }
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function obtenerAreas(){
+            try {
+                $salida = "";
+
+                $sql = $this->db->connect()->query("SELECT ncodarea,ccodarea,UPPER(cdesarea) AS cdesarea 
+                                                    FROM tb_area 
+                                                    WHERE nflgactivo = 1");
+                $sql->execute();
+                $rowCount = $sql->rowCount(); 
+
+                if ($rowCount > 0){
+                    while ($rs = $sql->fetch()){
+                        $salida .='<li><a href="'.$rs['ncodarea'].'">'.$rs['ccodarea']." ".$rs['cdesarea'].'</a></li>';
+                    }
+
+                    return $salida;
+                }
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;

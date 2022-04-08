@@ -41,6 +41,7 @@
                                                     WHERE
                                                         tb_usermod.iduser = :user 
                                                         AND ISNULL( sysmenu.cruta ) 
+                                                        AND sysmenu.copcion	= '00'
                                                     GROUP BY
                                                         sysmenu.cdescripcion 
                                                     ORDER BY
