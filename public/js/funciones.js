@@ -76,4 +76,13 @@ previewImg = (event,img) => {
     	.attr('height', '250px');
 };
 
+diferenciadefechas = (inicio,final) => {
+    var entrega = new Date(inicio).getTime();
+    var actual  = new Date(final).getTime();
+
+    diff = (entrega - actual)/(1000*60*60*24);
+
+    return diff;
+}
+
 

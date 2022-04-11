@@ -18,6 +18,7 @@ $bordeCajas:#E0E0E0;
 $subtitulo:#33B71F;
 $bienes:chartreuse;
 $servicios:chocolate;
+$procesando:#FFCA28;
 
 .bienes {
     background:$bienes;
@@ -404,6 +405,12 @@ $servicios:chocolate;
         height: 20rem;
         overflow:auto;
         padding: 0 10px;
+
+        tbody {
+            tr {
+                cursor:pointer;
+            }
+        }
     }
 
     .tituloVentana {
@@ -519,7 +526,7 @@ $servicios:chocolate;
         color:$blanco;
         height: 35px;
         font-size: .8rem;
-        line-height: 2rem;
+        line-height: 1.5rem;
 
         tr {
             th:nth-child(1) {
@@ -535,7 +542,14 @@ $servicios:chocolate;
                 border: 1px solid  $lineasTabla;
                 line-height:1.5rem;
                 width: 1%;
-    white-space: nowrap;
+                white-space: nowrap;
+
+                input[type="number"]{
+                    width: 100%;
+                    height: 2rem;
+                    text-align: right;
+                    padding-right: 10px;
+                }
             }
         }
     }
@@ -585,4 +599,20 @@ $servicios:chocolate;
 //altos
 .mininoTablaInterna{
     min-height: 15rem;
+}
+
+
+//margenes
+.izq20px{
+    margin-left: 20px;
+}
+
+
+//processos
+.estado{
+    font-weight:900;
+}
+
+.procesando{
+    background: $procesando;
 }

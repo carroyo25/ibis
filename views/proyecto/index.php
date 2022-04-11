@@ -56,6 +56,12 @@
                                 <label for="abreviatura">Abreviado :</label>
                                 <input type="text" name="abreviatura" id="abreviatura" class="cerrarLista mayusculas">
                             </div>
+
+                            <div class="column2">
+                                <input type="checkbox" name="chkVerAlm" id="chkVerAlm" class="cerrarLista izq20px">
+                                <label for="chkVerAlm">Verifica Almacen</label>
+                                
+                            </div>
                         </div>
                         <div class="barraOpciones">
                             <span>Ubicación</span>
@@ -88,27 +94,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="barraOpciones">
-                            <span>Centro de Costos</span>
-                            <button type="button" id="addSubItem" title="Cancelar">
-                                <i class="fas fa-ban"></i> Agregar Centro de Costos
-                            </button>
-                        </div>
-                        <div class="tablaInterna">
-                            <table class="tablainterna3columnas tabla" id="tablaCostos">
-                                <thead>
-                                    <tr>
-                                        <th>Codigo</th>
-                                        <th>Nombre</th>
-                                        <th>Almacen</th>
-                                        <th>...</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    
-                                </tbody>
-                            </table>
-                        </div>   
+                           
                     </div>
                 </form>
             </div>

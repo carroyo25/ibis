@@ -632,6 +632,7 @@
             }
         }
 
+        //centro de costos por usuario
         public function costosPorUsuario($id){
             try {
                 $salida = "";
@@ -639,6 +640,7 @@
                 $sql = $this->db->connect()->prepare("SELECT
                                                     UPPER( tb_proyectos.ccodproy ) AS codigo_costos,
                                                     UPPER( tb_proyectos.cdesproy ) AS descripcion_costos,
+                                                    tb_proyectos.veralm,
                                                     tb_costusu.ncodproy 
                                                 FROM
                                                     tb_costusu
@@ -651,7 +653,7 @@
 
                 if ($rowCount > 0){
                     while ($rs = $sql->fetch()){
-                        $salida .='<li><a href="'.$rs['ncodproy'].'">'.$rs['codigo_costos']." ".$rs['descripcion_costos'].'</a></li>';
+                        $salida .='<li><a href="'.$rs['ncodproy'].'" data-aprobacion="'.$rs['veralm'].'">'.$rs['codigo_costos']." ".$rs['descripcion_costos'].'</a></li>';
                     }
 
                     return $salida;
@@ -685,6 +687,59 @@
             }
         }
 
+        //genera los nuemro de los docuentos
+        public function generarNumero($id,$query){
+            try {
+                $sql = $this->db->connect()->prepare($query);
+                $sql->execute(["cod"=>$id]);
+                $result = $sql->fetchAll();
+
+                return str_pad($result[0]['numero'] + 1,6,0,STR_PAD_LEFT) ;
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage;
+                return false;
+            }
+         }
+
+         //listado de productos
+         public function listarProductos($tipo){
+             try {
+                 $salida = "";
+                 $sql = $this->db->connect()->prepare("SELECT
+                                                        cm_producto.id_cprod,
+                                                        cm_producto.ccodprod,
+                                                        cm_producto.cdesprod,
+                                                        tb_unimed.ncodmed,
+                                                        tb_unimed.cabrevia,
+                                                        tb_unimed.nfactor,
+                                                        tb_parametros.cdescripcion 
+                                                    FROM
+                                                        cm_producto
+                                                        INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                        INNER JOIN tb_parametros ON cm_producto.ntipo = tb_parametros.nidreg
+                                                    WHERE ntipo = :tipo
+                                                    LIMIT 20");
+                $sql->execute(["tipo"=>$tipo]);
+                $rowCount = $sql->rowCount();
+                if ($rowCount > 0){
+                    while ($rs = $sql->fetch()) {
+                        $salida .='<tr class="pointer" data-idprod="'.$rs['id_cprod'].'" data-ncomed="'.$rs['ncodmed'].'" data-unidad="'.$rs['cabrevia'].'">
+                                        <td class="textoCentro">'.$rs['ccodprod'].'</td>
+                                        <td class="pl20px">'.$rs['cdesprod'].'</td>
+                                        <td class="textoCentro">'.$rs['cabrevia'].'</td>
+                                    </tr>';
+                    }
+                }
+
+                return $salida;
+             } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage;
+                return false;
+            }
+         }
+
+        
+         //codigo de ubigeo
         public function getUbigeo($nivel,$prefijo){
             try {
                 $salida = "";

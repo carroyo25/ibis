@@ -17,15 +17,17 @@
     <div class="modal" id="proceso">
         <div class="ventanaProceso tamanioProceso">
             <div class="cabezaProceso">
-                <form action="#" id="proceso" autocomplete="off">
+                <form action="#" id="formProceso" autocomplete="off">
                     <input type="hidden" name="codigo_costos" id="codigo_costos"> 
                     <input type="hidden" name="codigo_area" id="codigo_area">
                     <input type="hidden" name="codigo_transporte" id="codigo_transporte">
-                    <input type="hidden" name="codigo_transporte" id="codigo_transporte">           
-                    <input type="hidden" name="coigo_solicitante" id="coigo_solicitante">
+                    <input type="hidden" name="codigo_solicitante" id="codigo_solicitante">
                     <input type="hidden" name="codigo_tipo" id="codigo_tipo">
                     <input type="hidden" name="codigo_pedido" id="codigo_pedido">
-                    <input type="hidden" name="codigo_estado" id="codigo_estado">
+                    <input type="hidden" name="codigo_estado" id="codigo_estado" value="0">
+                    <input type="hidden" name="dias_atencion" id="dias_atencion" value="0">
+                    <input type="hidden" name="codigo_atencion" id="codigo_atencion" value="0">
+
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
                         <div>
@@ -38,7 +40,7 @@
                             <button type="button" id="preview" title="Vista Previa" class="boton1">
                                 <i class="fab fa-wpexplorer"></i> Vista Previa
                             </button>
-                            <button type="button" id="sendItem" title="Enviar Pedido" class="boton1">
+                            <button type="button" id="sendItem" title="Enviar Pedido" class="boton1 desactivado">
                                 <i class="far fa-paper-plane"></i> Enviar Almacen
                             </button>
                             <button type="button" id="requestAprob" title="Solicitar Aprobacion" class="boton1 desactivado">
@@ -63,7 +65,7 @@
                             </div>
                             <div class="column2">
                                 <label for="costos">CCostos:</label>
-                                <input type="text" name="costos" id="costos" class="mostrarLista" placeholder="Seleccione una opcion">
+                                <input type="text" name="costos" id="costos" class="mostrarLista busqueda" placeholder="Elija una opcion">
                                 <div class="lista" id="listaCostos">
                                    <ul>
                                        <?php echo $this->listaCostos?>
@@ -73,7 +75,7 @@
                             </div>
                             <div class="column2">
                                 <label for="area">Area:</label>
-                                <input type="text" name="area" id="area" class="mostrarLista" placeholder="Seleccione una opcion">
+                                <input type="text" name="area" id="area" class="mostrarLista busqueda" placeholder="Elija una opcion">
                                 <div class="lista" id="listaAreas">
                                    <ul>
                                        <?php echo $this->listaAreas?>
@@ -84,7 +86,7 @@
                         <div class="seccion_medio">
                             <div class="column2">
                                 <label for="transporte">Transporte:</label>
-                                <input type="text" name="transporte" id="transporte" class="mostrarLista" placeholder="Seleccione una opcion">
+                                <input type="text" name="transporte" id="transporte" class="mostrarLista" placeholder="Elija una opcion">
                                 <div class="lista" id="listaTransportes">
                                    <ul>
                                        <?php echo $this->listaTransportes?>
@@ -97,7 +99,7 @@
                             </div>
                             <div class="column2">
                                 <label for="solicitante">Solicitante:</label>
-                                <input type="text" name="solicitante" id="solicitante" class="mostrarLista" placeholder="Seleccione una opcion">
+                                <input type="text" name="solicitante" id="solicitante" class="mostrarLista busqueda" placeholder="Elija una opcion">
                                 <div class="lista" id="listaSolicitantes">
                                    <ul>
                                        <?php echo $this->listaAquarius?>
@@ -109,7 +111,7 @@
                             <div class="column4_55">
                                 <div class="column2_3957">
                                     <label for="tipo">Tipo :</label>
-                                    <input type="text" name="tipo" id="tipo" class="mostrarLista" placeholder="Seleccione una opcion">
+                                    <input type="text" name="tipo" id="tipo" class="mostrarLista" placeholder="Elija una opcion">
                                     <div class="lista" id="listaTipo">
                                         <ul>
                                             <?php echo $this->listaTipos?>
@@ -123,7 +125,7 @@
                             </div>
                             <div class="column2">
                                 <label for="estado">Estado:</label>
-                                <input type="text" name="estado" id="estado" class="cerrarLista textoCentro w35por" readonly value="PROCESO">
+                                <input type="text" name="estado" id="estado" class="textoCentro w35por estado procesando" readonly value="EN PROCESO">
                             </div>
                         </div>
                     </div>
@@ -144,15 +146,13 @@
                             <thead>
                                 <tr>
                                     <th>...</th>
-                                    <th>...</th>
                                     <th>Item</th>
                                     <th>Codigo</th>
                                     <th>Descripcion</th>
                                     <th>Und.</th>
                                     <th>Cant.</th>
-                                    <th>Nro.Parte</th>
-                                    <th>Ver.QA/QC</th>
-                                    <th>Tipo</th>
+                                    <th>Nro.</br>Parte</th>
+                                    <th>Ver.</br>QA/QC</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -179,8 +179,9 @@
                 <table class="tabla " id="tablaModulos">
                     <thead >
                         <tr class="stickytop">
-                            <th>Codigo</th>
+                            <th width="10%">Codigo</th>
                             <th>Descripcion</th>
+                            <th>Und.</th>
                         </tr>
                     </thead>
                     <tbody>

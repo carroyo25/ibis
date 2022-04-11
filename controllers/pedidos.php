@@ -14,6 +14,15 @@
             $this->view->listaPedidos = "";
             $this->view->render('pedidos/index');
         }
-        
+
+        function numeroDocumento(){
+            $sql = "SELECT COUNT(idreg) AS numero FROM tb_pedidocab WHERE tb_pedidocab.idcostos =:cod";
+            echo $this->model->generarNumero($_POST['cc'],$sql);
+        }
+
+        function llamaProductos(){
+            echo $this->model->listarProductos($_POST['tipo']);
+        }
+
     }
 ?>
