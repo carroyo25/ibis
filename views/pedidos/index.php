@@ -13,6 +13,13 @@
     <div class="modal" id="esperar">
     </div>
     <div class="modal" id="pregunta">
+        <div class="ventanaPregunta">
+            <h3>Desea eliminar el registro?</h3>
+            <div>
+                <button type="button" id="btnAceptarPregunta">Aceptar</button>
+                <button type="button" id="btnCancelarPregunta">Cancelar</button>
+            </div>
+        </div>
     </div>
     <div class="modal" id="proceso">
         <div class="ventanaProceso tamanioProceso">
@@ -31,22 +38,22 @@
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
                         <div>
-                            <button type="button" id="saveItem" title="Grabar Pedido" class="boton1">
+                            <button type="button" id="saveItem" title="Grabar Pedido" class="boton3">
                                 <span><i class="far fa-save"></i> Grabar Pedido</span> 
                             </button>
-                            <button type="button" id="upAttach" title="Importar Adjuntos" class="boton1">
+                            <button type="button" id="upAttach" title="Importar Adjuntos" class="boton3">
                                 <i class="fas fa-upload"></i> Adjuntar Archivos
                             </button>
-                            <button type="button" id="preview" title="Vista Previa" class="boton1">
+                            <button type="button" id="preview" title="Vista Previa" class="boton3">
                                 <i class="fab fa-wpexplorer"></i> Vista Previa
                             </button>
-                            <button type="button" id="sendItem" title="Enviar Pedido" class="boton1 desactivado">
+                            <button type="button" id="sendItem" title="Enviar Pedido" class="boton3 desactivado">
                                 <i class="far fa-paper-plane"></i> Enviar Almacen
                             </button>
-                            <button type="button" id="requestAprob" title="Solicitar Aprobacion" class="boton1 desactivado">
+                            <button type="button" id="requestAprob" title="Solicitar Aprobacion" class="boton3 desactivado">
                                 <i class="fas fa-award"></i> Solicitar Aprobacion
                             </button>
-                            <button type="button" id="closeProcess" title="Cerrar">
+                            <button type="button" id="closeProcess" title="Cerrar" class="boton3">
                                 <i class="fas fa-window-close"></i>
                             </button>
                         </div>
@@ -137,7 +144,7 @@
                     </div>
                     <div class="barraOpciones">
                         <span>Detalles</span>
-                        <button type="button" id="addItem" title="Añadir Item" class="cerrarLista">
+                        <button type="button" id="addItem" title="Añadir Item" class="cerrarLista boton3">
                             <i class="far fa-plus-square"></i> Agregar
                         </button>
                     </div>
@@ -162,6 +169,25 @@
                     </div>
                 </form>
             </div>
+        </div>
+    </div>
+    <div class="modal" id="archivos">
+        <div class="ventanaArchivos">
+            <form action="#" id="fileAtachs" enctype='multipart/form-data'>
+                <input type="text" name="nropedidoatach" id="nropedidoatach">
+                <input type="file" name="uploadAtach[]" id="uploadAtach" multiple class="oculto">
+                <div class="tituloArchivos">
+                    <h3>Adjuntar Archivos</h3>
+                    <a href="#" id="openArch" title="Adjuntar Archivos"><i class="fas fa-file-medical"></i></a>
+                </div>            
+                <ul class="listaArchivos" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
+
+                </ul>
+                <div class="opcionesArchivos">
+                    <button type="button" class="boton3" id="btnConfirmAtach">Aceptar</button>
+                    <button type="button" class="boton3" id="btnCancelAtach">Cancelar</button>
+                </div>
+            </form>
         </div>
     </div>
     <div class="modal" id="busqueda">
@@ -189,6 +215,15 @@
                     </tbody>
                 </table>
             </div>
+        </div>
+    </div>
+    <div class="modal" id="vistaprevia">
+        <div class="ventanaVistaPrevia">
+            <div class="tituloVista">
+                <h3>Adjuntar Archivos</h3>
+                <a href="#" id="closePreview" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
+            </div>
+            <object data="public/documentos/pedidos/adjuntos/6255040a6f97d.pdf" type="application/pdf"></object>
         </div>
     </div>
     <div class="cabezaModulo">

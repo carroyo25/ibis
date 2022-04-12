@@ -88,7 +88,7 @@ $(function(){
 
             $.post(RUTA+"pedidos/numeroDocumento", {cc:codigo},
                 function (data, textStatus, jqXHR) {
-                    $("#numero").val(data);
+                    $("#numero,#nropedidoatach").val(data);
                 },
                 "text"
             );
@@ -148,8 +148,6 @@ $(function(){
             result[this.name] = this.value;
         })
 
-        console.log(result);
-
         return false;
     });
 
@@ -187,7 +185,7 @@ $(function(){
                         <td class="textoCentro">${codigo}</td>
                         <td>${descrip}</td>
                         <td class="textoCentro">${unidad}</td>
-                        <td><input type="number" step="any" placeholder="0.00"></td>
+                        <td><input type="number" step="any" placeholder="0.00" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"></td>
                         <td></td>
                         <td class="textoCentro"><input type="checkbox"></td>
                     </tr>`;
@@ -200,8 +198,150 @@ $(function(){
         return false;
     });
 
-    $('.input-number').on('keypress keyup blur', function () { 
-        this.value = this.value.replace(/[^0-9]/g,'');
-        console.log(this);
+   $("#upAttach").click(function (e) { 
+       e.preventDefault();
+    
+       if ($("#numero").val() == ""){
+            mostrarMensaje("Faltan datos del pedido","mensaje_error")
+       }else{
+            $("#archivos").fadeIn();
+       }
+       
+       return false;
+   });
+
+   $("#preview").click(function (e) { 
+        e.preventDefault();
+    
+        if ($("#numero").val() == ""){
+            mostrarMensaje("Faltan datos del pedido","mensaje_error")
+        }else{
+            let result = {};
+
+            $.each($("#formProceso").serializeArray(),function(){
+                result[this.name] = this.value;
+            })
+
+            $.post(RUTA+"pedidos/vistaprevia", {cabecera:result,detalles:JSON.stringify(itemsPreview())},
+                function (data, textStatus, jqXHR) {
+                    console.log(data);
+                },
+                "text"
+            );
+            //$("#vistaprevia").fadeIn();
+        }
+
+        $("#vistaprevia").fadeIn();
+        
+        return false;
+    });
+
+    $("#closePreview").click(function (e) { 
+        e.preventDefault();
+
+        $(".ventanaVistaPrevia object").attr("data","");
+        $("#vistaprevia").fadeOut();
+
+        return false;
+    });
+
+   $("#openArch").click(function (e) { 
+       e.preventDefault();
+
+       $("#uploadAtach").trigger("click");
+
+       return false;
+   });
+
+   $("#uploadAtach").on("change", function (e) {
+       e.preventDefault();
+
+       let fp = $(this);
+       let lg = fp[0].files.length;
+       let items = fp[0].files;
+       let fragment = "";
+
+       if (lg > 0) {
+            for (var i = 0; i < lg; i++) {
+                var fileName = items[i].name; // get file name
+
+                // append li to UL tag to display File info
+                fragment +=`<li><p><i class="far fa-file"></i></p>
+                                <p>${fileName}</p></li>`;
+            }
+
+            $(".listaArchivos").append(fragment);
+        }
+
+       return false;
+   });
+
+   $("#btnConfirmAtach").on("click", function (e) {
+        e.preventDefault();
+
+        $("#archivos").fadeOut();
+       // $("#fileAtachs").trigger("submit");
+
+        return false;
+    });
+
+    $("#btnCancelAtach").on("click", function (e) {
+        e.preventDefault();
+
+        $("#archivos").fadeOut();
+        $("#fileAtachs")[0].reset();
+        $(".listaArchivos").empty();
+
+    });
+
+    //añadir registro de adjuntos
+    $("#fileAtachs").on("submit", function (e) {
+        e.preventDefault()
+
+        $.ajax({
+            // URL to move the uploaded image file to server
+            url: RUTA + 'pedidos/adjuntos',
+            // Request type
+            type: "POST", 
+            // To send the full form data
+            data: new FormData( this ),
+            contentType:false,      
+            processData:false,
+            dataType:"json",    
+            // UI response after the file upload  
+            success: function(data)
+            {   
+                
+            }
+        });
+        
+        return false;
     });
 })
+
+itemsPreview = () =>{
+    DATA = [];
+    let TABLA = $("#tablaDetalles tbody >tr");
+
+    TABLA.each(function(){
+        let ITEM        = $(this).find('td').eq(1).text(),
+            CODIGO      = $(this).find('td').eq(2).text(),
+            DESCRIPCION = $(this).find('td').eq(3).text(),
+            UNIDAD      = $(this).find('td').eq(4).text(),
+            CANTIDAD    = $(this).find('td').eq(5).children().val(),
+            NROPARTE    = $(this).find('td').eq(6).text();
+
+        item= {};
+        
+        item['item']        = ITEM;
+        item['codigo']      = CODIGO;
+        item['descripcion'] = DESCRIPCION;
+        item['unidad']      = UNIDAD;
+        item['cantidad']    = CANTIDAD;
+        item['nroparte']    = NROPARTE;
+
+        DATA.push(item);
+    })
+
+    return DATA;
+}

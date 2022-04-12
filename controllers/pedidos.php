@@ -24,5 +24,13 @@
             echo $this->model->listarProductos($_POST['tipo']);
         }
 
+        function adjuntos(){
+            echo $this->model->subirAdjuntos($_POST['nropedidoatach'],$_FILES['uploadAtach']);
+        }
+
+        function vistaPrevia(){
+            echo $this->model->generarVistaPrevia($_POST['cabecera'],$_POST['detalles']);
+        }
+
     }
 ?>

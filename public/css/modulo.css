@@ -290,7 +290,7 @@
   background: #c2c2c2;
 }
 
-.ventanaProceso, .ventanaOpciones, .ventanaBusqueda, .ventanaPregunta {
+.ventanaProceso, .ventanaOpciones, .ventanaBusqueda, .ventanaPregunta, .ventanaArchivos, .ventanaVistaPrevia {
   background: #fff;
   position: absolute;
   top: 50%;
@@ -306,6 +306,82 @@
 }
 .ventanaProceso .primeraBarra {
   border-radius: 8px 8px 0 0;
+}
+
+.ventanaVistaPrevia {
+  width: 45%;
+  border-radius: 8px;
+  height: 40rem;
+}
+.ventanaVistaPrevia object, .ventanaVistaPrevia iframe {
+  width: 100%;
+  height: 100%;
+}
+.ventanaVistaPrevia .tituloVista {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  padding: 1rem;
+}
+
+.ventanaArchivos {
+  width: 35%;
+  padding: 1rem;
+  border-radius: 8px;
+}
+.ventanaArchivos .tituloArchivos {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
+.ventanaArchivos .tituloArchivos i {
+  font-size: 1.5rem;
+}
+.ventanaArchivos .listaArchivos {
+  height: 35vh;
+  border: 1px solid #E0E0E0;
+  margin: 5px 0;
+  overflow: auto;
+  border-radius: 8px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  padding: 1rem;
+}
+.ventanaArchivos .listaArchivos li {
+  width: 6rem;
+  text-align: center;
+  margin: 10px;
+}
+.ventanaArchivos .listaArchivos li i {
+  font-size: 2rem;
+}
+.ventanaArchivos .listaArchivos li p:nth-child(2) {
+  font-size: 0.6rem;
+  width: 110px;
+  text-align: center;
+  word-wrap: break-word;
+}
+.ventanaArchivos .opcionesArchivos {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+.ventanaArchivos .opcionesArchivos button {
+  padding: 1rem;
+  width: 33%;
+  margin-right: 10px;
 }
 
 .tabs_labels {
