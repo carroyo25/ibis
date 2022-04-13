@@ -61,6 +61,18 @@ checkExistTable = (table,item,indice) => {
     return itenExist;
 }
 
+checkCantTables = (table,idx) =>{
+    let sw = false;
+
+    table.each(function(){
+        if ($(this).find('td').eq(idx).children().val() == 0){
+            sw = true;
+        }
+    })
+
+    return sw;
+}
+
 buscar = (_this) => {
     $.each($("#tablaPrincipal tbody tr"), function() {
         if($(this).text().toLowerCase().indexOf($(_this).val().toLowerCase()) === -1)

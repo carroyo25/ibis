@@ -88,9 +88,10 @@ $(function(){
 
             $.post(RUTA+"pedidos/numeroDocumento", {cc:codigo},
                 function (data, textStatus, jqXHR) {
-                    $("#numero,#nropedidoatach").val(data);
+                    $("#numero").val(data.numero);
+                    $("#nropedidoatach,#codigo_verificacion").val(data.codigo);
                 },
-                "text"
+                "json"
             );
         }else if(contenedor_padre == "listaCostos"){
             $("#codigo_costos").val(codigo);
@@ -103,7 +104,6 @@ $(function(){
         }else if(contenedor_padre == "listaTipo"){
             $("#codigo_tipo").val(codigo);
         }
-        
 
         return false;
     });
@@ -146,7 +146,39 @@ $(function(){
 
         $.each($("#formProceso").serializeArray(),function(){
             result[this.name] = this.value;
-        })
+        });
+
+        try {
+            if (result['codigo_costos'] == '') throw "Elija Centro de Costos";
+            if (result['codigo_area'] == '') throw "Elija Area";
+            if (result['codigo_transporte'] == '') throw "Elija Tipo de Transporte";
+            if (result['concepto'] == '') throw "Escriba el concepto";
+            if (result['codigo_solicitante'] == '') throw "Elija Solicitante";
+            if (result['codigo_tipo'] == '') throw "Elija el tipo de pedido";
+            if ($("#tablaDetalles tbody tr").length <= 0) throw "El pedido no tienes items";
+            if (checkCantTables($("#tablaDetalles tbody > tr"),5)) throw "No ingreso cantidad en un item";
+
+            if (accion == 'n'){
+                $.post(RUTA+"pedidos/nuevoPedido", {cabecera:result,detalles:JSON.stringify(itemsSave())},
+                    function (data, textStatus, jqXHR) {
+                        mostrarMensaje(data.mensaje,data.clase);
+
+                        $("#fileAtachs").trigger("submit");
+                    },
+                    "json"
+                );
+            }else{
+                $.post(RUTA+"pedidos/modificaPedido", {cabecera:result,detalles:JSON.stringify(itemsSave())},
+                    function (data, textStatus, jqXHR) {
+                        mostrarMensaje(data.mensaje,data.clase);
+                    },
+                    "json"
+            );
+            }
+
+        } catch (error) {
+            mostrarMensaje(error,'mensaje_error');
+        }
 
         return false;
     });
@@ -179,7 +211,7 @@ $(function(){
         let unidad = $(this).children('td:eq(2)').text();
 
         if (!checkExistTable($("#tablaDetalles tbody tr"),codigo,2)){
-            let row = `<tr data-grabado="0" data-idprod="${idprod}" data-codund="${nunid}">
+            let row = `<tr data-grabado="0" data-idprod="${idprod}" data-codund="${nunid}" data-indice="-">
                         <td class="textoCentro"><a href="#"><i class="fas fa-eraser"></i></a></td>
                         <td class="textoCentro">${nFilas}</td>
                         <td class="textoCentro">${codigo}</td>
@@ -224,14 +256,17 @@ $(function(){
 
             $.post(RUTA+"pedidos/vistaprevia", {cabecera:result,detalles:JSON.stringify(itemsPreview())},
                 function (data, textStatus, jqXHR) {
-                    console.log(data);
+                    $(".ventanaVistaPrevia iframe")
+                    .attr("src","")
+                    .attr("src","public/documentos/pedidos/vistaprevia/"+data);
+
+                    $("#vista_previa").val(data);
+
+                    $("#vistaprevia").fadeIn();
                 },
                 "text"
             );
-            //$("#vistaprevia").fadeIn();
         }
-
-        $("#vistaprevia").fadeIn();
         
         return false;
     });
@@ -239,7 +274,7 @@ $(function(){
     $("#closePreview").click(function (e) { 
         e.preventDefault();
 
-        $(".ventanaVistaPrevia object").attr("data","");
+        $(".ventanaVistaPrevia iframe").attr("src","");
         $("#vistaprevia").fadeOut();
 
         return false;
@@ -280,7 +315,6 @@ $(function(){
         e.preventDefault();
 
         $("#archivos").fadeOut();
-       // $("#fileAtachs").trigger("submit");
 
         return false;
     });
@@ -340,6 +374,34 @@ itemsPreview = () =>{
         item['cantidad']    = CANTIDAD;
         item['nroparte']    = NROPARTE;
 
+        DATA.push(item);
+    })
+
+    return DATA;
+}
+
+itemsSave = () =>{
+    DATA = [];
+    let TABLA = $("#tablaDetalles tbody >tr");
+
+    TABLA.each(function(){
+        let IDPROD      = $(this).data('idprod'),
+            UNIDAD      = $(this).data('codund'),
+            CANTIDAD    = $(this).find('td').eq(5).children().val(),
+            NROPARTE    = $(this).find('td').eq(6).text();
+            INDEX       = $(this).data('indice');
+            ESTADO      = $(this).data('grabado');
+
+        item= {};
+        
+        if (ESTADO == 0) {
+            item['idprod']      = IDPROD;
+            item['unidad']      = UNIDAD;
+            item['cantidad']    = CANTIDAD;
+            item['nroparte']    = NROPARTE;
+            item['index']       = INDEX;
+        }
+        
         DATA.push(item);
     })
 

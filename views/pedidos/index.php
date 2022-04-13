@@ -31,9 +31,13 @@
                     <input type="hidden" name="codigo_solicitante" id="codigo_solicitante">
                     <input type="hidden" name="codigo_tipo" id="codigo_tipo">
                     <input type="hidden" name="codigo_pedido" id="codigo_pedido">
-                    <input type="hidden" name="codigo_estado" id="codigo_estado" value="0">
-                    <input type="hidden" name="dias_atencion" id="dias_atencion" value="0">
-                    <input type="hidden" name="codigo_atencion" id="codigo_atencion" value="0">
+                    <input type="hidden" name="codigo_estado" id="codigo_estado" value="49">
+                    <input type="hidden" name="codigo_verificacion" id="codigo_verificacion">
+                    <input type="hidden" name="dias_atencion" id="dias_atencion" value="10">
+                    <input type="hidden" name="codigo_atencion" id="codigo_atencion" value="47">
+                    <input type="hidden" name="vista_previa" id="vista_previa">
+                    <input type="hidden" name="emitido" id="emitido">
+
 
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
@@ -174,7 +178,7 @@
     <div class="modal" id="archivos">
         <div class="ventanaArchivos">
             <form action="#" id="fileAtachs" enctype='multipart/form-data'>
-                <input type="text" name="nropedidoatach" id="nropedidoatach">
+                <input type="hidden" name="nropedidoatach" id="nropedidoatach">
                 <input type="file" name="uploadAtach[]" id="uploadAtach" multiple class="oculto">
                 <div class="tituloArchivos">
                     <h3>Adjuntar Archivos</h3>
@@ -220,10 +224,10 @@
     <div class="modal" id="vistaprevia">
         <div class="ventanaVistaPrevia">
             <div class="tituloVista">
-                <h3>Adjuntar Archivos</h3>
+                <h3>Vista Previa</h3>
                 <a href="#" id="closePreview" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
             </div>
-            <object data="public/documentos/pedidos/adjuntos/6255040a6f97d.pdf" type="application/pdf"></object>
+            <iframe src=""></iframe>
         </div>
     </div>
     <div class="cabezaModulo">
@@ -267,10 +271,9 @@
                     <th>Emision</th>
                     <th>Vencimiento</th>
                     <th>Descripción</th>
-                    <th>Area</th>
-                    <th>Centro de Costos</th>
+                    <th>Centro Costos</th>
                     <th>Resposable</th>
-                    <th>Estado Pedido</th>
+                    <th>Estado</th>
                     <th>Atencion</th>
                     <th>...</th>
                 </tr>
@@ -280,6 +283,7 @@
             </tbody>
         </table>
     </div>
+
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
     <script src="<?php echo constant('URL');?>public/js/funciones.js?<?php echo constant('VERSION')?>"></script>
     <script src="<?php echo constant('URL');?>public/js/pedidos.js?<?php echo constant('VERSION')?>"></script>

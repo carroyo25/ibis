@@ -545,6 +545,10 @@
   cursor: pointer;
 }
 
+.tablaInterna {
+  overflow: auto;
+}
+
 .tablainterna3columnas th:nth-child(1), .tablainterna3columnas th:nth-child(3) {
   width: 10%;
 }

@@ -240,14 +240,6 @@ input[type=number]::-webkit-outer-spin-button {
     }
 }
 
-.mayusculas{
-    text-transform: uppercase;
-}
-
-.minusculas{
-    text-transform: lowercase;
-}
-
 .cabecera {
     height: 4rem;
 }
@@ -256,6 +248,24 @@ input[type=number]::-webkit-outer-spin-button {
     opacity: 0.6;
     pointer-events: none;
     cursor: default;
+}
+
+
+.mayusculas{
+    text-transform: uppercase;
+}
+
+.minusculas{
+    text-transform: lowercase;
+}
+
+.normal{
+    background: $activo;
+}
+
+.urgente {
+    background:$notificacion;
+    color: $blanco;
 }
 
 .pl5px{

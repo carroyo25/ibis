@@ -3,7 +3,9 @@ require_once "public/fpdf/mc_table.inc.php";
 
 class PDF extends PDF_MC_Table{
     //Construct
-    public function __construct($numero,$fecha,$proyecto,$costo,$area,$concepto,$mmto,$condicion,$transporte,$usuario,$solicitante,$estado,$especificacion,$tipo,$mensaje,$aprueba) {
+    public function __construct($numero,$fecha,$proyecto,$costo,$area,$concepto,
+								$mmto,$condicion,$transporte,$usuario,$solicitante,
+								$estado,$especificacion,$tipo,$mensaje,$aprueba) {
         parent::__construct();
         $this->numero           = $numero;
         $this->fecha            = $fecha;
@@ -28,8 +30,6 @@ class PDF extends PDF_MC_Table{
     }
     //page header
     function Header(){
-		$titulo = $this->tipo == "B" ? "PEDIDO DE COMPRA":"PEDIDO DE SERVICIO";
-
         $this->Rect(10,10,30,20); //marco de la imagen
         $this->Rect(40,10,130,20); //marco del titulo
         $this->Rect(10,10,190,20); //marco general
@@ -40,13 +40,13 @@ class PDF extends PDF_MC_Table{
 	    $this->SetFont('Arial','B',12);
 		$this->SetTextColor(0,0,0);
 	 	$this->SetFillColor(229, 229, 229);
-	    $this->Cell(190,7,$titulo,0,1,'C');
+	    $this->Cell(190,7,$this->tipo,0,1,'C');
 	    $this->SetFont('Arial','B',10);
 	    $this->Cell(190,6,utf8_decode('N° ').date("Y",strtotime($this->fecha))."-".$this->numero,0,1,'C');
 	    $this->Cell(190,7,$this->mensaje,0,0,'C');
 	    $this->SetXY(170,11);
 	    $this->SetFont('Arial','',7);
-	    $this->MultiCell(30,7,utf8_decode('PSPC-410-X-PR-001-FR-001 Revisión: 0 Emisión: 06/05/2019 '),0,'L',false);
+	    $this->MultiCell(30,4,utf8_decode('PSPC-410-X-PR-001-FR-001 Revisión: 0 Emisión: 06/05/2019 '),0,'L',false);
 
 	    $this->SetXY(170,32);
 	    $this->Cell(30,4,"Solicitado",1,1,"C");
@@ -64,9 +64,9 @@ class PDF extends PDF_MC_Table{
 	    $this->Cell(30,4,utf8_decode($this->transporte),1,1,"C");
 
 	    $this->SetXY(10,32);
-	    $this->Cell(30,5,"Proyecto",1,0);
+	    $this->Cell(30,5,"Centro de Costos",1,0);
 	    $this->Cell(130,5,utf8_decode($this->proyecto),1,1);
-	    $this->Cell(30,5,"Area/Costo",1,0);
+	    $this->Cell(30,5,"Area",1,0);
 	    $this->Cell(80,5,utf8_decode($this->area),1,0);
 	    $this->Cell(20,5,utf8_decode("Ped.MMTO N°"),1,0);
 	    $this->Cell(30,5,$this->mmto,1,1);

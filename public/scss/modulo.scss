@@ -537,8 +537,12 @@ $procesando:#FFCA28;
     cursor: pointer;
 }
 
-
 //tablas en  los formularios
+
+.tablaInterna {
+    overflow:auto;
+}
+
 .tablainterna3columnas{
     th:nth-child(1),th:nth-child(3) {
         width:10%;

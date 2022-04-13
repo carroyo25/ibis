@@ -687,19 +687,35 @@
             }
         }
 
-        //genera los nuemro de los docuentos
+        //genera los numero de los docuentos
         public function generarNumero($id,$query){
             try {
                 $sql = $this->db->connect()->prepare($query);
                 $sql->execute(["cod"=>$id]);
                 $result = $sql->fetchAll();
 
-                return str_pad($result[0]['numero'] + 1,6,0,STR_PAD_LEFT) ;
+                return $salida = array("numero"=>str_pad($result[0]['numero'] + 1,6,0,STR_PAD_LEFT),
+                                        "codigo"=>uniqid()); 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage;
                 return false;
             }
          }
+
+         public function obtenerIndice($codigo,$query){
+            try {
+                $sql = $this->db->connect()->prepare("$query");
+                $sql->execute(["id"=>$codigo]);
+                $result = $sql->fetchAll();
+
+                return $result[0]['numero'];
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+         }
+
+
 
          //listado de productos
          public function listarProductos($tipo){
@@ -740,7 +756,8 @@
 
         
          //codigo de ubigeo
-        public function getUbigeo($nivel,$prefijo){
+        
+         public function getUbigeo($nivel,$prefijo){
             try {
                 $salida = "";
                 $query= $this->db->connect()->prepare("SELECT
