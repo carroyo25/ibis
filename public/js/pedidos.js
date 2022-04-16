@@ -1,6 +1,6 @@
 $(function(){
     var accion = "";
-    var index = "";
+    var grabado = false;
 
     $("#nuevoRegistro").click(function (e) { 
         e.preventDefault();
@@ -45,6 +45,10 @@ $(function(){
 
     $(".mostrarLista").focus(function (e) { 
         e.preventDefault();
+
+        if (accion !="n") {
+            return false;
+        }
         
         $(this).next().slideDown();
 
@@ -111,17 +115,22 @@ $(function(){
     $("#closeProcess").click(function (e) { 
         e.preventDefault();
 
-        /*$.post(RUTA+"usuarios/actualizaListado",
+        $.post(RUTA+"pedidos/actualizaListado",
             function (data, textStatus, jqXHR) {
-                $(".itemsTabla  table tbody")
+                $(".itemsTabla table tbody")
                     .empty()
                     .append(data);
-                
-                $("#proceso").fadeOut();
+
+                $("#proceso").fadeOut(function(){
+                    grabado = false;
+                    $("form")[0].reset();
+                    $("form")[1].reset();
+                    $("#tablaDetalles tbody,.listaArchivos").empty();
+                });
             },
             "text"
         );
-        return false;*/
+        return false;
 
         $("#proceso").fadeOut();
     });
@@ -137,6 +146,17 @@ $(function(){
         $(l).filter(function() {
             $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
         });
+    });
+
+    //cuanndo cambia algo en la tabla de detalles
+    $("#tablaDetalles tbody ").on("change","input", function (e) {
+        //e.preventDefault();
+
+        if (accion == 'u') {
+            $(this).parent().parent().attr("data-grabado",0);
+        }
+        
+       return false;
     });
 
     $("#saveItem").click(function (e) { 
@@ -164,6 +184,9 @@ $(function(){
                         mostrarMensaje(data.mensaje,data.clase);
 
                         $("#fileAtachs").trigger("submit");
+                        
+                        grabado = true;
+                        accion = null;
                     },
                     "json"
                 );
@@ -203,19 +226,20 @@ $(function(){
     $("#tablaModulos tbody").on("click","tr", function (e) {
         e.preventDefault();
 
-        let nFilas = $.strPad($("#tablaDetalles tr").length,2);
+        let nFilas = $.strPad($("#tablaDetalles tr").length,3);
         let idprod = $(this).data("idprod");
         let nunid = $(this).data("ncomed");
         let codigo = $(this).children('td:eq(0)').text();
         let descrip = $(this).children('td:eq(1)').text();
         let unidad = $(this).children('td:eq(2)').text();
+        let grabado = 0;
 
         if (!checkExistTable($("#tablaDetalles tbody tr"),codigo,2)){
-            let row = `<tr data-grabado="0" data-idprod="${idprod}" data-codund="${nunid}" data-indice="-">
+            let row = `<tr data-grabado="${grabado}" data-idprod="${idprod}" data-codund="${nunid}" data-indice="-">
                         <td class="textoCentro"><a href="#"><i class="fas fa-eraser"></i></a></td>
                         <td class="textoCentro">${nFilas}</td>
                         <td class="textoCentro">${codigo}</td>
-                        <td>${descrip}</td>
+                        <td class="pl20px">${descrip}</td>
                         <td class="textoCentro">${unidad}</td>
                         <td><input type="number" step="any" placeholder="0.00" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"></td>
                         <td></td>
@@ -230,7 +254,65 @@ $(function(){
         return false;
     });
 
-   $("#upAttach").click(function (e) { 
+    $("#tablaPrincipal tbody").on("click","tr", function (e) {
+        e.preventDefault();
+
+        $.post(RUTA+"pedidos/consultaId", {id:$(this).data("indice")},
+            function (data, textStatus, jqXHR) {
+                
+                let numero = $.strPad(data.cabecera[0].nrodoc,6);
+                let estado = "textoCentro w35por estado " + data.cabecera[0].cabrevia;
+                
+                $("#codigo_costos").val(data.cabecera[0].idcostos);
+                $("#codigo_area").val(data.cabecera[0].idarea);
+                $("#codigo_transporte").val(data.cabecera[0].idtrans);
+                $("#codigo_solicitante").val(data.cabecera[0].idsolicita);
+                $("#codigo_tipo").val(data.cabecera[0].idtipomov);
+                $("#codigo_pedido").val(data.cabecera[0].idreg);
+                $("#codigo_estado").val(data.cabecera[0].estadodoc);
+                $("#codigo_verificacion").val(data.cabecera[0].verificacion);
+                $("#codigo_atencion").val(data.cabecera[0].nivelAten);
+                $("#vista_previa").val(data.cabecera[0].docfPdfPrev);
+                $("#numero").val(numero);
+                $("#emision").val(data.cabecera[0].emision);
+                $("#costos").val(data.cabecera[0].proyecto);
+                $("#area").val(data.cabecera[0].area);
+                $("#transporte").val(data.cabecera[0].transporte);
+                $("#concepto").val(data.cabecera[0].concepto);
+                $("#solicitante").val(data.cabecera[0].nombres);
+                $("#tipo").val(data.cabecera[0].tipo);
+                $("#vence").val(data.cabecera[0].vence);
+                $("#estado").val(data.cabecera[0].estado);
+                $("#espec_items").val(data.cabecera[0].detalle);
+
+                if (data.cabecera[0].veralm == 0) {
+                    $("#requestAprob").removeClass("desactivado");
+                    $("#sendItem").addClass("desactivado");
+                }else {
+                    $("#requestAprob").addClass("desactivado");
+                    $("#sendItem").removeClass("desactivado");
+                }
+
+                $("#tablaDetalles tbody")
+                    .empty()
+                    .append(data.detalles);
+
+                $("#estado")
+                    .removeClass()
+                    .addClass(estado);
+                
+                grabado = true;
+            },
+            "json"
+        );
+
+        accion = "u";
+        $("#proceso").fadeIn();
+
+        return false;
+    });
+
+    $("#upAttach").click(function (e) { 
        e.preventDefault();
     
        if ($("#numero").val() == ""){
@@ -240,9 +322,9 @@ $(function(){
        }
        
        return false;
-   });
+    });
 
-   $("#preview").click(function (e) { 
+    $("#preview").click(function (e) { 
         e.preventDefault();
     
         if ($("#numero").val() == ""){
@@ -280,15 +362,15 @@ $(function(){
         return false;
     });
 
-   $("#openArch").click(function (e) { 
+    $("#openArch").click(function (e) { 
        e.preventDefault();
 
        $("#uploadAtach").trigger("click");
 
        return false;
-   });
+    });
 
-   $("#uploadAtach").on("change", function (e) {
+    $("#uploadAtach").on("change", function (e) {
        e.preventDefault();
 
        let fp = $(this);
@@ -309,9 +391,9 @@ $(function(){
         }
 
        return false;
-   });
+    });
 
-   $("#btnConfirmAtach").on("click", function (e) {
+    $("#btnConfirmAtach").on("click", function (e) {
         e.preventDefault();
 
         $("#archivos").fadeOut();
@@ -351,6 +433,135 @@ $(function(){
         
         return false;
     });
+
+    $("#sendItem,#requestAprob").click(function (e) { 
+        e.preventDefault();
+
+        $("#estadoPedido,#codigo_estado").val($(this).data("estado"));
+                
+        if (grabado){
+            $.post(RUTA+"pedidos/buscaRol", {rol:$(this).data("rol"),cc:$("#codigo_costos").val()},
+                function (data, textStatus, jqXHR) {
+                    $("#listaCorreos tbody").empty().append(data);
+                    $("#sendMail").fadeIn();
+                },
+                "text"
+            );
+        }else{
+            mostrarMensaje("Por favor grabar el pedido","mensaje_error");
+        }
+
+        return false;
+    });
+
+    $("#closeMail").click(function (e) { 
+        e.preventDefault();
+
+        $("form")[2].reset();
+        $(".atachs").empty();
+        $(".messaje div").empty();
+        $("#sendMail").fadeOut();
+        $("#estadoPedido,#codigo_estado").val(49);
+
+        return false;
+    });
+    
+
+    //proceso con el correo
+    //para cambiar el tipo de letra en el mensaje
+   $(".js-boton").mousedown(function(event) {
+        event.preventDefault(); // Esto no es necesario, es por vicio xD
+            
+        var comando = $(this).attr('data-type');
+        document.execCommand(comando, false, null);
+
+        return false
+   });
+
+   $("#btnAtach").click(function (e) { 
+        e.preventDefault();
+        
+        $("#mailAtach").trigger("click");
+        return false;
+   });
+
+   $("#mailAtach").on("change", function (e) {
+        e.preventDefault();
+ 
+        let fp = $(this);
+        let lg = fp[0].files.length;
+        let items = fp[0].files;
+        let fragment = "";
+
+        adjuntos = hadfledFiles(this.files);
+ 
+        if (lg > 0) {
+             for (let i = 0; i < lg; i++) {
+                 let fileName = items[i].name; // get file name
+ 
+                 // append li to UL tag to display File info
+                 fragment +=`<li><a href="${i}"><i class="far fa-file"></i> ${fileName}</a></li>`;
+             }
+ 
+             $(".atachs").append(fragment);
+         }
+ 
+        return false;
+   });
+
+   $("#btnConfirmSend").click(function (e) { 
+       e.preventDefault();
+
+       let result = {};
+
+       $.each($("#formProceso").serializeArray(),function(){
+           result[this.name] = this.value;
+       })
+
+       $.post(RUTA+"pedidos/vistaprevia", {cabecera:result,detalles:JSON.stringify(itemsPreview())},
+            function (data, textStatus, jqXHR) {
+                $("#vista_previa").val(data);
+                $("#formMails").trigger("submit");
+            },
+            "text"
+        );
+
+       
+       return false;
+   });
+
+   //generar el documento y enviar el emitido
+   $("#formMails").submit(function (e) { 
+       e.preventDefault();
+
+        let parametros = new FormData( this );
+            parametros.append("correos", JSON.stringify(mailsList()));
+            parametros.append("mensaje",$(".messaje div").html());
+            parametros.append("pedido",$("#codigo_pedido").val());
+            parametros.append("detalles",JSON.stringify(itemsPreview()));
+            parametros.append("emitido",$("#vista_previa").val());
+
+        $.ajax({
+                // URL to move the uploaded image file to server
+                url: RUTA + 'pedidos/envioCorreos',
+                // Request type
+                type: "POST", 
+                // To send the full form data
+                data: parametros,
+                contentType:false,      
+                processData:false,
+                dataType:"json",    
+                // UI response after the file upload  
+                success: function(response)
+                {   
+                    //$("#closeMail,#closePreview,#closeProcess").trigger("click");
+                    //$("#closeMail").trigger("click");
+                    mostrarMensaje(response.mensaje,response.clase);
+                }
+            });
+
+       return false;
+   });
 })
 
 itemsPreview = () =>{
@@ -364,6 +575,7 @@ itemsPreview = () =>{
             UNIDAD      = $(this).find('td').eq(4).text(),
             CANTIDAD    = $(this).find('td').eq(5).children().val(),
             NROPARTE    = $(this).find('td').eq(6).text();
+            ITEMPEDIDO  = $(this).data('idx'),
 
         item= {};
         
@@ -373,6 +585,7 @@ itemsPreview = () =>{
         item['unidad']      = UNIDAD;
         item['cantidad']    = CANTIDAD;
         item['nroparte']    = NROPARTE;
+        item['itempedido']  = ITEMPEDIDO;
 
         DATA.push(item);
     })
@@ -389,7 +602,8 @@ itemsSave = () =>{
             UNIDAD      = $(this).data('codund'),
             CANTIDAD    = $(this).find('td').eq(5).children().val(),
             NROPARTE    = $(this).find('td').eq(6).text();
-            INDEX       = $(this).data('indice');
+            IDX       = $(this).data('idx');
+            CALIDAD     = $(this).find('td').eq(7).children().prop("checked"),
             ESTADO      = $(this).data('grabado');
 
         item= {};
@@ -399,11 +613,43 @@ itemsSave = () =>{
             item['unidad']      = UNIDAD;
             item['cantidad']    = CANTIDAD;
             item['nroparte']    = NROPARTE;
-            item['index']       = INDEX;
-        }
-        
-        DATA.push(item);
+            item['idx']         = IDX;
+            item['calidad']     = CALIDAD;
+
+            DATA.push(item);
+        } 
     })
 
     return DATA;
+}
+
+mailsList = () => {
+    CORREOS = [];
+
+    let TABLA =  $("#listaCorreos tbody >tr");
+
+    TABLA.each(function(){
+        let CORREO      = $(this).find('td').eq(1).text(),
+            NOMBRE      = $(this).find('td').eq(0).text(),
+            ENVIAR      = $(this).find('td').eq(2).children().prop("checked"),
+
+        item= {};
+        
+        if (ENVIAR) {
+            item['nombre']= NOMBRE;
+            item['correo']= CORREO;
+
+            CORREOS.push(item);
+        }
+        
+    })
+
+    return CORREOS;
+}
+
+hadfledFiles = (files) =>{
+    let filesvar = "";
+    filesvar = files;
+    
+    return filesvar;
 }

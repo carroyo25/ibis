@@ -38,7 +38,6 @@
                     <input type="hidden" name="vista_previa" id="vista_previa">
                     <input type="hidden" name="emitido" id="emitido">
 
-
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
                         <div>
@@ -51,10 +50,10 @@
                             <button type="button" id="preview" title="Vista Previa" class="boton3">
                                 <i class="fab fa-wpexplorer"></i> Vista Previa
                             </button>
-                            <button type="button" id="sendItem" title="Enviar Pedido" class="boton3 desactivado">
+                            <button type="button" id="sendItem" data-rol="4" data-estado="51" title="Enviar Pedido" class="boton3 desactivado">
                                 <i class="far fa-paper-plane"></i> Enviar Almacen
                             </button>
-                            <button type="button" id="requestAprob" title="Solicitar Aprobacion" class="boton3 desactivado">
+                            <button type="button" id="requestAprob"  data-rol="3" data-estado="53" title="Solicitar Aprobacion" class="boton3 desactivado">
                                 <i class="fas fa-award"></i> Solicitar Aprobacion
                             </button>
                             <button type="button" id="closeProcess" title="Cerrar" class="boton3">
@@ -230,8 +229,61 @@
             <iframe src=""></iframe>
         </div>
     </div>
+    <div class="modal" id="sendMail">
+        <form action="#" method="post" id="formMails">
+            <input type="hidden" name="estadoPedido" id="estadoPedido">
+            <div class="ventanaCorreo">
+                    <input type="file" name="mailAtach[]" id="mailAtach" multiple class="oculto">
+                    <div class="tituloCorreo">
+                        <h3 class="w100por">Enviar Correo</h3>
+                        <a href="#" id="closeMail" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
+                        <hr>
+                    </div>
+                    <div class="cuerpoCorreo">
+                        <div class="correoIzq">
+                            <div class="asunto">
+                                <label for="subject">Asunto :</label>
+                                <input type="text" name="subject" id="subject">
+                            </div>
+                            <div class="opciones">
+                                <button class="boton3 js-boton" data-type="bold" type="button"><i class="fas fa-bold"></i></button>
+                                <button class="boton3 js-boton" data-type="italic" type="button"><i class="fas fa-italic"></i></button>
+                                <button class="boton3" id="btnAtach"><i class="fas fa-paperclip"></i></button>
+                            </div>
+                            <div class="messaje">
+                                <div contenteditable="true">
+
+                                </div>
+                            </div>
+                            <ul class="atachs">
+
+                            </ul>
+                            <div class="commands">
+                                <button class="boton3" id="btnConfirmSend">Enviar</button>
+                            </div>
+                        </div>
+                        <div class="correoDerch">
+                            <h4>Correos</h4>
+                            <table id="listaCorreos" class="tabla">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Correo</th>
+                                        <th>...</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                
+            </div>
+        </form>
+    </div>
     <div class="cabezaModulo">
-        <h1>Catálogo Bienes/Servicios</h1>
+        <h1>Requerimientos Bienes/Servicios</h1>
         <div>
             <a href="#" id="nuevoRegistro"><i class="far fa-file"></i></a>
             <a href="#" id="irInicio"><i class="fas fa-home"></i></a>
@@ -242,22 +294,22 @@
             <div class="variasConsultas">
                     <div>
                         <label for="tipo">Tipo : </label>
-                        <select name="tipo" id="tipo">
+                        <select name="tipoSearch" id="tipoSearch">
                             <option value="37">Bienes</option>
                             <option value="38">Servicios</option>
                         </select>
                     </div>
                     <div>
-                        <label for="costos">Centro de Costos</label>
-                        <input type="text" name="costos" id="costos">
+                        <label for="costosSearch">Centro de Costos</label>
+                        <input type="text" name="costosSearch" id="costosSearch">
                     </div>
                     <div>
                         <label for="mes">Mes</label>
-                        <input type="number" name="mes" id="mes" value="<?php echo date("m")?>" class="textoCentro">
+                        <input type="number" name="mesSearch" id="mesSearch" value="<?php echo date("m")?>" class="textoCentro">
                     </div>
                     <div>
                         <label for="anio">Año :</label>
-                        <input type="number" name="anio" id="anio" value="<?php echo date("Y")?>" class="textoCentro">
+                        <input type="number" name="anioSearch" id="anioSearch" value="<?php echo date("Y")?>" class="textoCentro">
                     </div>
                     <button type="button">Procesar</button> 
             </div>
@@ -283,7 +335,6 @@
             </tbody>
         </table>
     </div>
-
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
     <script src="<?php echo constant('URL');?>public/js/funciones.js?<?php echo constant('VERSION')?>"></script>
     <script src="<?php echo constant('URL');?>public/js/pedidos.js?<?php echo constant('VERSION')?>"></script>

@@ -36,5 +36,32 @@
             echo json_encode($this->model->insertar($_POST['cabecera'],$_POST['detalles']));
         }
 
+        function modificaPedido(){
+            echo json_encode($this->model->modificar($_POST['cabecera'],$_POST['detalles']));
+        }
+
+        function actualizaListado(){
+            echo $this->model->listarPedidosUsuario();
+        }
+
+        function consultaId(){
+            echo json_encode($this->model->consultarReqId($_POST['id'],49,50));
+        }
+
+        function buscaRol(){
+            echo $this->model->buscarRol($_POST['rol'],$_POST['cc']);
+        }
+
+        function envioCorreos(){
+            echo json_encode($this->model->enviarMensajes($_POST['subject'],
+                                                        $_POST['mensaje'],
+                                                        $_POST['correos'],
+                                                        $_FILES['mailAtach'],
+                                                        $_POST['pedido'],
+                                                        $_POST['detalles'],
+                                                        $_POST['estadoPedido'],
+                                                        $_POST['emitido']));
+        }
+
     }
 ?>

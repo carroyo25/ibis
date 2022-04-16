@@ -440,12 +440,33 @@
             }
         }
 
-        public function actualizarCabecera($tabla,$valor,$id){
-
+        public function actualizarCabecera($tabla,$valor,$id,$emitido){
+            try {
+                $sql = $this->db->connect()->prepare("UPDATE $tabla SET estadodoc=:est,docPdfEmit=:emit WHERE idreg=:id");
+                $sql->execute(["est"=>$valor,
+                                "id"=>$id,
+                                "emit"=>$emitido]);
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
         }
 
-        public function actualizarDetalles($tabla,$valor,$detalles,$id){
-            
+        public function actualizarDetalles($tabla,$valor,$detalles){
+            $datos = json_decode($detalles);
+            $nreg =  count($datos);
+
+            try {
+                for ($i=0; $i < $nreg; $i++) { 
+                    $sql = $this->db->connect()->prepare("UPDATE $tabla SET estadoItem=:est WHERE iditem=:id");
+                    $sql->execute(["est"=>$valor,
+                                    "id"=>$datos[$i]->itempedido]);
+                }
+                
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
         }
 
         public function crearMenu($user){
@@ -579,7 +600,7 @@
         public function listarClases($grupo){
             try {
                 $salida = "";
-                $sql = $this->db->connect()->prepare("SELECT ncodclase,ccodcata,cdescrip 
+                $sql = $this->db->connect()->prepare("SELECT ncodclase,ccodcata,UPPER(cdescrip) AS cdescrip 
                                                         FROM tb_clase
                                                         WHERE ncodgrupo =:grupo AND nflgactivo = 1
                                                         ORDER BY cdescrip DESC");
@@ -610,7 +631,7 @@
                 $sql = $this->db->connect()->query("SELECT ncodgrupo,ccodcata,cdescrip 
                                                         FROM tb_grupo
                                                         WHERE nflgactivo = 1
-                                                        ORDER BY cdescrip DESC");
+                                                        ORDER BY ccodcata DESC");
                 $sql->execute();
                 $rowCount = $sql->rowCount();
 
@@ -700,7 +721,7 @@
                 echo "Error: ".$th->getMessage;
                 return false;
             }
-         }
+        }
 
          public function obtenerIndice($codigo,$query){
             try {
@@ -714,8 +735,6 @@
                 return false;
             }
          }
-
-
 
          //listado de productos
          public function listarProductos($tipo){
@@ -756,8 +775,7 @@
 
         
          //codigo de ubigeo
-        
-         public function getUbigeo($nivel,$prefijo){
+        public function getUbigeo($nivel,$prefijo){
             try {
                 $salida = "";
                 $query= $this->db->connect()->prepare("SELECT
@@ -782,6 +800,107 @@
                 echo $e->getMessage();
                 return false;
             }
+        }
+
+        public function buscarRol($rol,$cc){
+            try {
+                $salida = "";
+                if ($rol == 4){
+                    
+                    $sql = $this->db->connect()->prepare("SELECT
+                                                        ibis.tb_user.ccorreo AS correo,
+                                                        ibis.tb_user.nrol,
+                                                        rrhh.tabla_aquarius.nombres, 
+                                                        rrhh.tabla_aquarius.apellidos 
+                                                    FROM
+                                                        ibis.tb_user
+                                                        INNER JOIN rrhh.tabla_aquarius ON ibis.tb_user.ncodper = rrhh.tabla_aquarius.internal 
+                                                    WHERE
+                                                        tb_user.nrol =:rol");
+                    $sql->execute(["rol"=>$rol]);
+                }   
+                else{
+                    $sql = $this->db->connect()->prepare("SELECT
+                                                        ibis.tb_costusu.ncodcos,
+                                                        ibis.tb_costusu.ncodproy,
+                                                        ibis.tb_costusu.id_cuser,
+                                                        ibis.tb_user.ccorreo AS correo,
+                                                        rrhh.tabla_aquarius.apellidos,
+                                                        rrhh.tabla_aquarius.nombres,
+                                                        ibis.tb_proyectos.cdesproy 
+                                                    FROM
+                                                        ibis.tb_costusu
+                                                        INNER JOIN ibis.tb_user ON tb_costusu.id_cuser = tb_user.iduser
+                                                        INNER JOIN rrhh.tabla_aquarius ON ibis.tb_user.ncodper = rrhh.tabla_aquarius.internal
+                                                        INNER JOIN ibis.tb_proyectos ON ibis.tb_costusu.ncodproy = ibis.tb_proyectos.nidreg 
+                                                    WHERE
+                                                        ibis.tb_user.nrol = :rol 
+                                                        AND ibis.tb_costusu.ncodproy = :cc");
+                    $sql->execute(["rol"=>$rol,
+                    "cc"=>$cc]);
+                }
+                
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0) {
+                    while($rs = $sql->fetch()){
+                    $nom = $this->primerosNombres($rs['nombres'],$rs['apellidos']);
+
+                        $salida .='<tr>
+                                    <td class="pl10px">'.$nom.'</td>
+                                    <td class="pl10px">'.$rs['correo'].'</td>
+                                    <td class="textoCentro"><input type="checkbox"></td>
+                                </tr>';
+                    }
+                     
+                }
+
+                return $salida;
+
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function primerosNombres($nombres,$apellidos){
+            $nombre_array = explode(" ",$nombres);
+            $apellido_array= explode(" ",$apellidos);
+            
+            $nnom = count($nombre_array);
+            $napell = count($apellido_array);
+             
+            if( $nnom  <= 2){
+                $nom  = $nombre_array[0];
+            }
+            
+            if( $napell == 2){
+                $apell = $apellido_array[0];
+            }else {
+                $apell = $apellido_array[0] . " " . $apellido_array[1];
+            }
+            
+            return $nom . " " . $apell;
+        }
+
+        //subir los adjuntos de los Correos
+        public function subirAdjuntoCorreo($archivos){
+            $countfiles = count( $archivos['name'] );
+            $upload = false;
+
+            for($i=0;$i<$countfiles;$i++){
+                try {
+                    // Upload file
+                    if (move_uploaded_file($archivos['tmp_name'][$i],'public/documentos/correos/adjuntos/'.$archivos['name'][$i])){
+                        $upload = true;
+                    }
+                } catch (PDOException $th) {
+                    echo "Error: ".$th->getMessage();
+                    return false;
+                }
+            }
+
+            return $upload;
         }
     }
 ?>

@@ -87,7 +87,7 @@
 
                 $sql = $this->db->connect()->query("SELECT
                                                         tb_grupo.ncodgrupo,
-                                                        tb_grupo.cdescrip,
+                                                        UPPER(tb_grupo.cdescrip) AS cdescrip,
                                                         tb_grupo.ccodcata 
                                                     FROM
                                                         tb_grupo
@@ -97,7 +97,7 @@
                                                     GROUP BY
                                                         tb_grupo.ncodgrupo 
                                                     ORDER BY
-                                                        tb_grupo.cdescrip ASC");
+                                                        tb_grupo.ccodcata ASC");
                 $sql->execute();
                 $rowCount = $sql->rowcount();
 

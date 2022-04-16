@@ -290,7 +290,13 @@
   background: #c2c2c2;
 }
 
-.ventanaProceso, .ventanaOpciones, .ventanaBusqueda, .ventanaPregunta, .ventanaArchivos, .ventanaVistaPrevia {
+.ventanaProceso,
+.ventanaOpciones,
+.ventanaBusqueda,
+.ventanaPregunta,
+.ventanaArchivos,
+.ventanaVistaPrevia,
+.ventanaCorreo {
   background: #fff;
   position: absolute;
   top: 50%;
@@ -325,6 +331,102 @@
       -ms-flex-pack: justify;
           justify-content: space-between;
   padding: 1rem;
+}
+
+.ventanaCorreo {
+  width: 55%;
+  padding: 1rem;
+  border-radius: 8px;
+}
+.ventanaCorreo .tituloCorreo {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  margin-bottom: 5px;
+}
+.ventanaCorreo .tituloCorreo i {
+  font-size: 1.5rem;
+}
+.ventanaCorreo .cuerpoCorreo {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 1.1fr 10px 1fr;
+  grid-template-columns: 1.1fr 1fr;
+  -webkit-column-gap: 10px;
+     -moz-column-gap: 10px;
+          column-gap: 10px;
+}
+.ventanaCorreo .cuerpoCorreo .correoIzq {
+  border: 1px solid #E0E0E0;
+  padding: 1rem;
+  border-radius: 8px;
+  padding: 10px;
+}
+.ventanaCorreo .cuerpoCorreo .correoIzq .asunto {
+  border: 1px solid #E0E0E0;
+  padding: 1rem;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 5px;
+}
+.ventanaCorreo .cuerpoCorreo .correoIzq .asunto input {
+  border: none;
+  border-bottom: 1px solid #E0E0E0;
+  outline: none;
+  width: 80%;
+}
+.ventanaCorreo .cuerpoCorreo .correoIzq .opciones {
+  margin-bottom: 5px;
+}
+.ventanaCorreo .cuerpoCorreo .correoIzq .messaje {
+  min-height: 20rem;
+  max-height: 20rem;
+  border: 1px solid black;
+  padding: 10px;
+  overflow: auto;
+}
+.ventanaCorreo .cuerpoCorreo .correoIzq .messaje div {
+  outline: none;
+  border-bottom: 1px dotted #c2c2c2;
+  line-height: 1.2rem;
+  font-size: 0.9rem;
+}
+.ventanaCorreo .cuerpoCorreo .correoIzq .atachs {
+  height: 3rem;
+  border: 1px dotted #c2c2c2;
+  margin-top: 10px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  overflow: auto;
+  padding: 0.5rem;
+}
+.ventanaCorreo .cuerpoCorreo .correoIzq .atachs li {
+  margin-right: 1px;
+  font-size: 0.7rem;
+  line-height: 1rem;
+  border: 1px solid #fff;
+}
+.ventanaCorreo .cuerpoCorreo .correoIzq .atachs li:hover {
+  border: 1px solid #E0E0E0;
+}
+.ventanaCorreo .cuerpoCorreo .correoIzq .commands {
+  margin-top: 5px;
+  text-align: right;
+}
+.ventanaCorreo .cuerpoCorreo .correoDerch {
+  border: 1px solid #E0E0E0;
+  padding: 1rem;
+}
+.ventanaCorreo .cuerpoCorreo .correoDerch h4 {
+  margin-bottom: 10px;
 }
 
 .ventanaArchivos {
@@ -586,7 +688,7 @@
 .tabla {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.8rem;
+  font-size: 0.7rem;
 }
 .tabla thead {
   background: #000;
@@ -642,6 +744,10 @@
   width: 75%;
 }
 
+.w100por {
+  width: 100%;
+}
+
 .tamanioProceso {
   width: 70%;
 }
@@ -658,6 +764,14 @@
   font-weight: 900;
 }
 
+.procesando, .consulta {
+  font-size: 0.6rem !important;
+}
+
 .procesando {
   background: #FFCA28;
+}
+
+.consulta {
+  background: #D7FF67;
 }

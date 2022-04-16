@@ -53,7 +53,7 @@
 
                 $sql = $this->db->connect()->query("SELECT
                                                         tb_grupo.ncodgrupo,
-                                                        tb_grupo.cdescrip,
+                                                        UPPER(tb_grupo.cdescrip) AS cdescrip,
                                                         tb_grupo.ccodcata 
                                                     FROM
                                                         tb_grupo
@@ -63,7 +63,7 @@
                                                     GROUP BY
                                                         tb_grupo.ncodgrupo 
                                                     ORDER BY
-                                                        tb_grupo.cdescrip ASC");
+                                                        tb_grupo.ccodcata ASC");
                 $sql->execute();
                 $rowCount = $sql->rowcount();
 
@@ -154,10 +154,10 @@
         private function clases($grupo){
             try {
                 $salida = "";
-                $sql = $this->db->connect()->prepare("SELECT ncodclase,ncodgrupo,ccodcata,cdescrip 
+                $sql = $this->db->connect()->prepare("SELECT ncodclase,ncodgrupo,ccodcata,UPPER(cdescrip) AS cdescrip 
                                                         FROM tb_clase
                                                         WHERE ncodgrupo =:grupo AND nflgactivo = 1
-                                                        ORDER BY cdescrip DESC");
+                                                        ORDER BY ccodcata ASC");
                 $sql->execute(['grupo'=>$grupo]);
                 $rowCount = $sql->rowCount();
 
@@ -180,11 +180,12 @@
         private function familias($grupo,$clase){
             $salida = "";
             try {
-                $sql = $this->db->connect()->prepare("SELECT ncodgrupo,ncodclase,ncodfamilia,ccodcata,cdescrip
+                $sql = $this->db->connect()->prepare("SELECT ncodgrupo,ncodclase,ncodfamilia,ccodcata,UPPER(cdescrip) AS cdescrip 
                                                         FROM tb_familia
                                                         WHERE ncodgrupo=:grupo 
                                                         AND ncodclase =:clase
-                                                        AND nflgactivo = 1");
+                                                        AND nflgactivo = 1
+                                                        ORDER BY ccodcata ASC");
                 $sql->execute(["grupo"=>$grupo,"clase"=>$clase]);
                 $rowCount = $sql->rowCount();
 

@@ -19,6 +19,7 @@ $subtitulo:#33B71F;
 $bienes:chartreuse;
 $servicios:chocolate;
 $procesando:#FFCA28;
+$consulta:#D7FF67;
 
 .bienes {
     background:$bienes;
@@ -268,7 +269,13 @@ $procesando:#FFCA28;
     }
 }
 
-.ventanaProceso,.ventanaOpciones,.ventanaBusqueda,.ventanaPregunta,.ventanaArchivos,.ventanaVistaPrevia{
+.ventanaProceso,
+.ventanaOpciones,
+.ventanaBusqueda,
+.ventanaPregunta,
+.ventanaArchivos,
+.ventanaVistaPrevia,
+.ventanaCorreo{
     background:$blanco;
     position: absolute;
     top: 50%;
@@ -299,6 +306,105 @@ $procesando:#FFCA28;
         display: flex;
         justify-content: space-between;
         padding:1rem;
+    }
+}
+
+.ventanaCorreo{
+    width: 55%;
+    padding: 1rem;
+    border-radius: 8px;
+
+    .tituloCorreo{
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 5px;
+
+        i {
+            font-size: 1.5rem;
+        }
+    }
+
+    .cuerpoCorreo{
+        display: grid;
+        grid-template-columns: 1.1fr 1fr;
+        column-gap: 10px;
+
+        .correoIzq{
+            border:1px solid  $bordeCajas;
+            padding:1rem;
+            border-radius: 8px;
+            padding: 10px;
+
+            .asunto{
+                border:1px solid  $bordeCajas;
+                padding:1rem;
+                border-radius: 8px;
+                padding: 10px;
+                margin-bottom: 5px;
+
+                input{
+                    border:none;
+                    border-bottom: 1px solid $bordeCajas;
+                    outline: none;
+                    width:80%;
+                }
+            }
+
+            .opciones{
+                margin-bottom: 5px;
+            }
+            .messaje{
+                min-height: 20rem;
+                max-height: 20rem;
+                border: 1px solid black;
+                padding: 10px;
+                overflow:auto;
+
+                div{
+                    outline: none;
+                    border-bottom: 1px dotted #c2c2c2;
+                    line-height: 1.2rem;
+                    font-size: .9rem;
+                }
+            }
+
+            .atachs{
+                height: 3rem;
+                border: 1px dotted #c2c2c2;
+                margin-top: 10px;
+                display:flex;
+                flex-direction:column;
+                overflow:auto;
+                padding: .5rem;
+
+                li{
+                    margin-right: 1px;
+                    font-size: 0.7rem;
+                    line-height: 1rem;
+                    border:1px solid $blanco;
+
+                    &:hover{
+                        border:1px solid $bordeCajas;
+                    }
+                }
+            }
+
+            .commands{
+                margin-top: 5px;
+                text-align: right;
+            }
+        }
+
+        .correoDerch{
+            border:1px solid  $bordeCajas;
+            padding: 1rem;
+            
+            h4{
+                margin-bottom: 10px;
+            }
+        }
+
+
     }
 }
 
@@ -594,7 +700,7 @@ $procesando:#FFCA28;
 .tabla{
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.8rem;
+    font-size: 0.7rem;
 
     thead {
         background:$negro;
@@ -665,6 +771,9 @@ $procesando:#FFCA28;
     width: 75%;
 }
 
+.w100por{
+    width: 100%;
+}
 
 //modificar esto para la resolucion de la pantalla
 .tamanioProceso{
@@ -688,6 +797,15 @@ $procesando:#FFCA28;
     font-weight:900;
 }
 
+.procesando,.consulta{
+    font-size: 0.6rem !important;
+}
+
 .procesando{
     background: $procesando;
+    
+}
+
+.consulta{
+    background: $consulta;
 }

@@ -25,6 +25,7 @@
                     $_SESSION['correo']     = $rq[0]['ccorreo'];
                     $_SESSION['cargo']     = $rq[0]['ccargo'];
                     $_SESSION['inicial']     = $rq[0]['cinicial'];
+                    $_SESSION['password']   = "aK8izG1WEQwwB1X";
                 }
 
                 return $respuesta;

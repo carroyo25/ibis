@@ -31,7 +31,8 @@
                                                     INNER JOIN ibis.tb_parametros AS atenciones ON ibis.tb_pedidocab.nivelAten = atenciones.nidreg
                                                     INNER JOIN ibis.tb_parametros AS estados ON ibis.tb_pedidocab.estadodoc = estados.nidreg 
                                                 WHERE
-                                                    ibis.tb_pedidocab.usuario = :user");
+                                                    ibis.tb_pedidocab.usuario = :user 
+                                                    AND ibis.tb_pedidocab.estadodoc BETWEEN 49 AND 50");
                 $sql->execute(["user"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowCount();
 
@@ -78,8 +79,9 @@
             $reg = ''; 
             $dti = $datos['codigo_tipo'] == 37 ? "PEDIDO DE COMPRA":"PEDIDO DE SERVICIO";
             $mmt = "";
-            $cla = $datos['dias_atencion'] <= 7 ? "URGENTE":"NORMAL";
-            $msj = $datos['codigo_estado'] == 0 ? "VISTA PREVIA":"EMITIDO";
+            $cla = $datos['dias_atencion'] <= 46 ? "URGENTE":"NORMAL";
+            $msj = $datos['codigo_estado'] == 49 ? "VISTA PREVIA":"EMITIDO";
+            $ruta = $datos['codigo_estado'] == 49 ? "public/documentos/pedidos/vistaprevia/":"public/documentos/pedidos/emitidos/";
 
             $pdf = new PDF($num,$fec,$pry,$cos,$are,$con,$mmt,$cla,$tra,$usr,$sol,$reg,$esp,$dti,$msj,"");
 		    $pdf->AddPage();
@@ -113,9 +115,9 @@
 			    }	
 		    }
 
-            $pdf->Output("public/documentos/pedidos/vistaprevia/".$filename,'F');
+            $pdf->Output($ruta.$filename,'F');
             
-            echo $filename;
+            return $filename;
         }
 
         public function insertar($datos,$detalles){
@@ -177,6 +179,68 @@
             }
         }
 
+        public function consultarReqId($id,$min,$max){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        ibis.tb_pedidocab.idreg,
+                                                        ibis.tb_pedidocab.idcostos,
+                                                        ibis.tb_pedidocab.idarea,
+                                                        ibis.tb_pedidocab.idtrans,
+                                                        ibis.tb_pedidocab.idsolicita,
+                                                        ibis.tb_pedidocab.idtipomov,
+                                                        ibis.tb_pedidocab.emision,
+                                                        ibis.tb_pedidocab.vence,
+                                                        ibis.tb_pedidocab.estadodoc,
+                                                        ibis.tb_pedidocab.nrodoc,
+                                                        ibis.tb_pedidocab.usuario,
+                                                        ibis.tb_pedidocab.concepto,
+                                                        ibis.tb_pedidocab.detalle,
+                                                        ibis.tb_pedidocab.nivelAten,
+                                                        ibis.tb_pedidocab.docfPdfPrev,
+                                                        ibis.tb_pedidocab.verificacion,
+                                                        CONCAT( rrhh.tabla_aquarius.apellidos, ' ', rrhh.tabla_aquarius.nombres ) AS nombres,
+                                                        UPPER(
+                                                        CONCAT( ibis.tb_proyectos.ccodproy, ' ', ibis.tb_proyectos.cdesproy )) AS proyecto,
+                                                        UPPER(
+                                                        CONCAT( ibis.tb_area.ccodarea, ' ', ibis.tb_area.cdesarea )) AS area,
+                                                        UPPER(
+                                                        CONCAT( ibis.tb_parametros.nidreg, ' ', ibis.tb_parametros.cdescripcion )) AS transporte,
+                                                        estados.cdescripcion AS estado,
+                                                        estados.cabrevia,
+                                                        UPPER(
+                                                        CONCAT_WS( ' ', tipos.nidreg, tipos.cdescripcion )) AS tipo,
+                                                        ibis.tb_proyectos.veralm 
+                                                    FROM
+                                                        ibis.tb_pedidocab
+                                                        INNER JOIN rrhh.tabla_aquarius ON ibis.tb_pedidocab.idsolicita = rrhh.tabla_aquarius.internal
+                                                        INNER JOIN ibis.tb_proyectos ON ibis.tb_pedidocab.idcostos = ibis.tb_proyectos.nidreg
+                                                        INNER JOIN ibis.tb_area ON ibis.tb_pedidocab.idarea = ibis.tb_area.ncodarea
+                                                        INNER JOIN ibis.tb_parametros ON ibis.tb_pedidocab.idtrans = ibis.tb_parametros.nidreg
+                                                        INNER JOIN ibis.tb_parametros AS transportes ON ibis.tb_pedidocab.idtrans = transportes.nidreg
+                                                        INNER JOIN ibis.tb_parametros AS estados ON ibis.tb_pedidocab.estadodoc = estados.nidreg
+                                                        INNER JOIN ibis.tb_parametros AS tipos ON ibis.tb_pedidocab.idtipomov = tipos.nidreg 
+                                                    WHERE
+                                                        tb_pedidocab.idreg = :id 
+                                                        AND tb_pedidocab.estadodoc BETWEEN :min 
+                                                        AND :max");
+                $sql->execute(['id'=>$id, 'min'=>$min, 'max'=>$max]);
+                $rowCount = $sql->rowCount();
+                
+                if ($rowCount > 0) {
+                    $docData = array();
+                    while($row=$sql->fetch(PDO::FETCH_ASSOC)){
+                        $docData[] = $row;
+                    }
+                }
+
+                return array("cabecera"=>$docData,
+                            "detalles"=>$this->consultarDetalles($id));
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
         public function subirAdjuntos($codigo,$adjuntos){
             $indice = $this->obtenerIndice($codigo,"SELECT idreg AS numero FROM tb_pedidocab WHERE tb_pedidocab.verificacion =:id");
             $countfiles = count( $adjuntos['name'] );
@@ -206,6 +270,147 @@
 
         }
 
+        public function modificar($datos,$detalles){
+            try {
+                $salida = false;
+                $respuesta = false;
+                $mensaje = "Error en el registro";
+                $clase = "mensaje_error";
+
+                $sql = $this->db->connect()->prepare("UPDATE tb_pedidocab SET vence=:vence,concepto=:concep,detalle=:det,nivelAten=:aten,
+                                                                                docfPdfPrev=:dprev
+                                                                                WHERE idreg=:id");
+                 $sql->execute([
+                    "vence"=>$datos['vence'],
+                    "concep"=>$datos['concepto'],
+                    "det"=>$datos['espec_items'],
+                    "aten"=>$datos['codigo_atencion'],
+                    "dprev"=>$datos['vista_previa'],
+                    "id"=>$datos['codigo_pedido']
+                ]);
+
+                $rowCount = $sql->rowCount();
+
+                $details = json_decode($detalles);
+
+                for ($i=0; $i < count($details); $i++) { 
+                   $rowDetails = $this->updateItems($datos['codigo_atencion'],
+                                                    $details[$i]->cantidad,
+                                                    $details[$i]->calidad,
+                                                    $details[$i]->idx);
+                }
+
+                if ($rowCount > 0 || $rowDetails > 0){
+                    $respuesta = true;
+                    $mensaje = "Pedido Modificado";
+                    $clase = "mensaje_correcto";
+                }
+
+                $salida = array("respuesta"=>$respuesta,
+                                "mensaje"=>$mensaje,
+                                "clase"=>$clase);
+
+                
+                return $salida;
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }            
+        }
+
+        public function enviarMensajes($asunto,$mensaje,$correos,$archivos,$pedido,$detalles,$estado,$emitido){
+            require_once("public/PHPMailer/PHPMailerAutoload.php");
+
+            $this->subirAdjuntoCorreo($archivos);
+            
+            $data       = json_decode($correos);
+            $nreg       = count($data);
+            $subject    = utf8_decode($asunto);
+            $messaje    = utf8_decode($mensaje);
+            $countfiles = count( $archivos['name'] );
+            $estadoEnvio= false;
+            $clase = "mensaje_error";
+            $salida = "";
+            
+            $origen = $_SESSION['user']."@sepcon.net";
+            $nombre_envio = $_SESSION['user'];
+
+            $mail = new PHPMailer;
+            $mail->isSMTP();
+            $mail->SMTPDebug = 0;
+            $mail->Debugoutput = 'html';
+            $mail->Host = 'mail.sepcon.net';
+            $mail->SMTPAuth = true;
+            $mail->Username = 'sistema_ibis@sepcon.net';
+            $mail->Password = $_SESSION['password'];
+            $mail->Port = 465;
+            $mail->SMTPSecure = "ssl";
+            $mail->SMTPOptions = array(
+                'ssl' => array(
+                    'verify_peer' => false,
+                    'verify_peer_name' => false,
+                    'allow_self_signed' => false
+                )
+            );
+            
+            try {
+                $mail->setFrom($origen,$nombre_envio);
+
+                for ($i=0; $i < $nreg; $i++) {
+                    $mail->addAddress($data[$i]->correo,$data[$i]->nombre);
+    
+                    $mail->Subject = $subject;
+                    $mail->msgHTML(utf8_decode($messaje));
+                    
+                    $mail->AddAttachment('public/documentos/pedidos/emitidos/'.$emitido);
+
+                    for($i=0;$i<$countfiles;$i++){
+                        if (file_exists( 'public/documentos/correos/adjuntos/'.$archivos['name'][$i] )) {
+                            $mail->AddAttachment('public/documentos/correos/adjuntos/'.$archivos['name'][$i]);
+                        }
+                    }
+    
+                    if (!$mail->send()) {
+                        //$mensaje = $mail->ErrorInfo;
+                        $mensaje = "Mensaje de correo no enviado";
+                        $estadoEnvio = false; 
+                    }else {
+                        $mensaje = "Mensaje de correo enviado";
+                        $estadoEnvio = true; 
+                    }   
+                }
+
+                if ($estadoEnvio){
+                    $clase = "mensaje_correcto";
+                    $this->actualizarCabecera("tb_pedidocab",$estado,$pedido,$emitido);
+                    $this->actualizarDetalles("tb_pedidodet",$estado,$detalles);
+                }
+
+                $salida= array("estado"=>$estadoEnvio,
+                                "mensaje"=>$mensaje,
+                                "clase"=>$clase );
+
+                return $salida;
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        private function updateItems($aten,$cant,$qaqc,$idx){
+            $sql = $this->db->connect()->prepare("UPDATE ibis.tb_pedidodet SET cant_pedida = :cant, 
+                                        nflgqaqc = :qaqc,
+                                        tipoAten = :aten 
+                                        WHERE iditem = :id");
+            $sql ->execute(["cant"=>$cant,
+                            "qaqc"=>$qaqc,
+                            "aten"=>$aten,
+                            "id"=>$idx]);
+            $rowCount = $sql->rowCount();
+            return $rowCount;
+        }
+
         private function saveItems($codigo,$estado,$atencion,$tipo,$detalles){
             $indice = $this->obtenerIndice($codigo,"SELECT idreg AS numero FROM tb_pedidocab WHERE tb_pedidocab.verificacion =:id");
 
@@ -217,7 +422,7 @@
                     if ($datos[$i]->index == '-') {
                         $sql = $this->db->connect()->prepare("INSERT INTO tb_pedidodet SET idpedido=:ped,idprod=:prod,idtipo=:tipo,unid=:und,
                                                                                     cant_pedida=:cant,estadoItem=:est,tipoAten=:aten,
-                                                                                    verificacion=:ver");
+                                                                                    verificacion=:ver,nflgqaqc=:qaqc");
                         $sql ->execute([
                                         "ped"=>$indice,
                                         "prod"=>$datos[$i]->idprod,
@@ -226,7 +431,8 @@
                                         "cant"=>$datos[$i]->cantidad,
                                         "est"=>$estado,
                                         "aten"=>$atencion,
-                                        "ver"=>$codigo]);
+                                        "ver"=>$codigo,
+                                        "qaqc"=>$datos[$i]->calidad]);
                     }
                    
                 } catch (PDOException $th) {
@@ -234,9 +440,65 @@
                     return false;
                 }
             }
-
         }
-    }
 
-    
+        private function consultarDetalles($id){
+            try {
+                $salida ="";
+
+                $sql=$this->db->connect()->prepare("SELECT
+                                                    tb_pedidodet.iditem,
+                                                    tb_pedidodet.idpedido,
+                                                    tb_pedidodet.idprod,
+                                                    tb_pedidodet.idtipo,
+                                                    tb_pedidodet.nroparte,
+                                                    tb_pedidodet.unid,
+                                                    FORMAT(tb_pedidodet.cant_pedida,2) AS cant_pedida,
+                                                    tb_pedidodet.estadoItem,
+                                                    cm_producto.ccodprod,
+                                                    cm_producto.cdesprod,
+                                                    tb_unimed.cabrevia,
+                                                    tb_pedidodet.nflgqaqc 
+                                                FROM
+                                                    tb_pedidodet
+                                                    INNER JOIN cm_producto ON tb_pedidodet.idprod = cm_producto.id_cprod
+                                                    INNER JOIN tb_unimed ON tb_pedidodet.unid = tb_unimed.ncodmed 
+                                                WHERE
+                                                    tb_pedidodet.idpedido = :id");
+                $sql->execute(["id"=>$id]);
+                $rowCount = $sql->rowCount();
+                
+                if ($rowCount > 0){
+                    $filas = 1;
+                    while ($rs = $sql->fetch()) {
+
+                        $checked = $rs['nflgqaqc'] == 1 ? "checked ": " ";
+                        
+                        $salida .='<tr data-grabado="1" data-idprod="'.$rs['idprod'].'" data-codund="'.$rs['unid'].'" data-idx="'.$rs['iditem'].'">
+                                        <td class="textoCentro"><a href="#"><i class="fas fa-eraser"></i></a></td>
+                                        <td class="textoCentro">'.str_pad($filas++,3,0,STR_PAD_LEFT).'</td>
+                                        <td class="textoCentro">'.$rs['ccodprod'].'</td>
+                                        <td class="pl20px">'.$rs['cdesprod'].'</td>
+                                        <td class="textoCentro">'.$rs['cabrevia'].'</td>
+                                        <td>
+                                            <input type="number" 
+                                                        step="any" 
+                                                        placeholder="0.00" 
+                                                        onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"
+                                                        onclick="this.select()" 
+                                                        value="'.$rs['cant_pedida'].'">
+                                        </td>
+                                        <td></td>
+                                        <td class="textoCentro"><input type="checkbox" '.$checked.'></td>
+                                    </tr>';
+                    }
+                }
+                
+                return $salida;
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+    }    
 ?>
