@@ -773,7 +773,6 @@
             }
          }
 
-        
          //codigo de ubigeo
         public function getUbigeo($nivel,$prefijo){
             try {
@@ -901,6 +900,194 @@
             }
 
             return $upload;
+        }
+
+        public function consultarReqId($id,$min,$max,$proceso){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        ibis.tb_pedidocab.idreg,
+                                                        ibis.tb_pedidocab.idcostos,
+                                                        ibis.tb_pedidocab.idarea,
+                                                        ibis.tb_pedidocab.idtrans,
+                                                        ibis.tb_pedidocab.idsolicita,
+                                                        ibis.tb_pedidocab.idtipomov,
+                                                        ibis.tb_pedidocab.emision,
+                                                        ibis.tb_pedidocab.vence,
+                                                        ibis.tb_pedidocab.estadodoc,
+                                                        ibis.tb_pedidocab.nrodoc,
+                                                        ibis.tb_pedidocab.usuario,
+                                                        ibis.tb_pedidocab.concepto,
+                                                        ibis.tb_pedidocab.detalle,
+                                                        ibis.tb_pedidocab.nivelAten,
+                                                        ibis.tb_pedidocab.docfPdfPrev,
+                                                        ibis.tb_pedidocab.docPdfEmit,
+                                                        ibis.tb_pedidocab.docPdfAprob,
+                                                        ibis.tb_pedidocab.verificacion,
+                                                        CONCAT( rrhh.tabla_aquarius.apellidos, ' ', rrhh.tabla_aquarius.nombres ) AS nombres,
+                                                        UPPER(
+                                                        CONCAT( ibis.tb_proyectos.ccodproy, ' ', ibis.tb_proyectos.cdesproy )) AS proyecto,
+                                                        UPPER(
+                                                        CONCAT( ibis.tb_area.ccodarea, ' ', ibis.tb_area.cdesarea )) AS area,
+                                                        UPPER(
+                                                        CONCAT( ibis.tb_parametros.nidreg, ' ', ibis.tb_parametros.cdescripcion )) AS transporte,
+                                                        estados.cdescripcion AS estado,
+                                                        estados.cabrevia,
+                                                        UPPER(
+                                                        CONCAT_WS( ' ', tipos.nidreg, tipos.cdescripcion )) AS tipo,
+                                                        ibis.tb_proyectos.veralm 
+                                                    FROM
+                                                        ibis.tb_pedidocab
+                                                        INNER JOIN rrhh.tabla_aquarius ON ibis.tb_pedidocab.idsolicita = rrhh.tabla_aquarius.internal
+                                                        INNER JOIN ibis.tb_proyectos ON ibis.tb_pedidocab.idcostos = ibis.tb_proyectos.nidreg
+                                                        INNER JOIN ibis.tb_area ON ibis.tb_pedidocab.idarea = ibis.tb_area.ncodarea
+                                                        INNER JOIN ibis.tb_parametros ON ibis.tb_pedidocab.idtrans = ibis.tb_parametros.nidreg
+                                                        INNER JOIN ibis.tb_parametros AS transportes ON ibis.tb_pedidocab.idtrans = transportes.nidreg
+                                                        INNER JOIN ibis.tb_parametros AS estados ON ibis.tb_pedidocab.estadodoc = estados.nidreg
+                                                        INNER JOIN ibis.tb_parametros AS tipos ON ibis.tb_pedidocab.idtipomov = tipos.nidreg 
+                                                    WHERE
+                                                        tb_pedidocab.idreg = :id 
+                                                        AND tb_pedidocab.estadodoc BETWEEN :min 
+                                                        AND :max");
+                $sql->execute(['id'=>$id, 'min'=>$min, 'max'=>$max]);
+                $rowCount = $sql->rowCount();
+                
+                if ($rowCount > 0) {
+                    $docData = array();
+                    while($row=$sql->fetch(PDO::FETCH_ASSOC)){
+                        $docData[] = $row;
+                    }
+                }
+
+                if ( $proceso == 49){
+                    $detalles = $this->consultarDetallesProceso($id);
+                }else if ( $proceso == 51){
+                    $detalles = $this->consultarDetallesStock($id);
+                }
+                    
+
+                return array("cabecera"=>$docData,
+                            "detalles"=>$detalles);
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        private function consultarDetallesProceso($id){
+            try {
+                $salida ="";
+
+                $sql=$this->db->connect()->prepare("SELECT
+                                                    tb_pedidodet.iditem,
+                                                    tb_pedidodet.idpedido,
+                                                    tb_pedidodet.idprod,
+                                                    tb_pedidodet.idtipo,
+                                                    tb_pedidodet.nroparte,
+                                                    tb_pedidodet.unid,
+                                                    FORMAT(tb_pedidodet.cant_pedida,2) AS cant_pedida,
+                                                    tb_pedidodet.estadoItem,
+                                                    cm_producto.ccodprod,
+                                                    cm_producto.cdesprod,
+                                                    tb_unimed.cabrevia,
+                                                    tb_pedidodet.nflgqaqc 
+                                                FROM
+                                                    tb_pedidodet
+                                                    INNER JOIN cm_producto ON tb_pedidodet.idprod = cm_producto.id_cprod
+                                                    INNER JOIN tb_unimed ON tb_pedidodet.unid = tb_unimed.ncodmed 
+                                                WHERE
+                                                    tb_pedidodet.idpedido = :id");
+                $sql->execute(["id"=>$id]);
+                $rowCount = $sql->rowCount();
+                
+                if ($rowCount > 0){
+                    $filas = 1;
+                    while ($rs = $sql->fetch()) {
+
+                        $checked = $rs['nflgqaqc'] == 1 ? "checked ": " ";
+                        
+                        $salida .='<tr data-grabado="1" data-idprod="'.$rs['idprod'].'" data-codund="'.$rs['unid'].'" data-idx="'.$rs['iditem'].'">
+                                        <td class="textoCentro"><a href="#"><i class="fas fa-eraser"></i></a></td>
+                                        <td class="textoCentro">'.str_pad($filas++,3,0,STR_PAD_LEFT).'</td>
+                                        <td class="textoCentro">'.$rs['ccodprod'].'</td>
+                                        <td class="pl20px">'.$rs['cdesprod'].'</td>
+                                        <td class="textoCentro">'.$rs['cabrevia'].'</td>
+                                        <td>
+                                            <input type="number" 
+                                                        step="any" 
+                                                        placeholder="0.00" 
+                                                        onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"
+                                                        onclick="this.select()" 
+                                                        value="'.$rs['cant_pedida'].'">
+                                        </td>
+                                        <td></td>
+                                        <td class="textoCentro"><input type="checkbox" '.$checked.'></td>
+                                    </tr>';
+                    }
+                }
+                
+                return $salida;
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        private function consultarDetallesStock($id){
+            try {
+                $salida ="";
+
+                $sql=$this->db->connect()->prepare("SELECT
+                                                    tb_pedidodet.iditem,
+                                                    tb_pedidodet.idpedido,
+                                                    tb_pedidodet.idprod,
+                                                    tb_pedidodet.idtipo,
+                                                    tb_pedidodet.nroparte,
+                                                    tb_pedidodet.unid,
+                                                    FORMAT(tb_pedidodet.cant_pedida,2) AS cant_pedida,
+                                                    tb_pedidodet.estadoItem,
+                                                    cm_producto.ccodprod,
+                                                    cm_producto.cdesprod,
+                                                    tb_unimed.cabrevia,
+                                                    tb_pedidodet.nflgqaqc 
+                                                FROM
+                                                    tb_pedidodet
+                                                    INNER JOIN cm_producto ON tb_pedidodet.idprod = cm_producto.id_cprod
+                                                    INNER JOIN tb_unimed ON tb_pedidodet.unid = tb_unimed.ncodmed 
+                                                WHERE
+                                                    tb_pedidodet.idpedido = :id");
+                $sql->execute(["id"=>$id]);
+                $rowCount = $sql->rowCount();
+                
+                if ($rowCount > 0){
+                    $filas = 1;
+                    while ($rs = $sql->fetch()) {
+                        $salida .='<tr data-grabado="1" data-idprod="'.$rs['idprod'].'" data-codund="'.$rs['unid'].'" data-idx="'.$rs['iditem'].'">
+                                        <td class="textoCentro"><a href="'.$rs['idprod'].'"><i class="far fa-eye"></i></a></td>
+                                        <td class="textoCentro">'.str_pad($filas++,3,0,STR_PAD_LEFT).'</td>
+                                        <td class="textoCentro">'.$rs['ccodprod'].'</td>
+                                        <td class="pl20px">'.$rs['cdesprod'].'</td>
+                                        <td class="textoCentro">'.$rs['cabrevia'].'</td>
+                                        <td class="textoCentro">'.$rs['cant_pedida'].'</td>
+                                        <td>
+                                            <input type="number" 
+                                                        step="any" 
+                                                        placeholder="0.00" 
+                                                        onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"
+                                                        onclick="this.select()" 
+                                                        value=""
+                                                        class="valorAtendido">
+                                        </td>
+                                        <td></td>
+                                        <td class="textoCentro"><input type="text"></td>
+                                    </tr>';
+                    }
+                }
+                
+                return $salida;
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
         }
     }
 ?>

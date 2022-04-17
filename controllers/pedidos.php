@@ -45,7 +45,7 @@
         }
 
         function consultaId(){
-            echo json_encode($this->model->consultarReqId($_POST['id'],49,50));
+            echo json_encode($this->model->consultarReqId($_POST['id'],49,50,49));
         }
 
         function buscaRol(){

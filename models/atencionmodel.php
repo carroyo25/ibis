@@ -60,5 +60,149 @@
                 return false;
             }
         }
+
+        public function almacenUsuario($codprod){
+            try {
+                $salida = "";
+
+                $sql = $this->db->connect()->prepare("SELECT
+                                            tb_almausu.ncodalm, 
+                                            tb_almausu.nalmacen, 
+                                            tb_almausu.id_cuser, 
+                                            tb_almacen.ccodalm, 
+                                            UPPER(tb_almacen.cdesalm) AS almacen
+                                        FROM
+                                            tb_almausu
+                                            INNER JOIN
+                                            tb_almacen
+                                            ON 
+                                                tb_almausu.ncodalm = tb_almacen.ncodalm
+                                        WHERE
+                                            tb_almausu.nflgactivo = 1 AND
+                                            tb_almausu.id_cuser = :user");
+                $sql->execute(["user"=>$_SESSION['iduser']]);
+                $rowCount = $sql->rowCount();
+                if($rowCount > 0) {
+                    while ($rs = $sql->fetch()) {
+                        $cant = $this->existenciasAlmacen($codprod,$rs['nalmacen']);
+                        $salida .='<tr>
+                                        <td class="pl20px">'.$rs['almacen'].'</td>
+                                        <td class="textoDerecha pr20px">'.number_format($cant, 2, '.', ',').'</td>
+                                    </tr>';
+                    }
+                }
+
+                return $salida;
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        private function existenciasAlmacen($id,$alm){
+            try {
+                $existencias = 0;
+                $sql = $this->db->connect()->prepare("SELECT
+                                                    alm_existencia.codprod,
+                                                    alm_existencia.idprod,
+                                                    SUM( alm_existencia.cant_ingr ) AS ingresos,
+                                                    SUM( alm_existencia.cant_sal ) AS salidas 
+                                                FROM
+                                                    alm_existencia 
+                                                WHERE
+                                                    alm_existencia.idalm = :alm 
+                                                    AND alm_existencia.idprod = :prod");
+                $sql->execute(["prod"=>$id,
+                                "alm"=>$alm]);
+                
+                $result = $sql->fetchAll();
+
+                $existencias = $result[0]['ingresos'] - $result[0]['salidas'];
+
+                return $existencias;
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function enviarMensajes($asunto,$mensaje,$correos,$pedido,$detalles,$estado,$emitido){
+            require_once("public/PHPMailer/PHPMailerAutoload.php");
+
+            $this->subirAdjuntoCorreo($archivos);
+            
+            $data       = json_decode($correos);
+            $nreg       = count($data);
+            $subject    = utf8_decode($asunto);
+            $messaje    = utf8_decode($mensaje);
+            $countfiles = count( $archivos['name'] );
+            $estadoEnvio= false;
+            $clase = "mensaje_error";
+            $salida = "";
+            
+            $origen = $_SESSION['user']."@sepcon.net";
+            $nombre_envio = $_SESSION['user'];
+
+            $mail = new PHPMailer;
+            $mail->isSMTP();
+            $mail->SMTPDebug = 0;
+            $mail->Debugoutput = 'html';
+            $mail->Host = 'mail.sepcon.net';
+            $mail->SMTPAuth = true;
+            $mail->Username = 'sistema_ibis@sepcon.net';
+            $mail->Password = $_SESSION['password'];
+            $mail->Port = 465;
+            $mail->SMTPSecure = "ssl";
+            $mail->SMTPOptions = array(
+                'ssl' => array(
+                    'verify_peer' => false,
+                    'verify_peer_name' => false,
+                    'allow_self_signed' => false
+                )
+            );
+            
+            try {
+                $mail->setFrom($origen,$nombre_envio);
+
+                for ($i=0; $i < $nreg; $i++) {
+                    $mail->addAddress($data[$i]->correo,$data[$i]->nombre);
+    
+                    $mail->Subject = $subject;
+                    $mail->msgHTML(utf8_decode($messaje));
+                    
+                    $mail->AddAttachment('public/documentos/pedidos/emitidos/'.$emitido);
+
+                    for($i=0;$i<$countfiles;$i++){
+                        if (file_exists( 'public/documentos/correos/adjuntos/'.$archivos['name'][$i] )) {
+                            $mail->AddAttachment('public/documentos/correos/adjuntos/'.$archivos['name'][$i]);
+                        }
+                    }
+    
+                    if (!$mail->send()) {
+                        //$mensaje = $mail->ErrorInfo;
+                        $mensaje = "Mensaje de correo no enviado";
+                        $estadoEnvio = false; 
+                    }else {
+                        $mensaje = "Mensaje de correo enviado";
+                        $estadoEnvio = true; 
+                    }   
+                }
+
+                if ($estadoEnvio){
+                    $clase = "mensaje_correcto";
+                    $this->actualizarCabecera("tb_pedidocab",$estado,$pedido,$emitido);
+                    $this->actualizarDetalles("tb_pedidodet",$estado,$detalles);
+                }
+
+                $salida= array("estado"=>$estadoEnvio,
+                                "mensaje"=>$mensaje,
+                                "clase"=>$clase );
+
+                return $salida;
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
     }
 ?>

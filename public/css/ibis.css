@@ -47,15 +47,6 @@ input[type=number]::-webkit-outer-spin-button {
   margin: 0;
 }
 
-.flex_center {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-}
-
 .activo {
   background: #7DCB3D;
 }
@@ -240,6 +231,19 @@ input[type=number]::-webkit-outer-spin-button {
   cursor: default;
 }
 
+.textoDerecha {
+  text-align: right;
+}
+
+.flex_center {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
 .mayusculas {
   text-transform: uppercase;
 }
@@ -267,6 +271,10 @@ input[type=number]::-webkit-outer-spin-button {
 
 .pl20px {
   padding-left: 20px;
+}
+
+.pr20px {
+  padding-right: 20px;
 }
 
 .pie {

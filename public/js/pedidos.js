@@ -131,8 +131,6 @@ $(function(){
             "text"
         );
         return false;
-
-        $("#proceso").fadeOut();
     });
 
     //filtrado en la lista de solicitante
