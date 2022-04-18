@@ -7,9 +7,6 @@
     <title>Document</title>
 </head>
 <body>
-    <div class="mensaje">
-        <p></p>
-    </div>
     <div class="modal" id="proceso">
         <div class="ventanaProceso tamanioProceso">
             <div class="cabezaProceso">
@@ -28,13 +25,13 @@
                         <span>Datos Generales</span>
                         <div>
                             <button type="button" id="closeReq" title="Atender todos el pedido por almacen" class="boton3">
-                                <span><i class="far fa-save"></i> Culminar Pedido</span> 
+                                <span><i class="far fa-save"></i> Ver Adjuntos</span> 
                             </button>
                             <button type="button" id="preview" title="Vista Previa" class="boton3">
                                 <i class="fab fa-wpexplorer"></i> Ver Pedido
                             </button>
                             <button type="button" id="requestAprob"  data-rol="3" data-estado="53" title="Solicitar Aprobacion" class="boton3">
-                                <i class="fas fa-award"></i> Solicitar Aprobacion
+                                <i class="fas fa-award"></i> Aprobar Pedidos
                             </button>
                             <button type="button" id="closeProcess" title="Cerrar" class="boton3">
                                 <i class="fas fa-window-close"></i>
@@ -106,13 +103,13 @@
                         <table class="tabla" id="tablaDetalles">
                             <thead>
                                 <tr>
-                                    <th>...</th>
                                     <th>Item</th>
                                     <th>Codigo</th>
                                     <th>Descripcion</th>
                                     <th>Und.</th>
-                                    <th>Cant.</br>Pedida</th>
-                                    <th>Cant.</br>Atendida</th>
+                                    <th>Cant.Ped.</th>
+                                    <th>Cant.Aten.</th>
+                                    <th>Cant.</br>Aprobada</th>
                                     <th>Nro.</br>Parte</th>
                                     <th>Observaciones</th>
                                 </tr>
@@ -126,89 +123,10 @@
             </div>
         </div>
     </div>
-    <div class="modal" id="archivos">
-        <div class="ventanaArchivos">
-            <table id="tablaExistencias" class="tabla">
-                <thead>
-                    <tr>
-                        <th>Almacen</th>
-                        <th>Cantidad</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    
-                </tbody>
-            </table>
-            <div class="opcionesArchivos">
-                <button type="button" class="boton3" id="btnConfirmAtach">Aceptar</button>
-            </div>
-        </div>
-    </div>
-    <div class="modal" id="sendMail">
-        <form action="#" method="post" id="formMails">
-            <input type="hidden" name="estadoPedido" id="estadoPedido">
-            <div class="ventanaCorreo">
-                    <input type="file" name="mailAtach[]" id="mailAtach" multiple class="oculto">
-                    <div class="tituloCorreo">
-                        <h3 class="w100por">Enviar Correo</h3>
-                        <a href="#" id="closeMail" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
-                        <hr>
-                    </div>
-                    <div class="cuerpoCorreo">
-                        <div class="correoIzq">
-                            <div class="asunto">
-                                <label for="subject">Asunto :</label>
-                                <input type="text" name="subject" id="subject">
-                            </div>
-                            <div class="opciones">
-                                <button class="boton3 js-boton" data-type="bold" type="button"><i class="fas fa-bold"></i></button>
-                                <button class="boton3 js-boton" data-type="italic" type="button"><i class="fas fa-italic"></i></button>
-                                <button class="boton3 oculto" id="btnAtach"><i class="fas fa-paperclip" ></i></button>
-                            </div>
-                            <div class="messaje">
-                                <div contenteditable="true">
-
-                                </div>
-                            </div>
-                            <ul class="atachs oculto">
-
-                            </ul>
-                            <div class="commands">
-                                <button class="boton3" id="btnConfirmSend">Enviar</button>
-                            </div>
-                        </div>
-                        <div class="correoDerch">
-                            <h4>Correos</h4>
-                            <table id="listaCorreos" class="tabla">
-                                <thead>
-                                    <tr>
-                                        <th>Nombre</th>
-                                        <th>Correo</th>
-                                        <th>...</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                
-            </div>
-        </form>
-    </div>
-    <div class="modal" id="pregunta">
-        <div class="ventanaPregunta">
-            <h3>Desea culminar el pedido?</h3>
-            <div>
-                <button type="button" id="btnAceptarPregunta">Aceptar</button>
-                <button type="button" id="btnCancelarPregunta">Cancelar</button>
-            </div>
-        </div>
-    </div>
     <div class="cabezaModulo">
-        <h1>Atención de Pedidos (Almacen)</h1>
+        <h1>Requerimientos Bienes/Servicios</h1>
         <div>
+            <a href="#" id="nuevoRegistro"><i class="far fa-file"></i></a>
             <a href="#" id="irInicio"><i class="fas fa-home"></i></a>
         </div>
     </div>
@@ -258,17 +176,8 @@
             </tbody>
         </table>
     </div>
-    <div class="modal" id="vistaprevia">
-        <div class="ventanaVistaPrevia">
-            <div class="tituloVista">
-                <h3>Vista Previa</h3>
-                <a href="#" id="closePreview" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
-            </div>
-            <iframe src=""></iframe>
-        </div>
-    </div>
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
-    <script src="<?php echo constant('URL');?>public/js/funciones.js?<?php echo constant('VERSION')?>"></script>
-    <script src="<?php echo constant('URL');?>public/js/atencion.js?<?php echo constant('VERSION')?>"></script>
+    <script src="<?php echo constant('URL');?>public/js/funciones.js"></script>
+    <script src="<?php echo constant('URL');?>public/js/aprobacion.js?"></script>
 </body>
 </html>

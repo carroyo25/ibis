@@ -764,7 +764,7 @@
   font-weight: 900;
 }
 
-.procesando, .consulta {
+.procesando, .consulta, .aprobacion {
   font-size: 0.6rem !important;
 }
 
@@ -774,4 +774,8 @@
 
 .consulta {
   background: #D7FF67;
+}
+
+.aprobacion {
+  background: #C9E2F4;
 }

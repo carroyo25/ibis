@@ -54,21 +54,20 @@ $(function(){
     $("#closeProcess").click(function (e) { 
         e.preventDefault();
 
-        /*$.post(RUTA+"pedidos/actualizaListado",
+        $.post(RUTA+"atencion/actualizaListado",
             function (data, textStatus, jqXHR) {
                 $(".itemsTabla table tbody")
                     .empty()
                     .append(data);
 
                 $("#proceso").fadeOut(function(){
-                    grabado = false;
                     $("form")[0].reset();
                     $("form")[1].reset();
-                    $("#tablaDetalles tbody,.listaArchivos").empty();
+                    $("#tablaDetalles tbody").empty();
                 });
             },
             "text"
-        );*/
+        );
 
         $("#proceso").fadeOut();
         
@@ -165,24 +164,66 @@ $(function(){
     $("#btnConfirmSend").click(function (e) { 
         e.preventDefault();
 
-        //$asunto,$mensaje,$correos,$pedido,$detalles,$estado,$emitido
- 
-        $.post(RUTA+"atencion/correo", {pedido:$("#codigo_pedido").val(),
-                                                detalles:JSON.stringify(itemsPreview()),
-                                                correos:JSON.stringify(mailsList()),
-                                                adjunto:$("#emitido").val(),
-                                                asunto:$("#subject").val(),
-                                                mensaje:$("messaje div").html(),
-                                                estado:53},
+        try {
+            if ($("#subject").val() =="") throw "Escriba el asunto";
+            if ($("messaje div").html() =="") throw "Escriba el asunto";
+
+            $.post(RUTA+"atencion/correos", {pedido:$("#codigo_pedido").val(),
+                                            detalles:JSON.stringify(itemsSave()),
+                                            correos:JSON.stringify(mailsList()),
+                                            adjunto:$("#emitido").val(),
+                                            asunto:$("#subject").val(),
+                                            mensaje:$(".messaje div").html(),
+                                            estado:53},
                                                 
              function (data, textStatus, jqXHR) {
-                 $("#vista_previa").val(data);
-                 $("#formMails").trigger("submit");
+                mostrarMensaje(data.mensaje,data.clase);
+                $("#sendMail").fadeOut();
              },
              "text"
          );
- 
+        } catch (error) {
+            mostrarMensaje(error,'mensaje_error');
+        }
         
+        return false;
+    });
+
+    $("#closeReq").click(function (e) { 
+        e.preventDefault();
+    
+        $("#pregunta").fadeIn();
+
+        return false;
+    });
+
+
+    $("#btnAceptarPregunta").click(function (e) { 
+        e.preventDefault();
+
+        $.post(RUTA+"atencion/culminaPedido", {id:$('#codigo_pedido').val(),
+                                                estado:52,
+                                                detalles:JSON.stringify(itemsSave())},
+            function (data, textStatus, jqXHR) {
+                if (data){
+                    mostrarMensaje("Pedido Culminado","mensaje_correcto");
+                }else{
+                    mostrarMensaje("Error,no se realizo la acción","mensaje_error");
+                }
+
+                $("#pregunta").fadeOut();
+            },
+            "text"
+        );
+
+        return false;
+    });
+
+    $("#btnCancelarPregunta").click(function (e) { 
+        e.preventDefault();
+
+        $("#pregunta").fadeOut();
+
         return false;
     });
 })
@@ -194,9 +235,9 @@ itemsSave = () =>{
     TABLA.each(function(){
         let IDPROD      = $(this).data('idprod'),
             CANTIDAD    = $(this).find('td').eq(5).text(),
-            IDX         = $(this).data('idx');
-            ATENDIDA    = $(this).find('td').eq(6).children().val()
-            OBSERVAC    = $(this).find('td').eq(6).children().val()
+            ITEMPEDIDO  = $(this).data('idx'),
+            ATENDIDA    = $(this).find('td').eq(6).children().val(),
+            OBSERVAC    = $(this).find('td').eq(8).children().val(),
             ESTADO      = $(this).data('grabado');
 
         item= {};
@@ -204,7 +245,7 @@ itemsSave = () =>{
         if (ESTADO == 1) {
             item['idprod']      = IDPROD;
             item['cantidad']    = CANTIDAD;
-            item['idx']         = IDX;
+            item['itempedido']  = ITEMPEDIDO;
             item['atendida']    = ATENDIDA;
             item['observac']    = OBSERVAC;
 

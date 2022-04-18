@@ -182,6 +182,7 @@ $(function(){
                         mostrarMensaje(data.mensaje,data.clase);
 
                         $("#fileAtachs").trigger("submit");
+                        $("#saveItem").addClass("desactivado");
                         
                         grabado = true;
                         accion = null;
@@ -555,6 +556,7 @@ $(function(){
                     //$("#closeMail,#closePreview,#closeProcess").trigger("click");
                     //$("#closeMail").trigger("click");
                     mostrarMensaje(response.mensaje,response.clase);
+                    $("#sendMail").fadeOut();
                 }
             });
 
@@ -574,6 +576,7 @@ itemsPreview = () =>{
             CANTIDAD    = $(this).find('td').eq(5).children().val(),
             NROPARTE    = $(this).find('td').eq(6).text();
             ITEMPEDIDO  = $(this).data('idx'),
+            OBSERVAC    = ""
 
         item= {};
         
@@ -584,6 +587,8 @@ itemsPreview = () =>{
         item['cantidad']    = CANTIDAD;
         item['nroparte']    = NROPARTE;
         item['itempedido']  = ITEMPEDIDO;
+        item['observac']    = OBSERVAC;
+        item['atendida']    = 0;
 
         DATA.push(item);
     })
@@ -600,7 +605,7 @@ itemsSave = () =>{
             UNIDAD      = $(this).data('codund'),
             CANTIDAD    = $(this).find('td').eq(5).children().val(),
             NROPARTE    = $(this).find('td').eq(6).text();
-            IDX       = $(this).data('idx');
+            IDX         = $(this).data('idx');
             CALIDAD     = $(this).find('td').eq(7).children().prop("checked"),
             ESTADO      = $(this).data('grabado');
 

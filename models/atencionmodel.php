@@ -126,16 +126,13 @@
             }
         }
 
-        public function enviarMensajes($asunto,$mensaje,$correos,$pedido,$detalles,$estado,$emitido){
+        public function enviarMensajeAprobacion($asunto,$mensaje,$correos,$pedido,$detalles,$estado,$emitido){
             require_once("public/PHPMailer/PHPMailerAutoload.php");
 
-            $this->subirAdjuntoCorreo($archivos);
-            
             $data       = json_decode($correos);
             $nreg       = count($data);
             $subject    = utf8_decode($asunto);
             $messaje    = utf8_decode($mensaje);
-            $countfiles = count( $archivos['name'] );
             $estadoEnvio= false;
             $clase = "mensaje_error";
             $salida = "";
@@ -169,17 +166,12 @@
     
                     $mail->Subject = $subject;
                     $mail->msgHTML(utf8_decode($messaje));
-                    
-                    $mail->AddAttachment('public/documentos/pedidos/emitidos/'.$emitido);
 
-                    for($i=0;$i<$countfiles;$i++){
-                        if (file_exists( 'public/documentos/correos/adjuntos/'.$archivos['name'][$i] )) {
-                            $mail->AddAttachment('public/documentos/correos/adjuntos/'.$archivos['name'][$i]);
-                        }
+                    if (file_exists( 'public/documentos/pedidos/emitidos/'.$emitido)) {
+                        $mail->AddAttachment('public/documentos/pedidos/emitidos/'.$emitido);
                     }
     
                     if (!$mail->send()) {
-                        //$mensaje = $mail->ErrorInfo;
                         $mensaje = "Mensaje de correo no enviado";
                         $estadoEnvio = false; 
                     }else {
@@ -199,6 +191,42 @@
                                 "clase"=>$clase );
 
                 return $salida;
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function cerrarPedido($id,$estado,$detalles){
+            try {
+                $sql = $this->db->connect()->prepare("UPDATE tb_pedidocab SET estadodoc=:est WHERE idreg=:id");
+                $sql->execute(["est"=>$estado,
+                                "id"=>$id]);
+                $rowCount = $sql->fetch();
+                
+                $this->cerrarItems($estado,$detalles);
+
+                return true;
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function cerrarItems($estado,$detalles){
+            try {
+                $datos = json_decode($detalles);
+                $nreg =  count($datos);
+                
+                for ($i=0; $i < $nreg; $i++) { 
+                    $p = $datos[$i]->itempedido;
+                    $c = $datos[$i]->cantidad;
+                    $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet SET estadoItem=:est,cant_atend=:aten,cant_resto=:resto WHERE iditem=:id");
+                    $sql->execute(["est"=>$estado,
+                                    "id"=>$p,
+                                    "aten"=>$c,
+                                    "resto"=>0]);
+                }
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;

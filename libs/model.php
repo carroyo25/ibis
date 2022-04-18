@@ -458,9 +458,20 @@
 
             try {
                 for ($i=0; $i < $nreg; $i++) { 
-                    $sql = $this->db->connect()->prepare("UPDATE $tabla SET estadoItem=:est WHERE iditem=:id");
-                    $sql->execute(["est"=>$valor,
-                                    "id"=>$datos[$i]->itempedido]);
+
+                    //esta linea es para cam biar los items 52 -- atendido en su total por almacen
+                    $estado = $datos[$i]->cantidad - $datos[$i]->atendida == 0 ? 52: $valor;
+                    $resto = $datos[$i]->cantidad - $datos[$i]->atendida;
+
+                    $sql = $this->db->connect()->prepare("UPDATE $tabla SET estadoItem=:est,observAlmacen=:obs,
+                                                                            cant_atend=:aten,
+                                                                            cant_resto=:resto
+                                                                        WHERE iditem=:id");
+                    $sql->execute(["est"=>$estado,
+                                    "id"=>$datos[$i]->itempedido,
+                                    "obs"=>$datos[$i]->observac,
+                                    "aten"=>$datos[$i]->atendida,
+                                    "resto"=>$resto]);
                 }
                 
             } catch (PDOException $th) {
@@ -962,6 +973,8 @@
                     $detalles = $this->consultarDetallesProceso($id);
                 }else if ( $proceso == 51){
                     $detalles = $this->consultarDetallesStock($id);
+                }else if ( $proceso == 53 ){
+                    $detalles = $this->consultarDetallesAprobacion($id);
                 }
                     
 
@@ -1075,6 +1088,67 @@
                                                         onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"
                                                         onclick="this.select()" 
                                                         value=""
+                                                        class="valorAtendido">
+                                        </td>
+                                        <td></td>
+                                        <td class="textoCentro"><input type="text"></td>
+                                    </tr>';
+                    }
+                }
+                
+                return $salida;
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        private function consultarDetallesAprobacion($id){
+            try {
+                $salida ="";
+
+                $sql=$this->db->connect()->prepare("SELECT
+                                                    tb_pedidodet.iditem,
+                                                    tb_pedidodet.idpedido,
+                                                    tb_pedidodet.idprod,
+                                                    tb_pedidodet.idtipo,
+                                                    tb_pedidodet.nroparte,
+                                                    tb_pedidodet.unid,
+                                                    FORMAT(tb_pedidodet.cant_pedida,2) AS cant_pedida,
+                                                    FORMAT(tb_pedidodet.cant_atend,2) AS cant_atendida,
+                                                    FORMAT(tb_pedidodet.cant_resto,2) AS cant_pendiente,
+                                                    tb_pedidodet.estadoItem,
+                                                    cm_producto.ccodprod,
+                                                    cm_producto.cdesprod,
+                                                    tb_unimed.cabrevia,
+                                                    tb_pedidodet.nflgqaqc 
+                                                FROM
+                                                    tb_pedidodet
+                                                    INNER JOIN cm_producto ON tb_pedidodet.idprod = cm_producto.id_cprod
+                                                    INNER JOIN tb_unimed ON tb_pedidodet.unid = tb_unimed.ncodmed 
+                                                WHERE
+                                                    tb_pedidodet.idpedido = :id");
+                $sql->execute(["id"=>$id]);
+                $rowCount = $sql->rowCount();
+                
+                if ($rowCount > 0){
+                    $filas = 1;
+                    while ($rs = $sql->fetch()) {
+                        
+                        $salida .='<tr data-grabado="1" data-idprod="'.$rs['idprod'].'" data-codund="'.$rs['unid'].'" data-idx="'.$rs['iditem'].'">
+                                        <td class="textoCentro">'.str_pad($filas++,3,0,STR_PAD_LEFT).'</td>
+                                        <td class="textoCentro">'.$rs['ccodprod'].'</td>
+                                        <td class="pl20px">'.$rs['cdesprod'].'</td>
+                                        <td class="textoCentro">'.$rs['cabrevia'].'</td>
+                                        <td class="textoCentro">'.$rs['cant_pedida'].'</td>
+                                        <td class="textoCentro">'.$rs['cant_atendida'].'</td>
+                                        <td>
+                                            <input type="number" 
+                                                        step="any" 
+                                                        placeholder="0.00" 
+                                                        onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"
+                                                        onclick="this.select()" 
+                                                        value="'.$rs['cant_pendiente'].'"
                                                         class="valorAtendido">
                                         </td>
                                         <td></td>
