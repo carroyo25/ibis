@@ -440,12 +440,13 @@
             }
         }
 
-        public function actualizarCabecera($tabla,$valor,$id,$emitido){
+        public function actualizarCabecera($tabla,$valor,$id,$emitido,$aprueba){
             try {
                 $sql = $this->db->connect()->prepare("UPDATE $tabla SET estadodoc=:est,docPdfEmit=:emit WHERE idreg=:id");
                 $sql->execute(["est"=>$valor,
                                 "id"=>$id,
-                                "emit"=>$emitido]);
+                                "emit"=>$emitido,
+                                "aut"=>$aprueba]);
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
@@ -734,7 +735,7 @@
             }
         }
 
-         public function obtenerIndice($codigo,$query){
+        public function obtenerIndice($codigo,$query){
             try {
                 $sql = $this->db->connect()->prepare("$query");
                 $sql->execute(["id"=>$codigo]);
@@ -745,10 +746,10 @@
                 echo "Error: ".$th->getMessage();
                 return false;
             }
-         }
+        }
 
          //listado de productos
-         public function listarProductos($tipo){
+        public function listarProductos($tipo){
              try {
                  $salida = "";
                  $sql = $this->db->connect()->prepare("SELECT
@@ -782,7 +783,7 @@
                 echo "Error: ".$th->getMessage;
                 return false;
             }
-         }
+        }
 
          //codigo de ubigeo
         public function getUbigeo($nivel,$prefijo){
@@ -815,21 +816,8 @@
         public function buscarRol($rol,$cc){
             try {
                 $salida = "";
-                if ($rol == 4){
-                    
-                    $sql = $this->db->connect()->prepare("SELECT
-                                                        ibis.tb_user.ccorreo AS correo,
-                                                        ibis.tb_user.nrol,
-                                                        rrhh.tabla_aquarius.nombres, 
-                                                        rrhh.tabla_aquarius.apellidos 
-                                                    FROM
-                                                        ibis.tb_user
-                                                        INNER JOIN rrhh.tabla_aquarius ON ibis.tb_user.ncodper = rrhh.tabla_aquarius.internal 
-                                                    WHERE
-                                                        tb_user.nrol =:rol");
-                    $sql->execute(["rol"=>$rol]);
-                }   
-                else{
+
+                if ($rol != 3){
                     $sql = $this->db->connect()->prepare("SELECT
                                                         ibis.tb_costusu.ncodcos,
                                                         ibis.tb_costusu.ncodproy,
@@ -848,6 +836,20 @@
                                                         AND ibis.tb_costusu.ncodproy = :cc");
                     $sql->execute(["rol"=>$rol,
                     "cc"=>$cc]);
+                }   
+                else {
+                    $sql = $this->db->connect()->prepare("SELECT
+                                                        ibis.tb_user.ccorreo AS correo,
+                                                        ibis.tb_user.nrol,
+                                                        rrhh.tabla_aquarius.nombres, 
+                                                        rrhh.tabla_aquarius.apellidos 
+                                                    FROM
+                                                        ibis.tb_user
+                                                        INNER JOIN rrhh.tabla_aquarius ON ibis.tb_user.ncodper = rrhh.tabla_aquarius.internal 
+                                                    WHERE
+                                                        tb_user.nrol =:rol");
+                    $sql->execute(["rol"=>$rol]);
+                    
                 }
                 
                 $rowCount = $sql->rowCount();
@@ -916,45 +918,51 @@
         public function consultarReqId($id,$min,$max,$proceso){
             try {
                 $sql = $this->db->connect()->prepare("SELECT
-                                                        ibis.tb_pedidocab.idreg,
-                                                        ibis.tb_pedidocab.idcostos,
-                                                        ibis.tb_pedidocab.idarea,
-                                                        ibis.tb_pedidocab.idtrans,
-                                                        ibis.tb_pedidocab.idsolicita,
-                                                        ibis.tb_pedidocab.idtipomov,
-                                                        ibis.tb_pedidocab.emision,
-                                                        ibis.tb_pedidocab.vence,
-                                                        ibis.tb_pedidocab.estadodoc,
-                                                        ibis.tb_pedidocab.nrodoc,
-                                                        ibis.tb_pedidocab.usuario,
-                                                        ibis.tb_pedidocab.concepto,
-                                                        ibis.tb_pedidocab.detalle,
-                                                        ibis.tb_pedidocab.nivelAten,
-                                                        ibis.tb_pedidocab.docfPdfPrev,
-                                                        ibis.tb_pedidocab.docPdfEmit,
-                                                        ibis.tb_pedidocab.docPdfAprob,
-                                                        ibis.tb_pedidocab.verificacion,
-                                                        CONCAT( rrhh.tabla_aquarius.apellidos, ' ', rrhh.tabla_aquarius.nombres ) AS nombres,
+                                                        ibis.tb_pedidocab.idreg, 
+                                                        ibis.tb_pedidocab.idcostos, 
+                                                        ibis.tb_pedidocab.idarea, 
+                                                        ibis.tb_pedidocab.idtrans, 
+                                                        ibis.tb_pedidocab.idsolicita, 
+                                                        ibis.tb_pedidocab.idtipomov, 
+                                                        ibis.tb_pedidocab.emision, 
+                                                        ibis.tb_pedidocab.vence, 
+                                                        ibis.tb_pedidocab.estadodoc, 
+                                                        ibis.tb_pedidocab.nrodoc, 
+                                                        ibis.tb_pedidocab.usuario, 
+                                                        ibis.tb_pedidocab.concepto, 
+                                                        ibis.tb_pedidocab.detalle, 
+                                                        ibis.tb_pedidocab.nivelAten, 
+                                                        ibis.tb_pedidocab.docfPdfPrev, 
+                                                        ibis.tb_pedidocab.docPdfEmit, 
+                                                        ibis.tb_pedidocab.docPdfAprob, 
+                                                        ibis.tb_pedidocab.verificacion, 
+                                                        CONCAT( rrhh.tabla_aquarius.apellidos, ' ', rrhh.tabla_aquarius.nombres ) AS nombres, 
                                                         UPPER(
-                                                        CONCAT( ibis.tb_proyectos.ccodproy, ' ', ibis.tb_proyectos.cdesproy )) AS proyecto,
+                                                        CONCAT( ibis.tb_proyectos.ccodproy, ' ', ibis.tb_proyectos.cdesproy )) AS proyecto, 
                                                         UPPER(
-                                                        CONCAT( ibis.tb_area.ccodarea, ' ', ibis.tb_area.cdesarea )) AS area,
+                                                        CONCAT( ibis.tb_area.ccodarea, ' ', ibis.tb_area.cdesarea )) AS area, 
                                                         UPPER(
-                                                        CONCAT( ibis.tb_parametros.nidreg, ' ', ibis.tb_parametros.cdescripcion )) AS transporte,
-                                                        estados.cdescripcion AS estado,
-                                                        estados.cabrevia,
+                                                        CONCAT( ibis.tb_parametros.nidreg, ' ', ibis.tb_parametros.cdescripcion )) AS transporte, 
+                                                        estados.cdescripcion AS estado, 
+                                                        estados.cabrevia, 
                                                         UPPER(
-                                                        CONCAT_WS( ' ', tipos.nidreg, tipos.cdescripcion )) AS tipo,
-                                                        ibis.tb_proyectos.veralm 
+                                                        CONCAT_WS( ' ', tipos.nidreg, tipos.cdescripcion )) AS tipo, 
+                                                        ibis.tb_proyectos.veralm, 
+                                                        ibis.tb_user.cnombres
                                                     FROM
                                                         ibis.tb_pedidocab
-                                                        INNER JOIN rrhh.tabla_aquarius ON ibis.tb_pedidocab.idsolicita = rrhh.tabla_aquarius.internal
-                                                        INNER JOIN ibis.tb_proyectos ON ibis.tb_pedidocab.idcostos = ibis.tb_proyectos.nidreg
-                                                        INNER JOIN ibis.tb_area ON ibis.tb_pedidocab.idarea = ibis.tb_area.ncodarea
-                                                        INNER JOIN ibis.tb_parametros ON ibis.tb_pedidocab.idtrans = ibis.tb_parametros.nidreg
-                                                        INNER JOIN ibis.tb_parametros AS transportes ON ibis.tb_pedidocab.idtrans = transportes.nidreg
-                                                        INNER JOIN ibis.tb_parametros AS estados ON ibis.tb_pedidocab.estadodoc = estados.nidreg
-                                                        INNER JOIN ibis.tb_parametros AS tipos ON ibis.tb_pedidocab.idtipomov = tipos.nidreg 
+                                                        INNER JOIN
+                                                        rrhh.tabla_aquarius
+                                                        ON 
+                                                            ibis.tb_pedidocab.idsolicita = rrhh.tabla_aquarius.internal
+                                                        INNER JOIN
+                                                    ibis.tb_proyectos ON ibis.tb_pedidocab.idcostos = ibis.tb_proyectos.nidreg
+                                                    INNER JOIN ibis.tb_area ON ibis.tb_pedidocab.idarea = ibis.tb_area.ncodarea
+                                                    INNER JOIN ibis.tb_parametros ON ibis.tb_pedidocab.idtrans = ibis.tb_parametros.nidreg
+                                                    INNER JOIN ibis.tb_parametros AS transportes ON ibis.tb_pedidocab.idtrans = transportes.nidreg
+                                                    INNER JOIN ibis.tb_parametros AS estados ON ibis.tb_pedidocab.estadodoc = estados.nidreg
+                                                    INNER JOIN ibis.tb_parametros AS tipos ON ibis.tb_pedidocab.idtipomov = tipos.nidreg
+                                                    INNER JOIN ibis.tb_user ON ibis.tb_pedidocab.usuario = ibis.tb_user.iduser 
                                                     WHERE
                                                         tb_pedidocab.idreg = :id 
                                                         AND tb_pedidocab.estadodoc BETWEEN :min 
@@ -1153,6 +1161,7 @@
                                         </td>
                                         <td></td>
                                         <td class="textoCentro"><input type="text"></td>
+                                        <td class="textoCentro"><input type="checkbox" checked></td>
                                     </tr>';
                     }
                 }

@@ -296,7 +296,8 @@
 .ventanaPregunta,
 .ventanaArchivos,
 .ventanaVistaPrevia,
-.ventanaCorreo {
+.ventanaCorreo,
+.ventanaAdjuntos {
   background: #fff;
   position: absolute;
   top: 50%;
@@ -312,6 +313,67 @@
 }
 .ventanaProceso .primeraBarra {
   border-radius: 8px 8px 0 0;
+}
+
+.ventanaAdjuntos {
+  width: 45%;
+  border-radius: 8px;
+  height: 35rem;
+}
+.ventanaAdjuntos object, .ventanaAdjuntos iframe {
+  width: 100%;
+  height: 100%;
+}
+.ventanaAdjuntos .tituloAdjuntos {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  padding: 1rem;
+}
+.ventanaAdjuntos ul {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  height: 6rem;
+  width: 95%;
+  border: 1px solid #E0E0E0;
+  margin-left: 1rem;
+  margin-right: 1rem;
+  padding: 1rem;
+  overflow: auto;
+}
+.ventanaAdjuntos ul li {
+  border: 1px solid #fff;
+  height: 4rem;
+}
+.ventanaAdjuntos ul li a {
+  display: block;
+  text-align: center;
+  width: 6rem;
+  padding: 0.3rem;
+  -webkit-transition: 0.5s;
+  transition: 0.5s;
+  border-radius: 8px;
+}
+.ventanaAdjuntos ul li a:hover {
+  background: rgba(0, 120, 212, 0.4);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+          backdrop-filter: saturate(180%) blur(20px);
+}
+.ventanaAdjuntos ul li i {
+  font-size: 2rem;
+  margin-bottom: 5px;
+}
+.ventanaAdjuntos ul li p {
+  font-size: 0.6rem;
+  text-align: justify;
+  height: 1.5rem;
+  overflow: hidden;
 }
 
 .ventanaVistaPrevia {

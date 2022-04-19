@@ -18,6 +18,7 @@ $(function(){
                 $("#codigo_verificacion").val(data.cabecera[0].verificacion);
                 $("#codigo_atencion").val(data.cabecera[0].nivelAten);
                 $("#emitido").val(data.cabecera[0].docPdfEmit);
+                $("#elabora").val(data.cabecera[0].cnombres);
                 $("#numero").val(numero);
                 $("#emision").val(data.cabecera[0].emision);
                 $("#costos").val(data.cabecera[0].proyecto);
@@ -89,4 +90,172 @@ $(function(){
 
         return false;
     });
+
+    $("#viewAtach").click(function (e) { 
+        e.preventDefault();
+
+        $.post(RUTA+"aprobacion/adjuntos", {id:$("#codigo_pedido").val()},
+            function (data, textStatus, jqXHR) {
+                if (data.archivos > 0){
+                    $("#listaAdjuntos")
+                        .empty()
+                        .append(data.adjuntos);
+                        $("#vistaAdjuntos").fadeIn();
+                }else{
+                    mostrarMensaje("No hay archivos adjuntos","mensaje_error");
+                }
+            },
+            "json"
+        );
+        
+        
+        
+        return false;
+    });
+
+    $("#closeAtach").click(function (e) { 
+        e.preventDefault();
+
+        $(".ventanaAdjuntos iframe").attr("src","");
+        $("#vistaAdjuntos").fadeOut();
+
+        return false;
+    });
+
+    $("#vistaAdjuntos").on("click","a", function (e) {
+        e.preventDefault();
+        
+        $(".ventanaAdjuntos iframe")
+            .attr("src","")
+            .attr("src","public/documentos/pedidos/adjuntos/"+$(this).attr("href"));
+        
+        return false;
+    });
+
+    $("#requestAprob").click(function (e) { 
+        e.preventDefault();
+        
+        $.post(RUTA+"aprobacion/buscaRol", {rol:$(this).data("rol"),cc:$("#codigo_costos").val()},
+            function (data, textStatus, jqXHR) {
+                $("#listaCorreos tbody").empty().append(data);
+                $("#sendMail").fadeIn();
+            },
+            "text"
+        );
+        return false;
+    });
+
+    $("#closeMail").click(function (e) { 
+        e.preventDefault();
+
+        $("form")[2].reset();
+        $(".atachs").empty();
+        $(".messaje div").empty();
+        $("#sendMail").fadeOut();
+
+        return false;
+    });
+
+    $("#btnConfirmSend").click(function (e) { 
+        e.preventDefault();
+
+
+        try {
+            if ($("#subject").val() =="") throw "Escriba el asunto";
+            if ($("messaje div").html() =="") throw "Escriba el asunto";
+
+            let result = {};
+
+            $.each($("#formProceso").serializeArray(),function(){
+                result[this.name] = this.value;
+            });
+            
+            $.post(RUTA+"aprobacion/correos", {pedido:$("#codigo_pedido").val(),
+                                            detalles:JSON.stringify(itemsPreview()),
+                                            correos:JSON.stringify(mailsList()),
+                                            adjunto:$("#emitido").val(),
+                                            asunto:$("#subject").val(),
+                                            mensaje:$(".messaje div").html(),
+                                            estado:54,
+                                            cabecera:result},
+                                                
+             function (data, textStatus, jqXHR) {
+                //mostrarMensaje(data.mensaje,data.clase);
+                //$("#sendMail").fadeOut();
+             },
+             "text"
+         );
+        } catch (error) {
+            mostrarMensaje(error,'mensaje_error');
+        }
+        
+        return false;
+    });
 })
+
+itemsPreview = () =>{
+    DATA = [];
+    let TABLA = $("#tablaDetalles tbody >tr");
+
+    TABLA.each(function(){
+        let ITEM        = $(this).find('td').eq(0).text(),
+            CODIGO      = $(this).find('td').eq(1).text(),
+            DESCRIPCION = $(this).find('td').eq(2).text(),
+            UNIDAD      = $(this).find('td').eq(3).text(),
+            CANTIDAD    = $(this).find('td').eq(4).text(),
+            ATENDIDA    = $(this).find('td').eq(5).text(),
+            APROBADA    = $(this).find('td').eq(6).children().val(),
+            NROPARTE    = $(this).find('td').eq(7).text(),
+            OBSERVA     = $(this).find('td').eq(8).children().val(),
+            VERIFICA    = $(this).find('td').eq(9).children().prop("checked"),
+            ITEMPEDIDO  = $(this).data('idx');
+            OBSERVAC    = ""
+
+        item= {};
+        
+        if (VERIFICA){
+            item['item']        = ITEM;
+            item['codigo']      = CODIGO;
+            item['descripcion'] = DESCRIPCION;
+            item['unidad']      = UNIDAD;
+            item['cantidad']    = CANTIDAD;
+            item['nroparte']    = NROPARTE;
+            item['itempedido']  = ITEMPEDIDO;
+            item['observa']     = OBSERVA;
+            item['atendida']    = ATENDIDA;
+            item['aprobada']    = APROBADA;
+            item['verifica']    = VERIFICA;
+    
+            DATA.push(item);
+        }
+       
+    })
+
+    return DATA;
+}
+
+
+
+mailsList = () => {
+    CORREOS = [];
+
+    let TABLA =  $("#listaCorreos tbody >tr");
+
+    TABLA.each(function(){
+        let CORREO      = $(this).find('td').eq(1).text(),
+            NOMBRE      = $(this).find('td').eq(0).text(),
+            ENVIAR      = $(this).find('td').eq(2).children().prop("checked"),
+
+        item= {};
+        
+        if (ENVIAR) {
+            item['nombre']= NOMBRE;
+            item['correo']= CORREO;
+
+            CORREOS.push(item);
+        }
+        
+    })
+
+    return CORREOS;
+}

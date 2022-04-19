@@ -321,7 +321,7 @@
 
                 if ($estadoEnvio){
                     $clase = "mensaje_correcto";
-                    $this->actualizarCabecera("tb_pedidocab",$estado,$pedido,$emitido);
+                    $this->actualizarCabecera("tb_pedidocab",$estado,$pedido,$emitido,null);
                     $this->actualizarDetalles("tb_pedidodet",$estado,$detalles);
                 }
 

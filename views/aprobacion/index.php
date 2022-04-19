@@ -19,21 +19,22 @@
                     <input type="hidden" name="codigo_pedido" id="codigo_pedido">
                     <input type="hidden" name="codigo_estado" id="codigo_estado">
                     <input type="hidden" name="codigo_atencion" id="codigo_atencion">
+                    <input type="hidden" name="elabora" id="elabora">
                     <input type="hidden" name="emitido" id="emitido">
 
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
                         <div>
-                            <button type="button" id="closeReq" title="Atender todos el pedido por almacen" class="boton3">
+                            <button type="button" id="viewAtach" title="Ver los adjuntos del pedidos" class="boton3">
                                 <span><i class="far fa-save"></i> Ver Adjuntos</span> 
                             </button>
                             <button type="button" id="preview" title="Vista Previa" class="boton3">
                                 <i class="fab fa-wpexplorer"></i> Ver Pedido
                             </button>
-                            <button type="button" id="requestAprob"  data-rol="3" data-estado="53" title="Solicitar Aprobacion" class="boton3">
+                            <button type="button" id="requestAprob"  data-rol="68" data-estado="54" title="Solicitar Aprobacion" class="boton3">
                                 <i class="fas fa-award"></i> Aprobar Pedidos
                             </button>
-                            <button type="button" id="closeProcess" title="Cerrar" class="boton3">
+                            <button type="button" id="closeProcess" title="Cierra la ventana actual" class="boton3">
                                 <i class="fas fa-window-close"></i>
                             </button>
                         </div>
@@ -112,6 +113,7 @@
                                     <th>Cant.</br>Aprobada</th>
                                     <th>Nro.</br>Parte</th>
                                     <th>Observaciones</th>
+                                    <th>...</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -122,6 +124,77 @@
                 </form>
             </div>
         </div>
+    </div>
+    <div class="modal" id="vistaprevia">
+        <div class="ventanaVistaPrevia">
+            <div class="tituloVista">
+                <h3>Vista Previa</h3>
+                <a href="#" id="closePreview" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
+            </div>
+            <iframe src=""></iframe>
+        </div>
+    </div>
+    <div class="modal" id="vistaAdjuntos">
+        <div class="ventanaAdjuntos">
+            <div class="tituloAdjuntos">
+                <h3>Adjuntos Pedido</h3>
+                <a href="#" id="closeAtach" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
+            </div>
+            <ul id="listaAdjuntos">
+
+            </ul>
+            <iframe src=""></iframe>
+        </div>
+    </div>
+    <div class="modal" id="sendMail">
+        <form action="#" method="post" id="formMails">
+            <input type="hidden" name="estadoPedido" id="estadoPedido">
+            <div class="ventanaCorreo">
+                    <input type="file" name="mailAtach[]" id="mailAtach" multiple class="oculto">
+                    <div class="tituloCorreo">
+                        <h3 class="w100por">Enviar Correo</h3>
+                        <a href="#" id="closeMail" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
+                        <hr>
+                    </div>
+                    <div class="cuerpoCorreo">
+                        <div class="correoIzq">
+                            <div class="asunto">
+                                <label for="subject">Asunto :</label>
+                                <input type="text" name="subject" id="subject">
+                            </div>
+                            <div class="opciones">
+                                <button class="boton3 js-boton" data-type="bold" type="button"><i class="fas fa-bold"></i></button>
+                                <button class="boton3 js-boton" data-type="italic" type="button"><i class="fas fa-italic"></i></button>
+                                <button class="boton3 oculto" id="btnAtach"><i class="fas fa-paperclip" ></i></button>
+                            </div>
+                            <div class="messaje">
+                                <div contenteditable="true">
+
+                                </div>
+                            </div>
+                            <div class="commands">
+                                <button class="boton3" id="btnConfirmSend">Enviar</button>
+                            </div>
+                        </div>
+                        <div class="correoDerch">
+                            <h4>Correos</h4>
+                            <table id="listaCorreos" class="tabla">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Correo</th>
+                                        <th>...</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                
+            </div>
+        </form>
     </div>
     <div class="cabezaModulo">
         <h1>Requerimientos Bienes/Servicios</h1>
