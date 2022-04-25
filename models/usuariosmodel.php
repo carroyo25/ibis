@@ -162,10 +162,15 @@
                                     "mensaje"=>"El usuario ya existe");
                 }else {
                     $id = uniqid();
+                    
+                    //$this->primerosNombres($nombres,$apellidos)
+
+                    $nombres = "";
 
                     $sql = $this->db->connect()->prepare("INSERT INTO tb_user 
                                                         SET iduser=:id,
                                                             cnameuser=:user,
+                                                            cnombres=:nombres,
                                                             cclave=:clave,
                                                             ncodper=:internal,
                                                             nrol=:rol,
@@ -183,7 +188,8 @@
                                     "fdesde"=>$cabecera['desde'],
                                     "fhasta"=>$cabecera['hasta'],
                                     "estado"=>$cabecera['cod_est'],
-                                    "iniciales"=>$cabecera['iniciales']]);
+                                    "iniciales"=>$cabecera['iniciales'],
+                                    "nombres"=>$cabecera['nombre']]);
                     $rowcount = $sql->rowcount();
     
                     if ($rowcount) {
@@ -314,6 +320,23 @@
                     echo 'Huy problemas';
                 }
                 
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function mostrarClave($id){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT cclave FROM tb_user WHERE iduser=:id LIMIT 1");
+                $sql->execute(["id"=>$id]);
+                
+                $result = $sql->fetchAll();
+
+                $clave = $this->decryptPass($result[0]['cclave']);
+
+                return $clave;
+
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
@@ -507,7 +530,5 @@
             }
             return $salida;
         }
-
-        
     }
 ?>

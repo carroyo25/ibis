@@ -7,7 +7,7 @@ $transparente_negro: rgba(0,0,0,0.5);
 $transparente_blanco: rgba(255,255,255,0.1);
 $fondo_menus:#005D84;
 $negro:#000;
-$notificacion:#B10417;
+$notificacion:#EF1313;
 $iniciales:#B461A3;
 $activo:#7DCB3D;
 
@@ -245,9 +245,7 @@ input[type=number]::-webkit-outer-spin-button {
     cursor: default;
 }
 
-.textoDerecha {
-    text-align: right;
-}
+
 
 .flex_center{
     display: flex;
@@ -283,6 +281,10 @@ input[type=number]::-webkit-outer-spin-button {
     padding-left: 20px;
 }
 
+.pr5px{
+    padding-right: 5px;
+}
+
 .pr20px{
     padding-right: 20px;
 }
@@ -311,6 +313,10 @@ input[type=number]::-webkit-outer-spin-button {
 
 .textoCentro{
     text-align: center;
+}
+
+.textoDerecha {
+    text-align: right;
 }
 
 .oculto{

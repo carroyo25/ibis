@@ -149,7 +149,7 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 .inactivo {
-  background: #B10417;
+  background: #EF1313;
 }
 
 .areaTrabajo {
@@ -231,10 +231,6 @@ input[type=number]::-webkit-outer-spin-button {
   cursor: default;
 }
 
-.textoDerecha {
-  text-align: right;
-}
-
 .flex_center {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -257,7 +253,7 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 .urgente {
-  background: #B10417;
+  background: #EF1313;
   color: #fff;
 }
 
@@ -271,6 +267,10 @@ input[type=number]::-webkit-outer-spin-button {
 
 .pl20px {
   padding-left: 20px;
+}
+
+.pr5px {
+  padding-right: 5px;
 }
 
 .pr20px {
@@ -303,6 +303,10 @@ input[type=number]::-webkit-outer-spin-button {
 
 .textoCentro {
   text-align: center;
+}
+
+.textoDerecha {
+  text-align: right;
 }
 
 .oculto {

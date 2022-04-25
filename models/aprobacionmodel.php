@@ -34,7 +34,8 @@
                                                         INNER JOIN ibis.tb_parametros AS atencion ON ibis.tb_pedidocab.nivelAten = atencion.nidreg 
                                                     WHERE
                                                         tb_costusu.id_cuser = :user 
-                                                        AND tb_pedidocab.estadodoc = 53");
+                                                        AND tb_pedidocab.estadodoc = 53
+                                                        AND tb_costusu.nflgactivo = 1");
                 $sql->execute(["user"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowCount();
 
@@ -84,11 +85,10 @@
             }
         }
 
-        public function enviarMensajeAprobado($asunto,$mensaje,$correos,$pedido,$detalles,$estado,$cabecera){
+        public function enviarCorreo($asunto,$mensaje,$correos,$pedido,$detalles,$estado,$cabecera){
             require_once("public/PHPMailer/PHPMailerAutoload.php");
 
             $adjunto = $this->genReqAprob($cabecera,$detalles);
-            $adjunto = $adjunto.".pdf"; 
 
             $data       = json_decode($correos);
             $nreg       = count($data);
@@ -99,7 +99,7 @@
             $salida = "";
             
             $origen = $_SESSION['user']."@sepcon.net";
-            $nombre_envio = $_SESSION['user'];
+            $nombre_envio = $_SESSION['nombres'];
 
             $mail = new PHPMailer;
             $mail->isSMTP();
@@ -123,7 +123,7 @@
                 $mail->setFrom($origen,$nombre_envio);
 
                 for ($i=0; $i < $nreg; $i++) {
-                    $mail->addAddress($data[$i]->correo,$data[$i]->nombre);
+                    $mail->addAddress($data[$i]->correo,utf8_decode($data[$i]->nombre));
     
                     $mail->Subject = $subject;
                     $mail->msgHTML(utf8_decode($messaje));
@@ -156,7 +156,6 @@
                 echo $th->getMessage();
                 return false;
             }
-            
         }
 
         private function actCabPedAprueba($estado,$pedido,$aprobado){
@@ -183,11 +182,11 @@
                 for ($i=0; $i < $nreg ; $i++) { 
                     $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet 
                                                             SET estadoItem=:est,
-                                                                cant_aprob=cantaprob,
-                                                                nflgaprobado=swaprob,
-                                                                idaprueba=usraprob,
-                                                                obsAprueba=obaprueba,
-                                                                faprobado=fecaprob 
+                                                                cant_aprob=:cantaprob,
+                                                                nflgaprobado=:swaprob,
+                                                                idaprueba=:usraprob,
+                                                                obsAprueba=:obaprueba,
+                                                                faprobado=:fecaprob 
                                                             WHERE iditem=:id");
                     $sql->execute(["est"=>$estado,
                                     "id"=>$datos[$i]->itempedido,

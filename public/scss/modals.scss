@@ -14,12 +14,38 @@
     font-size: 1.2rem;
 }
 
+.mensaje_error, .mensaje_correcto{
+	span {
+		font-size: 20px;
+
+		&:before{
+			margin-right: 30px;
+			font-size: 2rem;
+			font-family: "Font Awesome 5 Free";
+  			font-weight: 900;
+  			display: inline-block;
+  			vertical-align: middle;
+		}
+	}
+}
+
 .mensaje_error{
-    background: #8d0404a1;
+    background: rgba(tomato, .8);
+
+    span {
+		&:before{
+  			content: "\f057";
+		}
+	}
 }
 
 .mensaje_correcto{
-    background:rgb(6, 138, 6);
+    background: rgba(yellowgreen,.8);
+    span {
+		&:before{
+  			content: "\f164";
+		}
+	}
 }
 
 .modal{

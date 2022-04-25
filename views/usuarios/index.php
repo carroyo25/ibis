@@ -39,6 +39,24 @@
         </div>
     </div>
     <div class="modal" id="pregunta">
+        <div class="ventanaPregunta">
+            <h3>Desea culminar el pedido?</h3>
+            <div>
+                <button type="button" id="btnAceptarPregunta">Aceptar</button>
+                <button type="button" id="btnCancelarPregunta">Cancelar</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="dialogo">
+        <div class="ventanaDialogo">
+            <h3>Clave del sistema</h3>
+            <div>
+                <span id="claveUsuario">Aca ira la clave</span>
+            </div>
+            <div>
+                <button type="button" id="btnAceptarDialogo">Aceptar</button>
+            </div>
+        </div>
     </div>
     <div class="modal" id="proceso">
         <div class="ventanaProceso">

@@ -1,10 +1,8 @@
 $(function(){
-    accion = "";
-
     $("#tablaPrincipal tbody").on("click","tr", function (e) {
         e.preventDefault();
 
-        $.post(RUTA+"atencion/consultaId", {id:$(this).data("indice")},
+       $.post(RUTA+"cotizacion/consultaId", {id:$(this).data("indice")},
             function (data, textStatus, jqXHR) {
                 
                 let numero = $.strPad(data.cabecera[0].nrodoc,6);
@@ -19,7 +17,8 @@ $(function(){
                 $("#codigo_estado").val(data.cabecera[0].estadodoc);
                 $("#codigo_verificacion").val(data.cabecera[0].verificacion);
                 $("#codigo_atencion").val(data.cabecera[0].nivelAten);
-                $("#emitido").val(data.cabecera[0].docPdfEmit);
+                $("#aprobado").val(data.cabecera[0].docPdfAprob);
+                $("#elabora").val(data.cabecera[0].cnombres);
                 $("#numero").val(numero);
                 $("#emision").val(data.cabecera[0].emision);
                 $("#costos").val(data.cabecera[0].proyecto);
@@ -31,7 +30,6 @@ $(function(){
                 $("#vence").val(data.cabecera[0].vence);
                 $("#estado").val(data.cabecera[0].estado);
                 $("#espec_items").val(data.cabecera[0].detalle);
-
                 
                 $("#tablaDetalles tbody")
                     .empty()
@@ -40,8 +38,6 @@ $(function(){
                 $("#estado")
                     .removeClass()
                     .addClass(estado);
-                
-                grabado = true;
             },
             "json"
         );
@@ -54,7 +50,7 @@ $(function(){
     $("#closeProcess").click(function (e) { 
         e.preventDefault();
 
-        $.post(RUTA+"atencion/actualizaListado",
+        /*$.post(RUTA+"aprobacion/actualizaListado",
             function (data, textStatus, jqXHR) {
                 $(".itemsTabla table tbody")
                     .empty()
@@ -67,21 +63,29 @@ $(function(){
                 });
             },
             "text"
-        );
+        );*/
 
         $("#proceso").fadeOut();
         
         return false;  
     });
 
+    $("#viewAtach").click(function (e) { 
+        e.preventDefault();
+        
+        mostrarMensaje("mensaje","mensaje_correcto");
+        
+        return false;
+    });
+
     $("#preview").click(function (e) { 
         e.preventDefault();
-    
+
         $(".ventanaVistaPrevia iframe")
             .attr("src","")
-            .attr("src","public/documentos/pedidos/emitidos/"+$("#emitido").val());
-
-            $("#vistaprevia").fadeIn();
+            .attr("src","public/documentos/pedidos/aprobados/"+$("#aprobado").val());
+        
+        $("#vistaprevia").fadeIn();
         
         return false;
     });
@@ -95,51 +99,10 @@ $(function(){
         return false;
     });
 
-    $("#tablaDetalles tbody").on("focusout",".valorAtendido", function (e) {
-        e.preventDefault();
-
-        let cant_pedida = $(this).parent().parent().find('td').eq(5).text()
-        let cant_atendida = $(this).val();
-        let resultado = cant_pedida - cant_atendida;
-
-        if (resultado < 0){
-            mostrarMensaje("Verifique la cantidad ingresada","mensaje_error");
-        }
-
-        return false;
-    });
-
-    $("#tablaDetalles tbody").on("click","a", function (e) {
-        e.preventDefault();
-
-        $.post(RUTA+"atencion/existenciaProducto",{id:$(this).attr("href")},
-            function (data, textStatus, jqXHR) {
-                $("#tablaExistencias tbody")
-                    .empty()
-                    .append(data);
-        
-                    $("#archivos").fadeIn();
-                
-            },
-            "text"
-        );
-
-
-        return false;s
-    });
-
-    $("#btnConfirmAtach").click(function (e) { 
-        e.preventDefault();
-        
-        $("#archivos").fadeOut();
-
-        return false;
-    });
-
     $("#requestAprob").click(function (e) { 
         e.preventDefault();
 
-        $.post(RUTA+"atencion/buscaRol", {rol:3,cc:$("#codigo_costos").val()},
+        $.post(RUTA+"cotizacion/proveedores",
             function (data, textStatus, jqXHR) {
                 $("#listaCorreos tbody").empty().append(data);
                 $("#sendMail").fadeIn();
@@ -168,17 +131,25 @@ $(function(){
             if ($("#subject").val() =="") throw "Escriba el asunto";
             if ($("messaje div").html() =="") throw "Escriba el asunto";
 
-            $.post(RUTA+"atencion/correos", {pedido:$("#codigo_pedido").val(),
-                                            detalles:JSON.stringify(itemsSave()),
-                                            correos:JSON.stringify(mailsList()),
-                                            adjunto:$("#emitido").val(),
-                                            asunto:$("#subject").val(),
-                                            mensaje:$(".messaje div").html(),
-                                            estado:53},
+            let result = {};
+
+            $.each($("#formProceso").serializeArray(),function(){
+                result[this.name] = this.value;
+            });
+
+            $("#espera").fadeIn();
+            
+            $.post(RUTA+"cotizacion/mensajeCorreo", {pedido:$("#codigo_pedido").val(),
+                                                    detalles:JSON.stringify(itemsSave()),
+                                                    correos:JSON.stringify(mailsList()),
+                                                    asunto:$("#subject").val(),
+                                                    mensaje:$(".messaje div").html(),
+                                                    estado:55},
                                                 
              function (data, textStatus, jqXHR) {
-                mostrarMensaje(data.mensaje,data.clase);
+                $("#espera").fadeOut();
                 $("#sendMail").fadeOut();
+                mostrarMensaje(data.mensaje,data.clase);
              },
              "json"
          );
@@ -189,43 +160,6 @@ $(function(){
         return false;
     });
 
-    $("#closeReq").click(function (e) { 
-        e.preventDefault();
-    
-        $("#pregunta").fadeIn();
-
-        return false;
-    });
-
-
-    $("#btnAceptarPregunta").click(function (e) { 
-        e.preventDefault();
-
-        $.post(RUTA+"atencion/culminaPedido", {id:$('#codigo_pedido').val(),
-                                                estado:52,
-                                                detalles:JSON.stringify(itemsSave())},
-            function (data, textStatus, jqXHR) {
-                if (data){
-                    mostrarMensaje("Pedido Culminado","mensaje_correcto");
-                }else{
-                    mostrarMensaje("Error,no se realizo la acción","mensaje_error");
-                }
-
-                $("#pregunta").fadeOut();
-            },
-            "text"
-        );
-
-        return false;
-    });
-
-    $("#btnCancelarPregunta").click(function (e) { 
-        e.preventDefault();
-
-        $("#pregunta").fadeOut();
-
-        return false;
-    });
 })
 
 itemsSave = () =>{
@@ -234,20 +168,22 @@ itemsSave = () =>{
 
     TABLA.each(function(){
         let IDPROD      = $(this).data('idprod'),
+            UNIDAD      = $(this).data('codund'),
             CANTIDAD    = $(this).find('td').eq(5).text(),
-            ITEMPEDIDO  = $(this).data('idx'),
-            ATENDIDA    = $(this).find('td').eq(6).children().val(),
-            OBSERVAC    = $(this).find('td').eq(8).children().val(),
-            ESTADO      = $(this).data('grabado');
+            NROPARTE    = $(this).find('td').eq(6).text(),
+            IDX         = $(this).data('idx'),
+            OBSERVA     = $(this).find('td').eq(7).children().val(),
+            ESTADO      = $(this).find('td').eq(0).children().prop('checked'); 
 
         item= {};
         
         if (ESTADO == 1) {
             item['idprod']      = IDPROD;
+            item['unidad']      = UNIDAD;
             item['cantidad']    = CANTIDAD;
-            item['itempedido']  = ITEMPEDIDO;
-            item['atendida']    = ATENDIDA;
-            item['observac']    = OBSERVAC;
+            item['nroparte']    = NROPARTE;
+            item['itempedido']  = IDX;
+            item['observac']    = OBSERVA;
 
             DATA.push(item);
         } 
@@ -265,12 +201,14 @@ mailsList = () => {
         let CORREO      = $(this).find('td').eq(1).text(),
             NOMBRE      = $(this).find('td').eq(0).text(),
             ENVIAR      = $(this).find('td').eq(2).children().prop("checked"),
+            CODPROV     = $(this).data('doc')
 
         item= {};
         
         if (ENVIAR) {
-            item['nombre']= NOMBRE;
-            item['correo']= CORREO;
+            item['nombre'] = NOMBRE;
+            item['correo'] = CORREO;
+            item['codprov']= CODPROV;
 
             CORREOS.push(item);
         }

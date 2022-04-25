@@ -29,6 +29,7 @@
                     <input type="hidden" name="codigo_documento" id="codigo_documento">
                     <input type="hidden" name="codigo_tipo" id="codigo_tipo">
                     <input type="hidden" name="codigo_pais" id="codigo_pais" value="135">
+                    <input type="hidden" name="codigo_estado" id="codigo_estado" value="135">
 
                     <input type="hidden" name="activeTab" id="activeTab" value="tab1">
                     <div class="barraOpciones primeraBarra">
@@ -107,7 +108,12 @@
                         </div>
                         <div class="column2">
                             <label for="estado">Estado:</label>
-                            <input type="text" name="estado" id="estado" class="mayusculas cerrarLista readonly">
+                            <input type="text" name="estado" id="estado" class="mostrarLista mayusculas readonly">
+                            <div class="lista" id="listaTipo">
+                                <ul>
+                                    <?php echo $this->listaEstados?>
+                                </ul> 
+                            </div>
                         </div>
                     </div>
                 </div>

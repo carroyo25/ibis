@@ -22,15 +22,18 @@
             echo $this->model->buscarRol($_POST['rol'],$_POST['cc']);
         }
         
-        function correos(){
-            echo json_encode($this->model->enviarMensajeAprobacion($_POST['asunto'],
+        function confirma(){
+            echo json_encode($this->model->enviarCorreo($_POST['asunto'],
                                                           $_POST['mensaje'],
                                                           $_POST['correos'],
                                                           $_POST['pedido'],
                                                           $_POST['detalles'],
                                                           $_POST['estado'],
-                                                          $_POST['adjunto'],
                                                           $_POST['cabecera']));
+        }
+
+        function actualizaListado(){
+            echo $this->model->listarPedidos();
         }
     }
 ?>

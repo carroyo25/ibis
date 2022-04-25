@@ -68,5 +68,9 @@
 
             echo $this->model->quitarItem($id,$query);
         }
+
+        function clave(){
+            echo $this->model->mostrarClave($_POST['id']);
+        }
     }
 ?>

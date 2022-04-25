@@ -369,6 +369,17 @@
             return $encrypted;
         }
 
+        public function decryptPass($password){
+            $sSalt = '20adeb83e85f03cfc84d0fb7e5f4d290';
+            $sSalt = substr(hash('sha256', $sSalt, true), 0, 32);
+            $method = 'aes-256-cbc';
+        
+            $iv = chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0);
+        
+            $decrypted = openssl_decrypt(base64_decode($password), $method, $sSalt, OPENSSL_RAW_DATA, $iv);
+            return $decrypted;
+        }
+
         //llamar valores de la tabla general al pasar un parametro
         public function listarParametros($clase) {
             try {
@@ -421,7 +432,10 @@
         public function listarAquarius(){
             try {
                 $salida = "";
-                $query = $this->db->connectrrhh()->query("SELECT dni, CONCAT(apellidos,', ',nombres) AS nombres, internal,ccargo,dcargo FROM tabla_aquarius 
+                $query = $this->db->connectrrhh()->query("SELECT dni, CONCAT(nombres,' ',apellidos) AS nombres, internal,ccargo,dcargo,
+                                                        nombres AS nomb,
+                                                        apellidos AS apell
+                                                        FROM tabla_aquarius 
                                                         WHERE estado = 'AC' ORDER BY apellidos ASC");
                 $query->execute();
                 $rowcount = $query->rowcount();
@@ -429,7 +443,11 @@
                 if ($rowcount > 0) {
                     while ($row = $query->fetch()) {
                         $salida.='<li>
-                                    <a href="'.$row['internal'].'" data-ccargo="'.$row['ccargo'].'" data-dcargo="'.$row['dcargo'].'">'.$row['nombres'].'</a>
+                                    <a href="'.$row['internal'].'" 
+                                                data-ccargo="'.$row['ccargo'].'" 
+                                                data-dcargo="'.$row['dcargo'].'"
+                                                data-nom="'.$row['nomb'].'"
+                                                data-apell="'.$row['apell'].'">'.$row['nombres'].'</a>
                                  </li>';
                     }
                 }
@@ -442,7 +460,7 @@
 
         public function actualizarCabecera($tabla,$valor,$id,$emitido,$aprueba){
             try {
-                $sql = $this->db->connect()->prepare("UPDATE $tabla SET estadodoc=:est,docPdfEmit=:emit WHERE idreg=:id");
+                $sql = $this->db->connect()->prepare("UPDATE $tabla SET estadodoc=:est,docPdfEmit=:emit,aprueba=:aut WHERE idreg=:id");
                 $sql->execute(["est"=>$valor,
                                 "id"=>$id,
                                 "emit"=>$emitido,
@@ -460,9 +478,9 @@
             try {
                 for ($i=0; $i < $nreg; $i++) { 
 
-                    //esta linea es para cam biar los items 52 -- atendido en su total por almacen
-                    $estado = $datos[$i]->cantidad - $datos[$i]->atendida == 0 ? 52: $valor;
-                    $resto = $datos[$i]->cantidad - $datos[$i]->atendida;
+                    //esta linea es para cambiar los items 52 -- atendido en su total por almacen
+                    $estado = floatval($datos[$i]->cantidad) - floatval($datos[$i]->atendida) == 0 ? 52: $valor;
+                    $resto = floatval($datos[$i]->cantidad) - floatval($datos[$i]->atendida);
 
                     $sql = $this->db->connect()->prepare("UPDATE $tabla SET estadoItem=:est,observAlmacen=:obs,
                                                                             cant_atend=:aten,
@@ -983,6 +1001,8 @@
                     $detalles = $this->consultarDetallesStock($id);
                 }else if ( $proceso == 53 ){
                     $detalles = $this->consultarDetallesAprobacion($id);
+                }else if ( $proceso == 54 ){
+                    $detalles = $this->consultarDetallesCotizacion($id);
                 }
                     
 
@@ -1162,6 +1182,59 @@
                                         <td></td>
                                         <td class="textoCentro"><input type="text"></td>
                                         <td class="textoCentro"><input type="checkbox" checked></td>
+                                    </tr>';
+                    }
+                }
+                
+                return $salida;
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        private function consultarDetallesCotizacion($id){
+            try {
+                $salida ="";
+
+                $sql=$this->db->connect()->prepare("SELECT
+                                                    tb_pedidodet.iditem,
+                                                    tb_pedidodet.idpedido,
+                                                    tb_pedidodet.idprod,
+                                                    tb_pedidodet.idtipo,
+                                                    tb_pedidodet.nroparte,
+                                                    tb_pedidodet.unid,
+                                                    FORMAT(tb_pedidodet.cant_pedida,2) AS cant_pedida,
+                                                    FORMAT(tb_pedidodet.cant_atend,2) AS cant_atendida,
+                                                    FORMAT(tb_pedidodet.cant_resto,2) AS cant_pendiente,
+                                                    FORMAT(tb_pedidodet.cant_aprob,2) AS cant_aprobada,
+                                                    tb_pedidodet.estadoItem,
+                                                    cm_producto.ccodprod,
+                                                    cm_producto.cdesprod,
+                                                    tb_unimed.cabrevia,
+                                                    tb_pedidodet.nflgqaqc 
+                                                FROM
+                                                    tb_pedidodet
+                                                    INNER JOIN cm_producto ON tb_pedidodet.idprod = cm_producto.id_cprod
+                                                    INNER JOIN tb_unimed ON tb_pedidodet.unid = tb_unimed.ncodmed 
+                                                WHERE
+                                                    tb_pedidodet.idpedido = :id");
+                $sql->execute(["id"=>$id]);
+                $rowCount = $sql->rowCount();
+                
+                if ($rowCount > 0){
+                    $filas = 1;
+                    while ($rs = $sql->fetch()) {
+                        
+                        $salida .='<tr data-grabado="1" data-idprod="'.$rs['idprod'].'" data-codund="'.$rs['unid'].'" data-idx="'.$rs['iditem'].'">
+                                        <td class="textoCentro"><input type="checkbox" checked></td>
+                                        <td class="textoCentro">'.str_pad($filas++,3,0,STR_PAD_LEFT).'</td>
+                                        <td class="textoCentro">'.$rs['ccodprod'].'</td>
+                                        <td class="pl20px">'.$rs['cdesprod'].'</td>
+                                        <td class="textoCentro">'.$rs['cabrevia'].'</td>
+                                        <td class="textoCentro">'.$rs['cant_aprobada'].'</td>
+                                        <td class="textoCentro"></td>
+                                        <td class="textoCentro"><input type="text"></td>
                                     </tr>';
                     }
                 }

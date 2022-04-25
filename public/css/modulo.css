@@ -297,7 +297,9 @@
 .ventanaArchivos,
 .ventanaVistaPrevia,
 .ventanaCorreo,
-.ventanaAdjuntos {
+.ventanaAdjuntos,
+.ventanaDialogo,
+.ventanaEspera {
   background: #fff;
   position: absolute;
   top: 50%;
@@ -675,13 +677,13 @@
   padding: 10px;
 }
 
-.ventanaPregunta {
+.ventanaPregunta, .ventanaDialogo {
   width: 20%;
   text-align: center;
   padding: 20px;
   line-height: 3rem;
 }
-.ventanaPregunta button {
+.ventanaPregunta button, .ventanaDialogo button {
   border: none;
   width: 45%;
   line-height: 2.5rem;
@@ -690,7 +692,7 @@
   -webkit-transition: 0.5s;
   transition: 0.5s;
 }
-.ventanaPregunta button:hover {
+.ventanaPregunta button:hover, .ventanaDialogo button:hover {
   color: #000;
   background: #005D84;
 }
@@ -757,7 +759,6 @@
   color: #fff;
   height: 35px;
   font-size: 0.8rem;
-  line-height: 1.5rem;
 }
 .tabla thead tr th:nth-child(1) {
   width: 5rem;
@@ -806,6 +807,10 @@
   width: 75%;
 }
 
+.w90por {
+  width: 90%;
+}
+
 .w100por {
   width: 100%;
 }
@@ -840,4 +845,12 @@
 
 .aprobacion {
   background: #C9E2F4;
+}
+
+.aprobado {
+  background: #04AA6D;
+}
+
+.cotizacion {
+  background: #EFEF13;
 }

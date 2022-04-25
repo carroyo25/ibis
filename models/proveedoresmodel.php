@@ -15,7 +15,7 @@
                                                              cm_entidad.cemail,
                                                              cm_entidad.id_centi
                                                         FROM cm_entidad 
-                                                        WHERE cm_entidad.nflgactivo = 1");
+                                                        WHERE cm_entidad.nflgactivo = 7");
                 $query->execute();
 
                 $rowcount = $query->rowcount();
@@ -46,7 +46,7 @@
         public function insertar($datos,$bancos,$contactos){
             $salida = false;
 
-            $almacen = array_key_exists('chkVerAlm', $datos)? 1 : 0;
+            $agente = array_key_exists('agente', $datos)? 1 : 0;
            
             if ( $this->existeProveedor($datos['nrodoc'])){
                 $salida = array("respuesta"=>false,
@@ -56,7 +56,7 @@
                 $sql = $this->db->connect()->prepare("INSERT INTO cm_entidad SET ctipdoc=:tdoc,cnumdoc=:nrodoc,crazonsoc=:razon,
                                                                                 cviadireccion=:direccion,ncodpais=:pais,ctelefono=:fono,
                                                                                 nagenret=:retencion,cemail=:correo,nflgactivo=:estado,
-                                                                                ctipper=:persona,veralm=:alm");
+                                                                                ctipper=:persona");
                 $sql->execute(["tdoc"=>$datos["codigo_documento"],
                                 "nrodoc"=>$datos["nrodoc"],
                                 "razon"=>$datos["razon"],
@@ -65,9 +65,8 @@
                                 "fono"=>$datos["telefono"],
                                 "retencion"=>$datos["agente"],
                                 "correo"=>$datos["correo"],
-                                "estado"=>1,
-                                "persona"=>$datos["codigo_tipo"],
-                                "alm"=>$almacen]);
+                                "estado"=>$datos['codigo_estado'],
+                                "persona"=>$datos["codigo_tipo"]]);
                 
                 $rowCount = $sql->rowcount();
 
@@ -154,7 +153,7 @@
                                                         tipo_personas.cdescripcion AS tipo_persona,
                                                         tb_pais.cdespais,
                                                     IF
-                                                        ( cm_entidad.nflgactivo = 1, 'ACTIVO', 'INACTIVO' ) AS estado,
+                                                        ( cm_entidad.nflgactivo = 7, 'ACTIVO', 'INACTIVO' ) AS estado,
                                                         cm_entidad.ncodpais 
                                                     FROM
                                                         cm_entidad

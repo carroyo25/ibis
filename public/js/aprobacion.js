@@ -50,7 +50,7 @@ $(function(){
     $("#closeProcess").click(function (e) { 
         e.preventDefault();
 
-        /*$.post(RUTA+"atencion/actualizaListado",
+        $.post(RUTA+"aprobacion/actualizaListado",
             function (data, textStatus, jqXHR) {
                 $(".itemsTabla table tbody")
                     .empty()
@@ -63,7 +63,7 @@ $(function(){
                 });
             },
             "text"
-        );*/
+        );
 
         $("#proceso").fadeOut();
         
@@ -170,20 +170,19 @@ $(function(){
                 result[this.name] = this.value;
             });
             
-            $.post(RUTA+"aprobacion/correos", {pedido:$("#codigo_pedido").val(),
+            $.post(RUTA+"aprobacion/confirma", {pedido:$("#codigo_pedido").val(),
                                             detalles:JSON.stringify(itemsPreview()),
                                             correos:JSON.stringify(mailsList()),
-                                            adjunto:$("#emitido").val(),
                                             asunto:$("#subject").val(),
                                             mensaje:$(".messaje div").html(),
                                             estado:54,
                                             cabecera:result},
                                                 
              function (data, textStatus, jqXHR) {
-                //mostrarMensaje(data.mensaje,data.clase);
-                //$("#sendMail").fadeOut();
+                $("#sendMail").fadeOut();
+                mostrarMensaje(data.mensaje,data.clase);
              },
-             "text"
+             "json"
          );
         } catch (error) {
             mostrarMensaje(error,'mensaje_error');

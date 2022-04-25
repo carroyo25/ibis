@@ -1,3 +1,4 @@
+@charset "UTF-8";
 .mensaje {
   position: fixed;
   height: 4rem;
@@ -21,12 +22,30 @@
   font-size: 1.2rem;
 }
 
+.mensaje_error span, .mensaje_correcto span {
+  font-size: 20px;
+}
+.mensaje_error span:before, .mensaje_correcto span:before {
+  margin-right: 30px;
+  font-size: 2rem;
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  display: inline-block;
+  vertical-align: middle;
+}
+
 .mensaje_error {
-  background: #8d0404a1;
+  background: rgba(255, 99, 71, 0.8);
+}
+.mensaje_error span:before {
+  content: "";
 }
 
 .mensaje_correcto {
-  background: #068a06;
+  background: rgba(154, 205, 50, 0.8);
+}
+.mensaje_correcto span:before {
+  content: "";
 }
 
 .modal {

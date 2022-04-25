@@ -12,6 +12,7 @@
             $this->view->listaTipos = $this->model->listarParametros("05");
             $this->view->listaDocumentos = $this->model->listarParametros("04");
             $this->view->listaPais = $this->model->listarPais();
+            $this->view->listaEstados = $this->model->listarParametros("01");
             $this->view->render('proveedores/index');
         }
 

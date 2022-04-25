@@ -111,7 +111,7 @@ $(function() {
         return false;
     });
 
-    $("#tipo_ent,#tipo_doc,#pais").focus(function (e) { 
+    $(".mostrarLista").focus(function (e) { 
         e.preventDefault();
         
         $(this).next().slideDown();
@@ -147,6 +147,9 @@ $(function() {
             }else if(id == "pais") {
                 $("#codigo_pais").val($(this).attr("href"));
                 $("#pais").val($(this).text());
+            }else if(id == "estado") {
+                $("#codigo_estado").val($(this).attr("href"));
+                $("#estado").val($(this).text());
             }
 
         return false;

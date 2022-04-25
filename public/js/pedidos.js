@@ -604,8 +604,8 @@ itemsSave = () =>{
         let IDPROD      = $(this).data('idprod'),
             UNIDAD      = $(this).data('codund'),
             CANTIDAD    = $(this).find('td').eq(5).children().val(),
-            NROPARTE    = $(this).find('td').eq(6).text();
-            IDX         = $(this).data('idx');
+            NROPARTE    = $(this).find('td').eq(6).text(),
+            IDX         = $(this).data('idx'),
             CALIDAD     = $(this).find('td').eq(7).children().prop("checked"),
             ESTADO      = $(this).data('grabado');
 

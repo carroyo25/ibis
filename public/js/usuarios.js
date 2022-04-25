@@ -304,8 +304,22 @@ $(function(){
         }else if($(this).data("action") == "d"){
             console.log("eliminar")
         }else if($(this).data("action") == "s"){
-            console.log("ver pass")
+            $.post(RUTA+"usuarios/clave",{id:$(this).attr("href")} ,
+                function (data, textStatus, jqXHR) {
+                    $("#claveUsuario").text(data);
+                    $("#dialogo").fadeIn();
+                },
+                "text"
+            );
         }
+
+        return false;
+    });
+
+    $("#btnAceptarDialogo").click(function (e) { 
+        e.preventDefault();
+        
+        $("#dialogo").fadeOut();
 
         return false;
     });
