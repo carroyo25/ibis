@@ -11,7 +11,7 @@
         }
 
         function consultaId(){
-            echo json_encode($this->model->consultarReqId($_POST['id'],51,51,51));
+            echo json_encode($this->model->consultarReqId($_POST['id'],51,51,51,null));
         }
 
         function existenciaProducto(){

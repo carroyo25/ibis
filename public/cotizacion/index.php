@@ -9,7 +9,8 @@
     $monedas = parametros($pdo,'03');
     $pagos = parametros($pdo,'11');
     $proveedor = nombre_entidad($pdo,$ruc);
-    $items = itemsPedido($pdo,$pedido);
+    $items = itemsPedido($pdo,$pedido,$ruc);
+    $verificar = verificaParticipa($pdo,$pedido,$ruc);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -41,14 +42,19 @@
     </div>
     <div class="wrapcot">
         <form action="" method="post" id="proforma">
+            <input type="hidden" name="pedido" id="pedido" value="<?php echo $pedido?>">
+            <input type="hidden" name="st" id="st">
+            <input type="hidden" name="si" id="si">
+            <input type="hidden" name="to" id="to">
             <input type="file" name="cotizacion" id="cotizacion" class="oculto">
+            <input type="file" name="itemAtach" id="itemAtach" class="oculto">
             <div class="cabeceracot">
                 <div class="logo">
                     <img src="../img/logo.png" alt="">
                 </div>
                 <div class="nombre_ent">
                     <p><?php echo $proveedor?></p>
-                    <p><?php echo $ruc?></p>
+                    <p id="ruc"><?php echo $ruc?></p>
                 </div>
                 <div class="fecha">
                     <p><?php echo date("d/m/y")?></p>
@@ -76,9 +82,9 @@
                         </select>
                         <label>Incluye IGV</label>
                         <div class="igv">
-                            <input type="radio" name="igv" id="si" value="0.18">
+                            <input type="radio" name="radioIgv" id="si" value="0.18">
                             <label for="si">Si</label>
-                            <input type="radio" name="igv" id="no" value="1">
+                            <input type="radio" name="radioIgv" id="no" value="0">
                             <label for="no">No</label>
                         </div>
                     </div>
@@ -137,10 +143,12 @@
                                 </ul>
                             </div>
                         </div>
-                        <div class="opciones">
-                            <button type="button" id="btnAtach"><i class="fas fa-file-pdf"></i>Adjuntar Cotización</button>
-                            <button type="button" id="btnSend"><i class="far fa-calendar-check"></i>Enviar Documento</button>
-                        </div>
+                        <?php if (!$verificar) {?>
+                            <div class="opciones">
+                                <button type="button" id="btnAtach"><i class="fas fa-file-pdf"></i>Adjuntar Cotización</button>
+                                <button type="button" id="btnSend"><i class="far fa-calendar-check"></i>Enviar Documento</button>
+                            </div>
+                        <?php } ?>
                     </div>
                 </div>
             </div>

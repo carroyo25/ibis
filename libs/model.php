@@ -933,7 +933,7 @@
             return $upload;
         }
 
-        public function consultarReqId($id,$min,$max,$proceso){
+        public function consultarReqId($id,$min,$max,$proceso,$item){
             try {
                 $sql = $this->db->connect()->prepare("SELECT
                                                         ibis.tb_pedidocab.idreg, 
@@ -1003,6 +1003,8 @@
                     $detalles = $this->consultarDetallesAprobacion($id);
                 }else if ( $proceso == 54 ){
                     $detalles = $this->consultarDetallesCotizacion($id);
+                }else if ( $proceso == 56 ){
+                    $detalles = $this->consultarCotizaciones($id,$item);
                 }
                     
 
@@ -1240,6 +1242,156 @@
                 }
                 
                 return $salida;
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        private function consultarCotizaciones($id,$item){
+            try {
+                $proveedores = 0;
+                $codpr = [];
+                $salida='<thead>
+                            <tr>
+                                <th rowspan="2">ITEM</th>
+                                <th rowspan="2">CODIGO</th>
+                                <th rowspan="2">DESCRIPCION</th>
+                            ';
+                $query = $this->db->connect()->prepare("SELECT
+                                                        cm_entidad.crazonsoc,
+                                                        cm_entidad.id_centi,
+                                                        cm_entidad.cnumdoc 
+                                                    FROM
+                                                        lg_proformadet
+                                                        INNER JOIN cm_entidad ON lg_proformadet.id_centi = cm_entidad.cnumdoc 
+                                                    WHERE
+                                                        lg_proformadet.id_regmov = :cod
+                                                    AND lg_proformadet.niddet = :item");
+                $query->execute(["cod"=>$id,
+                                 "item"=>$item]);
+                $rowcount = $query->rowcount();
+
+                if ($rowcount > 0){
+                    while ($rs = $query->fetch()) {
+                        $salida .= '<th colspan="5">'.$rs['crazonsoc'].'</th>';
+                        $codpr[$proveedores] = $rs['cnumdoc'];
+                        $proveedores++;
+                    }
+                }
+
+                $salida .= '</tr><tr>';
+
+                for ($i=0; $i < $rowcount ; $i++) { 
+                    $salida .= '<th>Precio</th>
+					            <th>F.Entrega</th>
+					            <th>Dias</th>
+					            <th>Adj.</th>
+                                <th>...</th>';
+                }
+
+                $salida .= '</tr></thead>';
+                
+                $cols = $rowcount*5;
+
+                $cuerpo = $this->ItemsCotizacion($id,$cols,$item,$codpr);
+
+                $salida = $salida.$cuerpo;
+
+                return $salida;
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function ItemsCotizacion($id,$cols,$item,$codpr){
+            try {
+                $detalle = "<tbody>";
+                $linea = 1;
+                $fila = 1;
+                $query = $this->db->connect()->prepare("SELECT
+                                                        tb_pedidodet.idpedido,
+                                                        tb_pedidodet.idprod,
+                                                        cm_producto.ccodprod,
+                                                        cm_producto.cdesprod 
+                                                    FROM
+                                                        tb_pedidodet
+                                                        INNER JOIN cm_producto ON tb_pedidodet.idprod = cm_producto.id_cprod 
+                                                    WHERE
+                                                        tb_pedidodet.idpedido =:cod
+                                                    AND tb_pedidodet.iditem =:item");
+                $query->execute(["cod"=>$id,
+                                "item"=>$item]);
+                $rowcount = $query->rowcount();
+
+                
+ 
+                if ($rowcount > 0){
+                    while ($rs = $query->fetch()) {
+                        $detalle .= '<tr data-fila="'.$fila.'">
+                                        <td class="textoCentro">'.str_pad($linea++,3,"0",STR_PAD_LEFT).'</td>
+                                        <td class="textoCentro">'.$rs['ccodprod'].'</td>
+                                        <td class="con_borde pl10" >'.$rs['cdesprod'].'</td>'.
+                                        $this->obtenerPrecios($id,$item,$codpr);
+                        $item++;
+                    }
+                }
+
+                $detalle.="</tr></tbody>";
+
+                return $detalle;
+
+            } catch (PDOException $e) {
+                $e->getMessage();
+                return false;
+            }
+        }
+
+        private function obtenerPrecios($cod,$item,$codpr){
+            $nreg = count($codpr);
+            $precios = "";
+            try {
+                for ($i=0; $i < $nreg; $i++){
+                    
+                    $sql = $this->db->connect()->prepare("SELECT
+                                                        lg_proformadet.id_regmov,
+                                                        lg_proformadet.niddet,
+                                                        lg_proformadet.id_centi,
+                                                        lg_proformadet.cantcoti,
+                                                        lg_proformadet.ffechaent,
+                                                        lg_proformadet.precunit,
+                                                        DATE_FORMAT( lg_proformadet.fregsys, '%Y-%m-%d' ) AS emitido,
+                                                        DATEDIFF(
+                                                            lg_proformadet.ffechaent,
+                                                        DATE_FORMAT( lg_proformadet.fregsys, '%Y-%m-%d' )) AS dias,
+                                                        lg_proformadet.cdocPDF,
+                                                        lg_proformadet.total,
+                                                        tb_parametros.cabrevia 
+                                                    FROM
+                                                        lg_proformadet
+                                                        INNER JOIN tb_parametros ON lg_proformadet.ncodmon = tb_parametros.nidreg 
+                                                    WHERE
+                                                        lg_proformadet.id_regmov = :cod 
+                                                        AND lg_proformadet.id_centi = :ent 
+                                                        AND lg_proformadet.niddet = :item");
+                    $sql->execute(["cod"=>$cod,"ent"=>$codpr[$i],"item"=>$item]);
+                    $rs = $sql->fetchAll();
+
+                    $adjunto = $rs[0]["cdocPDF"] == "" ? "": '<a href="'.$rs[0]['cdocPDF'].'"><i class="far fa-sticky-note"></i></a>';
+
+                    $precios .= '<td class="textoDerecha pr20px">'.$rs[0]['cabrevia']." ".number_format($rs[0]['precunit'], 2, '.', ',').'</td>
+                                 <td class="textoCentro">'.date("d/m/Y", strtotime($rs[0]['ffechaent'])).'</td>
+                                 <td class="textoDerecha pr20px">'.$rs[0]['dias'].'</td>
+                                 <td class="textoCentro">'.$adjunto.'</td>
+                                 <td class="textoCentro" data-position="'.$i.'"
+                                                         data-pedido="'.$cod.'"
+                                                         data-entidad="'.$codpr[$i].'"
+                                                         data-detalle="'.$item.'"
+                                                         data-total="'.$rs[0]['total'].'"><input type="checkbox" class="chkVerificado"</td>';
+                }
+    
+                return $precios;
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;

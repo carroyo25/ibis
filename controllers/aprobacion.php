@@ -11,7 +11,7 @@
         }
 
         function consultaId(){
-            echo json_encode($this->model->consultarReqId($_POST['id'],53,53,53));
+            echo json_encode($this->model->consultarReqId($_POST['id'],53,53,53,null));
         }
 
         function adjuntos(){

@@ -170,6 +170,11 @@
             }
         }
 
+        public function cerrarcotizaciones($id,$valor,$details){
+            $this->actCabPedCot($id,$valor);
+            $this->actDetPedCot($details,$valor);
+        }
+
         private function grabarCabecera($mails,$pedido,$codcot){
             try {
                 $correos = json_decode($mails);
@@ -196,7 +201,8 @@
                 $correos = json_decode($mails);
                 $detalles = json_decode($details);
 
-                for ($i=0;$i<count($detalles);$i++){
+                for ($j=0; $j < count($correos); $j++){
+                    for ($i=0;$i<count($detalles);$i++){
                         $query = $this->db->connect()->prepare("INSERT INTO lg_cotizadet SET id_regmov=:idped,
                                                                                                 niddet=:iddet,
                                                                                                 id_cprod=:cprod,
@@ -211,11 +217,14 @@
                                          "cprod"=>$detalles[$i]->idprod,
                                          "canti"=>$detalles[$i]->cantidad,
                                          "unid"=>$detalles[$i]->unidad,
-                                         "prove"=>$correos[$i]->codprov,
+                                         "prove"=>$correos[$j]->codprov,
                                          "flag"=>1,
                                          "esta"=>0,
                                         "coti"=>$codcot]);
+                    }
                 }
+
+                
 
             } catch (PDOException $e) {
                 echo $e->getMessage();

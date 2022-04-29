@@ -11,7 +11,7 @@
         <p></p>
     </div>
     <div class="modal" id="proceso">
-        <div class="ventanaProceso tamanioProceso">
+        <div class="ventanaProceso tamanioProceso80">
             <div class="cabezaProceso">
                 <form action="#" id="formProceso" autocomplete="off">
                     <input type="hidden" name="codigo_costos" id="codigo_costos"> 
@@ -29,13 +29,13 @@
                         <span>Datos Generales</span>
                         <div>
                             <button type="button" id="preview" title="Vista Previa" class="boton3">
-                                <i class="fab fa-wpexplorer"></i> Ver Pedido
+                                <i class="fab fa-wpexplorer"></i> Ver Proformas
                             </button>
                             <button type="button" id="requestAprob" data-estado="55" title="Solicitar Cotizacion" class="boton3">
-                                <i class="fas fa-award"></i> Enviar Cotización
+                                <i class="fas fa-award"></i> Enviar a Revisión
                             </button>
                             <button type="button" id="closeCotiz"  data-estado="56" title="Cerrar Proceso" class="boton3">
-                                <i class="fas fa-door-closed"></i> Cerrar Cotizaciones
+                                <i class="fas fa-door-closed"></i> Cerrar Estudio
                             </button>
                             <button type="button" id="closeProcess" title="Cierra la ventana actual" class="boton3">
                                 <i class="fas fa-window-close"></i>
@@ -70,22 +70,22 @@
                             </div>
                             <div class="column2">
                                 <label for="concepto">Concepto:</label>
-                                <input type="text" name="concepto" id="concepto">
+                                <input type="text" name="concepto" id="concepto" readonly>
                             </div>
                             <div class="column2">
                                 <label for="solicitante">Solicitante:</label>
-                                <input type="text" name="solicitante" id="solicitante">
+                                <input type="text" name="solicitante" id="solicitante" readonly>
                             </div>
                         </div>
                         <div class="seccion_derecha">
                             <div class="column4_55">
                                 <div class="column2_3957">
                                     <label for="tipo">Tipo :</label>
-                                    <input type="text" name="tipo" id="tipo">
+                                    <input type="text" name="tipo" id="tipo" readonly>
                                 </div>
                                 <div class="column2_46">
                                     <label for="vence">Vence :</label>
-                                    <input type="date" name="vence" id="vence">
+                                    <input type="date" name="vence" id="vence" readonly>
                                 </div>
                             </div>
                             <div class="column2">
@@ -105,21 +105,7 @@
                     </div>
                     <div class="tablaInterna mininoTablaInterna">
                         <table class="tabla" id="tablaDetalles">
-                            <thead>
-                                <tr>
-                                    <th>...</th>
-                                    <th>Item</th>
-                                    <th>Codigo</th>
-                                    <th>Descripcion</th>
-                                    <th>Und.</th>
-                                    <th>Cant.</th>
-                                    <th>Nro.</br>Parte</th>
-                                    <th>Observaciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-
-                            </tbody>
+                           
                         </table>
                     </div>
                 </form>
@@ -135,59 +121,6 @@
             <iframe src=""></iframe>
         </div>
     </div>
-    <div class="modal" id="sendMail">
-        <form action="#" method="post" id="formMails">
-            <input type="hidden" name="estadoPedido" id="estadoPedido">
-            <div class="ventanaCorreo">
-                    <div class="tituloCorreo">
-                        <h3 class="w100por">Enviar Correo</h3>
-                        <a href="#" id="closeMail" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
-                        <hr>
-                    </div>
-                    <div class="cuerpoCorreo">
-                        <div class="correoIzq">
-                            <div class="asunto">
-                                <label for="subject">Asunto :</label>
-                                <input type="text" name="subject" id="subject">
-                            </div>
-                            <div class="opciones">
-                                <button class="boton3 js-boton" data-type="bold" type="button"><i class="fas fa-bold"></i></button>
-                                <button class="boton3 js-boton" data-type="italic" type="button"><i class="fas fa-italic"></i></button>
-                                <button class="boton3 oculto" id="btnAtach"><i class="fas fa-paperclip" ></i></button>
-                            </div>
-                            <div class="messaje">
-                                <div contenteditable="true">
-
-                                </div>
-                            </div>
-                            <div class="commands">
-                                <button class="boton3" id="btnConfirmSend">Enviar</button>
-                            </div>
-                        </div>
-                        <div class="correoDerch">
-                            <h4>Correos</h4>
-                            <table id="listaCorreos" class="tabla">
-                                <thead>
-                                    <tr>
-                                        <th>Nombre</th>
-                                        <th>Correo</th>
-                                        <th>...</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-            </div>
-        </form>
-    </div>
-    <div class="modal" id="espera">
-        <div class="ventanaEspera">
-            <img src="<?php echo constant('URL');?>public/img/sendmail.gif" alt="">
-        </div>
-    </div>
     <div class="modal" id="pregunta">
         <div class="ventanaPregunta">
             <h3>Pasar a estudio de mercado?</h3>
@@ -198,7 +131,7 @@
         </div>
     </div>
     <div class="cabezaModulo">
-        <h1>Cotizar Bienes/Servicios</h1>
+        <h1>Estudio de Mercado</h1>
         <div>
             <a href="#" id="irInicio"><i class="fas fa-home"></i></a>
         </div>
@@ -233,12 +166,12 @@
         <table id="tablaPrincipal">
             <thead>
                 <tr>
-                    <th>Num.</th>
+                    <th>Pedido.</th>
                     <th>Emision</th>
                     <th>Vencimiento</th>
                     <th>Descripción</th>
                     <th>Centro Costos</th>
-                    <th>Resposable</th>
+                    <th>Responsable</th>
                     <th>Estado</th>
                     <th>Atencion</th>
                     <th>...</th>
@@ -251,6 +184,6 @@
     </div>
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
     <script src="<?php echo constant('URL');?>public/js/funciones.js"></script>
-    <script src="<?php echo constant('URL');?>public/js/cotizacion.js?"></script>
+    <script src="<?php echo constant('URL');?>public/js/estudio.js?"></script>
 </body>
 </html>

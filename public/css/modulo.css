@@ -596,7 +596,7 @@
 .ventanaProceso .textAreaEnter textarea {
   width: 100%;
   border: 1px solid #c2c2c2;
-  height: 3rem;
+  height: 2rem;
   padding: 5px;
 }
 .ventanaProceso .dataProceso_2 {
@@ -760,13 +760,9 @@
   height: 35px;
   font-size: 0.8rem;
 }
-.tabla thead tr th:nth-child(1) {
-  width: 5rem;
-}
 .tabla tbody tr td {
   border: 1px solid #616161;
   line-height: 1.5rem;
-  width: 1%;
   white-space: nowrap;
 }
 .tabla tbody tr td input[type=number] {
@@ -819,6 +815,10 @@
   width: 70%;
 }
 
+.tamanioProceso80 {
+  width: 80%;
+}
+
 .mininoTablaInterna {
   min-height: 15rem;
 }
@@ -831,8 +831,8 @@
   font-weight: 900;
 }
 
-.procesando, .consulta, .aprobacion {
-  font-size: 0.6rem !important;
+.procesando, .consulta, .aprobacion, .estudio {
+  font-size: 0.5rem !important;
 }
 
 .procesando {
@@ -853,4 +853,8 @@
 
 .cotizacion {
   background: #EFEF13;
+}
+
+.estudio {
+  background: #C0CA33;
 }

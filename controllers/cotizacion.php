@@ -11,7 +11,7 @@
         }
 
         function consultaId(){
-            echo json_encode($this->model->consultarReqId($_POST['id'],54,55,54));
+            echo json_encode($this->model->consultarReqId($_POST['id'],54,55,54,null));
         }
         
         function proveedores(){
@@ -25,6 +25,14 @@
                                                         $_POST['asunto'],
                                                         $_POST['mensaje'],
                                                         $_POST['estado']));
+        }
+
+        function estudio(){
+            echo $this->model->cerrarcotizaciones($_POST['pedido'],$_POST['estado'],$_POST['detalles']);
+        }
+
+        function actualizaListado(){
+            echo $this->model->listaPedidos();
         }
     }
 ?>

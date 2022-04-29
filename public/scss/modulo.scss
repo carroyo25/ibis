@@ -23,6 +23,7 @@ $consulta:#D7FF67;
 $aprobacion:#C9E2F4;
 $aprobado:#04AA6D;
 $cotizando:#EFEF13;
+$estudio:#C0CA33;
 
 .bienes {
     background:$bienes;
@@ -581,7 +582,7 @@ $cotizando:#EFEF13;
         textarea {
             width: 100%;
             border:1px solid $sobreElemento;
-            height: 3rem;
+            height: 2rem;
             padding: 5px;
         }
     }
@@ -775,12 +776,6 @@ $cotizando:#EFEF13;
         color:$blanco;
         height: 35px;
         font-size: .8rem;
-
-        tr {
-            th:nth-child(1) {
-                width: 5rem;
-            }
-        }
     }
 
     tbody {
@@ -789,7 +784,7 @@ $cotizando:#EFEF13;
             td{
                 border: 1px solid  $lineasTabla;
                 line-height:1.5rem;
-                width: 1%;
+                //width: 1%;
                 white-space: nowrap;
 
                 input[type="number"]{
@@ -851,6 +846,10 @@ $cotizando:#EFEF13;
     width: 70%;
 }
 
+.tamanioProceso80{
+    width: 80%;
+}
+
 //altos
 .mininoTablaInterna{
     min-height: 15rem;
@@ -868,8 +867,8 @@ $cotizando:#EFEF13;
     font-weight:900;
 }
 
-.procesando,.consulta,.aprobacion{
-    font-size: 0.6rem !important;
+.procesando,.consulta,.aprobacion,.estudio{
+    font-size: 0.5rem !important;
 }
 
 .procesando{
@@ -891,4 +890,8 @@ $cotizando:#EFEF13;
 
 .cotizacion {
     background: $cotizando;
+}
+
+.estudio {
+    background: $estudio;
 }

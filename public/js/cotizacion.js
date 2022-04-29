@@ -50,7 +50,7 @@ $(function(){
     $("#closeProcess").click(function (e) { 
         e.preventDefault();
 
-        /*$.post(RUTA+"aprobacion/actualizaListado",
+        $.post(RUTA+"cotizacion/actualizaListado",
             function (data, textStatus, jqXHR) {
                 $(".itemsTabla table tbody")
                     .empty()
@@ -63,7 +63,7 @@ $(function(){
                 });
             },
             "text"
-        );*/
+        );
 
         $("#proceso").fadeOut();
         
@@ -158,6 +158,36 @@ $(function(){
         }
         
         return false;
+    });
+
+    $("#closeCotiz").click(function (e) { 
+        e.preventDefault();
+
+        $("#pregunta").fadeIn();
+        
+        return false;
+    });
+
+    $("#btnAceptarPregunta").click(function (e) { 
+        e.preventDefault();
+
+        $.post(RUTA+"cotizacion/estudio", {pedido:$("#codigo_pedido").val(),estado:56,detalles:JSON.stringify(itemsSave())},
+            function (data, textStatus, jqXHR) {
+                mostrarMensaje("Pedido actulizado","mensaje_correcto");
+            },
+            "text"
+        );
+        
+        return false;
+    });
+
+    $("#btnCancelarPregunta").click(function (e) { 
+        e.preventDefault();
+
+        $("#pregunta").fadeOut();
+        
+        return false;
+        
     });
 
 })
