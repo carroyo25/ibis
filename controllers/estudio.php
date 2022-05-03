@@ -17,6 +17,14 @@
         function consultaId(){
             echo json_encode($this->model->consultarReqId($_POST['id'],56,56,56,$_POST['item']));
         }
+
+        function proformas(){
+            echo $this->model->verProformas($_POST['id']);
+        }
+
+        function procesaEstudio(){
+            echo $this->model->actualizarProformas($_POST['id'],$_POST['datos']);
+        }
         
     }
 ?>

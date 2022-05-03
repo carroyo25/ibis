@@ -1,10 +1,8 @@
 $(function(){
-    var  fila = [];
-
     $("#tablaPrincipal tbody").on("click","tr", function (e) {
         e.preventDefault();
 
-       $.post(RUTA+"estudio/consultaId", {id:$(this).data("pedido"),item:$(this).data("item")},
+       $.post(RUTA+"verificacion/consultaId", {id:$(this).data("indice")},
             function (data, textStatus, jqXHR) {
                 
                 let numero = $.strPad(data.cabecera[0].nrodoc,6);
@@ -19,7 +17,7 @@ $(function(){
                 $("#codigo_estado").val(data.cabecera[0].estadodoc);
                 $("#codigo_verificacion").val(data.cabecera[0].verificacion);
                 $("#codigo_atencion").val(data.cabecera[0].nivelAten);
-                $("#aprobado").val(data.cabecera[0].docPdfAprob);
+                $("#emitido").val(data.cabecera[0].docPdfEmit);
                 $("#elabora").val(data.cabecera[0].cnombres);
                 $("#numero").val(numero);
                 $("#emision").val(data.cabecera[0].emision);
@@ -33,7 +31,7 @@ $(function(){
                 $("#estado").val(data.cabecera[0].estado);
                 $("#espec_items").val(data.cabecera[0].detalle);
                 
-                $("#tablaDetalles")
+                $("#tablaDetalles tbody")
                     .empty()
                     .append(data.detalles);
 
@@ -52,7 +50,7 @@ $(function(){
     $("#closeProcess").click(function (e) { 
         e.preventDefault();
 
-        $.post(RUTA+"estudio/actualizaListado",
+        $.post(RUTA+"verificacion/actualizaListado",
             function (data, textStatus, jqXHR) {
                 $(".itemsTabla table tbody")
                     .empty()
@@ -72,44 +70,12 @@ $(function(){
         return false;  
     });
 
-    $("#tablaDetalles").on("click",".chkVerificado", function (e) {
-        item = {};
-
-        let posicion = $(this).parent().parent().data("fila");
-        let indice = fila.findIndex(criterio => criterio.lugar === posicion);
-        let entidad = $(this).parent().data("entidad");
-
-        //Este metodo
-        if( $(this).prop('checked') ) {
-            if (indice == -1){
-                item["lugar"]       = posicion;
-                item["pedido"]      = $(this).parent().data("pedido");
-                item['entidad']     = $(this).parent().data("entidad");
-                item["detprof"]     = $(this).parent().data("detprof");
-                item["unitario"]    = $(this).parent().data("precio");
-                item["detpedido"]   = $(this).parent().data("detped");
-                item["entrega"]     = $(this).parent().data("entrega");
-                item["total"]       = $(this).parent().data("total");
-                item["espec"]       = $(this).parent().data("espec");
-            
-                fila.push(item);
-            }else{
-                fila[posicion]['entidad']     = $(this).parent().data("entidad");
-                fila[posicion]["detprof"]     = $(this).parent().data("detprof");
-                fila[posicion]["unitario"]    = $(this).parent().data("precio");
-                fila[posicion]["entrega"]     = $(this).parent().data("entrega");
-                fila[posicion]["total"]       = $(this).parent().data("total");
-                fila[posicion]["espec"]       = $(this).parent().data("total");
-            }       
-        }
-    });
-
     $("#tablaDetalles").on("click","a", function (e) {
         e.preventDefault();
 
         $(".ventanaVistaPrevia iframe")
                     .attr("src","")
-                    .attr("src",$(this).attr("href"));
+                    .attr("src","public/documentos/pedidos/especificaciones/"+$(this).attr("href"));
         
         $("#vistaprevia").fadeIn();
 
@@ -125,64 +91,24 @@ $(function(){
         return false;
     });
 
-    $("#preview").click(function (e) { 
+    $("#authProcess").click(function (e) { 
         e.preventDefault();
 
-        $.post(RUTA+"estudio/proformas", {id:$("#codigo_pedido").val()},
-            function (data, textStatus, jqXHR) {
-                $("#listaAdjuntos")
-                    .empty()
-                    .append(data);
-
-                $("#vistaAdjuntos").fadeIn();
-            },
-            "text"
-        );
-        return false;
-    });
-
-    $("#closeAtach").click(function (e) { 
-        e.preventDefault();
-
-        $(".ventanaAdjuntos iframe").attr("src","");
-        $("#vistaAdjuntos").fadeOut();
-
-        return false;
-    });
-
-    $("#vistaAdjuntos").on("click","a", function (e) {
-        e.preventDefault();
-        
-        $(".ventanaAdjuntos iframe")
-            .attr("src","")
-            .attr("src","public/documentos/cotizaciones/"+$(this).attr("href"));
-        
-        return false;
-    });
-
-    $("#requestAprob").click(function (e) { 
-        e.preventDefault();
-        
         $("#pregunta").fadeIn();
 
         return false;
     });
 
-    
     $("#btnAceptarPregunta").click(function (e) { 
         e.preventDefault();
 
-        if (fila.length > 1) {
-            mostrarMensaje("No hay seleccion de items","mensaje_error");
-            return false;
-        }
-
-        $.post(RUTA+"estudio/procesaEstudio", {datos:JSON.stringify(fila),id:$("#codigo_pedido").val()},
+        $.post(RUTA+"verificacion/actualizaPedido", {detalles:JSON.stringify(updateItems()),id:$("#codigo_pedido").val()},
             function (data, textStatus, jqXHR) {
-                $("#pregunta").fadeOut();
+                mostrarMensaje(data.mensaje,data.clase);
             },
-            "text"
+            "json"
         );
+
         return false;
     });
 
@@ -194,3 +120,25 @@ $(function(){
         return false;
     });
 })
+
+updateItems = () =>{
+    DATA = [];
+    let TABLA = $("#tablaDetalles tbody >tr");
+
+    TABLA.each(function(){
+        let INDICE  = $(this).data('idx'),
+            OBSERVA = $(this).find('td').eq(6).children().val(),
+            ESTADO  = $(this).find('td').eq(7).children().prop('checked');
+        
+        item= {};
+
+        if (ESTADO) {
+            item['itempedido'] = INDICE;
+            item['observa'] = OBSERVA;
+
+            DATA.push(item);
+        }
+    });
+
+    return DATA;
+}

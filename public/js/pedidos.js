@@ -465,7 +465,6 @@ $(function(){
         return false;
     });
     
-
     //proceso con el correo
     //para cambiar el tipo de letra en el mensaje
    $(".js-boton").mousedown(function(event) {

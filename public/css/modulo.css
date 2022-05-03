@@ -831,7 +831,7 @@
   font-weight: 900;
 }
 
-.procesando, .consulta, .aprobacion, .estudio {
+.procesando, .consulta, .aprobacion, .estudio, .conformidad {
   font-size: 0.5rem !important;
 }
 
@@ -857,4 +857,12 @@
 
 .estudio {
   background: #C0CA33;
+}
+
+.adjudicado {
+  background: rgba(145, 93, 152, 0.5);
+}
+
+.conformidad {
+  background: #27798F;
 }
