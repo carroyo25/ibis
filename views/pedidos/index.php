@@ -81,7 +81,6 @@
                                        <?php echo $this->listaCostos?>
                                    </ul> 
                                 </div>
-                                
                             </div>
                             <div class="column2">
                                 <label for="area">Area:</label>

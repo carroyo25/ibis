@@ -227,8 +227,8 @@ $adjudicado:rgba(145,93,152,.5);
         thead {
             background:$negro;
             color:$blanco;
-            line-height: 2rem;
-            font-size: .8rem;
+            line-height: 1.5rem;
+            font-size: .7rem;
         }
 
         tbody {
@@ -640,13 +640,12 @@ $adjudicado:rgba(145,93,152,.5);
 }
 
 .ventanaBusqueda{
-    width:65%;
+    //width:65%;
 
-    input {
+    input[type="text"] {
         height: 35px;
         border:none;
         border:1px solid #c2c2c2;
-        width: 90%;
     }
 
     .tablaBusqueda{
@@ -718,6 +717,7 @@ $adjudicado:rgba(145,93,152,.5);
 
 .tablaInterna {
     overflow:auto;
+    max-height: 25vh;
 }
 
 .tablainterna3columnas{
@@ -768,7 +768,7 @@ $adjudicado:rgba(145,93,152,.5);
     width : 150px !important;
 }
 
-.tabla{
+.tabla,.tablaWrap{
     width: 100%;
     border-collapse: collapse;
     font-size: 0.7rem;
@@ -781,13 +781,10 @@ $adjudicado:rgba(145,93,152,.5);
     }
 
     tbody {
-        
         tr{
             td{
                 border: 1px solid  $lineasTabla;
                 line-height:1.5rem;
-                //width: 1%;
-                white-space: nowrap;
 
                 input[type="number"]{
                     width: 100%;
@@ -795,6 +792,23 @@ $adjudicado:rgba(145,93,152,.5);
                     text-align: right;
                     padding-right: 10px;
                 }
+            }
+        }
+
+        &:hover{
+            background:rgba(255,255,43,.7);
+        }
+    }
+}
+
+.tablaWrap{
+    tbody {
+        tr{
+            td{
+                border: 1px solid  $lineasTabla;
+                overflow: hidden;
+                white-space: break-spaces;
+                transition: 5s;
             }
         }
     }

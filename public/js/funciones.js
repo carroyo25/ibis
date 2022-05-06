@@ -101,6 +101,17 @@ diferenciadefechas = (inicio,final) => {
     return diff;
 }
 
+sumarTotales = (table) => {
+    let suma = 0;
+
+    table.each(function(){
+        let valor = $(this).data("total");
+        suma = suma + valor;
+    });
+
+    return suma;
+}
+
 
 //queda pendiente el drag and drop 
 dropHandler = (ev) => {

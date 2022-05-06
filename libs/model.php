@@ -683,6 +683,26 @@
             }
         }
 
+        public function listarAlmacen(){
+            try {
+                $salida = "";
+                $sql = $this->db->connect()->query("SELECT ncodalm,UPPER(cdesalm) AS almacen FROM tb_almacen WHERE nflgactivo = 1");
+                $sql->execute();
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0){
+                    while ($rs = $sql->fetch()){
+                        $salida .='<li><a href="'.$rs['ncodalm'].'" >'.$rs['almacen'].'</a></li>';
+                    }
+
+                    return $salida;
+                } 
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
         //centro de costos por usuario
         public function costosPorUsuario($id){
             try {

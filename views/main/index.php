@@ -24,7 +24,7 @@
         </div>
         <div class="landZone">
             <div class="presentacion">
-                <h1>Ibis</h1>
+                <h1>Click</h1>
                 <p>Control de Procesos</p>
                 <div class="circulos">
                     <div></div>
