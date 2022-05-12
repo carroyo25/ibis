@@ -29,7 +29,7 @@
                     <input type="hidden" name="codigo_documento" id="codigo_documento">
                     <input type="hidden" name="codigo_tipo" id="codigo_tipo">
                     <input type="hidden" name="codigo_pais" id="codigo_pais" value="135">
-                    <input type="hidden" name="codigo_estado" id="codigo_estado" value="135">
+                    <input type="hidden" name="codigo_estado" id="codigo_estado" value="7">
 
                     <input type="hidden" name="activeTab" id="activeTab" value="tab1">
                     <div class="barraOpciones primeraBarra">

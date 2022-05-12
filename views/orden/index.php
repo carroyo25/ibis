@@ -34,6 +34,7 @@
                     <input type="hidden" name="codigo_verificacion" id="codigo_verificacion">
                     <input type="hidden" name="vista_previa" id="vista_previa">
                     <input type="hidden" name="emitido" id="emitido">
+                    <input type="hidden" name="pedidopdf" id="pedidopdf">
 
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
@@ -110,8 +111,8 @@
                             </div>
                             <div class="column4_55">
                                 <div class="column2_3957">
-                                    <label for="centrega">Cond.Pago :</label>
-                                    <input type="text" name="centrega" id="centrega" class="cerrarLista" readonly>
+                                    <label for="cpago">Cond.Pago :</label>
+                                    <input type="text" name="cpago" id="cpago" class="cerrarLista" readonly>
                                 </div>
                                 <div class="column2_46">
                                     <label for="estado">Estado:</label>
@@ -126,11 +127,16 @@
                             </div>
                             <div class="column2">
                                 <label for="atencion">Atención:</label>
-                                <input type="text" name="entidad" id="entidad" readonly>
+                                <input type="text" name="atencion" id="atencion" readonly>
                             </div>
                             <div class="column2">
                                 <label for="transporte">Transporte:</label>
-                                <input type="text" name="transporte" id="transporte" readonly>
+                                <input type="text" name="transporte" id="transporte" class="mostrarLista busqueda" placeholder="Elija una opcion">
+                                <div class="lista" id="listaTransporte">
+                                   <ul>
+                                       <?php echo $this->listaTransportes?>
+                                   </ul> 
+                                </div>
                             </div>
                             <div class="column2">
                                 <label for="lentrega">Lugar Entrega:</label>
@@ -228,6 +234,15 @@
                 <div></div>
                 <div></div>
             </div>
+        </div>
+    </div>
+    <div class="modal" id="vistaprevia">
+        <div class="ventanaVistaPrevia">
+            <div class="tituloVista">
+                <h3>Vista Previa</h3>
+                <a href="#" id="closePreview" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
+            </div>
+            <iframe src=""></iframe>
         </div>
     </div>
     <div class="cabezaModulo">

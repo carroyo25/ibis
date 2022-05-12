@@ -97,12 +97,14 @@ $(function() {
                 );
             }
             else {
-                /*$.post(RUTA+"proyecto/modificaProyecto", {datos:result,costos:JSON.stringify(getItems())},
+                $.post(RUTA+"proveedores/modificaEntidad", {datos:result,
+                                                            contactos:JSON.stringify(obtenerContactos()),
+                                                            bancos:JSON.stringify(obtenerBancos())},
                     function (data, textStatus, jqXHR) {
                         mostrarMensaje(data.mensaje,data.clase);
                     },
                     "json"
-                );*/
+                );
             }
         } catch (error) {
             mostrarMensaje(error,'mensaje_error');
@@ -267,7 +269,7 @@ obtenerBancos = () =>{
             CUENTA   = $(this).find('td').eq(3).children().val(),
             NUMERO   = $(this).find('td').eq(4).children().val(),
             ACTIVO   = $(this).find('td').eq(5).children().prop('checked'),
-            ESTADO = $(this).data('grabado');
+            ESTADO   = $(this).data('grabado');
 
         item= {};
 
@@ -293,15 +295,15 @@ obtenerContactos = () => {
             TELEFONO = $(this).find('td').eq(3).children().val(),
             CORREO   = $(this).find('td').eq(4).children().val(),
             ACTIVO   = $(this).find('td').eq(5).children().prop('checked'),
-            ESTADO = $(this).data('grabado');
+            ESTADO   = $(this).data('grabado');
 
         item= {};
 
         if ( ESTADO == 0 ) {
             item["nombre"]      = NOMBRE;
-            item["telefono"] = TELEFONO;
-            item["correo"]     = CORREO;
-            item["activo"]     = ACTIVO;
+            item["telefono"]    = TELEFONO;
+            item["correo"]      = CORREO;
+            item["activo"]      = ACTIVO;
 
             DATA.push(item);
         }  

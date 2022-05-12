@@ -71,8 +71,6 @@
                 $rowCount = $sql->rowcount();
 
                 if ($rowCount > 0) {
-                    
-                   
                      $id = $this->obtenerId($datos['nrodoc']);
 
                      if ($id !== 0){
@@ -92,17 +90,11 @@
         public function modificar($datos,$bancos,$contactos){
             $salida = false;
 
-            $almacen = array_key_exists('chkVerAlm', $datos)? 1 : 0;
-           
-            if ( $this->existeProveedor($datos['nrodoc'])){
-                $salida = array("respuesta"=>false,
-                                "clase"=>"mensaje_error",
-                                "mensaje"=>"Ya se registro el proveedor");
-            }else{
-                $sql = $this->db->connect()->prepare("INSERT INTO cm_entidad SET ctipdoc=:tdoc,cnumdoc=:nrodoc,crazonsoc=:razon,
+            $sql = $this->db->connect()->prepare("UPDATE cm_entidad SET ctipdoc=:tdoc,cnumdoc=:nrodoc,crazonsoc=:razon,
                                                                                 cviadireccion=:direccion,ncodpais=:pais,ctelefono=:fono,
                                                                                 nagenret=:retencion,cemail=:correo,nflgactivo=:estado,
-                                                                                ctipper=:persona,veralm=:alm");
+                                                                                ctipper=:persona
+                                                                        WHERE id_centi=:id");
                 $sql->execute(["tdoc"=>$datos["codigo_documento"],
                                 "nrodoc"=>$datos["nrodoc"],
                                 "razon"=>$datos["razon"],
@@ -111,27 +103,16 @@
                                 "fono"=>$datos["telefono"],
                                 "retencion"=>$datos["agente"],
                                 "correo"=>$datos["correo"],
-                                "estado"=>1,
+                                "estado"=>$datos['codigo_estado'],
                                 "persona"=>$datos["codigo_tipo"],
-                                "alm"=>$almacen]);
-                
-                $rowCount = $sql->rowcount();
+                                "id"=>$datos['codigo_entidad']]);
 
-                if ($rowCount > 0) {
-                    
-                   
-                     $id = $this->obtenerId($datos['nrodoc']);
+            $this->grabarBancos($datos["codigo_entidad"],$bancos);
+            $this->grabarContactos($datos["codigo_entidad"],$contactos);
 
-                     if ($id !== 0){
-                         $this->grabarBancos($id,$bancos);
-                         $this->grabarContactos($id,$contactos);
-
-                         $salida = array("respuesta"=>true,
-                                "clase"=>"mensaje_correcto",
-                                "mensaje"=>"Grabado correctamente");
-                     }
-                }
-            }
+            $salida = array("respuesta"=>true,
+                            "clase"=>"mensaje_correcto",
+                            "mensaje"=>"Modifcado correctamente");
             
             return $salida;
         }
@@ -298,7 +279,7 @@
                 if ($rowCount > 0){
                     while ($rs = $sql->fetch()){
                         $sw = $rs['nflgactivo'] == 1 ? "checked":"";
-                        $salida = '<tr data-grabado="0">
+                        $salida .= '<tr data-grabado="1">
                                         <td class="textoCentro"><a href="'.$rs['nidcontact'].'"><i class="far fa-trash-alt"></i></a></td>
                                         <td class="textoCentro">'.str_pad($contador++,2,0,STR_PAD_LEFT).'</td>
                                         <td class="pl20px">'.strtoupper($rs['cnombres']).'</td>
@@ -343,7 +324,7 @@
                 if ($rowCount > 0){
                     while ($rs = $sql->fetch()){
                         $sw = $rs['nflgactivo'] == 1 ? "checked":"";
-                        $salida = '<tr data-grabado="0">
+                        $salida .= '<tr data-grabado="1">
                                     <td class="textoCentro"><a href="'.$rs['ncodbco'].'"><i class="far fa-trash-alt"></i></a></td>
                                     <td class="textoCentro">'.str_pad($contador++,2,0,STR_PAD_LEFT).'</td>
                                     <td class="pl20px">'.strtoupper($rs['banco']).'</td>

@@ -1,10 +1,12 @@
 $(function(){
-    let accion = "";
-    let grabado = false;
-    let entidad = "";
-    let pedido = "";
-    let proforma = "";
-    let moneda = "";
+    let accion   = "",
+        grabado  = false,
+        entidad  = "",
+        pedido   = 0,
+        proforma = "",
+        moneda   = "",
+        cmoneda  = "",
+        pago     = "";
 
     $("#nuevoRegistro").click(function (e) { 
         e.preventDefault();
@@ -54,6 +56,8 @@ $(function(){
 
         if (contenedor_padre == "listaAlmacen"){
             $("#codigo_almacen").val(codigo);
+        }else if (contenedor_padre == "listaTransporte"){
+            $("#codigo_transporte").val(codigo);
         }
 
         return false;
@@ -123,6 +127,8 @@ $(function(){
             entidad     = $(this).data("entidad");
             proforma    = $(this).data("proforma");
             moneda      = $(this).data("moneda");
+            cmoneda     = $(this).data("desmoneda");
+            pago        = $(this).data("pago");
         }
 
         try {
@@ -140,7 +146,7 @@ $(function(){
                 total       = $(this).data("total"),
                 nroparte    = $(this).data("nroparte"),
                 request     = $.strPad($(this).data("pedido"),6),
-                money       = $(this).data("desmoneda")
+                abrmomeda   = $(this).data("abrmoneda"),
                 grabado     = 0;
 
             if (!checkExistTable($("#tablaDetalles tbody tr"),codigo,1)){
@@ -152,7 +158,7 @@ $(function(){
                     <td class="textoDerecha pr5px">${cantidad}</td>
                     <td class="textoDerecha pr5px">${precio}</td>
                     <td class="textoDerecha pr5px">${igv}</td>
-                    <td class="textoDerecha pr5px">${money} ${total}</td>
+                    <td class="textoDerecha pr5px">${abrmomeda} ${total}</td>
                     <td class="textoCentro">${nroparte}</td>
                     <td class="textoCentro">${request}</td>
                </tr>`;
@@ -174,6 +180,62 @@ $(function(){
         
         let totalOrden = sumarTotales($("#tablaDetalles tbody tr"));
         $("#total").val(totalOrden.toFixed(2));
+
+        return false;
+    });
+
+    $("#btnAceptItems").click(function (e) { 
+        e.preventDefault();
+
+        try {
+            if (pedido == 0) throw "No se selecciono ningún item";
+            
+            $.post(RUTA+"orden/datosPedido", {pep:pedido,prof:proforma,ent:entidad},
+                function (data, textStatus, jqXHR) {
+
+                    $("#codigo_pedido").val(data.pedido[0].idreg);
+                    $("#codigo_costos").val(data.pedido[0].idcostos);
+                    $("#codigo_area").val(data.pedido[0].idarea);
+                    $("#codigo_transporte").val(data.pedido[0].idtrans);
+                    $("#codigo_tipo").val(data.pedido[0].idtipomov);
+                    $("#codigo_estado").val(data.pedido[0].estadodoc);
+                    $("#costos").val(data.pedido[0].proyecto);
+                    $("#area").val(data.pedido[0].area);
+                    $("#concepto").val(data.pedido[0].concepto);
+                    $("#detalle").val(data.pedido[0].detalle);
+                    $("#tipo").val(data.pedido[0].tipo);
+                    $("#pedidopdf").val(data.pedido[0].docPdfAprob);
+
+                    $("#numero").val(data.orden.numero);
+                    $("#moneda").val(cmoneda);
+                    $("#cpago").val(pago);
+
+                    $("#entidad").val(data.entidad[0].crazonsoc);
+                    $("#atencion").val(data.entidad[0].contacto);
+                    
+                },
+                "json"
+            );
+        } catch (error) {
+            mostrarMensaje(error,"mensaje_error");
+        };
+
+        return false;
+    });
+
+    $("#preview").click(function (e) { 
+        e.preventDefault();
+        
+        $("#vistaprevia").fadeIn();
+
+        return false;
+    });
+
+    $("#closePreview").click(function (e) { 
+        e.preventDefault();
+
+        $(".ventanaVistaPrevia iframe").attr("src","");
+        $("#vistaprevia").fadeOut();
 
         return false;
     });

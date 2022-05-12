@@ -34,6 +34,14 @@
             echo json_encode($this->model->insertar($datos,$bancos,$contactos));
         }
 
+        function modificaEntidad(){
+            $bancos = $_POST['bancos'];
+            $contactos = $_POST['contactos'];
+            $datos = $_POST['datos'];
+
+            echo json_encode($this->model->modificar($datos,$bancos,$contactos));
+        }
+
         function consultaId(){
             $id = $_POST['id'];
 
