@@ -31,10 +31,19 @@
                     <input type="hidden" name="codigo_pedido" id="codigo_pedido">
                     <input type="hidden" name="codigo_orden" id="codigo_orden">
                     <input type="hidden" name="codigo_estado" id="codigo_estado">
+                    <input type="hidden" name="codigo_entidad" id="codigo_entidad">
+                    <input type="hidden" name="ruc_entidad" id="ruc_entidad">
+                    <input type="hidden" name="direccion_entidad" id="direccion_entidad">
+                    <input type="hidden" name="telefono_entidad" id="telefono_entidad">
+                    <input type="hidden" name="correo_entidad" id="correo_entidad">
                     <input type="hidden" name="codigo_verificacion" id="codigo_verificacion">
+                    <input type="hidden" name="telefono_contacto" id="telefono_contacto">
+                    <input type="hidden" name="correo_contacto" id="correo_contacto">
                     <input type="hidden" name="vista_previa" id="vista_previa">
                     <input type="hidden" name="emitido" id="emitido">
                     <input type="hidden" name="pedidopdf" id="pedidopdf">
+                    <input type="hidden" name="proforma" id="proforma">
+                    <input type="hidden" name="retencion" id="retencion">
 
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
@@ -243,6 +252,36 @@
                 <a href="#" id="closePreview" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
             </div>
             <iframe src=""></iframe>
+        </div>
+    </div>
+    <div class="modal" id="comentarios">
+        <div class="ventanaComentarios">
+            <h3>Observaciones</h3>
+            <hr>
+            <div>
+                <table class="tabla" id="tablaComentarios">
+                    <thead>
+                         <tr>
+                             <th>Usuario:</th>
+                             <th>Fecha:</th>
+                             <th>Comentarios</th>
+                             <th>...</th>
+                         </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Cesar Arroyo:</td>
+                            <td>14/05/2022</td>
+                            <td>Se inicio orden de compra</td>
+                            <td>xs</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div>
+                <button type="button" id="btnAceptarDialogo">Aceptar</button>
+                <button type="button" id="btnCancelarDialogo">Cancelar</button>
+            </div>
         </div>
     </div>
     <div class="cabezaModulo">

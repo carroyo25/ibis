@@ -284,7 +284,8 @@ $adjudicado:rgba(145,93,152,.5);
 .ventanaCorreo,
 .ventanaAdjuntos,
 .ventanaDialogo,
-.ventanaEspera{
+.ventanaEspera,
+.ventanaComentarios{
     background:$blanco;
     position: absolute;
     top: 50%;
@@ -677,8 +678,17 @@ $adjudicado:rgba(145,93,152,.5);
     }
 }
 
-.ventanaPregunta,.ventanaDialogo{
+.ventanaProceso,.ventanaDialogo {
     width: 20%;
+}
+
+.ventanaComentarios{
+    width: 33%;
+    padding:1rem;
+    border-radius: 20px;
+}
+
+.ventanaPregunta,.ventanaDialogo,.ventanaComentarios{
     text-align: center;
     padding: 20px;
     line-height: 3rem;
@@ -776,7 +786,7 @@ $adjudicado:rgba(145,93,152,.5);
     thead {
         background:$negro;
         color:$blanco;
-        height: 35px;
+        height: 30px;
         font-size: .8rem;
     }
 
@@ -786,18 +796,24 @@ $adjudicado:rgba(145,93,152,.5);
                 border: 1px solid  $lineasTabla;
                 line-height:1.5rem;
 
-                input[type="number"]{
+                input[type="number"],input[type="text"],input[type="date"]{
                     width: 100%;
                     height: 2rem;
-                    text-align: right;
                     padding-right: 10px;
+                    background:transparent;
+                    outline: none;
+                }
+
+                input[type="number"]{
+                    text-align: right;
                 }
             }
-        }
 
-        &:hover{
-            background:rgba(255,255,43,.7);
+            &:hover{
+                background:rgba(255,255,43,.7);
+            }
         }
+   
     }
 }
 

@@ -718,7 +718,8 @@
                                                     INNER JOIN tb_proyectos ON tb_costusu.ncodproy = tb_proyectos.nidreg 
                                                 WHERE
                                                     tb_costusu.id_cuser = :id 
-                                                    AND tb_proyectos.nflgactivo = 1");
+                                                    AND tb_proyectos.nflgactivo = 1
+                                                    AND tb_costusu.nflgactivo = 1");
                 $sql->execute(["id"=>$id]);
                 $rowCount = $sql->rowCount(); 
 

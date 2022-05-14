@@ -299,7 +299,8 @@
 .ventanaCorreo,
 .ventanaAdjuntos,
 .ventanaDialogo,
-.ventanaEspera {
+.ventanaEspera,
+.ventanaComentarios {
   background: #fff;
   position: absolute;
   top: 50%;
@@ -673,13 +674,22 @@
   padding: 10px;
 }
 
-.ventanaPregunta, .ventanaDialogo {
+.ventanaProceso, .ventanaDialogo {
   width: 20%;
+}
+
+.ventanaComentarios {
+  width: 33%;
+  padding: 1rem;
+  border-radius: 20px;
+}
+
+.ventanaPregunta, .ventanaDialogo, .ventanaComentarios {
   text-align: center;
   padding: 20px;
   line-height: 3rem;
 }
-.ventanaPregunta button, .ventanaDialogo button {
+.ventanaPregunta button, .ventanaDialogo button, .ventanaComentarios button {
   border: none;
   width: 45%;
   line-height: 2.5rem;
@@ -688,7 +698,7 @@
   -webkit-transition: 0.5s;
   transition: 0.5s;
 }
-.ventanaPregunta button:hover, .ventanaDialogo button:hover {
+.ventanaPregunta button:hover, .ventanaDialogo button:hover, .ventanaComentarios button:hover {
   color: #000;
   background: #005D84;
 }
@@ -754,20 +764,24 @@
 .tabla thead, .tablaWrap thead {
   background: #000;
   color: #fff;
-  height: 35px;
+  height: 30px;
   font-size: 0.8rem;
 }
 .tabla tbody tr td, .tablaWrap tbody tr td {
   border: 1px solid #616161;
   line-height: 1.5rem;
 }
-.tabla tbody tr td input[type=number], .tablaWrap tbody tr td input[type=number] {
+.tabla tbody tr td input[type=number], .tabla tbody tr td input[type=text], .tabla tbody tr td input[type=date], .tablaWrap tbody tr td input[type=number], .tablaWrap tbody tr td input[type=text], .tablaWrap tbody tr td input[type=date] {
   width: 100%;
   height: 2rem;
-  text-align: right;
   padding-right: 10px;
+  background: transparent;
+  outline: none;
 }
-.tabla tbody:hover, .tablaWrap tbody:hover {
+.tabla tbody tr td input[type=number], .tablaWrap tbody tr td input[type=number] {
+  text-align: right;
+}
+.tabla tbody tr:hover, .tablaWrap tbody tr:hover {
   background: rgba(255, 255, 43, 0.7);
 }
 

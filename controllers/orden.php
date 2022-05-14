@@ -19,6 +19,10 @@
         function datosPedido(){
             echo json_encode($this->model->verDatosCabecera($_POST['pep'],$_POST['prof'],$_POST['ent']));
         }
+
+        function vistaPreliminar(){
+            echo $this->model->generarDocumento($_POST['cabecera'],$_POST['condicion'],$_POST['detalles']);
+        }
         
     }
 ?>

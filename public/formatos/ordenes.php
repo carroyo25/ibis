@@ -3,9 +3,10 @@
 
     class PDF extends PDF_MC_Table{
 
-        public function __construct($titulo,$condicion,$fecha,$moneda,$plazo,$lugar,$cotizacion,$fentrega,$pago,$importe,
-                                    $info,$detalle,$usuario,
-                                    $razon_social,$ruc,$direccion,$telefono,$correo,$retencion,
+        public function __construct($titulo,$condicion,$fecha,$moneda,$plazo,
+                                    $lugar,$cotizacion,$fentrega,$pago,$importe,
+                                    $info,$detalle,$usuario,$razon_social,
+                                    $ruc,$direccion,$telefono,$correo,$retencion,
                                     $contacto,$tel_contacto,$cor_contacto)
         {
             parent::__construct();
@@ -118,7 +119,7 @@
             $this->Cell(20,3,utf8_decode("Plazo de entrega :"),"B",0);
             $this->Cell(27,3,utf8_decode($this->plazo),"BR",1); //envia de parametro
             
-            if ($this->retencion == 1) {
+            if ($this->retencion == 2) {
                 $this->SetFillColor(0, 0, 128);
                 $this->SetTextColor(255,255,255);
                 $this->MultiCell(15,3,utf8_decode('AGENTE DE RETENCION'),1,'L',true); //envia de parametro
@@ -145,9 +146,9 @@
 	        // Salto de línea
     		$this->Ln(3);
             $this->Rect(10,73,190,7,"F"); //fondo de mensaje
-    		$this->SetWidths(array(10,15,15,10,95,17,15,15));
+    		$this->SetWidths(array(10,15,15,10,95,17,13,15));
     		$this->SetAligns(array("C","C","C","C","C","C","C","C"));
-    		$this->Row(array('Item',utf8_decode('Código'),'Cant.','Und.',utf8_decode('Descripción'),'Nro.Pedido','Precio UNitario','Valor Total'));
+    		$this->Row(array('Item',utf8_decode('Código'),'Cant.','Und.',utf8_decode('Descripción'),'Nro.Pedido','Precio Unitario','Valor Total'));
                     
         }
 
