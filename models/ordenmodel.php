@@ -107,16 +107,18 @@
             }
         }
 
-        public function verDatosCabecera($pedido,$profoma,$entidad){
+        public function verDatosCabecera($pedido,$proforma,$entidad){
             $datosPedido = $this->datosPedido($pedido);
             $sql = "SELECT COUNT(lg_ordencab.id_regmov) AS numero FROM lg_ordencab WHERE lg_ordencab.ncodcos =:cod";
             
             $numero = $this->generarNumero($datosPedido[0]["idcostos"],$sql);
             $entidad = $this->datosEntidad($entidad);
+            $proforma = $this->datosProforma($proforma);
 
             $salida = array("pedido"=>$datosPedido,
                             "orden"=>$numero,
-                            "entidad"=>$entidad);
+                            "entidad"=>$entidad,
+                            "proforma"=>$proforma);
 
             return $salida;
         }
@@ -243,6 +245,87 @@
             $pdf->Output($filename,'F');
 
             return $file;
+        }
+
+        public function insertarOrden($cabecera,$detalles){
+            try {
+                $salida = false;
+                $respuesta = false;
+                $mensaje = "Error en el registro";
+                $clase = "mensaje_error";
+
+                $sql = "SELECT COUNT(lg_ordencab.id_regmov) AS numero FROM lg_ordencab WHERE lg_ordencab.ncodcos =:cod";
+                $api = file_get_contents('https://api.apis.net.pe/v1/tipo-cambio-sunat');
+                $cambio = json_decode($api);
+                $entrega = $this->calcularDias($cabecera['fentrega']);
+            
+                $orden = $this->generarNumero($cabecera['codigo_costos'],$sql);
+                $periodo = explode('-',$cabecera['emision']);
+                
+
+                $sql = $this->db->connect()->prepare("INSERT INTO lg_ordencab SET id_refpedi=:pedi,cper=:anio,cmes=:mes,ntipmov=:tipo,cnumero=:orden,
+                                                                                ffechadoc=:fecha,ffechaent=:entrega,id_centi=:entidad,ncodmon=:moneda,ntcambio=:tcambio,
+                                                                                nigv=:igv,ntotal=:total,ncodpry=:proyecto,ncodcos=:ccostos,ncodarea=:area,
+                                                                                ctiptransp=:transporte,id_cuser=:elabora,ncodpago=:pago,nplazo=:pentrega,cnumcot=:cotizacion,
+                                                                                cdocPDF=:adjunto,nEstadoDoc=:est,ncodalm=:almacen,nflgactivo=:flag,nNivAten=:atencion,
+                                                                                cverificacion=:verif");
+
+                $sql ->execute(["pedi"=>$cabecera['codigo_pedido'],
+                                "anio"=>$periodo[0],
+                                "mes"=>$periodo[1],
+                                "tipo"=>$cabecera['codigo_tipo'],
+                                "orden"=>$orden['numero'],
+                                "fecha"=>$cabecera['emision'],
+                                "entrega"=>$cabecera['fentrega'],
+                                "entidad"=>$cabecera['codigo_entidad'],
+                                "moneda"=>$cabecera['codigo_moneda'],
+                                "tcambio"=>$cambio->compra,
+                                "igv"=>0,
+                                "total"=>$cabecera['total'],
+                                "proyecto"=>$cabecera['codigo_costos'],
+                                "ccostos"=>$cabecera['codigo_costos'],
+                                "area"=>$cabecera['codigo_area'],
+                                "transporte"=>$cabecera['codigo_transporte'],
+                                "elabora"=>$_SESSION['iduser'],
+                                "pago"=>$cabecera['codigo_pago'],
+                                "pentrega"=>$entrega,
+                                "cotizacion"=>$cabecera['proforma'],
+                                "adjunto"=>$cabecera['vista_previa'],
+                                "est"=>49,
+                                "almacen"=>$cabecera['codigo_almacen'],
+                                "flag"=>1,
+                                "atencion"=>$cabecera['nivel_atencion'],
+                                "verif"=>$cabecera['codigo_verificacion']]);
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0){
+                    $this->grabarDetalles($cabecera['codigo_verificacion'],$detalles);
+                    $respuesta = true;
+                    $mensaje = "Orden Grabada";
+                    $clase = "mensaje_correcto";
+                }
+
+                $salida = array("respuesta"=>$respuesta,
+                                "mensaje"=>$mensaje,
+                                "clase"=>$clase);
+
+                
+                return $salida;
+
+                
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }    
+        }
+
+        public function modificarOrden($cabecera,$detalles){
+            try {
+                //code...
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }    
         }
 
         private function calcularDias($fechaEntrega){
@@ -384,6 +467,94 @@
                 echo "Error: " . $th->getMessage();
                 return false;
             }
+        }
+
+        private function datosProforma($proforma){
+            try {
+                $sql=$this->db->connect()->prepare("SELECT
+                                                    lg_proformacab.id_regmov,
+                                                    lg_proformacab.id_centi,
+                                                    lg_proformacab.ffechadoc,
+                                                    lg_proformacab.ffechaplazo,
+                                                    lg_proformacab.cnumero,
+                                                    lg_proformacab.ccondpago,
+                                                    lg_proformacab.ncodmon,
+                                                    lg_proformacab.nafecIgv,
+                                                    lg_proformacab.nigv,
+                                                    lg_proformacab.ntotal,
+                                                    tb_parametros.cdescripcion 
+                                                FROM
+                                                    lg_proformacab
+                                                    INNER JOIN tb_parametros ON lg_proformacab.ccondpago = tb_parametros.nidreg 
+                                                WHERE
+                                                    lg_proformacab.nprof =:proforma");
+                $sql->execute(["proforma"=>$proforma]);
+
+                $rowCount = $sql->rowCount();
+                
+                if ($rowCount > 0) {
+                    $docData = array();
+                    while($row=$sql->fetch(PDO::FETCH_ASSOC)){
+                        $docData[] = $row;
+                    }
+                }
+
+                return $docData;
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        private function grabarDetalles($codigo,$detalles){
+            try {
+                $indice = $this->obtenerIndice($codigo,"SELECT id_regmov AS numero FROM lg_ordencab WHERE lg_ordencab.cverificacion =:id");
+                $datos = json_decode($detalles);
+                $nreg = count($datos);
+
+                for ($i=0; $i < $nreg; $i++) { 
+                    $sql = $this->db->connect()->prepare("INSERT INTO lg_ordendet SET id_regmov=:id,nidpedi=:nidp,id_cprod=:cprod,ncanti=:cant,
+                                                                                    nunitario=:unit,nigv=:igv,ntotal=:total,
+                                                                                    nestado=:est,cverifica=:verif");
+                    $sql->execute(["id"=>$indice,
+                                    "nidp"=>$datos[$i]->pedido,
+                                    "cprod"=>$datos[$i]->codprod,
+                                    "cant"=>$datos[$i]->cantidad,
+                                    "unit"=>$datos[$i]->precio,
+                                    "igv"=>$datos[$i]->igv,
+                                    "total"=>$datos[$i]->total,
+                                    "est"=>1,
+                                    "verif"=>$codigo]);
+                }
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+
+        private function actualizarDetallesPedido($detalles){
+            try {
+                $datos = json_decode($detalles);
+                $nreg = count($datos);
+                for ($i=0; $i <$nreg ; $i++) { 
+                    $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet SET estadoItem=:est WHERE iditem=:item");
+                    $sql->execute(["item"=>$datos[$i]->iditem,
+                                    "est"=>59]);
+                }
+                
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function actualizarCabceraPedido(){
+
+        }
+
+        public function grabarComentarios() {
+
         }
     }
 ?>

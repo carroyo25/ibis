@@ -683,6 +683,10 @@
   padding: 1rem;
   border-radius: 20px;
 }
+.ventanaComentarios .cuerpoComentarios {
+  height: 25rem;
+  overflow: auto;
+}
 
 .ventanaPregunta, .ventanaDialogo, .ventanaComentarios {
   text-align: center;

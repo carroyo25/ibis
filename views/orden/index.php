@@ -32,6 +32,7 @@
                     <input type="hidden" name="codigo_orden" id="codigo_orden">
                     <input type="hidden" name="codigo_estado" id="codigo_estado">
                     <input type="hidden" name="codigo_entidad" id="codigo_entidad">
+                    <input type="hidden" name="codigo_moneda" id="codigo_moneda">
                     <input type="hidden" name="ruc_entidad" id="ruc_entidad">
                     <input type="hidden" name="direccion_entidad" id="direccion_entidad">
                     <input type="hidden" name="telefono_entidad" id="telefono_entidad">
@@ -44,6 +45,8 @@
                     <input type="hidden" name="pedidopdf" id="pedidopdf">
                     <input type="hidden" name="proforma" id="proforma">
                     <input type="hidden" name="retencion" id="retencion">
+                    <input type="hidden" name="nivel_atencion" id="nivel_atencion">
+                    <input type="hidden" name="codigo_pago" id="codigo_pago">
 
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
@@ -258,7 +261,7 @@
         <div class="ventanaComentarios">
             <h3>Observaciones</h3>
             <hr>
-            <div>
+            <div class="cuerpoComentarios">
                 <table class="tabla" id="tablaComentarios">
                     <thead>
                          <tr>
@@ -269,12 +272,6 @@
                          </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>Cesar Arroyo:</td>
-                            <td>14/05/2022</td>
-                            <td>Se inicio orden de compra</td>
-                            <td>xs</td>
-                        </tr>
                     </tbody>
                 </table>
             </div>

@@ -23,6 +23,14 @@
         function vistaPreliminar(){
             echo $this->model->generarDocumento($_POST['cabecera'],$_POST['condicion'],$_POST['detalles']);
         }
+
+        function nuevoRegistro(){
+            echo json_encode($this->model->insertarOrden($_POST['cabecera'],$_POST['detalles']));
+        }
+
+        function modificaRegistro(){
+            echo json_encode($this->model->modificarOrden($_POST['cabecera'],$_POST['detalles']));
+        }
         
     }
 ?>

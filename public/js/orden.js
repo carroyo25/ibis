@@ -15,6 +15,7 @@ $(function(){
             .removeClass()
             .addClass("textoCentro estado procesando");
         $("#proceso").fadeIn();
+
         accion = 'n';
 
         return false;
@@ -159,8 +160,8 @@ $(function(){
                 let row = `<tr data-grabado="${grabado}" 
                                 data-total="${total}" 
                                 data-codprod="${cod_prod}" 
-                                data-itPed="${proforma}"
-                                data-profroma="${id_item}">
+                                data-itPed="${id_item}"
+                                data-profroma="${proforma}">
                     <td class="textoCentro">${nFilas}</td>
                     <td class="textoCentro">${codigo}</td>
                     <td class="pl20px">${descrip}</td>
@@ -200,16 +201,20 @@ $(function(){
                     $("#codigo_transporte").val(data.pedido[0].idtrans);
                     $("#codigo_tipo").val(data.pedido[0].idtipomov);
                     $("#codigo_estado").val(data.pedido[0].estadodoc);
+                    $("#codigo_moneda").val(moneda);
+                    $("#codigo_pago").val(data.proforma[0].ccondpago);
                     $("#costos").val(data.pedido[0].proyecto);
                     $("#area").val(data.pedido[0].area);
                     $("#concepto").val(data.pedido[0].concepto);
                     $("#detalle").val(data.pedido[0].detalle);
                     $("#tipo").val(data.pedido[0].tipo);
                     $("#pedidopdf").val(data.pedido[0].docPdfAprob);
+                    $("#nivel_atencion").val(data.pedido[0].nivelAten);
                     
                     $("#numero").val(data.orden.numero);
                     $("#moneda").val(cmoneda);
                     $("#cpago").val(pago);
+                    $("#codigo_verificacion").val(data.orden.codigo);
 
                     $("#entidad").val(data.entidad[0].crazonsoc);
                     $("#atencion").val(data.entidad[0].contacto);
@@ -264,7 +269,6 @@ $(function(){
         } catch (error) {
             mostrarMensaje(error,'mensaje_error');
         }
-       
 
         return false;
     });
@@ -281,19 +285,71 @@ $(function(){
     $("#addMessage").click(function (e) { 
         e.preventDefault();
         
-        let date = fechaActual();
+        let date = fechaActual(),
+            usuario = $("#name_user").val();
         
         let row = `<tr>
-                        <td data-grabar="1"></td>
+                        <td data-grabar="1">${usuario}</td>
                         <td><input type="date" value="${date}" readonly></td>
                         <td><input type="text" placeholder="Escriba su comentario"" ></td>
                         <td class="con_borde centro"><a href="#"><i class="far fa-trash-alt"></i></a></td>
-                    </tr>`
+                    </tr>`;
+
+
+        if ($("#tablaComentarios tbody tr").length <= 0)
+            $("#tablaComentarios tbody").append(row);
+        else{
+            $('#tablaComentarios > tbody tr:eq(0)').before(row);
+        }
         
-        $('#tablaComentarios > tbody tr:eq(0)').before(row);
-
-
         $("#comentarios").fadeIn();
+
+        return false;
+    });
+
+    $("#btnCancelarDialogo").click(function (e) { 
+        e.preventDefault();
+        
+        $("#comentarios").fadeOut();
+
+        return false
+    });
+
+    $("#saveOrden").click(function (e) { 
+        e.preventDefault();
+
+        try {
+            let result = {};
+    
+            $.each($("#formProceso").serializeArray(),function(){
+                result[this.name] = this.value;
+            })
+
+            if (result['numero'] == "") throw "No tiene numero de orden";
+            if (result['fentrega'] == "") throw "Elija la fecha de entrega";
+            if (result['codigo_transporte'] == "") throw "Elija la forma de transporte";
+            if (result['codigo_almacen'] == "") throw "Indique el lugar de entrega";
+            if ($("#tablaDetalles tbody tr") .length <= 0) throw "No tiene productos seleccionados"
+
+            if ( accion == 'n' ){
+                $.post(RUTA+"orden/nuevoRegistro", {cabecera:result,detalles:JSON.stringify(detalles())},
+                    function (data, textStatus, jqXHR) {
+                        mostrarMensaje(data.mensaje,data.clase);
+                    },
+                    "json"
+                );
+            }else {
+                $.post(RUTA+"orden/modificaRegistro", {cabecera:result,detalles:JSON.stringify(detalles())},
+                    function (data, textStatus, jqXHR) {
+                        mostrarMensaje(data.mensaje,data.clase);
+                    },
+                    "json"
+                );
+            }
+
+        } catch (error) {
+            mostrarMensaje(error,'mensaje_error'); 
+        }
 
         return false;
     });
@@ -340,4 +396,7 @@ detalles = () => {
     return DATA;
 }
 
+comentarios = () => {
+
+}
 

@@ -686,6 +686,11 @@ $adjudicado:rgba(145,93,152,.5);
     width: 33%;
     padding:1rem;
     border-radius: 20px;
+
+    .cuerpoComentarios{
+        height: 25rem;
+        overflow:auto;
+    }
 }
 
 .ventanaPregunta,.ventanaDialogo,.ventanaComentarios{

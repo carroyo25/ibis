@@ -24,6 +24,9 @@
             <img src="<?php echo constant('URL')?>public/img/ibis.png" alt="">
             <div>
                 <h1>CA</h1>
+                <input type="hidden" id="name_user" name="name_user" value="<?php echo $_SESSION['nombres']?>">
+                <input type="hidden" id="id_user" name="id_user" value="<?php echo $_SESSION['iduser']?>">
+                <input type="hidden" id="mail_user" name="mail_user" value="<?php echo $_SESSION['correo']?>">
             </div>
         </div>
         <div class="areaTrabajo">
