@@ -25,12 +25,15 @@
         }
 
         function nuevoRegistro(){
-            echo json_encode($this->model->insertarOrden($_POST['cabecera'],$_POST['detalles']));
+            echo json_encode($this->model->insertarOrden($_POST['cabecera'],$_POST['detalles'],$_POST['comentarios']));
         }
 
         function modificaRegistro(){
-            echo json_encode($this->model->modificarOrden($_POST['cabecera'],$_POST['detalles']));
+            echo json_encode($this->model->modificarOrden($_POST['cabecera'],$_POST['detalles'],$_POST['comentarios']));
         }
         
+        function ordenId(){
+            echo json_encode($this->model->consultarOrdenId($_POST['id']));
+        }
     }
 ?>

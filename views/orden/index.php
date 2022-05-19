@@ -47,6 +47,7 @@
                     <input type="hidden" name="retencion" id="retencion">
                     <input type="hidden" name="nivel_atencion" id="nivel_atencion">
                     <input type="hidden" name="codigo_pago" id="codigo_pago">
+                    <input type="hidden" name="sw" id="sw" value="0">
 
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
@@ -277,9 +278,57 @@
             </div>
             <div>
                 <button type="button" id="btnAceptarDialogo">Aceptar</button>
-                <button type="button" id="btnCancelarDialogo">Cancelar</button>
             </div>
         </div>
+    </div>
+    <div class="modal" id="sendMail">
+        <form action="#" method="post" id="formMails">
+            <input type="hidden" name="estadoPedido" id="estadoPedido">
+            <div class="ventanaCorreo">
+                    <input type="file" name="mailAtach[]" id="mailAtach" multiple class="oculto">
+                    <div class="tituloCorreo">
+                        <h3 class="w100por">Enviar Correo</h3>
+                        <a href="#" id="closeMail" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
+                        <hr>
+                    </div>
+                    <div class="cuerpoCorreo">
+                        <div class="correoIzq">
+                            <div class="asunto">
+                                <label for="subject">Asunto :</label>
+                                <input type="text" name="subject" id="subject">
+                            </div>
+                            <div class="opciones">
+                                <button class="boton3 js-boton" data-type="bold" type="button"><i class="fas fa-bold"></i></button>
+                                <button class="boton3 js-boton" data-type="italic" type="button"><i class="fas fa-italic"></i></button>
+                            </div>
+                            <div class="messaje">
+                                <div contenteditable="true">
+
+                                </div>
+                            </div>
+                            <div class="commands">
+                                <button class="boton3" id="btnConfirmSend">Enviar</button>
+                            </div>
+                        </div>
+                        <div class="correoDerch">
+                            <h4>Correos</h4>
+                            <table id="listaCorreos" class="tabla">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Correo</th>
+                                        <th>...</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                
+            </div>
+        </form>
     </div>
     <div class="cabezaModulo">
         <h1>Requerimientos Bienes/Servicios</h1>
@@ -318,13 +367,12 @@
         <table id="tablaPrincipal">
             <thead>
                     <tr>
-                    <th rowspan="2">...</th>
                     <th rowspan="2">Num.</th>  
                     <th rowspan="2">Emision</th>
-                    <th rowspan="2">Vencimiento</th>
                     <th rowspan="2">Descripción</th>
                     <th rowspan="2">Centro Costos</th> 
-                    <th rowspan="2">Responsable</th>
+                    <th rowspan="2">Area</th>
+                    <th rowspan="2">Atencion</th>
                     <th colspan="3" width="16%">Firmas</th>
                     <tr>
                         <th>Logística</th>

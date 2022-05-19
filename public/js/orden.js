@@ -7,6 +7,73 @@ $(function(){
         moneda   = "",
         cmoneda  = "",
         pago     = "";
+        ingresos = 0;
+
+    $("#tablaPrincipal tbody").on("click","tr", function (e) {
+        e.preventDefault();
+
+        $.post(RUTA+"orden/ordenId", {id:$(this).data("indice")},
+            function (data, textStatus, jqXHR) {
+
+                let estado = "textoCentro " + data.cabecera[0].estado;
+
+                $("#codigo_costos").val(data.cabecera[0].ncodcos);
+                $("#codigo_area").val(data.cabecera[0].ncodarea);
+                $("#codigo_transporte").val(data.cabecera[0].ctiptransp);
+                $("#codigo_tipo").val(data.cabecera[0].ntipmov);
+                $("#codigo_almacen").val(data.cabecera[0].ncodalm);
+                $("#codigo_pedido").val(data.cabecera[0].id_refpedi);
+                $("#codigo_orden").val(data.cabecera[0].id_regmov);
+                $("#codigo_estado").val(data.cabecera[0].nEstadoDoc);
+                $("#codigo_entidad").val(data.cabecera[0].id_centi);
+                $("#codigo_moneda").val(data.cabecera[0].ncodmon);
+                $("#codigo_pago").val(data.cabecera[0].ncodpago);
+                $("#ruc_entidad").val(data.cabecera[0].cnumdoc);
+                $("#direccion_entidad").val(data.cabecera[0].cviadireccion);
+                $("#telefono_entidad").val(data.cabecera[0].ctelefono1);
+                $("#correo_entidad").val(data.cabecera[0].mail_entidad);
+                $("#codigo_verificacion").val(data.cabecera[0].cverificacion);
+                $("#telefono_contacto").val(data.cabecera[0].ctelefono1);
+                $("#correo_contacto").val(data.cabecera[0].cemail);
+                $("#proforma").val(data.cabecera[0].cnumcot);
+                $("#retencion").val(data.cabecera[0].nagenret);
+                $("#nivel_atencion").val(data.cabecera[0].nivelAten);
+                $("#numero").val(data.cabecera[0].cnumero);
+                $("#emision").val(data.cabecera[0].ffechadoc);
+                $("#costos").val(data.cabecera[0].costos);
+                $("#area").val(data.cabecera[0].area);
+                $("#concepto").val(data.cabecera[0].concepto);
+                $("#detalle").val(data.cabecera[0].detalle);
+                $("#moneda").val(data.cabecera[0].nombre_moneda);
+                $("#total").val();
+                $("#tipo").val(data.cabecera[0].tipo);
+                $("#fentrega").val(data.cabecera[0].ffechaent);
+                $("#cpago").val(data.cabecera[0].pagos);
+                $("#estado").val(data.cabecera[0].descripcion_estado);
+                $("#entidad").val(data.cabecera[0].crazonsoc);
+                $("#atencion").val(data.cabecera[0].cnombres);
+                $("#transporte").val(data.cabecera[0].transporte);
+                $("#lentrega").val(data.cabecera[0].cdesalm);
+                $("#total").val(data.total);
+
+                $("#estado")
+                    .removeClass()
+                    .addClass(estado);
+
+                $("#tablaDetalles tbody")
+                    .empty()
+                    .append(data.detalles);
+
+                $("#sw").val(1);
+            },
+            "json"
+        );
+    
+        accion = "u";
+        $("#proceso").fadeIn();
+    
+        return false;
+    });
 
     $("#nuevoRegistro").click(function (e) { 
         e.preventDefault();
@@ -14,7 +81,9 @@ $(function(){
         $("#estado")
             .removeClass()
             .addClass("textoCentro estado procesando");
+        $("form")[0].reset();
         $("#proceso").fadeIn();
+        $("#sw").val(0);
 
         accion = 'n';
 
@@ -24,10 +93,6 @@ $(function(){
     $(".mostrarLista").focus(function (e) { 
         e.preventDefault();
 
-        if (accion !="n") {
-            return false;
-        }
-        
         $(this).next().slideDown();
 
         return false;
@@ -285,29 +350,35 @@ $(function(){
     $("#addMessage").click(function (e) { 
         e.preventDefault();
         
+
         let date = fechaActual(),
             usuario = $("#name_user").val();
         
-        let row = `<tr>
-                        <td data-grabar="1">${usuario}</td>
+        let row = `<tr data-grabar="0">
+                        <td >${usuario}</td>
                         <td><input type="date" value="${date}" readonly></td>
                         <td><input type="text" placeholder="Escriba su comentario"" ></td>
                         <td class="con_borde centro"><a href="#"><i class="far fa-trash-alt"></i></a></td>
                     </tr>`;
 
 
-        if ($("#tablaComentarios tbody tr").length <= 0)
-            $("#tablaComentarios tbody").append(row);
-        else{
-            $('#tablaComentarios > tbody tr:eq(0)').before(row);
+        if (ingresos == 0) {
+            if ($("#tablaComentarios tbody tr").length <= 0)
+                $("#tablaComentarios tbody").append(row);
+            else{
+                $('#tablaComentarios > tbody tr:eq(0)').before(row);
+            }
+
+            ingresos++;
         }
+        
         
         $("#comentarios").fadeIn();
 
         return false;
     });
 
-    $("#btnCancelarDialogo").click(function (e) { 
+    $("#btnAceptarDialogo").click(function (e) { 
         e.preventDefault();
         
         $("#comentarios").fadeOut();
@@ -332,14 +403,18 @@ $(function(){
             if ($("#tablaDetalles tbody tr") .length <= 0) throw "No tiene productos seleccionados"
 
             if ( accion == 'n' ){
-                $.post(RUTA+"orden/nuevoRegistro", {cabecera:result,detalles:JSON.stringify(detalles())},
+                $.post(RUTA+"orden/nuevoRegistro", {cabecera:result,
+                                                    detalles:JSON.stringify(detalles()),
+                                                    comentarios:JSON.stringify(comentarios())},
                     function (data, textStatus, jqXHR) {
                         mostrarMensaje(data.mensaje,data.clase);
                     },
                     "json"
                 );
             }else {
-                $.post(RUTA+"orden/modificaRegistro", {cabecera:result,detalles:JSON.stringify(detalles())},
+                $.post(RUTA+"orden/modificaRegistro", {cabecera:result,
+                                                        detalles:JSON.stringify(detalles()),
+                                                        comentarios:JSON.stringify(comentarios())},
                     function (data, textStatus, jqXHR) {
                         mostrarMensaje(data.mensaje,data.clase);
                     },
@@ -351,6 +426,14 @@ $(function(){
             mostrarMensaje(error,'mensaje_error'); 
         }
 
+        return false;
+    });
+
+    $("#requestAprob").click(function (e) { 
+        e.preventDefault();
+
+        $("#sendMail").fadeIn();
+        
         return false;
     });
 })
@@ -372,31 +455,60 @@ detalles = () => {
             NROPARTE    = $(this).find('td').eq(8).text(),
             PEDIDO      = $(this).find('td').eq(9).text(),
             CODPROD     = $(this).data('codprod'),
-            ITEMPEDIDO  = $(this).data('iditem');
+            MONEDA      = $("#codigo_moneda").val(),
+            ITEMPEDIDO  = $(this).data('itped');
+            GRABAR      = $(this).data('grabado');
 
         item= {};
         
-        item['item']        = ITEM;
-        item['codigo']      = CODIGO;
-        item['descripcion'] = DESCRIPCION;
-        item['unidad']      = UNIDAD;
-        item['cantidad']    = CANTIDAD;
-        item['precio']      = PRECIO;
-        item['igv']         = IGV;
-        item['total']       = TOTAL;
-        item['nroparte']    = NROPARTE;
-        item['pedido']      = PEDIDO;
-        item['codprod']     = CODPROD;
-        item['itempedido']  = ITEMPEDIDO;
-       
+        if (GRABAR == 0) {
+            item['item']        = ITEM;
+            item['codigo']      = CODIGO;
+            item['descripcion'] = DESCRIPCION;
+            item['unidad']      = UNIDAD;
+            item['cantidad']    = CANTIDAD;
+            item['precio']      = PRECIO;
+            item['igv']         = IGV;
+            item['total']       = TOTAL;
+            item['nroparte']    = NROPARTE;
+            item['pedido']      = PEDIDO;
+            item['codprod']     = CODPROD;
+            item['moneda']      = MONEDA;
+            item['itped']       = ITEMPEDIDO;
+            item['grabado']     = GRABADO;
 
-        DATA.push(item);
-    })
+            DATA.push(item);
+        }
+    });
 
     return DATA;
 }
 
 comentarios = () => {
+    COMENTARIOS = [];
 
+    let TABLA = $("#tablaComentarios tbody >tr");
+
+    TABLA.each(function (){
+        let USUARIO     = $("#id_user").val(),
+            FECHA       = $(this).find('td').eq(1).text(),
+            COMENTARIO  = $(this).find('td').eq(2).children().val(),
+            GRABAR      = $(this).data("grabar");
+
+        item = {};
+
+        if ( GRABAR == "0" && COMENTARIO !=""){
+            item['usuario']     = USUARIO;
+            item['fecha']       = FECHA;
+            item['comentario']  = COMENTARIO;
+            item['grabar']      = GRABAR;
+
+            COMENTARIOS.push(item);
+        }
+
+        
+    });
+
+    return COMENTARIOS;
 }
 

@@ -7,7 +7,69 @@
         }
 
         public function listarOrdenes($user){
+           try {
+                $salida = "";
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        tb_costusu.ncodcos,
+                                                        tb_costusu.ncodproy,
+                                                        tb_costusu.id_cuser,
+                                                        lg_ordencab.id_regmov,
+                                                        lg_ordencab.cnumero,
+                                                        lg_ordencab.ffechadoc,
+                                                        lg_ordencab.nNivAten,
+                                                        lg_ordencab.nEstadoDoc,
+                                                        lg_ordencab.ncodpago,
+                                                        lg_ordencab.nplazo,
+                                                        lg_ordencab.cdocPDF,
+                                                        UPPER( tb_pedidocab.concepto ) AS concepto,
+                                                        UPPER( tb_pedidocab.detalle ) AS detalle,
+                                                        UPPER(
+                                                        CONCAT_WS( tb_area.ccodarea, tb_area.cdesarea )) AS area,
+                                                        UPPER(
+                                                        CONCAT_WS( tb_proyectos.ccodproy, tb_proyectos.cdesproy )) AS costos,
+                                                        lg_ordencab.nfirmaLog,
+                                                        lg_ordencab.nfirmaFin,
+                                                        lg_ordencab.nfirmaOpe,
+                                                        tb_parametros.cdescripcion AS atencion 
+                                                    FROM
+                                                        tb_costusu
+                                                        INNER JOIN lg_ordencab ON tb_costusu.ncodproy = lg_ordencab.ncodpry
+                                                        INNER JOIN tb_pedidocab ON lg_ordencab.id_refpedi = tb_pedidocab.idreg
+                                                        INNER JOIN tb_area ON lg_ordencab.ncodarea = tb_area.ncodarea
+                                                        INNER JOIN tb_proyectos ON lg_ordencab.ncodpry = tb_proyectos.nidreg
+                                                        INNER JOIN tb_parametros ON lg_ordencab.nNivAten = tb_parametros.nidreg 
+                                                    WHERE
+                                                        tb_costusu.id_cuser = :user 
+                                                        AND tb_costusu.nflgactivo = 1");
+                $sql->execute(["user"=>$user]);
+                $rowCount = $sql->rowCount();
 
+                if ($rowCount > 0){
+                    while ($rs = $sql->fetch()) {
+
+                        $log = is_null($rs['nfirmaLog']) ? '<i class="far fa-square"></i>' : '<i class="far fa-check-square"></i>';
+                        $ope = is_null($rs['nfirmaOpe']) ? '<i class="far fa-square"></i>' : '<i class="far fa-check-square"></i>';
+                        $fin = is_null($rs['nfirmaFin']) ? '<i class="far fa-square"></i>' : '<i class="far fa-check-square"></i>';
+
+                        $salida .='<tr class="pointer" data-indice="'.$rs['id_regmov'].'">
+                                    <td class="textoCentro">'.str_pad($rs['cnumero'],4,0,STR_PAD_LEFT).'</td>
+                                    <td class="textoCentro">'.date("d/m/Y", strtotime($rs['ffechadoc'])).'</td>
+                                    <td class="pl20px">'.$rs['detalle'].'</td>
+                                    <td class="pl20px">'.utf8_decode($rs['costos']).'</td>
+                                    <td class="pl20px">'.$rs['area'].'</td>
+                                    <td class="textoCentro '.strtolower($rs['atencion']).'">'.$rs['atencion'].'</td>
+                                    <td class="textoCentro">'.$log.'</td>
+                                    <td class="textoCentro">'.$ope.'</td>
+                                    <td class="textoCentro">'.$fin.'</td>
+                                    </tr>';
+                    }
+                }
+
+                return $salida;                    
+           } catch (PDOException $th) {
+               echo "Error: " . $th->getMessage();
+               return false;
+           }
         }
 
         public function importarPedidos(){
@@ -66,7 +128,7 @@
                                                     WHERE
                                                         tb_costusu.id_cuser =:user 
                                                         AND tb_costusu.nflgactivo = 1 
-                                                        AND tb_pedidocab.estadodoc = 58");
+                                                        AND tb_pedidodet.estadoItem = 58");
                 $sql->execute(["user"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowCount();
 
@@ -130,6 +192,7 @@
             $bancos = $this->bancosProveedor($cabecera['codigo_entidad']);
 
             $sql = "SELECT COUNT(lg_ordencab.id_regmov) AS numero FROM lg_ordencab WHERE lg_ordencab.ncodcos =:cod";
+
             $numero = $this->generarNumero($cabecera['codigo_costos'],$sql);
             
             if ($cabecera['codigo_tipo'] == "37") {
@@ -143,7 +206,9 @@
             }
 
             $anio = explode("-",$cabecera['emision']);
-            $titulo = $titulo . " " . $numero['numero'];
+
+            $orden = $cabecera['sw'] == 0 ? $numero['numero'] : $cabecera['numero'];
+            $titulo = $titulo . " " . $orden;
             
             $file = $prefix.$numero['numero']."_".$cabecera['codigo_costos'].".pdf";
             $entrega = $this->calcularDias($cabecera['fentrega']);
@@ -247,7 +312,7 @@
             return $file;
         }
 
-        public function insertarOrden($cabecera,$detalles){
+        public function insertarOrden($cabecera,$detalles,$comentarios){
             try {
                 $salida = false;
                 $respuesta = false;
@@ -300,6 +365,7 @@
 
                 if ($rowCount > 0){
                     $this->grabarDetalles($cabecera['codigo_verificacion'],$detalles);
+                    $this->actualizarDetallesPedido($detalles);
                     $respuesta = true;
                     $mensaje = "Orden Grabada";
                     $clase = "mensaje_correcto";
@@ -319,9 +385,9 @@
             }    
         }
 
-        public function modificarOrden($cabecera,$detalles){
+        public function modificarOrden($cabecera,$detalles,$comentarios){
             try {
-                //code...
+                var_dump($comentarios);
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;
@@ -513,18 +579,24 @@
                 $nreg = count($datos);
 
                 for ($i=0; $i < $nreg; $i++) { 
-                    $sql = $this->db->connect()->prepare("INSERT INTO lg_ordendet SET id_regmov=:id,nidpedi=:nidp,id_cprod=:cprod,ncanti=:cant,
+                    if($datos[$i]->grabado) {
+                        $sql = $this->db->connect()->prepare("INSERT INTO lg_ordendet SET id_regmov=:id,niddeta=:nidp,id_cprod=:cprod,ncanti=:cant,
                                                                                     nunitario=:unit,nigv=:igv,ntotal=:total,
-                                                                                    nestado=:est,cverifica=:verif");
-                    $sql->execute(["id"=>$indice,
-                                    "nidp"=>$datos[$i]->pedido,
-                                    "cprod"=>$datos[$i]->codprod,
-                                    "cant"=>$datos[$i]->cantidad,
-                                    "unit"=>$datos[$i]->precio,
-                                    "igv"=>$datos[$i]->igv,
-                                    "total"=>$datos[$i]->total,
-                                    "est"=>1,
-                                    "verif"=>$codigo]);
+                                                                                    nestado=:est,cverifica=:verif,nidpedi=:pedido,
+                                                                                    nmonref=:moneda");
+                        $sql->execute(["id"=>$indice,
+                                        "nidp"=>$datos[$i]->itped,
+                                        "pedido"=>$datos[$i]->pedido,
+                                        "cprod"=>$datos[$i]->codprod,
+                                        "cant"=>$datos[$i]->cantidad,
+                                        "unit"=>$datos[$i]->precio,
+                                        "igv"=>$datos[$i]->igv,
+                                        "total"=>$datos[$i]->total,
+                                        "est"=>1,
+                                        "verif"=>$codigo,
+                                        "moneda"=>$datos[$i]->moneda]);
+                    }
+                    
                 }
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
@@ -539,8 +611,8 @@
                 $nreg = count($datos);
                 for ($i=0; $i <$nreg ; $i++) { 
                     $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet SET estadoItem=:est WHERE iditem=:item");
-                    $sql->execute(["item"=>$datos[$i]->iditem,
-                                    "est"=>59]);
+                    $sql->execute(["item"=>$datos[$i]->itped,
+                                    "est"=>84]);
                 }
                 
             } catch (PDOException $th) {
@@ -549,7 +621,7 @@
             }
         }
 
-        private function actualizarCabceraPedido(){
+        private function actualizarCabeceraPedido(){
 
         }
 
