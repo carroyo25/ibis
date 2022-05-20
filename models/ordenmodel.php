@@ -365,6 +365,7 @@
 
                 if ($rowCount > 0){
                     $this->grabarDetalles($cabecera['codigo_verificacion'],$detalles);
+                    $this->grabarComentarios($cabecera['codigo_verificacion'],$comentarios);
                     $this->actualizarDetallesPedido($detalles);
                     $respuesta = true;
                     $mensaje = "Orden Grabada";
@@ -387,7 +388,22 @@
 
         public function modificarOrden($cabecera,$detalles,$comentarios){
             try {
-                var_dump($comentarios);
+                $entrega = $this->calcularDias($cabecera['fentrega']);
+
+                $sql = $this->db->connect()->prepare("UPDATE lg_ordencab 
+                                                        SET  ffechaent=:entrega,ntotal=:total,ctiptransp=:transp,
+                                                             nplazo=:plazo,ncodalm=:alm
+                                                        WHERE id_regmov = :id");
+                $sql->execute(['entrega'=>$cabecera['fentrega'],
+                                "total"=>$cabecera['total'],
+                                "transp"=>$cabecera['codigo_transporte'],
+                                "plazo"=>$entrega,
+                                "alm"=>$cabecera['codigo_almacen'],
+                                "id"=>$cabecera['codigo_orden']]);
+                
+                $this->grabarDetalles($cabecera['codigo_verificacion'],$detalles);
+                $this->grabarComentarios($cabecera['codigo_verificacion'],$comentarios);
+
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;
@@ -572,6 +588,27 @@
             }
         }
 
+        public function grabarComentarios($codigo,$comentarios) {
+            try {
+                $indice = $this->obtenerIndice($codigo,"SELECT id_regmov AS numero FROM lg_ordencab WHERE lg_ordencab.cverificacion =:id");
+                $datos = json_decode($comentarios);
+                $nreg = count($datos);
+
+                for ($i=0; $i < $nreg; $i++) { 
+                    $sql = $this->db->connect()->prepare("INSERT INTO lg_ordencomenta 
+                                                        SET id_regmov=:id,id_cuser=:usr,ffecha=:fecha,ccomenta=:comentario");
+                    $sql->execute(["id"=>$indice,
+                                    "usr"=>$datos[$i]->usuario,
+                                    "fecha"=>$datos[$i]->fecha,
+                                    "comentario"=>$datos[$i]->comentario]);
+                }
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
         private function grabarDetalles($codigo,$detalles){
             try {
                 $indice = $this->obtenerIndice($codigo,"SELECT id_regmov AS numero FROM lg_ordencab WHERE lg_ordencab.cverificacion =:id");
@@ -625,8 +662,6 @@
 
         }
 
-        public function grabarComentarios() {
-
-        }
+        
     }
 ?>

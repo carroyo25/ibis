@@ -4,7 +4,11 @@ $(function(){
 
         $(".opcion").removeClass("visitado");
         $(this).addClass("visitado");
-        $(".cargaModulo").load($(this).attr("href"),function(){
+		
+		$("#esperar").fadeIn();
+        
+		$(".cargaModulo").load($(this).attr("href"),function(){
+			
 		});
 
         return false;

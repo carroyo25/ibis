@@ -1621,7 +1621,8 @@
                                     <td class="textoDerecha pr5px">'.$rs['nigv'].'</td>
                                     <td class="textoDerecha pr5px">'.$rs['moneda'].$rs['total'].'</td>
                                     <td class="textoCentro">'.$rs['nroparte'].'</td>
-                                    <td class="textoCentro">'.str_pad($rs['idpedido'],6,0,STR_PAD_LEFT).'</td>';
+                                    <td class="textoCentro">'.str_pad($rs['idpedido'],6,0,STR_PAD_LEFT).'</td>
+                                </tr>';
                     }
                 }
 
@@ -1634,7 +1635,31 @@
 
         private function consultarComentarios($id){
             try {
-                //code...
+                $salida="";
+                $sql = $this->db->connect()->prepare("SELECT
+                                                    UPPER(lg_ordencomenta.ccomenta) AS ccomenta,
+                                                    lg_ordencomenta.ffecha,
+                                                    tb_user.cnombres 
+                                                FROM
+                                                    lg_ordencomenta
+                                                    INNER JOIN tb_user ON lg_ordencomenta.id_cuser = tb_user.iduser 
+                                                WHERE
+                                                    lg_ordencomenta.id_regmov = :id");
+                $sql->execute(["id"=>$id]);
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0) {
+                    while ($rs = $sql->fetch()){
+                        $salida.='<tr data-grabar="1">
+                                    <td >'.$rs['cnombres'].'</td>
+                                    <td><input type="date" value="'.$rs['ffecha'].'" readonly></td>
+                                    <td>'.$rs['ccomenta'].'</td>
+                                    <td class="con_borde centro"><a href="#"><i class="far fa-trash-alt"></i></a></td>
+                                </tr>';
+                    }
+                }
+
+                return $salida;
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;

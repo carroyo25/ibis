@@ -8,6 +8,8 @@ $(function(){
         cmoneda  = "",
         pago     = "";
         ingresos = 0;
+    
+    $("#esperar").fadeOut();
 
     $("#tablaPrincipal tbody").on("click","tr", function (e) {
         e.preventDefault();
@@ -63,6 +65,10 @@ $(function(){
                 $("#tablaDetalles tbody")
                     .empty()
                     .append(data.detalles);
+
+                $("#tablaComentarios tbody")
+                    .empty()
+                    .append(data.comentarios);
 
                 $("#sw").val(1);
             },
@@ -357,7 +363,7 @@ $(function(){
         let row = `<tr data-grabar="0">
                         <td >${usuario}</td>
                         <td><input type="date" value="${date}" readonly></td>
-                        <td><input type="text" placeholder="Escriba su comentario"" ></td>
+                        <td><input type="text" placeholder="Escriba su comentario"></td>
                         <td class="con_borde centro"><a href="#"><i class="far fa-trash-alt"></i></a></td>
                     </tr>`;
 
@@ -371,7 +377,6 @@ $(function(){
 
             ingresos++;
         }
-        
         
         $("#comentarios").fadeIn();
 
@@ -491,7 +496,7 @@ comentarios = () => {
 
     TABLA.each(function (){
         let USUARIO     = $("#id_user").val(),
-            FECHA       = $(this).find('td').eq(1).text(),
+            FECHA       = $(this).find('td').eq(1).children().val(),
             COMENTARIO  = $(this).find('td').eq(2).children().val(),
             GRABAR      = $(this).data("grabar");
 

@@ -3,6 +3,9 @@ $(function(){
     var tabActive = "tab1";
     var accion = "";
 
+    $("#esperar").fadeOut();
+
+
     $("#nuevoRegistro").click(function (e) { 
         e.preventDefault();
 

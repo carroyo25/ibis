@@ -16,8 +16,23 @@
     <div class="mensaje mensaje_correcto">
         <p></p>
     </div>
-    <div class="modal" id="ventanaEspera">
-
+    <div class="modal" id="esperar">
+        <div class="loadingio-spinner-spinner-5ulcsi06hlf">
+            <div class="ldio-fifgg00y5y">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
     </div>
     <div class="wrap">
         <div class="cabecera">

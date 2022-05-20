@@ -2,6 +2,8 @@ $(function () {
     var accion = "";
     var index = 0;
 
+    $("#esperar").fadeOut();
+
     $("#nuevoRegistro").click(function (e) { 
         e.preventDefault();
 
