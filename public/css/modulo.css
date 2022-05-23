@@ -856,7 +856,7 @@
   font-weight: 900;
 }
 
-.procesando, .consulta, .aprobacion, .estudio, .conformidad {
+.procesando, .consulta, .aprobacion, .estudio, .conformidad, .firmas {
   font-size: 0.5rem !important;
 }
 
@@ -890,4 +890,8 @@
 
 .conformidad {
   background: #27798F;
+}
+
+.firmas {
+  background: #73BB6F;
 }

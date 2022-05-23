@@ -6,13 +6,17 @@ $(function(){
         proforma = "",
         moneda   = "",
         cmoneda  = "",
-        pago     = "";
-        ingresos = 0;
+        pago     = "",
+        ingresos = 0,
+        swcoment = false,
+        autorizado = 0;
     
     $("#esperar").fadeOut();
 
     $("#tablaPrincipal tbody").on("click","tr", function (e) {
         e.preventDefault();
+
+        autorizado = $(this).data('finanzas')+$(this).data('logistica')+$(this).data('operaciones');
 
         $.post(RUTA+"orden/ordenId", {id:$(this).data("indice")},
             function (data, textStatus, jqXHR) {
@@ -71,6 +75,8 @@ $(function(){
                     .append(data.comentarios);
 
                 $("#sw").val(1);
+
+                grabado = true;
             },
             "json"
         );
@@ -92,12 +98,16 @@ $(function(){
         $("#sw").val(0);
 
         accion = 'n';
+        grabado = false;
 
         return false;
     });
 
     $(".mostrarLista").focus(function (e) { 
         e.preventDefault();
+
+        if ($("#codigo_estado").val() == 59)
+            return false;
 
         $(this).next().slideDown();
 
@@ -138,14 +148,7 @@ $(function(){
     $("#closeProcess").click(function (e) { 
         e.preventDefault();
 
-        $("#proceso").fadeOut(function(){
-            /*grabado = false;
-            $("form")[0].reset();
-            $("form")[1].reset();
-            $("#tablaDetalles tbody,.listaArchivos").empty();*/
-        });
-
-        /*$.post(RUTA+"pedidos/actualizaListado",
+        $.post(RUTA+"orden/actualizaListado",
             function (data, textStatus, jqXHR) {
                 $(".itemsTabla table tbody")
                     .empty()
@@ -155,16 +158,20 @@ $(function(){
                     grabado = false;
                     $("form")[0].reset();
                     $("form")[1].reset();
-                    $("#tablaDetalles tbody,.listaArchivos").empty();
+                    $("#tablaDetalles tbody").empty();
                 });
             },
             "text"
-        );*/
+        );
+
         return false;
     });
 
     $("#loadRequest").click(function (e) { 
         e.preventDefault();
+
+        if ($("#codigo_estado").val() == 59)
+            return false;
         
         $("#esperar").fadeIn();
 
@@ -388,6 +395,15 @@ $(function(){
         
         $("#comentarios").fadeOut();
 
+        if ($("#codigo_estado").val() == 59 && !swcoment) {
+            $.post(RUTA+"orden/comentarios", {codigo:$("#codigo_verificacion").val(),comentarios:JSON.stringify(comentarios())},
+                function (data, textStatus, jqXHR) {
+                    swcoment = true;
+                },
+                "text"
+            );
+        }
+
         return false
     });
 
@@ -395,17 +411,20 @@ $(function(){
         e.preventDefault();
 
         try {
-            let result = {};
-    
-            $.each($("#formProceso").serializeArray(),function(){
-                result[this.name] = this.value;
-            })
-
+            if ($("#codigo_estado").val() == 59) throw "La orden esta en firmas.";
             if (result['numero'] == "") throw "No tiene numero de orden";
             if (result['fentrega'] == "") throw "Elija la fecha de entrega";
             if (result['codigo_transporte'] == "") throw "Elija la forma de transporte";
             if (result['codigo_almacen'] == "") throw "Indique el lugar de entrega";
             if ($("#tablaDetalles tbody tr") .length <= 0) throw "No tiene productos seleccionados"
+
+            grabado = true;
+
+            let result = {};
+    
+            $.each($("#formProceso").serializeArray(),function(){
+                result[this.name] = this.value;
+            })
 
             if ( accion == 'n' ){
                 $.post(RUTA+"orden/nuevoRegistro", {cabecera:result,
@@ -437,8 +456,90 @@ $(function(){
     $("#requestAprob").click(function (e) { 
         e.preventDefault();
 
-        $("#sendMail").fadeIn();
+        try {
+            if ($("#codigo_estado").val() == 59) throw "La orden esta en firmas.";
+            if (grabado) throw "Por favor grabar la orden";
+
+            $.post(RUTA+"orden/buscaRol", {rol:$(this).data("rol")},
+                function (data, textStatus, jqXHR) {
+                    $("#listaCorreos tbody").empty().append(data);
+                    $("#sendMail").fadeIn();
+                },
+                "text"
+            );
+        } catch (error) {
+            mostrarMensaje(error,'mensaje_error'); 
+        }
         
+        return false;
+    });
+
+    $("#closeMail").click(function (e) { 
+        e.preventDefault();
+
+        $("form")[2].reset();
+        $(".atachs").empty();
+        $(".messaje div").empty();
+        $("#sendMail").fadeOut();
+
+        return false;
+    });
+
+    $("#btnConfirmSend").click(function (e) { 
+        e.preventDefault();
+        
+        try {
+            if ($("#subject").val() =="") throw "Escriba el asunto";
+            if ($("messaje div").html() =="") throw "Escriba el asunto";
+
+            let result = {};
+    
+            $.each($("#formProceso").serializeArray(),function(){
+                result[this.name] = this.value;
+            })
+
+            $.post(RUTA+"orden/correo", {cabecera:result,
+                                        detalles:JSON.stringify(detalles()),
+                                        correos:JSON.stringify(mailsList()),
+                                        asunto:$("#subject").val(),
+                                        mensaje:$(".messaje div").html()},
+                                                
+            function (data, textStatus, jqXHR) {
+                mostrarMensaje(data.mensaje,data.clase);
+                $("#sendMail").fadeOut();
+            },
+            "json"
+        );
+        } catch (error) {
+            mostrarMensaje(error,'mensaje_error');
+        }
+
+        return false;
+    });
+
+    $("#sendEntOrden").click(function (e) { 
+        e.preventDefault();
+        
+        try {
+            if (autorizado != 3) throw "La orden no ha sido autorizada";
+        } catch (error) {
+            mostrarMensaje(error,'mensaje_error');
+        }
+
+        let result = {};
+    
+        $.each($("#formProceso").serializeArray(),function(){
+            result[this.name] = this.value;
+        })
+
+        $.post(RUTA+"orden/envioOrden", {cabecera:result,
+                                        detalles:JSON.stringify(detalles())},
+            function (data, textStatus, jqXHR) {
+                mostrarMensaje(data.mensaje,data.clase);
+            },
+            "json"
+        );
+
         return false;
     });
 })
@@ -466,7 +567,7 @@ detalles = () => {
 
         item= {};
         
-        if (GRABAR == 0) {
+        //if (GRABAR == 0) {
             item['item']        = ITEM;
             item['codigo']      = CODIGO;
             item['descripcion'] = DESCRIPCION;
@@ -480,10 +581,10 @@ detalles = () => {
             item['codprod']     = CODPROD;
             item['moneda']      = MONEDA;
             item['itped']       = ITEMPEDIDO;
-            item['grabado']     = GRABADO;
+            item['grabado']     = GRABAR;
 
             DATA.push(item);
-        }
+        //}
     });
 
     return DATA;
@@ -515,5 +616,29 @@ comentarios = () => {
     });
 
     return COMENTARIOS;
+}
+
+mailsList = () => {
+    CORREOS = [];
+
+    let TABLA =  $("#listaCorreos tbody >tr");
+
+    TABLA.each(function(){
+        let CORREO      = $(this).find('td').eq(1).text(),
+            NOMBRE      = $(this).find('td').eq(0).text(),
+            ENVIAR      = $(this).find('td').eq(2).children().prop("checked"),
+
+        item= {};
+        
+        if (ENVIAR) {
+            item['nombre']= NOMBRE;
+            item['correo']= CORREO;
+
+            CORREOS.push(item);
+        }
+        
+    })
+
+    return CORREOS;
 }
 

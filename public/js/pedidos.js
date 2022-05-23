@@ -2,6 +2,8 @@ $(function(){
     var accion = "";
     var grabado = false;
 
+    $("#esperar").fadeOut();
+
     $("#nuevoRegistro").click(function (e) { 
         e.preventDefault();
 

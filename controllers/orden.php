@@ -35,5 +35,29 @@
         function ordenId(){
             echo json_encode($this->model->consultarOrdenId($_POST['id']));
         }
+
+        function buscaRol(){
+            echo $this->model->buscarFirmas($_POST['rol']);
+        }
+
+        function correo(){
+            echo json_encode($this->model->enviarCorreo($_POST['cabecera'],
+                                                        $_POST['detalles'],
+                                                        $_POST['correos'],
+                                                        $_POST['asunto'],
+                                                        $_POST['mensaje']));
+        }
+
+        function comentarios(){
+            echo $this->model->grabarComentarios($_POST['codigo'],$_POST['comentarios']);
+        }
+
+        function envioOrden(){
+            echo json_encode($this->model->enviarCorreoProveedor($_POST['cabecera'],$_POST['detalles']));
+        }
+
+        function actualizaListado(){
+            echo $this->model->listarOrdenes($_SESSION['iduser']);
+        }
     }
 ?>

@@ -171,8 +171,10 @@
             if ($this->condicion == 0){
                 $this->SetTextColor(170,218,245);
                 $estado = chr(45); //envia de parametro
-            }
-            else {
+            }else if(($this->condicion == 1)){
+                $this->SetTextColor(29,162,97);
+                $estado = chr(45);
+            }else if(($this->condicion == 2)){
                 $this->SetTextColor(29,162,97);
                 $estado = chr(51);
             }

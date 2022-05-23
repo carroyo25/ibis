@@ -158,6 +158,7 @@
                 ]);
 
                 $rowCount = $sql->rowCount();
+                
 
                 if ($rowCount > 0){
                     $this->saveItems($datos['codigo_verificacion'],$datos['codigo_estado'],$datos['codigo_atencion'],$datos['codigo_tipo'],$detalles);
@@ -310,7 +311,6 @@
                     }
     
                     if (!$mail->send()) {
-                        //$mensaje = $mail->ErrorInfo;
                         $mensaje = "Mensaje de correo no enviado";
                         $estadoEnvio = false; 
                     }else {

@@ -914,6 +914,44 @@
             }
         }
 
+        public function buscarFirmas($rol){
+            try {
+                $salida = "";
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        ibis.tb_user.ccorreo AS correo,
+                                                        ibis.tb_user.nrol,
+                                                        rrhh.tabla_aquarius.nombres, 
+                                                        rrhh.tabla_aquarius.apellidos 
+                                                    FROM
+                                                        ibis.tb_user
+                                                        INNER JOIN rrhh.tabla_aquarius ON ibis.tb_user.ncodper = rrhh.tabla_aquarius.internal 
+                                                    WHERE
+                                                        tb_user.nrol =:rol");
+                    $sql->execute(["rol"=>$rol]);
+                
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0) {
+                    while($rs = $sql->fetch()){
+                    $nom = $this->primerosNombres($rs['nombres'],$rs['apellidos']);
+
+                        $salida .='<tr>
+                                    <td class="pl10px">'.$nom.'</td>
+                                    <td class="pl10px">'.$rs['correo'].'</td>
+                                    <td class="textoCentro"><input type="checkbox"></td>
+                                </tr>';
+                    }
+                     
+                }
+
+                return $salida;
+
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
         public function primerosNombres($nombres,$apellidos){
             $nombre_array = explode(" ",$nombres);
             $apellido_array= explode(" ",$apellidos);
@@ -1573,6 +1611,27 @@
             }
         }
 
+        public function grabarComentarios($codigo,$comentarios) {
+            try {
+                $indice = $this->obtenerIndice($codigo,"SELECT id_regmov AS numero FROM lg_ordencab WHERE lg_ordencab.cverificacion =:id");
+                $datos = json_decode($comentarios);
+                $nreg = count($datos);
+
+                for ($i=0; $i < $nreg; $i++) { 
+                    $sql = $this->db->connect()->prepare("INSERT INTO lg_ordencomenta 
+                                                        SET id_regmov=:id,id_cuser=:usr,ffecha=:fecha,ccomenta=:comentario");
+                    $sql->execute(["id"=>$indice,
+                                    "usr"=>$datos[$i]->usuario,
+                                    "fecha"=>$datos[$i]->fecha,
+                                    "comentario"=>$datos[$i]->comentario]);
+                }
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
         private function consultarDetallesOrden($id){
             try {
                 $salida = "";
@@ -1608,10 +1667,9 @@
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()){
                         $salida.='<tr data-grabado="1" 
-                                        data-total="${total}" 
-                                        data-codprod="${cod_prod}" 
-                                        data-itPed="${id_item}"
-                                        data-profroma="${proforma}">
+                                        data-total="'.$rs['total'].'" 
+                                        data-codprod="'.$rs['id_cprod'].'" 
+                                        data-itPed="'.$rs['nidpedi'].'">
                                     <td class="textoCentro">'.str_pad($item,6,0,STR_PAD_LEFT).'</td>
                                     <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                     <td class="pl20px">'.$rs['cdesprod'].'</td>
@@ -1644,7 +1702,8 @@
                                                     lg_ordencomenta
                                                     INNER JOIN tb_user ON lg_ordencomenta.id_cuser = tb_user.iduser 
                                                 WHERE
-                                                    lg_ordencomenta.id_regmov = :id");
+                                                    lg_ordencomenta.id_regmov = :id
+                                                ORDER BY fregsys DESC");
                 $sql->execute(["id"=>$id]);
                 $rowCount = $sql->rowCount();
 

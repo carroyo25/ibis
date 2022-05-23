@@ -10,15 +10,6 @@
     <div class="mensaje">
         <p></p>
     </div>
-    <div class="modal" id="pregunta">
-        <div class="ventanaPregunta">
-            <h3>Desea eliminar el registro?</h3>
-            <div>
-                <button type="button" id="btnAceptarPregunta">Aceptar</button>
-                <button type="button" id="btnCancelarPregunta">Cancelar</button>
-            </div>
-        </div>
-    </div>
     <div class="modal" id="proceso">
         <div class="ventanaProceso tamanioProceso">
             <div class="cabezaProceso">
@@ -52,20 +43,14 @@
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
                         <div>
-                            <button type="button" id="saveOrden" title="Grabar Orden" class="boton3">
-                                <span><i class="far fa-save"></i> Grabar </span> 
-                            </button>
-                            <button type="button" id="cancelOrder" title="Cancelar Orden" class="boton3">
-                                <i class="fab fa-wpexplorer"></i> Cancelar
-                            </button>
                             <button type="button" id="addMessage" title="Comentarios" class="boton3">
-                                <i class="far fa-comments"></i> Agregar comentarios
+                                <i class="far fa-comments"></i> Observaciones 
                             </button>
                             <button type="button" id="preview" title="Vista Previa" class="boton3">
                                 <i class="far fa-file-pdf"></i> Vista Previa
                             </button>
                             <button type="button" id="requestAprob"  title="Solicitar Aprobacion" class="boton3" data-rol="5">
-                                <i class="fas fa-signature"></i> Solicitar Aprobacion
+                                <i class="fas fa-signature"></i> Aurtorizar Proceso
                             </button>
                             <button type="button" id="closeProcess" title="Cerrar" class="boton3">
                                 <i class="fas fa-window-close"></i>
@@ -200,66 +185,6 @@
             </div>
         </div>
     </div>
-    <div class="modal" id="busqueda">
-        <div class="ventanaBusqueda w75por">
-            <div class="tituloVentana">
-                <span id="tituloBusqueda">Pedidos</span>
-                <div>
-                    <a href="#" id="closeSearch"><i class="fas fa-window-close"></i></a>
-                </div>
-            </div>
-            <div class="textoBusqueda">
-                <input type="text" name="txtBuscar" id="txtBuscar" placeholder="Buscar" class="w90por">
-                <button type="button" class="boton3" id="btnAceptItems">Aceptar</button>
-            </div>
-            <div class="tablaBusqueda">
-                <table class="tablaWrap" id="pedidos">
-                    <thead>
-                        <tr class="stickytop">
-                            <th width="4%">Pedido</th>
-                            <th width="5%">Emisión</th>
-                            <th width="15%">Concepto</th>
-                            <th width="15%">Area</th>
-                            <th width="15%">Centro de Costos</th>
-                            <th width="7%">Codigo</th>
-                            <th width="20%">Descripción</th>
-                            <th width="15%">Proveedor</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-    <div class="modal" id="esperar">
-        <div class="loadingio-spinner-spinner-5ulcsi06hlf">
-            <div class="ldio-fifgg00y5y">
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-            </div>
-        </div>
-    </div>
-    <div class="modal" id="vistaprevia">
-        <div class="ventanaVistaPrevia">
-            <div class="tituloVista">
-                <h3>Vista Previa</h3>
-                <a href="#" id="closePreview" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
-            </div>
-            <iframe src=""></iframe>
-        </div>
-    </div>
     <div class="modal" id="comentarios">
         <div class="ventanaComentarios">
             <h3>Observaciones</h3>
@@ -283,56 +208,26 @@
             </div>
         </div>
     </div>
-    <div class="modal" id="sendMail">
-        <form action="#" method="post" id="formMails">
-            <input type="hidden" name="estadoPedido" id="estadoPedido">
-            <div class="ventanaCorreo">
-                    <input type="file" name="mailAtach[]" id="mailAtach" multiple class="oculto">
-                    <div class="tituloCorreo">
-                        <h3 class="w100por">Enviar Correo</h3>
-                        <a href="#" id="closeMail" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
-                        <hr>
-                    </div>
-                    <div class="cuerpoCorreo">
-                        <div class="correoIzq">
-                            <div class="asunto">
-                                <label for="subject">Asunto :</label>
-                                <input type="text" name="subject" id="subject">
-                            </div>
-                            <div class="opciones">
-                                <button class="boton3 js-boton" data-type="bold" type="button"><i class="fas fa-bold"></i></button>
-                                <button class="boton3 js-boton" data-type="italic" type="button"><i class="fas fa-italic"></i></button>
-                            </div>
-                            <div class="messaje">
-                                <div contenteditable="true">
-
-                                </div>
-                            </div>
-                            <div class="commands">
-                                <button class="boton3" id="btnConfirmSend">Enviar</button>
-                            </div>
-                        </div>
-                        <div class="correoDerch">
-                            <h4>Correos</h4>
-                            <table id="listaCorreos" class="tabla">
-                                <thead>
-                                    <tr>
-                                        <th>Nombre</th>
-                                        <th>Correo</th>
-                                        <th>...</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+    <div class="modal" id="vistaprevia">
+        <div class="ventanaVistaPrevia">
+            <div class="tituloVista">
+                <h3>Vista Previa</h3>
+                <a href="#" id="closePreview" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
             </div>
-        </form>
+            <iframe src=""></iframe>
+        </div>
+    </div>
+    <div class="modal" id="pregunta">
+        <div class="ventanaPregunta">
+            <h3>¿Firmar la Orden?</h3>
+            <div>
+                <button type="button" id="btnAceptarPregunta">Aceptar</button>
+                <button type="button" id="btnCancelarPregunta">Cancelar</button>
+            </div>
+        </div>
     </div>
     <div class="cabezaModulo">
-        <h1>Requerimientos de Ordenes</h1>
+        <h1>Aprobacion de Ordenes</h1>
         <div>
             <a href="#" id="nuevoRegistro"><i class="far fa-file"></i></a>
             <a href="#" id="irInicio"><i class="fas fa-home"></i></a>
@@ -377,8 +272,8 @@
                     <th colspan="3" width="16%">Firmas</th>
                     <tr>
                         <th>Logística</th>
-                        <th>Finanzas</th>
                         <th>Operaciones</th>
+                        <th>Finanzas</th>
                     </tr>
                     
                 </tr>
@@ -390,6 +285,6 @@
     </div>
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
     <script src="<?php echo constant('URL');?>public/js/funciones.js?<?php echo constant('VERSION')?>"></script>
-    <script src="<?php echo constant('URL');?>public/js/orden.js?<?php echo constant('VERSION')?>"></script>
+    <script src="<?php echo constant('URL');?>public/js/firmas.js?<?php echo constant('VERSION')?>"></script>
 </body>
 </html>

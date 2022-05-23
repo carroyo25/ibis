@@ -25,6 +25,7 @@ $aprobado:#04AA6D;
 $cotizando:#EFEF13;
 $estudio:#C0CA33;
 $conformidad:#27798F;
+$firmas:#73BB6F;
 $adjudicado:rgba(145,93,152,.5);
 
 .bienes {
@@ -904,7 +905,7 @@ $adjudicado:rgba(145,93,152,.5);
     font-weight:900;
 }
 
-.procesando,.consulta,.aprobacion,.estudio,.conformidad{
+.procesando,.consulta,.aprobacion,.estudio,.conformidad,.firmas{
     font-size: 0.5rem !important;
 }
 
@@ -939,4 +940,8 @@ $adjudicado:rgba(145,93,152,.5);
 
 .conformidad  {
     background: $conformidad;
+}
+
+.firmas {
+    background: $firmas;
 }

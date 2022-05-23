@@ -233,24 +233,6 @@
             </div>
         </div>
     </div>
-    <div class="modal" id="esperar">
-        <div class="loadingio-spinner-spinner-5ulcsi06hlf">
-            <div class="ldio-fifgg00y5y">
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-            </div>
-        </div>
-    </div>
     <div class="modal" id="vistaprevia">
         <div class="ventanaVistaPrevia">
             <div class="tituloVista">
@@ -260,79 +242,8 @@
             <iframe src=""></iframe>
         </div>
     </div>
-    <div class="modal" id="comentarios">
-        <div class="ventanaComentarios">
-            <h3>Observaciones</h3>
-            <hr>
-            <div class="cuerpoComentarios">
-                <table class="tabla" id="tablaComentarios">
-                    <thead>
-                         <tr>
-                             <th>Usuario:</th>
-                             <th>Fecha:</th>
-                             <th>Comentarios</th>
-                             <th>...</th>
-                         </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-            </div>
-            <div>
-                <button type="button" id="btnAceptarDialogo">Aceptar</button>
-            </div>
-        </div>
-    </div>
-    <div class="modal" id="sendMail">
-        <form action="#" method="post" id="formMails">
-            <input type="hidden" name="estadoPedido" id="estadoPedido">
-            <div class="ventanaCorreo">
-                    <input type="file" name="mailAtach[]" id="mailAtach" multiple class="oculto">
-                    <div class="tituloCorreo">
-                        <h3 class="w100por">Enviar Correo</h3>
-                        <a href="#" id="closeMail" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
-                        <hr>
-                    </div>
-                    <div class="cuerpoCorreo">
-                        <div class="correoIzq">
-                            <div class="asunto">
-                                <label for="subject">Asunto :</label>
-                                <input type="text" name="subject" id="subject">
-                            </div>
-                            <div class="opciones">
-                                <button class="boton3 js-boton" data-type="bold" type="button"><i class="fas fa-bold"></i></button>
-                                <button class="boton3 js-boton" data-type="italic" type="button"><i class="fas fa-italic"></i></button>
-                            </div>
-                            <div class="messaje">
-                                <div contenteditable="true">
-
-                                </div>
-                            </div>
-                            <div class="commands">
-                                <button class="boton3" id="btnConfirmSend">Enviar</button>
-                            </div>
-                        </div>
-                        <div class="correoDerch">
-                            <h4>Correos</h4>
-                            <table id="listaCorreos" class="tabla">
-                                <thead>
-                                    <tr>
-                                        <th>Nombre</th>
-                                        <th>Correo</th>
-                                        <th>...</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-            </div>
-        </form>
-    </div>
     <div class="cabezaModulo">
-        <h1>Requerimientos de Ordenes</h1>
+        <h1>Requerimientos Bienes/Servicios</h1>
         <div>
             <a href="#" id="nuevoRegistro"><i class="far fa-file"></i></a>
             <a href="#" id="irInicio"><i class="fas fa-home"></i></a>
@@ -367,29 +278,25 @@
     <div class="itemsTabla">
         <table id="tablaPrincipal">
             <thead>
-                    <tr>
-                    <th rowspan="2">Num.</th>  
-                    <th rowspan="2">Emision</th>
-                    <th rowspan="2">Descripción</th>
-                    <th rowspan="2">Centro Costos</th> 
-                    <th rowspan="2">Area</th>
-                    <th rowspan="2">Atencion</th>
-                    <th colspan="3" width="16%">Firmas</th>
-                    <tr>
-                        <th>Logística</th>
-                        <th>Finanzas</th>
-                        <th>Operaciones</th>
-                    </tr>
-                    
+                <tr>
+                    <th>Num.</th>
+                    <th>Emision</th>
+                    <th>Vencimiento</th>
+                    <th>Descripción</th>
+                    <th>Centro Costos</th>
+                    <th>Resposable</th>
+                    <th>Estado</th>
+                    <th>Atencion</th>
+                    <th>...</th>
                 </tr>
             </thead>
             <tbody>
-                <?php echo $this->listaOrdenes;?>
+                <?php echo $this->listaNotasIngreso;?>
             </tbody>
         </table>
     </div>
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
     <script src="<?php echo constant('URL');?>public/js/funciones.js?<?php echo constant('VERSION')?>"></script>
-    <script src="<?php echo constant('URL');?>public/js/orden.js?<?php echo constant('VERSION')?>"></script>
+    <script src="<?php echo constant('URL');?>public/js/recepcion.js?<?php echo constant('VERSION')?>"></script>
 </body>
 </html>
