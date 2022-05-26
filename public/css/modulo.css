@@ -66,7 +66,7 @@
   display: -ms-grid;
   display: grid;
   position: relative;
-  padding: 5px;
+  padding: 2px 5px;
 }
 
 .column2 {
@@ -834,6 +834,10 @@
 
 .w100por {
   width: 100%;
+}
+
+.ml60px {
+  margin-left: 60px;
 }
 
 .tamanioProceso {

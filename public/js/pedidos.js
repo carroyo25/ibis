@@ -653,6 +653,7 @@ mailsList = () => {
 
 hadfledFiles = (files) =>{
     let filesvar = "";
+    
     filesvar = files;
     
     return filesvar;

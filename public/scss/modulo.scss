@@ -71,7 +71,7 @@ $adjudicado:rgba(145,93,152,.5);
 .column2,.column2_9,.column2_46,.column2_3957{
     display:grid;
     position: relative;
-    padding: 5px;
+    padding: 2px 5px;
 }
 
 .column2{
@@ -877,6 +877,11 @@ $adjudicado:rgba(145,93,152,.5);
 
 .w100por{
     width: 100%;
+}
+
+//margenes
+.ml60px{
+    margin-left: 60px;
 }
 
 //modificar esto para la resolucion de la pantalla

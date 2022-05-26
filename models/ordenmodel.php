@@ -380,7 +380,7 @@
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0){
-                    $this->grabarDetalles($cabecera['codigo_verificacion'],$detalles);
+                    $this->grabarDetalles($cabecera['codigo_verificacion'],$detalles,$cabecera['codigo_costos']);
                     $this->grabarComentarios($cabecera['codigo_verificacion'],$comentarios);
                     $this->actualizarDetallesPedido(84,$detalles,$orden);
                     $respuesta = true;
@@ -417,7 +417,7 @@
                                 "alm"=>$cabecera['codigo_almacen'],
                                 "id"=>$cabecera['codigo_orden']]);
                 
-                $this->grabarDetalles($cabecera['codigo_verificacion'],$detalles);
+                $this->grabarDetalles($cabecera['codigo_verificacion'],$detalles,$cabecera['codigo_costos']);
                 $this->grabarComentarios($cabecera['codigo_verificacion'],$comentarios);
 
                 $salida = array("respuesta"=>true,
@@ -748,7 +748,7 @@
             }
         }
 
-        private function grabarDetalles($codigo,$detalles){
+        private function grabarDetalles($codigo,$detalles,$costos){
             try {
                 $indice = $this->obtenerIndice($codigo,"SELECT id_regmov AS numero FROM lg_ordencab WHERE lg_ordencab.cverificacion =:id");
                 $datos = json_decode($detalles);
@@ -759,7 +759,7 @@
                         $sql = $this->db->connect()->prepare("INSERT INTO lg_ordendet SET id_regmov=:id,niddeta=:nidp,id_cprod=:cprod,ncanti=:cant,
                                                                                     nunitario=:unit,nigv=:igv,ntotal=:total,
                                                                                     nestado=:est,cverifica=:verif,nidpedi=:pedido,
-                                                                                    nmonref=:moneda");
+                                                                                    nmonref=:moneda,ncodcos=:costos");
                         $sql->execute(["id"=>$indice,
                                         "nidp"=>$datos[$i]->itped,
                                         "pedido"=>$datos[$i]->pedido,
@@ -770,7 +770,8 @@
                                         "total"=>$datos[$i]->total,
                                         "est"=>1,
                                         "verif"=>$codigo,
-                                        "moneda"=>$datos[$i]->moneda]);
+                                        "moneda"=>$datos[$i]->moneda,
+                                        "costos"=>$costos]);
                     }
                     
                 }

@@ -1742,5 +1742,33 @@
                 return false;
             }
         }
+
+        //recepcion
+        public function apruebaRecepción(){
+            try {
+                $salida = "";
+                $sql = $this->db->connect()->query("SELECT
+                                                tb_user.iduser,
+                                                tb_user.cnombres 
+                                            FROM
+                                                tb_user 
+                                            WHERE
+                                                tb_user.nrol = 4");
+                $sql->execute();
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0){
+                    while ($rs = $sql->fetch()){
+                        $salida .='<li><a href="'.$rs['iduser'].'" >'.$rs['cnombres'].'</a></li>';
+                    }
+
+                    return $salida;
+                } 
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+        
     }
 ?>

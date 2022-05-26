@@ -161,7 +161,12 @@
                 
 
                 if ($rowCount > 0){
-                    $this->saveItems($datos['codigo_verificacion'],$datos['codigo_estado'],$datos['codigo_atencion'],$datos['codigo_tipo'],$detalles);
+                    $this->saveItems($datos['codigo_verificacion'],
+                                    $datos['codigo_estado'],
+                                    $datos['codigo_atencion'],
+                                    $datos['codigo_tipo'],
+                                    $datos['codigo_costos'],
+                                    $detalles);
                     $respuesta = true;
                     $mensaje = "Pedido Grabado";
                     $clase = "mensaje_correcto";
@@ -349,7 +354,7 @@
             return $rowCount;
         }
 
-        private function saveItems($codigo,$estado,$atencion,$tipo,$detalles){
+        private function saveItems($codigo,$estado,$atencion,$tipo,$costos,$detalles){
             $indice = $this->obtenerIndice($codigo,"SELECT idreg AS numero FROM tb_pedidocab WHERE tb_pedidocab.verificacion =:id");
 
             $datos = json_decode($detalles);
@@ -359,7 +364,7 @@
                 try {
                         $sql = $this->db->connect()->prepare("INSERT INTO tb_pedidodet SET idpedido=:ped,idprod=:prod,idtipo=:tipo,unid=:und,
                                                                                     cant_pedida=:cant,estadoItem=:est,tipoAten=:aten,
-                                                                                    verificacion=:ver,nflgqaqc=:qaqc");
+                                                                                    verificacion=:ver,nflgqaqc=:qaqc,idcostos=:costos");
                         $sql ->execute([
                                         "ped"=>$indice,
                                         "prod"=>$datos[$i]->idprod,
@@ -369,7 +374,8 @@
                                         "est"=>$estado,
                                         "aten"=>$atencion,
                                         "ver"=>$codigo,
-                                        "qaqc"=>$datos[$i]->calidad]);
+                                        "qaqc"=>$datos[$i]->calidad,
+                                        "costos"=>$costos]);
                    
                 } catch (PDOException $th) {
                     echo "Error: ".$th->getMessage();
