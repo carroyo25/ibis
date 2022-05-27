@@ -7,6 +7,43 @@
         }
 
 
+        public function insertar($cabecera, $detalles,$series){
+            try {
+
+                $sql = $this->db->connect()->prepare("INSERT INTO alm_recepcab SET ctipmov =:mov");
+                $sql->execute(["mov"=>"I"]);
+                $rowCount = $sql->rowCount();
+                
+                if ($rowCount > 0) {
+                    $indice = $this->lastInsertId("SELECT MAX(id_regalm) AS id FROM alm_recepcab");
+                }
+
+                return $indice;
+
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+            }
+        }
+
+        private function grabarDetalles($id,$detalles){
+            try {
+               
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        private function grabarSeries($id,$series) {
+            try {
+                //code...
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+
+            }
+        }
+
         public function listarOrdenes(){
             try {
                 $salida = "";
@@ -57,7 +94,6 @@
                 return false;
             }
         }
-
 
         public function consultarOrdenIdRecepcion($id){
             try {
@@ -149,8 +185,11 @@
                 if ($rowCount > 0) {
                     $item=1;
                     while ($rs = $sql->fetch()){
-                        $salida.='<tr data-detorden="'.$rs['nitemord'].'">
-                                    <td class="textoCentro"><a><i class="fas fa-barcode"></i></a></td>
+                        $salida.='<tr data-detorden="'.$rs['nitemord'].'" 
+                                        data-idprod="'.$rs['id_cprod'].'"
+                                        data-iddetped="'.$rs['nidpedi'].'">
+
+                                    <td class="textoCentro"><a href="'.$rs['nitemord'].'"><i class="fas fa-barcode"></i></a></td>
                                     <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
                                     <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                     <td>'.$rs['cdesprod'].'</td>
@@ -167,6 +206,24 @@
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
                 return false;
+            }
+        }
+
+        public function subirAdjuntos($codigo,$adjuntos){
+           
+        }
+
+        public function lastInsertId($query) {
+            try {
+                $sql = $this->db->connect()->query($query);
+                $sql->execute();
+                $result = $sql->fetchAll();
+                
+                return $result[0]['id'];
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+
             }
         }
     }

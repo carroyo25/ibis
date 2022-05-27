@@ -18,7 +18,6 @@
             echo json_encode($this->model->generarNumero($_POST['id'],$sql));
         }
         
-
         function items(){
             echo $this->model->importarItems();
         }
@@ -29,6 +28,15 @@
 
         function ordenes(){
             echo $this->model->listarOrdenes();
+        }
+
+        function nuevoIngreso(){
+            //echo json_encode($this->model->insertar($_POST['cabecera'],$_POST['detalles'],$_POST['series']));
+            echo $this->model->insertar($_POST['cabecera'],$_POST['detalles'],$_POST['series']);
+        }
+
+        function adjuntos(){
+            echo $this->model->subirAdjuntos($_POST['nroingreso'],$_FILES['uploadAtach']);
         }
     }
 ?>

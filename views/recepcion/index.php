@@ -39,6 +39,7 @@
                     <input type="hidden" name="codigo_verificacion" id="codigo_verificacion">
                     <input type="hidden" name="vista_previa" id="vista_previa">
                     <input type="hidden" name="codigo_recepcion" id="codigo_recepcion">
+                    <input type="hidden" name="codigo_ingreso" id="codigo_ingreso">
 
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
@@ -320,7 +321,7 @@
     </div>
     <div class="modal" id="series">
         <div class="ventanaArchivos">
-            <table id="tablaExistencias" class="tabla">
+            <table id="tablaSeries" class="tabla">
                 <thead>
                     <tr>
                         <th>Producto</th>
@@ -331,8 +332,10 @@
                     
                 </tbody>
             </table>
+            </br>
             <div class="opcionesArchivos">
-                <button type="button" class="boton3" id="btnConfirmAtach">Aceptar</button>
+                <button type="button" class="boton3" id="btnConfirmSeries">Aceptar</button>
+                <button type="button" class="boton3" id="btnCancelSeries">Cancelar</button>
             </div>
         </div>
     </div>

@@ -100,7 +100,7 @@ $(function(){
         }else if(contenedor_padre == "listaAprueba"){
             $("#codigo_aprueba").val(codigo);
         }else if(contenedor_padre == "listaMovimiento"){
-            $("#codigo_area").val(codigo);
+            $("#codigo_movimiento").val(codigo);
         }
 
         return false;
@@ -138,6 +138,7 @@ $(function(){
                     $("#codigo_costos").val(data.cabecera[0].ncodcos);
                     $("#codigo_area").val(data.cabecera[0].ncodarea);
                     $("#codigo_orden").val(data.cabecera[0].id_regmov);
+                    $("#codigo_pedido").val(data.cabecera[0].id_refpedi);
                     $("#codigo_estado").val(data.cabecera[0].nEstadoDoc);
                     $("#codigo_entidad").val(data.cabecera[0].id_centi);
                     $("#proyecto").val(data.cabecera[0].costos);
@@ -254,7 +255,7 @@ $(function(){
         e.preventDefault()
 
         let ainfo = new FormData(this)
-            ainfo.append("nota",);
+            ainfo.append("nota",$("#codigo_ingreso").val());
 
         $.ajax({
             // URL to move the uploaded image file to server
@@ -276,11 +277,138 @@ $(function(){
         return false;
     });
 
-    $("#tablaDetalles tbody").on("click","tr", function (e) {
+    $("#tablaDetalles tbody").on("click","a", function (e) {
         e.preventDefault();
+
+        let filas = parseInt($(this).parent().parent().find("td").eq(6).children().val()),
+            orden = $(this).parent().parent().data('detorden'),
+            producto = $(this).parent().parent().data('idprod'),
+            almacen = $("#codigo_almacen").val(),
+            nombre = $(this).parent().parent().find("td").eq(3).text();
+
+            row = `<tr data-orden="${orden}" data-producto="${producto}" data-almacen="${almacen}">
+                        <td>${nombre}</td>
+                        <td><input type="text"></td>
+                    </tr>`
+
+    
+        $("#tablaSeries tbody").empty();
+
+        for (let index = 0; index < filas; index++) {
+            $("#tablaSeries").append(row);        
+        }
 
         $("#series").fadeIn();
 
         return false;
     });
+
+    $("#btnCancelSeries").click(function (e) { 
+        e.preventDefault();
+
+        $("#tablaSeries tbody").empty();
+        $("#series").fadeOut();
+        
+        return false;
+    });
+
+    $("#btnConfirmSeries").click(function (e) { 
+        e.preventDefault();
+
+        $("#series").fadeOut();
+        
+        return false;
+    });
+
+    $("#saveOrden").click(function (e) { 
+        e.preventDefault();
+        
+        let result = {};
+
+        $.each($("#formProceso").serializeArray(),function(){
+            result[this.name] = this.value;
+        });
+
+        try {
+            if (result['codigo_almacen'] == '') throw "Elija el Almacen";
+            if (result['codigo_costos'] == '') throw "Elija Centro de Costos";
+            if (result['codigo_aprueba'] == '') throw "Elija la persona que aprueba";
+            if (result['codigo_movimiento'] == '') throw "Elija tipo de movimiento";
+            if (result['guia'] == '') throw "Escriba el número de guia"
+
+            $.post(RUTA+"recepcion/nuevoIngreso", {cabecera:result,
+                                                    detalles:JSON.stringify(detalles()),
+                                                    series:JSON.stringify(series())},
+                function (data, textStatus, jqXHR) {
+                    console.log(data);
+                },
+                "json"
+            );
+        } catch (error) {
+            mostrarMensaje(error,'mensaje_error');
+        }
+
+        return false;
+    });
 })
+
+detalles = () =>{
+    DETALLES = [];
+
+    let TABLA = $("#tablaDetalles tbody >tr");
+    
+    TABLA.each(function(){
+        let ITEM        = $(this).find('td').eq(1).text(),
+            IDDETORDEN  = $(this).data("detorden"),
+            IDDETPED    = $(this).data("iddetped"),
+            IDPROD      = $(this).data("idprod"),
+            PEDIDO      = $("#codigo_pedido").val(),
+            ORDEN       = $("#codigo_orden").val(),
+            ALMACEN     = $("#codigo_almacen").val(),
+            CANTREC     = $(this).find('td').eq(6).children().val(),
+            OBSER       = $(this).find('td').eq(7).children().val(),
+            VENCE       = $(this).find('td').eq(8).children().val();  
+    
+        item = {};
+
+        item['item']        = ITEM;
+        item['iddetorden']  = IDDETORDEN;
+        item['iddetped']    = IDDETPED;
+        item['idprod']      = IDPROD;
+        item['pedido']      = ORDEN;
+        item['orden']       = PEDIDO;
+        item['almacen']     = ALMACEN;
+        item['cantrec']     = CANTREC;
+        item['obser']       = OBSER;
+        item['vence']       = VENCE;
+
+        DETALLES.push(item);
+    })
+
+    return DETALLES; 
+}
+
+series = () => {
+    SERIES = [];
+
+    let TABLA = $("#tablaSeries tbody >tr");
+
+    TABLA.each(function(){
+
+        let ORDEN   = $(this).data('orden'),
+            ALMACEN = $("#codigo_almacen").val(),
+            PRODUCTO = $(this).data('producto'),
+            SERIE  = $(this).find('td').eq(1).children().val();
+    
+        item = {};
+
+        item['orden'] = ORDEN;
+        item['almacen'] = ALMACEN;
+        item['producto'] = PRODUCTO;
+        item['serie']= SERIE;
+
+        SERIES.push(item);
+    })
+
+    return SERIES;
+}
