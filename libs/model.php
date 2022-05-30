@@ -357,6 +357,20 @@
             }
         }
 
+        //obtener el ultimo id creado
+        public function lastInsertId($query) {
+            try {
+                $sql = $this->db->connect()->query($query);
+                $sql->execute();
+                $result = $sql->fetchAll();
+                
+                return $result[0]['id'];
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+
+            }
+        }
 
         public function encryptPass($password){
             $sSalt = '20adeb83e85f03cfc84d0fb7e5f4d290';
@@ -397,6 +411,55 @@
                         $salida.='<li>
                                     <a href="'.$row['nidreg'].'">'.$row['nidreg'].' '.$row['cdescripcion'].'</a>
                                  </li>';
+                    }
+                }
+                return $salida;
+            } catch (PDOException $e) {
+                echo $e->getMessage();
+                return false;
+            }
+        }
+
+        public function rrhhCargo($codigo){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        ibis.tb_user.iduser, 
+                                                        rrhh.tabla_aquarius.dcargo, 
+                                                        rrhh.tabla_aquarius.ccargo 
+                                                    FROM
+                                                        ibis.tb_user
+                                                        INNER JOIN
+                                                        rrhh.tabla_aquarius
+                                                        ON 
+                                                            ibis.tb_user.ncodper = rrhh.tabla_aquarius.internal
+                                                    WHERE
+                                                        ibis.tb_user.iduser =:codigo");
+                $sql->execute(["codigo"=>$codigo]);
+                $result = $sql->fetchAll();
+
+                return $result[0]['dcargo'];
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function listarSelect($clase,$activo) {
+            try {
+                $salida = "";
+                $query = $this->db->connect()->prepare("SELECT nidreg,cdescripcion,cobservacion 
+                                                        FROM tb_parametros
+                                                        WHERE cclase=:clase
+                                                        AND ccod != '00' 
+                                                        ORDER BY cdescripcion");
+                $query->execute(["clase" => $clase]);
+                $rowcount = $query->rowcount();
+
+                if ($rowcount > 0) {
+                    while ($row = $query->fetch()) {
+                        $selected = $activo == $row['nidreg'] ? "selected" : "";
+                        
+                        $salida.='<option value="'.$row['nidreg'].'" '.$selected.'>'.$row['cdescripcion'].'</option>';
                     }
                 }
                 return $salida;
@@ -1766,6 +1829,205 @@
                 } 
             } catch (PDOException $th) {
                 echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function consultarNotaID($indice){
+            try {
+                $sql=$this->db->connect()->prepare("SELECT
+                                                        ibis.alm_recepcab.id_regalm,
+                                                        ibis.alm_recepcab.ctipmov,
+                                                        ibis.alm_recepcab.ncodmov,
+                                                        ibis.alm_recepcab.nnronota,
+                                                        ibis.alm_recepcab.cper,
+                                                        ibis.alm_recepcab.cmes,
+                                                        ibis.alm_recepcab.ncodalm1,
+                                                        ibis.alm_recepcab.ffecdoc,
+                                                        ibis.alm_recepcab.cnumguia,
+                                                        ibis.alm_recepcab.ncodpry,
+                                                        ibis.alm_recepcab.ncodarea,
+                                                        ibis.alm_recepcab.ncodcos,
+                                                        ibis.alm_recepcab.idref_pedi,
+                                                        ibis.alm_recepcab.idref_abas,
+                                                        ibis.alm_recepcab.id_userAprob,
+                                                        ibis.alm_recepcab.nEstadoDoc,
+                                                        ibis.tb_proyectos.ccodproy,
+                                                        UPPER( ibis.tb_proyectos.cdesproy ) AS proyecto,
+                                                        ibis.tb_area.ccodarea,
+                                                        UPPER ( ibis.tb_area.cdesarea ) AS area,
+                                                        ibis.tb_user.cnombres,
+                                                        CONCAT_WS( ' ', rrhh.tabla_aquarius.nombres, rrhh.tabla_aquarius.apellidos ) AS nombres,
+                                                        ibis.tb_pedidocab.idsolicita,
+                                                        ibis.tb_almacen.ccodalm,
+                                                        UPPER( ibis.tb_almacen.cdesalm ) AS almacen,
+                                                        ibis.alm_recepcab.nnromov,
+                                                        ibis.tb_parametros.cdescripcion,
+                                                        ibis.cm_entidad.id_centi,
+                                                        ibis.cm_entidad.cnumdoc,
+                                                        ibis.cm_entidad.crazonsoc,
+                                                        LPAD( ibis.tb_pedidocab.nrodoc, 6, 0 ) AS pedido,
+                                                        ibis.lg_ordencab.cnumero AS orden,
+                                                        UPPER( ibis.tb_pedidocab.concepto ) AS concepto,
+                                                        UPPER( ibis.tb_pedidocab.detalle ) AS detalle,
+                                                        estados.cabrevia AS estado,
+	                                                    ibis.alm_recepcab.nflgCalidad 
+                                                    FROM
+                                                        ibis.alm_recepcab
+                                                        INNER JOIN ibis.tb_proyectos ON alm_recepcab.ncodpry = tb_proyectos.nidreg
+                                                        INNER JOIN ibis.tb_area ON alm_recepcab.ncodarea = tb_area.ncodarea
+                                                        INNER JOIN ibis.tb_user ON alm_recepcab.id_userAprob = tb_user.iduser
+                                                        INNER JOIN ibis.tb_pedidocab ON ibis.alm_recepcab.idref_pedi = ibis.tb_pedidocab.idreg
+                                                        INNER JOIN rrhh.tabla_aquarius ON ibis.tb_pedidocab.idsolicita = rrhh.tabla_aquarius.internal
+                                                        INNER JOIN ibis.tb_almacen ON ibis.alm_recepcab.ncodalm1 = ibis.tb_almacen.ncodalm
+                                                        INNER JOIN ibis.tb_parametros ON ibis.alm_recepcab.ncodmov = ibis.tb_parametros.nidreg
+                                                        INNER JOIN ibis.cm_entidad ON ibis.alm_recepcab.id_centi = ibis.cm_entidad.id_centi
+                                                        INNER JOIN ibis.lg_ordencab ON ibis.alm_recepcab.idref_abas = ibis.lg_ordencab.id_regmov
+                                                        INNER JOIN ibis.tb_parametros AS estados ON ibis.alm_recepcab.nEstadoDoc = estados.nidreg 
+                                                    WHERE
+                                                        alm_recepcab.id_regalm = :id 
+                                                        LIMIT 1");
+                $sql->execute(["id"=>$indice]);
+
+                $rowCount = $sql->rowCount();
+                
+                if ($rowCount > 0) {
+                    $docData = array();
+                    while($row=$sql->fetch(PDO::FETCH_ASSOC)){
+                        $docData[] = $row;
+                    }
+                }
+
+                return array("cabecera"=>$docData,
+                            "detalles"=>$this->detallesNota($indice),
+                            "series"=>$this->seriesNota($indice),
+                            "adjuntos"=>$this->adjuntosNota($indice));
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        private function detallesNota($indice){
+            try {
+                $salida="";
+                $sql=$this->db->connect()->prepare("SELECT
+                                                    alm_recepdet.niddeta,
+                                                    alm_recepdet.id_regalm,
+                                                    alm_recepdet.ncodalm1,
+                                                    alm_recepdet.id_cprod,
+                                                    FORMAT(alm_recepdet.ncantidad,2) AS ncantidad,
+                                                    alm_recepdet.niddetaPed,
+                                                    alm_recepdet.niddetaOrd,
+                                                    cm_producto.ccodprod,
+                                                    cm_producto.cdesprod,
+                                                    FORMAT( lg_ordendet.ncanti, 2 ) AS cantidad,
+                                                    alm_recepdet.nestadoreg,
+                                                    tb_unimed.cabrevia,
+                                                    alm_recepdet.cobserva,
+                                                    alm_recepdet.fvence  
+                                                FROM
+                                                    alm_recepdet
+                                                    INNER JOIN cm_producto ON alm_recepdet.id_cprod = cm_producto.id_cprod
+                                                    INNER JOIN lg_ordendet ON alm_recepdet.niddetaPed = lg_ordendet.nitemord
+                                                    INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed 
+                                                WHERE
+                                                    alm_recepdet.id_regalm = :id");
+                $sql->execute(['id'=>$indice]);
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0) {
+                    while($rs = $sql->fetch()){
+                        $item = 1;
+                        $fecha = $rs['fvence'] == "" ? date("d/m/Y", strtotime($rs['fvence'])) : "";
+                        
+                        $salida = '<tr data-detorden="'.$rs['niddetaOrd'].'" 
+                                        data-idprod="'.$rs['id_cprod'].'"
+                                        data-iddetped="'.$rs['niddetaPed'].'">
+                                        <td class="textoCentro"><a href="'.$rs['id_regalm'].'"><i class="fas fa-barcode"></i></a></td>
+                                        <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
+                                        <td class="textoCentro">'.$rs['ccodprod'].'</td>
+                                        <td class="pl20px">'.$rs['cdesprod'].'</td>
+                                        <td class="textoCentro">'.$rs['cabrevia'].'</td>
+                                        <td class="pr20px textoDerecha">'.$rs['cantidad'].'</td>
+                                        <td class="pr20px textoDerecha"><input type="text" value="'.$rs['ncantidad'].'" readonly></td>
+                                        <td><input type="text" value="'.$rs['cobserva'].'" readonly></td>
+                                        <td class="textoCentro">'.$fecha.'</td>
+                                        <td><select name="estado">'.$this->listarSelect(13,$rs['nestadoreg']).'</select></td>
+                                        
+                                    </tr>';
+                    }
+                }
+
+                return $salida;
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        private function seriesNota($indice){
+            try {
+                $salida="";
+                $sql=$this->db->connect()->prepare("SELECT
+                                                    alm_recepserie.ncodserie,
+                                                    alm_recepserie.id_cprod,
+                                                    alm_recepserie.idref_movi,
+                                                    alm_recepserie.idref_alma,
+                                                    alm_recepserie.cdesserie,
+                                                    alm_recepserie.cdetalle,
+                                                    cm_producto.cdesprod 
+                                                FROM
+                                                    alm_recepserie
+                                                    INNER JOIN cm_producto ON alm_recepserie.id_cprod = cm_producto.id_cprod 
+                                                WHERE
+                                                    alm_recepserie.idref_movi = :id");
+                $sql->execute(['id'=>$indice]);
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0) {
+                    while($rs = $sql->fetch()){
+                        $salida .= '<tr>
+                                        <td>'.$rs['cdesprod'].'</td>
+                                        <td>'.$rs['cdesserie'].'</td>
+                                    </tr>';
+                    }
+                }
+
+                return $salida;
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        private function adjuntosNota($indice){
+            try {
+                $salida="";
+                $sql=$this->db->connect()->prepare("SELECT
+                                                    lg_regdocumento.id_regmov,
+                                                    lg_regdocumento.nidrefer,
+                                                    lg_regdocumento.creferencia,
+                                                    lg_regdocumento.cdocumento,
+                                                    lg_regdocumento.cmodulo 
+                                                FROM
+                                                    lg_regdocumento 
+                                                WHERE
+                                                    lg_regdocumento.nidrefer = :id 
+                                                    AND lg_regdocumento.cmodulo = 'NI'");
+                $sql->execute(['id'=>$indice]);
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0) {
+                    while($rs = $sql->fetch()){
+                        $salida .= '<li><p><i class="far fa-file"></i></p>
+                                    <p>'.$rs['cdocumento'].'</p></li>';
+                    }
+                }
+
+                return $salida;
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
                 return false;
             }
         }

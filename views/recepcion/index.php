@@ -25,7 +25,6 @@
                 <form action="#" id="formProceso" autocomplete="off">
                     <input type="hidden" name="codigo_costos" id="codigo_costos"> 
                     <input type="hidden" name="codigo_area" id="codigo_area">
-                    <input type="hidden" name="codigo_transporte" id="codigo_transporte">
                     <input type="hidden" name="codigo_movimiento" id="codigo_movimiento">
                     <input type="hidden" name="codigo_aprueba" id="codigo_aprueba">
                     <input type="hidden" name="codigo_almacen" id="codigo_almacen">
@@ -34,12 +33,10 @@
                     <input type="hidden" name="codigo_estado" id="codigo_estado">
                     <input type="hidden" name="codigo_entidad" id="codigo_entidad">
                     <input type="hidden" name="codigo_moneda" id="codigo_moneda">
-                    <input type="hidden" name="ruc_entidad" id="ruc_entidad">
                     <input type="hidden" name="correo_entidad" id="correo_entidad">
                     <input type="hidden" name="codigo_verificacion" id="codigo_verificacion">
-                    <input type="hidden" name="vista_previa" id="vista_previa">
                     <input type="hidden" name="codigo_recepcion" id="codigo_recepcion">
-                    <input type="hidden" name="codigo_ingreso" id="codigo_ingreso">
+                    <input type="hidden" name="codigo_ingreso" id="codigo_ingreso" value="1">
 
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
@@ -197,6 +194,7 @@
                                         <th width="7%">Cantidad</br>Recibida</th>
                                         <th class="">Observaciones</th>
                                         <th class="">Fecha </br> Vencimiento</th>
+                                        <th class="">Estado</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -303,15 +301,11 @@
                 <tr>
                     <th>Num. Guia</th>
                     <th>F.Emisión</th>
-                    <th>F.Traslado</th>
-                    <th>Almacen Origen</th>
-                    <th>Proyecto/Sede</th>
-                    <th>Centro Costos</th>
+                    <th>Almacen</th>
+                    <th>Proyecto/Sede/Costos</th>
                     <th>Area</th>
-                    <th>Solicitante</th>
                     <th>Pedido</th>
                     <th>Orden</th>
-                    <th>...</th>
                 </tr>
             </thead>
             <tbody>

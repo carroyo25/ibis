@@ -6,16 +6,106 @@
             parent::__construct();
         }
 
-
-        public function insertar($cabecera, $detalles,$series){
+        public function listarNotas(){
             try {
+                $salida = "";
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        tb_costusu.id_cuser,
+                                                        tb_costusu.ncodproy,
+                                                        alm_recepcab.id_regalm,
+                                                        alm_recepcab.ncodmov,
+                                                        alm_recepcab.nnromov,
+                                                        alm_recepcab.nnronota,
+                                                        alm_recepcab.cper,
+                                                        alm_recepcab.cmes,
+                                                        alm_recepcab.ncodalm1,
+                                                        alm_recepcab.ffecdoc,
+                                                        alm_recepcab.id_centi,
+                                                        alm_recepcab.cnumguia,
+                                                        alm_recepcab.ncodpry,
+                                                        alm_recepcab.ncodarea,
+                                                        alm_recepcab.ncodcos,
+                                                        alm_recepcab.idref_pedi,
+                                                        alm_recepcab.idref_abas,
+                                                        alm_recepcab.nEstadoDoc,
+                                                        alm_recepcab.nflgCalidad,
+                                                        UPPER( tb_almacen.cdesalm ) AS almacen,
+                                                        UPPER( tb_proyectos.cdesproy ) AS proyecto,
+                                                        UPPER( tb_area.cdesarea ) AS area,
+                                                        lg_ordencab.cnumero AS orden,
+                                                        LPAD( tb_pedidocab.nrodoc, 6, 0 ) pedido 
+                                                    FROM
+                                                        tb_costusu
+                                                        INNER JOIN alm_recepcab ON tb_costusu.ncodproy = alm_recepcab.ncodpry
+                                                        INNER JOIN tb_almacen ON alm_recepcab.ncodalm1 = tb_almacen.ncodalm
+                                                        INNER JOIN tb_proyectos ON alm_recepcab.ncodpry = tb_proyectos.nidreg
+                                                        INNER JOIN tb_area ON alm_recepcab.ncodarea = tb_area.ncodarea
+                                                        INNER JOIN lg_ordencab ON alm_recepcab.idref_abas = lg_ordencab.id_regmov
+                                                        INNER JOIN tb_pedidocab ON alm_recepcab.idref_pedi = tb_pedidocab.idreg 
+                                                    WHERE
+                                                        tb_costusu.id_cuser = :usr 
+                                                        AND tb_costusu.nflgactivo = 1");
+                $sql->execute(["usr"=>$_SESSION['iduser']]);
+                $rowCount = $sql->rowcount();
+                if ($rowCount > 0){
+                    while($rs = $sql->fetch()){
+                        $salida.='<tr class="pointer" data-indice="'.$rs['id_regalm'].'">
+                                    <td class="textoCentro">'.$rs['cnumguia'].'</td>
+                                    <td class="textoCentro">'.date("d/m/Y", strtotime($rs['ffecdoc'])).'</td>
+                                    <td class="pl20px">'.$rs['almacen'].'</td>
+                                    <td class="pl20px">'.$rs['proyecto'].'</td>
+                                    <td class="pl20px">'.$rs['area'].'</td>
+                                    <td class="textoCentro">'.$rs['orden'].'</td>
+                                    <td class="textoCentro">'.$rs['pedido'].'</td>
+                                </tr>';
+                    }
+                }
 
-                $sql = $this->db->connect()->prepare("INSERT INTO alm_recepcab SET ctipmov =:mov");
-                $sql->execute(["mov"=>"I"]);
+                return $salida;
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        public function insertar($cabecera,$detalles,$series){
+            try {
+               
+                $fecha = explode("-",$cabecera['fecha']); 
+                
+                $calidad = array_key_exists('qaqc', $cabecera)? 1 : 0;
+
+                $nota = $this->generarNumero($cabecera["codigo_almacen"],"SELECT COUNT( alm_recepcab.id_regalm ) AS numero FROM alm_recepcab WHERE ncodalm1 =:cod");
+
+                $sql = $this->db->connect()->prepare("INSERT INTO alm_recepcab SET ctipmov =:mov,cper=:anio,cmes=:mes,ncodalm1=:almacen,ffecdoc=:emision,
+                                                                                    id_centi=:entidad,cnumguia=:guia,idref_pedi=:pedido,id_userAprob=:aprueba,
+                                                                                    nEstadoDoc=:estado,nflgactivo=:activo,nnronota=:nota,idref_abas=:orden,
+                                                                                    ncodpry=:costos,ncodarea=:area,nflgCalidad=:calidad,nnromov=:movimiento,
+                                                                                    ncodmov=:codigo_movimiento");
+                $sql->execute(["mov"=>"I",
+                                "anio"=>$fecha[0],
+                                "mes"=>$fecha[1],
+                                "almacen"=>$cabecera['codigo_almacen'],
+                                "emision"=>$cabecera['fecha'],
+                                "entidad"=>$cabecera['codigo_entidad'],
+                                "guia"=>$cabecera['guia'],
+                                "pedido"=>$cabecera['codigo_pedido'],
+                                "aprueba"=>$cabecera['codigo_aprueba'],
+                                "estado"=>$cabecera['codigo_estado'],
+                                "activo"=>1,
+                                "nota"=>$nota['numero'],
+                                "orden"=>$cabecera['codigo_orden'],
+                                "costos"=>$cabecera['codigo_costos'],
+                                "area"=>$cabecera['codigo_area'],
+                                "calidad"=>$calidad,
+                                "movimiento"=>1,
+                                "codigo_movimiento"=>$cabecera['codigo_movimiento']]);
                 $rowCount = $sql->rowCount();
                 
                 if ($rowCount > 0) {
                     $indice = $this->lastInsertId("SELECT MAX(id_regalm) AS id FROM alm_recepcab");
+                    $this->grabarDetalles($indice,$detalles);
+                    $this->grabarSeries($indice,$series);
                 }
 
                 return $indice;
@@ -26,21 +116,50 @@
         }
 
         private function grabarDetalles($id,$detalles){
-            try {
-               
-            } catch (PDOException $th) {
-                echo "Error: " . $th->getMessage();
-                return false;
+            $datos = json_decode($detalles);
+            $nreg = count($datos);
+
+            for ($i=0; $i < $nreg; $i++) { 
+                try {
+                        $sql = $this->db->connect()->prepare("INSERT INTO alm_recepdet SET id_regalm=:id,ncodalm1=:almacen,id_cprod=:cprod,ncantidad=:cantidad,
+                                                                                            niddetaPed=:itempedido,niddetaOrd=:itemorden,nflgactivo=:flag,
+                                                                                            nsaldo=:saldo,cObserva=:observacion,fVence=:vencimiento,
+                                                                                            nestadoreg=:estado");
+                        $sql ->execute(["id"=>$id,
+                                        "almacen"=>$datos[$i]->almacen,
+                                        "cprod"=>$datos[$i]->idprod,
+                                        "cantidad"=>$datos[$i]->cantrec,
+                                        "itempedido"=>$datos[$i]->iddetped,
+                                        "itemorden"=>$datos[$i]->iddetorden,
+                                        "flag"=>1,
+                                        "saldo"=>$datos[$i]->cantsol-$datos[$i]->cantrec,
+                                        "observacion"=>$datos[$i]->obser,
+                                        "vencimiento"=>$datos[$i]->vence,
+                                        "estado"=>$datos[$i]->nestado]);
+                   
+                } catch (PDOException $th) {
+                    echo "Error: ".$th->getMessage();
+                    return false;
+                }
             }
         }
 
         private function grabarSeries($id,$series) {
             try {
-                //code...
+                $datos = json_decode($series);
+                $nreg = count($datos);
+
+                for ($i=0; $i < $nreg; $i++) { 
+                    $sql= $this->db->connect()->prepare("INSERT INTO alm_recepserie SET id_cprod=:cprod,idref_movi=:nota,idref_alma=:almacen,
+                                                                                        cdesserie=:serie");
+                     $sql ->execute(["cprod"=>$datos[$i]->producto,
+                                    "almacen"=>$datos[$i]->almacen,
+                                    "nota"=>$id,
+                                    "serie"=>$datos[$i]->serie]);
+                }
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
                 return false;
-
             }
         }
 
@@ -159,6 +278,8 @@
         private function ordenDetalles($id) {
             try {
                 $salida ="";
+                $estados = $this->listarSelect(13,96);
+
                 $sql = $this->db->connect()->prepare("SELECT
                                                 lg_ordendet.nitemord,
                                                 lg_ordendet.id_regmov,
@@ -198,6 +319,7 @@
                                     <td><input type="number" step="any" placeholder="0.00" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"></td>
                                     <td><input type="text"></td>
                                     <td><input type="date"></td>
+                                    <td><select name="estado">'. $estados .'</select></td>
                                 </tr>';
                     }
                 }
@@ -210,21 +332,92 @@
         }
 
         public function subirAdjuntos($codigo,$adjuntos){
-           
-        }
+            $countfiles = count( $adjuntos['name'] );
 
-        public function lastInsertId($query) {
-            try {
-                $sql = $this->db->connect()->query($query);
-                $sql->execute();
-                $result = $sql->fetchAll();
-                
-                return $result[0]['id'];
-            } catch (PDOException $th) {
-                echo "Error: " . $th->getMessage();
-                return false;
+            for($i=0;$i<$countfiles;$i++){
+                try {
+                    $ext = explode('.',$adjuntos['name'][$i]);
+                    $filename = uniqid().".".end($ext);
+                    // Upload file
+                    if (move_uploaded_file($adjuntos['tmp_name'][$i],'public/documentos/notas_ingreso/adjuntos/'.$filename)){
+                        $sql= $this->db->connect()->prepare("INSERT INTO lg_regdocumento 
+                                                                    SET nidrefer=:cod,cmodulo=:mod,cdocumento=:doc,
+                                                                        creferencia=:ref,nflgactivo=:est");
+                        $sql->execute(["cod"=>$codigo,
+                                        "mod"=>"NI",
+                                        "ref"=>$filename,
+                                        "doc"=>$adjuntos['name'][$i],
+                                        "est"=>1]);
+                    }
+                    
 
+                } catch (PDOException $th) {
+                    echo "Error: ".$th->getMessage();
+                    return false;
+                }
             }
         }
+
+        public function generarPdf($cabecera,$detalles,$condicion){
+            require_once("public/formatos/notaingreso.php");
+
+            $datos = json_decode($detalles);
+            $nreg = count($datos);
+
+            $cargo = $this->rrhhCargo($cabecera['codigo_aprueba']);
+
+            $fecha = explode("-",$cabecera['fecha']);
+            
+            $rc = 0;
+
+            $dia = $fecha[2];
+            $mes = $fecha[1];
+            $anio = $fecha[0];
+
+            $file = uniqid("NI")."_".$cabecera['numero']."_".$cabecera['codigo_almacen'].".pdf";
+
+            if ($condicion == 0){
+                $filename = "public/documentos/notas_ingreso/vistaprevia/".$file;
+            }else if ($condicion == 1){
+                $filename = "public/documentos/notas_ingreso/emitidas/".$file;
+            }
+
+            $pdf = new PDF($cabecera['numero'],$condicion,$dia,$mes,$anio,
+                            $cabecera['proyecto'],$cabecera['almacen'],$cabecera['tipo'],$cabecera['orden'],
+                            $cabecera['pedido'],$cabecera['guia'],$cabecera['aprueba'],$cargo,"I");
+            
+            $pdf->AliasNbPages();
+            $pdf->AddPage();
+            $pdf->SetWidths(array(5,15,55,8,12,20,45,15,15));
+            $pdf->SetFont('Arial','',4);
+            $lc = 0;
+
+            for($i=1;$i<=$nreg;$i++){
+                $pdf->SetAligns(array("C","L","L","L","R","L","L","L","L"));
+                $pdf->Row(array(str_pad($i,3,"0",STR_PAD_LEFT),
+                                        $datos[$rc]->codigo,
+                                        utf8_decode($datos[$rc]->descripcion),
+                                        $datos[$rc]->unidad,
+                                        $datos[$rc]->cantrec,
+                                        $datos[$rc]->obser,
+                                        $cabecera['razon'],
+                                        $datos[$rc]->cestado,
+                                        $datos[$rc]->ubicacion));
+                $lc++;
+                $rc++;
+                
+                if ($lc == 52) {
+                    $pdf->AddPage();
+                    $lc = 0;
+                }	
+            }
+
+            
+            
+            $pdf->Output($filename,'F');
+            echo $filename;
+
+        }
+        
     }
 ?>

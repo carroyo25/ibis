@@ -27,6 +27,7 @@ $estudio:#C0CA33;
 $conformidad:#27798F;
 $firmas:#73BB6F;
 $adjudicado:rgba(145,93,152,.5);
+$recepcion:#AAD2F0;
 
 .bienes {
     background:$bienes;
@@ -482,9 +483,11 @@ $adjudicado:rgba(145,93,152,.5);
 }
 
 .ventanaArchivos{
-    width: 35%;
+    width: 40%;
     padding: 1rem;
     border-radius: 8px;
+    max-height: 30rem;
+    overflow: auto;
 
     .tituloArchivos{
         display: flex;
@@ -910,8 +913,8 @@ $adjudicado:rgba(145,93,152,.5);
     font-weight:900;
 }
 
-.procesando,.consulta,.aprobacion,.estudio,.conformidad,.firmas{
-    font-size: 0.5rem !important;
+.procesando,.consulta,.aprobacion,.estudio,.conformidad,.firmas,.recepcion{
+    font-size: 0.7rem !important;
 }
 
 .procesando{
@@ -949,4 +952,8 @@ $adjudicado:rgba(145,93,152,.5);
 
 .firmas {
     background: $firmas;
+}
+
+.recepcion{
+    background: $recepcion;
 }

@@ -495,9 +495,11 @@
 }
 
 .ventanaArchivos {
-  width: 35%;
+  width: 40%;
   padding: 1rem;
   border-radius: 8px;
+  max-height: 30rem;
+  overflow: auto;
 }
 .ventanaArchivos .tituloArchivos {
   display: -webkit-box;
@@ -860,8 +862,8 @@
   font-weight: 900;
 }
 
-.procesando, .consulta, .aprobacion, .estudio, .conformidad, .firmas {
-  font-size: 0.5rem !important;
+.procesando, .consulta, .aprobacion, .estudio, .conformidad, .firmas, .recepcion {
+  font-size: 0.7rem !important;
 }
 
 .procesando {
@@ -898,4 +900,8 @@
 
 .firmas {
   background: #73BB6F;
+}
+
+.recepcion {
+  background: #AAD2F0;
 }

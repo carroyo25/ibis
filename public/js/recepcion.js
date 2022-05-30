@@ -1,22 +1,77 @@
 $(function(){
     let accion = "",
         grabado = false,
-        co = 0;
+        indice_nota=0;
 
     $("#esperar").fadeOut();
 
-    $("#saveOrder").click(function (e) { 
+    $("#tablaPrincipal tbody").on("click","tr", function (e) {
         e.preventDefault();
-        
-        let result = {};
 
-        $.each($("#formProceso").serializeArray(),function(){
-            result[this.name] = this.value;
-        });
+        $.post(RUTA+"recepcion/consultaId", {id:$(this).data("indice")},
+            function (data, textStatus, jqXHR) {
+                
+                let estado = "textoCentro w100por estado " + data.cabecera[0].estado;
+                
+                $("#codigo_costos").val(data.cabecera[0].ncodpry);
+                $("#codigo_area").val(data.cabecera[0].ncodarea);
+                $("#codigo_movimiento").val(data.cabecera[0].ncodmov);
+                $("#codigo_aprueba").val(data.cabecera[0].id_userAprob);
+                $("#codigo_almacen").val(data.cabecera[0].ncodalm1);
+                $("#codigo_pedido").val(data.cabecera[0].idref_pedi);
+                $("#codigo_orden").val(data.cabecera[0].idref_abas);
+                $("#codigo_estado").val(data.cabecera[0].nEstadoDoc);
+                $("#codigo_entidad").val(data.cabecera[0].id_centi);
+                $("#codigo_ingreso").val(data.cabecera[0].id_regalm);
+                $("#almacen").val(data.cabecera[0].almacen);
+                $("#fecha").val(data.cabecera[0].ffecdoc);
+                $("#numero").val(data.cabecera[0].nnronota);
+                $("#proyecto").val(data.cabecera[0].proyecto);
+                $("#area").val(data.cabecera[0].area);
+                $("#solicita").val(data.cabecera[0].nombres);
+                $("#orden").val(data.cabecera[0].orden);
+                $("#pedido").val(data.cabecera[0].pedido);
+                $("#ruc").val(data.cabecera[0].cnumdoc);
+                $("#guia").val(data.cabecera[0].cnumguia);
+                $("#razon").val(data.cabecera[0].crazonsoc);
+                $("#concepto").val(data.cabecera[0].concepto);
+                $("#detalle").val(data.cabecera[0].detalle);
+                $("#aprueba").val(data.cabecera[0].cnombres);
+                $("#tipo").val(data.cabecera[0].cdescripcion);
+                $("#estado").val(data.cabecera[0].estado);
+                $("#movimiento").val(1);
+
+                let swqaqc = data.cabecera[0].nflgCalidad == 1 ? true: false;
+                
+                $("#qaqc").prop("checked",swqaqc);
+                
+                $("#estado")
+                    .removeClass()
+                    .addClass(estado);
+                
+                
+                $("#tablaDetalles tbody")
+                    .empty()
+                    .append(data.detalles);
+                
+                $("#tablaSeries tbody")
+                    .empty()
+                    .append(data.series);
+
+                $(".listaArchivos")
+                    .empty()
+                    .append(data.adjuntos);
+            },
+            "json"
+        );
+
+        accion = "u";
+        grabado = true;
+        $("#proceso").fadeIn();
 
         return false;
     });
-    
+
     $("#nuevoRegistro").click(function (e) { 
         e.preventDefault();
 
@@ -35,7 +90,7 @@ $(function(){
 
         $("#proceso").fadeOut();
 
-        /*$.post(RUTA+"pedidos/actualizaListado",
+        $.post(RUTA+"recepcion/actualizaNotas",
             function (data, textStatus, jqXHR) {
                 $(".itemsTabla table tbody")
                     .empty()
@@ -49,7 +104,7 @@ $(function(){
                 });
             },
             "text"
-        );*/
+        );
 
         return false;
     });
@@ -205,7 +260,8 @@ $(function(){
     $("#openArch").click(function (e) { 
         e.preventDefault();
  
-        $("#uploadAtach").trigger("click");
+        if (accion == "n")
+            $("#uploadAtach").trigger("click");
  
         return false;
     });
@@ -250,12 +306,68 @@ $(function(){
  
     });
 
+    $("#saveOrden").click(function (e) { 
+        e.preventDefault();
+        
+        let result = {};
+
+        $.each($("#formProceso").serializeArray(),function(){
+            result[this.name] = this.value;
+        });
+
+        try {
+            if (result['codigo_almacen'] == '') throw "Elija el Almacen";
+            if (result['codigo_costos'] == '') throw "Elija Centro de Costos";
+            if (result['codigo_aprueba'] == '') throw "Elija la persona que aprueba";
+            if (result['codigo_movimiento'] == '') throw "Elija tipo de movimiento";
+            if (result['guia'] == '') throw "Escriba el número de guia"
+
+            $.post(RUTA+"recepcion/nuevoIngreso", {cabecera:result,
+                                                    detalles:JSON.stringify(detalles()),
+                                                    series:JSON.stringify(series())},
+                function (data, textStatus, jqXHR) {
+                    $("#codigo_ingreso").val(data);
+                    if ($("#codigo_ingreso").val() !== 0)
+                        $("#fileAtachs").trigger("submit");
+                },
+                "json"
+            );
+        } catch (error) {
+            mostrarMensaje(error,'mensaje_error');
+        }
+
+        return false;
+    });
+
+    $("#closeDocument").click(function (e) { 
+        e.preventDefault();
+        
+        try {
+            if (result['codigo_ingreso'] == '') throw "Por favor garbar la nota de ingreso";
+
+            $.post(RUTA+"recepcion/cerrarRecepcion", {nota:$("#codigo_ingreso"),
+                                                        pedido:$("#pedido").val(),
+                                                        orden:$("#orden").val(),
+                                                        detalles:JSON.stringify(detalles())},
+                function (data, textStatus, jqXHR) {
+                    console.log(data);
+                },
+                "text"
+            );
+
+        } catch (error) {
+            mostrarMensaje(error,'mensaje_error');
+        }
+
+        return false;
+    });
+
      //añadir registro de adjuntos
     $("#fileAtachs").on("submit", function (e) {
         e.preventDefault()
 
-        let ainfo = new FormData(this)
-            ainfo.append("nota",$("#codigo_ingreso").val());
+        let aInfo = new FormData( this );
+            aInfo.append("nroIngreso",$("#codigo_ingreso").val());
 
         $.ajax({
             // URL to move the uploaded image file to server
@@ -263,7 +375,7 @@ $(function(){
             // Request type
             type: "POST", 
             // To send the full form data
-            data: new FormData( this ),
+            data: aInfo,
             contentType:false,      
             processData:false,
             dataType:"json",    
@@ -291,11 +403,12 @@ $(function(){
                         <td><input type="text"></td>
                     </tr>`
 
-    
-        $("#tablaSeries tbody").empty();
+        if (accion == 'n') {
+            $("#tablaSeries tbody").empty();
 
-        for (let index = 0; index < filas; index++) {
-            $("#tablaSeries").append(row);        
+            for (let index = 0; index < filas; index++) {
+                $("#tablaSeries").append(row);        
+            }
         }
 
         $("#series").fadeIn();
@@ -320,7 +433,7 @@ $(function(){
         return false;
     });
 
-    $("#saveOrden").click(function (e) { 
+    $("#preview").click(function (e) { 
         e.preventDefault();
         
         let result = {};
@@ -336,20 +449,33 @@ $(function(){
             if (result['codigo_movimiento'] == '') throw "Elija tipo de movimiento";
             if (result['guia'] == '') throw "Escriba el número de guia"
 
-            $.post(RUTA+"recepcion/nuevoIngreso", {cabecera:result,
+            $.post(RUTA+"recepcion/documentopdf",{cabecera:result,
                                                     detalles:JSON.stringify(detalles()),
-                                                    series:JSON.stringify(series())},
+                                                    condicion:0},
                 function (data, textStatus, jqXHR) {
-                    console.log(data);
+                    $(".ventanaVistaPrevia iframe")
+                    .attr("src","")
+                    .attr("src",data);
+
+                    $("#vistaprevia").fadeIn();
                 },
-                "json"
+                "text"
             );
         } catch (error) {
             mostrarMensaje(error,'mensaje_error');
         }
+        return preview;
+    });
+
+    $("#closePreview").click(function (e) { 
+        e.preventDefault();
+
+        $(".ventanaVistaPrevia iframe").attr("src","");
+        $("#vistaprevia").fadeOut();
 
         return false;
     });
+    
 })
 
 detalles = () =>{
@@ -365,9 +491,16 @@ detalles = () =>{
             PEDIDO      = $("#codigo_pedido").val(),
             ORDEN       = $("#codigo_orden").val(),
             ALMACEN     = $("#codigo_almacen").val(),
-            CANTREC     = $(this).find('td').eq(6).children().val(),
+            CANTSOL     = parseFloat($(this).find('td').eq(5).text()),
+            CANTREC     = $(this).find('td').eq(6).children().val(),// cantidad
             OBSER       = $(this).find('td').eq(7).children().val(),
-            VENCE       = $(this).find('td').eq(8).children().val();  
+            VENCE       = $(this).find('td').eq(8).children().val(),
+            CODIGO      = $(this).find('td').eq(2).text(),//codigo
+            DESCRIPCION = $(this).find('td').eq(3).text(),//descripcion
+            UNIDAD      = $(this).find('td').eq(4).text(),//unidad
+            NESTADO     = $(this).find("select[name='estado']").val(),
+            CESTADO     = $(this).find("select[name='estado'] option:selected").text(),
+            UBICACION   = "";
     
         item = {};
 
@@ -381,6 +514,14 @@ detalles = () =>{
         item['cantrec']     = CANTREC;
         item['obser']       = OBSER;
         item['vence']       = VENCE;
+        item['cantsol']     = CANTSOL;
+
+        item['codigo']     = CODIGO;
+        item['descripcion']= DESCRIPCION;
+        item['unidad']     = UNIDAD;
+        item['nestado']    = NESTADO;
+        item['cestado']    = CESTADO;
+        item['ubicacion']  = UBICACION;
 
         DETALLES.push(item);
     })
