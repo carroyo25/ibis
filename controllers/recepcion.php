@@ -50,5 +50,9 @@
         function consultaId(){
             echo json_encode($this->model->consultarNotaID($_POST['id']));
         }
+
+        function cierraIngreso(){
+            echo $this->model->cerrar($_POST['cabecera'],$_POST['detalles']);
+        }
     }
 ?>

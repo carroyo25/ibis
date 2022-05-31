@@ -44,7 +44,8 @@
                                                         INNER JOIN tb_pedidocab ON alm_recepcab.idref_pedi = tb_pedidocab.idreg 
                                                     WHERE
                                                         tb_costusu.id_cuser = :usr 
-                                                        AND tb_costusu.nflgactivo = 1");
+                                                        AND tb_costusu.nflgactivo = 1
+                                                        AND alm_recepcab.nEstadoDoc = 60");
                 $sql->execute(["usr"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowcount();
                 if ($rowCount > 0){
@@ -419,5 +420,70 @@
 
         }
         
+        public function cerrar($cabecera,$detalles){
+            $estado = array_key_exists('qaqc', $cabecera)? 61 : 62;
+
+            $nota = $this->actualizar_nota($cabecera['codigo_ingreso'],$estado);
+            $orden = $this->actualizar_orden($cabecera['codigo_orden'],$estado);
+            $pedido = $this->actualizar_pedido($cabecera['codigo_pedido'],$estado);
+            $items = $this->actualizar_detalles($detalles,$estado);
+
+            echo $nota .'<br/>' . $orden . '<br/>' . $pedido;
+        }
+
+        private function actualizar_nota($id,$estado){
+            try {
+                $sql = $this->db->connect()->prepare("UPDATE alm_recepcab SET nEstadoDoc=:estado WHERE id_regalm = :id");
+                $sql->execute(["estado"=>$estado,"id"=>$id]);
+                $rowCount = $sql->rowCount();
+                
+                return "Notas Actualizadas -> " . $rowCount;
+
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        private function actualizar_orden($id,$estado){
+            try {
+                $sql = $this->db->connect()->prepare("UPDATE lg_ordencab SET nEstadoDoc=:estado WHERE id_regmov = :id");
+                $sql->execute(["estado"=>$estado,"id"=>$id]);
+                $rowCount = $sql->rowCount();
+                
+                return "Orden Actualizadas -> " . $rowCount;
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        private function actualizar_pedido($id,$estado){
+            try {
+                $sql = $this->db->connect()->prepare("UPDATE tb_pedidocab SET estadodoc=:estado WHERE idreg = :id");
+                $sql->execute(["estado"=>$estado,"id"=>$id]);
+                $rowCount = $sql->rowCount();
+                
+                return "Orden Actualizadas -> " . $rowCount;
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+
+        private function actualizar_detalles($detalles,$estado){
+            try {
+                $datos = json_decode($detalles);
+                $nreg = count($datos);
+
+                for ($i=0; $i < $nreg; $i++) { 
+                    # code...
+                }
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
     }
 ?>

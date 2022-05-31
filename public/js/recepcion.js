@@ -77,7 +77,7 @@ $(function(){
 
         $("#estado")
             .removeClass()
-            .addClass("textoCentro estado procesando");
+            .addClass("textoCentro estado w100por procesando");
         $("#proceso").fadeIn();
         
         accion = 'n';
@@ -327,10 +327,11 @@ $(function(){
                                                     series:JSON.stringify(series())},
                 function (data, textStatus, jqXHR) {
                     $("#codigo_ingreso").val(data);
+
                     if ($("#codigo_ingreso").val() !== 0)
                         $("#fileAtachs").trigger("submit");
                 },
-                "json"
+                "text"
             );
         } catch (error) {
             mostrarMensaje(error,'mensaje_error');
@@ -342,19 +343,26 @@ $(function(){
     $("#closeDocument").click(function (e) { 
         e.preventDefault();
         
-        try {
-            if (result['codigo_ingreso'] == '') throw "Por favor garbar la nota de ingreso";
+        let result = {};
 
-            $.post(RUTA+"recepcion/cerrarRecepcion", {nota:$("#codigo_ingreso"),
-                                                        pedido:$("#pedido").val(),
-                                                        orden:$("#orden").val(),
-                                                        detalles:JSON.stringify(detalles())},
+        $.each($("#formProceso").serializeArray(),function(){
+            result[this.name] = this.value;
+        });
+
+        try {
+            if (result['codigo_ingreso'] == '') throw "Debe grabar el documento";
+            if (result['codigo_costos'] == '') throw "Elija Centro de Costos";
+            if (result['codigo_aprueba'] == '') throw "Elija la persona que aprueba";
+            if (result['codigo_movimiento'] == '') throw "Elija tipo de movimiento";
+            if (result['guia'] == '') throw "Escriba el número de guia"
+
+            $.post(RUTA+"recepcion/cierraIngreso", {cabecera:result,
+                                                    detalles:JSON.stringify(detalles())},
                 function (data, textStatus, jqXHR) {
                     console.log(data);
                 },
                 "text"
             );
-
         } catch (error) {
             mostrarMensaje(error,'mensaje_error');
         }
