@@ -428,7 +428,10 @@
             $pedido = $this->actualizar_pedido($cabecera['codigo_pedido'],$estado);
             $items = $this->actualizar_detalles($detalles,$estado);
 
-            echo $nota .'<br/>' . $orden . '<br/>' . $pedido;
+            $this->generarPdf($cabecera,$detalles,1);
+
+            return true;
+
         }
 
         private function actualizar_nota($id,$estado){
@@ -471,14 +474,19 @@
             }
         }
 
-
         private function actualizar_detalles($detalles,$estado){
             try {
                 $datos = json_decode($detalles);
                 $nreg = count($datos);
 
                 for ($i=0; $i < $nreg; $i++) { 
-                    # code...
+                    try {
+                        $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet SET estadoItem=:estado WHERE iditem=:id");
+                        $sql->execute(["estado"=>$estado,"id"=>$datos[$i]->iddetped]);
+                    } catch (PDOException $th) {
+                        echo "Error: " . $th->getMessage();
+                        return false;
+                    }
                 }
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
