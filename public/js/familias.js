@@ -4,6 +4,14 @@ $(function () {
 
     $("#esperar").fadeOut();
 
+    $(".ventanaProceso ").click(function (e) { 
+        e.preventDefault();
+        
+        $(".lista").slideUp();
+
+        return false;
+    });
+
     $("#nuevoRegistro").click(function (e) { 
         e.preventDefault();
 
@@ -132,6 +140,7 @@ $(function () {
 
         $.post(RUTA+"familias/actualizaTabla",
             function (data, textStatus, jqXHR) {
+                $(".lista").slideUp();
                 $("form")[0].reset();
                 $("#tablaPrincipal tbody")
                     .empty()

@@ -55,7 +55,9 @@
                 </div>
             </div>
             <div class="ventana">
-                <div class="cargaModulo"></div>
+                <div class="cargaModulo">
+                    <h1>Panel</h1>
+                </div>
             </div>
         </div>
         <div class="pie">

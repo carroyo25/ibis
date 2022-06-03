@@ -68,5 +68,37 @@
                 return false;
             }
         }
+
+        public function grabarCalidad($detalles){
+                $datos = json_decode($detalles);
+                $nreg = count($datos);
+
+                for ($i=0; $i < $nreg; $i++) { 
+                    try {
+                        $sql = $this->db->connect()->prepare("UPDATE alm_recepdet SET nestadoreg=:estado WHERE niddeta=:id");
+                        $sql->execute(["estado"=>$datos[$i]->nestado,
+                                        "id"=>$datos[$i]->iddetnota]);
+                    } catch (PDOException $th) {
+                        echo "Error: " . $th->getMessage();
+                        return false;
+                    }  
+                }
+        }
+
+        public function liberar_nota($id,$estado,$detalles){
+            try {
+                $sql = $this->db->connect()->prepare("UPDATE alm_recepcab SET nEstadoDoc=:estado WHERE id_regalm = :id");
+                $sql->execute(["estado"=>$estado,"id"=>$id]);
+                $rowCount = $sql->rowCount();
+                
+                if ($rowCount > 0) {
+                    $this->grabarCalidad($detalles);
+                }
+
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
     }
 ?>

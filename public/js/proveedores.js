@@ -2,6 +2,8 @@ $(function() {
     var tabActive = "tab1";
     var accion = "";
     var index = "";
+    
+    $("#esperar").fadeOut();
 
     $.post(RUTA+"proveedores/obtenerValores", {bancos:"02",tipo:"03"},
             function (data, textStatus, jqXHR) {
@@ -168,8 +170,9 @@ $(function() {
     $("#closeProcess").click(function (e) { 
         e.preventDefault();
 
-        /*$.post(RUTA+"proveedores/actualizaListado",
+        $.post(RUTA+"proveedores/actualizaListado",
             function (data, textStatus, jqXHR) {
+                $(".lista").hide();
                 $(".itemsTabla  table tbody")
                     .empty()
                     .append(data);
@@ -177,7 +180,7 @@ $(function() {
                 $("#proceso").fadeOut();
             },
             "text"
-        );*/
+        );
 
         $("form")[0].reset();
         $("#bancos tbody,#contatos tbody").empty();

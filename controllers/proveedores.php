@@ -51,6 +51,10 @@
         function desactivaProveedor(){
             echo $this->model->borrarProveedor($_POST['id']);
         }
+
+        function actualizaListado(){
+            echo $this->model->listarProveedores();
+        }
         
     }
 ?>

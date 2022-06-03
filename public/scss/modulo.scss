@@ -28,6 +28,7 @@ $conformidad:#27798F;
 $firmas:#73BB6F;
 $adjudicado:rgba(145,93,152,.5);
 $recepcion:#AAD2F0;
+$calidad:#F4D03F;
 
 .bienes {
     background:$bienes;
@@ -102,7 +103,7 @@ $recepcion:#AAD2F0;
     border: 1px solid $sobreElemento;
     margin-top: 10px;
     border-radius: 8px;
-    margin-bottom: 1rem;
+    //margin-bottom: 1rem;
 
     label {
         margin-top: 14px !important;
@@ -913,7 +914,7 @@ $recepcion:#AAD2F0;
     font-weight:900;
 }
 
-.procesando,.consulta,.aprobacion,.estudio,.conformidad,.firmas,.recepcion{
+.procesando,.consulta,.aprobacion,.estudio,.conformidad,.firmas,.recepcion,.calidad{
     font-size: 0.7rem !important;
 }
 
@@ -956,4 +957,8 @@ $recepcion:#AAD2F0;
 
 .recepcion{
     background: $recepcion;
+}
+
+.calidad{
+    background: $calidad;
 }

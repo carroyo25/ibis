@@ -62,4 +62,113 @@ $(function(){
 
         return false;
     });
+
+    $("#saveDocument").click(function (e) { 
+        e.preventDefault();
+
+        $.post(RUTA+"calidad/grabaCalidad", {detalles:JSON.stringify(detalles())},
+            function (data, textStatus, jqXHR) {
+                console.log(data);
+            },
+            "text"
+        );
+
+        return false
+    });
+
+    $("#freeDocument").click(function (e) { 
+        e.preventDefault();
+        
+        $.post(RUTA+"calidad/liberaNota", {id:$("#codigo_ingreso").val(),estado:60,detalles:JSON.stringify(detalles())},
+            function (data, textStatus, jqXHR) {
+                console.log(data);
+            },
+            "text"
+        );
+
+        return false;
+    });
+
+    $("#closeProcess").click(function (e) { 
+        e.preventDefault();
+
+        $("#proceso").fadeOut();
+
+        $.post(RUTA+"calidad/actualizaNotas",
+            function (data, textStatus, jqXHR) {
+                $(".itemsTabla table tbody")
+                    .empty()
+                    .append(data);
+
+                $("#proceso").fadeOut(function(){
+                    $("form")[0].reset();
+                    $("form")[1].reset();
+                    $("#tablaDetalles tbody,.listaArchivos").empty();
+                });
+            },
+            "text"
+        );
+
+        return false;
+    });
+
+    $("#tablaDetalles tbody").on("click","a", function (e) {
+        e.preventDefault();
+
+
+        return false;
+    });
 })
+
+detalles = () =>{
+    DETALLES = [];
+
+    let TABLA = $("#tablaDetalles tbody >tr");
+    
+    TABLA.each(function(){
+        let ITEM        = $(this).find('td').eq(1).text(),
+            IDDETORDEN  = $(this).data("detorden"),
+            IDDETPED    = $(this).data("iddetped"),
+            IDDETNOTA   = $(this).data("iddetnota")
+            IDPROD      = $(this).data("idprod"),
+            PEDIDO      = $("#codigo_pedido").val(),
+            ORDEN       = $("#codigo_orden").val(),
+            ALMACEN     = $("#codigo_almacen").val(),
+            CANTSOL     = parseFloat($(this).find('td').eq(5).text()),
+            CANTREC     = $(this).find('td').eq(6).children().val(),// cantidad
+            OBSER       = $(this).find('td').eq(7).children().val(),
+            VENCE       = $(this).find('td').eq(8).children().val(),
+            CODIGO      = $(this).find('td').eq(2).text(),//codigo
+            DESCRIPCION = $(this).find('td').eq(3).text(),//descripcion
+            UNIDAD      = $(this).find('td').eq(4).text(),//unidad
+            NESTADO     = $(this).find("select[name='estado']").val(),
+            CESTADO     = $(this).find("select[name='estado'] option:selected").text(),
+            UBICACION   = "";
+    
+        item = {};
+
+        item['item']        = ITEM;
+        item['iddetorden']  = IDDETORDEN;
+        item['iddetped']    = IDDETPED;
+        item['idprod']      = IDPROD;
+        item['pedido']      = ORDEN;
+        item['orden']       = PEDIDO;
+        item['almacen']     = ALMACEN;
+        item['cantrec']     = CANTREC;
+        item['obser']       = OBSER;
+        item['vence']       = VENCE;
+        item['cantsol']     = CANTSOL;
+        item['iddetnota']   = IDDETNOTA;
+
+        item['codigo']     = CODIGO;
+        item['descripcion']= DESCRIPCION;
+        item['unidad']     = UNIDAD;
+        item['nestado']    = NESTADO;
+        item['cestado']    = CESTADO;
+        item['ubicacion']  = UBICACION;
+
+        DETALLES.push(item);
+    })
+
+    return DETALLES; 
+}

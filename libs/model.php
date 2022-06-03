@@ -1833,7 +1833,7 @@
             }
         }
 
-        public function consultarNotaID($indice){
+        public function consultarNotaID($indice,$clase){
             try {
                 $sql=$this->db->connect()->prepare("SELECT
                                                         ibis.alm_recepcab.id_regalm,
@@ -1899,7 +1899,7 @@
                 }
 
                 return array("cabecera"=>$docData,
-                            "detalles"=>$this->detallesNota($indice),
+                            "detalles"=>$this->detallesNota($indice,$clase),
                             "series"=>$this->seriesNota($indice),
                             "adjuntos"=>$this->adjuntosNota($indice));
             } catch (PDOException $th) {
@@ -1908,7 +1908,7 @@
             }
         }
 
-        private function detallesNota($indice){
+        private function detallesNota($indice,$clase){
             try {
                 $salida="";
                 $sql=$this->db->connect()->prepare("SELECT
@@ -1939,11 +1939,13 @@
                 if ($rowCount > 0) {
                     while($rs = $sql->fetch()){
                         $item = 1;
+                        
                         $fecha = $rs['fvence'] == "" ? date("d/m/Y", strtotime($rs['fvence'])) : "";
                         
                         $salida = '<tr data-detorden="'.$rs['niddetaOrd'].'" 
                                         data-idprod="'.$rs['id_cprod'].'"
-                                        data-iddetped="'.$rs['niddetaPed'].'">
+                                        data-iddetped="'.$rs['niddetaPed'].'"
+                                        data-iddetnota="'.$rs['niddeta'].'">
                                         <td class="textoCentro"><a href="'.$rs['id_regalm'].'"><i class="fas fa-barcode"></i></a></td>
                                         <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
@@ -1951,9 +1953,9 @@
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                         <td class="pr20px textoDerecha">'.$rs['cantidad'].'</td>
                                         <td class="pr20px textoDerecha"><input type="text" value="'.$rs['ncantidad'].'" readonly></td>
-                                        <td><input type="text" value="'.$rs['cobserva'].'" readonly></td>
+                                        <td><input type="text" value="'.$rs['cobserva'].'"></td>
                                         <td class="textoCentro">'.$fecha.'</td>
-                                        <td><select name="estado">'.$this->listarSelect(13,$rs['nestadoreg']).'</select></td>
+                                        <td><select name="estado">'.$this->listarSelect($clase,$rs['nestadoreg']).'</select></td>
                                         
                                     </tr>';
                     }

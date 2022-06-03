@@ -4,6 +4,14 @@ $(function(){
 
     $("#esperar").fadeOut();
 
+    $(".ventanaProceso ").click(function (e) { 
+        e.preventDefault();
+        
+        $(".lista").slideUp();
+
+        return false;
+    });
+
 
     $("#nuevoRegistro").click(function (e) { 
         e.preventDefault();
@@ -81,10 +89,11 @@ $(function(){
         $.post(RUTA+"clases/actualizaTabla",
             function (data, textStatus, jqXHR) {
                 $("form")[0].reset();
+                $(".lista").hide();
                 $("#tablaPrincipal tbody")
                     .empty()
                     .append(data);
-                $("#proceso").fadeOut();
+                $("#proceso").fadeOut();  
             },
             "text"
         );

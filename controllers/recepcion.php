@@ -48,7 +48,7 @@
         }
 
         function consultaId(){
-            echo json_encode($this->model->consultarNotaID($_POST['id']));
+            echo json_encode($this->model->consultarNotaID($_POST['id'],13));
         }
 
         function cierraIngreso(){

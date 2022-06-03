@@ -102,7 +102,6 @@
   border: 1px solid #c2c2c2;
   margin-top: 10px;
   border-radius: 8px;
-  margin-bottom: 1rem;
 }
 
 .column4items > *:nth-child(1) {
@@ -862,7 +861,7 @@
   font-weight: 900;
 }
 
-.procesando, .consulta, .aprobacion, .estudio, .conformidad, .firmas, .recepcion {
+.procesando, .consulta, .aprobacion, .estudio, .conformidad, .firmas, .recepcion, .calidad {
   font-size: 0.7rem !important;
 }
 
@@ -904,4 +903,8 @@
 
 .recepcion {
   background: #AAD2F0;
+}
+
+.calidad {
+  background: #F4D03F;
 }
