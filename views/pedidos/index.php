@@ -142,7 +142,7 @@
                         <span>Especificaciones Técnicas o Descripción del Pedido</span>
                     </div>
                     <div class="textAreaEnter">
-                        <textarea name="espec_items" id="espec_items" rows="2" class="w100p"></textarea>
+                        <textarea name="espec_items" id="espec_items" rows="2" class="w100p" readonly></textarea>
                     </div>
                     <div class="barraOpciones">
                         <span>Detalles</span>
@@ -160,7 +160,7 @@
                                     <th>Descripcion</th>
                                     <th>Und.</th>
                                     <th>Cant.</th>
-                                    <th>Nro.</br>Parte</th>
+                                    <th>Especificaciones</th>
                                     <th>Ver.</br>QA/QC</th>
                                 </tr>
                             </thead>

@@ -47,6 +47,9 @@
                             <button type="button" id="importData" title="Importar Orden" class="boton3">
                                 <i class="fab fa-wpexplorer"></i> Importar Orden
                             </button>
+                            <button type="button" id="importData" title="Guia Remisión" class="boton3">
+                                <i class="fab fa-wpexplorer"></i> Importar Guia Remisión
+                            </button>
                             <button type="button" id="closeDocument" title="Cerrar Nota" class="boton3">
                                 <i class="far fa-comments"></i> Cerrar Nota
                             </button>

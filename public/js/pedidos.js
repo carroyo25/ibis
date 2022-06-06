@@ -235,7 +235,7 @@ $(function(){
         let unidad = $(this).children('td:eq(2)').text();
         let grabado = 0;
 
-        if (!checkExistTable($("#tablaDetalles tbody tr"),codigo,2)){
+        //if (!checkExistTable($("#tablaDetalles tbody tr"),codigo,2)){
             let row = `<tr data-grabado="${grabado}" data-idprod="${idprod}" data-codund="${nunid}" data-indice="-">
                         <td class="textoCentro"><a href="#"><i class="fas fa-eraser"></i></a></td>
                         <td class="textoCentro">${nFilas}</td>
@@ -243,14 +243,14 @@ $(function(){
                         <td class="pl20px">${descrip}</td>
                         <td class="textoCentro">${unidad}</td>
                         <td><input type="number" step="any" placeholder="0.00" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"></td>
-                        <td></td>
+                        <td><input type="text"></td>
                         <td class="textoCentro"><input type="checkbox"></td>
                     </tr>`;
 
             $("#tablaDetalles tbody").append(row);
-        }else{
-            mostrarMensaje("Item duplicado","mensaje_error")
-        }
+        //}else{
+            //mostrarMensaje("Item duplicado","mensaje_error")
+        //}
 
         return false;
     });
@@ -575,7 +575,7 @@ itemsPreview = () =>{
             DESCRIPCION = $(this).find('td').eq(3).text(),
             UNIDAD      = $(this).find('td').eq(4).text(),
             CANTIDAD    = $(this).find('td').eq(5).children().val(),
-            NROPARTE    = $(this).find('td').eq(6).text();
+            ESPECIFICA  = $(this).find('td').eq(6).text();
             ITEMPEDIDO  = $(this).data('idx'),
             OBSERVAC    = ""
 
@@ -586,7 +586,7 @@ itemsPreview = () =>{
         item['descripcion'] = DESCRIPCION;
         item['unidad']      = UNIDAD;
         item['cantidad']    = CANTIDAD;
-        item['nroparte']    = NROPARTE;
+        item['especifica']  = ESPECIFICA;
         item['itempedido']  = ITEMPEDIDO;
         item['observac']    = OBSERVAC;
         item['atendida']    = 0;

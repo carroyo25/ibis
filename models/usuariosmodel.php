@@ -412,13 +412,15 @@
             $salida = "";
             try {
                 $sql = $this->db->connect()->prepare("SELECT
-                                                            tb_almausu.ncodalm,
-                                                            UPPER( tb_almacen.cdesalm ) AS descripcion 
-                                                        FROM
-                                                            tb_almausu
-                                                            INNER JOIN tb_almacen ON tb_almausu.ncodalm = tb_almacen.ncodalm 
-                                                        WHERE
-                                                            tb_almausu.id_cuser =:id
+                                                        tb_almausu.nalmacen,
+                                                        tb_almausu.id_cuser,
+                                                        tb_almausu.nflgactivo,
+                                                        UPPER(tb_almacen.cdesalm) AS descripcion 
+                                                    FROM
+                                                        tb_almausu
+                                                        INNER JOIN tb_almacen ON tb_almausu.nalmacen = tb_almacen.ncodalm 
+                                                    WHERE
+                                                        tb_almausu.id_cuser = :id 
                                                         AND tb_almausu.nflgactivo = 1");
                 $sql->execute(["id"=>$codigo]);
                 $rowCount = $sql->rowCount();
@@ -426,8 +428,8 @@
 
                 if($rowCount > 0) {
                     while ($rs = $sql->fetch()) {
-                        $salida .= '<tr data-grabado="1" data-codigo="'.$rs['ncodalm'].'">
-                                            <td class="textoCentro"><a href="'.$rs['ncodalm'].'"><i class="fas fa-eraser"></i></a> </td>
+                        $salida .= '<tr data-grabado="1" data-codigo="'.$rs['nalmacen'].'">
+                                            <td class="textoCentro"><a href="'.$rs['nalmacen'].'"><i class="fas fa-eraser"></i></a> </td>
                                             <td class="textoCentro">'.str_pad($filas++,2,0,STR_PAD_LEFT).'</td>
                                             <td class="pl10px">'.$rs['descripcion'].'</td>
                                     </tr>';

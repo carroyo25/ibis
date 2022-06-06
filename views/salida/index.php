@@ -69,8 +69,8 @@
                                 </div>
                             </div>
                             <div class="column2">
-                                <label for="proyecto">Proyecto:</label>
-                                <input type="text" name="proyecto" id="proyecto" readonly>
+                                <label for="costos">Ccostos:</label>
+                                <input type="text" name="costos" id="costos" readonly>
                             </div>
                             <div class="column2">
                                 <label for="area">Area:</label>
@@ -82,13 +82,13 @@
                             </div>
                             <div class="column2">
                                 <label for="aprueba">Aprueba:</label>
-                                <input type="text" name="aprueba" id="aprueba" class="mostrarLista busqueda" placeholder="Elija opción" readonly>
+                                <input type="text" name="aprueba" id="aprueba" class="mostrarLista busqueda" readonly>
                             </div>
                         </div>
                         <div class="seccion_medio">
                             <div class="column2">
                                 <label for="almacen">Almacen:</label>
-                                <input type="text" name="almacen" id="almacen" class="mostrarLista busqueda" placeholder="Elija opción" readonly>
+                                <input type="text" name="almacen" id="almacen" class="mostrarLista busqueda" readonly>
                             </div>
                             <div class="column4_55">
                                 <div class="column2_3957">
@@ -115,13 +115,6 @@
                                 <input type="text" name="concepto" id="concepto" readonly>
                             </div>
                             <div class="column2">
-                                <label for="detalle">Detalle:</label>
-                                <input type="text" name="detalle" id="detalle" readonly>
-                            </div>
-                        </div>
-                        <div class="seccion_derecha">
-                            
-                            <div class="column2">
                                 <label for="tipo">Tipo Mov.:</label>
                                 <input type="text" name="tipo" id="tipo" class="mostrarLista busqueda" placeholder="Elija opción"
                                     readonly>
@@ -131,6 +124,8 @@
                                    </ul> 
                                 </div>
                             </div>
+                        </div>
+                        <div class="seccion_derecha">
                             <div class="column4_55">
                                 <div class="column2">
                                     <label for="estado">Estado:</label>
@@ -153,13 +148,13 @@
                         <span>Detalles</span>
                         <div>
                             <button type="button" id="atachDocs" title="Documentos Adjuntos" class="cerrarLista boton3">
-                                <i class="fas fa-upload"></i> Documentos Adjuntos
+                                <i class="fas fa-paperclip"></i> Documentos Adjuntos
                             </button>
                             <button type="button" id="asocOrd" title="Orden de Compra Asociada" class="cerrarLista boton3">
-                                <i class="fas fa-upload"></i> Orden Asociada
+                                <i class="far fa-file-pdf"></i> Orden Asociada
                             </button>
-                            <button type="button" id="atachDocs" title="Orden de Compra Asociada" class="cerrarLista boton3">
-                                <i class="fas fa-upload"></i> Generar Guia Remisión
+                            <button type="button" id="atachDocs" title="Guia de Remision" class="cerrarLista boton3">
+                                <i class="fas fa-upload"></i> Guia de Remision
                             </button>
                         </div>
                     </div>
@@ -191,7 +186,7 @@
     <div class="modal" id="busqueda">
         <div class="ventanaBusqueda w75por">
             <div class="tituloVentana">
-                <span id="tituloBusqueda">Pedidos</span>
+                <span id="tituloBusqueda">Notas de Ingreso</span>
                 <div>
                     <a href="#" id="closeSearch"><i class="fas fa-window-close"></i></a>
                 </div>
@@ -201,10 +196,10 @@
                 <button type="button" class="boton3" id="btnAceptItems">Aceptar</button>
             </div>
             <div class="tablaBusqueda">
-                <table class="tablaWrap" id="ordenes">
+                <table class="tablaWrap" id="notas">
                     <thead>
                         <tr class="stickytop" >
-                            <th>Orden</th>
+                            <th>Número</th>
                             <th>Emisión</th>
                             <th>Area</th>
                             <th>Centro de Costos</th>
