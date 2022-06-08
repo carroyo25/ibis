@@ -2034,5 +2034,45 @@
             }
         }
         
+
+        public function genNumberSalidas($cod){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT
+                                                            COUNT(alm_despachocab.nnromov) AS nummov 
+                                                        FROM
+                                                            alm_despachocab 
+                                                        WHERE
+                                                            alm_despachocab.ncodalm1 = :cod");
+                $sql->execute(["cod"=>$cod]);
+
+                $row = $sql->fetchAll();
+
+                return $row[0]['nummov'];
+
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function genNumberIngresos($cod){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT
+                                                            COUNT(alm_recepcab.nnromov) AS nummov 
+                                                        FROM
+                                                            alm_recepcab 
+                                                        WHERE
+                                                            alm_recepcab.ncodalm1 = :cod");
+                $sql->execute(["cod"=>$cod]);
+
+                $row = $sql->fetchAll();
+
+                return $row[0]['nummov'];
+
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
     }
 ?>

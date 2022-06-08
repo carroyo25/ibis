@@ -7,7 +7,8 @@
 
         function render(){
             $this->view->listaNotasSalidas = "";
-            //$this->view->listaMovimiento = $this->model->listarParametros(12);
+            $this->view->listaMovimiento = $this->model->listarParametros(12);
+            $this->view->listaAprueba = $this->model->apruebaRecepción();
             $this->view->render('salida/index');
         }
 
@@ -19,5 +20,9 @@
             echo json_encode($this->model->llamarNotaIngresoId($_POST['id']));
         }
         
+
+        function nuevasalida(){
+            echo json_encode($this->model->grabarDespacho($_POST['cabecera'],$_POST['detalles']));
+        }
     }
 ?>

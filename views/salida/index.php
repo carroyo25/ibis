@@ -34,12 +34,13 @@
                     <input type="hidden" name="codigo_moneda" id="codigo_moneda">
                     <input type="hidden" name="correo_entidad" id="correo_entidad">
                     <input type="hidden" name="codigo_ingreso" id="codigo_ingreso">
-                    <input type="hidden" name="codigo_salida" id="codigo_salida" value="1">
+                    <input type="hidden" name="codigo_salida" id="codigo_salida">
+                    <input type="hidden" name="id_centi" id="id_centi">
 
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
                         <div>
-                            <button type="button" id="saveOrden" title="Grabar Nota" class="boton3">
+                            <button type="button" id="saveDoc" title="Grabar Nota" class="boton3">
                                 <span><i class="far fa-save"></i> Grabar </span> 
                             </button>
                             <button type="button" id="importData" title="Importar Orden" class="boton3">
@@ -81,8 +82,14 @@
                                 <input type="text" name="solicita" id="solicita" class="cerrarLista" readonly>
                             </div>
                             <div class="column2">
-                                <label for="aprueba">Aprueba:</label>
-                                <input type="text" name="aprueba" id="aprueba" class="mostrarLista busqueda" readonly>
+                            <label for="aprueba">Aprueba:</label>
+                                <input type="text" name="aprueba" id="aprueba" class="mostrarLista busqueda" placeholder="Elija opción"
+                                    readonly>
+                                <div class="lista" id="listaAprueba">
+                                   <ul>
+                                       <?php echo $this->listaAprueba?>
+                                   </ul> 
+                                </div>
                             </div>
                         </div>
                         <div class="seccion_medio">
