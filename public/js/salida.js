@@ -5,6 +5,63 @@ $(function() {
 
     $("#esperar").fadeOut();
 
+    $("#tablaPrincipal tbody").on("click","tr", function (e) {
+        e.preventDefault();
+
+        $.post(RUTA+"salida/salidaId", {id:$(this).data("indice")},
+            function (data, textStatus, jqXHR) {
+                
+                let estado = "textoCentro w100por estado " + data.cabecera[0].cabrevia;
+                
+                $("#codigo_costos").val(data.cabecera[0].ncodpry);
+                $("#codigo_area").val(data.cabecera[0].ncodarea);
+                $("#codigo_movimiento").val(data.cabecera[0].ncodmov);
+                $("#codigo_aprueba").val(data.cabecera[0].id_userAprob);
+                $("#codigo_almacen").val(data.cabecera[0].ncodalm1);
+                $("#codigo_pedido").val(data.cabecera[0].idref_pedi);
+                $("#codigo_orden").val(data.cabecera[0].idref_abas);
+                $("#codigo_estado").val(data.cabecera[0].nEstadoDoc);
+                $("#codigo_entidad").val(data.cabecera[0].id_centi);
+                $("#codigo_ingreso").val(data.cabecera[0].idref_abas);
+                $("#codigo_salida").val(data.cabecera[0].id_regalm);
+                $("#almacen_origen_despacho").val(data.cabecera[0].almacen);
+                $("#fecha").val(data.cabecera[0].ffecdoc);
+                $("#numero").val(data.cabecera[0].nnronota);
+                $("#costos").val(data.cabecera[0].costos);
+                $("#area").val(data.cabecera[0].area);
+                $("#solicita").val(data.cabecera[0].nombres);
+                $("#orden").val(data.cabecera[0].orden);
+                $("#pedido").val(data.cabecera[0].pedido);
+                $("#ruc").val(data.cabecera[0].cnumdoc);
+                $("#guia").val(data.cabecera[0].cnumguia);
+                $("#razon").val(data.cabecera[0].crazonsoc);
+                $("#concepto").val(data.cabecera[0].concepto);
+                $("#aprueba").val(data.cabecera[0].cnombres);
+                $("#tipo").val(data.cabecera[0].cdescripcion);
+                $("#estado").val(data.cabecera[0].estado);
+                $("#movimiento").val(data.cabecera[0].movimiento);
+                $("#fecha_pedido").val(data.cabecera[0].emision);
+                $("#fecha_orden").val(data.cabecera[0].ffechadoc);
+                
+                
+                $("#estado")
+                    .removeClass()
+                    .addClass(estado);
+                
+                $("#tablaDetalles tbody")
+                    .empty()
+                    .append(data.detalles)
+            },
+            "json"
+        );
+
+        accion = "u";
+        grabado = true;
+        $("#proceso").fadeIn();
+
+        return false;
+    });
+
     $("#nuevoRegistro").click(function (e) { 
         e.preventDefault();
 
@@ -22,6 +79,9 @@ $(function() {
         e.preventDefault();
 
         $("#proceso").fadeOut();
+
+        $("form")[0].reset();
+        $("form")[1].reset();
 
         /*$.post(RUTA+"recepcion/actualizaNotas",
             function (data, textStatus, jqXHR) {
@@ -85,7 +145,7 @@ $(function() {
                 $("#area").val(data.cabecera[0].area);
                 $("#solicita").val(data.cabecera[0].solicita);
                 //$("#aprueba").val(data.cabecera[0].cnombres);
-                $("#almacen").val(data.cabecera[0].almacen);
+                $("#almacen_origen_despacho").val(data.cabecera[0].almacen);
                 $("#pedido").val(data.cabecera[0].pedido);
                 $("#fecha_pedido").val(data.cabecera[0].emision);
                 $("#orden").val(data.cabecera[0].orden);
@@ -111,9 +171,17 @@ $(function() {
     $(".mostrarLista").focus(function (e) { 
         e.preventDefault();
 
-        if (accion !="n") {
+        /*if (accion !="n") {
             return false;
-        }
+        }*/
+        
+        $(this).next().slideDown();
+
+        return false;
+    });
+
+    $(".mostrarListaInterna").focus(function (e) { 
+        e.preventDefault();
         
         $(this).next().slideDown();
 
@@ -146,6 +214,34 @@ $(function() {
             $("#codigo_movimiento").val(codigo);
         }else if(contenedor_padre == "listaAprueba"){
             $("#codigo_aprueba").val(codigo);
+        }else if(contenedor_padre == "listaOrigen"){
+            $("#codigo_origen").val(codigo);
+            $("#almacen_origen_direccion").val($(this).data('direccion'));
+            $("#almacen_origen_dpto").val($(this).data('dpto'));
+            $("#almacen_origen_prov").val($(this).data('prov'));
+            $("#almacen_origen_dist").val($(this).data('dist'));
+        }else if(contenedor_padre == "listaDestino"){
+            $("#codigo_destino").val(codigo);
+            $("#almacen_destino_direccion").val($(this).data('direccion'));
+            $("#almacen_destino_dpto").val($(this).data('dpto'));
+            $("#almacen_destino_prov").val($(this).data('prov'));
+            $("#almacen_destino_dist").val($(this).data('dist'));
+        }else if(contenedor_padre == "listaAutoriza"){
+            $("#codigo_autoriza").val(codigo);
+        }else if(contenedor_padre == "listaDespacha"){
+            $("#codigo_despacha").val(codigo);
+        }else if(contenedor_padre == "listaDestinatario"){
+            $("#codigo_destinatario").val(codigo);
+        }else if(contenedor_padre == "listaModalidad"){
+            $("#codigo_modalidad").val(codigo);
+        }else if(contenedor_padre == "listaEnvio"){
+            $("#codigo_tipo").val(codigo);
+        }else if(contenedor_padre == "listaAlmacenDestino"){
+            $("#codigo_almacen_destino").val(codigo);
+        }else if(contenedor_padre == "listaEntidad"){
+            $("#codigo_entidad_transporte").val(codigo);
+            $("#direccion_entidad_transporte").val($(this).data('direccion'));
+            $("#ruc_entidad_transporte").val($(this).data('ruc'));
         }
 
         return false;
@@ -163,6 +259,18 @@ $(function() {
 
             if (result['codigo_salida'] == "") throw "Por favor grabar el documento";
 
+            $.post(RUTA+"salida/documentoPdf", {cabecera:result,
+                                                detalles:JSON.stringify(detalles()),
+                                                condicion:0},
+                function (data, textStatus, jqXHR) {
+                    $(".ventanaVistaPrevia iframe")
+                    .attr("src","")
+                    .attr("src",data);
+
+                    $("#vistaprevia").fadeIn();
+                },
+                "text"
+            );
             $("#vistaprevia").fadeIn();
 
         } catch (error) {
@@ -182,9 +290,11 @@ $(function() {
                 result[this.name] = this.value;
             });
 
+            if (result['codigo_ingreso'] == "") throw "debe grabar la nota de despacho";
             if (result['codigo_movimiento'] == "") throw "Elija el tipo de movimiento";
             if (result['codigo_ingreso'] == "") throw "Seleccione una nota de ingreso";
             if (result['codigo_aprueba'] == "") throw "Seleccione la persona que aprueba";
+            if (result['codigo_almacen_destino'] == "") throw "Seleccione la persona que aprueba";
 
             $.post(RUTA+"salida/nuevaSalida", {cabecera:result,
                                                 detalles:JSON.stringify(detalles())},
@@ -194,6 +304,73 @@ $(function() {
                 },
                 "json"
             );
+
+        } catch (error) {
+            mostrarMensaje(error,'mensaje_error');
+        }
+
+        return false;
+    });
+
+    $("#closePreview").click(function (e) { 
+        e.preventDefault();
+
+        $(".ventanaVistaPrevia iframe").attr("src","");
+        $("#vistaprevia").fadeOut();
+
+        return false;
+    });
+
+    $(".tituloDocumento").on("click","#closeDocument", function (e) {
+        e.preventDefault();
+
+        $(this).parent().parent().parent().parent().parent().fadeOut();
+
+        return false;
+    });
+
+    $("#guiaRemision").click(function (e) { 
+        e.preventDefault();
+        
+        $("#vistadocumento").fadeIn();
+
+        return false;
+    });
+
+    $("#printDocument").click(function (e) { 
+        e.preventDefault();
+        
+        try {
+
+            let result = {};
+
+            $.each($("#guiaremision").serializeArray(),function(){
+                result[this.name] = this.value;
+            });
+
+            if (result['numero_guia'] == "") throw "Ingrese el Nro. de Guia";
+            if (result['codigo_origen'] == "") throw "Seleccione Almacen oriegn";
+            if (result['codigo_destino'] == "") throw "Seleccione Almacen destino";
+            if (result['codigo_entidad'] == "") throw "Seleccione la empresa de transportes";
+            if (result['codigo_autoriza'] == "") throw "Seleccione la persona que autoriza";
+            if (result['codigo_destinatario'] == "") throw "Seleccione el desdtinatario";
+            if (result['codigo_traslado'] == "") throw "Seleccione la modalidad de traslado";
+            if (result['codigo_tipo'] == "") throw "Seleccione el tipo de envio";
+            if (result['nro_bultos'] == "") throw "Indique el Nro. de bultos";
+            if (result['peso_bruto'] == "") throw "Indique el peso bruto";
+            if (result['nombre_conductor'] == "") throw "Escriba el nombre del conductor";
+            if (result['placa'] == "") throw "Indique la placa del vehiculo";
+
+            $.post(RUTA+"salida/guiaremision", {cabecera:result,
+                                                detalles:JSON.stringify(detalles()),
+                                                despacho:$("#codigo_salida").val(),
+                                                pedido:$("#codigo_pedido").val()},
+                function (data, textStatus, jqXHR) {
+                    console.log(data);
+                },
+                "text"
+            );
+
 
         } catch (error) {
             mostrarMensaje(error,'mensaje_error');
@@ -218,7 +395,7 @@ detalles = () =>{
             ALMACEN     = $("#codigo_almacen").val(),
             CANTIDAD    = $(this).find('td').eq(5).children().val(),// cantidad
             OBSER       = $(this).find('td').eq(6).children().val(),
-            VENCE       = $(this).find('td').eq(8).children().val(),
+            VENCE       = $(this).find('td').eq(8).text(),
             SERIE       = $(this).find('td').eq(7).text(),
             CODIGO      = $(this).find('td').eq(2).text(),//codigo
             DESCRIPCION = $(this).find('td').eq(3).text(),//descripcion

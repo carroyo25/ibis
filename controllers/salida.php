@@ -6,9 +6,15 @@
         }
 
         function render(){
-            $this->view->listaNotasSalidas = "";
-            $this->view->listaMovimiento = $this->model->listarParametros(12);
+            $this->view->listaNotasSalidas = $this->model->listarNotasIngreso();
+            $this->view->listaEnvio = $this->model->listarParametros('08');
             $this->view->listaAprueba = $this->model->apruebaRecepción();
+            $this->view->listaAlmacen = $this->model->listarAlmacenGuia();
+            $this->view->listaEntidad = $this->model->listarEntidades();
+            $this->view->listaModalidad = $this->model->listarParametros(14);
+            $this->view->listaPersonal = $this->model->listarPersonalRol(4);
+            $this->view->listaMovimiento = $this->model->listarParametros(12);
+
             $this->view->render('salida/index');
         }
 
@@ -23,6 +29,18 @@
 
         function nuevasalida(){
             echo json_encode($this->model->grabarDespacho($_POST['cabecera'],$_POST['detalles']));
+        }
+
+        function documentopdf(){
+            echo $this->model->generarPdfSalida($_POST['cabecera'],$_POST['detalles'],$_POST['condicion']);
+        }
+
+        function salidaId(){
+            echo json_encode($this->model->consultarSalidaId($_POST['id']));
+        }
+
+        function guiaremision(){
+            echo $this->model->grabarGuiaRemision($_POST['cabecera'],$_POST['detalles'],$_POST['despacho'],$_POST['pedido']);
         }
     }
 ?>

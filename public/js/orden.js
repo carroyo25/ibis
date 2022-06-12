@@ -170,8 +170,8 @@ $(function(){
     $("#loadRequest").click(function (e) { 
         e.preventDefault();
 
-        if ($("#codigo_estado").val() == 59)
-            return false;
+        //if ($("#codigo_estado").val() == 59)
+          //  return false;
         
         $("#esperar").fadeIn();
 

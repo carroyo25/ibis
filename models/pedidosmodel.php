@@ -97,13 +97,13 @@
 			    $pdf->SetAligns(array("L","L","L","L","R","L","L","L","L","L"));
                 $pdf->Row(array($details[$rc]->item,
                                 $details[$rc]->codigo,
-                                utf8_decode($details[$rc]->descripcion),
+                                utf8_decode($details[$rc]->descripcion."\n".$details[$rc]->especifica),
                                 $details[$rc]->unidad,
                                 $details[$rc]->cantidad,
                                 '',
                                 '',
                                 '',
-                                $details[$rc]->nroparte,
+                                '',
                                 ''));
                 
                 $lc++;
@@ -166,6 +166,7 @@
                                     $datos['codigo_atencion'],
                                     $datos['codigo_tipo'],
                                     $datos['codigo_costos'],
+                                    $datos['codigo_area'],
                                     $detalles);
                     $respuesta = true;
                     $mensaje = "Pedido Grabado";
@@ -354,7 +355,7 @@
             return $rowCount;
         }
 
-        private function saveItems($codigo,$estado,$atencion,$tipo,$costos,$detalles){
+        private function saveItems($codigo,$estado,$atencion,$tipo,$costos,$area,$detalles){
             $indice = $this->obtenerIndice($codigo,"SELECT idreg AS numero FROM tb_pedidocab WHERE tb_pedidocab.verificacion =:id");
 
             $datos = json_decode($detalles);
@@ -364,7 +365,7 @@
                 try {
                         $sql = $this->db->connect()->prepare("INSERT INTO tb_pedidodet SET idpedido=:ped,idprod=:prod,idtipo=:tipo,unid=:und,
                                                                                     cant_pedida=:cant,estadoItem=:est,tipoAten=:aten,
-                                                                                    verificacion=:ver,nflgqaqc=:qaqc,idcostos=:costos");
+                                                                                    verificacion=:ver,nflgqaqc=:qaqc,idcostos=:costos,idarea=:area");
                         $sql ->execute([
                                         "ped"=>$indice,
                                         "prod"=>$datos[$i]->idprod,
@@ -375,7 +376,8 @@
                                         "aten"=>$atencion,
                                         "ver"=>$codigo,
                                         "qaqc"=>$datos[$i]->calidad,
-                                        "costos"=>$costos]);
+                                        "costos"=>$costos,
+                                        "area"=>$area]);
                    
                 } catch (PDOException $th) {
                     echo "Error: ".$th->getMessage();

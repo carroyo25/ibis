@@ -29,6 +29,8 @@ $firmas:#73BB6F;
 $adjudicado:rgba(145,93,152,.5);
 $recepcion:#AAD2F0;
 $calidad:#F4D03F;
+$despacho:#E2C08D;
+
 
 .bienes {
     background:$bienes;
@@ -230,7 +232,6 @@ $calidad:#F4D03F;
         thead {
             background:$negro;
             color:$blanco;
-            line-height: 1.5rem;
             font-size: .7rem;
         }
 
@@ -288,7 +289,8 @@ $calidad:#F4D03F;
 .ventanaAdjuntos,
 .ventanaDialogo,
 .ventanaEspera,
-.ventanaComentarios{
+.ventanaComentarios,
+.ventanaDocumento{
     background:$blanco;
     position: absolute;
     top: 50%;
@@ -381,6 +383,109 @@ $calidad:#F4D03F;
         display: flex;
         justify-content: space-between;
         padding:1rem;
+    }
+}
+
+.ventanaDocumento{
+    border-radius: 8px;
+    //width: 65%;
+    //overflow: auto;
+
+    input{
+        border: 1px solid $sombra !important;
+        height: 1.6rem !important;
+    }
+
+    .tituloDocumento{
+        display: flex;
+        justify-content: space-between;
+        padding: 1rem;
+
+        p {
+            display:inline-block;
+        }  
+    }
+
+    .dos_columnas{
+        padding: 1rem;
+        display:grid;
+        grid-template-columns: 1fr 1fr;
+        column-gap: 20px;
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+
+        label{
+            font-weight: bold;
+            font-size: 0.7rem;
+        }
+
+        input[type="text"],textarea {
+            font-size: .7rem !important;
+        }
+
+        input[type="number"] {
+            font-size: .7rem !important;
+            text-align: right;
+        }
+
+        p {
+            margin: 1rem 0;
+            border-bottom: 1px solid $sombra;
+        }
+
+        .dos_columnas_interna{
+            display:grid;
+            position: relative;
+            grid-template-columns: 28% 1fr;
+            column-gap: 3px;
+            row-gap: 5px;
+        }
+
+        .cuatro_columnas_interna{
+            display:grid;
+            position: relative;
+            grid-template-columns: repeat(2,28% 1fr);
+            grid-template-rows: repeat(8 1fr);
+            row-gap:.5rem;
+            column-gap: 3px;
+
+            .uno {
+                grid-column: 1;
+            }
+            .dos{
+                grid-column: 2 / 6;
+            }
+
+            .tres{
+                grid-column: 2 / 4;
+            }
+
+            .rowTwo{
+                grid-row: 2;
+            }
+
+            .rowThree{
+                grid-row: 3
+            }
+
+            .rowFive{
+                grid-row: 5;
+            }
+
+            .rowSix{
+                grid-row: 6
+            }
+
+            .rowSeven{
+                grid-row: 7
+            }
+        }
+
+
+
+        textarea {
+            border:1px solid $sombra;
+            padding:3px;
+        }
     }
 }
 
@@ -859,6 +964,10 @@ $calidad:#F4D03F;
 }
 
 
+.w10por{
+    width: 10%;
+}
+
 .w35por{
     width: 35%;
 }
@@ -914,7 +1023,7 @@ $calidad:#F4D03F;
     font-weight:900;
 }
 
-.procesando,.consulta,.aprobacion,.estudio,.conformidad,.firmas,.recepcion,.calidad{
+.procesando,.consulta,.aprobacion,.estudio,.conformidad,.firmas,.recepcion,.calidad,.despacho{
     font-size: 0.7rem !important;
 }
 
@@ -961,4 +1070,8 @@ $calidad:#F4D03F;
 
 .calidad{
     background: $calidad;
+}
+
+.despacho{
+    background: $despacho;
 }

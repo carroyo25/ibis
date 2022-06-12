@@ -409,7 +409,7 @@
                 if ($rowcount > 0) {
                     while ($row = $query->fetch()) {
                         $salida.='<li>
-                                    <a href="'.$row['nidreg'].'">'.$row['nidreg'].' '.$row['cdescripcion'].'</a>
+                                    <a href="'.$row['nidreg'].'">'.$row['cdescripcion'].'</a>
                                  </li>';
                     }
                 }
@@ -586,7 +586,7 @@
 
                 if($rowcount > 0){
                     while ($rs = $sql->fetch()) {
-                        $salida .= '<option value="'.$rs['nidreg'].'" data-abrevia"">'.$rs['cdescripcion'].'</option>';
+                        $salida .= '<option value="'.$rs['nidreg'].'" data-abrevia="">'.$rs['cdescripcion'].'</option>';
                     }
                 } 
 
@@ -756,6 +756,100 @@
                 if ($rowCount > 0){
                     while ($rs = $sql->fetch()){
                         $salida .='<li><a href="'.$rs['ncodalm'].'" >'.$rs['almacen'].'</a></li>';
+                    }
+
+                    return $salida;
+                } 
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function listarEntidades(){
+            try {
+                $salida = "";
+                $sql = $this->db->connect()->query("SELECT
+                                                    cm_entidad.id_centi, 
+                                                    UPPER(cm_entidad.crazonsoc) AS crazonsoc, 
+                                                    cm_entidad.cnumdoc,
+                                                    cm_entidad.cviadireccion
+                                                FROM
+                                                    cm_entidad
+                                                WHERE
+                                                    cm_entidad.nflgactivo = 7");
+                $sql->execute();
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0){
+                    while ($rs = $sql->fetch()){
+                        $salida .='<li><a href="'.$rs['id_centi'].'" data-direccion="'.$rs['cviadireccion'].'" data-ruc="'.$rs['cnumdoc'].'">'.$rs['crazonsoc'].'</a></li>';
+                    }
+
+                    return $salida;
+                } 
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function listarAlmacenGuia(){
+            try {
+                $salida = "";
+                $sql = $this->db->connect()->query("SELECT
+                                                        ncodalm,
+                                                        UPPER( cdesalm ) AS almacen,
+                                                        UPPER(
+                                                        CONCAT_WS( ' ', cdesvia, cnrovia )) AS direccion,
+                                                        distritos.cdubigeo AS dist,
+                                                        provincias.cdubigeo AS prov,
+                                                        dptos.cdubigeo AS dpto 
+                                                    FROM
+                                                        tb_almacen
+                                                        LEFT JOIN tb_ubigeo AS distritos ON tb_almacen.ncubigeo = distritos.ccubigeo
+                                                        LEFT JOIN tb_ubigeo AS provincias ON SUBSTR( tb_almacen.ncubigeo, 1, 4 ) = provincias.ccubigeo
+                                                        LEFT JOIN tb_ubigeo AS dptos ON SUBSTR( tb_almacen.ncubigeo, 1, 2 ) = dptos.ccubigeo 
+                                                    WHERE
+                                                        nflgactivo = 1");
+                $sql->execute();
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0){
+                    while ($rs = $sql->fetch()){
+                        $salida .='<li><a href="'.$rs['ncodalm'].'" 
+                                        data-direccion="'.$rs['direccion'].'"
+                                        data-dpto="'.$rs['dpto'].'"
+                                        data-prov="'.$rs['prov'].'"
+                                        data-dist="'.$rs['dist'].'">'.$rs['almacen'].'</a></li>';
+                    }
+
+                    return $salida;
+                } 
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function listarPersonalRol($nrol){
+            try {
+                $salida = "";
+                $sql = $this->db->connect()->prepare("SELECT
+                                            tb_user.iduser,
+                                            tb_user.cnombres 
+                                        FROM
+                                            tb_user 
+                                        WHERE
+                                            nrol =:rol 
+                                            AND nflgactivo = 1 
+                                            AND nestado = 7");
+                $sql->execute(['rol'=>4]);
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0){
+                    while ($rs = $sql->fetch()){
+                        $salida .='<li><a href="'.$rs['iduser'].'" >'.$rs['cnombres'].'</a></li>';
                     }
 
                     return $salida;
@@ -1151,6 +1245,7 @@
                                                     tb_pedidodet.idtipo,
                                                     tb_pedidodet.nroparte,
                                                     tb_pedidodet.unid,
+                                                    tb_pedidodet.observaciones,
                                                     FORMAT(tb_pedidodet.cant_pedida,2) AS cant_pedida,
                                                     tb_pedidodet.estadoItem,
                                                     cm_producto.ccodprod,
@@ -1186,7 +1281,7 @@
                                                         onclick="this.select()" 
                                                         value="'.$rs['cant_pedida'].'">
                                         </td>
-                                        <td></td>
+                                        <td class="pl20px">'.$rs['observaciones'].'</td>
                                         <td class="textoCentro"><input type="checkbox" '.$checked.'></td>
                                     </tr>';
                     }
@@ -1902,6 +1997,7 @@
                             "detalles"=>$this->detallesNota($indice,$clase),
                             "series"=>$this->seriesNota($indice),
                             "adjuntos"=>$this->adjuntosNota($indice));
+
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
                 return false;
@@ -1910,7 +2006,8 @@
 
         private function detallesNota($indice,$clase){
             try {
-                $salida="";
+                $salida='<tr><td colspan="12">No hay registros</td></tr>';
+                $indice = 9;
                 $sql=$this->db->connect()->prepare("SELECT
                                                     alm_recepdet.niddeta,
                                                     alm_recepdet.id_regalm,

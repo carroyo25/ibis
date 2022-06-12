@@ -138,10 +138,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="barraOpciones">
-                        <span>Especificaciones Técnicas o Descripción del Pedido</span>
-                    </div>
-                    <div class="textAreaEnter">
+                    <div class="textAreaEnter oculto">
                         <textarea name="espec_items" id="espec_items" rows="2" class="w100p" readonly></textarea>
                     </div>
                     <div class="barraOpciones">

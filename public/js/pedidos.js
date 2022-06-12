@@ -617,7 +617,7 @@ itemsSave = () =>{
             item['unidad']      = UNIDAD;
             item['cantidad']    = CANTIDAD;
             item['nroparte']    = NROPARTE;
-            item['itempedido']         = IDX;
+            item['itempedido']  = IDX;
             item['calidad']     = CALIDAD;
 
             DATA.push(item);
