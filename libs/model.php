@@ -467,7 +467,7 @@
                 echo $e->getMessage();
                 return false;
             }
-        }
+        } 
 
         public function listarPais() {
             try {
@@ -591,6 +591,58 @@
                 } 
 
                 return $salida;
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function selectAlmacen(){
+            try {
+                $salida = '<option value="-1" class="oculto">Elija una opción</option>';
+                $sql = $this->db->connect()->query("SELECT ncodalm,UPPER(cdesalm) AS almacen FROM tb_almacen WHERE nflgactivo = 1");
+                $sql->execute();
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0){
+                    while ($rs = $sql->fetch()){
+                        $salida .= '<option value="'.$rs['ncodalm'].'" data-abrevia="">'.$rs['almacen'].'</option>';
+                    }
+
+                    return $salida;
+                } 
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function selectCostos(){
+            try {
+                $salida = "";
+
+                $sql = $this->db->connect()->prepare("SELECT
+                                                    UPPER( tb_proyectos.ccodproy ) AS codigo_costos,
+                                                    UPPER( tb_proyectos.cdesproy ) AS descripcion_costos,
+                                                    tb_proyectos.veralm,
+                                                    tb_costusu.ncodproy 
+                                                FROM
+                                                    tb_costusu
+                                                    INNER JOIN tb_proyectos ON tb_costusu.ncodproy = tb_proyectos.nidreg 
+                                                WHERE
+                                                    tb_costusu.id_cuser = :id 
+                                                    AND tb_proyectos.nflgactivo = 1
+                                                    AND tb_costusu.nflgactivo = 1");
+                $sql->execute(["id"=>$_SESSION['iduser']]);
+                $rowCount = $sql->rowCount(); 
+
+                if ($rowCount > 0){
+                    while ($rs = $sql->fetch()){
+                        $salida .= '<option value="'.$rs['ncodproy'].'" data-abrevia="">'.$rs['codigo_costos']." ".$rs['descripcion_costos'].'</option>';
+                    }
+
+                    return $salida;
+                }
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
@@ -2130,7 +2182,6 @@
                 return false;
             }
         }
-        
 
         public function genNumberSalidas($cod){
             try {

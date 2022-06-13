@@ -18,13 +18,15 @@ $(function() {
                 $("#codigo_movimiento").val(data.cabecera[0].ncodmov);
                 $("#codigo_aprueba").val(data.cabecera[0].id_userAprob);
                 $("#codigo_almacen").val(data.cabecera[0].ncodalm1);
+                $("#codigo_almacen_destino").val(data.cabecera[0].ncodalm2);
                 $("#codigo_pedido").val(data.cabecera[0].idref_pedi);
-                $("#codigo_orden").val(data.cabecera[0].idref_abas);
+                $("#codigo_orden").val(data.cabecera[0].idref_ord);
                 $("#codigo_estado").val(data.cabecera[0].nEstadoDoc);
                 $("#codigo_entidad").val(data.cabecera[0].id_centi);
                 $("#codigo_ingreso").val(data.cabecera[0].idref_abas);
                 $("#codigo_salida").val(data.cabecera[0].id_regalm);
                 $("#almacen_origen_despacho").val(data.cabecera[0].almacen);
+                $("#almacen_destino_despacho").val(data.cabecera[0].destino);
                 $("#fecha").val(data.cabecera[0].ffecdoc);
                 $("#numero").val(data.cabecera[0].nnronota);
                 $("#costos").val(data.cabecera[0].costos);
@@ -78,12 +80,7 @@ $(function() {
     $("#closeProcess").click(function (e) { 
         e.preventDefault();
 
-        $("#proceso").fadeOut();
-
-        $("form")[0].reset();
-        $("form")[1].reset();
-
-        /*$.post(RUTA+"recepcion/actualizaNotas",
+        $.post(RUTA+"salida/actualizaDespachos",
             function (data, textStatus, jqXHR) {
                 $(".itemsTabla table tbody")
                     .empty()
@@ -93,11 +90,10 @@ $(function() {
                     grabado = false;
                     $("form")[0].reset();
                     $("form")[1].reset();
-                    $("#tablaDetalles tbody,.listaArchivos").empty();
                 });
             },
             "text"
-        );*/
+        );
 
         return false;
     });
@@ -171,9 +167,9 @@ $(function() {
     $(".mostrarLista").focus(function (e) { 
         e.preventDefault();
 
-        /*if (accion !="n") {
+        if (accion !="n") {
             return false;
-        }*/
+        }
         
         $(this).next().slideDown();
 
@@ -289,21 +285,25 @@ $(function() {
             $.each($("#formProceso").serializeArray(),function(){
                 result[this.name] = this.value;
             });
+            
+            if (accion == 'n'){
+                if (result['codigo_ingreso'] == "") throw "debe grabar la nota de despacho";
+                if (result['codigo_movimiento'] == "") throw "Elija el tipo de movimiento";
+                if (result['codigo_ingreso'] == "") throw "Seleccione una nota de ingreso";
+                if (result['codigo_aprueba'] == "") throw "Seleccione la persona que aprueba";
+                if (result['codigo_almacen_destino'] == "") throw "Seleccione la persona que aprueba";
 
-            if (result['codigo_ingreso'] == "") throw "debe grabar la nota de despacho";
-            if (result['codigo_movimiento'] == "") throw "Elija el tipo de movimiento";
-            if (result['codigo_ingreso'] == "") throw "Seleccione una nota de ingreso";
-            if (result['codigo_aprueba'] == "") throw "Seleccione la persona que aprueba";
-            if (result['codigo_almacen_destino'] == "") throw "Seleccione la persona que aprueba";
-
-            $.post(RUTA+"salida/nuevaSalida", {cabecera:result,
+            
+                $.post(RUTA+"salida/nuevaSalida", {cabecera:result,
                                                 detalles:JSON.stringify(detalles())},
-                function (data, textStatus, jqXHR) {
-                    mostrarMensaje(data.mensaje,data.clase);
-                    $("#codigo_salida").val(data.indice);
-                },
-                "json"
-            );
+                    function (data, textStatus, jqXHR) {
+                        mostrarMensaje(data.mensaje,data.clase);
+                        $("#codigo_salida").val(data.indice);
+                    },
+                    "json"
+                );
+            }
+            
 
         } catch (error) {
             mostrarMensaje(error,'mensaje_error');
@@ -364,9 +364,25 @@ $(function() {
             $.post(RUTA+"salida/guiaremision", {cabecera:result,
                                                 detalles:JSON.stringify(detalles()),
                                                 despacho:$("#codigo_salida").val(),
-                                                pedido:$("#codigo_pedido").val()},
+                                                pedido:$("#codigo_pedido").val(),
+                                                orden:$("#codigo_orden").val(),
+                                                ingreso:$("#codigo_ingreso").val(),},
                 function (data, textStatus, jqXHR) {
-                    console.log(data);
+                    $.post(RUTA+"salida/actualizaDespachos",
+                        function (data, textStatus, jqXHR) {
+                            $(".itemsTabla table tbody")
+                                .empty()
+                                .append(data);
+
+                            $("#proceso").fadeOut(function(){
+                                grabado = false;
+                                $("form")[0].reset();
+                                $("form")[1].reset();
+                                $("#vistadocumento").fadeOut();
+                            });
+                        },
+                        "text"
+                    );
                 },
                 "text"
             );

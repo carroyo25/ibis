@@ -6,7 +6,7 @@
         }
 
         function render(){
-            $this->view->listaNotasSalidas = $this->model->listarNotasIngreso();
+            $this->view->listaNotasSalidas = $this->model->listarNotasDespacho();
             $this->view->listaEnvio = $this->model->listarParametros('08');
             $this->view->listaAprueba = $this->model->apruebaRecepción();
             $this->view->listaAlmacen = $this->model->listarAlmacenGuia();
@@ -40,7 +40,16 @@
         }
 
         function guiaremision(){
-            echo $this->model->grabarGuiaRemision($_POST['cabecera'],$_POST['detalles'],$_POST['despacho'],$_POST['pedido']);
+            echo $this->model->grabarGuiaRemision($_POST['cabecera'],
+                                                    $_POST['detalles'],
+                                                    $_POST['despacho'],
+                                                    $_POST['pedido'],
+                                                    $_POST['orden'],
+                                                    $_POST['ingreso']);
+        }
+
+        function actualizaDespachos(){
+            echo $this->model->listarNotasDespacho();
         }
     }
 ?>

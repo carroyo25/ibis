@@ -99,7 +99,7 @@
                             </div>
                             <div class="column2">
                                 <label for="almacen_destino_despacho">Almacen Destino:</label>
-                                <input type="text" name="almacen_destin_despachoo" id="almacen_destino_despacho" class="mostrarLista busqueda" readonly>
+                                <input type="text" name="almacen_destino_despacho" id="almacen_destino_despacho" class="mostrarLista busqueda" readonly>
                                 <div class="lista" id="listaAlmacenDestino">
                                    <ul>
                                        <?php echo $this->listaAlmacen?>

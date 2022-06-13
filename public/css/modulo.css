@@ -217,6 +217,337 @@
 .barraTrabajo .variasConsultas div:nth-child(3) input, .barraTrabajo .variasConsultas div:nth-child(4) input {
   width: 65%;
 }
+.barraTrabajo .variasConsultasColumna {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 1fr 10px 10%;
+  grid-template-columns: 1fr 10%;
+  padding: 5px 15px;
+  -webkit-column-gap: 10px;
+     -moz-column-gap: 10px;
+          column-gap: 10px;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 0.3fr 10px 0.3fr 10px 0.3fr 10px 0.3fr 10px 0.3fr 10px 0.3fr 10px 0.3fr 10px 0.3fr 10px 0.3fr 10px 0.3fr 10px 0.3fr 10px 0.3fr 10px 0.3fr 10px 0.3fr 10px 0.3fr 10px 0.3fr 10px 0.3fr 10px 0.3fr 10px 0.3fr 10px 0.3fr 10px 0.3fr 10px 0.3fr 10px 0.3fr 10px 0.3fr 10px 0.3fr;
+  grid-template-columns: repeat(25, 0.3fr);
+  -ms-grid-rows: 1fr 10px 1fr;
+  grid-template-rows: 1fr 1fr;
+  -webkit-column-gap: 10px;
+     -moz-column-gap: 10px;
+          column-gap: 10px;
+  row-gap: 10px;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta > *:nth-child(1) {
+  -ms-grid-row: 1;
+  -ms-grid-column: 1;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta > *:nth-child(2) {
+  -ms-grid-row: 1;
+  -ms-grid-column: 3;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta > *:nth-child(3) {
+  -ms-grid-row: 1;
+  -ms-grid-column: 5;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta > *:nth-child(4) {
+  -ms-grid-row: 1;
+  -ms-grid-column: 7;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta > *:nth-child(5) {
+  -ms-grid-row: 1;
+  -ms-grid-column: 9;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta > *:nth-child(6) {
+  -ms-grid-row: 1;
+  -ms-grid-column: 11;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta > *:nth-child(7) {
+  -ms-grid-row: 1;
+  -ms-grid-column: 13;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta > *:nth-child(8) {
+  -ms-grid-row: 1;
+  -ms-grid-column: 15;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta > *:nth-child(9) {
+  -ms-grid-row: 1;
+  -ms-grid-column: 17;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta > *:nth-child(10) {
+  -ms-grid-row: 1;
+  -ms-grid-column: 19;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta > *:nth-child(11) {
+  -ms-grid-row: 1;
+  -ms-grid-column: 21;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta > *:nth-child(12) {
+  -ms-grid-row: 1;
+  -ms-grid-column: 23;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta > *:nth-child(13) {
+  -ms-grid-row: 1;
+  -ms-grid-column: 25;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta > *:nth-child(14) {
+  -ms-grid-row: 1;
+  -ms-grid-column: 27;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta > *:nth-child(15) {
+  -ms-grid-row: 1;
+  -ms-grid-column: 29;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta > *:nth-child(16) {
+  -ms-grid-row: 1;
+  -ms-grid-column: 31;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta > *:nth-child(17) {
+  -ms-grid-row: 1;
+  -ms-grid-column: 33;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta > *:nth-child(18) {
+  -ms-grid-row: 1;
+  -ms-grid-column: 35;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta > *:nth-child(19) {
+  -ms-grid-row: 1;
+  -ms-grid-column: 37;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta > *:nth-child(20) {
+  -ms-grid-row: 1;
+  -ms-grid-column: 39;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta > *:nth-child(21) {
+  -ms-grid-row: 1;
+  -ms-grid-column: 41;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta > *:nth-child(22) {
+  -ms-grid-row: 1;
+  -ms-grid-column: 43;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta > *:nth-child(23) {
+  -ms-grid-row: 1;
+  -ms-grid-column: 45;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta > *:nth-child(24) {
+  -ms-grid-row: 1;
+  -ms-grid-column: 47;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta > *:nth-child(25) {
+  -ms-grid-row: 1;
+  -ms-grid-column: 49;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta > *:nth-child(26) {
+  -ms-grid-row: 3;
+  -ms-grid-column: 1;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta > *:nth-child(27) {
+  -ms-grid-row: 3;
+  -ms-grid-column: 3;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta > *:nth-child(28) {
+  -ms-grid-row: 3;
+  -ms-grid-column: 5;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta > *:nth-child(29) {
+  -ms-grid-row: 3;
+  -ms-grid-column: 7;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta > *:nth-child(30) {
+  -ms-grid-row: 3;
+  -ms-grid-column: 9;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta > *:nth-child(31) {
+  -ms-grid-row: 3;
+  -ms-grid-column: 11;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta > *:nth-child(32) {
+  -ms-grid-row: 3;
+  -ms-grid-column: 13;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta > *:nth-child(33) {
+  -ms-grid-row: 3;
+  -ms-grid-column: 15;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta > *:nth-child(34) {
+  -ms-grid-row: 3;
+  -ms-grid-column: 17;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta > *:nth-child(35) {
+  -ms-grid-row: 3;
+  -ms-grid-column: 19;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta > *:nth-child(36) {
+  -ms-grid-row: 3;
+  -ms-grid-column: 21;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta > *:nth-child(37) {
+  -ms-grid-row: 3;
+  -ms-grid-column: 23;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta > *:nth-child(38) {
+  -ms-grid-row: 3;
+  -ms-grid-column: 25;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta > *:nth-child(39) {
+  -ms-grid-row: 3;
+  -ms-grid-column: 27;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta > *:nth-child(40) {
+  -ms-grid-row: 3;
+  -ms-grid-column: 29;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta > *:nth-child(41) {
+  -ms-grid-row: 3;
+  -ms-grid-column: 31;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta > *:nth-child(42) {
+  -ms-grid-row: 3;
+  -ms-grid-column: 33;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta > *:nth-child(43) {
+  -ms-grid-row: 3;
+  -ms-grid-column: 35;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta > *:nth-child(44) {
+  -ms-grid-row: 3;
+  -ms-grid-column: 37;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta > *:nth-child(45) {
+  -ms-grid-row: 3;
+  -ms-grid-column: 39;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta > *:nth-child(46) {
+  -ms-grid-row: 3;
+  -ms-grid-column: 41;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta > *:nth-child(47) {
+  -ms-grid-row: 3;
+  -ms-grid-column: 43;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta > *:nth-child(48) {
+  -ms-grid-row: 3;
+  -ms-grid-column: 45;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta > *:nth-child(49) {
+  -ms-grid-row: 3;
+  -ms-grid-column: 47;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta > *:nth-child(50) {
+  -ms-grid-row: 3;
+  -ms-grid-column: 49;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta label {
+  color: #fff;
+  display: block;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta input, .barraTrabajo .variasConsultasColumna .datosConsulta select {
+  height: 1.7rem;
+  width: 100%;
+  outline: none;
+  border-radius: 5px;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta .item1 {
+  -ms-grid-column: 1;
+  grid-column: 1;
+  -ms-grid-row: 1;
+  grid-row: 1;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta .item2 {
+  -ms-grid-column: 2;
+  -ms-grid-column-span: 2;
+  grid-column: 2/4;
+  -ms-grid-row: 1;
+  grid-row: 1;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta .item3 {
+  -ms-grid-column: 4;
+  -ms-grid-column-span: 5;
+  grid-column: 4/9;
+  -ms-grid-row: 1;
+  grid-row: 1;
+  margin-left: 20px;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta .item4 {
+  -ms-grid-column: 7;
+  -ms-grid-column-span: 12;
+  grid-column: 7/19;
+  -ms-grid-row: 1;
+  grid-row: 1;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta .item5 {
+  -ms-grid-column: 19;
+  grid-column: 19;
+  -ms-grid-row: 1;
+  grid-row: 1;
+  margin-left: 20px;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta .item6 {
+  -ms-grid-column: 20;
+  -ms-grid-column-span: 2;
+  grid-column: 20/22;
+  -ms-grid-row: 1;
+  grid-row: 1;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta .item7 {
+  -ms-grid-column: 22;
+  grid-column: 22;
+  -ms-grid-row: 1;
+  grid-row: 1;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta .item8 {
+  -ms-grid-column: 23;
+  -ms-grid-column-span: 2;
+  grid-column: 23/25;
+  -ms-grid-row: 1;
+  grid-row: 1;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta .item9 {
+  -ms-grid-column: 1;
+  -ms-grid-column-span: 2;
+  grid-column: 1/3;
+  -ms-grid-row: 2;
+  grid-row: 2;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta .item10 {
+  -ms-grid-column: 2;
+  -ms-grid-column-span: 2;
+  grid-column: 2/4;
+  -ms-grid-row: 2;
+  grid-row: 2;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta .item11 {
+  -ms-grid-column: 4;
+  -ms-grid-column-span: 5;
+  grid-column: 4/9;
+  -ms-grid-row: 2;
+  grid-row: 2;
+  margin-left: 20px;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta .item12 {
+  -ms-grid-column: 7;
+  -ms-grid-column-span: 6;
+  grid-column: 7/13;
+  -ms-grid-row: 2;
+  grid-row: 2;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta .item13 {
+  -ms-grid-column: 13;
+  -ms-grid-column-span: 2;
+  grid-column: 13/15;
+  -ms-grid-row: 2;
+  grid-row: 2;
+  margin-left: 20px;
+}
+.barraTrabajo .variasConsultasColumna .datosConsulta .item14 {
+  -ms-grid-column: 15;
+  -ms-grid-column-span: 10;
+  grid-column: 15/25;
+  -ms-grid-row: 2;
+  grid-row: 2;
+}
 
 .tituloGrupo, .tituloClase {
   color: #fff;
@@ -1031,4 +1362,12 @@
 
 .despacho {
   background: #E2C08D;
+}
+
+.orden {
+  background: #5F9EA0;
+}
+
+.culminado {
+  background: #006400;
 }

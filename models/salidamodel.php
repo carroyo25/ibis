@@ -6,7 +6,7 @@
             parent::__construct();
         }
 
-        public function listarNotasIngreso(){
+        public function listarNotasDespacho(){
             $salida = "";
             try {
                 $sql = $this->db->connect()->prepare("SELECT
@@ -39,7 +39,8 @@
                                                         INNER JOIN tb_parametros ON alm_despachocab.nEstadoDoc = tb_parametros.nidreg 
                                                     WHERE
                                                         tb_costusu.id_cuser = :usr 
-                                                        AND tb_costusu.nflgactivo = 1");
+                                                        AND tb_costusu.nflgactivo = 1
+                                                        AND alm_despachocab.nEstadoDoc = 62");
                 $sql->execute(["usr"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowCount();
 
@@ -411,50 +412,53 @@
         public function consultarSalidaId($indice){
             try {
                 $sql=$this->db->connect()->prepare("SELECT
-                                                        ibis.alm_despachocab.id_userAprob,
-                                                        ibis.alm_despachocab.id_regalm,
-                                                        ibis.alm_despachocab.ntipmov,
-                                                        LPAD(ibis.alm_despachocab.nnronota,6,0) AS nnronota,
-                                                        ibis.alm_despachocab.ffecdoc,
-                                                        ibis.alm_despachocab.nnromov,
-                                                        ibis.alm_despachocab.cnumguia,
-                                                        ibis.alm_despachocab.ncodpry,
-                                                        ibis.alm_despachocab.ncodarea,
-                                                        ibis.alm_despachocab.idref_ord,
-                                                        ibis.alm_despachocab.idref_pedi,
-                                                        ibis.alm_despachocab.idref_abas,
-                                                        ibis.alm_despachocab.nEstadoDoc,
-                                                        UPPER(
-                                                        CONCAT_WS( ' ', tb_proyectos.ccodproy, tb_proyectos.cdesproy )) AS costos,
-                                                        UPPER(
-                                                        CONCAT_WS( ' ', tb_area.ccodarea, tb_area.cdesarea )) AS area,
-                                                        ibis.alm_despachocab.ncodalm1,
-                                                        UPPER( origen.cdesalm ) AS almacen,
-                                                        ibis.tb_user.cnombres,
-                                                        movimientos.cdescripcion,
-                                                        LPAD( alm_despachocab.nnromov, 4, 0 ) AS movimiento,
-                                                        UPPER( ibis.tb_pedidocab.concepto ) AS concepto,
-                                                        ibis.tb_pedidocab.emision,
-                                                        ibis.lg_ordencab.cnumero AS orden,
-                                                        ibis.lg_ordencab.ffechadoc,
-                                                        estados.cdescripcion AS estado,
-                                                        estados.cabrevia,
-                                                        CONCAT_WS( ' ', rrhh.tabla_aquarius.nombres, rrhh.tabla_aquarius.apellidos ) AS nombres,
-                                                        ibis.lg_ordencab.id_centi,
-	                                                    LPAD(ibis.tb_pedidocab.nrodoc,6, 0 ) AS pedido
-                                                    FROM
-                                                        ibis.alm_despachocab
-                                                        INNER JOIN ibis.tb_proyectos ON alm_despachocab.ncodpry = tb_proyectos.nidreg
-                                                        INNER JOIN ibis.tb_area ON alm_despachocab.ncodarea = tb_area.ncodarea
-                                                        INNER JOIN ibis.tb_almacen AS origen ON alm_despachocab.ncodalm1 = origen.ncodalm
-                                                        INNER JOIN ibis.tb_user ON alm_despachocab.id_userAprob = tb_user.iduser
-                                                        INNER JOIN ibis.tb_parametros AS movimientos ON alm_despachocab.ntipmov = movimientos.nidreg
-                                                        INNER JOIN ibis.tb_pedidocab ON alm_despachocab.idref_pedi = tb_pedidocab.idreg
-                                                        INNER JOIN ibis.lg_ordencab ON alm_despachocab.idref_ord = lg_ordencab.id_regmov
-                                                        INNER JOIN ibis.tb_parametros AS estados ON alm_despachocab.nEstadoDoc = estados.nidreg
-                                                        INNER JOIN rrhh.tabla_aquarius ON ibis.tb_pedidocab.idsolicita = rrhh.tabla_aquarius.internal 
-                                                    WHERE
-                                                        alm_despachocab.id_regalm = :indice");
+                                                            ibis.alm_despachocab.id_userAprob,
+                                                            ibis.alm_despachocab.id_regalm,
+                                                            ibis.alm_despachocab.ntipmov,
+                                                            LPAD( ibis.alm_despachocab.nnronota, 6, 0 ) AS nnronota,
+                                                            ibis.alm_despachocab.ffecdoc,
+                                                            ibis.alm_despachocab.nnromov,
+                                                            ibis.alm_despachocab.cnumguia,
+                                                            ibis.alm_despachocab.ncodpry,
+                                                            ibis.alm_despachocab.ncodarea,
+                                                            ibis.alm_despachocab.idref_ord,
+                                                            ibis.alm_despachocab.idref_pedi,
+                                                            ibis.alm_despachocab.idref_abas,
+                                                            ibis.alm_despachocab.nEstadoDoc,
+                                                            UPPER(
+                                                            CONCAT_WS( ' ', tb_proyectos.ccodproy, tb_proyectos.cdesproy )) AS costos,
+                                                            UPPER(
+                                                            CONCAT_WS( ' ', tb_area.ccodarea, tb_area.cdesarea )) AS area,
+                                                            ibis.alm_despachocab.ncodalm1,
+                                                            UPPER( origen.cdesalm ) AS almacen,
+                                                            ibis.tb_user.cnombres,
+                                                            movimientos.cdescripcion,
+                                                            LPAD( alm_despachocab.nnromov, 4, 0 ) AS movimiento,
+                                                            UPPER( ibis.tb_pedidocab.concepto ) AS concepto,
+                                                            ibis.tb_pedidocab.emision,
+                                                            ibis.lg_ordencab.cnumero AS orden,
+                                                            ibis.lg_ordencab.ffechadoc,
+                                                            estados.cdescripcion AS estado,
+                                                            estados.cabrevia,
+                                                            CONCAT_WS( ' ', rrhh.tabla_aquarius.nombres, rrhh.tabla_aquarius.apellidos ) AS nombres,
+                                                            ibis.lg_ordencab.id_centi,
+                                                            LPAD( ibis.tb_pedidocab.nrodoc, 6, 0 ) AS pedido,
+                                                            ibis.alm_despachocab.ncodalm2,
+                                                            UPPER( destino.cdesalm ) AS destino 
+                                                        FROM
+                                                            ibis.alm_despachocab
+                                                            INNER JOIN ibis.tb_proyectos ON alm_despachocab.ncodpry = tb_proyectos.nidreg
+                                                            INNER JOIN ibis.tb_area ON alm_despachocab.ncodarea = tb_area.ncodarea
+                                                            INNER JOIN ibis.tb_almacen AS origen ON alm_despachocab.ncodalm1 = origen.ncodalm
+                                                            INNER JOIN ibis.tb_user ON alm_despachocab.id_userAprob = tb_user.iduser
+                                                            INNER JOIN ibis.tb_parametros AS movimientos ON alm_despachocab.ntipmov = movimientos.nidreg
+                                                            INNER JOIN ibis.tb_pedidocab ON alm_despachocab.idref_pedi = tb_pedidocab.idreg
+                                                            INNER JOIN ibis.lg_ordencab ON alm_despachocab.idref_ord = lg_ordencab.id_regmov
+                                                            INNER JOIN ibis.tb_parametros AS estados ON alm_despachocab.nEstadoDoc = estados.nidreg
+                                                            INNER JOIN rrhh.tabla_aquarius ON ibis.tb_pedidocab.idsolicita = rrhh.tabla_aquarius.internal
+                                                            INNER JOIN ibis.tb_almacen AS destino ON ibis.alm_despachocab.ncodalm2 = destino.ncodalm 
+                                                        WHERE
+                                                            alm_despachocab.id_regalm = :indice");
                 $sql->execute(["indice"=>$indice]);
                 $docData = array();
                 while($row=$sql->fetch(PDO::FETCH_ASSOC)){
@@ -530,10 +534,9 @@
             }
         }
 
-        public function grabarGuiaRemision($cabecera,$detalles,$despacho){
+        public function grabarGuiaRemision($cabecera,$detalles,$despacho,$pedido,$orden,$ingreso){
             try {
-
-                $filename = "public/documentos/guias_remision/".$despacho.".pdf";
+                $filename = "public/documentos/guias_remision/".$cabecera['numero_guia'].".pdf";
                 $this->generarGuia($cabecera,$detalles,$filename);
 
                 $sql = $this->db->connect()->prepare("INSERT lg_docusunat SET ccodtdoc=:ccodtdoc,ffechdoc=:ffechdoc,ffechreg=:ffechreg,ffechtrasl=:ffechtrasl,cserie=:cserie,
@@ -541,7 +544,7 @@
                                                                             ctipoenvio=:ctipoenvio,nbultos=:nbultos,npesotot=:npesotot,cdniconduc=:cdniconduc,cdesconduc=:cdesconduc,
                                                                             cnrolicen=:cnrolicen,cnrocert=:cnrocert,cmarcaveh=:cmarcaveh,cplacaveh=:cplacaveh,cconfigveh=:cconfigveh,
                                                                             ncodalm1=:ncodalm1,ncodalm2=:ncodalm2,nEstadoImp=:nEstadoImp,cdocPDF=:cdocPDF,nflgactivo=:nflgactivo,
-                                                                            id_despacho=:salida");
+                                                                            id_despacho=:salida,nEstadoDoc=:estado");
                 $sql->execute([ "ccodtdoc"=>'09',
                                 "ffechdoc"=>$cabecera['fgemision'],
                                 "ffechreg"=>null,
@@ -567,11 +570,17 @@
                                 "nEstadoImp"=>null,
                                 "cdocPDF"=>$filename,
                                 "nflgactivo"=>1,
-                                "salida"=>$despacho]);
+                                "salida"=>$despacho,
+                                "estado"=>0]);
                 $rowCount = $sql->rowcount();
 
                 if ($rowCount > 0){
                    $this->generarGuia($cabecera,$detalles,$filename);
+                   $this->actualizarCabeceraPedido($pedido,67);
+                   $this->actualizarCabeceraOrden($orden,67);
+                   $this->actualizarDetallesPedido($detalles,$despacho,67);
+                   $this->actualizarCabeceraDespacho($despacho,67);
+                   $this->actualizarCabeceraIngreso($ingreso,67);
                 }
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
@@ -627,8 +636,8 @@
                     $pdf->Cell(190,4,"Peso   : ".$cabecera["peso_bruto"]. "Kgs",0,1);
                     $pdf->Output($archivo,'F');
                     
-                    $c = "PDFtoPrinter.exe ".$archivo;
-                    $output = shell_exec($c);
+                    //$c = "PDFtoPrinter.exe ".$archivo;
+                    //$output = shell_exec($c);
                     
                     return $archivo;
                 }
@@ -639,31 +648,74 @@
             }
         }
 
-        private function actualizarCabeceraPedido(){
+        private function actualizarCabeceraPedido($pedido,$estado){
             try {
-                
+                $sql = $this->db->connect()->prepare("UPDATE tb_pedidocab SET estadodoc=:estado WHERE idreg=:pedido");
+                $sql->execute(["estado"=>$estado,
+                                "pedido"=>$pedido]);
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;
             }
         }
 
-        private function actualizarDetallesPedido(){
+        private function actualizarCabeceraOrden($orden,$estado){
             try {
-                //code...
+                $sql = $this->db->connect()->prepare("UPDATE lg_ordencab SET nEstadoDoc=:estado WHERE id_regmov=:orden");
+                $sql->execute(["estado"=>$estado,
+                                "orden"=>$orden]);
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;
             }
         }
 
-        private function actualizarCabeceraDespacho(){
+        private function actualizarDetallesPedido($detalles,$despacho,$estado){
             try {
-                //code...
+                $datos = json_decode($detalles);
+                $nreg = count($datos);
+
+                for ($i=0; $i < $nreg; $i++) { 
+                    try {
+                        $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet SET estadoItem=:estado,
+                                                                                        cant_env=:enviado,
+                                                                                        iddespacho=:despacho
+                                                                                 WHERE iditem=:id");
+                        $sql->execute(["estado"=>$estado,
+                                        "id"=>$datos[$i]->pedido,
+                                        "enviado"=>$datos[$i]->cantidad,
+                                        "despacho"=>$despacho]);
+                    } catch (PDOException $th) {
+                        echo "Error: " . $th->getMessage();
+                        return false;
+                    }
+                }
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;
             }
-        } 
+        }
+
+        private function actualizarCabeceraDespacho($despacho,$estado){
+            try {
+                $sql = $this->db->connect()->prepare("UPDATE alm_despachocab SET nEstadoDoc=:estado WHERE id_regalm=:despacho");
+                $sql->execute(["estado"=>$estado,
+                                "despacho"=>$despacho]);
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function actualizarCabeceraIngreso($ingreso,$estado){
+            try {
+                $sql = $this->db->connect()->prepare("UPDATE alm_recepcab SET nEstadoDoc=:estado WHERE id_regalm=:ingreso");
+                $sql->execute(["estado"=>$estado,
+                                "ingreso"=>$ingreso]);
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
     }
 ?>
