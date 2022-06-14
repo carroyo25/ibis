@@ -393,13 +393,86 @@ $culminado:#006400;
 .ventanaDialogo,
 .ventanaEspera,
 .ventanaComentarios,
-.ventanaDocumento{
+.ventanaDocumento,
+.ventanaResumen{
     background:$blanco;
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     box-shadow: 5px 8px 5px #000;
+}
+
+.ventanaResumen{
+    border-radius: 8px;
+
+    .tituloDocumento{
+        display: flex;
+        justify-content: space-between;
+        padding: .5rem;
+        border-bottom: 1px solid #c2c2c2;
+        margin-bottom: 5px;  
+    }
+
+    p {
+        display:block;
+        margin-bottom:20px;
+    }
+
+    input{
+        border: 1px solid #c2c2c2 !important;
+        height: 2rem;
+        width: 100%;
+        outline: none;
+        font-size: 0.7rem;
+    }
+
+    label{
+        font-weight: bold;
+        font-size: .7rem;
+    }
+
+    a{
+        text-align: right;
+        font-size: 1.5rem;
+        margin-right: 20px;
+    }
+    
+    section {
+        display:grid;
+        padding: 0 1rem;
+        column-gap:5px;
+        margin-bottom: 20px;
+
+        div{
+            display:grid;
+            grid-template-rows: 1fr 1fr;
+        }
+    }
+
+    .seccion1{
+        grid-template-columns: 15% 55% 8% 8% 12%;
+    }
+
+    .seccion2{
+        grid-template-columns: 1fr 5% 1fr 1fr 1.5fr 1fr;
+    }
+
+    .seccion3{
+        grid-template-columns: repeat(6,1fr);
+
+        a{
+            margin-left: 30px;
+        }
+    }
+
+    .seccion4{
+        grid-template-columns: repeat(6,1fr);
+    }
+
+    .seccion5{
+        grid-template-columns: repeat(6,1fr);
+    }
 }
 
 .ventanaProceso {
@@ -491,8 +564,6 @@ $culminado:#006400;
 
 .ventanaDocumento{
     border-radius: 8px;
-    //width: 65%;
-    //overflow: auto;
 
     input{
         border: 1px solid $sombra !important;
@@ -590,6 +661,7 @@ $culminado:#006400;
             padding:3px;
         }
     }
+    
 }
 
 .ventanaCorreo{

@@ -63,7 +63,13 @@
                     while ($rs = $sql->fetch()){
                         $tipo = $rs['idtipo'] == 37 ? "B" : "S";
 
-                        $salida .='<tr data-iditem="" data-pedido="" data-orden="" data-ingreso="" data-salida="" class="pointer">
+                        $salida .='<tr data-producto="'.$rs['idprod'].'"
+                                     data-pedido="'.$rs['idpedido'].'" 
+                                     data-orden="'.$rs['idorden'].'" 
+                                     data-ingreso="'.$rs['idingreso'].'" 
+                                     data-despacho="'.$rs['iddespacho'].'" 
+                                     data-item ="'.$rs['iditem'].'"
+                                     class="pointer">
                                     <td class="textoCentro">'.str_pad($item++,4,0,STR_PAD_LEFT).'</td>
                                     <td class="textoCentro '.$rs['estado'].'">'.$rs['cdescripcion'].'</td>
                                     <td class="pl20px">'.$rs['costos'].'</td>
@@ -81,6 +87,88 @@
                 return $salida;
             } catch (PDOException $th) {
                 echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function consultarCargoPlan($codigo,$pedido,$orden,$ingreso,$despacho,$item){
+            $detallePedido = $this->detallePedido($item);
+            $datosOrden = $this->orden($orden);
+            $datosIngreso = $this->ingreso($ingreso);
+            $datosDespacho = $this->despacho($despacho);
+
+            return array("producto"=>$detallePedido);
+        }
+        
+        private function detallePedido($item){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        tb_pedidodet.iditem,
+                                                        tb_pedidodet.idpedido,
+                                                        FORMAT( tb_pedidodet.cant_pedida, 2 ) AS pedida,
+                                                        FORMAT( tb_pedidodet.cant_atend, 2 ) AS atendida,
+                                                        FORMAT( tb_pedidodet.cant_aprob, 2 ) AS aprobada,
+                                                        IFNULL( tb_pedidodet.cant_aprob, tb_pedidodet.cant_pedida ) AS cantidad,
+                                                        tb_pedidodet.estadoItem,
+                                                        cm_producto.ccodprod,
+                                                        CONCAT_WS(' ', cm_producto.cdesprod, tb_pedidodet.observaciones ) AS producto,
+                                                        tb_unimed.cabrevia,
+                                                        tb_parametros.cabrevia AS estado,
+                                                        tb_parametros.cdescripcion 
+                                                    FROM
+                                                        tb_pedidodet
+                                                        INNER JOIN cm_producto ON tb_pedidodet.idprod = cm_producto.id_cprod
+                                                        INNER JOIN tb_unimed ON tb_pedidodet.unid = tb_unimed.ncodmed
+                                                        INNER JOIN tb_parametros ON tb_pedidodet.estadoItem = tb_parametros.nidreg 
+                                                    WHERE
+                                                        tb_pedidodet.iditem = :item");
+                $sql->execute(['item'=>$item]);
+
+                $docData = array();
+
+                while($row=$sql->fetch(PDO::FETCH_ASSOC)){
+                    $docData[] = $row;
+                }
+
+                return $docData;
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function pedido($pedido){
+            try {
+                //code...
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function orden($codigo){
+            try {
+                //code...
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function ingreso($codigo){
+            try {
+                //code...
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function despacho($codigo){
+            try {
+                //code...
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
                 return false;
             }
         }

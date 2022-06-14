@@ -12,5 +12,14 @@
             $this->view->render('cargoplan/index');
         }
         
+
+        function consultaItem(){
+            echo json_encode($this->model->consultarCargoPlan($_POST['codigo'],
+                                                            $_POST['pedido'],
+                                                            $_POST['orden'],
+                                                            $_POST['ingreso'],
+                                                            $_POST['despacho'],
+                                                            $_POST['item']));
+        }
     }
 ?>
