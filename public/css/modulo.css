@@ -714,6 +714,24 @@
   -ms-grid-columns: (1fr)[6];
   grid-template-columns: repeat(6, 1fr);
 }
+.ventanaResumen .porcentaje {
+  background: rgb(33, 167, 227);
+  background: -webkit-gradient(linear, left top, right top, from(rgba(33, 167, 227, 0.1853116246)), color-stop(50%, rgb(93, 185, 223)), to(rgb(0, 255, 218)));
+  background: linear-gradient(90deg, rgba(33, 167, 227, 0.1853116246) 0%, rgb(93, 185, 223) 50%, rgb(0, 255, 218) 100%);
+  position: relative;
+  height: 2rem;
+  -webkit-transition-duration: 0.5s;
+          transition-duration: 0.5s;
+  width: 0;
+}
+.ventanaResumen .porcentaje span {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 5px;
+  bottom: 0;
+  font-size: 0.8rem;
+}
 
 .ventanaProceso {
   border-radius: 8px;
@@ -1443,5 +1461,5 @@
 }
 
 .culminado {
-  background: #006400;
+  background: #55A5E2;
 }

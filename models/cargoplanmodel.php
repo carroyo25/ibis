@@ -69,6 +69,7 @@
                                      data-ingreso="'.$rs['idingreso'].'" 
                                      data-despacho="'.$rs['iddespacho'].'" 
                                      data-item ="'.$rs['iditem'].'"
+                                     data-status="'.$rs['estadoItem'].'"
                                      class="pointer">
                                     <td class="textoCentro">'.str_pad($item++,4,0,STR_PAD_LEFT).'</td>
                                     <td class="textoCentro '.$rs['estado'].'">'.$rs['cdescripcion'].'</td>
@@ -91,13 +92,18 @@
             }
         }
 
-        public function consultarCargoPlan($codigo,$pedido,$orden,$ingreso,$despacho,$item){
+        public function consultarCargoPlan($codigo,$pedido,$orden,$ingreso,$despacho,$item,$estado){
             $detallePedido = $this->detallePedido($item);
+            $datosPedido = $this->pedido($pedido);
             $datosOrden = $this->orden($orden);
-            $datosIngreso = $this->ingreso($ingreso);
-            $datosDespacho = $this->despacho($despacho);
+            $datosIngreso = $this->ingreso($ingreso,$item);
+            $datosDespacho = $this->despacho($despacho,$item);
 
-            return array("producto"=>$detallePedido);
+            return array("producto"=>$detallePedido,
+                         "pedido"=>$datosPedido,
+                         "orden"=>$datosOrden,
+                         "ingreso"=>$datosIngreso,
+                         "despacho"=>$datosDespacho);
         }
         
         private function detallePedido($item){
@@ -139,34 +145,123 @@
 
         private function pedido($pedido){
             try {
-                //code...
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        LPAD( tb_pedidocab.nrodoc, 6, 0 ) AS pedido,
+                                                        tb_pedidocab.aprueba,
+                                                        tb_pedidocab.faprueba,
+                                                        tb_pedidocab.emision,
+                                                    IF
+                                                        ( tb_pedidocab.idtipomov = 37, 'B', 'S' ) AS tipo,
+                                                        tb_user.cnombres 
+                                                    FROM
+                                                        tb_pedidocab
+                                                        INNER JOIN tb_user ON tb_pedidocab.aprueba = tb_user.iduser 
+                                                    WHERE
+                                                        tb_pedidocab.idreg = :pedido");
+                $sql->execute(["pedido"=>$pedido]);
+
+                $docData = array();
+
+                while($row=$sql->fetch(PDO::FETCH_ASSOC)){
+                    $docData[] = $row;
+                }
+
+                return $docData;
+
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;
             }
         }
 
-        private function orden($codigo){
+        private function orden($orden){
             try {
-                //code...
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        lg_ordencab.id_regmov, 
+                                                        lg_ordencab.cnumero, 
+                                                        lg_ordencab.ffechadoc, 
+                                                        lg_ordencab.nEstadoReg, 
+                                                        lg_ordencab.fechaLog, 
+                                                        lg_ordencab.fechaOpe, 
+                                                        lg_ordencab.FechaFin
+                                                    FROM
+                                                        lg_ordencab
+                                                    WHERE
+                                                        lg_ordencab.id_regmov = :orden");
+                $sql->execute(["orden"=>$orden]);
+
+                $docData = array();
+
+                while($row=$sql->fetch(PDO::FETCH_ASSOC)){
+                    $docData[] = $row;
+                }
+
+                return $docData;
+
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;
             }
         }
 
-        private function ingreso($codigo){
+        private function ingreso($ingreso,$item){
             try {
-                //code...
+                $sql = $this->db->connect()->prepare("SELECT
+                                            FORMAT( alm_recepdet.ncantidad, 2 ) AS cantidad, 
+                                            alm_recepdet.niddetaPed, 
+                                            alm_recepdet.id_regalm, 
+                                            alm_recepcab.nnronota, 
+                                            alm_recepcab.ffecdoc
+                                        FROM
+                                            alm_recepdet
+                                            INNER JOIN
+                                            alm_recepcab
+                                            ON 
+                                                alm_recepdet.id_regalm = alm_recepcab.id_regalm
+                                        WHERE
+                                            alm_recepdet.niddetaPed = :item AND
+                                            alm_recepdet.id_regalm = :ingreso");
+                $sql->execute(["ingreso"=>$ingreso, "item"=>$item]);
+
+                $docData = array();
+
+                while($row=$sql->fetch(PDO::FETCH_ASSOC)){
+                    $docData[] = $row;
+                }
+
+                return $docData;
+
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;
             }
         }
 
-        private function despacho($codigo){
+        private function despacho($despacho,$item){
             try {
-                //code...
+                $sql = $this->db->connect()->prepare("SELECT
+                                                            alm_despachodet.niddeta,
+                                                            alm_despachodet.id_regalm,
+                                                            FORMAT(alm_despachodet.ncantidad,2) AS cantidad,
+                                                            LPAD(alm_despachocab.nnronota, 6, 0 ) AS despacho,
+                                                            alm_despachodet.niddetaPed,
+                                                            alm_despachocab.ffecdoc 
+                                                        FROM
+                                                            alm_despachodet
+                                                            INNER JOIN alm_despachocab ON alm_despachodet.id_regalm = alm_despachocab.id_regalm 
+                                                        WHERE
+                                                            alm_despachodet.niddetaOrd = :item 
+                                                            AND alm_despachodet.id_regalm = :despacho");
+                $sql->execute(["despacho"=>$despacho,"item"=>$item]);
+
+                $docData = array();
+
+                while($row=$sql->fetch(PDO::FETCH_ASSOC)){
+                    $docData[] = $row;
+                }
+
+                return $docData;
+
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;

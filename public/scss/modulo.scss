@@ -31,7 +31,7 @@ $recepcion:#AAD2F0;
 $calidad:#F4D03F;
 $despacho:#E2C08D;
 $orden:#5F9EA0;
-$culminado:#006400;
+$culminado:#55A5E2;
 
 
 .bienes {
@@ -472,6 +472,24 @@ $culminado:#006400;
 
     .seccion5{
         grid-template-columns: repeat(6,1fr);
+    }
+
+    .porcentaje{
+        background: rgb(33,167,227);
+        background: linear-gradient(90deg, rgba(33,167,227,0.18531162464985995) 0%, rgba(93,185,223,1) 50%, rgba(0,255,218,1) 100%);
+        position: relative;
+        height: 2rem;
+        transition-duration: .5s;
+        width: 0;
+
+        span{
+            position: absolute;
+            left: 0;
+            right: 0;
+            top:5px;
+            bottom: 0;
+            font-size: 0.8rem;
+        }
     }
 }
 

@@ -19,7 +19,8 @@
                                                             $_POST['orden'],
                                                             $_POST['ingreso'],
                                                             $_POST['despacho'],
-                                                            $_POST['item']));
+                                                            $_POST['item'],
+                                                            $_POST['status']));
         }
     }
 ?>

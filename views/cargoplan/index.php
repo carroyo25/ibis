@@ -7,6 +7,15 @@
     <title>Document</title>
 </head>
 <body>
+    <div class="modal" id="vistaprevia">
+        <div class="ventanaVistaPrevia">
+            <div class="tituloVista">
+                <h3>Vista Previa</h3>
+                <a href="#" id="closePreview" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
+            </div>
+            <iframe src=""></iframe>
+        </div>
+    </div>
     <div class="modal" id="vistadocumento">
         <div class="ventanaResumen">
             <form method="post" id="cargoplan">
@@ -105,11 +114,11 @@
                         </div>
                         <div>
                             <label for="ingresada">Cantidad</br>Ingreso</label>
-                            <input type="text" name="ingresada" id="ingresada" class="centro unstyled" readonly>
+                            <input type="text" name="ingresada" id="ingresada" class="textoDerecha pr10px" readonly>
                         </div>
                         <div>
                             <label for="enviada">Porcentaje</br>Recibido</label>
-                            <div class="porcentaje textoCentro"><span>0%</span></div>
+                            <div class="porcentaje textoCentro" id="ingresado_porcentaje"><span id="porcentaje_ingresado">0%</span></div>
                         </div>
                         <div></div>
                         <div>
@@ -120,7 +129,7 @@
                     <section class="seccion5">
                         <div>
                             <label for="despacho">N°. Despacho:</label>
-                            <input type="text" name="despacho" id="despacho" class="drch pr5" readonly>
+                            <input type="text" name="despacho" id="despacho" readonly>
                         </div>
                         <div>
                             <label for="fecha_salida">Fecha Salida</label>
@@ -128,11 +137,11 @@
                         </div>
                         <div>
                             <label for="enviada">Cantidad</br>Despachada</label>
-                            <input type="text" name="enviada" id="enviada" class="centro unstyled" readonly>
+                            <input type="text" name="enviada" id="enviada" class="textoDerecha pr10px" readonly>
                         </div>
                         <div>
                             <label for="enviada">Porcentaje</br>Enviado</label>
-                            <div class="porcentaje textoCentro"><span>0%</span></div>
+                            <div class="porcentaje textoCentro" id="enviado_porcentaje"><span id="porcentaje_despacho">0%</span></div>
                         </div>
                         <div></div>
                         <div>
