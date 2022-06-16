@@ -6,9 +6,12 @@
         }
 
         function render(){
-            $this->view->listaOrdenes = "";
+            $this->view->listaOrdenes = $this->model->listarOrdenes();
             $this->view->render('evaluacion/index');
         }
         
+        function criterios(){
+            echo $this->model->evaluar($_POST['rol'],$_POST['tipo']);
+        }
     }
 ?>

@@ -10,7 +10,7 @@
                 $respuesta = false;
                 $pass = $this->encryptPass($clave);
 
-                $sql = $this->db->connect()->prepare("SELECT iduser,cnameuser,cnombres,ccorreo,ccargo,cinicial 
+                $sql = $this->db->connect()->prepare("SELECT iduser,cnameuser,cnombres,ccorreo,ccargo,cinicial,nrol
                                                         FROM tb_user 
                                                         WHERE cnameuser=:user AND cclave=:pass");
                 $sql->execute(["user"=>$user,"pass"=>$pass]);
@@ -23,8 +23,9 @@
                     $_SESSION['user']       = $rq[0]['cnameuser'];
                     $_SESSION['nombres']    = $rq[0]['cnombres'];
                     $_SESSION['correo']     = $rq[0]['ccorreo'];
-                    $_SESSION['cargo']     = $rq[0]['ccargo'];
-                    $_SESSION['inicial']     = $rq[0]['cinicial'];
+                    $_SESSION['cargo']      = $rq[0]['ccargo'];
+                    $_SESSION['inicial']    = $rq[0]['cinicial'];
+                    $_SESSION['rol']        = $rq[0]['nrol'];
                     $_SESSION['password']   = "aK8izG1WEQwwB1X";
                 }
 

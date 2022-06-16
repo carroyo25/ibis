@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,6 +7,118 @@
     <title>Document</title>
 </head>
 <body>
+<div class="modal" id="proceso">
+        <div class="ventanaProceso tamanioProceso">
+            <div class="leyenda">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Puntaje</th>
+                            <th>Criterio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="textoCentro">5</td>
+                            <td class="textoCentro">Excelente</td>
+                        </tr>
+                        <tr>
+                            <td class="textoCentro">4</td>
+                            <td class="textoCentro">Bueno</td>
+                        </tr>
+                        <tr>
+                            <td class="textoCentro">3</td>
+                            <td class="textoCentro">Regular</td>
+                        </tr>
+                        <tr>
+                            <td class="textoCentro">2</td>
+                            <td class="textoCentro">Insuficiente</td>
+                        </tr>
+                        <tr>
+                            <td class="textoCentro">1</td>
+                            <td class="textoCentro">Deficiente</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="cabezaProceso">
+                <form action="#" id="formProceso" autocomplete="off">
+                    <input type="hidden" name="codigo_orden" id="codigo_orden">
+                    <input type="hidden" name="tipo_orden" id="tipo_orden" value="37">
+
+                    <div class="barraOpciones primeraBarra">
+                        <span>Datos Generales</span>
+                        <div>
+                            <button type="button" id="saveOrden" title="Grabar Orden" class="boton3">
+                                <span><i class="far fa-save"></i> Grabar </span> 
+                            </button>
+                            <button type="button" id="cerrarVentana" title="Cerrar" class="boton3">
+                                <i class="fas fa-window-close"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="dataProceso_2">
+                        <div class="seccion_izquierda">
+                            <div class="column4_55">
+                                <div class="column2_3957">
+                                    <label for="numero">Orden Nro:</label>
+                                    <input type="text" name="numero" id="numero" class="cerrarLista" readonly>
+                                </div>
+                                <div class="column2_46">
+                                    <label for="emision">Emisión:</label>
+                                    <input type="date" name="emision" id="emision" class="cerrarLista" value="<?php echo date("Y-m-d");?>">
+                                </div>
+                            </div>
+                            <div class="column2">
+                                <label for="costos">CCostos:</label>
+                                <input type="text" name="costos" id="costos" readonly>
+                            </div>
+                        </div>
+                        <div class="seccion_medio">
+                            <div class="column2">
+                                <label for="detalle">Detalle:</label>
+                                <input type="text" name="detalle" id="detalle" class="cerrarLista" readonly>
+                            </div>
+                            
+                            <div class="column4_55">
+                                <div class="column2_3957">
+                                    <label for="puntaje">Puntaje :</label>
+                                    <input type="text" name="puntaje" id="puntaje" class="cerrarLista" readonly>
+                                </div>
+                                <div class="column2_46">
+                                    <label for="estado">Estado:</label>
+                                    <input type="text" name="estado" id="estado" class="textoCentro estado procesando" readonly value="EVALUACION">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="seccion_derecha">
+                            <div class="column2">
+                                <label for="entidad">Entidad:</label>
+                                <input type="text" name="entidad" id="entidad" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="barraOpciones">
+                        <span>Criterios de Evaluación</span>
+                    </div>
+                    <div class="tablaInterna mininoTablaInterna">
+                        <table class="tabla" id="tablaDetalles">
+                            <thead>
+                                <tr class="stickytop">
+                                    <th>Criterio</th>
+                                    <th>Descripcion</th>
+                                    <th>Puntaje</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     <div class="cabezaModulo">
         <h1>Evaluacion de proveedores</h1>
         <div>
@@ -43,20 +155,13 @@
         <table id="tablaPrincipal">
             <thead>
                     <tr>
-                    <th rowspan="2">Num.</th>  
-                    <th rowspan="2">Emision</th>
-                    <th rowspan="2">Descripción</th>
-                    <th rowspan="2">Centro Costos</th> 
-                    <th rowspan="2">Area</th>
-                    <th rowspan="2">Atencion</th>
-                    <th colspan="3" width="16%">Firmas</th>
-                    <tr>
-                        <th>Logística</th>
-                        <th>Finanzas</th>
-                        <th>Operaciones</th>
+                        <th >Num.</th>  
+                        <th >Emision</th>
+                        <th >Descripción</th>
+                        <th >Centro Costos</th> 
+                        <th >Area</th>
+                        <th >Proveedor</th>
                     </tr>
-                    
-                </tr>
             </thead>
             <tbody>
                 <?php echo $this->listaOrdenes;?>

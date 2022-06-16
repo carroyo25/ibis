@@ -735,6 +735,7 @@
 
 .ventanaProceso {
   border-radius: 8px;
+  position: relative;
 }
 .ventanaProceso .primeraBarra {
   border-radius: 8px 8px 0 0;
@@ -1350,6 +1351,26 @@
 .tabs_labels .seleccionado {
   color: #fff;
   background: #000;
+}
+
+.leyenda {
+  position: absolute;
+  background: #fff;
+  z-index: 10;
+  padding: 1rem;
+  right: -180px;
+}
+.leyenda table {
+  border-collapse: collapse;
+}
+.leyenda table thead {
+  color: #fff;
+  background: #005D84;
+  font-size: 0.7rem;
+}
+.leyenda table tr, .leyenda table th, .leyenda table td {
+  border: 1px solid #c3c3c3;
+  padding: 10px;
 }
 
 .w10por {

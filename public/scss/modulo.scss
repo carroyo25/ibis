@@ -495,6 +495,7 @@ $culminado:#55A5E2;
 
 .ventanaProceso {
     border-radius: 8px;
+    position: relative;
 
     .primeraBarra{
         border-radius: 8px 8px 0 0;;
@@ -1156,6 +1157,30 @@ $culminado:#55A5E2;
     }
 }
 
+
+.leyenda {
+    position: absolute;
+    background: #fff;
+    z-index: 10;
+    padding: 1rem;
+    right: -180px;
+
+    table {
+        border-collapse: collapse;
+
+        thead {
+            color: $blanco;
+            background:$fondo_menus;
+            font-size: .7rem;
+        }
+
+        tr,th,td{
+            border: 1px solid $sombra;
+            padding:10px;
+
+        }
+    }
+}
 
 .w10por{
     width: 10%;
