@@ -11,7 +11,7 @@
         }
         
         function criterios(){
-            echo $this->model->evaluar($_POST['rol'],$_POST['tipo']);
+            echo json_encode($this->model->llamarOrdenID($_POST['tipo'],$_POST['id']));
         }
     }
 ?>

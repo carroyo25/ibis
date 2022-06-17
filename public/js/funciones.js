@@ -77,6 +77,18 @@ checkCantTables = (table,idx) =>{
     return sw;
 }
 
+checkCantTablesMinMax = (table,idx) =>{
+    let sw = false;
+
+    table.each(function(){
+        if ($(this).find('td').eq(idx).children().val() < 1  || $(this).find('td').eq(idx).children().val() > 5){
+            sw = true;
+        }
+    })
+
+    return sw;
+}
+
 buscar = (_this) => {
     $.each($("#tablaPrincipal tbody tr"), function() {
         if($(this).text().toLowerCase().indexOf($(_this).val().toLowerCase()) === -1)
@@ -111,6 +123,7 @@ sumarTotales = (table) => {
 
     return suma;
 }
+
 
 fechaActual = () => {
     var d = new Date(); 

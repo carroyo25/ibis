@@ -1353,6 +1353,11 @@
   background: #000;
 }
 
+.criterio {
+  border: 1px solid #616161 !important;
+  line-height: 1.5rem !important;
+}
+
 .leyenda {
   position: absolute;
   background: #fff;

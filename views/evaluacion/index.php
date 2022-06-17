@@ -44,6 +44,7 @@
             <div class="cabezaProceso">
                 <form action="#" id="formProceso" autocomplete="off">
                     <input type="hidden" name="codigo_orden" id="codigo_orden">
+                    <input type="hidden" name="codigo_entidad" id="codigo_entidad">
                     <input type="hidden" name="tipo_orden" id="tipo_orden" value="37">
 
                     <div class="barraOpciones primeraBarra">
@@ -107,7 +108,7 @@
                                 <tr class="stickytop">
                                     <th>Criterio</th>
                                     <th>Descripcion</th>
-                                    <th>Puntaje</th>
+                                    <th width="4%">Puntaje</th>
                                 </tr>
                             </thead>
                             <tbody>

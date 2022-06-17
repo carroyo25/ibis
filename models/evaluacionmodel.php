@@ -21,6 +21,7 @@
                                                             lg_ordencab.ncodpago,
                                                             lg_ordencab.nplazo,
                                                             lg_ordencab.cdocPDF,
+                                                            lg_ordencab.ntipmov,
                                                             UPPER( tb_pedidocab.concepto ) AS concepto,
                                                             UPPER( tb_pedidocab.detalle ) AS detalle,
                                                             UPPER(
@@ -48,7 +49,7 @@
                  if ($rowCount > 0){
                      while ($rs = $sql->fetch()) {
  
-                         $salida .='<tr class="pointer" data-indice="'.$rs['id_regmov'].'" >
+                         $salida .='<tr class="pointer" data-indice="'.$rs['id_regmov'].'" data-tipo="'.$rs['ntipmov'].'">
                                      <td class="textoCentro">'.str_pad($rs['cnumero'],4,0,STR_PAD_LEFT).'</td>
                                      <td class="textoCentro">'.date("d/m/Y", strtotime($rs['ffechadoc'])).'</td>
                                      <td class="pl20px">'.$rs['detalle'].'</td>
@@ -66,28 +67,72 @@
             }
         }
 
-        public function evaluar($rol,$tipo){
+        public function llamarOrdenID($tipo,$id){
+            try {
+                $sql=$this->db->connect()->prepare("SELECT
+                                                    lg_ordencab.id_regmov,
+                                                    lg_ordencab.cnumero,
+                                                    lg_ordencab.ffechadoc,
+                                                    UPPER( cm_entidad.crazonsoc ) AS entidad,
+                                                    cm_entidad.id_centi,
+                                                    UPPER( tb_pedidocab.concepto ) AS concepto,
+                                                    lg_ordencab.id_cuser,
+                                                    tb_user.nrol,
+                                                    lg_ordencab.ntipmov,
+                                                    UPPER( tb_proyectos.cdesproy ) AS proyecto 
+                                                FROM
+                                                    lg_ordencab
+                                                    INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
+                                                    INNER JOIN tb_pedidocab ON lg_ordencab.id_refpedi = tb_pedidocab.idreg
+                                                    INNER JOIN tb_user ON lg_ordencab.id_cuser = tb_user.iduser
+                                                    INNER JOIN tb_proyectos ON lg_ordencab.ncodpry = tb_proyectos.nidreg 
+                                                WHERE
+                                                    lg_ordencab.id_regmov =:id");
+                $sql->execute(["id"=>$id]);
+                $rowCount = $sql->rowcount();
+
+                if ($rowCount > 0) {
+                    $docData = array();
+                    while($row=$sql->fetch(PDO::FETCH_ASSOC)){
+                        $docData[] = $row;
+                    }
+                }  
+
+                return array("cabecera"=>$docData,
+                            "nrol"=>$docData[0]["nrol"],
+                            "criterios"=>$this->evaluar($docData[0]["nrol"],$docData[0]["ntipmov"]));
+
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        private function evaluar($rol,$tipo){
             try {
                 $salida = "";
                 $sql = $this->db->connect()->prepare("SELECT
-                                                        tb_evaluaciones.idreg,
-                                                        tb_evaluaciones.descripcion,
-                                                        tb_evaluaciones.ayuda,
-                                                        tb_evaluaciones.puntaje,
-                                                        tb_evaluaciones.peso 
+                                                        tb_criterios.idreg,
+                                                        tb_criterios.descripcion,
+                                                        tb_criterios.ayuda,
+                                                        tb_criterios.puntaje,
+                                                        tb_criterios.peso 
                                                     FROM
-                                                        tb_evaluaciones 
+                                                        tb_criterios 
                                                     WHERE
-                                                        tb_evaluaciones.nrol = :rol 
-                                                        AND tb_evaluaciones.tipo = :tipo");
+                                                        tb_criterios.nrol = :rol 
+                                                        AND tb_criterios.tipo = :tipo");
                 $sql->execute(["rol"=>$rol,"tipo"=>$tipo]);
                 $rowCount = $sql->rowCount();
                 if ($rowCount > 0){
                     while ($rs = $sql->fetch()){
-                        $salida.='<tr data-reg="'.$rs['idreg'].'">
-                                    <td class="pl20px">'.$rs['descripcion'].'</td>
+                        $salida.='<tr data-reg="'.$rs['idreg'].'" data-total="'.$rs['puntaje'].'" data-peso="'.$rs['peso'].'" data-tipo="'.$tipo.'">
+                                    <td class="pl20px criterio">'.$rs['descripcion'].'</td>
                                     <td class="pl20px">'.$rs['ayuda'].'</td>
-                                    <td><input type="number" value="'.$rs['puntaje'].'" max="5" min="1"></td>
+                                    <td>
+                                        <input type="text" value="'.$rs["puntaje"].'" maxlength="1" pattern="^[1-5]+" class="textoCentro"
+                                            onClick="this.select();" class="puntaje">
+                                    </td>
                                   </tr>';
                     }
                 }
@@ -103,6 +148,15 @@
                 //code...
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
+            }
+        }
+
+        private function actualizarOrden($id){
+            try {
+                //code...
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
             }
         }
         
