@@ -7,7 +7,7 @@
     <title>Document</title>
 </head>
 <body>
-<div class="modal" id="proceso">
+    <div class="modal" id="proceso">
         <div class="ventanaProceso tamanioProceso">
             <div class="leyenda">
                 <table class="table">
@@ -43,9 +43,10 @@
             </div>
             <div class="cabezaProceso">
                 <form action="#" id="formProceso" autocomplete="off">
+                    <input type="hidden" name="codigo_rol" id="codigo_rol">
                     <input type="hidden" name="codigo_orden" id="codigo_orden">
                     <input type="hidden" name="codigo_entidad" id="codigo_entidad">
-                    <input type="hidden" name="tipo_orden" id="tipo_orden" value="37">
+                    <input type="hidden" name="tipo_orden" id="tipo_orden">
 
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>

@@ -92,16 +92,17 @@ input[type=number]::-webkit-outer-spin-button {
 .acordeon{
     color: #fff;
     background: #4b4a4a;
-    padding: 15px;
-    font-family: Futura, 'Trebuchet MS', Arial, sans-serif;
-    height: 94%;
+    padding: 8px;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    height: 86vh;
+    overflow: auto;
     
     .link{
         display: block;
         display: block;
         padding: 10px 15px 15px 4px;
         color: white;
-        font-size: .9rem;
+        font-size: .7rem;
         border-bottom: 1px solid #ccc;
         position: relative;
         font-weight: 700;
@@ -173,9 +174,9 @@ input[type=number]::-webkit-outer-spin-button {
 
 .areaTrabajo{
     display:grid;
-    grid-template-columns: 15% 85%;
+    grid-template-columns: 12% 85%;
     background:$blanco;
-    height: 90%;
+    height: 90vh;
 
     .menu {
         background-color: $negro;
@@ -225,12 +226,42 @@ input[type=number]::-webkit-outer-spin-button {
         display: flex;
         padding-right:30px;
         align-items: center;
+        position: relative;
+
+        ul {
+            background:$blanco;
+            position: absolute;
+            top: 65px;
+            right: 50px;
+            width: max-content;
+            border: 1px solid #000 !important;
+            display:none;
+
+            li {
+
+                a {
+                    display: block;
+                    font-size: .9rem;
+                    padding: 2px 5px;
+                    transition-duration: .5s;
+                    
+                    &:hover {
+                        background: $fondo_menus;
+                        color: $blanco;
+                    }
+                }
+            }
+        }
 
         h1{
-            background:$iniciales;
+            background:$fondo_menus;
             font-size:1.2rem;
-            padding: 9px 7px;
+            padding: 9px 12px;
             border-radius: 50%;
+            a{
+                background:$fondo_menus;
+                color:$blanco;
+            }
         }
     }
 }

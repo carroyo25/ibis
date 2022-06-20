@@ -10,46 +10,49 @@
             try {
                  $salida = "";
                  $sql = $this->db->connect()->prepare("SELECT
-                                                            tb_costusu.ncodcos,
-                                                            tb_costusu.ncodproy,
-                                                            tb_costusu.id_cuser,
-                                                            lg_ordencab.id_regmov,
-                                                            lg_ordencab.cnumero,
-                                                            lg_ordencab.ffechadoc,
-                                                            lg_ordencab.nNivAten,
-                                                            lg_ordencab.nEstadoDoc,
-                                                            lg_ordencab.ncodpago,
-                                                            lg_ordencab.nplazo,
-                                                            lg_ordencab.cdocPDF,
-                                                            lg_ordencab.ntipmov,
-                                                            UPPER( tb_pedidocab.concepto ) AS concepto,
-                                                            UPPER( tb_pedidocab.detalle ) AS detalle,
-                                                            UPPER(
-                                                            CONCAT_WS( tb_area.ccodarea, tb_area.cdesarea )) AS area,
-                                                            UPPER(
-                                                            CONCAT_WS( tb_proyectos.ccodproy, tb_proyectos.cdesproy )) AS costos,
-                                                            lg_ordencab.id_centi,
-                                                            cm_entidad.cnumdoc,
-                                                            UPPER(cm_entidad.crazonsoc) AS proveedor 
-                                                        FROM
-                                                            tb_costusu
-                                                            INNER JOIN lg_ordencab ON tb_costusu.ncodproy = lg_ordencab.ncodpry
-                                                            INNER JOIN tb_pedidocab ON lg_ordencab.id_refpedi = tb_pedidocab.idreg
-                                                            INNER JOIN tb_area ON lg_ordencab.ncodarea = tb_area.ncodarea
-                                                            INNER JOIN tb_proyectos ON lg_ordencab.ncodpry = tb_proyectos.nidreg
-                                                            INNER JOIN tb_parametros ON lg_ordencab.nNivAten = tb_parametros.nidreg
-                                                            INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi 
-                                                        WHERE
-                                                            tb_costusu.id_cuser = :user 
-                                                            AND tb_costusu.nflgactivo = 1 
-                                                            AND lg_ordencab.nEstadoDoc = 67");
-                                                            $sql->execute(["user"=>$_SESSION['iduser']]);
+                                                        tb_costusu.ncodcos,
+                                                        tb_costusu.ncodproy,
+                                                        tb_costusu.id_cuser,
+                                                        lg_ordencab.id_regmov,
+                                                        lg_ordencab.cnumero,
+                                                        lg_ordencab.ffechadoc,
+                                                        lg_ordencab.nNivAten,
+                                                        lg_ordencab.nEstadoDoc,
+                                                        lg_ordencab.ncodpago,
+                                                        lg_ordencab.nplazo,
+                                                        lg_ordencab.cdocPDF,
+                                                        lg_ordencab.ntipmov,
+                                                        UPPER( tb_pedidocab.concepto ) AS concepto,
+                                                        UPPER( tb_pedidocab.detalle ) AS detalle,
+                                                        UPPER(
+                                                        CONCAT_WS( tb_area.ccodarea, tb_area.cdesarea )) AS area,
+                                                        UPPER(
+                                                        CONCAT_WS( tb_proyectos.ccodproy, tb_proyectos.cdesproy )) AS costos,
+                                                        lg_ordencab.id_centi,
+                                                        cm_entidad.cnumdoc,
+                                                        UPPER( cm_entidad.crazonsoc ) AS proveedor,
+                                                        tb_user.nrol 
+                                                    FROM
+                                                        tb_costusu
+                                                        INNER JOIN lg_ordencab ON tb_costusu.ncodproy = lg_ordencab.ncodpry
+                                                        INNER JOIN tb_pedidocab ON lg_ordencab.id_refpedi = tb_pedidocab.idreg
+                                                        INNER JOIN tb_area ON lg_ordencab.ncodarea = tb_area.ncodarea
+                                                        INNER JOIN tb_proyectos ON lg_ordencab.ncodpry = tb_proyectos.nidreg
+                                                        INNER JOIN tb_parametros ON lg_ordencab.nNivAten = tb_parametros.nidreg
+                                                        INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
+                                                        INNER JOIN tb_user ON lg_ordencab.id_cuser = tb_user.iduser 
+                                                    WHERE
+                                                        tb_costusu.id_cuser = :user 
+                                                        AND tb_costusu.nflgactivo = 1 
+                                                        AND lg_ordencab.nEstadoDoc = 67 
+	                                                    AND lg_ordencab.userEval <> :userEval");
+                 $sql->execute(["user"=>$_SESSION['iduser'],"userEval"=>$_SESSION['iduser']]);
                  $rowCount = $sql->rowCount();
  
                  if ($rowCount > 0){
                      while ($rs = $sql->fetch()) {
  
-                         $salida .='<tr class="pointer" data-indice="'.$rs['id_regmov'].'" data-tipo="'.$rs['ntipmov'].'">
+                         $salida .='<tr class="pointer" data-indice="'.$rs['id_regmov'].'" data-tipo="'.$rs['ntipmov'].'" data-rol="'.$rs['nrol'].'">
                                      <td class="textoCentro">'.str_pad($rs['cnumero'],4,0,STR_PAD_LEFT).'</td>
                                      <td class="textoCentro">'.date("d/m/Y", strtotime($rs['ffechadoc'])).'</td>
                                      <td class="pl20px">'.$rs['detalle'].'</td>
@@ -143,9 +146,57 @@
             }
         }
 
-        public function grabarEvaluacion($detalles,$orden,$entidad){
+        public function grabarEvaluacion($items){
             try {
-                //code...
+                $datos = json_decode($items);
+                $nreg = count($datos);
+                $mensaje = "No se grabó, la evaluacion";
+                $respuesta = false;
+                $item = 0;
+                $clase="mensaje_error";
+
+                for ($i=0; $i < $nreg ; $i++) { 
+                    try {
+                        $sql = $this->db->connect()->prepare("INSERT INTO tb_califica SET idcriterio=:criterio,
+                                                                                            idorden=:orden,
+                                                                                            identidad=:entidad,
+                                                                                            iduser=:usr,
+                                                                                            npuntaje=:puntaje,
+                                                                                            npeso=:peso,
+                                                                                            ncalifica=:califica,
+                                                                                            nrol=:rol");
+                        $sql->execute(["criterio"=>$datos[$i]->reg,
+                                        "orden"=>$datos[$i]->orden,
+                                        "entidad"=>$datos[$i]->entidad,
+                                        "usr"=>$datos[$i]->usuario,
+                                        "puntaje"=>$datos[$i]->puntaje,
+                                        "peso"=>$datos[$i]->peso,
+                                        "califica"=>($datos[$i]->peso/100)*$datos[$i]->puntaje,
+                                        "rol"=>$datos[$i]->rol]);
+                        
+                        $rowCount = $sql->rowCount();
+
+                        if ($rowCount > 0){
+                            $item++;
+                        }
+
+                    } catch (PDOException $th) {
+                        echo $th->getMessage();
+                        return false;
+                    }
+                }
+
+                if ($item > 0){
+                    $this->actualizarOrden($datos[0]->orden);
+                    $mensaje = "Grabado correctamente";
+                    $respuesta = false;
+                    $clase = "mensaje_correcto";
+                }
+
+                return array("mensaje"=>$mensaje, 
+                             "respuesta"=>$respuesta,
+                            "clase"=>$clase);
+
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
             }
@@ -153,7 +204,8 @@
 
         private function actualizarOrden($id){
             try {
-                //code...
+                $sql=$this->db->connect()->prepare("UPDATE lg_ordencab SET userEval = :usr WHERE id_regmov = :id");
+                $sql->execute(["usr"=>$_SESSION['iduser'],"id"=>$id]);            
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
                 return false;

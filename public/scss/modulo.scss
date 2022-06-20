@@ -149,6 +149,132 @@ $culminado:#55A5E2;
     }
 }
 
+.dashBoard{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    grid-column-gap: 1rem;
+    grid-row-gap: 1rem;
+    padding:1rem;
+
+    >div {
+        border:1px solid $lineaBarra;
+        padding:1rem;
+        box-shadow: 3px 5px 5px $sombra;
+
+        .titulo {
+            font-weight: bold;
+            color:$negro;
+        }
+    }
+
+    .area1 { 
+        grid-area: 1 / 1 / 2 / 3;
+
+        .area1_description{
+            display: flex;
+            justify-content:space-evenly;
+            margin: 3rem 0;
+
+            .area1_section{
+                display:inherit;
+                line-height: 2rem;
+                color: $negro;
+
+                i:nth-child(1) {
+                    padding:2rem;
+                    border-radius: 50%;
+                }
+
+                div:nth-child(1){
+                    display: flex;
+                    font-size: 2rem;
+                    justify-content:center;
+                    align-items:center;
+                    padding: 1rem;
+                }
+
+                div:nth-child(2){
+                    display: flex;
+                    flex-direction: column;
+                    //font-size: .8rem;
+                    justify-content:left;
+                    align-items:left;
+                    padding: 1rem;
+
+                    p:nth-child(2){
+                        font-size: 2rem;
+                        font-weight: bold;
+                    }
+
+                    p:nth-child(3){
+                        font-size: .7rem !important;
+                    }
+                }
+            }
+
+            .area1_section:nth-child(1) {
+                i{
+                    background: #FABD1C !important;
+                }
+            }
+
+            .area1_section:nth-child(2) {
+                i{
+                    background: #DF3D62 !important;
+                }
+            }
+
+            .area1_section:nth-child(3) {
+                i{
+                    background: #58CA90 !important;
+                }
+            }
+        }
+
+        .area1_command{
+            text-align: center;
+
+            button {
+                border: none;
+                padding: 1rem;
+                width: 100%;
+                margin-top: 25px;
+                border-radius: 8px;
+                color: #fff;
+                background: #518FFB;
+                -webkit-transition: 0.3s;
+                transition: 0.3s;
+                width: 35%;
+
+                &:hover{
+                    box-shadow: 2px 3px 5px #000;
+                }
+            }
+        }
+    }
+    
+    .area2 { 
+        grid-area: 2 / 1 / 3 / 2; 
+
+        #myChart{
+            height: 320px; 
+            width: 500px;
+            margin: 0 auto;
+        }
+    }
+    
+    .area3 { 
+        grid-area: 2 / 2 / 3 / 3; 
+
+        .dashboard_table{
+            margin-top: 20px;
+        }
+    }
+}
+
+
+
 .direccion_columna{
     flex-direction: column;
 }
@@ -401,6 +527,8 @@ $culminado:#55A5E2;
     left: 50%;
     transform: translate(-50%, -50%);
     box-shadow: 5px 8px 5px #000;
+    min-width: 35%;
+    max-width: 90%;
 }
 
 .ventanaResumen{
@@ -496,6 +624,7 @@ $culminado:#55A5E2;
 .ventanaProceso {
     border-radius: 8px;
     position: relative;
+    max-width: 70%;
 
     .primeraBarra{
         border-radius: 8px 8px 0 0;;
@@ -951,6 +1080,8 @@ $culminado:#55A5E2;
         height: 35px;
         border:none;
         border:1px solid #c2c2c2;
+        width: 100%;
+        outline: none;
     }
 
     .tablaBusqueda{

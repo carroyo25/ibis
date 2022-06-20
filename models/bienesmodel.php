@@ -287,7 +287,7 @@
                 imagecopyresampled($copia, $original, 0, 0, 0, 0, $ancho_nuevo, 400, $ancho_original, $alto_original);
     
                 //exportar guardar imagen
-                imagejpeg($copia,"public/fotos/catalogo/".$codigo.$ext,50);
+                imagejpeg($copia,"public/documentos/fotos/catalogo/".$codigo.$ext,50);
                  
                 //elimina los datos temporales
                 imagedestroy($original);

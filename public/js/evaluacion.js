@@ -6,7 +6,8 @@ $(function(){
 
        $.post(RUTA+"evaluacion/criterios", {id:$(this).data("indice"),tipo:$(this).data("tipo")},
         function (data, textStatus, jqXHR) {
-            $("#codigo_orden").val(data.cabecera[0].idregmov);
+            $("#codigo_orden").val(data.cabecera[0].id_regmov);
+            $("#codigo_rol").val(data.cabecera[0].nrol);
             $("#codigo_entidad").val(data.cabecera[0].id_centi);
             $("#tipo_orden").val(data.cabecera[0].idregmov);
             $("#numero").val(data.cabecera[0].cnumero);
@@ -18,7 +19,6 @@ $(function(){
             $("#tablaDetalles tbody")
                 .empty()
                 .append(data.criterios);
-
             
             let totalOrden = sumarTotales($("#tablaDetalles tbody tr"));
             $("#puntaje").val(totalOrden.toFixed(0));    
@@ -37,13 +37,13 @@ $(function(){
         try {
             if (checkCantTablesMinMax($("#tablaDetalles tbody > tr"),2)) throw "El puntaje debe estar entre 1 y 5";
 
-            console.log(JSON.stringify(items()))
-            /*$.post(RUTA+"evaluacion/evaluar", {items},
+            $.post(RUTA+"evaluacion/evaluar",{items:JSON.stringify(items())},
                 function (data, textStatus, jqXHR) {
-                    
+                    mostrarMensaje(data.mensaje,data.clase);
+                    $("#cerrarVentana").trigger("click");
                 },
                 "json"
-            );*/
+            );
 
         } catch (error) {
             mostrarMensaje(error,'mensaje_error');
@@ -55,16 +55,15 @@ $(function(){
     $("#cerrarVentana").click(function (e) { 
         e.preventDefault();
 
-        /*$.post(RUTA+"proyecto/actualizaTabla",
+        $.post(RUTA+"evaluacion/actualizaTabla",
             function (data, textStatus, jqXHR) {
                 $("#tablaPrincipal tbody")
                     .empty()
                     .append(data);
-                $("#proceso").fadeOut();
-                $("form")[0].reset();
+                $("#tablaDetalles tbody").empty();
             },
             "text"
-        );*/
+        );
         
         $("#proceso").fadeOut();
         
@@ -84,7 +83,7 @@ items = () =>{
             ENTIDAD     = $("#codigo_entidad").val(),
             ORDEN       = $("#codigo_orden").val(),
             USUARIO     = $("#id_user").val(),
-            
+            ROL         = $("#codigo_rol").val()
 
         item= {};
         
@@ -95,6 +94,7 @@ items = () =>{
         item['entidad']    = ENTIDAD;
         item['orden']      = ORDEN;
         item['usuario']    = USUARIO;
+        item['rol']        = ROL;   
     
         DATA.push(item);
        

@@ -13,5 +13,13 @@
         function criterios(){
             echo json_encode($this->model->llamarOrdenID($_POST['tipo'],$_POST['id']));
         }
+
+        function evaluar(){
+            echo json_encode($this->model->grabarEvaluacion($_POST['items']));
+        }
+
+        function actualizaTabla(){
+            echo $this->model->listarOrdenes();
+        }
     }
 ?>

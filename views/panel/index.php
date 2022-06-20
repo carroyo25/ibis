@@ -1,8 +1,5 @@
-<?php
-
-?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -37,8 +34,14 @@
     <div class="wrap">
         <div class="cabecera">
             <img src="<?php echo constant('URL')?>public/img/ibis.png" alt="">
-            <div>
-                <h1 id="iniciales">CA</h1>
+            <div id="cabecera_inicial">
+                <h1 id="iniciales"><a href="#" id="cabecera_main_option"><?php echo $this->iniciales?></a> </h1>
+                <ul id="cabecera_menu">
+                    <li><a href="#">Cambiar Contraseña</a></li>
+                    <li><a href="#">Ir al inicio</a></li>
+                    <hr>
+                    <li><a href="<?php echo constant('URL')?>">Salir del Sistema</a></li>
+                </ul>
                 <input type="hidden" id="name_user" name="name_user" value="<?php echo $_SESSION['nombres']?>">
                 <input type="hidden" id="id_user" name="id_user" value="<?php echo $_SESSION['iduser']?>">
                 <input type="hidden" id="mail_user" name="mail_user" value="<?php echo $_SESSION['correo']?>">
@@ -57,7 +60,7 @@
             </div>
             <div class="ventana">
                 <div class="cargaModulo">
-                    <h1>Panel</h1>
+                    <?php require 'views/adm.php'; ?>
                 </div>
             </div>
         </div>

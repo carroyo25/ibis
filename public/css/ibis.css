@@ -82,16 +82,17 @@ input[type=number]::-webkit-outer-spin-button {
 .acordeon {
   color: #fff;
   background: #4b4a4a;
-  padding: 15px;
-  font-family: Futura, "Trebuchet MS", Arial, sans-serif;
-  height: 94%;
+  padding: 8px;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  height: 86vh;
+  overflow: auto;
 }
 .acordeon .link {
   display: block;
   display: block;
   padding: 10px 15px 15px 4px;
   color: white;
-  font-size: 0.9rem;
+  font-size: 0.7rem;
   border-bottom: 1px solid #ccc;
   position: relative;
   font-weight: 700;
@@ -155,10 +156,10 @@ input[type=number]::-webkit-outer-spin-button {
 .areaTrabajo {
   display: -ms-grid;
   display: grid;
-  -ms-grid-columns: 15% 85%;
-  grid-template-columns: 15% 85%;
+  -ms-grid-columns: 12% 85%;
+  grid-template-columns: 12% 85%;
   background: #fff;
-  height: 90%;
+  height: 90vh;
 }
 .areaTrabajo .menu {
   background-color: #000;
@@ -213,12 +214,39 @@ input[type=number]::-webkit-outer-spin-button {
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
+  position: relative;
+}
+.cabecera div ul, .pie div ul {
+  background: #fff;
+  position: absolute;
+  top: 65px;
+  right: 50px;
+  width: -webkit-max-content;
+  width: -moz-max-content;
+  width: max-content;
+  border: 1px solid #000 !important;
+  display: none;
+}
+.cabecera div ul li a, .pie div ul li a {
+  display: block;
+  font-size: 0.9rem;
+  padding: 2px 5px;
+  -webkit-transition-duration: 0.5s;
+          transition-duration: 0.5s;
+}
+.cabecera div ul li a:hover, .pie div ul li a:hover {
+  background: #005D84;
+  color: #fff;
 }
 .cabecera div h1, .pie div h1 {
-  background: #B461A3;
+  background: #005D84;
   font-size: 1.2rem;
-  padding: 9px 7px;
+  padding: 9px 12px;
   border-radius: 50%;
+}
+.cabecera div h1 a, .pie div h1 a {
+  background: #005D84;
+  color: #fff;
 }
 
 .cabecera {
