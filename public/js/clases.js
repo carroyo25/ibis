@@ -42,6 +42,7 @@ $(function(){
         id = destino.attr("id");
 
         $("#codgrupo").val($(this).attr("href"));
+        $("#codigo").val($(this).data("grupo"));
 
         return false;
     });
@@ -63,7 +64,11 @@ $(function(){
             if (accion == 'n')
                 $.post(RUTA+"clases/nuevaClase", {datos:result},
                     function (data, textStatus, jqXHR) {
+                        $("#tablaPrincipal tbody")
+                            .empty()
+                            .append(data.items)
                         mostrarMensaje(data.mensaje,data.clase);
+                        $("form")[0].reset();
                     },
                     "json"
                 );
@@ -160,5 +165,18 @@ $(function(){
     $("#consulta").keyup(function(){
         _this = this;
         buscar(_this); // arrow function para activa el buscador
+    });
+
+    //filtrado en la lista de solicitante
+    $(".busqueda").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+        $(this).next().attr("id");
+
+        //aignar a una variable el contenido
+        let l = "#"+ $(this).next().attr("id")+ " li a"
+
+        $(l).filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
     });
 })

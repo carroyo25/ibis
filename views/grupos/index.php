@@ -22,10 +22,10 @@
         </div>
     </div>
     <div class="modal" id="proceso">
-        <div class="ventanaProceso w35por">
+        <div class="ventanaProceso w25por">
             <div class="cabezaProceso">
                 <form action="#" autocomplete="off" id="formProceso">
-                    <input type="hidden" name="codclase" id="codclase">
+                    <input type="hidden" name="codgrupo" id="codgrupo">
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
                         <div>

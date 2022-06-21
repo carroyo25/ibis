@@ -146,9 +146,10 @@ $(function(){
         return false;
     });
 
-    $("#nombre,#nivel,#estado").focus(function (e) { 
+    $(".mostrarLista").focus(function (e) { 
         e.preventDefault();
         
+        $(".lista").slideUp();
         $(this).next().slideDown();
 
         return false;
@@ -265,6 +266,8 @@ $(function(){
                     .append(data);
                 
                 $("#proceso").fadeOut();
+
+                $(".lista").slideUp();
             },
             "text"
         );
@@ -292,7 +295,7 @@ $(function(){
                     $("#cargo").val(data.cabecera[0].dcargo);
                     $("#nivel").val(data.cabecera[0].nivel);
                     $("#estado").val(data.cabecera[0].estado);
-                    $("#iniciales").val(data.cabecera[0].cinicial);
+                    $("#user_inic").val(data.cabecera[0].cinicial);
                     $("#desde").val(data.cabecera[0].fvigdesde);
                     $("#hasta").val(data.cabecera[0].fvighasta);
 
@@ -359,7 +362,7 @@ $(function(){
         if (parent.data("grabado") == 1){
             $.post(RUTA+"usuarios/desactivaItem", {id:$(this).attr("href"),query:"UPDATE tb_costusu SET nflgactivo = 0 WHERE ncodcos =:id"},
                 function (data, textStatus, jqXHR) {
-                    //fillTables($("#costos tbody > tr"),1);
+                    fillTables($("#costos tbody > tr"),1);
                 },
                 "text"
             );
@@ -368,7 +371,7 @@ $(function(){
         return false
     });
 
-    $("#almacenes tbody").on("click","a", function (e) {
+    $("#almacen tbody").on("click","a", function (e) {
         e.preventDefault();
 
         let parent = $(this).parent().parent();
@@ -377,7 +380,7 @@ $(function(){
         if (parent.data("grabado") == 1){
             $.post(RUTA+"usuarios/desactivaItem", {id:$(this).attr("href"),query:"UPDATE tb_almausu SET nflgactivo = 0 WHERE ncodalm =:id"},
                 function (data, textStatus, jqXHR) {
-                    //fillTables($("#almacenes tbody > tr"),1);
+                    fillTables($("#almacenes tbody > tr"),1);
                 },
                 "text"
             );

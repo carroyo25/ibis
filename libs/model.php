@@ -682,7 +682,7 @@
 
                 if ($rowCount > 0) {
                     while ( $rs = $sql->fetch()){
-                        $salida .='<li><a href="'.$rs['ncodgrupo'].'">'.$rs['ccodcata'] .' - '.strtoupper($rs['cdescrip']).'</a></li>';
+                        $salida .='<li><a href="'.$rs['ncodgrupo'].'" data-grupo="'.$rs['ccodcata'].'">'.$rs['ccodcata'] .' - '.strtoupper($rs['cdescrip']).'</a></li>';
                     }
                 }
 
@@ -782,7 +782,7 @@
 
                 if($rowCount > 0) {
                     while($rs = $sql->fetch()){
-                        $salida .='<tr class="pointer" data-id="'.$rs['ncodgrupo'].'">
+                        $salida .='<tr class="pointer" data-id="'.$rs['ncodgrupo'].'" data-grupo="'.$rs['ccodcata'].'">
                                         <td class="textoCentro">'.$rs['ccodcata'].'</td>
                                         <td class="pl20px">'.$rs['cdescrip'].'</td>
                                         <td class="textoCentro"><a href="'.$rs['ccodcata'].'"><i class="fas fa-trash-alt"></i></a></td>

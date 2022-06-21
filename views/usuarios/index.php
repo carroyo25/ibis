@@ -13,7 +13,7 @@
     <div class="modal" id="esperar">
     </div>
     <div class="modal" id="busqueda">
-        <div class="ventanaBusqueda">
+        <div class="ventanaBusqueda w35por">
             <div class="tituloVentana">
                 <span id="tituloBusqueda">Titulo Ventana</span>
                 <div>
@@ -131,8 +131,8 @@
                         </div>
                         <div class="seccion_derecha">
                             <div class="column2">
-                                <label for="Iniciales">Iniciales</label>
-                                <input type="text" name="iniciales" id="iniciales" maxlength="2" class="mayusculas cerrarLista obligatorio">
+                                <label for="user_inic">Iniciales</label>
+                                <input type="text" name="user_inic" id="user_inic" maxlength="2" class="mayusculas cerrarLista obligatorio">
                             </div>
                             <div class="column2">
                                 <label for="desde">Desde :</label>
@@ -182,7 +182,7 @@
                                 <thead>
                                     <tr>
                                         <th class="con_borde w5p">...</th>
-                                        <th class="con_borde w5p">Codigo</th>
+                                        <th class="con_borde"  width="5%">Codigo</th>
                                         <th class="con_borde">Descripcion</th>
                                     </tr>
                                 </thead>
@@ -195,7 +195,7 @@
                                 <thead>
                                     <tr>
                                         <th class="con_borde w5p">...</th>
-                                        <th class="con_borde w5p">Codigo</th>
+                                        <th class="con_borde" width="5%">Codigo</th>
                                         <th class="con_borde">Descripcion</th>
                                     </tr>
                                 </thead>

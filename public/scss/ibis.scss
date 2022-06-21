@@ -27,6 +27,7 @@ a {
 body {
     background:$blanco;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow:hidden;
 }
 
 html {
@@ -327,7 +328,7 @@ input[type=number]::-webkit-outer-spin-button {
     height:2rem;
     color: $blanco;
     background: $negro;
-    position:absolute; /*El div será ubicado con relación a la pantalla*/
+    position:fixed; /*El div será ubicado con relación a la pantalla*/
     bottom:0px; /*Abajo deje un espacio de 0px*/
 }
 

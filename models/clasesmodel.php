@@ -32,7 +32,10 @@
                     }
                 }
                 
-                $salida = array("respuesta"=>$respuesta, "mensaje"=>$mensaje,"clase"=>$clase);
+                $salida = array("respuesta"=>$respuesta,
+                                 "mensaje"=>$mensaje,
+                                 "clase"=>$clase,
+                                "items"=>$this->listarTitulosGrupos());
                 return $salida;
 
             } catch (PDOException $th) {

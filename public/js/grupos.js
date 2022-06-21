@@ -9,6 +9,7 @@ $(function(){
         e.preventDefault();
 
         $("#proceso").fadeIn();
+
         accion = 'n';
 
         return false;
@@ -26,11 +27,18 @@ $(function(){
         try {
             if (result['codigo'] == '') throw "Ingrese un codigo";
             if (result['descripcion'] == '') throw "Ingrese una descripción";
+            if (result['tipoClase'] == null) throw "Seleccione el tipo";
 
             if (accion == 'n'){
                 $.post(RUTA+"grupos/nuevoGrupo", {datos: result},
                     function (data, textStatus, jqXHR) {
                         mostrarMensaje(data.mensaje,data.clase);
+
+                        $("#tablaPrincipal tbody")
+                        .empty()
+                        .append(data.items);
+
+                        $("form")[0].reset();
                     },
                     "json"
                 );
@@ -71,7 +79,7 @@ $(function(){
 
         $.post(RUTA+"grupos/consultaId", {id:$(this).data("id")},
             function (data, textStatus, jqXHR) {
-                $("#codclase").val(data.grupo[0].ncodclase);
+                $("#codgrupo").val(data.grupo[0].ncodgrupo);
                 $("#codigo").val(data.grupo[0].ccodcata);
                 $("#descripcion").val(data.grupo[0].cdescrip);
                 $("input[name=tipoClase][value='"+data.grupo[0].ntipclase+"']").prop("checked",true);

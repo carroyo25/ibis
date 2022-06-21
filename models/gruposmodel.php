@@ -50,7 +50,6 @@
                     $mensaje = "Código de grupo duplicado";
                     $clase = "mensaje_error";
                 }else{
-                    $tipo = $datos['tipoClase'] == NULL ? 1:0;
 
                     $sql = $this->db->connect()->prepare("INSERT INTO tb_grupo 
                                                             SET ccodcata=:cod,cdescrip=:descrip,nnivclas=:niv,
@@ -58,7 +57,7 @@
                     $sql->execute(["cod"=>strtoupper($datos['codigo']),
                                     "descrip"=>strtoupper($datos['descripcion']),
                                     "niv"=>1,
-                                    "tipo"=>$tipo]);
+                                    "tipo"=>$datos['tipoClase']]);
                     $rowCount = $sql->rowCount();
 
                     if ($rowCount > 0) {
@@ -68,7 +67,10 @@
                     }
                 }
                 
-                $salida = array("respuesta"=>$respuesta, "mensaje"=>$mensaje,"clase"=>$clase);
+                $salida = array("respuesta"=>$respuesta,
+                                 "mensaje"=>$mensaje,
+                                 "clase"=>$clase,
+                                "items"=>$this->listarGrupos());
                 return $salida;
 
             } catch (PDOException $th) {
@@ -84,11 +86,10 @@
                 $clase = "mensaje_error";
 
                 $sql = $this->db->connect()->prepare("UPDATE tb_grupo 
-                                                        SET cdescrip=:descrip,ntipclase=:tipo
-                                                        WHERE ncodclase=:id");
+                                                        SET cdescrip=:descrip
+                                                        WHERE ncodgrupo=:id");
                 $sql->execute(["descrip"=>$datos['descripcion'],
-                                "tipo"=>$datos['ntipclase'],
-                                "id"=>$datos['ncodgrupo']]);
+                                "id"=>$datos['codgrupo']]);
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0) {

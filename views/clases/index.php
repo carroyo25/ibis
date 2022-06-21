@@ -22,7 +22,7 @@
         </div>
     </div>
     <div class="modal" id="proceso">
-        <div class="ventanaProceso w35por">
+        <div class="ventanaProceso w25por">
             <div class="cabezaProceso">
                 <form action="#" autocomplete="off" id="formProceso">
                     <input type="hidden" name="codgrupo" id="codgrupo">
@@ -44,7 +44,7 @@
                         <div class="seccion_izquierda">
                             <div class="column2_9">
                                 <label for="clase">Grupo:</label>
-                                <input type="text" name="grupo" id="grupo" class="mostrarLista obligatorio" placeholder="Seleccione una opcion">
+                                <input type="text" name="grupo" id="grupo" class="mostrarLista obligatorio busqueda" placeholder="Seleccione una opcion">
                                 <div class="lista" id="listaClase">
                                     <ul>
                                         <?php echo $this->listaGrupos?>

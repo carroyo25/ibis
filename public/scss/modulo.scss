@@ -462,6 +462,7 @@ $culminado:#55A5E2;
             background:$negro;
             color:$blanco;
             font-size: .7rem;
+            height: 1.2rem;
         }
 
         tbody {
@@ -527,8 +528,6 @@ $culminado:#55A5E2;
     left: 50%;
     transform: translate(-50%, -50%);
     box-shadow: 5px 8px 5px #000;
-    min-width: 35%;
-    max-width: 90%;
 }
 
 .ventanaResumen{
@@ -624,7 +623,8 @@ $culminado:#55A5E2;
 .ventanaProceso {
     border-radius: 8px;
     position: relative;
-    max-width: 70%;
+    min-width: 25%;
+    max-width: 90%;
 
     .primeraBarra{
         border-radius: 8px 8px 0 0;;
@@ -1321,6 +1321,11 @@ $culminado:#55A5E2;
 .w10por{
     width: 10%;
 }
+
+.w25por{
+    width: 25%;
+}
+
 
 .w35por{
     width: 35%;

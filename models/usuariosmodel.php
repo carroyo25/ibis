@@ -162,10 +162,6 @@
                                     "mensaje"=>"El usuario ya existe");
                 }else {
                     $id = uniqid();
-                    
-                    //$this->primerosNombres($nombres,$apellidos)
-
-                    $nombres = "";
 
                     $sql = $this->db->connect()->prepare("INSERT INTO tb_user 
                                                         SET iduser=:id,
@@ -177,7 +173,7 @@
                                                             ccorreo=:correo,
                                                             fvigdesde=:fdesde,
                                                             fvighasta=:fhasta,
-                                                            cinicial=:iniciales,
+                                                            cinicial=:user_inic,
                                                             nestado=:estado");
                     $sql->execute(["id"=>$id,
                                     "user"=>$cabecera['usuario'],
@@ -188,7 +184,7 @@
                                     "fdesde"=>$cabecera['desde'],
                                     "fhasta"=>$cabecera['hasta'],
                                     "estado"=>$cabecera['cod_est'],
-                                    "iniciales"=>$cabecera['iniciales'],
+                                    "iniciales"=>$cabecera['user_inic'],
                                     "nombres"=>$cabecera['nombre']]);
                     $rowcount = $sql->rowcount();
     
@@ -291,7 +287,7 @@
                                 "fdesde"=>$cabecera['desde'],
                                 "fhasta"=>$cabecera['hasta'],
                                 "estado"=>$cabecera['cod_est'],
-                                "iniciales"=>$cabecera['iniciales']]);
+                                "iniciales"=>$cabecera['user_inic']]);
 
                 $this->grabarModulos($cabecera['cod_user'],$modulos);
                 $this->grabarCostos($cabecera['cod_user'],$costos);
@@ -429,7 +425,7 @@
                 if($rowCount > 0) {
                     while ($rs = $sql->fetch()) {
                         $salida .= '<tr data-grabado="1" data-codigo="'.$rs['nalmacen'].'">
-                                            <td class="textoCentro"><a href="'.$rs['nalmacen'].'"><i class="fas fa-eraser"></i></a> </td>
+                                            <td class="textoCentro"><a href="'.$rs['nalmacen'].'"><i class="fas fa-eraser"></i></a></td>
                                             <td class="textoCentro">'.str_pad($filas++,2,0,STR_PAD_LEFT).'</td>
                                             <td class="pl10px">'.$rs['descripcion'].'</td>
                                     </tr>';
