@@ -293,13 +293,13 @@ $(function() {
                 
                 switch (data.item[0].rfoto) {
                     case 'image/jpeg':
-                        foto = "public/fotos/catalogo/"+data.item[0].ccodprod+'.jpg';
+                        foto = "public/documentos/fotos/catalogo/"+data.item[0].ccodprod+'.jpg';
                         break;
                     case 'image/png':
-                        foto = "public/fotos/catalogo/"+data.item[0].ccodprod+'.png';
+                        foto = "public/documentos/fotos/catalogo/"+data.item[0].ccodprod+'.png';
                         break;
                     case 'image/gif':
-                        foto = "public/fotos/catalogo/"+data.item[0].ccodprod+'.gif';
+                        foto = "public/documentos/fotos/catalogo/"+data.item[0].ccodprod+'.gif';
                         break;
                 }
 

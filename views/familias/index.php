@@ -28,6 +28,8 @@
                     <input type="hidden" name="codgrupo" id="codgrupo">
                     <input type="hidden" name="codclase" id="codclase">
                     <input type="hidden" name="codfamilia" id="codfamilia">
+                    <input type="hidden" name="codigo_clase_catalogo" id="codigo_clase_catalogo">
+
                     <div class="barraOpciones primeraBarra">
                         <span>Datos del grupo</span>
                         <div>
@@ -44,7 +46,7 @@
                         <div class="seccion_izquierda">
                             <div class="column2_9">
                                 <label for="clase">Grupo:</label>
-                                <input type="text" name="grupo" id="grupo" class="mostrarLista obligatorio" placeholder="Seleccione una opcion">
+                                <input type="text" name="grupo" id="grupo" class="mostrarLista obligatorio busqueda" placeholder="Seleccione una opcion">
                                 <div class="lista" id="listaGrupo">
                                     <ul>
                                         <?php echo $this->listaGrupo?>
@@ -58,7 +60,7 @@
                         <div class="seccion_derecha">
                             <div class="column2_9">
                                 <label for="clave">Clase:</label>
-                                <input type="text" name="clase" id="clase" class="mostrarLista obligatorio" placeholder="Seleccione una opcion">
+                                <input type="text" name="clase" id="clase" class="mostrarLista obligatorio busqueda" placeholder="Seleccione una opcion">
                                 <div class="lista" id="listaClase">
                                     <ul>
                                         

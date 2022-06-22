@@ -19,6 +19,10 @@
             echo json_encode($this->model->insertarFamilia($_POST['datos']));
         }
 
+        function modificaFamilia() {
+            echo json_encode($this->model->modificarFamilia($_POST['datos']));
+        }
+
         function familiaId(){
             echo json_encode($this->model->consultaId($_POST['id']));
         }
@@ -27,8 +31,12 @@
             echo $this->model->listarGrupos();
         }
 
-        public function desactivaFamilia(){
+        function desactivaFamilia(){
             echo $this->model->eliminaFamilia($_POST['id']);
+        }
+
+        function codigo(){
+            echo $this->model->crearCodigoClase($_POST['grupo'],$_POST['clase']);
         }
         
     }

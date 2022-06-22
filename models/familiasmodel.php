@@ -34,13 +34,42 @@
                     }
                 }
                 
-                $salida = array("respuesta"=>$respuesta, "mensaje"=>$mensaje,"clase"=>$clase);
+                $salida = array("respuesta"=>$respuesta,
+                                 "mensaje"=>$mensaje,
+                                 "clase"=>$clase,
+                                 "items"=>$this->listarGrupos(),
+                                 "numero"=>$this->crearCodigoClase($datos['codgrupo'],$datos['codclase']));
                 return $salida;
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;
             }
+        }
+
+        public function modificarFamilia($datos){
+            $respuesta = false;
+            $mensaje = "Error al grabar el registro";
+            $clase = "mensaje_error";
+
+            $sql = $this->db->connect()->prepare("UPDATE tb_familia 
+                                                 SET cdescrip=:descrip
+                                                 WHERE ncodfamilia =:familia");
+            $sql->execute(["familia"=>$datos['codfamilia'],
+                            "descrip"=>strtoupper($datos['descripcion'])]);
+            $rowCount = $sql->rowCount();
+
+            if ($rowCount > 0) {
+                $respuesta = false;
+                $mensaje = "Grupo creado";
+                $clase = "mensaje_correcto";
+            }
+
+            $salida = array("respuesta"=>$respuesta,
+                        "mensaje"=>$mensaje,
+                        "clase"=>$clase);
+
+            return $salida;
         }
 
         public function listaFamiliaPrincipal(){

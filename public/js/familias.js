@@ -1,6 +1,7 @@
 $(function () {
     var accion = "";
-    var index = 0;
+    var index = 0
+    var codigoTexto = "";
 
     $("#esperar").fadeOut();
 
@@ -62,6 +63,7 @@ $(function () {
         let contenedor_padre = $(this).parent().parent().parent().attr("id");
         let id = "";
         let codigo = $(this).attr("href");
+        codigoTexto = $(this).data("catalogo");
         
         control.slideUp()
         destino.val($(this).text());
@@ -69,8 +71,17 @@ $(function () {
 
         if (contenedor_padre == "listaGrupo"){
             $("#codgrupo").val(codigo);
+
         }else if(contenedor_padre == "listaClase"){
-            $("#codclase").val(codigo);
+            $("#codclase").val(codigo)
+
+            $.post(RUTA+"familias/codigo", {grupo:$("#codgrupo").val(),clase:$("#codclase").val()},
+                function (data, textStatus, jqXHR) {
+                    $("#codigo").val(codigoTexto + data);
+                    $("#codigo_clase_catalogo").val(codigoTexto);
+                },
+                "text"
+            );
         }
 
         return false;
@@ -93,12 +104,18 @@ $(function () {
                 $.post(RUTA+"familias/nuevaFamilia", {datos:result},
                     function (data, textStatus, jqXHR) {
                         mostrarMensaje(data.mensaje,data.clase);
-                        $(".entradaDatos input").val('');
+                        $("#descripcion").val('');
+                        
+                        $("#tablaPrincipal tbody")
+                            .empty()
+                            .append(data.items);
+                        
+                        $("#codigo").val(codigoTexto + data.numero);
                     },
                     "json"
                 );
             }else{
-                $.post(RUTA+"grupos/modificaFamila", {datos: result},
+                $.post(RUTA+"familias/modificaFamilia", {datos: result},
                     function (data, textStatus, jqXHR) {
                         mostrarMensaje(data.mensaje,data.clase);
                     },
@@ -191,5 +208,18 @@ $(function () {
     $("#consulta").keyup(function(){
         _this = this;
         buscar(_this); // arrow function para activa el buscador
+    });
+
+     //filtrado en la lista de solicitante
+     $(".busqueda").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+        $(this).next().attr("id");
+
+        //aignar a una variable el contenido
+        let l = "#"+ $(this).next().attr("id")+ " li a"
+
+        $(l).filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
     });
 })

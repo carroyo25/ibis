@@ -716,6 +716,26 @@
             }
         }
 
+        public function crearCodigoClase($grupo,$clase){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT
+                                                            LPAD( COUNT(tb_familia.ncodfamilia ) + 1, 4, 0 ) AS numero 
+                                                        FROM
+                                                            tb_familia 
+                                                        WHERE
+                                                            tb_familia.ncodgrupo =:grupo 
+                                                            AND tb_familia.ncodclase =:clase");
+                $sql->execute(['grupo' =>$grupo,'clase'=>$clase]);
+                $result=$sql->fetchAll();
+
+                return str_pad($result[0]['numero'],4,0,STR_PAD_LEFT);
+                
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
         public function obtenerFamilias($grupo,$clase) {
             $salida = "";
             try {
