@@ -11,6 +11,7 @@
             $this->view->listaMonedas = $this->model->llamarParametrosSelect("03");
             $this->view->listaTipos = $this->model->listarParametros("05");
             $this->view->listaDocumentos = $this->model->listarParametros("04");
+            $this->view->listaRubros = $this->model->listarParametros("15");
             $this->view->listaPais = $this->model->listarPais();
             $this->view->listaEstados = $this->model->listarParametros("01");
             $this->view->render('proveedores/index');

@@ -144,16 +144,19 @@ $(function() {
 
             if (id == "tipo_ent") {
                 $("#codigo_tipo").val($(this).attr("href"));
-                $("#tipo_ent").val($(this).text());
+                //$("#tipo_ent").val($(this).text());
             }else if(id == "tipo_doc"){
                 $("#codigo_documento").val($(this).attr("href"));
-                $("#tipo_doc").val($(this).text());
+                //$("#tipo_doc").val($(this).text());
             }else if(id == "pais") {
                 $("#codigo_pais").val($(this).attr("href"));
-                $("#pais").val($(this).text());
+                //$("#pais").val($(this).text());
             }else if(id == "estado") {
                 $("#codigo_estado").val($(this).attr("href"));
-                $("#estado").val($(this).text());
+                //$("#estado").val($(this).text());
+            }else if(id == "rubro") {
+                $("#codigo_rubro").val($(this).attr("href"));
+                //$("#estado").val($(this).text());
             }
 
         return false;
@@ -173,9 +176,11 @@ $(function() {
         $.post(RUTA+"proveedores/actualizaListado",
             function (data, textStatus, jqXHR) {
                 $(".lista").hide();
-                $(".itemsTabla  table tbody")
+                $("#tablaPrincipal tbody")
                     .empty()
                     .append(data);
+
+                $("#contactos tbody, #bancos tbody").empty();
                 
                 $("#proceso").fadeOut();
             },
@@ -197,6 +202,7 @@ $(function() {
                 $("#codigo_entidad").val(data.proveedor[0].id_centi);
                 $("#codigo_documento").val(data.proveedor[0].ctipdoc);
                 $("#codigo_tipo").val(data.proveedor[0].ctipper);
+                $("#codigo_rubro").val(data.proveedor[0].nrubro);
                 $("#codigo_pais").val(data.proveedor[0].ncodpais);
                 $("#razon").val(data.proveedor[0].crazonsoc);
                 $("#tipo_ent").val(data.proveedor[0].tipo_persona);
@@ -208,6 +214,7 @@ $(function() {
                 $("#agente").val(data.proveedor[0].nagenret);
                 $("#estado").val(data.proveedor[0].estado);
                 $("#correo").val(data.proveedor[0].cemail);
+                $("#rubro").val(data.proveedor[0].rubro);
 
                 $("input[name=agente][value='"+data.proveedor[0].nagenret+"']").prop("checked",true);
 

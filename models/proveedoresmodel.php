@@ -56,7 +56,7 @@
                 $sql = $this->db->connect()->prepare("INSERT INTO cm_entidad SET ctipdoc=:tdoc,cnumdoc=:nrodoc,crazonsoc=:razon,
                                                                                 cviadireccion=:direccion,ncodpais=:pais,ctelefono=:fono,
                                                                                 nagenret=:retencion,cemail=:correo,nflgactivo=:estado,
-                                                                                ctipper=:persona");
+                                                                                ctipper=:persona,nrubro=:rubro");
                 $sql->execute(["tdoc"=>$datos["codigo_documento"],
                                 "nrodoc"=>$datos["nrodoc"],
                                 "razon"=>$datos["razon"],
@@ -66,7 +66,8 @@
                                 "retencion"=>$datos["agente"],
                                 "correo"=>$datos["correo"],
                                 "estado"=>$datos['codigo_estado'],
-                                "persona"=>$datos["codigo_tipo"]]);
+                                "persona"=>$datos["codigo_tipo"],
+                                "rubro" => $datos["codigo_rubro"]]);
                 
                 $rowCount = $sql->rowcount();
 
@@ -135,14 +136,17 @@
                                                         tb_pais.cdespais,
                                                     IF
                                                         ( cm_entidad.nflgactivo = 7, 'ACTIVO', 'INACTIVO' ) AS estado,
-                                                        cm_entidad.ncodpais 
+                                                        cm_entidad.ncodpais,
+                                                        cm_entidad.nrubro,
+                                                        rubros.cdescripcion AS rubro 
                                                     FROM
                                                         cm_entidad
                                                         INNER JOIN tb_parametros AS documentos ON cm_entidad.ctipdoc = documentos.nidreg
                                                         INNER JOIN tb_parametros AS tipo_personas ON cm_entidad.ctipper = tipo_personas.nidreg
-                                                        INNER JOIN tb_pais ON cm_entidad.ncodpais = tb_pais.ncodpais 
+                                                        INNER JOIN tb_pais ON cm_entidad.ncodpais = tb_pais.ncodpais
+                                                        INNER JOIN tb_parametros AS rubros ON cm_entidad.nrubro = rubros.nidreg 
                                                     WHERE
-                                                        cm_entidad.id_centi = :id");
+                                                        cm_entidad.id_centi =:id");
                 $sql->execute(["id"=>$id]);
                 $rowCount = $sql->rowCount();
                 
@@ -189,7 +193,7 @@
                                                                 ncodbco=:codigobanco,
                                                                 cnrocta=:cuenta,
                                                                 cmoneda=:moneda,
-                                                                nflgactivo=:activo");
+                                                                ndefault=:activo");
                     $sql->execute(["codigo"      => $codigo,
                                     "codigobanco"=> $datos[$i]->nombre,
                                     "cuenta"     => $datos[$i]->numero,
@@ -213,7 +217,7 @@
                                                                 cnombres=:nombre,
                                                                 cemail=:correo,
                                                                 ctelefono1=:telefono,
-                                                                nflgactivo=:activo");
+                                                                ndefault=:activo");
                     $sql->execute(["codigo"    => $codigo,
                                     "nombre"   => $datos[$i]->nombre,
                                     "correo"   => $datos[$i]->correo,
@@ -272,7 +276,7 @@
                                                     cm_entidadcon
                                                 WHERE
                                                     cm_entidadcon.id_centi = :id
-                                                AND cm_entidadcon.nflgactivo = 1");
+                                                AND cm_entidadcon.nflgactivo = 7");
                 $sql->execute(["id"=>$id]);
                 $rowCount = $sql->rowCount();
 
@@ -317,7 +321,7 @@
                                                         INNER JOIN tb_parametros AS monedas ON cm_entidadbco.cmoneda = monedas.nidreg 
                                                     WHERE
                                                         cm_entidadbco.id_centi = :id 
-                                                        AND cm_entidadbco.nflgactivo = 1");
+                                                        AND cm_entidadbco.nflgactivo = 7");
                 $sql->execute(["id"=>$id]);
                 $rowCount = $sql->rowCount();
 

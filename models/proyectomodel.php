@@ -39,17 +39,20 @@
             $mensaje = "Error en el registro";
             $clase = "mensaje_error";
             $id = 0;
+            $verifica = array_key_exists('chkVerAlm',$datos)  ? 1 : 0;
             
             try {
                 $sql = $this->db->connect()->prepare("INSERT INTO tb_proyectos SET ccodproy=:cod,
                                                                                     cdesproy=:nom,
                                                                                     cubica=:ubig,
-                                                                                    cabrevia=:abre,
-                                                                                    nflgactivo=:est");
+                                                                                    ncosto=:costo,
+                                                                                    nflgactivo=:est,
+                                                                                    veralm=:verifica");
                 $sql->execute(["cod"=>$datos['codigo'],
                                 "nom"=>$datos['descripcion'],
                                 "ubig"=>$datos['ubigeo'],
-                                "abre"=>$datos['abreviatura'],
+                                "costo"=>$datos['costo'],
+                                "verifica"=>$verifica,
                                 "est"=>1]);
                 $rc = $sql->rowcount();
 
@@ -79,29 +82,28 @@
             $respuesta = true;
             $mensaje = "Se actualizo correctamente";
             $clase = "mensaje_correcto";
+
+            $verifica = array_key_exists('chkVerAlm',$datos)  ? 1 : 0;
             
             try {
                 $sql = $this->db->connect()->prepare("UPDATE tb_proyectos 
                                                         SET ccodproy=:cod,
                                                             cdesproy=:nom,
                                                             cubica=:ubig,
-                                                            cabrevia=:abre
+                                                            ncosto=:costo,
+                                                            veralm=:verifica
                                                         WHERE nidreg=:id");
                 $sql->execute(["cod"=>$datos['codigo'],
                                 "nom"=>$datos['descripcion'],
                                 "ubig"=>$datos['ubigeo'],
-                                "abre"=>$datos['abreviatura'],
-                                "id"=>$datos['codproy']]);
+                                "costo"=>$datos['costo'],
+                                "id"=>$datos['codproy'],
+                                "verifica"=>$verifica]);
                 $rc = $sql->rowcount();
 
                 $this->grabarItems($costos,$datos['codproy']);
 
-                /*if ($rc > 0) {
-                    $respuesta = true;
-                    $mensaje = "Se actualizo correctamente";
-                    $clase = "mensaje_correcto";
-                }*/
-
+                
                 $salida = array("respuesta"=>$respuesta,
                                     "mensaje"=>$mensaje,
                                     "clase"=>$clase);
@@ -119,7 +121,8 @@
                                                     tb_proyectos.ccodproy,
                                                     tb_proyectos.cdesproy,
                                                     tb_proyectos.cubica,
-                                                    tb_proyectos.cabrevia,
+                                                    tb_proyectos.ncosto,
+                                                    tb_proyectos.veralm,
                                                     distritos.cdubigeo AS distrito,
                                                     provincias.cdubigeo AS provincia,
                                                     dptos.cdubigeo AS departamento 

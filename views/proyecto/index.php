@@ -49,17 +49,17 @@
                             </div>
                         </div>
                         <div class="barraOpciones ">
-                            <span>Nombre Abreviado</span>
+                            <span>Detalles</span>
                         </div>
                         <div class="seccion_medio">
                             <div class="column2">
-                                <label for="abreviatura">Abreviado :</label>
-                                <input type="text" name="abreviatura" id="abreviatura" class="cerrarLista mayusculas">
+                                <label for="costo">Costo $/. :</label>
+                                <input type="text" name="costo" id="costo" class="cerrarLista mayusculas">
                             </div>
 
                             <div class="column2">
                                 <input type="checkbox" name="chkVerAlm" id="chkVerAlm" class="cerrarLista izq20px">
-                                <label for="chkVerAlm">Verifica Almacen</label>
+                                <label for="chkVerAlm">Verifica Almacen (Habilitar para consultas de saldos en almacen)</label>
                                 
                             </div>
                         </div>

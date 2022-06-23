@@ -141,10 +141,14 @@ $(function(){
                 $("#codproy").val(data.proyecto[0].nidreg);
                 $("#codigo").val(data.proyecto[0].ccodproy);
                 $("#descripcion").val(data.proyecto[0].cdesproy);
-                $("#abreviatura").val(data.proyecto[0].cabrevia);
+                $("#costo").val(data.proyecto[0].ncosto);
                 $("#dpto").val(data.proyecto[0].departamento);
                 $("#prov").val(data.proyecto[0].provincia);
                 $("#dist").val(data.proyecto[0].distrito);
+
+                let checked = data.proyecto[0].veralm == 1 ? "checked":"";
+
+                $("#chkVerAlm").prop("checked",checked);
 
                 $("#tablaCostos tbody")
                     .empty()

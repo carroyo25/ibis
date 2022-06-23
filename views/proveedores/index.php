@@ -22,7 +22,7 @@
         </div>
     </div>
     <div class="modal" id="proceso">
-        <div class="ventanaProceso">
+        <div class="ventanaProceso w65por">
             <div class="cabezaProceso">
                 <form action="#" id="formProceso" autocomplete="off">
                     <input type="hidden" name="codigo_entidad" id="codigo_entidad">
@@ -30,6 +30,8 @@
                     <input type="hidden" name="codigo_tipo" id="codigo_tipo">
                     <input type="hidden" name="codigo_pais" id="codigo_pais" value="135">
                     <input type="hidden" name="codigo_estado" id="codigo_estado" value="7">
+                    <input type="hidden" name="codigo_rubro" id="codigo_rubro" value="7">
+
 
                     <input type="hidden" name="activeTab" id="activeTab" value="tab1">
                     <div class="barraOpciones primeraBarra">
@@ -49,13 +51,24 @@
                             <label for="razon">Razón Social:</label>
                             <input type="text" name="razon" id="razon" class="mayusculas cerrarLista obligatorio">
                         </div>
-                        <div class="column2">
-                            <label for="tipo_ent">Tipo:</label>
-                            <input type="text" name="tipo_ent" id="tipo_ent" class="mostrarLista obligatorio" placeholder="Seleccione una opcion">
-                            <div class="lista" id="listaTipo">
-                                <ul>
-                                    <?php echo $this->listaTipos?>
-                                </ul> 
+                        <div class="column4">
+                            <div class="column2">
+                                <label for="tipo_ent">Tipo:</label>
+                                <input type="text" name="tipo_ent" id="tipo_ent" class="mostrarLista obligatorio" placeholder="Seleccione una opcion">
+                                <div class="lista" id="listaTipo">
+                                    <ul>
+                                        <?php echo $this->listaTipos?>
+                                    </ul> 
+                                </div>
+                            </div>
+                            <div class="column2">
+                                <label for="rubro">Rubro:</label>
+                                <input type="text" name="rubro" id="rubro" class="mostrarLista obligatorio" placeholder="Seleccione una opcion">
+                                <div class="lista" id="listaRubro">
+                                    <ul>
+                                        <?php echo $this->listaRubros?>
+                                    </ul> 
+                                </div>
                             </div>
                         </div>
                         <div class="column4">
@@ -69,7 +82,7 @@
                                 </div>
                             </div>
                             <div class="column2">
-                                <label for="nrodoc">Numero:</label>
+                                <label for="nrodoc">Número:</label>
                                 <input type="text" name="nrodoc" id="nrodoc" class="mayusculas cerrarLista obligatorio">
                             </div>
                         </div>
@@ -153,7 +166,7 @@
                                 <th>...</th>
                                 <th>Item</th>
                                 <th>Nombre Banco</th>
-                                <th>Tipo Cuenta</th>
+                                <th>Moneda</th>
                                 <th>Nro. Cuenta</th>
                                 <th>Activo</th>
                             </tr>
