@@ -73,7 +73,7 @@ $(function(){
                     "json"
                 );
             else {
-                $.post(RUTA+"clase/modificaClase", {datos:result},
+                $.post(RUTA+"clases/modificaClase", {datos:result},
                     function (data, textStatus, jqXHR) {
                         mostrarMensaje(data.mensaje,data.clase);
                     },

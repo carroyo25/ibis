@@ -167,6 +167,17 @@
   display: inline-block;
 }
 
+.column4_7_1 {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 70px 10px 1fr 10px 110px 10px 1fr;
+  grid-template-columns: 70px 1fr 110px 1fr;
+  margin-left: 6px;
+  -webkit-column-gap: 10px;
+     -moz-column-gap: 10px;
+          column-gap: 10px;
+}
+
 .dashBoard {
   display: -ms-grid;
   display: grid;
@@ -1307,6 +1318,7 @@
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  gap: 5px;
 }
 .ventanaProceso .dataProceso input, .ventanaProceso .dataProceso_2 input {
   height: 35px;

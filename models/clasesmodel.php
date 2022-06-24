@@ -52,7 +52,7 @@
 
                 $sql = $this->db->connect()->prepare("UPDATE tb_clase 
                                                       SET cdescrip=:descrip 
-                                                      WHERE ncodgrupo=:cod");
+                                                      WHERE ncodclase=:cod");
                 $sql->execute(["cod"=>$datos['codclase'],
                                "descrip"=>strtoupper($datos['descripcion'])]);
                 $rowCount = $sql->rowCount();

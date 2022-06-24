@@ -191,7 +191,7 @@ $(function () {
     $("#btnAceptarPregunta").click(function (e) { 
         e.preventDefault();
 
-        $.post(RUTA+"familias/desactivaFamlia", {id:index},
+        $.post(RUTA+"familias/desactivaFamilia", {id:index},
             function (data, textStatus, jqXHR) {
                 $("#tablaPrincipal tbody")
                     .empty()

@@ -149,6 +149,14 @@ $culminado:#55A5E2;
     }
 }
 
+.column4_7_1{
+    display: grid;
+    grid-template-columns: 70px 1fr 110px 1fr;
+    margin-left: 6px;
+    column-gap: 10px;
+}
+
+
 .dashBoard{
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -1030,6 +1038,7 @@ $culminado:#55A5E2;
 
     .dataProceso{
         display: flex;
+        gap:5px;
     }
 
     .dataProceso,.dataProceso_2{

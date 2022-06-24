@@ -50,13 +50,17 @@
             echo json_encode($this->model->consultarId($_POST['id']));
         }
 
-        public function desactivaItem(){
+        function desactivaItem(){
             echo $this->model->eliminaItem($_POST['id']);
         }
 
-        public function actualizaTabla(){
+        function actualizaTabla(){
             echo  $this->model->listarItems();
         }
+
+        function buscaPalabra(){
+            echo $this->model->buscarItemsPalabra($_POST['criterio']);
+        } 
         
     }
 ?>

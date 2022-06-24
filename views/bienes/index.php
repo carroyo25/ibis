@@ -98,9 +98,11 @@
                                     </ul> 
                                 </div>
                             </div>
-                            <div class="column2">
+                            <div class="column4_7_1">
                                 <label for="nro_parte">Nro.Parte:</label>
-                                <input type="text" name="nro_parte" id="nro_parte" class="mayusculas cerrarLista obligatorio">
+                                <input type="text" name="nro_parte" id="nro_parte" class="mayusculas cerrarLista">
+                                <label for="cod_pat">Codigo Patrimonial:</label>
+                                <input type="text" name="cod_pat" id="cod_pat" class="mayusculas cerrarLista obligatorio">
                             </div>
                             <div class="column4_1">
                                 <div>
