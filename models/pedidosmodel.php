@@ -221,6 +221,7 @@
                 $respuesta = false;
                 $mensaje = "Error en el registro";
                 $clase = "mensaje_error";
+                $rowDetails = 0;
 
                 $sql = $this->db->connect()->prepare("UPDATE tb_pedidocab SET vence=:vence,concepto=:concep,detalle=:det,nivelAten=:aten,
                                                                                 docfPdfPrev=:dprev
@@ -237,17 +238,37 @@
                 $rowCount = $sql->rowCount();
 
                 $details = json_decode($detalles);
-
-                for ($i=0; $i < count($details); $i++) { 
-                   $rowDetails = $this->updateItems($datos['codigo_atencion'],
-                                                    $details[$i]->cantidad,
-                                                    $details[$i]->calidad,
-                                                    $details[$i]->idx);
+                $nreg = count($details);
+                
+                for ($i=0; $i < $nreg; $i++) { 
+                    //graba el item si no se ha insertado como nuevo
+                    if( $details[$i]->itempedido == '-' ){
+                        $this->saveItems($datos['codigo_verificacion'],
+                                $datos['codigo_estado'],
+                                $datos['codigo_atencion'],
+                                $datos['codigo_tipo'],
+                                $datos['codigo_costos'],
+                                $datos['codigo_area'],
+                                $detalles);
+                    }else{
+                    //cambia los datos 
+                        for ($i=0; $i < count($details); $i++) { 
+                            $rowDetails = $this->updateItems($datos['codigo_atencion'],
+                                                             $details[$i]->cantidad,
+                                                             $details[$i]->calidad,
+                                                             $details[$i]->itempedido,
+                                                             $details[$i]->especifica);
+                         }
+                    }
                 }
 
                 if ($rowCount > 0 || $rowDetails > 0){
                     $respuesta = true;
                     $mensaje = "Pedido Modificado";
+                    $clase = "mensaje_correcto";
+                }else{
+                    $respuesta = true;
+                    $mensaje = "Nada que modificar";
                     $clase = "mensaje_correcto";
                 }
 
@@ -333,7 +354,8 @@
 
                 $salida= array("estado"=>$estadoEnvio,
                                 "mensaje"=>$mensaje,
-                                "clase"=>$clase );
+                                "clase"=>$clase,
+                                "pedidos"=>$this->listarPedidosUsuario());
 
                 return $salida;
             } catch (PDOException $th) {
@@ -342,14 +364,16 @@
             }
         }
 
-        private function updateItems($aten,$cant,$qaqc,$idx){
+        private function updateItems($aten,$cant,$qaqc,$idx,$especifica){
             $sql = $this->db->connect()->prepare("UPDATE ibis.tb_pedidodet SET cant_pedida = :cant, 
                                         nflgqaqc = :qaqc,
-                                        tipoAten = :aten 
+                                        tipoAten = :aten,
+                                        observaciones=:espec 
                                         WHERE iditem = :id");
             $sql ->execute(["cant"=>$cant,
                             "qaqc"=>$qaqc,
                             "aten"=>$aten,
+                            "espec"=>$especifica,
                             "id"=>$idx]);
             $rowCount = $sql->rowCount();
             return $rowCount;
@@ -365,7 +389,8 @@
                 try {
                         $sql = $this->db->connect()->prepare("INSERT INTO tb_pedidodet SET idpedido=:ped,idprod=:prod,idtipo=:tipo,unid=:und,
                                                                                     cant_pedida=:cant,estadoItem=:est,tipoAten=:aten,
-                                                                                    verificacion=:ver,nflgqaqc=:qaqc,idcostos=:costos,idarea=:area");
+                                                                                    verificacion=:ver,nflgqaqc=:qaqc,idcostos=:costos,idarea=:area,
+                                                                                    observaciones=:espec");
                         $sql ->execute([
                                         "ped"=>$indice,
                                         "prod"=>$datos[$i]->idprod,
@@ -377,12 +402,57 @@
                                         "ver"=>$codigo,
                                         "qaqc"=>$datos[$i]->calidad,
                                         "costos"=>$costos,
-                                        "area"=>$area]);
+                                        "area"=>$area,
+                                        "espec"=>$datos[$i]->especifica]);
                    
                 } catch (PDOException $th) {
                     echo "Error: ".$th->getMessage();
                     return false;
                 }
+            }
+        }
+
+        public function filtrarItemsPedido($criterio,$tipo){
+            try {
+                $salida = '<tr><td class="textoCentro" colspan="3">No existe el producto buscado</tr>';
+                
+                $sql = $this->db->connect()->prepare("SELECT
+                                                    cm_producto.id_cprod,
+                                                    cm_producto.ccodprod,
+                                                    UPPER(cm_producto.cdesprod) AS cdesprod,
+                                                    cm_producto.flgActivo,
+                                                    tb_parametros.cdescripcion AS tipo,
+                                                    tb_unimed.cabrevia 
+                                                FROM
+                                                    cm_producto
+                                                    INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                    INNER JOIN tb_parametros ON cm_producto.ntipo = tb_parametros.nidreg 
+                                                WHERE
+                                                    cm_producto.flgActivo = 1 AND
+                                                    cm_producto.cdesprod LIKE :criterio AND
+                                                    cm_producto.ntipo=:tipo
+                                                LIMIT 100");
+                $sql->execute(["criterio"=>"%".$criterio."%","tipo"=>$tipo]);
+                $rc = $sql->rowcount();
+                $item = 1;
+
+                if ($rc > 0){
+                    $salida = "";
+                    while( $rs = $sql->fetch()) {
+                        $salida .='<tr data-id="'.$rs['id_cprod'].'" class="pointer">
+                                        <td class="textoCentro">'.$rs['ccodprod'].'</td>
+                                        <td class="pl20px">'.$rs['cdesprod'].'</td>
+                                        <td class="textoCentro">'.$rs['cabrevia'].'</td>
+                                    </tr>';
+                        $item++;
+                    }
+                }
+
+                return $salida;
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
             }
         }
 

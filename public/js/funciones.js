@@ -46,7 +46,7 @@ fillTables = (table,idx) => {
     table.each(function(){
         item++;
 
-        $(this).find('td').eq(idx).text($.strPad(item,2));
+        $(this).find('td').eq(idx).text($.strPad(item,3));
     });
 }
 

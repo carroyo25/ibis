@@ -1,6 +1,7 @@
 $(function(){
     var accion = "";
     var grabado = false;
+    var aprobacion = 0;
 
     $("#esperar").fadeOut();
 
@@ -74,17 +75,16 @@ $(function(){
         let id = "";
         let codigo = $(this).attr("href");
         let catalogo = $(this).data("catalogo");
-        let aprobacion = $(this).data("aprobacion");
         
         control.slideUp()
-
         destino.val($(this).text());
         id = destino.attr("id");
 
         if (contenedor_padre == "listaCostos"){
             $("#codigo_costos").val(codigo);
+            aprobacion = $(this).data("aprobacion");
 
-            if (aprobacion == 0) {
+            if ( aprobacion == 0 ) {
                 $("#requestAprob").removeClass("desactivado");
                 $("#sendItem").addClass("desactivado");
             }else {
@@ -109,6 +109,21 @@ $(function(){
             $("#codigo_solicitante").val(codigo);
         }else if(contenedor_padre == "listaTipo"){
             $("#codigo_tipo").val(codigo);
+
+            console.log(aprobacion);
+
+            if ( codigo == 38) {
+                $("#requestAprob").removeClass("desactivado");
+                $("#sendItem").addClass("desactivado");
+            }else if ( codigo == 37) {
+                if (aprobacion == 0) {
+                    $("#sendItem").addClass("desactivado");
+                    $("#requestAprob").removeClass("desactivado");
+                }else {
+                    $("#sendItem").removeClass("desactivado");
+                    $("#requestAprob").addClass("desactivado");
+                }
+            }
         }
 
         return false;
@@ -128,6 +143,7 @@ $(function(){
                     $("form")[0].reset();
                     $("form")[1].reset();
                     $("#tablaDetalles tbody,.listaArchivos").empty();
+                    $(".lista").fadeOut();
                 });
             },
             "text"
@@ -148,8 +164,18 @@ $(function(){
         });
     });
 
-    //cuanndo cambia algo en la tabla de detalles
+    //cuando cambia algo en la tabla de detalles
     $("#tablaDetalles tbody ").on("change","input", function (e) {
+        //e.preventDefault();
+
+        if (accion == 'u') {
+            $(this).parent().parent().attr("data-grabado",0);
+        }
+        
+       return false;
+    });
+
+    $("#tablaDetalles tbody ").on("change","textarea", function (e) {
         //e.preventDefault();
 
         if (accion == 'u') {
@@ -235,22 +261,18 @@ $(function(){
         let unidad = $(this).children('td:eq(2)').text();
         let grabado = 0;
 
-        //if (!checkExistTable($("#tablaDetalles tbody tr"),codigo,2)){
-            let row = `<tr data-grabado="${grabado}" data-idprod="${idprod}" data-codund="${nunid}" data-indice="-">
-                        <td class="textoCentro"><a href="#"><i class="fas fa-eraser"></i></a></td>
-                        <td class="textoCentro">${nFilas}</td>
-                        <td class="textoCentro">${codigo}</td>
-                        <td class="pl20px">${descrip}</td>
-                        <td class="textoCentro">${unidad}</td>
-                        <td><input type="number" step="any" placeholder="0.00" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"></td>
-                        <td><input type="text"></td>
-                        <td class="textoCentro"><input type="checkbox"></td>
-                    </tr>`;
+        let row = `<tr data-grabado="${grabado}" data-idprod="${idprod}" data-codund="${nunid}" data-idx="-">
+                    <td class="textoCentro"><a href="#"><i class="fas fa-eraser"></i></a></td>
+                    <td class="textoCentro">${nFilas}</td>
+                    <td class="textoCentro">${codigo}</td>
+                    <td class="pl20px">${descrip}</td>
+                    <td class="textoCentro">${unidad}</td>
+                    <td><input type="number" step="any" placeholder="0.00" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"></td>
+                    <td><textarea></textarea></td>
+                    <td class="textoCentro"></td>
+                </tr>`;
 
-            $("#tablaDetalles tbody").append(row);
-        //}else{
-            //mostrarMensaje("Item duplicado","mensaje_error")
-        //}
+        $("#tablaDetalles tbody").append(row);
 
         return false;
     });
@@ -286,12 +308,19 @@ $(function(){
                 $("#estado").val(data.cabecera[0].estado);
                 $("#espec_items").val(data.cabecera[0].detalle);
 
-                if (data.cabecera[0].veralm == 0) {
+                console.log(data.cabecera[0].idtipomov,data.cabecera[0].veralm)
+               
+                if (data.cabecera[0].idtipomov == 38) {
                     $("#requestAprob").removeClass("desactivado");
                     $("#sendItem").addClass("desactivado");
                 }else {
-                    $("#requestAprob").addClass("desactivado");
-                    $("#sendItem").removeClass("desactivado");
+                    if ( data.cabecera[0].veralm == 0 ){
+                        $("#requestAprob").removeClass("desactivado");
+                        $("#sendItem").addClass("desactivado");
+                    }else {
+                        $("#requestAprob").addClass("desactivado");
+                        $("#sendItem").removeClass("desactivado");
+                    }                    
                 }
 
                 $("#tablaDetalles tbody")
@@ -469,100 +498,135 @@ $(function(){
     
     //proceso con el correo
     //para cambiar el tipo de letra en el mensaje
-   $(".js-boton").mousedown(function(event) {
-        event.preventDefault(); // Esto no es necesario, es por vicio xD
+    $(".js-boton").mousedown(function(event) {
+            event.preventDefault(); // Esto no es necesario, es por vicio xD
+                
+            var comando = $(this).attr('data-type');
+            document.execCommand(comando, false, null);
+
+            return false
+    });
+
+    $("#btnAtach").click(function (e) { 
+            e.preventDefault();
             
-        var comando = $(this).attr('data-type');
-        document.execCommand(comando, false, null);
+            $("#mailAtach").trigger("click");
+            return false;
+    });
 
-        return false
-   });
+    $("#mailAtach").on("change", function (e) {
+            e.preventDefault();
+    
+            let fp = $(this);
+            let lg = fp[0].files.length;
+            let items = fp[0].files;
+            let fragment = "";
 
-   $("#btnAtach").click(function (e) { 
-        e.preventDefault();
-        
-        $("#mailAtach").trigger("click");
-        return false;
-   });
-
-   $("#mailAtach").on("change", function (e) {
-        e.preventDefault();
- 
-        let fp = $(this);
-        let lg = fp[0].files.length;
-        let items = fp[0].files;
-        let fragment = "";
-
-        adjuntos = hadfledFiles(this.files);
- 
-        if (lg > 0) {
-             for (let i = 0; i < lg; i++) {
-                 let fileName = items[i].name; // get file name
- 
-                 // append li to UL tag to display File info
-                 fragment +=`<li><a href="${i}"><i class="far fa-file"></i> ${fileName}</a></li>`;
-             }
- 
-             $(".atachs").append(fragment);
-         }
- 
-        return false;
-   });
-
-   $("#btnConfirmSend").click(function (e) { 
-       e.preventDefault();
-
-       let result = {};
-
-       $.each($("#formProceso").serializeArray(),function(){
-           result[this.name] = this.value;
-       })
-
-       $.post(RUTA+"pedidos/vistaprevia", {cabecera:result,detalles:JSON.stringify(itemsPreview())},
-            function (data, textStatus, jqXHR) {
-                $("#vista_previa").val(data);
-                $("#formMails").trigger("submit");
-            },
-            "text"
-        );
-
-       
-       return false;
-   });
-
-   //generar el documento y enviar el emitido
-   $("#formMails").submit(function (e) { 
-       e.preventDefault();
-
-        let parametros = new FormData( this );
-            parametros.append("correos", JSON.stringify(mailsList()));
-            parametros.append("mensaje",$(".messaje div").html());
-            parametros.append("pedido",$("#codigo_pedido").val());
-            parametros.append("detalles",JSON.stringify(itemsPreview()));
-            parametros.append("emitido",$("#vista_previa").val());
-
-        $.ajax({
-                // URL to move the uploaded image file to server
-                url: RUTA + 'pedidos/envioCorreos',
-                // Request type
-                type: "POST", 
-                // To send the full form data
-                data: parametros,
-                contentType:false,      
-                processData:false,
-                dataType:"json",    
-                // UI response after the file upload  
-                success: function(response)
-                {   
-                    //$("#closeMail,#closePreview,#closeProcess").trigger("click");
-                    //$("#closeMail").trigger("click");
-                    mostrarMensaje(response.mensaje,response.clase);
-                    $("#sendMail").fadeOut();
+            adjuntos = hadfledFiles(this.files);
+    
+            if (lg > 0) {
+                for (let i = 0; i < lg; i++) {
+                    let fileName = items[i].name; // get file name
+    
+                    // append li to UL tag to display File info
+                    fragment +=`<li><a href="${i}"><i class="far fa-file"></i> ${fileName}</a></li>`;
                 }
-            });
+    
+                $(".atachs").append(fragment);
+            }
+    
+            return false;
+    });
 
-       return false;
-   });
+    $("#btnConfirmSend").click(function (e) { 
+        e.preventDefault();
+
+        let result = {};
+
+        $.each($("#formProceso").serializeArray(),function(){
+            result[this.name] = this.value;
+        })
+
+        $("#esperar").fadeIn();
+
+        $.post(RUTA+"pedidos/vistaprevia", {cabecera:result,detalles:JSON.stringify(itemsPreview())},
+                function (data, textStatus, jqXHR) {
+                    $("#vista_previa").val(data);
+                    $("#formMails").trigger("submit"); 
+                },
+                "text"
+            );
+
+        
+        return false;
+    });
+
+    //generar el documento y enviar el emitido
+    $("#formMails").submit(function (e) { 
+        e.preventDefault();
+
+            let parametros = new FormData( this );
+                parametros.append("correos", JSON.stringify(mailsList()));
+                parametros.append("mensaje",$(".messaje div").html());
+                parametros.append("pedido",$("#codigo_pedido").val());
+                parametros.append("detalles",JSON.stringify(itemsPreview()));
+                parametros.append("emitido",$("#vista_previa").val());
+                
+
+            $.ajax({
+                    // URL to move the uploaded image file to server
+                    url: RUTA + 'pedidos/envioCorreos',
+                    // Request type
+                    type: "POST", 
+                    // To send the full form data
+                    data: parametros,
+                    contentType:false,      
+                    processData:false,
+                    dataType:"json",    
+                    // UI response after the file upload
+                    beforeSend: function () {
+                        $("#esperar").fadeIn();
+                    },  
+                    success: function(response)
+                    {   
+                        mostrarMensaje(response.mensaje,response.clase);
+                        $("#proceso, #sendMail,#esperar").fadeOut();
+                        $("#tablaPrincipal tbody")
+                            .empty()
+                            .append(response.pedidos);
+                    }
+                });
+
+        return false;
+    });
+
+   //filtrar Item del pedido
+    $("#txtBuscar").on("keypress", function (e) {
+    if(e.which == 13) {
+        $("#esperar").fadeIn();
+        
+        $.post(RUTA+"pedidos/filtraItems", {criterio:$(this).val(),tipo:$("#codigo_tipo").val()},
+                function (data, textStatus, jqXHR) {
+                    $("#tablaModulos tbody")
+                        .empty()
+                        .append(data);
+                    $("#esperar").fadeOut();
+                },
+                "text"
+            );
+        }
+    });
+
+    $("#tablaDetalles tbody").on("click","a", function (e) {
+        e.preventDefault();
+
+        let parent = $(this).parent().parent();
+        parent.remove();
+
+        fillTables($("#tablaDetalles tbody > tr"),1);
+
+        return false;
+    });
 })
 
 itemsPreview = () =>{
@@ -575,9 +639,10 @@ itemsPreview = () =>{
             DESCRIPCION = $(this).find('td').eq(3).text(),
             UNIDAD      = $(this).find('td').eq(4).text(),
             CANTIDAD    = $(this).find('td').eq(5).children().val(),
-            ESPECIFICA  = $(this).find('td').eq(6).text();
+            ESPECIFICA  = $(this).find('td').eq(6).children().val();
             ITEMPEDIDO  = $(this).data('idx'),
-            OBSERVAC    = ""
+            OBSERVAC    = "",
+            NROPARTE    = $(this).find('td').eq(7).text(),
 
         item= {};
         
@@ -590,6 +655,7 @@ itemsPreview = () =>{
         item['itempedido']  = ITEMPEDIDO;
         item['observac']    = OBSERVAC;
         item['atendida']    = 0;
+        item['nroparte']    = NROPARTE;
 
         DATA.push(item);
     })
@@ -605,10 +671,12 @@ itemsSave = () =>{
         let IDPROD      = $(this).data('idprod'),
             UNIDAD      = $(this).data('codund'),
             CANTIDAD    = $(this).find('td').eq(5).children().val(),
-            NROPARTE    = $(this).find('td').eq(6).text(),
+            NROPARTE    = $(this).find('td').eq(7).text(),
             IDX         = $(this).data('idx'),
-            CALIDAD     = $(this).find('td').eq(7).children().prop("checked"),
+            CALIDAD     = 0,
             ESTADO      = $(this).data('grabado');
+            ESPECIFICA  = $(this).find('td').eq(6).children().val();
+
 
         item= {};
         
@@ -619,6 +687,7 @@ itemsSave = () =>{
             item['nroparte']    = NROPARTE;
             item['itempedido']  = IDX;
             item['calidad']     = CALIDAD;
+            item['especifica']  = ESPECIFICA;
 
             DATA.push(item);
         } 

@@ -50,10 +50,10 @@
                             <button type="button" id="preview" title="Vista Previa" class="boton3">
                                 <i class="fab fa-wpexplorer"></i> Vista Previa
                             </button>
-                            <button type="button" id="sendItem" data-rol="4" data-estado="51" title="Enviar Pedido" class="boton3 desactivado">
+                            <button type="button" id="sendItem" data-rol="109" data-estado="51" title="Enviar Pedido" class="boton3 desactivado">
                                 <i class="far fa-paper-plane"></i> Enviar Almacen
                             </button>
-                            <button type="button" id="requestAprob"  data-rol="3" data-estado="53" title="Solicitar Aprobacion" class="boton3 desactivado">
+                            <button type="button" id="requestAprob" data-rol="3" data-estado="53" title="Solicitar Aprobacion" class="boton3 desactivado">
                                 <i class="fas fa-award"></i> Solicitar Aprobacion
                             </button>
                             <button type="button" id="closeProcess" title="Cerrar" class="boton3">
@@ -151,14 +151,14 @@
                         <table class="tabla" id="tablaDetalles">
                             <thead>
                                 <tr>
-                                    <th>...</th>
-                                    <th>Item</th>
-                                    <th>Codigo</th>
+                                    <th width="3%">...</th>
+                                    <th width="5%">Item</th>
+                                    <th width="8%">Codigo</th>
                                     <th>Descripcion</th>
-                                    <th>Und.</th>
-                                    <th>Cant.</th>
-                                    <th>Especificaciones</th>
-                                    <th>Ver.</br>QA/QC</th>
+                                    <th width="5%">Und.</th>
+                                    <th width="6%">Cant.</th>
+                                    <th width="30%">Especificaciones</th>
+                                    <th>Nro. Parte</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -189,7 +189,7 @@
         </div>
     </div>
     <div class="modal" id="busqueda">
-        <div class="ventanaBusqueda">
+        <div class="ventanaBusqueda w50por">
             <div class="tituloVentana">
                 <span id="tituloBusqueda">Catálogo Bienes/Servicios</span>
                 <div>

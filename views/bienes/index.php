@@ -114,8 +114,8 @@
                                     <label for="detraccion">Afecto a detracción</label>
                                 </div>
                                 <div>
-                                    <input type="checkbox" name="activo" id="activo">
-                                    <label for="activo">Activo Fijo</label>
+                                    <input type="checkbox" name="actfij" id="actfij">
+                                    <label for="actfij">Activo Fijo</label>
                                 </div>
                             </div>
                         </div>

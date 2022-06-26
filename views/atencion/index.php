@@ -23,6 +23,7 @@
                     <input type="hidden" name="codigo_estado" id="codigo_estado">
                     <input type="hidden" name="codigo_atencion" id="codigo_atencion">
                     <input type="hidden" name="emitido" id="emitido">
+                    <input type="hidden" name="espec_items" id ="espec_items">
 
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
@@ -94,26 +95,20 @@
                         </div>
                     </div>
                     <div class="barraOpciones">
-                        <span>Especificaciones Técnicas o Descripción del Pedido</span>
-                    </div>
-                    <div class="textAreaEnter">
-                        <textarea name="espec_items" id="espec_items" rows="2" class="w100p" readonly></textarea>
-                    </div>
-                    <div class="barraOpciones">
                         <span>Detalles</span>
                     </div>
                     <div class="tablaInterna mininoTablaInterna">
                         <table class="tabla" id="tablaDetalles">
                             <thead>
                                 <tr>
-                                    <th>...</th>
-                                    <th>Item</th>
-                                    <th>Codigo</th>
+                                    <th width="3%">...</th>
+                                    <th width="5%">Item</th>
+                                    <th width="10%">Codigo</th>
                                     <th>Descripcion</th>
-                                    <th>Und.</th>
-                                    <th>Cant.</br>Pedida</th>
-                                    <th>Cant.</br>Atendida</th>
-                                    <th>Nro.</br>Parte</th>
+                                    <th width="5%">Und.</th>
+                                    <th width="10%">Cant.</br>Pedida</th>
+                                    <th width="10%">Cant.</br>Atendida</th>
+                                    <th width="10%">Nro.</br>Parte</th>
                                     <th>Observaciones</th>
                                 </tr>
                             </thead>

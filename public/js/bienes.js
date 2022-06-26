@@ -301,10 +301,11 @@ $(function() {
                     case 'image/gif':
                         foto = "public/documentos/fotos/catalogo/"+data.item[0].ccodprod+'.gif';
                         break;
+                    case '':
+                        foto = 'public/img/noimagen.jpg'
+
                 }
 
-                console.log(foto);
-                
                 $("#foto").attr("src",foto)
                             .attr('width', '300px')
                             .attr('height', '250px');

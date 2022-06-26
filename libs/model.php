@@ -751,7 +751,7 @@
 
                 if ($rowCount > 0) {
                     while ( $rs = $sql->fetch()){
-                        $salida .='<li><a href="'.$rs['ncodclase'].'" data-catalogo="'.$rs['ccodcata'] .'">'.$rs['ccodcata'] .' - '.strtoupper($rs['cdescrip']).'</a></li>';
+                        $salida .='<li><a href="'.$rs['ncodfamilia'].'" data-catalogo="'.$rs['ccodcata'] .'">'.$rs['ccodcata'] .' - '.strtoupper($rs['cdescrip']).'</a></li>';
                     }
                 }
 
@@ -1023,7 +1023,7 @@
                  $sql = $this->db->connect()->prepare("SELECT
                                                         cm_producto.id_cprod,
                                                         cm_producto.ccodprod,
-                                                        cm_producto.cdesprod,
+                                                        UPPER(cm_producto.cdesprod) AS cdesprod,
                                                         tb_unimed.ncodmed,
                                                         tb_unimed.cabrevia,
                                                         tb_unimed.nfactor,
@@ -1081,29 +1081,13 @@
             }
         }
 
+        //filtrar par que nop vean los correso deben poner le cntro de costos
         public function buscarRol($rol,$cc){
             try {
                 $salida = "";
 
-                if ($rol != 3){
-                    $sql = $this->db->connect()->prepare("SELECT
-                                                        ibis.tb_costusu.ncodcos,
-                                                        ibis.tb_costusu.ncodproy,
-                                                        ibis.tb_costusu.id_cuser,
-                                                        ibis.tb_user.ccorreo AS correo,
-                                                        rrhh.tabla_aquarius.apellidos,
-                                                        rrhh.tabla_aquarius.nombres,
-                                                        ibis.tb_proyectos.cdesproy 
-                                                    FROM
-                                                        ibis.tb_costusu
-                                                        INNER JOIN ibis.tb_user ON tb_costusu.id_cuser = tb_user.iduser
-                                                        INNER JOIN rrhh.tabla_aquarius ON ibis.tb_user.ncodper = rrhh.tabla_aquarius.internal
-                                                        INNER JOIN ibis.tb_proyectos ON ibis.tb_costusu.ncodproy = ibis.tb_proyectos.nidreg 
-                                                    WHERE
-                                                        ibis.tb_user.nrol = :rol 
-                                                        AND ibis.tb_costusu.ncodproy = :cc");
-                    $sql->execute(["rol"=>$rol,
-                    "cc"=>$cc]);
+                /*if ($rol != 3){
+                   
                 }   
                 else {
                     $sql = $this->db->connect()->prepare("SELECT
@@ -1118,7 +1102,26 @@
                                                         tb_user.nrol =:rol");
                     $sql->execute(["rol"=>$rol]);
                     
-                }
+                }*/
+
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        ibis.tb_costusu.ncodcos,
+                                                        ibis.tb_costusu.ncodproy,
+                                                        ibis.tb_costusu.id_cuser,
+                                                        ibis.tb_user.ccorreo AS correo,
+                                                        rrhh.tabla_aquarius.apellidos,
+                                                        rrhh.tabla_aquarius.nombres,
+                                                        ibis.tb_proyectos.cdesproy 
+                                                    FROM
+                                                        ibis.tb_costusu
+                                                        INNER JOIN ibis.tb_user ON tb_costusu.id_cuser = tb_user.iduser
+                                                        INNER JOIN rrhh.tabla_aquarius ON ibis.tb_user.ncodper = rrhh.tabla_aquarius.internal
+                                                        INNER JOIN ibis.tb_proyectos ON ibis.tb_costusu.ncodproy = ibis.tb_proyectos.nidreg 
+                                                    WHERE
+                                                        ibis.tb_user.nrol = :rol 
+                                                        AND ibis.tb_costusu.ncodproy = :cc
+                                                        AND ibis.tb_costusu.nflgactivo = 1");
+                $sql->execute(["rol"=>$rol,"cc"=>$cc]);
                 
                 $rowCount = $sql->rowCount();
 
@@ -1343,7 +1346,7 @@
                                         <td class="textoCentro"><a href="#"><i class="fas fa-eraser"></i></a></td>
                                         <td class="textoCentro">'.str_pad($filas++,3,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
-                                        <td class="pl20px">'.$rs['cdesprod'].'</td>
+                                        <td class="pl20px">'.strtoupper($rs['cdesprod']).'</td>
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                         <td>
                                             <input type="number" 
@@ -1353,8 +1356,8 @@
                                                         onclick="this.select()" 
                                                         value="'.$rs['cant_pedida'].'">
                                         </td>
-                                        <td class="pl20px">'.$rs['observaciones'].'</td>
-                                        <td class="textoCentro"><input type="checkbox" '.$checked.'></td>
+                                        <td class="pl20px"><textarea>'.$rs['observaciones'].'</textarea></td>
+                                        <td class="textoCentro"></td>
                                     </tr>';
                     }
                 }
@@ -1371,22 +1374,29 @@
                 $salida ="";
 
                 $sql=$this->db->connect()->prepare("SELECT
-                                                    tb_pedidodet.iditem,
-                                                    tb_pedidodet.idpedido,
-                                                    tb_pedidodet.idprod,
-                                                    tb_pedidodet.idtipo,
-                                                    tb_pedidodet.nroparte,
-                                                    tb_pedidodet.unid,
-                                                    FORMAT(tb_pedidodet.cant_pedida,2) AS cant_pedida,
-                                                    tb_pedidodet.estadoItem,
-                                                    cm_producto.ccodprod,
-                                                    cm_producto.cdesprod,
-                                                    tb_unimed.cabrevia,
-                                                    tb_pedidodet.nflgqaqc 
+                                                    tb_pedidodet.iditem, 
+                                                    tb_pedidodet.idpedido, 
+                                                    tb_pedidodet.idprod, 
+                                                    tb_pedidodet.idtipo, 
+                                                    tb_pedidodet.nroparte, 
+                                                    tb_pedidodet.unid, 
+                                                    FORMAT(tb_pedidodet.cant_pedida,2) AS cant_pedida, 
+                                                    tb_pedidodet.estadoItem, 
+                                                    cm_producto.ccodprod, 
+                                                    CONCAT_WS(' ',cm_producto.cdesprod,tb_pedidodet.observaciones) AS cdesprod, 
+                                                    tb_unimed.cabrevia, 
+                                                    tb_pedidodet.nflgqaqc, 
+                                                    tb_pedidodet.especificaciones 
                                                 FROM
                                                     tb_pedidodet
-                                                    INNER JOIN cm_producto ON tb_pedidodet.idprod = cm_producto.id_cprod
-                                                    INNER JOIN tb_unimed ON tb_pedidodet.unid = tb_unimed.ncodmed 
+                                                    INNER JOIN
+                                                    cm_producto
+                                                    ON 
+                                                        tb_pedidodet.idprod = cm_producto.id_cprod
+                                                    INNER JOIN
+                                                    tb_unimed
+                                                    ON 
+                                                        tb_pedidodet.unid = tb_unimed.ncodmed
                                                 WHERE
                                                     tb_pedidodet.idpedido = :id");
                 $sql->execute(["id"=>$id]);
@@ -1399,7 +1409,7 @@
                                         <td class="textoCentro"><a href="'.$rs['idprod'].'"><i class="far fa-eye"></i></a></td>
                                         <td class="textoCentro">'.str_pad($filas++,3,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
-                                        <td class="pl20px">'.$rs['cdesprod'].'</td>
+                                        <td class="pl20px">'.strtoupper($rs['cdesprod']).'</td>
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                         <td class="textoCentro">'.$rs['cant_pedida'].'</td>
                                         <td>
@@ -1429,24 +1439,29 @@
                 $salida ="";
 
                 $sql=$this->db->connect()->prepare("SELECT
-                                                    tb_pedidodet.iditem,
-                                                    tb_pedidodet.idpedido,
-                                                    tb_pedidodet.idprod,
-                                                    tb_pedidodet.idtipo,
-                                                    tb_pedidodet.nroparte,
-                                                    tb_pedidodet.unid,
-                                                    FORMAT(tb_pedidodet.cant_pedida,2) AS cant_pedida,
-                                                    FORMAT(tb_pedidodet.cant_atend,2) AS cant_atendida,
-                                                    FORMAT(tb_pedidodet.cant_resto,2) AS cant_pendiente,
-                                                    tb_pedidodet.estadoItem,
-                                                    cm_producto.ccodprod,
-                                                    cm_producto.cdesprod,
-                                                    tb_unimed.cabrevia,
-                                                    tb_pedidodet.nflgqaqc 
+                                                    tb_pedidodet.iditem, 
+                                                    tb_pedidodet.idpedido, 
+                                                    tb_pedidodet.idprod, 
+                                                    tb_pedidodet.idtipo, 
+                                                    tb_pedidodet.nroparte, 
+                                                    tb_pedidodet.unid, 
+                                                    FORMAT(tb_pedidodet.cant_pedida,2) AS cant_pedida, 
+                                                    tb_pedidodet.estadoItem, 
+                                                    cm_producto.ccodprod, 
+                                                    CONCAT_WS(' ',cm_producto.cdesprod,tb_pedidodet.observaciones) AS cdesprod, 
+                                                    tb_unimed.cabrevia, 
+                                                    tb_pedidodet.nflgqaqc, 
+                                                    tb_pedidodet.especificaciones 
                                                 FROM
                                                     tb_pedidodet
-                                                    INNER JOIN cm_producto ON tb_pedidodet.idprod = cm_producto.id_cprod
-                                                    INNER JOIN tb_unimed ON tb_pedidodet.unid = tb_unimed.ncodmed 
+                                                    INNER JOIN
+                                                    cm_producto
+                                                    ON 
+                                                        tb_pedidodet.idprod = cm_producto.id_cprod
+                                                    INNER JOIN
+                                                    tb_unimed
+                                                    ON 
+                                                        tb_pedidodet.unid = tb_unimed.ncodmed
                                                 WHERE
                                                     tb_pedidodet.idpedido = :id");
                 $sql->execute(["id"=>$id]);
@@ -1459,7 +1474,7 @@
                         $salida .='<tr data-grabado="1" data-idprod="'.$rs['idprod'].'" data-codund="'.$rs['unid'].'" data-idx="'.$rs['iditem'].'">
                                         <td class="textoCentro">'.str_pad($filas++,3,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
-                                        <td class="pl20px">'.$rs['cdesprod'].'</td>
+                                        <td class="pl20px">'.strtoupper($rs['cdesprod']).'</td>
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                         <td class="textoCentro">'.$rs['cant_pedida'].'</td>
                                         <td class="textoCentro">'.$rs['cant_atendida'].'</td>

@@ -1496,6 +1496,13 @@
 .tabla tbody tr td input[type=number], .tablaWrap tbody tr td input[type=number] {
   text-align: right;
 }
+.tabla tbody tr td textarea, .tablaWrap tbody tr td textarea {
+  width: 100%;
+  outline: none;
+  background: transparent;
+  font-size: 0.7rem;
+  padding-left: 2px;
+}
 .tabla tbody tr:hover, .tablaWrap tbody tr:hover {
   background: rgba(255, 255, 43, 0.7);
 }

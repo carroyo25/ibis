@@ -1256,6 +1256,14 @@ $culminado:#55A5E2;
                 input[type="number"]{
                     text-align: right;
                 }
+
+                textarea{
+                    width: 100%;
+                    outline: none;
+                    background: transparent;
+                    font-size: 0.7rem;
+                    padding-left: 2px;
+                }
             }
 
             &:hover{

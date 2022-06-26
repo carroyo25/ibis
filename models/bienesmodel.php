@@ -12,7 +12,7 @@
                 $sql = $this->db->connect()->query("SELECT
                                                     cm_producto.id_cprod,
                                                     cm_producto.ccodprod,
-                                                    cm_producto.cdesprod,
+                                                    UPPER(cm_producto.cdesprod) AS cdesprod,
                                                     cm_producto.flgActivo,
                                                     tb_parametros.cdescripcion AS tipo,
                                                     tb_unimed.cabrevia 
@@ -54,7 +54,7 @@
                 $sql = $this->db->connect()->prepare("SELECT
                                                     cm_producto.id_cprod,
                                                     cm_producto.ccodprod,
-                                                    cm_producto.cdesprod,
+                                                    UPPER(cm_producto.cdesprod) AS cdesprod,
                                                     cm_producto.flgActivo,
                                                     tb_parametros.cdescripcion AS tipo,
                                                     tb_unimed.cabrevia 
@@ -190,11 +190,13 @@
 
                     $serie = array_key_exists('serie', $datos)? 1 : 0;
                     $detraccion = array_key_exists("detraccion",$datos)? 1 : 0;
+                    $actfij = array_key_exists("activo",$datos)? 1 : 0;
 
                     $sql = $this->db->connect()->prepare("INSERT INTO cm_producto 
                                                             SET ccodprod=:cod,cdesprod=:descripcion,ntipo=:tipo,ngrupo=:grupo,
                                                                 nclase=:clase,nfam=:familia,nund=:unidad,cnparte=:parte,flgSerie=:serie,
-                                                                flgDetrac=:detrac,flgActivo=:activo,iduser=:user,rfoto=:tfoto");
+                                                                flgDetrac=:detrac,flgActivo=:activo,iduser=:user,rfoto=:tfoto,
+                                                                flgActFij=:actfij,cCodPat=:codpat");
                     $sql->execute(["cod"=>$datos['codigo'],
                                     "descripcion"=>$datos['descripcion'],
                                     "tipo"=>$datos['codigo_tipo'],
@@ -207,7 +209,9 @@
                                     "detrac"=>$detraccion,
                                     "activo"=>1,
                                     "user"=>$_SESSION['iduser'],
-                                    "tfoto"=>$datos['tipofoto']]);
+                                    "tfoto"=>$datos['tipofoto'],
+                                    "actfij"=>$actfij,
+                                    "codpat"=>$datos['cod_pat']]);
                     $rowCount = $sql->rowCount();
 
                     if ($rowCount > 0){
@@ -232,7 +236,7 @@
             return $salida;
         }
 
-        public function Modificar($datos){
+        public function modificar($datos){
             $salida = false;
             $respuesta = false;
             $mensaje = "Error en el registro";
@@ -242,19 +246,24 @@
 
                 $serie = array_key_exists('serie', $datos)? 1 : 0;
                 $detraccion = array_key_exists("detraccion",$datos)? 1 : 0;
+                $actfij = array_key_exists("activo",$datos)? 1 : 0;
+
 
                 $sql = $this->db->connect()->prepare("UPDATE cm_producto 
                                                         SET cdesprod=:descripcion,nund=:unidad,cnparte=:parte,
-                                                            flgSerie=:serie,flgDetrac=:detrac,iduser=:user,rfoto=:tfoto
+                                                            flgSerie=:serie,flgDetrac=:detrac,iduser=:usr,rfoto=:tfoto,
+                                                            flgActFij=:actfij,cCodPat=:codpat
                                                         WHERE id_cprod=:id");
                 $sql->execute([ "descripcion"=>$datos['descripcion'],
                                 "unidad"=>$datos['codigo_unidad'],
                                 "parte"=>$datos['nro_parte'],
                                 "serie"=>$serie,
                                 "detrac"=>$detraccion,
-                                "user"=>$_SESSION['iduser'],
+                                "usr"=>$_SESSION['iduser'],
                                 "tfoto"=>$datos['tipofoto'],
-                                "id"=>$datos['codigo_item']]);
+                                "id"=>$datos['codigo_item'],
+                                "actfij"=>$actfij,
+                                "codpat"=>$datos['cod_pat']]);
                                 
                 $rowCount = $sql->rowCount();
 

@@ -79,7 +79,7 @@
                                     <td class="textoCentro">'.$rs['anio'].'</td>
                                     <td class="textoCentro">'.str_pad($rs['nrodoc'],6,0,STR_PAD_LEFT).'</td>
                                     <td class="textoCentro">'.$rs['unidad'].'</td>
-                                    <td class="pl20px">'.$rs['concepto'].'</td>
+                                    <td class="pl20px">'.strtoupper($rs['cdesprod']).'</td>
                                     <td class="textoCentro">'.$rs['cnumero'].'</td>
                                 </tr>';
                     }

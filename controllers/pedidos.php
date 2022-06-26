@@ -63,5 +63,9 @@
                                                         $_POST['emitido']));
         }
 
+        function filtraItems(){
+            echo $this->model->filtrarItemsPedido($_POST['criterio'],$_POST['tipo']);
+        }
+
     }
 ?>
