@@ -106,9 +106,9 @@
                                     <th width="10%">Codigo</th>
                                     <th>Descripcion</th>
                                     <th width="5%">Und.</th>
-                                    <th width="10%">Cant.</br>Pedida</th>
-                                    <th width="10%">Cant.</br>Atendida</th>
-                                    <th width="10%">Nro.</br>Parte</th>
+                                    <th width="7%">Cant.</br>Pedida</th>
+                                    <th width="7%">Cant.</br>Atendida</th>
+                                    <th width="7%">Nro.</br>Parte</th>
                                     <th>Observaciones</th>
                                 </tr>
                             </thead>

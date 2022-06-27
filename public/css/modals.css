@@ -1,4 +1,3 @@
-@charset "UTF-8";
 .mensaje {
   position: fixed;
   height: 4rem;
@@ -38,14 +37,14 @@
   background: rgba(255, 99, 71, 0.8);
 }
 .mensaje_error span:before {
-  content: "";
+  content: "\f057";
 }
 
 .mensaje_correcto {
   background: rgba(154, 205, 50, 0.8);
 }
 .mensaje_correcto span:before {
-  content: "";
+  content: "\f164";
 }
 
 .modal {
@@ -57,4 +56,8 @@
   background: rgba(0, 0, 0, 0.6);
   z-index: 2;
   display: none;
+}
+
+#esperar {
+  z-index: 9999;
 }

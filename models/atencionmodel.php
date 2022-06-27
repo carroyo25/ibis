@@ -67,20 +67,20 @@
                 $salida = "";
 
                 $sql = $this->db->connect()->prepare("SELECT
-                                            tb_almausu.ncodalm, 
-                                            tb_almausu.nalmacen, 
-                                            tb_almausu.id_cuser, 
-                                            tb_almacen.ccodalm, 
-                                            UPPER(tb_almacen.cdesalm) AS almacen
-                                        FROM
-                                            tb_almausu
-                                            INNER JOIN
-                                            tb_almacen
-                                            ON 
-                                                tb_almausu.ncodalm = tb_almacen.ncodalm
-                                        WHERE
-                                            tb_almausu.nflgactivo = 1 AND
-                                            tb_almausu.id_cuser = :user");
+                                                        tb_almausu.ncodalm, 
+                                                        tb_almausu.nalmacen, 
+                                                        tb_almausu.id_cuser, 
+                                                        tb_almacen.ccodalm, 
+                                                        UPPER(tb_almacen.cdesalm) AS almacen
+                                                    FROM
+                                                        tb_almausu
+                                                        INNER JOIN
+                                                        tb_almacen
+                                                        ON 
+                                                        tb_almausu.nalmacen = tb_almacen.ncodalm
+                                                    WHERE
+                                                        tb_almausu.nflgactivo = 1 AND
+                                                        tb_almausu.id_cuser = :user");
                 $sql->execute(["user"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowCount();
                 if($rowCount > 0) {

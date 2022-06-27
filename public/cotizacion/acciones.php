@@ -194,7 +194,8 @@
                         INNER JOIN tb_unimed ON lg_cotizadet.ncodmed = tb_unimed.ncodmed 
                     WHERE
                         lg_cotizadet.id_regmov = ?
-                        AND lg_cotizadet.id_centi = ?";
+                        AND lg_cotizadet.id_centi = ?
+                        AND lg_cotizadet.cantcoti > 0";
             $statement = $pdo->prepare($sql);
             $statement -> execute(array($pedido,$ruc));
             $result = $statement ->fetchAll();

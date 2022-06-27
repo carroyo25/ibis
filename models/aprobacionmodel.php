@@ -149,7 +149,8 @@
 
                 $salida= array("estado"=>$estadoEnvio,
                                 "mensaje"=>$mensaje,
-                                "clase"=>$clase );
+                                "clase"=>$clase,
+                                "pedidos"=>$this->listarPedidos());
 
                 return $salida;
             } catch (PDOException $th) {

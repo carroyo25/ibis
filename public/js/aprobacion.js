@@ -162,10 +162,11 @@ $(function(){
     $("#btnConfirmSend").click(function (e) { 
         e.preventDefault();
 
-
         try {
             if ($("#subject").val() =="") throw "Escriba el asunto";
-            if ($("messaje div").html() =="") throw "Escriba el asunto";
+            if ($("messaje div").html() =="") throw "Escriba el mensaje";
+
+            $("#esperar").fadeIn();
 
             let result = {};
 
@@ -182,7 +183,10 @@ $(function(){
                                             cabecera:result},
                                                 
              function (data, textStatus, jqXHR) {
-                $("#sendMail").fadeOut();
+                $("#sendMail,#proceso,#esperar").fadeOut();
+                $("#tablaPrincipal tbody")
+                    .empty()
+                    .append(data.pedidos);
                 mostrarMensaje(data.mensaje,data.clase);
              },
              "json"
@@ -235,8 +239,6 @@ itemsPreview = () =>{
 
     return DATA;
 }
-
-
 
 mailsList = () => {
     CORREOS = [];

@@ -24,6 +24,7 @@
                     <input type="hidden" name="codigo_atencion" id="codigo_atencion">
                     <input type="hidden" name="elabora" id="elabora">
                     <input type="hidden" name="aprobado" id="aprobado">
+                    <input type="hidden" name="espec_items" id="espec_items">
 
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
@@ -93,12 +94,6 @@
                                 <input type="text" name="estado" id="estado" class="textoCentro w35por estado" readonly>
                             </div>
                         </div>
-                    </div>
-                    <div class="barraOpciones">
-                        <span>Especificaciones Técnicas o Descripción del Pedido</span>
-                    </div>
-                    <div class="textAreaEnter">
-                        <textarea name="espec_items" id="espec_items" rows="2" class="w100p" readonly></textarea>
                     </div>
                     <div class="barraOpciones">
                         <span>Detalles</span>
