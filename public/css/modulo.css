@@ -1484,7 +1484,7 @@
 }
 .tabla tbody tr td, .tablaWrap tbody tr td {
   border: 1px solid #616161;
-  line-height: 1.5rem;
+  line-height: 1rem;
 }
 .tabla tbody tr td input[type=number], .tabla tbody tr td input[type=text], .tabla tbody tr td input[type=date], .tablaWrap tbody tr td input[type=number], .tablaWrap tbody tr td input[type=text], .tablaWrap tbody tr td input[type=date] {
   width: 100%;

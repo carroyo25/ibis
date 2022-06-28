@@ -11,7 +11,7 @@
         <p></p>
     </div>
     <div class="modal" id="proceso">
-        <div class="ventanaProceso tamanioProceso80">
+        <div class="ventanaProceso tamanioProceso">
             <div class="cabezaProceso">
                 <form action="#" id="formProceso" autocomplete="off">
                     <input type="hidden" name="codigo_costos" id="codigo_costos"> 
@@ -24,6 +24,7 @@
                     <input type="hidden" name="codigo_atencion" id="codigo_atencion">
                     <input type="hidden" name="elabora" id="elabora">
                     <input type="hidden" name="aprobado" id="aprobado">
+                    <input type="hidden" name="espec_items" id="espec_items">
 
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
@@ -94,12 +95,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="barraOpciones">
-                        <span>Especificaciones Técnicas o Descripción del Pedido</span>
-                    </div>
-                    <div class="textAreaEnter">
-                        <textarea name="espec_items" id="espec_items" rows="2" class="w100p" readonly></textarea>
-                    </div>
+                   
                     <div class="barraOpciones">
                         <span>Detalles</span>
                     </div>

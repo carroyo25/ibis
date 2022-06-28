@@ -10,46 +10,38 @@
             try {
                 $salida = "";
                 $sql = $this->db->connect()->prepare("SELECT
-                                                        ibis.lg_cotizadet.id_regmov,
-                                                        ibis.lg_cotizadet.niddet,
-                                                        ibis.tb_pedidocab.idarea,
-                                                        ibis.tb_pedidocab.idsolicita,
-                                                        ibis.tb_pedidocab.emision,
-                                                        ibis.tb_pedidocab.vence,
-                                                        ibis.tb_pedidocab.estadodoc,
+                                                        ibis.tb_costusu.id_cuser,
+                                                        ibis.tb_costusu.ncodproy,
                                                         ibis.tb_pedidocab.nrodoc,
                                                         UPPER( ibis.tb_pedidocab.concepto ) AS concepto,
-                                                        ibis.tb_pedidocab.idcostos,
+                                                        ibis.tb_pedidocab.idreg,
+                                                        ibis.tb_pedidocab.estadodoc,
+                                                        ibis.tb_pedidocab.emision,
+                                                        ibis.tb_pedidocab.vence,
                                                         UPPER(
                                                         CONCAT_WS( ' ', ibis.tb_proyectos.ccodproy, ibis.tb_proyectos.cdesproy )) AS costos,
-                                                        ibis.tb_costusu.nflgactivo,
-                                                        CONCAT_WS( ' ', rrhh.tabla_aquarius.apellidos, rrhh.tabla_aquarius.nombres ) AS nombres,
+                                                        ibis.tb_pedidocab.nivelAten,
+                                                        CONCAT_WS(' ',rrhh.tabla_aquarius.apellidos,rrhh.tabla_aquarius.nombres) AS nombres,
                                                         estados.cdescripcion AS estado,
-                                                        estados.cabrevia,
-                                                        atenciones.cdescripcion AS atencion,
-                                                        ibis.tb_pedidocab.idreg,
-                                                        ibis.tb_costusu.ncodproy 
+                                                        atencion.cdescripcion AS atencion,
+                                                        estados.cabrevia 
                                                     FROM
-                                                        ibis.lg_cotizadet
-                                                        INNER JOIN ibis.tb_pedidocab ON lg_cotizadet.id_regmov = tb_pedidocab.idreg
-                                                        INNER JOIN ibis.tb_costusu ON tb_pedidocab.idcostos = tb_costusu.ncodproy
-                                                        INNER JOIN ibis.tb_proyectos ON tb_pedidocab.idcostos = tb_proyectos.nidreg
+                                                        ibis.tb_costusu
+                                                        INNER JOIN ibis.tb_pedidocab ON tb_costusu.ncodproy = tb_pedidocab.idcostos
+                                                        INNER JOIN ibis.tb_proyectos ON tb_costusu.ncodproy = tb_proyectos.nidreg
                                                         INNER JOIN rrhh.tabla_aquarius ON ibis.tb_pedidocab.idsolicita = rrhh.tabla_aquarius.internal
-                                                        INNER JOIN ibis.tb_parametros AS estados ON ibis.tb_pedidocab.estadodoc = ibis.estados.nidreg
-                                                        INNER JOIN ibis.tb_parametros AS atenciones ON ibis.tb_pedidocab.nivelAten = atenciones.nidreg 
+                                                        INNER JOIN ibis.tb_parametros AS estados ON ibis.tb_pedidocab.estadodoc = estados.nidreg
+                                                        INNER JOIN ibis.tb_parametros AS atencion ON ibis.tb_pedidocab.nivelAten = atencion.nidreg 
                                                     WHERE
-                                                        tb_costusu.nflgactivo = 1 
-                                                        AND ibis.tb_costusu.id_cuser = :user  
-                                                        AND tb_pedidocab.estadodoc BETWEEN 56 
-                                                        AND 56 
-                                                    GROUP BY
-                                                        ibis.lg_cotizadet.niddet");
+                                                        tb_costusu.id_cuser = :user 
+                                                        AND tb_pedidocab.estadodoc = 56
+                                                        AND tb_costusu.nflgactivo = 1");
                 $sql->execute(["user"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()) {
-                        $salida .='<tr class="pointer" data-pedido="'.$rs['idreg'].'" data-item="'.$rs['niddet'].'">
+                        $salida .='<tr class="pointer" data-indice="'.$rs['idreg'].'">
                                         <td class="textoCentro">'.str_pad($rs['nrodoc'],4,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.date("d/m/Y", strtotime($rs['emision'])).'</td>
                                         <td class="textoCentro">'.date("d/m/Y", strtotime($rs['vence'])).'</td>

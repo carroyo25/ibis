@@ -7,7 +7,7 @@ $(function(){
     $("#tablaPrincipal tbody").on("click","tr", function (e) {
         e.preventDefault();
 
-       $.post(RUTA+"estudio/consultaId", {id:$(this).data("pedido"),item:$(this).data("item")},
+       $.post(RUTA+"estudio/consultaId", {id:$(this).data("indice")},
             function (data, textStatus, jqXHR) {
                 
                 let numero = $.strPad(data.cabecera[0].nrodoc,6);

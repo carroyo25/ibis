@@ -15,7 +15,7 @@
         }
 
         function consultaId(){
-            echo json_encode($this->model->consultarReqId($_POST['id'],56,56,56,$_POST['item']));
+            echo json_encode($this->model->consultarReqId($_POST['id'],56,56,56));
         }
 
         function proformas(){
