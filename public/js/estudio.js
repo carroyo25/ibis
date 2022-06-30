@@ -75,14 +75,13 @@ $(function(){
         return false;  
     });
 
-    $("#tablaDetalles").on("click",".chkVerificado", function (e) {
+    $("#tablaDetalles").on("click","input", function (e) {
         item = {};
 
         let posicion = $(this).parent().parent().data("fila");
         let indice = fila.findIndex(criterio => criterio.lugar === posicion);
         let entidad = $(this).parent().data("entidad");
 
-        //Este metodo
         if( $(this).prop('checked') ) {
             if (indice == -1){
                 item["lugar"]       = posicion;
@@ -93,17 +92,18 @@ $(function(){
                 item["detpedido"]   = $(this).parent().data("detped");
                 item["entrega"]     = $(this).parent().data("entrega");
                 item["total"]       = $(this).parent().data("total");
-                item["espec"]       = $(this).parent().data("espec");
+                item["espec"]       = $(this).parent().data("detalle");
             
                 fila.push(item);
-            }else{
-                fila[posicion]['entidad']     = $(this).parent().data("entidad");
-                fila[posicion]["detprof"]     = $(this).parent().data("detprof");
-                fila[posicion]["unitario"]    = $(this).parent().data("precio");
-                fila[posicion]["entrega"]     = $(this).parent().data("entrega");
-                fila[posicion]["total"]       = $(this).parent().data("total");
-                fila[posicion]["espec"]       = $(this).parent().data("total");
-            }       
+            }else {
+                fila[posicion-1]['entidad']     = $(this).parent().data("entidad");
+                fila[posicion-1]["detprof"]     = $(this).parent().data("detprof");
+                fila[posicion-1]["unitario"]    = $(this).parent().data("precio");
+                fila[posicion-1]["entrega"]     = $(this).parent().data("entrega");
+                fila[posicion-1]["total"]       = $(this).parent().data("total");
+                fila[posicion-1]["espec"]       = $(this).parent().data("detalle");
+            }
+
         }
     });
 

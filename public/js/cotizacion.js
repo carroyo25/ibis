@@ -1,19 +1,6 @@
 $(function(){
     $("#esperar").fadeOut();
     
-    //mandar a la pagian principal
-    /*$("#irInicio").click(function (e) { 
-        e.preventDefault();
-        
-            $(".cargaModulo").load(RUTA+"panel .ventana",function(){
-			
-		});
-
-        console.log('Ir a inicio');
-
-        return false;
-    });*/
-    
     $("#tablaPrincipal tbody").on("click","tr", function (e) {
         e.preventDefault();
 

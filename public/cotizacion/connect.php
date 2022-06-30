@@ -1,7 +1,7 @@
 <?php 
-	$dsn = "mysql:dbname=ibis;host=localhost";
-	$user = "root";
-	$password = "zBELTUAKpNQvCOl6";
+	$dsn = "mysql:dbname=ibis;host=192.168.1.30";
+	$user = "remoto";
+	$password = "s3pc0n2020";
 	$errorDbConexion = true;
 
 	try {

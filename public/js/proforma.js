@@ -108,6 +108,7 @@ $(function (){
                     $("#si").val((suma*igv).toFixed(2));
                     $("#total").val(numberWithCommas((suma*(1+igv)).toFixed(2)));
                     $("#to").val((suma*(1+igv)).toFixed(2));
+                    $("#total_numero").val((suma*(1+igv)).toFixed(2));
                 }
             } catch (error) {
                 mostrarMensaje(error,'mensaje_error');
@@ -176,9 +177,10 @@ const getItems  = () => {
             UNIDAD   = $(this).data('und'),
             CANTIDAD = $(this).find('td').eq(4).text(),
             PRECIO   = $(this).find('td').eq(5).children().val(),
-            TOTAL    = $(this).find('td').eq(6).text(),
+            TOTAL    = $("#total_numero").val(),
+            IGV      = $("#igv").val(),
             OBSERVAC = $(this).find('td').eq(8).children().val(),
-            ENTREGA  = $(this).find('td').eq(9).children().val()
+            ENTREGA  = $(this).find('td').eq(9).children().val(),
 
         item ={}
 
@@ -191,6 +193,7 @@ const getItems  = () => {
         item['total']       = TOTAL;
         item['observa']     = OBSERVAC;
         item['entrega']     = ENTREGA;
+        item['igv']         = IGV;
 
         DETALLES.push(item);
     })

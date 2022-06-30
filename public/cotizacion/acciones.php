@@ -78,7 +78,7 @@
             for ($i=0; $i < $nreg ; $i++) { 
                 $sql = "INSERT INTO lg_proformadet SET id_regmov=?,niddet=?,ncodmed=?,id_centi=?,id_cprod=?,
                                                     cantcoti=?,ncodmon=?,precunit=?,total=?,ffechaent=?,cdetalle=?,
-                                                    cdocPDF=?,cotref=?,nflgactivo=?";
+                                                    cdocPDF=?,cotref=?,nflgactivo=?,impuesto=?";
                 $statement = $pdo->prepare($sql);
                 $statement -> execute(array($pedido,
                                             $datos[$i]->idpedet,
@@ -88,12 +88,13 @@
                                             $datos[$i]->cantidad,
                                             $moneda,
                                             $datos[$i]->precio,
-                                            $datos[$i]->precio*$datos[$i]->cantidad,
+                                            $datos[$i]->total,
                                             $datos[$i]->entrega,
                                             $datos[$i]->observa,
                                             $datos[$i]->adjunto,
                                             $cotref,
-                                            1));    
+                                            1,
+                                            $datos[$i]->igv));    
             }
 
         } catch (PDOException $th) {
@@ -178,24 +179,25 @@
         try {
             $salida ="";
             $sql = "SELECT
-                        lg_cotizadet.nitemcot,
-                        lg_cotizadet.id_regmov,
-                        lg_cotizadet.niddet,
-                        lg_cotizadet.ncodmed,
-                        lg_cotizadet.id_cprod,
-                        lg_cotizadet.cantcoti,
-                        lg_cotizadet.ccodcot,
-                        cm_producto.ccodprod,
-                        UPPER(cm_producto.cdesprod) AS cdesprod,
-                        tb_unimed.cabrevia 
-                    FROM
-                        lg_cotizadet
-                        INNER JOIN cm_producto ON lg_cotizadet.id_cprod = cm_producto.id_cprod
-                        INNER JOIN tb_unimed ON lg_cotizadet.ncodmed = tb_unimed.ncodmed 
-                    WHERE
-                        lg_cotizadet.id_regmov = ?
-                        AND lg_cotizadet.id_centi = ?
-                        AND lg_cotizadet.cantcoti > 0";
+                    lg_cotizadet.nitemcot,
+                    lg_cotizadet.id_regmov,
+                    lg_cotizadet.niddet,
+                    lg_cotizadet.ncodmed,
+                    lg_cotizadet.id_cprod,
+                    lg_cotizadet.cantcoti,
+                    lg_cotizadet.ccodcot,
+                    cm_producto.ccodprod,
+                    UPPER(CONCAT_WS(' ',cm_producto.cdesprod,tb_pedidodet.observaciones)) AS cdesprod,
+                    tb_unimed.cabrevia
+                FROM
+                    lg_cotizadet
+                INNER JOIN cm_producto ON lg_cotizadet.id_cprod = cm_producto.id_cprod
+                INNER JOIN tb_unimed ON lg_cotizadet.ncodmed = tb_unimed.ncodmed
+                INNER JOIN tb_pedidodet ON lg_cotizadet.niddet = tb_pedidodet.iditem
+                WHERE
+                    lg_cotizadet.id_regmov = ?
+                AND lg_cotizadet.id_centi = ?
+                AND lg_cotizadet.cantcoti > 0";
             $statement = $pdo->prepare($sql);
             $statement -> execute(array($pedido,$ruc));
             $result = $statement ->fetchAll();

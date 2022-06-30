@@ -48,6 +48,7 @@
             <input type="hidden" name="to" id="to">
             <input type="file" name="cotizacion" id="cotizacion" class="oculto">
             <input type="file" name="itemAtach" id="itemAtach" class="oculto">
+            <input type="hidden" name="total_numero" id="total_numero">
             <div class="cabeceracot">
                 <div class="logo">
                     <img src="../img/logo.png" alt="">
@@ -122,7 +123,7 @@
                             <input type="text" name="stotal" id="stotal" readonly>
                             <label>I.G.V.</label>
                             <input type="text" name="igv" id="igv" readonly>
-                            <label>Sub. Total</label>
+                            <label>Total</label>
                             <input type="text" name="total" id="total" readonly>
                         </div>
                         <div class="comentarios">

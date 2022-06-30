@@ -1520,7 +1520,7 @@
                                                     FORMAT(tb_pedidodet.cant_aprob,2) AS cant_aprobada,
                                                     tb_pedidodet.estadoItem,
                                                     cm_producto.ccodprod,
-                                                    cm_producto.cdesprod,
+                                                    UPPER(CONCAT_WS(' ',cm_producto.cdesprod, tb_pedidodet.observaciones)) AS cdesprod,
                                                     tb_unimed.cabrevia,
                                                     tb_pedidodet.nflgqaqc 
                                                 FROM
@@ -1538,6 +1538,7 @@
                     while ($rs = $sql->fetch()) {
                         
                         $salida .='<tr data-grabado="1" data-idprod="'.$rs['idprod'].'" data-codund="'.$rs['unid'].'" data-idx="'.$rs['iditem'].'">
+                                        <td><input type="checkbox" checked="checked"></td>    
                                         <td class="textoCentro">'.str_pad($filas++,3,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="pl20px">'.$rs['cdesprod'].'</td>
@@ -1667,6 +1668,7 @@
                                                         lg_proformadet.ffechaent,
                                                         lg_proformadet.precunit,
                                                         lg_proformadet.nitemprof,
+                                                        lg_proformadet.cdetalle,
                                                         DATE_FORMAT( lg_proformadet.fregsys, '%Y-%m-%d' ) AS emitido,
                                                         DATEDIFF(
                                                             lg_proformadet.ffechaent,
@@ -1701,6 +1703,7 @@
                                                          data-detped="'.$rs[0]['niddet'].'"
                                                          data-entrega="'.$rs[0]['ffechaent'].'"
                                                          data-dias="'.$rs[0]['dias'].'"
+                                                         data-detalle="'.$rs[0]['cdetalle'].'"
                                                          data-espec="'.$rs[0]['cdocPDF'].'"><input type="checkbox" name="opcion'.$nreg.'" class="chkVerificado"</td>';
            }
 
@@ -1725,7 +1728,7 @@
                                                     tb_pedidodet.estadoItem,
                                                     tb_pedidodet.docEspec,
                                                     cm_producto.ccodprod,
-                                                    cm_producto.cdesprod,
+                                                    UPPER(CONCAT_WS(' ',cm_producto.cdesprod, tb_pedidodet.observaciones)) AS cdesprod,
                                                     tb_unimed.cabrevia,
                                                     tb_pedidodet.nflgqaqc 
                                                 FROM
