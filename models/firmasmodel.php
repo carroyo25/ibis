@@ -10,37 +10,43 @@
             try {
                  $salida = "";
                  $sql = $this->db->connect()->query("SELECT
-                                                         tb_costusu.ncodcos,
-                                                         tb_costusu.ncodproy,
-                                                         tb_costusu.id_cuser,
-                                                         lg_ordencab.id_regmov,
-                                                         lg_ordencab.cnumero,
-                                                         lg_ordencab.ffechadoc,
-                                                         lg_ordencab.nNivAten,
-                                                         lg_ordencab.nEstadoDoc,
-                                                         lg_ordencab.ncodpago,
-                                                         lg_ordencab.nplazo,
-                                                         lg_ordencab.cdocPDF,
-                                                         UPPER( tb_pedidocab.concepto ) AS concepto,
-                                                         UPPER( tb_pedidocab.detalle ) AS detalle,
-                                                         UPPER(
-                                                         CONCAT_WS( tb_area.ccodarea, tb_area.cdesarea )) AS area,
-                                                         UPPER(
-                                                         CONCAT_WS( tb_proyectos.ccodproy, tb_proyectos.cdesproy )) AS costos,
-                                                         lg_ordencab.nfirmaLog,
-                                                         lg_ordencab.nfirmaFin,
-                                                         lg_ordencab.nfirmaOpe,
-                                                         tb_parametros.cdescripcion AS atencion 
-                                                     FROM
-                                                         tb_costusu
-                                                         INNER JOIN lg_ordencab ON tb_costusu.ncodproy = lg_ordencab.ncodpry
-                                                         INNER JOIN tb_pedidocab ON lg_ordencab.id_refpedi = tb_pedidocab.idreg
-                                                         INNER JOIN tb_area ON lg_ordencab.ncodarea = tb_area.ncodarea
-                                                         INNER JOIN tb_proyectos ON lg_ordencab.ncodpry = tb_proyectos.nidreg
-                                                         INNER JOIN tb_parametros ON lg_ordencab.nNivAten = tb_parametros.nidreg 
-                                                     WHERE
-                                                         tb_costusu.nflgactivo = 1
-                                                     AND lg_ordencab.nEstadoDoc = 59");
+                                                            lg_ordencab.id_regmov,
+                                                            lg_ordencab.cnumero,
+                                                            lg_ordencab.ffechadoc,
+                                                            lg_ordencab.nNivAten,
+                                                            lg_ordencab.nEstadoDoc,
+                                                            lg_ordencab.ncodpago,
+                                                            lg_ordencab.nplazo,
+                                                            lg_ordencab.nfirmaLog,
+                                                            lg_ordencab.nfirmaFin,
+                                                            lg_ordencab.nfirmaOpe,
+                                                            UPPER(tb_pedidocab.concepto) AS concepto,
+                                                            lg_ordencab.cdocPDF,
+                                                            UPPER(
+                                                                    CONCAT_WS(
+                                                                        ' ',
+                                                                        tb_area.ccodarea,
+                                                                        tb_area.cdesarea
+                                                                    )
+                                                                ) AS area,
+                                                            UPPER(
+                                                                    CONCAT_WS(
+                                                                        ' ',
+                                                                        tb_proyectos.ccodproy,
+                                                                        tb_proyectos.cdesproy
+                                                                    )
+                                                                ) AS costos,
+                                                            tb_proyectos.nidreg,
+                                                            tb_parametros.cdescripcion AS atencion
+                                                            FROM
+                                                            lg_ordencab
+                                                            INNER JOIN tb_pedidocab ON lg_ordencab.id_refpedi = tb_pedidocab.idreg
+                                                            INNER JOIN tb_area ON lg_ordencab.ncodarea = tb_area.ncodarea
+                                                            INNER JOIN tb_proyectos ON lg_ordencab.ncodpry = tb_proyectos.nidreg
+                                                            INNER JOIN tb_parametros ON lg_ordencab.nNivAten = tb_parametros.nidreg
+                                                            WHERE
+                                                                lg_ordencab.nEstadoDoc = 59
+                                                            ");
                  $sql->execute();
                  $rowCount = $sql->rowCount();
  
@@ -63,7 +69,7 @@
                                                          data-operaciones="'.$fope.'">
                                      <td class="textoCentro">'.str_pad($rs['cnumero'],4,0,STR_PAD_LEFT).'</td>
                                      <td class="textoCentro">'.date("d/m/Y", strtotime($rs['ffechadoc'])).'</td>
-                                     <td class="pl20px">'.$rs['detalle'].'</td>
+                                     <td class="pl20px">'.$rs['concepto'].'</td>
                                      <td class="pl20px">'.utf8_decode($rs['costos']).'</td>
                                      <td class="pl20px">'.$rs['area'].'</td>
                                      <td class="textoCentro '.strtolower($rs['atencion']).'">'.$rs['atencion'].'</td>

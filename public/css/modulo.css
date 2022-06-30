@@ -1383,6 +1383,10 @@
 }
 .ventanaBusqueda .textoBusqueda {
   padding: 10px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  gap: 10px;
 }
 
 .ventanaDialogo {

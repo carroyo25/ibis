@@ -130,7 +130,7 @@ updateItems = () =>{
     TABLA.each(function(){
         let INDICE  = $(this).data('idx'),
             OBSERVA = $(this).find('td').eq(6).children().val(),
-            ESTADO  = $(this).find('td').eq(7).children().prop('checked');
+            ESTADO  = $(this).find('td').eq(8).children().prop('checked');
         
         item= {};
 

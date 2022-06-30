@@ -1722,6 +1722,7 @@
                                                     tb_pedidodet.idtipo,
                                                     tb_pedidodet.nroparte,
                                                     tb_pedidodet.unid,
+                                                    UPPER(tb_pedidodet.docEspec) AS docEspec,
                                                     FORMAT(tb_pedidodet.cant_aprob,2) AS cant_aprob,
                                                     FORMAT(tb_pedidodet.cant_atend,2) AS cant_atendida,
                                                     FORMAT(tb_pedidodet.cant_resto,2) AS cant_pendiente,
@@ -1752,6 +1753,7 @@
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                         <td class="numeroTabla">'.$rs['cant_aprob'].'</td>
                                         <td></td>
+                                        <td class="pl20px">'.$rs['docEspec'].'</td>
                                         <td class="textoCentro"><input type="text"></td>
                                         <td class="textoCentro"><input type="checkbox" checked></td>
                                         <td class="textoCentro"><a href="'.$rs['docEspec'].'"><i class="far fa-sticky-note"></i</a></td>
@@ -1809,6 +1811,7 @@
 	                                                cm_entidad.cemail AS mail_entidad,
                                                     cm_entidad.nagenret,
                                                     lg_ordencab.cverificacion,
+                                                    lg_ordencab.ntotal,
 	                                                tb_pedidocab.nivelAten  
                                                 FROM
                                                     lg_ordencab
@@ -1884,15 +1887,17 @@
                                                     FORMAT( lg_ordendet.ncanti, 2 ) AS ncanti,
                                                     FORMAT( lg_ordendet.nunitario, 2 ) AS nunitario,
                                                     FORMAT( lg_ordendet.nigv, 2 ) AS nigv,
+                                                    FORMAT( tb_pedidodet.total - lg_ordendet.nigv,2) AS subtotal,
                                                     lg_ordendet.ntotal,
                                                     cm_producto.ccodprod,
-                                                    cm_producto.cdesprod,
+                                                    UPPER(CONCAT_WS(' ',cm_producto.cdesprod,tb_pedidodet.observaciones,tb_pedidodet.docEspec)) AS cdesprod,
                                                     cm_producto.nund,
                                                     tb_unimed.cabrevia,
-                                                    FORMAT(( lg_ordendet.ncanti * lg_ordendet.nunitario ) + lg_ordendet.nigv, 2 ) AS total,
+                                                    FORMAT( tb_pedidodet.total, 2 ) AS total,
                                                     tb_pedidodet.idpedido,
                                                     tb_pedidodet.nroparte,
-                                                    monedas.cabrevia AS moneda 
+                                                    monedas.cabrevia AS moneda,
+                                                    tb_pedidodet.total AS total_numero 
                                                 FROM
                                                     lg_ordendet
                                                     INNER JOIN cm_producto ON lg_ordendet.id_cprod = cm_producto.id_cprod
@@ -1907,7 +1912,7 @@
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()){
                         $salida.='<tr data-grabado="1" 
-                                        data-total="'.$rs['total'].'" 
+                                        data-total="'.$rs['total_numero'].'" 
                                         data-codprod="'.$rs['id_cprod'].'" 
                                         data-itPed="'.$rs['nidpedi'].'">
                                     <td class="textoCentro">'.str_pad($item,6,0,STR_PAD_LEFT).'</td>
@@ -1915,8 +1920,8 @@
                                     <td class="pl20px">'.$rs['cdesprod'].'</td>
                                     <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                     <td class="textoDerecha pr5px">'.$rs['ncanti'].'</td>
-                                    <td class="textoDerecha pr5px">'.$rs['nunitario'].'</td>
-                                    <td class="textoDerecha pr5px">'.$rs['nigv'].'</td>
+                                    <td class="textoDerecha pr5px">'.$rs['moneda'].$rs['subtotal'].'</td>
+                                    <td class="textoDerecha pr5px">'.$rs['moneda'].$rs['nigv'].'</td>
                                     <td class="textoDerecha pr5px">'.$rs['moneda'].$rs['total'].'</td>
                                     <td class="textoCentro">'.$rs['nroparte'].'</td>
                                     <td class="textoCentro">'.str_pad($rs['idpedido'],6,0,STR_PAD_LEFT).'</td>

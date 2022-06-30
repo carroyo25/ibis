@@ -39,6 +39,7 @@
                     <input type="hidden" name="nivel_atencion" id="nivel_atencion">
                     <input type="hidden" name="codigo_pago" id="codigo_pago">
                     <input type="hidden" name="sw" id="sw" value="0">
+                    <input type="hidden" name="detalle" id="detalle">
 
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
@@ -50,7 +51,7 @@
                                 <i class="far fa-file-pdf"></i> Vista Previa
                             </button>
                             <button type="button" id="requestAprob"  title="Solicitar Aprobacion" class="boton3" data-rol="5">
-                                <i class="fas fa-signature"></i> Aurtorizar Proceso
+                                <i class="fas fa-signature"></i> Autorizar Proceso
                             </button>
                             <button type="button" id="closeProcess" title="Cerrar" class="boton3">
                                 <i class="fas fa-window-close"></i>
@@ -83,10 +84,6 @@
                             </div>
                         </div>
                         <div class="seccion_medio">
-                            <div class="column2">
-                                <label for="detalle">Detalle:</label>
-                                <input type="text" name="detalle" id="detalle" class="cerrarLista" readonly>
-                            </div>
                             <div class="column4_55">
                                 <div class="column2_3957">
                                     <label for="moneda">Moneda :</label>
@@ -151,14 +148,6 @@
                     </div>
                     <div class="barraOpciones">
                         <span>Detalles</span>
-                        <div>
-                            <button type="button" id="loadRequest" title="Importar Pedido" class="cerrarLista boton3">
-                                <i class="fas fa-upload"></i> Importar Items
-                            </button>
-                            <button type="button" id="sendEntOrden" title="Enviar Proveedor" class="cerrarLista boton3">
-                                <i class="far fa-paper-plane"></i> Enviar Orden
-                            </button>
-                        </div>
                     </div>
                     <div class="tablaInterna mininoTablaInterna">
                         <table class="tabla" id="tablaDetalles">

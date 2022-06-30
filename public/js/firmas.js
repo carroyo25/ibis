@@ -50,7 +50,7 @@ $(function() {
                 $("#atencion").val(data.cabecera[0].cnombres);
                 $("#transporte").val(data.cabecera[0].transporte);
                 $("#lentrega").val(data.cabecera[0].cdesalm);
-                $("#total").val(data.total);
+                $("#total").val(data.cabecera[0].ntotal);
 
                 $("#estado")
                     .removeClass()

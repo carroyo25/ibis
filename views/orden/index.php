@@ -48,6 +48,7 @@
                     <input type="hidden" name="nivel_atencion" id="nivel_atencion">
                     <input type="hidden" name="codigo_pago" id="codigo_pago">
                     <input type="hidden" name="sw" id="sw" value="0">
+                    <input type="hidden" name="detalle" id="detalle">
 
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
@@ -98,10 +99,6 @@
                             </div>
                         </div>
                         <div class="seccion_medio">
-                            <div class="column2">
-                                <label for="detalle">Detalle:</label>
-                                <input type="text" name="detalle" id="detalle" class="cerrarLista" readonly>
-                            </div>
                             <div class="column4_55">
                                 <div class="column2_3957">
                                     <label for="moneda">Moneda :</label>

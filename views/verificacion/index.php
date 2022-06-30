@@ -98,10 +98,11 @@
                                 <tr>
                                     <th width="3%">Item</th>
                                     <th width="7%">Codigo</th>
-                                    <th>Descripcion</th>
+                                    <th width="30%">Descripcion</th>
                                     <th>Und.</th>
                                     <th width="3%">Cant.</br>Aprobada</th>
                                     <th>Nro.</br>Parte</th>
+                                    <th>Especificaciones</th>
                                     <th>Observaciones</th>
                                     <th>...</th>
                                     <th>...</th>

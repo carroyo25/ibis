@@ -60,7 +60,7 @@ $(function(){
                 $("#atencion").val(data.cabecera[0].cnombres);
                 $("#transporte").val(data.cabecera[0].transporte);
                 $("#lentrega").val(data.cabecera[0].cdesalm);
-                $("#total").val(data.total);
+                $("#total").val(data.cabecera[0].ntotal);
 
                 $("#estado")
                     .removeClass()
@@ -76,12 +76,12 @@ $(function(){
 
                 $("#sw").val(1);
 
-                grabado = true;
             },
             "json"
         );
     
         accion = "u";
+        grabado = true;
         $("#proceso").fadeIn();
     
         return false;
@@ -96,6 +96,7 @@ $(function(){
         $("form")[0].reset();
         $("#proceso").fadeIn();
         $("#sw").val(0);
+        $("#codigo_estado").val(0);
 
         accion = 'n';
         grabado = false;
@@ -170,8 +171,11 @@ $(function(){
     $("#loadRequest").click(function (e) { 
         e.preventDefault();
 
-        //if ($("#codigo_estado").val() == 59)
-          //  return false;
+        if ($("#codigo_estado").val() == 60){
+            mostrarMensaje("La orden no se puede modificar","mensaje_error");
+            return false;
+        }
+            
         
         $("#esperar").fadeIn();
 
@@ -306,7 +310,7 @@ $(function(){
                     $("#telefono_contacto").val(data.entidad[0].telefono_contacto)
 
                     let totalOrden = sumarTotales($("#tablaDetalles tbody tr"));
-                    $("#total").val(totalOrden.toFixed(2)); 
+                    $("#total").val(parseFloat(totalOrden).toFixed(2)); 
                 },
                 "json"
             );
@@ -410,6 +414,12 @@ $(function(){
     $("#saveOrden").click(function (e) { 
         e.preventDefault();
 
+        let result = {};
+    
+        $.each($("#formProceso").serializeArray(),function(){
+                result[this.name] = this.value;
+        })
+
         try {
             if ($("#codigo_estado").val() == 59) throw "La orden esta en firmas.";
             if (result['numero'] == "") throw "No tiene numero de orden";
@@ -419,12 +429,6 @@ $(function(){
             if ($("#tablaDetalles tbody tr") .length <= 0) throw "No tiene productos seleccionados"
 
             grabado = true;
-
-            let result = {};
-    
-            $.each($("#formProceso").serializeArray(),function(){
-                result[this.name] = this.value;
-            })
 
             if ( accion == 'n' ){
                 $.post(RUTA+"orden/nuevoRegistro", {cabecera:result,
@@ -457,8 +461,9 @@ $(function(){
         e.preventDefault();
 
         try {
+            console.log(grabado);
             if ($("#codigo_estado").val() == 59) throw "La orden esta en firmas.";
-            if (grabado) throw "Por favor grabar la orden";
+            if (!grabado) throw "Por favor grabar la orden";
 
             $.post(RUTA+"orden/buscaRol", {rol:$(this).data("rol")},
                 function (data, textStatus, jqXHR) {

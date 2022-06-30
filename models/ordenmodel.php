@@ -40,8 +40,7 @@
                                                         INNER JOIN tb_parametros ON lg_ordencab.nNivAten = tb_parametros.nidreg 
                                                     WHERE
                                                         tb_costusu.id_cuser = :user 
-                                                        AND tb_costusu.nflgactivo = 1
-                                                        AND lg_ordencab.nEstadoDoc = 59");
+                                                        AND tb_costusu.nflgactivo = 1");
                 $sql->execute(["user"=>$user]);
                 $rowCount = $sql->rowCount();
 
@@ -64,7 +63,7 @@
                                                         data-operaciones="'.$fope.'">
                                     <td class="textoCentro">'.str_pad($rs['cnumero'],4,0,STR_PAD_LEFT).'</td>
                                     <td class="textoCentro">'.date("d/m/Y", strtotime($rs['ffechadoc'])).'</td>
-                                    <td class="pl20px">'.$rs['detalle'].'</td>
+                                    <td class="pl20px">'.$rs['concepto'].'</td>
                                     <td class="pl20px">'.utf8_decode($rs['costos']).'</td>
                                     <td class="pl20px">'.$rs['area'].'</td>
                                     <td class="textoCentro '.strtolower($rs['atencion']).'">'.$rs['atencion'].'</td>
@@ -96,7 +95,7 @@
                                                         CONCAT_WS( ' ', tb_area.ccodarea, tb_area.cdesarea )) AS area,
                                                         cm_producto.id_cprod,
                                                         cm_producto.ccodprod,
-                                                        cm_producto.cdesprod,
+                                                        UPPER(CONCAT_WS(' ',cm_producto.cdesprod,tb_pedidodet.observaciones,tb_pedidodet.docEspec)) AS cdesprod,
                                                         tb_pedidodet.idpedido,
                                                         tb_pedidocab.emision,
                                                         UPPER( tb_pedidocab.concepto ) AS concepto,
@@ -122,7 +121,8 @@
                                                         monedas.nidreg AS moneda,
                                                         pagos.cdescripcion AS pago,
                                                         pagos.ccod,
-                                                        lg_proformacab.cnumero 
+                                                        lg_proformacab.cnumero,
+                                                        tb_pedidodet.total AS total_numero
                                                     FROM
                                                         tb_pedidodet
                                                         INNER JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
@@ -152,7 +152,7 @@
                                                        data-cantidad="'.$rs['cantidad'].'"
                                                        data-precio="'.$rs['precio'].'"
                                                        data-igv="'.$rs['igv'].'"
-                                                       data-total="'.$rs['total'].'"
+                                                       data-total="'.$rs['total_numero'].'"
                                                        data-nroparte="'.$rs['nroparte'].'"
                                                        data-moneda="'.$rs['moneda'].'"
                                                        data-abrmoneda="'.$rs['abrmoneda'].'"
@@ -229,7 +229,7 @@
 
             $pdf = new PDF($titulo,$condicion,$cabecera['emision'],$cabecera['moneda'],$entrega,
                             $cabecera['lentrega'],$cabecera['proforma'],$cabecera['fentrega'],$cabecera['cpago'],$cabecera['total'],
-                            $cabecera['costos'],$cabecera['detalle'],$_SESSION['nombres'],$cabecera['entidad'],$cabecera['ruc_entidad'],
+                            $cabecera['costos'],$cabecera['concepto'],$_SESSION['nombres'],$cabecera['entidad'],$cabecera['ruc_entidad'],
                             $cabecera['direccion_entidad'],$cabecera['telefono_entidad'],$cabecera['correo_entidad'],$cabecera['retencion'],
                             $cabecera['atencion'],$cabecera['telefono_contacto'],$cabecera['correo_contacto']);
 
@@ -402,6 +402,42 @@
             }    
         }
 
+        private function grabarDetalles($codigo,$detalles,$costos){
+            try {
+                $indice = $this->obtenerIndice($codigo,"SELECT id_regmov AS numero FROM lg_ordencab WHERE lg_ordencab.cverificacion =:id");
+                
+                $datos = json_decode($detalles);
+                
+                $nreg = count($datos);
+
+                for ($i=0; $i < $nreg; $i++) { 
+                    if(!$datos[$i]->grabado) {
+                        $sql = $this->db->connect()->prepare("INSERT INTO lg_ordendet SET id_regmov=:id,niddeta=:nidp,id_cprod=:cprod,ncanti=:cant,
+                                                                                    nunitario=:unit,nigv=:igv,ntotal=:total,
+                                                                                    nestado=:est,cverifica=:verif,nidpedi=:pedido,
+                                                                                    nmonref=:moneda,ncodcos=:costos");
+                        $sql->execute(["id"=>$indice,
+                                        "nidp"=>$datos[$i]->itped,
+                                        "pedido"=>$datos[$i]->pedido,
+                                        "cprod"=>$datos[$i]->codprod,
+                                        "cant"=>$datos[$i]->cantidad,
+                                        "unit"=>$datos[$i]->precio,
+                                        "igv"=>$datos[$i]->igv,
+                                        "total"=>$datos[$i]->total,
+                                        "est"=>1,
+                                        "verif"=>$codigo,
+                                        "moneda"=>$datos[$i]->moneda,
+                                        "costos"=>$costos]);
+                    }//aca poner para la modificacion de ordenes
+                    
+                }
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+
         public function modificarOrden($cabecera,$detalles,$comentarios){
             try {
                 $entrega = $this->calcularDias($cabecera['fentrega']);
@@ -554,9 +590,9 @@
                         return array("mensaje"=>"Hubo un error, en el envio",
                                     "clase"=>"mensaje_error");
                     }else {
-                        $this->actualizarCabeceraPedido(60,$cabecera['codigo_pedido'],$cabecera['codigo_orden']);
-                        $this->actualizarDetallesPedido(60,$detalles,$cabecera['codigo_orden']);
-                        $this->actualizarCabeceraOrden(60,$cabecera['codigo_orden']);
+                        $this->actualizarCabeceraPedido(59,$cabecera['codigo_pedido'],$cabecera['codigo_orden']);
+                        $this->actualizarDetallesPedido(59,$detalles,$cabecera['codigo_orden']);
+                        $this->actualizarCabeceraOrden(59,$cabecera['codigo_orden']);
                         return array("mensaje"=>"Correo enviado",
                                     "clase"=>"mensaje_correcto");
                     }
@@ -688,7 +724,7 @@
                                                     INNER JOIN tb_parametros AS bancos ON cm_entidadbco.ncodbco = bancos.nidreg
                                                     INNER JOIN tb_parametros AS monedas ON cm_entidadbco.cmoneda = monedas.nidreg 
                                                 WHERE
-                                                    cm_entidadbco.nflgactivo = 1 
+                                                    cm_entidadbco.nflgactivo = 7 
                                                     AND cm_entidadbco.id_centi = :entidad");
                 $sql->execute(["entidad"=>$entidad]);
                 $rowCount = $sql->rowCount();
@@ -748,39 +784,6 @@
             }
         }
 
-        private function grabarDetalles($codigo,$detalles,$costos){
-            try {
-                $indice = $this->obtenerIndice($codigo,"SELECT id_regmov AS numero FROM lg_ordencab WHERE lg_ordencab.cverificacion =:id");
-                $datos = json_decode($detalles);
-                $nreg = count($datos);
-
-                for ($i=0; $i < $nreg; $i++) { 
-                    if($datos[$i]->grabado) {
-                        $sql = $this->db->connect()->prepare("INSERT INTO lg_ordendet SET id_regmov=:id,niddeta=:nidp,id_cprod=:cprod,ncanti=:cant,
-                                                                                    nunitario=:unit,nigv=:igv,ntotal=:total,
-                                                                                    nestado=:est,cverifica=:verif,nidpedi=:pedido,
-                                                                                    nmonref=:moneda,ncodcos=:costos");
-                        $sql->execute(["id"=>$indice,
-                                        "nidp"=>$datos[$i]->itped,
-                                        "pedido"=>$datos[$i]->pedido,
-                                        "cprod"=>$datos[$i]->codprod,
-                                        "cant"=>$datos[$i]->cantidad,
-                                        "unit"=>$datos[$i]->precio,
-                                        "igv"=>$datos[$i]->igv,
-                                        "total"=>$datos[$i]->total,
-                                        "est"=>1,
-                                        "verif"=>$codigo,
-                                        "moneda"=>$datos[$i]->moneda,
-                                        "costos"=>$costos]);
-                    }
-                    
-                }
-            } catch (PDOException $th) {
-                echo "Error: ".$th->getMessage();
-                return false;
-            }
-        }
-
         private function actualizarCabeceraPedido($estado,$pedido,$orden){
             try {
                 $sql = $this->db->connect()->prepare("UPDATE tb_pedidocab SET estadodoc=:est,idorden=:orden WHERE idreg=:id");
@@ -801,7 +804,7 @@
                     $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet SET estadoItem=:est,idorden=:orden WHERE iditem=:item");
                     $sql->execute(["item"=>$datos[$i]->itped,
                                     "est"=>$estado,
-                                    "orden"=>$orden]);
+                                    "orden"=>$orden['numero']]);
                 }
                 
             } catch (PDOException $th) {
