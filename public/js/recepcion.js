@@ -149,6 +149,7 @@ $(function(){
             $.post(RUTA+"recepcion/numeroIngreso", {id:codigo},
                 function (data, textStatus, jqXHR) {
                     $("#numero").val(data.numero);
+                    $("#movimiento").val(data.movimiento);
                 },
                 "json"
             );

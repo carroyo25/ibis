@@ -40,8 +40,9 @@
                                                         INNER JOIN tb_parametros ON lg_ordencab.nNivAten = tb_parametros.nidreg 
                                                     WHERE
                                                         tb_costusu.id_cuser = :user 
-                                                        AND tb_costusu.nflgactivo = 1");
-                $sql->execute(["user"=>$user]);
+                                                        AND tb_costusu.nflgactivo = 1
+                                                        AND lg_ordencab.nEstadoDoc BETWEEN 58 AND 59");
+                $sql->execute(["user"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0){
@@ -437,7 +438,6 @@
             }
         }
 
-
         public function modificarOrden($cabecera,$detalles,$comentarios){
             try {
                 $entrega = $this->calcularDias($cabecera['fentrega']);
@@ -590,11 +590,12 @@
                         return array("mensaje"=>"Hubo un error, en el envio",
                                     "clase"=>"mensaje_error");
                     }else {
-                        $this->actualizarCabeceraPedido(59,$cabecera['codigo_pedido'],$cabecera['codigo_orden']);
-                        $this->actualizarDetallesPedido(59,$detalles,$cabecera['codigo_orden']);
-                        $this->actualizarCabeceraOrden(59,$cabecera['codigo_orden']);
+                        $this->actualizarCabeceraPedido(60,$cabecera['codigo_pedido'],$cabecera['codigo_orden']);
+                        $this->actualizarDetallesPedido(60,$detalles,$cabecera['codigo_orden']);
+                        $this->actualizarCabeceraOrden(60,$cabecera['codigo_orden']);
                         return array("mensaje"=>"Correo enviado",
-                                    "clase"=>"mensaje_correcto");
+                                    "clase"=>"mensaje_correcto",
+                                    "ordenes"=>$this->listarOrdenes($_SESSION['iduser']));
                     }
                         
                     $mail->clearAddresses();
@@ -804,7 +805,7 @@
                     $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet SET estadoItem=:est,idorden=:orden WHERE iditem=:item");
                     $sql->execute(["item"=>$datos[$i]->itped,
                                     "est"=>$estado,
-                                    "orden"=>$orden['numero']]);
+                                    "orden"=>$orden]);
                 }
                 
             } catch (PDOException $th) {

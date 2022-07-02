@@ -37,6 +37,7 @@
                     <input type="hidden" name="codigo_verificacion" id="codigo_verificacion">
                     <input type="hidden" name="codigo_recepcion" id="codigo_recepcion">
                     <input type="hidden" name="codigo_ingreso" id="codigo_ingreso" value="1">
+                    <input type="hidden" name="detalle" id="detalle">
 
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
@@ -46,9 +47,6 @@
                             </button>
                             <button type="button" id="importData" title="Importar Orden" class="boton3">
                                 <i class="fab fa-wpexplorer"></i> Importar Orden
-                            </button>
-                            <button type="button" id="importData" title="Guia Remisión" class="boton3">
-                                <i class="fab fa-wpexplorer"></i> Importar Guia Remisión
                             </button>
                             <button type="button" id="closeDocument" title="Cerrar Nota" class="boton3">
                                 <i class="far fa-comments"></i> Cerrar Nota
@@ -126,21 +124,17 @@
                                 <input type="text" name="concepto" id="concepto" readonly>
                             </div>
                             <div class="column2">
-                                <label for="detalle">Detalle:</label>
-                                <input type="text" name="detalle" id="detalle" readonly>
-                            </div>
-                        </div>
-                        <div class="seccion_derecha">
-                            <div class="column2">
-                                <label for="aprueba">Aprueba:</label>
-                                <input type="text" name="aprueba" id="aprueba" class="mostrarLista busqueda" placeholder="Elija opción"
-                                    readonly>
-                                <div class="lista" id="listaAprueba">
-                                   <ul>
-                                       <?php echo $this->listaAprueba?>
-                                   </ul> 
+                                    <label for="aprueba">Aprueba:</label>
+                                    <input type="text" name="aprueba" id="aprueba" class="mostrarLista busqueda" placeholder="Elija opción"
+                                        readonly>
+                                    <div class="lista" id="listaAprueba">
+                                    <ul>
+                                        <?php echo $this->listaAprueba?>
+                                    </ul> 
+                                    </div>
                                 </div>
                             </div>
+                        <div class="seccion_derecha">
                             <div class="column2">
                                 <label for="tipo">Tipo Mov.:</label>
                                 <input type="text" name="tipo" id="tipo" class="mostrarLista busqueda" placeholder="Elija opción"
@@ -321,7 +315,7 @@
             <table id="tablaSeries" class="tabla">
                 <thead>
                     <tr>
-                        <th>Producto</th>
+                        <th>Item</th>
                         <th>Serie</th>
                     </tr>
                 </thead>

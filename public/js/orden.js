@@ -171,7 +171,7 @@ $(function(){
     $("#loadRequest").click(function (e) { 
         e.preventDefault();
 
-        if ($("#codigo_estado").val() == 60){
+        if ($("#codigo_estado").val() == 59){
             mostrarMensaje("La orden no se puede modificar","mensaje_error");
             return false;
         }
@@ -461,7 +461,6 @@ $(function(){
         e.preventDefault();
 
         try {
-            console.log(grabado);
             if ($("#codigo_estado").val() == 59) throw "La orden esta en firmas.";
             if (!grabado) throw "Por favor grabar la orden";
 
@@ -537,10 +536,15 @@ $(function(){
             result[this.name] = this.value;
         })
 
+        $("#esperar").fadeIn();
         $.post(RUTA+"orden/envioOrden", {cabecera:result,
                                         detalles:JSON.stringify(detalles())},
             function (data, textStatus, jqXHR) {
                 mostrarMensaje(data.mensaje,data.clase);
+                $("#tablaPrincipal tbody")
+                    .empty()
+                    .append(data.ordenes);
+                $("#esperar").fadeOut();
             },
             "json"
         );

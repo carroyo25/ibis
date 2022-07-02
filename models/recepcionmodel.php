@@ -288,7 +288,7 @@
                                                 lg_ordendet.nidpedi,
                                                 lg_ordendet.id_cprod,
                                                 cm_producto.ccodprod,
-                                                cm_producto.cdesprod,
+                                                UPPER(CONCAT_WS(' ',cm_producto.cdesprod,tb_pedidodet.observaciones,tb_pedidodet.docEspec)) AS cdesprod,
                                                 cm_producto.nund,
                                                 tb_unimed.cabrevia,
                                                 tb_pedidodet.idpedido,
@@ -314,7 +314,7 @@
                                     <td class="textoCentro"><a href="'.$rs['nitemord'].'"><i class="fas fa-barcode"></i></a></td>
                                     <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
                                     <td class="textoCentro">'.$rs['ccodprod'].'</td>
-                                    <td>'.$rs['cdesprod'].'</td>
+                                    <td class="pl20px">'.$rs['cdesprod'].'</td>
                                     <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                     <td class="textoDerecha pr20px">'.$rs['cantidad'].'</td>
                                     <td><input type="number" step="any" placeholder="0.00" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"></td>

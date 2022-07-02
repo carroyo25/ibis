@@ -996,7 +996,8 @@
                 $result = $sql->fetchAll();
 
                 return $salida = array("numero"=>str_pad($result[0]['numero'] + 1,6,0,STR_PAD_LEFT),
-                                        "codigo"=>uniqid()); 
+                                        "codigo"=>uniqid(),
+                                        "movimiento"=>str_pad($this->genNumberIngresos($id)+1,6,0,STR_PAD_LEFT)); 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage;
                 return false;
@@ -2094,27 +2095,34 @@
         private function detallesNota($indice,$clase){
             try {
                 $salida='<tr><td colspan="12">No hay registros</td></tr>';
-                $indice = 9;
                 $sql=$this->db->connect()->prepare("SELECT
                                                     alm_recepdet.niddeta,
                                                     alm_recepdet.id_regalm,
                                                     alm_recepdet.ncodalm1,
                                                     alm_recepdet.id_cprod,
-                                                    FORMAT(alm_recepdet.ncantidad,2) AS ncantidad,
+                                                    FORMAT(alm_recepdet.ncantidad, 2) AS ncantidad,
                                                     alm_recepdet.niddetaPed,
                                                     alm_recepdet.niddetaOrd,
-                                                    cm_producto.ccodprod,
-                                                    cm_producto.cdesprod,
-                                                    FORMAT( lg_ordendet.ncanti, 2 ) AS cantidad,
                                                     alm_recepdet.nestadoreg,
+                                                    cm_producto.ccodprod,
+                                                    UPPER(
+                                                        CONCAT_WS(
+                                                            ' ',
+                                                            cm_producto.cdesprod,
+                                                            tb_pedidodet.observaciones,
+                                                            tb_pedidodet.docEspec
+                                                        )
+                                                    ) AS cdesprod,
+                                                    FORMAT(lg_ordendet.ncanti, 2) AS cantidad,
                                                     tb_unimed.cabrevia,
                                                     alm_recepdet.cobserva,
-                                                    alm_recepdet.fvence  
+                                                    alm_recepdet.fvence
                                                 FROM
                                                     alm_recepdet
-                                                    INNER JOIN cm_producto ON alm_recepdet.id_cprod = cm_producto.id_cprod
-                                                    INNER JOIN lg_ordendet ON alm_recepdet.niddetaPed = lg_ordendet.nitemord
-                                                    INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed 
+                                                INNER JOIN tb_pedidodet ON alm_recepdet.niddetaPed = tb_pedidodet.iditem
+                                                INNER JOIN cm_producto ON alm_recepdet.id_cprod = cm_producto.id_cprod
+                                                INNER JOIN lg_ordendet ON alm_recepdet.niddetaOrd = lg_ordendet.nitemord
+                                                INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
                                                 WHERE
                                                     alm_recepdet.id_regalm = :id");
                 $sql->execute(['id'=>$indice]);
@@ -2155,6 +2163,7 @@
         private function seriesNota($indice){
             try {
                 $salida="";
+                $item = 1;
                 $sql=$this->db->connect()->prepare("SELECT
                                                     alm_recepserie.ncodserie,
                                                     alm_recepserie.id_cprod,
@@ -2174,7 +2183,7 @@
                 if ($rowCount > 0) {
                     while($rs = $sql->fetch()){
                         $salida .= '<tr>
-                                        <td>'.$rs['cdesprod'].'</td>
+                                        <td>'.$item++.'</td>
                                         <td>'.$rs['cdesserie'].'</td>
                                     </tr>';
                     }
