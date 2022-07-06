@@ -51,5 +51,13 @@
         function actualizaDespachos(){
             echo $this->model->listarNotasDespacho();
         }
+
+        function cerrarNota(){
+            echo $this->model->actualizarProcesos($_POST['detalles'],
+                                                    $_POST['despacho'],
+                                                    $_POST['pedido'],
+                                                    $_POST['orden'],
+                                                    $_POST['ingreso']);
+        }
     }
 ?>

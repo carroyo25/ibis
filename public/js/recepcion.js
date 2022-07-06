@@ -61,6 +61,8 @@ $(function(){
                 $(".listaArchivos")
                     .empty()
                     .append(data.adjuntos);
+
+                $("#items").val($("#tablaDetalles tbody tr").length);
             },
             "json"
         );

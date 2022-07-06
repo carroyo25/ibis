@@ -339,7 +339,6 @@ $(function() {
 
     $("#printDocument").click(function (e) { 
         e.preventDefault();
-        
         try {
 
             let result = {};
@@ -349,7 +348,7 @@ $(function() {
             });
 
             if (result['numero_guia'] == "") throw "Ingrese el Nro. de Guia";
-            if (result['codigo_origen'] == "") throw "Seleccione Almacen oriegn";
+            if (result['codigo_origen'] == "") throw "Seleccione Almacen origen";
             if (result['codigo_destino'] == "") throw "Seleccione Almacen destino";
             if (result['codigo_entidad'] == "") throw "Seleccione la empresa de transportes";
             if (result['codigo_autoriza'] == "") throw "Seleccione la persona que autoriza";
@@ -368,24 +367,14 @@ $(function() {
                                                 orden:$("#codigo_orden").val(),
                                                 ingreso:$("#codigo_ingreso").val(),},
                 function (data, textStatus, jqXHR) {
-                    $.post(RUTA+"salida/actualizaDespachos",
-                        function (data, textStatus, jqXHR) {
-                            $(".itemsTabla table tbody")
-                                .empty()
-                                .append(data);
-
-                            $("#proceso").fadeOut(function(){
-                                grabado = false;
-                                $("form")[0].reset();
-                                $("form")[1].reset();
-                                $("#vistadocumento").fadeOut();
-                            });
-                        },
-                        "text"
-                    );
-                },
-                "text"
-            );
+                        
+                       if (data !== ""){
+                            $("#iFramePdf").attr("src",data);
+                            $("#vistadocumento").fadeOut();
+                       }
+                    },
+                    "text"
+                );
 
 
         } catch (error) {
@@ -394,6 +383,49 @@ $(function() {
 
         return false;
     });
+
+    $("#iFramePdf").on('load', function() {
+        $("iframe")[1].contentWindow.print();
+    })
+
+    $("#updateDocument").click(function(e) {
+        e.preventDefault()
+
+        try {
+
+            let result = {};
+
+            $.each($("#formProceso").serializeArray(),function(){
+                result[this.name] = this.value;
+            });
+
+            $.post(RUTA+"salida/cerrarNota", {cabecera:result,
+                                              detalles:JSON.stringify(detalles()),
+                                              despacho:$("#codigo_salida").val(),
+                                              pedido:$("#codigo_pedido").val(),
+                                              orden:$("#codigo_orden").val(),
+                                              ingreso:$("#codigo_ingreso").val(),},
+                function (data, textStatus, jqXHR) {
+                    $(".itemsTabla table tbody")
+                    .empty()
+                    .append(data);
+
+                    $("#proceso").fadeOut(function(){
+                        grabado = false;
+                        $("form")[0].reset();
+                        $("form")[1].reset();
+                    
+                    });
+                },"text");
+
+
+        } catch (error) {
+            mostrarMensaje(error,'mensaje_error');
+        }
+
+        return false;
+    })
+
 })
 
 detalles = () =>{
@@ -445,4 +477,10 @@ detalles = () =>{
     })
 
     return DETALLES; 
+}
+
+printTrigger = (elementId) => {
+    let getMyFrame = document.getElementById(elementId); 
+        getMyFrame.focus(); 
+        getMyFrame.contentWindow.print();
 }

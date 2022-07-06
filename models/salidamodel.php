@@ -189,27 +189,36 @@
             try {
                 $salida = "";
                 $sql = $this->db->connect()->prepare("SELECT
-                                                    alm_recepdet.niddeta,
-                                                    alm_recepdet.id_regalm,
-                                                    alm_recepdet.ncodalm1,
-                                                    alm_recepdet.id_cprod,
-                                                    FORMAT( alm_recepdet.ncantidad, 2 ) AS ncantidad,
-                                                    alm_recepdet.niddetaPed,
-                                                    alm_recepdet.niddetaOrd,
-                                                    cm_producto.ccodprod,
-                                                    cm_producto.cdesprod,
-                                                    FORMAT( lg_ordendet.ncanti, 2 ) AS cantidad,
-                                                    alm_recepdet.nestadoreg,
-                                                    tb_unimed.cabrevia,
-                                                    alm_recepdet.cobserva,
-                                                    alm_recepdet.fvence 
-                                                FROM
-                                                    alm_recepdet
-                                                    INNER JOIN cm_producto ON alm_recepdet.id_cprod = cm_producto.id_cprod
-                                                    INNER JOIN lg_ordendet ON alm_recepdet.niddetaPed = lg_ordendet.nitemord
-                                                    INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed 
-                                                WHERE
-                                                    alm_recepdet.id_regalm = :id");
+                                                        alm_recepdet.niddeta,
+                                                        alm_recepdet.id_regalm,
+                                                        alm_recepdet.ncodalm1,
+                                                        alm_recepdet.id_cprod,
+                                                        FORMAT(alm_recepdet.ncantidad, 2) AS ncantidad,
+                                                        alm_recepdet.niddetaPed,
+                                                        alm_recepdet.niddetaOrd,
+                                                        alm_recepdet.nestadoreg,
+                                                        cm_producto.ccodprod,
+                                                        alm_recepdet.fvence,
+                                                        UPPER(
+                                                                CONCAT_WS(
+                                                                    ' ',
+                                                                    cm_producto.cdesprod,
+                                                                    tb_pedidodet.observaciones,
+                                                                    tb_pedidodet.docEspec
+                                                                )
+                                                            ) AS cdesprod,
+                                                        tb_unimed.cabrevia,
+                                                        FORMAT(lg_ordendet.ncanti, 2) AS cantidad,
+                                                        alm_recepserie.cdesserie
+                                                        FROM
+                                                        alm_recepdet
+                                                        INNER JOIN tb_pedidodet ON alm_recepdet.niddetaPed = tb_pedidodet.iditem
+                                                        INNER JOIN cm_producto ON alm_recepdet.id_cprod = cm_producto.id_cprod
+                                                        INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                        INNER JOIN lg_ordendet ON alm_recepdet.niddetaOrd = lg_ordendet.nitemord
+                                                        INNER JOIN alm_recepserie ON alm_recepdet.niddeta = alm_recepserie.ncodserie
+                                                        WHERE
+                                                            alm_recepdet.id_regalm = :id");
                 $sql->execute(["id"=>$id]);
                 $rowCount = $sql->rowCount();
 
@@ -225,14 +234,14 @@
                                         data-itempedido="'.$rs['niddetaPed'].'" 
                                         data-itemingreso="'.$rs['niddeta'].'"
                                         data-idproducto ="'.$rs['id_cprod'].'">
-                                        <td class="textoCentro">...</td>
+                                        <td class="textoCentro"><input type="checkbox"></td>
                                         <td class="textoCentro">'.str_pad($item,3,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="pl20px">'.$rs['cdesprod'].'</td>
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                         <td><input type="number" step="any" value="'.$rs['cantidad'].'" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"></td>
                                         <td class="pl20px"><input type="text"></td>
-                                        <td class="textoCentro"></td>
+                                        <td class="textoCentro">'.$rs['cdesserie'].'</td>
                                         <td class="textoCentro">'.$fecha.'</td>
                                         <td><select name="estado" disabled>'. $estados .'</select></td>
                                     </tr>';
@@ -477,27 +486,37 @@
             try {
                 $salida="";
                 $sql=$this->db->connect()->prepare("SELECT
-                                                    alm_despachodet.niddeta,
-                                                    alm_despachodet.id_regalm,
-                                                    alm_despachodet.id_cprod,
-                                                    FORMAT(alm_despachodet.ncantidad,2) AS cantidad,
-                                                    alm_despachodet.niddetaOrd,
-                                                    alm_despachodet.niddetaPed,
+                                                    alm_recepdet.niddeta,
+                                                    alm_recepdet.id_regalm,
+                                                    alm_recepdet.ncodalm1,
+                                                    alm_recepdet.id_cprod,
+                                                    FORMAT(alm_recepdet.ncantidad, 2) AS ncantidad,
+                                                    alm_recepdet.niddetaPed,
+                                                    alm_recepdet.niddetaOrd,
+                                                    alm_recepdet.nestadoreg,
                                                     cm_producto.ccodprod,
-                                                    cm_producto.cdesprod,
+                                                    alm_recepdet.fvence,
+                                                    UPPER(
+                                                            CONCAT_WS(
+                                                                ' ',
+                                                                cm_producto.cdesprod,
+                                                                tb_pedidodet.observaciones,
+                                                                tb_pedidodet.docEspec
+                                                            )
+                                                        ) AS cdesprod,
                                                     tb_unimed.cabrevia,
-                                                    tb_unimed.nfactor,
-                                                    alm_despachodet.cobserva,
-                                                    alm_despachodet.fvence,
-                                                    alm_despachodet.cSerie,
-                                                    alm_despachodet.nestadoreg 
-                                                FROM
-                                                    alm_despachodet
-                                                    INNER JOIN cm_producto ON alm_despachodet.id_cprod = cm_producto.id_cprod
-                                                    INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed 
-                                                WHERE
-                                                    alm_despachodet.id_regalm = :indice");
-                $sql->execute(["indice"=>$indice]);
+                                                    FORMAT(lg_ordendet.ncanti, 2) AS cantidad,
+                                                    alm_recepserie.cdesserie
+                                                    FROM
+                                                    alm_recepdet
+                                                    INNER JOIN tb_pedidodet ON alm_recepdet.niddetaPed = tb_pedidodet.iditem
+                                                    INNER JOIN cm_producto ON alm_recepdet.id_cprod = cm_producto.id_cprod
+                                                    INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                    INNER JOIN lg_ordendet ON alm_recepdet.niddetaOrd = lg_ordendet.nitemord
+                                                    INNER JOIN alm_recepserie ON alm_recepdet.niddeta = alm_recepserie.ncodserie
+                                                    WHERE
+                                                        alm_recepdet.id_regalm = :id");
+                $sql->execute(["id"=>$indice]);
 
                 $rowCount = $sql->rowCount();
 
@@ -507,7 +526,7 @@
 
                         $estados = $this->listarSelect(13,$rs['nestadoreg']);
 
-                        $fecha = $rs['fvence'] == "" ? "" : date("d/m/Y", strtotime($rs['fvence']));
+                        $fecha = $rs['fvence'] == "0000-00-00" ? "" : date("d-m-Y", strtotime($rs['fvence']));
 
                         $salida.='<tr data-itemorden="'.$rs['niddetaOrd'].'" 
                                         data-itempedido="'.$rs['niddetaPed'].'" 
@@ -520,7 +539,7 @@
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                         <td><input type="number" step="any" value="'.$rs['cantidad'].'" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"></td>
                                         <td class="pl20px"><input type="text"></td>
-                                        <td class="textoCentro"></td>
+                                        <td class="textoCentro">'.$rs['cdesserie'].'</td>
                                         <td class="textoCentro">'.$fecha.'</td>
                                         <td><select name="estado" disabled>'. $estados .'</select></td>
                                     </tr>';
@@ -537,8 +556,7 @@
         public function grabarGuiaRemision($cabecera,$detalles,$despacho,$pedido,$orden,$ingreso){
             try {
                 $filename = "public/documentos/guias_remision/".$cabecera['numero_guia'].".pdf";
-                $this->generarGuia($cabecera,$detalles,$filename);
-
+                
                 $sql = $this->db->connect()->prepare("INSERT lg_docusunat SET ccodtdoc=:ccodtdoc,ffechdoc=:ffechdoc,ffechreg=:ffechreg,ffechtrasl=:ffechtrasl,cserie=:cserie,
                                                                             cnumero=:cnumero,id_centi=:id_centi,cmotivo=:cmotivo,ccodmodtrasl=:ccodmodtrasl,cdesmodtrasl=:cdesmodtrasl,
                                                                             ctipoenvio=:ctipoenvio,nbultos=:nbultos,npesotot=:npesotot,cdniconduc=:cdniconduc,cdesconduc=:cdesconduc,
@@ -575,12 +593,7 @@
                 $rowCount = $sql->rowcount();
 
                 if ($rowCount > 0){
-                   $this->generarGuia($cabecera,$detalles,$filename);
-                   $this->actualizarCabeceraPedido($pedido,67);
-                   $this->actualizarCabeceraOrden($orden,67);
-                   $this->actualizarDetallesPedido($detalles,$despacho,67);
-                   $this->actualizarCabeceraDespacho($despacho,67);
-                   $this->actualizarCabeceraIngreso($ingreso,67);
+                    return $this->generarGuia($cabecera,$detalles,$filename);
                 }
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
@@ -636,9 +649,6 @@
                     $pdf->Cell(190,4,"Peso   : ".$cabecera["peso_bruto"]. "Kgs",0,1);
                     $pdf->Output($archivo,'F');
                     
-                    //$c = "PDFtoPrinter.exe ".$archivo;
-                    //$output = shell_exec($c);
-                    
                     return $archivo;
                 }
 
@@ -646,6 +656,18 @@
                 echo "Error: ".$th->getMessage();
                 return false;
             }
+        }
+
+        public function actualizarProcesos($detalles,$despacho,$pedido,$orden,$ingreso){
+                $this->actualizarCabeceraPedido($pedido,67);
+                $this->actualizarCabeceraOrden($orden,67);
+                $this->actualizarDetallesPedido($detalles,$despacho,67);
+                $this->actualizarCabeceraDespacho($despacho,67);
+                $this->actualizarCabeceraIngreso($ingreso,67);
+            
+                $despachos  = $this->listarNotasDespacho();
+
+                return $despachos;
         }
 
         private function actualizarCabeceraPedido($pedido,$estado){

@@ -474,7 +474,7 @@
             }
         }
 
-        //aca actulizar la cantidad recibida
+        //aca actualizar la cantidad recibida
         private function actualizar_detalles($detalles,$estado){
             try {
                 $datos = json_decode($detalles);

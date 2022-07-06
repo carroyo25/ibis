@@ -24,8 +24,8 @@
         </div>
         <div class="landZone">
             <div class="presentacion">
-                <h1>Click</h1>
-                <p>Control de Procesos</p>
+                <h1>Gestor Logístico</h1>
+                <p>Almacen -  Compras</p>
                 <div class="circulos">
                     <div></div>
                     <div></div>

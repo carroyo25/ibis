@@ -46,8 +46,8 @@
                             <button type="button" id="importData" title="Importar Orden" class="boton3">
                                 <i class="fab fa-wpexplorer"></i> Importar Nota
                             </button>
-                            <button type="button" id="closeDocument" title="Cerrar Nota" class="boton3">
-                                <i class="far fa-comments"></i> Cerrar Nota
+                            <button type="button" id="updateDocument" title="Cerrar Salida" class="boton3">
+                                <i class="far fa-comments"></i> Cerrar Salida
                             </button>
                             <button type="button" id="preview" title="Vista Previa" class="boton3">
                                 <i class="far fa-file-pdf"></i> Vista Previa
@@ -251,6 +251,7 @@
                 <input type="hidden" name="ruc_entidad_transporte" id="ruc_entidad_transporte">
                 <input type="hidden" name="codigo_modalidad" id="codigo_modalidad">
                 <input type="hidden" name="codigo_tipo" id="codigo_tipo">
+                <iframe id="iFramePdf" src="" class="oculto"></iframe>
 
                 <div class="tituloDocumento">
                     <div>
@@ -407,7 +408,7 @@
         </div>
     </div>
     <div class="cabezaModulo">
-        <h1>Despachos</h1>
+        <h1>Notas Salida</h1>
         <div>
             <a href="#" id="nuevoRegistro"><i class="far fa-file"></i></a>
             <a href="#" id="irInicio"><i class="fas fa-home"></i></a>
