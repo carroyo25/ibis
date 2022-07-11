@@ -1082,7 +1082,7 @@
             }
         }
 
-        //filtrar par que nop vean los correso deben poner le cntro de costos
+        //filtrar par que nop vean los correso deben poner le centro de costos
         public function buscarRol($rol,$cc){
             try {
                 $salida = "";
@@ -1591,7 +1591,7 @@
                 $salida .= '</tr><tr>';
 
                 for ($i=0; $i < $proveedores ; $i++) { 
-                    $salida .= '<th width="6%">Precio</th>
+                    $salida .= '<th width="6%">Precio Unit</th>
 					            <th width="6%">F.Entrega</th>
 					            <th width="3%">Dias</th>
 					            <th width="3%">Adj.</th>
@@ -1691,7 +1691,7 @@
 
                 $adjunto = $rs[0]["cdocPDF"] == "" ? "": '<a href="'.$url.$rs[0]['cdocPDF'].'"><i class="far fa-sticky-note"></i></a>';
                     
-                $precios .= '<td class="textoDerecha pr20px '.$codpr[$i].'">'.$rs[0]['cabrevia']." ".number_format($rs[0]['total'], 2, '.', ',').'</td>
+                $precios .= '<td class="textoDerecha pr20px '.$codpr[$i].'">'.$rs[0]['cabrevia']." ".number_format($rs[0]['precunit'], 2, '.', ',').'</td>
                              <td class="textoCentro '.$codpr[$i].'">'.date("d/m/Y", strtotime($rs[0]['ffechaent'])).'</td>
                              <td class="textoDerecha pr20px '.$codpr[$i].'">'.$rs[0]['dias'].'</td>
                              <td class="textoCentro '.$codpr[$i].'">'.$adjunto.'</td>

@@ -1,3 +1,5 @@
+$("#esperar").fadeOut();
+
 var HOST = $(location).attr('hostname');
 
 if (HOST ==  "localhost") {

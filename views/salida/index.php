@@ -408,7 +408,7 @@
         </div>
     </div>
     <div class="cabezaModulo">
-        <h1>Notas Salida</h1>
+        <h1>Notas de Salida</h1>
         <div>
             <a href="#" id="nuevoRegistro"><i class="far fa-file"></i></a>
             <a href="#" id="irInicio"><i class="fas fa-home"></i></a>

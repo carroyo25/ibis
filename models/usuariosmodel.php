@@ -173,7 +173,7 @@
                                                             ccorreo=:correo,
                                                             fvigdesde=:fdesde,
                                                             fvighasta=:fhasta,
-                                                            cinicial=:user_inic,
+                                                            cinicial=:iniciales,
                                                             nestado=:estado");
                     $sql->execute(["id"=>$id,
                                     "user"=>$cabecera['usuario'],

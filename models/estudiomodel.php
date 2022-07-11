@@ -98,10 +98,10 @@
             try {
                 $data = json_decode($datos);
                 $nreg = count($data);
-                
-                for ($i=0; $i < $nreg; $i++) { 
-                    try {
-                        $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet 
+                $actualizados = 0;
+
+                for ($i=0; $i < $nreg; $i++) {
+                    $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet 
                                                                 SET precio =:prec,
                                                                     total=:tot,
                                                                     entidad=:ent,
@@ -110,24 +110,19 @@
                                                                     estadoItem=:est,
                                                                     docEspec=:doc
                                                                 WHERE iditem=:id");
-                        $sql->execute(["prec"=>$data[$i]->unitario,
-                                        "tot"=>$data[$i]->total,
-                                        "ent"=>$data[$i]->entidad,
-                                        "adj"=>1,
-                                        "prof"=>$data[$i]->detprof,
-                                        "doc"=>$data[$i]->espec,
-                                        "id"=>$data[$i]->detpedido,
-                                        "est"=>57]);
-                        
-                        return $i;
-
-                    } catch (PDOException $th) {
-                        echo "Error: ".$th->getMessage();
-                        return false;
+                    $sql->execute(["prec"=>$data[$i]->unitario,
+                                    "tot"=>$data[$i]->total,
+                                    "ent"=>$data[$i]->entidad,
+                                    "adj"=>1,
+                                    "prof"=>$data[$i]->detprof,
+                                    "doc"=>$data[$i]->espec,
+                                    "id"=>$data[$i]->detpedido,
+                                    "est"=>57]);
+                    if ($sql->rowcount() > 0){
+                        $actualizados++;
                     }
                 }
-                
-
+                return  "numero de registros actualizados" . $actualizados;
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;

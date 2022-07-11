@@ -9,6 +9,10 @@
             $this->view->listaGuias = $this->model->listarGuias();
             $this->view->render('registros/index');
         }
+
+        function despachosID(){
+            echo json_encode($this->model->importarDespacho($_POST['id']));
+        }
         
     }
 ?>

@@ -154,7 +154,7 @@
         </div>
     </div>
     <div class="cabezaModulo">
-        <h1>Cargo Planner</h1>
+        <h1>Cargo Plan</h1>
         <div>
             <a href="#" id="irInicio"><i class="fas fa-home"></i></a>
         </div>

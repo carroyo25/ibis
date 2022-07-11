@@ -329,7 +329,7 @@
         </form>
     </div>
     <div class="cabezaModulo">
-        <h1>Requerimientos de Ordenes</h1>
+        <h1>Registro de ordenes</h1>
         <div>
             <a href="#" id="nuevoRegistro"><i class="far fa-file"></i></a>
             <a href="#" id="irInicio"><i class="fas fa-home"></i></a>

@@ -13,17 +13,13 @@
                 <form action="#" id="formProceso" autocomplete="off">
                     <input type="hidden" name="codigo_costos" id="codigo_costos"> 
                     <input type="hidden" name="codigo_area" id="codigo_area">
-                    <input type="hidden" name="codigo_movimiento" id="codigo_movimiento">
-                    <input type="hidden" name="codigo_aprueba" id="codigo_aprueba">
                     <input type="hidden" name="codigo_almacen" id="codigo_almacen">
                     <input type="hidden" name="codigo_almacen_destino" id="codigo_almacen_destino">
                     <input type="hidden" name="codigo_pedido" id="codigo_pedido">
                     <input type="hidden" name="codigo_orden" id="codigo_orden">
                     <input type="hidden" name="codigo_estado" id="codigo_estado">
-                    <input type="hidden" name="codigo_moneda" id="codigo_moneda">
                     <input type="hidden" name="codigo_ingreso" id="codigo_ingreso">
                     <input type="hidden" name="codigo_salida" id="codigo_salida">
-                    <input type="hidden" name="id_centi" id="id_centi">
 
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
@@ -31,14 +27,8 @@
                             <button type="button" id="saveDoc" title="Grabar Nota" class="boton3">
                                 <span><i class="far fa-save"></i> Grabar </span> 
                             </button>
-                            <button type="button" id="importData" title="Importar Orden" class="boton3">
-                                <i class="fab fa-wpexplorer"></i> Importar Nota
-                            </button>
                             <button type="button" id="updateDocument" title="Cerrar Salida" class="boton3">
-                                <i class="far fa-comments"></i> Cerrar Salida
-                            </button>
-                            <button type="button" id="preview" title="Vista Previa" class="boton3">
-                                <i class="far fa-file-pdf"></i> Vista Previa
+                                <i class="far fa-comments"></i> Confirmar Ingreso
                             </button>
                             <button type="button" id="closeProcess" title="Cerrar" class="boton3">
                                 <i class="fas fa-window-close"></i>
@@ -69,16 +59,7 @@
                                 <label for="solicita">Solicita:</label>
                                 <input type="text" name="solicita" id="solicita" class="cerrarLista" readonly>
                             </div>
-                            <div class="column2">
-                            <label for="aprueba">Aprueba:</label>
-                                <input type="text" name="aprueba" id="aprueba" class="mostrarLista busqueda" placeholder="Elija opción"
-                                    readonly>
-                                <div class="lista" id="listaAprueba">
-                                   <ul>
-                                       <?php echo $this->listaAprueba?>
-                                   </ul> 
-                                </div>
-                            </div>
+                            
                         </div>
                         <div class="seccion_medio">
                             <div class="column2">
@@ -88,11 +69,6 @@
                             <div class="column2">
                                 <label for="almacen_destino_despacho">Almacen Destino:</label>
                                 <input type="text" name="almacen_destino_despacho" id="almacen_destino_despacho" class="mostrarLista busqueda" readonly>
-                                <div class="lista" id="listaAlmacenDestino">
-                                   <ul>
-                                       <?php echo $this->listaAlmacen?>
-                                   </ul> 
-                                </div>
                             </div>
                             <div class="column4_55">
                                 <div class="column2_3957">
@@ -114,22 +90,15 @@
                                     <input type="date" name="fecha_orden" id="fecha_orden" class="cerrarLista" readonly>
                                 </div>
                             </div>
-                            <div class="column2">
-                                <label for="concepto">Concepto:</label>
-                                <input type="text" name="concepto" id="concepto" readonly>
-                            </div>
-                            
                         </div>
                         <div class="seccion_derecha">
                             <div class="column2">
-                                <label for="tipo">Tipo Mov.:</label>
-                                <input type="text" name="tipo" id="tipo" class="mostrarLista busqueda" placeholder="Elija opción"
-                                    readonly>
-                                <div class="lista" id="listaMovimiento">
-                                   <ul>
-                                       <?php echo $this->listaMovimiento?>
-                                   </ul> 
-                                </div>
+                                <label for="recepciona">Recepciona:</label>
+                                <input type="text" name="recepciona" id="recepciona" >
+                            </div>
+                            <div class="column2">
+                                <label for="concepto">Concepto:</label>
+                                <input type="text" name="concepto" id="concepto" readonly>
                             </div>
                             <div class="column4_55">
                                 <div class="column2">
@@ -141,23 +110,11 @@
                                     <input type="text" name="guia" id="guia" class="cerrarLista">
                                 </div>
                             </div>
-                            <div class="column4_55">
-                                <div class="column2">
-                                    <label for="movimiento">Mov Almacen:</label>
-                                    <input type="text" name="movimiento" id="movimiento" class="w100por" readonly>
-                                </div>
-                            </div>
                         </div>
                     </div>
                     <div class="barraOpciones">
                         <span>Detalles</span>
                         <div>
-                            <button type="button" id="atachDocs" title="Documentos Adjuntos" class="cerrarLista boton3">
-                                <i class="fas fa-paperclip"></i> Documentos Adjuntos
-                            </button>
-                            <button type="button" id="asocOrd" title="Orden de Compra Asociada" class="cerrarLista boton3">
-                                <i class="far fa-file-pdf"></i> Orden Asociada
-                            </button>
                             <button type="button" id="guiaRemision" title="Guia de Remision" class="cerrarLista boton3">
                                 <i class="fas fa-upload"></i> Guia de Remision
                             </button>

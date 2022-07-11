@@ -175,7 +175,7 @@ $(function(){
     $("#btnAceptarPregunta").click(function (e) { 
         e.preventDefault();
 
-        if (fila.length > 1) {
+        if ( fila.length < 1 ) {
             mostrarMensaje("No hay seleccion de items","mensaje_error");
             return false;
         }
@@ -186,7 +186,7 @@ $(function(){
             },
             "text"
         );
-        
+       
         return false;
     });
 

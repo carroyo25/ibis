@@ -1,6 +1,7 @@
 $(function (){
     var index = 0;
     var errorFile = false;
+    var igv = 0;
     
     $("#btnSend").click(function (e) { 
         e.preventDefault();
@@ -93,7 +94,8 @@ $(function (){
                 let precio = $(this).val();
                 let total = (parseFloat(cant) * parseFloat(precio));
                 let suma = 0;
-                let igv = parseFloat($('input:radio[name=radioIgv]:checked').val());
+
+                igv = parseFloat($('input:radio[name=radioIgv]:checked').val());
 
                 $(this).parent().parent().find("td").eq(6).text(parseFloat(total.toFixed(2)));
                 
@@ -177,8 +179,8 @@ const getItems  = () => {
             UNIDAD   = $(this).data('und'),
             CANTIDAD = $(this).find('td').eq(4).text(),
             PRECIO   = $(this).find('td').eq(5).children().val(),
-            TOTAL    = $("#total_numero").val(),
-            IGV      = $("#igv").val(),
+            TOTAL    = $(this).find('td').eq(6).text(),
+            IGV      = 0,
             OBSERVAC = $(this).find('td').eq(8).children().val(),
             ENTREGA  = $(this).find('td').eq(9).children().val(),
 
