@@ -182,7 +182,6 @@
                                     <th>Und.</th>
                                     <th>Cant.</th>
                                     <th>Precio</th>
-                                    <th>Igv</th>
                                     <th>Total</th>
                                     <th>Nro.</br>Parte</th>
                                     <th>Pedido</th>

@@ -309,7 +309,7 @@
                     while ($rs = $sql->fetch()){
                         $salida.='<tr data-detorden="'.$rs['nitemord'].'" 
                                         data-idprod="'.$rs['id_cprod'].'"
-                                        data-iddetped="'.$rs['nidpedi'].'">
+                                        data-iddetped="'.$rs['niddeta'].'">
 
                                     <td class="textoCentro"><a href="'.$rs['nitemord'].'"><i class="fas fa-barcode"></i></a></td>
                                     <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>

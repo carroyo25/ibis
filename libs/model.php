@@ -1915,14 +1915,13 @@
                         $salida.='<tr data-grabado="1" 
                                         data-total="'.$rs['total_numero'].'" 
                                         data-codprod="'.$rs['id_cprod'].'" 
-                                        data-itPed="'.$rs['nidpedi'].'">
+                                        data-itPed="'.$rs['niddeta'].'">
                                     <td class="textoCentro">'.str_pad($item,6,0,STR_PAD_LEFT).'</td>
                                     <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                     <td class="pl20px">'.$rs['cdesprod'].'</td>
                                     <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                     <td class="textoDerecha pr5px">'.$rs['ncanti'].'</td>
                                     <td class="textoDerecha pr5px">'.$rs['moneda'].$rs['subtotal'].'</td>
-                                    <td class="textoDerecha pr5px">'.$rs['moneda'].$rs['nigv'].'</td>
                                     <td class="textoDerecha pr5px">'.$rs['moneda'].$rs['total'].'</td>
                                     <td class="textoCentro">'.$rs['nroparte'].'</td>
                                     <td class="textoCentro">'.str_pad($rs['idpedido'],6,0,STR_PAD_LEFT).'</td>

@@ -41,7 +41,7 @@
                                                     WHERE
                                                         tb_costusu.id_cuser = :user 
                                                         AND tb_costusu.nflgactivo = 1
-                                                        AND lg_ordencab.nEstadoDoc BETWEEN 58 AND 59");
+                                                        AND lg_ordencab.nEstadoDoc BETWEEN 49 AND 59");
                 $sql->execute(["user"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowCount();
 
@@ -86,81 +86,73 @@
             try {
                 $salida = "";
                 $sql = $this->db->connect()->prepare("SELECT
-                                                        tb_pedidocab.idcostos,
-                                                        tb_pedidocab.idarea,
-                                                        tb_pedidocab.idtrans,
-                                                        tb_pedidocab.nrodoc,
-                                                        UPPER(
-                                                        CONCAT_WS( ' ', tb_proyectos.ccodproy, tb_proyectos.cdesproy )) AS costos,
-                                                        UPPER(
-                                                        CONCAT_WS( ' ', tb_area.ccodarea, tb_area.cdesarea )) AS area,
-                                                        cm_producto.id_cprod,
-                                                        cm_producto.ccodprod,
-                                                        UPPER(CONCAT_WS(' ',cm_producto.cdesprod,tb_pedidodet.observaciones,tb_pedidodet.docEspec)) AS cdesprod,
                                                         tb_pedidodet.idpedido,
-                                                        tb_pedidocab.emision,
-                                                        UPPER( tb_pedidocab.concepto ) AS concepto,
-                                                        tb_pedidocab.detalle,
-                                                        tb_pedidodet.iditem,
+                                                        FORMAT(tb_pedidodet.cant_aprob,2) AS cantidad,
+                                                        FORMAT(tb_pedidodet.precio,2) AS precio,
+                                                        tb_pedidodet.igv,
+                                                        FORMAT(tb_pedidodet.total,2) AS total,
+                                                        tb_pedidodet.estadoItem,
+                                                        UPPER(
+                                                            CONCAT_WS(
+                                                                ' // ',
+                                                                cm_producto.cdesprod,
+                                                                tb_pedidodet.observaciones,
+                                                                lg_proformadet.cdetalle
+                                                            )
+                                                        ) AS cdesprod,
+                                                        cm_producto.ccodprod,
+                                                        cm_producto.id_cprod,
+                                                        tb_unimed.ncodmed,
+                                                        tb_unimed.cabrevia AS unidad,
                                                         cm_entidad.crazonsoc,
-                                                        cm_entidad.id_centi,
-                                                        tb_pedidodet.idproforma,
-                                                        FORMAT( tb_pedidodet.cant_aprob, 2 ) AS cantidad,
-                                                        FORMAT( tb_pedidodet.precio, 2 ) AS precio,
-                                                        FORMAT((
-                                                                tb_pedidodet.precio * tb_pedidodet.cant_aprob 
-                                                                ) + ( tb_pedidodet.precio * tb_pedidodet.cant_aprob ) *
-                                                        IF
-                                                            ( lg_proformacab.nigv > 0, 0.18, 0 ),
-                                                            2 
-                                                        ) AS total,
-                                                        FORMAT(( tb_pedidodet.precio * tb_pedidodet.cant_aprob ) * IF ( lg_proformacab.nigv > 0, 0.18, 0 ), 2 ) AS igv,
-                                                        tb_unimed.cabrevia AS desunidad,
-                                                        monedas.cdescripcion,
-                                                        monedas.cabrevia AS abrmoneda,
-                                                        tb_pedidodet.nroparte,
-                                                        monedas.nidreg AS moneda,
-                                                        pagos.cdescripcion AS pago,
-                                                        pagos.ccod,
-                                                        lg_proformacab.cnumero,
-                                                        tb_pedidodet.total AS total_numero
+                                                        UPPER(tb_proyectos.cdesproy) AS costos,
+                                                        lg_proformadet.ncodmon,
+                                                        tb_parametros.cabrevia AS moneda,
+                                                        tb_parametros.cdescripcion AS cmoneda,
+                                                        tb_area.ncodarea,
+                                                        UPPER(tb_area.cdesarea) AS area,
+                                                        tb_pedidodet.iditem,
+                                                        tb_pedidodet.idcostos,
+                                                        tb_pedidodet.idarea,
+                                                        tb_pedidocab.idreg,
+                                                        tb_pedidocab.nrodoc,
+                                                        tb_pedidocab.emision,
+                                                        tb_pedidocab.concepto,
+                                                        tb_pedidodet.entidad,
+                                                        lg_proformadet.id_abastec
                                                     FROM
-                                                        tb_pedidodet
-                                                        INNER JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
-                                                        INNER JOIN tb_costusu ON tb_pedidocab.idcostos = tb_costusu.ncodproy
-                                                        INNER JOIN tb_proyectos ON tb_pedidocab.idcostos = tb_proyectos.nidreg
-                                                        INNER JOIN tb_area ON tb_pedidocab.idarea = tb_area.ncodarea
-                                                        INNER JOIN cm_producto ON tb_pedidodet.idprod = cm_producto.id_cprod
-                                                        INNER JOIN cm_entidad ON tb_pedidodet.entidad = cm_entidad.cnumdoc
-                                                        INNER JOIN lg_proformacab ON tb_pedidodet.idproforma = lg_proformacab.nprof
-                                                        INNER JOIN tb_unimed ON tb_pedidodet.unid = tb_unimed.ncodmed
-                                                        INNER JOIN tb_parametros AS monedas ON lg_proformacab.ncodmon = monedas.nidreg
-                                                        INNER JOIN tb_parametros AS pagos ON lg_proformacab.ccondpago = pagos.nidreg 
+                                                        tb_costusu
+                                                    INNER JOIN tb_pedidodet ON tb_costusu.ncodproy = tb_pedidodet.idcostos
+                                                    INNER JOIN cm_producto ON tb_pedidodet.idprod = cm_producto.id_cprod
+                                                    INNER JOIN tb_unimed ON tb_pedidodet.unid = tb_unimed.ncodmed
+                                                    INNER JOIN cm_entidad ON tb_pedidodet.entidad = cm_entidad.cnumdoc
+                                                    INNER JOIN lg_proformadet ON tb_pedidodet.idproforma = lg_proformadet.nitemprof
+                                                    INNER JOIN tb_proyectos ON tb_pedidodet.idcostos = tb_proyectos.nidreg
+                                                    INNER JOIN tb_parametros ON lg_proformadet.ncodmon = tb_parametros.nidreg
+                                                    INNER JOIN tb_area ON tb_pedidodet.idarea = tb_area.ncodarea
+                                                    INNER JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
                                                     WHERE
-                                                        tb_costusu.id_cuser =:user 
-                                                        AND tb_costusu.nflgactivo = 1 
-                                                        AND tb_pedidodet.estadoItem = 58");
+                                                        tb_costusu.nflgactivo = 1
+                                                    AND tb_costusu.id_cuser = :user
+                                                    AND tb_pedidodet.estadoItem = 58");
                 $sql->execute(["user"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()) {
-                        $salida .='<tr class="pointer" data-pedido="'.$rs['idpedido'].'" 
-                                                       data-iditem="'.$rs['iditem'].'" 
-                                                       data-entidad="'.$rs['id_centi'].'"
-                                                       data-proforma="'.$rs['idproforma'].'"
-                                                       data-unidad="'.$rs['desunidad'].'"
-                                                       data-cantidad="'.$rs['cantidad'].'"
+                        $salida .='<tr class="pointer" data-pedido="'.$rs['idpedido'].'"
+                                                       data-entidad="'.$rs['entidad'].'"
+                                                       data-moneda="'.$rs['cmoneda'].'"
+                                                       data-unidad="'.$rs['unidad'].'"
+                                                       data-cantidad ="'.$rs['cantidad'].'"
                                                        data-precio="'.$rs['precio'].'"
-                                                       data-igv="'.$rs['igv'].'"
-                                                       data-total="'.$rs['total_numero'].'"
-                                                       data-nroparte="'.$rs['nroparte'].'"
-                                                       data-moneda="'.$rs['moneda'].'"
-                                                       data-abrmoneda="'.$rs['abrmoneda'].'"
-                                                       data-desmoneda="'.$rs['cdescripcion'].'"
-                                                       data-pago="'.$rs['pago'].'"
+                                                       data-total="'.$rs['total'].'"
+                                                       data-abrmoneda="'.$rs['moneda'].'"
                                                        data-codprod="'.$rs['id_cprod'].'"
-                                                       data-nroprofoma="'.$rs['cnumero'].'">
+                                                       data-iditem="'.$rs['iditem'].'"
+                                                       data-proforma="'.$rs['id_abastec'].'"
+                                                       data-pago="'.$rs['id_abastec'].'"
+                                                       data-codigomoneda="'.$rs['ncodmon'].'">
                                         <td class="textoCentro">'.str_pad($rs['nrodoc'],6,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.date("d/m/Y", strtotime($rs['emision'])).'</td>
                                         <td class="pl5px">'.$rs['concepto'].'</td>
@@ -677,22 +669,22 @@
         private function datosEntidad($entidad){
             try {
                 $sql=$this->db->connect()->prepare("SELECT
-                                                        cm_entidad.cnumdoc,
-                                                        cm_entidad.crazonsoc,
-                                                        UPPER( cm_entidadcon.cnombres ) AS contacto,
-                                                        cm_entidadcon.cemail AS correo_contacto,
-                                                        cm_entidadcon.ctelefono1 AS telefono_contacto,
-                                                        cm_entidad.id_centi,
-                                                        cm_entidad.cemail AS correo_entidad,
-                                                        cm_entidad.cviadireccion,
-                                                        cm_entidad.ctelefono,
-                                                        cm_entidad.nagenret  
-                                                    FROM
-                                                        cm_entidadcon
-                                                        INNER JOIN cm_entidad ON cm_entidadcon.id_centi = cm_entidad.id_centi 
-                                                    WHERE
-                                                        cm_entidad.id_centi =:entidad 
-                                                        LIMIT 1");
+                                                    cm_entidad.cnumdoc,
+                                                    cm_entidad.crazonsoc,
+                                                    UPPER(cm_entidadcon.cnombres) AS contacto,
+                                                    cm_entidadcon.cemail AS correo_contacto,
+                                                    cm_entidadcon.ctelefono1 AS telefono_contacto,
+                                                    cm_entidad.id_centi,
+                                                    cm_entidad.cemail AS correo_entidad,
+                                                    cm_entidad.cviadireccion,
+                                                    cm_entidad.ctelefono,
+                                                    cm_entidad.nagenret
+                                                FROM
+                                                    cm_entidadcon
+                                                INNER JOIN cm_entidad ON cm_entidadcon.id_centi = cm_entidad.id_centi
+                                                WHERE
+                                                    cm_entidad.cnumdoc = :entidad
+                                                LIMIT 1");
                 $sql->execute(["entidad"=>$entidad]);
 
                 $rowCount = $sql->rowCount();
@@ -761,7 +753,7 @@
                                                     lg_proformacab.nafecIgv,
                                                     lg_proformacab.nigv,
                                                     lg_proformacab.ntotal,
-                                                    tb_parametros.cdescripcion 
+                                                    tb_parametros.cdescripcion  AS pago
                                                 FROM
                                                     lg_proformacab
                                                     INNER JOIN tb_parametros ON lg_proformacab.ccondpago = tb_parametros.nidreg 

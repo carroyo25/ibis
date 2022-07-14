@@ -210,8 +210,7 @@ $(function(){
             entidad     = $(this).data("entidad");
             proforma    = $(this).data("proforma");
             moneda      = $(this).data("moneda");
-            cmoneda     = $(this).data("desmoneda");
-            pago        = $(this).data("pago");
+            cmoneda     = $(this).data("codigomoneda");
         }
 
         try {
@@ -221,45 +220,39 @@ $(function(){
 
             let nFilas      = $.strPad($("#tablaDetalles tr").length,3),
                 codigo      = $(this).children('td:eq(5)').text(),
-                descrip     = $(this).children('td:eq(6)').text(),
-                unidad      = $(this).data("unidad"),
-                cantidad    = $(this).data("cantidad"),
-                precio      = $(this).data("precio"),
-                igv         = $(this).data("igv"),
-                total       = $(this).data("total"),
-                nroparte    = $(this).data("nroparte"),
                 request     = $.strPad($(this).data("pedido"),6),
+                descrip     = $(this).children('td:eq(6)').text(),
+                cantidad    = $(this).data("cantidad"),
+                unidad      = $(this).data("unidad"),
+                precio      = $(this).data("precio"),
+                total       = $(this).data("total"),
                 abrmomeda   = $(this).data("abrmoneda"),
                 cod_prod    = $(this).data("codprod"),
                 id_item     = $(this).data("iditem"),
-                proforma    = $(this).data("nroprofoma")
                 grabado     = 0;
 
-
             if (!checkExistTable($("#tablaDetalles tbody tr"),codigo,1)){
-                $("#proforma").val(proforma);
-                
                 let row = `<tr data-grabado="${grabado}" 
                                 data-total="${total}" 
                                 data-codprod="${cod_prod}" 
-                                data-itPed="${id_item}"
-                                data-profroma="${proforma}">
-                    <td class="textoCentro">${nFilas}</td>
-                    <td class="textoCentro">${codigo}</td>
-                    <td class="pl20px">${descrip}</td>
-                    <td class="textoCentro">${unidad}</td>
-                    <td class="textoDerecha pr5px">${cantidad}</td>
-                    <td class="textoDerecha pr5px">${precio}</td>
-                    <td class="textoDerecha pr5px">${igv}</td>
-                    <td class="textoDerecha pr5px">${abrmomeda} ${total}</td>
-                    <td class="textoCentro">${nroparte}</td>
-                    <td class="textoCentro">${request}</td>
-               </tr>`;
+                                data-itPed="${id_item}">
+                            <td class="textoCentro">${nFilas}</td>
+                            <td class="textoCentro">${codigo}</td>
+                            <td class="pl20px">${descrip}</td>
+                            <td class="textoCentro">${unidad}</td>
+                            <td class="textoDerecha pr5px">${cantidad}</td>
+                            <td class="textoDerecha pr5px">${abrmomeda} ${precio}</td>
+                            <<td class="textoDerecha pr5px">${abrmomeda} ${total}</td>
+                            <td></td>
+                            <td class="textoCentro">${request}</td>
+                        </tr>`;
 
-               $("#tablaDetalles tbody").append(row)
+                $("#tablaDetalles tbody").append(row);
+                
             }else{
                 mostrarMensaje("Item duplicado","mensaje_error");
             }
+                
 
         } catch (error) {
             mostrarMensaje(error,'mensaje_error');
@@ -283,7 +276,7 @@ $(function(){
                     $("#codigo_transporte").val(data.pedido[0].idtrans);
                     $("#codigo_tipo").val(data.pedido[0].idtipomov);
                     $("#codigo_estado").val(data.pedido[0].estadodoc);
-                    $("#codigo_moneda").val(moneda);
+                    $("#codigo_moneda").val(cmoneda);
                     $("#codigo_pago").val(data.proforma[0].ccondpago);
                     $("#costos").val(data.pedido[0].proyecto);
                     $("#area").val(data.pedido[0].area);
@@ -294,8 +287,8 @@ $(function(){
                     $("#nivel_atencion").val(data.pedido[0].nivelAten);
                     
                     $("#numero").val(data.orden.numero);
-                    $("#moneda").val(cmoneda);
-                    $("#cpago").val(pago);
+                    $("#moneda").val(moneda);
+                    $("#cpago").val(data.proforma[0].pago);
                     $("#codigo_verificacion").val(data.orden.codigo);
 
                     $("#entidad").val(data.entidad[0].crazonsoc);
@@ -307,7 +300,9 @@ $(function(){
                     $("#retencion").val(data.entidad[0].nagenret);
                     $("#correo_entidad").val(data.entidad[0].correo_entidad);
                     $("#correo_contacto").val(data.entidad[0].correo_contacto);
-                    $("#telefono_contacto").val(data.entidad[0].telefono_contacto)
+                    $("#telefono_contacto").val(data.entidad[0].telefono_contacto);
+
+                    $("#busqueda").fadeOut(); 
 
                     let totalOrden = sumarTotales($("#tablaDetalles tbody tr"));
                     $("#total").val(parseFloat(totalOrden).toFixed(2)); 
