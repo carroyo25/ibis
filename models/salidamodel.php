@@ -216,7 +216,7 @@
                                                         INNER JOIN cm_producto ON alm_recepdet.id_cprod = cm_producto.id_cprod
                                                         INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
                                                         INNER JOIN lg_ordendet ON alm_recepdet.niddetaOrd = lg_ordendet.nitemord
-                                                        INNER JOIN alm_recepserie ON alm_recepdet.niddeta = alm_recepserie.ncodserie
+                                                        LEFT JOIN alm_recepserie ON alm_recepdet.niddeta = alm_recepserie.ncodserie
                                                         WHERE
                                                             alm_recepdet.id_regalm = :id");
                 $sql->execute(["id"=>$id]);
@@ -513,7 +513,7 @@
                                                     INNER JOIN cm_producto ON alm_recepdet.id_cprod = cm_producto.id_cprod
                                                     INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
                                                     INNER JOIN lg_ordendet ON alm_recepdet.niddetaOrd = lg_ordendet.nitemord
-                                                    INNER JOIN alm_recepserie ON alm_recepdet.niddeta = alm_recepserie.ncodserie
+                                                    LEFT JOIN alm_recepserie ON alm_recepdet.niddeta = alm_recepserie.ncodserie
                                                     WHERE
                                                         alm_recepdet.id_regalm = :id");
                 $sql->execute(["id"=>$indice]);
@@ -532,7 +532,7 @@
                                         data-itempedido="'.$rs['niddetaPed'].'" 
                                         data-itemingreso="'.$rs['niddeta'].'"
                                         data-idproducto ="'.$rs['id_cprod'].'">
-                                        <td class="textoCentro">...</td>
+                                        <td class="textoCentro"><input type="checkbox"></td>
                                         <td class="textoCentro">'.str_pad($item,3,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="pl20px">'.$rs['cdesprod'].'</td>
@@ -556,6 +556,8 @@
         public function grabarGuiaRemision($cabecera,$detalles,$despacho,$pedido,$orden,$ingreso){
             try {
                 $filename = "public/documentos/guias_remision/".$cabecera['numero_guia'].".pdf";
+
+                //return $this->generarGuia($cabecera,$detalles,$filename);
                 
                 $sql = $this->db->connect()->prepare("INSERT lg_docusunat SET ccodtdoc=:ccodtdoc,ffechdoc=:ffechdoc,ffechreg=:ffechreg,ffechtrasl=:ffechtrasl,cserie=:cserie,
                                                                             cnumero=:cnumero,id_centi=:id_centi,cmotivo=:cmotivo,ccodmodtrasl=:ccodmodtrasl,cdesmodtrasl=:cdesmodtrasl,
@@ -589,7 +591,7 @@
                                 "cdocPDF"=>$filename,
                                 "nflgactivo"=>1,
                                 "salida"=>$despacho,
-                                "estado"=>0]);
+                                "estado"=>60]);
                 $rowCount = $sql->rowcount();
 
                 if ($rowCount > 0){

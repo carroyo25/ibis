@@ -340,12 +340,12 @@ $(function() {
     $("#printDocument").click(function (e) { 
         e.preventDefault();
         try {
-
             let result = {};
 
             $.each($("#guiaremision").serializeArray(),function(){
                 result[this.name] = this.value;
             });
+
 
             if (result['numero_guia'] == "") throw "Ingrese el Nro. de Guia";
             if (result['codigo_origen'] == "") throw "Seleccione Almacen origen";

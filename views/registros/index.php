@@ -20,6 +20,7 @@
                     <input type="hidden" name="codigo_estado" id="codigo_estado">
                     <input type="hidden" name="codigo_ingreso" id="codigo_ingreso">
                     <input type="hidden" name="codigo_salida" id="codigo_salida">
+                    <input type="hidden" name="codigo_recepciona" id="codigo_recepciona">
 
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
@@ -94,7 +95,12 @@
                         <div class="seccion_derecha">
                             <div class="column2">
                                 <label for="recepciona">Recepciona:</label>
-                                <input type="text" name="recepciona" id="recepciona" >
+                                <input type="text" name="recepciona" id="recepciona" class="mostrarLista busqueda" placeholder="Elija opción" readonly>
+                                <div class="lista uno rowFive" id="listaRecepciona">
+                                <ul>
+                                    <?php echo $this->listaRecepciona?>
+                                </ul> 
+                            </div>
                             </div>
                             <div class="column2">
                                 <label for="concepto">Concepto:</label>
@@ -102,12 +108,12 @@
                             </div>
                             <div class="column4_55">
                                 <div class="column2">
-                                    <label for="estado">Estado:</label>
-                                    <input type="text" name="estado" id="estado" class="textoCentro estado w100por procesando" readonly value="EN PROCESO">
+                                    <label for="bultos">Bultos:</label>
+                                    <input type="text" name="bultos" id="bultos" class="w100por textDerecha" readonlys>
                                 </div>
                                 <div class="column2_46">
-                                    <label for="items">Nro.Guia :</label>
-                                    <input type="text" name="guia" id="guia" class="cerrarLista">
+                                    <label for="peso">Peso :</label>
+                                    <input type="text" name="peso" id="peso" class="cerrarLista">
                                 </div>
                             </div>
                         </div>
@@ -133,6 +139,7 @@
                                         <th class="">Observaciones</th>
                                         <th class="">Serie</th>
                                         <th class="">Fecha </br> Vencimiento</th>
+                                        <th class="">Ubicación</th>
                                         <th class="">Estado</th>
                                 </tr>
                             </thead>

@@ -9,9 +9,6 @@ $(function(){
 
         $.post(RUTA+"registros/despachosID", {id:$(this).data("despacho")},
             function (data, textStatus, jqXHR) {
-                
-                /*let estado = "textoCentro w100por estado " + data.cabecera[0].cabrevia;*/
-                
                 $("#codigo_costos").val(data.cabecera[0].codigo_costos);
                 $("#codigo_area").val(data.cabecera[0].codigo_area);
                 $("#codigo_almacen").val(data.cabecera[0].origen);
@@ -22,34 +19,28 @@ $(function(){
                 $("#codigo_entidad").val(data.cabecera[0].id_centi);
                 $("#codigo_ingreso").val(data.cabecera[0].idref_abas);
                 $("#codigo_salida").val(data.cabecera[0].id_regalm);
-                $("#almacen_origen_despacho").val(data.cabecera[0].almacen);
+                $("#almacen_origen_despacho").val(data.cabecera[0].origen);
                 $("#almacen_destino_despacho").val(data.cabecera[0].destino);
-                $("#fecha").val(data.cabecera[0].ffecdoc);
-                $("#numero").val(data.cabecera[0].nnronota);
+                $("#numero").val(data.cabecera[0].guia);
                 $("#costos").val(data.cabecera[0].costos);
                 $("#area").val(data.cabecera[0].area);
-                $("#solicita").val(data.cabecera[0].nombres);
+                $("#solicita").val(data.cabecera[0].solicita);
                 $("#orden").val(data.cabecera[0].orden);
-                /*$("#pedido").val(data.cabecera[0].pedido);
-                $("#ruc").val(data.cabecera[0].cnumdoc);
-                $("#guia").val(data.cabecera[0].cnumguia);
-                $("#razon").val(data.cabecera[0].crazonsoc);
+                $("#pedido").val(data.cabecera[0].pedido);
+                $("#guia").val(data.cabecera[0].guia);
                 $("#concepto").val(data.cabecera[0].concepto);
-                $("#aprueba").val(data.cabecera[0].cnombres);
-                $("#tipo").val(data.cabecera[0].cdescripcion);
-                $("#estado").val(data.cabecera[0].estado);
-                $("#movimiento").val(data.cabecera[0].movimiento);
                 $("#fecha_pedido").val(data.cabecera[0].emision);
-                $("#fecha_orden").val(data.cabecera[0].ffechadoc);
+                $("#fecha_orden").val(data.cabecera[0].fecha_orden);
+                $("#bultos").val(data.cabecera[0].nbultos);
+                $("#peso").val(data.cabecera[0].npesotot);
                 
-                
-                $("#estado")
+                /*$("#estado")
                     .removeClass()
-                    .addClass(estado);
+                    .addClass(estado);*/
                 
                 $("#tablaDetalles tbody")
                     .empty()
-                    .append(data.detalles);*/
+                    .append(data.detalles);
             },
             "json"
         );
@@ -57,6 +48,66 @@ $(function(){
         accion = "u";
         grabado = true;
         $("#proceso").fadeIn();
+
+        return false;
+    });
+
+    $("#closeProcess").click(function (e) { 
+        e.preventDefault();
+
+        $("#proceso").fadeOut()
+
+        /*$.post(RUTA+"registros/actualizaRegistros",
+            function (data, textStatus, jqXHR) {
+                $(".itemsTabla table tbody")
+                    .empty()
+                    .append(data);
+
+                $("#proceso").fadeOut(function(){
+                    grabado = false;
+                    $("form")[0].reset();
+                    $("form")[1].reset();
+                });
+            },
+            "text"
+        );*/
+
+        return false;
+    });
+
+    $(".mostrarLista").focus(function (e) { 
+        e.preventDefault();
+
+        $(this).next().slideDown();
+
+        return false;
+    });
+
+    $(".cerrarLista").focus(function (e) { 
+        e.preventDefault();
+        
+        $(".lista").fadeOut();
+
+        return false;
+    });
+
+    $(".lista").on("click",'a', function (e) {
+        e.preventDefault();
+
+        let control = $(this).parent().parent().parent();
+        let destino = $(this).parent().parent().parent().prev();
+        let contenedor_padre = $(this).parent().parent().parent().attr("id");
+        let id = "";
+        let codigo = $(this).attr("href");
+        
+        control.slideUp()
+
+        destino.val($(this).text());
+        id = destino.attr("id");
+
+        if(contenedor_padre == "listaRecepciona"){
+            $("#codigo_recepciona").val(codigo);
+        }
 
         return false;
     });
