@@ -11,14 +11,14 @@ $(function(){
             function (data, textStatus, jqXHR) {
                 $("#codigo_costos").val(data.cabecera[0].codigo_costos);
                 $("#codigo_area").val(data.cabecera[0].codigo_area);
-                $("#codigo_almacen").val(data.cabecera[0].origen);
-                $("#codigo_almacen_destino").val(data.cabecera[0].destino);
+                $("#codigo_almacen").val(data.cabecera[0].codigo_origen);
+                $("#codigo_almacen_destino").val(data.cabecera[0].codigo_destino);
                 $("#codigo_pedido").val(data.cabecera[0].codigo_pedido);
                 $("#codigo_orden").val(data.cabecera[0].codigo_orden);
                 $("#codigo_estado").val(data.cabecera[0].nEstadoDoc);
                 $("#codigo_entidad").val(data.cabecera[0].id_centi);
                 $("#codigo_ingreso").val(data.cabecera[0].idref_abas);
-                $("#codigo_salida").val(data.cabecera[0].id_regalm);
+                $("#codigo_salida").val(data.cabecera[0].id_despacho);
                 $("#almacen_origen_despacho").val(data.cabecera[0].origen);
                 $("#almacen_destino_despacho").val(data.cabecera[0].destino);
                 $("#numero").val(data.cabecera[0].guia);
@@ -57,7 +57,7 @@ $(function(){
 
         $("#proceso").fadeOut()
 
-        /*$.post(RUTA+"registros/actualizaRegistros",
+        $.post(RUTA+"registros/actualizarDespachos",
             function (data, textStatus, jqXHR) {
                 $(".itemsTabla table tbody")
                     .empty()
@@ -70,7 +70,7 @@ $(function(){
                 });
             },
             "text"
-        );*/
+        );
 
         return false;
     });
@@ -111,4 +111,58 @@ $(function(){
 
         return false;
     });
+
+    $("#updateDocument").click(function(e){
+        e.preventDefault();
+
+        $.post(RUTA+"registros/ingresoAlmacen",{detalles:JSON.stringify(detalles()),
+                                                almacen:$('#codigo_almacen_destino').val(),
+                                                pedido:$('#codigo_pedido').val(),
+                                                orden:$('#codigo_orden').val(),
+                                                recepciona:$('#codigo_recepciona').val(),
+                                                salida:$('#codigo_salida').val()},
+            function (data, textStatus, jqXHR) {
+                if (data.respuesta) {
+                    mostrarMensaje("Items añadidos","mensaje_correcto");
+                }else{
+                    mostrarMensaje("Items añadidos","no se actualizo correctamente");
+                }
+            },
+            "json"
+        );
+
+        return false;
+    });
 })
+
+detalles = () =>{
+    DETALLES = [];
+
+    let TABLA = $("#tablaDetalles tbody tr");
+
+    TABLA.each(function(){
+        let ITEMPEDIDO      = $(this).data("itempedido"),
+            IDPRODUCTO      = $(this).data("idproducto"),
+            CANTIDAD        = $(this).find('td').eq(4).children().val(),
+            OBSERVACIONES   = $(this).find('td').eq(5).children().val(),
+            SERIES          = $(this).find('td').eq(6).text(),
+            VENCIMIENTO     = $(this).find('td').eq(7).text(),
+            UBICACION       = $(this).find('td').eq(8).children().val(),
+            RECEPCIONA      = $("#codigo_recepciona").val();
+
+        item = {};
+
+        item['itempedido']      = ITEMPEDIDO;
+        item['idproducto']      = IDPRODUCTO;
+        item['cantidad']        = CANTIDAD;
+        item['observaciones']   = OBSERVACIONES;
+        item['series']          = SERIES;
+        item['vencimiento']     = VENCIMIENTO;
+        item['ubicacion']       = UBICACION;
+        item['recepciona']      = RECEPCIONA;
+
+        DETALLES.push(item);
+    })
+
+    return DETALLES
+}

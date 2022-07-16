@@ -44,7 +44,8 @@
                                                         INNER JOIN tb_parametros ON lg_docusunat.nEstadoDoc = tb_parametros.nidreg
                                                         WHERE
                                                             tb_almausu.id_cuser = :usr
-                                                        AND tb_almausu.nflgactivo = 1");
+                                                        AND tb_almausu.nflgactivo = 1
+                                                        AND alm_despachocab.nEstadoDoc != 99 ");
                 $sql->execute(["usr"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowcount();
                 $item = 1;
@@ -181,13 +182,12 @@
 
                         $estados = $this->listarSelect(13,$rs['nestadoreg']);
 
-                        $fecha = $rs['fvence'] == null ? "" : date("d-m-Y", strtotime($rs['fvence']));
+                        $fecha = $rs['fvence'] == '30-11--0001' ? "" : date("d-m-Y", strtotime($rs['fvence']));
 
                         $salida.='<tr data-itemorden="'.$rs['niddetaOrd'].'" 
                                         data-itempedido="'.$rs['niddetaPed'].'" 
                                         data-itemingreso="'.$rs['niddeta'].'"
                                         data-idproducto ="'.$rs['id_cprod'].'">
-                                        <td class="textoCentro"><input type="checkbox"></td>
                                         <td class="textoCentro">'.str_pad($item,3,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="pl20px">'.$rs['cdesprod'].'</td>
@@ -195,7 +195,7 @@
                                         <td><input type="number" step="any" value="'.$rs['cantidad'].'" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"></td>
                                         <td class="pl20px"><input type="text"></td>
                                         <td class="textoCentro">'.$rs['cdesserie'].'</td>
-                                        <td class="textoCentro">'.$fecha.'</td>
+                                        <td class="textoCentro"><input type="date" value="'.$rs['fvence'].'" readonly></td>
                                         <td><input type="text"></td>
                                         <td><select name="estado" disabled>'. $estados .'</select></td>
                                     </tr>';
@@ -203,6 +203,78 @@
                 }
 
                 return $salida;
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        //$salida se refiere al número del despacho
+        public function actualizarStocks($detalles,$almacen,$pedido,$orden,$recepciona,$salida){
+            try {
+                $datos = json_decode($detalles);
+                $nreg = count($datos);
+                $item = 0;
+                for ($i=0; $i < $nreg; $i++) { 
+                    $sql = $this->db->connect()->prepare("INSERT INTO alm_existencia SET idalm=:alm,idprod=:prod,serie=:serie,
+                                                            cant_ingr=:cantidad,crecepciona=:recepciona,tipo=:tipo");
+                    $sql ->execute(["alm"=>$almacen,
+                                    "prod"=>$datos[$i]->idproducto,
+                                    "serie"=>$datos[$i]->series,
+                                    "cantidad"=>$datos[$i]->cantidad,
+                                    "recepciona"=>$recepciona,
+                                    "tipo"=>1]);
+                    $rowCount = $sql->rowcount();
+                    if ($sql->rowCount() > 0){
+                        $item++;
+                    }
+                }
+
+                if ($item > 0) {
+                    $this->actualizarDetallesPedido($detalles,67);
+                    $this->actualizarCabeceraPedidos($pedido,67);
+                    $this->actualizarDespacho($salida,99);
+                }
+
+                return array("item"=>$item);
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function actualizarDetallesPedido($detalles,$estado){
+            try {
+                $datos = json_decode($detalles);
+                $nreg = count($datos);
+
+                for ($i=0; $i < $nreg; $i++) { 
+                    $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet SET estadoItem =:estado WHERE iditem = :id" );
+                    $sql ->execute(["estado"=> 99,
+                                    "id"=>$datos[$i]->itempedido]);
+                    $rowCount = $sql->rowcount();
+                }
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function actualizarCabeceraPedidos($pedido,$estado){
+            try {
+                $sql = $this->db->connect()->prepare("UPDATE tb_pedidocab SET estadodoc =:estado WHERE idreg = :id" );
+                $sql ->execute(["estado"=> $estado,"id"=>$pedido]);
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function actualizarDespacho($salida,$estado){
+            try {
+                $sql = $this->db->connect()->prepare("UPDATE alm_despachocab SET nEstadoDoc =:estado WHERE id_regalm = :id" );
+                $sql ->execute(["estado"=> $estado,"id"=>$salida]);
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;

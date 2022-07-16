@@ -130,7 +130,6 @@
                         <table class="tabla" id="tablaDetalles">
                             <thead>
                                 <tr class="stickytop">
-                                        <th class="">...</th>
                                         <th class="">Item</th>
                                         <th class="">Codigo</th>
                                         <th class="">Descripcion</th>
