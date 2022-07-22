@@ -907,6 +907,10 @@
 .ventanaProceso .primeraBarra {
   border-radius: 8px 8px 0 0;
 }
+.ventanaProceso .ccostos__partidas {
+  height: 10rem;
+  overflow: auto;
+}
 
 .ventanaAdjuntos {
   width: 45%;
@@ -1311,16 +1315,22 @@
 .ventanaProceso .dataProceso_2 {
   display: -ms-grid;
   display: grid;
-  -ms-grid-columns: 1fr 1fr 1fr;
-  grid-template-columns: 1fr 1fr 1fr;
+  -ms-grid-columns: (1fr)[3];
+  grid-template-columns: repeat(3, 1fr);
 }
-.ventanaProceso .dataProceso {
+.ventanaProceso .dataProceso_flex {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  gap: 5px;
 }
-.ventanaProceso .dataProceso input, .ventanaProceso .dataProceso_2 input {
+.ventanaProceso .dataProceso {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: (1fr)[3];
+  grid-template-columns: repeat(3, 1fr);
+  padding: 5px;
+}
+.ventanaProceso .dataProceso input[type=text], .ventanaProceso .dataProceso input[type=date], .ventanaProceso .dataProceso input[type=number], .ventanaProceso .dataProceso_2 input[type=text], .ventanaProceso .dataProceso_2 input[type=date], .ventanaProceso .dataProceso_2 input[type=number], .ventanaProceso .dataProceso_flex input[type=text], .ventanaProceso .dataProceso_flex input[type=date], .ventanaProceso .dataProceso_flex input[type=number] {
   height: 35px;
   border: none;
   border: 1px solid #c2c2c2;
@@ -1328,7 +1338,10 @@
   font-size: 0.7rem;
   border-radius: 8px;
 }
-.ventanaProceso .dataProceso label, .ventanaProceso .dataProceso_2 label {
+.ventanaProceso .dataProceso input[type=checkbox], .ventanaProceso .dataProceso input[type=radio], .ventanaProceso .dataProceso_2 input[type=checkbox], .ventanaProceso .dataProceso_2 input[type=radio], .ventanaProceso .dataProceso_flex input[type=checkbox], .ventanaProceso .dataProceso_flex input[type=radio] {
+  height: 1rem;
+}
+.ventanaProceso .dataProceso label, .ventanaProceso .dataProceso_2 label, .ventanaProceso .dataProceso_flex label {
   font-size: 0.7rem;
   font-weight: bold;
   margin-top: 10px;

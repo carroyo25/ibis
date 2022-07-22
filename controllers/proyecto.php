@@ -12,10 +12,10 @@
         }
 
         function nuevoProyecto(){
-            $datos = $_POST['datos'];
-            $costos = $_POST['costos'];
+            $cabecera = $_POST['datos'];
+            $partidas = $_POST['partidas'];
 
-            echo json_encode($this->model->crearProyecto($datos,$costos));
+            //echo json_encode($this->model->crearProyecto($datos,$costos,$partidas));
         }
 
         function actualizaTabla(){
@@ -29,10 +29,10 @@
         }
 
         function modificaProyecto(){
-            $datos = $_POST['datos'];
-            $costos = $_POST['costos'];
+            $cabecera = $_POST['datos'];
+            $partidas = $_POST['partidas'];
 
-            echo json_encode($this->model->modificarProyecto($datos,$costos));
+            echo json_encode($this->model->modificarProyecto($cabecera,$partidas));
         }
 
         function desactivaProyecto(){

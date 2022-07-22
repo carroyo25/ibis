@@ -3,8 +3,7 @@ $(function(){
     var index = "";
 
     $("#esperar").fadeOut();
-
-    
+   
     $("#nuevoRegistro").click(function (e) { 
         e.preventDefault();
 
@@ -29,7 +28,7 @@ $(function(){
             if (result['descripcion'] == '') throw "Ingrese una descripción";
             
             if (accion == 'n') {
-                $.post(RUTA+"proyecto/nuevoProyecto", {datos:result,costos:JSON.stringify(getItems())},
+                $.post(RUTA+"proyecto/nuevoProyecto", {datos:result,partidas:JSON.stringify(getItems())},
                     function (data, textStatus, jqXHR) {
                         mostrarMensaje(data.mensaje,data.clase);
                     },
@@ -37,7 +36,7 @@ $(function(){
                 );
             }
             else {
-                $.post(RUTA+"proyecto/modificaProyecto", {datos:result,costos:JSON.stringify(getItems())},
+                $.post(RUTA+"proyecto/modificaProyecto", {datos:result,partidas:JSON.stringify(getItems())},
                     function (data, textStatus, jqXHR) {
                         mostrarMensaje(data.mensaje,data.clase);
                     },
@@ -150,9 +149,9 @@ $(function(){
 
                 $("#chkVerAlm").prop("checked",checked);
 
-                $("#tablaCostos tbody")
+                $("#partidas tbody")
                     .empty()
-                    .append(data.costos);
+                    .append(data.partidas);
             },
             "json"
         );
@@ -208,14 +207,13 @@ $(function(){
         let row = `<tr data-estado="0">
                         <td class="pl5px"><input type="text"></td>
                         <td class="pl5px"><input type="text"></td>
-                        <td class="textoCentro"><input type="checkbox" checked="false"></td>
                         <td class="textoCentro"><a href="#"><i class="far fa-trash-alt"></i></a></td>
                     </tr>`;
 
-        $("#tablaCostos tbody").append(row);
+        $("#partidas tbody").append(row);
     });
 
-    $("body #tablaCostos tbody").on("click","a", function (e) {
+    $("body #partidas tbody").on("click","a", function (e) {
         e.preventDefault();
 
         let control = $(this);
@@ -240,12 +238,11 @@ $(function(){
 
 getItems = () =>{
     DATA = [];
-    let TABLA = $("#tablaCostos tbody > tr");
+    let TABLA = $("#partidas tbody > tr");
 
     TABLA.each(function(){
         let CODIGO = $(this).find('td').eq(0).children().val(),
             DESCRIPCION = $(this).find('td').eq(1).children().val(),
-            ALMACEN = $(this).find('td').eq(2).children().prop('checked'),
             ESTADO = $(this).data('estado');
 
         item= {};
@@ -253,7 +250,6 @@ getItems = () =>{
         if ( ESTADO == 0 ) {
             item["codigo"]      = CODIGO;
             item["descripcion"] = DESCRIPCION;
-            item["almacen"]     = ALMACEN;
 
             DATA.push(item);
         }  

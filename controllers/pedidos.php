@@ -12,12 +12,13 @@
             $this->view->listaTransportes = $this->model->listarParametros("08");
             $this->view->listaAquarius  = $this->model->listarAquarius();
             $this->view->listaPedidos = $this->model->listarPedidosUsuario();
+
             $this->view->render('pedidos/index');
         }
 
         function numeroDocumento(){
             $sql = "SELECT COUNT(idreg) AS numero FROM tb_pedidocab WHERE tb_pedidocab.idcostos =:cod";
-            echo json_encode($this->model->generarNumero($_POST['cc'],$sql));
+            echo json_encode($this->model->generarNumeroPedido($_POST['cc'],$sql));
         }
 
         function llamaProductos(){

@@ -189,36 +189,40 @@
             try {
                 $salida = "";
                 $sql = $this->db->connect()->prepare("SELECT
+                                                        alm_recepserie.idref_alma,
+                                                        alm_recepserie.idref_movi,
+                                                        alm_recepserie.cdesserie,
+                                                        cm_producto.ccodprod,
+                                                        UPPER(
+                                                            CONCAT_WS(
+                                                                ' ',
+                                                                cm_producto.cdesprod,
+                                                                tb_pedidodet.observaciones
+                                                            )
+                                                        ) AS cdesprod,
+                                                        tb_unimed.cabrevia,
+                                                        alm_recepdet.nestadoreg,
                                                         alm_recepdet.niddeta,
                                                         alm_recepdet.id_regalm,
                                                         alm_recepdet.ncodalm1,
+                                                        alm_recepdet.fvence,
+                                                        FORMAT(alm_recepdet.ncantidad, 2) AS cantidad,
                                                         alm_recepdet.id_cprod,
-                                                        FORMAT(alm_recepdet.ncantidad, 2) AS ncantidad,
                                                         alm_recepdet.niddetaPed,
                                                         alm_recepdet.niddetaOrd,
-                                                        alm_recepdet.nestadoreg,
-                                                        cm_producto.ccodprod,
-                                                        alm_recepdet.fvence,
-                                                        UPPER(
-                                                                CONCAT_WS(
-                                                                    ' ',
-                                                                    cm_producto.cdesprod,
-                                                                    tb_pedidodet.observaciones,
-                                                                    tb_pedidodet.docEspec
-                                                                )
-                                                            ) AS cdesprod,
-                                                        tb_unimed.cabrevia,
-                                                        FORMAT(lg_ordendet.ncanti, 2) AS cantidad,
-                                                        alm_recepserie.cdesserie
-                                                        FROM
+                                                        tb_parametros.cdescripcion,
+                                                        tb_pedidodet.iditem,
+                                                        tb_pedidodet.idpedido,
+                                                        tb_unimed.nfactor
+                                                    FROM
                                                         alm_recepdet
-                                                        INNER JOIN tb_pedidodet ON alm_recepdet.niddetaPed = tb_pedidodet.iditem
-                                                        INNER JOIN cm_producto ON alm_recepdet.id_cprod = cm_producto.id_cprod
-                                                        INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
-                                                        INNER JOIN lg_ordendet ON alm_recepdet.niddetaOrd = lg_ordendet.nitemord
-                                                        LEFT JOIN alm_recepserie ON alm_recepdet.niddeta = alm_recepserie.ncodserie
-                                                        WHERE
-                                                            alm_recepdet.id_regalm = :id");
+                                                    LEFT JOIN alm_recepserie ON alm_recepdet.niddeta = alm_recepserie.idref_movi
+                                                    INNER JOIN cm_producto ON alm_recepdet.id_cprod = cm_producto.id_cprod
+                                                    INNER JOIN tb_pedidodet ON alm_recepdet.niddetaPed = tb_pedidodet.iditem
+                                                    INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                    INNER JOIN tb_parametros ON alm_recepdet.nestadoreg = tb_parametros.nidreg
+                                                    WHERE
+                                                        alm_recepdet.id_regalm = :id");
                 $sql->execute(["id"=>$id]);
                 $rowCount = $sql->rowCount();
 
@@ -486,36 +490,39 @@
             try {
                 $salida="";
                 $sql=$this->db->connect()->prepare("SELECT
+                                                    alm_recepserie.idref_alma,
+                                                    alm_recepserie.idref_movi,
+                                                    alm_recepserie.cdesserie,
+                                                    cm_producto.ccodprod,
+                                                    UPPER(
+                                                        CONCAT_WS(
+                                                            ' ',
+                                                            cm_producto.cdesprod,
+                                                            tb_pedidodet.observaciones
+                                                        )
+                                                    ) AS cdesprod,
+                                                    tb_unimed.cabrevia,
+                                                    alm_recepdet.nestadoreg,
                                                     alm_recepdet.niddeta,
                                                     alm_recepdet.id_regalm,
                                                     alm_recepdet.ncodalm1,
+                                                    alm_recepdet.fvence,
+                                                    FORMAT(alm_recepdet.ncantidad, 2) AS cantidad,
                                                     alm_recepdet.id_cprod,
-                                                    FORMAT(alm_recepdet.ncantidad, 2) AS ncantidad,
                                                     alm_recepdet.niddetaPed,
                                                     alm_recepdet.niddetaOrd,
-                                                    alm_recepdet.nestadoreg,
-                                                    cm_producto.ccodprod,
-                                                    alm_recepdet.fvence,
-                                                    UPPER(
-                                                            CONCAT_WS(
-                                                                ' ',
-                                                                cm_producto.cdesprod,
-                                                                tb_pedidodet.observaciones,
-                                                                tb_pedidodet.docEspec
-                                                            )
-                                                        ) AS cdesprod,
-                                                    tb_unimed.cabrevia,
-                                                    FORMAT(lg_ordendet.ncanti, 2) AS cantidad,
-                                                    alm_recepserie.cdesserie
-                                                    FROM
+                                                    tb_parametros.cdescripcion,
+                                                    tb_pedidodet.iditem,
+                                                    tb_pedidodet.idpedido,
+                                                    tb_unimed.nfactor
+                                                FROM
                                                     alm_recepdet
-                                                    INNER JOIN tb_pedidodet ON alm_recepdet.niddetaPed = tb_pedidodet.iditem
-                                                    INNER JOIN cm_producto ON alm_recepdet.id_cprod = cm_producto.id_cprod
-                                                    INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
-                                                    INNER JOIN lg_ordendet ON alm_recepdet.niddetaOrd = lg_ordendet.nitemord
-                                                    LEFT JOIN alm_recepserie ON alm_recepdet.niddeta = alm_recepserie.ncodserie
-                                                    WHERE
-                                                        alm_recepdet.id_regalm = :id");
+                                                LEFT JOIN alm_recepserie ON alm_recepdet.niddeta = alm_recepserie.idref_movi
+                                                INNER JOIN cm_producto ON alm_recepdet.id_cprod = cm_producto.id_cprod
+                                                INNER JOIN tb_pedidodet ON alm_recepdet.niddetaPed = tb_pedidodet.iditem
+                                                INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                INNER JOIN tb_parametros ON alm_recepdet.nestadoreg = tb_parametros.nidreg
+                                                WHERE tb_pedidodet.idpedido = :id");
                 $sql->execute(["id"=>$indice]);
 
                 $rowCount = $sql->rowCount();

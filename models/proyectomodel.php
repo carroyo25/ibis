@@ -142,11 +142,10 @@
                         $docData[] = $row;
                     }
 
-                    $costos = $this->consultarDetalles($id);
+                    $partidas = $this->consultarDetalles($id);
                 }
 
-                return array("proyecto"=>$docData,
-                            "costos"=>$costos);
+                return array("proyecto"=>$docData,"partidas"=>$partidas);
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
@@ -202,12 +201,15 @@
 
             for ($i=0; $i < count($datos) ; $i++) { 
                 try {
-                    $query= $this->db->connect()->prepare("INSERT INTO tb_ccostos SET ccodcos=:cod,cdescos=:dsc,nflgactivo=:est,ncodpry=:proy,nflgVeryAlm=:alm");
-                    $query->execute(["cod" =>$datos[$i]->codigo,
-                                 "dsc" =>$datos[$i]->descripcion,
-                                 "est" =>1,
-                                 "proy"=>$id,
-                                 "alm" =>$datos[$i]->almacen]);
+                    $query= $this->db->connect()->prepare("INSERT INTO tb_partidas 
+                                                            SET idcc=:costo,
+                                                                ccodigo=:codigo,
+                                                                cdescripcion=:dsc,
+                                                                nflgactivo=:est");
+                    $query->execute(["costo" =>$id,
+                                     "dsc" =>$datos[$i]->descripcion,
+                                     "est" =>1,
+                                     "codigo"=>$datos[$i]->codigo]);
                 } catch (PDOException $th) {
                     echo $th->getMessage();
                     return false;
@@ -218,27 +220,25 @@
         private function consultarDetalles($id){
             $salida = "";
             try {
-                $sql = $this->db->connect()->prepare("SELECT tb_ccostos.ccodcos, 
-                                                             tb_ccostos.cdescos, 
-                                                             tb_ccostos.nflgactivo, 
-                                                             tb_ccostos.ncodcos, 
-                                                             tb_ccostos.ncodpry, 
-                                                             tb_ccostos.nflgVeryAlm
-                                                      FROM tb_ccostos
-                                                      WHERE tb_ccostos.ncodpry =:id 
-                                                      AND nflgactivo = 1");
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        tb_partidas.idreg,
+                                                        tb_partidas.idcc,
+                                                        tb_partidas.ccodigo,
+                                                        UPPER(tb_partidas.cdescripcion) AS cdescripcion
+                                                    FROM
+                                                        tb_partidas
+                                                    WHERE
+                                                        tb_partidas.idcc = :id
+                                                    AND tb_partidas.nflgactivo = 1");
                 $sql->execute(["id"=>$id]);
                 $rowCount = $sql->rowCount();
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()) {
 
-                        $sw = $rs['nflgVeryAlm'] == 1 ? "checked":"";
-
                         $salida.='<tr data-estado="1">
-                                    <td class="pl5px">'.$rs['ccodcos'].'</td>
-                                    <td class="pl5px">'.$rs['cdescos'].'</td>
-                                    <td class="textoCentro"><input type="checkbox" '.$sw.'></td>
-                                    <td class="textoCentro"><a href="'.$rs['ncodcos'].'"><i class="far fa-trash-alt"></i></a></td>
+                                    <td class="pl5px">'.$rs['ccodigo'].'</td>
+                                    <td class="pl5px">'.$rs['cdescripcion'].'</td>
+                                    <td class="textoCentro"><a href="'.$rs['idreg'].'"><i class="far fa-trash-alt"></i></a></td>
                                  </tr>';
                     }
                 }

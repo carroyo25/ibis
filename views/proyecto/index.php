@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -39,7 +39,7 @@
                             </button>
                         </div>
                     </div>
-                    <div class="dataProceso direccion_columna">
+                    <div class="dataProceso_flex direccion_columna">
                         <div class="seccion_izquierda">
                             <div class="column2">
                                 <label for="clave">codigo. :</label>
@@ -60,7 +60,6 @@
                             <div class="column2">
                                 <input type="checkbox" name="chkVerAlm" id="chkVerAlm" class="cerrarLista izq20px">
                                 <label for="chkVerAlm">Verifica Almacen (Habilitar para consultas de saldos en almacen)</label>
-                                
                             </div>
                         </div>
                         <div class="barraOpciones">
@@ -94,7 +93,27 @@
                                 </div>
                             </div>
                         </div>
-                           
+                        <div class="barraOpciones">
+                            <span>Partidas</span>
+
+                            <button type="button" id="addSubItem" title="Agregar Partidas">
+                                <span><i class="fas fa-plus"></i> Añadir</span> 
+                            </button>
+                        </div>
+                        <div class="ccostos__partidas">
+                            <table id="partidas" class="tabla">
+                                <thead>
+                                    <tr>
+                                        <th width="15%">Codigo</th>
+                                        <th>Descripcion</th>
+                                        <th width="3%">...</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+                        </div>   
                     </div>
                 </form>
             </div>

@@ -87,10 +87,10 @@
                 $salida = "";
                 $sql = $this->db->connect()->prepare("SELECT
                                                         tb_pedidodet.idpedido,
-                                                        FORMAT(tb_pedidodet.cant_aprob,2) AS cantidad,
-                                                        FORMAT(tb_pedidodet.precio,2) AS precio,
+                                                        FORMAT(tb_pedidodet.cant_aprob, 2) AS cantidad,
+                                                        FORMAT(tb_pedidodet.precio, 2) AS precio,
                                                         tb_pedidodet.igv,
-                                                        FORMAT(tb_pedidodet.total,2) AS total,
+                                                        FORMAT(tb_pedidodet.total, 2) AS total,
                                                         tb_pedidodet.estadoItem,
                                                         UPPER(
                                                             CONCAT_WS(
@@ -107,8 +107,6 @@
                                                         cm_entidad.crazonsoc,
                                                         UPPER(tb_proyectos.cdesproy) AS costos,
                                                         lg_proformadet.ncodmon,
-                                                        tb_parametros.cabrevia AS moneda,
-                                                        tb_parametros.cdescripcion AS cmoneda,
                                                         tb_area.ncodarea,
                                                         UPPER(tb_area.cdesarea) AS area,
                                                         tb_pedidodet.iditem,
@@ -119,7 +117,12 @@
                                                         tb_pedidocab.emision,
                                                         tb_pedidocab.concepto,
                                                         tb_pedidodet.entidad,
-                                                        lg_proformadet.id_abastec
+                                                        lg_proformadet.id_abastec,
+                                                        tb_pedidodet.total AS total_numero,
+                                                        lg_proformacab.id_centi,
+                                                        tb_parametros.cabrevia AS moneda,
+                                                        tb_parametros.cdescripcion AS cmoneda,
+                                                        lg_proformacab.cnumero
                                                     FROM
                                                         tb_costusu
                                                     INNER JOIN tb_pedidodet ON tb_costusu.ncodproy = tb_pedidodet.idcostos
@@ -128,9 +131,10 @@
                                                     INNER JOIN cm_entidad ON tb_pedidodet.entidad = cm_entidad.cnumdoc
                                                     INNER JOIN lg_proformadet ON tb_pedidodet.idproforma = lg_proformadet.nitemprof
                                                     INNER JOIN tb_proyectos ON tb_pedidodet.idcostos = tb_proyectos.nidreg
-                                                    INNER JOIN tb_parametros ON lg_proformadet.ncodmon = tb_parametros.nidreg
                                                     INNER JOIN tb_area ON tb_pedidodet.idarea = tb_area.ncodarea
                                                     INNER JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
+                                                    INNER JOIN lg_proformacab ON tb_pedidodet.idproforma = lg_proformacab.nprof
+                                                    INNER JOIN tb_parametros ON lg_proformacab.ncodmon = tb_parametros.nidreg
                                                     WHERE
                                                         tb_costusu.nflgactivo = 1
                                                     AND tb_costusu.id_cuser = :user
@@ -146,7 +150,7 @@
                                                        data-unidad="'.$rs['unidad'].'"
                                                        data-cantidad ="'.$rs['cantidad'].'"
                                                        data-precio="'.$rs['precio'].'"
-                                                       data-total="'.$rs['total'].'"
+                                                       data-total="'.$rs['total_numero'].'"
                                                        data-abrmoneda="'.$rs['moneda'].'"
                                                        data-codprod="'.$rs['id_cprod'].'"
                                                        data-iditem="'.$rs['iditem'].'"

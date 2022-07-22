@@ -96,6 +96,11 @@ $(function(){
                 function (data, textStatus, jqXHR) {
                     $("#numero").val(data.numero);
                     $("#nropedidoatach,#codigo_verificacion").val(data.codigo);
+                    $("#listaPartidas ul")
+                        .empty()
+                        .append(data.partidas);
+
+
                 },
                 "json"
             );
@@ -110,9 +115,7 @@ $(function(){
         }else if(contenedor_padre == "listaTipo"){
             $("#codigo_tipo").val(codigo);
 
-            console.log(aprobacion);
-
-            if ( codigo == 38) {
+            if (codigo == 38) {
                 $("#requestAprob").removeClass("desactivado");
                 $("#sendItem").addClass("desactivado");
             }else if ( codigo == 37) {
@@ -124,6 +127,8 @@ $(function(){
                     $("#requestAprob").addClass("desactivado");
                 }
             }
+        }else if(contenedor_padre == "listaPartidas"){
+            $("#codigo_partida").val(codigo);
         }
 
         return false;
@@ -197,7 +202,7 @@ $(function(){
         try {
             if (result['codigo_costos'] == '') throw "Elija Centro de Costos";
             if (result['codigo_area'] == '') throw "Elija Area";
-            if (result['codigo_transporte'] == '') throw "Elija Tipo de Transporte";
+            //if (result['codigo_transporte'] == '') throw "Elija Tipo de Transporte";
             if (result['concepto'] == '') throw "Escriba el concepto";
             if (result['codigo_solicitante'] == '') throw "Elija Solicitante";
             if (result['codigo_tipo'] == '') throw "Elija el tipo de pedido";
@@ -290,6 +295,7 @@ $(function(){
                 $("#codigo_area").val(data.cabecera[0].idarea);
                 $("#codigo_transporte").val(data.cabecera[0].idtrans);
                 $("#codigo_solicitante").val(data.cabecera[0].idsolicita);
+                $("#codigo_partida").val(data.cabecera[0].idpartida);
                 $("#codigo_tipo").val(data.cabecera[0].idtipomov);
                 $("#codigo_pedido").val(data.cabecera[0].idreg);
                 $("#codigo_estado").val(data.cabecera[0].estadodoc);
@@ -307,6 +313,7 @@ $(function(){
                 $("#vence").val(data.cabecera[0].vence);
                 $("#estado").val(data.cabecera[0].estado);
                 $("#espec_items").val(data.cabecera[0].detalle);
+                $("#partida").val(data.cabecera[0].cdescripcion);
 
                 console.log(data.cabecera[0].idtipomov,data.cabecera[0].veralm)
                

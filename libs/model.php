@@ -988,7 +988,7 @@
             }
         }
 
-        //genera los numero de los docuentos
+        //genera los numero de los documentos
         public function generarNumero($id,$query){
             try {
                 $sql = $this->db->connect()->prepare($query);
@@ -1003,6 +1003,23 @@
                 return false;
             }
         }
+        
+
+        public function generarNumeroPedido($id,$query){
+            try {
+                $sql = $this->db->connect()->prepare($query);
+                $sql->execute(["cod"=>$id]);
+                $result = $sql->fetchAll();
+
+                return $salida = array("numero"=>str_pad($result[0]['numero'] + 1,6,0,STR_PAD_LEFT),
+                                        "codigo"=>uniqid(),
+                                        "movimiento"=>str_pad($this->genNumberIngresos($id)+1,6,0,STR_PAD_LEFT),
+                                        "partidas"=>$this->listarPartidas($id)); 
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage;
+                return false;
+            }
+        }
 
         public function obtenerIndice($codigo,$query){
             try {
@@ -1011,6 +1028,36 @@
                 $result = $sql->fetchAll();
 
                 return $result[0]['numero'];
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function listarPartidas($codigo) {
+            try {
+                $salida = "";
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        tb_partidas.idreg,
+                                                        tb_partidas.idcc,
+                                                        tb_partidas.ccodigo,
+                                                        UPPER(tb_partidas.cdescripcion) AS cdescripcion
+                                                    FROM
+                                                        tb_partidas
+                                                    WHERE
+                                                        tb_partidas.idcc = :costo
+                                                    AND tb_partidas.nflgactivo = 1");
+                $sql->execute(["costo" => $codigo]);
+                $rowCount = $sql->rowCount(); 
+
+                if ($rowCount > 0){
+                    while ($rs = $sql->fetch()){
+                        $salida .='<li><a href="'.$rs['idreg'].'">'.$rs['ccodigo']." ".$rs['cdescripcion'].'</a></li>';
+                    }
+                }
+
+                return $salida;
+
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;
@@ -1258,7 +1305,9 @@
                                                         UPPER(
                                                         CONCAT_WS( ' ', tipos.nidreg, tipos.cdescripcion )) AS tipo, 
                                                         ibis.tb_proyectos.veralm, 
-                                                        ibis.tb_user.cnombres
+                                                        ibis.tb_user.cnombres,
+                                                        ibis.tb_partidas.cdescripcion,
+                                                        ibis.tb_pedidocab.idpartida
                                                     FROM
                                                         ibis.tb_pedidocab
                                                         INNER JOIN
@@ -1272,7 +1321,8 @@
                                                     INNER JOIN ibis.tb_parametros AS transportes ON ibis.tb_pedidocab.idtrans = transportes.nidreg
                                                     INNER JOIN ibis.tb_parametros AS estados ON ibis.tb_pedidocab.estadodoc = estados.nidreg
                                                     INNER JOIN ibis.tb_parametros AS tipos ON ibis.tb_pedidocab.idtipomov = tipos.nidreg
-                                                    INNER JOIN ibis.tb_user ON ibis.tb_pedidocab.usuario = ibis.tb_user.iduser 
+                                                    INNER JOIN ibis.tb_user ON ibis.tb_pedidocab.usuario = ibis.tb_user.iduser
+                                                    INNER JOIN ibis.tb_partidas ON ibis.tb_pedidocab.idpartida = ibis.tb_partidas.idreg 
                                                     WHERE
                                                         tb_pedidocab.idreg = :id 
                                                         AND tb_pedidocab.estadodoc BETWEEN :min 

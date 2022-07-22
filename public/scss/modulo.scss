@@ -637,6 +637,11 @@ $culminado:#55A5E2;
     .primeraBarra{
         border-radius: 8px 8px 0 0;;
     }
+
+    .ccostos__partidas{
+        height: 10rem;
+        overflow: auto;
+    }
 }
 
 .ventanaAdjuntos{
@@ -1033,23 +1038,31 @@ $culminado:#55A5E2;
 
     .dataProceso_2{
         display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-columns: repeat(3,1fr);
+    }
+
+    .dataProceso_flex{
+        display: flex;
     }
 
     .dataProceso{
-        display: flex;
-        gap:5px;
+        display: grid;
+        grid-template-columns: repeat(3,1fr);
+        padding: 5px;
     }
 
-    .dataProceso,.dataProceso_2{
-        input {
+    .dataProceso,.dataProceso_2,.dataProceso_flex{
+        input[type=text], input[type=date], input[type=number] {
             height: 35px;
             border:none;
             border:1px solid $sobreElemento;
             margin-top: 3px;
             font-size: .7rem;
             border-radius: 8px;
+        }
 
+        input[type=checkbox],input[type=radio] {
+            height: 1rem;
         }
 
         label {

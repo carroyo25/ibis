@@ -27,16 +27,19 @@
                 <form action="#" id="formProceso" autocomplete="off">
                     <input type="hidden" name="codigo_costos" id="codigo_costos"> 
                     <input type="hidden" name="codigo_area" id="codigo_area">
-                    <input type="hidden" name="codigo_transporte" id="codigo_transporte">
+                    <input type="hidden" name="codigo_transporte" id="codigo_transporte" value="39">
                     <input type="hidden" name="codigo_solicitante" id="codigo_solicitante">
                     <input type="hidden" name="codigo_tipo" id="codigo_tipo">
+                    <input type="hidden" name="codigo_partida" id="codigo_partida">
                     <input type="hidden" name="codigo_pedido" id="codigo_pedido">
                     <input type="hidden" name="codigo_estado" id="codigo_estado" value="49">
                     <input type="hidden" name="codigo_verificacion" id="codigo_verificacion">
                     <input type="hidden" name="dias_atencion" id="dias_atencion" value="10">
                     <input type="hidden" name="codigo_atencion" id="codigo_atencion" value="47">
+                    <input type="hidden" name="codigo_partida" id="codigo_partida" value="47">
                     <input type="hidden" name="vista_previa" id="vista_previa">
                     <input type="hidden" name="emitido" id="emitido">
+                    <input type="hidden" name="transporte" id="transporte" value="">
 
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
@@ -83,22 +86,22 @@
                                 </div>
                             </div>
                             <div class="column2">
-                                <label for="area">Area:</label>
-                                <input type="text" name="area" id="area" class="mostrarLista busqueda" placeholder="Elija una opcion">
-                                <div class="lista" id="listaAreas">
+                                <label for="area">Partida:</label>
+                                <input type="text" name="partida" id="partida" class="mostrarLista busqueda" placeholder="Elija una opcion">
+                                <div class="lista" id="listaPartidas">
                                    <ul>
-                                       <?php echo $this->listaAreas?>
+                                       
                                    </ul>
                                 </div>
                             </div>
                         </div>
                         <div class="seccion_medio">
                             <div class="column2">
-                                <label for="transporte">Transporte:</label>
-                                <input type="text" name="transporte" id="transporte" class="mostrarLista" placeholder="Elija una opcion">
-                                <div class="lista" id="listaTransportes">
+                                <label for="area">Area:</label>
+                                <input type="text" name="area" id="area" class="mostrarLista busqueda" placeholder="Elija una opcion">
+                                <div class="lista" id="listaAreas">
                                    <ul>
-                                       <?php echo $this->listaTransportes?>
+                                       <?php echo $this->listaAreas?>
                                    </ul>
                                 </div>
                             </div>

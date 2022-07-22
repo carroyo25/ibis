@@ -135,7 +135,7 @@
                 $sql = $this->db->connect()->prepare("INSERT INTO tb_pedidocab SET idcostos=:cost,idarea=:area,idtrans=:trans,idsolicita=:soli,idtipomov=:mov,
                                                                                 emision=:emis,vence=:vence,estadodoc=:estdoc,nrodoc=:nro,usuario=:user,
                                                                                 anio=:ano,mes=:mes,concepto=:concep,detalle=:det,nivelAten=:aten,
-                                                                                docfPdfPrev=:dprev,nflgactivo=:est,verificacion=:ver");
+                                                                                docfPdfPrev=:dprev,nflgactivo=:est,verificacion=:ver,idpartida=:partida");
                 $sql->execute([
                     "cost"=>$datos['codigo_costos'],
                     "area"=>$datos['codigo_area'],
@@ -154,7 +154,8 @@
                     "aten"=>$datos['codigo_atencion'],
                     "dprev"=>$datos['vista_previa'],
                     "est"=>1,
-                    "ver"=>$datos['codigo_verificacion']
+                    "ver"=>$datos['codigo_verificacion'],
+                    "partida"=>$datos['codigo_partida']
                 ]);
 
                 $rowCount = $sql->rowCount();
