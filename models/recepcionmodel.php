@@ -300,7 +300,7 @@
                                                 INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
                                                 INNER JOIN tb_pedidodet ON lg_ordendet.niddeta = tb_pedidodet.iditem 
                                             WHERE
-                                                lg_ordendet.nitemord =:id");
+                                                lg_ordendet.id_regmov =:id");
                 $sql->execute(["id"=>$id]);
                 
                 $rowCount = $sql->rowCount();

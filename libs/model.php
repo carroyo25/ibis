@@ -329,7 +329,7 @@
                     $num_letrammd = $this->cienmillon($nummierod);
          
                 return $num_letrammd;
-            }
+        }
          
          
         public function convertir($numero){
@@ -2181,12 +2181,13 @@
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0) {
+                    $salida="";
                     while($rs = $sql->fetch()){
                         $item = 1;
                         
                         $fecha = $rs['fvence'] == "" ? date("d/m/Y", strtotime($rs['fvence'])) : "";
                         
-                        $salida = '<tr data-detorden="'.$rs['niddetaOrd'].'" 
+                        $salida .= '<tr data-detorden="'.$rs['niddetaOrd'].'" 
                                         data-idprod="'.$rs['id_cprod'].'"
                                         data-iddetped="'.$rs['niddetaPed'].'"
                                         data-iddetnota="'.$rs['niddeta'].'">
