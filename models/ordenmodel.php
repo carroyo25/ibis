@@ -94,7 +94,7 @@
                                                         tb_pedidodet.estadoItem,
                                                         UPPER(
                                                             CONCAT_WS(
-                                                                ' // ',
+                                                                ' ',
                                                                 cm_producto.cdesprod,
                                                                 tb_pedidodet.observaciones,
                                                                 lg_proformadet.cdetalle
@@ -122,7 +122,8 @@
                                                         lg_proformacab.id_centi,
                                                         tb_parametros.cabrevia AS moneda,
                                                         tb_parametros.cdescripcion AS cmoneda,
-                                                        lg_proformacab.cnumero
+                                                        lg_proformacab.cnumero,
+                                                        lg_proformacab.cotref
                                                     FROM
                                                         tb_costusu
                                                     INNER JOIN tb_pedidodet ON tb_costusu.ncodproy = tb_pedidodet.idcostos
@@ -133,7 +134,7 @@
                                                     INNER JOIN tb_proyectos ON tb_pedidodet.idcostos = tb_proyectos.nidreg
                                                     INNER JOIN tb_area ON tb_pedidodet.idarea = tb_area.ncodarea
                                                     INNER JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
-                                                    INNER JOIN lg_proformacab ON tb_pedidodet.idproforma = lg_proformacab.nprof
+                                                    INNER JOIN lg_proformacab ON tb_pedidodet.cotref = lg_proformacab.cotref
                                                     INNER JOIN tb_parametros ON lg_proformacab.ncodmon = tb_parametros.nidreg
                                                     WHERE
                                                         tb_costusu.nflgactivo = 1
@@ -154,7 +155,7 @@
                                                        data-abrmoneda="'.$rs['moneda'].'"
                                                        data-codprod="'.$rs['id_cprod'].'"
                                                        data-iditem="'.$rs['iditem'].'"
-                                                       data-proforma="'.$rs['id_abastec'].'"
+                                                       data-proforma="'.$rs['cotref'].'"
                                                        data-pago="'.$rs['id_abastec'].'"
                                                        data-codigomoneda="'.$rs['ncodmon'].'">
                                         <td class="textoCentro">'.str_pad($rs['nrodoc'],6,0,STR_PAD_LEFT).'</td>
@@ -762,7 +763,7 @@
                                                     lg_proformacab
                                                     INNER JOIN tb_parametros ON lg_proformacab.ccondpago = tb_parametros.nidreg 
                                                 WHERE
-                                                    lg_proformacab.nprof =:proforma");
+                                                    lg_proformacab.cotref =:proforma");
                 $sql->execute(["proforma"=>$proforma]);
 
                 $rowCount = $sql->rowCount();

@@ -36,7 +36,6 @@
                     <input type="hidden" name="codigo_verificacion" id="codigo_verificacion">
                     <input type="hidden" name="dias_atencion" id="dias_atencion" value="10">
                     <input type="hidden" name="codigo_atencion" id="codigo_atencion" value="47">
-                    <input type="hidden" name="codigo_partida" id="codigo_partida" value="47">
                     <input type="hidden" name="vista_previa" id="vista_previa">
                     <input type="hidden" name="emitido" id="emitido">
                     <input type="hidden" name="transporte" id="transporte" value="">

@@ -1052,7 +1052,7 @@ $culminado:#55A5E2;
     }
 
     .dataProceso,.dataProceso_2,.dataProceso_flex{
-        input[type=text], input[type=date], input[type=number] {
+        input[type=text], input[type=date], input[type=number],input[type=password],input[type=mail] {
             height: 35px;
             border:none;
             border:1px solid $sobreElemento;

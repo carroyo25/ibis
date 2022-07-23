@@ -87,6 +87,8 @@
                 $pedidos = $this->actDetallePedido($datos);
                 $this->actualizaCabeceraPedido($id);
 
+                var_dump($datos);
+
                 return $pedidos;
             } catch (PDOException $th) {
                 echo $th->getMessage();
@@ -108,7 +110,8 @@
                                                                     nflgAdjudicado=:adj,
                                                                     idproforma=:prof,
                                                                     estadoItem=:est,
-                                                                    docEspec=:doc
+                                                                    docEspec=:doc,
+                                                                    cotref=:cprof
                                                                 WHERE iditem=:id");
                     $sql->execute(["prec"=>$data[$i]->unitario,
                                     "tot"=>$data[$i]->total,
@@ -117,6 +120,7 @@
                                     "prof"=>$data[$i]->detprof,
                                     "doc"=>$data[$i]->espec,
                                     "id"=>$data[$i]->detpedido,
+                                    "cprof"=>$data[$i]->idproforma,
                                     "est"=>57]);
                     if ($sql->rowcount() > 0){
                         $actualizados++;

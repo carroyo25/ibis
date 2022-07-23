@@ -33,6 +33,7 @@ $(function(){
                 $("#vence").val(data.cabecera[0].vence);
                 $("#estado").val(data.cabecera[0].estado);
                 $("#espec_items").val(data.cabecera[0].detalle);
+                $("#partida").val(data.cabecera[0].cdescripcion );
 
                 
                 $("#tablaDetalles tbody")
@@ -180,7 +181,7 @@ $(function(){
                                                 
              function (data, textStatus, jqXHR) {
                 mostrarMensaje(data.mensaje,data.clase);
-                $("#sendMail").fadeOut();
+                $("#sendMail,#esperar").fadeOut();
              },
              "json"
          );

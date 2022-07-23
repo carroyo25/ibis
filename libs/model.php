@@ -1571,13 +1571,14 @@
                                                     FORMAT(tb_pedidodet.cant_aprob,2) AS cant_aprobada,
                                                     tb_pedidodet.estadoItem,
                                                     cm_producto.ccodprod,
-                                                    UPPER(CONCAT_WS(' ',cm_producto.cdesprod, tb_pedidodet.observaciones)) AS cdesprod,
+                                                    UPPER(CONCAT_WS(' ',cm_producto.cdesprod, tb_pedidodet.observaciones,lg_proformadet.cdetalle)) AS cdesprod,
                                                     tb_unimed.cabrevia,
                                                     tb_pedidodet.nflgqaqc 
                                                 FROM
                                                     tb_pedidodet
                                                     INNER JOIN cm_producto ON tb_pedidodet.idprod = cm_producto.id_cprod
-                                                    INNER JOIN tb_unimed ON tb_pedidodet.unid = tb_unimed.ncodmed 
+                                                    INNER JOIN tb_unimed ON tb_pedidodet.unid = tb_unimed.ncodmed
+                                                    LEFT JOIN lg_proformadet ON tb_pedidodet.iditem = lg_proformadet.niddet 
                                                 WHERE
                                                     tb_pedidodet.idpedido = :id 
                                                 AND tb_pedidodet.cant_resto > 0");
@@ -1720,6 +1721,7 @@
                                                         lg_proformadet.precunit,
                                                         lg_proformadet.nitemprof,
                                                         lg_proformadet.cdetalle,
+                                                        lg_proformadet.cotref,
                                                         DATE_FORMAT( lg_proformadet.fregsys, '%Y-%m-%d' ) AS emitido,
                                                         DATEDIFF(
                                                             lg_proformadet.ffechaent,
@@ -1755,6 +1757,7 @@
                                                          data-entrega="'.$rs[0]['ffechaent'].'"
                                                          data-dias="'.$rs[0]['dias'].'"
                                                          data-detalle="'.$rs[0]['cdetalle'].'"
+                                                         data-idproforma="'.$rs[0]['cotref'].'"
                                                          data-espec="'.$rs[0]['cdocPDF'].'"><input type="checkbox" name="opcion'.$nreg.'" class="chkVerificado"</td>';
            }
 
@@ -1956,7 +1959,7 @@
                                                     INNER JOIN tb_pedidodet ON lg_ordendet.niddeta = tb_pedidodet.iditem
                                                     INNER JOIN tb_parametros AS monedas ON lg_ordendet.nmonref = monedas.nidreg 
                                                 WHERE
-                                                    lg_ordendet.nitemord = :id");
+                                                    lg_ordendet.id_regmov = :id");
                 $sql->execute(["id"=>$id]);
                 $rowCount = $sql->rowCount();
                 $item = 1;

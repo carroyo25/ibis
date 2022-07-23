@@ -122,6 +122,7 @@
 
         public function insertar($datos,$detalles){
             try {
+
                 $salida = false;
                 $respuesta = false;
                 $mensaje = "Error en el registro";

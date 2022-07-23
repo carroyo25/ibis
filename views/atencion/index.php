@@ -59,14 +59,14 @@
                                 <input type="text" name="costos" id="costos" readonly>
                             </div>
                             <div class="column2">
-                                <label for="area">Area:</label>
-                                <input type="text" name="area" id="area" readonly>
+                                <label for="area">Partida:</label>
+                                <input type="text" name="partida" id="partida" readonly>
                             </div>
                         </div>
                         <div class="seccion_medio">
                             <div class="column2">
-                                <label for="transporte">Transporte:</label>
-                                <input type="text" name="transporte" id="transporte" readonly>
+                                <label for="area">Area:</label>
+                                <input type="text" name="area" id="area" readonly>
                             </div>
                             <div class="column2">
                                 <label for="concepto">Concepto:</label>

@@ -195,7 +195,7 @@
         </form>
     </div>
     <div class="cabezaModulo">
-        <h1>Requerimientos Bienes/Servicios</h1>
+        <h1>Aprobacion de Pedidos</h1>
         <div>
             <!-- <a href="#" id="nuevoRegistro"><i class="far fa-file"></i></a> -->
             <a href="#" id="irInicio"><i class="fas fa-home"></i></a>

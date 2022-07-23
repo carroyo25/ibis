@@ -93,6 +93,7 @@ $(function(){
                 item["entrega"]     = $(this).parent().data("entrega");
                 item["total"]       = $(this).parent().data("total");
                 item["espec"]       = $(this).parent().data("detalle");
+                item["idproforma"]  = $(this).parent().data("idproforma");
             
                 fila.push(item);
             }else {
@@ -102,6 +103,7 @@ $(function(){
                 fila[posicion-1]["entrega"]     = $(this).parent().data("entrega");
                 fila[posicion-1]["total"]       = $(this).parent().data("total");
                 fila[posicion-1]["espec"]       = $(this).parent().data("detalle");
+                fila[posicion-1]["idproforma"]  = $(this).parent().data("idproforma");
             }
 
         }
@@ -186,6 +188,7 @@ $(function(){
             },
             "text"
         );
+
        
         return false;
     });
