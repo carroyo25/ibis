@@ -71,7 +71,7 @@ $culminado:#55A5E2;
     grid-template-rows: 1fr;
     padding: 0 19px;
     border-radius: 8px;
-
+    align-items: self-end;
 }
 
 .column2,.column2_9,.column2_46,.column2_3957{
@@ -1045,13 +1045,18 @@ $culminado:#55A5E2;
         display: flex;
     }
 
+    .dataProceso_flex_columna{
+        display: flex;
+        flex-direction: column;
+    }
+
     .dataProceso{
         display: grid;
         grid-template-columns: repeat(3,1fr);
         padding: 5px;
     }
 
-    .dataProceso,.dataProceso_2,.dataProceso_flex{
+    .dataProceso,.dataProceso_2,.dataProceso_flex,.dataProceso_flex_columna{
         input[type=text], input[type=date], input[type=number],input[type=password],input[type=mail] {
             height: 35px;
             border:none;

@@ -45,7 +45,7 @@
                                                         WHERE
                                                             tb_almausu.id_cuser = :usr
                                                         AND tb_almausu.nflgactivo = 1
-                                                        AND alm_despachocab.nEstadoDoc != 67 ");
+                                                        AND alm_despachocab.nEstadoDoc = 67 ");
                 $sql->execute(["usr"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowcount();
                 $item = 1;
@@ -188,7 +188,7 @@
                                         data-itempedido="'.$rs['niddetaPed'].'" 
                                         data-itemingreso="'.$rs['niddeta'].'"
                                         data-idproducto ="'.$rs['id_cprod'].'">
-                                        <td class="textoCentro">'.str_pad($item,3,0,STR_PAD_LEFT).'</td>
+                                        <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="pl20px">'.$rs['cdesprod'].'</td>
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
@@ -250,7 +250,7 @@
 
                 for ($i=0; $i < $nreg; $i++) { 
                     $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet SET estadoItem =:estado WHERE iditem = :id" );
-                    $sql ->execute(["estado"=> 99,
+                    $sql ->execute(["estado"=> 67,
                                     "id"=>$datos[$i]->itempedido]);
                     $rowCount = $sql->rowcount();
                 }

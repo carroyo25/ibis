@@ -40,7 +40,7 @@
                             </button>
                         </div>
                     </div>
-                    <div class="dataProceso direccion_columna">
+                    <div class="dataProceso_flex_columna">
                         <div class="seccion_izquierda">
                             <div class="column2_9">
                                 <label for="clase">Grupo:</label>

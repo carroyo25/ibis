@@ -15,7 +15,7 @@
         define('PASSWORD','s3pc0n2020');
     }else {
         define('URL','http://200.41.86.61:3000/ibis/');
-        define('PASSWORD','odigo72');
+        define('PASSWORD','s3pc0n2020');
     }
         
     define('HOST','192.168.1.30');
