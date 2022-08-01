@@ -29,7 +29,7 @@
                     </div>
                     <div>
                         <p>Pedidos Aprobados</p>
-                        <p>15</p>
+                        <p>0</p>
                         <p>ultimo emitido: 15/04/2022</p>
                     </div>
                 </div>
@@ -39,7 +39,7 @@
                     </div>
                     <div>
                         <p>Pedidos Culminados</p>
-                        <p>20</p>
+                        <p>0</p>
                         <p>ultimo emitido: 15/04/2022</p>
                     </div>
                 </div>

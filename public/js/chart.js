@@ -2,7 +2,9 @@
 $(function () {
     $("#esperar").fadeOut();
 
-    if ( $("#rol_user").val() == 2) {
+    //esta parte controla la parte de informes del sistema
+
+    if ( $("#rol_user").val() == 9 || $("#rol_user").val() == 2) {
         $.ajax({
             type: "POST",
             url: RUTA+"panel/pedidos",
