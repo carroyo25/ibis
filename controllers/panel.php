@@ -23,5 +23,9 @@
         function pedidos(){
             echo json_encode($this->model->listarPanelPedidos());
         }
+
+        function ordenes(){
+            echo json_encode($this->model->listarPanelOrdenes());
+        }
     }
 ?>

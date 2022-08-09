@@ -424,7 +424,8 @@
                                                     UPPER(cm_producto.cdesprod) AS cdesprod,
                                                     cm_producto.flgActivo,
                                                     tb_parametros.cdescripcion AS tipo,
-                                                    tb_unimed.cabrevia 
+                                                    tb_unimed.cabrevia,
+                                                    tb_unimed.ncodmed 
                                                 FROM
                                                     cm_producto
                                                     INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
@@ -441,7 +442,7 @@
                 if ($rc > 0){
                     $salida = "";
                     while( $rs = $sql->fetch()) {
-                        $salida .='<tr data-id="'.$rs['id_cprod'].'" class="pointer">
+                        $salida .='<tr class="pointer" data-idprod="'.$rs['id_cprod'].'" data-ncomed="'.$rs['ncodmed'].'" data-unidad="'.$rs['cabrevia'].'">
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="pl20px">'.$rs['cdesprod'].'</td>
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>

@@ -59,6 +59,9 @@ $(function() {
 
         accion = "u";
         grabado = true;
+
+        console.log(accion);
+        
         $("#proceso").fadeIn();
 
         return false;
@@ -292,7 +295,6 @@ $(function() {
                 if (result['codigo_ingreso'] == "") throw "Seleccione una nota de ingreso";
                 if (result['codigo_aprueba'] == "") throw "Seleccione la persona que aprueba";
                 if (result['codigo_almacen_destino'] == "") throw "Seleccione la persona que aprueba";
-
             
                 $.post(RUTA+"salida/nuevaSalida", {cabecera:result,
                                                 detalles:JSON.stringify(detalles())},
@@ -302,6 +304,7 @@ $(function() {
                     },
                     "json"
                 );
+                
             }
             
 

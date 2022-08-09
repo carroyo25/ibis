@@ -521,28 +521,31 @@ $(function(){
         
         try {
             if (autorizado != 3) throw "La orden no ha sido autorizada";
+            
+            let result = {};
+    
+            $.each($("#formProceso").serializeArray(),function(){
+                result[this.name] = this.value;
+            })
+
+            $("#esperar").fadeIn();
+            $.post(RUTA+"orden/envioOrden", {cabecera:result,
+                                            detalles:JSON.stringify(detalles())},
+                function (data, textStatus, jqXHR) {
+                    mostrarMensaje(data.mensaje,data.clase);
+                    $("#tablaPrincipal tbody")
+                        .empty()
+                        .append(data.ordenes);
+                    $("#esperar").fadeOut();
+                },
+                "json"
+            );
+
         } catch (error) {
             mostrarMensaje(error,'mensaje_error');
         }
 
-        let result = {};
-    
-        $.each($("#formProceso").serializeArray(),function(){
-            result[this.name] = this.value;
-        })
-
-        $("#esperar").fadeIn();
-        $.post(RUTA+"orden/envioOrden", {cabecera:result,
-                                        detalles:JSON.stringify(detalles())},
-            function (data, textStatus, jqXHR) {
-                mostrarMensaje(data.mensaje,data.clase);
-                $("#tablaPrincipal tbody")
-                    .empty()
-                    .append(data.ordenes);
-                $("#esperar").fadeOut();
-            },
-            "json"
-        );
+        
 
         return false;
     });

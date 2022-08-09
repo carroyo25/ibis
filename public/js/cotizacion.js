@@ -67,8 +67,6 @@ $(function(){
             "text"
         );
 
-        $("#proceso").fadeOut();
-        
         return false;  
     });
 
@@ -175,7 +173,8 @@ $(function(){
 
         $.post(RUTA+"cotizacion/estudio", {pedido:$("#codigo_pedido").val(),estado:56,detalles:JSON.stringify(itemsSave())},
             function (data, textStatus, jqXHR) {
-                mostrarMensaje("Pedido actulizado","mensaje_correcto");
+                $("#pregunta").fadeOut();
+                mostrarMensaje("Pedido actualizado","mensaje_correcto");
             },
             "text"
         );

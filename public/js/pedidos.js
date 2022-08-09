@@ -315,7 +315,6 @@ $(function(){
                 $("#espec_items").val(data.cabecera[0].detalle);
                 $("#partida").val(data.cabecera[0].cdescripcion);
 
-                console.log(data.cabecera[0].idtipomov,data.cabecera[0].veralm)
                
                 if (data.cabecera[0].idtipomov == 38) {
                     $("#requestAprob").removeClass("desactivado");
@@ -473,10 +472,11 @@ $(function(){
 
     $("#sendItem,#requestAprob").click(function (e) { 
         e.preventDefault();
-
-        $("#estadoPedido,#codigo_estado").val($(this).data("estado"));
                 
         if (grabado){
+
+            $("#estadoPedido,#codigo_estado").val($(this).data("estado"));
+
             $.post(RUTA+"pedidos/buscaRol", {rol:$(this).data("rol"),cc:$("#codigo_costos").val()},
                 function (data, textStatus, jqXHR) {
                     $("#listaCorreos tbody").empty().append(data);

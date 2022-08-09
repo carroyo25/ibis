@@ -153,25 +153,26 @@
                                                     cm_producto.ccodprod,
                                                     alm_recepdet.fvence,
                                                     UPPER(
-                                                            CONCAT_WS(
-                                                                ' ',
-                                                                cm_producto.cdesprod,
-                                                                tb_pedidodet.observaciones,
-                                                                tb_pedidodet.docEspec
-                                                            )
-                                                        ) AS cdesprod,
+                                                        CONCAT_WS(
+                                                            ' ',
+                                                            cm_producto.cdesprod,
+                                                            tb_pedidodet.observaciones,
+                                                            tb_pedidodet.docEspec
+                                                        )
+                                                    ) AS cdesprod,
                                                     tb_unimed.cabrevia,
                                                     FORMAT(lg_ordendet.ncanti, 2) AS cantidad,
-                                                    alm_recepserie.cdesserie
-                                                    FROM
-                                                    alm_recepdet
-                                                    INNER JOIN tb_pedidodet ON alm_recepdet.niddetaPed = tb_pedidodet.iditem
-                                                    INNER JOIN cm_producto ON alm_recepdet.id_cprod = cm_producto.id_cprod
-                                                    INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
-                                                    INNER JOIN lg_ordendet ON alm_recepdet.niddetaOrd = lg_ordendet.nitemord
-                                                    LEFT JOIN alm_recepserie ON alm_recepdet.niddeta = alm_recepserie.ncodserie
-                                                    WHERE
-                                                        alm_recepdet.id_regalm = :id");
+                                                    series.cdesserie,
+                                                    series.ncodserie
+                                                FROM
+                                                alm_recepdet
+                                                INNER JOIN tb_pedidodet ON alm_recepdet.niddetaPed = tb_pedidodet.iditem
+                                                INNER JOIN cm_producto ON alm_recepdet.id_cprod = cm_producto.id_cprod
+                                                INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                INNER JOIN lg_ordendet ON alm_recepdet.niddetaOrd = lg_ordendet.nitemord
+                                                LEFT JOIN (SELECT ncodserie,cdesserie,id_cprod FROM alm_recepserie) AS series ON alm_recepdet.id_cprod = series.id_cprod
+                                                WHERE
+                                                    alm_recepdet.id_regalm = :id");
                 $sql->execute(["id"=>$id]);
 
                 $rowCount = $sql->rowCount();
@@ -181,6 +182,8 @@
                     while ($rs = $sql->fetch()){
 
                         $estados = $this->listarSelect(13,$rs['nestadoreg']);
+
+                        $cantidad  = $rs['cdesserie'] == ' ' ? $rs['cantidad'] : 1;
 
                         $fecha = $rs['fvence'] == '30-11--0001' ? "" : date("d-m-Y", strtotime($rs['fvence']));
 
@@ -192,7 +195,7 @@
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="pl20px">'.$rs['cdesprod'].'</td>
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
-                                        <td><input type="number" step="any" value="'.$rs['cantidad'].'" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"></td>
+                                        <td><input type="number" step="any" value="'.$cantidad.'" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"></td>
                                         <td class="pl20px"><input type="text"></td>
                                         <td class="textoCentro">'.$rs['cdesserie'].'</td>
                                         <td class="textoCentro"><input type="date" value="'.$rs['fvence'].'" readonly></td>

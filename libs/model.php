@@ -1360,6 +1360,32 @@
             }
         }
 
+        public function buscarSeries($idprod,$ingreso,$almacen){
+            try {
+                $salida = "";
+
+                $sql = $this->db->connect()->prepare("SELECT cdesserie FROM alm_recepserie 
+                                                         WHERE id_cprod = :producto
+                                                            AND idref_movi = :salida
+                                                            AND idref_alma = :almacen");
+                $sql ->execute(["producto"=>$idprod,"salida"=>$ingreso,"almacen"=>$almacen]);
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0) {
+                    while ($rs = $sql->fetch()) {
+                        $salida .= $rs['cdesserie']." "; 
+                    }
+                }
+                
+                return $salida;
+                
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+
         private function consultarDetallesProceso($id){
             try {
                 $salida ="";
@@ -1741,7 +1767,8 @@
                 $rs = $sql->fetchAll();
                 $url = "public/documentos/pedidos/especificaciones/";
 
-                $adjunto = $rs[0]["cdocPDF"] == "" ? "": '<a href="'.$url.$rs[0]['cdocPDF'].'"><i class="far fa-sticky-note"></i></a>';
+                //$adjunto = $rs[0]["cdocPDF"] == "" ? "": '<a href="'.$url.$rs[0]['cdocPDF'].'"><i class="far fa-sticky-note"></i></a>';
+                $adjunto = "";
                     
                 $precios .= '<td class="textoDerecha pr20px '.$codpr[$i].'">'.$rs[0]['cabrevia']." ".number_format($rs[0]['precunit'], 2, '.', ',').'</td>
                              <td class="textoCentro '.$codpr[$i].'">'.date("d/m/Y", strtotime($rs[0]['ffechaent'])).'</td>

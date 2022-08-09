@@ -174,6 +174,7 @@
 
             $query = "SELECT COUNT( alm_despachocab.id_regalm ) AS numero FROM alm_despachocab WHERE ncodalm1 =:cod";
             $movimiento = $this->genNumberSalidas($docData[0]["ncodalm1"]) + $this->genNumberIngresos($docData[0]["ncodalm1"]);
+            //$series = $this->buscarSeries(414,1,3);
 
             return array("cabecera"=>$docData,
                         "detalles"=>$this->detallesNotaIngreso($id),
@@ -189,10 +190,16 @@
             try {
                 $salida = "";
                 $sql = $this->db->connect()->prepare("SELECT
-                                                        alm_recepserie.idref_alma,
-                                                        alm_recepserie.idref_movi,
-                                                        alm_recepserie.cdesserie,
+                                                        alm_recepdet.id_regalm,
+                                                        alm_recepdet.ncodalm1,
+                                                        alm_recepdet.fvence,
+                                                        alm_recepdet.ncantidad,
+                                                        alm_recepdet.id_cprod,
+                                                        alm_recepdet.niddetaPed,
+                                                        alm_recepdet.niddetaOrd,
+                                                        alm_recepdet.niddeta,
                                                         cm_producto.ccodprod,
+                                                        FORMAT(alm_recepdet.ncantidad, 2) AS cantidad,
                                                         UPPER(
                                                             CONCAT_WS(
                                                                 ' ',
@@ -200,23 +207,12 @@
                                                                 tb_pedidodet.observaciones
                                                             )
                                                         ) AS cdesprod,
+                                                        tb_unimed.nfactor,
                                                         tb_unimed.cabrevia,
-                                                        alm_recepdet.nestadoreg,
-                                                        alm_recepdet.niddeta,
-                                                        alm_recepdet.id_regalm,
-                                                        alm_recepdet.ncodalm1,
-                                                        alm_recepdet.fvence,
-                                                        FORMAT(alm_recepdet.ncantidad, 2) AS cantidad,
-                                                        alm_recepdet.id_cprod,
-                                                        alm_recepdet.niddetaPed,
-                                                        alm_recepdet.niddetaOrd,
                                                         tb_parametros.cdescripcion,
-                                                        tb_pedidodet.iditem,
-                                                        tb_pedidodet.idpedido,
-                                                        tb_unimed.nfactor
+                                                        alm_recepdet.nestadoreg
                                                     FROM
                                                         alm_recepdet
-                                                    LEFT JOIN alm_recepserie ON alm_recepdet.niddeta = alm_recepserie.idref_movi
                                                     INNER JOIN cm_producto ON alm_recepdet.id_cprod = cm_producto.id_cprod
                                                     INNER JOIN tb_pedidodet ON alm_recepdet.niddetaPed = tb_pedidodet.iditem
                                                     INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
@@ -232,20 +228,23 @@
 
                         $estados = $this->listarSelect(13,$rs['nestadoreg']);
 
+                        $series = $this->buscarSeries($rs['id_cprod'],$rs['id_regalm'],$rs['ncodalm1']);
+
                         $fecha = $rs['fvence'] == "" ? date("d/m/Y", strtotime($rs['fvence'])) : "";
 
                         $salida.='<tr data-itemorden="'.$rs['niddetaOrd'].'" 
                                         data-itempedido="'.$rs['niddetaPed'].'" 
                                         data-itemingreso="'.$rs['niddeta'].'"
-                                        data-idproducto ="'.$rs['id_cprod'].'">
+                                        data-idproducto ="'.$rs['id_cprod'].'"
+                                        data-recepcion ="'.$rs['id_regalm'].'">
                                         <td class="textoCentro"><input type="checkbox"></td>
                                         <td class="textoCentro">'.str_pad($item,3,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
-                                        <td class="pl20px">'.$rs['cdesprod'].'</td>
+                                        <td class="pl20px">'.$rs['cdesprod'].' '.$series.'</td>
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                         <td><input type="number" step="any" value="'.$rs['cantidad'].'" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"></td>
                                         <td class="pl20px"><input type="text"></td>
-                                        <td class="textoCentro">'.$rs['cdesserie'].'</td>
+                                        <td class="textoCentro"></td>
                                         <td class="textoCentro">'.$fecha.'</td>
                                         <td><select name="estado" disabled>'. $estados .'</select></td>
                                     </tr>';
@@ -259,6 +258,7 @@
             }
         }
 
+       
         public function grabarDespacho($cabecera,$detalles){
             try {
                 $mensaje = "Error al grabar el registro";
@@ -490,10 +490,16 @@
             try {
                 $salida="";
                 $sql=$this->db->connect()->prepare("SELECT
-                                                    alm_recepserie.idref_alma,
-                                                    alm_recepserie.idref_movi,
-                                                    alm_recepserie.cdesserie,
+                                                    alm_recepdet.id_regalm,
+                                                    alm_recepdet.ncodalm1,
+                                                    alm_recepdet.fvence,
+                                                    alm_recepdet.ncantidad,
+                                                    alm_recepdet.id_cprod,
+                                                    alm_recepdet.niddetaPed,
+                                                    alm_recepdet.niddetaOrd,
+                                                    alm_recepdet.niddeta,
                                                     cm_producto.ccodprod,
+                                                    FORMAT(alm_recepdet.ncantidad, 2) AS cantidad,
                                                     UPPER(
                                                         CONCAT_WS(
                                                             ' ',
@@ -501,28 +507,18 @@
                                                             tb_pedidodet.observaciones
                                                         )
                                                     ) AS cdesprod,
+                                                    tb_unimed.nfactor,
                                                     tb_unimed.cabrevia,
-                                                    alm_recepdet.nestadoreg,
-                                                    alm_recepdet.niddeta,
-                                                    alm_recepdet.id_regalm,
-                                                    alm_recepdet.ncodalm1,
-                                                    alm_recepdet.fvence,
-                                                    FORMAT(alm_recepdet.ncantidad, 2) AS cantidad,
-                                                    alm_recepdet.id_cprod,
-                                                    alm_recepdet.niddetaPed,
-                                                    alm_recepdet.niddetaOrd,
                                                     tb_parametros.cdescripcion,
-                                                    tb_pedidodet.iditem,
-                                                    tb_pedidodet.idpedido,
-                                                    tb_unimed.nfactor
+                                                    alm_recepdet.nestadoreg
                                                 FROM
                                                     alm_recepdet
-                                                LEFT JOIN alm_recepserie ON alm_recepdet.niddeta = alm_recepserie.idref_movi
                                                 INNER JOIN cm_producto ON alm_recepdet.id_cprod = cm_producto.id_cprod
                                                 INNER JOIN tb_pedidodet ON alm_recepdet.niddetaPed = tb_pedidodet.iditem
                                                 INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
                                                 INNER JOIN tb_parametros ON alm_recepdet.nestadoreg = tb_parametros.nidreg
-                                                WHERE tb_pedidodet.idpedido = :id");
+                                                WHERE
+                                                    alm_recepdet.id_regalm = :id");
                 $sql->execute(["id"=>$indice]);
 
                 $rowCount = $sql->rowCount();
@@ -532,8 +528,8 @@
                     while ($rs = $sql->fetch()){
 
                         $estados = $this->listarSelect(13,$rs['nestadoreg']);
-
                         $fecha = $rs['fvence'] == "0000-00-00" ? "" : date("d-m-Y", strtotime($rs['fvence']));
+                        $series = $this->buscarSeries($rs['id_cprod'],$rs['id_regalm'],$rs['ncodalm1']);
 
                         $salida.='<tr data-itemorden="'.$rs['niddetaOrd'].'" 
                                         data-itempedido="'.$rs['niddetaPed'].'" 
@@ -542,11 +538,11 @@
                                         <td class="textoCentro"><input type="checkbox"></td>
                                         <td class="textoCentro">'.str_pad($item,3,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
-                                        <td class="pl20px">'.$rs['cdesprod'].'</td>
+                                        <td class="pl20px">'.$rs['cdesprod'].' '.$series.'</td>
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                         <td><input type="number" step="any" value="'.$rs['cantidad'].'" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"></td>
                                         <td class="pl20px"><input type="text"></td>
-                                        <td class="textoCentro">'.$rs['cdesserie'].'</td>
+                                        <td class="textoCentro"></td>
                                         <td class="textoCentro">'.$fecha.'</td>
                                         <td><select name="estado" disabled>'. $estados .'</select></td>
                                     </tr>';

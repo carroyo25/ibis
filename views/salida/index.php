@@ -343,7 +343,7 @@
                             <input type="text" name="modalidad_traslado" id="modalidad_traslado" class="dos mostrarListaInterna busqueda" placeholder="Elija opción" readonly>
                             <div class="lista rowTwo uno" id="listaModalidad">
                                 <ul>
-                                       <?php echo $this->listaModalidad?>
+                                    <?php echo $this->listaModalidad?>
                                 </ul> 
                             </div>
                             <label for="tipo_envio">Tipo Envio</label>

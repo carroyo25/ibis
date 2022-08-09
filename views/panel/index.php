@@ -60,7 +60,11 @@
             </div>
             <div class="ventana">
                 <div class="cargaModulo">
-                    <?php require 'views/adm.php'; ?>
+                    <?php if ($_SESSION['rol'] == 2 || $_SESSION['rol'] == 9)
+                            require 'views/adm.php'; 
+                        else if ($_SESSION['rol'] == 5 )
+                            require 'views/aprob.php'; 
+                        ?>
                 </div>
             </div>
         </div>

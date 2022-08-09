@@ -153,6 +153,78 @@
 
         }
 
+        public function listarPanelOrdenes(){
+            try {
+                $valores = [];
+                $salida ="";
+                $proceso = 0;
+                $consulta = 0;
+                $atendido = 0;
+                $aprobacion = 0;
+                $aprobado = 0;
+                $cotizando = 0;
+                $etiquetas = ["Proceso", "Firmas", "Atendido", "Aprobacion", "Aprobado","Culminados"];
+
+
+                $sql = $this->db->connect()->query("SELECT
+                                                        lg_ordencab.cnumero,
+                                                        lg_ordencab.ffechadoc,
+                                                        lg_ordencab.ncodpry,
+                                                        tb_parametros.cdescripcion,
+                                                        tb_parametros.cabrevia,
+                                                        UPPER(tb_proyectos.cdesproy) AS proyecto,
+                                                        tb_pedidocab.concepto,
+                                                        lg_ordencab.nEstadoDoc                                                
+                                                    FROM
+                                                        lg_ordencab
+                                                    INNER JOIN tb_parametros ON lg_ordencab.nEstadoDoc = tb_parametros.nidreg
+                                                    INNER JOIN tb_proyectos ON lg_ordencab.ncodcos = tb_proyectos.nidreg
+                                                    INNER JOIN tb_pedidocab ON lg_ordencab.id_refpedi = tb_pedidocab.idreg");
+                $sql->execute();
+                $rowcount = $sql->rowcount();
+
+                if ($rowcount > 0) {
+                    while ($rs = $sql->fetch()) {
+                        $salida .= '<tr>
+                                        <td class="textoCentro">'.$rs['cnumero'].'</td>
+                                        <td class="pl20px">'.$rs['concepto'].'</td>
+                                        <td class="textoCentro">'.$rs['ffechadoc'].'</td>
+                                        <td class="pl20px">'.$rs['proyecto'].'</td>
+                                        <td class="textoCentro '.$rs['cabrevia'].'">'.$rs['cdescripcion'].'</td>
+                                    </tr>';
+                        
+                        if ($rs['nEstadoDoc'] == 49){ //procesando
+                            $proceso++;
+                        }else if($rs['nEstadoDoc'] == 59) {
+                            $consulta++;
+                        }else if($rs['nEstadoDoc'] == 52) {
+                            $atendido++;
+                        }else if($rs['nEstadoDoc'] == 53) {
+                            $aprobacion++;
+                        }else if($rs['nEstadoDoc'] == 54) {
+                            $aprobado++;
+                        }else if($rs['nEstadoDoc'] == 59) {
+                            $cotizando++;
+                        }
+                        
+                    }
+
+                    array_push($valores,$proceso);
+                    array_push($valores,$consulta);
+                    array_push($valores,$atendido);
+                    array_push($valores,$aprobacion);
+                    array_push($valores,$aprobado);
+                    array_push($valores,$cotizando);
+                }
+
+                return array("contenido"=>$salida,
+                              "valores"=>$valores,
+                              "etiquetas"=>$etiquetas);
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            } 
+        }
 
     }
 ?>

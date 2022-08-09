@@ -94,7 +94,6 @@ $(function() {
         return false;
     });
 
-
     $("#addMessage").click(function (e) { 
         e.preventDefault();
         
@@ -196,6 +195,14 @@ $(function() {
         $("#pregunta").fadeOut();
 
         return false;
+    });
+
+    $("#verCotizacion").click(function(e){
+        e.preventDefault();
+
+        $("#vistaprevia").fadeIn();
+
+        return false
     });
      
 })

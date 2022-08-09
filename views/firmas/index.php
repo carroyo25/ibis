@@ -53,6 +53,9 @@
                             <button type="button" id="requestAprob"  title="Solicitar Aprobacion" class="boton3" data-rol="5">
                                 <i class="fas fa-signature"></i> Autorizar Proceso
                             </button>
+                            <button type="button" id="verCotizacion" title="Ver cotizacion" class="boton3">
+                                <i class="far fa-file-pdf"></i> Ver Cotización
+                            </button>
                             <button type="button" id="closeProcess" title="Cerrar" class="boton3">
                                 <i class="fas fa-window-close"></i>
                             </button>

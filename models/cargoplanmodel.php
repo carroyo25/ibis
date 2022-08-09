@@ -25,6 +25,7 @@
                                                         tb_pedidodet.cant_env,
                                                         tb_pedidodet.estadoItem,
                                                         tb_pedidodet.tipoAten,
+                                                        tb_pedidodet.observaciones,
                                                         UPPER(
                                                         CONCAT_WS( ' ', tb_proyectos.ccodproy, tb_proyectos.cdesproy )) AS costos,
                                                         cm_producto.ccodprod,
@@ -79,7 +80,7 @@
                                     <td class="textoCentro">'.$rs['anio'].'</td>
                                     <td class="textoCentro">'.str_pad($rs['nrodoc'],6,0,STR_PAD_LEFT).'</td>
                                     <td class="textoCentro">'.$rs['unidad'].'</td>
-                                    <td class="pl20px">'.strtoupper($rs['cdesprod']).'</td>
+                                    <td class="pl20px">'.strtoupper($rs['cdesprod'].' '.$rs['observaciones']).'</td>
                                     <td class="textoCentro">'.$rs['cnumero'].'</td>
                                 </tr>';
                     }

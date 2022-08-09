@@ -25,9 +25,6 @@
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
                         <div>
-                            <button type="button" id="saveDoc" title="Grabar Nota" class="boton3">
-                                <span><i class="far fa-save"></i> Grabar </span> 
-                            </button>
                             <button type="button" id="updateDocument" title="Cerrar Salida" class="boton3">
                                 <i class="far fa-comments"></i> Confirmar Ingreso
                             </button>
