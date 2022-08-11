@@ -1385,7 +1385,6 @@
             }
         }
 
-
         private function consultarDetallesProceso($id){
             try {
                 $salida ="";

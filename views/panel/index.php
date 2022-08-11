@@ -63,7 +63,13 @@
                     <?php if ($_SESSION['rol'] == 2 || $_SESSION['rol'] == 9)
                             require 'views/adm.php'; 
                         else if ($_SESSION['rol'] == 5 )
-                            require 'views/aprob.php'; 
+                            require 'views/aprob.php';
+                        else if ($_SESSION['rol'] == 3 )
+                            require 'views/aped.php';
+                        else if ($_SESSION['rol'] == 68 )
+                            require 'views/comp.php';
+                        else if ($_SESSION['rol'] == 4 )
+                            require 'views/alsed.php';  
                         ?>
                 </div>
             </div>

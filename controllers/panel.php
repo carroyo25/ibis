@@ -27,5 +27,21 @@
         function ordenes(){
             echo json_encode($this->model->listarPanelOrdenes());
         }
+
+        function pedidosxAprobar(){
+            echo json_encode($this->model->listarPedidosPendientesAprobacion());
+        }
+
+        function compras(){
+            echo json_encode($this->model->resumenCompras());
+        }
+
+        function resumenAlmacenSedes(){
+            echo json_encode($this->model->resumenAlmacenRecepcion());
+        }
+
+        function resumenAlmacenObra(){
+
+        }
     }
 ?>
