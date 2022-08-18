@@ -69,7 +69,9 @@
                         else if ($_SESSION['rol'] == 68 )
                             require 'views/comp.php';
                         else if ($_SESSION['rol'] == 4 )
-                            require 'views/alsed.php';  
+                            require 'views/alsed.php';
+                        else if ($_SESSION['rol'] == 109 )
+                            require 'views/alobr.php';  
                         ?>
                 </div>
             </div>

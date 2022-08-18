@@ -152,7 +152,7 @@ $(function () {
 
                 $("#tablaPanelIngresos tbody")
                   .empty()
-                  .append(response.aprobados);
+                  .append(response.ingresos);
             }
         });
     }

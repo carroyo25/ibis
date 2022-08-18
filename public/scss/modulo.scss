@@ -1074,7 +1074,19 @@ $culminado:#55A5E2;
             font-size: 0.7rem;
             font-weight: bold;
             margin-top: 10px;
-        }  
+        } 
+        
+        .igv{
+            border: 1px solid #c2c2c2;
+            display: flex;
+            justify-content: space-evenly;
+            padding: 10px;
+            border-radius: 8px;
+
+            label {
+                margin-top: 0 !important;
+            }
+        }
     }
 
     table {

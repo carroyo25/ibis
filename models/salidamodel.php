@@ -643,8 +643,9 @@
                         $pdf->AddPage();
                         $lc = 0;
                     }
-                    
-                    $pdf->Ln(1);
+                }
+
+                $pdf->Ln(1);
                     $pdf->SetX(13);
                     $pdf->MultiCell(190,2,utf8_decode($cabecera["observaciones"]));
                     $pdf->Ln(2);
@@ -655,7 +656,6 @@
                     $pdf->Output($archivo,'F');
                     
                     return $archivo;
-                }
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();

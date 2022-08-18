@@ -8,7 +8,10 @@
         function render(){
             $this->view->listaAlmacenes = $this->model->listarAlmacen();
             $this->view->listaTransportes = $this->model->listarParametros("08");
+            $this->view->listaMonedas =  $this->model->listarParametros("03");
+            $this->view->listaPagos = $this->model->listarParametros("11");
             $this->view->listaOrdenes = $this->model->listarOrdenes($_SESSION['iduser']);
+            $this->view->listaEntidades = $this->model->listarEntidades();
             $this->view->render('orden/index');
         }
 
@@ -17,7 +20,7 @@
         }
 
         function datosPedido(){
-            echo json_encode($this->model->verDatosCabecera($_POST['pep'],$_POST['prof'],$_POST['ent']));
+            echo json_encode($this->model->verDatosCabecera($_POST['pep']));
         }
 
         function vistaPreliminar(){
@@ -25,11 +28,14 @@
         }
 
         function nuevoRegistro(){
-            echo json_encode($this->model->insertarOrden($_POST['cabecera'],$_POST['detalles'],$_POST['comentarios']));
+            echo json_encode($this->model->insertarOrden($_POST['cabecera'],$_POST['detalles'],$_POST['comentarios'],$_FILES));
+
+            //echo $_FILES['file-0']['name'];
+            //$this->model->subirArchivos($_FILES);
         }
 
         function modificaRegistro(){
-            echo json_encode($this->model->modificarOrden($_POST['cabecera'],$_POST['detalles'],$_POST['comentarios']));
+            //echo json_encode($this->model->modificarOrden($_POST['cabecera'],$_POST['detalles'],$_POST['comentarios']));
         }
         
         function ordenId(){
@@ -58,6 +64,10 @@
 
         function actualizaListado(){
             echo $this->model->listarOrdenes($_SESSION['iduser']);
+        }
+
+        function detallesEntidad(){
+            echo json_encode($this->model->datosEntidad($_POST['codigo']));
         }
     }
 ?>

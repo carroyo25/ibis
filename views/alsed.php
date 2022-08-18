@@ -77,9 +77,10 @@
                    <thead>
                        <tr>
                            <th>Nro</th>
-                           <th>Concepto</th>
-                           <th>Emisión</th>
+                           <th>Emision</th>
+                           <th>Almacen</th>
                            <th>Centro Costos</th>
+                           <th>Orden</th>
                            <th>Estado</th>
                        </tr>
                    </thead>

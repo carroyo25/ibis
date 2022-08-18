@@ -86,60 +86,49 @@
             try {
                 $salida = "";
                 $sql = $this->db->connect()->prepare("SELECT
-                                                        tb_pedidodet.idpedido,
-                                                        FORMAT(tb_pedidodet.cant_aprob, 2) AS cantidad,
-                                                        FORMAT(tb_pedidodet.precio, 2) AS precio,
-                                                        tb_pedidodet.igv,
-                                                        FORMAT(tb_pedidodet.total, 2) AS total,
-                                                        tb_pedidodet.estadoItem,
-                                                        UPPER(
-                                                            CONCAT_WS(
-                                                                ' ',
-                                                                cm_producto.cdesprod,
-                                                                tb_pedidodet.observaciones,
-                                                                lg_proformadet.cdetalle
-                                                            )
-                                                        ) AS cdesprod,
-                                                        cm_producto.ccodprod,
-                                                        cm_producto.id_cprod,
-                                                        tb_unimed.ncodmed,
-                                                        tb_unimed.cabrevia AS unidad,
-                                                        cm_entidad.crazonsoc,
-                                                        UPPER(tb_proyectos.cdesproy) AS costos,
-                                                        lg_proformadet.ncodmon,
-                                                        tb_area.ncodarea,
-                                                        UPPER(tb_area.cdesarea) AS area,
-                                                        tb_pedidodet.iditem,
-                                                        tb_pedidodet.idcostos,
-                                                        tb_pedidodet.idarea,
-                                                        tb_pedidocab.idreg,
-                                                        tb_pedidocab.nrodoc,
-                                                        tb_pedidocab.emision,
-                                                        tb_pedidocab.concepto,
-                                                        tb_pedidodet.entidad,
-                                                        lg_proformadet.id_abastec,
-                                                        tb_pedidodet.total AS total_numero,
-                                                        lg_proformacab.id_centi,
-                                                        tb_parametros.cabrevia AS moneda,
-                                                        tb_parametros.cdescripcion AS cmoneda,
-                                                        lg_proformacab.cnumero,
-                                                        lg_proformacab.cotref
-                                                    FROM
-                                                        tb_costusu
-                                                    INNER JOIN tb_pedidodet ON tb_costusu.ncodproy = tb_pedidodet.idcostos
-                                                    INNER JOIN cm_producto ON tb_pedidodet.idprod = cm_producto.id_cprod
-                                                    INNER JOIN tb_unimed ON tb_pedidodet.unid = tb_unimed.ncodmed
-                                                    INNER JOIN cm_entidad ON tb_pedidodet.entidad = cm_entidad.cnumdoc
-                                                    INNER JOIN lg_proformadet ON tb_pedidodet.idproforma = lg_proformadet.nitemprof
-                                                    INNER JOIN tb_proyectos ON tb_pedidodet.idcostos = tb_proyectos.nidreg
-                                                    INNER JOIN tb_area ON tb_pedidodet.idarea = tb_area.ncodarea
-                                                    INNER JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
-                                                    INNER JOIN lg_proformacab ON tb_pedidodet.cotref = lg_proformacab.cotref
-                                                    INNER JOIN tb_parametros ON lg_proformacab.ncodmon = tb_parametros.nidreg
-                                                    WHERE
-                                                        tb_costusu.nflgactivo = 1
-                                                    AND tb_costusu.id_cuser = :user
-                                                    AND tb_pedidodet.estadoItem = 58");
+                tb_pedidodet.idpedido,
+                FORMAT(tb_pedidodet.cant_aprob, 2) AS cantidad,
+                FORMAT(tb_pedidodet.precio, 2) AS precio,
+                tb_pedidodet.igv,
+                FORMAT(tb_pedidodet.total, 2) AS total,
+                tb_pedidodet.estadoItem,
+                UPPER(
+                    CONCAT_WS(
+                        ' ',
+                        cm_producto.cdesprod,
+                        tb_pedidodet.observaciones
+                    )
+                ) AS cdesprod,
+                cm_producto.ccodprod,
+                cm_producto.id_cprod,
+                tb_unimed.ncodmed,
+                tb_unimed.cabrevia AS unidad,
+                UPPER(tb_proyectos.cdesproy) AS costos,
+                tb_area.ncodarea,
+                UPPER(tb_area.cdesarea) AS area,
+                tb_pedidodet.iditem,
+                tb_pedidodet.idcostos,
+                tb_pedidodet.idarea,
+                tb_pedidocab.idreg,
+                tb_pedidocab.nrodoc,
+                tb_pedidocab.emision,
+                tb_pedidocab.concepto,
+                tb_pedidodet.entidad,
+                tb_pedidodet.total AS total_numero
+            FROM
+                tb_costusu
+            INNER JOIN tb_pedidodet ON tb_costusu.ncodproy = tb_pedidodet.idcostos
+            INNER JOIN cm_producto ON tb_pedidodet.idprod = cm_producto.id_cprod
+            INNER JOIN tb_unimed ON tb_pedidodet.unid = tb_unimed.ncodmed
+            INNER JOIN tb_proyectos ON tb_pedidodet.idcostos = tb_proyectos.nidreg
+            INNER JOIN tb_area ON tb_pedidodet.idarea = tb_area.ncodarea
+            INNER JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
+            WHERE
+                tb_costusu.nflgactivo = 1
+            AND tb_costusu.id_cuser = :user
+            AND tb_pedidodet.estadoItem = 54");
+
+                                                    //se cambia el 58 para llama los items directo con aprobacion
                 $sql->execute(["user"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowCount();
 
@@ -147,17 +136,11 @@
                     while ($rs = $sql->fetch()) {
                         $salida .='<tr class="pointer" data-pedido="'.$rs['idpedido'].'"
                                                        data-entidad="'.$rs['entidad'].'"
-                                                       data-moneda="'.$rs['cmoneda'].'"
                                                        data-unidad="'.$rs['unidad'].'"
                                                        data-cantidad ="'.$rs['cantidad'].'"
-                                                       data-precio="'.$rs['precio'].'"
                                                        data-total="'.$rs['total_numero'].'"
-                                                       data-abrmoneda="'.$rs['moneda'].'"
                                                        data-codprod="'.$rs['id_cprod'].'"
-                                                       data-iditem="'.$rs['iditem'].'"
-                                                       data-proforma="'.$rs['cotref'].'"
-                                                       data-pago="'.$rs['id_abastec'].'"
-                                                       data-codigomoneda="'.$rs['ncodmon'].'">
+                                                       data-iditem="'.$rs['iditem'].'">
                                         <td class="textoCentro">'.str_pad($rs['nrodoc'],6,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.date("d/m/Y", strtotime($rs['emision'])).'</td>
                                         <td class="pl5px">'.$rs['concepto'].'</td>
@@ -165,7 +148,6 @@
                                         <td class="pl5px">'.$rs['costos'].'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="pl5px">'.$rs['cdesprod'].'</td>
-                                        <td class="pl5px">'.$rs['crazonsoc'].'</td>
                                     </tr>';
                     }
                 }
@@ -177,18 +159,17 @@
             }
         }
 
-        public function verDatosCabecera($pedido,$proforma,$entidad){
+        public function verDatosCabecera($pedido){
             $datosPedido = $this->datosPedido($pedido);
             $sql = "SELECT COUNT(lg_ordencab.id_regmov) AS numero FROM lg_ordencab WHERE lg_ordencab.ncodcos =:cod";
-            
+            $api = file_get_contents('https://api.apis.net.pe/v1/tipo-cambio-sunat');
+            $cambio = json_decode($api);
+
             $numero = $this->generarNumero($datosPedido[0]["idcostos"],$sql);
-            $entidad = $this->datosEntidad($entidad);
-            $proforma = $this->datosProforma($proforma);
 
             $salida = array("pedido"=>$datosPedido,
                             "orden"=>$numero,
-                            "entidad"=>$entidad,
-                            "proforma"=>$proforma);
+                            "cambio"=>$cambio->compra);
 
             return $salida;
         }
@@ -226,7 +207,7 @@
             $entrega = $this->calcularDias($cabecera['fentrega']);
 
             $pdf = new PDF($titulo,$condicion,$cabecera['emision'],$cabecera['moneda'],$entrega,
-                            $cabecera['lentrega'],$cabecera['proforma'],$cabecera['fentrega'],$cabecera['cpago'],$cabecera['total'],
+                            $cabecera['lentrega'],$cabecera['ncotiz'],$cabecera['fentrega'],$cabecera['cpago'],$cabecera['total'],
                             $cabecera['costos'],$cabecera['concepto'],$_SESSION['nombres'],$cabecera['entidad'],$cabecera['ruc_entidad'],
                             $cabecera['direccion_entidad'],$cabecera['telefono_entidad'],$cabecera['correo_entidad'],$cabecera['retencion'],
                             $cabecera['atencion'],$cabecera['telefono_contacto'],$cabecera['correo_contacto']);
@@ -326,16 +307,15 @@
             return $file;
         }
 
-        public function insertarOrden($cabecera,$detalles,$comentarios){
+        public function insertarOrden($cabecera,$detalles,$comentarios,$adjuntos){
             try {
-                $salida = false;
+                var_dump($adjuntos);
+                /*$salida = false;
                 $respuesta = false;
                 $mensaje = "Error en el registro";
                 $clase = "mensaje_error";
 
                 $sql = "SELECT COUNT(lg_ordencab.id_regmov) AS numero FROM lg_ordencab WHERE lg_ordencab.ncodcos =:cod";
-                $api = file_get_contents('https://api.apis.net.pe/v1/tipo-cambio-sunat');
-                $cambio = json_decode($api);
                 $entrega = $this->calcularDias($cabecera['fentrega']);
             
                 $orden = $this->generarNumero($cabecera['codigo_costos'],$sql);
@@ -358,7 +338,7 @@
                                 "entrega"=>$cabecera['fentrega'],
                                 "entidad"=>$cabecera['codigo_entidad'],
                                 "moneda"=>$cabecera['codigo_moneda'],
-                                "tcambio"=>$cambio->compra,
+                                "tcambio"=>$cabecera['tcambio'],
                                 "igv"=>0,
                                 "total"=>$cabecera['total'],
                                 "proyecto"=>$cabecera['codigo_costos'],
@@ -391,13 +371,22 @@
                                 "clase"=>$clase);
 
                 
-                return $salida;
+                return $salida;*/
 
                 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;
             }    
+        }
+
+        public function subirArchivos($adjuntos) {
+            try {
+                //echo $adjuntos['file-0']['tmp_name'];
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            } 
         }
 
         private function grabarDetalles($codigo,$detalles,$costos){
@@ -671,7 +660,7 @@
             }
         }
 
-        private function datosEntidad($entidad){
+        public function datosEntidad($entidad){
             try {
                 $sql=$this->db->connect()->prepare("SELECT
                                                     cm_entidad.cnumdoc,

@@ -4,8 +4,10 @@ var HOST = $(location).attr('hostname');
 
 if (HOST ==  "localhost") {
     var RUTA = "http://localhost/ibis/";
-}else {
-    var RUTA = "https://200.41.86.61:3000/ibis/";
+}else if (HOST ==  "192.168.110.16"){
+    var RUTA = "http://192.168.110.16/ibis/";
+}else if (HOST ==  "200.41.86.58"){
+    var RUTA = "http://200.41.86.58:8004/ibis/";
 }
 
 var emailreg = /^[a-zA-Z0-9_\.\-]+@[a-zA-Z0-9\-]+\.[a-zA-Z0-9\-\.]+$/;

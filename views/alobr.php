@@ -18,7 +18,7 @@
                         <i class="fas fa-dolly"></i>
                     </div>
                     <div>
-                        <p>Ordenes Emitidas</p>
+                        <p>Despachos</p>
                         <p id="pedidos_emitidos">1</p>
                         <p>ultimo emitido: 02/08/2022</p>
                     </div>
@@ -28,19 +28,9 @@
                         <span><i class="far fa-edit"></i></span>
                     </div>
                     <div>
-                        <p>Ordenes Aprobadas</p>
+                        <p>Ingresos</p>
                         <p>0</p>
                         <p>ultimo aprobado: -</p>
-                    </div>
-                </div>
-                <div class="area1_section">
-                    <div>
-                        <span><i class="fas fa-file-signature"></i></span>
-                    </div>
-                    <div>
-                        <p>Ordenes Culminados</p>
-                        <p>0</p>
-                        <p>ultimo culminada: 15/04/2022</p>
                     </div>
                 </div>
             </div>

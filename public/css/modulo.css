@@ -1358,6 +1358,20 @@
   font-weight: bold;
   margin-top: 10px;
 }
+.ventanaProceso .dataProceso .igv, .ventanaProceso .dataProceso_2 .igv, .ventanaProceso .dataProceso_flex .igv, .ventanaProceso .dataProceso_flex_columna .igv {
+  border: 1px solid #c2c2c2;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: space-evenly;
+      -ms-flex-pack: space-evenly;
+          justify-content: space-evenly;
+  padding: 10px;
+  border-radius: 8px;
+}
+.ventanaProceso .dataProceso .igv label, .ventanaProceso .dataProceso_2 .igv label, .ventanaProceso .dataProceso_flex .igv label, .ventanaProceso .dataProceso_flex_columna .igv label {
+  margin-top: 0 !important;
+}
 .ventanaProceso table tbody tr {
   height: 30px;
   font-size: 0.7rem;

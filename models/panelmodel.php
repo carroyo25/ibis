@@ -384,7 +384,7 @@
                                                     INNER JOIN tb_parametros AS atencion ON tb_pedidocab.nivelAten = atencion.nidreg
                                                     WHERE
                                                         tb_costusu.id_cuser = :user
-                                                    AND tb_pedidocab.estadodoc = 54
+                                                    AND tb_pedidocab.estadodoc BETWEEN 49 AND 60
                                                     AND tb_costusu.nflgactivo = 1");
                 $sql->execute(["user"=>$_SESSION['iduser']]);
                 $rowcount = $sql->rowcount();
@@ -567,29 +567,28 @@
                                                         alm_recepcab.id_centi,
                                                         alm_recepcab.cnumguia,
                                                         alm_recepcab.ncodpry,
-                                                        alm_recepcab.ncodarea,
                                                         alm_recepcab.ncodcos,
                                                         alm_recepcab.idref_pedi,
                                                         alm_recepcab.idref_abas,
                                                         alm_recepcab.nEstadoDoc,
-                                                        alm_recepcab.nflgCalidad,
-                                                        UPPER( tb_almacen.cdesalm ) AS almacen,
-                                                        UPPER( tb_proyectos.cdesproy ) AS proyecto,
-                                                        UPPER( tb_area.cdesarea ) AS area,
+                                                        UPPER(tb_almacen.cdesalm) AS almacen,
+                                                        UPPER(tb_proyectos.cdesproy) AS proyecto,
                                                         lg_ordencab.cnumero AS orden,
-                                                        LPAD( tb_pedidocab.nrodoc, 6, 0 ) pedido 
-                                                    FROM
+                                                        LPAD(tb_pedidocab.nrodoc, 6, 0) AS pedido,
+                                                        tb_parametros.cdescripcion,
+                                                        tb_parametros.cabrevia
+                                                        FROM
                                                         tb_costusu
                                                         INNER JOIN alm_recepcab ON tb_costusu.ncodproy = alm_recepcab.ncodpry
                                                         INNER JOIN tb_almacen ON alm_recepcab.ncodalm1 = tb_almacen.ncodalm
                                                         INNER JOIN tb_proyectos ON alm_recepcab.ncodpry = tb_proyectos.nidreg
                                                         INNER JOIN tb_area ON alm_recepcab.ncodarea = tb_area.ncodarea
                                                         INNER JOIN lg_ordencab ON alm_recepcab.idref_abas = lg_ordencab.id_regmov
-                                                        INNER JOIN tb_pedidocab ON alm_recepcab.idref_pedi = tb_pedidocab.idreg 
-                                                    WHERE
-                                                        tb_costusu.id_cuser = :usr 
-                                                        AND tb_costusu.nflgactivo = 1
-                                                        AND alm_recepcab.nEstadoDoc = 60");
+                                                        INNER JOIN tb_pedidocab ON alm_recepcab.idref_pedi = tb_pedidocab.idreg
+                                                        INNER JOIN tb_parametros ON alm_recepcab.nEstadoDoc = tb_parametros.nidreg
+                                                        WHERE
+                                                            tb_costusu.id_cuser = :usr
+                                                        AND tb_costusu.nflgactivo = 1");
                 $sql->execute(["usr"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowcount();
                 if ($rowCount > 0){
@@ -599,9 +598,8 @@
                                     <td class="textoCentro">'.date("d/m/Y", strtotime($rs['ffecdoc'])).'</td>
                                     <td class="pl20px">'.$rs['almacen'].'</td>
                                     <td class="pl20px">'.$rs['proyecto'].'</td>
-                                    <td class="pl20px">'.$rs['area'].'</td>
-                                    <td class="textoCentro">'.$rs['orden'].'</td>
-                                    <td class="textoCentro">'.$rs['pedido'].'</td>
+                                    <td class="pl20px">'.$rs['orden'].'</td>
+                                    <td class="textoCentro '.$rs['cabrevia'].'">'.$rs['cdescripcion'].'</td>
                                 </tr>';
                     }
                 }

@@ -2,29 +2,23 @@
     
     $url = $_SERVER['HTTP_HOST'];
 
-    /*if ($url === "localhost"){
+    if ($url === "localhost")
         define('URL','http://localhost/ibis/');
-        define('PASSWORD','s3pc0n2020');
-    }else {
-        define('URL','http://200.41.86.61:3000/ibis/');
-        define('PASSWORD','odigo72');
-    }*/
-
-    if ($url === "localhost"){
-        define('URL','http://localhost/ibis/');
-        define('PASSWORD','s3pc0n2020');
-    }else {
-        define('URL','http://200.41.86.61:3000/ibis/');
-        define('PASSWORD','s3pc0n2020');
-    }
+    else if ($url === "192.168.110.16")
+        define('URL','//192.168.110.16/ibis/');
+    else if ($url === "200.41.86.58:8004")
+        define('URL','http://200.41.86.58:8004/ibis/');
+        
         
     define('HOST','192.168.1.30');
-    define('DB','ibis');
-    define('DB2','rrhh');
+    define('HOST1','192.168.110.16');
+    define('DB','rrhh');
+    define('DB2','ibis');
     define('USER','remoto');
     define('MAILPASSWORD','aK8izG1WEQwwB1X');
     define('MAILUSER','sistema_ibis@sepcon.net');
-    define('CHARSET','utf8mb4'); 
+    define('CHARSET','utf8mb4');
+    define('PASSWORD','s3pc0n2020'); 
 
 
     define('VERSION',rand(0, 15000));

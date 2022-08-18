@@ -95,14 +95,19 @@
                             </div>
                             <div class="column2">
                                 <label for="concepto">Concepto:</label>
-                                <input type="text" name="concepto" id="concepto" class="cerrarLista" readonly>
+                                <input type="text" name="concepto" id="concepto" class="cerrarLista mayusculas">
                             </div>
                         </div>
                         <div class="seccion_medio">
                             <div class="column4_55">
                                 <div class="column2_3957">
                                     <label for="moneda">Moneda :</label>
-                                    <input type="text" name="moneda" id="moneda" class="cerrarLista" readonly>
+                                    <input type="text" name="moneda" id="moneda" class="mostrarLista busqueda" placeholder="Elija una opcion" readonly>
+                                    <div class="lista" id="listaMoneda">
+                                        <ul>
+                                            <?php echo $this->listaMonedas?>
+                                        </ul> 
+                                    </div>
                                 </div>
                                 <div class="column2_46">
                                     <label for="total">Total :</label>
@@ -122,31 +127,57 @@
                             <div class="column4_55">
                                 <div class="column2_3957">
                                     <label for="cpago">Cond.Pago :</label>
-                                    <input type="text" name="cpago" id="cpago" class="cerrarLista" readonly>
+                                    <input type="text" name="cpago" id="cpago" class="mostrarLista busqueda" placeholder="Elija una opcion" readonly>
+                                    <div class="lista" id="listaPago">
+                                        <ul>
+                                            <?php echo $this->listaPagos?>
+                                        </ul> 
+                                    </div>
                                 </div>
                                 <div class="column2_46">
                                     <label for="estado">Estado:</label>
                                     <input type="text" name="estado" id="estado" class="textoCentro estado procesando" readonly value="EN PROCESO">
                                 </div>
                             </div>
+                            <div class="column4_55">
+                                <div class="column2_46">
+                                    <label for="tcambio">Incluye IGV.</label>
+                                    <div class="igv">
+                                        <input type="radio" name="radioIgv" id="si" value="0.18">
+                                        <label for="si">Si</label>
+                                        <input type="radio" name="radioIgv" id="no" value="0" checked>
+                                        <label for="no">No</label>
+                                    </div>
+                                </div>
+                                <div class="column2_46">
+                                    <label for="tcambio">T. Cambio:</label>
+                                    <input type="text" name="tcambio" id="tcambio" class="textoDerecha pr20px">
+                                </div>
+                            </div>
+                            
                         </div>
                         <div class="seccion_derecha">
                             <div class="column2">
                                 <label for="entidad">Entidad:</label>
-                                <input type="text" name="entidad" id="entidad" readonly>
+                                <input type="text" name="entidad" id="entidad" class="mostrarLista busqueda" placeholder="Elija una opcion">
+                                <div class="lista" id="listaEntidad">
+                                    <ul>
+                                        <?php echo $this->listaEntidades?>
+                                    </ul> 
+                                </div>
                             </div>
                             <div class="column2">
                                 <label for="atencion">Atención:</label>
                                 <input type="text" name="atencion" id="atencion" readonly>
                             </div>
-                            <div class="column2">
-                                <label for="transporte">Transporte:</label>
-                                <input type="text" name="transporte" id="transporte" class="mostrarLista busqueda" placeholder="Elija una opcion"
-                                    readonly>
-                                <div class="lista" id="listaTransporte">
-                                   <ul>
-                                       <?php echo $this->listaTransportes?>
-                                   </ul> 
+                            <div class="column4_55">
+                                <div class="column2">
+                                    <label for="ncotiz">N° Cot.:</label>
+                                    <input type="text" name="ncotiz" id="ncotiz" class="cerrarLista">
+                                </div>
+                                <div class="column2">
+                                    <label for="dscto">Descuentos %:</label>
+                                    <input type="text" name="dscto" id="dscto" class="cerrarLista">
                                 </div>
                             </div>
                             <div class="column2">
@@ -164,6 +195,9 @@
                     <div class="barraOpciones">
                         <span>Detalles</span>
                         <div>
+                            <button type="button" id="uploadCotiz" title="Adjuntar Coizacion" class="cerrarLista boton3">
+                                <i class="far fa-file-pdf"></i> Adjuntar archivos
+                            </button>
                             <button type="button" id="loadRequest" title="Importar Pedido" class="cerrarLista boton3">
                                 <i class="fas fa-upload"></i> Importar Items
                             </button>
@@ -176,13 +210,14 @@
                         <table class="tabla" id="tablaDetalles">
                             <thead>
                                 <tr class="stickytop">
+                                    <th width="3%">...</th>
                                     <th>Item</th>
-                                    <th>Codigo</th>
+                                    <th width="7%">Codigo</th>
                                     <th>Descripcion</th>
                                     <th>Und.</th>
-                                    <th>Cant.</th>
-                                    <th>Precio</th>
-                                    <th>Total</th>
+                                    <th width="7%">Cant.</th>
+                                    <th width="10%">Precio</th>
+                                    <th width="10%">Total</th>
                                     <th>Nro.</br>Parte</th>
                                     <th>Pedido</th>
                                 </tr>
@@ -219,7 +254,6 @@
                             <th width="15%">Centro de Costos</th>
                             <th width="7%">Codigo</th>
                             <th width="20%">Descripción</th>
-                            <th width="15%">Proveedor</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -326,6 +360,24 @@
                     </div>
             </div>
         </form>
+    </div>
+    <div class="modal" id="archivos">
+        <div class="ventanaArchivos">
+            <form action="#" id="fileAtachs" enctype='multipart/form-data'>
+                <input type="hidden" name="nroordenatach" id="nroordenatach">
+                <input type="file" name="uploadAtach" id="uploadAtach" multiple class="oculto">
+                <div class="tituloArchivos">
+                    <h3>Adjuntar Archivos</h3>
+                    <a href="#" id="openArch" title="Adjuntar Archivos"><i class="fas fa-file-medical"></i></a>
+                </div>            
+                <ul class="listaArchivos" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
+                </ul>
+                <div class="opcionesArchivos">
+                    <button type="button" class="boton3" id="btnConfirmAtach">Aceptar</button>
+                    <button type="button" class="boton3" id="btnCancelAtach">Cancelar</button>
+                </div>
+            </form>
+        </div>
     </div>
     <div class="cabezaModulo">
         <h1>Registro de ordenes</h1>
