@@ -54,13 +54,14 @@
                         <span>Datos Generales</span>
                         <div>
                             <button type="button" id="saveOrden" title="Grabar Orden" class="boton3">
-                                <span><i class="far fa-save"></i> Grabar </span> 
+                                <p><i class="far fa-save"></i> Grabar </p> 
                             </button>
                             <button type="button" id="cancelOrder" title="Cancelar Orden" class="boton3">
                                 <i class="fab fa-wpexplorer"></i> Cancelar
                             </button>
                             <button type="button" id="addMessage" title="Comentarios" class="boton3">
                                 <i class="far fa-comments"></i> Agregar comentarios
+                                <span class="button__comment">0</span>
                             </button>
                             <button type="button" id="preview" title="Vista Previa" class="boton3">
                                 <i class="far fa-file-pdf"></i> Vista Previa

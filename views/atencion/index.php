@@ -29,7 +29,7 @@
                         <span>Datos Generales</span>
                         <div>
                             <button type="button" id="closeReq" title="Atender todos el pedido por almacen" class="boton3">
-                                <span><i class="far fa-save"></i> Culminar Pedido</span> 
+                                <p><i class="far fa-save"></i> Culminar Pedido</p> 
                             </button>
                             <button type="button" id="preview" title="Vista Previa" class="boton3">
                                 <i class="fab fa-wpexplorer"></i> Ver Pedido

@@ -43,7 +43,7 @@
                         <span>Datos Generales</span>
                         <div>
                             <button type="button" id="saveOrden" title="Grabar Nota" class="boton3">
-                                <span><i class="far fa-save"></i> Grabar </span> 
+                                <p><i class="far fa-save"></i> Grabar </p> 
                             </button>
                             <button type="button" id="importData" title="Importar Orden" class="boton3">
                                 <i class="fab fa-wpexplorer"></i> Importar Orden
@@ -65,11 +65,7 @@
                                 <label for="almacen">Almacen:</label>
                                 <input type="text" name="almacen" id="almacen" class="mostrarLista busqueda" placeholder="Elija opción"
                                     readonly>
-                                <div class="lista" id="listaAlmacen">
-                                   <ul>
-                                       <?php echo $this->listaAlmacen?>
-                                   </ul> 
-                                </div>
+                                
                             </div>
                             <div class="column4_55">
                                 <div class="column2_3957">
@@ -190,8 +186,7 @@
                                         <th width="7%">Cantidad</br>solicitada</th>
                                         <th width="7%">Cantidad</br>Recibida</th>
                                         <th class="">Observaciones</th>
-                                        <th class="">Fecha </br> Vencimiento</th>
-                                        <th class="">Estado</th>
+                                        <th class="">N° Parte</th>
                                 </tr>
                             </thead>
                             <tbody>

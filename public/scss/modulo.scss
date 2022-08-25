@@ -1020,9 +1020,25 @@ $culminado:#55A5E2;
             padding:10px;
             border: 2px solid transparent;
             transition:.5s;
+            position: relative;
 
             &:hover{
                 border:2px solid $negro;
+            }
+
+            span{
+                background: red;
+                color: white;
+                font-size: .5rem;
+                padding: 5px 7px;
+                position: absolute;
+                top: 0;
+                border-radius: 20px;
+                right: -5px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                display: none;
             }
         }
     }

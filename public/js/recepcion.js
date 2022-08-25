@@ -208,7 +208,8 @@ $(function(){
                     $("#razon").val(data.cabecera[0].crazonsoc);
                     $("#concepto").val(data.cabecera[0].concepto);
                     $("#detalle").val(data.cabecera[0].detalle);
-
+                    $("#almacen").val(data.cabecera[0].cdesalm);
+                    $("#codigo_almacen").val(data.cabecera[0].ncodalm);
                 
                     $("#tablaDetalles tbody")
                         .empty()

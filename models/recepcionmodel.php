@@ -243,6 +243,7 @@
                                                         UPPER( tb_almacen.cdesalm ) AS cdesalm,
                                                         ibis.cm_entidad.cemail AS mail_entidad,
                                                         ibis.lg_ordencab.cverificacion,
+                                                        ibis.lg_ordencab.ncodalm,
                                                         LPAD(ibis.tb_pedidocab.nrodoc,6,0) AS pedido,
                                                         ibis.tb_pedidocab.nivelAten,
                                                         CONCAT_WS(' ',rrhh.tabla_aquarius.nombres,rrhh.tabla_aquarius.apellidos) AS solicita
@@ -269,11 +270,19 @@
                 }
 
                 return array("cabecera"=>$docData,
-                            "detalles"=>$this->ordenDetalles($id));
+                            "detalles"=>$this->ordenDetalles($id),
+                            "numero"=>$this->$docData[0]['ncodalm']);
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
                 return false;
             }
+        }
+
+        private function numeroIngreso($almacen){
+            $sql ="SELECT COUNT( alm_recepcab.id_regalm ) AS numero FROM alm_recepcab WHERE ncodalm1 =:cod";
+
+
+            return $this->generarNumero($almacen,$sql);
         }
 
         private function ordenDetalles($id) {
@@ -300,7 +309,7 @@
                                                 INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
                                                 INNER JOIN tb_pedidodet ON lg_ordendet.niddeta = tb_pedidodet.iditem 
                                             WHERE
-                                                lg_ordendet.id_regmov =:id");
+                                                lg_ordendet.id_orden =:id");
                 $sql->execute(["id"=>$id]);
                 
                 $rowCount = $sql->rowCount();
@@ -319,8 +328,7 @@
                                     <td class="textoDerecha pr20px">'.$rs['cantidad'].'</td>
                                     <td><input type="number" step="any" placeholder="0.00" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"></td>
                                     <td><input type="text"></td>
-                                    <td><input type="date"></td>
-                                    <td><select name="estado">'. $estados .'</select></td>
+                                    <td></td>
                                 </tr>';
                     }
                 }

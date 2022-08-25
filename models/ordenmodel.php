@@ -320,9 +320,13 @@
                 $cab = json_decode($cabecera);
 
                 $sql = "SELECT COUNT(lg_ordencab.id_regmov) AS numero FROM lg_ordencab WHERE lg_ordencab.ncodcos = :cod";
+                
+                $indice = $this->lastInsertId("SELECT MAX(id_regmov) AS id FROM lg_ordencab");
+                
                 $entrega = $this->calcularDias($cab->fentrega);
             
                 $orden = $this->generarNumero($cab->codigo_costos,$sql);
+                
                 $periodo = explode('-',$cab->emision);
 
                 $this->subirArchivos($orden['numero'],$adjuntos);
@@ -365,7 +369,7 @@
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0){
-                    $this->grabarDetalles($cab->codigo_verificacion,$detalles,$cab->codigo_costos);
+                    $this->grabarDetalles($cab->codigo_verificacion,$detalles,$cab->codigo_costos,$indice);
                     $this->grabarComentarios($cab->codigo_verificacion,$comentarios);
                     $this->actualizarDetallesPedido(84,$detalles,$orden['numero'],$cab->codigo_entidad);
                     $this->subirArchivos($orden,$adjuntos);
@@ -389,6 +393,42 @@
             }    
         }
 
+        private function grabarDetalles($codigo,$detalles,$costos,$idx){
+            try {
+                $indice = $this->obtenerIndice($codigo,"SELECT id_regmov AS numero FROM lg_ordencab WHERE lg_ordencab.cverificacion =:id");
+                
+                $datos = json_decode($detalles);
+                
+                $nreg = count($datos);
+
+                for ($i=0; $i < $nreg; $i++) { 
+                    if(!$datos[$i]->grabado) {
+                        $sql = $this->db->connect()->prepare("INSERT INTO lg_ordendet SET id_regmov=:id,niddeta=:nidp,id_cprod=:cprod,ncanti=:cant,
+                                                                                    nunitario=:unit,nigv=:igv,ntotal=:total,
+                                                                                    nestado=:est,cverifica=:verif,nidpedi=:pedido,
+                                                                                    nmonref=:moneda,ncodcos=:costos,id_orden=:ordenidx");
+                        $sql->execute(["id"=>$indice,
+                                        "nidp"=>$datos[$i]->itped,
+                                        "pedido"=>$datos[$i]->pedido,
+                                        "cprod"=>$datos[$i]->codprod,
+                                        "cant"=>$datos[$i]->cantidad,
+                                        "unit"=>$datos[$i]->precio,
+                                        "igv"=>$datos[$i]->igv,
+                                        "total"=>$datos[$i]->total,
+                                        "est"=>1,
+                                        "verif"=>$codigo,
+                                        "moneda"=>$datos[$i]->moneda,
+                                        "costos"=>$costos,
+                                        "ordenidx"=>$idx+1]);
+                    }//aca poner para la modificacion de ordenes
+                    
+                }
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
         public function modificarOrden($cabecera,$detalles,$comentarios){
             try {
                 $entrega = $this->calcularDias($cabecera['fentrega']);
@@ -404,7 +444,7 @@
                                 "alm"=>$cabecera['codigo_almacen'],
                                 "id"=>$cabecera['codigo_orden']]);
                 
-                $this->grabarDetalles($cabecera['codigo_verificacion'],$detalles,$cabecera['codigo_costos']);
+                $this->grabarDetalles($cabecera['codigo_verificacion'],$detalles,$cabecera['codigo_costos'],$cabecera['codigo_orden']);
                 $this->grabarComentarios($cabecera['codigo_verificacion'],$comentarios);
 
                 $salida = array("respuesta"=>true,
@@ -453,6 +493,25 @@
             }
         }
 
+        private function actualizarDetallesPedidoCorreo($estado,$detalles){
+            try {
+                $datos = json_decode($detalles);
+                $nreg = count($datos);
+
+
+                for ($i=0; $i <$nreg ; $i++) { 
+                    $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet SET 
+                                                        estadoItem=:est WHERE iditem=:item");
+                    $sql->execute(["item"=>$datos[$i]->itped,
+                                    "est"=>$estado]);
+                }
+                
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
         private function registrarOrdenesItems($item,$orden,$entidad){
             try {
                 $sql = $this->db->connect()->prepare("INSERT INTO tb_itemorden SET item=:item, orden=:orden, entidad=:entidad");
@@ -489,43 +548,6 @@
             }
 
         }
-
-        private function grabarDetalles($codigo,$detalles,$costos){
-            try {
-                $indice = $this->obtenerIndice($codigo,"SELECT id_regmov AS numero FROM lg_ordencab WHERE lg_ordencab.cverificacion =:id");
-                
-                $datos = json_decode($detalles);
-                
-                $nreg = count($datos);
-
-                for ($i=0; $i < $nreg; $i++) { 
-                    if(!$datos[$i]->grabado) {
-                        $sql = $this->db->connect()->prepare("INSERT INTO lg_ordendet SET id_regmov=:id,niddeta=:nidp,id_cprod=:cprod,ncanti=:cant,
-                                                                                    nunitario=:unit,nigv=:igv,ntotal=:total,
-                                                                                    nestado=:est,cverifica=:verif,nidpedi=:pedido,
-                                                                                    nmonref=:moneda,ncodcos=:costos");
-                        $sql->execute(["id"=>$indice,
-                                        "nidp"=>$datos[$i]->itped,
-                                        "pedido"=>$datos[$i]->pedido,
-                                        "cprod"=>$datos[$i]->codprod,
-                                        "cant"=>$datos[$i]->cantidad,
-                                        "unit"=>$datos[$i]->precio,
-                                        "igv"=>$datos[$i]->igv,
-                                        "total"=>$datos[$i]->total,
-                                        "est"=>1,
-                                        "verif"=>$codigo,
-                                        "moneda"=>$datos[$i]->moneda,
-                                        "costos"=>$costos]);
-                    }//aca poner para la modificacion de ordenes
-                    
-                }
-            } catch (PDOException $th) {
-                echo "Error: ".$th->getMessage();
-                return false;
-            }
-        }
-
-        
 
         public function enviarCorreo($cabecera,$detalles,$correos,$asunto,$mensaje){
             try {
@@ -587,8 +609,8 @@
 
                 if ($estadoEnvio){
                     $clase = "mensaje_correcto";
-                    $this->actualizarCabeceraPedido(59,$cabecera['codigo_pedido'],$cabecera['codigo_orden']);
-                    $this->actualizarDetallesPedido(59,$detalles,$cabecera['codigo_orden']);
+                    //$this->actualizarCabeceraPedido(59,$cabecera['codigo_pedido'],$cabecera['codigo_orden']);
+                    //$this->actualizarDetallesPedido(59,$detalles,$cabecera['codigo_orden'],$cabecera['codigo_entidad']);
                     $this->actualizarCabeceraOrden(59,$cabecera['codigo_orden']);
                 }
 
@@ -649,7 +671,7 @@
                                     "clase"=>"mensaje_error");
                     }else {
                         $this->actualizarCabeceraPedido(60,$cabecera['codigo_pedido'],$cabecera['codigo_orden']);
-                        $this->actualizarDetallesPedido(60,$detalles,$cabecera['codigo_orden']);
+                        $this->actualizarDetallesPedidoCorreo(60,$detalles);
                         $this->actualizarCabeceraOrden(60,$cabecera['codigo_orden']);
                         return array("mensaje"=>"Correo enviado",
                                     "clase"=>"mensaje_correcto",

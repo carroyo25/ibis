@@ -63,6 +63,8 @@ $(function(){
                 $("#transporte").val(data.cabecera[0].transporte);
                 $("#lentrega").val(data.cabecera[0].cdesalm);
                 $("#total").val(data.cabecera[0].ntotal);
+                $("#ncotiz").val(data.cabecera[0].cnumcot);
+                $("#tcambio").val(data.cabecera[0].ntcambio);
 
                 $("#estado")
                     .removeClass()
@@ -77,6 +79,13 @@ $(function(){
                     .append(data.comentarios);
 
                 $("#sw").val(1);
+
+                if (data.bocadillo != 0) {
+                    $(".button__comment")
+                        .text(data.bocadillo)
+                        .show();
+                }
+
 
             },
             "json"

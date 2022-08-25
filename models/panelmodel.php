@@ -375,7 +375,7 @@
                                                         tb_pedidocab.nivelAten,
                                                         estados.cdescripcion AS estado,
                                                         atencion.cdescripcion AS atencion,
-                                                        UPPER(estados.cabrevia) AS cabrevia
+                                                        estados.cabrevia
                                                     FROM
                                                         tb_costusu
                                                     INNER JOIN tb_pedidocab ON tb_costusu.ncodproy = tb_pedidocab.idcostos
@@ -395,7 +395,7 @@
                                         <td class="pl20px">'.$rs['concepto'].'</td>
                                         <td class="textoCentro">'.date("d/m/Y", strtotime($rs['emision'])).'</td>
                                         <td class="pl20px">'.$rs['proyecto'].'</td>
-                                        <td class="textoCentro '.$rs['cabrevia'].'">'.$rs['cabrevia'].'</td>
+                                        <td class="textoCentro '.$rs['cabrevia'].'">'.$rs['estado'].'</td>
                                     </tr>';
                     }
                 }

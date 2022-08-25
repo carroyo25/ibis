@@ -44,7 +44,7 @@
                         <span>Datos Generales</span>
                         <div>
                             <button type="button" id="saveItem" title="Grabar Pedido" class="boton3">
-                                <span><i class="far fa-save"></i> Grabar Pedido</span> 
+                                <p><i class="far fa-save"></i> Grabar Pedido</p> 
                             </button>
                             <button type="button" id="upAttach" title="Importar Adjuntos" class="boton3">
                                 <i class="fas fa-upload"></i> Adjuntar Archivos

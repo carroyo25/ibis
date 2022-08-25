@@ -30,7 +30,7 @@
                         <span>Datos Generales</span>
                         <div>
                             <button type="button" id="viewAtach" title="Ver los adjuntos del pedidos" class="boton3">
-                                <span><i class="far fa-save"></i> Ver Adjuntos</span> 
+                                <p><i class="far fa-save"></i> Ver Adjuntos</p> 
                             </button>
                             <button type="button" id="preview" title="Vista Previa" class="boton3">
                                 <i class="fab fa-wpexplorer"></i> Ver Pedido

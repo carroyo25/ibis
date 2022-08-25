@@ -1865,6 +1865,8 @@
                                                     lg_ordencab.cnumcot,
                                                     lg_ordencab.nEstadoDoc,
                                                     lg_ordencab.id_refpedi,
+                                                    lg_ordencab.ntcambio,
+                                                    lg_ordencab.cnumcot,
                                                     UPPER(tb_pedidocab.concepto) AS concepto,
                                                     UPPER(tb_pedidocab.detalle) AS detalle,
                                                     UPPER(CONCAT_WS(' ',tb_proyectos.ccodproy,tb_proyectos.cdesproy)) AS costos,
@@ -1922,11 +1924,15 @@
                 $detalles = $this->consultarDetallesOrden($id);
                 $comentarios = $this->consultarComentarios($id);
                 $total = $this->calculaTotalOrden($id);
+                $ncomentarios = $this->consultarTotalComentarios($id);
+                $adjuntos = $this->verAdjuntosOrden($id);
 
                 return array("cabecera"=>$docData,
                             "detalles"=>$detalles,
                             "comentarios"=>$comentarios,
-                            "total"=>$total);
+                            "total"=>$total,
+                            "bocadillo"=>$ncomentarios,
+                            "adjuntos"=>$adjuntos);
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
@@ -1968,7 +1974,7 @@
                                                     FORMAT( lg_ordendet.nunitario, 2 ) AS nunitario,
                                                     FORMAT( lg_ordendet.nigv, 2 ) AS nigv,
                                                     FORMAT( tb_pedidodet.total - lg_ordendet.nigv,2) AS subtotal,
-                                                    lg_ordendet.ntotal,
+                                                    FORMAT( lg_ordendet.ntotal,2) as ntotal,
                                                     cm_producto.ccodprod,
                                                     UPPER(CONCAT_WS(' ',cm_producto.cdesprod,tb_pedidodet.observaciones,tb_pedidodet.docEspec)) AS cdesprod,
                                                     cm_producto.nund,
@@ -1996,12 +2002,25 @@
                                         data-codprod="'.$rs['id_cprod'].'" 
                                         data-itPed="'.$rs['niddeta'].'">
                                     <td class="textoCentro"><i class="fas fa-ban"></i></td>
-                                    <td class="textoCentro">'.str_pad($item,6,0,STR_PAD_LEFT).'</td>
+                                    <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
                                     <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                     <td class="pl20px">'.$rs['cdesprod'].'</td>
                                     <td class="textoCentro">'.$rs['cabrevia'].'</td>
-                                    <td class="textoDerecha pr5px">'.$rs['ncanti'].'</td>
-                                    <td class="textoDerecha pr5px">'.$rs['nunitario'].'</td>
+                                    <td class="textoDerecha pr5px"><input type="number" 
+                                                                    step="any" 
+                                                                    placeholder="0.00" 
+                                                                    onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"
+                                                                    onclick="this.select()"
+                                                                    value='.$rs['ncanti'].'>
+                                    </td>
+                                    <td class="textoDerecha pr5px">
+                                    <input type="number"
+                                        step="any" 
+                                        placeholder="0.00" 
+                                        onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"
+                                        onclick="this.select()"
+                                        value='.$rs['nunitario'].'>
+                                    </td>
                                     <td class="textoDerecha pr5px">'.$rs['ntotal'].'</td>
                                     <td class="textoCentro">'.$rs['nroparte'].'</td>
                                     <td class="textoCentro">'.str_pad($rs['idpedido'],6,0,STR_PAD_LEFT).'</td>
@@ -2050,6 +2069,25 @@
             }
         }
 
+        private function consultarTotalComentarios($id){
+            try {
+                $salida="";
+                $sql = $this->db->connect()->prepare("SELECT
+                                                COUNT(id_regmov) AS comments__number
+                                            FROM
+                                                lg_ordencomenta
+                                            WHERE
+                                                lg_ordencomenta.id_regmov = :id");
+                $sql->execute(["id"=>$id]);
+                $result = $sql->fetchAll();
+
+                return $result[0]["comments__number"];
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
         private function calculaTotalOrden($id){
             try {
                 $sql = $this->db->connect()->prepare("SELECT
@@ -2064,6 +2102,32 @@
                 return $result[0]["total"];
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function verAdjuntosOrden($id){
+            try {
+                $salida = "";
+                $sql = $this->db->connect()->prepare("SELECT creferencia,cdocumento 
+                                                        FROM lg_regdocumento 
+                                                        WHERE nidrefer=:id
+                                                        AND cmodulo='ORD'");
+                $sql->execute(['id'=>$id]);
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0) {
+                    while ($rs = $sql->fetch()) {
+                        $salida .= '<li><a href="'.$rs['creferencia'].'" data-archivo="'.$rs['creferencia'].'"><i class="far fa-file"></i><p>'.$rs['cdocumento'].'</p></a></li>';
+                    }
+                }
+                
+                $ret = array("adjuntos"=>$salida,
+                            "archivos"=>$rowCount);
+
+                return $ret;
+            } catch (PDOException $th) {
+                echo $th->getMessage();
                 return false;
             }
         }

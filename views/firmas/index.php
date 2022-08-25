@@ -45,7 +45,8 @@
                         <span>Datos Generales</span>
                         <div>
                             <button type="button" id="addMessage" title="Comentarios" class="boton3">
-                                <i class="far fa-comments"></i> Observaciones 
+                                <i class="far fa-comments"></i> Observaciones
+                                <span class="button__comment">0</span> 
                             </button>
                             <button type="button" id="preview" title="Vista Previa" class="boton3">
                                 <i class="far fa-file-pdf"></i> Vista Previa
@@ -54,7 +55,7 @@
                                 <i class="fas fa-signature"></i> Autorizar Proceso
                             </button>
                             <button type="button" id="verCotizacion" title="Ver cotizacion" class="boton3">
-                                <i class="far fa-file-pdf"></i> Ver Cotización
+                                <i class="far fa-file-pdf"></i> Ver Adjuntos
                             </button>
                             <button type="button" id="closeProcess" title="Cerrar" class="boton3">
                                 <i class="fas fa-window-close"></i>
@@ -156,6 +157,7 @@
                         <table class="tabla" id="tablaDetalles">
                             <thead>
                                 <tr class="stickytop">
+                                    <th>...</th>
                                     <th>Item</th>
                                     <th>Codigo</th>
                                     <th>Descripcion</th>
@@ -205,6 +207,18 @@
                 <h3>Vista Previa</h3>
                 <a href="#" id="closePreview" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
             </div>
+            <iframe src=""></iframe>
+        </div>
+    </div>
+    <div class="modal" id="vistaAdjuntos">
+        <div class="ventanaAdjuntos">
+            <div class="tituloAdjuntos">
+                <h3>Adjuntos Orden</h3>
+                <a href="#" id="closeAtach" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
+            </div>
+            <ul id="listaAdjuntos">
+
+            </ul>
             <iframe src=""></iframe>
         </div>
     </div>

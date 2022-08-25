@@ -17,10 +17,10 @@
             echo $this->model->listarNotas();
         }
 
-        function numeroIngreso(){
+        /*function numeroIngreso(){
             $sql ="SELECT COUNT( alm_recepcab.id_regalm ) AS numero FROM alm_recepcab WHERE ncodalm1 =:cod";
             echo json_encode($this->model->generarNumero($_POST['id'],$sql));
-        }
+        }*/
         
         function items(){
             echo $this->model->importarItems();

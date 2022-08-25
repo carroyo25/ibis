@@ -52,6 +52,14 @@ $(function() {
                 $("#lentrega").val(data.cabecera[0].cdesalm);
                 $("#total").val(data.cabecera[0].ntotal);
 
+                console.log(data.adjuntos);
+                
+                if (data.bocadillo != 0) {
+                    $(".button__comment")
+                        .text(data.bocadillo)
+                        .show();
+                }
+
                 $("#estado")
                     .removeClass()
                     .addClass(estado);
@@ -66,6 +74,10 @@ $(function() {
 
                 $("#sw").val(1);
 
+                $("#listaAdjuntos")
+                    .empty()
+                    .append(data.adjuntos.adjuntos);
+
                 grabado = true;
             },
             "json"
@@ -73,6 +85,16 @@ $(function() {
     
         $("#proceso").fadeIn();
     
+        return false;
+    });
+
+    $("#vistaAdjuntos").on("click","a", function (e) {
+        e.preventDefault();
+        
+        $(".ventanaAdjuntos iframe")
+            .attr("src","")
+            .attr("src","public/documentos/ordenes/adjuntos/"+$(this).attr("href"));
+        
         return false;
     });
 
@@ -200,9 +222,18 @@ $(function() {
     $("#verCotizacion").click(function(e){
         e.preventDefault();
 
-        $("#vistaprevia").fadeIn();
+        $("#vistaAdjuntos").fadeIn();
 
         return false
+    });
+
+    $("#closeAtach").click(function(e){
+        e.preventDefault();
+
+        $("#vistaAdjuntos").fadeOut();
+        $(".ventanaAdjuntos iframe").attr("src","");
+
+        return false;
     });
      
 })
