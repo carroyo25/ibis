@@ -253,7 +253,8 @@ $(function(){
                 let row = `<tr data-grabado="${grabado}" 
                                 data-total="${total}" 
                                 data-codprod="${cod_prod}" 
-                                data-itPed="${id_item}">
+                                data-itPed="${id_item}"
+                                data-cant="${cantidad}">
                             <td class="textoCentro"><a href="#"><i class="fas fa-ban"></i></a></td>
                             <td class="textoCentro">${nFilas}</td>
                             <td class="textoCentro">${codigo}</td>
@@ -308,8 +309,6 @@ $(function(){
                     $("#codigo_transporte").val(data.pedido[0].idtrans);
                     $("#codigo_tipo").val(data.pedido[0].idtipomov);
                     $("#codigo_estado").val(data.pedido[0].estadodoc);
-                    //$("#codigo_moneda").val(cmoneda);
-                    //$("#codigo_pago").val(data.proforma[0].ccondpago);
                     $("#costos").val(data.pedido[0].proyecto);
                     $("#area").val(data.pedido[0].area);
                     $("#concepto").val(data.pedido[0].concepto);
@@ -320,9 +319,7 @@ $(function(){
                     $("#tcambio").val(data.cambio);
                     
                     $("#numero").val(data.orden.numero);
-                    //$("#moneda").val(moneda);
-                    //$("#cpago").val(data.proforma[0].pago);
-                    //$("#codigo_verificacion").val(data.orden.codigo);
+                    $("#codigo_verificacion").val(data.pedido[0].verificacion);
 
                     //$("#entidad").val(data.entidad[0].crazonsoc);
                     //$("#atencion").val(data.entidad[0].contacto);
@@ -456,32 +453,7 @@ $(function(){
         formData.append("detalles",JSON.stringify(detalles()));
         formData.append("comentarios",JSON.stringify(comentarios()));
 
-
-        $.ajax({
-            // URL to move the uploaded image file to server
-            url: RUTA + 'orden/nuevoRegistro',
-            // Request type
-            type: "POST", 
-            // To send the full form data
-            data: formData,
-            contentType:false,      
-            processData:false,
-            dataType:"json",    
-            // UI response after the file upload
-            beforeSend: function () {
-                //$("#esperar").fadeIn();
-            },  
-            success: function(response)
-            {   
-                /*mostrarMensaje(response.mensaje,response.clase);
-                $("#proceso, #sendMail,#esperar").fadeOut();
-                $("#tablaPrincipal tbody")
-                    .empty()
-                    .append(response.pedidos);*/
-            }
-        });
-
-        /*try {
+        try {
             if ($("#codigo_estado").val() == 59) throw "La orden esta en firmas.";
             if (result['numero'] == "") throw "No tiene numero de orden";
             if (result['fentrega'] == "") throw "Elija la fecha de entrega";
@@ -490,20 +462,34 @@ $(function(){
             if (result['correo_entidad'] == "") throw "Elija el proveedor";
             if (result['codigo_almacen'] == "") throw "Indique el lugar de entrega";
             if (result['total'] == "") throw "No se registro el total de la orden";
-            if ($("#tablaDetalles tbody tr") .length <= 0) throw "No tiene productos seleccionados"
+            if ($("#tablaDetalles tbody tr") .length <= 0) throw "No tiene items cargados"
 
             grabado = true;
             
             if ( accion == 'n' ){
-                $.post(RUTA+"orden/nuevoRegistro", {cabecera:result,
-                                                    detalles:JSON.stringify(detalles()),
-                                                    comentarios:JSON.stringify(comentarios()),
-                                                    archivos:fp[0].files},
-                    function (data, textStatus, jqXHR) {
-                        mostrarMensaje(data.mensaje,data.clase);
-                    },
-                    "json"
-                );
+                $.ajax({
+                    // URL to move the uploaded image file to server
+                    url: RUTA + 'orden/nuevoRegistro',
+                    // Request type
+                    type: "POST", 
+                    // To send the full form data
+                    data: formData,
+                    contentType:false,      
+                    processData:false,
+                    dataType:"json",    
+                    // UI response after the file upload
+                    beforeSend: function () {
+                        //$("#esperar").fadeIn();
+                    },  
+                    success: function(response)
+                    {   
+                        mostrarMensaje(response.mensaje,response.clase);
+                        $("#proceso, #sendMail,#esperar").fadeOut();
+                        $("#tablaPrincipal tbody")
+                            .empty()
+                            .append(response.pedidos);
+                    }
+                });
             }else {
                 $.post(RUTA+"orden/modificaRegistro", {cabecera:result,
                                                         detalles:JSON.stringify(detalles()),
@@ -517,7 +503,7 @@ $(function(){
 
         } catch (error) {
             mostrarMensaje(error,'mensaje_error'); 
-        }*/
+        }
 
         
 
@@ -729,14 +715,15 @@ detalles = () => {
             UNIDAD      = $(this).find('td').eq(4).text(),
             CANTIDAD    = $(this).find('td').eq(5).children().val(),
             PRECIO      = $(this).find('td').eq(6).children().val(),
-            IGV         = 1.18,
+            IGV         = 0.18,
             TOTAL       = $(this).find('td').eq(7).text(),
             NROPARTE    = $(this).find('td').eq(8).text(),
             PEDIDO      = $(this).find('td').eq(9).text(),
             CODPROD     = $(this).data('codprod'),
             MONEDA      = $("#codigo_moneda").val(),
-            ITEMPEDIDO  = $(this).data('itped');
-            GRABAR      = $(this).data('grabado');
+            ITEMPEDIDO  = $(this).data('itped'),
+            GRABAR      = $(this).data('grabado'),
+            CANTPED     = $(this).data('cant');
 
         item= {};
         
@@ -755,6 +742,7 @@ detalles = () => {
             item['moneda']      = MONEDA;
             item['itped']       = ITEMPEDIDO;
             item['grabado']     = GRABAR;
+            item['cantped']     = CANTPED;
 
             DATA.push(item);
         //}

@@ -29,13 +29,10 @@
 
         function nuevoRegistro(){
             echo json_encode($this->model->insertarOrden($_POST['cabecera'],$_POST['detalles'],$_POST['comentarios'],$_FILES));
-
-            //echo $_FILES['file-0']['name'];
-            //$this->model->subirArchivos($_FILES);
         }
 
         function modificaRegistro(){
-            //echo json_encode($this->model->modificarOrden($_POST['cabecera'],$_POST['detalles'],$_POST['comentarios']));
+            echo json_encode($this->model->modificarOrden($_POST['cabecera'],$_POST['detalles'],$_POST['comentarios']));
         }
         
         function ordenId(){
