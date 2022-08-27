@@ -1,7 +1,8 @@
 $(function(){
     let accion = "",
         grabado = false,
-        indice_nota=0;
+        indice_nota=0,
+        suma = 0;
 
     $("#esperar").fadeOut();
 
@@ -40,8 +41,10 @@ $(function(){
                 $("#tipo").val(data.cabecera[0].cdescripcion);
                 $("#estado").val(data.cabecera[0].estado);
                 $("#movimiento").val(1);
+                
 
                 let swqaqc = data.cabecera[0].nflgCalidad == 1 ? true: false;
+                let suma = 0;
                 
                 $("#qaqc").prop("checked",swqaqc);
                 
@@ -193,11 +196,14 @@ $(function(){
 
         $.post(RUTA+"recepcion/ordenId",{id:$(this).data("orden")},
             function (data, textStatus, jqXHR) {
+                    suma = 0;
+
                     $("#codigo_costos").val(data.cabecera[0].ncodcos);
                     $("#codigo_area").val(data.cabecera[0].ncodarea);
                     $("#codigo_orden").val(data.cabecera[0].id_regmov);
                     $("#codigo_pedido").val(data.cabecera[0].id_refpedi);
                     $("#codigo_estado").val(data.cabecera[0].nEstadoDoc);
+                    $("#codigo_entidad").val(data.cabecera[0].id_centi);
                     $("#codigo_entidad").val(data.cabecera[0].id_centi);
                     $("#proyecto").val(data.cabecera[0].costos);
                     $("#area").val(data.cabecera[0].area);
@@ -210,12 +216,17 @@ $(function(){
                     $("#detalle").val(data.cabecera[0].detalle);
                     $("#almacen").val(data.cabecera[0].cdesalm);
                     $("#codigo_almacen").val(data.cabecera[0].ncodalm);
+                    $("#numero").val(data.numero.numero);
+                    $("#movimiento").val(data.numero.movimiento);
                 
                     $("#tablaDetalles tbody")
                         .empty()
                         .append(data.detalles);
 
                     $("#items").val($("#tablaDetalles tbody tr").length);
+
+                    
+    
 
                 $("#busqueda").fadeOut();
             },
@@ -313,7 +324,10 @@ $(function(){
     $("#saveOrden").click(function (e) { 
         e.preventDefault();
         
-        let result = {};
+        let result = {},
+            solicitada = 0,
+            recibida = 0,
+            cerrarOrden = false;
 
         $.each($("#formProceso").serializeArray(),function(){
             result[this.name] = this.value;
@@ -324,19 +338,32 @@ $(function(){
             if (result['codigo_costos'] == '') throw "Elija Centro de Costos";
             if (result['codigo_aprueba'] == '') throw "Elija la persona que aprueba";
             if (result['codigo_movimiento'] == '') throw "Elija tipo de movimiento";
-            if (result['guia'] == '') throw "Escriba el número de guia"
+            if (result['guia'] == '') throw "Escriba el número de guia";
 
-            $.post(RUTA+"recepcion/nuevoIngreso", {cabecera:result,
-                                                    detalles:JSON.stringify(detalles()),
-                                                    series:JSON.stringify(series())},
-                function (data, textStatus, jqXHR) {
-                    $("#codigo_ingreso").val(data);
+            $("#tablaDetalles tbody  > tr").each(function () {
+                solicitada += parseFloat($(this).find('td').eq(5).text() || 0,10);
+                recibida += parseFloat($(this).find('td').eq(6).children().val() || 0,10)
+            })
 
-                    if ($("#codigo_ingreso").val() !== 0)
-                        $("#fileAtachs").trigger("submit");
-                },
-                "text"
-            );
+            cerrarOrden = solicitada == recibida ? 62 : 60;
+
+            if (accion == "n") {
+                $.post(RUTA+"recepcion/nuevoIngreso", {cabecera:result,
+                    detalles:JSON.stringify(detalles()),
+                    series:JSON.stringify(series()),
+                    cerrar:cerrarOrden},
+                        function (data, textStatus, jqXHR) {
+                        $("#codigo_ingreso").val(data);
+
+                        /*if ($("#codigo_ingreso").val() !== 0)
+                            $("#fileAtachs").trigger("submit");*/
+                        },
+                        "text"
+                    );
+            }
+
+            
+
         } catch (error) {
             mostrarMensaje(error,'mensaje_error');
         }
@@ -437,6 +464,22 @@ $(function(){
         return false;
     });
 
+    $("#tablaDetalles tbody").on('keypress','input', function (e) {
+        if (e.which == 13) {
+            let cant = parseFloat($(this).parent().parent().find("td").eq(7).text()) - $(this).parent().parent().find("td").eq(6).children().val();
+            
+            try {
+                if (cant < 0) throw "Error en el ingreso";
+
+                $(this).parent().parent().find("td").eq(7).text(cant.toFixed(2));
+
+            } catch (error) {
+                mostrarMensaje(error,"mensaje_error");
+                $(this).parent().parent().find("td").eq(7).text($(this).parent().parent().data("saldo"));
+            }
+        }
+    });
+
     $("#btnConfirmSeries").click(function (e) { 
         e.preventDefault();
 
@@ -476,6 +519,7 @@ $(function(){
         } catch (error) {
             mostrarMensaje(error,'mensaje_error');
         }
+
         return preview;
     });
 
@@ -484,6 +528,37 @@ $(function(){
 
         $(".ventanaVistaPrevia iframe").attr("src","");
         $("#vistaprevia").fadeOut();
+
+        return false;
+    });
+
+    $("#sendEntOrden").click(function(e){
+        e.preventDefault();
+
+       let result = {};
+
+        $.each($("#formProceso").serializeArray(),function(){
+            result[this.name] = this.value;
+        });
+
+        try {
+            if (result['codigo_almacen'] == '') throw "Elija el Almacen";
+            if (result['codigo_costos'] == '') throw "Elija Centro de Costos";
+            if (result['codigo_aprueba'] == '') throw "Elija la persona que aprueba";
+            if (result['codigo_movimiento'] == '') throw "Elija tipo de movimiento";
+            if (result['guia'] == '') throw "Escriba el número de guia"
+
+            $.post(RUTA+"recepcion/envioProveedor",{cabecera:result,
+                                                    detalles:JSON.stringify(detalles()),
+                                                    condicion:1},
+                function (data, textStatus, jqXHR) {
+                   
+                },
+                "text"
+            );
+        } catch (error) {
+            mostrarMensaje(error,'mensaje_error');
+        }
 
         return false;
     });
@@ -505,13 +580,14 @@ detalles = () =>{
             ALMACEN     = $("#codigo_almacen").val(),
             CANTSOL     = parseFloat($(this).find('td').eq(5).text()),
             CANTREC     = $(this).find('td').eq(6).children().val(),// cantidad
-            OBSER       = $(this).find('td').eq(7).children().val(),
-            VENCE       = $(this).find('td').eq(8).children().val(),
+            CANTSAL     = $(this).find('td').eq(7).text(),
+            OBSER       = $(this).find('td').eq(8).children().val(),
+            VENCE       = null,
             CODIGO      = $(this).find('td').eq(2).text(),//codigo
             DESCRIPCION = $(this).find('td').eq(3).text(),//descripcion
             UNIDAD      = $(this).find('td').eq(4).text(),//unidad
-            NESTADO     = $(this).find("select[name='estado']").val(),
-            CESTADO     = $(this).find("select[name='estado'] option:selected").text(),
+            NESTADO     = null,
+            CESTADO     = null //$(this).find("select[name='estado'] option:selected").text(),
             UBICACION   = "";
     
         item = {};
@@ -524,9 +600,10 @@ detalles = () =>{
         item['orden']       = PEDIDO;
         item['almacen']     = ALMACEN;
         item['cantrec']     = CANTREC;
+        item['cantsol']     = CANTSOL;
+        item['cantsal']     = CANTSAL;
         item['obser']       = OBSER;
         item['vence']       = VENCE;
-        item['cantsol']     = CANTSOL;
 
         item['codigo']     = CODIGO;
         item['descripcion']= DESCRIPCION;
@@ -555,10 +632,13 @@ series = () => {
     
         item = {};
 
-        item['orden'] = ORDEN;
-        item['almacen'] = ALMACEN;
-        item['producto'] = PRODUCTO;
-        item['serie']= SERIE;
+        if (SERIE != ""){
+            item['orden'] = ORDEN;
+            item['almacen'] = ALMACEN;
+            item['producto'] = PRODUCTO;
+            item['serie']= SERIE;
+        }
+        
 
         SERIES.push(item);
     })

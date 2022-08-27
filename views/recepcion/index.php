@@ -48,9 +48,6 @@
                             <button type="button" id="importData" title="Importar Orden" class="boton3">
                                 <i class="fab fa-wpexplorer"></i> Importar Orden
                             </button>
-                            <button type="button" id="closeDocument" title="Cerrar Nota" class="boton3">
-                                <i class="far fa-comments"></i> Cerrar Nota
-                            </button>
                             <button type="button" id="preview" title="Vista Previa" class="boton3">
                                 <i class="far fa-file-pdf"></i> Vista Previa
                             </button>
@@ -65,7 +62,6 @@
                                 <label for="almacen">Almacen:</label>
                                 <input type="text" name="almacen" id="almacen" class="mostrarLista busqueda" placeholder="Elija opción"
                                     readonly>
-                                
                             </div>
                             <div class="column4_55">
                                 <div class="column2_3957">
@@ -185,6 +181,7 @@
                                         <th class="">Unidad</th>
                                         <th width="7%">Cantidad</br>solicitada</th>
                                         <th width="7%">Cantidad</br>Recibida</th>
+                                        <th width="7%">Pendiente</br>Entrega</th>
                                         <th class="">Observaciones</th>
                                         <th class="">N° Parte</th>
                                 </tr>
@@ -296,8 +293,8 @@
                     <th>Almacen</th>
                     <th>Proyecto/Sede/Costos</th>
                     <th>Area</th>
-                    <th>Pedido</th>
                     <th>Orden</th>
+                    <th>Pedido</th>
                 </tr>
             </thead>
             <tbody>

@@ -406,7 +406,8 @@
                         $sql = $this->db->connect()->prepare("INSERT INTO lg_ordendet SET id_regmov=:id,niddeta=:nidp,id_cprod=:cprod,ncanti=:cant,
                                                                                     nunitario=:unit,nigv=:igv,ntotal=:total,
                                                                                     nestado=:est,cverifica=:verif,nidpedi=:pedido,
-                                                                                    nmonref=:moneda,ncodcos=:costos,id_orden=:ordenidx");
+                                                                                    nmonref=:moneda,ncodcos=:costos,id_orden=:ordenidx,
+                                                                                    nSaldo=:saldo");
                         $sql->execute(["id"=>$indice,
                                         "nidp"=>$datos[$i]->itped,
                                         "pedido"=>$datos[$i]->pedido,
@@ -419,7 +420,8 @@
                                         "verif"=>$codigo,
                                         "moneda"=>$datos[$i]->moneda,
                                         "costos"=>$costos,
-                                        "ordenidx"=>$idx+1]);
+                                        "ordenidx"=>$idx+1,
+                                        "saldo"=>$datos[$i]->cantidad]);
                     }//aca poner para la modificacion de ordenes
                     
                 }

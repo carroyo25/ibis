@@ -69,9 +69,10 @@
             }
         }
 
-        public function insertar($cabecera,$detalles,$series){
+        public function insertar($cabecera,$detalles,$series,$cerrar){
             try {
-               
+                $indice = $this->lastInsertId("SELECT MAX(id_regmov) AS id FROM lg_ordencab");
+
                 $fecha = explode("-",$cabecera['fecha']); 
                 
                 $calidad = array_key_exists('qaqc', $cabecera)? 1 : 0;
@@ -83,6 +84,7 @@
                                                                                     nEstadoDoc=:estado,nflgactivo=:activo,nnronota=:nota,idref_abas=:orden,
                                                                                     ncodpry=:costos,ncodarea=:area,nflgCalidad=:calidad,nnromov=:movimiento,
                                                                                     ncodmov=:codigo_movimiento");
+
                 $sql->execute(["mov"=>"I",
                                 "anio"=>$fecha[0],
                                 "mes"=>$fecha[1],
@@ -107,12 +109,109 @@
                     $indice = $this->lastInsertId("SELECT MAX(id_regalm) AS id FROM alm_recepcab");
                     $this->grabarDetalles($indice,$detalles);
                     $this->grabarSeries($indice,$series);
+                    $this->actualizar_detalles_orden($detalles);
+                    $this->calcularSaldosOrden($cabecera['codigo_orden']);
+                    $this->calcularSaldosPedido($cabecera['codigo_pedido']);
+                    $this->saldosDetallesPedidos($detalles);
+                    $this->generarPdf($cabecera,$detalles,1); 
                 }
 
                 return $indice;
 
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+        
+        //
+        public function enviarCorreIngreso($cabecera,$detalles,$condicion){
+            $this->actualizar_nota($cabecera['codigo_ingreso'],62);
+        }
+
+        private function calcularSaldosOrden($id){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT SUM(nSaldo) AS saldo FROM lg_ordendet WHERE id_orden =:id");
+                $sql->execute(['id' => $id]);
+                $result = $sql->fetchAll();
+
+                if ( $result[0]['saldo'] == 0 ) {
+                    $this->actualizar_orden($id,62);
+                }
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        private function calcularSaldosPedido($id){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT SUM(nSaldo) AS saldo FROM lg_ordendet WHERE nidpedi =:id");
+                $sql->execute(['id' => $id]);
+                $result = $sql->fetchAll();
+
+                if ( $result[0]['saldo'] == 0 ) {
+                    $this->actualizar_pedido($id,62);
+                }
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        //actualizar items de la orden
+        private function actualizar_detalles_orden($detalles){
+            try {
+                $datos = json_decode($detalles);
+                $nreg = count($datos);
+
+                for ($i=0; $i < $nreg; $i++) { 
+                    try {
+                        $estado = $datos[$i]->cantsal == 0 ? 62 : 60;
+
+                        $sql = $this->db->connect()->prepare("UPDATE lg_ordendet SET nSaldo=:saldo, nEstadoReg=:estado WHERE nitemord=:id");
+
+                        $sql->execute(["estado"=>$estado,
+                                        "saldo"=>$datos[$i]->cantsal,
+                                        "id"=>$datos[$i]->iddetorden]);
+                    } catch (PDOException $th) {
+                        echo "Error: " . $th->getMessage();
+                        return false;
+                    }
+                }
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        private function saldosDetallesPedidos($detalles){
+                $datos = json_decode($detalles);
+                $nreg = count($datos);
+
+                for ($i = 0; $i < $nreg; $i++) {
+                    try {
+                        $sql = $this->db->connect()->prepare("SELECT SUM(nsaldo) AS nSaldo FROM lg_ordendet WHERE niddeta =:id");
+                        $sql->execute(['id' => $datos[$i]->iddetped]);
+                        $result = $sql->fetchAll();
+
+                        if ($result[0]['nSaldo'] == 0){
+                            $this->actualizar_detalles_pedido($datos[$i]->iddetped,62);
+                        }
+                    } catch (PDOException $th) {
+                        echo "Error: " . $th->getMessage();
+                        return false;
+                    }
+                }  
+        }
+
+        private function actualizar_detalles_pedido($id,$estado){
+            try {
+                $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet SET estadoItem=:estado WHERE iditem=:id");
+                $sql->execute(["estado"=>$estado,"id"=>$id]);
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
             }
         }
 
@@ -149,15 +248,19 @@
             try {
                 $datos = json_decode($series);
                 $nreg = count($datos);
+                echo $nreg;
 
-                for ($i=0; $i < $nreg; $i++) { 
-                    $sql= $this->db->connect()->prepare("INSERT INTO alm_recepserie SET id_cprod=:cprod,idref_movi=:nota,idref_alma=:almacen,
-                                                                                        cdesserie=:serie");
-                     $sql ->execute(["cprod"=>$datos[$i]->producto,
-                                    "almacen"=>$datos[$i]->almacen,
-                                    "nota"=>$id,
-                                    "serie"=>$datos[$i]->serie]);
+                if ($nreg > 0 ) {
+                    for ($i=0; $i < $nreg; $i++) { 
+                        $sql= $this->db->connect()->prepare("INSERT INTO alm_recepserie SET id_cprod=:cprod,idref_movi=:nota,idref_alma=:almacen,
+                                                                                            cdesserie=:serie");
+                         $sql ->execute(["cprod"=>$datos[$i]->producto,
+                                        "almacen"=>$datos[$i]->almacen,
+                                        "nota"=>$id,
+                                        "serie"=>$datos[$i]->serie]);
+                    }
                 }
+                
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
                 return false;
@@ -269,9 +372,11 @@
                     $docData[] = $row;
                 }
 
+                $almacen = $docData[0]['ncodalm'];
+
                 return array("cabecera"=>$docData,
                             "detalles"=>$this->ordenDetalles($id),
-                            "numero"=>$this->$docData[0]['ncodalm']);
+                            "numero"=>$this->numeroIngreso($almacen));
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
                 return false;
@@ -280,8 +385,6 @@
 
         private function numeroIngreso($almacen){
             $sql ="SELECT COUNT( alm_recepcab.id_regalm ) AS numero FROM alm_recepcab WHERE ncodalm1 =:cod";
-
-
             return $this->generarNumero($almacen,$sql);
         }
 
@@ -296,6 +399,7 @@
                                                 lg_ordendet.niddeta,
                                                 lg_ordendet.nidpedi,
                                                 lg_ordendet.id_cprod,
+                                                FORMAT(lg_ordendet.nsaldo,2) AS nsaldo,
                                                 cm_producto.ccodprod,
                                                 UPPER(CONCAT_WS(' ',cm_producto.cdesprod,tb_pedidodet.observaciones,tb_pedidodet.docEspec)) AS cdesprod,
                                                 cm_producto.nund,
@@ -318,8 +422,8 @@
                     while ($rs = $sql->fetch()){
                         $salida.='<tr data-detorden="'.$rs['nitemord'].'" 
                                         data-idprod="'.$rs['id_cprod'].'"
-                                        data-iddetped="'.$rs['niddeta'].'">
-
+                                        data-iddetped="'.$rs['niddeta'].'"
+                                        data-saldo="'.$rs['nsaldo'].'">
                                     <td class="textoCentro"><a href="'.$rs['nitemord'].'"><i class="fas fa-barcode"></i></a></td>
                                     <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
                                     <td class="textoCentro">'.$rs['ccodprod'].'</td>
@@ -327,6 +431,7 @@
                                     <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                     <td class="textoDerecha pr20px">'.$rs['cantidad'].'</td>
                                     <td><input type="number" step="any" placeholder="0.00" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"></td>
+                                    <td class="textoDerecha pr20px">'.$rs['nsaldo'].'</td>
                                     <td><input type="text"></td>
                                     <td></td>
                                 </tr>';
@@ -428,27 +533,13 @@
 
         }
         
-        public function cerrar($cabecera,$detalles){
-            $estado = array_key_exists('qaqc', $cabecera)? 61 : 62;
-
-            $nota = $this->actualizar_nota($cabecera['codigo_ingreso'],$estado);
-            $orden = $this->actualizar_orden($cabecera['codigo_orden'],$estado);
-            $pedido = $this->actualizar_pedido($cabecera['codigo_pedido'],$estado);
-            $items = $this->actualizar_detalles($detalles,$estado);
-
-            $this->generarPdf($cabecera,$detalles,1);
-
-            return true;
-
-        }
-
         private function actualizar_nota($id,$estado){
             try {
                 $sql = $this->db->connect()->prepare("UPDATE alm_recepcab SET nEstadoDoc=:estado WHERE id_regalm = :id");
                 $sql->execute(["estado"=>$estado,"id"=>$id]);
                 $rowCount = $sql->rowCount();
                 
-                return "Notas Actualizadas -> " . $rowCount;
+                //return "Notas Actualizadas -> " . $rowCount;
 
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
@@ -476,27 +567,6 @@
                 $rowCount = $sql->rowCount();
                 
                 return "Orden Actualizadas -> " . $rowCount;
-            } catch (PDOException $th) {
-                echo "Error: " . $th->getMessage();
-                return false;
-            }
-        }
-
-        //aca actualizar la cantidad recibida
-        private function actualizar_detalles($detalles,$estado){
-            try {
-                $datos = json_decode($detalles);
-                $nreg = count($datos);
-
-                for ($i=0; $i < $nreg; $i++) { 
-                    try {
-                        $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet SET estadoItem=:estado WHERE iditem=:id");
-                        $sql->execute(["estado"=>$estado,"id"=>$datos[$i]->iddetped]);
-                    } catch (PDOException $th) {
-                        echo "Error: " . $th->getMessage();
-                        return false;
-                    }
-                }
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
                 return false;

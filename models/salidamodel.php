@@ -209,14 +209,12 @@
                                                         ) AS cdesprod,
                                                         tb_unimed.nfactor,
                                                         tb_unimed.cabrevia,
-                                                        tb_parametros.cdescripcion,
                                                         alm_recepdet.nestadoreg
                                                     FROM
                                                         alm_recepdet
                                                     INNER JOIN cm_producto ON alm_recepdet.id_cprod = cm_producto.id_cprod
                                                     INNER JOIN tb_pedidodet ON alm_recepdet.niddetaPed = tb_pedidodet.iditem
                                                     INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
-                                                    INNER JOIN tb_parametros ON alm_recepdet.nestadoreg = tb_parametros.nidreg
                                                     WHERE
                                                         alm_recepdet.id_regalm = :id");
                 $sql->execute(["id"=>$id]);
@@ -226,7 +224,7 @@
                     $item = 1;
                     while ($rs = $sql->fetch()){
 
-                        $estados = $this->listarSelect(13,$rs['nestadoreg']);
+                        //$estados = $this->listarSelect(13,$rs['nestadoreg']);
 
                         $series = $this->buscarSeries($rs['id_cprod'],$rs['id_regalm'],$rs['ncodalm1']);
 
@@ -245,8 +243,8 @@
                                         <td><input type="number" step="any" value="'.$rs['cantidad'].'" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"></td>
                                         <td class="pl20px"><input type="text"></td>
                                         <td class="textoCentro"></td>
-                                        <td class="textoCentro">'.$fecha.'</td>
-                                        <td><select name="estado" disabled>'. $estados .'</select></td>
+                                        <td class="textoCentro"></td>
+                                        <td><select name="estado" disabled></select></td>
                                     </tr>';
                     }
                 }

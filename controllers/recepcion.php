@@ -17,11 +17,6 @@
             echo $this->model->listarNotas();
         }
 
-        /*function numeroIngreso(){
-            $sql ="SELECT COUNT( alm_recepcab.id_regalm ) AS numero FROM alm_recepcab WHERE ncodalm1 =:cod";
-            echo json_encode($this->model->generarNumero($_POST['id'],$sql));
-        }*/
-        
         function items(){
             echo $this->model->importarItems();
         }
@@ -35,7 +30,7 @@
         }
 
         function nuevoIngreso(){
-            echo $this->model->insertar($_POST['cabecera'],$_POST['detalles'],$_POST['series']);
+            echo $this->model->insertar($_POST['cabecera'],$_POST['detalles'],$_POST['series'],$_POST['cerrar']);
         }
 
         function adjuntos(){
@@ -52,6 +47,10 @@
 
         function cierraIngreso(){
             echo $this->model->cerrar($_POST['cabecera'],$_POST['detalles']);
+        }
+
+        function envioProveedor(){
+            $this->model->enviarCorreIngreso($_POST['cabecera'],$_POST['detalles'],$_POST['condicion']);
         }
     }
 ?>
