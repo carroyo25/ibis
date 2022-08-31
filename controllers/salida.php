@@ -59,5 +59,10 @@
                                                     $_POST['orden'],
                                                     $_POST['ingreso']);
         }
+
+        function almacenes(){
+            echo json_encode($this->model->consultarAlmacenes($_POST['origen'],$_POST['destino']));
+        }
+
     }
 ?>

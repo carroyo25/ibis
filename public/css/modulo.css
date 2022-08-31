@@ -1087,12 +1087,20 @@
   grid-column: 2/4;
 }
 .ventanaDocumento .dos_columnas .cuatro_columnas_interna .rowTwo {
+  -ms-grid-row: 1;
+  grid-row: 1;
+}
+.ventanaDocumento .dos_columnas .cuatro_columnas_interna .rowTwo {
   -ms-grid-row: 2;
   grid-row: 2;
 }
 .ventanaDocumento .dos_columnas .cuatro_columnas_interna .rowThree {
   -ms-grid-row: 3;
   grid-row: 3;
+}
+.ventanaDocumento .dos_columnas .cuatro_columnas_interna .rowFour {
+  -ms-grid-row: 4;
+  grid-row: 4;
 }
 .ventanaDocumento .dos_columnas .cuatro_columnas_interna .rowFive {
   -ms-grid-row: 5;

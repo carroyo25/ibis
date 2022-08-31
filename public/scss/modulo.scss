@@ -795,11 +795,19 @@ $culminado:#55A5E2;
             }
 
             .rowTwo{
+                grid-row: 1;
+            }
+
+            .rowTwo{
                 grid-row: 2;
             }
 
             .rowThree{
                 grid-row: 3
+            }
+
+            .rowFour{
+                grid-row: 4;
             }
 
             .rowFive{

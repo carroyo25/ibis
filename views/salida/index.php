@@ -46,9 +46,6 @@
                             <button type="button" id="importData" title="Importar Orden" class="boton3">
                                 <i class="fab fa-wpexplorer"></i> Importar Nota
                             </button>
-                            <button type="button" id="updateDocument" title="Cerrar Salida" class="boton3">
-                                <i class="far fa-comments"></i> Cerrar Salida
-                            </button>
                             <button type="button" id="preview" title="Vista Previa" class="boton3">
                                 <i class="far fa-file-pdf"></i> Vista Previa
                             </button>
@@ -184,11 +181,9 @@
                                         <th class="">Codigo</th>
                                         <th class="">Descripcion</th>
                                         <th class="">Unidad</th>
-                                        <th width="7%">Cantidad</th>
+                                        <th width="7%">Cantidad</br>Ingresada</th>
+                                        <th width="7%">Cantidad</br>Despachada</th>
                                         <th class="">Observaciones</th>
-                                        <th class="">Serie</th>
-                                        <th class="">Fecha </br> Vencimiento</th>
-                                        <th class="">Estado</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -251,6 +246,7 @@
                 <input type="hidden" name="ruc_entidad_transporte" id="ruc_entidad_transporte">
                 <input type="hidden" name="codigo_modalidad" id="codigo_modalidad">
                 <input type="hidden" name="codigo_tipo" id="codigo_tipo">
+                <input type="hidden" name="motivo_traslado" id="motivo_traslado">
                 <iframe id="iFramePdf" src="" class="oculto"></iframe>
 
                 <div class="tituloDocumento">
@@ -286,8 +282,7 @@
                             <p><strong>Domicilio de partida</strong></p>
                             <div class="dos_columnas_interna">
                                 <label for="almacen_origen">Almacen Origen: </label>
-                                <input type="text" name="almacen_origen" id="almacen_origen" class="mostrarListaInterna busqueda" placeholder="Elija opción"
-                                    readonly>
+                                <input type="text" name="almacen_origen" id="almacen_origen" class=" busqueda" >
                                 <div class="lista" id="listaOrigen">
                                    <ul>
                                        <?php echo $this->listaAlmacen?>
@@ -305,13 +300,7 @@
                             <p><strong>Domicilio de Llegada</strong></p>
                             <div class="dos_columnas_interna">
                                 <label for="almacen_destino">Almacen Destino: </label>
-                                <input type="text" name="almacen_destino" id="almacen_origen" class="mostrarListaInterna busqueda" placeholder="Elija opción"
-                                    readonly>
-                                <div class="lista" id="listaDestino">
-                                   <ul>
-                                       <?php echo $this->listaAlmacen?>
-                                   </ul> 
-                                </div>    
+                                <input type="text" name="almacen_destino" id="almacen_destino" class="busqueda" readonly>
                                 <label for="almacen_destino_direccion ">Dirección:</label>
                                 <input type="text" name="almacen_destino_direccion" id="almacen_destino_direccion">
                                 <label for="almacen_destino_dpto">Departamento :</label>
@@ -337,18 +326,16 @@
                     <div class="columna_derecha">
                         <p><strong>Motivo</strong></p>
                         <div class="cuatro_columnas_interna">
-                            <label for="motivo_traslado" class="uno">Motivo Traslado :</label>
-                            <input type="text" name="motivo_traslado" id="motivo_traslado" class="dos">
                             <label for="modalidad_traslado" class="uno">Modalidad Traslado :</label>
                             <input type="text" name="modalidad_traslado" id="modalidad_traslado" class="dos mostrarListaInterna busqueda" placeholder="Elija opción" readonly>
-                            <div class="lista rowTwo uno" id="listaModalidad">
+                            <div class="lista rowOne uno" id="listaModalidad">
                                 <ul>
                                     <?php echo $this->listaModalidad?>
                                 </ul> 
                             </div>
                             <label for="tipo_envio">Tipo Envio</label>
                             <input type="text" name="tipo_envio" id="tipo_envio" class="dos mostrarListaInterna busqueda" placeholder="Elija opción" readonly>
-                            <div class="lista uno rowThree" id="listaEnvio">
+                            <div class="lista uno rowTwo" id="listaEnvio">
                                 <ul>
                                     <?php echo $this->listaEnvio?>
                                 </ul> 
@@ -359,21 +346,21 @@
                             <input type="text" name="peso_bruto" id="peso_bruto" placeholder="Kg.">
                             <label for="autoriza">Autoriza:</label>
                             <input type="text" name="autoriza" id="autoriza" class="dos mostrarListaInterna busqueda" placeholder="Elija opción" readonly>
-                            <div class="lista uno rowFive" id="listaAutoriza">
+                            <div class="lista uno rowFour" id="listaAutoriza">
                                 <ul>
                                     <?php echo $this->listaPersonal?>
                                 </ul> 
                             </div>
                             <label for="despacha">Despacha:</label>
                             <input type="text" name="despacha" id="despacha"  class="dos mostrarListaInterna busqueda" placeholder="Elija opción" readonly>
-                            <div class="lista uno rowSix" id="listaDespacha">
+                            <div class="lista uno rowFive" id="listaDespacha">
                                 <ul>
                                     <?php echo $this->listaPersonal?>
                                 </ul> 
                             </div>
                             <label for="destinatario">Destinatario:</label>
                             <input type="text" name="destinatario" id="destinatario" class="dos mostrarListaInterna busqueda" placeholder="Elija opción" readonly>
-                            <div class="lista uno rowSeven" id="listaDestinatario">
+                            <div class="lista uno rowSix" id="listaDestinatario">
                                 <ul>
                                     <?php echo $this->listaPersonal?>
                                 </ul> 

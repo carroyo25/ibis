@@ -104,7 +104,8 @@ $(function() {
     $("#importData").click(function (e) { 
         e.preventDefault();
         
-        $.post(RUTA+"salida/ingresos",
+        if ( accion == 'n') {
+            $.post(RUTA+"salida/ingresos",
             function (data, textStatus, jqXHR) {
                 $("#notas tbody")
                     .empty()
@@ -114,6 +115,10 @@ $(function() {
             },
             "text"
         );
+        }else{
+            mostrarMensaje('El despacho se esta procesando','mensaje_error');
+        }
+        
 
         return false
     });
@@ -335,6 +340,24 @@ $(function() {
     $("#guiaRemision").click(function (e) { 
         e.preventDefault();
         
+         $.post(RUTA+"salida/almacenes", {origen:$("#codigo_almacen").val(),
+                                            destino:$("#codigo_almacen_destino").val()},
+            function (data, text, requestXHR) {
+                $("#almacen_origen").val(data[0].almacen);
+                $("#codigo_origen").val(data[0].ncodalm);
+                $("#almacen_origen_direccion").val(data[0].direccion);
+                $("#almacen_origen_dpto").val(data[0].dpto);
+                $("#almacen_origen_prov").val(data[0].prov);
+                $("#almacen_origen_dist").val(data[0].dist);
+
+                $("#almacen_destino").val(data[1].almacen);
+                $("#codigo_destino").val(data[1].ncodalm);
+                $("#almacen_destino_direccion").val(data[1].direccion);
+                $("#almacen_destino_dpto").val(data[1].dpto);
+                $("#almacen_destino_prov").val(data[1].prov);
+                $("#almacen_destino_dist").val(data[1].dist);
+            },"json");          
+        
         $("#vistadocumento").fadeIn();
 
         return false;
@@ -355,13 +378,13 @@ $(function() {
             if (result['codigo_destino'] == "") throw "Seleccione Almacen destino";
             if (result['codigo_entidad'] == "") throw "Seleccione la empresa de transportes";
             if (result['codigo_autoriza'] == "") throw "Seleccione la persona que autoriza";
-            if (result['codigo_destinatario'] == "") throw "Seleccione el desdtinatario";
+            if (result['codigo_destinatario'] == "") throw "Seleccione el destinatario";
             if (result['codigo_traslado'] == "") throw "Seleccione la modalidad de traslado";
             if (result['codigo_tipo'] == "") throw "Seleccione el tipo de envio";
             if (result['nro_bultos'] == "") throw "Indique el Nro. de bultos";
             if (result['peso_bruto'] == "") throw "Indique el peso bruto";
-            if (result['nombre_conductor'] == "") throw "Escriba el nombre del conductor";
-            if (result['placa'] == "") throw "Indique la placa del vehiculo";
+            //if (result['nombre_conductor'] == "") throw "Escriba el nombre del conductor";
+            //if (result['placa'] == "") throw "Indique la placa del vehiculo";
 
             $.post(RUTA+"salida/guiaremision", {cabecera:result,
                                                 detalles:JSON.stringify(detalles()),
@@ -444,16 +467,18 @@ detalles = () =>{
             PEDIDO      = $("#codigo_pedido").val(),
             ORDEN       = $("#codigo_orden").val(),
             ALMACEN     = $("#codigo_almacen").val(),
-            CANTIDAD    = $(this).find('td').eq(5).children().val(),// cantidad
-            OBSER       = $(this).find('td').eq(6).children().val(),
-            VENCE       = $(this).find('td').eq(8).text(),
-            SERIE       = $(this).find('td').eq(7).text(),
+            INGRESO     = $("#codigo_ingreso").val(),
+            CANTIDAD    = $(this).find('td').eq(6).children().val(),// cantidad
+            OBSER       = $(this).find('td').eq(7).children().val(),
+            VENCE       = "",
+            SERIE       = "",
             CODIGO      = $(this).find('td').eq(2).text(),//codigo
             DESCRIPCION = $(this).find('td').eq(3).text(),//descripcion
             UNIDAD      = $(this).find('td').eq(4).text(),//unidad
-            NESTADO     = $(this).find("select[name='estado']").val(),
-            CESTADO     = $(this).find("select[name='estado'] option:selected").text(),
-            UBICACION   = "";
+            NESTADO     = '',
+            CESTADO     = '',
+            UBICACION   = "",
+            CANTDESP    = $(this).find('td').eq(5).text();
     
         item = {};
 
@@ -468,6 +493,7 @@ detalles = () =>{
         item['obser']       = OBSER;
         item['vence']       = VENCE;
         item['serie']       = SERIE;
+        item['ingreso']     = INGRESO;
 
         item['codigo']     = CODIGO;
         item['descripcion']= DESCRIPCION;
@@ -475,6 +501,7 @@ detalles = () =>{
         item['nestado']    = NESTADO;
         item['cestado']    = CESTADO;
         item['ubicacion']  = UBICACION;
+        item['cantdesp']   = CANTDESP;
 
         DETALLES.push(item);
     })
