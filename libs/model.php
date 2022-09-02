@@ -1896,6 +1896,7 @@
                                                     cm_entidad.nagenret,
                                                     lg_ordencab.cverificacion,
                                                     lg_ordencab.ntotal,
+                                                    FORMAT(lg_ordencab.ntotal,2) AS ctotal,
 	                                                tb_pedidocab.nivelAten  
                                                 FROM
                                                     lg_ordencab
@@ -1944,14 +1945,14 @@
 
         public function grabarComentarios($codigo,$comentarios) {
             try {
-                $indice = $this->obtenerIndice($codigo,"SELECT id_regmov AS numero FROM lg_ordencab WHERE lg_ordencab.cverificacion =:id");
+                //$indice = $this->obtenerIndice($codigo,"SELECT id_regmov AS numero FROM lg_ordencab WHERE lg_ordencab.cverificacion =:id");
                 $datos = json_decode($comentarios);
                 $nreg = count($datos);
 
                 for ($i=0; $i < $nreg; $i++) { 
                     $sql = $this->db->connect()->prepare("INSERT INTO lg_ordencomenta 
                                                         SET id_regmov=:id,id_cuser=:usr,ffecha=:fecha,ccomenta=:comentario");
-                    $sql->execute(["id"=>$indice,
+                    $sql->execute(["id"=>$codigo,
                                     "usr"=>$datos[$i]->usuario,
                                     "fecha"=>$datos[$i]->fecha,
                                     "comentario"=>$datos[$i]->comentario]);
@@ -1993,16 +1994,17 @@
                                                     INNER JOIN tb_pedidodet ON lg_ordendet.niddeta = tb_pedidodet.iditem
                                                     INNER JOIN tb_parametros AS monedas ON lg_ordendet.nmonref = monedas.nidreg 
                                                 WHERE
-                                                    lg_ordendet.id_regmov = :id");
+                                                    lg_ordendet.id_orden = :id");
                 $sql->execute(["id"=>$id]);
                 $rowCount = $sql->rowCount();
                 $item = 1;
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()){
                         $salida.='<tr data-grabado="1" 
-                                        data-total="'.$rs['total_numero'].'" 
+                                        data-total="'.$rs['ntotal'].'" 
                                         data-codprod="'.$rs['id_cprod'].'" 
-                                        data-itPed="'.$rs['niddeta'].'">
+                                        data-itPed="'.$rs['niddeta'].'"
+                                        data-cant="'.$rs['ncanti'].'">
                                     <td class="textoCentro"><i class="fas fa-ban"></i></td>
                                     <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
                                     <td class="textoCentro">'.$rs['ccodprod'].'</td>

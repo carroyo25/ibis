@@ -170,10 +170,12 @@
                                                 INNER JOIN cm_producto ON alm_recepdet.id_cprod = cm_producto.id_cprod
                                                 INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
                                                 INNER JOIN lg_ordendet ON alm_recepdet.niddetaOrd = lg_ordendet.nitemord
-                                                LEFT JOIN (SELECT ncodserie,cdesserie,id_cprod FROM alm_recepserie) AS series ON alm_recepdet.id_cprod = series.id_cprod
+                                                LEFT JOIN (SELECT ncodserie,cdesserie,id_cprod 
+                                                            FROM alm_recepserie
+                                                            WHERE idref_movi =:despacho ) AS series ON alm_recepdet.id_cprod = series.id_cprod
                                                 WHERE
                                                     alm_recepdet.id_regalm = :id");
-                $sql->execute(["id"=>$id]);
+                $sql->execute(["id"=>$id,"despacho"=>$id]);
 
                 $rowCount = $sql->rowCount();
 

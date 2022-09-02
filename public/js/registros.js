@@ -125,7 +125,7 @@ $(function(){
                 if (data.respuesta) {
                     mostrarMensaje("Items añadidos","mensaje_correcto");
                 }else{
-                    mostrarMensaje("Items añadidos","no se actualizo correctamente");
+                    mostrarMensaje("no se actualizo correctamente","mensaje_error");
                 }
             },
             "json"

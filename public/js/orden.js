@@ -53,7 +53,7 @@ $(function(){
                 $("#concepto").val(data.cabecera[0].concepto);
                 $("#detalle").val(data.cabecera[0].detalle);
                 $("#moneda").val(data.cabecera[0].nombre_moneda);
-                $("#total").val();
+                $("#total").val(data.cabecera[0].ctotal);
                 $("#tipo").val(data.cabecera[0].tipo);
                 $("#fentrega").val(data.cabecera[0].ffechaent);
                 $("#cpago").val(data.cabecera[0].pagos);
@@ -62,9 +62,11 @@ $(function(){
                 $("#atencion").val(data.cabecera[0].cnombres);
                 $("#transporte").val(data.cabecera[0].transporte);
                 $("#lentrega").val(data.cabecera[0].cdesalm);
-                $("#total").val(data.cabecera[0].ntotal);
+                $("#total_numero").val(data.cabecera[0].ntotal);
                 $("#ncotiz").val(data.cabecera[0].cnumcot);
                 $("#tcambio").val(data.cabecera[0].ntcambio);
+
+                console.log(data.cabecera[0].ctotal)
 
                 $("#estado")
                     .removeClass()
@@ -433,7 +435,7 @@ $(function(){
         $("#comentarios").fadeOut();
 
         if ($("#codigo_estado").val() == 59 && !swcoment) {
-            $.post(RUTA+"orden/comentarios", {codigo:$("#codigo_verificacion").val(),comentarios:JSON.stringify(comentarios())},
+            $.post(RUTA+"orden/comentarios", {codigo:$("#codigo_orden").val(),comentarios:JSON.stringify(comentarios())},
                 function (data, textStatus, jqXHR) {
                     swcoment = true;
                 },
@@ -628,11 +630,13 @@ $(function(){
                 $(this).parent().parent().find("td").eq(7).text(total.toFixed(2));
 
                 $("#tablaDetalles tbody  > tr").each(function () {
-                    suma += parseFloat($(this).find('td').eq(7).text()||0,10)
+                    suma += parseFloat($(this).find('td').eq(7).text()||0,10);
                 })
 
                 if(suma > 0) {
                     $("#total").val(numberWithCommas(suma.toFixed(2)));
+                    $("#total_numero").val(suma.toFixed(2));
+
                 }
 
             } catch (error) {

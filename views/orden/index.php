@@ -49,6 +49,7 @@
                     <input type="hidden" name="codigo_pago" id="codigo_pago">
                     <input type="hidden" name="sw" id="sw" value="0">
                     <input type="hidden" name="detalle" id="detalle">
+                    <input type="hidden" name="total_numero" id="total_numero">
 
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>

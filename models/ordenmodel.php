@@ -1,8 +1,7 @@
 <?php
     class OrdenModel extends Model{
 
-        public function __construct()
-        {
+        public function __construct(){
             parent::__construct();
         }
 
@@ -349,7 +348,7 @@
                                 "moneda"     =>$cab->codigo_moneda,
                                 "tcambio"    =>$cab->tcambio,
                                 "igv"        =>0,
-                                "total"      =>$cab->total,
+                                "total"      =>$cab->total_numero,
                                 "proyecto"   =>$cab->codigo_costos,
                                 "ccostos"    =>$cab->codigo_costos,
                                 "area"       =>$cab->codigo_area,
@@ -369,10 +368,10 @@
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0){
-                    $this->grabarDetalles($cab->codigo_verificacion,$detalles,$cab->codigo_costos,$indice);
-                    $this->grabarComentarios($cab->codigo_verificacion,$comentarios);
-                    $this->actualizarDetallesPedido(84,$detalles,$orden['numero'],$cab->codigo_entidad);
                     $this->subirArchivos($orden,$adjuntos);
+                    $this->grabarDetalles($cab->codigo_verificacion,$detalles,$cab->codigo_costos,$indice);
+                    $this->grabarComentarios($cab->codigo_orden,$comentarios);
+                    $this->actualizarDetallesPedido(84,$detalles,$orden['numero'],$cab->codigo_entidad);
                     $this->actualizarCabeceraPedido(58,$cab->codigo_pedido,$orden['numero']);
                     $respuesta = true;
                     $mensaje = "Orden Grabada";

@@ -15,7 +15,7 @@
             $cabecera = $_POST['datos'];
             $partidas = $_POST['partidas'];
 
-            echo json_encode($this->model->crearProyecto($datos,$costos,$partidas));
+            echo json_encode($this->model->crearProyecto($cabecera,$partidas));
         }
 
         function actualizaTabla(){
