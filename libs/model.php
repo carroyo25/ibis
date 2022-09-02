@@ -1272,6 +1272,7 @@
             return $upload;
         }
 
+        //consultas pedidos
         public function consultarReqId($id,$min,$max,$proceso){
             try {
                 $sql = $this->db->connect()->prepare("SELECT
@@ -1541,7 +1542,8 @@
                                                     ON 
                                                         tb_pedidodet.unid = tb_unimed.ncodmed
                                                 WHERE
-                                                    tb_pedidodet.idpedido = :id");
+                                                    tb_pedidodet.idpedido = :id 
+                                                    AND tb_pedidodet.cant_resto != 0");
                 $sql->execute(["id"=>$id]);
                 $rowCount = $sql->rowCount();
                 
@@ -1971,7 +1973,7 @@
                                                     lg_ordendet.nidpedi,
                                                     lg_ordendet.id_cprod,
                                                     FORMAT( lg_ordendet.ncanti, 2 ) AS ncanti,
-                                                    FORMAT( lg_ordendet.nunitario, 2 ) AS nunitario,
+                                                    lg_ordendet.nunitario AS nunitario,
                                                     FORMAT( lg_ordendet.nigv, 2 ) AS nigv,
                                                     FORMAT( tb_pedidodet.total - lg_ordendet.nigv,2) AS subtotal,
                                                     FORMAT( lg_ordendet.ntotal,2) as ntotal,
@@ -2017,9 +2019,10 @@
                                     <input type="number"
                                         step="any" 
                                         placeholder="0.00" 
-                                        onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"
                                         onclick="this.select()"
-                                        value='.$rs['nunitario'].'>
+                                        onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"
+                                        value='.$rs['nunitario'].'
+                                        class="textoDerecha">
                                     </td>
                                     <td class="textoDerecha pr5px">'.$rs['ntotal'].'</td>
                                     <td class="textoCentro">'.$rs['nroparte'].'</td>

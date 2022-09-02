@@ -611,8 +611,8 @@
 
                 if ($estadoEnvio){
                     $clase = "mensaje_correcto";
-                    //$this->actualizarCabeceraPedido(59,$cabecera['codigo_pedido'],$cabecera['codigo_orden']);
-                    //$this->actualizarDetallesPedido(59,$detalles,$cabecera['codigo_orden'],$cabecera['codigo_entidad']);
+                    $this->actualizarCabeceraPedido(59,$cabecera['codigo_pedido'],$cabecera['codigo_orden']);
+                    $this->actualizarDetallesPedido(59,$detalles,$cabecera['codigo_orden'],$cabecera['codigo_entidad']);
                     $this->actualizarCabeceraOrden(59,$cabecera['codigo_orden']);
                 }
 

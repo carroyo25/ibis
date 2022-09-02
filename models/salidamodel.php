@@ -243,7 +243,7 @@
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                         <td class="textoDerecha pr20px">'.$rs['cantidad'].'</td>
                                         <td><input type="number" step="any" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"
-                                            value="'.$rs['nsaldo'].'" readonly></td>
+                                            value="'.$rs['nsaldo'].'"></td>
                                         <td class="pl20px"><input type="text"></td>
                                     </tr>';
                     }

@@ -31,7 +31,7 @@
                         <span>Datos Generales</span>
                         <div>
                             <button type="button" id="grabarItem" title="Grabar Datos">
-                                <span><i class="far fa-save"></i> Grabar Registro</span> 
+                                <p><i class="far fa-save"></i> Grabar Registro</p> 
                             </button>
                             
                             <button type="button" id="cerrarVentana" title="Cerrar">
@@ -97,7 +97,7 @@
                             <span>Partidas</span>
 
                             <button type="button" id="addSubItem" title="Agregar Partidas">
-                                <span><i class="fas fa-plus"></i> Añadir</span> 
+                                <p><i class="fas fa-plus"></i> Añadir</p> 
                             </button>
                         </div>
                         <div class="ccostos__partidas">

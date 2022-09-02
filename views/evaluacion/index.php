@@ -52,7 +52,7 @@
                         <span>Datos Generales</span>
                         <div>
                             <button type="button" id="saveOrden" title="Grabar Orden" class="boton3">
-                                <span><i class="far fa-save"></i> Grabar </span> 
+                                <p><i class="far fa-save"></i> Grabar </p> 
                             </button>
                             <button type="button" id="cerrarVentana" title="Cerrar" class="boton3">
                                 <i class="fas fa-window-close"></i>

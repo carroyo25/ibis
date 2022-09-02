@@ -31,7 +31,7 @@
                         <span>Datos Generales</span>
                         <div>
                             <button type="button" id="grabarItem" title="Grabar Datos">
-                                <span><i class="far fa-save"></i> Grabar Registro</span> 
+                                <p><i class="far fa-save"></i> Grabar Registro</p> 
                             </button>
                             <button type="button" id="cerrarVentana" title="Cerrar">
                                 <i class="fas fa-window-close"></i>
