@@ -36,7 +36,7 @@
                                 <i class="fab fa-wpexplorer"></i> Ver Pedido
                             </button>
                             <button type="button" id="requestAprob"  data-rol="68" data-estado="54" title="Solicitar Aprobacion" class="boton3">
-                                <i class="fas fa-award"></i> Aprobar Pedidos
+                                <i class="fas fa-award"></i> Aprobar Pedido
                             </button>
                             <button type="button" id="closeProcess" title="Cierra la ventana actual" class="boton3">
                                 <i class="fas fa-window-close"></i>

@@ -142,39 +142,47 @@
             try {
                 $salida="";
                 $sql=$this->db->connect()->prepare("SELECT
-                                                    alm_recepdet.niddeta,
-                                                    alm_recepdet.id_regalm,
-                                                    alm_recepdet.ncodalm1,
-                                                    alm_recepdet.id_cprod,
-                                                    FORMAT(alm_recepdet.ncantidad, 2) AS ncantidad,
-                                                    alm_recepdet.niddetaPed,
-                                                    alm_recepdet.niddetaOrd,
-                                                    alm_recepdet.nestadoreg,
-                                                    cm_producto.ccodprod,
-                                                    alm_recepdet.fvence,
-                                                    UPPER(
-                                                        CONCAT_WS(
-                                                            ' ',
-                                                            cm_producto.cdesprod,
-                                                            tb_pedidodet.observaciones,
-                                                            tb_pedidodet.docEspec
-                                                        )
-                                                    ) AS cdesprod,
-                                                    tb_unimed.cabrevia,
-                                                    FORMAT(lg_ordendet.ncanti, 2) AS cantidad,
-                                                    series.cdesserie,
-                                                    series.ncodserie
-                                                FROM
-                                                alm_recepdet
-                                                INNER JOIN tb_pedidodet ON alm_recepdet.niddetaPed = tb_pedidodet.iditem
-                                                INNER JOIN cm_producto ON alm_recepdet.id_cprod = cm_producto.id_cprod
-                                                INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
-                                                INNER JOIN lg_ordendet ON alm_recepdet.niddetaOrd = lg_ordendet.nitemord
-                                                LEFT JOIN (SELECT ncodserie,cdesserie,id_cprod 
-                                                            FROM alm_recepserie
-                                                            WHERE idref_movi =:despacho ) AS series ON alm_recepdet.id_cprod = series.id_cprod
-                                                WHERE
-                                                    alm_recepdet.id_regalm = :id");
+                alm_despachodet.niddeta,
+                alm_despachodet.id_regalm,
+                alm_despachodet.ncodalm1,
+                alm_despachodet.ncodalm2,
+                alm_despachodet.id_cprod,
+                alm_despachodet.niddetaOrd,
+                alm_despachodet.niddetaPed,
+                alm_despachodet.nestadoreg,
+                alm_despachodet.fvence,
+                cm_producto.ccodprod,
+                UPPER(
+                    CONCAT_WS(
+                        ' ',
+                        cm_producto.cdesprod,
+                        tb_pedidodet.observaciones,
+                        tb_pedidodet.docEspec
+                    )
+                ) AS cdesprod,
+                tb_pedidodet.observaciones,
+                tb_unimed.cabrevia,
+                FORMAT(lg_ordendet.ncanti, 2) AS cantidad,
+                series.cdesserie,
+                series.ncodserie
+            FROM
+                alm_despachodet
+            INNER JOIN cm_producto ON alm_despachodet.id_cprod = cm_producto.id_cprod
+            INNER JOIN tb_pedidodet ON alm_despachodet.niddetaPed = tb_pedidodet.iditem
+            INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+            INNER JOIN lg_ordendet ON alm_despachodet.niddetaOrd = lg_ordendet.nitemord
+            LEFT JOIN (
+                SELECT
+                    ncodserie,
+                    cdesserie,
+                    id_cprod
+                FROM
+                    alm_recepserie
+                WHERE
+                    idref_movi = :despacho
+            ) AS series ON alm_despachodet.id_cprod = series.id_cprod
+            WHERE
+                alm_despachodet.id_regalm = :id");
                 $sql->execute(["id"=>$id,"despacho"=>$id]);
 
                 $rowCount = $sql->rowCount();
@@ -185,7 +193,7 @@
 
                         $estados = $this->listarSelect(13,$rs['nestadoreg']);
 
-                        $cantidad  = $rs['cdesserie'] == ' ' ? $rs['cantidad'] : 1;
+                        $cantidad  = $rs['cdesserie'] == null ? $rs['cantidad'] : 1;
 
                         $fecha = $rs['fvence'] == '30-11--0001' ? "" : date("d-m-Y", strtotime($rs['fvence']));
 

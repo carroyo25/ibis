@@ -309,10 +309,7 @@ $(function() {
                     },
                     "json"
                 );
-                
             }
-            
-
         } catch (error) {
             mostrarMensaje(error,'mensaje_error');
         }
@@ -478,6 +475,7 @@ detalles = () =>{
             NESTADO     = '',
             CESTADO     = '',
             UBICACION   = "",
+            DESTINO     = $("#codigo_almacen_destino").val(),
             CANTDESP    = $(this).find('td').eq(5).text();
     
         item = {};
@@ -502,6 +500,8 @@ detalles = () =>{
         item['cestado']    = CESTADO;
         item['ubicacion']  = UBICACION;
         item['cantdesp']   = CANTDESP;
+
+        item['destino'] = DESTINO;
 
         DETALLES.push(item);
     })

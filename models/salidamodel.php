@@ -258,6 +258,7 @@
 
         public function grabarDespacho($cabecera,$detalles){
             try {
+                
                 $mensaje = "Error al grabar el registro";
                 $clase = "mensaje_error";
                 $error = true;
@@ -341,7 +342,8 @@
                     try {
                         $sql=$this->db->connect()->prepare("INSERT INTO alm_despachodet SET id_regalm=:cod,ncodalm1=:ori,id_cprod=:cpro,ncantidad=:cant,
                                                                                         cSerie=:ser,niddetaPed=:pedido,niddetaOrd=:orden,nflgactivo=:flag,
-                                                                                        nestadoreg=:estadoItem,ingreso=:ingreso,nsaldo=:despacho");
+                                                                                        nestadoreg=:estadoItem,ingreso=:ingreso,nsaldo=:despacho,
+                                                                                        ncodalm2=:destino");
                          $sql->execute(["cod"=>$id,
                                         "ori"=>$almacen,
                                         "cpro"=>$datos[$i]->idprod,
@@ -352,7 +354,8 @@
                                         "flag"=>1,
                                         "estadoItem"=>$datos[$i]->nestado,
                                         "ingreso"=>$datos[$i]->ingreso,
-                                        "despacho"=>$datos[$i]->cantdesp]);
+                                        "despacho"=>$datos[$i]->cantdesp,
+                                        "destino"=>$datos[$i]->destino]);
                     } catch (PDOException $th) {
                         echo $th->getMessage();
                         return false;
@@ -702,8 +705,6 @@
                 return false;
             }
         }
-
-        
 
         private function actualizarCabeceraPedido($pedido,$estado){
             try {
