@@ -458,8 +458,8 @@ detalles = () =>{
     
     TABLA.each(function(){
         let ITEM        = $(this).find('td').eq(1).text(),
-            IDDETORDEN  = $(this).data("detorden"),
-            IDDETPED    = $(this).data("iddetped"),
+            IDDETORDEN  = $(this).data("itemorden"),
+            IDDETPED    = $(this).data("itempedido"),
             IDPROD      = $(this).data("idproducto"),
             PEDIDO      = $("#codigo_pedido").val(),
             ORDEN       = $("#codigo_orden").val(),

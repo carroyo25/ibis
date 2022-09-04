@@ -111,7 +111,7 @@
                             "clase"=>"mensaje_correcto",
                             "esatdo"=>true);
             }else {
-                return array("mensaje"=>"No se realizo le proceso",
+                return array("mensaje"=>"Ya autorizo la orden",
                             "clase"=>"mensaje_error",
                             "operador"=>$operador,
                             "estado"=>false);

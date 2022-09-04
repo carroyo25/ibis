@@ -2293,7 +2293,7 @@
                                         <td class="pl20px">'.$rs['cdesprod'].'</td>
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                         <td class="pr20px textoDerecha">'.$rs['cantidad'].'</td>
-                                        <td class="pr20px textoDerecha"><input type="text" value="'.$rs['ncantidad'].'" readonly></td>
+                                        <td class="pr5px"><input type="text" class="textoDerecha" value="'.$rs['ncantidad'].'" readonly></td>
                                         <td class="pr20px textoDerecha"></td>
                                         <td><input type="text" value="'.$rs['cobserva'].'"></td>
                                         <td></td>
