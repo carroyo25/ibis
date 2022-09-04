@@ -9,7 +9,7 @@
     <link rel="shortcut icon" type="image/png" href="<?php echo constant('URL')?>public/img/logo.png" />
     <link rel="stylesheet" href="<?php echo constant('URL')?>public/css/all.css">
     <link rel="stylesheet" href="<?php echo constant('URL')?>public/css/login.css?<?php echo constant('VERSION')?>">
-    <title>Ibis -- Control de Procesos</title>
+    <title>Sical -- Sistema Integrado de Compras, Almacenes y Logística</title>
 </head>
 <body>
     <div class="mensaje mensaje_correcto">
@@ -24,8 +24,8 @@
         </div>
         <div class="landZone">
             <div class="presentacion">
-                <h1>Gestor Logístico</h1>
-                <p>Almacen -  Compras</p>
+                <h1>Sical  - Sepcon</h1>
+                <p>Sistema Integrado de Compras, Almacenes y Logística</p>
                 <div class="circulos">
                     <div></div>
                     <div></div>
