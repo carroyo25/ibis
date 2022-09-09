@@ -68,7 +68,7 @@
                                                     WHERE
                                                         tb_usermod.iduser = :user AND flgactivo = 1 
                                                     ORDER BY
-                                                        sysmenu.cclasmenu ASC");
+                                                        sysmenu.copcion ASC");
                 $sql->execute(["user"=>$user]);
                 $result = $sql->fetchAll();
 

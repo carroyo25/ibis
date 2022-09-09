@@ -71,7 +71,8 @@
 
         public function insertar($cabecera,$detalles,$series,$cerrar){
             try {
-                $indice = $this->lastInsertId("SELECT MAX(id_regmov) AS id FROM lg_ordencab");
+                //$indice = $this->lastInsertId("SELECT MAX(id_regmov) AS id FROM lg_ordencab");
+                $indice = $this->lastInsertId("SELECT MAX(id_regalm) AS id FROM alm_recepcab");
 
                 $fecha = explode("-",$cabecera['fecha']); 
                 
