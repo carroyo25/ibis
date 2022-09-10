@@ -9,6 +9,8 @@ $(function(){
     $("#nuevoRegistro").click(function (e) { 
         e.preventDefault();
 
+        $("form")[0].reset();
+        $("#modulos tbody,#costos tbody,#almacen tbody").empty();
         $("#proceso").fadeIn();
         accion = 'n';
 
@@ -231,6 +233,8 @@ $(function(){
                 function (data, textStatus, jqXHR) {
                     
                     if (data.respuesta) {
+                        $("form")[0].reset();
+                        $("#modulos tbody,#costos tbody,#almacen tbody").empty();
                         mostrarMensaje("Usuario Insertado","mensaje_correcto");
                     }else {
                         mostrarMensaje(data.mensaje,"mensaje_error");

@@ -761,6 +761,35 @@
   background: rgba(255, 255, 43, 0.7);
 }
 
+.itemsCargoPlanner {
+  overflow: auto;
+  height: 73vh;
+  margin-top: 5px;
+}
+.itemsCargoPlanner table {
+  border-collapse: collapse;
+  width: 150%;
+}
+.itemsCargoPlanner table thead {
+  background: #000;
+  color: #fff;
+  height: 1.2rem;
+  font-size: 0.6rem;
+}
+.itemsCargoPlanner table tbody .pointer {
+  cursor: pointer;
+  height: 25px;
+}
+.itemsCargoPlanner table tbody .pointer td {
+  border: 1px solid #000;
+  line-height: 1rem;
+  padding: 0 2px;
+  font-size: 0.6rem;
+}
+.itemsCargoPlanner table tbody .pointer:hover {
+  background: rgba(255, 255, 43, 0.7);
+}
+
 .lista {
   width: 85%;
   position: absolute;

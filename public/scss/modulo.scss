@@ -461,7 +461,7 @@ $culminado:#55A5E2;
     margin-top: 5px;
     overflow-x: hidden;
     overflow-y: auto;
-    
+
     table {
         width: 100%;
         border-collapse: collapse;
@@ -488,6 +488,44 @@ $culminado:#55A5E2;
                 }
             };
         }
+    }
+}
+
+.itemsCargoPlanner{
+    overflow: auto;
+    height: 73vh;
+    margin-top: 5px;
+
+    table {
+        border-collapse: collapse;
+        width: 150%;
+        
+
+        thead {
+            background:$negro;
+            color:$blanco;
+            height: 1.2rem;
+            font-size: 0.6rem;
+        }
+
+        tbody {
+            .pointer{
+                cursor: pointer;
+                height: 25px;
+                
+                td{
+                    border: 1px solid  #000;
+                    line-height: 1rem;
+                    padding: 0 2px;
+                    font-size: 0.6rem;
+                }
+                
+                &:hover {
+                    background:rgba(255,255,43,.7);
+                }
+            };
+        }
+
     }
 }
 
