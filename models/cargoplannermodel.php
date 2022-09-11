@@ -33,9 +33,11 @@
                 ordenes.ffechadoc,
                 ordenes.ffechaent,
                 proveedores.crazonsoc,
-                recepcion.ncantidad,
+                recepcion.ncantidad AS cant_recepcionada,
                 recepcab.nnronota,
-                recepcab.cnumguia
+                recepcab.cnumguia,
+                despacho.ncantidad AS cant_despachada,
+                LPAD(despachocab.nnronota,6,0) AS nota_despacho
             FROM
                 tb_pedidodet
             INNER JOIN cm_producto ON tb_pedidodet.idprod = cm_producto.id_cprod
@@ -70,7 +72,9 @@
                     alm_recepdet
             ) AS recepcion ON recepcion.niddetaPed = tb_pedidodet.iditem
             AND recepcion.niddetaOrd = tb_pedidodet.idorden
-            LEFT JOIN (SELECT id_regalm,nnronota,cnumguia FROM alm_recepcab ) AS recepcab ON recepcion.id_regalm = recepcab.id_regalm");
+            LEFT JOIN (SELECT id_regalm,nnronota,cnumguia FROM alm_recepcab ) AS recepcab ON recepcion.id_regalm = recepcab.id_regalm
+            LEFT JOIN (SELECT id_regalm,ncantidad FROM alm_despachodet ) AS despacho ON recepcion.id_regalm = despacho.id_regalm
+            LEFT JOIN (SELECT id_regalm,ffecdoc,nnronota FROM  alm_despachocab ) AS despachocab ON despacho.id_regalm = despacho.id_regalm");
                 $sql->execute();
                 $rowCount = $sql->rowCount();
                 $item = 1;
@@ -92,7 +96,7 @@
                                         <td>'.$rs['orden'].'</td>
                                         <td>'.$rs['ffechadoc'].'</td>
                                         <td>'.$rs['crazonsoc'].'</td>
-                                        <td>'.$rs['ncantidad'].'</td>
+                                        <td>'.$rs['cant_recepcionada'].'</td>
                                         <td></td>
                                         <td>'.$rs['ffechadoc'].'</td>
                                         <td></td>
@@ -101,7 +105,7 @@
                                         <td></td>
                                         <td>'.$rs['nnronota'].'</td>
                                         <td>'.$rs['cnumguia'].'</td>
-                                        <td></td>
+                                        <td>'.$rs['nota_despacho'].'</td>
                                         <td></td>
                                         <td></td>
                                         <td></td>
