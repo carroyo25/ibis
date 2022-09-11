@@ -400,6 +400,7 @@
                                                 lg_ordendet.niddeta,
                                                 lg_ordendet.nidpedi,
                                                 lg_ordendet.id_cprod,
+                                                lg_ordendet.id_orden,
                                                 FORMAT(lg_ordendet.nsaldo,2) AS nsaldo,
                                                 cm_producto.ccodprod,
                                                 UPPER(CONCAT_WS(' ',cm_producto.cdesprod,tb_pedidodet.observaciones,tb_pedidodet.docEspec)) AS cdesprod,
@@ -421,11 +422,11 @@
                 if ($rowCount > 0) {
                     $item=1;
                     while ($rs = $sql->fetch()){
-                        $salida.='<tr data-detorden="'.$rs['nitemord'].'" 
+                        $salida.='<tr data-detorden="'.$rs['id_orden'].'" 
                                         data-idprod="'.$rs['id_cprod'].'"
                                         data-iddetped="'.$rs['niddeta'].'"
                                         data-saldo="'.$rs['nsaldo'].'">
-                                    <td class="textoCentro"><a href="'.$rs['nitemord'].'"><i class="fas fa-barcode"></i></a></td>
+                                    <td class="textoCentro"><a href="'.$rs['id_orden'].'"><i class="fas fa-barcode"></i></a></td>
                                     <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
                                     <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                     <td class="pl20px">'.$rs['cdesprod'].'</td>

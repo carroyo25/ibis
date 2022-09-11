@@ -589,30 +589,34 @@ detalles = () =>{
             NESTADO     = null,
             CESTADO     = null //$(this).find("select[name='estado'] option:selected").text(),
             UBICACION   = "";
+
     
         item = {};
 
-        item['item']        = ITEM;
-        item['iddetorden']  = IDDETORDEN;
-        item['iddetped']    = IDDETPED;
-        item['idprod']      = IDPROD;
-        item['pedido']      = ORDEN;
-        item['orden']       = PEDIDO;
-        item['almacen']     = ALMACEN;
-        item['cantrec']     = CANTREC;
-        item['cantsol']     = CANTSOL;
-        item['cantsal']     = CANTSAL;
-        item['obser']       = OBSER;
-        item['vence']       = VENCE;
+        if (CANTREC > 0) {
+            item['item']        = ITEM;
+            item['iddetorden']  = IDDETORDEN;
+            item['iddetped']    = IDDETPED;
+            item['idprod']      = IDPROD;
+            item['pedido']      = ORDEN;
+            item['orden']       = PEDIDO;
+            item['almacen']     = ALMACEN;
+            item['cantrec']     = CANTREC;
+            item['cantsol']     = CANTSOL;
+            item['cantsal']     = CANTSAL;
+            item['obser']       = OBSER;
+            item['vence']       = VENCE;
 
-        item['codigo']     = CODIGO;
-        item['descripcion']= DESCRIPCION;
-        item['unidad']     = UNIDAD;
-        item['nestado']    = NESTADO;
-        item['cestado']    = CESTADO;
-        item['ubicacion']  = UBICACION;
+            item['codigo']     = CODIGO;
+            item['descripcion']= DESCRIPCION;
+            item['unidad']     = UNIDAD;
+            item['nestado']    = NESTADO;
+            item['cestado']    = CESTADO;
+            item['ubicacion']  = UBICACION;
 
-        DETALLES.push(item);
+            DETALLES.push(item);
+        }
+        
     })
 
     return DETALLES; 

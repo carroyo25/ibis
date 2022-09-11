@@ -371,8 +371,8 @@
                     $this->subirArchivos($orden,$adjuntos);
                     $this->grabarDetalles($cab->codigo_verificacion,$detalles,$cab->codigo_costos,$indice);
                     $this->grabarComentarios($cab->codigo_orden,$comentarios);
-                    $this->actualizarDetallesPedido(84,$detalles,$orden['numero'],$cab->codigo_entidad);
-                    $this->actualizarCabeceraPedido(58,$cab->codigo_pedido,$orden['numero']);
+                    $this->actualizarDetallesPedido(84,$detalles,$indice,$cab->codigo_entidad);
+                    $this->actualizarCabeceraPedido(58,$cab->codigo_pedido,$indice);
                     $respuesta = true;
                     $mensaje = "Orden Grabada";
                     $clase = "mensaje_correcto";

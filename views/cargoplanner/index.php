@@ -225,8 +225,6 @@
                     <th>Nota</br>Ing.</br>Obra</th>
                     <th>Fecha</br>Recep</br>Obra</th>
                     <th>Observaciones</th>
-                    <th>Observaciones</th>
-                    <th>Observaciones</th>
                 </tr>
             </thead>
             <tbody>
