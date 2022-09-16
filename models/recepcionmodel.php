@@ -422,7 +422,8 @@
                 if ($rowCount > 0) {
                     $item=1;
                     while ($rs = $sql->fetch()){
-                        $salida.='<tr data-detorden="'.$rs['id_orden'].'" 
+                        if ( $rs['nsaldo'] > 0) {
+                            $salida.='<tr data-detorden="'.$rs['id_orden'].'" 
                                         data-idprod="'.$rs['id_cprod'].'"
                                         data-iddetped="'.$rs['niddeta'].'"
                                         data-saldo="'.$rs['nsaldo'].'">
@@ -437,6 +438,8 @@
                                     <td><input type="text"></td>
                                     <td></td>
                                 </tr>';
+                        }
+                        
                     }
                 }
 

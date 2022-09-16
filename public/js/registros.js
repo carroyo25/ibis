@@ -21,7 +21,7 @@ $(function(){
                 $("#codigo_salida").val(data.cabecera[0].id_despacho);
                 $("#almacen_origen_despacho").val(data.cabecera[0].origen);
                 $("#almacen_destino_despacho").val(data.cabecera[0].destino);
-                $("#numero").val(data.cabecera[0].guia);
+                $("#numero").val(data.numero);
                 $("#costos").val(data.cabecera[0].costos);
                 $("#area").val(data.cabecera[0].area);
                 $("#solicita").val(data.cabecera[0].solicita);
@@ -33,10 +33,6 @@ $(function(){
                 $("#fecha_orden").val(data.cabecera[0].fecha_orden);
                 $("#bultos").val(data.cabecera[0].nbultos);
                 $("#peso").val(data.cabecera[0].npesotot);
-                
-                /*$("#estado")
-                    .removeClass()
-                    .addClass(estado);*/
                 
                 $("#tablaDetalles tbody")
                     .empty()
@@ -112,27 +108,56 @@ $(function(){
         return false;
     });
 
+    $("#tablaDetalles tbody").on('keypress','input', function (e) {
+        if (e.which == 13) {
+            let cant = parseFloat($(this).parent().parent().find("td").eq(4).text()) - $(this).parent().parent().find("td").eq(5).children().val();
+            
+            try {
+                if (cant < 0) throw "Error en el ingreso";
+
+            } catch (error) {
+                mostrarMensaje(error,"mensaje_error");
+            }
+        }
+    });
+
+    
     $("#updateDocument").click(function(e){
         e.preventDefault();
 
-        $.post(RUTA+"registros/ingresoAlmacen",{detalles:JSON.stringify(detalles()),
-                                                almacen:$('#codigo_almacen_destino').val(),
-                                                pedido:$('#codigo_pedido').val(),
-                                                orden:$('#codigo_orden').val(),
-                                                recepciona:$('#codigo_recepciona').val(),
-                                                salida:$('#codigo_salida').val()},
-            function (data, textStatus, jqXHR) {
-                if (data.respuesta) {
-                    mostrarMensaje("Items añadidos","mensaje_correcto");
-                }else{
-                    mostrarMensaje("no se actualizo correctamente","mensaje_error");
-                }
-            },
-            "json"
-        );
+        let result = {};
+
+        $.each($("#formProceso").serializeArray(),function(){
+            result[this.name] = this.value;
+        });
+
+        try {
+            if (result['codigo_recepciona'] == '') throw "Elija el responsable de la recepcion";
+            
+
+            $.post(RUTA+"registros/ingresoAlmacen",{detalles:JSON.stringify(detalles()),
+                almacen:$('#codigo_almacen_destino').val(),
+                pedido:$('#codigo_pedido').val(),
+                orden:$('#codigo_orden').val(),
+                recepciona:$('#codigo_recepciona').val(),
+                salida:$('#codigo_salida').val(),
+                cabecera:result},
+                function (data, textStatus, jqXHR) {
+                    if (data) {
+                        mostrarMensaje("Items añadidos","mensaje_correcto");
+                    }else{
+                        mostrarMensaje("no se actualizo correctamente","mensaje_error");
+                    }
+                },
+                    "text"
+                );
+        } catch (error) {
+            mostrarMensaje(error,'mensaje_error');
+        }
 
         return false;
     });
+
 })
 
 detalles = () =>{
@@ -142,24 +167,31 @@ detalles = () =>{
 
     TABLA.each(function(){
         let ITEMPEDIDO      = $(this).data("itempedido"),
+            ITEMDESPACHO    = $(this).data("itemdespacho"),
             IDPRODUCTO      = $(this).data("idproducto"),
-            CANTIDAD        = $(this).find('td').eq(4).children().val(),
-            OBSERVACIONES   = $(this).find('td').eq(5).children().val(),
-            SERIES          = $(this).find('td').eq(6).text(),
-            VENCIMIENTO     = $(this).find('td').eq(7).text(),
-            UBICACION       = $(this).find('td').eq(8).children().val(),
+            CANTIDAD        = $(this).find('td').eq(4).text(),
+            INGRESO         = $(this).find('td').eq(5).children().val(),
+            OBSERVACIONES   = $(this).find('td').eq(6).children().val(),
+            SERIES          = $(this).find('td').eq(7).text(),
+            VENCIMIENTO     = $(this).find('td').eq(8).text(),
+            UBICACION       = $(this).find('td').eq(9).children().val(),
             RECEPCIONA      = $("#codigo_recepciona").val();
+            //ojo grabar el estado del material
 
         item = {};
 
-        item['itempedido']      = ITEMPEDIDO;
-        item['idproducto']      = IDPRODUCTO;
-        item['cantidad']        = CANTIDAD;
-        item['observaciones']   = OBSERVACIONES;
-        item['series']          = SERIES;
-        item['vencimiento']     = VENCIMIENTO;
-        item['ubicacion']       = UBICACION;
-        item['recepciona']      = RECEPCIONA;
+        if ( CANTIDAD > 0 ) {
+            item['itempedido']      = ITEMPEDIDO;
+            item['itemdespacho']    = ITEMDESPACHO;
+            item['idproducto']      = IDPRODUCTO;
+            item['cantidad']        = CANTIDAD;
+            item['observaciones']   = OBSERVACIONES;
+            item['series']          = SERIES;
+            item['vencimiento']     = VENCIMIENTO;
+            item['ubicacion']       = UBICACION;
+            item['recepciona']      = RECEPCIONA;
+            item['ingreso']         = INGRESO;
+        }
 
         DETALLES.push(item);
     })

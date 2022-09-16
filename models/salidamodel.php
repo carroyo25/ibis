@@ -343,7 +343,7 @@
                         $sql=$this->db->connect()->prepare("INSERT INTO alm_despachodet SET id_regalm=:cod,ncodalm1=:ori,id_cprod=:cpro,ncantidad=:cant,
                                                                                         cSerie=:ser,niddetaPed=:pedido,niddetaOrd=:orden,nflgactivo=:flag,
                                                                                         nestadoreg=:estadoItem,ingreso=:ingreso,nsaldo=:despacho,
-                                                                                        ncodalm2=:destino");
+                                                                                        ncodalm2=:destino,niddetaIng = :itemIngreso");
                          $sql->execute(["cod"=>$id,
                                         "ori"=>$almacen,
                                         "cpro"=>$datos[$i]->idprod,
@@ -355,7 +355,8 @@
                                         "estadoItem"=>$datos[$i]->nestado,
                                         "ingreso"=>$datos[$i]->ingreso,
                                         "despacho"=>$datos[$i]->cantdesp,
-                                        "destino"=>$datos[$i]->destino]);
+                                        "destino"=>$datos[$i]->destino,
+                                        "itemIngreso"=>$datos[$i]->iddetingreso]);
                     } catch (PDOException $th) {
                         echo $th->getMessage();
                         return false;

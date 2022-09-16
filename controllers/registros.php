@@ -16,12 +16,13 @@
         }
         
         function ingresoAlmacen(){
-            echo json_encode($this->model->actualizarStocks($_POST['detalles'],
+            echo json_encode($this->model->insertarIngreso($_POST['detalles'],
                                                             $_POST['almacen'],
                                                             $_POST['pedido'],
                                                             $_POST['orden'],
                                                             $_POST['recepciona'],
-                                                            $_POST['salida']));
+                                                            $_POST['salida'],
+                                                            $_POST['cabecera']));
         }
 
         function actualizarDespachos(){

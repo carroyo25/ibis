@@ -387,9 +387,9 @@
 .barraTrabajo .variasConsultasColumna {
   display: -ms-grid;
   display: grid;
-  -ms-grid-columns: 1fr 10px 10%;
-  grid-template-columns: 1fr 10%;
-  padding: 5px 15px;
+  -ms-grid-columns: 1fr 10px 5%;
+  grid-template-columns: 1fr 5%;
+  padding: 5px;
   -webkit-column-gap: 10px;
      -moz-column-gap: 10px;
           column-gap: 10px;
@@ -714,6 +714,65 @@
   grid-column: 15/25;
   -ms-grid-row: 2;
   grid-row: 2;
+}
+.barraTrabajo .variasConsultasColumna .datosConsultaCargoPlan {
+  font-size: 0.8rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  gap: 20px;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
+.barraTrabajo .variasConsultasColumna .datosConsultaCargoPlan label {
+  color: #fff;
+  display: block;
+}
+.barraTrabajo .variasConsultasColumna .datosConsultaCargoPlan input, .barraTrabajo .variasConsultasColumna .datosConsultaCargoPlan select {
+  height: 1.7rem;
+  width: 100%;
+  outline: none;
+  border-radius: 5px;
+}
+.barraTrabajo .variasConsultasColumna .datosConsultaCargoPlan .procesos {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  gap: 5px;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+.barraTrabajo .variasConsultasColumna .datosConsultaCargoPlan .procesos div {
+  border: 1px solid #000;
+  padding: 5px;
+}
+.barraTrabajo .variasConsultasColumna .datosConsultaCargoPlan .procesos div a {
+  color: #fff;
+  font-size: 8pt;
+}
+.barraTrabajo .variasConsultasColumna .botonesConsulta {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  gap: 5px;
+}
+.barraTrabajo .variasConsultasColumna .botonesConsulta button {
+  height: 20px;
+  border-radius: 8px;
+  -webkit-transition: all 0.5s;
+  transition: all 0.5s;
+  color: #d2c2d2;
+}
+.barraTrabajo .variasConsultasColumna .botonesConsulta button:hover {
+  -webkit-box-shadow: 2px 3px 6px #005D84;
+          box-shadow: 2px 3px 6px #005D84;
+  color: #000;
 }
 
 .tituloGrupo, .tituloClase {
@@ -1656,6 +1715,25 @@
   padding: 10px;
 }
 
+.cero__avance, .entrega__125 {
+  background-color: lightcoral !important;
+  color: #000;
+}
+
+.entrega__2699 {
+  background-color: lightseagreen !important;
+  color: #000;
+}
+
+.entrega__completa {
+  background-color: lightblue !important;
+  color: #000;
+}
+
+.w5por {
+  width: 5%;
+}
+
 .w10por {
   width: 10%;
 }
@@ -1712,7 +1790,7 @@
   font-weight: 900;
 }
 
-.procesando, .consulta, .aprobacion, .estudio, .conformidad, .firmas, .recepcion, .calidad, .despacho {
+.procesando, .consulta, .aprobacion, .estudio, .conformidad, .firmas, .recepcion, .calidad, .despacho, .atendido {
   font-size: 0.7rem !important;
 }
 
@@ -1770,4 +1848,8 @@
 
 .culminado {
   background: #55A5E2;
+}
+
+.atendido {
+  background: #33B71F;
 }

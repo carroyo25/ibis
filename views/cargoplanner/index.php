@@ -162,32 +162,57 @@
     <div class="barraTrabajo">
         <form action="#" id="formConsulta">
             <div class="variasConsultasColumna">
-                <div class="datosConsulta">
-                        <label for="tipo" class="item1">Tipo : </label>
-                        <select name="tipoSearch" id="tipoSearch" class="item2">
-                            <option value="37">Bienes</option>
-                            <option value="38">Servicios</option>
-                        </select>
-                        <label for="costosSearch" class="item3">Centro de Costos </label>
-                        <select name="costosSearch" id="costosSearch" class="item4">
-                            <?php echo $this->listaCostos ?>
-                        </select>
-                        <label for="mes" class="item5">Mes</label>
-                        <input type="number" name="mesSearch" id="mesSearch" value="<?php echo date("m")?>" class="textoCentro item6">
-                        <label for="anio" class="item7">Año :</label>
-                        <input type="number" name="anioSearch" id="anioSearch" value="<?php echo date("Y")?>" class="textoCentro item8">
-                        <label for="ordenSearch" class="item9">Orden :</label>
-                        <input type="text" name="ordenSearch" id="ordenSearch" class="item10">
-                        <label for="almacenSearch" class="item11">Almacen :</label>
-                        <select name="almacenSearch" id="almacenSearch" class="item12">
-                            <?php echo $this->listaAlmacen ?>
-                        </select>
-                        <label for="conceptoSearch" class="item13">Concepto : </label>
-                        <input type="text" name="conceptoSearch" id="conceptoSearch" class="item14">
-                    
+                <div class="datosConsultaCargoPlan">
+                        <div class="w5por">
+                            <label for="tipo">Tipo : </label>
+                            <select name="tipoSearch" id="tipoSearch">
+                                <option value="37">Bienes</option>
+                                <option value="38">Servicios</option>
+                            </select>    
+                        </div>
+                        <div>
+                            <label for="costosSearch">Centro de Costos </label>
+                            <select name="costosSearch" id="costosSearch">
+                                <?php echo $this->listaCostos ?>
+                            </select>
+                        </div>
+                        <div class="w5por">
+                            <label for="mes" class="item5">Mes</label>
+                            <input type="number" name="mesSearch" id="mesSearch" value="<?php echo date("m")?>" class="textoCentro">
+                        </div>
+                        <div class="w5por">
+                            <label for="anio" class="item7">Año :</label>
+                            <input type="number" name="anioSearch" id="anioSearch" value="<?php echo date("Y")?>" class="textoCentro">
+                        </div>
+                        <div  class="w5por">
+                            <label for="ordenSearch">Orden :</label>
+                            <input type="text" name="ordenSearch" id="ordenSearch">
+                        </div>
+                        <div  class="w5por">
+                            <label for="ordenSearch">Pedido :</label>
+                            <input type="text" name="pedidoSearch" id="pedidoSearch">
+                        </div>
+                        <div class="w25por">
+                            <label for="conceptoSearch">Concepto : </label>
+                            <input type="text" name="conceptoSearch" id="conceptoSearch">
+                        </div>
+                        <div class="procesos">
+                            <div class="procesando"><a href="#">10</a></div>
+                            <div class="emitido"><a href="#">20</div>
+                            <div class="consulta"><a href="#">30</a></div>
+                            <div class="aprobacion"><a href="#">40</a></div>
+                            <div class="aprobado"><a href="#">50</a></div>
+                            <div class="orden"><a href="#">60</a></div>
+                            <div class="firmas"><a href="#">70</a></div>
+                            <div class="recepcion"><a href="#">80</a></div>
+                            <div class="despacho"><a href="#">90</a></div>
+                            <div class="culminado"><a href="#">100</a></div>
+                        </div>
                 </div>
-
-                <button type="button">Procesar</button> 
+                <div class="botonesConsulta">
+                        <button type="button">Procesar</button>
+                        <button type="button">Exportar</button>
+                    </div>
             </div>
         </form>
     </div>
@@ -200,8 +225,10 @@
                     <th>Proyecto</th>
                     <th>Area</th>
                     <th>Partida</th>
+                    <th>tipo</th>
                     <th>Pedido</th>
                     <th>Aprobacion</br>Pedido</th>
+                    <th>Concepto</th>
                     <th>Codigo</th>
                     <th>UND</th>
                     <th>Descripcion</th>

@@ -121,7 +121,6 @@
                                                         WHERE
                                                             ibis.lg_docusunat.id_despacho = :id");
                 $sql->execute(["id"=>$id]);
-
                 $docData = array();
 
                 while($row=$sql->fetch(PDO::FETCH_ASSOC)){
@@ -129,7 +128,8 @@
                 }
 
                 return array("cabecera"=>$docData,
-                            "detalles"=>$this->detallesDespacho($id));
+                            "detalles"=>$this->detallesDespacho($id),
+                            "numero"=>str_pad($this->generarNroIngreso($docData[0]['codigo_costos']),6,0,STR_PAD_LEFT));
 
 
             } catch (PDOException $th) {
@@ -138,51 +138,67 @@
             }
         }
 
+        private function generarNroIngreso($costos){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT MAX(idreg) AS ingreso FROM alm_cabexist WHERE idcostos = :costos");
+                $sql->execute(["costos"=>$costos]);
+                $resultado = $sql->fetchAll();
+
+                $numero = $resultado[0]['ingreso'] == NULL ? 1 : $resultado[0]['ingreso'];
+                return $numero; 
+                
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+        
+
         private function detallesDespacho($id){
             try {
                 $salida="";
                 $sql=$this->db->connect()->prepare("SELECT
-                alm_despachodet.niddeta,
-                alm_despachodet.id_regalm,
-                alm_despachodet.ncodalm1,
-                alm_despachodet.ncodalm2,
-                alm_despachodet.id_cprod,
-                alm_despachodet.niddetaOrd,
-                alm_despachodet.niddetaPed,
-                alm_despachodet.nestadoreg,
-                alm_despachodet.fvence,
-                cm_producto.ccodprod,
-                UPPER(
-                    CONCAT_WS(
-                        ' ',
-                        cm_producto.cdesprod,
-                        tb_pedidodet.observaciones,
-                        tb_pedidodet.docEspec
-                    )
-                ) AS cdesprod,
-                tb_pedidodet.observaciones,
-                tb_unimed.cabrevia,
-                FORMAT(lg_ordendet.ncanti, 2) AS cantidad,
-                series.cdesserie,
-                series.ncodserie
-            FROM
-                alm_despachodet
-            INNER JOIN cm_producto ON alm_despachodet.id_cprod = cm_producto.id_cprod
-            INNER JOIN tb_pedidodet ON alm_despachodet.niddetaPed = tb_pedidodet.iditem
-            INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
-            INNER JOIN lg_ordendet ON alm_despachodet.niddetaOrd = lg_ordendet.nitemord
-            LEFT JOIN (
-                SELECT
-                    ncodserie,
-                    cdesserie,
-                    id_cprod
-                FROM
-                    alm_recepserie
-                WHERE
-                    idref_movi = :despacho
-            ) AS series ON alm_despachodet.id_cprod = series.id_cprod
-            WHERE
-                alm_despachodet.id_regalm = :id");
+                                                        alm_despachodet.niddeta,
+                                                        alm_despachodet.id_regalm,
+                                                        alm_despachodet.ncodalm1,
+                                                        alm_despachodet.ncodalm2,
+                                                        alm_despachodet.id_cprod,
+                                                        alm_despachodet.niddetaOrd,
+                                                        alm_despachodet.niddetaPed,
+                                                        alm_despachodet.nestadoreg,
+                                                        alm_despachodet.fvence,
+                                                        cm_producto.ccodprod,
+                                                        UPPER(
+                                                            CONCAT_WS(
+                                                                ' ',
+                                                                cm_producto.cdesprod,
+                                                                tb_pedidodet.observaciones,
+                                                                tb_pedidodet.docEspec
+                                                            )
+                                                        ) AS cdesprod,
+                                                        tb_pedidodet.observaciones,
+                                                        tb_unimed.cabrevia,
+                                                        FORMAT(alm_despachodet.ncantidad, 2) AS cantidad,
+                                                        series.cdesserie,
+                                                        series.ncodserie
+                                                    FROM
+                                                        alm_despachodet
+                                                    INNER JOIN cm_producto ON alm_despachodet.id_cprod = cm_producto.id_cprod
+                                                    INNER JOIN tb_pedidodet ON alm_despachodet.niddetaPed = tb_pedidodet.iditem
+                                                    INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                    INNER JOIN lg_ordendet ON alm_despachodet.niddetaOrd = lg_ordendet.nitemord
+                                                    LEFT JOIN (
+                                                        SELECT
+                                                            ncodserie,
+                                                            cdesserie,
+                                                            id_cprod
+                                                        FROM
+                                                            alm_recepserie
+                                                        WHERE
+                                                            idref_movi = :despacho
+                                                    ) AS series ON alm_despachodet.id_cprod = series.id_cprod
+                                                    WHERE
+                                                        alm_despachodet.id_regalm = :id");
                 $sql->execute(["id"=>$id,"despacho"=>$id]);
 
                 $rowCount = $sql->rowCount();
@@ -199,18 +215,19 @@
 
                         $salida.='<tr data-itemorden="'.$rs['niddetaOrd'].'" 
                                         data-itempedido="'.$rs['niddetaPed'].'" 
-                                        data-itemingreso="'.$rs['niddeta'].'"
+                                        data-itemdespacho="'.$rs['niddeta'].'"
                                         data-idproducto ="'.$rs['id_cprod'].'">
                                         <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="pl20px">'.$rs['cdesprod'].'</td>
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
-                                        <td><input type="number" step="any" value="'.$cantidad.'" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"></td>
-                                        <td class="pl20px"><input type="text"></td>
+                                        <td class="textoDerecha pr20px">'.$cantidad.'</td>
+                                        <td><input type="number" step="any" placeholder="0.00" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"></td>
+                                        <td class="pl5px"><input type="text"></td>
                                         <td class="textoCentro">'.$rs['cdesserie'].'</td>
-                                        <td class="textoCentro"><input type="date" value="'.$rs['fvence'].'" readonly></td>
+                                        <td class="textoCentro"><input type="date" value="'.$rs['fvence'].'"></td>
                                         <td><input type="text"></td>
-                                        <td><select name="estado" disabled>'. $estados .'</select></td>
+                                        <td><select name="estado">'. $estados .'</select></td>
                                     </tr>';
                     }
                 }
@@ -221,40 +238,7 @@
                 return false;
             }
         }
-
-        //$salida se refiere al número del despacho
-        public function actualizarStocks($detalles,$almacen,$pedido,$orden,$recepciona,$salida){
-            try {
-                $datos = json_decode($detalles);
-                $nreg = count($datos);
-                $item = 0;
-                for ($i=0; $i < $nreg; $i++) { 
-                    $sql = $this->db->connect()->prepare("INSERT INTO alm_existencia SET idalm=:alm,idprod=:prod,serie=:serie,
-                                                            cant_ingr=:cantidad,crecepciona=:recepciona,tipo=:tipo");
-                    $sql ->execute(["alm"=>$almacen,
-                                    "prod"=>$datos[$i]->idproducto,
-                                    "serie"=>$datos[$i]->series,
-                                    "cantidad"=>$datos[$i]->cantidad,
-                                    "recepciona"=>$recepciona,
-                                    "tipo"=>1]);
-                    $rowCount = $sql->rowcount();
-                    if ($sql->rowCount() > 0){
-                        $item++;
-                    }
-                }
-
-                if ($item > 0) {
-                    $this->actualizarDetallesPedido($detalles,67);
-                    $this->actualizarCabeceraPedidos($pedido,67);
-                    $this->actualizarDespacho($salida,99);
-                }
-
-                return array("item"=>$item);
-            } catch (PDOException $th) {
-                echo "Error: ".$th->getMessage();
-                return false;
-            }
-        }
+        
 
         private function actualizarDetallesPedido($detalles,$estado){
             try {
@@ -288,6 +272,88 @@
             try {
                 $sql = $this->db->connect()->prepare("UPDATE alm_despachocab SET nEstadoDoc =:estado WHERE id_regalm = :id" );
                 $sql ->execute(["estado"=> $estado,"id"=>$salida]);
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        public function insertarIngreso($detalles,$almacen,$pedido,$orden,$recepciona,$salida,$cabecera){
+            try {
+                $sql = $this->db->connect()->prepare("INSERT INTO alm_cabexist SET idped=:pedido,
+                                                                                    idord=:orden,
+                                                                                    idcostos=:costos,
+                                                                                    idarea=:area,
+                                                                                    iddespacho=:despacho");
+                $sql->execute(["pedido"=>$cabecera["pedido"],
+                                "orden"=>$cabecera["orden"],
+                                "costos"=>$cabecera["codigo_costos"],
+                                "area"=>$cabecera["codigo_area"],
+                                "despacho"=>$cabecera["codigo_salida"]]);
+                
+                $rowCount = $sql->rowcount();
+                if ($sql->rowCount() > 0){
+                    $this->actualizarStocks($detalles,$almacen,$pedido,$orden,$recepciona,$salida,$cabecera);
+                }
+                
+                return true;
+                
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function generarindice(){
+            try {
+                $sql = $this->db->connect()->query("SELECT MAX(idreg) AS ingreso FROM alm_cabexist");
+                $sql->execute();
+                $resultado = $sql->fetchAll();
+
+                return $resultado[0]['ingreso']; 
+                
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        //$salida se refiere al número del despacho
+        public function actualizarStocks($detalles,$almacen,$pedido,$orden,$recepciona,$salida,$cabecera){
+            try {
+                $datos = json_decode($detalles);
+                $nreg = count($datos);
+                $item = 0;
+                for ($i=0; $i < $nreg; $i++) { 
+                    $sql = $this->db->connect()->prepare("INSERT INTO alm_existencia SET idalm=:alm,idprod=:prod,serie=:serie,
+                                                            cant_ingr=:cantidad,crecepciona=:recepciona,tipo=:tipo,idregistro=:registro,
+                                                            iddespacho=:despacho,idpedido=:pedido,idorden=:orden,observaciones=:observac,
+                                                            ubicacion=:ubica");
+                    $sql ->execute(["alm"=>$almacen,
+                                    "prod"=>$datos[$i]->idproducto,
+                                    "serie"=>$datos[$i]->series,
+                                    "cantidad"=>$datos[$i]->ingreso,
+                                    "recepciona"=>$datos[$i]->recepciona,
+                                    "tipo"=>1,
+                                    "registro"=>$this->generarindice(),
+                                    "despacho"=>$datos[$i]->itemdespacho,
+                                    "pedido"=>$cabecera['codigo_pedido'],
+                                    "orden"=>$cabecera['codigo_orden'],
+                                    "observac"=>$datos[$i]->observaciones,
+                                    "ubica"=>$datos[$i]->ubicacion]);
+                    $rowCount = $sql->rowcount();
+                    if ($sql->rowCount() > 0){
+                        $item++;
+                    }
+                }
+
+                if ($item > 0) {
+                    $this->actualizarDetallesPedido($detalles,67);
+                    $this->actualizarCabeceraPedidos($pedido,67);
+                    $this->actualizarDespacho($salida,99);
+                }
+
+                return array("item"=>$item);
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;

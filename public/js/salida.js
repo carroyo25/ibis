@@ -461,6 +461,7 @@ detalles = () =>{
             IDDETORDEN  = $(this).data("itemorden"),
             IDDETPED    = $(this).data("itempedido"),
             IDPROD      = $(this).data("idproducto"),
+            IDINGRESO = $(this).data("itemingreso"),
             PEDIDO      = $("#codigo_pedido").val(),
             ORDEN       = $("#codigo_orden").val(),
             ALMACEN     = $("#codigo_almacen").val(),
@@ -483,6 +484,7 @@ detalles = () =>{
         item['item']        = ITEM;
         item['iddetorden']  = IDDETORDEN;
         item['iddetped']    = IDDETPED;
+        item['iddetingreso']= IDINGRESO;
         item['idprod']      = IDPROD;
         item['pedido']      = ORDEN;
         item['orden']       = PEDIDO;

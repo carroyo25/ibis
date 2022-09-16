@@ -339,8 +339,8 @@ $culminado:#55A5E2;
 
     .variasConsultasColumna{
         display: grid;
-        grid-template-columns: 1fr 10%;
-        padding: 5px 15px;
+        grid-template-columns: 1fr 5%;
+        padding: 5px;
         column-gap: 10px;
 
         .datosConsulta{
@@ -436,6 +436,60 @@ $culminado:#55A5E2;
                 grid-row: 2;
             }
             
+        }
+
+        .datosConsultaCargoPlan{
+            font-size: 0.8rem;
+            display: flex;
+            gap: 20px;
+            justify-content: space-between;
+
+
+            label {
+                color:$blanco;
+                display: block;
+            }
+
+            input,select {
+                height: 1.7rem;
+                width:100%;
+                outline: none;
+                border-radius: 5px;
+            }
+
+            .procesos {
+                display: flex;
+                gap: 5px;
+                align-items: center;
+    
+                div{
+                    border: 1px solid #000;
+                    padding: 5px;
+
+                    a {
+                        color: #fff;
+                        font-size: 8pt;
+                    }
+                }
+            }
+        }
+
+        .botonesConsulta{
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            
+            button {
+                height: 20px;
+                border-radius: 8px;
+                transition: all .5s;
+                color: #d2c2d2;
+
+                &:hover{
+                    box-shadow: 2px 3px 6px #005D84;
+                    color: #000;
+                }
+            }
         }
     }
 }
@@ -1429,6 +1483,27 @@ $culminado:#55A5E2;
     }
 }
 
+//colores cargo Plan
+.cero__avance,.entrega__125 {
+    background-color: lightcoral !important;
+    color: #000;
+}
+
+.entrega__2699{
+    background-color: lightseagreen !important;
+    color: #000;
+}
+
+.entrega__completa{
+    background-color: lightblue !important;
+    color: #000;
+}
+
+.w5por{
+    width: 5%;
+}
+
+
 .w10por{
     width: 10%;
 }
@@ -1493,13 +1568,12 @@ $culminado:#55A5E2;
     font-weight:900;
 }
 
-.procesando,.consulta,.aprobacion,.estudio,.conformidad,.firmas,.recepcion,.calidad,.despacho{
+.procesando,.consulta,.aprobacion,.estudio,.conformidad,.firmas,.recepcion,.calidad,.despacho,.atendido{
     font-size: 0.7rem !important;
 }
 
 .procesando{
     background: $procesando;
-    
 }
 
 .consulta{
@@ -1552,4 +1626,8 @@ $culminado:#55A5E2;
 
 .culminado{
     background: $culminado;
+}
+
+.atendido {
+    background: $subtitulo;
 }

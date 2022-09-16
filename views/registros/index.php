@@ -41,7 +41,7 @@
                                     <input type="date" name="fecha" id="fecha" class="cerrarLista" value="<?php echo date("Y-m-d");?>" readonly>
                                 </div>
                                 <div class="column2_46">
-                                    <label for="numero">Numero :</label>
+                                    <label for="numero">Numero Registro:</label>
                                     <input type="text" name="numero" id="numero" class="cerrarLista textoDerecha pr20px" readonly>
                                 </div>
                             </div>
@@ -106,11 +106,17 @@
                             <div class="column4_55">
                                 <div class="column2">
                                     <label for="bultos">Bultos:</label>
-                                    <input type="text" name="bultos" id="bultos" class="w100por textDerecha" readonlys>
+                                    <input type="text" name="bultos" id="bultos" class="w100por textDerecha" readonly>
                                 </div>
                                 <div class="column2_46">
                                     <label for="peso">Peso :</label>
                                     <input type="text" name="peso" id="peso" class="cerrarLista">
+                                </div>
+                            </div>
+                            <div class="column4_55">
+                                <div class="column2">
+                                    <label for="guia">Guia:</label>
+                                    <input type="text" name="guia" id="guia" class="w100por textDerecha" readonly>
                                 </div>
                             </div>
                         </div>
@@ -131,7 +137,8 @@
                                         <th class="">Codigo</th>
                                         <th class="">Descripcion</th>
                                         <th class="">Unidad</th>
-                                        <th width="7%">Cantidad</th>
+                                        <th width="7%">Cantidad <br/> Enviada</th>
+                                        <th width="7%">Cantidad <br/> Recep.</th>
                                         <th class="">Observaciones</th>
                                         <th class="">Serie</th>
                                         <th class="">Fecha </br> Vencimiento</th>
