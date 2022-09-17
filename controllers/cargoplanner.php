@@ -10,5 +10,9 @@
             $this->view->listaCargoPlan = $this->model->listarCargoPlan();
             $this->view->render('cargoplanner/index');
         }
+
+        function filtroCargoPlan(){
+            echo $this->model->filtrarCargoPlan($_POST);
+        }
     }
 ?>

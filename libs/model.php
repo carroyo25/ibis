@@ -967,7 +967,7 @@
 
         public function costosPorUsuarioSelect($id){
             try {
-                $salida = "";
+                $salida = "<option value='-1' selected class='oculto'>Seleccione una opción</option>";
 
                 $sql = $this->db->connect()->prepare("SELECT
                                                     UPPER( tb_proyectos.ccodproy ) AS codigo_costos,

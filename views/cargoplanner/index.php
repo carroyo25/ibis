@@ -176,13 +176,17 @@
                                 <?php echo $this->listaCostos ?>
                             </select>
                         </div>
+                        <!-- 
+                             value="<?php echo date("m")?>"
+                              value="<?php echo date("m")?>"
+                        
                         <div class="w5por">
-                            <label for="mes" class="item5">Mes</label>
-                            <input type="number" name="mesSearch" id="mesSearch" value="<?php echo date("m")?>" class="textoCentro">
-                        </div>
-                        <div class="w5por">
-                            <label for="anio" class="item7">Año :</label>
-                            <input type="number" name="anioSearch" id="anioSearch" value="<?php echo date("Y")?>" class="textoCentro">
+                            <label for="mes" class="item5">Mes Orden:</label>
+                            <input type="number" name="mesSearch" id="mesSearch" class="textoCentro">
+                        </div>-->
+                        <div>
+                            <label for="codigo">Codigo:</label>
+                            <input type="text" name="codigoSearch" id="codigoSearch" class="textoCentro">
                         </div>
                         <div  class="w5por">
                             <label for="ordenSearch">Orden :</label>
@@ -210,8 +214,8 @@
                         </div>
                 </div>
                 <div class="botonesConsulta">
-                        <button type="button">Procesar</button>
-                        <button type="button">Exportar</button>
+                        <button type="button" id="btnProcesa">Procesar</button>
+                        <button type="button" id="btnExporta">Exportar</button>
                     </div>
             </div>
         </form>
@@ -227,6 +231,7 @@
                     <th>Partida</th>
                     <th>tipo</th>
                     <th>Pedido</th>
+                    <th>Emisión</br>Pedido</th>
                     <th>Aprobacion</br>Pedido</th>
                     <th>Concepto</th>
                     <th>Codigo</th>
