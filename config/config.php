@@ -9,7 +9,6 @@
     else if ($url === "200.41.86.58")
         define('URL','http://200.41.86.58/ibis/');
 
-        //probar progranar en remoto  vv3
         
         
     define('HOST','192.168.1.30');
