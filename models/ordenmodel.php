@@ -371,7 +371,7 @@
                     $this->subirArchivos($orden,$adjuntos);
                     $this->grabarDetalles($cab->codigo_verificacion,$detalles,$cab->codigo_costos,$indice);
                     $this->grabarComentarios($cab->codigo_orden,$comentarios);
-                    $this->actualizarDetallesPedido(84,$detalles,$indice,$cab->codigo_entidad);
+                    $this->actualizarDetallesPedido(84,$detalles,$indice++,$cab->codigo_entidad);
                     $this->actualizarCabeceraPedido(58,$cab->codigo_pedido,$indice);
                     $respuesta = true;
                     $mensaje = "Orden Grabada";
@@ -465,6 +465,8 @@
             try {
                 $datos = json_decode($detalles);
                 $nreg = count($datos);
+
+                $orden++;
 
 
                 for ($i=0; $i <$nreg ; $i++) { 

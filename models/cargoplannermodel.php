@@ -269,7 +269,7 @@
                                                         '%d/%m/%Y'
                                                     ) AS emision_pedido,
                                                     tb_pedidocab.concepto,
-                                                    LPAD(tb_pedidocab.nrodoc, 6, 0) AS pedido,
+                                                    LPAD(tb_pedidocab.idreg, 6, 0) AS pedido,
                                                     tb_proyectos.ccodproy,
                                                     UPPER(tb_area.cdesarea) AS area,
                                                     DATE_FORMAT(
