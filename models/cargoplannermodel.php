@@ -27,7 +27,7 @@
                                                             ) AS descripcion,
                                                             DATE_FORMAT(tb_pedidocab.emision,'%d/%m/%Y') AS emision_pedido,
                                                             tb_pedidocab.concepto,
-                                                            LPAD(tb_pedidocab.nrodoc, 6, 0) AS pedido,
+                                                            LPAD(tb_pedidocab.idreg, 6, 0) AS pedido,
                                                             tb_proyectos.ccodproy,
                                                             UPPER(tb_area.cdesarea) AS area,
                                                             DATE_FORMAT(tb_pedidocab.faprueba ,'%d/%m/%Y') AS faprueba,
@@ -406,7 +406,7 @@
                                                     tb_pedidodet.idtipo = :tipo
                                                     AND tb_pedidodet.idcostos LIKE :costos
                                                     AND cm_producto.ccodprod LIKE :codigo
-                                                    AND tb_pedidocab.nrodoc LIKE :pedido
+                                                    AND tb_pedidocab.idreg LIKE :pedido
 	                                                AND IFNULL(ordenes.cnumero, '') LIKE :orden
                                                     AND tb_pedidocab.concepto LIKE :concepto");
 
