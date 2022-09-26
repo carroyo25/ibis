@@ -118,6 +118,66 @@
             }
         }
 
+        public function consultarPrecios($codigo){
+            try {
+                $salida = "";
+                $sql = $this->db->connect()->prepare("SELECT
+                                                            lg_ordendet.id_orden,
+                                                            lg_ordendet.nunitario,
+                                                            lg_ordendet.id_cprod,
+                                                            lg_ordencab.cnumero,
+                                                            cm_producto.ccodprod,
+                                                        IF (
+                                                            lg_ordencab.ncodmon != 20,
+                                                            lg_ordencab.ntcambio,
+                                                            1
+                                                        ) AS tipo_cambio,
+                                                        tb_parametros.cabrevia AS moneda,
+                                                        lg_ordencab.ffechadoc,
+                                                        tb_proyectos.ccodproy,
+                                                        tb_proyectos.cdesproy,
+                                                        lg_ordencab.id_refpedi,
+                                                        cm_producto.cdesprod,
+                                                        tb_unimed.cabrevia AS und
+                                                        FROM
+                                                            lg_ordendet
+                                                        INNER JOIN lg_ordencab ON lg_ordendet.id_regmov = lg_ordencab.id_regmov
+                                                        INNER JOIN tb_parametros ON lg_ordencab.ncodmon = tb_parametros.nidreg
+                                                        INNER JOIN tb_proyectos ON lg_ordencab.ncodpry = tb_proyectos.nidreg
+                                                        INNER JOIN cm_producto ON lg_ordendet.id_cprod = cm_producto.id_cprod
+                                                        INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                        WHERE
+                                                            lg_ordendet.id_cprod =:codigo
+                                                        ORDER BY
+                                                            lg_ordencab.ffechadoc ASC");
+                $sql->execute(["codigo"=>$codigo]);
+                $rowCount = $sql->rowcount();
+
+                if ($rowCount > 0) {
+                    while ($rs = $sql->fetch()) {
+ 
+                        $salida .='<tr>
+                                        <td>'.$r['ccodprod'].'</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>';
+                    }
+
+                }
+
+                return $salida;
+
+        } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
         private function obtenerOperador(){
             try {
                 

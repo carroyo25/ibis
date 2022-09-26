@@ -51,8 +51,6 @@ $(function() {
                 $("#transporte").val(data.cabecera[0].transporte);
                 $("#lentrega").val(data.cabecera[0].cdesalm);
                 $("#total").val(data.cabecera[0].ntotal);
-
-                console.log(data.adjuntos);
                 
                 if (data.bocadillo != 0) {
                     $(".button__comment")
@@ -85,6 +83,14 @@ $(function() {
     
         $("#proceso").fadeIn();
     
+        return false;
+    });
+
+    $("#tablaDetalles tbody").on("click","tr",function(e) {
+        e.preventDefault();
+
+        $("#consultaprecios").fadeIn();
+
         return false;
     });
 
@@ -186,6 +192,21 @@ $(function() {
 
         $(".ventanaVistaPrevia iframe").attr("src","");
         $("#vistaprevia").fadeOut();
+
+        return false;
+    });
+
+    $("#closePrices").click(function (e) { 
+        e.preventDefault();
+
+        $.post(RUTA+"firmas/precios", {codigo:$(this).data("codprod")},
+            function (data, text, requestXHR) {
+                $("#tablaPrecios")
+                    .empty()
+                    .append(data);
+            }
+            ,"text"
+        );
 
         return false;
     });

@@ -25,5 +25,9 @@
         function actualizaListado() {
             echo $this->model->listarOrdenesFirmas();
         }
+
+        function precios(){
+            echo $this->model->consultarPrecios($_POST['codigo']);
+        }
     }
 ?>

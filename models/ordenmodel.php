@@ -55,8 +55,10 @@
                         $fope = is_null($rs['nfirmaOpe']) ? 0 : 1;
                         $ffin = is_null($rs['nfirmaFin']) ? 0 : 1;
 
+                        $resaltado = $rs['nEstadoDoc'] == 59 ? "resaltado_firma" :  "";
 
-                        $salida .='<tr class="pointer" data-indice="'.$rs['id_regmov'].'" 
+
+                        $salida .='<tr class="pointer '.$resaltado.'" data-indice="'.$rs['id_regmov'].'" 
                                                         data-estado="'.$rs['nEstadoDoc'].'"
                                                         data-finanzas="'.$ffin.'"
                                                         data-logistica="'.$flog.'"
@@ -320,8 +322,6 @@
 
                 $sql = "SELECT COUNT(lg_ordencab.id_regmov) AS numero FROM lg_ordencab WHERE lg_ordencab.ncodcos = :cod";
                 
-                $indice = $this->lastInsertId("SELECT MAX(id_regmov) AS id FROM lg_ordencab");
-                
                 $entrega = $this->calcularDias($cab->fentrega);
             
                 $orden = $this->generarNumero($cab->codigo_costos,$sql);
@@ -337,7 +337,7 @@
                                                                                 cdocPDF=:adjunto,nEstadoDoc=:est,ncodalm=:almacen,nflgactivo=:flag,nNivAten=:atencion,
                                                                                 cverificacion=:verif,cObservacion=:observacion");
 
-                $sql ->execute(["pedi"       =>$cab->codigo_pedido,
+                $sql ->execute(["pedi"=>$cab->codigo_pedido,
                                 "anio"       =>$periodo[0],
                                 "mes"        =>$periodo[1],
                                 "tipo"       =>$cab->codigo_tipo,
@@ -368,10 +368,12 @@
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0){
+                    $indice = $this->lastInsertId("SELECT MAX(id_regmov) AS id FROM lg_ordencab");
+
                     $this->subirArchivos($orden,$adjuntos);
                     $this->grabarDetalles($cab->codigo_verificacion,$detalles,$cab->codigo_costos,$indice);
                     $this->grabarComentarios($cab->codigo_orden,$comentarios);
-                    $this->actualizarDetallesPedido(84,$detalles,$indice++,$cab->codigo_entidad);
+                    $this->actualizarDetallesPedido(84,$detalles,$indice,$cab->codigo_entidad);
                     $this->actualizarCabeceraPedido(58,$cab->codigo_pedido,$indice);
                     $respuesta = true;
                     $mensaje = "Orden Grabada";
@@ -419,7 +421,7 @@
                                         "verif"=>$codigo,
                                         "moneda"=>$datos[$i]->moneda,
                                         "costos"=>$costos,
-                                        "ordenidx"=>$idx+1,
+                                        "ordenidx"=>$idx,
                                         "saldo"=>$datos[$i]->cantidad]);
                     }//aca poner para la modificacion de ordenes
                     

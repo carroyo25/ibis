@@ -53,13 +53,24 @@ $culminado:#55A5E2;
         color: $tituloModulo;
     }
 
+    div:nth-child(2){
+        text-align: center;
+        display: flex;
+        gap: 20px;
+    }
+
     a {
         color:$negro;
         font-size:1.5rem;
-        
-        &:nth-child(1){
-            margin-right: 10px;
+        text-align: center;
+
+        p {
+            font-size: .8rem !important;
         }
+        
+        /*&:nth-child(1){
+            margin-right: 10px;
+        }*/
     }
 }
 
@@ -608,6 +619,7 @@ $culminado:#55A5E2;
     }
 }
 
+.ventanaPrecios,
 .ventanaProceso,
 .ventanaOpciones,
 .ventanaBusqueda,
@@ -793,6 +805,22 @@ $culminado:#55A5E2;
             }
 
             
+        }
+    }
+}
+
+.ventanaPrecios {
+    width: 45%;
+    border-radius: 8px;
+    height: 40rem;
+
+    .tituloVista{
+        display: flex;
+        justify-content: space-between;
+        padding:1rem;
+
+        h3{
+            width: 97%;
         }
     }
 }

@@ -21,12 +21,23 @@
 .cabezaModulo h3, .cabezaModulo h1, .cabezaModulo h2 {
   color: #797777;
 }
+.cabezaModulo div:nth-child(2) {
+  text-align: center;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  gap: 20px;
+}
 .cabezaModulo a {
   color: #000;
   font-size: 1.5rem;
+  text-align: center;
+  /*&:nth-child(1){
+      margin-right: 10px;
+  }*/
 }
-.cabezaModulo a:nth-child(1) {
-  margin-right: 10px;
+.cabezaModulo a p {
+  font-size: 0.8rem !important;
 }
 
 .controles_lineal {
@@ -875,6 +886,7 @@
   background: #c2c2c2;
 }
 
+.ventanaPrecios,
 .ventanaProceso,
 .ventanaOpciones,
 .ventanaBusqueda,
@@ -1062,6 +1074,24 @@
   text-align: justify;
   height: 1.5rem;
   overflow: hidden;
+}
+
+.ventanaPrecios {
+  width: 45%;
+  border-radius: 8px;
+  height: 40rem;
+}
+.ventanaPrecios .tituloVista {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  padding: 1rem;
+}
+.ventanaPrecios .tituloVista h3 {
+  width: 97%;
 }
 
 .ventanaVistaPrevia {

@@ -40,6 +40,7 @@
                     <input type="hidden" name="codigo_pago" id="codigo_pago">
                     <input type="hidden" name="sw" id="sw" value="0">
                     <input type="hidden" name="detalle" id="detalle">
+                    <input type="hidden" name="transporte" id="transporte">
 
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
@@ -128,7 +129,7 @@
                                 <label for="atencion">Atención:</label>
                                 <input type="text" name="atencion" id="atencion" readonly>
                             </div>
-                            <div class="column2">
+                            <!--<div class="column2">
                                 <label for="transporte">Transporte:</label>
                                 <input type="text" name="transporte" id="transporte" class="mostrarLista busqueda" placeholder="Elija una opcion"
                                     readonly>
@@ -137,7 +138,7 @@
                                        <?php echo $this->listaTransportes?>
                                    </ul> 
                                 </div>
-                            </div>
+                            </div>-->
                             <div class="column2">
                                 <label for="lentrega">Lugar Entrega:</label>
                                 <input type="text" name="lentrega" id="lentrega" class="mostrarLista busqueda" placeholder="Elija una opcion"
@@ -152,6 +153,11 @@
                     </div>
                     <div class="barraOpciones">
                         <span>Detalles</span>
+                        <div>
+                            <button type="button" id="cerrarAprobacion" title="Aprobar Express" class="cerrarLista boton3">
+                                <i class="far fa-plus-square"></i> Aprobación Urgente
+                            </button>
+                        </div>
                     </div>
                     <div class="tablaInterna mininoTablaInterna">
                         <table class="tabla" id="tablaDetalles">
@@ -210,6 +216,34 @@
             <iframe src=""></iframe>
         </div>
     </div>
+    <div class="modal" id="consultaprecios">
+        <div class="ventanaPrecios">
+            <div class="tituloVista">
+                <h3>Consulta de Precios</h3>
+                <a href="#" id="closePrices" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
+                <hr>
+               
+            </div>
+            <table class="tabla" id="tablaPrecios">
+                <thead>
+                    <tr>
+                        <th>Codigo</th>
+                        <th>Descripcion</th>
+                        <th>Centro de Costos</th>
+                        <th>Precio </br> Unitario</th>
+                        <th>Pedido</th>
+                        <th>Orden</th>
+                        <th>Moneda</th>
+                        <th>Tipo </br> Cambio</th>
+                        <th>Saldo Actual</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
     <div class="modal" id="vistaAdjuntos">
         <div class="ventanaAdjuntos">
             <div class="tituloAdjuntos">
@@ -234,7 +268,7 @@
     <div class="cabezaModulo">
         <h1>Aprobacion de Ordenes</h1>
         <div>
-            <a href="#" id="irInicio"><i class="fas fa-home"></i></a>
+            <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
         </div>
     </div>
     <div class="barraTrabajo">
