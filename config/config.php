@@ -14,7 +14,7 @@
         
         
     define('HOST','192.168.1.30');
-    define('HOST1','192.168.110.16');
+    define('HOST1','192.168.1.30');
     define('DB','rrhh');
     define('DB2','ibis');
     define('USER','remoto');

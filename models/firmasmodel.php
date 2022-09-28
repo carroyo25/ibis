@@ -118,6 +118,38 @@
             }
         }
 
+        public function firmarExpress($id) {
+            $fecha =  date("Y-m-d");
+
+            try {
+                $sql = $this->db->connect()->prepare("UPDATE lg_ordencab SET 
+                                                                nfirmaLog=:nLog,
+                                                                nfirmaOpe=:nOper,
+                                                                nfirmaFin=:nFin,
+                                                                codperLog=:usrLog,
+                                                                codperOpe=:usrOpe,
+                                                                codperFin=:usrFin,
+                                                                fechaLog=:fecLog,
+                                                                fechaOpe=:fecOpe,
+                                                                fechaFin=:fecFin 
+                                                    WHERE id_regmov=:cod");
+                
+                $sql->execute(["nLog" =>1,
+                                "nOper"=>1,
+                                "nFin" =>1,
+                                "usrLog" => $_SESSION['iduser'],
+                                "usrOpe" => $_SESSION['iduser'],
+                                "usrFin" => $_SESSION['iduser'],
+                                "fecLog" => $fecha,
+                                "fecFin"=> $fecha,
+                                "fecOpe"=> $fecha,
+                                "cod"=>$id]);
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
         public function consultarPrecios($codigo){
             try {
                 $salida = "";
@@ -133,10 +165,10 @@
                                                             1
                                                         ) AS tipo_cambio,
                                                         tb_parametros.cabrevia AS moneda,
-                                                        lg_ordencab.ffechadoc,
+                                                        DATE_FORMAT(lg_ordencab.ffechadoc,'%d/%m/%Y') AS fecha,
                                                         tb_proyectos.ccodproy,
                                                         tb_proyectos.cdesproy,
-                                                        lg_ordencab.id_refpedi,
+                                                        LPAD(lg_ordencab.id_refpedi, 6, 0) AS pedido,
                                                         cm_producto.cdesprod,
                                                         tb_unimed.cabrevia AS und
                                                         FROM
@@ -155,16 +187,19 @@
 
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()) {
+
+                        $tipo_cambio = $rs['tipo_cambio'] > 1 ? $rs['tipo_cambio'] : ''; 
  
                         $salida .='<tr>
-                                        <td>'.$r['ccodprod'].'</td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
+                                        <td class="textoCentro">'.$rs['ccodprod'].'</td>
+                                        <td class="pl10px">'.$rs['cdesprod'].'</td>
+                                        <td class="pl10px">'.$rs['cdesproy'].'</td>
+                                        <td class="textoCentro">'.$rs['moneda'].'</td>
+                                        <td class="textoDerecha pr20px">'.$rs['nunitario'].'</td>
+                                        <td class="textoCentro">'.$rs['pedido'].'</td>
+                                        <td class="textoCentro">'.$rs['cnumero'].'</td>
+                                        <td class="textoDerecha pr20px">'.$tipo_cambio.'</td>
+                                        <td class="textoCentro">'.$rs['fecha'].'</td>
                                     </tr>';
                     }
 

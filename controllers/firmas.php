@@ -22,6 +22,10 @@
             echo json_encode($this->model->firmar($_POST['id']));
         }
 
+        function autorizaExpress(){
+            echo json_encode($this->model->firmarExpress($_POST['id']));
+        }
+
         function actualizaListado() {
             echo $this->model->listarOrdenesFirmas();
         }

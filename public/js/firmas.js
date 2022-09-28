@@ -89,7 +89,18 @@ $(function() {
     $("#tablaDetalles tbody").on("click","tr",function(e) {
         e.preventDefault();
 
-        $("#consultaprecios").fadeIn();
+        $.post(RUTA+"firmas/precios", {codigo:$(this).data("codprod")},
+            function (data, text, requestXHR) {
+                $("#tablaPrecios tbody")
+                    .empty()
+                    .append(data);
+
+                $("#consultaprecios").fadeIn();
+                
+            }
+            ,"text"
+        );
+
 
         return false;
     });
@@ -199,14 +210,7 @@ $(function() {
     $("#closePrices").click(function (e) { 
         e.preventDefault();
 
-        $.post(RUTA+"firmas/precios", {codigo:$(this).data("codprod")},
-            function (data, text, requestXHR) {
-                $("#tablaPrecios")
-                    .empty()
-                    .append(data);
-            }
-            ,"text"
-        );
+        $("#consultaprecios").fadeOut();
 
         return false;
     });
@@ -229,6 +233,7 @@ $(function() {
             },
             "json"
         );
+
         return false;
     });
 
@@ -253,6 +258,37 @@ $(function() {
 
         $("#vistaAdjuntos").fadeOut();
         $(".ventanaAdjuntos iframe").attr("src","");
+
+        return false;
+    });
+
+    $("#culminarAprobaciones").click(function(e){
+        e.preventDefault();
+
+        $("#preguntaExpress").fadeIn();
+
+        return false;
+    });
+
+    $("#btnAceptarPreguntaExpress").click(function(e){
+        e.preventDefault(e);
+
+        $.post(RUTA+"firmas/autorizaExpress", {id:$("#codigo_orden").val()},
+            function (data, textStatus, jqXHR) {
+                mostrarMensaje(data.mensaje,data.clase);
+                $("#preguntaExpress").fadeOut();
+            },
+            "json"
+        );
+        
+
+        return false;
+    });
+
+    $("#btnCancelarPreguntaExpress").click(function(e){
+        e.preventDefault(e);
+
+        $("#preguntaExpress").fadeOut();
 
         return false;
     });

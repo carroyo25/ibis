@@ -129,16 +129,6 @@
                                 <label for="atencion">Atención:</label>
                                 <input type="text" name="atencion" id="atencion" readonly>
                             </div>
-                            <!--<div class="column2">
-                                <label for="transporte">Transporte:</label>
-                                <input type="text" name="transporte" id="transporte" class="mostrarLista busqueda" placeholder="Elija una opcion"
-                                    readonly>
-                                <div class="lista" id="listaTransporte">
-                                   <ul>
-                                       <?php echo $this->listaTransportes?>
-                                   </ul> 
-                                </div>
-                            </div>-->
                             <div class="column2">
                                 <label for="lentrega">Lugar Entrega:</label>
                                 <input type="text" name="lentrega" id="lentrega" class="mostrarLista busqueda" placeholder="Elija una opcion"
@@ -154,7 +144,7 @@
                     <div class="barraOpciones">
                         <span>Detalles</span>
                         <div>
-                            <button type="button" id="cerrarAprobacion" title="Aprobar Express" class="cerrarLista boton3">
+                            <button type="button" id="culminarAprobaciones" title="Aprobar Urgente" class="cerrarLista boton3">
                                 <i class="far fa-plus-square"></i> Aprobación Urgente
                             </button>
                         </div>
@@ -230,12 +220,12 @@
                         <th>Codigo</th>
                         <th>Descripcion</th>
                         <th>Centro de Costos</th>
+                        <th>Moneda</th>
                         <th>Precio </br> Unitario</th>
                         <th>Pedido</th>
                         <th>Orden</th>
-                        <th>Moneda</th>
                         <th>Tipo </br> Cambio</th>
-                        <th>Saldo Actual</th>
+                        <th>Fecha</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -262,6 +252,15 @@
             <div>
                 <button type="button" id="btnAceptarPregunta">Aceptar</button>
                 <button type="button" id="btnCancelarPregunta">Cancelar</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="preguntaExpress">
+        <div class="ventanaPregunta">
+            <h3>¿Completar la autorización?</h3>
+            <div>
+                <button type="button" id="btnAceptarPreguntaExpress">Aceptar</button>
+                <button type="button" id="btnCancelarPreguntaExpress">Cancelar</button>
             </div>
         </div>
     </div>

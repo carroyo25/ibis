@@ -66,13 +66,14 @@ input[type=number]::-webkit-outer-spin-button {
 .boton3{
     box-shadow:inset 0px 1px 0px 0px #ffffff;
 	background:linear-gradient(to bottom, #ededed 5%, #dfdfdf 100%);
-	background-color:#ededed;
+	background-color:#595959;
 	border-radius:6px;
 	border:1px solid #dcdcdc;
 	display:inline-block;
 	cursor:pointer;
-	color:#777777;
+	color:#595959;
 	font-family:Arial;
+    font-weight: bold;
 	font-size:.9rem;
 	padding:10px 39px;
 	text-decoration:none;
@@ -82,6 +83,7 @@ input[type=number]::-webkit-outer-spin-button {
         background:linear-gradient(to bottom, #dfdfdf 5%, #ededed 100%);
 	    background-color:#dfdfdf;
         color:#000;
+        font-weight: bold;
     }
 
     &:active{
