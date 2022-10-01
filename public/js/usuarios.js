@@ -246,7 +246,8 @@ $(function(){
             $.post(RUTA+"usuarios/actualizaUsuario", {cabecera:result,
                                                         modulos:JSON.stringify(obtenerModulos()),
                                                         costos:JSON.stringify(obtenerCostos()),
-                                                        almacenes:JSON.stringify(obtenerAlmacenes())},
+                                                        almacenes:JSON.stringify(obtenerAlmacenes()),
+                                                        usuario:$("#cod_user").val()},
                 function (data, textStatus, jqXHR) {
 
                     if (data.respuesta) {

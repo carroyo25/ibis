@@ -71,11 +71,11 @@ class PDF extends PDF_MC_Table{
 	    $this->Cell(20,5,utf8_decode("Ped.MMTO N°"),1,0);
 	    $this->Cell(30,5,$this->mmto,1,1);
 	    $this->Cell(30,5,"Objeto del Pedido",1,0);
-	    $this->Cell(80,5,utf8_decode($this->concepto),1,0);
+	    $this->Cell(80,5,utf8_decode($this->especificacion),1,0);
 	    $this->Cell(20,5,utf8_decode("Condición"),1,0);
 	    $this->Cell(30,5,utf8_decode($this->condicion),1,1);
 	    $this->Cell(30,5,"Concepto",1,0);
-	    $this->Cell(130,5,utf8_decode($this->especificacion),1,1);
+	    $this->Cell(130,5,utf8_decode($this->concepto),1,1);
 
 	    // Salto de línea
     	$this->Ln(1);

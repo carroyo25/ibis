@@ -2017,6 +2017,7 @@
                                                     FORMAT( tb_pedidodet.total, 2 ) AS total,
                                                     tb_pedidodet.idpedido,
                                                     tb_pedidodet.nroparte,
+                                                    tb_pedidodet.estadoItem,
                                                     monedas.cabrevia AS moneda,
                                                     tb_pedidodet.total AS total_numero 
                                                 FROM
@@ -2026,7 +2027,8 @@
                                                     INNER JOIN tb_pedidodet ON lg_ordendet.niddeta = tb_pedidodet.iditem
                                                     INNER JOIN tb_parametros AS monedas ON lg_ordendet.nmonref = monedas.nidreg 
                                                 WHERE
-                                                    lg_ordendet.id_orden = :id");
+                                                    lg_ordendet.id_orden = :id
+                                                AND ISNULL(lg_ordendet.nflgactivo)");
                 $sql->execute(["id"=>$id]);
                 $rowCount = $sql->rowCount();
                 $item = 1;
@@ -2036,8 +2038,9 @@
                                         data-total="'.$rs['ntotal'].'" 
                                         data-codprod="'.$rs['id_cprod'].'" 
                                         data-itPed="'.$rs['niddeta'].'"
-                                        data-cant="'.$rs['ncanti'].'">
-                                    <td class="textoCentro"><i class="fas fa-ban"></i></td>
+                                        data-cant="'.$rs['ncanti'].'"
+                                        data-proceso="'.$rs['estadoItem'].'">
+                                    <td class="textoCentro"><a href="'.$rs['nitemord'].'"><i class="fas fa-ban"></i></a></td>
                                     <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
                                     <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                     <td class="pl20px">'.$rs['cdesprod'].'</td>

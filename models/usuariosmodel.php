@@ -276,7 +276,7 @@
                                                             fvighasta=:fhasta,
                                                             cinicial=:iniciales,
                                                             nestado=:estado
-                                                        WHERE iduser=:id");
+                                                        WHERE iduser=:id ");
                 
                 $sql->execute(["id"=>$cabecera['cod_user'],
                                 "user"=>$cabecera['usuario'],
@@ -290,8 +290,8 @@
                                 "iniciales"=>$cabecera['user_inic']]);
 
                 $this->grabarModulos($cabecera['cod_user'],$modulos);
-                $this->grabarCostos($cabecera['cod_user'],$costos);
-                $this->grabarAlmacenes($cabecera['cod_user'],$almacenes);
+                //$this->grabarCostos($cabecera['cod_user'],$costos);
+                //$this->grabarAlmacenes($cabecera['cod_user'],$almacenes);
 
                 $salida = array("respuesta"=>true,
                                 "mensaje"=>"Usuario modificado");

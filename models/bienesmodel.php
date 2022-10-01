@@ -230,7 +230,7 @@
                 }
             }else{
                 $salida = array("respuesta"=>false,
-                                "mensaje"=>"Codigo duplicadp",
+                                "mensaje"=>"Codigo duplicado",
                                 "clase"=>"mensaje_error");
             }
 
