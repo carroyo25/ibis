@@ -290,8 +290,8 @@
                                 "iniciales"=>$cabecera['user_inic']]);
 
                 $this->grabarModulos($cabecera['cod_user'],$modulos);
-                //$this->grabarCostos($cabecera['cod_user'],$costos);
-                //$this->grabarAlmacenes($cabecera['cod_user'],$almacenes);
+                $this->grabarCostos($cabecera['cod_user'],$costos);
+                $this->grabarAlmacenes($cabecera['cod_user'],$almacenes);
 
                 $salida = array("respuesta"=>true,
                                 "mensaje"=>"Usuario modificado");

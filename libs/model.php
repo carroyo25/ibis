@@ -2038,6 +2038,7 @@
                                         data-total="'.$rs['ntotal'].'" 
                                         data-codprod="'.$rs['id_cprod'].'" 
                                         data-itPed="'.$rs['niddeta'].'"
+                                        data-itOrd="'.$rs['nitemord'].'"
                                         data-cant="'.$rs['ncanti'].'"
                                         data-proceso="'.$rs['estadoItem'].'">
                                     <td class="textoCentro"><a href="'.$rs['nitemord'].'"><i class="fas fa-ban"></i></a></td>

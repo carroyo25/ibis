@@ -194,11 +194,11 @@
             }
             
             if ($cabecera['codigo_tipo'] == "37") {
-                $titulo = "ORDEN DE COMPRA" ;
+                $titulo = "ORDEN DE COMPRA R1. -" ;
                 $prefix = "OC";
                 $tipo = "B";
             }else{
-                $titulo = "ORDEN DE SERVICIO";
+                $titulo = "ORDEN DE SERVICIO R1. -";
                 $prefix = "OS";
                 $tipo = "S";
             }
@@ -312,143 +312,34 @@
             return $file;
         }
 
-        public function insertarOrden($cabecera,$detalles,$comentarios,$adjuntos){
+        public function modificarOrden($cabecera,$detalles){
             try {
-                $salida = false;
-                $respuesta = false;
-                $mensaje = "Error en el registro";
-                $clase = "mensaje_error";
                 $cab = json_decode($cabecera);
 
-                $sql = "SELECT COUNT(lg_ordencab.id_regmov) AS numero FROM lg_ordencab WHERE lg_ordencab.ncodcos = :cod";
-                
                 $entrega = $this->calcularDias($cab->fentrega);
-            
-                $orden = $this->generarNumero($cab->codigo_costos,$sql);
-                
-                $periodo = explode('-',$cab->emision);
-
-                $this->subirArchivos($orden['numero'],$adjuntos);
-                
-                $sql = $this->db->connect()->prepare("INSERT INTO lg_ordencab SET id_refpedi=:pedi,cper=:anio,cmes=:mes,ntipmov=:tipo,cnumero=:orden,
-                                                                                ffechadoc=:fecha,ffechaent=:entrega,id_centi=:entidad,ncodmon=:moneda,ntcambio=:tcambio,
-                                                                                nigv=:igv,ntotal=:total,ncodpry=:proyecto,ncodcos=:ccostos,ncodarea=:area,
-                                                                                ctiptransp=:transporte,id_cuser=:elabora,ncodpago=:pago,nplazo=:pentrega,cnumcot=:cotizacion,
-                                                                                cdocPDF=:adjunto,nEstadoDoc=:est,ncodalm=:almacen,nflgactivo=:flag,nNivAten=:atencion,
-                                                                                cverificacion=:verif,cObservacion=:observacion");
-
-                $sql ->execute(["pedi"=>$cab->codigo_pedido,
-                                "anio"       =>$periodo[0],
-                                "mes"        =>$periodo[1],
-                                "tipo"       =>$cab->codigo_tipo,
-                                "orden"      =>$orden['numero'],
-                                "fecha"      =>$cab->emision,
-                                "entrega"    =>$cab->fentrega,
-                                "entidad"    =>$cab->codigo_entidad,
-                                "moneda"     =>$cab->codigo_moneda,
-                                "tcambio"    =>$cab->tcambio,
-                                "igv"        =>0,
-                                "total"      =>$cab->total_numero,
-                                "proyecto"   =>$cab->codigo_costos,
-                                "ccostos"    =>$cab->codigo_costos,
-                                "area"       =>$cab->codigo_area,
-                                "transporte" =>$cab->codigo_transporte,
-                                "elabora"    =>$_SESSION['iduser'],
-                                "pago"       =>$cab->codigo_pago,
-                                "pentrega"   =>$entrega,
-                                "cotizacion" =>$cab->proforma,
-                                "adjunto"    =>$cab->vista_previa,
-                                "est"        =>49,
-                                "almacen"    =>$cab->codigo_almacen,
-                                "flag"       =>1,
-                                "atencion"   =>$cab->nivel_atencion,
-                                "verif"      =>$cab->codigo_verificacion,
-                                "cotizacion" =>$cab->ncotiz,
-                                "observacion"=>$cab->concepto]);
-                $rowCount = $sql->rowCount();
-
-                if ($rowCount > 0){
-                    $indice = $this->lastInsertId("SELECT MAX(id_regmov) AS id FROM lg_ordencab");
-
-                    $this->subirArchivos($orden,$adjuntos);
-                    $this->grabarDetalles($cab->codigo_verificacion,$detalles,$cab->codigo_costos,$indice);
-                    $this->grabarComentarios($cab->codigo_orden,$comentarios);
-                    $this->actualizarDetallesPedido(84,$detalles,$indice,$cab->codigo_entidad);
-                    $this->actualizarCabeceraPedido(58,$cab->codigo_pedido,$indice);
-                    $respuesta = true;
-                    $mensaje = "Orden Grabada";
-                    $clase = "mensaje_correcto";
-                }
-
-                $salida = array("respuesta"=>$respuesta,
-                                "mensaje"=>$mensaje,
-                                "clase"=>$clase);
-
-                
-                return $salida;
-
-                
-            } catch (PDOException $th) {
-                echo "Error: ".$th->getMessage();
-                return false;
-            }    
-        }
-
-        private function grabarDetalles($codigo,$detalles,$costos,$idx){
-            try {
-                $indice = $this->obtenerIndice($codigo,"SELECT id_regmov AS numero FROM lg_ordencab WHERE lg_ordencab.cverificacion =:id");
-                
-                $datos = json_decode($detalles);
-                
-                $nreg = count($datos);
-
-                for ($i=0; $i < $nreg; $i++) { 
-                    if(!$datos[$i]->grabado) {
-                        $sql = $this->db->connect()->prepare("INSERT INTO lg_ordendet SET id_regmov=:id,niddeta=:nidp,id_cprod=:cprod,ncanti=:cant,
-                                                                                    nunitario=:unit,nigv=:igv,ntotal=:total,
-                                                                                    nestado=:est,cverifica=:verif,nidpedi=:pedido,
-                                                                                    nmonref=:moneda,ncodcos=:costos,id_orden=:ordenidx,
-                                                                                    nSaldo=:saldo");
-                        $sql->execute(["id"=>$indice,
-                                        "nidp"=>$datos[$i]->itped,
-                                        "pedido"=>$datos[$i]->pedido,
-                                        "cprod"=>$datos[$i]->codprod,
-                                        "cant"=>$datos[$i]->cantidad,
-                                        "unit"=>$datos[$i]->precio,
-                                        "igv"=>$datos[$i]->igv,
-                                        "total"=>$datos[$i]->total,
-                                        "est"=>1,
-                                        "verif"=>$codigo,
-                                        "moneda"=>$datos[$i]->moneda,
-                                        "costos"=>$costos,
-                                        "ordenidx"=>$idx,
-                                        "saldo"=>$datos[$i]->cantidad]);
-                    }//aca poner para la modificacion de ordenes
-                    
-                }
-            } catch (PDOException $th) {
-                echo "Error: ".$th->getMessage();
-                return false;
-            }
-        }
-
-        public function modificarOrden($cabecera,$detalles,$comentarios){
-            try {
-                $entrega = $this->calcularDias($cabecera['fentrega']);
 
                 $sql = $this->db->connect()->prepare("UPDATE lg_ordencab 
-                                                        SET  ffechaent=:entrega,ntotal=:total,ctiptransp=:transp,
-                                                             nplazo=:plazo,ncodalm=:alm
+                                                        SET ffechaent=:entrega,
+                                                            ntotal=:total,
+                                                            ctiptransp=:transp,
+                                                            nplazo=:plazo,
+                                                            ncodalm=:alm,
+                                                            ncodmon=:moneda,
+                                                            ntcambio=:tcambio,
+                                                            ncodpago=:pago
                                                         WHERE id_regmov = :id");
-                $sql->execute(['entrega'=>$cabecera['fentrega'],
-                                "total"=>$cabecera['total'],
-                                "transp"=>$cabecera['codigo_transporte'],
+                $sql->execute(['entrega'=>$cab->fentrega,
+                                "total"=>$cab->total,
+                                "transp"=>$cab->codigo_transporte,
                                 "plazo"=>$entrega,
-                                "alm"=>$cabecera['codigo_almacen'],
-                                "id"=>$cabecera['codigo_orden']]);
+                                "alm"=>$cab->codigo_almacen,
+                                "moneda"=>$cab->codigo_moneda,
+                                "tcambio"=>$cab->tcambio,
+                                "pago"=>$cab->codigo_pago,
+                                "id"=>$cab->codigo_orden]);
                 
-                $this->grabarDetalles($cabecera['codigo_verificacion'],$detalles,$cabecera['codigo_costos'],$cabecera['codigo_orden']);
-                $this->grabarComentarios($cabecera['codigo_verificacion'],$comentarios);
+                $this->actualizarDetallesOrden($detalles);
+                $this->actualizarDetallesPedido($detalles);
 
                 $salida = array("respuesta"=>true,
                                 "mensaje"=>"Registro modificado",
@@ -463,33 +354,73 @@
             } 
         }
 
-        private function actualizarDetallesPedido($estado,$detalles,$orden,$entidad){
+        private function grabarDetalles($codigo,$detalles,$costos,$idx){
+            try {
+                $datos = json_decode($detalles);
+                
+                $nreg = count($datos);
+
+                for ($i=0; $i < $nreg; $i++) { 
+                    $sql = $this->db->connect()->prepare("UPDATE lg_ordendet SET ncanti=:cant,nunitario=:unit,nigv=:igv,ntotal=:total,
+                                                                                nmonref=:moneda,nSaldo=:saldo
+                                                                                WHERE nitemord = :id");
+                    $sql->execute(["id"=>$indice,
+                                    "cant"=>$datos[$i]->cantidad,
+                                    "unit"=>$datos[$i]->precio,
+                                    "igv"=>$datos[$i]->igv,
+                                    "total"=>$datos[$i]->total,
+                                    "moneda"=>$datos[$i]->moneda,
+                                    "saldo"=>$datos[$i]->cantidad]);
+                    
+                }
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function actualizarDetallesOrden($detalles){
+            $datos = json_decode($detalles);
+            $nreg = count($datos);
+
+            for ($i = 0; $i < $nreg; $i++) {
+                try {
+                    $sql = $this->db->connect()->prepare("UPDATE lg_ordendet SET ncanti = :cantidad, 
+                                                                        nunitario=:precio,
+                                                                        nsaldo = :saldo,
+                                                                        ntotal = :total
+                                                WHERE lg_ordendet.nitemord = :id");
+                    $sql->execute([ "cantidad"=>$datos[$i]->cantidad,
+                                    "precio"=>$datos[$i]->precio,
+                                    "saldo" =>$datos[$i]->saldo,
+                                    "total"=>$datos[$i]->total,
+                                    "id"=>$datos[$i]->itemorden]);
+                } catch (PDOException $th) {
+                    echo "Error: ".$th->getMessage();
+                    return false;
+                }
+                
+            }
+        }
+
+        private function actualizarDetallesPedido($detalles){
             try {
                 $datos = json_decode($detalles);
                 $nreg = count($datos);
 
-                $orden++;
-
-
                 for ($i=0; $i <$nreg ; $i++) { 
-                    if($datos[$i]->cantidad == $datos[$i]->cantped) {
+                    if( $datos[$i]->saldo == 0 ) {
                         $estado = 84;    
                     }else{
                         $estado = 54;
                     }
 
-                    $pend = $datos[$i]->cantped - $datos[$i]->cantidad;
-
                     $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet SET 
-                                                        estadoItem=:est,
-                                                        idorden=:orden, 
+                                                        estadoItem=:est, 
                                                         cant_orden=:pendiente WHERE iditem=:item");
                     $sql->execute(["item"=>$datos[$i]->itped,
                                     "est"=>$estado,
-                                    "orden"=>$orden,
-                                    "pendiente"=>$pend]);
-                    
-                    $this->registrarOrdenesItems($datos[$i]->itped,$orden,$entidad);                
+                                    "pendiente"=>$datos[$i]->saldo]); 
                 }
                 
             } catch (PDOException $th) {
@@ -498,61 +429,6 @@
             }
         }
 
-        private function actualizarDetallesPedidoCorreo($estado,$detalles){
-            try {
-                $datos = json_decode($detalles);
-                $nreg = count($datos);
-
-
-                for ($i=0; $i <$nreg ; $i++) { 
-                    $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet SET 
-                                                        estadoItem=:est WHERE iditem=:item");
-                    $sql->execute(["item"=>$datos[$i]->itped,
-                                    "est"=>$estado]);
-                }
-                
-            } catch (PDOException $th) {
-                echo "Error: ".$th->getMessage();
-                return false;
-            }
-        }
-
-        private function registrarOrdenesItems($item,$orden,$entidad){
-            try {
-                $sql = $this->db->connect()->prepare("INSERT INTO tb_itemorden SET item=:item, orden=:orden, entidad=:entidad");
-                $sql->execute(["item"=>$item, "orden"=>$orden, "entidad"=>$entidad]);
-            } catch (PDOException $th) {
-                echo "Error: ". $th->getMessage();
-                return false;
-            }
-        }
-
-        public function subirArchivos($codigo,$adjuntos){
-            $countfiles = count( $adjuntos);
-
-            for( $i=0;$i<$countfiles;$i++ ){
-                try {
-                    $file = "file-".$i;
-                    $ext = explode('.',$adjuntos[$file]['name']);
-                    $filename = uniqid().".".end($ext);
-                    // Upload file
-                    if (move_uploaded_file($adjuntos[$file]['tmp_name'],'public/documentos/ordenes/adjuntos/'.$filename)){
-                        $sql= $this->db->connect()->prepare("INSERT INTO lg_regdocumento 
-                                                                    SET nidrefer=:cod,cmodulo=:mod,cdocumento=:doc,
-                                                                        creferencia=:ref,nflgactivo=:est");
-                        $sql->execute(["cod"=>$codigo,
-                                        "mod"=>"ORD",
-                                        "ref"=>$filename,
-                                        "doc"=>$adjuntos[$file]['name'],
-                                        "est"=>1]);
-                    }
-                } catch (PDOException $th) {
-                    echo "Error: ".$th->getMessage();
-                    return false;
-                }
-            }
-
-        }
 
         public function enviarCorreo($cabecera,$detalles,$correos,$asunto,$mensaje){
             try {
@@ -631,67 +507,6 @@
             } 
         }
 
-        public function enviarCorreoProveedor($cabecera,$detalles){
-            try {
-                require_once("public/PHPMailer/PHPMailerAutoload.php");
-
-                $documento = $this->generarDocumento($cabecera,2,$detalles);
-
-                $subject    = utf8_decode("Atención de Orden de Compra");
-                $messaje    = utf8_decode("Su atención en la orden de compra adjunta");
-
-                $origen = $_SESSION['user']."@sepcon.net";
-                $nombre_envio = $_SESSION['user'];
-                
-                $mail = new PHPMailer;
-                $mail->isSMTP();
-                $mail->SMTPDebug = 0;
-                $mail->Debugoutput = 'html';
-                $mail->Host = 'mail.sepcon.net';
-                $mail->SMTPAuth = true;
-                $mail->Username = 'sistema_ibis@sepcon.net';
-                $mail->Password = $_SESSION['password'];
-                $mail->Port = 465;
-                $mail->SMTPSecure = "ssl";
-                $mail->SMTPOptions = array(
-                    'ssl' => array(
-                        'verify_peer' => false,
-                        'verify_peer_name' => false,
-                        'allow_self_signed' => false
-                    )
-                );
-                
-                $mail->setFrom($origen,$nombre_envio);
-                $mail->addAddress($cabecera['correo_entidad'],$cabecera['entidad']);
-
-                $mail->Subject = $subject;
-                    $mail->msgHTML(utf8_decode($messaje));
-
-                    if (file_exists( 'public/documentos/ordenes/aprobadas/'.$documento)) {
-                        $mail->AddAttachment('public/documentos/ordenes/aprobadas/'.$documento);
-                    }
-        
-                    if (!$mail->send()) {
-                        return array("mensaje"=>"Hubo un error, en el envio",
-                                    "clase"=>"mensaje_error");
-                    }else {
-                        $this->actualizarCabeceraPedido(60,$cabecera['codigo_pedido'],$cabecera['codigo_orden']);
-                        $this->actualizarDetallesPedidoCorreo(60,$detalles);
-                        $this->actualizarCabeceraOrden(60,$cabecera['codigo_orden']);
-                        return array("mensaje"=>"Correo enviado",
-                                    "clase"=>"mensaje_correcto",
-                                    "ordenes"=>$this->listarOrdenes($_SESSION['iduser']));
-                    }
-                        
-                    $mail->clearAddresses();
-
-
-            } catch (PDOException $th) {
-                echo "Error: ".$th->getMessage();
-                return false;
-            } 
-        }
-
         public function eliminarItem($itemOrden,$itemPedido,$itemCantidad){
             try {
                $this->marcarDetalleOrden($itemOrden);
@@ -709,10 +524,9 @@
         }
 
         private function actualizarDetallePedido($itemPedido) {
-            $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet SET nflgactivo = 0,idorden = null,estadoItem = 97 WHERE iditem = :item");
+            $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet SET nflgactivo = 0,idorden = null,estadoItem = 54 WHERE iditem = :item");
             $sql->execute(["item"=>$itemPedido]);
         }
-
 
         private function calcularDias($fechaEntrega){
             $date1 = new DateTime(Date('Y-m-d'));

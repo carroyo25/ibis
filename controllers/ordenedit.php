@@ -27,9 +27,6 @@
             echo $this->model->generarDocumento($_POST['cabecera'],$_POST['condicion'],$_POST['detalles']);
         }
 
-        function editaRegistro(){
-            //echo json_encode($this->model->insertarOrden($_POST['cabecera'],$_POST['detalles'],$_POST['comentarios'],$_FILES));
-        }
 
         function modificaRegistro(){
             echo json_encode($this->model->modificarOrden($_POST['cabecera'],$_POST['detalles'],$_POST['comentarios']));
@@ -69,6 +66,10 @@
 
         function actualizaItem(){
             $this->model->eliminarItem($_POST['itemOrden'],$_POST['itemPedido'],$_POST['itemCantPed']);
+        }
+
+        function modificaOrden(){
+            echo json_encode($this->model->modificarOrden($_POST['cabecera'],$_POST['detalles']));
         }
     }
 ?>

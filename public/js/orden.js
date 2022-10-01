@@ -318,7 +318,7 @@ $(function(){
                     $("#codigo_area").val(data.pedido[0].idarea);
                     $("#codigo_transporte").val(data.pedido[0].idtrans);
                     $("#codigo_tipo").val(data.pedido[0].idtipomov);
-                    $("#codigo_estado").val(data.pedido[0].estadodoc);
+                    //$("#codigo_estado").val(data.pedido[0].estadodoc);
                     $("#costos").val(data.pedido[0].proyecto);
                     $("#area").val(data.pedido[0].area);
                     $("#concepto").val(data.pedido[0].concepto);

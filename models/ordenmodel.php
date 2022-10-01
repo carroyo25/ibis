@@ -91,6 +91,7 @@
                 FORMAT(tb_pedidodet.cant_aprob, 2) AS cantidad,
                 FORMAT(tb_pedidodet.cant_orden, 2) AS saldo,
                 FORMAT(tb_pedidodet.precio, 2) AS precio,
+                FORMAT(tb_pedidodet.cant_pedida,2) AS cantidad_pedida,
                 tb_pedidodet.igv,
                 FORMAT(tb_pedidodet.total, 2) AS total,
                 tb_pedidodet.estadoItem,
@@ -137,12 +138,16 @@
 
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()) {
-                        $saldo = $rs['saldo'] > 0 ? $rs['saldo'] : $rs['cantidad'];
+
+                        $cantidad = $rs['cantidad'] == null ? $rs['cantidad_pedida'] : $rs['cantidad'];
+                        $cantidad = $cantidad - $rs['saldo'];
+                       
+                        //$saldo = $rs['saldo'] > 0 ? $rs['saldo'] : $rs['cantidad'];
 
                         $salida .='<tr class="pointer" data-pedido="'.$rs['idpedido'].'"
                                                        data-entidad="'.$rs['entidad'].'"
                                                        data-unidad="'.$rs['unidad'].'"
-                                                       data-cantidad ="'.$saldo.'"
+                                                       data-cantidad ="'.$cantidad.'"
                                                        data-total="'.$rs['total_numero'].'"
                                                        data-codprod="'.$rs['id_cprod'].'"
                                                        data-iditem="'.$rs['iditem'].'">

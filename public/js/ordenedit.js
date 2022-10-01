@@ -374,7 +374,7 @@ $(function(){
             if (result['codigo_transporte'] == "") throw "Elija la forma de transporte";
             if (result['codigo_almacen'] == "") throw "Indique el lugar de entrega";
 
-            $.post(RUTA+"orden/vistaPreliminar", {cabecera:result,condicion:0,detalles:JSON.stringify(detalles())},
+            $.post(RUTA+"ordenedit/vistaPreliminar", {cabecera:result,condicion:0,detalles:JSON.stringify(detalles())},
                 function (data, textStatus, jqXHR) {
                     $(".ventanaVistaPrevia iframe")
                         .attr("src","")
@@ -460,11 +460,7 @@ $(function(){
 
         formData = new FormData();
         formData.append("cabecera",JSON.stringify(result));
-        $.each(jQuery('#uploadAtach')[0].files, function(i, file) {
-            formData.append('file-'+i, file);
-        });
         formData.append("detalles",JSON.stringify(detalles()));
-        formData.append("comentarios",JSON.stringify(comentarios()));
 
         try {
             if (result['numero'] == "") throw "No tiene numero de orden";
@@ -478,40 +474,26 @@ $(function(){
 
             grabado = true;
             
-            if ( accion == 'n' ){
-                $.ajax({
-                    // URL to move the uploaded image file to server
-                    url: RUTA + 'orden/editarRegistro',
-                    // Request type
-                    type: "POST", 
-                    // To send the full form data
-                    data: formData,
-                    contentType:false,      
-                    processData:false,
-                    dataType:"json",    
-                    // UI response after the file upload
-                    beforeSend: function () {
-                        //$("#esperar").fadeIn();
-                    },  
-                    success: function(response)
-                    {   
-                        mostrarMensaje(response.mensaje,response.clase);
-                        $("#proceso, #sendMail,#esperar").fadeOut();
-                        $("#tablaPrincipal tbody")
-                            .empty()
-                            .append(response.pedidos);
-                    }
-                });
-            }else {
-                $.post(RUTA+"orden/modificaRegistro", {cabecera:result,
-                                                        detalles:JSON.stringify(detalles()),
-                                                        comentarios:JSON.stringify(comentarios())},
-                    function (data, textStatus, jqXHR) {
-                        mostrarMensaje(data.mensaje,data.clase);
-                    },
-                    "json"
-                );
-            }
+            $.ajax({
+                // URL to move the uploaded image file to server
+                url: RUTA + 'ordenedit/modificaOrden',
+                // Request type
+                type: "POST", 
+                // To send the full form data
+                data: formData,
+                contentType:false,      
+                processData:false,
+                dataType:"json",    
+                // UI response after the file upload
+                beforeSend: function () {
+                    $("#esperar").fadeIn();
+                },  
+                success: function(response)
+                {   
+                    $("#esperar").fadeOut();
+                    mostrarMensaje(response.mensaje,response.clase);
+                }
+            });
 
         } catch (error) {
             mostrarMensaje(error,'mensaje_error'); 
@@ -713,7 +695,9 @@ detalles = () => {
             MONEDA      = $("#codigo_moneda").val(),
             ITEMPEDIDO  = $(this).data('itped'),
             GRABAR      = $(this).data('grabado'),
-            CANTPED     = $(this).data('cant');
+            CANTPED     = $(this).data('cant'),
+            ITEMORDEN   = $(this).data('itord'),
+            SALDO       = $(this).data('cant')-$(this).find('td').eq(5).children().val();
 
         item= {};
         
@@ -733,7 +717,8 @@ detalles = () => {
             item['itped']       = ITEMPEDIDO;
             item['grabado']     = GRABAR;
             item['cantped']     = CANTPED;
-
+            item['itemorden']   = ITEMORDEN;
+            item['saldo']       = SALDO;
             DATA.push(item);
         //}
     });
