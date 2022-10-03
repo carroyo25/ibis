@@ -240,16 +240,17 @@
                     <th>Cant</br>Sol.</th>
                     <th>Orden</th>
                     <th>Fecha</br>Orden</th>
+                    <th>Cant.</br>Orden</th>
                     <th>Proveedor</th>
-                    <th>Cant.</br>Recibida</th>
-                    <th>Saldo</br>Recibir</th>
-                    <th>Fecha</br>Envio</br>Proveedor</th>
-                    <th>Dias</br>Entrega</th>
                     <th>Fecha</br>Entrega</br>Proveedor</th>
+                    <th>Dias</br>Entrega</th>
                     <th>Dias</br>Atraso</th>
                     <th>Semaforo</th>
+                    <th>Cant.</br>Recibida</th>
+                    <th>Saldo</br>Recibir</th>
                     <th>Nota</br>Ingreso</th>
                     <th>Guia</br>Ingreso</th>
+                    <th>Fecha</br>Ingreso</th>
                     <th>Nota</br>Salida</th>
                     <th>Guia</br>Remisión</th>
                     <th>Fecha</br>Guia</br>Remisión</th>
