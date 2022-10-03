@@ -272,33 +272,33 @@
             try {
                 $salida = "";
                 $sql = $this->db->connect()->prepare("SELECT
-                                                    ibis.lg_ordencab.id_regmov,
-                                                    ibis.tb_costusu.ncodproy, 
-                                                    ibis.lg_ordencab.id_refpedi, 
-                                                    ibis.lg_ordencab.ntipdoc, 
-                                                    ibis.lg_ordencab.cnumero, 
-                                                    ibis.lg_ordencab.ffechadoc, 
-                                                    ibis.lg_ordencab.nEstadoDoc, 
-                                                    CONCAT_WS(' ',ibis.tb_proyectos.ccodproy,UPPER(ibis.tb_proyectos.cdesproy)) AS costos, 
-                                                    CONCAT_WS(' ',ibis.tb_area.ccodarea,UPPER(ibis.tb_area.cdesarea)) AS area
-                                                FROM
-                                                    ibis.tb_costusu
-                                                    INNER JOIN
-                                                    ibis.lg_ordencab
-                                                    ON 
-                                                        ibis.tb_costusu.ncodproy = ibis.lg_ordencab.ncodpry
-                                                    INNER JOIN
-                                                    ibis.tb_proyectos
-                                                    ON 
-                                                        ibis.lg_ordencab.ncodpry = ibis.tb_proyectos.nidreg
-                                                    INNER JOIN
-                                                    ibis.tb_area
-                                                    ON 
-                                                        ibis.lg_ordencab.ncodarea = ibis.tb_area.ncodarea
-                                                WHERE
-                                                    ibis.tb_costusu.id_cuser = :usr AND
-                                                    ibis.tb_costusu.nflgactivo = 1 AND
-                                                    ibis.lg_ordencab.nEstadoDoc = 60");
+                                                        lg_ordencab.id_regmov,
+                                                        tb_costusu.ncodproy, 
+                                                        lg_ordencab.id_refpedi, 
+                                                        lg_ordencab.ntipdoc, 
+                                                        lg_ordencab.cnumero, 
+                                                        lg_ordencab.ffechadoc, 
+                                                        lg_ordencab.nEstadoDoc, 
+                                                        CONCAT_WS(' ',tb_proyectos.ccodproy,UPPER(tb_proyectos.cdesproy)) AS costos, 
+                                                        CONCAT_WS(' ',tb_area.ccodarea,UPPER(tb_area.cdesarea)) AS area
+                                                    FROM
+                                                        tb_costusu
+                                                        INNER JOIN
+                                                        lg_ordencab
+                                                        ON 
+                                                            tb_costusu.ncodproy = lg_ordencab.ncodpry
+                                                        INNER JOIN
+                                                        tb_proyectos
+                                                        ON 
+                                                            lg_ordencab.ncodpry = tb_proyectos.nidreg
+                                                        INNER JOIN
+                                                        tb_area
+                                                        ON 
+                                                            lg_ordencab.ncodarea = tb_area.ncodarea
+                                                    WHERE
+                                                        tb_costusu.id_cuser = :usr AND
+                                                        tb_costusu.nflgactivo = 1 AND
+                                                        lg_ordencab.nEstadoDoc = 60");
                 $sql->execute(["usr"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowCount();
 
@@ -322,48 +322,48 @@
         public function consultarOrdenIdRecepcion($id){
             try {
                 $sql = $this->db->connect()->prepare("SELECT
-                                                        ibis.lg_ordencab.id_regmov,
-                                                        ibis.lg_ordencab.cnumero,
-                                                        ibis.lg_ordencab.ffechadoc,
-                                                        ibis.lg_ordencab.ncodcos,
-                                                        ibis.lg_ordencab.ncodarea,
-                                                        ibis.lg_ordencab.id_centi,
-                                                        ibis.lg_ordencab.ncodcot,
-                                                        ibis.lg_ordencab.cnumcot,
-                                                        ibis.lg_ordencab.nEstadoDoc,
-                                                        ibis.lg_ordencab.id_refpedi,
+                                                        lg_ordencab.id_regmov,
+                                                        lg_ordencab.cnumero,
+                                                        lg_ordencab.ffechadoc,
+                                                        lg_ordencab.ncodcos,
+                                                        lg_ordencab.ncodarea,
+                                                        lg_ordencab.id_centi,
+                                                        lg_ordencab.ncodcot,
+                                                        lg_ordencab.cnumcot,
+                                                        lg_ordencab.nEstadoDoc,
+                                                        lg_ordencab.id_refpedi,
                                                         UPPER( tb_pedidocab.concepto ) AS concepto,
                                                         UPPER( tb_pedidocab.detalle ) AS detalle,
                                                         UPPER(
                                                         CONCAT_WS( ' ', tb_proyectos.ccodproy, tb_proyectos.cdesproy )) AS costos,
-                                                        ibis.lg_ordencab.ncodpry,
+                                                        lg_ordencab.ncodpry,
                                                         UPPER(
                                                         CONCAT_WS( ' ', tb_area.ccodarea, tb_area.cdesarea )) AS area,
-                                                        ibis.lg_ordencab.ncodmon,
-                                                        ibis.lg_ordencab.ntipmov,
-                                                        ibis.lg_ordencab.ffechaent,
-                                                        ibis.cm_entidad.crazonsoc,
-                                                        ibis.cm_entidad.cnumdoc,
+                                                        lg_ordencab.ncodmon,
+                                                        lg_ordencab.ntipmov,
+                                                        lg_ordencab.ffechaent,
+                                                        cm_entidad.crazonsoc,
+                                                        cm_entidad.cnumdoc,
                                                         UPPER( tb_almacen.cdesalm ) AS cdesalm,
-                                                        ibis.cm_entidad.cemail AS mail_entidad,
-                                                        ibis.lg_ordencab.cverificacion,
-                                                        ibis.lg_ordencab.ncodalm,
-                                                        LPAD(ibis.tb_pedidocab.nrodoc,6,0) AS pedido,
-                                                        ibis.tb_pedidocab.nivelAten,
+                                                        cm_entidad.cemail AS mail_entidad,
+                                                        lg_ordencab.cverificacion,
+                                                        lg_ordencab.ncodalm,
+                                                        LPAD(tb_pedidocab.nrodoc,6,0) AS pedido,
+                                                        tb_pedidocab.nivelAten,
                                                         CONCAT_WS(' ',rrhh.tabla_aquarius.nombres,rrhh.tabla_aquarius.apellidos) AS solicita
                                                             FROM
-                                                            ibis.lg_ordencab
-                                                            INNER JOIN ibis.tb_pedidocab ON lg_ordencab.id_refpedi = tb_pedidocab.idreg
-                                                            INNER JOIN ibis.tb_proyectos ON lg_ordencab.ncodcos = tb_proyectos.nidreg
-                                                            INNER JOIN ibis.tb_area ON lg_ordencab.ncodarea = tb_area.ncodarea
-                                                            INNER JOIN ibis.tb_parametros AS monedas ON lg_ordencab.ncodmon = monedas.nidreg
-                                                            INNER JOIN ibis.tb_parametros AS tipos ON lg_ordencab.ntipmov = tipos.nidreg
-                                                            INNER JOIN ibis.tb_parametros AS pagos ON lg_ordencab.ncodpago = pagos.nidreg
-                                                            INNER JOIN ibis.tb_parametros AS estados ON lg_ordencab.nEstadoDoc = estados.nidreg
-                                                            INNER JOIN ibis.cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
-                                                            INNER JOIN ibis.tb_parametros AS transportes ON lg_ordencab.ctiptransp = transportes.nidreg
-                                                            INNER JOIN ibis.tb_almacen ON lg_ordencab.ncodalm = tb_almacen.ncodalm
-                                                            INNER JOIN rrhh.tabla_aquarius ON ibis.tb_pedidocab.idsolicita = rrhh.tabla_aquarius.internal 
+                                                            lg_ordencab
+                                                            INNER JOIN tb_pedidocab ON lg_ordencab.id_refpedi = tb_pedidocab.idreg
+                                                            INNER JOIN tb_proyectos ON lg_ordencab.ncodcos = tb_proyectos.nidreg
+                                                            INNER JOIN tb_area ON lg_ordencab.ncodarea = tb_area.ncodarea
+                                                            INNER JOIN tb_parametros AS monedas ON lg_ordencab.ncodmon = monedas.nidreg
+                                                            INNER JOIN tb_parametros AS tipos ON lg_ordencab.ntipmov = tipos.nidreg
+                                                            INNER JOIN tb_parametros AS pagos ON lg_ordencab.ncodpago = pagos.nidreg
+                                                            INNER JOIN tb_parametros AS estados ON lg_ordencab.nEstadoDoc = estados.nidreg
+                                                            INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
+                                                            INNER JOIN tb_parametros AS transportes ON lg_ordencab.ctiptransp = transportes.nidreg
+                                                            INNER JOIN tb_almacen ON lg_ordencab.ncodalm = tb_almacen.ncodalm
+                                                            INNER JOIN rrhh.tabla_aquarius ON tb_pedidocab.idsolicita = rrhh.tabla_aquarius.internal 
                                                             WHERE
                                                         lg_ordencab.id_regmov =:id 
                                                         AND lg_ordencab.nflgactivo = 1");

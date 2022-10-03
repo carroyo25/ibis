@@ -179,7 +179,7 @@
                                         <th class="">Codigo</th>
                                         <th class="">Descripcion</th>
                                         <th class="">Unidad</th>
-                                        <th width="7%">Cantidad</br>solicitada</th>
+                                        <th width="7%">Cantidad</br>Orden</th>
                                         <th width="7%">Cantidad</br>Recibida</th>
                                         <th width="7%">Pendiente</br>Entrega</th>
                                         <th class="">Observaciones</th>

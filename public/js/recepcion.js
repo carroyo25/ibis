@@ -3,6 +3,7 @@ $(function(){
         grabado = false,
         indice_nota=0,
         suma = 0;
+        co = 1;
 
     $("#esperar").fadeOut();
 
