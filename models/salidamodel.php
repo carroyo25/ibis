@@ -121,6 +121,90 @@
             }
         }
 
+        public function importarItemIngresos($costos){
+            try {
+                $salida = "";
+                $sql = $this->db->connect()->prepare("SELECT
+                                                alm_recepdet.niddeta,
+                                                alm_recepcab.ncodpry,
+                                                alm_recepdet.ncantidad,
+                                                alm_recepdet.id_cprod,
+                                                UPPER(
+                                                    CONCAT_WS(
+                                                        ' ',
+                                                        cm_producto.cdesprod,
+                                                        tb_pedidodet.observaciones
+                                                    )
+                                                ) AS descripcion,
+                                                cm_producto.ccodprod,
+                                                tb_unimed.cabrevia,
+                                                UPPER(CONCAT_WS(' ',tb_proyectos.ccodproy,tb_proyectos.cdesproy)) AS costos,
+                                                UPPER(tb_area.cdesarea) AS area,
+                                                tb_area.ccodarea,
+                                                tb_pedidocab.concepto,
+                                                LPAD(alm_recepdet.orden, 6, 0) AS orden,
+                                                LPAD(tb_pedidocab.idreg, 6, 0) AS pedido,
+                                                LPAD(alm_recepcab.id_regalm, 6, 0) AS nota_ingreso,
+                                                tb_partidas.cdescripcion AS partida,
+                                                DATE_FORMAT(
+                                                    alm_recepcab.ffecdoc,
+                                                    '%d/%m/%Y'
+                                                ) AS fecha_recepcion,
+                                                alm_recepcab.ncodalm1 AS codigo_almacen_origen,
+                                                UPPER(tb_almacen.cdesalm) AS almacen_origen
+                                            FROM
+                                                tb_costusu
+                                            INNER JOIN alm_recepcab ON tb_costusu.ncodproy = alm_recepcab.ncodpry
+                                            INNER JOIN alm_recepdet ON alm_recepcab.id_regalm = alm_recepdet.id_regalm
+                                            INNER JOIN cm_producto ON alm_recepdet.id_cprod = cm_producto.id_cprod
+                                            INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                            INNER JOIN tb_pedidodet ON alm_recepdet.niddetaPed = tb_pedidodet.iditem
+                                            INNER JOIN tb_proyectos ON tb_pedidodet.idcostos = tb_proyectos.nidreg
+                                            INNER JOIN tb_area ON tb_pedidodet.idarea = tb_area.ncodarea
+                                            INNER JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
+                                            INNER JOIN lg_ordencab ON tb_pedidocab.idorden = lg_ordencab.id_regmov
+                                            LEFT JOIN tb_partidas ON tb_pedidocab.idpartida = tb_partidas.idreg
+                                            INNER JOIN tb_almacen ON alm_recepcab.ncodalm1 = tb_almacen.ncodalm
+                                            WHERE
+                                                tb_costusu.nflgactivo = 1
+                                            AND tb_costusu.id_cuser =:user
+                                            AND alm_recepcab.nEstadoDoc = 62
+                                            AND alm_recepcab.ncodpry =:costos");
+                $sql->execute(["user"=>$_SESSION['iduser'],
+                                "costos"=>$costos]);
+                $rowCount = $sql->rowCount();
+                $item = 1;
+
+                if ($rowCount > 0) {
+                    while ($rs = $sql->fetch()) {
+                        $salida .='<tr class="pointer" 
+                                            data-indice="'.$rs['niddeta'].'"
+                                            data-codigocostos="'.$rs['ncodpry'].'"
+                                            data-codigoarea="'.$rs['ccodarea'].'"
+                                            data-codigoalmaenorigen="'.$rs['codigo_almacen_origen'].'"
+                                            data-costos="'.$rs['costos'].'"
+                                            data-almacen="'.$rs['almacen_origen'].'">
+                                        <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
+                                        <td class="textoCentro">'.$rs['fecha_recepcion'].'</td>
+                                        <td class="pl20px">'.$rs['costos'].'</td>
+                                        <td class="textoCentro">'.$rs['pedido'].'</td>
+                                        <td class="textoCentro">'.$rs['orden'].'</td>
+                                        <td class="textoCentro">'.$rs['nota_ingreso'].'</td>
+                                        <td class="pl20px">'.$rs['area'].'</td>
+                                        <td class="pl20px">'.$rs['concepto'].'</td>
+                                        <td class="pl20px">'.$rs['ccodprod'].'</td>
+                                        <td class="pl20px">'.$rs['descripcion'].'</td>
+                                   </tr>';
+                    }
+                }
+
+                return $salida;
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
         public function llamarNotaIngresoId($id){
             try {
                 $sql = $this->db->connect()->prepare("SELECT
@@ -818,5 +902,70 @@
                 return false;
             }
         }
-    }
+
+        public function buscarItemRecepcion($id) {
+            try {
+                $salida = "";
+                $sql= $this->db->connect()->prepare("SELECT
+                                                        alm_recepdet.ncantidad,
+                                                        alm_recepdet.niddetaPed,
+                                                        alm_recepdet.niddetaOrd,
+                                                        LPAD(alm_recepdet.orden, 6, 0) AS orden,
+                                                        cm_producto.ccodprod,
+                                                        UPPER(
+                                                            CONCAT_WS(
+                                                                ' ',
+                                                                cm_producto.cdesprod,
+                                                                tb_pedidodet.observaciones
+                                                            )
+                                                        ) AS descripcion,
+                                                        tb_unimed.cabrevia,
+                                                        LPAD(alm_recepcab.id_regalm, 6, 0) AS nota_ingreso,
+                                                        LPAD(tb_pedidocab.idreg, 6, 0) AS pedido,
+                                                        alm_recepdet.niddeta
+                                                    FROM
+                                                        alm_recepdet
+                                                    INNER JOIN cm_producto ON alm_recepdet.id_cprod = cm_producto.id_cprod
+                                                    INNER JOIN tb_pedidodet ON alm_recepdet.niddetaPed = tb_pedidodet.iditem
+                                                    INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                    INNER JOIN alm_recepcab ON alm_recepdet.id_regalm = alm_recepcab.id_regalm
+                                                    INNER JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
+                                                    WHERE niddeta = :id LIMIT 1");
+                $sql->execute(["id"=>$id]);
+                $rowCount = $sql->rowcount();
+                $result = $sql->fetchAll();
+
+                if ($rowCount > 0) {
+                    $salida = '<tr data-saldo="">
+                                    <td class="textoCentro"><a href="'.$result[0]['niddeta'].'"><i class="fas fa-trash"></i></a></td>
+                                    <td class="textoCentro"></td>
+                                    <td class="textoCentro">'.$result[0]['ccodprod'].'</td>
+                                    <td class="pl20px">'.$result[0]['descripcion'].'</td>
+                                    <td class="textoCentro">'.$result[0]['cabrevia'].'</td>
+                                    <td class="textoDerecha pr20px">'.$result[0]['ncantidad'].'</td>
+                                    <td class="textoDerecha pr5px">
+                                        <input type="number" 
+                                            step="any" 
+                                            placeholder="0.00" 
+                                            onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"
+                                            onclick="this.select()">
+                                    </td>
+                                    <td class="textoDerecha pr5px"></td>
+                                    <td>
+                                        <input type="text">
+                                    </td>
+                                    <td class="textoCentro">'.$result[0]['pedido'].'</td>
+                                    <td class="textoCentro">'.$result[0]['orden'].'</td>
+                                    <td class="textoCentro">'.$result[0]['nota_ingreso'].'</td>
+                                </tr>';
+                }
+
+                return $salida;
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+    } 
 ?>

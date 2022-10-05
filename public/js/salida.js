@@ -73,6 +73,7 @@ $(function() {
         $("#estado")
             .removeClass()
             .addClass("textoCentro estado w100por procesando");
+        $("#tablaDetalles tbody").empty();
         $("#proceso").fadeIn();
         
         accion = 'n';
@@ -105,7 +106,7 @@ $(function() {
         e.preventDefault();
         
         if ( accion == 'n') {
-            $.post(RUTA+"salida/ingresos",
+            $.post(RUTA+"salida/ingresos",{ccostos:$("#codigo_costos").val()},
             function (data, textStatus, jqXHR) {
                 $("#notas tbody")
                     .empty()
@@ -118,14 +119,13 @@ $(function() {
         }else{
             mostrarMensaje('El despacho se esta procesando','mensaje_error');
         }
-        
 
         return false
     });
 
     $(".tituloVentana").on("click","a", function (e) {
         e.preventDefault();
-
+        
         $(this).parent().parent().parent().parent().fadeOut();
 
         return false;
@@ -134,37 +134,23 @@ $(function() {
     $("#notas tbody").on("click","tr", function (e) {
         e.preventDefault();
 
-        $("#codigo_ingreso").val($(this).data("idnit"));
+        $("#almacen_origen_despacho").val($(this).data('almacen'));
+        $("#codigo_almacen").val($(this).data('codigoalmaenorigen'));
 
-        $.post(RUTA+"salida/notaId", {id:$(this).data("idnit")},
-            function (data, textStatus, jqXHR) {
-                $("#codigo_costos").val(data.cabecera[0].ncodpry);
-                $("#codigo_area").val(data.cabecera[0].ncodarea);
-                $("#codigo_almacen").val(data.cabecera[0].ncodalm1);
-                $("#codigo_pedido").val(data.cabecera[0].idref_pedi);
-                $("#codigo_orden").val(data.cabecera[0].idref_abas);
-                $("#codigo_estado").val(data.cabecera[0].nEstadoDoc);
-                $("#costos").val(data.cabecera[0].proyecto);
-                $("#area").val(data.cabecera[0].area);
-                $("#solicita").val(data.cabecera[0].solicita);
-                $("#almacen_origen_despacho").val(data.cabecera[0].almacen);
-                $("#pedido").val(data.cabecera[0].pedido);
-                $("#fecha_pedido").val(data.cabecera[0].emision);
-                $("#orden").val(data.cabecera[0].orden);
-                $("#fecha_orden").val(data.cabecera[0].ffechadoc);
-                $("#concepto").val(data.cabecera[0].concepto);
-                $("#estado").val(data.cabecera[0].cdescripcion);
-                $("#guia").val(data.cabecera[0].cnumguia);
-                $("#numero").val(data.numero.numero);
-                $("#movimiento").val(data.movimiento);
+        try {
+            $.post(RUTA+"salida/buscarItem", {indice:$(this).data("indice")},
+                function (data, text, requestXHR) {
+                    $("#tablaDetalles tbody")
+                        .append(data);
 
-                $("#tablaDetalles tbody")
-                    .append(data.detalles)
+                        fillTables($("#tablaDetalles tbody >tr"),1);
+                },    
+                "text"
+            );
 
-                $("#busqueda").fadeOut();
-            },
-            "json"
-        );
+        } catch (error) {
+            mostrarMensaje(error,'mensaje_error');
+        }
 
         return false;
     });
@@ -180,7 +166,7 @@ $(function() {
 
         return false;
     });
-
+    
     $(".mostrarListaInterna").focus(function (e) { 
         e.preventDefault();
         
@@ -446,7 +432,44 @@ $(function() {
         return false;
     })
 
+    $("#tablaDetalles tbody").on('keypress','input', function (e) {
+        if (e.which == 13) {
+            let cant = parseFloat($(this).parent().parent().find("td").eq(5).text()) - $(this).parent().parent().find("td").eq(6).children().val();
+            
+            try {
+                if (cant < 0) throw "Error en el ingreso";
+
+                $(this).parent().parent().find("td").eq(7).text(cant.toFixed(2));
+                $(this).parent().parent().find("td").eq(7).text($(this).parent().parent().data("saldo"));
+
+
+            } catch (error) {
+                mostrarMensaje(error,"mensaje_error");
+            }
+        }
+    });
+
+    $(".lista").on("click",'a', function (e) {
+        e.preventDefault();
+
+        let control = $(this).parent().parent().parent();
+        let destino = $(this).parent().parent().parent().prev();
+        let contenedor_padre = $(this).parent().parent().parent().attr("id");
+        let id = "";
+        let codigo = $(this).attr("href");
+        
+        control.slideUp()
+        destino.val($(this).text());
+        id = destino.attr("id");
+
+        if(contenedor_padre == "listaCostos"){
+            $("#codigo_costos").val(codigo);
+        }
+
+        return false;
+    });
 })
+
 
 detalles = () =>{
     DETALLES = [];

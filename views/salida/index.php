@@ -67,27 +67,19 @@
                                 </div>
                             </div>
                             <div class="column2">
-                                <label for="costos">Ccostos:</label>
-                                <input type="text" name="costos" id="costos" readonly>
+                                <label for="costos">CCostos:</label>
+                                <input type="text" name="costos" id="costos" class="mostrarLista busqueda" placeholder="Elija una opcion">
+                                <div class="lista" id="listaCostos">
+                                   <ul>
+                                       <?php echo $this->listaCostos?>
+                                   </ul> 
+                                </div>
                             </div>
                             <div class="column2">
                                 <label for="area">Area:</label>
                                 <input type="text" name="area" id="area" readonly>
                             </div>
-                            <div class="column2">
-                                <label for="solicita">Solicita:</label>
-                                <input type="text" name="solicita" id="solicita" class="cerrarLista" readonly>
-                            </div>
-                            <div class="column2">
-                            <label for="aprueba">Aprueba:</label>
-                                <input type="text" name="aprueba" id="aprueba" class="mostrarLista busqueda" placeholder="Elija opción"
-                                    readonly>
-                                <div class="lista" id="listaAprueba">
-                                   <ul>
-                                       <?php echo $this->listaAprueba?>
-                                   </ul> 
-                                </div>
-                            </div>
+                            
                         </div>
                         <div class="seccion_medio">
                             <div class="column2">
@@ -103,31 +95,16 @@
                                    </ul> 
                                 </div>
                             </div>
-                            <div class="column4_55">
-                                <div class="column2_3957">
-                                    <label for="pedido">Nro. Pedido :</label>
-                                    <input type="text" name="pedido" id="pedido" class="cerrarLista" readonly>
-                                </div>
-                                <div class="column2_46">
-                                    <label for="fecha_pedido">Fecha Doc. :</label>
-                                    <input type="date" name="fecha_pedido" id="fecha_pedido" class="cerrarLista pr5px" readonly>
-                                </div>
-                            </div>
-                            <div class="column4_55">
-                                <div class="column2_3957">
-                                    <label for="orden">Nro. Orden :</label>
-                                    <input type="text" name="orden" id="orden" class="cerrarLista" readonly>
-                                </div>
-                                <div class="column2_46">
-                                    <label for="fecha_orden">Fecha Doc. :</label>
-                                    <input type="date" name="fecha_orden" id="fecha_orden" class="cerrarLista" readonly>
-                                </div>
-                            </div>
                             <div class="column2">
-                                <label for="concepto">Concepto:</label>
-                                <input type="text" name="concepto" id="concepto" readonly>
+                                <label for="aprueba">Aprueba:</label>
+                                <input type="text" name="aprueba" id="aprueba" class="mostrarLista busqueda" placeholder="Elija opción"
+                                        readonly>
+                                <div class="lista" id="listaAprueba">
+                                    <ul>
+                                        <?php echo $this->listaAprueba?>
+                                    </ul> 
+                                </div>
                             </div>
-                            
                         </div>
                         <div class="seccion_derecha">
                             <div class="column2">
@@ -181,9 +158,13 @@
                                         <th class="">Codigo</th>
                                         <th class="">Descripcion</th>
                                         <th class="">Unidad</th>
-                                        <th width="7%">Cantidad</br>Recepcionada</th>
-                                        <th width="7%">Cantidad</br>Despachada</th>
+                                        <th width="7%">Cantidad</br>Ingresada</th>
+                                        <th width="7%">Cantidad</br>Despacho</th>
+                                        <th width="7%">Saldo</th>
                                         <th class="">Observaciones</th>
+                                        <th class="">Nro.Pedido</th>
+                                        <th class="">Nro.Orden</th>
+                                        <th class="">Nota<br>Ingreso</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -211,10 +192,16 @@
                 <table class="tablaWrap" id="notas">
                     <thead>
                         <tr class="stickytop" >
-                            <th>Número</th>
-                            <th>Emisión</th>
-                            <th>Area</th>
+                            <th>Item</th>
+                            <th>Fecha</br>Ingreso</th>
                             <th>Centro de Costos</th>
+                            <th>Pedido</th>
+                            <th>Orden</th>
+                            <th>Ingreso</th>
+                            <th>Area</th>
+                            <th>Concepto</th>
+                            <th>Codigo</th>
+                            <th>Descripcion</th>
                         </tr>
                     </thead>
                     <tbody>

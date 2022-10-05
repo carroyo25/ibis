@@ -14,12 +14,13 @@
             $this->view->listaModalidad = $this->model->listarParametros(14);
             $this->view->listaPersonal = $this->model->listarPersonalRol(4);
             $this->view->listaMovimiento = $this->model->listarParametros(12);
+            $this->view->listaCostos = $this->model->costosPorUsuario($_SESSION['iduser']);
 
             $this->view->render('salida/index');
         }
 
         function ingresos(){
-            echo $this->model->importarIngresos();
+            echo $this->model->importarItemIngresos($_POST['ccostos']);
         }
 
         function notaId(){
@@ -62,6 +63,10 @@
 
         function almacenes(){
             echo json_encode($this->model->consultarAlmacenes($_POST['origen'],$_POST['destino']));
+        }
+
+        function buscarItem(){
+            echo $this->model->buscarItemRecepcion($_POST['indice']);
         }
 
     }

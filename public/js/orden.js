@@ -318,7 +318,6 @@ $(function(){
                     $("#codigo_area").val(data.pedido[0].idarea);
                     $("#codigo_transporte").val(data.pedido[0].idtrans);
                     $("#codigo_tipo").val(data.pedido[0].idtipomov);
-                    //$("#codigo_estado").val(data.pedido[0].estadodoc);
                     $("#costos").val(data.pedido[0].proyecto);
                     $("#area").val(data.pedido[0].area);
                     $("#concepto").val(data.pedido[0].concepto);
@@ -330,22 +329,7 @@ $(function(){
                     
                     $("#numero").val(data.orden.numero);
                     $("#codigo_verificacion").val(data.pedido[0].verificacion);
-
-                    //$("#entidad").val(data.entidad[0].crazonsoc);
-                    //$("#atencion").val(data.entidad[0].contacto);
-                    //$("#ruc_entidad").val(data.entidad[0].cnumdoc);
-                    //$("#codigo_entidad").val(data.entidad[0].id_centi);
-                    //$("#direccion_entidad").val(data.entidad[0].cviadireccion);
-                    //$("#telefono_entidad").val(data.entidad[0].ctelefono);
-                    //$("#retencion").val(data.entidad[0].nagenret);
-                    //$("#correo_entidad").val(data.entidad[0].correo_entidad);
-                    //$("#correo_contacto").val(data.entidad[0].correo_contacto);
-                    //$("#telefono_contacto").val(data.entidad[0].telefono_contacto);
-
                     $("#busqueda").fadeOut(); 
-
-                    //let totalOrden = sumarTotales($("#tablaDetalles tbody tr"));
-                    //$("#total").val(parseFloat(totalOrden).toFixed(2)); 
                 },
                 "json"
             );
