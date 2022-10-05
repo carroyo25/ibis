@@ -71,7 +71,6 @@
 
         public function insertar($cabecera,$detalles,$series,$cerrar){
             try {
-                //$indice = $this->lastInsertId("SELECT MAX(id_regmov) AS id FROM lg_ordencab");
                 $indice = $this->lastInsertId("SELECT MAX(id_regalm) AS id FROM alm_recepcab");
 
                 $fecha = explode("-",$cabecera['fecha']); 
@@ -225,7 +224,7 @@
                         $sql = $this->db->connect()->prepare("INSERT INTO alm_recepdet SET id_regalm=:id,ncodalm1=:almacen,id_cprod=:cprod,ncantidad=:cantidad,
                                                                                             niddetaPed=:itempedido,niddetaOrd=:itemorden,nflgactivo=:flag,
                                                                                             nsaldo=:saldo,cObserva=:observacion,fVence=:vencimiento,
-                                                                                            nestadoreg=:estado");
+                                                                                            nestadoreg=:estado,orden=:idorden,pedido=:idpedido");
                         $sql ->execute(["id"=>$id,
                                         "almacen"=>$datos[$i]->almacen,
                                         "cprod"=>$datos[$i]->idprod,
@@ -236,7 +235,9 @@
                                         "saldo"=>$datos[$i]->cantsol-$datos[$i]->cantrec,
                                         "observacion"=>$datos[$i]->obser,
                                         "vencimiento"=>$datos[$i]->vence,
-                                        "estado"=>$datos[$i]->nestado]);
+                                        "estado"=>$datos[$i]->nestado,
+                                        "idorden"=>$datos[$i]->orden,
+                                        "idpedido"=>$datos[$i]->pedido]);
                    
                 } catch (PDOException $th) {
                     echo "Error: ".$th->getMessage();
@@ -302,14 +303,23 @@
                 $sql->execute(["usr"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowCount();
 
+
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()) {
-                        $salida.='<tr data-orden="'.$rs['id_regmov'].'">
+                        //compara la orden si fue ingresada completa y no la muestra
+
+                        $diferencia_ingreso = $this->calcularIngresosOrden($rs['id_regmov']) - $this->calcularCantidadIngresa($rs['id_regmov']);
+
+                        if (($diferencia_ingreso) > 0 ) {
+                            $salida.='<tr data-orden="'.$rs['id_regmov'].'">
                                     <td class="textoCentro">'.$rs['cnumero'].'</td>
                                     <td class="textoCentro">'.$rs['ffechadoc'].'</td>
                                     <td class="pl20px">'.$rs['area'].'</td>
                                     <td class="pl20px">'.$rs['costos'].'</td>
                                 </tr>';
+                        }
+
+                        
                     }
                 }
                 return $salida;
@@ -395,38 +405,54 @@
                 $estados = $this->listarSelect(13,96);
 
                 $sql = $this->db->connect()->prepare("SELECT
-                                                lg_ordendet.nitemord,
-                                                lg_ordendet.id_regmov,
-                                                lg_ordendet.niddeta,
-                                                lg_ordendet.nidpedi,
-                                                lg_ordendet.id_cprod,
-                                                lg_ordendet.id_orden,
-                                                FORMAT(lg_ordendet.nsaldo,2) AS nsaldo,
-                                                cm_producto.ccodprod,
-                                                UPPER(CONCAT_WS(' ',cm_producto.cdesprod,tb_pedidodet.observaciones,tb_pedidodet.docEspec)) AS cdesprod,
-                                                cm_producto.nund,
-                                                tb_unimed.cabrevia,
-                                                tb_pedidodet.idpedido,
-                                                tb_pedidodet.nroparte,
-                                                FORMAT(lg_ordendet.ncanti,2) AS cantidad
-                                            FROM
-                                                lg_ordendet
+                                                    lg_ordendet.nitemord,
+                                                    lg_ordendet.id_regmov,
+                                                    lg_ordendet.niddeta,
+                                                    lg_ordendet.nidpedi,
+                                                    lg_ordendet.id_cprod,
+                                                    lg_ordendet.id_orden,
+                                                    cm_producto.ccodprod,
+                                                    UPPER(
+                                                        CONCAT_WS(
+                                                            ' ',
+                                                            cm_producto.cdesprod,
+                                                            tb_pedidodet.observaciones,
+                                                            tb_pedidodet.docEspec
+                                                        )
+                                                    ) AS cdesprod,
+                                                    cm_producto.nund,
+                                                    tb_unimed.cabrevia,
+                                                    tb_pedidodet.idpedido,
+                                                    tb_pedidodet.nroparte,
+                                                    FORMAT(lg_ordendet.ncanti, 2) AS cantidad,
+                                                    recepcion.pendiente AS saldo,
+                                                    @id := lg_ordendet.nitemord AS idorden,
+                                                    recepcion.pendiente
+                                                FROM
+                                                    lg_ordendet
                                                 INNER JOIN cm_producto ON lg_ordendet.id_cprod = cm_producto.id_cprod
                                                 INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
-                                                INNER JOIN tb_pedidodet ON lg_ordendet.niddeta = tb_pedidodet.iditem 
-                                            WHERE
-                                                lg_ordendet.id_orden =:id");
+                                                INNER JOIN tb_pedidodet ON lg_ordendet.niddeta = tb_pedidodet.iditem
+                                                LEFT JOIN ( SELECT SUM(alm_recepdet.ncantidad) AS pendiente,niddetaOrd FROM alm_recepdet
+                                                    WHERE
+                                                        alm_recepdet.niddetaOrd = @id
+                                                ) AS recepcion ON lg_ordendet.nitemord = recepcion.niddetaOrd
+                                                WHERE
+                                                    lg_ordendet.id_orden = :id");
                 $sql->execute(["id"=>$id]);
                 
                 $rowCount = $sql->rowCount();
+
                 if ($rowCount > 0) {
                     $item=1;
+                    
                     while ($rs = $sql->fetch()){
-                        if ( $rs['nsaldo'] > 0) {
-                            $salida.='<tr data-detorden="'.$rs['id_orden'].'" 
+                        $saldo = $rs['cantidad']-$this->calcularSaldosIngresados($rs['nitemord']);
+                        if ( $saldo > 0) {
+                            $salida.='<tr data-detorden="'.$rs['nitemord'].'" 
                                         data-idprod="'.$rs['id_cprod'].'"
                                         data-iddetped="'.$rs['niddeta'].'"
-                                        data-saldo="'.$rs['nsaldo'].'">
+                                        data-saldo="'.$saldo.'">
                                     <td class="textoCentro"><a href="'.$rs['id_orden'].'"><i class="fas fa-barcode"></i></a></td>
                                     <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
                                     <td class="textoCentro">'.$rs['ccodprod'].'</td>
@@ -434,16 +460,57 @@
                                     <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                     <td class="textoDerecha pr20px">'.$rs['cantidad'].'</td>
                                     <td><input type="number" step="any" placeholder="0.00" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"></td>
-                                    <td class="textoDerecha pr20px">'.$rs['nsaldo'].'</td>
+                                    <td class="textoDerecha pr20px">'.$saldo.'</td>
                                     <td><input type="text"></td>
                                     <td></td>
                                 </tr>';
                         }
-                        
                     }
                 }
 
                 return $salida;
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        //calcula los saldos de los items
+        private function calcularSaldosIngresados($id){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT SUM(alm_recepdet.ncantidad) AS pendiente,niddetaOrd FROM alm_recepdet
+                                                        WHERE alm_recepdet.niddetaOrd =:id");
+                $sql->execute(["id"=>$id]);
+                $result = $sql->fetchAll();
+
+                return $result[0]['pendiente'];
+
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        private function calcularIngresosOrden($id){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT SUM(lg_ordendet.ncanti) AS cantidad_orden FROM lg_ordendet WHERE id_regmov =:id");
+                $sql->execute(["id"=>$id]);
+                $result = $sql->fetchAll();
+
+                return $result[0]['cantidad_orden'];
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        private function calcularCantidadIngresa($id) {
+            try {
+                $sql = $this->db->connect()->prepare("SELECT SUM(alm_recepdet.ncantidad) AS recepcionado_orden FROM alm_recepdet WHERE orden =:id");
+                $sql->execute(["id"=>$id]);
+                $result = $sql->fetchAll();
+
+                return $result[0]['recepcionado_orden'];
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
                 return false;

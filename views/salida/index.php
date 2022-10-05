@@ -44,7 +44,7 @@
                                 <p><i class="far fa-save"></i> Grabar </p> 
                             </button>
                             <button type="button" id="importData" title="Importar Orden" class="boton3">
-                                <i class="fab fa-wpexplorer"></i> Importar Nota
+                                <i class="fab fa-wpexplorer"></i> Importar Items
                             </button>
                             <button type="button" id="preview" title="Vista Previa" class="boton3">
                                 <i class="far fa-file-pdf"></i> Vista Previa
@@ -181,7 +181,7 @@
                                         <th class="">Codigo</th>
                                         <th class="">Descripcion</th>
                                         <th class="">Unidad</th>
-                                        <th width="7%">Cantidad</br>Ingresada</th>
+                                        <th width="7%">Cantidad</br>Recepcionada</th>
                                         <th width="7%">Cantidad</br>Despachada</th>
                                         <th class="">Observaciones</th>
                                 </tr>
@@ -397,8 +397,8 @@
     <div class="cabezaModulo">
         <h1>Notas de Salida</h1>
         <div>
-            <a href="#" id="nuevoRegistro"><i class="far fa-file"></i></a>
-            <a href="#" id="irInicio"><i class="fas fa-home"></i></a>
+            <a href="#" id="nuevoRegistro"><i class="far fa-file"></i><p>Nuevo</p></a>
+            <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
         </div>
     </div>
     <div class="barraTrabajo">

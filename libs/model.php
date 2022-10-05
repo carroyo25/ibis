@@ -2297,10 +2297,11 @@
                                                             tb_pedidodet.docEspec
                                                         )
                                                     ) AS cdesprod,
-                                                    FORMAT(lg_ordendet.ncanti, 2) AS cantidad,
+                                                    FORMAT(lg_ordendet.ncanti, 2) AS cantidad_orden,
                                                     tb_unimed.cabrevia,
                                                     alm_recepdet.cobserva,
-                                                    alm_recepdet.fvence
+                                                    alm_recepdet.fvence,
+                                                    FORMAT(lg_ordendet.ncanti - alm_recepdet.ncantidad,2) AS saldo_ingresar
                                                 FROM
                                                     alm_recepdet
                                                 INNER JOIN tb_pedidodet ON alm_recepdet.niddetaPed = tb_pedidodet.iditem
@@ -2328,7 +2329,7 @@
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="pl20px">'.$rs['cdesprod'].'</td>
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
-                                        <td class="pr20px textoDerecha">'.$rs['cantidad'].'</td>
+                                        <td class="pr20px textoDerecha">'.$rs['cantidad_orden'].'</td>
                                         <td class="pr5px"><input type="text" class="textoDerecha" value="'.$rs['ncantidad'].'" readonly></td>
                                         <td class="pr20px textoDerecha"></td>
                                         <td><input type="text" value="'.$rs['cobserva'].'"></td>

@@ -198,7 +198,6 @@
                                                         alm_recepdet.niddetaPed,
                                                         alm_recepdet.niddetaOrd,
                                                         alm_recepdet.niddeta,
-                                                        alm_recepdet.nsaldo,
                                                         cm_producto.ccodprod,
                                                         FORMAT(alm_recepdet.ncantidad, 2) AS cantidad,
                                                         UPPER(
@@ -237,13 +236,13 @@
                                         data-idproducto ="'.$rs['id_cprod'].'"
                                         data-recepcion ="'.$rs['id_regalm'].'">
                                         <td class="textoCentro"><input type="checkbox"></td>
-                                        <td class="textoCentro">'.str_pad($item,3,0,STR_PAD_LEFT).'</td>
+                                        <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="pl20px">'.$rs['cdesprod'].' '.$series.'</td>
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                         <td class="textoDerecha pr20px">'.$rs['cantidad'].'</td>
                                         <td><input type="number" step="any" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"
-                                            value="'.$rs['nsaldo'].'"></td>
+                                            value=""></td>
                                         <td class="pl20px"><input type="text"></td>
                                     </tr>';
                     }
@@ -379,7 +378,7 @@
             $despachos  = $this->listarNotasDespacho();
 
             return $despachos;
-    }
+        }   
 
         public function generarPdfSalida($cabecera,$detalles,$condicion){
             require_once("public/formatos/notasalida.php");

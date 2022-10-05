@@ -140,7 +140,6 @@ $(function() {
             function (data, textStatus, jqXHR) {
                 $("#codigo_costos").val(data.cabecera[0].ncodpry);
                 $("#codigo_area").val(data.cabecera[0].ncodarea);
-                //$("#codigo_aprueba").val(data.cabecera[0].aprueba);
                 $("#codigo_almacen").val(data.cabecera[0].ncodalm1);
                 $("#codigo_pedido").val(data.cabecera[0].idref_pedi);
                 $("#codigo_orden").val(data.cabecera[0].idref_abas);
@@ -148,7 +147,6 @@ $(function() {
                 $("#costos").val(data.cabecera[0].proyecto);
                 $("#area").val(data.cabecera[0].area);
                 $("#solicita").val(data.cabecera[0].solicita);
-                //$("#aprueba").val(data.cabecera[0].cnombres);
                 $("#almacen_origen_despacho").val(data.cabecera[0].almacen);
                 $("#pedido").val(data.cabecera[0].pedido);
                 $("#fecha_pedido").val(data.cabecera[0].emision);
@@ -161,7 +159,6 @@ $(function() {
                 $("#movimiento").val(data.movimiento);
 
                 $("#tablaDetalles tbody")
-                    .empty()
                     .append(data.detalles)
 
                 $("#busqueda").fadeOut();
