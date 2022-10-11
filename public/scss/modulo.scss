@@ -323,6 +323,22 @@ $culminado:#55A5E2;
         }
     }
 
+    .dosConsultas{
+        color: $blanco;
+        padding: 5px 15px;
+        display:grid;
+        grid-template-columns: 150px .5fr 150px 1fr;
+        gap: 20px;
+
+        input{
+            height: 2rem;
+            outline: none;
+            border:none;
+            padding-left: 20px;
+            border-radius: 8px;
+        }
+    }
+
     .variasConsultas{
         color: $blanco;
         padding: 5px 15px;

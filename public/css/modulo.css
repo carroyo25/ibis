@@ -352,6 +352,22 @@
   padding-left: 20px;
   border-radius: 8px;
 }
+.barraTrabajo .dosConsultas {
+  color: #fff;
+  padding: 5px 15px;
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 150px 20px 0.5fr 20px 150px 20px 1fr;
+  grid-template-columns: 150px 0.5fr 150px 1fr;
+  gap: 20px;
+}
+.barraTrabajo .dosConsultas input {
+  height: 2rem;
+  outline: none;
+  border: none;
+  padding-left: 20px;
+  border-radius: 8px;
+}
 .barraTrabajo .variasConsultas {
   color: #fff;
   padding: 5px 15px;
