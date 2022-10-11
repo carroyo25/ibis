@@ -69,5 +69,13 @@
             echo $this->model->buscarItemRecepcion($_POST['indice']);
         }
 
+        //esto se usara para todos los documentos
+        function ultimoIndice(){
+            $indice = $this->model->lastInsertId("SELECT MAX(id_regalm) AS id FROM alm_despachocab"); 
+            $indice = gettype($indice) == "NULL" ? 1 : $indice;
+
+            echo str_pad($indice,6,0,STR_PAD_LEFT);
+        }
+
     }
 ?>

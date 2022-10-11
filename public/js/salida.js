@@ -11,7 +11,8 @@ $(function() {
         $.post(RUTA+"salida/salidaId", {id:$(this).data("indice")},
             function (data, textStatus, jqXHR) {
                 
-                let estado = "textoCentro w100por estado " + data.cabecera[0].cabrevia;
+                let estado = "textoCentro w100por estado " + data.cabecera[0].cabrevia,
+                    numero = $.strPad(data.cabecera[0].id_regalm,6);
                 
                 $("#codigo_costos").val(data.cabecera[0].ncodpry);
                 $("#codigo_area").val(data.cabecera[0].ncodarea);
@@ -25,10 +26,10 @@ $(function() {
                 $("#codigo_entidad").val(data.cabecera[0].id_centi);
                 $("#codigo_ingreso").val(data.cabecera[0].idref_abas);
                 $("#codigo_salida").val(data.cabecera[0].id_regalm);
-                $("#almacen_origen_despacho").val(data.cabecera[0].almacen);
+                $("#almacen_origen_despacho").val(data.cabecera[0].origen);
                 $("#almacen_destino_despacho").val(data.cabecera[0].destino);
                 $("#fecha").val(data.cabecera[0].ffecdoc);
-                $("#numero").val(data.cabecera[0].nnronota);
+                $("#numero").val(numero);
                 $("#costos").val(data.cabecera[0].costos);
                 $("#area").val(data.cabecera[0].area);
                 $("#solicita").val(data.cabecera[0].nombres);
@@ -39,7 +40,7 @@ $(function() {
                 $("#razon").val(data.cabecera[0].crazonsoc);
                 $("#concepto").val(data.cabecera[0].concepto);
                 $("#aprueba").val(data.cabecera[0].cnombres);
-                $("#tipo").val(data.cabecera[0].cdescripcion);
+                $("#tipo").val(data.cabecera[0].tipo_movimiento);
                 $("#estado").val(data.cabecera[0].estado);
                 $("#movimiento").val(data.cabecera[0].movimiento);
                 $("#fecha_pedido").val(data.cabecera[0].emision);
@@ -60,8 +61,6 @@ $(function() {
         accion = "u";
         grabado = true;
 
-        console.log(accion);
-        
         $("#proceso").fadeIn();
 
         return false;
@@ -106,16 +105,25 @@ $(function() {
         e.preventDefault();
         
         if ( accion == 'n') {
-            $.post(RUTA+"salida/ingresos",{ccostos:$("#codigo_costos").val()},
-            function (data, textStatus, jqXHR) {
-                $("#notas tbody")
-                    .empty()
-                    .append(data);
+            try {
 
-                $("#busqueda").fadeIn();
-            },
-            "text"
-        );
+                if ( $("#codigo_costos").val() == "" ) throw "Elija un centro de costos";
+
+                $.post(RUTA+"salida/ingresos",{ccostos:$("#codigo_costos").val()},
+                function (data, textStatus, jqXHR) {
+                    $("#notas tbody")
+                        .empty()
+                        .append(data);
+
+                    $("#busqueda").fadeIn();
+                },
+                "text"
+                );
+                
+            } catch (error) {
+                mostrarMensaje(error,'mensaje_error');
+            }
+                
         }else{
             mostrarMensaje('El despacho se esta procesando','mensaje_error');
         }
@@ -278,11 +286,9 @@ $(function() {
             });
             
             if (accion == 'n'){
-                if (result['codigo_ingreso'] == "") throw "debe grabar la nota de despacho";
                 if (result['codigo_movimiento'] == "") throw "Elija el tipo de movimiento";
-                if (result['codigo_ingreso'] == "") throw "Seleccione una nota de ingreso";
                 if (result['codigo_aprueba'] == "") throw "Seleccione la persona que aprueba";
-                if (result['codigo_almacen_destino'] == "") throw "Seleccione la persona que aprueba";
+                if (result['codigo_almacen_destino'] == "") throw "Seleccione el almacen destino";
             
                 $.post(RUTA+"salida/nuevaSalida", {cabecera:result,
                                                 detalles:JSON.stringify(detalles())},
@@ -434,13 +440,13 @@ $(function() {
 
     $("#tablaDetalles tbody").on('keypress','input', function (e) {
         if (e.which == 13) {
-            let cant = parseFloat($(this).parent().parent().find("td").eq(5).text()) - $(this).parent().parent().find("td").eq(6).children().val();
+            let cant = parseFloat($(this).parent().parent().find("td").eq(6).text()) - $(this).parent().parent().find("td").eq(7).children().val();
             
             try {
                 if (cant < 0) throw "Error en el ingreso";
 
-                $(this).parent().parent().find("td").eq(7).text(cant.toFixed(2));
-                $(this).parent().parent().find("td").eq(7).text($(this).parent().parent().data("saldo"));
+                $(this).parent().parent().find("td").eq(8).text(cant.toFixed(2));
+                //$(this).parent().parent().find("td").eq(7).text($(this).parent().parent().data("saldo"));
 
 
             } catch (error) {
@@ -464,6 +470,13 @@ $(function() {
 
         if(contenedor_padre == "listaCostos"){
             $("#codigo_costos").val(codigo);
+
+            $.post(RUTA+"salida/ultimoIndice",
+                function (data, text, requestXHR) {
+                    $("#numero").val(data);
+                },
+                "text"
+            );
         }
 
         return false;
@@ -478,16 +491,18 @@ detalles = () =>{
     
     TABLA.each(function(){
         let ITEM        = $(this).find('td').eq(1).text(),
-            IDDETORDEN  = $(this).data("itemorden"),
-            IDDETPED    = $(this).data("itempedido"),
+            IDDETORDEN  = $(this).data("idorden"),
+            IDDETPED    = $(this).data("idpedido"),
             IDPROD      = $(this).data("idproducto"),
-            IDINGRESO = $(this).data("itemingreso"),
-            PEDIDO      = $("#codigo_pedido").val(),
-            ORDEN       = $("#codigo_orden").val(),
+            IDINGRESO   = $(this).data("idingreso"),
+            PEDIDO      = $(this).data("pedido"),
+            ORDEN       = $(this).data("orden"),
+            INGRESO     = $(this).data("ingreso"),
             ALMACEN     = $("#codigo_almacen").val(),
-            INGRESO     = $("#codigo_ingreso").val(),
-            CANTIDAD    = $(this).find('td').eq(6).children().val(),// cantidad
-            OBSER       = $(this).find('td').eq(7).children().val(),
+            CANTIDAD    = $(this).find('td').eq(5).text(),// cantidad
+            CANTDESP    = $(this).find('td').eq(7).children().val(),
+            SALDO       = $(this).find('td').eq(8).text(),
+            OBSER       = $(this).find('td').eq(9).children().val(),
             VENCE       = "",
             SERIE       = "",
             CODIGO      = $(this).find('td').eq(2).text(),//codigo
@@ -497,23 +512,23 @@ detalles = () =>{
             CESTADO     = '',
             UBICACION   = "",
             DESTINO     = $("#codigo_almacen_destino").val(),
-            CANTDESP    = $(this).find('td').eq(5).text();
     
         item = {};
 
         item['item']        = ITEM;
         item['iddetorden']  = IDDETORDEN;
         item['iddetped']    = IDDETPED;
-        item['iddetingreso']= IDINGRESO;
+        item['idingreso']   = IDINGRESO;
         item['idprod']      = IDPROD;
         item['pedido']      = ORDEN;
         item['orden']       = PEDIDO;
+        item['ingreso']     = INGRESO;
         item['almacen']     = ALMACEN;
         item['cantidad']    = CANTIDAD;
         item['obser']       = OBSER;
         item['vence']       = VENCE;
         item['serie']       = SERIE;
-        item['ingreso']     = INGRESO;
+        
 
         item['codigo']     = CODIGO;
         item['descripcion']= DESCRIPCION;
@@ -524,6 +539,7 @@ detalles = () =>{
         item['cantdesp']   = CANTDESP;
 
         item['destino'] = DESTINO;
+        item['saldo']   = SALDO;
 
         DETALLES.push(item);
     })

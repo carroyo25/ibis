@@ -11,53 +11,50 @@
             try {
                 $sql = $this->db->connect()->prepare("SELECT
                                                         alm_despachocab.id_regalm,
-                                                        tb_costusu.id_cuser,
-                                                        LPAD(alm_despachocab.nnronota,6,0) AS salida,
-                                                        UPPER(
-                                                        CONCAT_WS( ' ', tb_proyectos.ccodproy, tb_proyectos.cdesproy )) AS costos,
-                                                        UPPER(
-                                                        CONCAT_WS( ' ', tb_area.ccodarea, tb_area.cdesarea )) AS area,
-                                                        alm_despachocab.ffecdoc,
-                                                        LPAD(alm_despachocab.nnromov,4,0) AS movimiento,
-                                                        UPPER(
-                                                        CONCAT_WS( ' ', tb_almacen.ccodalm, tb_almacen.cdesalm )) AS almacen,
-                                                        YEAR ( alm_despachocab.ffecdoc ) AS anio,
-                                                        lg_ordencab.cnumero AS orden,
+                                                        alm_despachocab.cmes,
+                                                        DATE_FORMAT(
+                                                            alm_despachocab.ffecdoc,
+                                                            '%d/%m/%Y'
+                                                        ) AS ffecdoc,
+                                                        YEAR(ffecdoc) AS anio,
+                                                        alm_despachocab.ncodpry,
+                                                        UPPER(origen.cdesalm) AS origen,
+                                                        alm_despachocab.nEstadoDoc,
                                                         alm_despachocab.cnumguia,
-                                                        LPAD(tb_pedidocab.nrodoc,6,0) AS pedido,
-                                                        UPPER( tb_pedidocab.concepto ) concepto,
+                                                        UPPER(destino.cdesalm) AS destino,
+                                                        UPPER(
+                                                            CONCAT_WS(
+                                                                ' ',
+                                                                tb_proyectos.cdesproy,
+                                                                tb_proyectos.ccodproy
+                                                            )
+                                                        ) AS costos,
                                                         tb_parametros.cdescripcion,
                                                         tb_parametros.cabrevia
                                                     FROM
                                                         tb_costusu
-                                                        INNER JOIN alm_despachocab ON tb_costusu.ncodproy = alm_despachocab.ncodpry
-                                                        INNER JOIN tb_proyectos ON alm_despachocab.ncodpry = tb_proyectos.nidreg
-                                                        INNER JOIN tb_area ON alm_despachocab.ncodarea = tb_area.ncodarea
-                                                        INNER JOIN tb_almacen ON alm_despachocab.ncodalm1 = tb_almacen.ncodalm
-                                                        INNER JOIN lg_ordencab ON alm_despachocab.idref_ord = lg_ordencab.id_regmov
-                                                        INNER JOIN tb_pedidocab ON alm_despachocab.idref_pedi = tb_pedidocab.idreg
-                                                        INNER JOIN tb_parametros ON alm_despachocab.nEstadoDoc = tb_parametros.nidreg 
+                                                    INNER JOIN alm_despachocab ON tb_costusu.ncodproy = alm_despachocab.ncodpry
+                                                    INNER JOIN tb_almacen AS origen ON alm_despachocab.ncodalm1 = origen.ncodalm
+                                                    INNER JOIN tb_almacen AS destino ON alm_despachocab.ncodalm2 = destino.ncodalm
+                                                    INNER JOIN tb_proyectos ON alm_despachocab.ncodpry = tb_proyectos.nidreg
+                                                    INNER JOIN tb_parametros ON alm_despachocab.nEstadoDoc = tb_parametros.nidreg
                                                     WHERE
-                                                        tb_costusu.id_cuser = :usr 
-                                                        AND tb_costusu.nflgactivo = 1
-                                                        AND alm_despachocab.nEstadoDoc = 62");
+                                                        tb_costusu.nflgactivo = 1
+                                                    AND tb_costusu.id_cuser = :usr
+                                                    AND alm_despachocab.nEstadoDoc = 62");
                 $sql->execute(["usr"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()){
                         $salida .='<tr data-indice="'.$rs['id_regalm'].'" class="pointer">
-                                        <td class="textoCentro">'.$rs['salida'].'</td>
+                                        <td class="textoCentro">'.str_pad($rs['id_regalm'],6,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.date("d/m/Y", strtotime($rs['ffecdoc'])).'</td>
-                                        <td class="textoCentro">'.$rs['movimiento'].'</td>
-                                        <td class="pl20px">'.$rs['almacen'].'</td>
+                                        <td class="textoCentro">'.$rs['destino'].'</td>
+                                        <td class="pl20px">'.$rs['destino'].'</td>
                                         <td class="pl20px">'.$rs['costos'].'</td>
                                         <td class="textoCentro">'.$rs['anio'].'</td>
-                                        <td class="textoCentro">'.$rs['orden'].'</td>
                                         <td class="textoCentro">'.$rs['cnumguia'].'</td>
-                                        <td class="textoCentro">'.$rs['pedido'].'</td>
-                                        <td class="textoCentro"></td>
-                                        <td class="textoCentro">'.$rs['concepto'].'</td>
                                         <td class="textoCentro '.$rs['cabrevia'].'">'.$rs['cdescripcion'].'</td>
                                     </tr>';
                     }
@@ -124,52 +121,62 @@
         public function importarItemIngresos($costos){
             try {
                 $salida = "";
+                
                 $sql = $this->db->connect()->prepare("SELECT
-                                                alm_recepdet.niddeta,
-                                                alm_recepcab.ncodpry,
-                                                alm_recepdet.ncantidad,
-                                                alm_recepdet.id_cprod,
-                                                UPPER(
-                                                    CONCAT_WS(
-                                                        ' ',
-                                                        cm_producto.cdesprod,
-                                                        tb_pedidodet.observaciones
-                                                    )
-                                                ) AS descripcion,
-                                                cm_producto.ccodprod,
-                                                tb_unimed.cabrevia,
-                                                UPPER(CONCAT_WS(' ',tb_proyectos.ccodproy,tb_proyectos.cdesproy)) AS costos,
-                                                UPPER(tb_area.cdesarea) AS area,
-                                                tb_area.ccodarea,
-                                                tb_pedidocab.concepto,
-                                                LPAD(alm_recepdet.orden, 6, 0) AS orden,
-                                                LPAD(tb_pedidocab.idreg, 6, 0) AS pedido,
-                                                LPAD(alm_recepcab.id_regalm, 6, 0) AS nota_ingreso,
-                                                tb_partidas.cdescripcion AS partida,
-                                                DATE_FORMAT(
-                                                    alm_recepcab.ffecdoc,
-                                                    '%d/%m/%Y'
-                                                ) AS fecha_recepcion,
-                                                alm_recepcab.ncodalm1 AS codigo_almacen_origen,
-                                                UPPER(tb_almacen.cdesalm) AS almacen_origen
-                                            FROM
-                                                tb_costusu
-                                            INNER JOIN alm_recepcab ON tb_costusu.ncodproy = alm_recepcab.ncodpry
-                                            INNER JOIN alm_recepdet ON alm_recepcab.id_regalm = alm_recepdet.id_regalm
-                                            INNER JOIN cm_producto ON alm_recepdet.id_cprod = cm_producto.id_cprod
-                                            INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
-                                            INNER JOIN tb_pedidodet ON alm_recepdet.niddetaPed = tb_pedidodet.iditem
-                                            INNER JOIN tb_proyectos ON tb_pedidodet.idcostos = tb_proyectos.nidreg
-                                            INNER JOIN tb_area ON tb_pedidodet.idarea = tb_area.ncodarea
-                                            INNER JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
-                                            INNER JOIN lg_ordencab ON tb_pedidocab.idorden = lg_ordencab.id_regmov
-                                            LEFT JOIN tb_partidas ON tb_pedidocab.idpartida = tb_partidas.idreg
-                                            INNER JOIN tb_almacen ON alm_recepcab.ncodalm1 = tb_almacen.ncodalm
-                                            WHERE
-                                                tb_costusu.nflgactivo = 1
-                                            AND tb_costusu.id_cuser =:user
-                                            AND alm_recepcab.nEstadoDoc = 62
-                                            AND alm_recepcab.ncodpry =:costos");
+                                                        alm_recepdet.niddeta,
+                                                        alm_recepcab.ncodpry,
+                                                        alm_recepdet.ncantidad,
+                                                        alm_recepdet.id_cprod,
+                                                        UPPER(
+                                                            CONCAT_WS(
+                                                                ' ',
+                                                                cm_producto.cdesprod,
+                                                                tb_pedidodet.observaciones
+                                                            )
+                                                        ) AS descripcion,
+                                                        cm_producto.ccodprod,
+                                                        tb_unimed.cabrevia,
+                                                        UPPER(
+                                                            CONCAT_WS(
+                                                                ' ',
+                                                                tb_proyectos.ccodproy,
+                                                                tb_proyectos.cdesproy
+                                                            )
+                                                        ) AS costos,
+                                                        UPPER(tb_area.cdesarea) AS area,
+                                                        tb_area.ccodarea,
+                                                        tb_pedidocab.concepto,
+                                                        LPAD(alm_recepdet.orden, 6, 0) AS orden,
+                                                        LPAD(tb_pedidocab.idreg, 6, 0) AS pedido,
+                                                        LPAD(alm_recepcab.id_regalm, 6, 0) AS nota_ingreso,
+                                                        tb_partidas.cdescripcion AS partida,
+                                                        DATE_FORMAT(
+                                                            alm_recepcab.ffecdoc,
+                                                            '%d/%m/%Y'
+                                                        ) AS fecha_recepcion,
+                                                        alm_recepcab.ncodalm1 AS codigo_almacen_origen,
+                                                        UPPER(tb_almacen.cdesalm) AS almacen_origen,
+                                                        alm_despachodet.nsaldo
+                                                    FROM
+                                                        tb_costusu
+                                                    INNER JOIN alm_recepcab ON tb_costusu.ncodproy = alm_recepcab.ncodpry
+                                                    INNER JOIN alm_recepdet ON alm_recepcab.id_regalm = alm_recepdet.id_regalm
+                                                    INNER JOIN cm_producto ON alm_recepdet.id_cprod = cm_producto.id_cprod
+                                                    INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                    INNER JOIN tb_pedidodet ON alm_recepdet.niddetaPed = tb_pedidodet.iditem
+                                                    INNER JOIN tb_proyectos ON tb_pedidodet.idcostos = tb_proyectos.nidreg
+                                                    INNER JOIN tb_area ON tb_pedidodet.idarea = tb_area.ncodarea
+                                                    INNER JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
+                                                    INNER JOIN lg_ordencab ON tb_pedidocab.idorden = lg_ordencab.id_regmov
+                                                    LEFT JOIN tb_partidas ON tb_pedidocab.idpartida = tb_partidas.idreg
+                                                    INNER JOIN tb_almacen ON alm_recepcab.ncodalm1 = tb_almacen.ncodalm
+                                                    LEFT JOIN alm_despachodet ON alm_recepdet.niddeta = alm_despachodet.niddetaIng
+                                                    WHERE
+                                                        tb_costusu.nflgactivo = 1
+                                                    AND tb_costusu.id_cuser = :user
+                                                    AND alm_recepcab.nEstadoDoc = 62
+                                                    AND alm_recepcab.ncodpry = :costos
+                                                    AND (alm_despachodet.nsaldo > 0 OR ISNULL(alm_despachodet.nsaldo))");
                 $sql->execute(["user"=>$_SESSION['iduser'],
                                 "costos"=>$costos]);
                 $rowCount = $sql->rowCount();
@@ -177,7 +184,14 @@
 
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()) {
-                        $salida .='<tr class="pointer" 
+                        $sw = false;
+
+                        if ( $this->calcularDespachos($rs['niddeta']) == $rs['ncantidad']) {  
+                            $sw = true;
+                        } ;
+
+                        if (!$sw) {
+                            $salida .='<tr class="pointer" 
                                             data-indice="'.$rs['niddeta'].'"
                                             data-codigocostos="'.$rs['ncodpry'].'"
                                             data-codigoarea="'.$rs['ccodarea'].'"
@@ -195,75 +209,12 @@
                                         <td class="pl20px">'.$rs['ccodprod'].'</td>
                                         <td class="pl20px">'.$rs['descripcion'].'</td>
                                    </tr>';
+                        }
+                        
                     }
                 }
 
                 return $salida;
-            } catch (PDOException $th) {
-                echo "Error: ".$th->getMessage();
-                return false;
-            }
-        }
-
-        public function llamarNotaIngresoId($id){
-            try {
-                $sql = $this->db->connect()->prepare("SELECT
-                                            ibis.alm_recepcab.id_regalm,
-                                            ibis.alm_recepcab.nnronota,
-                                            ibis.alm_recepcab.cper,
-                                            ibis.alm_recepcab.cmes,
-                                            ibis.alm_recepcab.ffecdoc,
-                                            ibis.alm_recepcab.id_userAprob AS aprueba,
-                                            ibis.alm_recepcab.nEstadoDoc,
-                                            UPPER(
-                                            CONCAT_WS( ' ', ibis.tb_proyectos.ccodproy, ibis.tb_proyectos.cdesproy )) AS proyecto,
-                                            UPPER(
-                                            CONCAT_WS( ' ', ibis.tb_area.ccodarea, ibis.tb_area.cdesarea )) AS area,
-                                            ibis.tb_user.cnombres,
-                                            LPAD( ibis.tb_pedidocab.nrodoc, 6, 0 ) AS pedido,
-                                            CONCAT_WS( ' ', rrhh.tabla_aquarius.nombres, rrhh.tabla_aquarius.apellidos ) AS solicita,
-                                            UPPER( ibis.tb_almacen.cdesalm ) AS almacen,
-                                            UPPER( ibis.tb_pedidocab.concepto ) AS concepto,
-                                            ibis.tb_parametros.cdescripcion,
-                                            ibis.tb_parametros.cabrevia,
-                                            ibis.lg_ordencab.cnumero AS orden,
-                                            ibis.lg_ordencab.ffechadoc,
-                                            ibis.tb_pedidocab.emision,
-                                            ibis.alm_recepcab.ncodpry,
-                                            ibis.alm_recepcab.ncodarea,
-                                            ibis.alm_recepcab.ncodalm1,
-                                            ibis.alm_recepcab.idref_pedi,
-                                            ibis.alm_recepcab.idref_abas,
-                                            ibis.alm_recepcab.cnumguia 
-                                        FROM
-                                            ibis.alm_recepcab
-                                            INNER JOIN ibis.tb_proyectos ON ibis.alm_recepcab.ncodpry = ibis.tb_proyectos.nidreg
-                                            INNER JOIN ibis.tb_area ON ibis.alm_recepcab.ncodarea = ibis.tb_area.ncodarea
-                                            INNER JOIN ibis.tb_user ON ibis.alm_recepcab.id_userAprob = ibis.tb_user.iduser
-                                            INNER JOIN ibis.tb_pedidocab ON ibis.alm_recepcab.idref_pedi = ibis.tb_pedidocab.idreg
-                                            INNER JOIN rrhh.tabla_aquarius ON ibis.tb_pedidocab.idsolicita = rrhh.tabla_aquarius.internal
-                                            INNER JOIN ibis.tb_almacen ON ibis.alm_recepcab.ncodalm1 = ibis.tb_almacen.ncodalm
-                                            INNER JOIN ibis.tb_parametros ON ibis.alm_recepcab.nEstadoDoc = ibis.tb_parametros.nidreg
-                                            INNER JOIN ibis.lg_ordencab ON ibis.alm_recepcab.idref_abas = ibis.lg_ordencab.id_regmov 
-                                        WHERE
-                                            ibis.alm_recepcab.id_regalm = :id 
-                                            AND ibis.alm_recepcab.nEstadoDoc = 62");
-                                        $sql->execute(["id"=>$id]);
-            
-            $docData = array();
-
-            while($row=$sql->fetch(PDO::FETCH_ASSOC)){
-                $docData[] = $row;
-            }
-
-            $query = "SELECT COUNT( alm_despachocab.id_regalm ) AS numero FROM alm_despachocab WHERE ncodalm1 =:cod";
-            $movimiento = $this->genNumberSalidas($docData[0]["ncodalm1"]) + $this->genNumberIngresos($docData[0]["ncodalm1"]);
-            //$series = $this->buscarSeries(414,1,3);
-
-            return array("cabecera"=>$docData,
-                        "detalles"=>$this->detallesNotaIngreso($id),
-                        "movimiento"=>str_pad($movimiento,6,0,STR_PAD_LEFT),
-                        "numero"=>$this->generarNumero($docData[0]["ncodalm1"],$query));
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;
@@ -348,6 +299,8 @@
 
                 $query = "SELECT COUNT( alm_despachocab.id_regalm ) AS numero FROM alm_despachocab WHERE ncodalm1 =:cod";
                 $numero = $this->generarNumero($cabecera["codigo_almacen"],$query);
+                $indice = $this->lastInsertId("SELECT MAX(id_regalm) AS id FROM alm_despachocab");
+                $indice = gettype($indice) == "NULL" ? 1 : $indice;
 
                 $fecha = explode("-",$cabecera['fecha']); 
 
@@ -364,7 +317,6 @@
                                                                                         idref_ord=:idref_ord,
                                                                                         idref_abas=:idref_abas,
                                                                                         nnronota=:nnronota,
-                                                                                        cobserva = :cobserva,
                                                                                         id_userAprob = :id_userAprob,
                                                                                         nEstadoDoc = :nEstadoDoc,
                                                                                         nflgactivo = :nflgactivo,
@@ -382,9 +334,8 @@
                                 "idref_ord"=>$cabecera['codigo_orden'],
                                 "idref_abas"=>$cabecera['codigo_ingreso'],
                                 "nnronota"=>$numero['numero'],
-                                "cobserva"=>$cabecera['concepto'],
                                 "id_userAprob"=>$cabecera['codigo_aprueba'],
-                                "nEstadoDoc"=>$cabecera['codigo_estado'],
+                                "nEstadoDoc"=>62,
                                 "nflgactivo"=>1,
                                 "nguia"=>$cabecera['guia']]);
                 $rowCount = $sql->rowCount();
@@ -395,14 +346,14 @@
                     $error = "false";
 
                     $indice = $this->lastInsertId("SELECT MAX(id_regalm) AS id FROM alm_despachocab");
+                    $indice = gettype($indice) == "NULL" ? 1 : $indice;
 
                     $this->grabarDetallesDespacho($indice,$detalles,$cabecera['codigo_almacen']);
-
-                    $this->actualizarCabeceraPedido($cabecera['codigo_pedido'],67);
+                    /*$this->actualizarCabeceraPedido($cabecera['codigo_pedido'],67);
                     $this->actualizarCabeceraOrden($cabecera['codigo_orden'],67);
                     $this->actualizarDetallesPedido($detalles,$indice,67);
                     //$this->actualizarCabeceraDespacho($despacho,67);
-                    $this->actualizarCabeceraIngreso($cabecera['codigo_ingreso'],67);
+                    $this->actualizarCabeceraIngreso($cabecera['codigo_ingreso'],67);*/
                 }
 
                 return array("mensaje"=>$mensaje, 
@@ -423,23 +374,41 @@
 
                 for ($i=0; $i < $nreg; $i++) { 
                     try {
-                        $sql=$this->db->connect()->prepare("INSERT INTO alm_despachodet SET id_regalm=:cod,ncodalm1=:ori,id_cprod=:cpro,ncantidad=:cant,
-                                                                                        cSerie=:ser,niddetaPed=:pedido,niddetaOrd=:orden,nflgactivo=:flag,
-                                                                                        nestadoreg=:estadoItem,ingreso=:ingreso,nsaldo=:despacho,
-                                                                                        ncodalm2=:destino,niddetaIng = :itemIngreso");
+                        $sql=$this->db->connect()->prepare("INSERT INTO alm_despachodet SET id_regalm=:cod,
+                                                                                            ncodalm1=:ori,
+                                                                                            id_cprod=:cpro,
+                                                                                            ncantidad=:cant,
+                                                                                            cSerie=:ser,
+                                                                                            niddetaPed=:idpedido,
+                                                                                            niddetaOrd=:idorden,
+                                                                                            nflgactivo=:flag,
+                                                                                            nestadoreg=:estadoItem,
+                                                                                            ingreso=:ingreso,
+                                                                                            nsaldo=:saldo,
+                                                                                            ncodalm2=:destino,
+                                                                                            niddetaIng=:itemIngreso,
+                                                                                            nroorden=:orden,
+                                                                                            nropedido=:pedido,
+                                                                                            ndespacho=:candesp,
+                                                                                            cobserva=:observac");
                          $sql->execute(["cod"=>$id,
                                         "ori"=>$almacen,
                                         "cpro"=>$datos[$i]->idprod,
                                         "cant"=>$datos[$i]->cantidad,
                                         "ser"=>$datos[$i]->serie,
-                                        "pedido"=>$datos[$i]->iddetped,
-                                        "orden"=>$datos[$i]->iddetorden,
+                                        "idpedido"=>$datos[$i]->iddetped,
+                                        "idorden"=>$datos[$i]->iddetorden,
                                         "flag"=>1,
                                         "estadoItem"=>$datos[$i]->nestado,
                                         "ingreso"=>$datos[$i]->ingreso,
-                                        "despacho"=>$datos[$i]->cantdesp,
+                                        "saldo"=>$datos[$i]->saldo,
                                         "destino"=>$datos[$i]->destino,
-                                        "itemIngreso"=>$datos[$i]->iddetingreso]);
+                                        "candesp"=>$datos[$i]->cantdesp,
+                                        "itemIngreso"=>$datos[$i]->idingreso,
+                                        "pedido"=>$datos[$i]->pedido,
+                                        "orden"=>$datos[$i]->orden,
+                                        "observac"=>$datos[$i]->obser
+                                        ]);
                     } catch (PDOException $th) {
                         echo $th->getMessage();
                         return false;
@@ -479,7 +448,8 @@
                 $mes = $fecha[1];
                 $anio = $fecha[0];
 
-                $cargo = $this->rrhhCargo($cabecera['codigo_aprueba']);
+                //$cargo = $this->rrhhCargo($cabecera['codigo_aprueba']);
+                $cargo = "Jefe de Almacen";
 
                 $file = uniqid("NS")."_".$cabecera['numero']."_".$cabecera['codigo_almacen'].".pdf";
 
@@ -490,12 +460,12 @@
                 }
                 
                 $pdf = new PDF($cabecera['numero'],$condicion,$dia,$mes,$anio,$cabecera['costos'],
-                            $cabecera['almacen_origen_despacho'],$cabecera['tipo'],$cabecera['orden'],$cabecera['pedido'],
-                            $cabecera['guia'],$cabecera['aprueba'],$cargo,'S');
+                            $cabecera['almacen_origen_despacho'],$cabecera['almacen_destino_despacho'],
+                            $cabecera['tipo'],$cabecera['guia'],$cabecera['aprueba'],$cargo);
 
                 $pdf->AliasNbPages();
                 $pdf->AddPage();
-                $pdf->SetWidths(array(5,15,55,8,12,20,45,15,15));
+                $pdf->SetWidths(array(10,15,70,8,10,30,17,15,15));
                 $pdf->SetFont('Arial','',4);
 
                 for($i=1;$i<=$nreg;$i++){
@@ -505,9 +475,9 @@
                                             utf8_decode($datos[$rc]->descripcion),
                                             $datos[$rc]->unidad,
                                             $datos[$rc]->cantidad,
+                                            $datos[$rc]->obser,
                                             "",
                                             "",
-                                            $datos[$rc]->cestado,
                                             ""));
                     $lc++;
                     $rc++;
@@ -530,53 +500,41 @@
         public function consultarSalidaId($indice){
             try {
                 $sql=$this->db->connect()->prepare("SELECT
-                                                            ibis.alm_despachocab.id_userAprob,
-                                                            ibis.alm_despachocab.id_regalm,
-                                                            ibis.alm_despachocab.ntipmov,
-                                                            LPAD( ibis.alm_despachocab.nnronota, 6, 0 ) AS nnronota,
-                                                            ibis.alm_despachocab.ffecdoc,
-                                                            ibis.alm_despachocab.nnromov,
-                                                            ibis.alm_despachocab.cnumguia,
-                                                            ibis.alm_despachocab.ncodpry,
-                                                            ibis.alm_despachocab.ncodarea,
-                                                            ibis.alm_despachocab.idref_ord,
-                                                            ibis.alm_despachocab.idref_pedi,
-                                                            ibis.alm_despachocab.idref_abas,
-                                                            ibis.alm_despachocab.nEstadoDoc,
-                                                            UPPER(
-                                                            CONCAT_WS( ' ', tb_proyectos.ccodproy, tb_proyectos.cdesproy )) AS costos,
-                                                            UPPER(
-                                                            CONCAT_WS( ' ', tb_area.ccodarea, tb_area.cdesarea )) AS area,
-                                                            ibis.alm_despachocab.ncodalm1,
-                                                            UPPER( origen.cdesalm ) AS almacen,
-                                                            ibis.tb_user.cnombres,
-                                                            movimientos.cdescripcion,
-                                                            LPAD( alm_despachocab.nnromov, 4, 0 ) AS movimiento,
-                                                            UPPER( ibis.tb_pedidocab.concepto ) AS concepto,
-                                                            ibis.tb_pedidocab.emision,
-                                                            ibis.lg_ordencab.cnumero AS orden,
-                                                            ibis.lg_ordencab.ffechadoc,
-                                                            estados.cdescripcion AS estado,
-                                                            estados.cabrevia,
-                                                            CONCAT_WS( ' ', rrhh.tabla_aquarius.nombres, rrhh.tabla_aquarius.apellidos ) AS nombres,
-                                                            ibis.lg_ordencab.id_centi,
-                                                            LPAD( ibis.tb_pedidocab.nrodoc, 6, 0 ) AS pedido,
-                                                            ibis.alm_despachocab.ncodalm2,
-                                                            UPPER( destino.cdesalm ) AS destino 
-                                                        FROM
-                                                            ibis.alm_despachocab
-                                                            INNER JOIN ibis.tb_proyectos ON alm_despachocab.ncodpry = tb_proyectos.nidreg
-                                                            INNER JOIN ibis.tb_area ON alm_despachocab.ncodarea = tb_area.ncodarea
-                                                            INNER JOIN ibis.tb_almacen AS origen ON alm_despachocab.ncodalm1 = origen.ncodalm
-                                                            INNER JOIN ibis.tb_user ON alm_despachocab.id_userAprob = tb_user.iduser
-                                                            INNER JOIN ibis.tb_parametros AS movimientos ON alm_despachocab.ntipmov = movimientos.nidreg
-                                                            INNER JOIN ibis.tb_pedidocab ON alm_despachocab.idref_pedi = tb_pedidocab.idreg
-                                                            INNER JOIN ibis.lg_ordencab ON alm_despachocab.idref_ord = lg_ordencab.id_regmov
-                                                            INNER JOIN ibis.tb_parametros AS estados ON alm_despachocab.nEstadoDoc = estados.nidreg
-                                                            INNER JOIN rrhh.tabla_aquarius ON ibis.tb_pedidocab.idsolicita = rrhh.tabla_aquarius.internal
-                                                            INNER JOIN ibis.tb_almacen AS destino ON ibis.alm_despachocab.ncodalm2 = destino.ncodalm 
-                                                        WHERE
-                                                            alm_despachocab.id_regalm = :indice");
+                                                    alm_despachocab.id_regalm,
+                                                    alm_despachocab.ncodalm1,
+                                                    alm_despachocab.ncodalm2,
+                                                    DATE_FORMAT(
+                                                        alm_despachocab.ffecdoc,
+                                                        '%d/%m/%Y'
+                                                    ) AS fecha_despacho,
+                                                    alm_despachocab.ffecdoc,
+                                                    alm_despachocab.cnumguia,
+                                                    alm_despachocab.ncodpry,
+                                                    alm_despachocab.nEstadoDoc,
+                                                    UPPER(origen.cdesalm) AS origen,
+                                                    UPPER(destino.cdesalm) AS destino,
+                                                    UPPER(
+                                                        CONCAT_WS(
+                                                            ' ',
+                                                            tb_proyectos.ccodproy,
+                                                            tb_proyectos.cdesproy
+                                                        )
+                                                    ) AS costos,
+                                                    alm_despachocab.id_userAprob,
+                                                    tb_user.cnombres,
+                                                    movimientos.nidreg,
+                                                    movimientos.cdescripcion AS tipo_movimiento,
+                                                    estado.cdescripcion AS estado
+                                                FROM
+                                                    alm_despachocab
+                                                INNER JOIN tb_almacen AS origen ON alm_despachocab.ncodalm1 = origen.ncodalm
+                                                INNER JOIN tb_almacen AS destino ON alm_despachocab.ncodalm2 = destino.ncodalm
+                                                INNER JOIN tb_proyectos ON alm_despachocab.ncodpry = tb_proyectos.nidreg
+                                                INNER JOIN tb_user ON alm_despachocab.id_userAprob = tb_user.iduser
+                                                INNER JOIN tb_parametros AS movimientos ON alm_despachocab.ntipmov = movimientos.nidreg
+                                                INNER JOIN tb_parametros AS estado ON alm_despachocab.nEstadoDoc = estado.nidreg
+                                                WHERE
+                                                    id_regalm = :indice");
                 $sql->execute(["indice"=>$indice]);
                 $docData = array();
                 while($row=$sql->fetch(PDO::FETCH_ASSOC)){
@@ -603,6 +561,11 @@
                                                     alm_despachodet.niddetaPed,
                                                     alm_despachodet.niddetaOrd,
                                                     alm_despachodet.niddeta,
+                                                    alm_despachodet.ndespacho,
+                                                    alm_despachodet.cobserva,
+                                                    alm_despachodet.nropedido,
+                                                    alm_despachodet.nroorden,
+                                                    alm_despachodet.ingreso,
                                                     FORMAT(alm_despachodet.nsaldo, 2) AS nsaldo,
                                                     cm_producto.ccodprod,
                                                     FORMAT(alm_despachodet.ncantidad, 2) AS cantidad,
@@ -630,9 +593,8 @@
                     $item = 1;
                     while ($rs = $sql->fetch()){
 
-                        //$estados = $this->listarSelect(13,$rs['nestadoreg']);
                         $fecha = $rs['fvence'] == "0000-00-00" ? "" : date("d-m-Y", strtotime($rs['fvence']));
-                        $series = $this->buscarSeries($rs['id_cprod'],$rs['id_regalm'],$rs['ncodalm1']);
+                        $series = "";
 
                         $salida.='<tr data-itemorden="'.$rs['niddetaOrd'].'" 
                                         data-itempedido="'.$rs['niddetaPed'].'" 
@@ -646,7 +608,12 @@
                                         <td class="textoDerecha pr20px">'.$rs['cantidad'].'</td>
                                         <td><input type="number" step="any" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"
                                             value="'.$rs['nsaldo'].'" readonly></td>
-                                        <td class="pl20px"><input type="text"></td>
+                                        <td class="pl20px"><input type="text" value="'.$rs['ndespacho'].'"></td>
+                                        <td></td>
+                                        <td class="pr20px"><input type="text" value="'.$rs['cobserva'].'"></td>
+                                        <td class="textoCentro">'.str_pad($rs['nropedido'],6,0,STR_PAD_LEFT).'</td>
+                                        <td class="textoCentro">'.str_pad($rs['nroorden'],6,0,STR_PAD_LEFT).'</td>
+                                        <td class="textoCentro">'.str_pad($rs['ingreso'],6,0,STR_PAD_LEFT).'</td>
                                     </tr>';
                     }
                 }
@@ -912,6 +879,7 @@
                                                         alm_recepdet.niddetaOrd,
                                                         LPAD(alm_recepdet.orden, 6, 0) AS orden,
                                                         cm_producto.ccodprod,
+                                                        cm_producto.id_cprod,
                                                         UPPER(
                                                             CONCAT_WS(
                                                                 ' ',
@@ -922,7 +890,13 @@
                                                         tb_unimed.cabrevia,
                                                         LPAD(alm_recepcab.id_regalm, 6, 0) AS nota_ingreso,
                                                         LPAD(tb_pedidocab.idreg, 6, 0) AS pedido,
-                                                        alm_recepdet.niddeta
+                                                        alm_recepdet.niddeta,
+                                                    
+                                                    IF (
+                                                        ISNULL(alm_despachodet.nsaldo),
+                                                        0,
+                                                        alm_despachodet.nsaldo
+                                                    ) AS saldo
                                                     FROM
                                                         alm_recepdet
                                                     INNER JOIN cm_producto ON alm_recepdet.id_cprod = cm_producto.id_cprod
@@ -930,19 +904,35 @@
                                                     INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
                                                     INNER JOIN alm_recepcab ON alm_recepdet.id_regalm = alm_recepcab.id_regalm
                                                     INNER JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
-                                                    WHERE niddeta = :id LIMIT 1");
+                                                    LEFT JOIN alm_despachodet ON alm_recepdet.niddeta = alm_despachodet.niddetaIng
+                                                    WHERE
+                                                        alm_recepdet.niddeta = :id
+                                                    LIMIT 1");
                 $sql->execute(["id"=>$id]);
                 $rowCount = $sql->rowcount();
                 $result = $sql->fetchAll();
 
                 if ($rowCount > 0) {
-                    $salida = '<tr data-saldo="">
+                        $saldo = $result[0]['saldo'];
+
+                        if ( $result[0]['saldo'] == 0.00) {
+                            $saldo = $result[0]['ncantidad'];
+                        }
+
+                         $salida = '<tr data-idproducto="'.$result[0]['id_cprod'].'"
+                                   data-idpedido="'.$result[0]['niddetaPed'].'"
+                                   data-idorden="'.$result[0]['niddetaOrd'].'"
+                                   data-idingreso="'.$result[0]['niddeta'].'"
+                                   data-pedido="'.$result[0]['pedido'].'"
+                                   data-orden="'.$result[0]['orden'].'"
+                                   data-ingreso="'.$result[0]['nota_ingreso'].'">
                                     <td class="textoCentro"><a href="'.$result[0]['niddeta'].'"><i class="fas fa-trash"></i></a></td>
                                     <td class="textoCentro"></td>
                                     <td class="textoCentro">'.$result[0]['ccodprod'].'</td>
                                     <td class="pl20px">'.$result[0]['descripcion'].'</td>
                                     <td class="textoCentro">'.$result[0]['cabrevia'].'</td>
                                     <td class="textoDerecha pr20px">'.$result[0]['ncantidad'].'</td>
+                                    <td class="textoDerecha pr20px">'.$saldo.'</td>
                                     <td class="textoDerecha pr5px">
                                         <input type="number" 
                                             step="any" 
@@ -961,6 +951,21 @@
                 }
 
                 return $salida;
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function calcularDespachos($id) {
+            try {
+                $sql = $this->db->connect()->prepare("SELECT SUM(ndespacho) AS saldo ,ncantidad FROM alm_despachodet WHERE niddetaIng =:id");
+                $sql->execute(["id" => $id]);
+
+                $result = $sql->fetchAll();
+
+                return $result[0]['saldo'];
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();

@@ -2,8 +2,7 @@
 	require_once "public/fpdf/mc_table.inc.php";
 
 	class PDF extends PDF_MC_Table{
-		public function __construct($ndoc,$condicion,$dia,$mes,$anio,$proyecto,$origen,
-									$destino,$movimiento,$nguia,$nautoriza,$cautoriza)
+        public function __construct($ndoc,$condicion,$dia,$mes,$anio,$proyecto,$origen,$movimiento,$orden,$nped,$nguia,$nautoriza,$cautoriza,$tipo)
         {
             parent::__construct();
             $this->ndoc         = $ndoc;
@@ -13,15 +12,19 @@
             $this->anio         = $anio;
             $this->proyecto     = $proyecto;
             $this->origen       = $origen;
-			$this->destino		= $destino;
             $this->movimiento   = $movimiento;
+            $this->orden        = $orden;
+            $this->nped         = $nped;
             $this->nguia        = $nguia;
             $this->nautoriza    = $nautoriza;
             $this->cautoriza    = $cautoriza;
+			$this->tipo			= $tipo;
         }
 	// Cabecera de página
 		function Header(){
-		   
+			$condicion = $this->condicion == 0 ? "VISTA PREVIA" : "EMITIDO";
+			$documento = $this->tipo == "I" ? "NOTA DE INGRESO" : "NOTA DE SALIDA"; 
+
 		    $this->Rect(10,10,30,20); //marco de la imagen
         	$this->Rect(10,10,190,20); //marco general
 
@@ -32,10 +35,10 @@
 			$this->SetTextColor(0,0,0);
 
 	 		$this->SetFillColor(229, 229, 229);
-	        $this->Cell(190,7,utf8_decode('REGISTRO DE SALIDA N° ').$this->ndoc,0,1,'C');
+	        $this->Cell(190,7,$documento,0,1,'C');
 	        $this->SetFont('Arial','B',10);
-	        $this->Cell(190,7,'',0,1,'C'); //pasa dato condicion
-	        $this->Cell(190,7,'VISTA PREVIA',0,0,'C'); //pasa dato condicion
+	        $this->Cell(190,6,utf8_decode('N° ').$this->ndoc,0,1,'C'); //pasa dato
+	        $this->Cell(190,7,$condicion,0,0,'C'); //pasa dato condicion
 
 	        $this->SetXY(160,10);
 	        $this->SetFont('Arial','B',8);
@@ -51,30 +54,29 @@
 	        $this->Cell(13,5,"PE",1,0,"C",1);
 	        $this->Cell(14,5,utf8_decode("Guia"),1,1,"C",1);
 	        $this->SetXY(160,25);
-	        $this->Cell(13,5,"",1,0,"C");//pasa dato
-	        $this->Cell(13,5,"",1,0,"C");//pasa dato
-	        $this->SetFont('Arial','B',6);
+	        
+			$this->SetFont('Arial','B',6);
+	        $this->Cell(13,5,$this->orden,1,0,"C");//pasa dato
+	        $this->Cell(13,5,$this->nped,1,0,"C");//pasa dato
 	        $this->Cell(14,5,$this->nguia,1,1,"C");//pasa dato
 
 	        $this->SetXY(10,32);
-	        $this->SetFont('Arial','B',6);
+	        $this->SetFont('Arial','B',8);
 	        $this->Cell(30,5,"Proyecto",1,0);
-	        $this->Cell(65,5,utf8_decode($this->proyecto),1,0); //pasa dato
+	        $this->Cell(160,5,utf8_decode($this->proyecto),1,1); //pasa dato
 	        $this->Cell(30,5,utf8_decode("Almacén Origen"),1,0);
-	        $this->Cell(65,5,utf8_decode($this->origen),1,1); //pasa dato
+	        $this->Cell(160,5,utf8_decode($this->origen),1,1); //pasa dato
 	        $this->Cell(30,5,"Tipo Movimiento",1,0);
-	        $this->Cell(65,5,$this->movimiento,1,0); //pasa dato
-	        $this->Cell(30,5,utf8_decode("Almacén Destino"),1,0);
-	        $this->Cell(65,5,utf8_decode($this->destino),1,1); //pasa dato
+	        $this->Cell(160,5,utf8_decode($this->movimiento),1,1); //pasa dato
 
 	        // Salto de línea
     		$this->Ln(1);
     		$this->SetFont('Arial','B',6);
-    		$this->Rect(10,43,190,6,"F"); //fondo de mensaje
-    		$this->SetWidths(array(10,15,70,8,10,30,17,15,15));
+    		$this->Rect(10,48,190,7,"F"); //fondo de mensaje
+    		$this->SetWidths(array(5,15,55,8,12,20,45,15,15));
     		$this->SetAligns(array("C","C","C","C","C","C","C","C","C"));
     		$this->Row(array('Item',utf8_decode('Código'),utf8_decode('Descripción'),
-    				'Und.','Cant.','Observ. Item','Proveedor','Estado',
+    				'Und.Med.','Cant.','Observ. Item','Proveedor','Estado',
     				'Ubica Fisica'));
     		
 		}
@@ -88,20 +90,18 @@
 		    $this->Line(150, 225, 190, 225);
 
 		    $this->SetFont('Arial','B',8);
-		    $this->Cell(64,4,"Diego Marky",0,0,"C"); //pasa dato
+		    $this->Cell(64,4,utf8_decode($this->nautoriza),0,0,"C"); //pasa dato
 		    $this->Cell(64,4,"",0,0,"C"); //pasa dato
 		    $this->Cell(64,4,"",0,1,"C"); // pasa dato
 
 		    $this->SetFont('Arial','',6);
-		    $this->Cell(64,2,"Asistente de Almacen",0,0,"C"); //pasa dato
+		    $this->Cell(64,2,utf8_decode($this->cautoriza),0,0,"C"); //pasa dato
 		    $this->Cell(64,2,"",0,0,"C"); //pasa dato
 		    $this->Cell(64,2,"",0,1,"C"); //pasa dato
 		   
 		   	$this->Cell(64,4,"Autorizado",0,0,"C");
 		    $this->Cell(64,4,"Recibido",0,0,"C");
 		    $this->Cell(64,4,"Expeditado",0,1,"C");
-
-
 		}
 	}
 ?>

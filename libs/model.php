@@ -1035,6 +1035,21 @@
                 return false;
             }
         }
+
+        public function ultimoIndice($tabla) {
+            try {
+                $sql = $this->db->connect()->prepare($query);
+                $sql->execute(["cod"=>$id]);
+                $result = $sql->fetchAll();
+
+                return $salida = array("numero"=>str_pad($result[0]['numero'] + 1,6,0,STR_PAD_LEFT),
+                                        "codigo"=>uniqid(),
+                                        "movimiento"=>str_pad($this->genNumberIngresos($id)+1,6,0,STR_PAD_LEFT)); 
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage;
+                return false;
+            }
+        }
         
 
         public function generarNumeroPedido($id,$query){
@@ -1057,6 +1072,19 @@
             try {
                 $sql = $this->db->connect()->prepare("$query");
                 $sql->execute(["id"=>$codigo]);
+                $result = $sql->fetchAll();
+
+                return $result[0]['numero'];
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        public function obtenerIndiceTabla($tabla){
+            try {
+                $sql = $this->db->connect()->query("$query");
+                $sql->execute();
                 $result = $sql->fetchAll();
 
                 return $result[0]['numero'];
@@ -1441,7 +1469,8 @@
                                                     INNER JOIN cm_producto ON tb_pedidodet.idprod = cm_producto.id_cprod
                                                     INNER JOIN tb_unimed ON tb_pedidodet.unid = tb_unimed.ncodmed 
                                                 WHERE
-                                                    tb_pedidodet.idpedido = :id");
+                                                    tb_pedidodet.idpedido = :id 
+                                                    AND tb_pedidodet.nflgActivo = 1");
                 $sql->execute(["id"=>$id]);
                 $rowCount = $sql->rowCount();
                 
@@ -1507,7 +1536,8 @@
                                                     ON 
                                                         tb_pedidodet.unid = tb_unimed.ncodmed
                                                 WHERE
-                                                    tb_pedidodet.idpedido = :id");
+                                                    tb_pedidodet.idpedido = :id
+                                                    AND tb_pedidodet.nflgActivo = 1");
                 $sql->execute(["id"=>$id]);
                 $rowCount = $sql->rowCount();
                 
@@ -1575,7 +1605,8 @@
                                                         tb_pedidodet.unid = tb_unimed.ncodmed
                                                 WHERE
                                                     tb_pedidodet.idpedido = :id 
-                                                    AND tb_pedidodet.cant_resto != 0");
+                                                    AND tb_pedidodet.cant_resto != 0
+                                                    AND tb_pedidodet.nflgActivo = 1");
                 $sql->execute(["id"=>$id]);
                 $rowCount = $sql->rowCount();
                 
@@ -1640,7 +1671,8 @@
                                                     LEFT JOIN lg_proformadet ON tb_pedidodet.iditem = lg_proformadet.niddet 
                                                 WHERE
                                                     tb_pedidodet.idpedido = :id 
-                                                AND tb_pedidodet.cant_resto > 0");
+                                                AND tb_pedidodet.cant_resto > 0
+                                                AND tb_pedidodet.nflgActivo = 1");
                 $sql->execute(["id"=>$id]);
                 $rowCount = $sql->rowCount();
                 
@@ -1739,7 +1771,8 @@
                                                         INNER JOIN tb_unimed ON tb_pedidodet.unid = tb_unimed.ncodmed 
                                                     WHERE
                                                         tb_pedidodet.idpedido = :id 
-                                                        AND cant_aprob > 0");
+                                                        AND cant_aprob > 0
+                                                        AND tb_pedidodet.nflgActivo = 1");
                 $sql->execute(["id"=>$id]);
                 $rowcount = $sql->rowcount();
 
@@ -1852,7 +1885,8 @@
                                                     INNER JOIN tb_unimed ON tb_pedidodet.unid = tb_unimed.ncodmed 
                                                 WHERE
                                                     tb_pedidodet.idpedido = :id 
-                                                AND tb_pedidodet.nflgAdjudicado  = 1");
+                                                AND tb_pedidodet.nflgAdjudicado  = 1
+                                                AND tb_pedidodet.nflgActivo = 1");
                 $sql->execute(["id"=>$id]);
                 $rowCount = $sql->rowCount();
                 
