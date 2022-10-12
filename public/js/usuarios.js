@@ -405,13 +405,7 @@ obtenerModulos = () =>{
             CLASE       = $(this).data("clase"),
             OPCION      = $(this).data("opcion"),
             IDUSER      = $("#cod_user").val();
-            /*AGREGAR     = $(this).find('td').eq(3).children().prop("checked"),
-            MODIFICAR   = $(this).find('td').eq(4).children().prop("checked"),
-            ELIMINAR    = $(this).find('td').eq(5).children().prop("checked"),
-            IMPRIMIR    = $(this).find('td').eq(6).children().prop("checked"),
-            PROCESAR    = $(this).find('td').eq(7).children().prop("checked"),
-            VISIBLE     = $(this).find('td').eq(8).children().prop("checked"),
-            TODOS       = $(this).find('td').eq(9).children().prop("checked"),*/
+           
             
             item={};
 
