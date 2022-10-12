@@ -899,7 +899,8 @@
 .ventanaEspera,
 .ventanaComentarios,
 .ventanaDocumento,
-.ventanaResumen {
+.ventanaResumen,
+.ventanaCambio {
   background: #fff;
   position: absolute;
   top: 50%;
@@ -1604,6 +1605,33 @@
   transition: 0.5s;
 }
 .ventanaPregunta button:hover, .ventanaDialogo button:hover, .ventanaComentarios button:hover {
+  color: #000;
+  background: #005D84;
+}
+
+.ventanaCambio {
+  padding: 15px;
+}
+.ventanaCambio h3 {
+  text-align: center;
+}
+.ventanaCambio input {
+  display: block;
+  height: 35px;
+  border: 1px solid #000;
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+.ventanaCambio button {
+  border: none;
+  width: 45%;
+  line-height: 2.5rem;
+  background: #797777;
+  color: #fff;
+  -webkit-transition: 0.5s;
+  transition: 0.5s;
+}
+.ventanaCambio button:hover {
   color: #000;
   background: #005D84;
 }

@@ -48,4 +48,36 @@ $(function(){
 
 		return false;
 	});
+
+	$("#changePass").click(function(e){
+		e.preventDefault();
+
+		try {
+			if ( $("#nueva_clave").val() === "") throw "Ingrese una clave";
+			if ( $("#nueva_clave_comfirm").val() === "") throw "Confirme la clave ingresada";
+			if ( $("#nueva_clave").val() !== $("#nueva_clave_comfirm").val()) throw "Las claves no son iguales";
+
+			$("#cambio").fadeOut();
+		} catch (error) {
+			mostrarMensaje(error,'mensaje_error');
+		}
+
+		return false;
+	});
+
+	$("#btnCancelarCambio").click(function(e){
+		e.preventDefault();
+
+		$("#cambio").fadeIn();
+
+		return false;
+	});
+
+	$("#botonAceptarCambio").click(function(e){
+		e.preventDefault();
+
+		$("#cambio").fadeOut();
+
+		return false;
+	});
 })

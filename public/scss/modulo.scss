@@ -655,7 +655,8 @@ $culminado:#55A5E2;
 .ventanaEspera,
 .ventanaComentarios,
 .ventanaDocumento,
-.ventanaResumen{
+.ventanaResumen,
+.ventanaCambio{
     background:$blanco;
     position: absolute;
     top: 50%;
@@ -1353,6 +1354,37 @@ $culminado:#55A5E2;
             background:$fondo_menus;
         }
     }
+}
+
+.ventanaCambio{
+    padding: 15px;
+
+    h3{
+        text-align: center;
+    }
+
+    input{
+        display: block;
+        height: 35px;
+        border: 1px solid #000;
+        margin-bottom: 20px;
+        margin-top: 20px;
+    }
+
+    button {
+        border:none;
+        width: 45%;
+        line-height: 2.5rem;
+        background:$fondoBotones;
+        color:$blanco;
+        transition:.5s;
+        
+        &:hover{
+            color: $negro;
+            background:$fondo_menus;
+        }
+    }
+
 }
 
 .pestanasUsuario{

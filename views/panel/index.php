@@ -31,13 +31,28 @@
             </div>
         </div>
     </div>
+    <div class="modal" id="cambio">
+        <div class="ventanaCambio">
+            <h3>Cambio de clave</h3>
+            <div>
+                <form action="" method="post" id="form__clave">
+                    <input type="password" name="nueva_clave" id="nueva_clave" placeholder="Ingrese su nueva clave">
+                    <input type="password" name="nueva_clave_comfirm" id="nueva_clave_comfirm" placeholder="Reescriba la clave anterior">
+                </form>
+            </div>
+            <div>
+                <button type="button" id="btnAceptarCambio">Aceptar</button>
+                <button type="button" id="btnCancelarCambio">Cancelar</button>
+            </div>
+        </div>
+    </div>
     <div class="wrap">
         <div class="cabecera">
             <img src="<?php echo constant('URL')?>public/img/ibis.png" alt="">
             <div id="cabecera_inicial">
                 <h1 id="iniciales"><a href="#" id="cabecera_main_option"><?php echo $this->iniciales?></a> </h1>
                 <ul id="cabecera_menu">
-                    <li><a href="#">Cambiar Contraseña</a></li>
+                    <li><a href="<?php echo $_SESSION['iduser']?>" id="changePass">Cambiar Contraseña</a></li>
                     <li><a href="#">Ir al inicio</a></li>
                     <hr>
                     <li><a href="<?php echo constant('URL')?>">Salir del Sistema</a></li>
