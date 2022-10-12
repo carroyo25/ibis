@@ -22,8 +22,7 @@
                                                     INNER JOIN tb_parametros ON cm_producto.ntipo = tb_parametros.nidreg 
                                                 WHERE
                                                     cm_producto.flgActivo = 1
-                                                ORDER BY cdesprod ASC
-                                                LIMIT 500");
+                                                ORDER BY cdesprod ASC");
                 $sql->execute();
                 $rc = $sql->rowcount();
                 $item = 1;

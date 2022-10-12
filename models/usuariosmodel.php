@@ -34,7 +34,9 @@
                                                     INNER JOIN rrhh.tabla_aquarius ON ibis.tb_user.ncodper = rrhh.tabla_aquarius.internal 
                                                 WHERE
                                                     tiporol.cclase = '00' 
-                                                    AND estados.cclase = '01'");
+                                                    AND estados.cclase = '01'
+                                                    AND ibis.tb_user.nflgactivo = 1
+                                                ORDER BY tb_user.cnameuser");
                 $sql->execute();
                 $rc = $sql->rowcount();
                 $c = 1;
@@ -103,7 +105,7 @@
                     while ($rs = $sql->fetch()) {
                         $salida .='<tr data-id="'.$rs['nidreg'].'" class="tablaPointer">
                                     <td class="textoCentro">'.$rs['ccodproy'].'</td>
-                                    <td class="pl10px">'.strtoupper($rs['cdesproy']).'</td>
+                                    <td class="pl10px">'.strtoupper(utf8_encode($rs['cdesproy'])).'</td>
                                  </tr>';
                     }
                 }
@@ -289,9 +291,9 @@
                                 "estado"=>$cabecera['cod_est'],
                                 "iniciales"=>$cabecera['user_inic']]);
 
-                $this->grabarModulos($cabecera['cod_user'],$modulos);
-                $this->grabarCostos($cabecera['cod_user'],$costos);
-                $this->grabarAlmacenes($cabecera['cod_user'],$almacenes);
+                $this->grabarModulos($modulos);
+                $this->grabarCostos($costos);
+                $this->grabarAlmacenes($almacenes);
 
                 $salida = array("respuesta"=>true,
                                 "mensaje"=>"Usuario modificado");
@@ -339,7 +341,7 @@
             }
         }
 
-        private function grabarModulos($codigo,$modulos){
+        private function grabarModulos($modulos){
             $data = json_decode($modulos);
 
             for ($i=0; $i < count($data); $i++) { 
@@ -348,25 +350,11 @@
                                                             SET iduser=:id,
                                                                 ncodmod=:codigo,
                                                                 classmenu=:clase,
-                                                                copcion=:opcion,
-                                                                agrega=:agre,
-                                                                modifica=:modi,
-                                                                elimina=:elim,
-                                                                imprime=:impr,
-                                                                procesa=:proce,
-                                                                visible=:visib,
-                                                                todos=:todo");
-                    $sql->execute(["id"=>$codigo,
+                                                                copcion=:opcion");
+                    $sql->execute(["id"=>$data[$i]->iduser,
                                     "codigo"=>$data[$i]->codm,
                                     "clase"=>$data[$i]->clas,
-                                    "opcion"=>$data[$i]->opci,
-                                    "agre"=>$data[$i]->agre,
-                                    "modi"=>$data[$i]->modi,
-                                    "elim"=>$data[$i]->elim,
-                                    "impr"=>$data[$i]->impr,
-                                    "proce"=>$data[$i]->proc,
-                                    "visib"=>$data[$i]->visi,
-                                    "todo"=>$data[$i]->todo]);
+                                    "opcion"=>$data[$i]->opci]);
                 } catch (PDOException $th) {
                     echo $th->getMessage();
                     return false;
@@ -374,13 +362,13 @@
             }
         }
 
-        private function grabarCostos($codigo,$costos){
+        private function grabarCostos($costos){
             $data = json_decode($costos);
             try {
                 for ($i=0; $i < count($data); $i++) { 
                     $sql = $this->db->connect()->prepare("INSERT INTO tb_costusu SET ncodproy=:cod,id_cuser=:usr,nflgactivo=:est");
                     $sql->execute(["cod"=>$data[$i]->codpr,
-                                    "usr"=>$codigo,
+                                    "usr"=>$data[$i]->iduser,
                                     "est"=>1]);
                 }
             } catch (PDOException $th) {
@@ -389,13 +377,13 @@
             }
         }
 
-        private function grabarAlmacenes($codigo,$almacenes){
+        private function grabarAlmacenes($almacenes){
             $data = json_decode($almacenes);
             try {
                 for ($i=0; $i < count($data); $i++) { 
                     $sql = $this->db->connect()->prepare("INSERT INTO tb_almausu SET nalmacen=:cod,id_cuser=:usr,nflgactivo=:est");
                     $sql->execute(["cod"=>$data[$i]->codalm,
-                                    "usr"=>$codigo,
+                                    "usr"=>$data[$i]->iduser,
                                     "est"=>1]);
                 }
             } catch (PDOException $th) {

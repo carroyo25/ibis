@@ -404,13 +404,14 @@ obtenerModulos = () =>{
             ESTADO      = $(this).data("grabado"),
             CLASE       = $(this).data("clase"),
             OPCION      = $(this).data("opcion"),
-            AGREGAR     = $(this).find('td').eq(3).children().prop("checked"),
+            IDUSER      = $("#cod_user").val();
+            /*AGREGAR     = $(this).find('td').eq(3).children().prop("checked"),
             MODIFICAR   = $(this).find('td').eq(4).children().prop("checked"),
             ELIMINAR    = $(this).find('td').eq(5).children().prop("checked"),
             IMPRIMIR    = $(this).find('td').eq(6).children().prop("checked"),
             PROCESAR    = $(this).find('td').eq(7).children().prop("checked"),
             VISIBLE     = $(this).find('td').eq(8).children().prop("checked"),
-            TODOS       = $(this).find('td').eq(9).children().prop("checked"),
+            TODOS       = $(this).find('td').eq(9).children().prop("checked"),*/
             
             item={};
 
@@ -419,13 +420,8 @@ obtenerModulos = () =>{
                 item["codm"]  = CODMOD;
                 item["clas"]  = CLASE;
                 item["opci"]  = OPCION;
-                item["agre"]  = AGREGAR;
-                item["modi"]  = MODIFICAR;
-                item["elim"]  = ELIMINAR;
-                item["impr"]  = IMPRIMIR;
-                item["proc"]  = PROCESAR;
-                item["visi"]  = VISIBLE;
-                item["todo"]  = TODOS;
+                item['iduser'] = IDUSER;
+                
                 
                 MODULOS.push(item);
             }    
@@ -441,12 +437,14 @@ obtenerCostos = () => {
     TABLA.each(function(){
         var CODPR  = $(this).data("codigo"),
             ESTADO = $(this).data("grabado"),
+            IDUSER = $("#cod_user").val();
             
             item={};
 
             if (ESTADO == '0'){
 
                 item["codpr"]  = CODPR;
+                item['iduser'] = IDUSER;
                 
                 PROYECTOS.push(item);
             }    
@@ -462,12 +460,14 @@ obtenerAlmacenes = () => {
     TABLA.each(function(){
         var CODALM  = $(this).data("codigo"),
             ESTADO = $(this).data("grabado"),
+            IDUSER = $("#cod_user").val();
             
             item={};
 
             if (ESTADO == '0'){
 
                 item["codalm"]  = CODALM;
+                item['iduser'] = IDUSER;
                 
                 ALMACENES.push(item);
             }    
