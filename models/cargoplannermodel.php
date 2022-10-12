@@ -58,15 +58,16 @@
                         LEFT JOIN (SELECT id_orden,ncanti,niddeta FROM lg_ordendet) AS detalles_orden ON tb_pedidodet.iditem = detalles_orden.niddeta
                         LEFT JOIN (SELECT id_regmov,ffechadoc,ffechaent,id_centi,ncodmon,nplazo FROM lg_ordencab) AS cabecera_orden ON detalles_orden.id_orden = cabecera_orden.id_regmov
                         LEFT JOIN (SELECT id_centi,crazonsoc FROM cm_entidad) AS proveedores ON cabecera_orden.id_centi = proveedores.id_centi
-                        LEFT JOIN (SELECT ncantidad,nsaldo,ncodalm1,id_regalm,niddetaPed FROM alm_recepdet ) AS recepcion_detalles ON tb_pedidodet.iditem = recepcion_detalles.niddetaPed
+                        LEFT JOIN (SELECT ncantidad,nsaldo,ncodalm1,id_regalm,niddetaPed,niddeta FROM alm_recepdet ) AS recepcion_detalles ON tb_pedidodet.iditem = recepcion_detalles.niddetaPed
                         LEFT JOIN (SELECT id_regalm,cnumguia,ffecdoc FROM alm_recepcab ) AS recepcion_cabecera ON recepcion_detalles.id_regalm = recepcion_cabecera.id_regalm
-                        LEFT JOIN (SELECT ncantidad,niddetaPed,id_regalm FROM alm_despachodet ) AS detalle_despacho ON tb_pedidodet.iditem = detalle_despacho.niddetaPed
+                        LEFT JOIN (SELECT ncantidad,niddetaPed,id_regalm,niddetaIng FROM alm_despachodet ) AS detalle_despacho ON recepcion_detalles.niddeta = detalle_despacho.niddetaIng
                         LEFT JOIN (SELECT id_regalm,cnumguia,ffecdoc FROM alm_despachocab) AS despacho_cabecera ON detalle_despacho.id_regalm = despacho_cabecera.id_regalm
                         LEFT JOIN tb_partidas ON tb_pedidocab.idpartida = tb_partidas.idreg
                         LEFT JOIN (SELECT id_despacho,ffechdoc,cnumero FROM lg_docusunat ) AS guias ON despacho_cabecera.id_regalm = guias.id_despacho
                         WHERE 
                             tb_costusu.id_cuser = :user 
-                            AND tb_costusu.nflgactivo = 1");
+                            AND tb_costusu.nflgactivo = 1
+                            AND tb_pedidodet.nflgActivo = 1");
                 
                 $sql->execute(["user"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowCount();

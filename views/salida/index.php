@@ -76,10 +76,15 @@
                                 </div>
                             </div>
                             <div class="column2">
-                                <label for="area">Area:</label>
-                                <input type="text" name="area" id="area" readonly>
+                                <label for="aprueba">Aprueba:</label>
+                                <input type="text" name="aprueba" id="aprueba" class="mostrarLista busqueda" placeholder="Elija opción"
+                                        readonly>
+                                <div class="lista" id="listaAprueba">
+                                    <ul>
+                                        <?php echo $this->listaAprueba?>
+                                    </ul> 
+                                </div>
                             </div>
-                            
                         </div>
                         <div class="seccion_medio">
                             <div class="column2">
@@ -95,14 +100,14 @@
                                    </ul> 
                                 </div>
                             </div>
-                            <div class="column2">
-                                <label for="aprueba">Aprueba:</label>
-                                <input type="text" name="aprueba" id="aprueba" class="mostrarLista busqueda" placeholder="Elija opción"
-                                        readonly>
-                                <div class="lista" id="listaAprueba">
-                                    <ul>
-                                        <?php echo $this->listaAprueba?>
-                                    </ul> 
+                            <div class="column4_55">
+                                <div class="column2">
+                                    <label for="movimiento">Mov Almacen:</label>
+                                    <input type="text" name="movimiento" id="movimiento" class="w100por" readonly>
+                                </div>
+                                <div class="column2_46">
+                                    <label for="items">Nro.Guia :</label>
+                                    <input type="text" name="guia" id="guia" class="cerrarLista">
                                 </div>
                             </div>
                         </div>
@@ -122,17 +127,9 @@
                                     <label for="estado">Estado:</label>
                                     <input type="text" name="estado" id="estado" class="textoCentro estado w100por procesando" readonly value="EN PROCESO">
                                 </div>
-                                <div class="column2_46">
-                                    <label for="items">Nro.Guia :</label>
-                                    <input type="text" name="guia" id="guia" class="cerrarLista">
-                                </div>
+                                
                             </div>
-                            <div class="column4_55">
-                                <div class="column2">
-                                    <label for="movimiento">Mov Almacen:</label>
-                                    <input type="text" name="movimiento" id="movimiento" class="w100por" readonly>
-                                </div>
-                            </div>
+                           
                         </div>
                     </div>
                     <div class="barraOpciones">
@@ -158,9 +155,10 @@
                                         <th class="">Codigo</th>
                                         <th class="">Descripcion</th>
                                         <th class="">Unidad</th>
-                                        <th width="7%">Cantidad</br>Ingresada</th>
+                                        <th width="7%">Cantidad</br>Orden</th>
+                                        <th width="7%">Pendiente</br>Entrega</th>
                                         <th width="7%">Cantidad</br>Despacho</th>
-                                        <th width="7%">Saldo</th>
+                                        <th width="7%">Saldo</br>Entregar</th>
                                         <th class="">Observaciones</th>
                                         <th class="">Nro.Pedido</th>
                                         <th class="">Nro.Orden</th>
@@ -420,15 +418,11 @@
                 <tr>
                     <th>Num. Nota</th>
                     <th>F.Emisión</th>
-                    <th>Registro </br> Mov.Almacen</th>
-                    <th>Almacen</th>
+                    <th>Almacen Origen</th>
+                    <th>Almacen Destino</th>
                     <th>Centro de Costos</th>
                     <th>Año</th>
-                    <th>Orden</th>
-                    <th>Guia</br>Proveedor</th>
-                    <th>Pedido</th>
                     <th>Guia</br>Remision</th>
-                    <th>Detalle</th>
                     <th>Estado</th>
                 </tr>
             </thead>
