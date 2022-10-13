@@ -52,15 +52,8 @@ $(function(){
 	$("#changePass").click(function(e){
 		e.preventDefault();
 
-		try {
-			if ( $("#nueva_clave").val() === "") throw "Ingrese una clave";
-			if ( $("#nueva_clave_comfirm").val() === "") throw "Confirme la clave ingresada";
-			if ( $("#nueva_clave").val() !== $("#nueva_clave_comfirm").val()) throw "Las claves no son iguales";
-
-			$("#cambio").fadeOut();
-		} catch (error) {
-			mostrarMensaje(error,'mensaje_error');
-		}
+		$("#cambio").fadeIn();
+		$("#cabecera_menu").fadeOut();
 
 		return false;
 	});
@@ -68,15 +61,37 @@ $(function(){
 	$("#btnCancelarCambio").click(function(e){
 		e.preventDefault();
 
-		$("#cambio").fadeIn();
+		$("#cambio").fadeOut();
 
 		return false;
 	});
 
-	$("#botonAceptarCambio").click(function(e){
+	$("#btnAceptarCambio").click(function(e){
 		e.preventDefault();
+		try {
 
-		$("#cambio").fadeOut();
+			if ( $("#nueva_clave").val() === "") throw "Ingrese una clave";
+			if ( $("#nueva_clave_comfirm").val() === "") throw "Confirme la clave ingresada";
+			if ( $("#nueva_clave").val() !== $("#nueva_clave_comfirm").val()) throw "Las claves no son iguales";
+
+			$.post(RUTA+"panel/cambiaClave", {clave:$("#nueva_clave").val()},
+				function (data, textStatus, jqXHR) {
+					$("#cambio").fadeOut();
+					if (data) {
+						mostrarMensaje("Clave cambiada","mensaje_correcto");
+						$("#form__clave")[0].reset();
+					}else {
+						mostrarMensaje("No se actualizo la clave","mensaje_error");
+					}	
+				},
+				"text"
+			);
+			
+			
+		} catch (error) {
+			mostrarMensaje(error,'mensaje_error');
+		}
+		
 
 		return false;
 	});

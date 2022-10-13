@@ -176,14 +176,7 @@
                                 <?php echo $this->listaCostos ?>
                             </select>
                         </div>
-                        <!-- 
-                             value="<?php echo date("m")?>"
-                              value="<?php echo date("m")?>"
-                        
-                        <div class="w5por">
-                            <label for="mes" class="item5">Mes Orden:</label>
-                            <input type="number" name="mesSearch" id="mesSearch" class="textoCentro">
-                        </div>-->
+                       
                         <div>
                             <label for="codigo">Codigo:</label>
                             <input type="text" name="codigoSearch" id="codigoSearch" class="textoCentro">

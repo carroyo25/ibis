@@ -35,7 +35,7 @@
         <div class="ventanaCambio">
             <h3>Cambio de clave</h3>
             <div>
-                <form action="" method="post" id="form__clave">
+                <form method="post" id="form__clave">
                     <input type="password" name="nueva_clave" id="nueva_clave" placeholder="Ingrese su nueva clave">
                     <input type="password" name="nueva_clave_comfirm" id="nueva_clave_comfirm" placeholder="Reescriba la clave anterior">
                 </form>

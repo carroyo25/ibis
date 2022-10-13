@@ -1036,7 +1036,7 @@
             }
         }
 
-        public function ultimoIndice($tabla) {
+        /*public function ultimoIndice($tabla) {
             try {
                 $sql = $this->db->connect()->prepare($query);
                 $sql->execute(["cod"=>$id]);
@@ -1049,7 +1049,7 @@
                 echo "Error: ".$th->getMessage;
                 return false;
             }
-        }
+        }*/
         
 
         public function generarNumeroPedido($id,$query){
@@ -1081,7 +1081,7 @@
             }
         }
 
-        public function obtenerIndiceTabla($tabla){
+        /*public function obtenerIndiceTabla($tabla){
             try {
                 $sql = $this->db->connect()->query("$query");
                 $sql->execute();
@@ -1092,7 +1092,7 @@
                 echo "Error: ".$th->getMessage();
                 return false;
             }
-        }
+        }*/
 
         private function listarPartidas($codigo) {
             try {
@@ -1189,28 +1189,10 @@
             }
         }
 
-        //filtrar par que nop vean los correso deben poner le centro de costos
+        //filtrar par que nop vean los correos deben poner le centro de costos
         public function buscarRol($rol,$cc){
             try {
                 $salida = "";
-
-                /*if ($rol != 3){
-                   
-                }   
-                else {
-                    $sql = $this->db->connect()->prepare("SELECT
-                                                        ibis.tb_user.ccorreo AS correo,
-                                                        ibis.tb_user.nrol,
-                                                        rrhh.tabla_aquarius.nombres, 
-                                                        rrhh.tabla_aquarius.apellidos 
-                                                    FROM
-                                                        ibis.tb_user
-                                                        INNER JOIN rrhh.tabla_aquarius ON ibis.tb_user.ncodper = rrhh.tabla_aquarius.internal 
-                                                    WHERE
-                                                        tb_user.nrol =:rol");
-                    $sql->execute(["rol"=>$rol]);
-                    
-                }*/
 
                 $sql = $this->db->connect()->prepare("SELECT
                                                         ibis.tb_costusu.ncodcos,
@@ -1405,7 +1387,7 @@
                 }else if ( $proceso == 53 ){
                     $detalles = $this->consultarDetallesAprobacion($id);
                 }else if ( $proceso == 54 ){
-                    $detalles = $this->consultarDetallesCotizacion($id);
+                    $detalles = $this->consultarDetallesAprobacion($id);
                 }else if ( $proceso == 56 ){
                     $detalles = $this->obtenerProformas($id);
                 }else if ($proceso ==57) {
@@ -2480,6 +2462,43 @@
 
                 return $row[0]['nummov'];
 
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function listarOperadores(){
+            try {
+                $salida = "";
+                $sql =  $this->db->connect()->query("SELECT
+                                        ibis.tb_user.iduser, 
+                                        ibis.tb_user.ccorreo, 
+                                        ibis.tb_user.nrol, 
+                                        ibis.tb_user.nflgactivo, 
+                                        rrhh.tabla_aquarius.apellidos, 
+                                        rrhh.tabla_aquarius.nombres
+                                    FROM
+                                        ibis.tb_user
+                                        INNER JOIN
+                                        rrhh.tabla_aquarius
+                                        ON 
+                                            ibis.tb_user.ncodper = rrhh.tabla_aquarius.internal
+                                    WHERE
+                                        ibis.tb_user.nrol = 68 AND
+                                        ibis.tb_user.nflgactivo = 1");
+                $sql->execute();
+                $rowcount = $sql->rowcount();
+
+                if($rowcount > 0){
+                    
+                    while($rs = $sql->fetch()){
+                        $nom = $this->primerosNombres($rs['nombres'],$rs['apellidos']);
+                        $salida .= '<li><a href="'.$rs['iduser'].'">'.$nom.'</a></li>';
+                    }
+                }
+
+                return $salida;
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;

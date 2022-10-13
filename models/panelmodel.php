@@ -610,5 +610,28 @@
                 return false;
             }
         }
+
+        public function cambiarClave($clave){
+            try {
+                $ret = false;
+                $clave_nueva = $this->encryptPass($clave);
+                $sql = $this->db->connect()->prepare("UPDATE tb_user 
+                                                    SET cclave =:clave 
+                                                    WHERE iduser =:usr");
+                $sql->execute(["clave"=>$clave_nueva,
+                                        "usr"=>$_SESSION['iduser']]);
+
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0) {
+                    $ret = true;
+                }
+
+                return $ret;
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
     }
 ?>

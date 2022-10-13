@@ -4,7 +4,7 @@ $(function(){
     $("#tablaPrincipal tbody").on("click","tr", function (e) {
         e.preventDefault();
 
-       /*$.post(RUTA+"asigna/consultaId", {id:$(this).data("indice")},
+       $.post(RUTA+"asigna/consultaId", {id:$(this).data("indice")},
             function (data, textStatus, jqXHR) {
                 
                 let numero = $.strPad(data.cabecera[0].nrodoc,6);
@@ -42,10 +42,93 @@ $(function(){
                     .addClass(estado);
             },
             "json"
-        );*/
+        );
 
         $("#proceso").fadeIn();
 
         return false;
     });
+
+    $("#closeProcess").click(function (e) { 
+        e.preventDefault();
+
+        $.post(RUTA+"asigna/actualizaListado",
+            function (data, textStatus, jqXHR) {
+                $(".itemsTabla table tbody")
+                    .empty()
+                    .append(data);
+
+                $("#proceso").fadeOut(function(){
+                    $("form")[0].reset();
+                    $("form")[1].reset();
+                    $("#tablaDetalles tbody").empty();
+                    $("#operadores *").removeClass("itemSeleccionado");
+                });
+            },
+            "text"
+        );
+
+        $("#proceso").fadeOut();
+        
+        return false;  
+    });
+
+    $("#asingRequest").click(function (e) { 
+        e.preventDefault();
+
+        $("#comentarios").fadeIn();
+
+        return false;
+    });
+
+    $("#cancelaAsigna").click(function (e) { 
+        e.preventDefault();
+
+        $("#comentarios").fadeOut();
+        
+        return false;
+    });
+
+    $("#aceptaAsigna").click(function (e) { 
+        e.preventDefault();
+
+        $.post(RUTA+"asigna/asignaOperador", {pedido:$("#codigo_pedido").val(),
+                                             detalles:JSON.stringify(itemsDetalles()),
+                                             asignado:$("#operador_asignado").val()},
+            function (data, textStatus, jqXHR) {
+                $("#comentarios").fadeOut();
+                mostrarMensaje("Pedido asignado","mensaje_correcto")
+            },
+            "text"
+        );
+        
+        return false;
+    });
+
+    $("#operadores").on("click","a", function (e) {
+        e.preventDefault();
+
+        $("#operadores *").removeClass("itemSeleccionado");
+        $(this).addClass("itemSeleccionado");
+        $("#operador_asignado").val($(this).attr("href"));
+
+        return false;
+    });
 })
+
+
+itemsDetalles = () =>{
+    DATA = [];
+    let TABLA = $("#tablaDetalles tbody >tr");
+
+    TABLA.each(function(){
+        let ITEMPEDIDO  = $(this).data('idx');
+
+        item= {};
+        item['itempedido']  = ITEMPEDIDO;
+               
+        DATA.push(item);
+    })
+
+    return DATA;
+}

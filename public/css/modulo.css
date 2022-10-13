@@ -389,7 +389,7 @@
   padding-left: 20px;
   border-radius: 8px;
 }
-.barraTrabajo .variasConsultas div:nth-child(2) input {
+.barraTrabajo .variasConsultas div:nth-child(2) select {
   width: 70%;
 }
 .barraTrabajo .variasConsultas div:nth-child(3) input, .barraTrabajo .variasConsultas div:nth-child(4) input {
@@ -900,7 +900,8 @@
 .ventanaComentarios,
 .ventanaDocumento,
 .ventanaResumen,
-.ventanaCambio {
+.ventanaCambio,
+.ventanaOperador {
   background: #fff;
   position: absolute;
   top: 50%;
@@ -1590,6 +1591,46 @@
   overflow: auto;
 }
 
+.ventanaOperador {
+  width: 19%;
+  padding: 1rem;
+  border-radius: 20px;
+}
+.ventanaOperador h3 {
+  text-align: center;
+}
+.ventanaOperador .contenedor_operadores {
+  border-top: 2px solid #000;
+  border-bottom: 2px solid #000;
+  font-size: 0.8rem;
+  line-height: 2rem;
+  margin: 10px 0;
+}
+.ventanaOperador .contenedor_operadores a {
+  background: transparent;
+  margin-left: 10px;
+  display: block;
+  padding-left: 20px;
+  -webkit-transition: 0.5s;
+  transition: 0.5s;
+}
+.ventanaOperador .contenedor_operadores a:hover {
+  background: rgba(128, 128, 255, 0.5);
+}
+.ventanaOperador button {
+  border: none;
+  width: 45%;
+  line-height: 2.5rem;
+  background: #797777;
+  color: #fff;
+  -webkit-transition: 0.5s;
+  transition: 0.5s;
+}
+.ventanaOperador button:hover {
+  color: #000;
+  background: #005D84;
+}
+
 .ventanaPregunta, .ventanaDialogo, .ventanaComentarios {
   text-align: center;
   padding: 20px;
@@ -1644,6 +1685,26 @@
 .separadorItem {
   background: #005D84;
   color: #fff;
+}
+
+.itemSeleccionado {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #000;
+  position: relative;
+}
+.itemSeleccionado::before {
+  content: "";
+  position: absolute;
+  border-color: #009933;
+  border-style: solid;
+  border-width: 0 0.3em 0.25em 0;
+  height: 1em;
+  top: 1.3em;
+  left: 0.6em;
+  margin-top: -1em;
+  -webkit-transform: rotate(45deg);
+          transform: rotate(45deg);
+  width: 0.5em;
 }
 
 .tablaPointer {

@@ -43,5 +43,9 @@
         function resumenAlmacenObra(){
 
         }
+
+        function cambiaClave(){
+            echo $this->model->cambiarClave($_POST['clave']);
+        }
     }
 ?>
