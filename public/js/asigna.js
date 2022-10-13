@@ -92,7 +92,10 @@ $(function(){
     $("#aceptaAsigna").click(function (e) { 
         e.preventDefault();
 
-        $.post(RUTA+"asigna/asignaOperador", {pedido:$("#codigo_pedido").val(),
+        try {
+            if ($("#operador_asignado").val() =="" ) throw "No selecciono operador";
+
+            $.post(RUTA+"asigna/asignaOperador", {pedido:$("#codigo_pedido").val(),
                                              detalles:JSON.stringify(itemsDetalles()),
                                              asignado:$("#operador_asignado").val()},
             function (data, textStatus, jqXHR) {
@@ -101,6 +104,9 @@ $(function(){
             },
             "text"
         );
+        } catch (error) {
+            mostrarMensaje(error,"mensaje_error")
+        }
         
         return false;
     });
