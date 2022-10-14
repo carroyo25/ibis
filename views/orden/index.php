@@ -147,7 +147,7 @@
                                     <div class="igv">
                                         <input type="radio" name="radioIgv" id="si" value="0.18">
                                         <label for="si">Si</label>
-                                        <input type="radio" name="radioIgv" id="no" value="0" checked>
+                                        <input type="radio" name="radioIgv" id="no" value="0.00" checked>
                                         <label for="no">No</label>
                                     </div>
                                 </div>

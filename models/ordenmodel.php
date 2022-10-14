@@ -271,31 +271,55 @@
             $pdf->Cell(5,6,"",0,0);
             $pdf->Cell(80,6,utf8_decode("Información Bancaria del Proveedor"),1,0,"C",true);
             $pdf->Cell(10,6,"",0,0);
-            $pdf->Cell(40,6,"Valor Venta",0,0);
-            $pdf->Cell(20,6,$cabecera['total'],0,1);
-                                        
-            $pdf->Cell(10,4,utf8_decode("Año"),1,0);
-                    
-            $pdf->Cell(10,4,"Tipo",1,0);
-            $pdf->Cell(10,4,"Pedido",1,0);
-            $pdf->Cell(10,4,"Mantto",1,0);
+
+            if ($cabecera['radioIgv'] ==  0) {
+                $pdf->Cell(48,6,"Valor Venta",0,0);
+                $pdf->Cell(20,6,$cabecera['total'],0,1);
+            }else {
+                
+                $igv = round(($cabecera['total']*0.18),2);
+                $total_sin_igv = round($cabecera['total'] - $igv,2);
+                $pdf->Cell(45,6,"Valor Venta",0,0);
+                $pdf->Cell(20,6,$total_sin_igv,0,1);
+            }
+
+            $pdf->Cell(10,6,utf8_decode("Año"),1,0);   
+            $pdf->Cell(10,6,"Tipo",1,0);
+            $pdf->Cell(10,6,"Pedido",1,0);
+            $pdf->Cell(10,6,"Mantto",1,0);
             $pdf->Cell(5,6,"",0,0);
             $pdf->Cell(35,4,"Detalle del Banco",1,0);
             $pdf->Cell(15,4,"Moneda",1,0);
             $pdf->Cell(30,4,"Nro. Cuenta Bancaria",1,0);
+
+            if($cabecera['radioIgv'] ==  0) {
+                $pdf->SetX(146);
+                $pdf->Cell(8,6,"",0,0);
+                $pdf->Cell(20,6,"",0,0);
+                $pdf->SetX(185);
+                $pdf->Cell(20,6,"",0,1); 
+            }else{
+                $igv = round(($cabecera['total']*0.18),2);
+                $total_sin_igv = round($cabecera['total'] - $igv,2);
+                $pdf->SetX(146);
+                $pdf->Cell(8,6,"IGV",0,0);
+                $pdf->Cell(37,6,"(18%)",0,0);
+                $pdf->Cell(25,6,$igv,0,1);
+            }
             
-            $pdf->Cell(10,4,"",0,0);
+
+            $pdf->SetFont('Arial',"","7");
+            $pdf->Cell(10,6,$anio[0],1,0);
+            $pdf->Cell(10,6,$tipo,1,0);
+            $pdf->Cell(10,6,str_pad($cabecera['codigo_pedido'],6,0,STR_PAD_LEFT),1,0);
+            $pdf->Cell(10,6,"",1,0);
+            $pdf->Cell(5,6,"",0,0);
+
+            $pdf->Cell(90,4,"",0,0);
             $pdf->SetFont('Arial',"B","8");
             $pdf->Cell(20,4,"TOTAL",1,0,"L",true);
             $pdf->Cell(15,4,$cabecera['moneda'],1,0,"C",true);
             $pdf->Cell(20,4,$cabecera['total'],1,1,"R",true);
-
-            $pdf->SetFont('Arial',"","7");
-            $pdf->Cell(10,4,$anio[0],1,0);
-            $pdf->Cell(10,4,$tipo,1,0);
-            $pdf->Cell(10,4,str_pad($cabecera['codigo_pedido'],6,0,STR_PAD_LEFT),1,0);
-            $pdf->Cell(10,4,"",1,0);
-            $pdf->Cell(5,6,"",0,0);
             
             $nreg = count($bancos);
 
