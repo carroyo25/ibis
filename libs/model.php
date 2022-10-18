@@ -821,13 +821,18 @@
         public function listarAlmacen(){
             try {
                 $salida = "";
-                $sql = $this->db->connect()->query("SELECT ncodalm,UPPER(cdesalm) AS almacen FROM tb_almacen WHERE nflgactivo = 1");
+                $sql = $this->db->connect()->query("SELECT
+                                                    tb_almacen.ncodalm,
+                                                    UPPER(cdesalm) AS almacen,
+                                                    UPPER(tb_almacen.ctipovia) AS direccion
+                                                    FROM tb_almacen
+                                                    WHERE nflgactivo = 1");
                 $sql->execute();
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0){
                     while ($rs = $sql->fetch()){
-                        $salida .='<li><a href="'.$rs['ncodalm'].'" >'.$rs['almacen'].'</a></li>';
+                        $salida .='<li><a href="'.$rs['ncodalm'].'" data-direccion="'.$rs['direccion'].'">'.$rs['almacen'].'</a></li>';
                     }
 
                     return $salida;
@@ -1939,11 +1944,13 @@
                                                     cm_entidadcon.ctelefono1,
                                                     transportes.cdescripcion AS transporte,
                                                     UPPER(tb_almacen.cdesalm) AS cdesalm,
+                                                    UPPER(tb_almacen.ctipovia) AS direccion,
                                                     cm_entidad.cviadireccion,
 	                                                cm_entidad.cemail AS mail_entidad,
                                                     cm_entidad.nagenret,
                                                     lg_ordencab.cverificacion,
                                                     lg_ordencab.ntotal,
+                                                    lg_ordencab.nigv,
                                                     FORMAT(lg_ordencab.ntotal,2) AS ctotal,
 	                                                tb_pedidocab.nivelAten  
                                                 FROM

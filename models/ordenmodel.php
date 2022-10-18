@@ -213,7 +213,7 @@
             $anio = explode("-",$cabecera['emision']);
 
             $orden = $cabecera['sw'] == 0 ? $noc : $cabecera['numero'];
-            $titulo = $titulo . " " . $orden;
+            $titulo = $titulo . " " .$anio[0]. " - " . $orden;
             
             $file = $prefix.$noc."_".$cabecera['codigo_costos'].".pdf";
             $entrega = $this->calcularDias($cabecera['fentrega']);
@@ -222,7 +222,8 @@
                             $cabecera['lentrega'],$cabecera['ncotiz'],$cabecera['fentrega'],$cabecera['cpago'],$cabecera['total'],
                             $cabecera['costos'],$cabecera['concepto'],$_SESSION['nombres'],$cabecera['entidad'],$cabecera['ruc_entidad'],
                             $cabecera['direccion_entidad'],$cabecera['telefono_entidad'],$cabecera['correo_entidad'],$cabecera['retencion'],
-                            $cabecera['atencion'],$cabecera['telefono_contacto'],$cabecera['correo_contacto']);
+                            $cabecera['atencion'],$cabecera['telefono_contacto'],$cabecera['correo_contacto'],
+                            $cabecera['direccion_almacen']);
 
             $pdf->AddPage();
             $pdf->AliasNbPages();
@@ -322,6 +323,13 @@
             $pdf->Cell(20,4,$cabecera['total'],1,1,"R",true);
             
             $nreg = count($bancos);
+
+            
+            $x = $pdf->GetX();
+            $y = $pdf->GetY();
+            
+
+            $pdf->SetXY(55,$y-6);
 
             for ($i=0;$i<$nreg;$i++){
                 $pdf->Cell(35,4,$bancos[$i]['banco'],1,0);
@@ -842,7 +850,7 @@
                                                     INNER JOIN tb_parametros AS monedas ON cm_entidadbco.cmoneda = monedas.nidreg 
                                                 WHERE
                                                     cm_entidadbco.nflgactivo = 7 
-                                                    AND cm_entidadbco.id_centi = :entidad");
+                                                    AND cm_entidadbco.nitem = :entidad");
                 $sql->execute(["entidad"=>$entidad]);
                 $rowCount = $sql->rowCount();
 

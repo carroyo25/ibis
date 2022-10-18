@@ -94,7 +94,7 @@
             $sql = $this->db->connect()->prepare("UPDATE cm_entidad SET ctipdoc=:tdoc,cnumdoc=:nrodoc,crazonsoc=:razon,
                                                                                 cviadireccion=:direccion,ncodpais=:pais,ctelefono=:fono,
                                                                                 nagenret=:retencion,cemail=:correo,nflgactivo=:estado,
-                                                                                ctipper=:persona
+                                                                                ctipper=:persona,nrubro=:rubro
                                                                         WHERE id_centi=:id");
                 $sql->execute(["tdoc"=>$datos["codigo_documento"],
                                 "nrodoc"=>$datos["nrodoc"],
@@ -106,6 +106,7 @@
                                 "correo"=>$datos["correo"],
                                 "estado"=>$datos['codigo_estado'],
                                 "persona"=>$datos["codigo_tipo"],
+                                "rubro"=>$datos["codigo_rubro"],
                                 "id"=>$datos['codigo_entidad']]);
 
             $this->grabarBancos($datos["codigo_entidad"],$bancos);

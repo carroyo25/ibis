@@ -35,6 +35,7 @@
                     <input type="hidden" name="codigo_moneda" id="codigo_moneda">
                     <input type="hidden" name="ruc_entidad" id="ruc_entidad">
                     <input type="hidden" name="direccion_entidad" id="direccion_entidad">
+                    <input type="hidden" name="direccion_almacen" id="direccion_almacen">
                     <input type="hidden" name="telefono_entidad" id="telefono_entidad">
                     <input type="hidden" name="correo_entidad" id="correo_entidad">
                     <input type="hidden" name="codigo_verificacion" id="codigo_verificacion">

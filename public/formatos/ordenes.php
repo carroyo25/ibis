@@ -7,31 +7,32 @@
                                     $lugar,$cotizacion,$fentrega,$pago,$importe,
                                     $info,$detalle,$usuario,$razon_social,
                                     $ruc,$direccion,$telefono,$correo,$retencion,
-                                    $contacto,$tel_contacto,$cor_contacto)
+                                    $contacto,$tel_contacto,$cor_contacto,$direccion_almacen)
         {
             parent::__construct();
-            $this->titulo       = $titulo;
-            $this->condicion    = $condicion;
-            $this->fecha        = $fecha;
-            $this->moneda       = $moneda;
-            $this->plazo        = $plazo;
-            $this->lugar        = $lugar;
-            $this->cotizacion   = $cotizacion;
-            $this->fentrega     = $fentrega;
-            $this->pago         = $pago;
-            $this->importe      = $importe;
-            $this->info         = $info;
-            $this->detalle      = $detalle;
-            $this->razon_social = $razon_social;
-            $this->ruc          = $ruc;
-            $this->direccion    = $direccion;
-            $this->telefono     = $telefono;
-            $this->correo       = $correo;
-            $this->retencion    = $retencion;
-            $this->contacto     = $contacto;
-            $this->tel_contacto = $tel_contacto;
-            $this->cor_contacto = $cor_contacto;
-            $this->usuario      = $usuario;
+            $this->titulo           = $titulo;
+            $this->condicion        = $condicion;
+            $this->fecha            = $fecha;
+            $this->moneda           = $moneda;
+            $this->plazo            = $plazo;
+            $this->lugar            = $lugar;
+            $this->cotizacion       = $cotizacion;
+            $this->fentrega         = $fentrega;
+            $this->pago             = $pago;
+            $this->importe          = $importe;
+            $this->info             = $info;
+            $this->detalle          = $detalle;
+            $this->razon_social     = $razon_social;
+            $this->ruc              = $ruc;
+            $this->direccion        = $direccion;
+            $this->telefono         = $telefono;
+            $this->correo           = $correo;
+            $this->retencion        = $retencion;
+            $this->contacto         = $contacto;
+            $this->tel_contacto     = $tel_contacto;
+            $this->cor_contacto     = $cor_contacto;
+            $this->usuario          = $usuario;
+            $this->direccion_almacen   = $direccion_almacen;
         }
 
         function header(){
@@ -42,7 +43,7 @@
             if ($this->condicion == 0) {
                 $condicion = "VISTA PREVIA";
             }else {
-                $condicion = "EMITIDO";
+                $condicion = "APROBADO";
             }
 
             $fecha = explode("-",$this->fecha);
@@ -66,9 +67,9 @@
 	        $this->Cell(10,4,"Mes",1,0,"C");
 	        $this->Cell(10,4,utf8_decode("Año"),1,1,"C");
 	        $this->SetXY(170,36);
-	        $this->Cell(10,8,$fecha[0],1,0,"C"); //envia de parametro
+	        $this->Cell(10,8,$fecha[2],1,0,"C"); //envia de parametro
 	        $this->Cell(10,8,$fecha[1],1,0,"C"); //envia de parametro
-	        $this->Cell(10,8,$fecha[2],1,1,"C"); //envia de parametro
+	        $this->Cell(10,8,$fecha[0],1,1,"C"); //envia de parametro
 	        
 	        $this->SetXY(10,32);
 	        $this->Cell(30,4,"Facturar a nombre de : ","TL",0);
@@ -82,7 +83,7 @@
 	        $this->Cell(30,4,utf8_decode($this->moneda),"R",1);
             
             $this->Cell(30,4,"Lugar de entrega de bienes :","LB",0);
-	        $this->Cell(130,4,utf8_decode($this->lugar),"BR",1); //envia de parametro
+	        $this->Cell(130,4,utf8_decode($this->lugar . " ". $this->direccion_almacen),"BR",1); //envia de parametro
 
     		$this->Ln(1);
 
@@ -135,7 +136,9 @@
             $this->Cell(13,3,utf8_decode("Observ :"),"L",0);
 
             $this->SetFillColor(255, 255, 0);
+            $this->SetFont('Arial','',5);
             $this->Cell(64,3,utf8_decode($this->detalle),"R",1,"L",true); //envia de parametro
+            $this->SetFont('Arial','',6);
             $this->Cell(16,3,utf8_decode(""),"BL",0);
             $this->Cell(13,3,utf8_decode("E-mail :"),"B",0);
             $this->Cell(84,3,utf8_decode($this->cor_contacto),"B",0); //envia de parametro

@@ -38,6 +38,7 @@ $(function(){
                 $("#codigo_pago").val(data.cabecera[0].ncodpago);
                 $("#ruc_entidad").val(data.cabecera[0].cnumdoc);
                 $("#direccion_entidad").val(data.cabecera[0].cviadireccion);
+                $("#direccion_almacen").val(data.cabecera[0].direccion);
                 $("#telefono_entidad").val(data.cabecera[0].ctelefono1);
                 $("#correo_entidad").val(data.cabecera[0].mail_entidad);
                 $("#codigo_verificacion").val(data.cabecera[0].cverificacion);
@@ -66,7 +67,12 @@ $(function(){
                 $("#ncotiz").val(data.cabecera[0].cnumcot);
                 $("#tcambio").val(data.cabecera[0].ntcambio);
 
-                console.log(data.cabecera[0].ctotal)
+               if (data.cabecera[0].nigv != 0) {
+                    $("#si").prop("checked", true);
+               }else {
+                    $("#no").prop("checked", true);
+               };
+
 
                 $("#estado")
                     .removeClass()
@@ -151,6 +157,7 @@ $(function(){
 
         if (contenedor_padre == "listaAlmacen"){
             $("#codigo_almacen").val(codigo);
+            $("#direccion_almacen").val($(this).data('direccion'));
         }else if (contenedor_padre == "listaTransporte"){
             $("#codigo_transporte").val(codigo);
         }else if (contenedor_padre == "listaMoneda"){

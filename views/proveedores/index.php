@@ -113,7 +113,7 @@
                         </div>  
                     </div>
                     <div class="seccion_derecha">
-                        <div class="column4items">
+                        <div class="column4items2filas">
                             <input type="radio" name="agente" id="percepcion" value="1">
                             <label for="percepcion">Agente Percepción</label>
                             <input type="radio" name="agente" id="retencion" value="2">
@@ -182,8 +182,8 @@
     <div class="cabezaModulo">
         <h2>Catalogo Proveedores</h2>
         <div>
-            <a href="#" id="nuevoRegistro"><i class="far fa-file"></i></a>
-            <a href="#" id="irInicio"><i class="fas fa-home"></i></a>
+            <a href="#" id="nuevoRegistro"><i class="far fa-file"></i><p>Nuevo</p></a>
+            <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
         </div>
     </div>
     <div class="barraTrabajo">
