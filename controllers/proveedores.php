@@ -56,6 +56,10 @@
         function actualizaListado(){
             echo $this->model->listarProveedores();
         }
+
+        function quitarItem(){
+            echo $this->model->desactivarItem($_POST,8);
+        }
         
     }
 ?>

@@ -7,6 +7,7 @@
 
         function render(){
             $this->view->listaCostos = $this->model->costosPorUsuario($_SESSION['iduser']);
+            $this->view->listaCostosSelect = $this->model->costosPorUsuarioSelect($_SESSION['iduser']);
             $this->view->listaAreas = $this->model->obtenerAreas();
             $this->view->listaTipos = $this->model->listarParametros("07");
             $this->view->listaTransportes = $this->model->listarParametros("08");
@@ -66,6 +67,10 @@
 
         function filtraItems(){
             echo $this->model->filtrarItemsPedido($_POST['criterio'],$_POST['tipo']);
+        }
+
+        function quitarItem(){
+            echo $this->model->desactivarItem($_POST,0);
         }
 
     }

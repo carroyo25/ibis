@@ -1146,7 +1146,7 @@
                                                         INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
                                                         INNER JOIN tb_parametros ON cm_producto.ntipo = tb_parametros.nidreg
                                                     WHERE ntipo = :tipo
-                                                    LIMIT 20");
+                                                    LIMIT 100");
                 $sql->execute(["tipo"=>$tipo]);
                 $rowCount = $sql->rowCount();
                 if ($rowCount > 0){
@@ -1468,7 +1468,7 @@
                         $checked = $rs['nflgqaqc'] == 1 ? "checked ": " ";
                         
                         $salida .='<tr data-grabado="1" data-idprod="'.$rs['idprod'].'" data-codund="'.$rs['unid'].'" data-idx="'.$rs['iditem'].'">
-                                        <td class="textoCentro"><a href="#"><i class="fas fa-eraser"></i></a></td>
+                                        <td class="textoCentro"><a href="'.$rs['iditem'].'"><i class="fas fa-eraser"></i></a></td>
                                         <td class="textoCentro">'.str_pad($filas++,3,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="pl20px">'.strtoupper($rs['cdesprod']).'</td>
@@ -2508,6 +2508,18 @@
                 return $salida;
             } catch (PDOException $th) {
                 echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function desactivarItem($post,$est) {
+            try {
+                $sql = $this->db->connect()->prepare($post['query']);
+                $sql->execute(["estado"=>$est,"id"=>$post['id']]);
+
+                return true;
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
                 return false;
             }
         }

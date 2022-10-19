@@ -179,7 +179,7 @@
                 <input type="file" name="uploadAtach[]" id="uploadAtach" multiple class="oculto">
                 <div class="tituloArchivos">
                     <h3>Adjuntar Archivos</h3>
-                    <a href="#" id="openArch" title="Adjuntar Archivos"><i class="fas fa-file-medical"></i></a>
+                    <a href="#" id="openArch" title="Adjuntar Archivos"><i class="fas fa-file-medical"></i><p>Añadir</p></a>
                 </div>            
                 <ul class="listaArchivos" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
                 </ul>
@@ -252,6 +252,9 @@
 
                                 </div>
                             </div>
+                            <div>
+                                <span>CC: <?php echo $_SESSION['correo']?></span>
+                            </div>
                             <ul class="atachs">
 
                             </ul>
@@ -273,7 +276,10 @@
                                     
                                 </tbody>
                             </table>
+                            
+                            
                         </div>
+                        
                     </div>
                 
             </div>
@@ -297,8 +303,10 @@
                         </select>
                     </div>
                     <div>
-                        <label for="costosSearch">Centro de Costos</label>
-                        <input type="text" name="costosSearch" id="costosSearch">
+                        <label for="costosSearch">Centro de Costos: </label>
+                        <select name="costosSearch" id="costosSearch" class="item4">
+                            <?php echo $this->listaCostosSelect ?>
+                        </select>
                     </div>
                     <div>
                         <label for="mes">Mes</label>

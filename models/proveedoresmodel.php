@@ -345,6 +345,6 @@
                 echo "Error: " . $th->getMessage();
                 return false;
             }
-        }   
+        }
     }
 ?>

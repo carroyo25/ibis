@@ -624,13 +624,24 @@ $(function(){
         }
     });
 
-    $("#tablaDetalles tbody").on("click","a", function (e) {
+    $("#tablaDetalles").on('click','a', function(e) {
         e.preventDefault();
 
-        let parent = $(this).parent().parent();
-        parent.remove();
+        let fila = $(this).parent().parent();
 
-        fillTables($("#tablaDetalles tbody > tr"),1);
+        if ($(this).attr("href") == "#") {
+                $(this).parent().parent().remove();
+                fillTables($("#tablaDetalles tbody > tr"),1);
+        }else {
+            $.post(RUTA+"pedidos/quitarItem", {query:"UPDATE tb_pedidodet SET tb_pedidodet.nflgactivo =:estado WHERE tb_pedidodet.iditem =:id",
+                                                        id:$(this).attr("href")},
+                function (data, text, requestXHR) {
+                    fila.remove();
+                    fillTables($("#tablaDetalles tbody > tr"),1);
+                },
+                "text"
+            );
+        };
 
         return false;
     });

@@ -268,6 +268,46 @@ $(function() {
         _this = this;
         buscar(_this); // arrow function para activa el buscador
     });
+
+    $("#contactos").on('click','a', function(e) {
+        e.preventDefault();
+
+        let fila = $(this).parent().parent();
+
+         if ($(this).attr("href") == "#") {
+                $(this).parent().parent().remove();
+         }else {
+            $.post(RUTA+"proveedores/quitarItem", {query:"UPDATE cm_entidadcon SET cm_entidadcon.nflgactivo =:estado WHERE cm_entidadcon.nidcontact =:id",
+                                                        id:$(this).attr("href")},
+                function (data, text, requestXHR) {
+                    fila.remove();
+                },
+                "text"
+            );
+         };
+
+        return false;
+    });
+
+    $("#bancos").on('click','a', function(e) {
+        e.preventDefault();
+
+        let fila = $(this).parent().parent();
+
+        if ($(this).attr("href") == "#") {
+                $(this).parent().parent().remove();
+        }else {
+            $.post(RUTA+"proveedores/quitarItem", {query:"UPDATE cm_entidadbco SET cm_entidadbco.nflgactivo =:estado WHERE cm_entidadbco.nitem =:id",
+                                                        id:$(this).attr("href")},
+                function (data, text, requestXHR) {
+                    fila.remove();
+                },
+                "text"
+            );
+        };
+
+        return false;
+    });
 })
 
 obtenerBancos = () =>{

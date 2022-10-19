@@ -114,14 +114,31 @@ $culminado:#55A5E2;
     grid-template-rows: 1fr 1fr;
     position: relative;
     padding: 0 13px;
-    row-gap: -5px;
+    gap: 5px;
     border: 1px solid $sobreElemento;
     margin-top: 10px;
     border-radius: 8px;
-    //margin-bottom: 1rem;
+    margin-bottom: 1rem;
 
     label {
-        margin-top: 14px !important;
+        margin-top: 14px;
+    }
+}
+
+.column4items2filas {
+    display: grid;
+    grid-template-columns: 20px 1fr;
+    grid-template-rows: 1fr 1fr;
+    position: relative;
+    padding: 10px 13px;
+    gap: 8px;
+    border: 1px solid $sobreElemento;
+    margin-top: 10px;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+
+    label {
+        margin-top: 0 !important;
     }
 }
 
@@ -1081,11 +1098,23 @@ $culminado:#55A5E2;
     padding: 1rem;
     border-radius: 8px;
     max-height: 30rem;
-    overflow: auto;
+    overflow: hidden;
 
     .tituloArchivos{
         display: flex;
         justify-content: space-between;
+
+        a {
+            text-align: center;
+            font-size: 0.8rem;
+            border: 1px solid #fff;
+            padding: 5px;
+            border-radius: 10px;
+
+            &:hover{
+                border: 1px solid #d4d4d4;
+            }
+        }
 
         i {
             font-size: 1.5rem;
@@ -1093,7 +1122,8 @@ $culminado:#55A5E2;
     }
 
     .listaArchivos {
-        height: 35vh;
+        max-height: 30vh;
+        height: 30vh;
         border:1px solid $bordeCajas;
         margin: 5px 0;
         overflow: auto;
@@ -1292,7 +1322,7 @@ $culminado:#55A5E2;
     }
 
     .tablaBusqueda{
-        height: 20rem;
+        height: 50rem;
         overflow:auto;
         padding: 0 10px;
 

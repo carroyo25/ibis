@@ -106,16 +106,17 @@
 .column4items {
   display: -ms-grid;
   display: grid;
-  -ms-grid-columns: 20px 1fr;
+  -ms-grid-columns: 20px 5px 1fr;
   grid-template-columns: 20px 1fr;
-  -ms-grid-rows: 1fr -5px 1fr;
+  -ms-grid-rows: 1fr 5px 1fr;
   grid-template-rows: 1fr 1fr;
   position: relative;
   padding: 0 13px;
-  row-gap: -5px;
+  gap: 5px;
   border: 1px solid #c2c2c2;
   margin-top: 10px;
   border-radius: 8px;
+  margin-bottom: 1rem;
 }
 
 .column4items > *:nth-child(1) {
@@ -125,7 +126,7 @@
 
 .column4items > *:nth-child(2) {
   -ms-grid-row: 1;
-  -ms-grid-column: 2;
+  -ms-grid-column: 3;
 }
 
 .column4items > *:nth-child(3) {
@@ -135,10 +136,49 @@
 
 .column4items > *:nth-child(4) {
   -ms-grid-row: 3;
-  -ms-grid-column: 2;
+  -ms-grid-column: 3;
 }
 .column4items label {
-  margin-top: 14px !important;
+  margin-top: 14px;
+}
+
+.column4items2filas {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 20px 8px 1fr;
+  grid-template-columns: 20px 1fr;
+  -ms-grid-rows: 1fr 8px 1fr;
+  grid-template-rows: 1fr 1fr;
+  position: relative;
+  padding: 10px 13px;
+  gap: 8px;
+  border: 1px solid #c2c2c2;
+  margin-top: 10px;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.column4items2filas > *:nth-child(1) {
+  -ms-grid-row: 1;
+  -ms-grid-column: 1;
+}
+
+.column4items2filas > *:nth-child(2) {
+  -ms-grid-row: 1;
+  -ms-grid-column: 3;
+}
+
+.column4items2filas > *:nth-child(3) {
+  -ms-grid-row: 3;
+  -ms-grid-column: 1;
+}
+
+.column4items2filas > *:nth-child(4) {
+  -ms-grid-row: 3;
+  -ms-grid-column: 3;
+}
+.column4items2filas label {
+  margin-top: 0 !important;
 }
 
 .column4 {
@@ -1340,7 +1380,7 @@
   padding: 1rem;
   border-radius: 8px;
   max-height: 30rem;
-  overflow: auto;
+  overflow: hidden;
 }
 .ventanaArchivos .tituloArchivos {
   display: -webkit-box;
@@ -1350,11 +1390,22 @@
       -ms-flex-pack: justify;
           justify-content: space-between;
 }
+.ventanaArchivos .tituloArchivos a {
+  text-align: center;
+  font-size: 0.8rem;
+  border: 1px solid #fff;
+  padding: 5px;
+  border-radius: 10px;
+}
+.ventanaArchivos .tituloArchivos a:hover {
+  border: 1px solid #d4d4d4;
+}
 .ventanaArchivos .tituloArchivos i {
   font-size: 1.5rem;
 }
 .ventanaArchivos .listaArchivos {
-  height: 35vh;
+  max-height: 30vh;
+  height: 30vh;
   border: 1px solid #E0E0E0;
   margin: 5px 0;
   overflow: auto;
@@ -1545,7 +1596,7 @@
   outline: none;
 }
 .ventanaBusqueda .tablaBusqueda {
-  height: 20rem;
+  height: 50rem;
   overflow: auto;
   padding: 0 10px;
 }

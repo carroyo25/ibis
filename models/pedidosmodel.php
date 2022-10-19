@@ -302,7 +302,7 @@
             $salida = "";
             
             $origen = $_SESSION['user']."@sepcon.net";
-            $nombre_envio = $_SESSION['user'];
+            $nombre_envio = $_SESSION['nombres'];
 
             $mail = new PHPMailer;
             $mail->isSMTP();
@@ -324,6 +324,8 @@
             
             try {
                 $mail->setFrom($origen,$nombre_envio);
+
+                $mail->addAddress($origen,$nombre_envio);
 
                 for ($i=0; $i < $nreg; $i++) {
                     $mail->addAddress($data[$i]->correo,$data[$i]->nombre);
