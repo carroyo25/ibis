@@ -83,7 +83,7 @@
            }
         }
 
-        public function importarPedidos(){
+        /*public function importarPedidos(){
             try {
                 $salida = "";
                 $sql = $this->db->connect()->prepare("SELECT
@@ -162,7 +162,7 @@
                 echo $th->getMessage();
                 return false;
             }
-        }
+        }*/
 
         public function verDatosCabecera($pedido){
             $datosPedido = $this->datosPedido($pedido);
@@ -360,7 +360,9 @@
                                                             ncodalm=:alm,
                                                             ncodmon=:moneda,
                                                             ntcambio=:tcambio,
-                                                            ncodpago=:pago
+                                                            ncodpago=:pago,
+                                                            userModifica=:modifica,
+                                                            nigv=:igv
                                                         WHERE id_regmov = :id");
                 $sql->execute(['entrega'=>$cab->fentrega,
                                 "total"=>$cab->total_numero,
@@ -370,6 +372,8 @@
                                 "moneda"=>$cab->codigo_moneda,
                                 "tcambio"=>$cab->tcambio,
                                 "pago"=>$cab->codigo_pago,
+                                "modifica"=>$_SESSION['iduser'],
+                                "igv"=>$cab->radioIgv,
                                 "id"=>$cab->codigo_orden]);
                 
                 $this->actualizarDetallesOrden($detalles);

@@ -202,10 +202,20 @@
             
             if ($cabecera['codigo_tipo'] == "37") {
                 $titulo = "ORDEN DE COMPRA" ;
+
+                if ( $cabecera['user_modifica'] != null) {
+                    $titulo = "ORDEN DE COMPRA - R1" ;
+                }
+
                 $prefix = "OC";
                 $tipo = "B";
             }else{
                 $titulo = "ORDEN DE SERVICIO";
+
+                if ( $cabecera['user_modifica'] != null) {
+                    $titulo = "ORDEN DE SERVICIO - R1" ;
+                }
+
                 $prefix = "OS";
                 $tipo = "S";
             }

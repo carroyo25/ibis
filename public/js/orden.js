@@ -66,6 +66,7 @@ $(function(){
                 $("#total_numero").val(data.cabecera[0].ntotal);
                 $("#ncotiz").val(data.cabecera[0].cnumcot);
                 $("#tcambio").val(data.cabecera[0].ntcambio);
+                $("#user_modifica").val(data.cabecera[0].userModifica);
 
                if (data.cabecera[0].nigv != 0) {
                     $("#si").prop("checked", true);

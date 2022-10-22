@@ -2198,7 +2198,7 @@
 }
 .resumen__wrap .div5 .circulos .avances .circulo_exterior {
   text-align: center;
-  width: 100px;
+  width: 70px;
   border-radius: 50%;
   padding: 10px;
   -webkit-box-shadow: 5px 7px 6px #c2c2c2;
@@ -2207,7 +2207,7 @@
 .resumen__wrap .div5 .circulos .avances .circulo_interior {
   width: 80px;
   border-radius: 50%;
-  padding: 25px;
+  padding: 20px;
   text-align: center;
   position: relative;
   border: 6px solid #fff;
@@ -2220,6 +2220,7 @@
   -webkit-transform: translate(-50%, -50%);
           transform: translate(-50%, -50%);
   font-weight: bold;
+  font-size: 0.55rem;
 }
 .resumen__wrap .div5 .circulos .avances .avance_activo_interno {
   background: yellow;

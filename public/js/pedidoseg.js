@@ -108,7 +108,7 @@ $(function(){
         e.preventDefault();
     
         let result = {};
-        let ruta = $("#codigo_estado") == 49 ? "public/documentos/pedidos/vistaprevia/":"public/documentos/pedidos/emitidos/";
+        let ruta = $("#codigo_estado").val() == 49 ? "public/documentos/pedidos/vistaprevia/":"public/documentos/pedidos/emitidos/";
 
         $.each($("#formProceso").serializeArray(),function(){
             result[this.name] = this.value;

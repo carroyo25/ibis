@@ -1923,6 +1923,7 @@
                                                     lg_ordencab.id_refpedi,
                                                     lg_ordencab.ntcambio,
                                                     lg_ordencab.cnumcot,
+                                                    lg_ordencab.userModifica,
                                                     UPPER(tb_pedidocab.concepto) AS concepto,
                                                     UPPER(tb_pedidocab.detalle) AS detalle,
                                                     UPPER(CONCAT_WS(' ',tb_proyectos.ccodproy,tb_proyectos.cdesproy)) AS costos,

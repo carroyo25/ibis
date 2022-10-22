@@ -1914,7 +1914,7 @@ $culminado:#55A5E2;
 
                 .circulo_exterior {
                     text-align: center;
-                    width: 100px;
+                    width: 70px;
                     border-radius: 50%;
                     padding: 10px;
                     box-shadow: 5px 7px 6px #c2c2c2;
@@ -1923,7 +1923,7 @@ $culminado:#55A5E2;
                 .circulo_interior {
                     width: 80px;
                     border-radius: 50%;
-                    padding: 25px;
+                    padding: 20px;
                     text-align: center;
                     position: relative;
                     border: 6px solid #fff;
@@ -1935,6 +1935,7 @@ $culminado:#55A5E2;
                         left: 50%;
                         transform: translate(-50%, -50%);
                         font-weight: bold;
+                        font-size: .55rem;
                     }
                 }
 
