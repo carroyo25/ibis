@@ -85,7 +85,7 @@ $culminado:#55A5E2;
     align-items: self-end;
 }
 
-.column2,.column2_9,.column2_46,.column2_3957{
+.column2,.column2_9,.column2_46,.column2_3957,.column2_3457{
     display:grid;
     position: relative;
     padding: 2px 5px;
@@ -106,6 +106,11 @@ $culminado:#55A5E2;
 .column2_3957{
     grid-template-columns: 39% 57%;
 }
+
+.column2_3457{
+    grid-template-columns: 34% 57%;
+}
+
 
 .column4items{
     display: -ms-grid;
@@ -984,8 +989,6 @@ $culminado:#55A5E2;
             }
         }
 
-
-
         textarea {
             border:1px solid $sombra;
             padding:3px;
@@ -1467,7 +1470,6 @@ $culminado:#55A5E2;
     overflow: auto;
 }
 
-
 .separadorItem{
     background:$fondo_menus;
     color: $blanco;
@@ -1498,7 +1500,6 @@ $culminado:#55A5E2;
 }
 
 //tablas en  los formularios
-
 .tablaInterna {
     overflow:auto;
     max-height: 25vh;
@@ -1807,4 +1808,158 @@ $culminado:#55A5E2;
 
 .atendido {
     background: $subtitulo;
+}
+
+.resumen__wrap {
+	height: 65vh;
+	display: grid;
+	grid-template-columns: 1fr 1fr .85fr;
+	grid-template-rows: 5% 1fr .8fr;
+	grid-column-gap: 0px;
+	grid-row-gap: 0px;
+
+    &>div{
+        border: 1px dotted #cecece;
+		padding: 5px;
+		font-size: .7rem;
+    }
+
+    .div1{
+        grid-area: 1 / 1 / 2 / 4;
+        background: #000;
+		color: #fff;
+        display: flex;
+        justify-content: space-between;
+         
+        a {
+            color: #fff;
+            font-size: .9rem;
+        }
+    }
+
+    .div2{
+        grid-area: 2 / 1 / 3 / 2;
+        line-height: 1.2rem;
+        padding: 5px;
+
+        p{
+            border-bottom: 1px solid #c2c2c2;
+            padding: 5px;
+        }
+
+        .opciones {
+			margin-top: 20px;
+			width: 100%;
+			text-align: center;
+			display: flex;
+			justify-content: space-between;
+
+            button {
+                padding: 12px;
+                font-size: .6rem;
+            }
+		}
+    }
+
+    .div3{
+        grid-area: 2 / 2 / 3 / 3;
+    }
+
+    .div4{
+        grid-area: 2 / 3 / 4 / 4;
+
+        .table_detalle {
+			border-collapse: collapse;
+            width: 100%;
+
+            thead{
+                background-color: black;
+                color: #fff;
+                border: 1px solid #c2c2c2;
+            }
+
+            tbody tr td {
+                border: 1px dotted #c2c2c2;
+
+                a {
+                    font-size: .9rem !important;
+                }
+            }
+		}
+
+		.textoCentro{
+			text-align: center;
+		}
+    }
+
+    .div5{
+        grid-area: 3 / 1 / 4 / 3;
+
+        .circulos {
+            margin-bottom: 10px;
+
+			p {
+                width: 100%;
+                text-align: center ;
+                line-height: 2rem;
+                font-weight: bold;
+                font-size: 1.5rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .avances {
+                display: flex;
+                justify-content: space-between;
+                position: relative;
+
+                .circulo_exterior {
+                    text-align: center;
+                    width: 100px;
+                    border-radius: 50%;
+                    padding: 10px;
+                    box-shadow: 5px 7px 6px #c2c2c2;
+                }
+        
+                .circulo_interior {
+                    width: 80px;
+                    border-radius: 50%;
+                    padding: 25px;
+                    text-align: center;
+                    position: relative;
+                    border: 6px solid #fff;
+
+                    span{
+                        display: block;
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        font-weight: bold;
+                    }
+                }
+
+                .avance_activo_interno {
+                    background: yellow;
+                }
+        
+                .avance_activo_externo {
+                    background: red;
+                }
+        
+                .avance_inactivo {
+                    background: #c2c2c2;
+                }
+
+                .barra {
+                    width: 100%;
+                    height: 10px;
+                    background: #c2c2c2;
+                    position: absolute;
+                    top: 50%;
+                    z-index: -1;
+                }
+        
+            }
+		}
+    }
 }

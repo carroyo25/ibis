@@ -2,7 +2,7 @@ $(function(){
     $("#tablaPrincipal tbody").on("click","tr", function (e) {
         e.preventDefault();
 
-        /*$.post(RUTA+"pedidoseg/consultaId", {id:$(this).data("indice")},
+        $.post(RUTA+"pedidoseg/seguimientoID", {id:$(this).data("indice")},
             function (data, textStatus, jqXHR) {
                 
                 let numero = $.strPad(data.cabecera[0].nrodoc,6);
@@ -31,7 +31,6 @@ $(function(){
                 $("#estado").val(data.cabecera[0].estado);
                 $("#espec_items").val(data.cabecera[0].detalle);
                 $("#partida").val(data.cabecera[0].cdescripcion);
-
                
                 if (data.cabecera[0].idtipomov == 38) {
                     $("#requestAprob").removeClass("desactivado");
@@ -57,10 +56,127 @@ $(function(){
                 grabado = true;
             },
             "json"
-        );*/
+        );
 
         $("#proceso").fadeIn();
 
         return false;
     });
+
+    $("#closeProcess").click(function (e) { 
+        e.preventDefault();
+
+        /*$.post(RUTA+"pedidoseg/actualizaListado",
+            function (data, textStatus, jqXHR) {
+                $(".itemsTabla table tbody")
+                    .empty()
+                    .append(data);
+
+                $("#proceso").fadeOut(function(){
+                   
+                    $("form")[0].reset();
+                    $("form")[1].reset();
+                    $("#tablaDetalles tbody,.listaArchivos").empty();
+                    $(".lista").fadeOut();
+
+                });
+            },
+            "text"
+        );*/
+
+        $("#proceso").fadeOut(function(){
+            $("form")[0].reset();
+            $("form")[1].reset();
+            $("#tablaDetalles tbody,.listaArchivos").empty();
+            $(".lista").fadeOut();
+
+        });
+
+        return false;
+    });
+
+    $("#closePreview").click(function (e) { 
+        e.preventDefault();
+
+        $(".ventanaVistaPrevia iframe").attr("src","");
+        $("#vistaprevia").fadeOut();
+
+        return false;
+    });
+
+    $("#preview").click(function (e) { 
+        e.preventDefault();
+    
+        let result = {};
+        let ruta = $("#codigo_estado") == 49 ? "public/documentos/pedidos/vistaprevia/":"public/documentos/pedidos/emitidos/";
+
+        $.each($("#formProceso").serializeArray(),function(){
+            result[this.name] = this.value;
+        })
+
+        $.post(RUTA+"pedidos/vistaprevia", {cabecera:result,detalles:JSON.stringify(itemsPreview())},
+                function (data, textStatus, jqXHR) {
+                    $(".ventanaVistaPrevia iframe")
+                    .attr("src","")
+                    .attr("src",ruta+data);
+
+                    $("#vista_previa").val(data);
+
+                    $("#vistaprevia").fadeIn();
+                },
+            "text"
+        );
+        
+        return false;
+    });
+
+    $("#verDetalles").click(function(e){
+        e.preventDefault();
+
+        $("#detalles").fadeIn();
+
+        return false;
+    });
+
+    $("#cerrarDetalles").click(function(e){
+        e.preventDefault();
+
+        $("#detalles").fadeOut();
+
+        return false;
+    });
 })
+
+itemsPreview = () =>{
+    DATA = [];
+    let TABLA = $("#tablaDetalles tbody >tr");
+
+    TABLA.each(function(){
+        let ITEM        = $(this).find('td').eq(1).text(),
+            CODIGO      = $(this).find('td').eq(2).text(),
+            DESCRIPCION = $(this).find('td').eq(3).text(),
+            UNIDAD      = $(this).find('td').eq(4).text(),
+            CANTIDAD    = $(this).find('td').eq(5).children().val(),
+            ESPECIFICA  = $(this).find('td').eq(6).children().val();
+            ITEMPEDIDO  = $(this).data('idx'),
+            OBSERVAC    = "",
+            NROPARTE    = $(this).find('td').eq(7).text(),
+
+        item= {};
+        
+        item['item']        = ITEM;
+        item['codigo']      = CODIGO;
+        item['descripcion'] = DESCRIPCION;
+        item['unidad']      = UNIDAD;
+        item['cantidad']    = CANTIDAD;
+        item['especifica']  = ESPECIFICA;
+        item['itempedido']  = ITEMPEDIDO;
+        item['observac']    = OBSERVAC;
+        item['atendida']    = 0;
+        item['nroparte']    = NROPARTE;
+
+        DATA.push(item);
+    })
+
+    return DATA;
+}

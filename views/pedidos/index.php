@@ -38,7 +38,7 @@
                     <input type="hidden" name="codigo_atencion" id="codigo_atencion" value="47">
                     <input type="hidden" name="vista_previa" id="vista_previa">
                     <input type="hidden" name="emitido" id="emitido">
-                    <input type="hidden" name="transporte" id="transporte" value="">
+                    
 
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
@@ -66,7 +66,7 @@
                     <div class="dataProceso_2">
                         <div class="seccion_izquierda">
                             <div class="column4_55">
-                                <div class="column2_3957">
+                                <div class="column2_3457">
                                     <label for="numero">Número:</label>
                                     <input type="text" name="numero" id="numero" class="cerrarLista" readonly>
                                 </div>
@@ -132,6 +132,16 @@
                                 <div class="column2_46">
                                     <label for="vence">Vence :</label>
                                     <input type="date" name="vence" id="vence" class="cerrarLista" value="<?php echo date("Y-m-d");?>">
+                                </div>
+                            </div>
+                            <div class="column4_55">
+                                <div class="column2_3957">
+                                    <label for="pedidommto">Ped. MMTO:</label>
+                                    <input type="text" name="pedidommto" id="pedidommto">
+                                </div>
+                                <div class="column2_46">
+                                    <label for="transporte">Transporte:</label>
+                                    <input type="text" name="transporte" id="transporte">
                                 </div>
                             </div>
                             <div class="column2">

@@ -29,20 +29,9 @@
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
                         <div>
-                            <button type="button" id="saveItem" title="Grabar Pedido" class="boton3">
-                                <p><i class="far fa-save"></i> Grabar Pedido</p> 
-                            </button>
-                            <button type="button" id="upAttach" title="Importar Adjuntos" class="boton3">
-                                <i class="fas fa-upload"></i> Adjuntar Archivos
-                            </button>
-                            <button type="button" id="preview" title="Vista Previa" class="boton3">
-                                <i class="fab fa-wpexplorer"></i> Vista Previa
-                            </button>
-                            <button type="button" id="sendItem" data-rol="109" data-estado="51" title="Enviar Pedido" class="boton3 desactivado">
-                                <i class="far fa-paper-plane"></i> Enviar Almacen
-                            </button>
-                            <button type="button" id="requestAprob" data-rol="3" data-estado="53" title="Solicitar Aprobacion" class="boton3 desactivado">
-                                <i class="fas fa-award"></i> Solicitar Aprobacion
+                            
+                            <button type="button" id="preview" title="Ver Documento" class="boton3">
+                                <i class="fab fa-wpexplorer"></i> Vista Documento
                             </button>
                             <button type="button" id="closeProcess" title="Cerrar" class="boton3">
                                 <i class="fas fa-window-close"></i>
@@ -52,7 +41,7 @@
                     <div class="dataProceso_2">
                         <div class="seccion_izquierda">
                             <div class="column4_55">
-                                <div class="column2_3957">
+                                <div class="column2_3457">
                                     <label for="numero">Número:</label>
                                     <input type="text" name="numero" id="numero" class="cerrarLista" readonly>
                                 </div>
@@ -64,60 +53,45 @@
                             <div class="column2">
                                 <label for="costos">CCostos:</label>
                                 <input type="text" name="costos" id="costos" class="mostrarLista busqueda" placeholder="Elija una opcion">
-                                <div class="lista" id="listaCostos">
-                                   <ul>
-                                       <?php echo $this->listaCostos?>
-                                   </ul> 
-                                </div>
                             </div>
                             <div class="column2">
                                 <label for="area">Partida:</label>
                                 <input type="text" name="partida" id="partida" class="mostrarLista busqueda" placeholder="Elija una opcion">
-                                <div class="lista" id="listaPartidas">
-                                   <ul>
-                                       
-                                   </ul>
-                                </div>
                             </div>
                         </div>
                         <div class="seccion_medio">
                             <div class="column2">
                                 <label for="area">Area:</label>
                                 <input type="text" name="area" id="area" class="mostrarLista busqueda" placeholder="Elija una opcion">
-                                <div class="lista" id="listaAreas">
-                                   <ul>
-                                       <?php echo $this->listaAreas?>
-                                   </ul>
-                                </div>
                             </div>
                             <div class="column2">
                                 <label for="concepto">Concepto:</label>
-                                <input type="text" name="concepto" id="concepto" class="cerrarLista">
+                                <input type="text" name="concepto" id="concepto" class="cerrarLista" readonly>
                             </div>
                             <div class="column2">
                                 <label for="solicitante">Solicitante:</label>
-                                <input type="text" name="solicitante" id="solicitante" class="mostrarLista busqueda" placeholder="Elija una opcion">
-                                <div class="lista" id="listaSolicitantes">
-                                   <ul>
-                                       <?php echo $this->listaAquarius?>
-                                   </ul>
-                                </div>
+                                <input type="text" name="solicitante" id="solicitante" class="mostrarLista" readonly>
                             </div>
                         </div>
                         <div class="seccion_derecha">
                             <div class="column4_55">
                                 <div class="column2_3957">
                                     <label for="tipo">Tipo :</label>
-                                    <input type="text" name="tipo" id="tipo" class="mostrarLista" placeholder="Elija una opcion">
-                                    <div class="lista" id="listaTipo">
-                                        <ul>
-                                            <?php echo $this->listaTipos?>
-                                        </ul>
-                                    </div>
+                                    <input type="text" name="tipo" id="tipo" class="mostrarLista" readonly>
                                 </div>
                                 <div class="column2_46">
                                     <label for="vence">Vence :</label>
-                                    <input type="date" name="vence" id="vence" class="cerrarLista" value="<?php echo date("Y-m-d");?>">
+                                    <input type="date" name="vence" id="vence" readonly>
+                                </div>
+                            </div>
+                            <div class="column4_55">
+                                <div class="column2_3957">
+                                    <label for="pedidommto">Ped. MMTO:</label>
+                                    <input type="text" name="pedidommto" id="pedidommto">
+                                </div>
+                                <div class="column2_46">
+                                    <label for="transporte">Transporte:</label>
+                                    <input type="text" name="transporte" id="transporte">
                                 </div>
                             </div>
                             <div class="column2">
@@ -131,8 +105,8 @@
                     </div>
                     <div class="barraOpciones">
                         <span>Detalles</span>
-                        <button type="button" id="addItem" title="Añadir Item" class="cerrarLista boton3">
-                            <i class="far fa-plus-square"></i> Agregar
+                        <button type="button" id="verDetalles" title="Añadir Item" class="cerrarLista boton3">
+                            <i class="far fa-plus-square"></i> Detalles
                         </button>
                     </div>
                     <div class="tablaInterna mininoTablaInterna">
@@ -161,7 +135,113 @@
     <div class="modal" id="esperar">
     </div>
     <div class="modal" id="detalles">
-        <div class="ventanaResumen">
+        <div class="ventanaResumen w75por">
+            <div class="resumen__wrap">
+                <div class="div1">
+                    <p>Detalles del Pedido</p>
+                    <a href="#" id="cerrarDetalles"><i class="far fa-window-close"></i></a>
+                </div>
+                <div class="div2">
+                    <table>
+                            <tbody>
+                                <tr><td colspan="4"><p>Emision</p></td> </tr>
+                                <tr>
+                                    <td><strong>N° Pedido</strong></td>
+                                    <td><p>00006</p></td>
+                                    <td><strong>Fecha Emision</strong></td>
+                                    <td><p>20/10/2022</p></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>C.Costos</strong></td>
+                                    <td colspan="3"><p>0200 ADMINISTRACION DE OFICINA</p> </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Elaborado :</strong></td>
+                                    <td colspan="3"> <p>ARROYO NUÑEZ CESAR AURELIO</p> </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>N° Items</strong></td>
+                                    <td><p>5</p></td>
+                                </tr>
+                                <tr><td colspan="4"><p>Aprobación</p></td> </tr>
+                                <tr>
+                                    <td><strong>Fecha Aprobado</strong></td>
+                                    <td><p>20/10/2022</p> </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Aprobado por :</strong></td>
+                                    <td><p> ANIBAL LA TORRE</p></td>
+                                </tr>	
+                            </tbody>
+                    </table>
+                    <div class="opciones">
+                        <button class="boton3">Orden Compra/Servicio</button>
+                        <button class="boton3">Nota Ingreso</button>
+                        <button class="boton3">Nota Salida</button>
+                        <button class="boton3">Registro Almacen</button>
+                    </div>
+                </div>
+                <div class="div3">
+                    <figure class="highcharts-figure">
+        		        <div id="container-speed" class="chart-container"></div>  
+    		        </figure>
+                </div>
+                <div class="div4">
+                    <table class="table_detalle" id="tabla_documentos">
+                        <thead>
+                            <tr>
+                                <th>N°.</th>
+                                <th>Emisión</th>
+                                <th>Documento</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="textoCentro">00001</td>
+                                <td class="textoCentro">21/10/2021</td>
+                                <td class="textoCentro"> <a href="X"><i class="fas fa-file-pdf"></i></a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="div5">
+                    <div class="circulos">
+                        <p>Estado del Pedido</p>
+                        <div class="avances">
+                            <?php 
+                                $avance = 3;
+
+                                $procesos = ["Proceso","Emitido","Consulta Almacen","Aprobacion","Aprobado","Orden","Firmas","Recepcion","Despacho","Destino"];
+
+                                for ($i=0; $i < 10 ; $i++) {
+                                    $mostrar_activo_externo = $avance >= $i ? "avance_activo_externo" : "avance_inactivo";
+                                    $mostrar_activo_interno = $avance >= $i ? "avance_activo_interno" : "avance_inactivo";
+                                    $etiqueta = $procesos[$i];
+                            ?>
+                                <div class="circulo_exterior <?php echo $mostrar_activo_externo?>">
+                                    <div class="circulo_interior <?php echo $mostrar_activo_interno;?>">
+                                        <span><?php echo $etiqueta ?></span>
+                                    </div>
+                                </div>
+                            <?php 
+                                }
+                            ?>
+                            <div class="barra">
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="vistaprevia">
+        <div class="ventanaVistaPrevia">
+            <div class="tituloVista">
+                <h3>Vista Previa</h3>
+                <a href="#" id="closePreview" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
+            </div>
+            <iframe src=""></iframe>
         </div>
     </div>
     <div class="cabezaModulo">
@@ -221,5 +301,14 @@
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
     <script src="<?php echo constant('URL');?>public/js/funciones.js?<?php echo constant('VERSION')?>"></script>
     <script src="<?php echo constant('URL');?>public/js/pedidoseg.js?<?php echo constant('VERSION')?>"></script>
+
+    <script src="<?php echo constant('URL');?>public/code/highcharts.js"></script>
+    <script src="<?php echo constant('URL');?>public/code/highcharts-more.js"></script>
+    <script src="<?php echo constant('URL');?>public/code/modules/solid-gauge.js"></script>
+    <script src="<?php echo constant('URL');?>public/code/modules/exporting.js"></script>
+    <script src="<?php echo constant('URL');?>public/code/modules/export-data.js"></script>
+    <script src="<?php echo constant('URL');?>public/code/modules/accessibility.js"></script>
+
+    <script src="<?php echo constant('URL');?>public/js/gauge.js?<?php echo constant('VERSION')?>"></script>
 </body>
 </html>

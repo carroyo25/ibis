@@ -1347,7 +1347,8 @@
                                                         UPPER(
                                                         CONCAT( ibis.tb_area.ccodarea, ' ', ibis.tb_area.cdesarea )) AS area, 
                                                         UPPER(
-                                                        CONCAT( ibis.tb_parametros.nidreg, ' ', ibis.tb_parametros.cdescripcion )) AS transporte, 
+                                                        CONCAT( ibis.tb_parametros.nidreg, ' ', ibis.tb_parametros.cdescripcion )) AS transporte,
+                                                        tb_parametros.cobservacion, 
                                                         estados.cdescripcion AS estado, 
                                                         estados.cabrevia, 
                                                         UPPER(

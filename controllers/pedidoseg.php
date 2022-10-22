@@ -11,6 +11,10 @@
             $this->view->listaPedidos = $this->model->listarPedidosUsuario();
             $this->view->render('pedidoseg/index');
         }
+
+        function seguimientoID(){
+            echo json_encode($this->model->consultarReqId($_POST['id'],49,90,49,null));
+        }
         
     }
 ?>

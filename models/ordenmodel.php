@@ -275,11 +275,11 @@
 
             if ($cabecera['radioIgv'] ==  0) {
                 $pdf->Cell(48,6,"Valor Venta",0,0);
-                $pdf->Cell(20,6,$cabecera['total'],0,1);
+                $pdf->Cell(20,6,$cabecera['total_numero'],0,1);
             }else {
                 
-                $igv = round(($cabecera['total']*0.18),2);
-                $total_sin_igv = round($cabecera['total'] - $igv,2);
+                $igv = round((floatval($cabecera['total_numero'])*0.18),2);
+                $total_sin_igv = round($cabecera['total_numero'] - $igv,2);
                 $pdf->Cell(45,6,"Valor Venta",0,0);
                 $pdf->Cell(20,6,$total_sin_igv,0,1);
             }
@@ -300,8 +300,8 @@
                 $pdf->SetX(185);
                 $pdf->Cell(20,6,"",0,1); 
             }else{
-                $igv = round(($cabecera['total']*0.18),2);
-                $total_sin_igv = round($cabecera['total'] - $igv,2);
+                $igv = round((floatval($cabecera['total_numero'])*0.18),2);
+                $total_sin_igv = round($cabecera['total_numero'] - $igv,2);
                 $pdf->SetX(146);
                 $pdf->Cell(8,6,"IGV",0,0);
                 $pdf->Cell(37,6,"(18%)",0,0);
@@ -330,6 +330,7 @@
             
 
             $pdf->SetXY(55,$y-6);
+            $pdf->SetFont('Arial',"B","6");
 
             for ($i=0;$i<$nreg;$i++){
                 $pdf->Cell(35,4,$bancos[$i]['banco'],1,0);
@@ -337,6 +338,7 @@
                 $pdf->Cell(30,4,$bancos[$i]['cuenta'],1,1);
                 $pdf->Cell(45,4,"",0,0);
             }
+            $pdf->SetFont('Arial',"B","8");
 
             if ($condicion == 0){
                 $filename = "public/documentos/ordenes/vistaprevia/".$file;
