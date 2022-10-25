@@ -13,20 +13,20 @@
 
         
         
-    //define('HOST','localhost');
-    //define('HOST1','localhost');
-    define('HOST','192.168.1.30');
-    define('HOST1','192.168.1.30');
+    define('HOST','localhost');
+    define('HOST1','localhost');
+    //define('HOST','192.168.1.30');
+    //define('HOST1','192.168.1.30');
     define('DB','rrhh');
     define('DB2','ibis');
     define('MAILPASSWORD','aK8izG1WEQwwB1X');
     define('MAILUSER','sistema_ibis@sepcon.net');
     define('CHARSET','utf8mb4');
-    define('USER','remoto');
-    define('PASSWORD','s3pc0n2020');
+    //define('USER','remoto');
+    //define('PASSWORD','s3pc0n2020');
     
-    //define('USER','root');
-    //define('PASSWORD','zBELTUAKpNQvCOl6'); 
+    define('USER','root');
+    define('PASSWORD','zBELTUAKpNQvCOl6'); 
 
 
     define('VERSION',rand(0, 15000));

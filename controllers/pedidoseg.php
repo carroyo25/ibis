@@ -15,6 +15,10 @@
         function seguimientoID(){
             echo json_encode($this->model->consultarReqId($_POST['id'],49,90,49,null));
         }
+
+        function infoPedido(){
+            echo json_encode($this->model->consultarInfo($_POST['id']));
+        }
         
     }
 ?>

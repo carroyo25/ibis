@@ -133,7 +133,23 @@ $(function(){
     $("#verDetalles").click(function(e){
         e.preventDefault();
 
-        $("#detalles").fadeIn();
+        $.post(RUTA+"pedidoseg/infoPedido", {id:$("#codigo_pedido").val()},
+            function (data, textStatus, jqXHR) {
+                $("#tableInfo tbody").find('tr').eq(1).find('td').eq(1).children().text(data.pedido);
+                $("#tableInfo tbody").find('tr').eq(1).find('td').eq(3).children().text(data.emision);
+                $("#tableInfo tbody").find('tr').eq(2).find('td').eq(1).children().text(data.costos);
+                $("#tableInfo tbody").find('tr').eq(3).find('td').eq(1).children().text(data.elaborado);
+                $("#tableInfo tbody").find('tr').eq(4).find('td').eq(1).children().text($("#tablaDetalles tbody tr").length);
+
+                if(data.aprobador != null) {
+                    $("#tableInfo tbody").find('tr').eq(6).find('td').eq(1).children().text(data.aprobador);
+                    $("#tableInfo tbody").find('tr').eq(7).find('td').eq(1).children().text(data.aprobacion);
+                }
+
+                $("#detalles").fadeIn();
+            },
+            "json"
+        );
 
         return false;
     });

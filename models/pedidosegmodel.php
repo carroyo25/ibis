@@ -58,5 +58,44 @@
                 return false;
             }
         }
+
+        public function consultarInfo($id){
+            try {
+                $sql=$this->db->connect()->prepare("SELECT
+                                    tb_pedidocab.idcostos,
+                                    DATE_FORMAT( tb_pedidocab.emision, '%d/%m/%Y' ) AS emision,
+                                    DATE_FORMAT( tb_pedidocab.faprueba, '%d/%m/%Y' ) AS aprobacion,
+                                    UPPER(
+                                    CONCAT_WS( ' ', tb_proyectos.ccodproy, tb_proyectos.cdesproy )) AS proyecto,
+                                    elbora.cnombres AS elaborado,
+                                    LPAD( tb_pedidocab.nrodoc, 6, 0 ) AS pedido,
+                                    aprueba.cnombres AS aprobador,
+                                    tb_parametros.cdescripcion,
+                                    FORMAT( tb_parametros.cobservacion, 0 ) AS avance,
+                                    tb_pedidocab.idreg 
+                                FROM
+                                    tb_pedidocab
+                                    INNER JOIN tb_proyectos ON tb_pedidocab.idcostos = tb_proyectos.nidreg
+                                    INNER JOIN tb_user AS elbora ON tb_pedidocab.usuario = elbora.iduser
+                                    LEFT JOIN tb_user AS aprueba ON tb_pedidocab.aprueba = aprueba.iduser
+                                    INNER JOIN tb_parametros ON tb_pedidocab.estadodoc = tb_parametros.nidreg 
+                                WHERE
+                                    tb_pedidocab.idreg =:id");
+                $sql->execute(["id"=>$id]);
+                $result = $sql->fetchAll();
+
+                $json_result = array("pedido"=>$result[0]['pedido'],
+                                    "emision"=>$result[0]['emision'],
+                                    "costos"=>$result[0]['proyecto'],
+                                    "elaborado"=>$result[0]['elaborado'],
+                                    "aprobador"=>$result[0]['aprobador'],
+                                    "aprobacion"=>$result[0]['aprobacion']);
+
+                return $json_result;
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
     }
 ?>

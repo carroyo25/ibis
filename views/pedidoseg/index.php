@@ -47,22 +47,22 @@
                                 </div>
                                 <div class="column2_46">
                                     <label for="emision">Emisión:</label>
-                                    <input type="date" name="emision" id="emision" class="cerrarLista" value="<?php echo date("Y-m-d");?>">
+                                    <input type="date" name="emision" id="emision" class="cerrarLista" value="">
                                 </div>
                             </div>
                             <div class="column2">
                                 <label for="costos">CCostos:</label>
-                                <input type="text" name="costos" id="costos" class="mostrarLista busqueda" placeholder="Elija una opcion">
+                                <input type="text" name="costos" id="costos" class="mostrarLista busqueda">
                             </div>
                             <div class="column2">
                                 <label for="area">Partida:</label>
-                                <input type="text" name="partida" id="partida" class="mostrarLista busqueda" placeholder="Elija una opcion">
+                                <input type="text" name="partida" id="partida" class="mostrarLista busqueda">
                             </div>
                         </div>
                         <div class="seccion_medio">
                             <div class="column2">
                                 <label for="area">Area:</label>
-                                <input type="text" name="area" id="area" class="mostrarLista busqueda" placeholder="Elija una opcion">
+                                <input type="text" name="area" id="area" class="mostrarLista busqueda">
                             </div>
                             <div class="column2">
                                 <label for="concepto">Concepto:</label>
@@ -142,35 +142,35 @@
                     <a href="#" id="cerrarDetalles"><i class="far fa-window-close"></i></a>
                 </div>
                 <div class="div2">
-                    <table>
+                    <table id="tableInfo">
                             <tbody>
-                                <tr><td colspan="4"><p>Emision</p></td> </tr>
+                                <tr><td colspan="4"><p class="tr__title">Emision</p></td> </tr>
                                 <tr>
-                                    <td><strong>N° Pedido</strong></td>
-                                    <td><p>00006</p></td>
-                                    <td><strong>Fecha Emision</strong></td>
-                                    <td><p>20/10/2022</p></td>
+                                    <td width="20%"><strong>N° Pedido</strong></td>
+                                    <td><p></p></td>
+                                    <td width="20%"><strong>Fecha Emision</strong></td>
+                                    <td><p></p></td>
                                 </tr>
                                 <tr>
                                     <td><strong>C.Costos</strong></td>
-                                    <td colspan="3"><p>0200 ADMINISTRACION DE OFICINA</p> </td>
+                                    <td colspan="3"><p></p> </td>
                                 </tr>
                                 <tr>
                                     <td><strong>Elaborado :</strong></td>
-                                    <td colspan="3"> <p>ARROYO NUÑEZ CESAR AURELIO</p> </td>
+                                    <td colspan="3"> <p></p> </td>
                                 </tr>
                                 <tr>
                                     <td><strong>N° Items</strong></td>
-                                    <td><p>5</p></td>
+                                    <td><p></p></td>
                                 </tr>
-                                <tr><td colspan="4"><p>Aprobación</p></td> </tr>
+                                <tr><td colspan="4"><p class="tr__title">Aprobación</p></td> </tr>
                                 <tr>
-                                    <td><strong>Fecha Aprobado</strong></td>
-                                    <td><p>20/10/2022</p> </td>
+                                    <td><strong>Fecha Aprobado :</strong></td>
+                                    <td><p>-</p></td>
                                 </tr>
                                 <tr>
                                     <td><strong>Aprobado por :</strong></td>
-                                    <td><p> ANIBAL LA TORRE</p></td>
+                                    <td><p>-</p></td>
                                 </tr>	
                             </tbody>
                     </table>
