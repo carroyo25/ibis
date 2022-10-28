@@ -142,11 +142,37 @@ $(function(){
                 $("#tableInfo tbody").find('tr').eq(4).find('td').eq(1).children().text($("#tablaDetalles tbody tr").length);
 
                 if(data.aprobador != null) {
-                    $("#tableInfo tbody").find('tr').eq(6).find('td').eq(1).children().text(data.aprobador);
-                    $("#tableInfo tbody").find('tr').eq(7).find('td').eq(1).children().text(data.aprobacion);
+                    $("#tableInfo tbody").find('tr').eq(6).find('td').eq(1).children().text(data.aprobacion);
+                    $("#tableInfo tbody").find('tr').eq(7).find('td').eq(1).children().text(data.aprobador);
+                }
+
+                let point = chartSpeed.series[0].points[0],
+                    avance = parseInt(data.avance),
+                    estados = (avance/10);
+                point.update(parseInt(avance));
+
+                for (let index = 0; index < estados; index++) {
+                    let circulo_externo = "#ce"+index,
+                        circulo_interno = "#ci"+index;
+
+                    $(circulo_externo)
+                        .removeClass("avance_inactivo")
+                        .addClass("avance_activo_externo");
+
+                    $(circulo_interno)
+                        .removeClass("avance_inactivo")
+                        .addClass("avance_activo_interno");
                 }
 
                 $("#detalles").fadeIn();
+
+                $(".div4 table tbody")
+                    .empty();
+
+                $("#tabla_ordenes").append(data.ordenes);
+                $("#tabla_ingresos").append(data.ingresos);
+                $("#tabla_despachos").append(data.despachos);
+                $("#tabla_registros").append(data.registros);
             },
             "json"
         );
@@ -158,6 +184,35 @@ $(function(){
         e.preventDefault();
 
         $("#detalles").fadeOut();
+
+        for (let index = 0; index < 10; index++) {
+            let circulo_externo = "#ce"+index,
+                circulo_interno = "#ci"+index;
+
+            $(circulo_externo)
+                .removeClass("avance_activo_externo")
+                .addClass("avance_inactivo");
+
+            $(circulo_interno)
+                .removeClass("avance_activo_interno")
+                .addClass("avance_inactivo");
+        }
+
+        return false;
+    });
+
+    $("#tabla_ordenes").on('click','a', function(e) {
+        e.preventDefault();
+
+        $.post(RUTA+"pedidoseg/datosOrden", {id: $(this).attr("href")},
+            function (data, text, requestXHR) {
+                $(".ventanaVistaPrevia iframe")
+                .attr("src","")
+                .attr("src",data);
+
+                $("#vistaprevia").fadeIn();
+            },"text"
+        );
 
         return false;
     });

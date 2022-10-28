@@ -25,6 +25,7 @@
                         DATE_FORMAT(tb_pedidocab.emision,'%d/%m/%Y') AS emision_pedido,
                         DATE_FORMAT(tb_pedidocab.faprueba,'%d/%m/%Y') AS faprueba,
                         tb_pedidocab.concepto,LPAD(tb_pedidocab.idreg, 6, 0) AS pedido,
+                        tb_pedidocab.concepto,LPAD(tb_pedidocab.nrodoc, 6, 0) AS nropedido,
                         tb_proyectos.ccodproy,
                         UPPER(tb_area.cdesarea) AS area,
                         LPAD(detalles_orden.id_orden,6,0) AS orden,
@@ -112,7 +113,7 @@
                                         <td class="pl20px">'.$rs['area'].'</td>
                                         <td class="pl20px">'.$rs['cdescripcion'].'</td>
                                         <td>'.$tipo.'</td>
-                                        <td class="textoCentro">'.$rs['pedido'].'</td>
+                                        <td class="textoCentro">'.$rs['nropedido'].'</td>
                                         <td class="textoCentro">'.$rs['emision_pedido'].'</td>
                                         <td class="textoCentro">'.$rs['faprueba'].'</td>
                                         <td class="pl20px">'.strtoupper($rs['concepto']).'</td>
@@ -179,6 +180,7 @@
                                                         DATE_FORMAT(tb_pedidocab.emision,'%d/%m/%Y') AS emision_pedido,
                                                         DATE_FORMAT(tb_pedidocab.faprueba,'%d/%m/%Y') AS faprueba,
                                                         tb_pedidocab.concepto,LPAD(tb_pedidocab.idreg, 6, 0) AS pedido,
+                                                        tb_pedidocab.concepto,LPAD(tb_pedidocab.nrodoc, 6, 0) AS nropedido,
                                                         tb_proyectos.ccodproy,
                                                         UPPER(tb_area.cdesarea) AS area,
                                                         LPAD(detalles_orden.id_orden,6,0) AS orden,
@@ -224,7 +226,7 @@
                                                             AND tb_pedidodet.idtipo = :tipo
                                                             AND tb_pedidodet.idcostos LIKE :costos
                                                             AND cm_producto.ccodprod LIKE :codigo
-                                                            AND tb_pedidocab.idreg LIKE :pedido
+                                                            AND tb_pedidocab.nrodoc LIKE :pedido
                                                             AND IFNULL(cabecera_orden.id_regmov, '') LIKE :orden
                                                             AND tb_pedidocab.concepto LIKE :concepto");
                         $sql->execute(["tipo"=>$tipo,
@@ -269,7 +271,6 @@
                                     $porcentaje_entrega = "";
                                 }
         
-        
                                 $salida .='<tr class="pointer">
                                                 <td class="textoCentro">'.str_pad($item++,6,0,STR_PAD_LEFT).'</td>
                                                 <td class="textoCentro '.$rs['cabrevia'].'" title="'.strtoupper($rs['cabrevia']).'">'.$rs['cobservacion'].'</td>
@@ -277,7 +278,7 @@
                                                 <td class="pl20px">'.$rs['area'].'</td>
                                                 <td class="pl20px">'.$rs['cdescripcion'].'</td>
                                                 <td>'.$tipo.'</td>
-                                                <td class="textoCentro">'.$rs['pedido'].'</td>
+                                                <td class="textoCentro">'.$rs['nropedido'].'</td>
                                                 <td class="textoCentro">'.$rs['emision_pedido'].'</td>
                                                 <td class="textoCentro">'.$rs['faprueba'].'</td>
                                                 <td class="pl20px">'.strtoupper($rs['concepto']).'</td>

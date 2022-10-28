@@ -29,7 +29,6 @@
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
                         <div>
-                            
                             <button type="button" id="preview" title="Ver Documento" class="boton3">
                                 <i class="fab fa-wpexplorer"></i> Vista Documento
                             </button>
@@ -135,7 +134,7 @@
     <div class="modal" id="esperar">
     </div>
     <div class="modal" id="detalles">
-        <div class="ventanaResumen w75por">
+        <div class="ventanaResumen w65por">
             <div class="resumen__wrap">
                 <div class="div1">
                     <p>Detalles del Pedido</p>
@@ -174,12 +173,6 @@
                                 </tr>	
                             </tbody>
                     </table>
-                    <div class="opciones">
-                        <button class="boton3">Orden Compra/Servicio</button>
-                        <button class="boton3">Nota Ingreso</button>
-                        <button class="boton3">Nota Salida</button>
-                        <button class="boton3">Registro Almacen</button>
-                    </div>
                 </div>
                 <div class="div3">
                     <figure class="highcharts-figure">
@@ -187,29 +180,82 @@
     		        </figure>
                 </div>
                 <div class="div4">
-                    <table class="table_detalle" id="tabla_documentos">
-                        <thead>
-                            <tr>
-                                <th>N°.</th>
-                                <th>Emisión</th>
-                                <th>Documento</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="textoCentro">00001</td>
-                                <td class="textoCentro">21/10/2021</td>
-                                <td class="textoCentro"> <a href="X"><i class="fas fa-file-pdf"></i></a></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div>
+                        <p id="titulo_documento">Orden OC/OS</p>
+                        <table class="table_detalle" id="tabla_ordenes">
+                            <thead>
+                                <tr>
+                                    <th>N°.</th>
+                                    <th>Emisión</th>
+                                    <th>Documento</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                               
+                            </tbody>
+                        </table>
+                    </div>
+                    <br>
+                    <div>
+                        <p id="titulo_documento">Nota Ingreso</p>
+                        <table class="table_detalle" id="tabla_ingresos">
+                            <thead>
+                                <tr>
+                                    <th>N°.</th>
+                                    <th>Emisión</th>
+                                    <th>Documento</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="3" class="textoCentro">No hay registros</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <br>
+                    <div>
+                        <p id="titulo_documento">Notas Despacho</p>
+                        <table class="table_detalle" id="tabla_despachos">
+                            <thead>
+                                <tr>
+                                    <th>N°.</th>
+                                    <th>Emisión</th>
+                                    <th>Documento</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="3" class="textoCentro">No hay registro</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <br>
+                    <div>
+                        <p id="titulo_documento">Registro Almacen</p>
+                        <table class="table_detalle" id="tabla_registros">
+                            <thead>
+                                <tr>
+                                    <th>N°.</th>
+                                    <th>Emisión</th>
+                                    <th>Documento</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="3" class="textoCentro">No hay registro</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 <div class="div5">
                     <div class="circulos">
                         <p>Estado del Pedido</p>
                         <div class="avances">
                             <?php 
-                                $avance = 3;
+                                $avance = 0;
 
                                 $procesos = ["Proceso","Emitido","Consulta Almacen","Aprobacion","Aprobado","Orden","Firmas","Recepcion","Despacho","Destino"];
 
@@ -218,8 +264,8 @@
                                     $mostrar_activo_interno = $avance >= $i ? "avance_activo_interno" : "avance_inactivo";
                                     $etiqueta = $procesos[$i];
                             ?>
-                                <div class="circulo_exterior <?php echo $mostrar_activo_externo?>">
-                                    <div class="circulo_interior <?php echo $mostrar_activo_interno;?>">
+                                <div class="circulo_exterior <?php echo $mostrar_activo_externo?>" id="ce<?php echo $i?>">
+                                    <div class="circulo_interior <?php echo $mostrar_activo_interno;?>" id="ci<?php echo $i?>">
                                         <span><?php echo $etiqueta ?></span>
                                     </div>
                                 </div>
@@ -283,8 +329,8 @@
             <thead>
                 <tr>
                     <th>Num.</th>
-                    <th>Emision</th>
-                    <th>Vencimiento</th>
+                    <th>Emisión</th>
+                    <th>Tipo</th>
                     <th>Descripción</th>
                     <th>Centro Costos</th>
                     <th>Resposable</th>

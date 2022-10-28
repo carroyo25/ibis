@@ -2165,6 +2165,9 @@
   border-collapse: collapse;
   width: 100%;
 }
+.resumen__wrap .div4 .table_detalle div {
+  margin-top: 20px;
+}
 .resumen__wrap .div4 .table_detalle thead {
   background-color: black;
   color: #fff;

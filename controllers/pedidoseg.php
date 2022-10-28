@@ -19,6 +19,10 @@
         function infoPedido(){
             echo json_encode($this->model->consultarInfo($_POST['id']));
         }
+
+        function datosOrden(){
+            echo $this->model->generarVistaOrden($_POST['id']);
+        }
         
     }
 ?>

@@ -191,6 +191,7 @@
 
             $bancos = $this->bancosProveedor($cabecera['codigo_entidad']);
 
+            //verificar para el numero de orden
             $sql = "SELECT COUNT(lg_ordencab.id_regmov) AS numero FROM lg_ordencab WHERE lg_ordencab.ncodcos =:cod";
 
             if ($condicion == 0) {
@@ -241,8 +242,6 @@
             $pdf->SetFont('Arial','',5);
             $lc = 0;
             $rc = 0;
-
-            //$pdf->Ln(3);
 
             $datos = json_decode($detalles);
             $nreg = count($datos);
@@ -317,7 +316,6 @@
                 $pdf->Cell(37,6,"(18%)",0,0);
                 $pdf->Cell(25,6,$igv,0,1);
             }
-            
 
             $pdf->SetFont('Arial',"","7");
             $pdf->Cell(10,6,$anio[0],1,0);
