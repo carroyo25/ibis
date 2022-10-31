@@ -49,7 +49,6 @@
                                         <td class="pl20px">'.$rs['nombres'].'</td>
                                         <td class="textoCentro '.$rs['cabrevia'].'">'.$rs['estado'].'</td>
                                         <td class="textoCentro '.strtolower($rs['atencion']).'">'.$rs['atencion'].'</td>
-                                        <td class="textoCentro"><a href="'.$rs['idreg'].'"><i class="fa fa-trash-alt"></i></a></td>
                                     </tr>';
                     }
                 }
@@ -261,17 +260,11 @@
             $file = uniqid().".pdf";
 
             $condicion = 1;
-            /*$titulo,$condicion,$fecha,$moneda,$plazo,
-                                    $lugar,$cotizacion,$fentrega,$pago,$importe,
-                                    $info,$detalle,$usuario,$razon_social,
-                                    $ruc,$direccion,$telefono,$correo,$retencion,
-                                    $contacto,$tel_contacto,$cor_contacto,$direccion_almacen*/
 
             $pdf = new PDF($titulo,$condicion,$datosOrden[0]['ffechadoc'],$datosOrden[0]['nombre_moneda'],$datosOrden[0]['nplazo'],
                             $datosOrden[0]['cdesalm'],$datosOrden[0]['cnumcot'],$datosOrden[0]['ffechaent'],$datosOrden[0]['pagos'],"",
-                            $datosOrden[0]['costos'],$datosOrden[0]['concepto'],$datosOrden[0]['cviadireccion'],$datosOrden[0]['cnombres'],
-                            $datosOrden[0]['cnumdoc'],
-                            $datosOrden[0]['crazonsoc'],$datosOrden[0]['ctelefono1'],$datosOrden[0]['cemail'],$datosOrden[0]['nagenret'],
+                            $datosOrden[0]['costos'],$datosOrden[0]['concepto'],$datosOrden[0]['cnameuser'],$datosOrden[0]['crazonsoc'],
+                            $datosOrden[0]['cnumdoc'],$datosOrden[0]['cviadireccion'],$datosOrden[0]['ctelefono1'],$datosOrden[0]['cemail'],$datosOrden[0]['nagenret'],
                             $datosOrden[0]['cnombres'],$datosOrden[0]['ctelefono1'],$datosOrden[0]['mail_entidad'],
                             $datosOrden[0]['direccion']);
 
@@ -338,20 +331,6 @@
             $pdf->Cell(15,6,"Moneda",1,0);
             $pdf->Cell(30,6,"Nro. Cuenta Bancaria",1,1);
 
-            /*if($cabecera['radioIgv'] ==  0) {
-                $pdf->SetX(146);
-                $pdf->Cell(8,6,"",0,0);
-                $pdf->Cell(20,6,"",0,0);
-                $pdf->SetX(185);
-                $pdf->Cell(20,6,"",0,1); 
-            }else{
-                $igv = round((floatval($cabecera['total_numero'])*0.18),2);
-                $total_sin_igv = round($cabecera['total_numero'] - $igv,2);
-                $pdf->SetX(146);
-                $pdf->Cell(8,6,"IGV",0,0);
-                $pdf->Cell(37,6,"(18%)",0,0);
-                $pdf->Cell(25,6,"",0,1);
-            }*/
 
             $pdf->SetFont('Arial',"","7");
             $pdf->Cell(10,6,$anio[0],1,0);
@@ -371,13 +350,6 @@
 
             $pdf->SetXY(55,$y-6);
             $pdf->SetFont('Arial',"B","6");
-
-            /*for ($i=0;$i<$nreg;$i++){
-                $pdf->Cell(35,4,$bancos[$i]['banco'],1,0);
-                $pdf->Cell(15,4,$bancos[$i]['moneda'],1,0);
-                $pdf->Cell(30,4,$bancos[$i]['cuenta'],1,1);
-                $pdf->Cell(45,4,"",0,0);
-            }*/
 
             $pdf->SetFont('Arial',"B","8");
 
@@ -444,7 +416,8 @@
                                                     lg_ordencab.nigv,
                                                     FORMAT(lg_ordencab.ntotal,2) AS ctotal,
 	                                                tb_pedidocab.nivelAten,
-                                                    tb_pedidocab.nrodoc  
+                                                    tb_pedidocab.nrodoc,
+                                                    tb_user.cnameuser   
                                                 FROM
                                                     lg_ordencab
                                                     INNER JOIN tb_pedidocab ON lg_ordencab.id_refpedi = tb_pedidocab.idreg
@@ -457,7 +430,8 @@
                                                     INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
                                                     INNER JOIN cm_entidadcon ON cm_entidad.id_centi = cm_entidadcon.id_centi
                                                     INNER JOIN tb_parametros AS transportes ON lg_ordencab.ctiptransp = transportes.nidreg
-                                                    INNER JOIN tb_almacen ON lg_ordencab.ncodalm = tb_almacen.ncodalm 
+                                                    INNER JOIN tb_almacen ON lg_ordencab.ncodalm = tb_almacen.ncodalm
+                                                    INNER JOIN tb_user ON lg_ordencab.id_cuser = tb_user.iduser 
                                                 WHERE
                                                     lg_ordencab.id_regmov =:id 
                                                     AND lg_ordencab.nflgactivo = 1");
@@ -545,6 +519,84 @@
             $diff = $date1->diff($date2);
             // will output 2 days
             return $diff->days . ' dias ';
+        }
+
+        public function listarPedidosUsuarioFiltrados($parametros){
+            try {
+                $salida = "";
+
+                $tipo   = $parametros['tipoSearch'] == -1 ? "%" : "%".$parametros['tipoSearch']."%";
+                $costos = $parametros['costosSearch'] == -1 ? "%" : "%".$parametros['costosSearch']."%";
+                $mes    = $parametros['mesSearch'];
+                $anio   = $parametros['anioSearch'];
+
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        ibis.tb_pedidocab.idreg,
+                                                        ibis.tb_pedidocab.idcostos,
+                                                        ibis.tb_pedidocab.idarea,
+                                                        ibis.tb_pedidocab.emision,
+                                                        ibis.tb_pedidocab.vence,
+                                                        ibis.tb_pedidocab.estadodoc,
+                                                        ibis.tb_pedidocab.nrodoc,
+                                                        ibis.tb_pedidocab.idtipomov,
+                                                        UPPER(ibis.tb_pedidocab.concepto) AS concepto,
+                                                        CONCAT(
+                                                            rrhh.tabla_aquarius.nombres,
+                                                            ' ',
+                                                            rrhh.tabla_aquarius.apellidos
+                                                        ) AS nombres,
+                                                        UPPER(
+                                                            CONCAT(
+                                                                ibis.tb_proyectos.ccodproy,
+                                                                ' ',
+                                                                ibis.tb_proyectos.cdesproy
+                                                            )
+                                                        ) AS costos,
+                                                        ibis.tb_pedidocab.nivelAten,
+                                                        atenciones.cdescripcion AS atencion,
+                                                        estados.cdescripcion AS estado,
+                                                        estados.cabrevia
+                                                    FROM
+                                                        ibis.tb_pedidocab
+                                                    INNER JOIN rrhh.tabla_aquarius ON ibis.tb_pedidocab.idsolicita = rrhh.tabla_aquarius.internal
+                                                    INNER JOIN ibis.tb_proyectos ON ibis.tb_pedidocab.idcostos = ibis.tb_proyectos.nidreg
+                                                    INNER JOIN ibis.tb_parametros AS atenciones ON ibis.tb_pedidocab.nivelAten = atenciones.nidreg
+                                                    INNER JOIN ibis.tb_parametros AS estados ON ibis.tb_pedidocab.estadodoc = estados.nidreg
+                                                    WHERE
+                                                        ibis.tb_pedidocab.usuario = :user 
+                                                    AND ibis.tb_pedidocab.idtipomov LIKE :tipomov
+                                                    AND ibis.tb_pedidocab.idcostos LIKE :costos
+                                                    AND MONTH (ibis.tb_pedidocab.emision) = :mes
+                                                    AND YEAR (ibis.tb_pedidocab.emision) = :anio
+                                                    AND ibis.tb_pedidocab.estadodoc");
+                $sql->execute(["user"=>$_SESSION['iduser'],
+                                "tipomov"=>$tipo,
+                                "costos"=>$costos,
+                                "mes"=>$mes,
+                                "anio"=>$anio]);
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0) {
+                    while ($rs = $sql->fetch()) {
+                        $tipo = $rs['idtipomov'] == 37 ? "B":"S";
+                        $salida .='<tr class="pointer" data-indice="'.$rs['idreg'].'">
+                                        <td class="textoCentro">'.str_pad($rs['nrodoc'],4,0,STR_PAD_LEFT).'</td>
+                                        <td class="textoCentro">'.date("d/m/Y", strtotime($rs['emision'])).'</td>
+                                        <td class="textoCentro">'.$tipo.'</td>
+                                        <td class="pl20px">'.utf8_decode($rs['concepto']).'</td>
+                                        <td class="pl20px">'.utf8_decode($rs['costos']).'</td>
+                                        <td class="pl20px">'.$rs['nombres'].'</td>
+                                        <td class="textoCentro '.$rs['cabrevia'].'">'.$rs['estado'].'</td>
+                                        <td class="textoCentro '.strtolower($rs['atencion']).'">'.$rs['atencion'].'</td>
+                                    </tr>';
+                    }
+                }
+
+                return $salida;
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
         }
     }
 ?>

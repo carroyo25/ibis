@@ -23,6 +23,11 @@
         function datosOrden(){
             echo $this->model->generarVistaOrden($_POST['id']);
         }
+
+
+        function filtroPedidos(){
+            echo $this->model->listarPedidosUsuarioFiltrados($_POST);
+        }
         
     }
 ?>

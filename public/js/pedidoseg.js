@@ -216,6 +216,23 @@ $(function(){
 
         return false;
     });
+
+    $("#btnProceso").on('click', function(e) {
+        e.preventDefault();
+
+        let srt = $("#formConsulta").serialize();
+
+        $.post(RUTA+"pedidoseg/filtroPedidos", {data:srt},
+            function (data, text, requestXHR) {
+                $("#tablaPrincipal tbody")
+                    .empty()
+                    .append(data);
+            },
+            "text"
+        );
+        
+        return false
+    });
 })
 
 itemsPreview = () =>{

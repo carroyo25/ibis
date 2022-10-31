@@ -320,7 +320,7 @@
                         <label for="anio">Año :</label>
                         <input type="number" name="anioSearch" id="anioSearch" value="<?php echo date("Y")?>" class="textoCentro">
                     </div>
-                    <button type="button">Procesar</button> 
+                    <button type="button" id="btnProceso">Procesar</button> 
             </div>
         </form>
     </div>
@@ -336,7 +336,6 @@
                     <th>Resposable</th>
                     <th>Estado</th>
                     <th>Atencion</th>
-                    <th>...</th>
                 </tr>
             </thead>
             <tbody>
