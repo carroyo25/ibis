@@ -302,6 +302,7 @@
                     <div>
                         <label for="tipo">Tipo : </label>
                         <select name="tipoSearch" id="tipoSearch">
+                            <option value="-1">Tipo</option>
                             <option value="37">Bienes</option>
                             <option value="38">Servicios</option>
                         </select>
@@ -314,7 +315,21 @@
                     </div>
                     <div>
                         <label for="mes">Mes</label>
-                        <input type="number" name="mesSearch" id="mesSearch" value="<?php echo date("m")?>" class="textoCentro">
+                        <select name="mesSearch" id="mesSearch">
+                            <option value="-1">Mes</option>
+                            <option value="1">Enero</option>
+                            <option value="2">Febrero</option>
+                            <option value="3">Marzo</option>
+                            <option value="4">Abril</option>
+                            <option value="5">Mayo</option>
+                            <option value="6">Junio</option>
+                            <option value="7">Julio</option>
+                            <option value="8">Agosto</option>
+                            <option value="9">Setiembre</option>
+                            <option value="10">Octubre</option>
+                            <option value="11">Noviembre</option>
+                            <option value="12">Diciembre</option>
+                        </select>
                     </div>
                     <div>
                         <label for="anio">Año :</label>

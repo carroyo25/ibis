@@ -17,6 +17,10 @@
         function buscaCodigo(){
             echo $this->model->buscarItemsCodigo($_POST['criterio']);
         }
+
+        function catalogoXls(){
+            echo $this->model->exportarCatalogo();
+        }
         
     }
 ?>

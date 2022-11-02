@@ -524,12 +524,19 @@
         public function listarPedidosUsuarioFiltrados($parametros){
             try {
                 $salida = "";
+                $mes  = date("m")-1;
 
                 $tipo   = $parametros['tipoSearch'] == -1 ? "%" : "%".$parametros['tipoSearch']."%";
                 $costos = $parametros['costosSearch'] == -1 ? "%" : "%".$parametros['costosSearch']."%";
-                $mes    = $parametros['mesSearch'];
+                $mes    = $parametros['mesSearch'] == -1 ? $mes :  $parametros['mesSearch'];
                 $anio   = $parametros['anioSearch'];
 
+                echo $tipo;
+                echo $mes;
+                echo $costos;
+                echo $anio;
+                echo $_SESSION['iduser'];
+                
                 $sql = $this->db->connect()->prepare("SELECT
                                                         ibis.tb_pedidocab.idreg,
                                                         ibis.tb_pedidocab.idcostos,
@@ -590,6 +597,8 @@
                                         <td class="textoCentro '.strtolower($rs['atencion']).'">'.$rs['atencion'].'</td>
                                     </tr>';
                     }
+                }else {
+                    $salida = '<tr class="pointer"><td colspan="8" class="textoCentro">No se encontraron registros en la consulta</td></tr>';
                 }
 
                 return $salida;

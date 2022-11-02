@@ -29,4 +29,16 @@ $(function(){
         }
     });
    
+    $("#excelFile").on('click', function(e) {
+        e.preventDefault();
+
+        $.post(RUTA+"catalogo/catalogoXls",
+            function (data, text, requestXHR) {
+                console.log(data);
+            },
+            "text"
+        );
+
+        return false;
+    });
 })

@@ -15,6 +15,7 @@
     <div class="cabezaModulo">
         <h1>Catálogo Bienes/Servicios</h1>
         <div>
+            <a href="#" id="excelFile"><i class="fas fa-file-excel"></i><p>Exportar</p></a>
             <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
         </div>
     </div>
@@ -34,7 +35,6 @@
                     <th>Tipo</th>
                     <th>Denominación</th>
                     <th>Unidad</th>
-                    <th width="3%">...</th>
                 </tr>
             </thead>
             <tbody>
