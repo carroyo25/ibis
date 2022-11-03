@@ -92,7 +92,6 @@
 
         public function buscarItemsCodigo($criterio){
             try {
-                $salida = "";
                 $sql = $this->db->connect()->prepare("SELECT
                                                     cm_producto.id_cprod,
                                                     cm_producto.ccodprod,
@@ -112,19 +111,12 @@
                 $item = 1;
 
                 if ($rc > 0){
-                    while( $rs = $sql->fetch()) {
-                        $salida .='<tr data-id="'.$rs['id_cprod'].'" class="pointer">
-                                        <td class="textoCentro">'.$rs['ccodprod'].'</td>
-                                        <td class="textoCentro '.strtolower($rs['tipo']).'">'.$rs['tipo'].'</td>
-                                        <td class="pl20px">'.$rs['cdesprod'].'</td>
-                                        <td class="textoCentro">'.$rs['cabrevia'].'</td>
-                                        <td class="textoCentro"><a href="'.$rs['id_cprod'].'"><i class="fas fa-trash-alt"></i></a></td>
-                                    </tr>';
-                        $item++;
+                    while( $rs = $sql->fetch(PDO::FETCH_ASSOC)) {
+                        $productos[] = $rs;
                     }
                 }
 
-                return $salida;
+                return array("productos"=>$productos);
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
@@ -226,7 +218,6 @@
 
         public function listarItemsScroll($pagina,$cantidad){
             try {
-                $pagina = 1;
                 $inicio = ($pagina - 1) * $cantidad;
                 $limite = $this->contarItems();
 
@@ -250,7 +241,7 @@
                 $item = 1;
 
                 if ($rc > 0){
-                    while( $rs = $sql->fetch_assoc()) {
+                    while( $rs = $sql->fetch()) {
                         $productos[] = $rs;
                     }
                 }
@@ -268,7 +259,7 @@
             try {
                 $sql = $this->db->connect()->query("SELECT COUNT(*) AS regs FROM cm_producto WHERE flgActivo = 1");
                 $sql->execute();
-                $filas = $sql->fetch_assoc();
+                $filas = $sql->fetch();
 
                 return $filas['regs'];
             } catch (PDOException $th) {

@@ -6,7 +6,7 @@
         }
 
         function render(){
-            //$this->view->listaItems = $this->model->listarItems();
+            $this->view->listaItems = $this->model->listarItemsScroll(1,15);
             $this->view->render('catalogo/index');
         }
 
@@ -15,7 +15,7 @@
         }
 
         function buscaCodigo(){
-            echo $this->model->buscarItemsCodigo($_POST['criterio']);
+            echo json_encode($this->model->buscarItemsCodigo($_POST['criterio']));
         }
 
         function catalogoXls(){
@@ -24,7 +24,7 @@
 
         function listaScroll(){
             $pagina = $_POST['pagina'] ?? 1;
-	        $cantidad = 10;
+	        $cantidad = 35;
 
             echo json_encode([$this->model->listarItemsScroll($pagina,$cantidad)]);
         }

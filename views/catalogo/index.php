@@ -27,7 +27,7 @@
             <input type="text" name="descripcion" id="descripcion">
         </div>
     </div>
-    <div class="itemsTabla">
+    <div class="itemsTabla" id="contenedor">
         <table id="tablaPrincipal">
             <thead>
                 <tr>
@@ -38,7 +38,7 @@
                 </tr>
             </thead>
             <tbody>
-                <!--<?php ///echo $this->listaItems;?>-->
+                
             </tbody>
         </table>
     </div>
