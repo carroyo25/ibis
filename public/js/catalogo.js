@@ -1,4 +1,4 @@
-$(function(){
+/*$(function(){
     $("#descripcion").on("keypress", function (e) {
         if(e.which == 13 && $(this).val().length > 1) {
             $("#waitmodal").fadeIn();
@@ -41,4 +41,24 @@ $(function(){
 
         return false;
     });
-})
+})*/
+
+
+const $ = str => document.getElementById(str);
+const contenedor = document.querySelector(".itemsTabla");
+const tablaPrincipal  = document.getElementById("tablaPrincipal");
+const body = document.querySelector("#tablaPrincipal tbody");
+
+/*body.innerHTML = `<tr>
+                    <td>B0Q094Q3049</td>
+                    <td>S</td>
+                    <td>AGENDA</td>
+                    <td>UND</td>
+                </tr>`;*/
+
+
+const query = async () => {
+    let pagina = parseInt(body.dataset.p) || 1;
+    const FD = new FormData();
+	FD.append('pagina',pagina);
+}

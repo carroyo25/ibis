@@ -22,7 +22,8 @@
                                                     INNER JOIN tb_parametros ON cm_producto.ntipo = tb_parametros.nidreg 
                                                 WHERE
                                                     cm_producto.flgActivo = 1
-                                                ORDER BY cdesprod ASC");
+                                                ORDER BY cdesprod ASC
+                                                LIMIT 15");
                 $sql->execute();
                 $rc = $sql->rowcount();
                 $item = 1;
@@ -217,6 +218,59 @@
 
                 return 'public/documentos/reportes/catalogo.xlsx';
 
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        public function listarItemsScroll($pagina,$cantidad){
+            try {
+                $pagina = 1;
+                $inicio = ($pagina - 1) * $cantidad;
+                $limite = $this->contarItems();
+
+                $sql = $this->db->connect()->query("SELECT
+                                                    cm_producto.id_cprod,
+                                                    cm_producto.ccodprod,
+                                                    UPPER(cm_producto.cdesprod) AS cdesprod,
+                                                    cm_producto.flgActivo,
+                                                    tb_parametros.cdescripcion AS tipo,
+                                                    tb_unimed.cabrevia 
+                                                FROM
+                                                    cm_producto
+                                                    INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                    INNER JOIN tb_parametros ON cm_producto.ntipo = tb_parametros.nidreg 
+                                                WHERE
+                                                    cm_producto.flgActivo = 1
+                                                ORDER BY cdesprod ASC
+                                                LIMIT $inicio,$cantidad");
+                $sql->execute();
+                $rc = $sql->rowcount();
+                $item = 1;
+
+                if ($rc > 0){
+                    while( $rs = $sql->fetch_assoc()) {
+                        $productos[] = $rs;
+                    }
+                }
+
+                return array("productos"=>$productos,
+                            'quedan'=>($inicio + $cantidad) < $limite);
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function contarItems(){
+            try {
+                $sql = $this->db->connect()->query("SELECT COUNT(*) AS regs FROM cm_producto WHERE flgActivo = 1");
+                $sql->execute();
+                $filas = $sql->fetch_assoc();
+
+                return $filas['regs'];
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;

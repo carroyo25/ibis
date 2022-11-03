@@ -6,7 +6,7 @@
         }
 
         function render(){
-            $this->view->listaItems = $this->model->listarItems();
+            //$this->view->listaItems = $this->model->listarItems();
             $this->view->render('catalogo/index');
         }
 
@@ -20,6 +20,13 @@
 
         function catalogoXls(){
             echo $this->model->exportarCatalogo();
+        }
+
+        function listaScroll(){
+            $pagina = $_POST['pagina'] ?? 1;
+	        $cantidad = 10;
+
+            echo json_encode([$this->model->listarItemsScroll($pagina,$cantidad)]);
         }
         
     }

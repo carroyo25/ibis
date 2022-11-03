@@ -38,7 +38,7 @@
                 </tr>
             </thead>
             <tbody>
-                <?php echo $this->listaItems;?>
+                <!--<?php ///echo $this->listaItems;?>-->
             </tbody>
         </table>
     </div>
