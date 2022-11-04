@@ -1,54 +1,10 @@
-/*$(function(){
-    $("#descripcion").on("keypress", function (e) {
-        if(e.which == 13 && $(this).val().length > 1) {
-            $("#waitmodal").fadeIn();
-            $.post(RUTA+"catalogo/buscaPalabra", {criterio:$(this).val()},
-                function (data, textStatus, jqXHR) {
-                    $("#tablaPrincipal tbody")
-                        .empty()
-                        .append(data);
-                    //$("#waitmodal").fadeOut();  
-                },
-                "text"
-            );
-        }
-    });
-
-    $("#codigo").on("keypress", function (e) {
-        if(e.which == 13 && $(this).val().length > 1) {
-            $("#waitmodal").fadeIn();
-            $.post(RUTA+"catalogo/buscaCodigo", {criterio:$(this).val()},
-                function (data, textStatus, jqXHR) {
-                    $("#tablaPrincipal tbody")
-                        .empty()
-                        .append(data);
-                    //$("#waitmodal").fadeOut();  
-                },
-                "text"
-            );
-        }
-    });
-   
-    $("#excelFile").on('click', function(e) {
-        e.preventDefault();
-
-        $.post(RUTA+"catalogo/catalogoXls",
-            function (data, text, requestXHR) {
-                console.log(data);
-            },
-            "text"
-        );
-
-        return false;
-    });
-})*/
-
-
-const $ = str => document.getElementById(str);
-const tabla = $('contenedor');
 const body = document.querySelector("#contenedor tbody");
-const txtBienes = $('codigo');
+const txtCodigoSearch = document.getElementById('codigo');
+const txtDescripSearch = document.getElementById('descripcion');
+const btnExportar = document.getElementById('excelFile');
 
+
+//bloque de scrol
 let listItemFinal = null;
 let estoyPidiendo = false;
 
@@ -104,11 +60,10 @@ const query = async () => {
 
 query();
 
+//fin del bloque de scroll
 
-txtBienes.addEventListener("keypress", e =>{
-    try {
-        if(e.which == 13 && e.target.value.length < 1) throw "No se puede realizar la consulta";
-
+txtCodigoSearch.addEventListener("keypress", e =>{
+    if(e.which === 13){
         const FD = new FormData();
         FD.append('criterio',e.target.value);
         
@@ -134,9 +89,61 @@ txtBienes.addEventListener("keypress", e =>{
             }
         })
         .catch(error => console.log("Proceso fallido",error));
-    } catch (error) {
-        console.log(error);
-    }
+    }else {
+        console.log("No sale");
+    };
 })
 
+txtDescripSearch.addEventListener("keypress", e =>{
+    if(e.which === 13){
+        const FD = new FormData();
+        FD.append('criterio',e.target.value);
+        
+        fetch(RUTA+"catalogo/buscaPalabra",{
+            method: 'POST',
+            body:FD
+        })
+        .then(function(response){
+            return response.json();
+        })
+        .then(dataJson => {
+            if(dataJson.productos){
+                body.innerHTML = "";
+                dataJson.productos.forEach(i => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `<td class="textoCentro">${i.ccodprod}</td>
+                                <td class="textoCentro bienes">${i.tipo}</td>
+                                <td class="pl20px">${i.cdesprod}</td>
+                                <td class="textoCentro">${i.cabrevia}</td>`;
+                    tr.classList.add("pointer");
+                    body.appendChild(tr);
+                })
+            }
+        })
+        .catch(error => console.log("Proceso fallido",error));
+    }else {
+        console.log("No sale");
+    }; 
+})
+
+btnExportar.addEventListener("click",e => {
+    e.preventDefault();
+
+    //let response = fetch(RUTA+'catalogo/catalogoXls');
+    fetch(RUTA+"catalogo/catalogoXls",{
+        method: 'POST',
+    })
+    .then(function(response){
+        return response.json();
+    })
+    .then(dataJson => {
+        if(dataJson.productos){
+            
+        }
+    })
+    .catch(error => console.log("Proceso fallido",error));
+
+
+    return false;
+})
 

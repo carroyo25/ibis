@@ -29,7 +29,7 @@
     </div>
     <div class="itemsTabla" id="contenedor">
         <table id="tablaPrincipal">
-            <thead>
+            <thead class="stickytop">
                 <tr>
                     <th width="10%">Codigo</th>
                     <th>Tipo</th>

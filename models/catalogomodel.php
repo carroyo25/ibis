@@ -6,51 +6,8 @@
             parent::__construct();
         }
 
-        public function listarItems(){
-            try {
-                $salida = "";
-                $sql = $this->db->connect()->query("SELECT
-                                                    cm_producto.id_cprod,
-                                                    cm_producto.ccodprod,
-                                                    UPPER(cm_producto.cdesprod) AS cdesprod,
-                                                    cm_producto.flgActivo,
-                                                    tb_parametros.cdescripcion AS tipo,
-                                                    tb_unimed.cabrevia 
-                                                FROM
-                                                    cm_producto
-                                                    INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
-                                                    INNER JOIN tb_parametros ON cm_producto.ntipo = tb_parametros.nidreg 
-                                                WHERE
-                                                    cm_producto.flgActivo = 1
-                                                ORDER BY cdesprod ASC
-                                                LIMIT 15");
-                $sql->execute();
-                $rc = $sql->rowcount();
-                $item = 1;
-
-                if ($rc > 0){
-                    while( $rs = $sql->fetch()) {
-                        $salida .='<tr data-id="'.$rs['id_cprod'].'" class="pointer">
-                                        <td class="textoCentro">'.$rs['ccodprod'].'</td>
-                                        <td class="textoCentro '.strtolower($rs['tipo']).'">'.$rs['tipo'].'</td>
-                                        <td class="pl20px">'.$rs['cdesprod'].'</td>
-                                        <td class="textoCentro">'.$rs['cabrevia'].'</td>
-                                    </tr>';
-                        $item++;
-                    }
-                }
-
-                return $salida;
-
-            } catch (PDOException $th) {
-                echo "Error: ".$th->getMessage();
-                return false;
-            }
-        }
-
         public function buscarItemsPalabra($criterio){
             try {
-                $salida = "";
                 $sql = $this->db->connect()->prepare("SELECT
                                                     cm_producto.id_cprod,
                                                     cm_producto.ccodprod,
@@ -64,25 +21,18 @@
                                                     INNER JOIN tb_parametros ON cm_producto.ntipo = tb_parametros.nidreg 
                                                 WHERE
                                                     cm_producto.flgActivo = 1 AND
-                                                    cm_producto.cdesprod LIKE :criterio");
+                                                    cm_producto.cdesprod LIKE :criterio
+                                                ORDER BY cdesprod ASC");
                 $sql->execute(["criterio"=>"%".$criterio."%"]);
                 $rc = $sql->rowcount();
-                $item = 1;
 
                 if ($rc > 0){
-                    while( $rs = $sql->fetch()) {
-                        $salida .='<tr data-id="'.$rs['id_cprod'].'" class="pointer">
-                                        <td class="textoCentro">'.$rs['ccodprod'].'</td>
-                                        <td class="textoCentro '.strtolower($rs['tipo']).'">'.$rs['tipo'].'</td>
-                                        <td class="pl20px">'.$rs['cdesprod'].'</td>
-                                        <td class="textoCentro">'.$rs['cabrevia'].'</td>
-                                        <td class="textoCentro"><a href="'.$rs['id_cprod'].'"><i class="fas fa-trash-alt"></i></a></td>
-                                    </tr>';
-                        $item++;
+                    while( $rs = $sql->fetch(PDO::FETCH_ASSOC)) {
+                        $productos[] = $rs;
                     }
                 }
 
-                return $salida;
+                return array("productos"=>$productos);
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
@@ -105,10 +55,10 @@
                                                     INNER JOIN tb_parametros ON cm_producto.ntipo = tb_parametros.nidreg 
                                                 WHERE
                                                     cm_producto.flgActivo = 1 AND
-                                                    cm_producto.ccodprod LIKE :criterio");
+                                                    cm_producto.ccodprod LIKE :criterio
+                                                ORDER BY cdesprod ASC");
                 $sql->execute(["criterio"=>"%".$criterio."%"]);
                 $rc = $sql->rowcount();
-                $item = 1;
 
                 if ($rc > 0){
                     while( $rs = $sql->fetch(PDO::FETCH_ASSOC)) {
@@ -149,7 +99,6 @@
                 $objPHPExcel->setActiveSheetIndex(0);
                 $objPHPExcel->getActiveSheet()->setTitle("Bienes");
 
-
                 $objPHPExcel->setActiveSheetIndex(1);
                 $objPHPExcel->getActiveSheet()->setTitle("Servicios");
 
@@ -178,21 +127,15 @@
                         $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(27);
                         $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(30);
                         $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(20);
-                        $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(20);
-                        $objPHPExcel->getActiveSheet()->getColumnDimension('J')->setWidth(20);
-                        $objPHPExcel->getActiveSheet()->getColumnDimension('H')->setWidth(15);
-                        $objPHPExcel->getActiveSheet()->getColumnDimension('I')->setWidth(15);
-                        $objPHPExcel->getActiveSheet()->getColumnDimension('J')->setWidth(40);
-
+                    
                         //combinar celdas
-                        $objPHPExcel->getActiveSheet()->mergeCells('A1:C1');
+                        $objPHPExcel->getActiveSheet()->mergeCells('A1:F1');
                         
-
                         //Titulo 
-                        $objPHPExcel->getActiveSheet()->setCellValue('C1','CATALOGO DE BIENES');
+                        $objPHPExcel->getActiveSheet()->setCellValue('A1','CATALOGO DE BIENES');
 
                         $objPHPExcel->getActiveSheet()
-                            ->getStyle('A8:J9')
+                            ->getStyle('A1:F4')
                             ->getFill()
                             ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
                             ->getStartColor()
@@ -201,6 +144,18 @@
                         $objPHPExcel->getActiveSheet()->setCellValue('A4','CODIDO'); // esto cambia
                         $objPHPExcel->getActiveSheet()->setCellValue('B4','DESCRIPCION'); // esto cambia
                         $objPHPExcel->getActiveSheet()->setCellValue('C4','UNIDAD'); // esto cambia
+                        $objPHPExcel->getActiveSheet()->setCellValue('D4','GRUPO'); // esto cambia
+                        $objPHPExcel->getActiveSheet()->setCellValue('E4','CLASE'); // esto cambia
+                        $objPHPExcel->getActiveSheet()->setCellValue('F4','FAMILIA'); // esto cambia
+
+                        $fila = 5;
+                        $productos = $this->productos(37);
+                        $nreg = count($productos);
+
+                        for ($i=0; $i < $nreg; $i++) { 
+                            $objPHPExcel->getActiveSheet()->setCellValue('A'.$fila,$productos[$i]['ccodprod']);
+                            $fila++;
+                        }
 
                 }
 
@@ -208,8 +163,8 @@
                 $objWriter->save('public/documentos/reportes/catalogo.xlsx');
                 exit();
 
-                return 'public/documentos/reportes/catalogo.xlsx';
-
+                return array("documento"=>'public/documentos/reportes/catalogo.xlsx');
+               
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;
@@ -262,6 +217,45 @@
                 $filas = $sql->fetch();
 
                 return $filas['regs'];
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function productos($tipo){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT
+                                                    cm_producto.ccodprod,
+                                                    UPPER( cm_producto.cdesprod ) AS cdesprod,
+                                                    tb_parametros.cdescripcion AS tipo,
+                                                    tb_unimed.cabrevia,
+                                                    UPPER( tb_grupo.cdescrip ) AS GRUPO,
+                                                    UPPER( tb_clase.cdescrip ) AS CLASE,
+                                                    UPPER( tb_familia.cdescrip ) AS FAMILIA 
+                                                FROM
+                                                    cm_producto
+                                                    INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                    INNER JOIN tb_parametros ON cm_producto.ntipo = tb_parametros.nidreg
+                                                    INNER JOIN tb_grupo ON cm_producto.ngrupo = tb_grupo.ncodgrupo
+                                                    INNER JOIN tb_clase ON cm_producto.nclase = tb_clase.ncodclase
+                                                    INNER JOIN tb_familia ON cm_producto.nfam = tb_familia.ncodfamilia 
+                                                WHERE
+                                                    cm_producto.flgActivo = 1 
+                                                    AND cm_producto.ntipo =:tipo 
+                                                ORDER BY
+                                                    cm_producto.cdesprod");
+                $sql->execute(["tipo"=>$tipo]);
+                $rc = $sql->rowcount();
+
+                if ($rc > 0){
+                    while( $rs = $sql->fetch(PDO::FETCH_ASSOC)) {
+                        $productos[] = $rs;
+                    }
+                }
+
+                return $productos;
+
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;

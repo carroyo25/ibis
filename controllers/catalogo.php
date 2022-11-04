@@ -11,7 +11,7 @@
         }
 
         function buscaPalabra(){
-            echo $this->model->buscarItemsPalabra($_POST['criterio']);
+            echo json_encode($this->model->buscarItemsPalabra($_POST['criterio']));
         }
 
         function buscaCodigo(){
@@ -19,7 +19,7 @@
         }
 
         function catalogoXls(){
-            echo $this->model->exportarCatalogo();
+            echo json_encode($this->model->exportarCatalogo());
         }
 
         function listaScroll(){
