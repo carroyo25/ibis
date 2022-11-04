@@ -93,6 +93,7 @@
                 ));
 
                 $hojas = ["Bienes","Servicios"];
+                $parametros = [37,38];
 
                 $objWorkSheet = $objPHPExcel->createSheet(1);
 
@@ -105,20 +106,14 @@
                 for ($ap=0; $ap <= 1 ; $ap++) { 
                     $objPHPExcel->setActiveSheetIndex($ap);
 
+                    //combinar celdas
+                    $objPHPExcel->getActiveSheet()->mergeCells('A1:G1');
+
                     //alineacion
-                        $objPHPExcel->getActiveSheet()->getStyle('C1:I5')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                        $objPHPExcel->getActiveSheet()->getStyle('C1:I5')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                        $objPHPExcel->getActiveSheet()->getStyle('A1:G4')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                        $objPHPExcel->getActiveSheet()->getStyle('A1:G4')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
                         $objPHPExcel->getActiveSheet()->getStyle('A1:AJ5')->getAlignment()->setWrapText(true);
-
-                        $objPHPExcel->getActiveSheet()->getStyle('A8:AJ9')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                        $objPHPExcel->getActiveSheet()->getStyle('A8:AJ9')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-
-                        $objPHPExcel->getActiveSheet()->getStyle('A6:J6')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                        $objPHPExcel->getActiveSheet()->getStyle('A6:J6')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-
-                        //estilo de fuentes
-                        $objPHPExcel->getActiveSheet()->getStyle('A6:J1000')->applyFromArray($cuerpo);
 
                         //ancho de columnas
                         $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(10);
@@ -127,15 +122,12 @@
                         $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(27);
                         $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(30);
                         $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(20);
-                    
-                        //combinar celdas
-                        $objPHPExcel->getActiveSheet()->mergeCells('A1:F1');
                         
                         //Titulo 
-                        $objPHPExcel->getActiveSheet()->setCellValue('A1','CATALOGO DE BIENES');
+                        $objPHPExcel->getActiveSheet()->setCellValue('A1','CATALOGO SICAL');
 
                         $objPHPExcel->getActiveSheet()
-                            ->getStyle('A1:F4')
+                            ->getStyle('A1:G4')
                             ->getFill()
                             ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
                             ->getStartColor()
@@ -143,27 +135,35 @@
 
                         $objPHPExcel->getActiveSheet()->setCellValue('A4','CODIDO'); // esto cambia
                         $objPHPExcel->getActiveSheet()->setCellValue('B4','DESCRIPCION'); // esto cambia
-                        $objPHPExcel->getActiveSheet()->setCellValue('C4','UNIDAD'); // esto cambia
-                        $objPHPExcel->getActiveSheet()->setCellValue('D4','GRUPO'); // esto cambia
-                        $objPHPExcel->getActiveSheet()->setCellValue('E4','CLASE'); // esto cambia
-                        $objPHPExcel->getActiveSheet()->setCellValue('F4','FAMILIA'); // esto cambia
+                        $objPHPExcel->getActiveSheet()->setCellValue('C4','TIPO'); // esto cambia
+                        $objPHPExcel->getActiveSheet()->setCellValue('D4','UNIDAD'); // esto cambia
+                        $objPHPExcel->getActiveSheet()->setCellValue('E4','GRUPO'); // esto cambia
+                        $objPHPExcel->getActiveSheet()->setCellValue('F4','CLASE'); // esto cambia
+                        $objPHPExcel->getActiveSheet()->setCellValue('G4','FAMILIA'); // esto cambia
 
                         $fila = 5;
-                        $productos = $this->productos(37);
+                        $productos = $this->productos($parametros[$ap]);
                         $nreg = count($productos);
 
                         for ($i=0; $i < $nreg; $i++) { 
                             $objPHPExcel->getActiveSheet()->setCellValue('A'.$fila,$productos[$i]['ccodprod']);
+                            $objPHPExcel->getActiveSheet()->setCellValue('B'.$fila,$productos[$i]['cdesprod']);
+                            $objPHPExcel->getActiveSheet()->setCellValue('C'.$fila,$productos[$i]['tipo']);
+                            $objPHPExcel->getActiveSheet()->setCellValue('D'.$fila,$productos[$i]['cabrevia']);
+                            $objPHPExcel->getActiveSheet()->setCellValue('E'.$fila,$productos[$i]['grupo']);
+                            $objPHPExcel->getActiveSheet()->setCellValue('F'.$fila,$productos[$i]['clase']);
+                            $objPHPExcel->getActiveSheet()->setCellValue('G'.$fila,$productos[$i]['familia']);
+                            
                             $fila++;
                         }
-
                 }
 
                 $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel,'Excel2007');
                 $objWriter->save('public/documentos/reportes/catalogo.xlsx');
-                exit();
 
                 return array("documento"=>'public/documentos/reportes/catalogo.xlsx');
+
+                exit();
                
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
@@ -230,9 +230,9 @@
                                                     UPPER( cm_producto.cdesprod ) AS cdesprod,
                                                     tb_parametros.cdescripcion AS tipo,
                                                     tb_unimed.cabrevia,
-                                                    UPPER( tb_grupo.cdescrip ) AS GRUPO,
-                                                    UPPER( tb_clase.cdescrip ) AS CLASE,
-                                                    UPPER( tb_familia.cdescrip ) AS FAMILIA 
+                                                    UPPER( tb_grupo.cdescrip ) AS grupo,
+                                                    UPPER( tb_clase.cdescrip ) AS clase,
+                                                    UPPER( tb_familia.cdescrip ) AS familia 
                                                 FROM
                                                     cm_producto
                                                     INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed

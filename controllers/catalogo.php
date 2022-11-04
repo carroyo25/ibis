@@ -24,7 +24,7 @@
 
         function listaScroll(){
             $pagina = $_POST['pagina'] ?? 1;
-	        $cantidad = 35;
+	        $cantidad = 30;
 
             echo json_encode([$this->model->listarItemsScroll($pagina,$cantidad)]);
         }

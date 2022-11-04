@@ -129,21 +129,14 @@ txtDescripSearch.addEventListener("keypress", e =>{
 btnExportar.addEventListener("click",e => {
     e.preventDefault();
 
-    //let response = fetch(RUTA+'catalogo/catalogoXls');
     fetch(RUTA+"catalogo/catalogoXls",{
         method: 'POST',
     })
-    .then(function(response){
-        return response.json();
-    })
-    .then(dataJson => {
-        if(dataJson.productos){
-            
-        }
+    .then((response) => response.json())
+    .then((data) => {
+        window.location.href = data.documento;
     })
     .catch(error => console.log("Proceso fallido",error));
-
-
     return false;
 })
 
