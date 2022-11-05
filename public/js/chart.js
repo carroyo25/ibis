@@ -14,34 +14,63 @@ $(function () {
                   .empty()
                   .append(response.contenido);
                 
-                $("#pedidos_emitidos").text(response.valores[0]);
+                $("#pedidos_emitidos").text(response.series[0].y); //emitidos
+                $("#pedidos_aprobados").text(response.series[4].y); //aprobados
+                $("#pedidos_culminados").text(response.series[10].y); //entregados
 
-                    let xValues = response.etiquetas;
-                    let yValues = response.valores;
-                    let barColors = [
-                    "#b91d47",
-                    "#00aba9",
-                    "#2b5797",
-                    "#e8c3b9",
-                    "#1e7145"
-                    ];
+                let valoresPedidos =  [response.series[0],
+                                       response.series[1],
+                                       response.series[2],
+                                       response.series[3],
+                                       response.series[4],
+                                       response.series[5],
+                                       response.series[6],
+                                       response.series[7],
+                                       response.series[8],
+                                       response.series[9],
+                                       response.series[10]]
 
-                    new Chart("myChart", {
-                    type: "pie",
-                    data: {
-                        labels: xValues,
-                        datasets: [{
-                        backgroundColor: barColors,
-                        data: yValues
-                        }]
+
+                Highcharts.chart('containerPie', {
+                    chart: {
+                      type: 'pie',
+                      options3d: {
+                        enabled: true,
+                        alpha: 45,
+                        beta: 0
+                      }
                     },
-                    options: {
-                            title: {
-                            display: false,
-                            text: "World Wide Wine Production 2018"
-                            }
+                    title: {
+                      text: 'N° Pedidos'
+                    },
+                    subtitle: {
+                      text: 'Fuente: Base de datos Sical'
+                    },
+                    accessibility: {
+                      point: {
+                        valueSuffix: '%'
+                      }
+                    },
+                    tooltip: {
+                      pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                    },
+                    plotOptions: {
+                      pie: {
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        depth: 35,
+                        dataLabels: {
+                          enabled: true,
+                          format: '{point.name}'
                         }
-                    });
+                      }
+                    },
+                    series: [{
+                      type: 'pie',
+                      name: 'Share',
+                      data: valoresPedidos
+                    }]
+                  });
             }
         });
     }else if ( $("#rol_user").val() == 5 ) {
@@ -56,32 +85,7 @@ $(function () {
                 
                 $("#pedidos_emitidos").text(response.valores[0]);
 
-                    let xValues = response.etiquetas;
-                    let yValues = response.valores;
-                    let barColors = [
-                    "#b91d47",
-                    "#00aba9",
-                    "#2b5797",
-                    "#e8c3b9",
-                    "#1e7145"
-                    ];
-
-                    new Chart("myChart", {
-                    type: "pie",
-                    data: {
-                        labels: xValues,
-                        datasets: [{
-                        backgroundColor: barColors,
-                        data: yValues
-                        }]
-                    },
-                    options: {
-                            title: {
-                            display: false,
-                            text: "World Wide Wine Production 2018"
-                            }
-                        }
-                    });
+                
             }
         });
     }else if ( $("#rol_user").val() == 3 ) {
@@ -97,32 +101,7 @@ $(function () {
                 $("#pedidos_emitidos").text(response.valores[0]);
                 $("#pedidos_pendientes").text(response.valores[3]);
 
-                    let xValues = response.etiquetas;
-                    let yValues = response.valores;
-                    let barColors = [
-                    "#b91d47",
-                    "#00aba9",
-                    "#2b5797",
-                    "#e8c3b9",
-                    "#1e7145"
-                    ];
-
-                    new Chart("myChart", {
-                    type: "pie",
-                    data: {
-                        labels: xValues,
-                        datasets: [{
-                        backgroundColor: barColors,
-                        data: yValues
-                        }]
-                    },
-                    options: {
-                            title: {
-                            display: false,
-                            text: "World Wide Wine Production 2018"
-                            }
-                        }
-                    });
+                
             }
         });
     }else if ( $("#rol_user").val() == 68 ) {

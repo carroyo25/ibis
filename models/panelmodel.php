@@ -88,12 +88,19 @@
                 $atendido = 0;
                 $aprobacion = 0;
                 $aprobado = 0;
-                $cotizando = 0;
-                $etiquetas = ["Proceso", "Consulta", "Atendido", "Aprobacion", "Aprobado","Culminados"];
+                $orden = 0;
+                $firma = 0;
+                $recepcion = 0;
+                $despacho = 0;
+                $asignado = 0;
+                $anulado = 0;
+
+                $etiquetas = ["Proceso", "Consulta", "Atendido", "Aprobacion", "Aprobado","Orden","Firma","Recepcion","Despacho","Destino",
+                            "Asignado","Anulado"];
 
 
                 $sql = $this->db->connect()->prepare("SELECT
-                                                        tb_pedidocab.emision,
+                                                        DATE_FORMAT(tb_pedidocab.emision,'%d/%m/%Y') AS emision,
                                                         tb_pedidocab.estadodoc,
                                                         LPAD(tb_pedidocab.nrodoc, 6, 0 ) AS pedido,
                                                         UPPER(tb_pedidocab.concepto) AS concepto,
@@ -105,7 +112,8 @@
                                                         INNER JOIN tb_proyectos ON tb_pedidocab.idcostos = tb_proyectos.nidreg
                                                         INNER JOIN tb_parametros ON tb_pedidocab.estadodoc = tb_parametros.nidreg 
                                                     WHERE
-                                                        tb_pedidocab.usuario = :user");
+                                                        tb_pedidocab.usuario = :user
+                                                    ORDER BY tb_pedidocab.emision DESC");
                 $sql->execute(["user"=>$_SESSION['iduser']]);
                 $rowcount = $sql->rowcount();
 
@@ -119,33 +127,71 @@
                                         <td class="textoCentro '.$rs['cabrevia'].'">'.$rs['cdescripcion'].'</td>
                                     </tr>';
                         
-                        if ($rs['estadodoc'] == 49){ //procesando
-                            $proceso++;
-                        }else if($rs['estadodoc'] == 51) {
-                            $consulta++;
-                        }else if($rs['estadodoc'] == 52) {
-                            $atendido++;
-                        }else if($rs['estadodoc'] == 53) {
-                            $aprobacion++;
-                        }else if($rs['estadodoc'] == 54) {
-                            $aprobado++;
-                        }else if($rs['estadodoc'] == 55) {
-                            $cotizando++;
-                        }
+                                    if ($rs['estadodoc'] == 49){ //procesando
+                                        $proceso++;
+                                    }
+                                    if($rs['estadodoc'] == 51) { //stock
+                                        $consulta++;
+                                    }
+                                    if($rs['estadodoc'] == 52) { //atendido almacen
+                                        $atendido++;
+                                    }
+                                    if($rs['estadodoc'] == 53) { //aprobacion
+                                        $aprobacion++;
+                                    }
+                                    if($rs['estadodoc'] == 54) { //aprobado
+                                        $aprobado++;
+                                    }
+                                    if($rs['estadodoc'] == 58) { //elaboracion orden
+                                        $orden++;
+                                    }
+                                    if($rs['estadodoc'] == 59) { //firma
+                                        $firma++;
+                                    }
+                                    if($rs['estadodoc'] == 60) { //recepcion
+                                        $recepcion++;
+                                    }
+                                    if($rs['estadodoc'] == 62) { //despacho
+                                        $despacho++;
+                                    }
+                                    if($rs['estadodoc'] == 64) { //asignado
+                                        $asignado++;
+                                    }
+                                    if($rs['estadodoc'] == 65) { //anulado
+                                        $anulado++;
+                                    }
                         
                     }
 
-                    array_push($valores,$proceso);
+                    $series[] = array("name"=>"proceso","y"=>$proceso);
+                    $series[] = array("name"=>"consulta","y"=>$consulta);
+                    $series[] = array("name"=>"atendido","y"=>$atendido);
+                    $series[] = array("name"=>"aprobacion","y"=>$aprobacion);
+                    $series[] = array("name"=>"aprobado","y"=>$aprobado);
+                    $series[] = array("name"=>"orden","y"=>$orden);
+                    $series[] = array("name"=>"firma","y"=>$firma);
+                    $series[] = array("name"=>"recepcion","y"=>$recepcion);
+                    $series[] = array("name"=>"despacho","y"=>$despacho);
+                    $series[] = array("name"=>"asignado","y"=>$asignado);
+                    $series[] = array("name"=>"anulado","y"=>$anulado);
+
+
+                    /*array_push($valores,$proceso);
                     array_push($valores,$consulta);
                     array_push($valores,$atendido);
                     array_push($valores,$aprobacion);
                     array_push($valores,$aprobado);
-                    array_push($valores,$cotizando);
+                    array_push($valores,$orden);
+                    array_push($valores,$firma);
+                    array_push($valores,$recepcion);
+                    array_push($valores,$despacho);
+                    array_push($valores,$asignado);
+                    array_push($valores,$anulado);*/
                 }
 
                 return array("contenido"=>$salida,
-                              "valores"=>$valores,
-                              "etiquetas"=>$etiquetas);
+                              "etiquetas"=>$etiquetas,
+                              "series" =>$series);
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
@@ -235,8 +281,15 @@
                 $atendido = 0;
                 $aprobacion = 0;
                 $aprobado = 0;
-                $cotizando = 0;
-                $etiquetas = ["Proceso", "Consulta", "Atendido", "Aprobacion", "Aprobado","Culminados"];
+                $orden = 0;
+                $firma = 0;
+                $recepcion = 0;
+                $despacho = 0;
+                $asignado = 0;
+                $anulado = 0;
+
+                $etiquetas = ["Proceso", "Consulta", "Atendido", "Aprobacion", "Aprobado","Orden","Firma","Recepcion","Despacho","Destino",
+                            "Asignado","Anulado"];
 
                 $sql = $this->db->connect()->prepare("SELECT
                                                         tb_costusu.id_cuser,
@@ -267,7 +320,7 @@
                                                     INNER JOIN tb_parametros AS atencion ON tb_pedidocab.nivelAten = atencion.nidreg
                                                     WHERE
                                                         tb_costusu.id_cuser = :user
-                                                    AND tb_pedidocab.estadodoc = 53
+                                                   
                                                     AND tb_costusu.nflgactivo = 1");
                 $sql->execute(["user"=>$_SESSION['iduser']]);
                 $rowcount = $sql->rowcount();
@@ -281,18 +334,28 @@
                                         <td class="textoCentro '.$rs['cabrevia'].'">'.$rs['cabrevia'].'</td>
                                     </tr>';
                         
-                        if ($rs['estadodoc'] == 49){ //procesando
+                        if ($rs['estadodoc']      == 49){ //procesando
                             $proceso++;
-                        }else if($rs['estadodoc'] == 51) {
+                        }else if($rs['estadodoc'] == 51) { //stock
                             $consulta++;
-                        }else if($rs['estadodoc'] == 52) {
+                        }else if($rs['estadodoc'] == 52) { //atendido almacen
                             $atendido++;
-                        }else if($rs['estadodoc'] == 53) {
+                        }else if($rs['estadodoc'] == 53) { //aprobacion
                             $aprobacion++;
-                        }else if($rs['estadodoc'] == 54) {
+                        }else if($rs['estadodoc'] == 54) { //aprobado
                             $aprobado++;
-                        }else if($rs['estadodoc'] == 55) {
-                            $cotizando++;
+                        }else if($rs['estadodoc'] == 58) { //elaboracion orden
+                            $orden++;
+                        }else if($rs['estadodoc'] == 59) { //firma
+                            $firma++;
+                        }else if($rs['estadodoc'] == 60) { //recepcion
+                            $recepcion++;
+                        }else if($rs['estadodoc'] == 62) { //despacho
+                            $despacho++;
+                        }else if($rs['estadodoc'] == 64) { //asignado
+                            $asignado++;
+                        }else if($rs['estadodoc'] == 65) { //anulado
+                            $anulado++;
                         }
                         
                     }
@@ -302,13 +365,19 @@
                     array_push($valores,$atendido);
                     array_push($valores,$aprobacion);
                     array_push($valores,$aprobado);
-                    array_push($valores,$cotizando);
+                    array_push($valores,$orden);
+                    array_push($valores,$firma);
+                    array_push($valores,$recepcion);
+                    array_push($valores,$despacho);
+                    array_push($valores,$asignado);
+                    array_push($valores,$anulado);
                 }
 
                 return array("contenido"=>$salida,
                               "valores"=>$valores,
                               "etiquetas"=>$etiquetas,
-                              "pedientes"=>$this->conteoPedidosPedientesAprobar());
+                              "pedientes"=>$this->conteoPedidosPedientesAprobar(),
+                              "aprobados"=>$this->conteoPedidosAprobados());
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
@@ -325,7 +394,29 @@
                         INNER JOIN tb_pedidocab ON tb_costusu.ncodproy = tb_pedidocab.idcostos
                         WHERE
                             tb_costusu.id_cuser = :user
-                        AND tb_pedidocab.estadodoc = 53
+                        AND tb_pedidocab.estadodoc = 49
+                        AND tb_costusu.nflgactivo = 1");
+
+                $sql->execute(["user"=>$_SESSION['iduser']]);
+                $result = $sql->fetchAll();
+
+                return $result[0]['pedidos__pendientes'];
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        private function conteoPedidosAprobados(){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT
+                            count(tb_pedidocab.idreg) AS pedidos__pendientes
+                        FROM
+                            tb_costusu
+                        INNER JOIN tb_pedidocab ON tb_costusu.ncodproy = tb_pedidocab.idcostos
+                        WHERE
+                            tb_costusu.id_cuser = :user
+                        AND tb_pedidocab.estadodoc BETWEEN 53,62
                         AND tb_costusu.nflgactivo = 1");
 
                 $sql->execute(["user"=>$_SESSION['iduser']]);

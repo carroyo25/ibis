@@ -197,7 +197,7 @@ input[type=number]::-webkit-outer-spin-button {
 .areaTrabajo .ventana .cargaModulo {
   width: 100%;
   height: 100%;
-  overflow: auto;
+  overflow: hidden;
   padding: 20px;
 }
 

@@ -29,7 +29,7 @@
                     </div>
                     <div>
                         <p>Pedidos Aprobados</p>
-                        <p>0</p>
+                        <p id="pedidos_aprobados"></p>
                         <p>ultimo emitido: 15/04/2022</p>
                     </div>
                 </div>
@@ -39,7 +39,7 @@
                     </div>
                     <div>
                         <p>Pedidos Culminados</p>
-                        <p>0</p>
+                        <p id="pedidos_culminados"></p>
                         <p>ultimo emitido: 15/04/2022</p>
                     </div>
                 </div>
@@ -49,18 +49,15 @@
             </div>
         </div>
         <div class="area2">
-            <div class="titulo">
-                <p>Resumen Pedidos</p>
-            </div>
-            <canvas id="myChart" style="width:100%;max-width:700px;height:320px"></canvas>
+            <div id="containerPie" class="container"></div>
         </div>
         <div class="area3">
-            <div class="titulo">
-                <p>Listado Documentos</p>
-            </div>
             <div id="dashboard_table">
                 <table class="tabla" id="tablaPanel">
-                   <thead>
+                    <caption>
+                        Pedidos
+                    </caption>
+                   <thead class="stickytop">
                        <tr>
                            <th>Nro</th>
                            <th>Concepto</th>
@@ -76,7 +73,8 @@
         </div>
     </div>
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+    <script src="<?php echo constant('URL');?>public/code/highcharts.js"></script>
+    <script src="<?php echo constant('URL');?>public/code/highcharts-3d.js"></script>
     <script src="<?php echo constant('URL');?>public/js/chart.js"></script>
 
 </body>

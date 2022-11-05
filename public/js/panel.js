@@ -1,6 +1,5 @@
 $(function(){
 	
-
     $(".acordeon .submenu").on("click","a", function (e) {
         e.preventDefault();
 
