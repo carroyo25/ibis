@@ -7,6 +7,7 @@
 
         function render(){
             $this->view->listaPedidos = $this->model->listarPedidos();
+            $this->view->listaCostosSelect = $this->model->costosPorUsuarioSelect($_SESSION['iduser']);
             $this->view->render('aprobacion/index');
         }
 
@@ -23,17 +24,18 @@
         }
         
         function confirma(){
-            echo json_encode($this->model->enviarCorreo($_POST['asunto'],
-                                                          $_POST['mensaje'],
-                                                          $_POST['correos'],
-                                                          $_POST['pedido'],
-                                                          $_POST['detalles'],
-                                                          $_POST['estado'],
-                                                          $_POST['cabecera']));
+            echo json_encode($this->model->aprobarPedido($_POST['cabecera'],
+                                                        $_POST['detalles'],
+                                                        $_POST['estado'],
+                                                        $_POST['pedido']));
         }
 
         function actualizaListado(){
             echo $this->model->listarPedidos();
+        }
+
+        function filtroPedidos(){
+            echo $this->model->filtroAprobados($_POST);
         }
     }
 ?>

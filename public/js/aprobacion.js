@@ -138,13 +138,17 @@ $(function(){
     $("#requestAprob").click(function (e) { 
         e.preventDefault();
         
-        $.post(RUTA+"aprobacion/buscaRol", {rol:$(this).data("rol"),cc:$("#codigo_costos").val()},
+        /*$.post(RUTA+"aprobacion/buscaRol", {rol:$(this).data("rol"),cc:$("#codigo_costos").val()},
             function (data, textStatus, jqXHR) {
                 $("#listaCorreos tbody").empty().append(data);
                 $("#sendMail").fadeIn();
             },
             "text"
-        );
+        );*/
+
+        $("#pregunta").fadeIn();
+        
+
         return false;
     });
 
@@ -196,6 +200,60 @@ $(function(){
         }
         
         return false;
+    });
+
+    $("#btnAceptarPregunta").click(function (e) { 
+        e.preventDefault();
+
+        let result = {};
+        $("#pregunta,#proceso").fadeOut();
+
+        $.each($("#formProceso").serializeArray(),function(){
+            result[this.name] = this.value;
+        });
+
+        $("#esperar").fadeIn();
+
+        $.post(RUTA+"aprobacion/confirma", {pedido:$("#codigo_pedido").val(),
+                                            detalles:JSON.stringify(itemsPreview()),
+                                            estado:54,
+                                            cabecera:result},
+            function (data, textStatus, jqXHR) {              
+                $("#esperar").fadeOut();
+                $("#tablaPrincipal tbody")
+                    .empty()
+                    .append(data.pedidos);
+                    mostrarMensaje(data.mensaje,data.clase); 
+            },
+            "json"
+        );
+
+        return false;
+    });
+
+    $("#btnCancelarPregunta").click(function (e) { 
+        e.preventDefault();
+
+        $("#pregunta").fadeOut();
+        
+        return false;
+    });
+
+    $("#btnConsulta").on('click', function(e) {
+        e.preventDefault();
+
+        let str = $("#formConsulta").serialize();
+
+        $.post(RUTA+"aprobacion/filtroPedidos", str,
+            function (data, text, requestXHR) {
+                $("#tablaPrincipal tbody")
+                    .empty()
+                    .append(data);
+            },
+            "text"
+        );
+        
+        return false
     });
 })
 

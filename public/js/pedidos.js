@@ -645,6 +645,23 @@ $(function(){
 
         return false;
     });
+
+    $("#btnConsulta").on('click', function(e) {
+        e.preventDefault();
+
+        let str = $("#formConsulta").serialize();
+
+        $.post(RUTA+"pedidos/filtroPedidos", str,
+            function (data, text, requestXHR) {
+                $("#tablaPrincipal tbody")
+                    .empty()
+                    .append(data);
+            },
+            "text"
+        );
+        
+        return false
+    });
 })
 
 itemsPreview = () =>{

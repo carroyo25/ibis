@@ -79,9 +79,9 @@
             }
         }
 
+        //panel de pedidos
         public function listarPanelPedidos(){
             try {
-                $valores = [];
                 $salida ="";
                 $proceso = 0;
                 $consulta = 0;
@@ -94,10 +94,6 @@
                 $despacho = 0;
                 $asignado = 0;
                 $anulado = 0;
-
-                $etiquetas = ["Proceso", "Consulta", "Atendido", "Aprobacion", "Aprobado","Orden","Firma","Recepcion","Despacho","Destino",
-                            "Asignado","Anulado"];
-
 
                 $sql = $this->db->connect()->prepare("SELECT
                                                         DATE_FORMAT(tb_pedidocab.emision,'%d/%m/%Y') AS emision,
@@ -159,44 +155,35 @@
                                     }
                                     if($rs['estadodoc'] == 65) { //anulado
                                         $anulado++;
-                                    }
-                        
+                                    } 
                     }
-
-                    $series[] = array("name"=>"proceso","y"=>$proceso);
-                    $series[] = array("name"=>"consulta","y"=>$consulta);
-                    $series[] = array("name"=>"atendido","y"=>$atendido);
-                    $series[] = array("name"=>"aprobacion","y"=>$aprobacion);
-                    $series[] = array("name"=>"aprobado","y"=>$aprobado);
-                    $series[] = array("name"=>"orden","y"=>$orden);
-                    $series[] = array("name"=>"firma","y"=>$firma);
-                    $series[] = array("name"=>"recepcion","y"=>$recepcion);
-                    $series[] = array("name"=>"despacho","y"=>$despacho);
-                    $series[] = array("name"=>"asignado","y"=>$asignado);
-                    $series[] = array("name"=>"anulado","y"=>$anulado);
-
-
-                    /*array_push($valores,$proceso);
-                    array_push($valores,$consulta);
-                    array_push($valores,$atendido);
-                    array_push($valores,$aprobacion);
-                    array_push($valores,$aprobado);
-                    array_push($valores,$orden);
-                    array_push($valores,$firma);
-                    array_push($valores,$recepcion);
-                    array_push($valores,$despacho);
-                    array_push($valores,$asignado);
-                    array_push($valores,$anulado);*/
+                    
+                    $series[] = array("name"=>"Proceso","y"=>$this->seriePie($proceso));
+                    $series[] = array("name"=>"Consultas","y"=>$this->seriePie($consulta));
+                    $series[] = array("name"=>"Atendidos","y"=>$this->seriePie($atendido));
+                    $series[] = array("name"=>"Aprobacion","y"=>$this->seriePie($aprobacion));
+                    $series[] = array("name"=>"Aprobados","y"=>$this->seriePie($aprobado));
+                    $series[] = array("name"=>"Orden","y"=>$this->seriePie($orden));
+                    $series[] = array("name"=>"Firmas","y"=>$this->seriePie($firma));
+                    $series[] = array("name"=>"Recepcionados","y"=>$this->seriePie($recepcion));
+                    $series[] = array("name"=>"Despachados","y"=>$this->seriePie($despacho));
+                    $series[] = array("name"=>"Asignados","y"=>$this->seriePie($asignado));
+                    $series[] = array("name"=>"Anulados","y"=>$this->seriePie($anulado));
                 }
 
                 return array("contenido"=>$salida,
-                              "etiquetas"=>$etiquetas,
                               "series" =>$series);
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
             } 
 
+        }
+
+        private function seriePie($valor){
+            $valor_devuelto = $valor == 0 ? "":$valor;
+            
+            return $valor_devuelto;
         }
 
         public function listarPanelOrdenes(){
@@ -274,23 +261,10 @@
 
         public function listarPedidosPendientesAprobacion(){
             try {
-                $valores = [];
                 $salida ="";
-                $proceso = 0;
-                $consulta = 0;
-                $atendido = 0;
                 $aprobacion = 0;
                 $aprobado = 0;
-                $orden = 0;
-                $firma = 0;
-                $recepcion = 0;
-                $despacho = 0;
-                $asignado = 0;
-                $anulado = 0;
-
-                $etiquetas = ["Proceso", "Consulta", "Atendido", "Aprobacion", "Aprobado","Orden","Firma","Recepcion","Despacho","Destino",
-                            "Asignado","Anulado"];
-
+                
                 $sql = $this->db->connect()->prepare("SELECT
                                                         tb_costusu.id_cuser,
                                                         tb_costusu.ncodproy,
@@ -320,8 +294,9 @@
                                                     INNER JOIN tb_parametros AS atencion ON tb_pedidocab.nivelAten = atencion.nidreg
                                                     WHERE
                                                         tb_costusu.id_cuser = :user
-                                                   
-                                                    AND tb_costusu.nflgactivo = 1");
+                                                    AND tb_costusu.nflgactivo = 1 
+                                                    AND tb_pedidocab.estadodoc BETWEEN 53 AND 54
+                                                    ORDER BY emision DESC");
                 $sql->execute(["user"=>$_SESSION['iduser']]);
                 $rowcount = $sql->rowcount();
                 if ($rowcount > 0) {
@@ -331,53 +306,23 @@
                                         <td class="pl20px">'.$rs['concepto'].'</td>
                                         <td class="textoCentro">'.date("d/m/Y", strtotime($rs['emision'])).'</td>
                                         <td class="pl20px">'.$rs['proyecto'].'</td>
-                                        <td class="textoCentro '.$rs['cabrevia'].'">'.$rs['cabrevia'].'</td>
+                                        <td class="textoCentro '.strtolower($rs['cabrevia']).'">'.$rs['cabrevia'].'</td>
                                     </tr>';
                         
-                        if ($rs['estadodoc']      == 49){ //procesando
-                            $proceso++;
-                        }else if($rs['estadodoc'] == 51) { //stock
-                            $consulta++;
-                        }else if($rs['estadodoc'] == 52) { //atendido almacen
-                            $atendido++;
-                        }else if($rs['estadodoc'] == 53) { //aprobacion
+                        if($rs['estadodoc'] == 53) { //aprobacion
                             $aprobacion++;
-                        }else if($rs['estadodoc'] == 54) { //aprobado
-                            $aprobado++;
-                        }else if($rs['estadodoc'] == 58) { //elaboracion orden
-                            $orden++;
-                        }else if($rs['estadodoc'] == 59) { //firma
-                            $firma++;
-                        }else if($rs['estadodoc'] == 60) { //recepcion
-                            $recepcion++;
-                        }else if($rs['estadodoc'] == 62) { //despacho
-                            $despacho++;
-                        }else if($rs['estadodoc'] == 64) { //asignado
-                            $asignado++;
-                        }else if($rs['estadodoc'] == 65) { //anulado
-                            $anulado++;
                         }
-                        
+                        if($rs['estadodoc'] == 54) { //aprobado
+                            $aprobado++;
+                        }
                     }
 
-                    array_push($valores,$proceso);
-                    array_push($valores,$consulta);
-                    array_push($valores,$atendido);
-                    array_push($valores,$aprobacion);
-                    array_push($valores,$aprobado);
-                    array_push($valores,$orden);
-                    array_push($valores,$firma);
-                    array_push($valores,$recepcion);
-                    array_push($valores,$despacho);
-                    array_push($valores,$asignado);
-                    array_push($valores,$anulado);
+                    $series[] = array("name"=>"Pendientes","y"=>$this->seriePie($aprobacion));
+                    $series[] = array("name"=>"Aprobados","y"=>$this->seriePie($aprobado));
                 }
 
                 return array("contenido"=>$salida,
-                              "valores"=>$valores,
-                              "etiquetas"=>$etiquetas,
-                              "pedientes"=>$this->conteoPedidosPedientesAprobar(),
-                              "aprobados"=>$this->conteoPedidosAprobados());
+                              "series" =>$series);
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;

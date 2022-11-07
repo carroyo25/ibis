@@ -73,5 +73,9 @@
             echo $this->model->desactivarItem($_POST,0);
         }
 
+        function filtroPedidos(){
+            echo $this->model->pedidosFiltrados($_POST);
+        }
+
     }
 ?>

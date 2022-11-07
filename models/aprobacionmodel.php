@@ -18,6 +18,7 @@
                                                         ibis.tb_pedidocab.estadodoc,
                                                         ibis.tb_pedidocab.emision,
                                                         ibis.tb_pedidocab.vence,
+                                                        ibis.tb_pedidocab.idtipomov,
                                                         UPPER(
                                                         CONCAT_WS( ' ', ibis.tb_proyectos.ccodproy, ibis.tb_proyectos.cdesproy )) AS costos,
                                                         ibis.tb_pedidocab.nivelAten,
@@ -35,16 +36,18 @@
                                                     WHERE
                                                         tb_costusu.id_cuser = :user 
                                                         AND tb_pedidocab.estadodoc = 53
-                                                        AND tb_costusu.nflgactivo = 1");
+                                                        AND tb_costusu.nflgactivo = 1
+                                                    ORDER BY tb_pedidocab.emision DESC");
                 $sql->execute(["user"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()) {
+                        $tipo = $rs['idtipomov'] == 37 ? "B":"S";
                         $salida .='<tr class="pointer" data-indice="'.$rs['idreg'].'">
                                         <td class="textoCentro">'.str_pad($rs['nrodoc'],4,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.date("d/m/Y", strtotime($rs['emision'])).'</td>
-                                        <td class="textoCentro">'.date("d/m/Y", strtotime($rs['vence'])).'</td>
+                                        <td class="textoCentro">'.$tipo.'</td>
                                         <td class="pl20px">'.utf8_decode($rs['concepto']).'</td>
                                         <td class="pl20px">'.utf8_decode($rs['costos']).'</td>
                                         <td class="pl20px">'.$rs['nombres'].'</td>
@@ -85,18 +88,10 @@
             }
         }
 
-        public function enviarCorreo($asunto,$mensaje,$correos,$pedido,$detalles,$estado,$cabecera){
+        private function enviarCorreo($adjunto,$correos){
             require_once("public/PHPMailer/PHPMailerAutoload.php");
 
-            $adjunto = $this->genReqAprob($cabecera,$detalles);
-
-            $data       = json_decode($correos);
-            $nreg       = count($data);
-            $subject    = utf8_decode($asunto);
-            $messaje    = utf8_decode($mensaje);
             $estadoEnvio= false;
-            $clase = "mensaje_error";
-            $salida = "";
             
             $origen = $_SESSION['user']."@sepcon.net";
             $nombre_envio = $_SESSION['nombres'];
@@ -122,11 +117,13 @@
             try {
                 $mail->setFrom($origen,$nombre_envio);
 
-                for ($i=0; $i < $nreg; $i++) {
-                    $mail->addAddress($data[$i]->correo,utf8_decode($data[$i]->nombre));
-    
-                    $mail->Subject = $subject;
-                    $mail->msgHTML(utf8_decode($messaje));
+                $mail->addAddress($origen,$nombre_envio);
+
+                foreach ($correos as $correo) {
+                    $mail->addAddress($correo['ccorreo'],utf8_decode($correo['cnombres']));
+                    
+                    $mail->Subject = "Pedido aprobado";
+                    $mail->msgHTML(utf8_decode("Pedido aprobado en el sistema"));
 
                     if (file_exists( 'public/documentos/pedidos/aprobados/'.$adjunto)) {
                         $mail->AddAttachment('public/documentos/pedidos/aprobados/'.$adjunto);
@@ -138,25 +135,30 @@
                     }else {
                         $mensaje = "Mensaje de correo enviado";
                         $estadoEnvio = true; 
-                    }   
+                    }
                 }
 
-                if ($estadoEnvio){
-                    $clase = "mensaje_correcto";
-                    $this->actCabPedAprueba($estado,$pedido,$adjunto);
-                    $this->actDetPedAprueba($estado,$detalles);
-                }
-
-                $salida= array("estado"=>$estadoEnvio,
-                                "mensaje"=>$mensaje,
-                                "clase"=>$clase,
-                                "pedidos"=>$this->listarPedidos());
-
-                return $salida;
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
             }
+        }
+
+        public function aprobarPedido($cabecera,$detalles,$estado,$pedido){
+            $adjunto = $this->genReqAprob($cabecera,$detalles);
+            $correos = $this->correosLogisticos();
+            $envio  = $this->enviarCorreo($adjunto,$correos);
+
+            $clase = "mensaje_correcto";
+            $this->actCabPedAprueba($estado,$pedido,$adjunto);
+            $this->actDetPedAprueba($estado,$detalles);
+
+            $salida= array("envio"=>$envio,
+                            "mensaje"=>"Pedido Aprobado",
+                            "clase"=>$clase,
+                            "pedidos"=>$this->listarPedidos());
+
+            return $salida;
         }
 
         private function actCabPedAprueba($estado,$pedido,$aprobado){
@@ -204,6 +206,7 @@
             }
         }
 
+        //genera el pdf del pedido
         private function genReqAprob($datos,$detalles){
             require_once('public/formatos/pedidos.php');
             
@@ -264,6 +267,106 @@
             $pdf->Output($ruta.$filename,'F');
             
             return $filename;
+        }
+
+        private function correosLogisticos(){
+            try {
+                $sql = $this->db->connect()->query("SELECT ccorreo,cnombres 
+                                                    FROM tb_user 
+                                                    WHERE tb_user.nrol = 68");
+                $sql->execute();
+                $rowCount = $sql->rowCount();
+                $correos = [];
+
+                if ( $rowCount > 0){
+                    while ( $rs = $sql->fetch(PDO::FETCH_ASSOC)) {
+                        array_push($correos,$rs);
+                    }
+                }
+
+                return $correos;
+
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function filtroAprobados($parametros){
+            try {
+                $salida = "";
+                $mes  = date("m")-1;
+
+                $tipo   = $parametros['tipoSearch'] == -1 ? "%" : "%".$parametros['tipoSearch']."%";
+                $costos = $parametros['costosSearch'] == -1 ? "%" : "%".$parametros['costosSearch']."%";
+                $mes    = $parametros['mesSearch'] == -1 ? "%".$mes :  $parametros['mesSearch'];
+                $anio   = "%".$parametros['anioSearch'];
+
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        ibis.tb_costusu.id_cuser,
+                                                        ibis.tb_costusu.ncodproy,
+                                                        ibis.tb_pedidocab.nrodoc,
+                                                        UPPER( ibis.tb_pedidocab.concepto ) AS concepto,
+                                                        ibis.tb_pedidocab.idreg,
+                                                        ibis.tb_pedidocab.estadodoc,
+                                                        ibis.tb_pedidocab.emision,
+                                                        ibis.tb_pedidocab.vence,
+                                                        ibis.tb_pedidocab.idtipomov,
+                                                        UPPER(
+                                                        CONCAT_WS( ' ', ibis.tb_proyectos.ccodproy, ibis.tb_proyectos.cdesproy )) AS costos,
+                                                        ibis.tb_pedidocab.nivelAten,
+                                                        CONCAT_WS( ' ', rrhh.tabla_aquarius.apellidos, rrhh.tabla_aquarius.nombres ) AS nombres,
+                                                        estados.cdescripcion AS estado,
+                                                        atencion.cdescripcion AS atencion,
+                                                        estados.cabrevia 
+                                                    FROM
+                                                        ibis.tb_costusu
+                                                        INNER JOIN ibis.tb_pedidocab ON tb_costusu.ncodproy = tb_pedidocab.idcostos
+                                                        INNER JOIN ibis.tb_proyectos ON tb_costusu.ncodproy = tb_proyectos.nidreg
+                                                        INNER JOIN rrhh.tabla_aquarius ON ibis.tb_pedidocab.idsolicita = rrhh.tabla_aquarius.internal
+                                                        INNER JOIN ibis.tb_parametros AS estados ON ibis.tb_pedidocab.estadodoc = estados.nidreg
+                                                        INNER JOIN ibis.tb_parametros AS atencion ON ibis.tb_pedidocab.nivelAten = atencion.nidreg 
+                                                    WHERE
+                                                        tb_costusu.id_cuser = :user 
+                                                        AND tb_pedidocab.estadodoc = 53 
+                                                        AND tb_costusu.nflgactivo = 1 
+                                                        AND ibis.tb_pedidocab.idtipomov LIKE :tipomov 
+                                                        AND ibis.tb_pedidocab.idcostos LIKE :costos 
+                                                        AND MONTH ( ibis.tb_pedidocab.emision ) LIKE :mes 
+                                                        AND YEAR ( ibis.tb_pedidocab.emision ) LIKE :anio 
+                                                    ORDER BY
+                                                        tb_pedidocab.emision DESC");
+                $sql->execute(["user"=>$_SESSION['iduser'],
+                                "tipomov"=>$tipo,
+                                "costos"=>$costos,
+                                "mes"=>$mes,
+                                "anio"=>$anio]);
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0) {
+                    while ($rs = $sql->fetch()) {
+                        $tipo = $rs['idtipomov'] == 37 ? "B":"S";
+                        $salida .='<tr class="pointer" data-indice="'.$rs['idreg'].'">
+                                        <td class="textoCentro">'.str_pad($rs['nrodoc'],4,0,STR_PAD_LEFT).'</td>
+                                        <td class="textoCentro">'.date("d/m/Y", strtotime($rs['emision'])).'</td>
+                                        <td class="textoCentro">'.$tipo.'</td>
+                                        <td class="pl20px">'.utf8_decode($rs['concepto']).'</td>
+                                        <td class="pl20px">'.utf8_decode($rs['costos']).'</td>
+                                        <td class="pl20px">'.$rs['nombres'].'</td>
+                                        <td class="textoCentro '.$rs['cabrevia'].'">'.$rs['estado'].'</td>
+                                        <td class="textoCentro '.strtolower($rs['atencion']).'">'.$rs['atencion'].'</td>
+                                        <td class="textoCentro"><a href="'.$rs['idreg'].'"><i class="fa fa-trash-alt"></i></a></td>
+                                    </tr>';
+                    }
+                }else {
+                    $salida = '<tr class="pointer"><td colspan="9" class="textoCentro" data-costos="'.$costos.'">No se encontraron registros en la consulta</td></tr>';
+                }
+
+                return $salida;
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
         }
     }
 ?>

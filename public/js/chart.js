@@ -14,9 +14,9 @@ $(function () {
                   .empty()
                   .append(response.contenido);
                 
-                $("#pedidos_emitidos").text(response.series[0].y); //emitidos
-                $("#pedidos_aprobados").text(response.series[4].y); //aprobados
-                $("#pedidos_culminados").text(response.series[10].y); //entregados
+                $("#pedidos_emitidos").text(validarSeries(response.series[0].y)); //emitidos
+                $("#pedidos_aprobados").text(validarSeries(response.series[4].y)); //aprobados
+                $("#pedidos_culminados").text(validarSeries(response.series[10].y)); //entregados
 
                 let valoresPedidos =  [response.series[0],
                                        response.series[1],
@@ -28,8 +28,7 @@ $(function () {
                                        response.series[7],
                                        response.series[8],
                                        response.series[9],
-                                       response.series[10]]
-
+                                       response.series[10]];
 
                 Highcharts.chart('containerPie', {
                     chart: {
@@ -70,7 +69,7 @@ $(function () {
                       name: 'Share',
                       data: valoresPedidos
                     }]
-                  });
+                });
             }
         });
     }else if ( $("#rol_user").val() == 5 ) {
@@ -83,7 +82,7 @@ $(function () {
                   .empty()
                   .append(response.contenido);
                 
-                $("#pedidos_emitidos").text(response.valores[0]);
+                //$("#pedidos_emitidos").text(response.valores[0]);
 
                 
             }
@@ -98,10 +97,52 @@ $(function () {
                   .empty()
                   .append(response.contenido);
                 
-                $("#pedidos_emitidos").text(response.valores[0]);
-                $("#pedidos_pendientes").text(response.valores[3]);
+                $("#pedidos_pendientes").text(validarSeries(response.series[0].y));
+                $("#pedidos_aprobados").text(validarSeries(response.series[1].y)); 
 
-                
+                let valoresPedidos =  [response.series[0],
+                                       response.series[1]];
+
+                                       Highcharts.chart('containerPie', {
+                                        chart: {
+                                          type: 'pie',
+                                          options3d: {
+                                            enabled: true,
+                                            alpha: 45,
+                                            beta: 0
+                                          }
+                                        },
+                                        title: {
+                                          text: 'Porcentaje Pedidos'
+                                        },
+                                        subtitle: {
+                                          text: 'Fuente: Base de datos Sical'
+                                        },
+                                        accessibility: {
+                                          point: {
+                                            valueSuffix: '%'
+                                          }
+                                        },
+                                        tooltip: {
+                                          pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                                        },
+                                        plotOptions: {
+                                          pie: {
+                                            allowPointSelect: true,
+                                            cursor: 'pointer',
+                                            depth: 20,
+                                            dataLabels: {
+                                              enabled: true,
+                                              format: '{point.name}'
+                                            }
+                                          }
+                                        },
+                                        series: [{
+                                          type: 'pie',
+                                          name: 'Share',
+                                          data: valoresPedidos
+                                        }]
+                                    });
             }
         });
     }else if ( $("#rol_user").val() == 68 ) {
@@ -136,3 +177,8 @@ $(function () {
         });
     }
 });
+
+const validarSeries = (valor) => {
+    let ret = valor == "" ? 0 : valor;
+    return ret;
+}
