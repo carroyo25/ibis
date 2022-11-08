@@ -86,7 +86,7 @@
                                 </div>
                                 <div class="column2_46">
                                     <label for="emision">Emisión:</label>
-                                    <input type="date" name="emision" id="emision" class="cerrarLista" value="<?php echo date("Y-m-d");?>">
+                                    <input type="date" name="emision" id="emision" class="cerrarLista" value="<?php echo date("Y-m-d");?>" min="<?php echo date("Y-m-d")?>">
                                 </div>
                             </div>
                             <div class="column2">
@@ -125,7 +125,7 @@
                                 </div>
                                 <div class="column2_46">
                                     <label for="fentrega">Fec.Entrega :</label>
-                                    <input type="date" name="fentrega" id="fentrega" class="cerrarLista">
+                                    <input type="date" name="fentrega" id="fentrega" class="cerrarLista" min="<?php echo date("Y-m-d")?>">
                                 </div>
                             </div>
                             <div class="column4_55">
@@ -224,6 +224,7 @@
                                     <th width="10%">Total</th>
                                     <th>Nro.</br>Parte</th>
                                     <th>Pedido</th>
+                                    <th>Detalle Item</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -396,23 +397,40 @@
                     <div>
                         <label for="tipo">Tipo : </label>
                         <select name="tipoSearch" id="tipoSearch">
+                            <option value="-1">Tipo</option>
                             <option value="37">Bienes</option>
                             <option value="38">Servicios</option>
                         </select>
                     </div>
                     <div>
-                        <label for="costosSearch">Centro de Costos</label>
-                        <input type="text" name="costosSearch" id="costosSearch">
+                        <label for="costosSearch">Centro de Costos: </label>
+                        <select name="costosSearch" id="costosSearch" class="item4">
+                            <?php echo $this->listaCostosSelect ?>
+                        </select>
                     </div>
                     <div>
                         <label for="mes">Mes</label>
-                        <input type="number" name="mesSearch" id="mesSearch" value="<?php echo date("m")?>" class="textoCentro">
+                        <select name="mesSearch" id="mesSearch">
+                            <option value="-1">Mes</option>
+                            <option value="1">Enero</option>
+                            <option value="2">Febrero</option>
+                            <option value="3">Marzo</option>
+                            <option value="4">Abril</option>
+                            <option value="5">Mayo</option>
+                            <option value="6">Junio</option>
+                            <option value="7">Julio</option>
+                            <option value="8">Agosto</option>
+                            <option value="9">Setiembre</option>
+                            <option value="10">Octubre</option>
+                            <option value="11">Noviembre</option>
+                            <option value="12">Diciembre</option>
+                        </select>
                     </div>
                     <div>
                         <label for="anio">Año :</label>
                         <input type="number" name="anioSearch" id="anioSearch" value="<?php echo date("Y")?>" class="textoCentro">
                     </div>
-                    <button type="button">Procesar</button> 
+                    <button type="button" class="boton3" id="btnConsulta">Consultar</button> 
             </div>
         </form>
     </div>

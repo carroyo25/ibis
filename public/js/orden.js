@@ -8,6 +8,7 @@ $(function(){
         ingresos = 0,
         swcoment = false,
         autorizado = 0,
+        costos = "",
         fp = 0;
     
     $("#esperar").fadeOut();
@@ -64,6 +65,8 @@ $(function(){
                 $("#ncotiz").val(data.cabecera[0].cnumcot);
                 $("#tcambio").val(data.cabecera[0].ntcambio);
                 $("#user_modifica").val(data.cabecera[0].userModifica);
+
+                console.log(data.cabecera[0].nigv);
 
                if (data.cabecera[0].nigv != 0) {
                     $("#si").prop("checked", true);
@@ -211,7 +214,6 @@ $(function(){
             return false;
         }
             
-        
         $("#esperar").fadeIn();
 
         $.post(RUTA+"orden/pedidos",
@@ -240,18 +242,14 @@ $(function(){
     $("#pedidos tbody").on("click","tr", function (e) {
         e.preventDefault();
 
-        if (pedido == "" ) {
-            pedido      = $(this).data("pedido");
-            entidad     = $(this).data("entidad");
-            proforma    = $(this).data("proforma");
-            moneda      = $(this).data("moneda");
-            cmoneda     = $(this).data("codigomoneda");
+        if (costos == "" ) {
+            costos = $(this).data("costos");
+            pedido = $(this).data("pedido");
         }
 
         try {
-            if ( pedido  != $(this).data("pedido")) throw "El item esta en otro pedido";
-            if ( entidad != $(this).data("entidad")) throw "No se puede asignar una orden a dos proveedores";
-            if ( moneda  != $(this).data("moneda")) throw "Los items en el pedido tiene monedas distintas"; 
+            if ( costos  != $(this).data("costos")) throw "El item esta otro centro de costos";
+            if ( pedido  != $(this).data("pedido")) throw "El item esta en  un pedido diferente";
 
             let nFilas      = $.strPad($("#tablaDetalles tr").length,3),
                 codigo      = $(this).children('td:eq(5)').text(),
@@ -264,7 +262,8 @@ $(function(){
                 id_item     = $(this).data("iditem"),
                 grabado     = 0;
 
-            if (!checkExistTable($("#tablaDetalles tbody tr"),codigo,1)){
+            if (!checkExistTable($("#tablaDetalles tbody tr"),codigo,5)){
+                let item = $(this);
                 let row = `<tr data-grabado="${grabado}" 
                                 data-total="${total}" 
                                 data-codprod="${cod_prod}" 
@@ -293,9 +292,16 @@ $(function(){
                             <<td class="textoDerecha pr5px"></td>
                             <td></td>
                             <td class="textoCentro">${request}</td>
+                            <td class="pl20px"><input type="text"></td>
                         </tr>`;
 
-                $("#tablaDetalles tbody").append(row);
+                $.post(RUTA+"orden/marcaItem", {id:$(this).data("iditem"),"estado":1},
+                    function (data, text, requestXHR) {
+                        item.remove();
+                        $("#tablaDetalles tbody").append(row);
+                    },                        
+                    "text"
+                );
                 
             }else{
                 mostrarMensaje("Item duplicado","mensaje_error");
@@ -313,7 +319,7 @@ $(function(){
         e.preventDefault();
 
         try {
-            if (pedido == 0) throw "No se selecciono ningún item";
+            if ($("#tablaDetalles tbody").length == 0) throw "No se selecciono ningún item";
             
             $.post(RUTA+"orden/datosPedido", {pep:pedido,prof:proforma,ent:entidad},
                 function (data, textStatus, jqXHR) {
@@ -332,8 +338,9 @@ $(function(){
                     $("#nivel_atencion").val(data.pedido[0].nivelAten);
                     $("#tcambio").val(data.cambio);
                     
-                    $("#numero").val(data.orden.numero);
+                    $("#numero").val(data.orden);
                     $("#codigo_verificacion").val(data.pedido[0].verificacion);
+                    
                     $("#busqueda").fadeOut(); 
                 },
                 "json"
@@ -611,7 +618,7 @@ $(function(){
         if (e.which == 13) {
             try {
                 let cant = $(this).parent().parent().find("td").eq(5).children().val();
-                let precio = $(this).val();
+                let precio = $(this).parent().parent().find("td").eq(6).children().val();
                 let suma = 0;
                 
                 let total = precio*cant;
@@ -632,6 +639,38 @@ $(function(){
                 
             }
         }
+    });
+
+    $("#tablaDetalles tbody").on('click',"a", function(e) {
+        e.preventDefault();
+
+        if ($("#codigo_estado").val() == 59){
+            mostrarMensaje("La orden no se puede modificar","mensaje_error");
+            return false;
+        }
+
+        let item    = $(this).parent().parent().remove();
+        let suma = 0;
+
+        $.post(RUTA+"orden/marcaItem", {id:$(this).parent().parent().data("itped"),"estado":0},
+            function (data, text, requestXHR) {
+                item.remove();
+                fillTables($("#tablaDetalles tbody > tr"),1);
+            },                        
+            "text"
+        );
+
+        $("#tablaDetalles tbody  > tr").each(function () {
+            suma += parseFloat($(this).find('td').eq(7).text()||0,10);
+        })
+
+        if(suma > 0) {
+            $("#total").val(numberWithCommas(suma.toFixed(2)));
+            $("#total_numero").val(suma.toFixed(2));
+
+        }
+
+        return false;
     });
 
     //filtrado en la lista de solicitante
@@ -716,7 +755,7 @@ detalles = () => {
             UNIDAD      = $(this).find('td').eq(4).text(),
             CANTIDAD    = $(this).find('td').eq(5).children().val(),
             PRECIO      = $(this).find('td').eq(6).children().val(),
-            IGV         = 0.18,
+            IGV         = 0,
             TOTAL       = $(this).find('td').eq(7).text(),
             NROPARTE    = $(this).find('td').eq(8).text(),
             PEDIDO      = $(this).find('td').eq(9).text(),
@@ -724,7 +763,8 @@ detalles = () => {
             MONEDA      = $("#codigo_moneda").val(),
             ITEMPEDIDO  = $(this).data('itped'),
             GRABAR      = $(this).data('grabado'),
-            CANTPED     = $(this).data('cant');
+            CANTPED     = $(this).data('cant'),
+            DETALLES    = $(this).find('td').eq(10).children().val();
 
         item= {};
         
@@ -744,6 +784,7 @@ detalles = () => {
             item['itped']       = ITEMPEDIDO;
             item['grabado']     = GRABAR;
             item['cantped']     = CANTPED;
+            item['detalles']    = DETALLES;
 
             DATA.push(item);
         //}

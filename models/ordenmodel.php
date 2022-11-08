@@ -87,51 +87,52 @@
             try {
                 $salida = "";
                 $sql = $this->db->connect()->prepare("SELECT
-                tb_pedidodet.idpedido,
-                FORMAT(tb_pedidodet.cant_aprob, 2) AS cantidad,
-                FORMAT(tb_pedidodet.cant_orden, 2) AS saldo,
-                FORMAT(tb_pedidodet.precio, 2) AS precio,
-                FORMAT(tb_pedidodet.cant_pedida,2) AS cantidad_pedida,
-                tb_pedidodet.igv,
-                FORMAT(tb_pedidodet.total, 2) AS total,
-                tb_pedidodet.estadoItem,
-                UPPER(
-                    CONCAT_WS(
-                        ' ',
-                        cm_producto.cdesprod,
-                        tb_pedidodet.observaciones
-                    )
-                ) AS cdesprod,
-                cm_producto.ccodprod,
-                cm_producto.id_cprod,
-                tb_unimed.ncodmed,
-                tb_unimed.cabrevia AS unidad,
-                UPPER(tb_proyectos.cdesproy) AS costos,
-                tb_area.ncodarea,
-                UPPER(tb_area.cdesarea) AS area,
-                tb_pedidodet.iditem,
-                tb_pedidodet.idcostos,
-                tb_pedidodet.idarea,
-                tb_pedidocab.idreg,
-                tb_pedidocab.nrodoc,
-                tb_pedidocab.emision,
-                tb_pedidocab.concepto,
-                tb_pedidodet.entidad,
-                tb_pedidodet.total AS total_numero
-            FROM
-                tb_costusu
-            INNER JOIN tb_pedidodet ON tb_costusu.ncodproy = tb_pedidodet.idcostos
-            INNER JOIN cm_producto ON tb_pedidodet.idprod = cm_producto.id_cprod
-            INNER JOIN tb_unimed ON tb_pedidodet.unid = tb_unimed.ncodmed
-            INNER JOIN tb_proyectos ON tb_pedidodet.idcostos = tb_proyectos.nidreg
-            INNER JOIN tb_area ON tb_pedidodet.idarea = tb_area.ncodarea
-            INNER JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
-            WHERE
-                tb_costusu.nflgactivo = 1
-            AND tb_costusu.id_cuser = :user
-            AND tb_pedidodet.estadoItem = 54
-            AND tb_pedidodet.idasigna = :user_asigna
-            AND (tb_pedidodet.cant_aprob > 0 OR ISNULL(tb_pedidodet.cant_aprob))");
+                                                        tb_pedidodet.idpedido,
+                                                        FORMAT(tb_pedidodet.cant_aprob, 2) AS cantidad,
+                                                        FORMAT(tb_pedidodet.cant_orden, 2) AS saldo,
+                                                        FORMAT(tb_pedidodet.precio, 2) AS precio,
+                                                        FORMAT(tb_pedidodet.cant_pedida,2) AS cantidad_pedida,
+                                                        tb_pedidodet.igv,
+                                                        FORMAT(tb_pedidodet.total, 2) AS total,
+                                                        tb_pedidodet.estadoItem,
+                                                        UPPER(
+                                                            CONCAT_WS(
+                                                                ' ',
+                                                                cm_producto.cdesprod,
+                                                                tb_pedidodet.observaciones
+                                                            )
+                                                        ) AS cdesprod,
+                                                        cm_producto.ccodprod,
+                                                        cm_producto.id_cprod,
+                                                        tb_unimed.ncodmed,
+                                                        tb_unimed.cabrevia AS unidad,
+                                                        UPPER(tb_proyectos.cdesproy) AS costos,
+                                                        tb_area.ncodarea,
+                                                        UPPER(tb_area.cdesarea) AS area,
+                                                        tb_pedidodet.iditem,
+                                                        tb_pedidodet.idcostos,
+                                                        tb_pedidodet.idarea,
+                                                        tb_pedidocab.idreg,
+                                                        tb_pedidocab.nrodoc,
+                                                        tb_pedidocab.emision,
+                                                        tb_pedidocab.concepto,
+                                                        tb_pedidodet.entidad,
+                                                        tb_pedidodet.total AS total_numero
+                                                    FROM
+                                                        tb_costusu
+                                                    INNER JOIN tb_pedidodet ON tb_costusu.ncodproy = tb_pedidodet.idcostos
+                                                    INNER JOIN cm_producto ON tb_pedidodet.idprod = cm_producto.id_cprod
+                                                    INNER JOIN tb_unimed ON tb_pedidodet.unid = tb_unimed.ncodmed
+                                                    INNER JOIN tb_proyectos ON tb_pedidodet.idcostos = tb_proyectos.nidreg
+                                                    INNER JOIN tb_area ON tb_pedidodet.idarea = tb_area.ncodarea
+                                                    INNER JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
+                                                    WHERE
+                                                        tb_costusu.nflgactivo = 1
+                                                    AND tb_costusu.id_cuser = :user
+                                                    AND tb_pedidodet.estadoItem = 54
+                                                    AND tb_pedidodet.idasigna = :user_asigna
+                                                    AND tb_pedidodet.nflgOrden = 0
+                                                    AND (tb_pedidodet.cant_aprob > 0 OR ISNULL(tb_pedidodet.cant_aprob))");
 
             //se cambia el 58 para llama los items directo con aprobacion
                 $sql->execute(["user"=>$_SESSION['iduser'],
@@ -142,17 +143,15 @@
                     while ($rs = $sql->fetch()) {
 
                         $cantidad = $rs['cantidad'] == null ? $rs['cantidad_pedida'] : $rs['cantidad'];
-                        $cantidad = $cantidad - $rs['saldo'];
                        
-                        //$saldo = $rs['saldo'] > 0 ? $rs['saldo'] : $rs['cantidad'];
-
                         $salida .='<tr class="pointer" data-pedido="'.$rs['idpedido'].'"
                                                        data-entidad="'.$rs['entidad'].'"
                                                        data-unidad="'.$rs['unidad'].'"
                                                        data-cantidad ="'.$cantidad.'"
                                                        data-total="'.$rs['total_numero'].'"
                                                        data-codprod="'.$rs['id_cprod'].'"
-                                                       data-iditem="'.$rs['iditem'].'">
+                                                       data-iditem="'.$rs['iditem'].'"
+                                                       data-costos="'.$rs['idcostos'].'">
                                         <td class="textoCentro">'.str_pad($rs['nrodoc'],6,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.date("d/m/Y", strtotime($rs['emision'])).'</td>
                                         <td class="pl5px">'.$rs['concepto'].'</td>
@@ -173,14 +172,14 @@
 
         public function verDatosCabecera($pedido){
             $datosPedido = $this->datosPedido($pedido);
-            $sql = "SELECT COUNT(lg_ordencab.id_regmov) AS numero FROM lg_ordencab WHERE lg_ordencab.ncodcos =:cod";
+            
             $api = file_get_contents('https://api.apis.net.pe/v1/tipo-cambio-sunat');
             $cambio = json_decode($api);
 
-            $numero = $this->generarNumero($datosPedido[0]["idcostos"],$sql);
+            $numero = $this->generarNumeroOrden();
 
             $salida = array("pedido"=>$datosPedido,
-                            "orden"=>$numero,
+                            "orden"=>str_pad($numero,6,0,STR_PAD_LEFT),
                             "cambio"=>$cambio->compra);
 
             return $salida;
@@ -194,12 +193,8 @@
             //verificar para el numero de orden
             $sql = "SELECT COUNT(lg_ordencab.id_regmov) AS numero FROM lg_ordencab WHERE lg_ordencab.ncodcos =:cod";
 
-            if ($condicion == 0) {
-                $numero = $this->generarNumero($cabecera['codigo_costos'],$sql);
-                $noc = $numero['numero'];
-            }else{
-                $noc = $cabecera['numero'];
-            }
+            
+            $noc = $cabecera['numero'];
             
             if ($cabecera['codigo_tipo'] == "37") {
                 $titulo = "ORDEN DE COMPRA" ;
@@ -373,7 +368,7 @@
                 
                 $entrega = $this->calcularDias($cab->fentrega);
             
-                $orden = $this->generarNumero($cab->codigo_costos,$sql);
+                $orden = $this->generarNumeroOrden();
                 
                 $periodo = explode('-',$cab->emision);
 
@@ -457,7 +452,7 @@
                                                                                     nunitario=:unit,nigv=:igv,ntotal=:total,
                                                                                     nestado=:est,cverifica=:verif,nidpedi=:pedido,
                                                                                     nmonref=:moneda,ncodcos=:costos,id_orden=:ordenidx,
-                                                                                    nSaldo=:saldo");
+                                                                                    nSaldo=:saldo,cobserva=:detalles");
                         $sql->execute(["id"=>$indice,
                                         "nidp"=>$datos[$i]->itped,
                                         "pedido"=>$datos[$i]->pedido,
@@ -471,7 +466,8 @@
                                         "moneda"=>$datos[$i]->moneda,
                                         "costos"=>$costos,
                                         "ordenidx"=>$idx,
-                                        "saldo"=>$datos[$i]->cantidad]);
+                                        "saldo"=>$datos[$i]->cantidad,
+                                        "detalles"=>$datos[$i]->detalles]);
                     }//aca poner para la modificacion de ordenes
                     
                 }
@@ -519,23 +515,26 @@
 
                 $orden++;
 
-
                 for ($i=0; $i <$nreg ; $i++) { 
                     if($datos[$i]->cantidad == $datos[$i]->cantped) {
-                        $estado = 84;    
+                        $estado = 84;
+                        $swOrden = 1;    
                     }else{
                         $estado = 54;
+                        $swOrden = 0;
                     }
 
                     $pend = $datos[$i]->cantped - $datos[$i]->cantidad;
 
                     $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet SET 
                                                         estadoItem=:est,
-                                                        idorden=:orden, 
+                                                        idorden=:orden,
+                                                        nflgOrden=:swOrden, 
                                                         cant_orden=:pendiente WHERE iditem=:item");
                     $sql->execute(["item"=>$datos[$i]->itped,
                                     "est"=>$estado,
                                     "orden"=>$orden,
+                                    "swOrden"=>$swOrden,
                                     "pendiente"=>$pend]);
                     
                     $this->registrarOrdenesItems($datos[$i]->itped,$orden,$entidad);                
@@ -936,6 +935,20 @@
                 $sql = $this->db->connect()->prepare("UPDATE lg_ordencab SET nEstadoDoc=:est WHERE id_regmov=:id");
                 $sql->execute(["est"=>$estado,
                                 "id"=>$orden]);
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        private function generarNumeroOrden(){
+            try {
+                $sql = $this->db->connect()->query("SELECT MAX(id_regmov) AS numero FROM lg_ordencab");
+                $sql->execute();
+
+                $result = $sql->fetchAll();
+                
+                return $result[0]['numero']+1;
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;

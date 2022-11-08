@@ -12,6 +12,7 @@
             $this->view->listaPagos = $this->model->listarParametros("11");
             $this->view->listaOrdenes = $this->model->listarOrdenes($_SESSION['iduser']);
             $this->view->listaEntidades = $this->model->listarEntidades();
+            $this->view->listaCostosSelect = $this->model->costosPorUsuarioSelect($_SESSION['iduser']);
             $this->view->render('orden/index');
         }
 
@@ -65,6 +66,10 @@
 
         function detallesEntidad(){
             echo json_encode($this->model->datosEntidad($_POST['codigo']));
+        }
+
+        function marcaItem(){
+            echo $this->model->itemMarcado($_POST['id'],$_POST['estado']);
         }
     }
 ?>

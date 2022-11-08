@@ -93,7 +93,8 @@
 
             $estadoEnvio= false;
             
-            $origen = $_SESSION['user']."@sepcon.net";
+            //$origen = $_SESSION['user']."@sepcon.net";
+            $origen = $_SESSION['correo'];
             $nombre_envio = $_SESSION['nombres'];
 
             $mail = new PHPMailer;
@@ -116,26 +117,28 @@
             
             try {
                 $mail->setFrom($origen,$nombre_envio);
-
                 $mail->addAddress($origen,$nombre_envio);
+                
+                $nreg = count($correos) ;
 
-                foreach ($correos as $correo) {
-                    $mail->addAddress($correo['ccorreo'],utf8_decode($correo['cnombres']));
-                    
-                    $mail->Subject = "Pedido aprobado";
-                    $mail->msgHTML(utf8_decode("Pedido aprobado en el sistema"));
+                for ($i=0; $i < $nreg; $i++) {
+                    $mail->addAddress($correos[$i]['ccorreo'],$correos[$i]['cnombres']);
+                }
 
-                    if (file_exists( 'public/documentos/pedidos/aprobados/'.$adjunto)) {
-                        $mail->AddAttachment('public/documentos/pedidos/aprobados/'.$adjunto);
-                    }
-    
-                    if (!$mail->send()) {
-                        $mensaje = "Mensaje de correo no enviado";
-                        $estadoEnvio = false; 
-                    }else {
-                        $mensaje = "Mensaje de correo enviado";
-                        $estadoEnvio = true; 
-                    }
+                $mail->Subject = "Pedido aprobado";
+                $mail->msgHTML(utf8_decode("Pedido aprobado en el sistema"));
+
+                if (file_exists( 'public/documentos/pedidos/aprobados/'.$adjunto)) {
+                    $mail->AddAttachment('public/documentos/pedidos/aprobados/'.$adjunto);
+                }
+
+                if (!$mail->send()) {
+                    $mensaje = "Mensaje de correo no enviado";
+                    $estadoEnvio = false; 
+                    $enviados = 0;
+                }else {
+                    $mensaje = "Mensaje de correo enviado";
+                    $estadoEnvio = true; 
                 }
 
             } catch (PDOException $th) {
@@ -153,7 +156,7 @@
             $this->actCabPedAprueba($estado,$pedido,$adjunto);
             $this->actDetPedAprueba($estado,$detalles);
 
-            $salida= array("envio"=>$envio,
+            $salida= array("envio"=>$correos,
                             "mensaje"=>"Pedido Aprobado",
                             "clase"=>$clase,
                             "pedidos"=>$this->listarPedidos());

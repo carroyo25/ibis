@@ -1041,6 +1041,7 @@
             }
         }
 
+
         /*public function ultimoIndice($tabla) {
             try {
                 $sql = $this->db->connect()->prepare($query);
@@ -2214,6 +2215,7 @@
                                                     lg_ordendet.id_regmov,
                                                     lg_ordendet.niddeta,
                                                     lg_ordendet.nidpedi,
+                                                    lg_ordendet.cobserva,
                                                     lg_ordendet.id_cprod,
                                                     FORMAT( lg_ordendet.ncanti, 2 ) AS ncanti,
                                                     lg_ordendet.nunitario AS nunitario,
@@ -2275,6 +2277,7 @@
                                     <td class="textoDerecha pr5px">'.$rs['ntotal'].'</td>
                                     <td class="textoCentro">'.$rs['nroparte'].'</td>
                                     <td class="textoCentro">'.str_pad($rs['idpedido'],6,0,STR_PAD_LEFT).'</td>
+                                    <td><input type="text" value="'.$rs['cobserva'].'"></td>
                                 </tr>';
                     }
                 }
@@ -2379,6 +2382,17 @@
                 return $ret;
             } catch (PDOException $th) {
                 echo $th->getMessage();
+                return false;
+            }
+        }
+
+        //marcar items para no ser consultados
+        public function itemMarcado($id,$estado){
+            try {
+                $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet SET nflgOrden =:estado WHERE iditem =:id");
+                $sql->execute(["id" => $id,"estado" => $estado]);
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
                 return false;
             }
         }
