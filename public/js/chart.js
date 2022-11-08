@@ -176,6 +176,35 @@ $(function () {
             }
         });
     }
+
+    $("#tablaPanelPedidos tbody").on("click","tr", function (e) {
+        e.preventDefault();
+
+        if ($("#rol_user").val() == 68) {
+
+          $.post(RUTA+"panel/pdfPedido",{"pedido":$(this).data('id')},
+            function (data, textStatus, jqXHR) {
+              $(".ventanaVistaPrevia iframe")
+                .attr("src","")
+                .attr("src","public/documentos/temp/"+data);
+
+                $("#vistaprevia").fadeIn();
+            },
+            "text"
+          );
+        }
+
+        return false;
+    });
+
+    $("#closePreview").click(function (e) { 
+      e.preventDefault();
+
+      $(".ventanaVistaPrevia iframe").attr("src","");
+      $("#vistaprevia").fadeOut();
+
+      return false;
+  });
 });
 
 const validarSeries = (valor) => {

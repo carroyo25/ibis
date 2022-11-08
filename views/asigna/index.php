@@ -96,13 +96,13 @@
                         <table class="tabla" id="tablaDetalles">
                             <thead>
                                 <tr>
-                                    <th>Item</th>
-                                    <th>Codigo</th>
-                                    <th>Descripcion</th>
+                                    <th width="5%">Item</th>
+                                    <th width="7%">Codigo</th>
+                                    <th width="20%">Descripcion</th>
                                     <th>Und.</th>
-                                    <th>Cant.Ped.</th>
-                                    <th>Cant.Aten.</th>
-                                    <th>Cant.</br>Aprobada</th>
+                                    <th width="7%">Cant.Ped.</th>
+                                    <th width="7%">Cant.Aten.</th>
+                                    <th width="7%">Cant.</br>Aprobada</th>
                                     <th>Nro.</br>Parte</th>
                                     <th>Observaciones</th>
                                     <th>...</th>
@@ -146,25 +146,40 @@
                     <div>
                         <label for="tipo">Tipo : </label>
                         <select name="tipoSearch" id="tipoSearch">
+                            <option value="-1">Tipo</option>
                             <option value="37">Bienes</option>
                             <option value="38">Servicios</option>
                         </select>
                     </div>
                     <div>
-                        <label for="costosSearch">Centro de Costos </label>
-                        <select name="costosSearch" id="costosSearch">
-                            <?php echo $this->listaCostos ?>
+                        <label for="costosSearch">Centro de Costos: </label>
+                        <select name="costosSearch" id="costosSearch" class="item4">
+                            <?php echo $this->listaCostosSelect ?>
                         </select>
                     </div>
                     <div>
                         <label for="mes">Mes</label>
-                        <input type="number" name="mesSearch" id="mesSearch" value="<?php echo date("m")?>" class="textoCentro">
+                        <select name="mesSearch" id="mesSearch">
+                            <option value="-1">Mes</option>
+                            <option value="1">Enero</option>
+                            <option value="2">Febrero</option>
+                            <option value="3">Marzo</option>
+                            <option value="4">Abril</option>
+                            <option value="5">Mayo</option>
+                            <option value="6">Junio</option>
+                            <option value="7">Julio</option>
+                            <option value="8">Agosto</option>
+                            <option value="9">Setiembre</option>
+                            <option value="10">Octubre</option>
+                            <option value="11">Noviembre</option>
+                            <option value="12">Diciembre</option>
+                        </select>
                     </div>
                     <div>
                         <label for="anio">Año :</label>
                         <input type="number" name="anioSearch" id="anioSearch" value="<?php echo date("Y")?>" class="textoCentro">
                     </div>
-                    <button type="button">Procesar</button> 
+                    <button type="button" class="boton3" id="btnConsulta">Consultar</button> 
             </div>
         </form>
     </div>
@@ -174,13 +189,12 @@
                 <tr>
                     <th>Num.</th>
                     <th>Emision</th>
-                    <th>Vencimiento</th>
+                    <th>Tipo</th>
                     <th>Descripción</th>
                     <th>Centro Costos</th>
                     <th>Resposable</th>
                     <th>Estado</th>
                     <th>Atencion</th>
-                    <th>...</th>
                 </tr>
             </thead>
             <tbody>

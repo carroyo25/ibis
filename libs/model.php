@@ -251,7 +251,7 @@
                     $numm = $this->centena($nummero);
          
                 return $numm;
-            }
+        }
          
         public function decmiles($numdmero){
                 if ($numdmero == 10000)
@@ -266,7 +266,7 @@
                     $numde = $this->miles($numdmero);
          
                 return $numde;
-            }
+        }
          
         public function cienmiles($numcmero){
                 if ($numcmero == 100000)
@@ -277,7 +277,7 @@
                 if ($numcmero < 100000)
                     $num_letracm = $this->decmiles($numcmero);
                 return $num_letracm;
-            }
+        }
          
         public function millon($nummiero){
                 if ($nummiero >= 1000000 && $nummiero <2000000){
@@ -305,7 +305,7 @@
                     $num_letradmm = $this->millon($numerodm);
          
                 return $num_letradmm;
-            }
+        }
          
         public function cienmillon($numcmeros){
                 if ($numcmeros == 100000000)
@@ -316,7 +316,7 @@
                 if ($numcmeros < 100000000)
                     $num_letracms = $this->decmillon($numcmeros);
                 return $num_letracms;
-            }
+        }
          
         public function milmillon($nummierod){
                 if ($nummierod >= 1000000000 && $nummierod <2000000000){
@@ -1626,6 +1626,191 @@
                 }
                 
                 return $salida;
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function generateRequestPDF($pedido){
+            try{
+                require_once('public/formatos/pedidos.php');
+                $cabecera = $this->requestCab($pedido);
+                $detalles = $this->requestDetails($pedido);
+
+                $num = $cabecera[0]['numero'];
+                $fec = $cabecera[0]['emision'];
+                $usr = $cabecera[0]['cnombres'];
+                $pry = $cabecera[0]['proyecto'];
+                $are = $cabecera[0]['area'];
+                $cos = $cabecera[0]['proyecto'];
+                $tra = $cabecera[0]['transporte'];
+                $con = $cabecera[0]['concepto'];
+                $sol = $cabecera[0]['nombres'];
+                $esp = $cabecera[0]['detalle'];
+
+                $reg = ''; 
+                $dti = $cabecera[0]['idtipomov'] == 37 ? "PEDIDO DE COMPRA":"PEDIDO DE SERVICIO";
+                $mmt = "";
+                $cla = "NORMAL";
+                $msj = $cabecera[0]['estadodoc'] == 49 ? "VISTA PREVIA":"EMITIDO";
+                $ruta = "public/documentos/temp/";
+                $filename =  uniqid().".pdf";
+
+                $pdf = new PDF($num,$fec,$pry,$cos,$are,$con,$mmt,$cla,$tra,$usr,$sol,$reg,$esp,$dti,$msj,"");
+                $pdf->AddPage();
+                $pdf->AliasNbPages();
+                $pdf->SetWidths(array(10,15,70,8,10,17,15,15,15,15));
+                $pdf->SetFont('Arial','',5);
+
+                $item = 1;
+                $lc = 0;
+                $rc = 0; 
+
+                foreach($detalles as $detalle) {
+                    $pdf->SetAligns(array("L","L","L","L","R","L","L","L","L","L"));
+                    $pdf->Row(array($item,
+                                    $detalle['ccodprod'],
+                                    utf8_decode($detalle['cdesprod']."\n".$detalle['observaciones']),
+                                    $detalle['cabrevia'],
+                                    $detalle['cant_pedida'],
+                                    '',
+                                    '',
+                                    '',
+                                    '',
+                                    ''));
+
+                    $lc++;
+                    $rc++;
+                    $item++;
+
+                    if ($lc == 52) {
+                        $pdf->AddPage();
+                        $lc = 0;
+                    }
+                }
+
+
+                $lc = 0;
+                $rc = 0;
+
+
+                $pdf->Output($ruta.$filename,'F');
+            
+                return $filename;
+
+            }catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        private function requestCab($pedido){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        ibis.tb_pedidocab.idreg, 
+                                                        ibis.tb_pedidocab.idcostos, 
+                                                        ibis.tb_pedidocab.idarea, 
+                                                        ibis.tb_pedidocab.idtrans, 
+                                                        ibis.tb_pedidocab.idsolicita, 
+                                                        ibis.tb_pedidocab.idtipomov, 
+                                                        ibis.tb_pedidocab.emision, 
+                                                        ibis.tb_pedidocab.vence, 
+                                                        ibis.tb_pedidocab.estadodoc, 
+                                                        LPAD(ibis.tb_pedidocab.nrodoc,6,0) AS numero, 
+                                                        ibis.tb_pedidocab.usuario, 
+                                                        ibis.tb_pedidocab.concepto, 
+                                                        ibis.tb_pedidocab.detalle, 
+                                                        ibis.tb_pedidocab.nivelAten,
+                                                        ibis.tb_pedidocab.detalle,  
+                                                        ibis.tb_pedidocab.docfPdfPrev, 
+                                                        ibis.tb_pedidocab.docPdfEmit, 
+                                                        ibis.tb_pedidocab.docPdfAprob, 
+                                                        ibis.tb_pedidocab.verificacion, 
+                                                        CONCAT( rrhh.tabla_aquarius.apellidos, ' ', rrhh.tabla_aquarius.nombres ) AS nombres, 
+                                                        UPPER(
+                                                        CONCAT( ibis.tb_proyectos.ccodproy, ' ', ibis.tb_proyectos.cdesproy )) AS proyecto, 
+                                                        UPPER(
+                                                        CONCAT( ibis.tb_area.ccodarea, ' ', ibis.tb_area.cdesarea )) AS area, 
+                                                        UPPER(
+                                                        CONCAT( ibis.tb_parametros.nidreg, ' ', ibis.tb_parametros.cdescripcion )) AS transporte,
+                                                        tb_parametros.cobservacion, 
+                                                        estados.cdescripcion AS estado, 
+                                                        estados.cabrevia, 
+                                                        UPPER(
+                                                        CONCAT_WS( ' ', tipos.nidreg, tipos.cdescripcion )) AS tipo, 
+                                                        ibis.tb_proyectos.veralm, 
+                                                        ibis.tb_user.cnombres,
+                                                        ibis.tb_partidas.cdescripcion,
+                                                        ibis.tb_pedidocab.idpartida
+                                                    FROM
+                                                        ibis.tb_pedidocab
+                                                        INNER JOIN
+                                                        rrhh.tabla_aquarius
+                                                        ON 
+                                                            ibis.tb_pedidocab.idsolicita = rrhh.tabla_aquarius.internal
+                                                        INNER JOIN
+                                                    ibis.tb_proyectos ON ibis.tb_pedidocab.idcostos = ibis.tb_proyectos.nidreg
+                                                    INNER JOIN ibis.tb_area ON ibis.tb_pedidocab.idarea = ibis.tb_area.ncodarea
+                                                    INNER JOIN ibis.tb_parametros ON ibis.tb_pedidocab.idtrans = ibis.tb_parametros.nidreg
+                                                    INNER JOIN ibis.tb_parametros AS transportes ON ibis.tb_pedidocab.idtrans = transportes.nidreg
+                                                    INNER JOIN ibis.tb_parametros AS estados ON ibis.tb_pedidocab.estadodoc = estados.nidreg
+                                                    INNER JOIN ibis.tb_parametros AS tipos ON ibis.tb_pedidocab.idtipomov = tipos.nidreg
+                                                    INNER JOIN ibis.tb_user ON ibis.tb_pedidocab.usuario = ibis.tb_user.iduser
+                                                    LEFT JOIN ibis.tb_partidas ON ibis.tb_pedidocab.idpartida = ibis.tb_partidas.idreg 
+                                                    WHERE
+                                                        tb_pedidocab.idreg = :id 
+                                                    LIMIT 1");
+                $sql->execute(['id'=>$pedido]);
+                $rowCount = $sql->rowCount();
+                
+                if ($rowCount > 0) {
+                    $docData = array();
+                    while($row=$sql->fetch(PDO::FETCH_ASSOC)){
+                        $docData[] = $row;
+                    }
+                }
+
+                return $docData; 
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        private function requestDetails($pedido) {
+            try {
+                $sql=$this->db->connect()->prepare("SELECT
+                                                    tb_pedidodet.iditem,
+                                                    tb_pedidodet.idpedido,
+                                                    tb_pedidodet.idprod,
+                                                    tb_pedidodet.idtipo,
+                                                    tb_pedidodet.nroparte,
+                                                    tb_pedidodet.unid,
+                                                    tb_pedidodet.observaciones,
+                                                    FORMAT(tb_pedidodet.cant_pedida,2) AS cant_pedida,
+                                                    tb_pedidodet.estadoItem,
+                                                    cm_producto.ccodprod,
+                                                    cm_producto.cdesprod,
+                                                    tb_unimed.cabrevia,
+                                                    tb_pedidodet.nflgqaqc 
+                                                FROM
+                                                    tb_pedidodet
+                                                    INNER JOIN cm_producto ON tb_pedidodet.idprod = cm_producto.id_cprod
+                                                    INNER JOIN tb_unimed ON tb_pedidodet.unid = tb_unimed.ncodmed 
+                                                WHERE
+                                                    tb_pedidodet.idpedido = :id 
+                                                    AND tb_pedidodet.nflgActivo = 1");
+                $sql->execute(["id"=>$pedido]);
+                $rowCount = $sql->rowCount();
+                $detalles = [];
+                if ($rowCount > 0) {
+                    while($rs = $sql->fetch()) {
+                        $detalles[] = $rs;
+                    }
+                }
+
+                return $detalles;
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;

@@ -5,12 +5,9 @@ $(function(){
         pedido   = 0,
         proforma = "",
         moneda   = "",
-        cmoneda  = "",
-        pago     = "",
         ingresos = 0,
         swcoment = false,
         autorizado = 0,
-        fila = 0;
         fp = 0;
     
     $("#esperar").fadeOut();

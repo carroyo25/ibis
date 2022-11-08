@@ -362,6 +362,24 @@
   width: 500px;
   margin: 0 auto;
 }
+.dashBoard .area2 #dashboard_table {
+  margin-top: 20px;
+}
+.dashBoard .area2 #dashboard_table table caption {
+  font-size: 1.5rem;
+  margin-bottom: 5px;
+}
+.dashBoard .area2 #dashboard_table table thead {
+  background-color: #58CA90;
+  border: 1px dashed #c2c2c2;
+}
+.dashBoard .area2 #dashboard_table table tr {
+  height: 25px !important;
+}
+.dashBoard .area2 #dashboard_table table tr * {
+  cursor: pointer;
+  border: 1px dotted #c2c2c2;
+}
 .dashBoard .area3 {
   -ms-grid-row: 2;
   -ms-grid-row-span: 1;
@@ -1618,7 +1636,7 @@
   outline: none;
 }
 .ventanaBusqueda .tablaBusqueda {
-  height: 50rem;
+  height: 25rem;
   overflow: auto;
   padding: 0 10px;
 }

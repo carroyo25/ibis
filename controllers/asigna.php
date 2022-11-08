@@ -9,6 +9,7 @@
             $this->view->listaCostos = $this->model->costosPorUsuarioSelect($_SESSION['iduser']);
             $this->view->listaPedidos = $this->model->listarPedidosAprobados();
             $this->view->listaOperadores = $this->model->listarOperadores();
+            $this->view->listaCostosSelect = $this->model->costosPorUsuarioSelect($_SESSION['iduser']);
             $this->view->render('asigna/index');
         }
 
@@ -22,6 +23,10 @@
 
         function asignaOperador(){
             echo $this->model->asignarOperador($_POST['pedido'],$_POST['detalles'],$_POST['asignado']);
+        }
+
+        function filtroPedidos(){
+            echo $this->model->filtroAsigna($_POST);
         }
         
     }

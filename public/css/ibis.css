@@ -136,12 +136,9 @@ input[type=number]::-webkit-outer-spin-button {
 }
 .acordeon .open .link {
   color: #fff;
-  background: #296384;
-  /* fallback for old browsers */
-  /* Chrome 10-25, Safari 5.1-6 */
+  background: #296384; /* fallback for old browsers */ /* Chrome 10-25, Safari 5.1-6 */
   background: -webkit-gradient(linear, left top, right top, from(#190A05), to(#201f1f));
-  background: linear-gradient(to right, #190A05, #201f1f);
-  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: linear-gradient(to right, #190A05, #201f1f); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
   font-size: 0.9rem;
 }
 .acordeon .open i {
@@ -323,10 +320,8 @@ input[type=number]::-webkit-outer-spin-button {
   height: 2rem;
   color: #fff;
   background: #000;
-  position: fixed;
-  /*El div será ubicado con relación a la pantalla*/
-  bottom: 0px;
-  /*Abajo deje un espacio de 0px*/
+  position: fixed; /*El div será ubicado con relación a la pantalla*/
+  bottom: 0px; /*Abajo deje un espacio de 0px*/
 }
 
 .resaltado {
@@ -389,8 +384,7 @@ input[type=number]::-webkit-outer-spin-button {
   -webkit-backface-visibility: hidden;
           backface-visibility: hidden;
   -webkit-transform-origin: 0 0;
-          transform-origin: 0 0;
-  /* see note above */
+          transform-origin: 0 0; /* see note above */
 }
 
 .ldio-fifgg00y5y div {

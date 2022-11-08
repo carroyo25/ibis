@@ -47,5 +47,9 @@
         function cambiaClave(){
             echo $this->model->cambiarClave($_POST['clave']);
         }
+
+        function pdfPedido() {
+            echo $this->model->generateRequestPDF($_POST['pedido']);
+        }
     }
 ?>

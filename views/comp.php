@@ -7,6 +7,15 @@
     <title>Document</title>
 </head>
 <body>
+    <div class="modal" id="vistaprevia">
+        <div class="ventanaVistaPrevia">
+            <div class="tituloVista">
+                <h3>Vista Previa</h3>
+                <a href="#" id="closePreview" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
+            </div>
+            <iframe src=""></iframe>
+        </div>
+    </div>
     <div class="dashBoard">
         <div class="area1">
             <div class="titulo">
@@ -49,32 +58,28 @@
             </div>
         </div>
         <div class="area2">
-            <div class="titulo">
-                <p>Listado Ordenes</p>
-            </div>
             <div id="dashboard_table">
                 <table class="tabla" id="tablaPanelOrdenes">
-                   <thead>
-                       <tr>
-                           <th>Nro</th>
-                           <th>Concepto</th>
-                           <th>Emision</th>
-                           <th>Centro Costos</th>
-                           <th>Estado</th>
-                           <th>L</th>
-                           <th>O</th>
-                           <th>F</th>
-                       </tr>
-                   </thead>
-                   <tbody>
-                   </tbody>
+                    <caption>Ordenes</caption>
+                    <thead>
+                        <tr>
+                            <th>Nro</th>
+                            <th>Concepto</th>
+                            <th>Emision</th>
+                            <th>Centro Costos</th>
+                            <th>Estado</th>
+                            <th>L</th>
+                            <th>O</th>
+                            <th>F</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
                 </table>
             </div>
         </div>
         <div class="area3">
-            <div class="titulo">
-                <p>Listado Pedidos</p>
-            </div>
+            <caption>Pedidos</caption>
             <div id="dashboard_table">
                 <table class="tabla" id="tablaPanelPedidos">
                    <thead>

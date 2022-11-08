@@ -310,6 +310,31 @@ $culminado:#55A5E2;
             width: 500px;
             margin: 0 auto;
         }
+
+        #dashboard_table{
+            margin-top: 20px;
+
+            table {
+                caption {
+                    font-size: 1.5rem;
+                    margin-bottom: 5px;
+                }
+
+                thead {
+                    background-color: #58CA90;
+                    border: 1px dashed #c2c2c2;
+                }
+
+                tr {
+                    height: 25px !important;
+                    
+                    * {
+                        cursor: pointer;
+                        border: 1px dotted #c2c2c2;
+                    }
+                }
+            }
+        }
     }
     
     .area3 { 
@@ -1340,6 +1365,7 @@ $culminado:#55A5E2;
 
 .ventanaBusqueda{
     //width:65%;
+    //height: 25rem;
 
     input[type="text"] {
         height: 35px;
@@ -1350,7 +1376,7 @@ $culminado:#55A5E2;
     }
 
     .tablaBusqueda{
-        height: 50rem;
+        height: 25rem;
         overflow:auto;
         padding: 0 10px;
 

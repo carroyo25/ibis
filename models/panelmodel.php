@@ -420,13 +420,13 @@
                                                     INNER JOIN tb_parametros AS atencion ON tb_pedidocab.nivelAten = atencion.nidreg
                                                     WHERE
                                                         tb_costusu.id_cuser = :user
-                                                    AND tb_pedidocab.estadodoc BETWEEN 49 AND 60
+                                                    AND tb_pedidocab.estadodoc BETWEEN 49 AND 54
                                                     AND tb_costusu.nflgactivo = 1");
                 $sql->execute(["user"=>$_SESSION['iduser']]);
                 $rowcount = $sql->rowcount();
                 if ($rowcount > 0) {
                     while ($rs = $sql->fetch()) {
-                        $salida .= '<tr>
+                        $salida .= '<tr data-id="'.$rs['idreg'].'">
                                         <td class="textoCentro">'.$rs['pedido'].'</td>
                                         <td class="pl20px">'.$rs['concepto'].'</td>
                                         <td class="textoCentro">'.date("d/m/Y", strtotime($rs['emision'])).'</td>
