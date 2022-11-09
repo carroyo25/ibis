@@ -63,7 +63,7 @@
                                                         data-finanzas="'.$ffin.'"
                                                         data-logistica="'.$flog.'"
                                                         data-operaciones="'.$fope.'">
-                                    <td class="textoCentro">'.str_pad($rs['cnumero'],4,0,STR_PAD_LEFT).'</td>
+                                    <td class="textoCentro">'.str_pad($rs['cnumero'],6,0,STR_PAD_LEFT).'</td>
                                     <td class="textoCentro">'.date("d/m/Y", strtotime($rs['ffechadoc'])).'</td>
                                     <td class="pl20px">'.$rs['concepto'].'</td>
                                     <td class="pl20px">'.utf8_decode($rs['costos']).'</td>
@@ -89,7 +89,7 @@
                 $sql = $this->db->connect()->prepare("SELECT
                                                         tb_pedidodet.idpedido,
                                                         FORMAT(tb_pedidodet.cant_aprob, 2) AS cantidad,
-                                                        FORMAT(tb_pedidodet.cant_orden, 2) AS saldo,
+                                                        FORMAT(tb_pedidodet.cant_resto, 2) AS saldo,
                                                         FORMAT(tb_pedidodet.precio, 2) AS precio,
                                                         FORMAT(tb_pedidodet.cant_pedida,2) AS cantidad_pedida,
                                                         tb_pedidodet.igv,
@@ -142,16 +142,19 @@
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()) {
 
-                        $cantidad = $rs['cantidad'] == null ? $rs['cantidad_pedida'] : $rs['cantidad'];
+                        //hace los cálculos de los saldos 
+                        $cantidad = $this->obtenerCantidades($rs['idpedido'],$rs['iditem']);
+                        $cant = $cantidad == null  ? $rs['cantidad_pedida'] : $rs['cantidad_pedida']-$cantidad;
                        
                         $salida .='<tr class="pointer" data-pedido="'.$rs['idpedido'].'"
                                                        data-entidad="'.$rs['entidad'].'"
                                                        data-unidad="'.$rs['unidad'].'"
-                                                       data-cantidad ="'.$cantidad.'"
+                                                       data-cantidad ="'.$cant.'"
                                                        data-total="'.$rs['total_numero'].'"
                                                        data-codprod="'.$rs['id_cprod'].'"
                                                        data-iditem="'.$rs['iditem'].'"
-                                                       data-costos="'.$rs['idcostos'].'">
+                                                       data-costos="'.$rs['idcostos'].'"
+                                                       data-itord="-">
                                         <td class="textoCentro">'.str_pad($rs['nrodoc'],6,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.date("d/m/Y", strtotime($rs['emision'])).'</td>
                                         <td class="pl5px">'.$rs['concepto'].'</td>
@@ -168,6 +171,24 @@
                 echo $th->getMessage();
                 return false;
             }
+        }
+
+        private function obtenerCantidades($pedido,$item){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT SUM(lg_ordendet.ncanti) 
+                                                        AS resto 
+                                                        FROM lg_ordendet 
+                                                        WHERE lg_ordendet.niddeta = :item 
+                                                            AND lg_ordendet.nidPedi=:pedido
+                                                            AND ISNULL(lg_ordendet.nflgactivo)");
+                $sql->execute(["pedido"=>$pedido,"item"=>$item]);
+                $result = $sql->fetchAll();
+
+                return $result[0]['resto'];
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            } 
         }
 
         public function verDatosCabecera($pedido){
@@ -372,7 +393,7 @@
                 
                 $periodo = explode('-',$cab->emision);
 
-                $this->subirArchivos($orden['numero'],$adjuntos);
+                $this->subirArchivos($orden,$adjuntos);
                 
                 $sql = $this->db->connect()->prepare("INSERT INTO lg_ordencab SET id_refpedi=:pedi,cper=:anio,cmes=:mes,ntipmov=:tipo,cnumero=:orden,
                                                                                 ffechadoc=:fecha,ffechaent=:entrega,id_centi=:entidad,ncodmon=:moneda,ntcambio=:tcambio,
@@ -385,7 +406,7 @@
                                 "anio"       =>$periodo[0],
                                 "mes"        =>$periodo[1],
                                 "tipo"       =>$cab->codigo_tipo,
-                                "orden"      =>$orden['numero'],
+                                "orden"      =>$orden,
                                 "fecha"      =>$cab->emision,
                                 "entrega"    =>$cab->fentrega,
                                 "entidad"    =>$cab->codigo_entidad,
@@ -412,13 +433,11 @@
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0){
-                    $indice = $this->lastInsertId("SELECT MAX(id_regmov) AS id FROM lg_ordencab");
-
                     $this->subirArchivos($orden,$adjuntos);
-                    $this->grabarDetalles($cab->codigo_verificacion,$detalles,$cab->codigo_costos,$indice);
+                    $this->grabarDetalles($cab->codigo_verificacion,$detalles,$cab->codigo_costos,$orden);
                     $this->grabarComentarios($cab->codigo_orden,$comentarios);
-                    $this->actualizarDetallesPedido(84,$detalles,$indice,$cab->codigo_entidad);
-                    $this->actualizarCabeceraPedido(58,$cab->codigo_pedido,$indice);
+                    $this->actualizarDetallesPedido(84,$detalles,$orden,$cab->codigo_entidad);
+                    $this->actualizarCabeceraPedido(58,$cab->codigo_pedido,$orden);
                     $respuesta = true;
                     $mensaje = "Orden Grabada";
                     $clase = "mensaje_correcto";
@@ -486,7 +505,7 @@
                                                              nplazo=:plazo,ncodalm=:alm
                                                         WHERE id_regmov = :id");
                 $sql->execute(['entrega'=>$cabecera['fentrega'],
-                                "total"=>$cabecera['total'],
+                                "total"=>$cabecera['total_numero'],
                                 "transp"=>$cabecera['codigo_transporte'],
                                 "plazo"=>$entrega,
                                 "alm"=>$cabecera['codigo_almacen'],
@@ -513,8 +532,6 @@
                 $datos = json_decode($detalles);
                 $nreg = count($datos);
 
-                $orden++;
-
                 for ($i=0; $i <$nreg ; $i++) { 
                     if($datos[$i]->cantidad == $datos[$i]->cantped) {
                         $estado = 84;
@@ -523,8 +540,6 @@
                         $estado = 54;
                         $swOrden = 0;
                     }
-
-                    $pend = $datos[$i]->cantped - $datos[$i]->cantidad;
 
                     $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet SET 
                                                         estadoItem=:est,
@@ -535,7 +550,7 @@
                                     "est"=>$estado,
                                     "orden"=>$orden,
                                     "swOrden"=>$swOrden,
-                                    "pendiente"=>$pend]);
+                                    "pendiente"=>$datos[$i]->cantidad]);
                     
                     $this->registrarOrdenesItems($datos[$i]->itped,$orden,$entidad);                
                 }
@@ -550,7 +565,6 @@
             try {
                 $datos = json_decode($detalles);
                 $nreg = count($datos);
-
 
                 for ($i=0; $i <$nreg ; $i++) { 
                     $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet SET 
@@ -881,42 +895,6 @@
             }
         }
 
-        private function datosProforma($proforma){
-            try {
-                $sql=$this->db->connect()->prepare("SELECT
-                                                    lg_proformacab.id_regmov,
-                                                    lg_proformacab.id_centi,
-                                                    lg_proformacab.ffechadoc,
-                                                    lg_proformacab.ffechaplazo,
-                                                    lg_proformacab.cnumero,
-                                                    lg_proformacab.ccondpago,
-                                                    lg_proformacab.ncodmon,
-                                                    lg_proformacab.nafecIgv,
-                                                    lg_proformacab.nigv,
-                                                    lg_proformacab.ntotal,
-                                                    tb_parametros.cdescripcion  AS pago
-                                                FROM
-                                                    lg_proformacab
-                                                    INNER JOIN tb_parametros ON lg_proformacab.ccondpago = tb_parametros.nidreg 
-                                                WHERE
-                                                    lg_proformacab.cotref =:proforma");
-                $sql->execute(["proforma"=>$proforma]);
-
-                $rowCount = $sql->rowCount();
-                
-                if ($rowCount > 0) {
-                    $docData = array();
-                    while($row=$sql->fetch(PDO::FETCH_ASSOC)){
-                        $docData[] = $row;
-                    }
-                }
-
-                return $docData;
-            } catch (PDOException $th) {
-                echo "Error: " . $th->getMessage();
-                return false;
-            }
-        }
 
         private function actualizarCabeceraPedido($estado,$pedido,$orden){
             try {

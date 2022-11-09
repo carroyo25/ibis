@@ -66,7 +66,6 @@ $(function(){
                 $("#tcambio").val(data.cabecera[0].ntcambio);
                 $("#user_modifica").val(data.cabecera[0].userModifica);
 
-                console.log(data.cabecera[0].nigv);
 
                if (data.cabecera[0].nigv != 0) {
                     $("#si").prop("checked", true);
@@ -485,7 +484,7 @@ $(function(){
                     dataType:"json",    
                     // UI response after the file upload
                     beforeSend: function () {
-                        //$("#esperar").fadeIn();
+                        $("#esperar").fadeIn();
                     },  
                     success: function(response)
                     {   
@@ -652,7 +651,9 @@ $(function(){
         let item    = $(this).parent().parent().remove();
         let suma = 0;
 
-        $.post(RUTA+"orden/marcaItem", {id:$(this).parent().parent().data("itped"),"estado":0},
+        $.post(RUTA+"orden/marcaItem", {id:$(this).parent().parent().data("itped"),
+                                        io:$(this).parent().parent().data("itord"),
+                                        "estado":0},
             function (data, text, requestXHR) {
                 item.remove();
                 fillTables($("#tablaDetalles tbody > tr"),1);

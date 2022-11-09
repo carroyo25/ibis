@@ -2095,7 +2095,7 @@
             try {
                 $sql = $this->db->connect()->prepare("SELECT
                                                     lg_ordencab.id_regmov,
-                                                    lg_ordencab.cnumero,
+                                                    LPAD(lg_ordencab.cnumero,6,0) AS cnumero,
                                                     lg_ordencab.ffechadoc,
                                                     lg_ordencab.ncodcos,
                                                     lg_ordencab.ncodarea,
@@ -2188,7 +2188,6 @@
 
         public function grabarComentarios($codigo,$comentarios) {
             try {
-                //$indice = $this->obtenerIndice($codigo,"SELECT id_regmov AS numero FROM lg_ordencab WHERE lg_ordencab.cverificacion =:id");
                 $datos = json_decode($comentarios);
                 $nreg = count($datos);
 
@@ -2252,7 +2251,8 @@
                                         data-itPed="'.$rs['niddeta'].'"
                                         data-itOrd="'.$rs['nitemord'].'"
                                         data-cant="'.$rs['ncanti'].'"
-                                        data-proceso="'.$rs['estadoItem'].'">
+                                        data-proceso="'.$rs['estadoItem'].'"
+                                        data-pedido="'.$rs['nidpedi'].'">
                                     <td class="textoCentro"><a href="'.$rs['nitemord'].'"><i class="fas fa-ban"></i></a></td>
                                     <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
                                     <td class="textoCentro">'.$rs['ccodprod'].'</td>
@@ -2387,10 +2387,31 @@
         }
 
         //marcar items para no ser consultados
-        public function itemMarcado($id,$estado){
+        public function itemMarcado($id,$estado,$io){
             try {
-                $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet SET nflgOrden =:estado WHERE iditem =:id");
+                $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet 
+                                                        SET nflgOrden =:estado,
+                                                            estadoItem = 54,
+                                                            idorden = NULL
+                                                        WHERE iditem =:id");
                 $sql->execute(["id" => $id,"estado" => $estado]);
+
+                if ($io != '-') {
+                    $this->quitarItemOrden($io);
+                }
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function quitarItemOrden($io) {
+            try {
+                $sql = $this->db->connect()->prepare("UPDATE lg_ordendet 
+                                                        SET nflgactivo = 1,
+                                                            id_orden = NULL
+                                                        WHERE nitemord =:id");
+                $sql->execute(["id" => $io]);
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;

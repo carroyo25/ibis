@@ -69,7 +69,7 @@
         }
 
         function marcaItem(){
-            echo $this->model->itemMarcado($_POST['id'],$_POST['estado']);
+            echo $this->model->itemMarcado($_POST['id'],$_POST['estado'],$_POST['io']);
         }
     }
 ?>
