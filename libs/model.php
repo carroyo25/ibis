@@ -2210,36 +2210,48 @@
             try {
                 $salida = "";
                 $sql=$this->db->connect()->prepare("SELECT
-                                                    lg_ordendet.nitemord,
-                                                    lg_ordendet.id_regmov,
-                                                    lg_ordendet.niddeta,
-                                                    lg_ordendet.nidpedi,
-                                                    lg_ordendet.cobserva,
-                                                    lg_ordendet.id_cprod,
-                                                    FORMAT( lg_ordendet.ncanti, 2 ) AS ncanti,
-                                                    lg_ordendet.nunitario AS nunitario,
-                                                    FORMAT( lg_ordendet.nigv, 2 ) AS nigv,
-                                                    FORMAT( tb_pedidodet.total - lg_ordendet.nigv,2) AS subtotal,
-                                                    FORMAT( lg_ordendet.ntotal,2) as ntotal,
-                                                    cm_producto.ccodprod,
-                                                    UPPER(CONCAT_WS(' ',cm_producto.cdesprod,tb_pedidodet.observaciones,tb_pedidodet.docEspec)) AS cdesprod,
-                                                    cm_producto.nund,
-                                                    tb_unimed.cabrevia,
-                                                    FORMAT( tb_pedidodet.total, 2 ) AS total,
-                                                    tb_pedidodet.idpedido,
-                                                    tb_pedidodet.nroparte,
-                                                    tb_pedidodet.estadoItem,
-                                                    monedas.cabrevia AS moneda,
-                                                    tb_pedidodet.total AS total_numero 
-                                                FROM
-                                                    lg_ordendet
+                                                        lg_ordendet.nitemord,
+                                                        lg_ordendet.id_regmov,
+                                                        lg_ordendet.niddeta,
+                                                        lg_ordendet.nidpedi,
+                                                        lg_ordendet.cobserva,
+                                                        lg_ordendet.id_cprod,
+                                                        FORMAT(lg_ordendet.ncanti, 2) AS ncanti,
+                                                        lg_ordendet.nunitario AS nunitario,
+                                                        FORMAT(lg_ordendet.nigv, 2) AS nigv,
+                                                        FORMAT(
+                                                            tb_pedidodet.total - lg_ordendet.nigv,
+                                                            2
+                                                        ) AS subtotal,
+                                                        FORMAT(lg_ordendet.ntotal, 2) AS ntotal,
+                                                        cm_producto.ccodprod,
+                                                        UPPER(
+                                                            CONCAT_WS(
+                                                                ' ',
+                                                                cm_producto.cdesprod,
+                                                                tb_pedidodet.observaciones,
+                                                                tb_pedidodet.docEspec
+                                                            )
+                                                        ) AS cdesprod,
+                                                        cm_producto.nund,
+                                                        tb_unimed.cabrevia,
+                                                        FORMAT(tb_pedidodet.total, 2) AS total,
+                                                        tb_pedidodet.idpedido,
+                                                        tb_pedidodet.nroparte,
+                                                        tb_pedidodet.estadoItem,
+                                                        monedas.cabrevia AS moneda,
+                                                        tb_pedidodet.total AS total_numero,
+                                                        LPAD(tb_pedidocab.nrodoc,6,0) as nro_pedido
+                                                    FROM
+                                                        lg_ordendet
                                                     INNER JOIN cm_producto ON lg_ordendet.id_cprod = cm_producto.id_cprod
                                                     INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
                                                     INNER JOIN tb_pedidodet ON lg_ordendet.niddeta = tb_pedidodet.iditem
-                                                    INNER JOIN tb_parametros AS monedas ON lg_ordendet.nmonref = monedas.nidreg 
-                                                WHERE
-                                                    lg_ordendet.id_orden = :id
-                                                AND ISNULL(lg_ordendet.nflgactivo)");
+                                                    INNER JOIN tb_parametros AS monedas ON lg_ordendet.nmonref = monedas.nidreg
+                                                    INNER JOIN tb_pedidocab ON lg_ordendet.nidpedi = tb_pedidocab.idreg
+                                                    WHERE
+                                                        lg_ordendet.id_orden = :id
+                                                    AND ISNULL(lg_ordendet.nflgactivo)");
                 $sql->execute(["id"=>$id]);
                 $rowCount = $sql->rowCount();
                 $item = 1;
@@ -2276,8 +2288,8 @@
                                     </td>
                                     <td class="textoDerecha pr5px">'.$rs['ntotal'].'</td>
                                     <td class="textoCentro">'.$rs['nroparte'].'</td>
-                                    <td class="textoCentro">'.str_pad($rs['idpedido'],6,0,STR_PAD_LEFT).'</td>
-                                    <td><input type="text" value="'.$rs['cobserva'].'"></td>
+                                    <td class="textoCentro">'.$rs['cobserva'].'</td>
+                                    <td><input type="text" value="'.$rs['nro_pedido'].'"></td>
                                 </tr>';
                     }
                 }
