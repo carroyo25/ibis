@@ -451,7 +451,7 @@
                                                         tb_costusu.ncodproy,
                                                         tb_costusu.id_cuser,
                                                         lg_ordencab.id_regmov,
-                                                        lg_ordencab.cnumero,
+                                                        LPAD(lg_ordencab.cnumero,6,0) as cnumero,
                                                         lg_ordencab.ffechadoc,
                                                         lg_ordencab.nNivAten,
                                                         lg_ordencab.nEstadoDoc,
@@ -478,7 +478,9 @@
                                                     WHERE
                                                         tb_costusu.id_cuser = :user 
                                                         AND tb_costusu.nflgactivo = 1
-                                                        AND lg_ordencab.nEstadoDoc BETWEEN 49 AND 59");
+                                                        AND lg_ordencab.nEstadoDoc BETWEEN 49 AND 59
+                                                    ORDER BY ffechadoc DESC");
+                                                    
                 $sql->execute(["user"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowCount();
 
@@ -493,8 +495,9 @@
                         $fope = is_null($rs['nfirmaOpe']) ? 0 : 1;
                         $ffin = is_null($rs['nfirmaFin']) ? 0 : 1;
 
+                        $estado = $rs['nEstadoDoc'] == 59 ? "resaltado_firma" : "";
 
-                        $salida .='<tr class="pointer">
+                        $salida .='<tr class="pointer '.$estado.'" data-estado="'.$rs['nEstadoDoc'].'">
                                         <td class="textoCentro">'.str_pad($rs['cnumero'],4,0,STR_PAD_LEFT).'</td>
                                         <td class="pl20px">'.$rs['concepto'].'</td>
                                         <td class="textoCentro">'.date("d/m/Y", strtotime($rs['ffechadoc'])).'</td>

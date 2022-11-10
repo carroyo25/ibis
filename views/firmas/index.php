@@ -41,6 +41,12 @@
                     <input type="hidden" name="sw" id="sw" value="0">
                     <input type="hidden" name="detalle" id="detalle">
                     <input type="hidden" name="transporte" id="transporte">
+                    <input type="hidden" name="nro_pedido" id="nro_pedido">
+                    <input type="hidden" name="user_modifica" id="user_modifica">
+                    <input type="hidden" name="ncotiz" id="ncotiz">
+                    <input type="hidden" name="direccion_almacen" id="direccion_almacen">
+                    <input type="hidden" name="radioIgv" id="radioIgv">
+                    <input type="hidden" name="total_numero" id="total_numero">
 
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
@@ -158,11 +164,12 @@
                                     <th>Codigo</th>
                                     <th>Descripcion</th>
                                     <th>Und.</th>
-                                    <th>Cant.</th>
-                                    <th>Precio</th>
-                                    <th>Total</th>
+                                    <th width="7%">Cant.</th>
+                                    <th width="7%">Precio</th>
+                                    <th width="7%">Total</th>
                                     <th>Nro.</br>Parte</th>
-                                    <th>Pedido</th>
+                                    <th width="7%">Pedido</th>
+                                    <th width="15%">Detalles</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -214,24 +221,26 @@
                 <hr>
                
             </div>
-            <table class="tabla" id="tablaPrecios">
-                <thead>
-                    <tr>
-                        <th>Codigo</th>
-                        <th>Descripcion</th>
-                        <th>Centro de Costos</th>
-                        <th>Moneda</th>
-                        <th>Precio </br> Unitario</th>
-                        <th>Pedido</th>
-                        <th>Orden</th>
-                        <th>Tipo </br> Cambio</th>
-                        <th>Fecha</th>
-                    </tr>
-                </thead>
-                <tbody>
+            <div class="preciosCuerpo">
+                <table class="tabla" id="tablaPrecios">
+                    <thead>
+                        <tr>
+                            <th>Codigo</th>
+                            <th>Descripcion</th>
+                            <th>Centro de Costos</th>
+                            <th>Moneda</th>
+                            <th>Precio </br> Unitario</th>
+                            <th>Pedido</th>
+                            <th>Orden</th>
+                            <th>Tipo </br> Cambio</th>
+                            <th>Fecha</th>
+                        </tr>
+                    </thead>
+                    <tbody>
 
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
     <div class="modal" id="vistaAdjuntos">
@@ -276,23 +285,40 @@
                     <div>
                         <label for="tipo">Tipo : </label>
                         <select name="tipoSearch" id="tipoSearch">
+                            <option value="-1">Tipo</option>
                             <option value="37">Bienes</option>
                             <option value="38">Servicios</option>
                         </select>
                     </div>
                     <div>
-                        <label for="costosSearch">Centro de Costos</label>
-                        <input type="text" name="costosSearch" id="costosSearch">
+                        <label for="costosSearch">Centro de Costos: </label>
+                        <select name="costosSearch" id="costosSearch" class="item4">
+                            <?php echo $this->listaCostosSelect ?>
+                        </select>
                     </div>
                     <div>
                         <label for="mes">Mes</label>
-                        <input type="number" name="mesSearch" id="mesSearch" value="<?php echo date("m")?>" class="textoCentro">
+                        <select name="mesSearch" id="mesSearch">
+                            <option value="-1">Mes</option>
+                            <option value="1">Enero</option>
+                            <option value="2">Febrero</option>
+                            <option value="3">Marzo</option>
+                            <option value="4">Abril</option>
+                            <option value="5">Mayo</option>
+                            <option value="6">Junio</option>
+                            <option value="7">Julio</option>
+                            <option value="8">Agosto</option>
+                            <option value="9">Setiembre</option>
+                            <option value="10">Octubre</option>
+                            <option value="11">Noviembre</option>
+                            <option value="12">Diciembre</option>
+                        </select>
                     </div>
                     <div>
                         <label for="anio">Año :</label>
                         <input type="number" name="anioSearch" id="anioSearch" value="<?php echo date("Y")?>" class="textoCentro">
                     </div>
-                    <button type="button">Procesar</button> 
+                    <button type="button" class="boton3" id="btnConsulta">Consultar</button> 
             </div>
         </form>
     </div>

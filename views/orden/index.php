@@ -52,7 +52,7 @@
                     <input type="hidden" name="detalle" id="detalle">
                     <input type="hidden" name="total_numero" id="total_numero">
                     <input type="hidden" name="user_modifica" id="user_modifica">
-
+                    <input type="hidden" name="nro_pedido" id="nro_pedido">
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
                         <div>
@@ -223,8 +223,8 @@
                                     <th width="10%">Precio</th>
                                     <th width="10%">Total</th>
                                     <th>Nro.</br>Parte</th>
-                                    <th>Pedido</th>
-                                    <th>Detalle Item</th>
+                                    <th width="7%">Pedido</th>
+                                    <th width="15%">Detalle Item</th>
                                 </tr>
                             </thead>
                             <tbody>

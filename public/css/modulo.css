@@ -1175,6 +1175,9 @@
 .ventanaPrecios .tituloVista h3 {
   width: 97%;
 }
+.ventanaPrecios .preciosCuerpo {
+  padding: 5px;
+}
 
 .ventanaVistaPrevia {
   width: 45%;

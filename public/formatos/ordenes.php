@@ -42,7 +42,9 @@
 
             if ($this->condicion == 0) {
                 $condicion = "VISTA PREVIA";
-            }else {
+            }else if($this->condicion == 1){
+                $condicion = "EMITIDO";
+            }else if($this->condicion == 2){
                 $condicion = "APROBADO";
             }
 

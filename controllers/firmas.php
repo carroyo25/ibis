@@ -7,6 +7,7 @@
 
         function render(){
             $this->view->listaOrdenes = $this->model->listarOrdenesFirmas();
+            $this->view->listaCostosSelect = $this->model->costosPorUsuarioSelect($_SESSION['iduser']);
             $this->view->render('firmas/index');
         }
 
@@ -32,6 +33,10 @@
 
         function precios(){
             echo $this->model->consultarPrecios($_POST['codigo']);
+        }
+
+        function vistaEmitida() {
+            echo $this->model->generarDocumento($_POST['cabecera'],$_POST['condicion'],$_POST['detalles']);
         }
     }
 ?>

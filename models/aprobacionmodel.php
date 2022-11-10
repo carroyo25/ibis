@@ -45,7 +45,7 @@
                     while ($rs = $sql->fetch()) {
                         $tipo = $rs['idtipomov'] == 37 ? "B":"S";
                         $salida .='<tr class="pointer" data-indice="'.$rs['idreg'].'">
-                                        <td class="textoCentro">'.str_pad($rs['nrodoc'],4,0,STR_PAD_LEFT).'</td>
+                                        <td class="textoCentro">'.str_pad($rs['nrodoc'],6,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.date("d/m/Y", strtotime($rs['emision'])).'</td>
                                         <td class="textoCentro">'.$tipo.'</td>
                                         <td class="pl20px">'.utf8_decode($rs['concepto']).'</td>

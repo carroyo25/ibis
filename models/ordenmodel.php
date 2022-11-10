@@ -113,7 +113,7 @@
                                                         tb_pedidodet.idcostos,
                                                         tb_pedidodet.idarea,
                                                         tb_pedidocab.idreg,
-                                                        tb_pedidocab.nrodoc,
+                                                        LPAD(tb_pedidocab.nrodoc,6,0) AS nrodoc,
                                                         tb_pedidocab.emision,
                                                         tb_pedidocab.concepto,
                                                         tb_pedidodet.entidad,
@@ -155,6 +155,7 @@
                                                        data-iditem="'.$rs['iditem'].'"
                                                        data-costos="'.$rs['idcostos'].'"
                                                        data-itord="-">
+                                                       data-nropedido="">
                                         <td class="textoCentro">'.str_pad($rs['nrodoc'],6,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.date("d/m/Y", strtotime($rs['emision'])).'</td>
                                         <td class="pl5px">'.$rs['concepto'].'</td>
@@ -206,177 +207,6 @@
             return $salida;
         }
 
-        public function generarDocumento($cabecera,$condicion,$detalles){
-            require_once("public/formatos/ordenes.php");
-
-            $bancos = $this->bancosProveedor($cabecera['codigo_entidad']);
-
-            //verificar para el numero de orden
-            $sql = "SELECT COUNT(lg_ordencab.id_regmov) AS numero FROM lg_ordencab WHERE lg_ordencab.ncodcos =:cod";
-
-            
-            $noc = $cabecera['numero'];
-            
-            if ($cabecera['codigo_tipo'] == "37") {
-                $titulo = "ORDEN DE COMPRA" ;
-
-                if ( $cabecera['user_modifica'] != null) {
-                    $titulo = "ORDEN DE COMPRA - R1" ;
-                }
-
-                $prefix = "OC";
-                $tipo = "B";
-            }else{
-                $titulo = "ORDEN DE SERVICIO";
-
-                if ( $cabecera['user_modifica'] != null) {
-                    $titulo = "ORDEN DE SERVICIO - R1" ;
-                }
-
-                $prefix = "OS";
-                $tipo = "S";
-            }
-
-            $anio = explode("-",$cabecera['emision']);
-
-            $orden = $cabecera['sw'] == 0 ? $noc : $cabecera['numero'];
-            $titulo = $titulo . " " .$anio[0]. " - " . $orden;
-            
-            $file = $prefix.$noc."_".$cabecera['codigo_costos'].".pdf";
-            $entrega = $this->calcularDias($cabecera['fentrega']);
-
-            $pdf = new PDF($titulo,$condicion,$cabecera['emision'],$cabecera['moneda'],$entrega,
-                            $cabecera['lentrega'],$cabecera['ncotiz'],$cabecera['fentrega'],$cabecera['cpago'],$cabecera['total'],
-                            $cabecera['costos'],$cabecera['concepto'],$_SESSION['nombres'],$cabecera['entidad'],$cabecera['ruc_entidad'],
-                            $cabecera['direccion_entidad'],$cabecera['telefono_entidad'],$cabecera['correo_entidad'],$cabecera['retencion'],
-                            $cabecera['atencion'],$cabecera['telefono_contacto'],$cabecera['correo_contacto'],
-                            $cabecera['direccion_almacen']);
-
-            $pdf->AddPage();
-            $pdf->AliasNbPages();
-            $pdf->SetWidths(array(10,15,15,10,95,17,13,15));
-            $pdf->SetFont('Arial','',5);
-            $lc = 0;
-            $rc = 0;
-
-            $datos = json_decode($detalles);
-            $nreg = count($datos);
-
-            for ($i=0; $i < $nreg; $i++) { 
-                $pdf->SetAligns(array("C","C","R","C","L","C","R","R"));
-                $pdf->Row(array($datos[$i]->item,
-                                $datos[$i]->codigo,
-                                $datos[$i]->cantidad,
-                                $datos[$i]->unidad,
-                                utf8_decode($datos[$i]->descripcion),
-                                $datos[$i]->pedido,
-                                $datos[$i]->precio,
-                                $datos[$i]->total));
-                $lc++;
-                $rc++;
-                
-                if ($lc == 52) {
-                    $pdf->AddPage();
-                    $lc = 0;
-                }
-            }
-
-            $pdf->Ln(3);
-
-            $pdf->SetFillColor(229, 229, 229);
-            $pdf->SetFont('Arial','B',10);
-            $pdf->Cell(20,6,"TOTAL :","LTB",0,"C",true);
-            $pdf->SetFont('Arial','B',8);
-            $pdf->Cell(140,6,$this->convertir($cabecera['total']),"TBR",0,"L",true); 
-            $pdf->SetFont('Arial','B',10);
-            $pdf->Cell(30,6,$cabecera['total'],"1",1,"R",true);
-
-            $pdf->Ln(1);
-            $pdf->SetFont('Arial',"","7");
-            $pdf->Cell(40,6,"Pedidos Asociados",1,0,"C",true);
-            $pdf->Cell(5,6,"",0,0);
-            $pdf->Cell(80,6,utf8_decode("Información Bancaria del Proveedor"),1,0,"C",true);
-            $pdf->Cell(10,6,"",0,0);
-
-            if ($cabecera['radioIgv'] ==  0) {
-                $pdf->Cell(48,6,"Valor Venta",0,0);
-                $pdf->Cell(20,6,$cabecera['total_numero'],0,1);
-            }else {
-                
-                $igv = round((floatval($cabecera['total_numero'])*0.18),2);
-                $total_sin_igv = round($cabecera['total_numero'] - $igv,2);
-                $pdf->Cell(45,6,"Valor Venta",0,0);
-                $pdf->Cell(20,6,$total_sin_igv,0,1);
-            }
-
-            $pdf->Cell(10,6,utf8_decode("Año"),1,0);   
-            $pdf->Cell(10,6,"Tipo",1,0);
-            $pdf->Cell(10,6,"Pedido",1,0);
-            $pdf->Cell(10,6,"Mantto",1,0);
-            $pdf->Cell(5,6,"",0,0);
-            $pdf->Cell(35,4,"Detalle del Banco",1,0);
-            $pdf->Cell(15,4,"Moneda",1,0);
-            $pdf->Cell(30,4,"Nro. Cuenta Bancaria",1,0);
-
-            if($cabecera['radioIgv'] ==  0) {
-                $pdf->SetX(146);
-                $pdf->Cell(8,6,"",0,0);
-                $pdf->Cell(20,6,"",0,0);
-                $pdf->SetX(185);
-                $pdf->Cell(20,6,"",0,1); 
-            }else{
-                $igv = round((floatval($cabecera['total_numero'])*0.18),2);
-                $total_sin_igv = round($cabecera['total_numero'] - $igv,2);
-                $pdf->SetX(146);
-                $pdf->Cell(8,6,"IGV",0,0);
-                $pdf->Cell(37,6,"(18%)",0,0);
-                $pdf->Cell(25,6,$igv,0,1);
-            }
-
-            $pdf->SetFont('Arial',"","7");
-            $pdf->Cell(10,6,$anio[0],1,0);
-            $pdf->Cell(10,6,$tipo,1,0);
-            $pdf->Cell(10,6,str_pad($cabecera['codigo_pedido'],6,0,STR_PAD_LEFT),1,0);
-            $pdf->Cell(10,6,"",1,0);
-            $pdf->Cell(5,6,"",0,0);
-
-            $pdf->Cell(90,4,"",0,0);
-            $pdf->SetFont('Arial',"B","8");
-            $pdf->Cell(20,4,"TOTAL",1,0,"L",true);
-            $pdf->Cell(15,4,$cabecera['moneda'],1,0,"C",true);
-            $pdf->Cell(20,4,$cabecera['total'],1,1,"R",true);
-            
-            $nreg = count($bancos);
-
-            
-            $x = $pdf->GetX();
-            $y = $pdf->GetY();
-            
-
-            $pdf->SetXY(55,$y-6);
-            $pdf->SetFont('Arial',"B","6");
-
-            for ($i=0;$i<$nreg;$i++){
-                $pdf->Cell(35,4,$bancos[$i]['banco'],1,0);
-                $pdf->Cell(15,4,$bancos[$i]['moneda'],1,0);
-                $pdf->Cell(30,4,$bancos[$i]['cuenta'],1,1);
-                $pdf->Cell(45,4,"",0,0);
-            }
-            $pdf->SetFont('Arial',"B","8");
-
-            if ($condicion == 0){
-                $filename = "public/documentos/ordenes/vistaprevia/".$file;
-            }else if ($condicion == 1){
-                $filename = "public/documentos/ordenes/emitidas/".$file;
-            }else if ($condicion == 2){
-                $filename = "public/documentos/ordenes/aprobadas/".$file;
-            }
-
-            $pdf->Output($filename,'F');
-
-            return $file;
-        }
-
         public function insertarOrden($cabecera,$detalles,$comentarios,$adjuntos){
             try {
                 $salida = false;
@@ -412,7 +242,7 @@
                                 "entidad"    =>$cab->codigo_entidad,
                                 "moneda"     =>$cab->codigo_moneda,
                                 "tcambio"    =>$cab->tcambio,
-                                "igv"        =>0,
+                                "igv"        =>$cab->radioIgv,
                                 "total"      =>$cab->total_numero,
                                 "proyecto"   =>$cab->codigo_costos,
                                 "ccostos"    =>$cab->codigo_costos,
@@ -474,7 +304,7 @@
                                                                                     nSaldo=:saldo,cobserva=:detalles");
                         $sql->execute(["id"=>$indice,
                                         "nidp"=>$datos[$i]->itped,
-                                        "pedido"=>$datos[$i]->pedido,
+                                        "pedido"=>$datos[$i]->refpedi,
                                         "cprod"=>$datos[$i]->codprod,
                                         "cant"=>$datos[$i]->cantidad,
                                         "unit"=>$datos[$i]->precio,
@@ -502,13 +332,14 @@
 
                 $sql = $this->db->connect()->prepare("UPDATE lg_ordencab 
                                                         SET  ffechaent=:entrega,ntotal=:total,ctiptransp=:transp,
-                                                             nplazo=:plazo,ncodalm=:alm
+                                                             nplazo=:plazo,ncodalm=:alm,nigv =:igv
                                                         WHERE id_regmov = :id");
                 $sql->execute(['entrega'=>$cabecera['fentrega'],
                                 "total"=>$cabecera['total_numero'],
                                 "transp"=>$cabecera['codigo_transporte'],
                                 "plazo"=>$entrega,
                                 "alm"=>$cabecera['codigo_almacen'],
+                                "igv"=>$cabecera['radioIgv'],
                                 "id"=>$cabecera['codigo_orden']]);
                 
                 $this->grabarDetalles($cabecera['codigo_verificacion'],$detalles,$cabecera['codigo_costos'],$cabecera['codigo_orden']);
@@ -754,13 +585,7 @@
             } 
         }
 
-        private function calcularDias($fechaEntrega){
-            $date1 = new DateTime(Date('Y-m-d'));
-            $date2 = new DateTime($fechaEntrega);
-            $diff = $date1->diff($date2);
-            // will output 2 days
-            return $diff->days . ' dias ';
-        }
+        
 
         private function datosPedido($pedido){
             try {
@@ -858,7 +683,7 @@
             }
         }
 
-        private function bancosProveedor($entidad){
+        /*private function bancosProveedor($entidad){
             try {
                 $bancos = [];
                 $item = array();
@@ -893,8 +718,7 @@
                 echo "Error: " . $th->getMessage();
                 return false;
             }
-        }
-
+        }*/
 
         private function actualizarCabeceraPedido($estado,$pedido,$orden){
             try {
@@ -932,5 +756,101 @@
                 return false;
             }
         }
+
+        public function ordenesFiltradas($parametros){
+            try {
+                $salida = "";
+                $mes  = date("m")-1;
+
+                $tipo   = $parametros['tipoSearch'] == -1 ? "%" : "%".$parametros['tipoSearch']."%";
+                $costos = $parametros['costosSearch'] == -1 ? "%" : "%".$parametros['costosSearch']."%";
+                $mes    = $parametros['mesSearch'] == -1 ? $mes :  $parametros['mesSearch'];
+                $anio   = $parametros['anioSearch'];
+
+                 $sql = $this->db->connect()->prepare("SELECT
+                                                        tb_costusu.ncodcos,
+                                                        tb_costusu.ncodproy,
+                                                        tb_costusu.id_cuser,
+                                                        lg_ordencab.id_regmov,
+                                                        lg_ordencab.cnumero,
+                                                        lg_ordencab.ffechadoc,
+                                                        lg_ordencab.nNivAten,
+                                                        lg_ordencab.nEstadoDoc,
+                                                        lg_ordencab.ncodpago,
+                                                        lg_ordencab.nplazo,
+                                                        lg_ordencab.cdocPDF,
+                                                        UPPER( tb_pedidocab.concepto ) AS concepto,
+                                                        UPPER( tb_pedidocab.detalle ) AS detalle,
+                                                        UPPER(
+                                                        CONCAT_WS( tb_area.ccodarea, tb_area.cdesarea )) AS area,
+                                                        UPPER(
+                                                        CONCAT_WS( tb_proyectos.ccodproy, tb_proyectos.cdesproy )) AS costos,
+                                                        lg_ordencab.nfirmaLog,
+                                                        lg_ordencab.nfirmaFin,
+                                                        lg_ordencab.nfirmaOpe,
+                                                        tb_parametros.cdescripcion AS atencion,
+                                                        lg_ordencab.ntipdoc,
+                                                        lg_ordencab.ntipmov 
+                                                    FROM
+                                                        tb_costusu
+                                                        INNER JOIN lg_ordencab ON tb_costusu.ncodproy = lg_ordencab.ncodpry
+                                                        INNER JOIN tb_pedidocab ON lg_ordencab.id_refpedi = tb_pedidocab.idreg
+                                                        INNER JOIN tb_area ON lg_ordencab.ncodarea = tb_area.ncodarea
+                                                        INNER JOIN tb_proyectos ON lg_ordencab.ncodpry = tb_proyectos.nidreg
+                                                        INNER JOIN tb_parametros ON lg_ordencab.nNivAten = tb_parametros.nidreg 
+                                                    WHERE
+                                                        tb_costusu.id_cuser = :user 
+                                                        AND tb_costusu.nflgactivo = 1 
+                                                        AND lg_ordencab.nEstadoDoc BETWEEN 49 
+                                                        AND 59 
+                                                        AND lg_ordencab.ncodpry LIKE :costos 
+                                                        AND lg_ordencab.ntipmov LIKE :tipomov 
+                                                        AND MONTH ( lg_ordencab.ffechadoc ) = :mes
+                                                        AND YEAR ( lg_ordencab.ffechadoc ) = :anio");
+                $sql->execute(["user"=>$_SESSION['iduser'],
+                                "tipomov"=>$tipo,
+                                "costos"=>$costos,
+                                "mes"=>$mes,
+                                "anio"=>$anio]);
+                 $rowCount = $sql->rowCount();
+ 
+                 if ($rowCount > 0){
+                     while ($rs = $sql->fetch()) {
+ 
+                         $log = is_null($rs['nfirmaLog']) ? '<i class="far fa-square"></i>' : '<i class="far fa-check-square"></i>';
+                         $ope = is_null($rs['nfirmaOpe']) ? '<i class="far fa-square"></i>' : '<i class="far fa-check-square"></i>';
+                         $fin = is_null($rs['nfirmaFin']) ? '<i class="far fa-square"></i>' : '<i class="far fa-check-square"></i>';
+ 
+                         $flog = is_null($rs['nfirmaLog']) ? 0 : 1;
+                         $fope = is_null($rs['nfirmaOpe']) ? 0 : 1;
+                         $ffin = is_null($rs['nfirmaFin']) ? 0 : 1;
+ 
+                         $resaltado = $rs['nEstadoDoc'] == 59 ? "resaltado_firma" :  "";
+ 
+ 
+                         $salida .='<tr class="pointer '.$resaltado.'" data-indice="'.$rs['id_regmov'].'" 
+                                                         data-estado="'.$rs['nEstadoDoc'].'"
+                                                         data-finanzas="'.$ffin.'"
+                                                         data-logistica="'.$flog.'"
+                                                         data-operaciones="'.$fope.'">
+                                     <td class="textoCentro">'.str_pad($rs['cnumero'],6,0,STR_PAD_LEFT).'</td>
+                                     <td class="textoCentro">'.date("d/m/Y", strtotime($rs['ffechadoc'])).'</td>
+                                     <td class="pl20px">'.$rs['concepto'].'</td>
+                                     <td class="pl20px">'.utf8_decode($rs['costos']).'</td>
+                                     <td class="pl20px">'.$rs['area'].'</td>
+                                     <td class="textoCentro '.strtolower($rs['atencion']).'">'.$rs['atencion'].'</td>
+                                     <td class="textoCentro">'.$log.'</td>
+                                     <td class="textoCentro">'.$ope.'</td>
+                                     <td class="textoCentro">'.$fin.'</td>
+                                     </tr>';
+                     }
+                 }
+ 
+                 return $salida;                    
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+         }
     }
 ?>

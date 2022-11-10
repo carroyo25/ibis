@@ -154,34 +154,32 @@
             try {
                 $salida = "";
                 $sql = $this->db->connect()->prepare("SELECT
-                                                            lg_ordendet.id_orden,
-                                                            lg_ordendet.nunitario,
-                                                            lg_ordendet.id_cprod,
-                                                            lg_ordencab.cnumero,
-                                                            cm_producto.ccodprod,
-                                                        IF (
-                                                            lg_ordencab.ncodmon != 20,
-                                                            lg_ordencab.ntcambio,
-                                                            1
-                                                        ) AS tipo_cambio,
+                                                        cm_producto.id_cprod,
+                                                        cm_producto.ccodprod,
+                                                        cm_producto.cdesprod,
+                                                        lg_ordendet.ncanti,
+                                                        lg_ordendet.nunitario,
+                                                        lg_ordencab.cnumero AS orden,
+                                                        tb_unimed.cabrevia AS unidad,
                                                         tb_parametros.cabrevia AS moneda,
-                                                        DATE_FORMAT(lg_ordencab.ffechadoc,'%d/%m/%Y') AS fecha,
+                                                        tb_pedidocab.nrodoc AS pedido,
                                                         tb_proyectos.ccodproy,
                                                         tb_proyectos.cdesproy,
-                                                        LPAD(lg_ordencab.id_refpedi, 6, 0) AS pedido,
-                                                        cm_producto.cdesprod,
-                                                        tb_unimed.cabrevia AS und
-                                                        FROM
-                                                            lg_ordendet
-                                                        INNER JOIN lg_ordencab ON lg_ordendet.id_regmov = lg_ordencab.id_regmov
-                                                        INNER JOIN tb_parametros ON lg_ordencab.ncodmon = tb_parametros.nidreg
-                                                        INNER JOIN tb_proyectos ON lg_ordencab.ncodpry = tb_proyectos.nidreg
-                                                        INNER JOIN cm_producto ON lg_ordendet.id_cprod = cm_producto.id_cprod
+                                                        lg_ordencab.ffechadoc,
+                                                    IF
+                                                        ( lg_ordencab.ncodmon != 20, FORMAT( lg_ordencab.ntcambio, 2 ), '' ) AS tipo_cambio 
+                                                    FROM
+                                                        cm_producto
+                                                        INNER JOIN lg_ordendet ON cm_producto.id_cprod = lg_ordendet.id_cprod
+                                                        INNER JOIN lg_ordencab ON lg_ordendet.id_orden = lg_ordencab.id_regmov
                                                         INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
-                                                        WHERE
-                                                            lg_ordendet.id_cprod =:codigo
-                                                        ORDER BY
-                                                            lg_ordencab.ffechadoc ASC");
+                                                        INNER JOIN tb_parametros ON lg_ordencab.ncodmon = tb_parametros.nidreg
+                                                        INNER JOIN tb_pedidocab ON lg_ordencab.id_refpedi = tb_pedidocab.idreg
+                                                        INNER JOIN tb_proyectos ON lg_ordencab.ncodpry = tb_proyectos.nidreg 
+                                                    WHERE
+                                                        cm_producto.id_cprod = :codigo
+                                                    ORDER BY
+                                                        lg_ordencab.ffechadoc ASC");
                 $sql->execute(["codigo"=>$codigo]);
                 $rowCount = $sql->rowcount();
 

@@ -41,7 +41,7 @@ $(function() {
                 $("#concepto").val(data.cabecera[0].concepto);
                 $("#detalle").val(data.cabecera[0].detalle);
                 $("#moneda").val(data.cabecera[0].nombre_moneda);
-                $("#total").val();
+                $("#total").val(data.cabecera[0].ctotal);
                 $("#tipo").val(data.cabecera[0].tipo);
                 $("#fentrega").val(data.cabecera[0].ffechaent);
                 $("#cpago").val(data.cabecera[0].pagos);
@@ -50,12 +50,20 @@ $(function() {
                 $("#atencion").val(data.cabecera[0].cnombres);
                 $("#transporte").val(data.cabecera[0].transporte);
                 $("#lentrega").val(data.cabecera[0].cdesalm);
-                $("#total").val(data.cabecera[0].ntotal);
+                $("#nro_pedido").val(data.cabecera[0].nrodoc);
+
+
+                $("#direccion_almacen").val(data.cabecera[0].direccion);
+                $("#ncotiz").val(data.cabecera[0].cnumcot);
+                $("#radioIgv").val(data.cabecera[0].nigv);
+                $("#total_numero").val(data.cabecera[0].ntotal);
                 
                 if (data.bocadillo != 0) {
                     $(".button__comment")
                         .text(data.bocadillo)
                         .show();
+                }else {
+                    $(".button__comment").hide();
                 }
 
                 $("#estado")
@@ -183,17 +191,23 @@ $(function() {
     $("#preview").click(function (e) { 
         e.preventDefault();
 
-        let archivo = "OC"+$("#numero").val()+"_"+$("#codigo_costos").val()+".pdf";
+        let result = {};
+    
+        $.each($("#formProceso").serializeArray(),function(){
+            result[this.name] = this.value;
+        })
 
-        $(".ventanaVistaPrevia iframe")
-            .attr("src","")
-            .attr("src","public/documentos/ordenes/emitidas/"+archivo);
+        $.post(RUTA+"firmas/vistaEmitida", {cabecera:result,condicion:1,detalles:JSON.stringify(detalles())},
+                function (data, textStatus, jqXHR) {
+                    $(".ventanaVistaPrevia iframe")
+                        .attr("src","")
+                        .attr("src","public/documentos/ordenes/emitidas/"+data);
                     
-        $("#vista_previa").val(archivo);    
-        $("#vistaprevia").fadeIn();
-
-        console.log(archivo);
-        
+                    $("#vista_previa").val(data);    
+                    $("#vistaprevia").fadeIn();
+                },
+                "text"
+            );
     
         return false;
     });
@@ -321,4 +335,55 @@ comentarios = () => {
     });
 
     return COMENTARIOS;
+}
+
+detalles = () => {
+    DATA = [];
+    let TABLA = $("#tablaDetalles tbody >tr");
+
+    TABLA.each(function(){
+        let ITEM        = $(this).find('td').eq(1).text(),
+            CODIGO      = $(this).find('td').eq(2).text(),
+            DESCRIPCION = $(this).find('td').eq(3).text(),
+            UNIDAD      = $(this).find('td').eq(4).text(),
+            CANTIDAD    = $(this).find('td').eq(5).children().val(),
+            PRECIO      = $(this).find('td').eq(6).children().val(),
+            IGV         = 0,
+            TOTAL       = $(this).find('td').eq(7).text(),
+            NROPARTE    = $(this).find('td').eq(8).text(),
+            PEDIDO      = $(this).find('td').eq(9).text(),
+            CODPROD     = $(this).data('codprod'),
+            MONEDA      = $("#codigo_moneda").val(),
+            ITEMPEDIDO  = $(this).data('itped'),
+            GRABAR      = $(this).data('grabado'),
+            CANTPED     = $(this).data('cant'),
+            REFPEDI      = $(this).data('refpedi'),
+            DETALLES    = $(this).find('td').eq(10).children().val();
+
+        item= {};
+        
+        //if (GRABAR == 0) {
+            item['item']        = ITEM;
+            item['codigo']      = CODIGO;
+            item['descripcion'] = DESCRIPCION;
+            item['unidad']      = UNIDAD;
+            item['cantidad']    = CANTIDAD;
+            item['precio']      = PRECIO;
+            item['igv']         = IGV;
+            item['total']       = TOTAL;
+            item['nroparte']    = NROPARTE;
+            item['pedido']      = PEDIDO;
+            item['codprod']     = CODPROD;
+            item['moneda']      = MONEDA;
+            item['itped']       = ITEMPEDIDO;
+            item['grabado']     = GRABAR;
+            item['cantped']     = CANTPED;
+            item['refpedi']     = REFPEDI;
+            item['detalles']    = DETALLES;
+
+            DATA.push(item);
+        //}
+    });
+
+    return DATA;
 }

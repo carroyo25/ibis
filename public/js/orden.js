@@ -65,7 +65,7 @@ $(function(){
                 $("#ncotiz").val(data.cabecera[0].cnumcot);
                 $("#tcambio").val(data.cabecera[0].ntcambio);
                 $("#user_modifica").val(data.cabecera[0].userModifica);
-
+                $("#nro_pedido").val(data.cabecera[0].nrodoc);
 
                if (data.cabecera[0].nigv != 0) {
                     $("#si").prop("checked", true);
@@ -92,6 +92,8 @@ $(function(){
                     $(".button__comment")
                         .text(data.bocadillo)
                         .show();
+                }else{
+                    $(".button__comment").hide();
                 }
 
             },
@@ -115,6 +117,7 @@ $(function(){
         $("#proceso").fadeIn();
         $("#sw").val(0);
         $("#codigo_estado").val(0);
+        $(".button__comment").hide();
 
         accion = 'n';
         grabado = false;
@@ -252,7 +255,8 @@ $(function(){
 
             let nFilas      = $.strPad($("#tablaDetalles tr").length,3),
                 codigo      = $(this).children('td:eq(5)').text(),
-                request     = $.strPad($(this).data("pedido"),6),
+                request     = $(this).data("pedido"),
+                nroreq      = $(this).children('td:eq(0)').text(),
                 descrip     = $(this).children('td:eq(6)').text(),
                 cantidad    = $(this).data("cantidad"),
                 unidad      = $(this).data("unidad"),
@@ -261,13 +265,16 @@ $(function(){
                 id_item     = $(this).data("iditem"),
                 grabado     = 0;
 
+            $("#nro_pedido").val(nroreq);
+
             if (!checkExistTable($("#tablaDetalles tbody tr"),codigo,5)){
                 let item = $(this);
-                let row = `<tr data-grabado="${grabado}" 
-                                data-total="${total}" 
+                let row = `<tr data-grabado ="${grabado}" 
+                                data-total  ="${total}" 
                                 data-codprod="${cod_prod}" 
-                                data-itPed="${id_item}"
-                                data-cant="${cantidad}">
+                                data-itPed  ="${id_item}"
+                                data-cant   ="${cantidad}"
+                                data-refpedi="${request}">
                             <td class="textoCentro"><a href="#"><i class="fas fa-ban"></i></a></td>
                             <td class="textoCentro">${nFilas}</td>
                             <td class="textoCentro">${codigo}</td>
@@ -290,7 +297,7 @@ $(function(){
                             </td>
                             <<td class="textoDerecha pr5px"></td>
                             <td></td>
-                            <td class="textoCentro">${request}</td>
+                            <td class="textoCentro">${nroreq}</td>
                             <td class="pl20px"><input type="text"></td>
                         </tr>`;
 
@@ -742,6 +749,23 @@ $(function(){
          $(".listaArchivos").empty();
  
      });
+
+     $("#btnConsulta").on('click', function(e) {
+        e.preventDefault();
+
+        let str = $("#formConsulta").serialize();
+
+        $.post(RUTA+"orden/filtroOrden", str,
+            function (data, text, requestXHR) {
+                $("#tablaPrincipal tbody")
+                    .empty()
+                    .append(data);
+            },
+            "text"
+        );
+        
+        return false
+    });
 })
 
 
@@ -765,6 +789,7 @@ detalles = () => {
             ITEMPEDIDO  = $(this).data('itped'),
             GRABAR      = $(this).data('grabado'),
             CANTPED     = $(this).data('cant'),
+            REFPEDI      = $(this).data('refpedi'),
             DETALLES    = $(this).find('td').eq(10).children().val();
 
         item= {};
@@ -785,6 +810,7 @@ detalles = () => {
             item['itped']       = ITEMPEDIDO;
             item['grabado']     = GRABAR;
             item['cantped']     = CANTPED;
+            item['refpedi']     = REFPEDI;
             item['detalles']    = DETALLES;
 
             DATA.push(item);

@@ -71,5 +71,9 @@
         function marcaItem(){
             echo $this->model->itemMarcado($_POST['id'],$_POST['estado'],$_POST['io']);
         }
+
+        function filtroOrden(){
+            echo $this->model->ordenesFiltradas($_POST);
+        }
     }
 ?>
