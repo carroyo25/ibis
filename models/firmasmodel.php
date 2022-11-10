@@ -37,7 +37,10 @@
                                                                     )
                                                                 ) AS costos,
                                                             tb_proyectos.nidreg,
-                                                            tb_parametros.cdescripcion AS atencion
+                                                            tb_parametros.cdescripcion AS atencion,
+                                                            (
+                                                                lg_ordencab.nfirmaLog + lg_ordencab.nfirmaFin + lg_ordencab.nfirmaOpe
+                                                            ) AS estado_firmas
                                                             FROM
                                                             lg_ordencab
                                                             INNER JOIN tb_pedidocab ON lg_ordencab.id_refpedi = tb_pedidocab.idreg
@@ -60,13 +63,22 @@
                          $flog = is_null($rs['nfirmaLog']) ? 0 : 1;
                          $fope = is_null($rs['nfirmaOpe']) ? 0 : 1;
                          $ffin = is_null($rs['nfirmaFin']) ? 0 : 1;
+
+                         $resaltado = "";
+
+                         if ($flog == 1 && $fope == 1 && $ffin == 1) {
+                            $resaltado = "resaltado_firma";
+                         }else {
+                            $resaltado = "";
+                         }
  
  
-                         $salida .='<tr class="pointer" data-indice="'.$rs['id_regmov'].'" 
+                         $salida .='<tr class="pointer '.$resaltado.'" data-indice="'.$rs['id_regmov'].'" 
                                                          data-estado="'.$rs['nEstadoDoc'].'"
                                                          data-finanzas="'.$ffin.'"
                                                          data-logistica="'.$flog.'"
-                                                         data-operaciones="'.$fope.'">
+                                                         data-operaciones="'.$fope.'"
+                                                         data-firmas="'.$rs['estado_firmas'].'">
                                      <td class="textoCentro">'.str_pad($rs['cnumero'],4,0,STR_PAD_LEFT).'</td>
                                      <td class="textoCentro">'.date("d/m/Y", strtotime($rs['ffechadoc'])).'</td>
                                      <td class="pl20px">'.$rs['concepto'].'</td>
@@ -131,7 +143,8 @@
                                                                 codperFin=:usrFin,
                                                                 fechaLog=:fecLog,
                                                                 fechaOpe=:fecOpe,
-                                                                fechaFin=:fecFin 
+                                                                fechaFin=:fecFin,
+                                                                nNivAten=:atencion 
                                                     WHERE id_regmov=:cod");
                 
                 $sql->execute(["nLog" =>1,
@@ -143,7 +156,23 @@
                                 "fecLog" => $fecha,
                                 "fecFin"=> $fecha,
                                 "fecOpe"=> $fecha,
+                                "atencion"=> 46,
                                 "cod"=>$id]);
+
+                $rowCount = $sql->rowcount();
+
+                if ($rowCount > 0) {
+                    return array("respuesta"=>true,
+                                "mensaje"=>"Se autorizo la orden",
+                                "clase"=>"mensaje_correcto");
+                                
+                }else {
+                    return array("respuesta"=>true,
+                                "mensaje"=>"No se pudo actualizar",
+                                "clase"=>"mensaje_error");
+                                
+                }
+
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
                 return false;
@@ -162,12 +191,12 @@
                                                         lg_ordencab.cnumero AS orden,
                                                         tb_unimed.cabrevia AS unidad,
                                                         tb_parametros.cabrevia AS moneda,
-                                                        tb_pedidocab.nrodoc AS pedido,
+                                                        LPAD(tb_pedidocab.nrodoc,6,0) AS pedido,
                                                         tb_proyectos.ccodproy,
                                                         tb_proyectos.cdesproy,
-                                                        lg_ordencab.ffechadoc,
+                                                        DATE_FORMAT(lg_ordencab.ffechadoc,'%d/%m/%Y') AS fecha,
                                                     IF
-                                                        ( lg_ordencab.ncodmon != 20, FORMAT( lg_ordencab.ntcambio, 2 ), '' ) AS tipo_cambio 
+                                                        ( lg_ordencab.ncodmon != 20, FORMAT( lg_ordencab.ntcambio, 2 ), 1 ) AS tipo_cambio 
                                                     FROM
                                                         cm_producto
                                                         INNER JOIN lg_ordendet ON cm_producto.id_cprod = lg_ordendet.id_cprod
@@ -195,7 +224,7 @@
                                         <td class="textoCentro">'.$rs['moneda'].'</td>
                                         <td class="textoDerecha pr20px">'.$rs['nunitario'].'</td>
                                         <td class="textoCentro">'.$rs['pedido'].'</td>
-                                        <td class="textoCentro">'.$rs['cnumero'].'</td>
+                                        <td class="textoCentro">'.$rs['orden'].'</td>
                                         <td class="textoDerecha pr20px">'.$tipo_cambio.'</td>
                                         <td class="textoCentro">'.$rs['fecha'].'</td>
                                     </tr>';
@@ -205,7 +234,116 @@
 
                 return $salida;
 
-        } catch (PDOException $th) {
+            } catch (PDOException $th) {
+                    echo "Error: " . $th->getMessage();
+                    return false;
+                }
+        }
+
+        public function filtrarOrdenesFirmas($parametros){
+            try {
+                $mes  = date("m");
+
+                $tipo   = $parametros['tipoSearch'] == -1 ? "%" : "%".$parametros['tipoSearch']."%";
+                $costos = $parametros['costosSearch'] == -1 ? "%" : "%".$parametros['costosSearch']."%";
+                $mes    = $parametros['mesSearch'] == -1 ? $mes :  $parametros['mesSearch'];
+                $anio   = $parametros['anioSearch'];
+
+                $salida = "";
+                 $sql = $this->db->connect()->prepare("SELECT
+                                                            lg_ordencab.id_regmov,
+                                                            lg_ordencab.cnumero,
+                                                            lg_ordencab.ffechadoc,
+                                                            lg_ordencab.nNivAten,
+                                                            lg_ordencab.nEstadoDoc,
+                                                            lg_ordencab.ncodpago,
+                                                            lg_ordencab.nplazo,
+                                                            lg_ordencab.nfirmaLog,
+                                                            lg_ordencab.nfirmaFin,
+                                                            lg_ordencab.nfirmaOpe,
+                                                            UPPER(tb_pedidocab.concepto) AS concepto,
+                                                            lg_ordencab.cdocPDF,
+                                                            UPPER(
+                                                                    CONCAT_WS(
+                                                                        ' ',
+                                                                        tb_area.ccodarea,
+                                                                        tb_area.cdesarea
+                                                                    )
+                                                                ) AS area,
+                                                            UPPER(
+                                                                    CONCAT_WS(
+                                                                        ' ',
+                                                                        tb_proyectos.ccodproy,
+                                                                        tb_proyectos.cdesproy
+                                                                    )
+                                                                ) AS costos,
+                                                            tb_proyectos.nidreg,
+                                                            tb_parametros.cdescripcion AS atencion,
+                                                            (
+                                                                lg_ordencab.nfirmaLog + lg_ordencab.nfirmaFin + lg_ordencab.nfirmaOpe
+                                                            ) AS estado_firmas
+                                                            FROM
+                                                            lg_ordencab
+                                                            INNER JOIN tb_pedidocab ON lg_ordencab.id_refpedi = tb_pedidocab.idreg
+                                                            INNER JOIN tb_area ON lg_ordencab.ncodarea = tb_area.ncodarea
+                                                            INNER JOIN tb_proyectos ON lg_ordencab.ncodpry = tb_proyectos.nidreg
+                                                            INNER JOIN tb_parametros ON lg_ordencab.nNivAten = tb_parametros.nidreg
+                                                            WHERE
+                                                                lg_ordencab.nEstadoDoc = 59 
+                                                                AND lg_ordencab.ncodpry LIKE :costos 
+                                                                AND lg_ordencab.ntipmov LIKE :tipomov 
+                                                                AND MONTH ( lg_ordencab.ffechadoc ) = :mes
+                                                                AND YEAR ( lg_ordencab.ffechadoc ) = :anio");
+                 $sql->execute(["tipomov"=>$tipo,
+                                "costos"=>$costos,
+                                "mes"=>$mes,
+                                "anio"=>$anio]);
+
+                 $rowCount = $sql->rowCount();
+ 
+                 if ($rowCount > 0){
+                     while ($rs = $sql->fetch()) {
+ 
+                         $log = is_null($rs['nfirmaLog']) ? '<i class="far fa-square"></i>' : '<i class="far fa-check-square"></i>';
+                         $ope = is_null($rs['nfirmaOpe']) ? '<i class="far fa-square"></i>' : '<i class="far fa-check-square"></i>';
+                         $fin = is_null($rs['nfirmaFin']) ? '<i class="far fa-square"></i>' : '<i class="far fa-check-square"></i>';
+ 
+                         $flog = is_null($rs['nfirmaLog']) ? 0 : 1;
+                         $fope = is_null($rs['nfirmaOpe']) ? 0 : 1;
+                         $ffin = is_null($rs['nfirmaFin']) ? 0 : 1;
+
+                         $resaltado = "";
+
+                         if ($flog == 1 && $fope == 1 && $ffin == 1) {
+                            $resaltado = "resaltado_firma";
+                         }else {
+                            $resaltado = "";
+                         }
+ 
+ 
+                         $salida .='<tr class="pointer '.$resaltado.'" data-indice="'.$rs['id_regmov'].'" 
+                                                         data-estado="'.$rs['nEstadoDoc'].'"
+                                                         data-finanzas="'.$ffin.'"
+                                                         data-logistica="'.$flog.'"
+                                                         data-operaciones="'.$fope.'"
+                                                         data-firmas="'.$rs['estado_firmas'].'">
+                                     <td class="textoCentro">'.str_pad($rs['cnumero'],4,0,STR_PAD_LEFT).'</td>
+                                     <td class="textoCentro">'.date("d/m/Y", strtotime($rs['ffechadoc'])).'</td>
+                                     <td class="pl20px">'.$rs['concepto'].'</td>
+                                     <td class="pl20px">'.utf8_decode($rs['costos']).'</td>
+                                     <td class="pl20px">'.$rs['area'].'</td>
+                                     <td class="textoCentro '.strtolower($rs['atencion']).'">'.$rs['atencion'].'</td>
+                                     <td class="textoCentro">'.$log.'</td>
+                                     <td class="textoCentro">'.$ope.'</td>
+                                     <td class="textoCentro">'.$fin.'</td>
+                                     </tr>';
+                     }
+                 }
+ 
+                 return $salida; 
+
+
+            } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
                 return false;
             }

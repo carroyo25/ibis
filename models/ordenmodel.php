@@ -585,8 +585,6 @@
             } 
         }
 
-        
-
         private function datosPedido($pedido){
             try {
                 $sql = $this->db->connect()->prepare("SELECT
@@ -682,43 +680,6 @@
                 return false;
             }
         }
-
-        /*private function bancosProveedor($entidad){
-            try {
-                $bancos = [];
-                $item = array();
-
-                $sql = $this->db->connect()->prepare("SELECT
-                                                    bancos.cdescripcion AS banco,
-                                                    cm_entidadbco.cnrocta AS cuenta,
-                                                    monedas.cdescripcion AS moneda
-                                                FROM
-                                                    cm_entidadbco
-                                                    INNER JOIN tb_parametros AS bancos ON cm_entidadbco.ncodbco = bancos.nidreg
-                                                    INNER JOIN tb_parametros AS monedas ON cm_entidadbco.cmoneda = monedas.nidreg 
-                                                WHERE
-                                                    cm_entidadbco.nflgactivo = 7 
-                                                    AND cm_entidadbco.nitem = :entidad");
-                $sql->execute(["entidad"=>$entidad]);
-                $rowCount = $sql->rowCount();
-
-                if($rowCount > 0){
-                    while ($rs = $sql->fetch()) {
-                        $item['banco'] = $rs['banco'];
-                        $item['moneda'] = $rs['moneda'];
-                        $item['cuenta'] = $rs['cuenta'];
-                        
-                        array_push($bancos,$item);
-                    }
-                }
-
-                return $bancos;
-
-            } catch (PDOException $th) {
-                echo "Error: " . $th->getMessage();
-                return false;
-            }
-        }*/
 
         private function actualizarCabeceraPedido($estado,$pedido,$orden){
             try {

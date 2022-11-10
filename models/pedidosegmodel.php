@@ -231,7 +231,6 @@
             $datosOrden   = $this->cabeceraOrden($id);
             $detalles     = $this->detallesOrden($id);
 
-
             if ($datosOrden[0]['ntipmov'] == "37") {
                 $titulo = "ORDEN DE COMPRA" ;
 
@@ -254,7 +253,7 @@
 
             $anio = explode("-",$datosOrden[0]['ffechadoc']);
 
-            $orden = str_pad($datosOrden[0]['id_regmov'],6,0);
+            $orden = str_pad($datosOrden[0]['id_regmov'],6,0,STR_PAD_LEFT);
             $titulo = $titulo . " " .$anio[0]. " - " . $orden;
             
             $file = uniqid().".pdf";
@@ -355,10 +354,12 @@
 
             if ($datosOrden[0]['nEstadoDoc'] == 59){
                 $filename = "public/documentos/ordenes/vistaprevia/".$file;
-            }else if ($condicion == 60){
+            }else if ($datosOrden[0]['nEstadoDoc'] == 60){
                 $filename = "public/documentos/ordenes/emitidas/".$file;
-            }else if ($condicion == 61){
+            }else if ($datosOrden[0]['nEstadoDoc'] == 61){
                 $filename = "public/documentos/ordenes/aprobadas/".$file;
+            }else if ($datosOrden[0]['nEstadoDoc'] == 49){
+                $filename = "public/documentos/ordenes/vistaprevia/".$file;
             }
 
             $pdf->Output($filename,'F');
@@ -369,72 +370,94 @@
         private function cabeceraOrden($id){
             try {
                 $sql = $this->db->connect()->prepare("SELECT
-                                                    lg_ordencab.id_regmov,
-                                                    lg_ordencab.cnumero,
-                                                    lg_ordencab.ffechadoc,
-                                                    lg_ordencab.ncodcos,
-                                                    lg_ordencab.ncodarea,
-                                                    lg_ordencab.id_centi,
-                                                    lg_ordencab.ctiptransp,
-                                                    lg_ordencab.ncodpago,
-                                                    lg_ordencab.nplazo,
-                                                    lg_ordencab.ncodcot,
-                                                    lg_ordencab.cnumcot,
-                                                    lg_ordencab.nEstadoDoc,
-                                                    lg_ordencab.id_refpedi,
-                                                    lg_ordencab.ntcambio,
-                                                    lg_ordencab.cnumcot,
-                                                    lg_ordencab.userModifica,
-                                                    UPPER(tb_pedidocab.concepto) AS concepto,
-                                                    UPPER(tb_pedidocab.detalle) AS detalle,
-                                                    UPPER(CONCAT_WS(' ',tb_proyectos.ccodproy,tb_proyectos.cdesproy)) AS costos,
-                                                    lg_ordencab.ncodpry,
-                                                    lg_ordencab.ncodalm,
-                                                    UPPER(CONCAT_WS(' ',tb_area.ccodarea,tb_area.cdesarea)) AS area,
-                                                    lg_ordencab.ncodmon,
-                                                    monedas.cdescripcion AS nombre_moneda,
-                                                    monedas.cabrevia AS abrevia_moneda,
-                                                    lg_ordencab.ntipmov,
-                                                    tipos.cdescripcion AS tipo,
-                                                    pagos.cdescripcion AS pagos,
-                                                    lg_ordencab.ffechaent,
-                                                    estados.cabrevia AS estado,
-                                                    estados.cdescripcion AS descripcion_estado,
-                                                    cm_entidad.crazonsoc,
-                                                    cm_entidad.cnumdoc,
-                                                    UPPER(cm_entidadcon.cnombres) as cnombres,
-                                                    cm_entidadcon.cemail,
-                                                    cm_entidadcon.ctelefono1,
-                                                    transportes.cdescripcion AS transporte,
-                                                    UPPER(tb_almacen.cdesalm) AS cdesalm,
-                                                    UPPER(tb_almacen.ctipovia) AS direccion,
-                                                    cm_entidad.cviadireccion,
-	                                                cm_entidad.cemail AS mail_entidad,
-                                                    cm_entidad.nagenret,
-                                                    lg_ordencab.cverificacion,
-                                                    lg_ordencab.ntotal,
-                                                    lg_ordencab.nigv,
-                                                    FORMAT(lg_ordencab.ntotal,2) AS ctotal,
-	                                                tb_pedidocab.nivelAten,
-                                                    tb_pedidocab.nrodoc,
-                                                    tb_user.cnameuser   
-                                                FROM
-                                                    lg_ordencab
-                                                    INNER JOIN tb_pedidocab ON lg_ordencab.id_refpedi = tb_pedidocab.idreg
-                                                    INNER JOIN tb_proyectos ON lg_ordencab.ncodcos = tb_proyectos.nidreg
-                                                    INNER JOIN tb_area ON lg_ordencab.ncodarea = tb_area.ncodarea
-                                                    INNER JOIN tb_parametros AS monedas ON lg_ordencab.ncodmon = monedas.nidreg
-                                                    INNER JOIN tb_parametros AS tipos ON lg_ordencab.ntipmov = tipos.nidreg
-                                                    INNER JOIN tb_parametros AS pagos ON lg_ordencab.ncodpago = pagos.nidreg
-                                                    INNER JOIN tb_parametros AS estados ON lg_ordencab.nEstadoDoc = estados.nidreg
-                                                    INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
-                                                    INNER JOIN cm_entidadcon ON cm_entidad.id_centi = cm_entidadcon.id_centi
-                                                    INNER JOIN tb_parametros AS transportes ON lg_ordencab.ctiptransp = transportes.nidreg
-                                                    INNER JOIN tb_almacen ON lg_ordencab.ncodalm = tb_almacen.ncodalm
-                                                    INNER JOIN tb_user ON lg_ordencab.id_cuser = tb_user.iduser 
-                                                WHERE
-                                                    lg_ordencab.id_regmov =:id 
-                                                    AND lg_ordencab.nflgactivo = 1");
+                                                                lg_ordencab.id_regmov,
+                                                                lg_ordencab.cnumero,
+                                                                lg_ordencab.ffechadoc,
+                                                                lg_ordencab.ncodcos,
+                                                                lg_ordencab.ncodarea,
+                                                                lg_ordencab.id_centi,
+                                                                lg_ordencab.ctiptransp,
+                                                                lg_ordencab.ncodpago,
+                                                                lg_ordencab.nplazo,
+                                                                lg_ordencab.ncodcot,
+                                                                lg_ordencab.cnumcot,
+                                                                lg_ordencab.nEstadoDoc,
+                                                                lg_ordencab.id_refpedi,
+                                                                lg_ordencab.ntcambio,
+                                                                lg_ordencab.cnumcot,
+                                                                lg_ordencab.userModifica,
+                                                                UPPER(tb_pedidocab.concepto) AS concepto,
+                                                                UPPER(tb_pedidocab.detalle) AS detalle,
+                                                                UPPER(
+                                                                    CONCAT_WS(
+                                                                        ' ',
+                                                                        tb_proyectos.ccodproy,
+                                                                        tb_proyectos.cdesproy
+                                                                    )
+                                                                ) AS costos,
+                                                                lg_ordencab.ncodpry,
+                                                                lg_ordencab.ncodalm,
+                                                                UPPER(
+                                                                    CONCAT_WS(
+                                                                        ' ',
+                                                                        tb_area.ccodarea,
+                                                                        tb_area.cdesarea
+                                                                    )
+                                                                ) AS area,
+                                                                lg_ordencab.ncodmon,
+                                                                monedas.cdescripcion AS nombre_moneda,
+                                                                monedas.cabrevia AS abrevia_moneda,
+                                                                lg_ordencab.ntipmov,
+                                                                tipos.cdescripcion AS tipo,
+                                                                pagos.cdescripcion AS pagos,
+                                                                lg_ordencab.ffechaent,
+                                                                estados.cabrevia AS estado,
+                                                                estados.cdescripcion AS descripcion_estado,
+                                                                cm_entidad.crazonsoc,
+                                                                cm_entidad.cnumdoc,
+                                                                cm_entidad.cnumdoc,
+                                                                UPPER(contacto.cnombres) AS cnombres,
+                                                                contacto.cemail,
+                                                                contacto.ctelefono1,
+                                                                transportes.cdescripcion AS transporte,
+                                                                UPPER(tb_almacen.cdesalm) AS cdesalm,
+                                                                UPPER(tb_almacen.ctipovia) AS direccion,
+                                                                cm_entidad.cviadireccion,
+                                                                cm_entidad.cemail AS mail_entidad,
+                                                                cm_entidad.nagenret,
+                                                                lg_ordencab.cverificacion,
+                                                                lg_ordencab.ntotal,
+                                                                lg_ordencab.nigv,
+                                                                FORMAT(lg_ordencab.ntotal, 2) AS ctotal,
+                                                                tb_pedidocab.nivelAten,
+                                                                tb_pedidocab.nrodoc,
+                                                                tb_user.cnameuser
+                                                            FROM
+                                                                lg_ordencab
+                                                            INNER JOIN tb_pedidocab ON lg_ordencab.id_refpedi = tb_pedidocab.idreg
+                                                            INNER JOIN tb_proyectos ON lg_ordencab.ncodcos = tb_proyectos.nidreg
+                                                            INNER JOIN tb_area ON lg_ordencab.ncodarea = tb_area.ncodarea
+                                                            INNER JOIN tb_parametros AS monedas ON lg_ordencab.ncodmon = monedas.nidreg
+                                                            INNER JOIN tb_parametros AS tipos ON lg_ordencab.ntipmov = tipos.nidreg
+                                                            INNER JOIN tb_parametros AS pagos ON lg_ordencab.ncodpago = pagos.nidreg
+                                                            INNER JOIN tb_parametros AS estados ON lg_ordencab.nEstadoDoc = estados.nidreg
+                                                            INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
+                                                            LEFT JOIN (
+                                                                SELECT
+                                                                    cemail,
+                                                                    cnombres,
+                                                                    ctelefono1,
+                                                                    id_centi
+                                                                FROM
+                                                                    cm_entidadcon
+                                                                LIMIT 1
+                                                            ) AS contacto ON contacto.id_centi = cm_entidad.id_centi
+                                                            INNER JOIN tb_parametros AS transportes ON lg_ordencab.ctiptransp = transportes.nidreg
+                                                            INNER JOIN tb_almacen ON lg_ordencab.ncodalm = tb_almacen.ncodalm
+                                                            INNER JOIN tb_user ON lg_ordencab.id_cuser = tb_user.iduser
+                                                            WHERE
+                                                                lg_ordencab.id_regmov = :id
+                                                            AND lg_ordencab.nflgactivo = 1");
                 $sql->execute(["id"=>$id]);
                 $rowCount = $sql->rowCount();
                 
@@ -511,14 +534,6 @@
                 echo "Error: ".$th->getMessage();
                 return false;
             }
-        }
-
-        private function calcularDias($fechaEntrega){
-            $date1 = new DateTime(Date('Y-m-d'));
-            $date2 = new DateTime($fechaEntrega);
-            $diff = $date1->diff($date2);
-            // will output 2 days
-            return $diff->days . ' dias ';
         }
 
         public function listarPedidosUsuarioFiltrados($parametros){

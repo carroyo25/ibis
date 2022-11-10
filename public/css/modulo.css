@@ -994,6 +994,9 @@
 
 .ventanaResumen {
   border-radius: 8px;
+  width: -webkit-max-content;
+  width: -moz-max-content;
+  width: max-content;
 }
 .ventanaResumen .tituloDocumento {
   display: -webkit-box;
@@ -2068,8 +2071,8 @@
 }
 
 .resumen__wrap {
-  max-height: 50vh;
-  height: 50vh;
+  max-height: 55vh;
+  height: 55vh;
   display: -ms-grid;
   display: grid;
   -ms-grid-columns: 1fr 0px 1fr 0px 0.85fr;

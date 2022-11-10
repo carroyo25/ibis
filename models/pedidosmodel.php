@@ -61,7 +61,7 @@
             }
         }
         
-        public function generarDocumento($datos,$detalles){
+        public function generarPedido($datos,$detalles){
             require_once('public/formatos/pedidos.php');
             
             $details = json_decode($detalles);

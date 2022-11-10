@@ -47,6 +47,7 @@
                     <input type="hidden" name="direccion_almacen" id="direccion_almacen">
                     <input type="hidden" name="radioIgv" id="radioIgv">
                     <input type="hidden" name="total_numero" id="total_numero">
+                    <input type="hidden" name="estado_firmas" id="estado_firmas">
 
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
@@ -150,7 +151,7 @@
                     <div class="barraOpciones">
                         <span>Detalles</span>
                         <div>
-                            <button type="button" id="culminarAprobaciones" title="Aprobar Urgente" class="cerrarLista boton3">
+                            <button type="button" id="culminarAprobaciones" title="Aprobar Urgente" class="cerrarLista boton4">
                                 <i class="far fa-plus-square"></i> Aprobación Urgente
                             </button>
                         </div>

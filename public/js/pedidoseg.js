@@ -150,7 +150,7 @@ $(function(){
                     avance = parseInt(data.avance),
                     estados = (avance/10);
                 point.update(parseInt(avance));
-
+                
                 for (let index = 0; index < estados; index++) {
                     let circulo_externo = "#ce"+index,
                         circulo_interno = "#ci"+index;

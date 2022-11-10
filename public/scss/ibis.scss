@@ -92,6 +92,35 @@ input[type=number]::-webkit-outer-spin-button {
     }
 }
 
+.boton4 {
+    //box-shadow:inset 0px 1px 0px 0px #ffffff;
+	//background:linear-gradient(to bottom, #ededed 5%, #dfdfdf 100%);
+	background-color:#f49999;
+	border-radius:6px;
+	border:1px solid #dcdcdc;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:Arial;
+    font-weight: bold;
+	font-size:.9rem;
+	padding:10px 39px;
+	text-decoration:none;
+	//text-shadow:0px 1px 0px #ffffff;
+
+    &:hover{
+        background:linear-gradient(to bottom, #f55555 5%, #e20606 100%);
+	    background-color:#fe2c2c;
+        color:#fff;
+        font-weight: bold;
+    }
+
+    &:active{
+        position:relative;
+	    top:1px;
+    }
+}
+
 .acordeon{
     color: #fff;
     background: #4b4a4a;
@@ -305,6 +334,7 @@ input[type=number]::-webkit-outer-spin-button {
 
 .resaltado_firma{
     font-weight: 900;
+    background-color: #f3f3f3;
 }
 
 .pl5px{

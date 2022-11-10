@@ -38,5 +38,9 @@
         function vistaEmitida() {
             echo $this->model->generarDocumento($_POST['cabecera'],$_POST['condicion'],$_POST['detalles']);
         }
+
+        function filtroFirmas(){
+            echo $this->model->filtrarOrdenesFirmas($_POST);
+        }
     }
 ?>

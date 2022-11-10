@@ -750,7 +750,7 @@ $(function(){
  
      });
 
-     $("#btnConsulta").on('click', function(e) {
+    $("#btnConsulta").on('click', function(e) {
         e.preventDefault();
 
         let str = $("#formConsulta").serialize();

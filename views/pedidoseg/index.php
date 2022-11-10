@@ -134,7 +134,7 @@
     <div class="modal" id="esperar">
     </div>
     <div class="modal" id="detalles">
-        <div class="ventanaResumen w65por">
+        <div class="ventanaResumen w75por">
             <div class="resumen__wrap">
                 <div class="div1">
                     <p>Detalles del Pedido</p>
@@ -367,7 +367,7 @@
     <script src="<?php echo constant('URL');?>public/code/modules/solid-gauge.js"></script>
     <script src="<?php echo constant('URL');?>public/code/modules/exporting.js"></script>
     <script src="<?php echo constant('URL');?>public/code/modules/export-data.js"></script>
-    <script src="<?php echo constant('URL');?>public/code/modules/accessibility.js"></script>
+    <script src="<?php echo constant('URL');?>public/code/modules/accessibility.js"></script>-->
 
     <script src="<?php echo constant('URL');?>public/js/gauge.js?<?php echo constant('VERSION')?>"></script>
 </body>

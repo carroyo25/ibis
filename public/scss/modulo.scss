@@ -740,6 +740,7 @@ $culminado:#55A5E2;
 
 .ventanaResumen{
     border-radius: 8px;
+    width: max-content;
 
     .tituloDocumento{
         display: flex;
@@ -1867,8 +1868,8 @@ $culminado:#55A5E2;
 
 .resumen__wrap {
 	//min-height: 62vh;
-    max-height: 50vh;
-    height: 50vh;
+    max-height: 55vh;
+    height: 55vh;
 	display: grid;
 	grid-template-columns: 1fr 1fr .85fr;
 	grid-template-rows: 5% 1fr .8fr;

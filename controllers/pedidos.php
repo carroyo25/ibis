@@ -31,7 +31,7 @@
         }
 
         function vistaPrevia(){
-            echo $this->model->generarDocumento($_POST['cabecera'],$_POST['detalles']);
+            echo $this->model->generarPedido($_POST['cabecera'],$_POST['detalles']);
         }
 
         function nuevoPedido(){

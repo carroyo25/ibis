@@ -8,6 +8,8 @@ $(function() {
     $("#tablaPrincipal tbody").on("click","tr", function (e) {
         e.preventDefault();
 
+        $("#estado_firmas").val($(this).data('firmas'));
+
         $.post(RUTA+"firmas/ordenId", {id:$(this).data("indice")},
             function (data, textStatus, jqXHR) {
 
@@ -51,6 +53,7 @@ $(function() {
                 $("#transporte").val(data.cabecera[0].transporte);
                 $("#lentrega").val(data.cabecera[0].cdesalm);
                 $("#nro_pedido").val(data.cabecera[0].nrodoc);
+                
 
 
                 $("#direccion_almacen").val(data.cabecera[0].direccion);
@@ -243,7 +246,7 @@ $(function() {
         $.post(RUTA+"firmas/autoriza", {id:$("#codigo_orden").val()},
             function (data, textStatus, jqXHR) {
                 mostrarMensaje(data.mensaje,data.clase);
-                $("#pregunta").fadeOut();
+                $("#pregunta,#proceso").fadeOut();
             },
             "json"
         );
@@ -279,7 +282,13 @@ $(function() {
     $("#culminarAprobaciones").click(function(e){
         e.preventDefault();
 
-        $("#preguntaExpress").fadeIn();
+        try {
+            if ($("#estado_firmas").val() == 3) throw "La orden ya esta autorizada";
+
+            $("#preguntaExpress").fadeIn();
+        } catch (error) {
+            mostrarMensaje(error,"mensaje_error");    
+        }
 
         return false;
     });
@@ -305,6 +314,23 @@ $(function() {
         $("#preguntaExpress").fadeOut();
 
         return false;
+    });
+
+    $("#btnConsulta").on('click', function(e) {
+        e.preventDefault();
+
+        let str = $("#formConsulta").serialize();
+
+        $.post(RUTA+"firmas/filtroFirmas", str,
+            function (data, text, requestXHR) {
+                $("#tablaPrincipal tbody")
+                    .empty()
+                    .append(data);
+            },
+            "text"
+        );
+        
+        return false
     });
      
 })
