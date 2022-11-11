@@ -53,8 +53,6 @@ $(function() {
                 $("#transporte").val(data.cabecera[0].transporte);
                 $("#lentrega").val(data.cabecera[0].cdesalm);
                 $("#nro_pedido").val(data.cabecera[0].nrodoc);
-                
-
 
                 $("#direccion_almacen").val(data.cabecera[0].direccion);
                 $("#ncotiz").val(data.cabecera[0].cnumcot);
@@ -304,7 +302,6 @@ $(function() {
             "json"
         );
         
-
         return false;
     });
 

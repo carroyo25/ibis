@@ -165,9 +165,9 @@
                     $series[] = array("name"=>"Aprobados","y"=>$this->seriePie($aprobado));
                     $series[] = array("name"=>"Orden","y"=>$this->seriePie($orden));
                     $series[] = array("name"=>"Firmas","y"=>$this->seriePie($firma));
-                    $series[] = array("name"=>"Recepcionados","y"=>$this->seriePie($recepcion));
-                    $series[] = array("name"=>"Despachados","y"=>$this->seriePie($despacho));
-                    $series[] = array("name"=>"Asignados","y"=>$this->seriePie($asignado));
+                    $series[] = array("name"=>"Recepcion","y"=>$this->seriePie($recepcion));
+                    $series[] = array("name"=>"Despacho","y"=>$this->seriePie($despacho));
+                    $series[] = array("name"=>"Asignacion","y"=>$this->seriePie($asignado));
                     $series[] = array("name"=>"Anulados","y"=>$this->seriePie($anulado));
                 }
 
@@ -181,7 +181,7 @@
         }
 
         private function seriePie($valor){
-            $valor_devuelto = $valor == 0 ? "":$valor;
+            $valor_devuelto = $valor == 0 ? 0:$valor;
             
             return $valor_devuelto;
         }

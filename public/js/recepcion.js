@@ -1,6 +1,5 @@
 $(function(){
-    let accion = "",
-        co = 1;
+    let accion = "",co = 1;
 
     $("#esperar").fadeOut();
 
@@ -351,10 +350,10 @@ $(function(){
                     series:JSON.stringify(series()),
                     cerrar:cerrarOrden},
                         function (data, textStatus, jqXHR) {
-                        $("#codigo_ingreso").val(data);
+                        $("#codigo_ingreso").val(data.indice);
 
-                        /*if ($("#codigo_ingreso").val() !== 0)
-                            $("#fileAtachs").trigger("submit");*/
+                        if ($("#codigo_ingreso").val() !== 0)
+                            $("#fileAtachs").trigger("submit");
                         },
                         "text"
                     );
@@ -559,6 +558,23 @@ $(function(){
         }
 
         return false;
+    });
+
+    $("#btnConsulta").on('click', function(e) {
+        e.preventDefault();
+
+        let str = $("#formConsulta").serialize();
+
+        $.post(RUTA+"firmas/filtroRecepcion", str,
+            function (data, text, requestXHR) {
+                $("#tablaPrincipal tbody")
+                    .empty()
+                    .append(data);
+            },
+            "text"
+        );
+        
+        return false
     });
     
 })

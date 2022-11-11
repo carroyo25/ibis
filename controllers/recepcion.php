@@ -10,6 +10,7 @@
             $this->view->listaAlmacen = $this->model->listarAlmacen();
             $this->view->listaAprueba = $this->model->apruebaRecepción();
             $this->view->listaMovimiento = $this->model->listarParametros(12);
+            $this->view->listaCostosSelect = $this->model->costosPorUsuarioSelect($_SESSION['iduser']);
             $this->view->render('recepcion/index');
         }
 
@@ -30,7 +31,7 @@
         }
 
         function nuevoIngreso(){
-            echo $this->model->insertar($_POST['cabecera'],$_POST['detalles'],$_POST['series'],$_POST['cerrar']);
+            echo json_encode($this->model->insertar($_POST['cabecera'],$_POST['detalles'],$_POST['series'],$_POST['cerrar']));
         }
 
         function adjuntos(){
@@ -51,6 +52,10 @@
 
         function envioProveedor(){
             $this->model->enviarCorreIngreso($_POST['cabecera'],$_POST['detalles'],$_POST['condicion']);
+        }
+
+        function filtroIngresos(){
+            echo $this->model->filtrarNotasIngreso($_POST);
         }
     }
 ?>
