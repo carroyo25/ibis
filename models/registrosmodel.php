@@ -45,7 +45,7 @@
                                                         WHERE
                                                             tb_almausu.id_cuser = :usr
                                                         AND tb_almausu.nflgactivo = 1
-                                                        AND alm_despachocab.nEstadoDoc = 62 ");
+                                                        AND alm_despachocab.nEstadoDoc = 67 ");
                 $sql->execute(["usr"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowcount();
                 $item = 1;

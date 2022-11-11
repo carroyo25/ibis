@@ -15,6 +15,7 @@
             $this->view->listaPersonal = $this->model->listarPersonalRol(4);
             $this->view->listaMovimiento = $this->model->listarParametros(12);
             $this->view->listaCostos = $this->model->costosPorUsuario($_SESSION['iduser']);
+            $this->view->listaCostosSelect = $this->model->costosPorUsuarioSelect($_SESSION['iduser']);
 
             $this->view->render('salida/index');
         }

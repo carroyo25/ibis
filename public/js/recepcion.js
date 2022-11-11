@@ -565,7 +565,7 @@ $(function(){
 
         let str = $("#formConsulta").serialize();
 
-        $.post(RUTA+"firmas/filtroRecepcion", str,
+        $.post(RUTA+"recepcion/filtroRecepcion", str,
             function (data, text, requestXHR) {
                 $("#tablaPrincipal tbody")
                     .empty()

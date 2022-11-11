@@ -54,7 +54,7 @@
             $this->model->enviarCorreIngreso($_POST['cabecera'],$_POST['detalles'],$_POST['condicion']);
         }
 
-        function filtroIngresos(){
+        function filtroRecepcion(){
             echo $this->model->filtrarNotasIngreso($_POST);
         }
     }

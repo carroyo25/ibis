@@ -601,8 +601,6 @@
                     $lc = 0;
                 }	
             }
-
-            
             
             $pdf->Output($filename,'F');
             echo $filename;
@@ -695,7 +693,7 @@
                                                         AND tb_costusu.nflgactivo = 1
                                                         AND alm_recepcab.nEstadoDoc = 60
                                                         AND alm_recepcab.ncodpry LIKE :costos 
-                                                        AND alm_recepcab.cnumgia LIKE :guia 
+                                                        AND alm_recepcab.cnumguia LIKE :guia 
                                                         AND MONTH ( alm_recepcab.ffecdoc ) = :mes
                                                         AND YEAR ( alm_recepcab.ffecdoc ) = :anio");
                 $sql->execute(["usr"=>$_SESSION['iduser'],

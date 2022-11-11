@@ -471,7 +471,7 @@ $(function() {
         if(contenedor_padre == "listaCostos"){
             $("#codigo_costos").val(codigo);
 
-            $.post(RUTA+"salida/",
+            $.post(RUTA+"salida/ultimoIndice",
                 function (data, text, requestXHR) {
                     $("#numero").val(data);
                 },

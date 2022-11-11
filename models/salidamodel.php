@@ -145,9 +145,9 @@
                                                         ) AS costos,
                                                         UPPER(tb_area.cdesarea) AS area,
                                                         tb_area.ccodarea,
-                                                        tb_pedidocab.concepto,
+                                                        UPPER(tb_pedidocab.concepto) AS concepto,
                                                         LPAD(alm_recepdet.orden, 6, 0) AS orden,
-                                                        LPAD(tb_pedidocab.idreg, 6, 0) AS pedido,
+                                                        LPAD(tb_pedidocab.nrodoc, 6, 0) AS pedido,
                                                         LPAD(alm_recepcab.id_regalm, 6, 0) AS nota_ingreso,
                                                         tb_partidas.cdescripcion AS partida,
                                                         DATE_FORMAT(
@@ -449,6 +449,7 @@
                 $anio = $fecha[0];
 
                 //$cargo = $this->rrhhCargo($cabecera['codigo_aprueba']);
+                //aca probar el api
                 $cargo = "Jefe de Almacen";
 
                 $file = uniqid("NS")."_".$cabecera['numero']."_".$cabecera['codigo_almacen'].".pdf";
@@ -594,7 +595,7 @@
                     while ($rs = $sql->fetch()){
 
                         $fecha = $rs['fvence'] == "0000-00-00" ? "" : date("d-m-Y", strtotime($rs['fvence']));
-                        $series = "";
+                        $series = $this->buscarSeries($rs['id_cprod'],$rs['id_regalm'],$rs['ncodalm1']);
 
                         $salida.='<tr data-itemorden="'.$rs['niddetaOrd'].'" 
                                         data-itempedido="'.$rs['niddetaPed'].'" 
@@ -603,7 +604,7 @@
                                         <td class="textoCentro"><input type="checkbox"></td>
                                         <td class="textoCentro">'.str_pad($item,3,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
-                                        <td class="pl20px">'.$rs['cdesprod'].' '.$series.'</td>
+                                        <td class="pl20px">'.$rs['cdesprod'].' N/S :'.$series.'</td>
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                         <td class="textoDerecha pr20px">'.$rs['cantidad'].'</td>
                                         <td><input type="number" step="any" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"
@@ -889,7 +890,7 @@
                                                         ) AS descripcion,
                                                         tb_unimed.cabrevia,
                                                         LPAD(alm_recepcab.id_regalm, 6, 0) AS nota_ingreso,
-                                                        LPAD(tb_pedidocab.idreg, 6, 0) AS pedido,
+                                                        LPAD(tb_pedidocab.nrodoc, 6, 0) AS pedido,
                                                         alm_recepdet.niddeta,
                                                     
                                                     IF (
