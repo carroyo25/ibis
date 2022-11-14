@@ -298,6 +298,7 @@ $(function() {
                     },
                     "json"
                 );
+
             }
         } catch (error) {
             mostrarMensaje(error,'mensaje_error');
@@ -359,7 +360,7 @@ $(function() {
             });
 
 
-            if (result['numero_guia'] == "") throw "Ingrese el Nro. de Guia";
+            /*if (result['numero_guia'] == "") throw "Ingrese el Nro. de Guia";
             if (result['codigo_origen'] == "") throw "Seleccione Almacen origen";
             if (result['codigo_destino'] == "") throw "Seleccione Almacen destino";
             if (result['codigo_entidad'] == "") throw "Seleccione la empresa de transportes";
@@ -368,9 +369,8 @@ $(function() {
             if (result['codigo_traslado'] == "") throw "Seleccione la modalidad de traslado";
             if (result['codigo_tipo'] == "") throw "Seleccione el tipo de envio";
             if (result['nro_bultos'] == "") throw "Indique el Nro. de bultos";
-            if (result['peso_bruto'] == "") throw "Indique el peso bruto";
-            //if (result['nombre_conductor'] == "") throw "Escriba el nombre del conductor";
-            //if (result['placa'] == "") throw "Indique la placa del vehiculo";
+            if (result['peso_bruto'] == "") throw "Indique el peso bruto";*/
+           
 
             $.post(RUTA+"salida/guiaremision", {cabecera:result,
                                                 detalles:JSON.stringify(detalles()),
@@ -481,6 +481,14 @@ $(function() {
 
         return false;
     });
+
+    $("#atachDocs").click(function(e){
+        e.preventDefault();
+
+        console.log(detalles());
+
+        return false;
+    });
 })
 
 
@@ -491,11 +499,12 @@ detalles = () =>{
     
     TABLA.each(function(){
         let ITEM        = $(this).find('td').eq(1).text(),
-            IDDETORDEN  = $(this).data("idorden"),
-            IDDETPED    = $(this).data("idpedido"),
+            IDDETORDEN  = $(this).data("itemorden"),
+            IDDETPED    = $(this).data("itempedido"),
             IDPROD      = $(this).data("idproducto"),
-            IDINGRESO   = $(this).data("idingreso"),
-            PEDIDO      = $(this).data("pedido"),
+            IDINGRESO   = $(this).data("itemingreso"),
+            IDDESPACHO  = $(this).data("itemdespacho"),
+            PEDIDO      = $(this).data("itempedido"),
             ORDEN       = $(this).data("orden"),
             INGRESO     = $(this).data("ingreso"),
             ALMACEN     = $("#codigo_almacen").val(),
@@ -519,6 +528,7 @@ detalles = () =>{
         item['iddetorden']  = IDDETORDEN;
         item['iddetped']    = IDDETPED;
         item['idingreso']   = IDINGRESO;
+        item['iddespacho']    = IDDESPACHO;
         item['idprod']      = IDPROD;
         item['pedido']      = ORDEN;
         item['orden']       = PEDIDO;
@@ -528,7 +538,6 @@ detalles = () =>{
         item['obser']       = OBSER;
         item['vence']       = VENCE;
         item['serie']       = SERIE;
-        
 
         item['codigo']     = CODIGO;
         item['descripcion']= DESCRIPCION;

@@ -12,32 +12,7 @@
     </div>
     <div class="modal" id="esperar">
     </div>
-    <div class="modal" id="busqueda">
-        <div class="ventanaBusqueda w35por">
-            <div class="tituloVentana">
-                <span id="tituloBusqueda">Titulo Ventana</span>
-                <div>
-                    <a href="#"><i class="fas fa-window-close"></i></a>
-                </div>
-            </div>
-            <div class="textoBusqueda">
-                <input type="text" name="txtBuscar" id="txtBuscar" placeholder="Buscar">
-            </div>
-            <div class="tablaBusqueda">
-                <table class="tabla " id="tablaModulos">
-                    <thead >
-                        <tr class="stickytop">
-                            <th>Codigo</th>
-                            <th>Descripcion</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
+    
     <div class="modal" id="pregunta">
         <div class="ventanaPregunta">
             <h3>Desea culminar el pedido?</h3>
@@ -223,6 +198,32 @@
                 </form>
             </div>
             
+        </div>
+    </div>
+    <div class="modal" id="busqueda">
+        <div class="ventanaBusqueda w35por">
+            <div class="tituloVentana">
+                <span id="tituloBusqueda">Titulo Ventana</span>
+                <div>
+                    <a href="#"><i class="fas fa-window-close"></i></a>
+                </div>
+            </div>
+            <div class="textoBusqueda">
+                <input type="text" name="txtBuscar" id="txtBuscar" placeholder="Buscar">
+            </div>
+            <div class="tablaBusqueda">
+                <table class="tabla " id="tablaModulos">
+                    <thead >
+                        <tr class="stickytop">
+                            <th>Codigo</th>
+                            <th>Descripcion</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
     <!-- esta es la parte principal .. un bello error-->

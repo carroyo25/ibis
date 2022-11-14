@@ -55,11 +55,7 @@
         }
 
         function cerrarNota(){
-            echo $this->model->actualizarProcesos($_POST['detalles'],
-                                                    $_POST['despacho'],
-                                                    $_POST['pedido'],
-                                                    $_POST['orden'],
-                                                    $_POST['ingreso']);
+            echo $this->model->actualizarProcesos($_POST['detalles']);
         }
 
         function almacenes(){
@@ -78,5 +74,6 @@
             echo str_pad($indice,6,0,STR_PAD_LEFT);
         }
 
+        
     }
 ?>

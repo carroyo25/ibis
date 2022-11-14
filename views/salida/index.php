@@ -155,14 +155,14 @@
                                         <th class="">Codigo</th>
                                         <th class="">Descripcion</th>
                                         <th class="">Unidad</th>
-                                        <th width="7%">Cantidad</br>Orden</th>
+                                        <th width="7%">Cantidad</br>Recibida</th>
                                         <th width="7%">Pendiente</br>Entrega</th>
                                         <th width="7%">Cantidad</br>Despacho</th>
                                         <th width="7%">Saldo</br>Entregar</th>
                                         <th class="">Observaciones</th>
-                                        <th class="">Nro.Pedido</th>
-                                        <th class="">Nro.Orden</th>
-                                        <th class="">Nota<br>Ingreso</th>
+                                        <th width="4%">Pedido</th>
+                                        <th width="4%">Orden</th>
+                                        <th width="4%">Ingreso</th>
                                 </tr>
                             </thead>
                             <tbody>

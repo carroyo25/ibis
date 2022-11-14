@@ -6,6 +6,7 @@
         }
 
         function render(){
+            $this->view->listaCostosSelect = $this->model->costosPorUsuarioSelect($_SESSION['iduser']);
             $this->view->listaRecepciona = $this->model->listarPersonalRol(4);
             $this->view->listaGuias = $this->model->listarGuias();
             $this->view->render('registros/index');
