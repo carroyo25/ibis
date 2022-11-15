@@ -39,7 +39,7 @@ $(function(){
             e.preventDefault();
             //aca se ponen los tabs
             $("#tituloBusqueda").text(titulo);
-            $("#busqueda").css("z-index","5").fadeIn(); 
+            $("#busqueda").fadeIn(); 
         
             if (tabActive == "tab1") {
                 $.post(RUTA+"usuarios/modulos",
