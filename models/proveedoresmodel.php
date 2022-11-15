@@ -321,7 +321,7 @@
                                                         INNER JOIN tb_parametros AS bancos ON cm_entidadbco.ncodbco = bancos.nidreg
                                                         INNER JOIN tb_parametros AS monedas ON cm_entidadbco.cmoneda = monedas.nidreg 
                                                     WHERE
-                                                        cm_entidadbco.nitem = :id 
+                                                        cm_entidadbco.id_centi = :id 
                                                         AND cm_entidadbco.nflgactivo = 7");
                 $sql->execute(["id"=>$id]);
                 $rowCount = $sql->rowCount();
