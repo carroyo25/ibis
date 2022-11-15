@@ -2512,9 +2512,18 @@
             $pdf->SetFont('Arial','B',10);
             $pdf->Cell(20,6,"TOTAL :","LTB",0,"C",true);
             $pdf->SetFont('Arial','B',8);
-            $pdf->Cell(140,6,$this->convertir($cabecera['total']),"TBR",0,"L",true); 
+            
             $pdf->SetFont('Arial','B',10);
-            $pdf->Cell(30,6,$cabecera['total'],"1",1,"R",true);
+
+            if ($cabecera['radioIgv'] ==  0){
+                $pdf->Cell(140,6,$this->convertir($cabecera['total']),"TBR",0,"L",true); 
+                $pdf->Cell(30,6,$cabecera['total'],"1",1,"R",true);
+            }
+            else {
+                $pdf->Cell(140,6,$this->convertir($cabecera['total']*1.18),"TBR",0,"L",true);
+                $pdf->Cell(30,6,$cabecera['total']*1.18,"1",1,"R",true);
+            }
+                
 
             $pdf->Ln(1);
             $pdf->SetFont('Arial',"","7");
@@ -2524,14 +2533,13 @@
             $pdf->Cell(10,6,"",0,0);
 
             if ($cabecera['radioIgv'] ==  0) {
-                $pdf->Cell(48,6,"Valor Venta",0,0);
-                $pdf->Cell(20,6,$cabecera['total_numero'],0,1);
-            }else {
-                
-                $igv = round((floatval($cabecera['total_numero'])*0.18),2);
-                $total_sin_igv = round($cabecera['total_numero'] - $igv,2);
                 $pdf->Cell(45,6,"Valor Venta",0,0);
-                $pdf->Cell(20,6,$total_sin_igv,0,1);
+                $pdf->Cell(20,6,$cabecera['total'],0,1);
+            }else {
+                $total_sin_igv = round($cabecera['total_numero'],2);
+                
+                $pdf->Cell(45,6,"Valor Venta",0,0);
+                $pdf->Cell(20,6,$cabecera['total'],0,1);
             }
 
             $pdf->Cell(10,6,utf8_decode("Año"),1,0);   
@@ -2569,7 +2577,11 @@
             $pdf->SetFont('Arial',"B","8");
             $pdf->Cell(20,4,"TOTAL",1,0,"L",true);
             $pdf->Cell(15,4,$cabecera['moneda'],1,0,"C",true);
-            $pdf->Cell(20,4,$cabecera['total'],1,1,"R",true);
+
+            if ( $cabecera['radioIgv'] ==  0 )
+                $pdf->Cell(20,4,$cabecera['total'],1,1,"R",true);
+            else 
+                $pdf->Cell(20,4,$cabecera['total']*1.18,1,1,"R",true);
             
             $nreg = count($bancos);
 
@@ -2617,7 +2629,7 @@
                                                     INNER JOIN tb_parametros AS monedas ON cm_entidadbco.cmoneda = monedas.nidreg 
                                                 WHERE
                                                     cm_entidadbco.nflgactivo = 7 
-                                                    AND cm_entidadbco.nitem = :entidad");
+                                                    AND cm_entidadbco.id_centi = :entidad");
                 $sql->execute(["entidad"=>$entidad]);
                 $rowCount = $sql->rowCount();
 
