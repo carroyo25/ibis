@@ -7,7 +7,7 @@
     <title>Ingreso Almacen</title>
 </head>
 <body>
-<div class="modal" id="proceso">
+    <div class="modal" id="proceso">
         <div class="ventanaProceso tamanioProceso">
             <div class="cabezaProceso">
                 <form action="#" id="formProceso" autocomplete="off">
@@ -26,7 +26,7 @@
                         <span>Datos Generales</span>
                         <div>
                             <button type="button" id="updateDocument" title="Cerrar Salida" class="boton3">
-                                <i class="far fa-comments"></i> Confirmar Ingreso
+                                <i class="far fa-save"></i> Grabar Ingreso
                             </button>
                             <button type="button" id="closeProcess" title="Cerrar" class="boton3">
                                 <i class="fas fa-window-close"></i>
@@ -49,15 +49,6 @@
                                 <label for="costos">Ccostos:</label>
                                 <input type="text" name="costos" id="costos" readonly>
                             </div>
-                            <div class="column2">
-                                <label for="area">Area:</label>
-                                <input type="text" name="area" id="area" readonly>
-                            </div>
-                            <div class="column2">
-                                <label for="solicita">Solicita:</label>
-                                <input type="text" name="solicita" id="solicita" class="cerrarLista" readonly>
-                            </div>
-                            
                         </div>
                         <div class="seccion_medio">
                             <div class="column2">
@@ -68,26 +59,7 @@
                                 <label for="almacen_destino_despacho">Almacen Destino:</label>
                                 <input type="text" name="almacen_destino_despacho" id="almacen_destino_despacho" class="mostrarLista busqueda" readonly>
                             </div>
-                            <div class="column4_55">
-                                <div class="column2_3957">
-                                    <label for="pedido">Nro. Pedido :</label>
-                                    <input type="text" name="pedido" id="pedido" class="cerrarLista" readonly>
-                                </div>
-                                <div class="column2_46">
-                                    <label for="fecha_pedido">Fecha Doc. :</label>
-                                    <input type="date" name="fecha_pedido" id="fecha_pedido" class="cerrarLista pr5px" readonly>
-                                </div>
-                            </div>
-                            <div class="column4_55">
-                                <div class="column2_3957">
-                                    <label for="orden">Nro. Orden :</label>
-                                    <input type="text" name="orden" id="orden" class="cerrarLista" readonly>
-                                </div>
-                                <div class="column2_46">
-                                    <label for="fecha_orden">Fecha Doc. :</label>
-                                    <input type="date" name="fecha_orden" id="fecha_orden" class="cerrarLista" readonly>
-                                </div>
-                            </div>
+                            
                         </div>
                         <div class="seccion_derecha">
                             <div class="column2">
@@ -103,29 +75,14 @@
                                 <label for="concepto">Concepto:</label>
                                 <input type="text" name="concepto" id="concepto" readonly>
                             </div>
-                            <div class="column4_55">
-                                <div class="column2">
-                                    <label for="bultos">Bultos:</label>
-                                    <input type="text" name="bultos" id="bultos" class="w100por textDerecha" readonly>
-                                </div>
-                                <div class="column2_46">
-                                    <label for="peso">Peso :</label>
-                                    <input type="text" name="peso" id="peso" class="cerrarLista">
-                                </div>
-                            </div>
-                            <div class="column4_55">
-                                <div class="column2">
-                                    <label for="guia">Guia:</label>
-                                    <input type="text" name="guia" id="guia" class="w100por textDerecha" readonly>
-                                </div>
-                            </div>
+                            
                         </div>
                     </div>
                     <div class="barraOpciones">
                         <span>Detalles</span>
                         <div>
-                            <button type="button" id="guiaRemision" title="Guia de Remision" class="cerrarLista boton3">
-                                <i class="fas fa-upload"></i> Guia de Remision
+                            <button type="button" id="itemsImport" title="Importar Items" class="cerrarLista boton3">
+                                <i class="fas fa-upload"></i> Impotar Items
                             </button>
                         </div>
                     </div>
@@ -155,9 +112,39 @@
             </div>
         </div>
     </div>
+    <div class="modal" id="busqueda">
+        <div class="ventanaBusqueda w75por">
+            <div class="tituloVentana">
+                <span id="tituloBusqueda">Items Despachados</span>
+                <div>
+                    <a href="#" id="closeSearch"><i class="fas fa-window-close"></i></a>
+                </div>
+            </div>
+            <div class="textoBusqueda">
+                <input type="text" name="txtBuscar" id="txtBuscar" placeholder="Buscar" class="w90por">
+                <button type="button" class="boton3" id="btnAceptItems">Aceptar</button>
+            </div>
+            <div class="tablaBusqueda">
+                <table class="tablaWrap" id="ordenes">
+                    <thead>
+                        <tr class="stickytop" >
+                            <th>Orden</th>
+                            <th>Emisión</th>
+                            <th>Area</th>
+                            <th>Centro de Costos</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
     <div class="cabezaModulo">
         <h1>Registro Almacen</h1>
         <div>
+            <a href="#" id="nuevoRegistro"><i class="far fa-file"></i><p>Nuevo</p></a>
             <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
         </div>
     </div>
@@ -209,15 +196,13 @@
                     <th>Almacen Destino</th>
                     <th>Centro de Costos</th>
                     <th>Año</th>
-                    <th>Orden</th>
-                    <th>Pedido</th>
                     <th>Guia</br>Remision</th>
                     <th>Detalle</th>
                     <th>Estado</th>
                 </tr>
             </thead>
             <tbody>
-                <?php echo $this->listaGuias;?>
+                <?php echo $this->listaIngresos;?>
             </tbody>
         </table>
     </div>

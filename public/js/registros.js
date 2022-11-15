@@ -2,6 +2,18 @@ $(function(){
     var accion = "";
     var index = "";
 
+    $("#nuevoRegistro").click(function (e) { 
+        e.preventDefault();
+
+        $("#estado")
+            .removeClass()
+            .addClass("textoCentro w35por estado procesando");
+        $("#proceso").fadeIn();
+        accion = 'n';
+
+        return false;
+    });
+
     $("#esperar").fadeOut();
 
     $("#tablaPrincipal tbody").on("click","tr", function (e) {
@@ -121,7 +133,6 @@ $(function(){
         }
     });
 
-    
     $("#updateDocument").click(function(e){
         e.preventDefault();
 
@@ -154,6 +165,14 @@ $(function(){
         } catch (error) {
             mostrarMensaje(error,'mensaje_error');
         }
+
+        return false;
+    });
+
+    $("#itemsImport").click(function (e) { 
+        e.preventDefault();
+
+        $("#busqueda").fadeIn();
 
         return false;
     });

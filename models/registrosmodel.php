@@ -9,34 +9,7 @@
         public function listarGuias(){
             try {
                 $salida = "";
-                $sql = $this->db->connect()->prepare("SELECT
-                tb_almausu.nalmacen,
-                UPPER(tb_almacen.cdesalm) AS destino,
-                lg_docusunat.ffechdoc,
-                lg_docusunat.ffechtrasl,
-                lg_docusunat.cnumero,
-                lg_docusunat.nbultos,
-                lg_docusunat.npesotot,
-                alm_despachocab.nnronota,
-                UPPER(
-                        CONCAT_WS(
-                            ' ',
-                            tb_proyectos.ccodproy,
-                            tb_proyectos.cdesproy
-                        )
-                    ) AS costos
-                
-                FROM
-                tb_almausu
-                INNER JOIN tb_almacen ON tb_almausu.nalmacen = tb_almacen.ncodalm
-                INNER JOIN lg_docusunat ON tb_almausu.nalmacen = lg_docusunat.ncodalm2
-                INNER JOIN alm_despachocab ON lg_docusunat.id_despacho = alm_despachocab.id_regalm
-                INNER JOIN tb_proyectos ON alm_despachocab.ncodpry = tb_proyectos.nidreg
-                
-                WHERE
-                    tb_almausu.id_cuser = :usr
-                AND tb_almausu.nflgactivo = 1
-                AND alm_despachocab.nEstadoDoc = 67");
+                $sql = $this->db->connect()->prepare("");
                 $sql->execute(["usr"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowcount();
                 $item = 1;
@@ -48,7 +21,7 @@
                                         <td class="textoCentro">'.date("d/m/Y", strtotime($rs['ffechdoc'])).'</td>
                                         <td class="pl20px">'.$rs['destino'].'</td>
                                         <td class="pl20px">'.$rs['costos'].'</td>
-                                        <td class="textoCentro"></td>
+                                        <td class="textoCentro">'.$rs['anio'].'</td>
                                         <td class="textoCentro"></td>
                                         <td class="textoCentro"></td>
                                         <td class="textoCentro"></td>
@@ -65,6 +38,46 @@
                 return false;
             }
         }
+
+        public function itemsDespachos(){
+            $sql = $this->db->connect()->prepare("SELECT
+                                                UPPER( tb_almacen.cdesalm ) AS destino,
+                                                CONCAT_WS( ' ', rrhh.tabla_aquarius.apellidos, rrhh.tabla_aquarius.nombres ) AS solicita,
+                                                UPPER( ibis.tb_pedidocab.concepto ) AS concepto,
+                                                LPAD( ibis.tb_pedidocab.nrodoc, 6, 0 ) AS pedido,
+                                                ibis.lg_ordencab.cnumero AS orden,
+                                                ibis.cm_producto.ccodprod,
+                                                UPPER(
+                                                CONCAT_WS( ' ', ibis.cm_producto.cdesprod, ibis.tb_pedidodet.observaciones )) AS descripcion,
+                                                ibis.tb_proyectos.ccodproy,
+                                                ibis.tb_proyectos.cdesproy,
+                                                ibis.tb_area.cdesarea,
+                                                ibis.tb_partidas.ccodigo,
+                                                ibis.tb_partidas.cdescripcion,
+                                                ibis.alm_despachodet.niddeta AS itemdespacho,
+                                                ibis.tb_pedidodet.iditem AS itempedido,
+                                                ibis.alm_despachodet.ncantidad,
+                                                ibis.alm_recepserie.cdesserie,
+                                                ibis.alm_despachodet.nGuia 
+                                            FROM
+                                                ibis.tb_almausu
+                                                INNER JOIN ibis.alm_despachodet ON tb_almausu.nalmacen = alm_despachodet.ncodalm2
+                                                INNER JOIN ibis.tb_almacen ON alm_despachodet.ncodalm2 = tb_almacen.ncodalm
+                                                INNER JOIN ibis.tb_pedidodet ON alm_despachodet.niddetaPed = tb_pedidodet.iditem
+                                                INNER JOIN ibis.tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
+                                                INNER JOIN rrhh.tabla_aquarius ON ibis.tb_pedidocab.idsolicita = rrhh.tabla_aquarius.internal
+                                                INNER JOIN ibis.lg_ordencab ON ibis.tb_pedidocab.idorden = ibis.lg_ordencab.id_regmov
+                                                INNER JOIN ibis.cm_producto ON ibis.tb_pedidodet.idprod = ibis.cm_producto.id_cprod
+                                                INNER JOIN ibis.tb_proyectos ON ibis.tb_pedidodet.idcostos = ibis.tb_proyectos.nidreg
+                                                INNER JOIN ibis.tb_area ON ibis.tb_pedidocab.idarea = ibis.tb_area.ncodarea
+                                                LEFT JOIN ibis.tb_partidas ON ibis.tb_pedidocab.idpartida = ibis.tb_partidas.idreg
+                                                INNER JOIN ibis.alm_recepdet ON ibis.alm_despachodet.niddetaIng = ibis.alm_recepdet.niddeta
+                                                LEFT JOIN ibis.alm_recepserie ON ibis.alm_recepdet.niddeta = ibis.alm_recepserie.idref_movi 
+                                            WHERE
+                                                tb_almausu.id_cuser =:user 
+                                                AND tb_almausu.nflgactivo = 1 
+                                                AND alm_despachodet.nestadoreg = 67");
+                                            }
 
         public function importarDespacho($id){
             try {
@@ -144,7 +157,6 @@
             }
         }
         
-
         private function detallesDespacho($id){
             try {
                 $salida="";
