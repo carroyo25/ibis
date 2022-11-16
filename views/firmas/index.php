@@ -65,6 +65,9 @@
                             <button type="button" id="verCotizacion" title="Ver cotizacion" class="boton3">
                                 <i class="far fa-file-pdf"></i> Ver Adjuntos
                             </button>
+                            <button type="button" id="verPedido" title="Ver pedido" class="boton3">
+                                <i class="far fa-file-pdf"></i> Ver Pedido
+                            </button>
                             <button type="button" id="closeProcess" title="Cerrar" class="boton3">
                                 <i class="fas fa-window-close"></i>
                             </button>

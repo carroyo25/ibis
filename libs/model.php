@@ -2112,6 +2112,7 @@
                                                     lg_ordencab.userModifica,
                                                     UPPER(tb_pedidocab.concepto) AS concepto,
                                                     UPPER(tb_pedidocab.detalle) AS detalle,
+                                                    tb_pedidocab.docPdfAprob,
                                                     UPPER(CONCAT_WS(' ',tb_proyectos.ccodproy,tb_proyectos.cdesproy)) AS costos,
                                                     lg_ordencab.ncodpry,
                                                     lg_ordencab.ncodalm,

@@ -58,6 +58,7 @@ $(function() {
                 $("#ncotiz").val(data.cabecera[0].cnumcot);
                 $("#radioIgv").val(data.cabecera[0].nigv);
                 $("#total_numero").val(data.cabecera[0].ntotal);
+                $("#pedidopdf").val(data.cabecera[0].docPdfAprob);
                 
                 if (data.bocadillo != 0) {
                     $(".button__comment")
@@ -328,6 +329,15 @@ $(function() {
         );
         
         return false
+    });
+
+    $("#verPedido").on('click', function(e) {
+        e.preventDefault();
+
+        $(".ventanaVistaPrevia iframe").attr("src","public/documentos/pedidos/aprobados/"+$("#pedidopdf").val());
+        $("#vistaprevia").fadeIn();
+
+        return false;
     });
      
 })
