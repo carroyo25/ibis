@@ -306,10 +306,18 @@
             }
         }
 
-        public function quitarItem($id,$query){
+        public function quitarItem($id,$modulo,$usuario){
             try {
+
+                if ($modulo == 1){
+                    $query = "UPDATE tb_usermod SET flgactivo  = 0 WHERE ncodmod =:id AND iduser=:usr";
+                }else if ($modulo == 2){
+                    $query = "UPDATE tb_costusu SET nflgactivo = 0 WHERE ncodcos =:id AND iduser=:usr";
+                }else if ($modulo == 3){
+                    $query = "UPDATE tb_almausu SET nflgactivo = 0 WHERE ncodalm =:id AND iduser=:usr";
+                }
                 $sql = $this->db->connect()->prepare($query);
-                $sql->execute(["id"=>$id]);
+                $sql->execute(["id"=>$id,"usr"=>$usuario]);
                 $rowCount=$sql->fetchAll();
 
                 if ($rowCount > 0){

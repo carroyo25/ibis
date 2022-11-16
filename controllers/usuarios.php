@@ -63,10 +63,11 @@
         }
 
         function desactivaItem(){
-            $id = $_POST['id'];
-            $query = $_POST['query'];
+            $id     = $_POST['id'];
+            $modulo = $_POST['modulo'];
+            $usuario = $_POST['user'];
 
-            echo $this->model->quitarItem($id,$query);
+            echo $this->model->quitarItem($id,$modulo,$usuario);
         }
 
         function clave(){

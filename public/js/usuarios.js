@@ -347,7 +347,7 @@ $(function(){
         parent.remove();
 
         if (parent.data("grabado") == 1){
-            $.post(RUTA+"usuarios/desactivaItem", {id:$(this).attr("href"),query:"UPDATE tb_usermod SET flgactivo = 0 WHERE ncodmod =:id"},
+            $.post(RUTA+"usuarios/desactivaItem", {id:$(this).attr("href"),modulo:1,user:$("#cod_user").val()},
                 function (data, textStatus, jqXHR) {
                     fillTables($("#modulos tbody > tr"),1);
                 },
@@ -365,7 +365,7 @@ $(function(){
         parent.remove();
 
         if (parent.data("grabado") == 1){
-            $.post(RUTA+"usuarios/desactivaItem", {id:$(this).attr("href"),query:"UPDATE tb_costusu SET nflgactivo = 0 WHERE ncodcos =:id"},
+            $.post(RUTA+"usuarios/desactivaItem", {id:$(this).attr("href"),modulo:2},
                 function (data, textStatus, jqXHR) {
                     fillTables($("#costos tbody > tr"),1);
                 },
@@ -383,7 +383,7 @@ $(function(){
         parent.remove();
 
         if (parent.data("grabado") == 1){
-            $.post(RUTA+"usuarios/desactivaItem", {id:$(this).attr("href"),query:"UPDATE tb_almausu SET nflgactivo = 0 WHERE ncodalm =:id"},
+            $.post(RUTA+"usuarios/desactivaItem", {id:$(this).attr("href"),modulo:3},
                 function (data, textStatus, jqXHR) {
                     fillTables($("#almacenes tbody > tr"),1);
                 },
