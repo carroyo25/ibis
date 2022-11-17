@@ -539,7 +539,7 @@
         public function listarPedidosUsuarioFiltrados($parametros){
             try {
                 $salida = "";
-                $mes  = date("m")-1;
+                $mes  = date("m");
 
                 $tipo   = $parametros['tipoSearch'] == -1 ? "%" : "%".$parametros['tipoSearch']."%";
                 $costos = $parametros['costosSearch'] == -1 ? "%" : "%".$parametros['costosSearch']."%";
