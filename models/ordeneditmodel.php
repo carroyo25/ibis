@@ -565,13 +565,13 @@
             $sql->execute(["item"=>$itemPedido]);
         }
 
-        private function calcularDias($fechaEntrega){
+        /*private function calcularDias($fechaEntrega){
             $date1 = new DateTime(Date('Y-m-d'));
             $date2 = new DateTime($fechaEntrega);
             $diff = $date1->diff($date2);
             // will output 2 days
             return $diff->days . ' dias ';
-        }
+        }*/
 
         private function datosPedido($pedido){
             try {

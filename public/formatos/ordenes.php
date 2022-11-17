@@ -57,7 +57,7 @@
 			$this->SetTextColor(0,0,0);
 	 		$this->SetFillColor(229, 229, 229);
 	        $this->Cell(190,7,utf8_decode($this->titulo),0,1,'C'); //envia de parametro
-	        $this->SetFont('Arial','B',8);
+	        $this->SetFont('Arial','B',7);
             $this->Cell(190,6,utf8_decode($this->info),0,1,'C'); //envia proyecto
 	        $this->Cell(190,7,$condicion,0,0,'C');
 	        $this->SetXY(170,11);
@@ -139,7 +139,11 @@
 
             $this->SetFillColor(255, 255, 0);
             $this->SetFont('Arial','',5);
-            $this->Cell(64,3,utf8_decode($this->detalle),"R",1,"L",true); //envia de parametro
+            $this ->MultiCell(64,2,utf8_decode($this->detalle), 0, 'L', 1);
+            //$this->
+
+            $this->SetY(67);
+            //$this->Cell(64,3,utf8_decode($this->detalle),"R",1,"L",true); //envia de parametro
             $this->SetFont('Arial','',6);
             $this->Cell(16,3,utf8_decode(""),"BL",0);
             $this->Cell(13,3,utf8_decode("E-mail :"),"B",0);

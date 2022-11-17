@@ -70,8 +70,8 @@
                                     <td class="pl20px">'.$rs['area'].'</td>
                                     <td class="textoCentro '.strtolower($rs['atencion']).'">'.$rs['atencion'].'</td>
                                     <td class="textoCentro">'.$log.'</td>
-                                    <td class="textoCentro">'.$ope.'</td>
                                     <td class="textoCentro">'.$fin.'</td>
+                                    <td class="textoCentro">'.$ope.'</td>
                                     </tr>';
                     }
                 }
@@ -721,7 +721,7 @@
         public function ordenesFiltradas($parametros){
             try {
                 $salida = "";
-                $mes  = date("m")-1;
+                $mes  = date("m");
 
                 $tipo   = $parametros['tipoSearch'] == -1 ? "%" : "%".$parametros['tipoSearch']."%";
                 $costos = $parametros['costosSearch'] == -1 ? "%" : "%".$parametros['costosSearch']."%";
