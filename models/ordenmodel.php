@@ -654,7 +654,10 @@
                 );
                 
                 $mail->setFrom($origen,$nombre_envio);
-                $mail->addAddress($cabecera['correo_entidad'],$cabecera['entidad']);
+                //$mail->addAddress($cabecera['correo_entidad'],$cabecera['entidad']);
+                $mail->addAddress($_SESSION['correo'],$_SESSION['nombres']);
+                $mail->addAddress("Cesar Arroyo","carroyo@sepcon.net");
+                
 
                 $mail->Subject = $subject;
                     $mail->msgHTML(utf8_decode($messaje));
