@@ -2432,7 +2432,8 @@
             }
         }
 
-        //genera el pdf de la orden de compra
+       
+
         public function generarDocumento($cabecera,$condicion,$detalles){
             require_once("public/formatos/ordenes.php");
 

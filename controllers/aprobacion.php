@@ -37,5 +37,9 @@
         function filtroPedidos(){
             echo $this->model->filtroAprobados($_POST);
         }
+
+        function anulapedido() {
+            echo $this->model->anularPedido($_POST['id']);
+        }
     }
 ?>

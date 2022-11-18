@@ -411,6 +411,7 @@
                                                         tb_pedidocab.nivelAten,
                                                         estados.cdescripcion AS estado,
                                                         atencion.cdescripcion AS atencion,
+                                                        ibis.tb_proyectos.ccodproy,
                                                         estados.cabrevia
                                                     FROM
                                                         tb_costusu
@@ -430,7 +431,7 @@
                                         <td class="textoCentro">'.$rs['pedido'].'</td>
                                         <td class="pl20px">'.$rs['concepto'].'</td>
                                         <td class="textoCentro">'.date("d/m/Y", strtotime($rs['emision'])).'</td>
-                                        <td class="pl20px">'.$rs['proyecto'].'</td>
+                                        <td class="pl20px">'.$rs['ccodproy'].'</td>
                                         <td class="textoCentro '.$rs['cabrevia'].'">'.$rs['estado'].'</td>
                                     </tr>';
                     }
@@ -479,7 +480,7 @@
                                                         tb_costusu.id_cuser = :user 
                                                         AND tb_costusu.nflgactivo = 1
                                                         AND lg_ordencab.nEstadoDoc BETWEEN 49 AND 59
-                                                    ORDER BY ffechadoc DESC");
+                                                    ORDER BY id_regmov ASC");
                                                     
                 $sql->execute(["user"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowCount();

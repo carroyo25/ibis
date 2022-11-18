@@ -86,8 +86,8 @@
                                      <td class="pl20px">'.$rs['area'].'</td>
                                      <td class="textoCentro '.strtolower($rs['atencion']).'">'.$rs['atencion'].'</td>
                                      <td class="textoCentro">'.$log.'</td>
-                                     <td class="textoCentro">'.$ope.'</td>
                                      <td class="textoCentro">'.$fin.'</td>
+                                     <td class="textoCentro">'.$ope.'</td>
                                      </tr>';
                      }
                  }
@@ -121,12 +121,14 @@
             if ($rowCount > 0){
                 return array("mensaje"=>"Se autorizo la orden",
                             "clase"=>"mensaje_correcto",
-                            "esatdo"=>true);
+                            "estado"=>true,
+                            "listado"=>$this->listarOrdenesFirmas());
             }else {
                 return array("mensaje"=>"Ya autorizo la orden",
                             "clase"=>"mensaje_error",
                             "operador"=>$operador,
-                            "estado"=>false);
+                            "estado"=>false,
+                            "listado"=>$this->listarOrdenesFirmas());
             }
         }
 
@@ -245,7 +247,7 @@
                 $mes  = date("m");
 
                 $tipo   = $parametros['tipoSearch'] == -1 ? "%" : "%".$parametros['tipoSearch']."%";
-                $costos = $parametros['costosSearch'] == -1 ? "%" : "%".$parametros['costosSearch']."%";
+                $costos = $parametros['costosSearch'] == -1 ? " " : $parametros['costosSearch'];
                 $mes    = $parametros['mesSearch'] == -1 ? $mes :  $parametros['mesSearch'];
                 $anio   = $parametros['anioSearch'];
 
@@ -290,7 +292,7 @@
                                                             INNER JOIN tb_parametros ON lg_ordencab.nNivAten = tb_parametros.nidreg
                                                             WHERE
                                                                 lg_ordencab.nEstadoDoc = 59 
-                                                                AND lg_ordencab.ncodpry LIKE :costos 
+                                                                AND lg_ordencab.ncodpry = :costos 
                                                                 AND lg_ordencab.ntipmov LIKE :tipomov 
                                                                 AND MONTH ( lg_ordencab.ffechadoc ) = :mes
                                                                 AND YEAR ( lg_ordencab.ffechadoc ) = :anio");
@@ -334,8 +336,8 @@
                                      <td class="pl20px">'.$rs['area'].'</td>
                                      <td class="textoCentro '.strtolower($rs['atencion']).'">'.$rs['atencion'].'</td>
                                      <td class="textoCentro">'.$log.'</td>
-                                     <td class="textoCentro">'.$ope.'</td>
                                      <td class="textoCentro">'.$fin.'</td>
+                                     <td class="textoCentro">'.$ope.'</td>
                                      </tr>';
                      }
                  }

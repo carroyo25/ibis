@@ -202,7 +202,7 @@ $(function(){
         try {
             if (result['codigo_costos'] == '') throw "Elija Centro de Costos";
             if (result['codigo_area'] == '') throw "Elija Area";
-            //if (result['codigo_transporte'] == '') throw "Elija Tipo de Transporte";
+            if (result['codigo_transporte'] == '') throw "Elija Tipo de Transporte";
             if (result['concepto'] == '') throw "Escriba el concepto";
             if (result['codigo_solicitante'] == '') throw "Elija Solicitante";
             if (result['codigo_tipo'] == '') throw "Elija el tipo de pedido";
@@ -215,7 +215,7 @@ $(function(){
                         mostrarMensaje(data.mensaje,data.clase);
 
                         $("#fileAtachs").trigger("submit");
-                        $("#saveItem").addClass("desactivado");
+                        //$("#saveItem").addClass("desactivado");
                         
                         grabado = true;
                         accion = null;
@@ -226,6 +226,7 @@ $(function(){
                 $.post(RUTA+"pedidos/modificaPedido", {cabecera:result,detalles:JSON.stringify(itemsSave())},
                     function (data, textStatus, jqXHR) {
                         mostrarMensaje(data.mensaje,data.clase);
+                        accion = null;
                     },
                     "json"
             );
@@ -344,6 +345,7 @@ $(function(){
 
         accion = "u";
         $("#proceso").fadeIn();
+        $("#saveItem").remove("desactivado");
 
         return false;
     });
@@ -476,6 +478,7 @@ $(function(){
         if (grabado){
 
             $("#estadoPedido,#codigo_estado").val($(this).data("estado"));
+            $("#subject").val("Pedido : "+$("#numero").val()+ " - " + $("#costos").val());
 
             $.post(RUTA+"pedidos/buscaRol", {rol:$(this).data("rol"),cc:$("#codigo_costos").val()},
                 function (data, textStatus, jqXHR) {
@@ -548,21 +551,33 @@ $(function(){
     $("#btnConfirmSend").click(function (e) { 
         e.preventDefault();
 
-        let result = {};
+        try {
 
-        $.each($("#formProceso").serializeArray(),function(){
-            result[this.name] = this.value;
-        })
+            if ($("#subject").val() == " ") throw "Indique el motivo del correo";
+            //if ($("#mailMessage").length == 1) throw "Indique el mensaje del correo";
 
-        $("#esperar").fadeIn();
+            console.log($("#mailMessage").length);
+            let result = {};
 
-        $.post(RUTA+"pedidos/vistaprevia", {cabecera:result,detalles:JSON.stringify(itemsPreview())},
+            $.each($("#formProceso").serializeArray(),function(){
+                result[this.name] = this.value;
+            });
+
+            $("#esperar").fadeIn();
+
+            $.post(RUTA+"pedidos/vistaprevia", {cabecera:result,detalles:JSON.stringify(itemsPreview())},
                 function (data, textStatus, jqXHR) {
                     $("#vista_previa").val(data);
                     $("#formMails").trigger("submit"); 
                 },
                 "text"
             );
+            
+        } catch (error) {
+            mostrarMensaje(error,"mensaje_error");
+        }
+
+        
 
         
         return false;
@@ -608,11 +623,13 @@ $(function(){
     });
 
    //filtrar Item del pedido
-    $("#txtBuscar").on("keypress", function (e) {
+    $("#txtBuscarCodigo, #txtBuscarDescrip").on("keypress", function (e) {
     if(e.which == 13) {
         $("#esperar").fadeIn();
         
-        $.post(RUTA+"pedidos/filtraItems", {criterio:$(this).val(),tipo:$("#codigo_tipo").val()},
+        $.post(RUTA+"pedidos/filtraItems", {codigo:$("#txtBuscarCodigo").val(),
+                                            descripcion:$("#txtBuscarDescrip").val(),
+                                            tipo:$("#codigo_tipo").val()},
                 function (data, textStatus, jqXHR) {
                     $("#tablaModulos tbody")
                         .empty()

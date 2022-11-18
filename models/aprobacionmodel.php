@@ -88,7 +88,7 @@
             }
         }
 
-        private function enviarCorreo($adjunto,$correos){
+        private function enviarCorreo($adjunto,$correos,$pedido,$costos){
             require_once("public/PHPMailer/PHPMailerAutoload.php");
 
             $estadoEnvio= false;
@@ -125,7 +125,8 @@
                     $mail->addAddress($correos[$i]['ccorreo'],$correos[$i]['cnombres']);
                 }
 
-                $mail->Subject = "Pedido aprobado";
+                $texto = "Pedido : " .$pedido . "-" .$costos;
+                $mail->Subject = $texto;
                 $mail->msgHTML(utf8_decode("Pedido aprobado en el sistema"));
 
                 if (file_exists( 'public/documentos/pedidos/aprobados/'.$adjunto)) {
@@ -150,7 +151,7 @@
         public function aprobarPedido($cabecera,$detalles,$estado,$pedido){
             $adjunto = $this->genReqAprob($cabecera,$detalles);
             $correos = $this->correosLogisticos();
-            $envio  = $this->enviarCorreo($adjunto,$correos);
+            $envio  = $this->enviarCorreo($adjunto,$correos,$cabecera['numero'],$cabecera['costos']);
 
             $clase = "mensaje_correcto";
             $this->actCabPedAprueba($estado,$pedido,$adjunto);
@@ -298,10 +299,10 @@
         public function filtroAprobados($parametros){
             try {
                 $salida = "";
-                $mes  = date("m")-1;
+                $mes  = date("m");
 
                 $tipo   = $parametros['tipoSearch'] == -1 ? "%" : "%".$parametros['tipoSearch']."%";
-                $costos = $parametros['costosSearch'] == -1 ? "%" : "%".$parametros['costosSearch']."%";
+                $costos = $parametros['costosSearch'] == -1 ? "" : $parametros['costosSearch'];
                 $mes    = $parametros['mesSearch'] == -1 ? "%".$mes :  $parametros['mesSearch'];
                 $anio   = "%".$parametros['anioSearch'];
 
@@ -334,7 +335,7 @@
                                                         AND tb_pedidocab.estadodoc = 53 
                                                         AND tb_costusu.nflgactivo = 1 
                                                         AND ibis.tb_pedidocab.idtipomov LIKE :tipomov 
-                                                        AND ibis.tb_pedidocab.idcostos LIKE :costos 
+                                                        AND ibis.tb_pedidocab.idcostos = :costos 
                                                         AND MONTH ( ibis.tb_pedidocab.emision ) LIKE :mes 
                                                         AND YEAR ( ibis.tb_pedidocab.emision ) LIKE :anio 
                                                     ORDER BY
@@ -366,6 +367,39 @@
                 }
 
                 return $salida;
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function anularPedido($id) {
+            try {
+                $sql = $this->db->connect()->prepare("UPDATE tb_pedidocab 
+                                                SET tb_pedidocab.estadodoc = 105,
+                                                    tb_pedidocab.anula =:user
+                                                WHERE idreg = :id
+                                                LIMIT 1");
+                $sql->execute(["id" => $id,"user"=>$_SESSION['iduser']]);
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0) {
+                    $this->anularDetalles($id);
+
+                    return "Pedido Anulado";
+                }
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        private function anularDetalles($id){
+            try {
+                $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet 
+                                                SET tb_pedidodet.estadoItem = 105
+                                                WHERE idpedido = :id");
+                $sql->execute(["id" => $id]);
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;

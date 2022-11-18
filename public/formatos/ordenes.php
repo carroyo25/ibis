@@ -140,10 +140,7 @@
             $this->SetFillColor(255, 255, 0);
             $this->SetFont('Arial','',5);
             $this ->MultiCell(64,2,utf8_decode($this->detalle), 0, 'L', 1);
-            //$this->
-
             $this->SetY(67);
-            //$this->Cell(64,3,utf8_decode($this->detalle),"R",1,"L",true); //envia de parametro
             $this->SetFont('Arial','',6);
             $this->Cell(16,3,utf8_decode(""),"BL",0);
             $this->Cell(13,3,utf8_decode("E-mail :"),"B",0);

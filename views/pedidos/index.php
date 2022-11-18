@@ -214,7 +214,8 @@
                 </div>
             </div>
             <div class="textoBusqueda">
-                <input type="text" name="txtBuscar" id="txtBuscar" placeholder="Buscar">
+                <input type="text" name="txtBuscarCodigo" id="txtBuscarCodigo" placeholder="Buscar Codigo">
+                <input type="text" name="txtBuscarDescrip" id="txtBuscarDescrip" placeholder="Buscar Descripción">
             </div>
             <div class="tablaBusqueda">
                 <table class="tabla " id="tablaModulos">
@@ -263,7 +264,7 @@
                                 <button class="boton3" id="btnAtach"><i class="fas fa-paperclip"></i></button>
                             </div>
                             <div class="messaje">
-                                <div contenteditable="true">
+                                <div contenteditable="true" id="mailMessage">
 
                                 </div>
                             </div>

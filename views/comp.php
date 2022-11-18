@@ -60,10 +60,9 @@
         <div class="area2">
             <div id="dashboard_table">
                 <table class="tabla" id="tablaPanelOrdenes">
-                    <caption>Ordenes</caption>
                     <thead>
                         <tr>
-                            <th>Nro</th>
+                            <th>N°. Orden</th>
                             <th>Concepto</th>
                             <th>Emision</th>
                             <th>Centro Costos</th>
@@ -79,12 +78,11 @@
             </div>
         </div>
         <div class="area3">
-            <caption>Pedidos</caption>
             <div id="dashboard_table">
                 <table class="tabla" id="tablaPanelPedidos">
                    <thead>
                        <tr>
-                           <th>Nro</th>
+                           <th>Nro. Pedido</th>
                            <th>Concepto</th>
                            <th>Emision</th>
                            <th>Centro Costos</th>
