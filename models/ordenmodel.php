@@ -355,7 +355,7 @@
                                 "est"        =>49,
                                 "almacen"    =>$cab->codigo_almacen,
                                 "flag"       =>1,
-                                "atencion"   =>$cab->nivel_atencion,
+                                "atencion"   =>47,
                                 "verif"      =>$cab->codigo_verificacion,
                                 "cotizacion" =>$cab->ncotiz,
                                 "observacion"=>$cab->concepto]);
