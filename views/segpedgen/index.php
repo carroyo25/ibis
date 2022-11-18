@@ -367,7 +367,7 @@
     <script src="<?php echo constant('URL');?>public/code/modules/solid-gauge.js"></script>
     <script src="<?php echo constant('URL');?>public/code/modules/exporting.js"></script>
     <script src="<?php echo constant('URL');?>public/code/modules/export-data.js"></script>
-    <script src="<?php echo constant('URL');?>public/code/modules/accessibility.js"></script>-->
+    <script src="<?php echo constant('URL');?>public/code/modules/accessibility.js"></script>
 
     <script src="<?php echo constant('URL');?>public/js/gauge.js?<?php echo constant('VERSION')?>"></script>
 </body>

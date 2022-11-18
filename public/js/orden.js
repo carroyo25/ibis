@@ -251,7 +251,7 @@ $(function(){
 
         try {
             if ( costos  != $(this).data("costos")) throw "El item esta otro centro de costos";
-            if ( pedido  != $(this).data("pedido")) throw "El item esta en  un pedido diferente";
+            //if ( pedido  != $(this).data("pedido")) throw "El item esta en  un pedido diferente";
 
             let nFilas      = $.strPad($("#tablaDetalles tr").length,3),
                 codigo      = $(this).children('td:eq(5)').text(),
