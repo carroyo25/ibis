@@ -298,7 +298,7 @@ $(function(){
                             <<td class="textoDerecha pr5px"></td>
                             <td></td>
                             <td class="textoCentro">${nroreq}</td>
-                            <td class="pl20px"><input type="text"></td>
+                            <td class="pl20px"><textarea></textarea></td>
                         </tr>`;
 
                 $.post(RUTA+"orden/marcaItem", {id:$(this).data("iditem"),"estado":1},
@@ -312,8 +312,6 @@ $(function(){
             }else{
                 mostrarMensaje("Item duplicado","mensaje_error");
             }
-                
-
         } catch (error) {
             mostrarMensaje(error,'mensaje_error');
         }
@@ -765,6 +763,21 @@ $(function(){
         );
         
         return false
+    });
+
+    $("#itemCostos").change(function (e) { 
+        e.preventDefault(e);
+
+        $.post(RUTA+"orden/ItemsPorCostos", {costo:$(this).val()},
+            function (data, textStatus, jqXHR) {
+                $("#pedidos tbody")
+                    .empty()
+                    .append(data);
+            },
+            "text"
+        );
+
+        return false        
     });
 })
 

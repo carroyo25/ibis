@@ -75,5 +75,9 @@
         function filtroOrden(){
             echo $this->model->ordenesFiltradas($_POST);
         }
+
+        function ItemsPorCostos(){
+            echo $this->model->importarPedidosCostos($_POST['costo']);
+        }
     }
 ?>

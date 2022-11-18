@@ -1369,6 +1369,7 @@
   border-bottom: 1px solid #E0E0E0;
   outline: none;
   width: 80%;
+  font-size: 0.75rem;
 }
 .ventanaCorreo .cuerpoCorreo .correoIzq .opciones {
   margin-bottom: 5px;
@@ -1640,6 +1641,13 @@
   border: 1px solid #c2c2c2;
   width: 100%;
   outline: none;
+}
+.ventanaBusqueda select {
+  width: 100%;
+  border: 1px solid #c2c2c2;
+  outline: none;
+  padding-left: 3px;
+  border-radius: 8px;
 }
 .ventanaBusqueda .tablaBusqueda {
   height: 25rem;

@@ -2432,7 +2432,8 @@
             }
         }
 
-        //genera el pdf de la orden de compra
+       
+
         public function generarDocumento($cabecera,$condicion,$detalles){
             require_once("public/formatos/ordenes.php");
 
@@ -2517,12 +2518,12 @@
             $pdf->SetFont('Arial','B',10);
 
             if ($cabecera['radioIgv'] ==  0){
-                $pdf->Cell(140,6,$this->convertir($cabecera['total']),"TBR",0,"L",true); 
-                $pdf->Cell(30,6,$cabecera['total'],"1",1,"R",true);
+                $pdf->Cell(140,6,$this->convertir($cabecera['total_numero'])." ".$cabecera['moneda'],"TBR",0,"L",true); 
+                $pdf->Cell(30,6,number_format($cabecera['total'],2),"1",1,"R",true);
             }
             else {
-                $pdf->Cell(140,6,$this->convertir($cabecera['total']*1.18),"TBR",0,"L",true);
-                $pdf->Cell(30,6,$cabecera['total']*1.18,"1",1,"R",true);
+                $pdf->Cell(140,6,$this->convertir($cabecera['total_numero']*1.18)." ".$cabecera['moneda'],"TBR",0,"L",true);
+                $pdf->Cell(30,6,number_format($cabecera['total_numero']*1.18,2),"1",1,"R",true);
             }
                 
 
@@ -2535,12 +2536,12 @@
 
             if ($cabecera['radioIgv'] ==  0) {
                 $pdf->Cell(45,6,"Valor Venta",0,0);
-                $pdf->Cell(20,6,$cabecera['total'],0,1);
+                $pdf->Cell(10,6,number_format($cabecera['total'],2),0,1,"R");
             }else {
                 $total_sin_igv = round($cabecera['total_numero'],2);
                 
                 $pdf->Cell(45,6,"Valor Venta",0,0);
-                $pdf->Cell(20,6,$cabecera['total'],0,1);
+                $pdf->Cell(10,6,number_format($cabecera['total_numero'],2),0,1,"R");
             }
 
             $pdf->Cell(10,6,utf8_decode("Año"),1,0);   
@@ -2560,11 +2561,11 @@
                 $pdf->Cell(20,6,"",0,1); 
             }else{
                 $igv = round((floatval($cabecera['total_numero'])*0.18),2);
-                $total_sin_igv = round($cabecera['total_numero'] - $igv,2);
+                $total_sin_igv = number_format($cabecera['total_numero'] - $igv,2);
                 $pdf->SetX(146);
                 $pdf->Cell(8,6,"IGV",0,0);
-                $pdf->Cell(37,6,"(18%)",0,0);
-                $pdf->Cell(25,6,$igv,0,1);
+                $pdf->Cell(36,6,"(18%)",0,0);
+                $pdf->Cell(10,6,number_format($igv,2),0,1,"R");
             }
 
             $pdf->SetFont('Arial',"","7");
@@ -2580,9 +2581,9 @@
             $pdf->Cell(15,4,$cabecera['moneda'],1,0,"C",true);
 
             if ( $cabecera['radioIgv'] ==  0 )
-                $pdf->Cell(20,4,$cabecera['total'],1,1,"R",true);
+                $pdf->Cell(20,4,number_format($cabecera['total'],2),1,1,"R",true);
             else 
-                $pdf->Cell(20,4,$cabecera['total']*1.18,1,1,"R",true);
+                $pdf->Cell(20,4,number_format($cabecera['total_numero']*1.18,2),1,1,"R",true);
             
             $nreg = count($bancos);
 

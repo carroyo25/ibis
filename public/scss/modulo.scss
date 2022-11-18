@@ -1091,6 +1091,7 @@ $anulado:#c2c2c2;
                     border-bottom: 1px solid $bordeCajas;
                     outline: none;
                     width:80%;
+                    font-size:.75rem;
                 }
             }
 
@@ -1379,6 +1380,14 @@ $anulado:#c2c2c2;
         border:1px solid #c2c2c2;
         width: 100%;
         outline: none;
+    }
+    
+    select {
+        width: 100%;
+        border: 1px solid #c2c2c2;
+        outline: none;
+        padding-left: 3px;
+        border-radius: 8px;
     }
 
     .tablaBusqueda{

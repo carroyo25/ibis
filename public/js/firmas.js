@@ -244,6 +244,7 @@ $(function() {
 
         $.post(RUTA+"firmas/autoriza", {id:$("#codigo_orden").val()},
             function (data, textStatus, jqXHR) {
+                $(".itemsTabla table tbody").empty().append(data.listado);
                 mostrarMensaje(data.mensaje,data.clase);
                 $("#pregunta,#proceso").fadeOut();
             },

@@ -239,13 +239,15 @@
     <div class="modal" id="busqueda">
         <div class="ventanaBusqueda w75por">
             <div class="tituloVentana">
-                <span id="tituloBusqueda">Pedidos</span>
+                <span id="tituloBusqueda">Items</span>
                 <div>
                     <a href="#" id="closeSearch"><i class="fas fa-window-close"></i></a>
                 </div>
             </div>
             <div class="textoBusqueda">
-                <input type="text" name="txtBuscar" id="txtBuscar" placeholder="Buscar" class="w90por">
+                <select name="itemCostos" id="itemCostos">
+                    <?php echo $this->listaCostosSelect ?>
+                </select>
                 <button type="button" class="boton3" id="btnAceptItems">Aceptar</button>
             </div>
             <div class="tablaBusqueda">
@@ -254,11 +256,11 @@
                         <tr class="stickytop">
                             <th width="4%">Pedido</th>
                             <th width="5%">Emisión</th>
-                            <th width="15%">Concepto</th>
+                            <th>Concepto</th>
                             <th width="15%">Area</th>
-                            <th width="15%">Centro de Costos</th>
+                            <th>Centro Costos</th>
                             <th width="7%">Codigo</th>
-                            <th width="20%">Descripción</th>
+                            <th>Descripción</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -443,6 +445,7 @@
                     <th rowspan="2">Descripción</th>
                     <th rowspan="2">Centro Costos</th> 
                     <th rowspan="2">Area</th>
+                    <th rowspan="2">Proveedor</th>
                     <th rowspan="2">Atencion</th>
                     <th colspan="3" width="16%">Firmas</th>
                     <tr>

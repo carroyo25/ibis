@@ -255,6 +255,48 @@ $(function(){
         
         return false
     });
+
+    $("#cancelRequest").click(function (e) { 
+        e.preventDefault();
+        
+        $("#preguntaAnula").fadeIn();
+
+        return false;
+    });
+
+    $("#btnCancelarAnula").click(function (e) { 
+        e.preventDefault();
+
+        $("#preguntaAnula").fadeOut();
+        
+        return false;
+    });
+
+    $("#btnAceptarAnula").click(function (e) { 
+        e.preventDefault();
+
+        $("#ventanaEspera").fadeIn();
+
+        $.post(RUTA+"aprobacion/anulapedido", {id:$("#codigo_pedido").val()},
+            function (data, textStatus, jqXHR) {
+                $("#preguntaAnula").fadeOut();
+                $("#ventanaEspera").fadeIn();
+
+                mostrarMensaje(data,"mensaje_correcto");
+            },
+            "text"
+        );
+        
+        return false;
+    });
+
+    $("#btnCancelarAnula").click(function (e) { 
+        e.preventDefault();
+
+        $("#preguntaAnula").fadeOut();
+        
+        return false;
+    });
 })
 
 itemsPreview = () =>{

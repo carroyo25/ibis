@@ -35,7 +35,7 @@
                             <button type="button" id="preview" title="Vista Previa" class="boton3">
                                 <i class="fab fa-wpexplorer"></i> Ver Pedido
                             </button>
-                            <button type="button" id="requestAprob"  data-rol="68" data-estado="54" title="Solicitar Aprobacion" class="boton3">
+                            <button type="button" id="requestAprob"  data-rol="68" data-estado="54" title="Aprobar Pedido" class="boton3">
                                 <i class="fas fa-award"></i> Aprobar Pedido
                             </button>
                             <button type="button" id="closeProcess" title="Cierra la ventana actual" class="boton3">
@@ -97,6 +97,9 @@
                     </div>
                     <div class="barraOpciones">
                         <span>Detalles</span>
+                        <button type="button" id="cancelRequest"  title="Anular Pedido" class="boton4">
+                            <i class="fas fa-ban"></i> Anular Pedido
+                        </button>
                     </div>
                     <div class="tablaInterna mininoTablaInterna">
                         <table class="tabla" id="tablaDetalles">
@@ -146,10 +149,19 @@
     </div>
     <div class="modal" id="pregunta">
         <div class="ventanaPregunta">
-            <h3>Aprobar el pedido?</h3>
+            <h3>¿Aprobar el pedido?</h3>
             <div>
                 <button type="button" id="btnAceptarPregunta">Aceptar</button>
                 <button type="button" id="btnCancelarPregunta">Cancelar</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="preguntaAnula">
+        <div class="ventanaPregunta">
+            <h3>¿Anular el pedido?</h3>
+            <div>
+                <button type="button" id="btnAceptarAnula">Aceptar</button>
+                <button type="button" id="btnCancelarAnula">Cancelar</button>
             </div>
         </div>
     </div>

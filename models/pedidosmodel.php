@@ -272,7 +272,7 @@
                     $clase = "mensaje_correcto";
                 }else{
                     $respuesta = true;
-                    $mensaje = "Nada que modificar";
+                    $mensaje = "Pedido Modificado";
                     $clase = "mensaje_correcto";
                 }
 
@@ -418,8 +418,11 @@
             }
         }
 
-        public function filtrarItemsPedido($criterio,$tipo){
+        public function filtrarItemsPedido($codigo,$descripcion,$tipo){
             try {
+                $codigo = "%".$codigo."%";
+                $descripcion = "%".$descripcion."%";
+
                 $salida = '<tr><td class="textoCentro" colspan="3">No existe el producto buscado</tr>';
                 
                 $sql = $this->db->connect()->prepare("SELECT
@@ -436,10 +439,13 @@
                                                     INNER JOIN tb_parametros ON cm_producto.ntipo = tb_parametros.nidreg 
                                                 WHERE
                                                     cm_producto.flgActivo = 1 AND
-                                                    cm_producto.cdesprod LIKE :criterio AND
+                                                    cm_producto.cdesprod LIKE :descripcion AND
+                                                    cm_producto.ccodprod LIKE :codigo AND
                                                     cm_producto.ntipo=:tipo
                                                 LIMIT 100");
-                $sql->execute(["criterio"=>"%".$criterio."%","tipo"=>$tipo]);
+                $sql->execute(["descripcion"=>$descripcion,
+                                "tipo"=>$tipo,
+                                "codigo"=>$codigo]);
                 $rc = $sql->rowcount();
                 $item = 1;
 
@@ -466,10 +472,10 @@
         public function pedidosFiltrados($parametros){
             try {
                 $salida = "";
-                $mes  = date("m")-1;
+                $mes  = date("m");
 
                 $tipo   = $parametros['tipoSearch'] == -1 ? "%" : "%".$parametros['tipoSearch']."%";
-                $costos = $parametros['costosSearch'] == -1 ? "%" : "%".$parametros['costosSearch']."%";
+                $costos = $parametros['costosSearch'] == -1 ? "%" : $parametros['costosSearch'];
                 $mes    = $parametros['mesSearch'] == -1 ? $mes :  $parametros['mesSearch'];
                 $anio   = $parametros['anioSearch'];
 
@@ -508,10 +514,10 @@
                                                     WHERE
                                                         ibis.tb_pedidocab.usuario = :user 
                                                     AND ibis.tb_pedidocab.idtipomov LIKE :tipomov
-                                                    AND ibis.tb_pedidocab.idcostos LIKE :costos
+                                                    AND ibis.tb_pedidocab.idcostos = :costos
                                                     AND MONTH (ibis.tb_pedidocab.emision) = :mes
                                                     AND YEAR (ibis.tb_pedidocab.emision) = :anio
-                                                    AND ibis.tb_pedidocab.estadodoc");
+                                                    AND ibis.tb_pedidocab.estadodoc BETWEEN 49 AND 50");
                 $sql->execute(["user"=>$_SESSION['iduser'],
                                 "tipomov"=>$tipo,
                                 "costos"=>$costos,
