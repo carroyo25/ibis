@@ -533,21 +533,16 @@
             }
         }
 
-        public function listarPedidosUsuarioFiltrados($parametros){
+        public function listarPedidosFiltrados($parametros){
             try {
                 $salida = "";
-                $mes  = date("m")-1;
+                $mes  = date("m");
 
                 $tipo   = $parametros['tipoSearch'] == -1 ? "%" : "%".$parametros['tipoSearch']."%";
-                $costos = $parametros['costosSearch'] == -1 ? "%" : "%".$parametros['costosSearch']."%";
+                $costos = $parametros['costosSearch'] == -1 ? "" : $parametros['costosSearch'];
                 $mes    = $parametros['mesSearch'] == -1 ? $mes :  $parametros['mesSearch'];
                 $anio   = $parametros['anioSearch'];
 
-                echo $tipo;
-                echo $mes;
-                echo $costos;
-                echo $anio;
-                echo $_SESSION['iduser'];
                 
                 $sql = $this->db->connect()->prepare("SELECT
                                                         ibis.tb_pedidocab.idreg,
@@ -582,14 +577,12 @@
                                                     INNER JOIN ibis.tb_parametros AS atenciones ON ibis.tb_pedidocab.nivelAten = atenciones.nidreg
                                                     INNER JOIN ibis.tb_parametros AS estados ON ibis.tb_pedidocab.estadodoc = estados.nidreg
                                                     WHERE
-                                                        ibis.tb_pedidocab.usuario = :user 
-                                                    AND ibis.tb_pedidocab.idtipomov LIKE :tipomov
-                                                    AND ibis.tb_pedidocab.idcostos LIKE :costos
+                                                        ibis.tb_pedidocab.idtipomov LIKE :tipomov
+                                                    AND ibis.tb_pedidocab.idcostos = :costos
                                                     AND MONTH (ibis.tb_pedidocab.emision) = :mes
                                                     AND YEAR (ibis.tb_pedidocab.emision) = :anio
                                                     AND ibis.tb_pedidocab.estadodoc");
-                $sql->execute(["user"=>$_SESSION['iduser'],
-                                "tipomov"=>$tipo,
+                $sql->execute(["tipomov"=>$tipo,
                                 "costos"=>$costos,
                                 "mes"=>$mes,
                                 "anio"=>$anio]);
@@ -602,8 +595,8 @@
                                         <td class="textoCentro">'.str_pad($rs['nrodoc'],4,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.date("d/m/Y", strtotime($rs['emision'])).'</td>
                                         <td class="textoCentro">'.$tipo.'</td>
-                                        <td class="pl20px">'.utf8_decode($rs['concepto']).'</td>
-                                        <td class="pl20px">'.utf8_decode($rs['costos']).'</td>
+                                        <td class="pl20px">'.$rs['concepto'].'</td>
+                                        <td class="pl20px">'.$rs['costos'].'</td>
                                         <td class="pl20px">'.$rs['nombres'].'</td>
                                         <td class="textoCentro '.$rs['cabrevia'].'">'.$rs['estado'].'</td>
                                         <td class="textoCentro '.strtolower($rs['atencion']).'">'.$rs['atencion'].'</td>

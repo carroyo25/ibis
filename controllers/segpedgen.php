@@ -24,9 +24,8 @@
             echo $this->model->generarVistaOrden($_POST['id']);
         }
 
-
-        function filtroPedidos(){
-            echo $this->model->listarPedidosUsuarioFiltrados($_POST);
+        function filtroPedidosAdmin(){
+            echo $this->model->listarPedidosFiltrados($_POST);
         }
         
     }

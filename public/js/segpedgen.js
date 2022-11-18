@@ -222,7 +222,7 @@ $(function(){
 
         let srt = $("#formConsulta").serialize();
 
-        $.post(RUTA+"pedidoseg/filtroPedidos", srt,
+        $.post(RUTA+"segpedgen/filtroPedidosAdmin", srt,
             function (data, text, requestXHR) {
                 $("#tablaPrincipal tbody")
                     .empty()
