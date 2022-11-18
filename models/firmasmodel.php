@@ -22,6 +22,7 @@
                                                             lg_ordencab.nfirmaOpe,
                                                             UPPER(tb_pedidocab.concepto) AS concepto,
                                                             lg_ordencab.cdocPDF,
+                                                            cm_entidad.crazonsoc,
                                                             UPPER(
                                                                     CONCAT_WS(
                                                                         ' ',
@@ -47,6 +48,7 @@
                                                             INNER JOIN tb_area ON lg_ordencab.ncodarea = tb_area.ncodarea
                                                             INNER JOIN tb_proyectos ON lg_ordencab.ncodpry = tb_proyectos.nidreg
                                                             INNER JOIN tb_parametros ON lg_ordencab.nNivAten = tb_parametros.nidreg
+                                                            INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
                                                             WHERE
                                                                 lg_ordencab.nEstadoDoc = 59
                                                             ");
@@ -83,6 +85,7 @@
                                      <td class="textoCentro">'.date("d/m/Y", strtotime($rs['ffechadoc'])).'</td>
                                      <td class="pl20px">'.$rs['concepto'].'</td>
                                      <td class="pl20px">'.utf8_decode($rs['costos']).'</td>
+                                     <td class="pl20px">'.$rs['crazonsoc'].'</td>
                                      <td class="pl20px">'.$rs['area'].'</td>
                                      <td class="textoCentro '.strtolower($rs['atencion']).'">'.$rs['atencion'].'</td>
                                      <td class="textoCentro">'.$log.'</td>
@@ -206,7 +209,8 @@
                                                         INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
                                                         INNER JOIN tb_parametros ON lg_ordencab.ncodmon = tb_parametros.nidreg
                                                         INNER JOIN tb_pedidocab ON lg_ordencab.id_refpedi = tb_pedidocab.idreg
-                                                        INNER JOIN tb_proyectos ON lg_ordencab.ncodpry = tb_proyectos.nidreg 
+                                                        INNER JOIN tb_proyectos ON lg_ordencab.ncodpry = tb_proyectos.nidreg
+                                                        INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
                                                     WHERE
                                                         cm_producto.id_cprod = :codigo
                                                     ORDER BY
@@ -246,8 +250,8 @@
             try {
                 $mes  = date("m");
 
-                $tipo   = $parametros['tipoSearch'] == -1 ? "%" : "%".$parametros['tipoSearch']."%";
-                $costos = $parametros['costosSearch'] == -1 ? " " : $parametros['costosSearch'];
+                $tipo   = $parametros['tipoSearch'] == -1 ? "%": "%".$parametros['tipoSearch']."%";
+                $costos = $parametros['costosSearch'] == -1 ? "%": "%".$parametros['costosSearch']."%";
                 $mes    = $parametros['mesSearch'] == -1 ? $mes :  $parametros['mesSearch'];
                 $anio   = $parametros['anioSearch'];
 
@@ -283,16 +287,18 @@
                                                             tb_parametros.cdescripcion AS atencion,
                                                             (
                                                                 lg_ordencab.nfirmaLog + lg_ordencab.nfirmaFin + lg_ordencab.nfirmaOpe
-                                                            ) AS estado_firmas
+                                                            ) AS estado_firmas,
+                                                            cm_entidad.crazonsoc
                                                             FROM
                                                             lg_ordencab
                                                             INNER JOIN tb_pedidocab ON lg_ordencab.id_refpedi = tb_pedidocab.idreg
                                                             INNER JOIN tb_area ON lg_ordencab.ncodarea = tb_area.ncodarea
                                                             INNER JOIN tb_proyectos ON lg_ordencab.ncodpry = tb_proyectos.nidreg
                                                             INNER JOIN tb_parametros ON lg_ordencab.nNivAten = tb_parametros.nidreg
+                                                            INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
                                                             WHERE
                                                                 lg_ordencab.nEstadoDoc = 59 
-                                                                AND lg_ordencab.ncodpry = :costos 
+                                                                AND lg_ordencab.ncodpry LIKE :costos 
                                                                 AND lg_ordencab.ntipmov LIKE :tipomov 
                                                                 AND MONTH ( lg_ordencab.ffechadoc ) = :mes
                                                                 AND YEAR ( lg_ordencab.ffechadoc ) = :anio");
@@ -333,6 +339,7 @@
                                      <td class="textoCentro">'.date("d/m/Y", strtotime($rs['ffechadoc'])).'</td>
                                      <td class="pl20px">'.$rs['concepto'].'</td>
                                      <td class="pl20px">'.utf8_decode($rs['costos']).'</td>
+                                     <td class="pl20px">'.$rs['crazonsoc'].'</td>
                                      <td class="pl20px">'.$rs['area'].'</td>
                                      <td class="textoCentro '.strtolower($rs['atencion']).'">'.$rs['atencion'].'</td>
                                      <td class="textoCentro">'.$log.'</td>
