@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="content-type" content="application/vnd.ms-excel; charset=UTF-8">
     <title>Document</title>
 </head>
 <body>
@@ -214,7 +215,7 @@
         </form>
     </div>
     <div class="itemsCargoPlanner">
-        <table>
+        <table id="cargoPlanDescrip">
             <thead>
                 <tr >
                     <th>Items</th>
@@ -260,6 +261,7 @@
     </div>
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
     <script src="<?php echo constant('URL');?>public/js/funciones.js?<?php echo constant('VERSION')?>"></script>
+    <script src="<?php echo constant('URL');?>public/js/tableToExcel.js"></script>
     <script src="<?php echo constant('URL');?>public/js/cargoplanner.js?<?php echo constant('VERSION')?>"></script>
 </body>
 </html>
