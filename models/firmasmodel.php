@@ -10,48 +10,38 @@
             try {
                  $salida = "";
                  $sql = $this->db->connect()->query("SELECT
-                                                            lg_ordencab.id_regmov,
-                                                            lg_ordencab.cnumero,
-                                                            lg_ordencab.ffechadoc,
-                                                            lg_ordencab.nNivAten,
-                                                            lg_ordencab.nEstadoDoc,
-                                                            lg_ordencab.ncodpago,
-                                                            lg_ordencab.nplazo,
-                                                            lg_ordencab.nfirmaLog,
-                                                            lg_ordencab.nfirmaFin,
-                                                            lg_ordencab.nfirmaOpe,
-                                                            UPPER(tb_pedidocab.concepto) AS concepto,
-                                                            lg_ordencab.cdocPDF,
-                                                            cm_entidad.crazonsoc,
-                                                            UPPER(
-                                                                    CONCAT_WS(
-                                                                        ' ',
-                                                                        tb_area.ccodarea,
-                                                                        tb_area.cdesarea
-                                                                    )
-                                                                ) AS area,
-                                                            UPPER(
-                                                                    CONCAT_WS(
-                                                                        ' ',
-                                                                        tb_proyectos.ccodproy,
-                                                                        tb_proyectos.cdesproy
-                                                                    )
-                                                                ) AS costos,
-                                                            tb_proyectos.nidreg,
-                                                            tb_parametros.cdescripcion AS atencion,
-                                                            (
-                                                                lg_ordencab.nfirmaLog + lg_ordencab.nfirmaFin + lg_ordencab.nfirmaOpe
-                                                            ) AS estado_firmas
-                                                            FROM
-                                                            lg_ordencab
-                                                            INNER JOIN tb_pedidocab ON lg_ordencab.id_refpedi = tb_pedidocab.idreg
-                                                            INNER JOIN tb_area ON lg_ordencab.ncodarea = tb_area.ncodarea
-                                                            INNER JOIN tb_proyectos ON lg_ordencab.ncodpry = tb_proyectos.nidreg
-                                                            INNER JOIN tb_parametros ON lg_ordencab.nNivAten = tb_parametros.nidreg
-                                                            INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
-                                                            WHERE
-                                                                lg_ordencab.nEstadoDoc = 59
-                                                            ");
+                                                        lg_ordencab.id_regmov,
+                                                        lg_ordencab.cnumero,
+                                                        lg_ordencab.ffechadoc,
+                                                        lg_ordencab.nNivAten,
+                                                        lg_ordencab.nEstadoDoc,
+                                                        lg_ordencab.ncodpago,
+                                                        lg_ordencab.nplazo,
+                                                        lg_ordencab.nfirmaLog,
+                                                        lg_ordencab.nfirmaFin,
+                                                        lg_ordencab.nfirmaOpe,
+                                                        UPPER( tb_pedidocab.concepto ) AS concepto,
+                                                        lg_ordencab.cdocPDF,
+                                                        cm_entidad.crazonsoc,
+                                                        UPPER( CONCAT_WS( ' ', tb_area.ccodarea, tb_area.cdesarea ) ) AS area,
+                                                        UPPER( CONCAT_WS( ' ', tb_proyectos.ccodproy, tb_proyectos.cdesproy ) ) AS costos,
+                                                        tb_proyectos.nidreg,
+                                                        tb_parametros.cdescripcion AS atencion,
+                                                        ( lg_ordencab.nfirmaLog + lg_ordencab.nfirmaFin + lg_ordencab.nfirmaOpe ) AS estado_firmas 
+                                                    FROM
+                                                        lg_ordencab
+                                                        INNER JOIN tb_pedidocab ON lg_ordencab.id_refpedi = tb_pedidocab.idreg
+                                                        INNER JOIN tb_area ON lg_ordencab.ncodarea = tb_area.ncodarea
+                                                        INNER JOIN tb_proyectos ON lg_ordencab.ncodpry = tb_proyectos.nidreg
+                                                        INNER JOIN tb_parametros ON lg_ordencab.nNivAten = tb_parametros.nidreg
+                                                        INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi 
+                                                    WHERE
+                                                        lg_ordencab.nEstadoDoc = 59 
+                                                        AND (
+                                                            lg_ordencab.nfirmaLog IS NULL 
+                                                                OR lg_ordencab.nfirmaOpe IS NULL 
+                                                                OR lg_ordencab.nfirmaFin IS NULL 
+                                                        )");
                  $sql->execute();
                  $rowCount = $sql->rowCount();
  
@@ -73,7 +63,6 @@
                          }else {
                             $resaltado = "";
                          }
- 
  
                          $salida .='<tr class="pointer '.$resaltado.'" data-indice="'.$rs['id_regmov'].'" 
                                                          data-estado="'.$rs['nEstadoDoc'].'"
@@ -301,7 +290,9 @@
                                                                 AND lg_ordencab.ncodpry LIKE :costos 
                                                                 AND lg_ordencab.ntipmov LIKE :tipomov 
                                                                 AND MONTH ( lg_ordencab.ffechadoc ) = :mes
-                                                                AND YEAR ( lg_ordencab.ffechadoc ) = :anio");
+                                                                AND YEAR ( lg_ordencab.ffechadoc ) = :anio
+                                                                AND (lg_ordencab.nfirmaLog IS NULL  OR lg_ordencab.nfirmaOpe IS NULL  OR lg_ordencab.nfirmaFin IS NULL )");
+                                                                
                  $sql->execute(["tipomov"=>$tipo,
                                 "costos"=>$costos,
                                 "mes"=>$mes,
