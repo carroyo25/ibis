@@ -36,8 +36,8 @@
             <h3>Cambio de clave</h3>
             <div>
                 <form method="post" id="form__clave">
-                    <input type="password" name="nueva_clave" id="nueva_clave" placeholder="Ingrese su nueva clave">
-                    <input type="password" name="nueva_clave_comfirm" id="nueva_clave_comfirm" placeholder="Reescriba la clave anterior">
+                    <input type="password" name="nueva_clave" id="nueva_clave" placeholder="Ingrese su nueva clave" autocomplete>
+                    <input type="password" name="nueva_clave_comfirm" id="nueva_clave_comfirm" placeholder="Reescriba la clave anterior" autocomplete>
                 </form>
             </div>
             <div>

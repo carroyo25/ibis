@@ -387,11 +387,13 @@
   -ms-grid-column-span: 1;
   grid-area: 2/2/3/3;
   max-height: 45vh;
-  overflow: auto;
+  overflow: hidden;
   height: 42vh;
 }
 .dashBoard .area3 #dashboard_table {
-  margin-top: 20px;
+  margin-top: 13px;
+  height: 90%;
+  overflow: auto;
 }
 .dashBoard .area3 #dashboard_table table caption {
   font-size: 1.5rem;

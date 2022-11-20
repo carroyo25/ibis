@@ -7,6 +7,11 @@
     <title>Document</title>
 </head>
 <body>
+    <div class="modal" id="resumen">
+        <div class="resumen">
+
+        </div>
+    </div>
     <div class="dashBoard">
         <div class="area1">
             <div class="titulo">
@@ -19,8 +24,8 @@
                     </div>
                     <div>
                         <p>Ordenes Emitidas</p>
-                        <p id="pedidos_emitidos"></p>
-                        <p>ultimo emitido: 02/08/2022</p>
+                        <p id="ordenes_emitidas"></p>
+                        <p>Año: <?php echo date("Y") ?></p>
                     </div>
                 </div>
                 <div class="area1_section">
@@ -29,8 +34,8 @@
                     </div>
                     <div>
                         <p>Ordenes Aprobadas</p>
-                        <p>0</p>
-                        <p>ultimo aprobado: -</p>
+                        <p id="ordenes_aprobadas">0</p>
+                        <p>Año: <?php echo date("Y") ?></p>
                     </div>
                 </div>
                 <div class="area1_section">
@@ -38,9 +43,9 @@
                         <span><i class="fas fa-file-signature"></i></span>
                     </div>
                     <div>
-                        <p>Ordenes Culminados</p>
-                        <p>0</p>
-                        <p>ultimo culminada: 15/04/2022</p>
+                        <p>Ordenes Pendientes</p>
+                        <p id="ordenes_pendientes">0</p>
+                        <p>Año: <?php echo date("Y") ?></p>
                     </div>
                 </div>
             </div>
@@ -50,34 +55,36 @@
         </div>
         <div class="area2">
             <div class="titulo">
-                <p>Resumen Ordenes</p>
+                <div id="container"></div>
             </div>
-            <canvas id="myChart" style="width:100%;max-width:700px;height:320px"></canvas>
         </div>
         <div class="area3">
             <div class="titulo">
-                <p>Listado Documentos</p>
+                <p>Ordenes pendientes de firma</p>
             </div>
             <div id="dashboard_table">
-                <table class="tabla" id="tablaPanel">
-                   <thead>
-                       <tr>
-                           <th>Nro</th>
-                           <th>Concepto</th>
-                           <th>Emision</th>
-                           <th>Centro Costos</th>
-                           <th>Estado</th>
-                       </tr>
-                   </thead>
-                   <tbody>
-                   </tbody>
-                </table>
+                <div>
+                    <table class="tabla" id="tablaPanel">
+                    <thead class="stickytop">
+                        <tr>
+                            <th>N° Orden</th>
+                            <th>Concepto</th>
+                            <th>Emision</th>
+                            <th>Centro Costos</th>
+                            <th>Proveedor</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
-    <script src="<?php echo constant('URL');?>public/js/chart.js"></script>
-
+    <script src="<?php echo constant('URL');?>public/js/chart.js?<?php echo constant('VERSION')?>"></script>
+    <script src="<?php echo constant('URL');?>public/code/highcharts.js"></script>
+    <script src="<?php echo constant('URL');?>public/code/highcharts-3d.js"></script>
 </body>
 </html>

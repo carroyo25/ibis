@@ -341,11 +341,13 @@ $anulado:#c2c2c2;
     .area3 { 
         grid-area: 2 / 2 / 3 / 3;
         max-height: 45vh;
-        overflow: auto; 
+        overflow: hidden;
         height: 42vh;
-
+        
         #dashboard_table{
-            margin-top: 20px;
+            margin-top: 13px;
+            height: 90%;
+            overflow: auto;
 
             table {
                 caption {

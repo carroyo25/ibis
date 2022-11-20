@@ -186,33 +186,31 @@
             return $valor_devuelto;
         }
 
+        //para el dashboard de gerentes
         public function listarPanelOrdenes(){
             try {
                 $valores = [];
                 $salida ="";
-                $proceso = 0;
-                $consulta = 0;
-                $atendido = 0;
-                $aprobacion = 0;
-                $aprobado = 0;
-                $cotizando = 0;
-                $etiquetas = ["Proceso", "Firmas", "Atendido", "Aprobacion", "Aprobado","Culminados"];
-
 
                 $sql = $this->db->connect()->query("SELECT
-                                                        lg_ordencab.cnumero,
-                                                        lg_ordencab.ffechadoc,
+                                                        LPAD(lg_ordencab.cnumero,6,0) AS cnumero,
+                                                        DATE_FORMAT(lg_ordencab.ffechadoc,'%d/%m/%Y') AS ffechadoc,
                                                         lg_ordencab.ncodpry,
-                                                        tb_parametros.cdescripcion,
+                                                        UPPER(tb_parametros.cdescripcion) AS cdescripcion,
                                                         tb_parametros.cabrevia,
                                                         UPPER(tb_proyectos.cdesproy) AS proyecto,
                                                         tb_pedidocab.concepto,
-                                                        lg_ordencab.nEstadoDoc                                                
+                                                        lg_ordencab.nEstadoDoc,
+                                                        tb_proyectos.ccodproy,
+                                                        cm_entidad.crazonsoc                                               
                                                     FROM
                                                         lg_ordencab
                                                     INNER JOIN tb_parametros ON lg_ordencab.nEstadoDoc = tb_parametros.nidreg
                                                     INNER JOIN tb_proyectos ON lg_ordencab.ncodcos = tb_proyectos.nidreg
-                                                    INNER JOIN tb_pedidocab ON lg_ordencab.id_refpedi = tb_pedidocab.idreg");
+                                                    INNER JOIN tb_pedidocab ON lg_ordencab.id_refpedi = tb_pedidocab.idreg
+                                                    INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
+                                                    WHERE (lg_ordencab.nfirmaLog IS NULL  OR lg_ordencab.nfirmaOpe IS NULL  OR lg_ordencab.nfirmaFin IS NULL )");
+                                                    
                 $sql->execute();
                 $rowcount = $sql->rowcount();
 
@@ -222,37 +220,17 @@
                                         <td class="textoCentro">'.$rs['cnumero'].'</td>
                                         <td class="pl20px">'.$rs['concepto'].'</td>
                                         <td class="textoCentro">'.$rs['ffechadoc'].'</td>
-                                        <td class="pl20px">'.$rs['proyecto'].'</td>
+                                        <td class="pl20px">'.$rs['ccodproy'].'</td>
+                                        <td class="pl20px">'.$rs['crazonsoc'].'</td>
                                         <td class="textoCentro '.$rs['cabrevia'].'">'.$rs['cdescripcion'].'</td>
-                                    </tr>';
-                        
-                        if ($rs['nEstadoDoc'] == 49){ //procesando
-                            $proceso++;
-                        }else if($rs['nEstadoDoc'] == 59) {
-                            $consulta++;
-                        }else if($rs['nEstadoDoc'] == 52) {
-                            $atendido++;
-                        }else if($rs['nEstadoDoc'] == 53) {
-                            $aprobacion++;
-                        }else if($rs['nEstadoDoc'] == 54) {
-                            $aprobado++;
-                        }else if($rs['nEstadoDoc'] == 59) {
-                            $cotizando++;
-                        }
-                        
+                                    </tr>'; 
                     }
-
-                    array_push($valores,$proceso);
-                    array_push($valores,$consulta);
-                    array_push($valores,$atendido);
-                    array_push($valores,$aprobacion);
-                    array_push($valores,$aprobado);
-                    array_push($valores,$cotizando);
                 }
 
                 return array("contenido"=>$salida,
-                              "valores"=>$valores,
-                              "etiquetas"=>$etiquetas);
+                              "emitidas"=>$this->ordenTotal(),
+                              "aprobadas"=>$this->ordenTotalAprobadas(),
+                              "grafico"=>$this->graficoConteoOrdenes());
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
@@ -670,6 +648,77 @@
                 return $ret;
             } catch (PDOException $th) {
                 echo $th->getMessage();
+                return false;
+            }
+        }
+
+        //total ordenes por año
+        private function ordenTotal() {
+            try {
+                $sql = $this->db->connect()->query("SELECT
+                                                            COUNT( lg_ordencab.id_regmov ) AS total 
+                                                        FROM
+                                                            lg_ordencab 
+                                                        WHERE
+                                                            YEAR ( lg_ordencab.ffechadoc ) = 2022");
+                $sql->execute();
+                $result = $sql->fetchAll();
+
+                return $result[0]['total'];
+
+            }catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+         //total ordenes aprobadas por año
+         private function ordenTotalAprobadas() {
+            try {
+                $sql = $this->db->connect()->query("SELECT COUNT(lg_ordencab.id_regmov)AS total
+                                                    FROM lg_ordencab 
+                                                    WHERE 
+                                                    YEAR(lg_ordencab.ffechadoc) = 2022 
+                                                    AND lg_ordencab.nfirmaFin+lg_ordencab.nfirmaOpe+lg_ordencab.nfirmaOpe = 3");
+                $sql->execute();
+                $result = $sql->fetchAll();
+
+                return $result[0]['total'];
+
+            }catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        private function graficoConteoOrdenes() {
+            try {
+                $sql = $this->db->connect()->query("SELECT
+                                                cm_entidad.crazonsoc,
+                                                IF (lg_ordencab.ncodmon = 20,1,lg_ordencab.ntcambio) AS tipo_cambio,
+                                                SUM(IF (lg_ordencab.ncodmon = 20,1,lg_ordencab.ntcambio)*lg_ordencab.ntotal*(1+lg_ordencab.nigv)) AS total_en_soles,
+                                                count(lg_ordencab.id_centi) AS ordenes_asignadas
+                                            FROM
+                                                lg_ordencab
+                                                INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi 
+                                            WHERE
+                                                MONTH ( lg_ordencab.ffechadoc ) = MONTH(CURRENT_DATE())
+                                            GROUP BY cm_entidad.crazonsoc	
+                                            ORDER BY cm_entidad.crazonsoc");
+                $sql->execute();
+
+                $rowCount = $sql->rowCount();
+                
+                if ($rowCount > 0) {
+                    $docData = array();
+                    while($row=$sql->fetch(PDO::FETCH_ASSOC)){
+                        $docData[] = $row;
+                    }
+                }
+
+                return $docData;
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
                 return false;
             }
         }

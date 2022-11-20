@@ -291,7 +291,7 @@
                                                                 AND lg_ordencab.ntipmov LIKE :tipomov 
                                                                 AND MONTH ( lg_ordencab.ffechadoc ) = :mes
                                                                 AND YEAR ( lg_ordencab.ffechadoc ) = :anio
-                                                                AND (lg_ordencab.nfirmaLog IS NULL  OR lg_ordencab.nfirmaOpe IS NULL  OR lg_ordencab.nfirmaFin IS NULL )");
+                                                                AND (lg_ordencab.nfirmaLog IS NULL OR lg_ordencab.nfirmaOpe IS NULL  OR lg_ordencab.nfirmaFin IS NULL )");
                                                                 
                  $sql->execute(["tipomov"=>$tipo,
                                 "costos"=>$costos,

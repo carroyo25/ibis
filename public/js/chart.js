@@ -3,6 +3,9 @@ $(function () {
     $("#esperar").fadeOut();
 
     //esta parte controla la parte de informes del sistema
+    const fecha = new Date();
+    const anioActual = fecha.getFullYear();
+    const mesActual = fecha.getMonth() + 1;
 
     if ( $("#rol_user").val() == 9 || $("#rol_user").val() == 2) {
         $.ajax({
@@ -81,10 +84,64 @@ $(function () {
                 $("#tablaPanel tbody")
                   .empty()
                   .append(response.contenido);
-                
-                //$("#pedidos_emitidos").text(response.valores[0]);
+                  
+                  $("#ordenes_emitidas").text(response.emitidas);
+                  $("#ordenes_aprobadas").text(response.aprobadas);
+                  $("#ordenes_pendientes").text(response.emitidas-response.aprobadas);
 
-                
+                  //obtener los valores del array
+                  let categorias =  [];
+                  let cantidades = [];
+
+                  response.grafico.forEach(element => {
+                    categorias.push(element.crazonsoc);
+                    cantidades.push(element.ordenes_asignadas);
+                  });
+
+                  // Set up the chart
+                  const chart = new Highcharts.Chart({
+                    chart: {
+                      renderTo: 'container',
+                      type: 'column',
+                      options3d: {
+                        enabled: true,
+                        alpha: 0,
+                        beta: 15,
+                        depth: 50,
+                        viewDistance: 25
+                      }
+                    },
+                    xAxis: {
+                      categories:categorias
+                    },
+                    yAxis: {
+                      title: {
+                        enabled: false
+                      }
+                    },
+                    tooltip: {
+                      headerFormat: '<b>{point.key}</b><br>',
+                      pointFormat: 'Ordenes: {point.y}'
+                    },
+                    title: {
+                      text: 'Ordenes de compra por proveedor'
+                    },
+                    subtitle: {
+                      text: `Origen: Reporte Sical  ${mesActual} / ${anioActual}`
+                    },
+                    legend: {
+                      enabled: false
+                    },
+                    plotOptions: {
+                      column: {
+                        depth: 30
+                      }
+                    },
+                    series: [{
+                      data: cantidades,
+                      colorByPoint: true
+                    }]
+                  });
             }
         });
     }else if ( $("#rol_user").val() == 3 ) {
@@ -103,7 +160,7 @@ $(function () {
                 let valoresPedidos =  [response.series[0],
                                        response.series[1]];
 
-                                       Highcharts.chart('containerPie', {
+                                    Highcharts.chart('containerPie', {
                                         chart: {
                                           type: 'pie',
                                           options3d: {
