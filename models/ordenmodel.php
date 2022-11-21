@@ -31,7 +31,8 @@
                                                         lg_ordencab.nfirmaFin,
                                                         lg_ordencab.nfirmaOpe,
                                                         tb_parametros.cdescripcion AS atencion,
-                                                        cm_entidad.crazonsoc 
+                                                        cm_entidad.crazonsoc,
+                                                        UPPER(tb_user.cnameuser) AS cnameuser 
                                                     FROM
                                                         tb_costusu
                                                         INNER JOIN lg_ordencab ON tb_costusu.ncodproy = lg_ordencab.ncodpry
@@ -39,7 +40,8 @@
                                                         INNER JOIN tb_area ON lg_ordencab.ncodarea = tb_area.ncodarea
                                                         INNER JOIN tb_proyectos ON lg_ordencab.ncodpry = tb_proyectos.nidreg
                                                         INNER JOIN tb_parametros ON lg_ordencab.nNivAten = tb_parametros.nidreg
-                                                        INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi 
+                                                        INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
+                                                        INNER JOIN tb_user ON lg_ordencab.id_cuser = tb_user.iduser 
                                                     WHERE
                                                         tb_costusu.id_cuser = :user 
                                                         AND tb_costusu.nflgactivo = 1
@@ -72,6 +74,7 @@
                                     <td class="pl20px">'.utf8_decode($rs['ccodproy']).'</td>
                                     <td class="pl20px">'.$rs['area'].'</td>
                                     <td class="pl20px">'.$rs['crazonsoc'].'</td>
+                                    <td class="pl5px">'.$rs['cnameuser'].'</td>
                                     <td class="textoCentro '.strtolower($rs['atencion']).'">'.$rs['atencion'].'</td>
                                     <td class="textoCentro">'.$log.'</td>
                                     <td class="textoCentro">'.$fin.'</td>

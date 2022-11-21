@@ -446,6 +446,7 @@
                     <th rowspan="2">Centro Costos</th> 
                     <th rowspan="2">Area</th>
                     <th rowspan="2">Proveedor</th>
+                    <th rowspan="2">Usuario</th>
                     <th rowspan="2">Atencion</th>
                     <th colspan="3" width="16%">Firmas</th>
                     <tr>
