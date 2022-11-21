@@ -65,7 +65,7 @@
         </div>
         <div class="areaTrabajo">
             <div class="menu">
-                <div>
+                <div class="titulo_menu">
                     <h1>Menu</h1>
                     <a href="#"><i class="fas fa-bars"></i></a>
                 </div>

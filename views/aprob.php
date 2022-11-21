@@ -86,5 +86,6 @@
     <script src="<?php echo constant('URL');?>public/js/chart.js?<?php echo constant('VERSION')?>"></script>
     <script src="<?php echo constant('URL');?>public/code/highcharts.js"></script>
     <script src="<?php echo constant('URL');?>public/code/highcharts-3d.js"></script>
+    <script src="<?php echo constant('URL');?>public/code/modules/accessibility.js"></script>
 </body>
 </html>

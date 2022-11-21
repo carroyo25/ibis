@@ -29,11 +29,13 @@
                                                         alm_recepcab.idref_abas,
                                                         alm_recepcab.nEstadoDoc,
                                                         alm_recepcab.nflgCalidad,
+                                                        tb_proyectos.ccodproy,
                                                         UPPER( tb_almacen.cdesalm ) AS almacen,
                                                         UPPER( tb_proyectos.cdesproy ) AS proyecto,
                                                         UPPER( tb_area.cdesarea ) AS area,
-                                                        lg_ordencab.cnumero AS orden,
-                                                        LPAD( tb_pedidocab.nrodoc, 6, 0 ) pedido 
+                                                        LPAD(lg_ordencab.cnumero,6,0) AS orden,
+                                                        LPAD(tb_pedidocab.nrodoc,6,0 ) pedido,
+                                                        cm_entidad.crazonsoc
                                                     FROM
                                                         tb_costusu
                                                         INNER JOIN alm_recepcab ON tb_costusu.ncodproy = alm_recepcab.ncodpry
@@ -41,7 +43,8 @@
                                                         INNER JOIN tb_proyectos ON alm_recepcab.ncodpry = tb_proyectos.nidreg
                                                         INNER JOIN tb_area ON alm_recepcab.ncodarea = tb_area.ncodarea
                                                         INNER JOIN lg_ordencab ON alm_recepcab.idref_abas = lg_ordencab.id_regmov
-                                                        INNER JOIN tb_pedidocab ON alm_recepcab.idref_pedi = tb_pedidocab.idreg 
+                                                        INNER JOIN tb_pedidocab ON alm_recepcab.idref_pedi = tb_pedidocab.idreg
+                                                        INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi 
                                                     WHERE
                                                         tb_costusu.id_cuser = :usr 
                                                         AND tb_costusu.nflgactivo = 1
@@ -54,8 +57,9 @@
                                     <td class="textoCentro">'.$rs['cnumguia'].'</td>
                                     <td class="textoCentro">'.date("d/m/Y", strtotime($rs['ffecdoc'])).'</td>
                                     <td class="pl20px">'.$rs['almacen'].'</td>
-                                    <td class="pl20px">'.$rs['proyecto'].'</td>
+                                    <td class="pl20px">'.$rs['ccodproy'].'</td>
                                     <td class="pl20px">'.$rs['area'].'</td>
+                                    <td class="pl20px">'.$rs['crazonsoc'].'</td>
                                     <td class="textoCentro">'.$rs['orden'].'</td>
                                     <td class="textoCentro">'.$rs['pedido'].'</td>
                                 </tr>';
@@ -278,32 +282,32 @@
                 $salida = "";
                 $sql = $this->db->connect()->prepare("SELECT
                                                         lg_ordencab.id_regmov,
-                                                        tb_costusu.ncodproy, 
-                                                        lg_ordencab.id_refpedi, 
-                                                        lg_ordencab.ntipdoc, 
-                                                        lg_ordencab.cnumero, 
-                                                        lg_ordencab.ffechadoc, 
-                                                        lg_ordencab.nEstadoDoc, 
-                                                        CONCAT_WS(' ',tb_proyectos.ccodproy,UPPER(tb_proyectos.cdesproy)) AS costos, 
-                                                        CONCAT_WS(' ',tb_area.ccodarea,UPPER(tb_area.cdesarea)) AS area
+                                                        tb_costusu.ncodproy,
+                                                        lg_ordencab.id_refpedi,
+                                                        lg_ordencab.ntipdoc,
+                                                        LPAD( lg_ordencab.cnumero, 6, 0 ) AS cnumero,
+                                                        DATE_FORMAT( lg_ordencab.ffechadoc, '%d/%m/%Y' ) AS ffechadoc,
+                                                        lg_ordencab.nEstadoDoc,
+                                                        tb_proyectos.ccodproy,
+                                                        CONCAT_WS(
+                                                            ' ',
+                                                            tb_proyectos.ccodproy,
+                                                        UPPER( tb_proyectos.cdesproy )) AS costos,
+                                                        CONCAT_WS(
+                                                            ' ',
+                                                            tb_area.ccodarea,
+                                                        UPPER( tb_area.cdesarea )) AS area,
+                                                        cm_entidad.crazonsoc 
                                                     FROM
                                                         tb_costusu
-                                                        INNER JOIN
-                                                        lg_ordencab
-                                                        ON 
-                                                            tb_costusu.ncodproy = lg_ordencab.ncodpry
-                                                        INNER JOIN
-                                                        tb_proyectos
-                                                        ON 
-                                                            lg_ordencab.ncodpry = tb_proyectos.nidreg
-                                                        INNER JOIN
-                                                        tb_area
-                                                        ON 
-                                                            lg_ordencab.ncodarea = tb_area.ncodarea
+                                                        INNER JOIN lg_ordencab ON tb_costusu.ncodproy = lg_ordencab.ncodpry
+                                                        INNER JOIN tb_proyectos ON lg_ordencab.ncodpry = tb_proyectos.nidreg
+                                                        INNER JOIN tb_area ON lg_ordencab.ncodarea = tb_area.ncodarea
+                                                        INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi 
                                                     WHERE
-                                                        tb_costusu.id_cuser = :usr AND
-                                                        tb_costusu.nflgactivo = 1 AND
-                                                        lg_ordencab.nEstadoDoc = 60");
+                                                        tb_costusu.id_cuser = :usr 
+                                                        AND tb_costusu.nflgactivo = 1 
+                                                        AND lg_ordencab.nEstadoDoc = 60");
                 $sql->execute(["usr"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowCount();
 
@@ -319,7 +323,8 @@
                                     <td class="textoCentro">'.$rs['cnumero'].'</td>
                                     <td class="textoCentro">'.$rs['ffechadoc'].'</td>
                                     <td class="pl20px">'.$rs['area'].'</td>
-                                    <td class="pl20px">'.$rs['costos'].'</td>
+                                    <td class="pl20px">'.$rs['ccodproy'].'</td>
+                                    <td class="pl20px">'.$rs['crazonsoc'].'</td>
                                 </tr>';
                         }
 
@@ -337,7 +342,7 @@
             try {
                 $sql = $this->db->connect()->prepare("SELECT
                                                         lg_ordencab.id_regmov,
-                                                        lg_ordencab.cnumero,
+                                                        LPAD(lg_ordencab.cnumero,6,0) AS cnumero,
                                                         lg_ordencab.ffechadoc,
                                                         lg_ordencab.ncodcos,
                                                         lg_ordencab.ncodarea,
@@ -678,8 +683,10 @@
                                                         UPPER( tb_almacen.cdesalm ) AS almacen,
                                                         UPPER( tb_proyectos.cdesproy ) AS proyecto,
                                                         UPPER( tb_area.cdesarea ) AS area,
-                                                        lg_ordencab.cnumero AS orden,
-                                                        LPAD( tb_pedidocab.nrodoc, 6, 0 ) pedido 
+                                                        LPAD(lg_ordencab.cnumero,6,0 )AS orden,
+                                                        LPAD( tb_pedidocab.nrodoc, 6, 0 ) pedido,
+                                                        cm_entidad.crazonsoc,
+                                                        tb_proyectos.ccodproy 
                                                     FROM
                                                         tb_costusu
                                                         INNER JOIN alm_recepcab ON tb_costusu.ncodproy = alm_recepcab.ncodpry
@@ -687,7 +694,8 @@
                                                         INNER JOIN tb_proyectos ON alm_recepcab.ncodpry = tb_proyectos.nidreg
                                                         INNER JOIN tb_area ON alm_recepcab.ncodarea = tb_area.ncodarea
                                                         INNER JOIN lg_ordencab ON alm_recepcab.idref_abas = lg_ordencab.id_regmov
-                                                        INNER JOIN tb_pedidocab ON alm_recepcab.idref_pedi = tb_pedidocab.idreg 
+                                                        INNER JOIN tb_pedidocab ON alm_recepcab.idref_pedi = tb_pedidocab.idreg
+                                                        INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
                                                     WHERE
                                                         tb_costusu.id_cuser = :usr 
                                                         AND tb_costusu.nflgactivo = 1
@@ -709,8 +717,9 @@
                                     <td class="textoCentro">'.$rs['cnumguia'].'</td>
                                     <td class="textoCentro">'.date("d/m/Y", strtotime($rs['ffecdoc'])).'</td>
                                     <td class="pl20px">'.$rs['almacen'].'</td>
-                                    <td class="pl20px">'.$rs['proyecto'].'</td>
+                                    <td class="pl20px">'.$rs['ccodproy'].'</td>
                                     <td class="pl20px">'.$rs['area'].'</td>
+                                    <td class="pl20px">'.$rs['crazonsoc'].'</td>
                                     <td class="textoCentro">'.$rs['orden'].'</td>
                                     <td class="textoCentro">'.$rs['pedido'].'</td>
                                 </tr>';

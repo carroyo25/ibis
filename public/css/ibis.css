@@ -66,7 +66,6 @@ input[type=number]::-webkit-outer-spin-button {
   font-family: Arial;
   font-weight: bold;
   font-size: 0.9rem;
-  padding: 10px 39px;
   text-decoration: none;
   text-shadow: 0px 1px 0px #ffffff;
 }
@@ -543,4 +542,55 @@ input[type=number]::-webkit-outer-spin-button {
   -webkit-animation-delay: 0s;
           animation-delay: 0s;
   background: #fff;
+}
+
+@media screen and (max-width: 1024px) {
+  .menu {
+    width: -webkit-max-content;
+    width: -moz-max-content;
+    width: max-content;
+  }
+  .menu .titulo_menu h1 {
+    font-size: 1rem;
+  }
+  .menu .titulo_menu i {
+    font-size: 12px !important;
+  }
+  .acordeon .link {
+    font-size: 0.5rem;
+  }
+  .acordeon .submenu a {
+    font-size: 0.6rem;
+  }
+  .areaTrabajo .ventana {
+    margin-left: 2rem;
+    width: 100%;
+  }
+  .dashBoard {
+    padding: 0;
+    grid-column-gap: 0.5rem;
+    grid-row-gap: 0.5rem;
+  }
+  .dashBoard > div {
+    padding: 5px;
+  }
+  .dashBoard .area1_description {
+    margin: 1rem 0 !important;
+  }
+  .dashBoard .area3 * {
+    font-size: 0.55rem !important;
+  }
+  .barraTrabajo {
+    font-size: 0.7rem;
+  }
+  .tamanioProceso {
+    width: 100% !important;
+  }
+  .ventanaProceso {
+    max-width: 95% !important;
+  }
+  .ventanaVistaPrevia {
+    width: 93% !important;
+    height: 85vh !important;
+  }
 }

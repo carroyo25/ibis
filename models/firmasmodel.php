@@ -23,6 +23,7 @@
                                                         UPPER( tb_pedidocab.concepto ) AS concepto,
                                                         lg_ordencab.cdocPDF,
                                                         cm_entidad.crazonsoc,
+                                                        tb_proyectos.ccodproy,
                                                         UPPER( CONCAT_WS( ' ', tb_area.ccodarea, tb_area.cdesarea ) ) AS area,
                                                         UPPER( CONCAT_WS( ' ', tb_proyectos.ccodproy, tb_proyectos.cdesproy ) ) AS costos,
                                                         tb_proyectos.nidreg,
@@ -73,7 +74,7 @@
                                      <td class="textoCentro">'.str_pad($rs['cnumero'],4,0,STR_PAD_LEFT).'</td>
                                      <td class="textoCentro">'.date("d/m/Y", strtotime($rs['ffechadoc'])).'</td>
                                      <td class="pl20px">'.$rs['concepto'].'</td>
-                                     <td class="pl20px">'.utf8_decode($rs['costos']).'</td>
+                                     <td class="pl20px">'.utf8_decode($rs['ccodproy']).'</td>
                                      <td class="pl20px">'.$rs['crazonsoc'].'</td>
                                      <td class="pl20px">'.$rs['area'].'</td>
                                      <td class="textoCentro '.strtolower($rs['atencion']).'">'.$rs['atencion'].'</td>
@@ -273,6 +274,7 @@
                                                                     )
                                                                 ) AS costos,
                                                             tb_proyectos.nidreg,
+                                                            tb_proyectos.ccodproy,
                                                             tb_parametros.cdescripcion AS atencion,
                                                             (
                                                                 lg_ordencab.nfirmaLog + lg_ordencab.nfirmaFin + lg_ordencab.nfirmaOpe
@@ -329,7 +331,7 @@
                                      <td class="textoCentro">'.str_pad($rs['cnumero'],4,0,STR_PAD_LEFT).'</td>
                                      <td class="textoCentro">'.date("d/m/Y", strtotime($rs['ffechadoc'])).'</td>
                                      <td class="pl20px">'.$rs['concepto'].'</td>
-                                     <td class="pl20px">'.utf8_decode($rs['costos']).'</td>
+                                     <td class="pl20px">'.utf8_decode($rs['ccodproy']).'</td>
                                      <td class="pl20px">'.$rs['crazonsoc'].'</td>
                                      <td class="pl20px">'.$rs['area'].'</td>
                                      <td class="textoCentro '.strtolower($rs['atencion']).'">'.$rs['atencion'].'</td>

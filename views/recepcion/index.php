@@ -215,6 +215,7 @@
                             <th>Emisión</th>
                             <th>Area</th>
                             <th>Centro de Costos</th>
+                            <th>Proveedor</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -306,6 +307,7 @@
                     <th>Almacen</th>
                     <th>Proyecto/Sede/Costos</th>
                     <th>Area</th>
+                    <th>Proveedor</th>
                     <th>Orden</th>
                     <th>Pedido</th>
                 </tr>

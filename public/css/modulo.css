@@ -455,8 +455,8 @@
   padding: 5px 15px;
   display: -ms-grid;
   display: grid;
-  -ms-grid-columns: 0.5fr 15px 1.2fr 15px 0.3fr 15px 0.3fr 15px 0.3fr;
-  grid-template-columns: 0.5fr 1.2fr 0.3fr 0.3fr 0.3fr;
+  -ms-grid-columns: 10% 15px 54% 15px 10% 15px 10% 15px 10%;
+  grid-template-columns: 10% 54% 10% 10% 10%;
   -webkit-column-gap: 15px;
      -moz-column-gap: 15px;
           column-gap: 15px;
@@ -470,12 +470,7 @@
   border: none;
   padding-left: 20px;
   border-radius: 8px;
-}
-.barraTrabajo .variasConsultas div:nth-child(2) select {
-  width: 70%;
-}
-.barraTrabajo .variasConsultas div:nth-child(3) input, .barraTrabajo .variasConsultas div:nth-child(4) input {
-  width: 65%;
+  width: 100%;
 }
 .barraTrabajo .variasConsultasColumna {
   display: -ms-grid;
@@ -885,7 +880,7 @@
 
 .itemsTabla {
   width: 100%;
-  height: 73vh;
+  height: 65vh;
   margin-top: 5px;
   overflow-x: auto;
   overflow-y: auto;
@@ -915,7 +910,7 @@
 
 .itemsCargoPlanner {
   overflow: auto;
-  height: 73vh;
+  height: 65vh;
   margin-top: 5px;
 }
 .itemsCargoPlanner table {
@@ -1600,7 +1595,8 @@
   border-radius: 8px;
 }
 .ventanaProceso .dataProceso input[type=checkbox], .ventanaProceso .dataProceso input[type=radio], .ventanaProceso .dataProceso_2 input[type=checkbox], .ventanaProceso .dataProceso_2 input[type=radio], .ventanaProceso .dataProceso_flex input[type=checkbox], .ventanaProceso .dataProceso_flex input[type=radio], .ventanaProceso .dataProceso_flex_columna input[type=checkbox], .ventanaProceso .dataProceso_flex_columna input[type=radio] {
-  height: 1rem;
+  height: 2rem;
+  margin-right: 5px;
 }
 .ventanaProceso .dataProceso label, .ventanaProceso .dataProceso_2 label, .ventanaProceso .dataProceso_flex label, .ventanaProceso .dataProceso_flex_columna label {
   font-size: 0.7rem;
@@ -1972,6 +1968,14 @@
   width: 35%;
 }
 
+.w40por {
+  width: 40%;
+}
+
+.w45por {
+  width: 45%;
+}
+
 .w50por {
   width: 50%;
 }
@@ -1997,7 +2001,7 @@
 }
 
 .tamanioProceso {
-  width: 75%;
+  width: 65%;
 }
 
 .tamanioProceso80 {

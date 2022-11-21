@@ -328,7 +328,7 @@
     </div>
     <div class="itemsTabla">
         <table id="tablaPrincipal">
-            <thead>
+            <thead class="stickytop">
                     <tr>
                     <th rowspan="2">Num.</th>  
                     <th rowspan="2">Emision</th>

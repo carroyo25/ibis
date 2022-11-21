@@ -7,7 +7,6 @@
     box-sizing: border-box;
 }
 
-
 body {
     background: #ABE2DE;
     font-family: "Helvetica Neue",Helvetica,Arial;
@@ -132,7 +131,6 @@ body {
    }
 }
 
-
 .pie {
     height:2rem;
     color: #FFF;
@@ -144,4 +142,24 @@ body {
 .wrap{
     position: relative;
     height: 100vh;
+}
+
+@media screen and (max-width: 1024px) {
+    .landZone {
+        width: 100% !important;
+
+        .presentacion {
+            p {
+                font-size: 1.5rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+        }
+
+        .ingreso {
+            width: 90% !important;
+        }
+    }
 }

@@ -127,7 +127,7 @@ $(function () {
                       text: 'Ordenes de compra por proveedor'
                     },
                     subtitle: {
-                      text: `Origen: Reporte Sical  ${mesActual} / ${anioActual}`
+                      text: `Mes :  ${mesActual}  Año : ${anioActual}`
                     },
                     legend: {
                       enabled: false

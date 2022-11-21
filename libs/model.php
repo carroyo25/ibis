@@ -2722,7 +2722,7 @@
                                                         ibis.cm_entidad.cnumdoc,
                                                         ibis.cm_entidad.crazonsoc,
                                                         LPAD( ibis.tb_pedidocab.nrodoc, 6, 0 ) AS pedido,
-                                                        ibis.lg_ordencab.cnumero AS orden,
+                                                        LPAD(ibis.lg_ordencab.cnumero,6,0) AS orden,
                                                         UPPER( ibis.tb_pedidocab.concepto ) AS concepto,
                                                         UPPER( ibis.tb_pedidocab.detalle ) AS detalle,
                                                         estados.cabrevia AS estado,

@@ -22,7 +22,7 @@
         </div>
     </div>
     <div class="modal" id="proceso">
-        <div class="ventanaProceso w25por">
+        <div class="ventanaProceso w40por">
             <div class="cabezaProceso">
                 <form action="#" autocomplete="off" id="formProceso">
                     <input type="hidden" name="codgrupo" id="codgrupo">

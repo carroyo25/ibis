@@ -124,13 +124,26 @@ body {
   height: 2rem;
   color: #FFF;
   background: #000;
-  position: absolute;
-  /*El div será ubicado con relación a la pantalla*/
-  bottom: 0px;
-  /*Abajo deje un espacio de 0px*/
+  position: absolute; /*El div será ubicado con relación a la pantalla*/
+  bottom: 0px; /*Abajo deje un espacio de 0px*/
 }
 
 .wrap {
   position: relative;
   height: 100vh;
+}
+
+@media screen and (max-width: 1024px) {
+  .landZone {
+    width: 100% !important;
+  }
+  .landZone .presentacion p {
+    font-size: 1.5rem;
+  }
+  .landZone .presentacion h1 {
+    font-size: 2rem;
+  }
+  .landZone .ingreso {
+    width: 90% !important;
+  }
 }
