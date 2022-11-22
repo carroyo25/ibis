@@ -1,5 +1,6 @@
 $(function(){
-    let accion = "",co = 1;
+    let accion = "",
+        co = 1;
 
     $("#esperar").fadeOut();
 
@@ -167,15 +168,22 @@ $(function(){
     $("#importData").click(function (e) { 
         e.preventDefault();
         
-        $.post(RUTA+"recepcion/ordenes",
-            function (data, textStatus, jqXHR) {
-                $("#ordenes tbody")
-                    .empty()
-                    .append(data);
-                $("#busqueda").fadeIn();
-            },
-            "text"
-        );
+        try {
+            if (accion == "u") throw "La nota, no puede modificarse";
+
+            $.post(RUTA+"recepcion/ordenes",
+                function (data, textStatus, jqXHR) {
+                    $("#ordenes tbody")
+                        .empty()
+                        .append(data);
+                    $("#busqueda").fadeIn();
+                },
+                "text"
+            );
+        } catch (error) {
+            mostrarMensaje(error,"mensaje_error");
+        }
+        
         
         return false;
     });
@@ -575,6 +583,21 @@ $(function(){
         );
         
         return false
+    });
+
+    $("#itemCostos").change(function (e) { 
+        e.preventDefault(e);
+
+        $.post(RUTA+"recepcion/ordenesPorCosto", {costo:$(this).val()},
+            function (data, textStatus, jqXHR) {
+                $("#ordenes tbody")
+                    .empty()
+                    .append(data);
+            },
+            "text"
+        );
+
+        return false        
     });
     
 })

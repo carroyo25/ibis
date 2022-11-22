@@ -517,7 +517,7 @@
                                                         tb_costusu.ncodproy,
                                                         tb_costusu.id_cuser,
                                                         lg_ordencab.id_regmov,
-                                                        lg_ordencab.cnumero,
+                                                        LPAD(lg_ordencab.cnumero,6,0) AS cnumero,
                                                         lg_ordencab.ffechadoc,
                                                         lg_ordencab.nNivAten,
                                                         lg_ordencab.nEstadoDoc,
@@ -533,7 +533,8 @@
                                                         lg_ordencab.nfirmaLog,
                                                         lg_ordencab.nfirmaFin,
                                                         lg_ordencab.nfirmaOpe,
-                                                        tb_parametros.cdescripcion AS atencion 
+                                                        tb_parametros.cdescripcion AS atencion,
+                                                        tb_proyectos.ccodproy 
                                                     FROM
                                                         tb_costusu
                                                         INNER JOIN lg_ordencab ON tb_costusu.ncodproy = lg_ordencab.ncodpry
@@ -552,10 +553,10 @@
                     while ($rs = $sql->fetch()) {
 
                         $salida .='<tr class="pointer">
-                                        <td class="textoCentro">'.str_pad($rs['cnumero'],4,0,STR_PAD_LEFT).'</td>
+                                        <td class="textoCentro">'.$rs['cnumero'].'</td>
                                         <td class="pl20px">'.$rs['concepto'].'</td>
                                         <td class="textoCentro">'.date("d/m/Y", strtotime($rs['ffechadoc'])).'</td>
-                                        <td class="pl20px">'.utf8_decode($rs['costos']).'</td>
+                                        <td class="pl20px">'.utf8_decode($rs['ccodproy']).'</td>
                                         <td class="textoCentro '.strtolower($rs['atencion']).'">'.$rs['atencion'].'</td>
                                     </tr>';
                     }
@@ -591,10 +592,12 @@
                                                         alm_recepcab.nEstadoDoc,
                                                         UPPER(tb_almacen.cdesalm) AS almacen,
                                                         UPPER(tb_proyectos.cdesproy) AS proyecto,
-                                                        lg_ordencab.cnumero AS orden,
+                                                        LPAD(lg_ordencab.cnumero,6,0) AS orden,
                                                         LPAD(tb_pedidocab.nrodoc, 6, 0) AS pedido,
                                                         tb_parametros.cdescripcion,
-                                                        tb_parametros.cabrevia
+                                                        tb_parametros.cabrevia,
+                                                        tb_proyectos.ccodproy, 
+                                                        cm_entidad.crazonsoc 
                                                         FROM
                                                         tb_costusu
                                                         INNER JOIN alm_recepcab ON tb_costusu.ncodproy = alm_recepcab.ncodpry
@@ -604,6 +607,7 @@
                                                         INNER JOIN lg_ordencab ON alm_recepcab.idref_abas = lg_ordencab.id_regmov
                                                         INNER JOIN tb_pedidocab ON alm_recepcab.idref_pedi = tb_pedidocab.idreg
                                                         INNER JOIN tb_parametros ON alm_recepcab.nEstadoDoc = tb_parametros.nidreg
+                                                        INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
                                                         WHERE
                                                             tb_costusu.id_cuser = :usr
                                                         AND tb_costusu.nflgactivo = 1");
@@ -615,7 +619,8 @@
                                     <td class="textoCentro">'.$rs['cnumguia'].'</td>
                                     <td class="textoCentro">'.date("d/m/Y", strtotime($rs['ffecdoc'])).'</td>
                                     <td class="pl20px">'.$rs['almacen'].'</td>
-                                    <td class="pl20px">'.$rs['proyecto'].'</td>
+                                    <td class="pl20px">'.$rs['ccodproy'].'</td>
+                                    <td class="pl20px">'.$rs['crazonsoc'].'</td>
                                     <td class="pl20px">'.$rs['orden'].'</td>
                                     <td class="textoCentro '.$rs['cabrevia'].'">'.$rs['cdescripcion'].'</td>
                                 </tr>';

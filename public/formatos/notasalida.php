@@ -57,20 +57,20 @@
 	        $this->Cell(14,5,$this->nguia,1,1,"C");//pasa dato
 
 	        $this->SetXY(10,32);
-	        $this->SetFont('Arial','B',6);
-	        $this->Cell(30,5,"Proyecto",1,0);
-	        $this->Cell(65,5,utf8_decode($this->proyecto),1,0); //pasa dato
-	        $this->Cell(30,5,utf8_decode("Almacén Origen"),1,0);
-	        $this->Cell(65,5,utf8_decode($this->origen),1,1); //pasa dato
-	        $this->Cell(30,5,"Tipo Movimiento",1,0);
-	        $this->Cell(65,5,$this->movimiento,1,0); //pasa dato
-	        $this->Cell(30,5,utf8_decode("Almacén Destino"),1,0);
-	        $this->Cell(65,5,utf8_decode($this->destino),1,1); //pasa dato
+	        $this->SetFont('Arial','B',5);
+	        $this->Cell(20,5,"Proyecto",1,0);
+	        $this->Cell(90,5,utf8_decode($this->proyecto),1,0); //pasa dato
+	        $this->Cell(20,5,utf8_decode("Almacén Origen"),1,0);
+	        $this->Cell(60,5,utf8_decode($this->origen),1,1); //pasa dato
+	        $this->Cell(20,5,"Tipo Movimiento",1,0);
+	        $this->Cell(90,5,$this->movimiento,1,0); //pasa dato
+	        $this->Cell(20,5,utf8_decode("Almacén Destino"),1,0);
+	        $this->Cell(60,5,utf8_decode($this->destino),1,1); //pasa dato
 
 	        // Salto de línea
     		$this->Ln(1);
     		$this->SetFont('Arial','B',6);
-    		$this->Rect(10,43,190,6,"F"); //fondo de mensaje
+    		$this->Rect(10,43,190,3,"F"); //fondo de mensaje
     		$this->SetWidths(array(10,15,70,8,10,30,17,15,15));
     		$this->SetAligns(array("C","C","C","C","C","C","C","C","C"));
     		$this->Row(array('Item',utf8_decode('Código'),utf8_decode('Descripción'),
@@ -88,12 +88,12 @@
 		    $this->Line(150, 225, 190, 225);
 
 		    $this->SetFont('Arial','B',8);
-		    $this->Cell(64,4,"Diego Marky",0,0,"C"); //pasa dato
+		    $this->Cell(64,4,$this->nautoriza,0,0,"C"); //pasa dato
 		    $this->Cell(64,4,"",0,0,"C"); //pasa dato
 		    $this->Cell(64,4,"",0,1,"C"); // pasa dato
 
 		    $this->SetFont('Arial','',6);
-		    $this->Cell(64,2,"Asistente de Almacen",0,0,"C"); //pasa dato
+		    $this->Cell(64,2,$this->cautoriza,0,0,"C"); //pasa dato
 		    $this->Cell(64,2,"",0,0,"C"); //pasa dato
 		    $this->Cell(64,2,"",0,1,"C"); //pasa dato
 		   

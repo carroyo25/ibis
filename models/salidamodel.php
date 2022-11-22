@@ -561,8 +561,8 @@
                                                         alm_despachodet.ndespacho,
                                                         alm_despachodet.cobserva,
                                                         alm_despachodet.niddetaIng,
-                                                        alm_despachodet.nropedido,
-                                                        alm_despachodet.nroorden,
+                                                        LPAD(alm_despachodet.nropedido,6,0) AS nropedido,
+                                                        LPAD(alm_despachodet.nroorden,6,0) AS nroorden,
                                                         alm_despachodet.ingreso,
                                                         FORMAT(alm_despachodet.nsaldo, 2) AS nsaldo,
                                                         cm_producto.ccodprod,
@@ -598,11 +598,13 @@
                         $fecha = $rs['fvence'] == "0000-00-00" ? "" : date("d-m-Y", strtotime($rs['fvence']));
                         $series = $this->buscarSeries($rs['id_cprod'],$rs['id_regalm'],$rs['ncodalm1']);
 
-                        $salida.='<tr data-itemorden="'.$rs['niddetaOrd'].'" 
-                                        data-itempedido="'.$rs['niddetaPed'].'" 
-                                        data-itemingreso="'.$rs['niddetaIng'].'"
-                                        data-itemdespacho="'.$rs['niddeta'].'"
-                                        data-idproducto ="'.$rs['id_cprod'].'">
+                        $salida.='<tr   data-idorden="'.$rs['niddetaOrd'].'" 
+                                        data-idpedido="'.$rs['niddetaPed'].'" 
+                                        data-idingreso="'.$rs['niddetaIng'].'"
+                                        data-iddespacho="'.$rs['niddeta'].'"
+                                        data-idproducto ="'.$rs['id_cprod'].'"
+                                        data-pedido ="'.$rs['nropedido'].'"
+                                        data-orden ="'.$rs['nroorden'].'">
                                         <td class="textoCentro"><input type="checkbox"></td>
                                         <td class="textoCentro">'.str_pad($item,3,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
@@ -674,7 +676,8 @@
                     $this->actualizarDetallesDespacho($detalles,$cabecera['numero_guia'],67);
                     $this->actualizarDetallesPedido($detalles,$despacho,67);
 
-                    return $this->generarGuia($cabecera,$detalles,$filename);
+                    return array("archivo"=>$this->generarGuia($cabecera,$detalles,$filename),
+                                "listado"=>$this->listarNotasDespacho());
                 }
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
@@ -782,13 +785,13 @@
                 for($i=1;$i<=$nreg;$i++){
 
                     $pdf->SetX(13);
-                    $pdf->SetCellHeight(5);
+                    $pdf->SetCellHeight(4);
 
                     $pdf->SetAligns(array("R","R","C","L"));
                     $pdf->Row(array(str_pad($i,3,"0",STR_PAD_LEFT),
                                     $datos[$rc]->cantidad,
                                     $datos[$rc]->unidad,
-                                    utf8_decode($datos[$rc]->codigo .' '. $datos[$rc]->descripcion .' '. $datos[$rc]->serie )));
+                                    utf8_decode($datos[$rc]->codigo .' '. $datos[$rc]->descripcion .' '. $datos[$rc]->serie .' '.'P : '.$datos[$rc]->pedido.' O : '.$datos[$rc]->orden)));
                     $lc++;
                     $rc++;
 
@@ -867,9 +870,7 @@
                 $sql = $this->db->connect()->prepare("SELECT
                                                             ncodalm,
                                                             UPPER(cdesalm) AS almacen,
-                                                            UPPER(
-                                                                CONCAT_WS(' ', cdesvia, cnrovia)
-                                                            ) AS direccion,
+                                                            UPPER(ctipovia) AS direccion,
                                                             distritos.cdubigeo AS dist,
                                                             provincias.cdubigeo AS prov,
                                                             dptos.cdubigeo AS dpto

@@ -57,5 +57,9 @@
         function filtroRecepcion(){
             echo $this->model->filtrarNotasIngreso($_POST);
         }
+
+        function ordenesPorCosto(){
+            echo $this->model->mostrarOrdenes($_POST['costo']);
+        }
     }
 ?>

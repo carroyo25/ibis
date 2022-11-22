@@ -217,7 +217,7 @@
     <div class="itemsCargoPlanner">
         <table id="cargoPlanDescrip">
             <thead>
-                <tr >
+                <tr class="stickytop">
                     <th>Items</th>
                     <th>Estado</br>Actual</th>
                     <th>Proyecto</th>
@@ -246,6 +246,7 @@
                     <th>Guia</br>Ingreso</th>
                     <th>Fecha</br>Ingreso</th>
                     <th>Nota</br>Salida</th>
+                    <th>Cant.</br>Enviada</th>
                     <th>Guia</br>Remisión</th>
                     <th>Fecha</br>Guia</br>Remisión</th>
                     <th>Cant</br>Rec.</br>Obra</th>
