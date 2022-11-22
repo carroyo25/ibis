@@ -359,8 +359,7 @@ $(function() {
                 result[this.name] = this.value;
             });
 
-
-            /*if (result['numero_guia'] == "") throw "Ingrese el Nro. de Guia";
+            if (result['numero_guia'] == "") throw "Ingrese el Nro. de Guia";
             if (result['codigo_origen'] == "") throw "Seleccione Almacen origen";
             if (result['codigo_destino'] == "") throw "Seleccione Almacen destino";
             if (result['codigo_entidad'] == "") throw "Seleccione la empresa de transportes";
@@ -369,8 +368,9 @@ $(function() {
             if (result['codigo_traslado'] == "") throw "Seleccione la modalidad de traslado";
             if (result['codigo_tipo'] == "") throw "Seleccione el tipo de envio";
             if (result['nro_bultos'] == "") throw "Indique el Nro. de bultos";
-            if (result['peso_bruto'] == "") throw "Indique el peso bruto";*/
-           
+            if (result['peso_bruto'] == "") throw "Indique el peso bruto";
+
+            $("#proceso").fadeOut();
 
             $.post(RUTA+"salida/guiaremision", {cabecera:result,
                                                 detalles:JSON.stringify(detalles()),
@@ -380,12 +380,15 @@ $(function() {
                                                 ingreso:$("#codigo_ingreso").val(),},
                 function (data, textStatus, jqXHR) {
                         
-                       if (data !== ""){
-                            $("#iFramePdf").attr("src",data);
+                       if (data.archivo !== ""){
+                            $("#iFramePdf").attr("src",data.archivo);
                             $("#vistadocumento").fadeOut();
+                            $("#tablaPrincipal tbody")
+                                .empty()
+                                .append(data.listado)
                        }
                     },
-                    "text"
+                    "json"
                 );
 
 
@@ -489,6 +492,14 @@ $(function() {
 
         return false;
     });
+
+    $(".action-button").click(function (e) { 
+        e.preventDefault();
+        
+        console.log("Mando Guia");
+
+        return false;
+    });
 })
 
 
@@ -499,12 +510,12 @@ detalles = () =>{
     
     TABLA.each(function(){
         let ITEM        = $(this).find('td').eq(1).text(),
-            IDDETORDEN  = $(this).data("itemorden"),
-            IDDETPED    = $(this).data("itempedido"),
+            IDDETORDEN  = $(this).data("idorden"),
+            IDDETPED    = $(this).data("idpedido"),
             IDPROD      = $(this).data("idproducto"),
-            IDINGRESO   = $(this).data("itemingreso"),
-            IDDESPACHO  = $(this).data("itemdespacho"),
-            PEDIDO      = $(this).data("itempedido"),
+            IDINGRESO   = $(this).data("idingreso"),
+            IDDESPACHO  = $(this).data("iddespacho"),
+            PEDIDO      = $(this).data("pedido"),
             ORDEN       = $(this).data("orden"),
             INGRESO     = $(this).data("ingreso"),
             ALMACEN     = $("#codigo_almacen").val(),
@@ -561,3 +572,9 @@ printTrigger = (elementId) => {
         getMyFrame.focus(); 
         getMyFrame.contentWindow.print();
 }
+
+window.addEventListener("afterprint", function(event) {
+    console.log(event);
+});
+
+window.matchMedia('print').addListener((evento)=>{console.log(evento);});

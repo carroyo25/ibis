@@ -27,7 +27,6 @@
         function notaId(){
             echo json_encode($this->model->llamarNotaIngresoId($_POST['id']));
         }
-        
 
         function nuevasalida(){
             echo json_encode($this->model->grabarDespacho($_POST['cabecera'],$_POST['detalles']));
@@ -42,12 +41,12 @@
         }
 
         function guiaremision(){
-            echo $this->model->grabarGuiaRemision($_POST['cabecera'],
+            echo json_encode($this->model->grabarGuiaRemision($_POST['cabecera'],
                                                     $_POST['detalles'],
                                                     $_POST['despacho'],
                                                     $_POST['pedido'],
                                                     $_POST['orden'],
-                                                    $_POST['ingreso']);
+                                                    $_POST['ingreso']));
         }
 
         function actualizaDespachos(){

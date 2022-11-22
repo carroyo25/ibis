@@ -85,7 +85,7 @@
                         $retraso =  $rs['retraso'] <= 0 && $saldo_mostrar != "" ? " " : $rs['retraso'];
                         $tipo = $rs['idtipo'] == 37 ? "B" : "S";
 
-                        $avance_entrega = round((( $rs['cantidad_recibida']  * 100)/$cantidad),2);
+                        $avance_entrega =  round((( $rs['cantidad_recibida']  * 100)/$cantidad),2);
 
                         $nplazo = (int)$rs['nplazo'] > 0 ? (int)$rs['nplazo']:" "; 
 
@@ -118,7 +118,7 @@
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td>'.$rs['unidad'].'</td>
                                         <td width="20%" class="pl20px">'.$rs['descripcion'].'</td>
-                                        <td class="textoDerecha pr10px">'.$cantidad.'</td>
+                                        <td class="textoDerecha pr10px">'.number_format($cantidad,2).'</td>
                                         <td class="textoCentro">'.$rs['orden'].'</td>
                                         <td class="textoCentro">'.$rs['emision_orden'].'</td>
                                         <td class="textoDerecha pr10px">'.$rs['cantidad_orden'].'</td>
@@ -133,6 +133,7 @@
                                         <td>'.$rs['guia_proveedor'].'</td>
                                         <td class="textoCentro">'.$rs['fecha_recepcion'].'</td>
                                         <td class="textoCentro">'.$rs['nota_salida'].'</td>
+                                        <td class="textoCentro">'.$rs['cantidad_despachada'].'</td>
                                         <td>'.$rs['guia_remision_sepcon'].'</td>
                                         <td class="textoCentro">'.$rs['fecha_guia_sepcon'].'</td>
                                         <td class="textoDerecha pr10px"></td>
@@ -298,6 +299,7 @@
                                                 <td>'.$rs['guia_proveedor'].'</td>
                                                 <td class="textoCentro">'.$rs['fecha_recepcion'].'</td>
                                                 <td class="textoCentro">'.$rs['nota_salida'].'</td>
+                                                <td class="textoCentro">'.$rs['cantidad_despachada'].'</td>
                                                 <td>'.$rs['guia_remision_sepcon'].'</td>
                                                 <td class="textoCentro">'.$rs['fecha_guia_sepcon'].'</td>
                                                 <td class="textoDerecha pr10px"></td>

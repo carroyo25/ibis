@@ -166,7 +166,7 @@
                                 <i class="fas fa-upload"></i> Documentos Adjuntos
                             </button>
                             <button type="button" id="sendEntOrden" title="Enviar Proveedor" class="cerrarLista boton3">
-                                <i class="far fa-paper-plane"></i> Enviar Proveedor
+                                <i class="far fa-paper-plane"></i> Cerrar Nota
                             </button>
                         </div>
                     </div>
@@ -204,7 +204,9 @@
                 </div>
             </div>
             <div class="textoBusqueda">
-                <input type="text" name="txtBuscar" id="txtBuscar" placeholder="Buscar" class="w90por">
+                <select name="itemCostos" id="itemCostos">
+                    <?php echo $this->listaCostosSelect ?>
+                </select>
                 <button type="button" class="boton3" id="btnAceptItems">Aceptar</button>
             </div>
             <div class="tablaBusqueda">

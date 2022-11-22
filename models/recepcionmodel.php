@@ -327,8 +327,6 @@
                                     <td class="pl20px">'.$rs['crazonsoc'].'</td>
                                 </tr>';
                         }
-
-                        
                     }
                 }
                 return $salida;
@@ -608,7 +606,8 @@
             }
             
             $pdf->Output($filename,'F');
-            echo $filename;
+            
+            return $filename;
 
         }
         
@@ -726,6 +725,65 @@
                     }
                 }
 
+                return $salida;
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        public function mostrarOrdenes($id){
+            try {
+                $salida = "";
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        lg_ordencab.id_regmov,
+                                                        tb_costusu.ncodproy,
+                                                        lg_ordencab.id_refpedi,
+                                                        lg_ordencab.ntipdoc,
+                                                        LPAD( lg_ordencab.cnumero, 6, 0 ) AS cnumero,
+                                                        DATE_FORMAT( lg_ordencab.ffechadoc, '%d/%m/%Y' ) AS ffechadoc,
+                                                        lg_ordencab.nEstadoDoc,
+                                                        tb_proyectos.ccodproy,
+                                                        CONCAT_WS(
+                                                            ' ',
+                                                            tb_proyectos.ccodproy,
+                                                        UPPER( tb_proyectos.cdesproy )) AS costos,
+                                                        CONCAT_WS(
+                                                            ' ',
+                                                            tb_area.ccodarea,
+                                                        UPPER( tb_area.cdesarea )) AS area,
+                                                        cm_entidad.crazonsoc 
+                                                    FROM
+                                                        tb_costusu
+                                                        INNER JOIN lg_ordencab ON tb_costusu.ncodproy = lg_ordencab.ncodpry
+                                                        INNER JOIN tb_proyectos ON lg_ordencab.ncodpry = tb_proyectos.nidreg
+                                                        INNER JOIN tb_area ON lg_ordencab.ncodarea = tb_area.ncodarea
+                                                        INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi 
+                                                    WHERE
+                                                        tb_costusu.id_cuser = :usr
+                                                        AND lg_ordencab.ncodpry = :id 
+                                                        AND tb_costusu.nflgactivo = 1 
+                                                        AND lg_ordencab.nEstadoDoc = 60");
+                $sql->execute(["usr"=>$_SESSION['iduser'],"id"=>$id]);
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0) {
+                    while ($rs = $sql->fetch()) {
+                        //compara la orden si fue ingresada completa y no la muestra
+
+                        $diferencia_ingreso = $this->calcularIngresosOrden($rs['id_regmov']) - $this->calcularCantidadIngresa($rs['id_regmov']);
+
+                        if (($diferencia_ingreso) > 0 ) {
+                            $salida.='<tr data-orden="'.$rs['id_regmov'].'">
+                                    <td class="textoCentro">'.$rs['cnumero'].'</td>
+                                    <td class="textoCentro">'.$rs['ffechadoc'].'</td>
+                                    <td class="pl20px">'.$rs['area'].'</td>
+                                    <td class="pl20px">'.$rs['ccodproy'].'</td>
+                                    <td class="pl20px">'.$rs['crazonsoc'].'</td>
+                                </tr>';
+                        }
+                    }
+                }
                 return $salida;
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
