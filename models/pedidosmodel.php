@@ -289,6 +289,7 @@
             }            
         }
 
+        //el tema es que debe cerrarse cuando se envia el correo
         public function enviarMensajes($asunto,$mensaje,$correos,$archivos,$pedido,$detalles,$estado,$emitido){
             require_once("public/PHPMailer/PHPMailerAutoload.php");
 
