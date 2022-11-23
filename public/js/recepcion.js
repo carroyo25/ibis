@@ -230,9 +230,6 @@ $(function(){
 
                     $("#items").val($("#tablaDetalles tbody tr").length);
 
-                    
-    
-
                 $("#busqueda").fadeOut();
             },
             "json"
@@ -358,12 +355,14 @@ $(function(){
                     series:JSON.stringify(series()),
                     cerrar:cerrarOrden},
                         function (data, textStatus, jqXHR) {
-                        $("#codigo_ingreso").val(data.indice);
-
-                        if ($("#codigo_ingreso").val() !== 0)
-                            $("#fileAtachs").trigger("submit");
+                            $("#codigo_ingreso").val(data.indice);
+                            $("#proceso").fadeOut();
+                            mostrarMensaje("Nota Grabada","mensaje_correcto");
+                            $("#tablaPrincipal tbody")
+                                .empty()
+                                .append(data.listado);
                         },
-                        "text"
+                        "json"
                     );
             }
 
@@ -436,7 +435,8 @@ $(function(){
     $("#tablaDetalles tbody").on("click","a", function (e) {
         e.preventDefault();
 
-        let filas = parseInt($(this).parent().parent().find("td").eq(6).children().val()),
+        if ($(this).data("accion") == "setSerial") {
+            let filas = parseInt($(this).parent().parent().find("td").eq(6).children().val()),
             orden = $(this).parent().parent().data('detorden'),
             producto = $(this).parent().parent().data('idprod'),
             almacen = $("#codigo_almacen").val(),
@@ -447,15 +447,19 @@ $(function(){
                         <td><input type="text"></td>
                     </tr>`
 
-        if (accion == 'n') {
-            $("#tablaSeries tbody").empty();
+            if (accion == 'n') {
+                $("#tablaSeries tbody").empty();
 
-            for (let index = 0; index < filas; index++) {
-                $("#tablaSeries").append(row);        
+                for (let index = 0; index < filas; index++) {
+                    $("#tablaSeries").append(row);        
+                }
             }
-        }
 
-        $("#series").fadeIn();
+            $("#series").fadeIn();
+        }else {
+            $(this).parent().parent().remove();
+        }
+        
 
         return false;
     });
@@ -469,7 +473,7 @@ $(function(){
         return false;
     });
 
-    $("#tablaDetalles tbody").on('keypress','input', function (e) {
+    /*$("#tablaDetalles tbody").on('keypress','input', function (e) {
         if (e.which == 13) {
             let cant = parseFloat($(this).parent().parent().find("td").eq(7).text()) - $(this).parent().parent().find("td").eq(6).children().val();
             
@@ -483,7 +487,7 @@ $(function(){
                 $(this).parent().parent().find("td").eq(7).text($(this).parent().parent().data("saldo"));
             }
         }
-    });
+    });*/
 
     $("#btnConfirmSeries").click(function (e) { 
         e.preventDefault();
@@ -599,6 +603,40 @@ $(function(){
 
         return false        
     });
+
+    $("#ordenSearch").keyup(function (e) { 
+        if(e.which == 13) {
+            $("#esperar").fadeIn();
+            
+            $.post(RUTA+"recepcion/filtraOrden", {id:$(this).val()},
+                function (data, textStatus, jqXHR) {
+                    $("#ordenes tbody")
+                        .empty()
+                        .append(data);
+                    $("#esperar").fadeOut();
+                },
+                "text"
+            );
+        }
+    });
+
+    $("#btnAceptarPregunta").click(function (e) { 
+        e.preventDefault();
+
+        $(this).parent().parent().remove();
+        
+        $("#pregunta").fadeOut();
+
+        return false;
+    });
+
+    $("#btnCancelarPregunta").click(function (e) { 
+        e.preventDefault();
+        
+        $("#pregunta").fadeOut();
+
+        return false;
+    });
     
 })
 
@@ -617,8 +655,8 @@ detalles = () =>{
             ALMACEN     = $("#codigo_almacen").val(),
             CANTSOL     = parseFloat($(this).find('td').eq(5).text()),
             CANTREC     = $(this).find('td').eq(6).children().val(),// cantidad
-            CANTSAL     = $(this).find('td').eq(7).text(),
-            OBSER       = $(this).find('td').eq(8).children().val(),
+            CANTSAL     = null,
+            OBSER       = $(this).find('td').eq(7).children().val(),
             VENCE       = null,
             CODIGO      = $(this).find('td').eq(2).text(),//codigo
             DESCRIPCION = $(this).find('td').eq(3).text(),//descripcion

@@ -61,5 +61,9 @@
         function ordenesPorCosto(){
             echo $this->model->mostrarOrdenes($_POST['costo']);
         }
+
+        function filtraOrden() {
+            echo $this->model->filtrarOrdenesID($_POST['id']);
+        }
     }
 ?>

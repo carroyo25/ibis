@@ -624,20 +624,20 @@ $(function(){
 
    //filtrar Item del pedido
     $("#txtBuscarCodigo, #txtBuscarDescrip").on("keypress", function (e) {
-    if(e.which == 13) {
-        $("#esperar").fadeIn();
-        
-        $.post(RUTA+"pedidos/filtraItems", {codigo:$("#txtBuscarCodigo").val(),
-                                            descripcion:$("#txtBuscarDescrip").val(),
-                                            tipo:$("#codigo_tipo").val()},
-                function (data, textStatus, jqXHR) {
-                    $("#tablaModulos tbody")
-                        .empty()
-                        .append(data);
-                    $("#esperar").fadeOut();
-                },
-                "text"
-            );
+        if(e.which == 13) {
+            $("#esperar").fadeIn();
+            
+            $.post(RUTA+"pedidos/filtraItems", {codigo:$("#txtBuscarCodigo").val(),
+                                                descripcion:$("#txtBuscarDescrip").val(),
+                                                tipo:$("#codigo_tipo").val()},
+                    function (data, textStatus, jqXHR) {
+                        $("#tablaModulos tbody")
+                            .empty()
+                            .append(data);
+                        $("#esperar").fadeOut();
+                    },
+                    "text"
+                );
         }
     });
 

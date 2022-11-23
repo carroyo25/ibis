@@ -73,7 +73,7 @@
     		$this->Ln(1);
     		$this->SetFont('Arial','B',6);
     		$this->Rect(10,48,190,7,"F"); //fondo de mensaje
-    		$this->SetWidths(array(5,15,55,8,12,20,45,15,15));
+    		$this->SetWidths(array(7,20,55,8,12,15,45,13,15));
     		$this->SetAligns(array("C","C","C","C","C","C","C","C","C"));
     		$this->Row(array('Item',utf8_decode('Código'),utf8_decode('Descripción'),
     				'Und.Med.','Cant.','Observ. Item','Proveedor','Estado',
@@ -89,6 +89,7 @@
 		    $this->Line(80, 225, 130, 225);
 		    $this->Line(150, 225, 190, 225);
 
+			$this->Image('public/img/firma_diego.jpg',30,213,25);
 		    $this->SetFont('Arial','B',8);
 		    $this->Cell(64,4,utf8_decode($this->nautoriza),0,0,"C"); //pasa dato
 		    $this->Cell(64,4,"",0,0,"C"); //pasa dato

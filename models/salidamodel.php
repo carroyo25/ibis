@@ -672,9 +672,9 @@
                 $rowCount = $sql->rowcount();
 
                 if ($rowCount > 0){
-                    $this->actualizarCabeceraDespacho($despacho,67);
-                    $this->actualizarDetallesDespacho($detalles,$cabecera['numero_guia'],67);
-                    $this->actualizarDetallesPedido($detalles,$despacho,67);
+                    //$this->actualizarCabeceraDespacho($despacho,67);
+                    //$this->actualizarDetallesDespacho($detalles,$cabecera['numero_guia'],67);
+                    //$this->actualizarDetallesPedido($detalles,$despacho,67);
 
                     return array("archivo"=>$this->generarGuia($cabecera,$detalles,$filename),
                                 "listado"=>$this->listarNotasDespacho());
