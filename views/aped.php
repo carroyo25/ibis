@@ -46,9 +46,7 @@
         <div class="area3">
             <div id="dashboard_table">
                 <table class="tabla" id="tablaPanel">
-                    <caption>
-                        Pedidos
-                    </caption>
+                    
                    <thead class="stickytop">
                        <tr>
                            <th>Nro</th>
@@ -65,6 +63,7 @@
         </div>
     </div>
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
+    <script src="<?php echo constant('URL');?>public/js/chart.js"></script>
     <script src="<?php echo constant('URL');?>public/code/highcharts.js"></script>
     <script src="<?php echo constant('URL');?>public/code/highcharts-3d.js"></script>
 </body>

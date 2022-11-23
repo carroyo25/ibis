@@ -20,6 +20,7 @@
                                                         lg_ordencab.nfirmaLog,
                                                         lg_ordencab.nfirmaFin,
                                                         lg_ordencab.nfirmaOpe,
+                                                        FORMAT(lg_ordencab.ntotal,2) as ntotal,
                                                         UPPER( tb_pedidocab.concepto ) AS concepto,
                                                         lg_ordencab.cdocPDF,
                                                         cm_entidad.crazonsoc,
@@ -74,10 +75,11 @@
                                      <td class="textoCentro">'.str_pad($rs['cnumero'],4,0,STR_PAD_LEFT).'</td>
                                      <td class="textoCentro">'.date("d/m/Y", strtotime($rs['ffechadoc'])).'</td>
                                      <td class="pl20px">'.$rs['concepto'].'</td>
-                                     <td class="pl20px">'.utf8_decode($rs['ccodproy']).'</td>
+                                     <td class="pl20px">'.utf8_decode($rs['costos']).'</td>
                                      <td class="pl20px">'.$rs['crazonsoc'].'</td>
                                      <td class="pl20px">'.$rs['area'].'</td>
                                      <td class="textoCentro '.strtolower($rs['atencion']).'">'.$rs['atencion'].'</td>
+                                     <td class="textoDerecha pr10px">'.$rs['ntotal'].'</td>
                                      <td class="textoCentro">'.$log.'</td>
                                      <td class="textoCentro">'.$fin.'</td>
                                      <td class="textoCentro">'.$ope.'</td>

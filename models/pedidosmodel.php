@@ -289,6 +289,7 @@
             }            
         }
 
+        //el tema es que debe cerrarse cuando se envia el correo
         public function enviarMensajes($asunto,$mensaje,$correos,$archivos,$pedido,$detalles,$estado,$emitido){
             require_once("public/PHPMailer/PHPMailerAutoload.php");
 
@@ -326,16 +327,15 @@
             
             try {
                 $mail->setFrom($origen,$nombre_envio);
-
                 $mail->addAddress($origen,$nombre_envio);
 
                 for ($i=0; $i < $nreg; $i++) {
                     $mail->addAddress($data[$i]->correo,$data[$i]->nombre);
-    
-                    $mail->Subject = $subject;
-                    $mail->msgHTML(utf8_decode($messaje));
                 }
 
+                $mail->Subject = $subject;
+                $mail->msgHTML(utf8_decode($messaje));
+                    
                 $mail->AddAttachment('public/documentos/pedidos/emitidos/'.$emitido);
 
                 for($i=0;$i<$countfiles;$i++){
@@ -343,17 +343,15 @@
                         $mail->AddAttachment('public/documentos/correos/adjuntos/'.$archivos['name'][$i]);
                     }
                 }
-
-                $estadoEnvio = true;
     
+                $mensaje = "Mensaje de correo no enviado";
+
                 if (!$mail->send()) {
-                    $mensaje = "Mensaje de correo no enviado";
                     $estadoEnvio = false; 
                 }else {
                     $mensaje = "Mensaje de correo enviado";
                     $estadoEnvio = true; 
                 }
-
 
                 if ($estadoEnvio){
                     $clase = "mensaje_correcto";

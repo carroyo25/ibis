@@ -376,6 +376,11 @@ input[type=number]::-webkit-outer-spin-button {
     font-size: 1.2rem !important;
 }
 
+.eliminarItem {
+    color: red;
+    text-align: center !important;
+}
+
 .stickytop {
     position: sticky;
     top: 0;
@@ -494,7 +499,7 @@ input[type=number]::-webkit-outer-spin-button {
     background: #fff;
   }
   
-  @media screen and (max-width: 1024px) {
+  @media screen and (max-width: 1360px) {
     .menu{
         width: max-content;
 

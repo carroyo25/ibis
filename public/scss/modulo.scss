@@ -1149,7 +1149,7 @@ $anulado:#c2c2c2;
     padding: 1rem;
     border-radius: 8px;
     max-height: 30rem;
-    overflow: hidden;
+    overflow: auto;
 
     .tituloArchivos{
         display: flex;
@@ -1410,6 +1410,13 @@ $anulado:#c2c2c2;
         padding:10px;
         display: flex;
         gap: 10px;
+    }
+
+    .textoBusquedaGrid{
+        display: grid;
+        grid-template-columns: 15% 1fr 16%;
+        gap: 10px;
+        padding: 10px;
     }
 }
 

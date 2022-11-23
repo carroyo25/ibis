@@ -333,11 +333,12 @@
                     <th rowspan="2">Num.</th>  
                     <th rowspan="2">Emision</th>
                     <th rowspan="2">Descripción</th>
-                    <th rowspan="2">Centro Costos</th> 
+                    <th rowspan="2">Proyecto</th> 
                     <th rowspan="2">Proveedor</th> 
                     <th rowspan="2">Area</th>
                     <th rowspan="2">Atencion</th>
-                    <th colspan="3" width="16%">Firmas</th>
+                    <th rowspan="2" width="80px">Total</th>
+                    <th colspan="3" width="15%">Firmas</th>
                     <tr>
                         <th>Logística</th>
                         <th>Finanzas</th>

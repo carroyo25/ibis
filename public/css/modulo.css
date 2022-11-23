@@ -1679,6 +1679,14 @@
   display: flex;
   gap: 10px;
 }
+.ventanaBusqueda .textoBusquedaGrid {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 15% 10px 1fr 10px 16%;
+  grid-template-columns: 15% 1fr 16%;
+  gap: 10px;
+  padding: 10px;
+}
 
 .ventanaDialogo {
   width: 20%;

@@ -1447,7 +1447,7 @@
                                                     tb_pedidodet.nroparte,
                                                     tb_pedidodet.unid,
                                                     tb_pedidodet.observaciones,
-                                                    FORMAT(tb_pedidodet.cant_pedida,2) AS cant_pedida,
+                                                    REPLACE(FORMAT(tb_pedidodet.cant_pedida,2),',','') AS cant_pedida,
                                                     tb_pedidodet.estadoItem,
                                                     cm_producto.ccodprod,
                                                     cm_producto.cdesprod,
@@ -1507,7 +1507,7 @@
                                                     tb_pedidodet.idtipo, 
                                                     tb_pedidodet.nroparte, 
                                                     tb_pedidodet.unid, 
-                                                    FORMAT(tb_pedidodet.cant_pedida,2) AS cant_pedida, 
+                                                    REPLACE(FORMAT(tb_pedidodet.cant_pedida,2),',','') AS cant_pedida, 
                                                     tb_pedidodet.estadoItem, 
                                                     cm_producto.ccodprod, 
                                                     CONCAT_WS(' ',cm_producto.cdesprod,tb_pedidodet.observaciones) AS cdesprod, 
@@ -1573,9 +1573,9 @@
                                                     tb_pedidodet.idtipo, 
                                                     tb_pedidodet.nroparte, 
                                                     tb_pedidodet.unid, 
-                                                    FORMAT(tb_pedidodet.cant_pedida,2) AS cant_pedida,
-                                                    FORMAT(tb_pedidodet.cant_atend,2) AS cant_atendida,
-                                                    FORMAT(tb_pedidodet.cant_resto,2) AS cant_pendiente, 
+                                                    REPLACE(FORMAT(tb_pedidodet.cant_pedida,2),',','') AS cant_pedida,
+                                                    REPLACE(FORMAT(tb_pedidodet.cant_resto,2),',','') AS cant_pendiente, 
+                                                    REPLACE(FORMAT(tb_pedidodet.cant_atend,2),',','') AS cant_atendida,
                                                     tb_pedidodet.estadoItem, 
                                                     cm_producto.ccodprod, 
                                                     CONCAT_WS(' ',cm_producto.cdesprod,tb_pedidodet.observaciones) AS cdesprod, 
@@ -1789,7 +1789,7 @@
                                                     tb_pedidodet.nroparte,
                                                     tb_pedidodet.unid,
                                                     tb_pedidodet.observaciones,
-                                                    FORMAT(tb_pedidodet.cant_pedida,2) AS cant_pedida,
+                                                    REPLACE(FORMAT(tb_pedidodet.cant_pedida,2),',','') AS cant_pedida,
                                                     tb_pedidodet.estadoItem,
                                                     cm_producto.ccodprod,
                                                     cm_producto.cdesprod,
@@ -2031,7 +2031,6 @@
            return $precios;
         }
 
-
         private function consultarDetallesConformidad($id){
             try {
                 $salida ="";
@@ -2218,7 +2217,7 @@
                                                         lg_ordendet.nidpedi,
                                                         lg_ordendet.cobserva,
                                                         lg_ordendet.id_cprod,
-                                                        FORMAT(lg_ordendet.ncanti, 2) AS ncanti,
+                                                        REPLACE(FORMAT(lg_ordendet.ncanti, 2),',','') AS ncanti,
                                                         lg_ordendet.nunitario AS nunitario,
                                                         FORMAT(lg_ordendet.nigv, 2) AS nigv,
                                                         FORMAT(
@@ -2803,25 +2802,24 @@
 
                 if ($rowCount > 0) {
                     $salida="";
+                    $item = 1;
                     while($rs = $sql->fetch()){
-                        $item = 1;
-                        
                         $fecha = $rs['fvence'] == "" ? date("d/m/Y", strtotime($rs['fvence'])) : "";
                         
                         $salida .= '<tr data-detorden="'.$rs['niddetaOrd'].'" 
                                         data-idprod="'.$rs['id_cprod'].'"
                                         data-iddetped="'.$rs['niddetaPed'].'"
                                         data-iddetnota="'.$rs['niddeta'].'">
-                                        <td class="textoCentro"><a href="'.$rs['id_regalm'].'"><i class="fas fa-barcode"></i></a></td>
+                                        <td class="textoCentro"><a href="'.$rs['id_regalm'].'" class="eliminarItem"><i class="fas fa-minus"></i></a></td>
                                         <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="pl20px">'.$rs['cdesprod'].'</td>
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                         <td class="pr20px textoDerecha">'.$rs['cantidad_orden'].'</td>
-                                        <td class="pr5px"><input type="text" class="textoDerecha" value="'.$rs['ncantidad'].'" readonly></td>
-                                        <td class="pr20px textoDerecha"></td>
+                                        <td class="pr5px"><input type="text" class="textoDerecha" value="'.$rs['ncantidad'].'"></td>
                                         <td><input type="text" value="'.$rs['cobserva'].'"></td>
-                                        <td></td>
+                                        <td class="pr20px textoDerecha"></td>
+                                        <td class="textoCentro"><a href="'.$rs['id_regalm'].'"><i class="fas fa-barcode"></i></a></td>
                                     </tr>';
                     }
                 }

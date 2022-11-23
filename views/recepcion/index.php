@@ -10,15 +10,7 @@
     <div class="mensaje">
         <p></p>
     </div>
-    <div class="modal" id="pregunta">
-        <div class="ventanaPregunta">
-            <h3>Desea eliminar el registro?</h3>
-            <div>
-                <button type="button" id="btnAceptarPregunta">Aceptar</button>
-                <button type="button" id="btnCancelarPregunta">Cancelar</button>
-            </div>
-        </div>
-    </div>
+   
     <div class="modal" id="proceso">
         <div class="ventanaProceso tamanioProceso">
             <div class="cabezaProceso">
@@ -174,16 +166,16 @@
                         <table class="tabla" id="tablaDetalles">
                             <thead>
                                 <tr class="stickytop">
-                                        <th class="">...</th>
+                                        <th width="5%"> - </th>
                                         <th class="">Item</th>
                                         <th class="">Codigo</th>
                                         <th class="">Descripcion</th>
                                         <th class="">Unidad</th>
                                         <th width="7%">Cantidad</br>Orden</th>
-                                        <th width="7%">Cantidad</br>Recibida</th>
-                                        <th width="7%">Pendiente</br>Entrega</th>
+                                        <th width="7%">Cantidad</br>Pendiente</th>
                                         <th class="">Observaciones</th>
                                         <th class="">N° Parte</th>
+                                        <th width="5%">...</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -203,7 +195,8 @@
                     <a href="#" id="closeSearch"><i class="fas fa-window-close"></i></a>
                 </div>
             </div>
-            <div class="textoBusqueda">
+            <div class="textoBusquedaGrid">
+                <input type="text" name="ordenSearch" id="ordenSearch" placeholder="Orden">
                 <select name="itemCostos" id="itemCostos">
                     <?php echo $this->listaCostosSelect ?>
                 </select>
@@ -252,6 +245,15 @@
                     <button type="button" class="boton3" id="btnCancelAtach">Cancelar</button>
                 </div>
             </form>
+        </div>
+    </div>
+    <div class="modal" id="pregunta">
+        <div class="ventanaPregunta">
+            <h3>Desea eliminar el registro?</h3>
+            <div>
+                <button type="button" id="btnAceptarPregunta">Aceptar</button>
+                <button type="button" id="btnCancelarPregunta">Cancelar</button>
+            </div>
         </div>
     </div>
     <div class="cabezaModulo">
