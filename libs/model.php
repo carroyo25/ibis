@@ -2481,7 +2481,7 @@
             $pdf->AddPage();
             $pdf->AliasNbPages();
             $pdf->SetWidths(array(10,15,15,10,95,17,13,15));
-            $pdf->SetFont('Arial','',5);
+            $pdf->SetFont('Arial','',6);
             $lc = 0;
             $rc = 0;
 
@@ -2518,7 +2518,7 @@
 
             if ($cabecera['radioIgv'] ==  0){
                 $pdf->Cell(140,6,$this->convertir($cabecera['total_numero'])." ".$cabecera['moneda'],"TBR",0,"L",true); 
-                $pdf->Cell(30,6,number_format($cabecera['total'],2),"1",1,"R",true);
+                $pdf->Cell(30,6,number_format($cabecera['total_numero'],2),"1",1,"R",true);
             }
             else {
                 $pdf->Cell(140,6,$this->convertir($cabecera['total_numero']*1.18)." ".$cabecera['moneda'],"TBR",0,"L",true);
@@ -2535,7 +2535,7 @@
 
             if ($cabecera['radioIgv'] ==  0) {
                 $pdf->Cell(45,6,"Valor Venta",0,0);
-                $pdf->Cell(10,6,number_format($cabecera['total'],2),0,1,"R");
+                $pdf->Cell(10,6,number_format($cabecera['total_numero'],2),0,1,"R");
             }else {
                 $total_sin_igv = round($cabecera['total_numero'],2);
                 
@@ -2580,7 +2580,7 @@
             $pdf->Cell(15,4,$cabecera['moneda'],1,0,"C",true);
 
             if ( $cabecera['radioIgv'] ==  0 )
-                $pdf->Cell(20,4,number_format($cabecera['total'],2),1,1,"R",true);
+                $pdf->Cell(20,4,number_format($cabecera['total_numero'],2),1,1,"R",true);
             else 
                 $pdf->Cell(20,4,number_format($cabecera['total_numero']*1.18,2),1,1,"R",true);
             

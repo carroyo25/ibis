@@ -573,8 +573,3 @@ printTrigger = (elementId) => {
         getMyFrame.contentWindow.print();
 }
 
-window.addEventListener("afterprint", function(event) {
-    console.log(event);
-});
-
-window.matchMedia('print').addListener((evento)=>{console.log(evento);});
