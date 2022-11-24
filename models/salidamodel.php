@@ -101,7 +101,7 @@
                                                     WHERE
                                                         tb_costusu.id_cuser = :user 
                                                         AND tb_costusu.nflgactivo = 1 
-                                                        AND alm_recepcab.nEstadoDoc = 62
+                                                        AND alm_recepcab.nEstadoDoc = 60
                                                     ORDER BY tb_proyectos.ccodproy");
                 $sql->execute(["user"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowCount();
@@ -159,7 +159,7 @@
                                                     WHERE
                                                         tb_costusu.id_cuser = :usr 
                                                         AND tb_costusu.nflgactivo = 1 
-                                                        AND alm_recepcab.nEstadoDoc = 62
+                                                        AND alm_recepcab.nEstadoDoc = 60
                                                         AND alm_recepcab.id_regalm = :id
                                                     ORDER BY tb_proyectos.ccodproy");
                 $sql->execute(["usr"=>$_SESSION['iduser'],'id'=>$id]);
