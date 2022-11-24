@@ -43,8 +43,8 @@
                             <button type="button" id="saveDoc" title="Grabar Nota" class="boton3">
                                 <p><i class="far fa-save"></i> Grabar </p> 
                             </button>
-                            <button type="button" id="importData" title="Importar Orden" class="boton3">
-                                <i class="fab fa-wpexplorer"></i> Importar Items
+                            <button type="button" id="importData" title="Importar Ingresos" class="boton3">
+                                <i class="fab fa-wpexplorer"></i> Importar Ingresos
                             </button>
                             <button type="button" id="preview" title="Vista Previa" class="boton3">
                                 <i class="far fa-file-pdf"></i> Vista Previa
@@ -68,12 +68,7 @@
                             </div>
                             <div class="column2">
                                 <label for="costos">CCostos:</label>
-                                <input type="text" name="costos" id="costos" class="mostrarLista busqueda" placeholder="Elija una opcion">
-                                <div class="lista" id="listaCostos">
-                                   <ul>
-                                       <?php echo $this->listaCostos?>
-                                   </ul> 
-                                </div>
+                                <input type="text" name="costos" id="costos" class="mostrarLista busqueda">
                             </div>
                             <div class="column2">
                                 <label for="aprueba">Aprueba:</label>
@@ -106,8 +101,7 @@
                                     <input type="text" name="movimiento" id="movimiento" class="w100por" readonly>
                                 </div>
                                 <div class="column2_46">
-                                    <label for="items">Nro.Guia :</label>
-                                    <input type="text" name="guia" id="guia" class="cerrarLista">
+                                    <input type="hidden" name="guia" id="guia" class="cerrarLista">
                                 </div>
                             </div>
                         </div>
@@ -155,10 +149,9 @@
                                         <th class="">Codigo</th>
                                         <th class="">Descripcion</th>
                                         <th class="">Unidad</th>
-                                        <th width="7%">Cantidad</br>Recibida</th>
-                                        <th width="7%">Pendiente</br>Entrega</th>
+                                        <th width="7%">Cantidad</br>Orden</th>
+                                        <th width="7%">Pendiente</br>Envio</th>
                                         <th width="7%">Cantidad</br>Despacho</th>
-                                        <th width="7%">Saldo</br>Entregar</th>
                                         <th class="">Observaciones</th>
                                         <th width="4%">Pedido</th>
                                         <th width="4%">Orden</th>
@@ -177,13 +170,16 @@
     <div class="modal" id="busqueda">
         <div class="ventanaBusqueda w75por">
             <div class="tituloVentana">
-                <span id="tituloBusqueda">Notas de Ingreso</span>
+                <span id="tituloBusqueda">Ingresos</span>
                 <div>
                     <a href="#" id="closeSearch"><i class="fas fa-window-close"></i></a>
                 </div>
             </div>
-            <div class="textoBusqueda">
-                <input type="text" name="txtBuscar" id="txtBuscar" placeholder="Buscar" class="w90por">
+            <div class="textoBusquedaGrid">
+                <input type="text" name="inputSearch" id="inputSearch" placeholder="Nro. Ingreso">
+                <select name="itemCostos" id="itemCostos">
+                    <?php echo $this->listaCostosSelect ?>
+                </select>
                 <button type="button" class="boton3" id="btnAceptItems">Aceptar</button>
             </div>
             <div class="tablaBusqueda">
@@ -198,12 +194,10 @@
                             <th>Ingreso</th>
                             <th>Area</th>
                             <th>Concepto</th>
-                            <th>Codigo</th>
-                            <th>Descripcion</th>
+                            <th>Almacen</th>
                         </tr>
                     </thead>
                     <tbody>
-
                     </tbody>
                 </table>
             </div>

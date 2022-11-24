@@ -473,22 +473,6 @@ $(function(){
         return false;
     });
 
-    /*$("#tablaDetalles tbody").on('keypress','input', function (e) {
-        if (e.which == 13) {
-            let cant = parseFloat($(this).parent().parent().find("td").eq(7).text()) - $(this).parent().parent().find("td").eq(6).children().val();
-            
-            try {
-                if (cant < 0) throw "Error en el ingreso";
-
-                $(this).parent().parent().find("td").eq(7).text(cant.toFixed(2));
-
-            } catch (error) {
-                mostrarMensaje(error,"mensaje_error");
-                $(this).parent().parent().find("td").eq(7).text($(this).parent().parent().data("saldo"));
-            }
-        }
-    });*/
-
     $("#btnConfirmSeries").click(function (e) { 
         e.preventDefault();
 

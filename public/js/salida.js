@@ -106,10 +106,7 @@ $(function() {
         
         if ( accion == 'n') {
             try {
-
-                if ( $("#codigo_costos").val() == "" ) throw "Elija un centro de costos";
-
-                $.post(RUTA+"salida/ingresos",{ccostos:$("#codigo_costos").val()},
+                $.post(RUTA+"salida/ingresos",
                 function (data, textStatus, jqXHR) {
                     $("#notas tbody")
                         .empty()
@@ -135,30 +132,6 @@ $(function() {
         e.preventDefault();
         
         $(this).parent().parent().parent().parent().fadeOut();
-
-        return false;
-    });
-
-    $("#notas tbody").on("click","tr", function (e) {
-        e.preventDefault();
-
-        $("#almacen_origen_despacho").val($(this).data('almacen'));
-        $("#codigo_almacen").val($(this).data('codigoalmaenorigen'));
-
-        try {
-            $.post(RUTA+"salida/buscarItem", {indice:$(this).data("indice")},
-                function (data, text, requestXHR) {
-                    $("#tablaDetalles tbody")
-                        .append(data);
-
-                        fillTables($("#tablaDetalles tbody >tr"),1);
-                },    
-                "text"
-            );
-
-        } catch (error) {
-            mostrarMensaje(error,'mensaje_error');
-        }
 
         return false;
     });
@@ -499,6 +472,54 @@ $(function() {
         console.log("Mando Guia");
 
         return false;
+    });
+
+    $("#inputSearch").keyup(function (e) { 
+        if(e.which == 13) {
+            $("#esperar").fadeIn();
+            
+            $.post(RUTA+"salida/filtraIngreso", {id:$(this).val()},
+                function (data, textStatus, jqXHR) {
+                    $("#notas tbody")
+                        .empty()
+                        .append(data);
+                    $("#esperar").fadeOut();
+                },
+                "text"
+            );
+        }
+    });
+
+    $("#btnAceptItems").click(function (e) { 
+        e.preventDefault();
+        
+        let TABLA = $("#notas tbody >tr");
+        let id = [];
+
+        TABLA.each(function(){
+            let checked = $(this).find('td').eq(0).children().prop('checked');
+            if (checked) {
+                id.push($(this).data('ingreso'));
+            }
+        })
+
+        try {
+            if (id.length == 0 ) throw "No se selecciono ningún item";
+
+            $.post(RUTA+"salida/llamarData", {data:JSON.stringify(id)},
+                function (data, textStatus, jqXHR) {
+                    $("#busqueda").fadeOut();
+                    $("#tablaDetalles tbody")
+                        .empty()
+                        .append(data);
+                },
+                "text"
+            );
+        } catch (error) {
+            mostrarMensaje(error,"mensaje_error");
+        }
+
+        return false
     });
 })
 

@@ -10,7 +10,6 @@
     <div class="mensaje">
         <p></p>
     </div>
-   
     <div class="modal" id="proceso">
         <div class="ventanaProceso tamanioProceso">
             <div class="cabezaProceso">
@@ -190,7 +189,7 @@
     <div class="modal" id="busqueda">
         <div class="ventanaBusqueda w75por">
             <div class="tituloVentana">
-                <span id="tituloBusqueda">Pedidos</span>
+                <span id="tituloBusqueda">Ordenes</span>
                 <div>
                     <a href="#" id="closeSearch"><i class="fas fa-window-close"></i></a>
                 </div>

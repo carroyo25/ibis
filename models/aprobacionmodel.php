@@ -122,7 +122,7 @@
                 $nreg = count($correos) ;
 
                 for ($i=0; $i < $nreg; $i++) {
-                    $mail->addAddress($correos[$i]['ccorreo'],$correos[$i]['cnombres']);
+                    //$mail->addAddress($correos[$i]['ccorreo'],$correos[$i]['cnombres']);
                 }
 
                 $texto = "Pedido : " .$pedido . "-" .$costos;
