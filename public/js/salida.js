@@ -414,23 +414,6 @@ $(function() {
         return false;
     })
 
-    $("#tablaDetalles tbody").on('keypress','input', function (e) {
-        if (e.which == 13) {
-            let cant = parseFloat($(this).parent().parent().find("td").eq(6).text()) - $(this).parent().parent().find("td").eq(7).children().val();
-            
-            try {
-                if (cant < 0) throw "Error en el ingreso";
-
-                $(this).parent().parent().find("td").eq(8).text(cant.toFixed(2));
-                //$(this).parent().parent().find("td").eq(7).text($(this).parent().parent().data("saldo"));
-
-
-            } catch (error) {
-                mostrarMensaje(error,"mensaje_error");
-            }
-        }
-    });
-
     $(".lista").on("click",'a', function (e) {
         e.preventDefault();
 
@@ -449,7 +432,7 @@ $(function() {
 
             $.post(RUTA+"salida/ultimoIndice",
                 function (data, text, requestXHR) {
-                    $("#numero").val(data);
+                    $("#numero").val(data.salida);
                 },
                 "text"
             );
@@ -498,6 +481,10 @@ $(function() {
 
         TABLA.each(function(){
             let checked = $(this).find('td').eq(0).children().prop('checked');
+            
+            $("#costos").val("xxx");
+            $("#codigo_costos").val($(this).data('costos'));
+            
             if (checked) {
                 id.push($(this).data('ingreso'));
             }
@@ -511,9 +498,9 @@ $(function() {
                     $("#busqueda").fadeOut();
                     $("#tablaDetalles tbody")
                         .empty()
-                        .append(data);
+                        .append(data.items);
                 },
-                "text"
+                "json"
             );
         } catch (error) {
             mostrarMensaje(error,"mensaje_error");

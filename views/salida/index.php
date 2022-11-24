@@ -150,7 +150,6 @@
                                         <th class="">Descripcion</th>
                                         <th class="">Unidad</th>
                                         <th width="7%">Cantidad</br>Orden</th>
-                                        <th width="7%">Pendiente</br>Envio</th>
                                         <th width="7%">Cantidad</br>Despacho</th>
                                         <th class="">Observaciones</th>
                                         <th width="4%">Pedido</th>

@@ -159,7 +159,7 @@
                                                     WHERE
                                                         tb_costusu.id_cuser = :usr 
                                                         AND tb_costusu.nflgactivo = 1 
-                                                        AND alm_recepcab.nEstadoDoc = 60
+                                                        AND alm_recepcab.nEstadoDoc = 62
                                                         AND alm_recepcab.id_regalm = :id
                                                     ORDER BY tb_proyectos.ccodproy");
                 $sql->execute(["usr"=>$_SESSION['iduser'],'id'=>$id]);
@@ -198,12 +198,35 @@
             $indices = str_replace("]",")",$indices);
 
             $salida = "";
-            $qry = "SELECT alm_recepdet.niddeta,
-                            cm_producto.ccodprod,
-	                        UPPER(cm_producto.cdesprod) AS descripcion 
-                     FROM alm_recepdet
-                     INNER JOIN cm_producto ON alm_recepdet.id_cprod = cm_producto.id_cprod 
-                     WHERE id_regalm IN $indices";
+            $qry = "SELECT
+                        alm_recepdet.niddeta,
+                        cm_producto.ccodprod,
+                        UPPER(cm_producto.cdesprod) AS descripcion,
+                        tb_unimed.cabrevia AS unidad,
+                        tb_pedidodet.observaciones,
+                        tb_pedidodet.iditem AS iditem,
+                        LPAD(tb_pedidocab.nrodoc, 6, 0) AS pedido,
+                        REPLACE (
+                            FORMAT(lg_ordendet.ncanti, 2),
+                            '',
+                            ','
+                        ) AS cantidad,
+                        tb_almacen.cdesalm,
+                        alm_recepcab.nnronota AS ingreso,
+                        lg_ordencab.id_regmov AS idorden,
+                        LPAD(lg_ordencab.cnumero, 6, 0) AS orden
+                    FROM
+                        alm_recepdet
+                    INNER JOIN cm_producto ON alm_recepdet.id_cprod = cm_producto.id_cprod
+                    INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                    INNER JOIN tb_pedidodet ON alm_recepdet.niddetaPed = tb_pedidodet.iditem
+                    INNER JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
+                    INNER JOIN lg_ordendet ON alm_recepdet.niddetaOrd = lg_ordendet.nitemord
+                    INNER JOIN tb_almacen ON alm_recepdet.ncodalm1 = tb_almacen.ncodalm
+                    INNER JOIN alm_recepcab ON alm_recepdet.id_regalm = alm_recepcab.id_regalm
+                    INNER JOIN lg_ordencab ON tb_pedidocab.idorden = lg_ordencab.id_regmov
+                    WHERE
+                        alm_recepdet.id_regalm IN $indices";
 
             try {
                 $sql = $this->db->connect()->query($qry);
@@ -214,24 +237,25 @@
                 if ($rowCount > 0){
                     while ($rs = $sql->fetch()) {
                         $salida .= '<tr class="pointer">
-                                    <td></td>
+                                    <td class="textoCentro"><a href="'.$rs['niddeta'].'" data-accion="deleteItem" class="eliminarItem"><i class="fas fa-minus"></i></a></td>
                                     <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
-                                    <td>'.$rs['ccodprod'].'</td>
-                                    <td>'.$rs['descripcion'].'</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
+                                    <td class="textoCentro">'.$rs['ccodprod'].'</td>
+                                    <td class="pl20px">'.$rs['descripcion'].'</td>
+                                    <td class="textoCentro">'.$rs['unidad'].'</td>
+                                    <td class="textoDerecha pr5px">'.$rs['cantidad'].'</td>
+                                    <td><input type="number"></td>
+                                    <td><input type="text"></td>
+                                    <td class="textoCentro">'.$rs['pedido'].'</td>
+                                    <td class="textoCentro">'.$rs['orden'].'</td>
+                                    <td class="textoCentro">'.$rs['ingreso'].'</td>
                                 </tr>';
+
+                        
                     }
                     
                 }
 
-                return $salida;
+                return array("items" => $salida);
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;

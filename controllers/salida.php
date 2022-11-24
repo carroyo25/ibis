@@ -33,7 +33,7 @@
         }
 
         function llamarData() {
-            echo $this->model->importarItems($_POST);
+            echo json_encode($this->model->importarItems($_POST));
         }
   
     }
