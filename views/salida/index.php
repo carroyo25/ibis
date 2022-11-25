@@ -44,7 +44,7 @@
                                 <p><i class="far fa-save"></i> Grabar </p> 
                             </button>
                             <button type="button" id="importData" title="Importar Ingresos" class="boton3">
-                                <i class="fab fa-wpexplorer"></i> Importar Ingresos
+                                <i class="fab fa-wpexplorer"></i> Importar Ordenes
                             </button>
                             <button type="button" id="preview" title="Vista Previa" class="boton3">
                                 <i class="far fa-file-pdf"></i> Vista Previa
@@ -174,34 +174,31 @@
     <div class="modal" id="busqueda">
         <div class="ventanaBusqueda w75por">
             <div class="tituloVentana">
-                <span id="tituloBusqueda">Ingresos</span>
+                <span id="tituloBusqueda">Ordenes</span>
                 <div>
                     <a href="#" id="closeSearch"><i class="fas fa-window-close"></i></a>
                 </div>
             </div>
             <div class="textoBusquedaGrid">
-                <input type="text" name="inputSearch" id="inputSearch" placeholder="Nro. Ingreso">
+                <input type="text" name="ordenSearch" id="ordenSearch" placeholder="Orden">
                 <select name="itemCostos" id="itemCostos">
                     <?php echo $this->listaCostosSelect ?>
                 </select>
                 <button type="button" class="boton3" id="btnAceptItems">Aceptar</button>
             </div>
             <div class="tablaBusqueda">
-                <table class="tablaWrap" id="notas">
+                <table class="tablaWrap" id="ordenes">
                     <thead>
                         <tr class="stickytop" >
-                            <th>Item</th>
-                            <th>Fecha</br>Ingreso</th>
-                            <th>Centro de Costos</th>
-                            <th>Pedido</th>
                             <th>Orden</th>
-                            <th>Ingreso</th>
+                            <th>Emisión</th>
                             <th>Area</th>
-                            <th>Concepto</th>
-                            <th>Almacen</th>
+                            <th>Centro de Costos</th>
+                            <th>Proveedor</th>
                         </tr>
                     </thead>
                     <tbody>
+
                     </tbody>
                 </table>
             </div>
