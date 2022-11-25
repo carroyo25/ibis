@@ -596,9 +596,9 @@ $(function(){
                 result[this.name] = this.value;
             })
 
-            $("#sendMail").fadeIn();
+            //$("#sendMail").fadeIn();
 
-            /*$.post(RUTA+"orden/envioOrden", {cabecera:result,
+            $.post(RUTA+"orden/envioOrden", {cabecera:result,
                                             detalles:JSON.stringify(detalles())},
                 function (data, textStatus, jqXHR) {
                     mostrarMensaje(data.mensaje,data.clase);
@@ -608,7 +608,7 @@ $(function(){
                     $("#esperar").fadeOut();
                 },
                 "json"
-            );*/
+            );
 
         } catch (error) {
             mostrarMensaje(error,'mensaje_error');
