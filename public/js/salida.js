@@ -225,7 +225,7 @@ $(function() {
                 result[this.name] = this.value;
             });
 
-            if (result['codigo_salida'] == "") throw "Por favor grabar el documento";
+            //if (result['codigo_salida'] == "") throw "Por favor grabar el documento";
 
             $.post(RUTA+"salida/documentoPdf", {cabecera:result,
                                                 detalles:JSON.stringify(detalles()),
@@ -252,7 +252,7 @@ $(function() {
         e.preventDefault();
 
         try {
-            let result = {};
+           let result = {};
 
             $.each($("#formProceso").serializeArray(),function(){
                 result[this.name] = this.value;
@@ -264,7 +264,7 @@ $(function() {
                 if (result['codigo_almacen_destino'] == "") throw "Seleccione el almacen destino";
             
                 $.post(RUTA+"salida/nuevaSalida", {cabecera:result,
-                                                detalles:JSON.stringify(detalles())},
+                                                   detalles:JSON.stringify(detalles())},
                     function (data, textStatus, jqXHR) {
                         mostrarMensaje(data.mensaje,data.clase);
                         $("#codigo_salida").val(data.indice);
@@ -336,34 +336,21 @@ $(function() {
             if (result['codigo_origen'] == "") throw "Seleccione Almacen origen";
             if (result['codigo_destino'] == "") throw "Seleccione Almacen destino";
             if (result['codigo_entidad'] == "") throw "Seleccione la empresa de transportes";
-            if (result['codigo_autoriza'] == "") throw "Seleccione la persona que autoriza";
-            if (result['codigo_destinatario'] == "") throw "Seleccione el destinatario";
             if (result['codigo_traslado'] == "") throw "Seleccione la modalidad de traslado";
-            if (result['codigo_tipo'] == "") throw "Seleccione el tipo de envio";
-            if (result['nro_bultos'] == "") throw "Indique el Nro. de bultos";
-            if (result['peso_bruto'] == "") throw "Indique el peso bruto";
-
-            $("#proceso").fadeOut();
-
-            $.post(RUTA+"salida/guiaremision", {cabecera:result,
-                                                detalles:JSON.stringify(detalles()),
-                                                despacho:$("#codigo_salida").val(),
-                                                pedido:$("#codigo_pedido").val(),
-                                                orden:$("#codigo_orden").val(),
-                                                ingreso:$("#codigo_ingreso").val(),},
+            if (result['codigo_autoriza'] == "") throw "Seleccione la persona que autoriza";
+            
+            $.post(RUTA+"salida/preImpreso", {cabecera:result,
+                                                detalles:JSON.stringify(detalles())},
                 function (data, textStatus, jqXHR) {
                         
                        if (data.archivo !== ""){
-                            $("#iFramePdf").attr("src",data.archivo);
-                            $("#vistadocumento").fadeOut();
-                            $("#tablaPrincipal tbody")
-                                .empty()
-                                .append(data.listado)
+                            $("#imprimir #iFramePdf").attr("src",data.archivo);
                        }
                     },
                     "json"
-                );
+            );
 
+            ;        
 
         } catch (error) {
             mostrarMensaje(error,'mensaje_error');
@@ -372,8 +359,8 @@ $(function() {
         return false;
     });
 
-    $("#iFramePdf").on('load', function() {
-        $("iframe")[1].contentWindow.print();
+    $("#imprimir #iFramePdf").on('load', function() {
+        $("iframe")[2].contentWindow.print();
     })
 
     $("#updateDocument").click(function(e) {
@@ -482,10 +469,13 @@ $(function() {
         TABLA.each(function(){
             let checked = $(this).find('td').eq(0).children().prop('checked');
             
-            $("#costos").val("xxx");
-            $("#codigo_costos").val($(this).data('costos'));
+            $("#codigo_movimiento").val(145);
+            $("#tipo").val("SALIDA POR OC")
             
             if (checked) {
+                $("#costos").val($(this).find('td').eq(2).text());
+                $("#codigo_costos").val($(this).data('costos'));
+
                 id.push($(this).data('ingreso'));
             }
         })
@@ -496,8 +486,8 @@ $(function() {
             $.post(RUTA+"salida/llamarData", {data:JSON.stringify(id)},
                 function (data, textStatus, jqXHR) {
                     $("#busqueda").fadeOut();
+                    $("#numero").val(data.numero);
                     $("#tablaDetalles tbody")
-                        .empty()
                         .append(data.items);
                 },
                 "json"
@@ -506,6 +496,55 @@ $(function() {
             mostrarMensaje(error,"mensaje_error");
         }
 
+        return false
+    });
+
+    $("#tablaDetalles tbody").on("click","a", function (e) {
+        e.preventDefault();
+
+        $(this).parent().parent().remove();
+        fillTables($("#tablaDetalles tbody > tr"),1);
+
+        return false;
+    });
+
+    $("#previewDocument").click(function (e) { 
+        e.preventDefault();
+        
+        try {
+            let result = {};
+
+            $.each($("#guiaremision").serializeArray(),function(){
+                result[this.name] = this.value;
+            });
+
+            if (result['numero_guia'] == "") throw "Ingrese el Nro. de Guia";
+            if (result['codigo_origen'] == "") throw "Seleccione Almacen origen";
+            if (result['codigo_destino'] == "") throw "Seleccione Almacen destino";
+            if (result['codigo_entidad'] == "") throw "Seleccione la empresa de transportes";
+            if (result['codigo_traslado'] == "") throw "Seleccione la modalidad de traslado";
+            if (result['codigo_autoriza'] == "") throw "Seleccione la persona que autoriza";
+            
+            $.post(RUTA+"salida/vistaPreviaGuiaRemision", {cabecera:result,
+                                                detalles:JSON.stringify(detalles())},
+                function (data, textStatus, jqXHR) {
+                        
+                       if (data.archivo !== ""){
+                            $(".ventanaVistaPrevia iframe")
+                            .attr("src","")
+                            .attr("src",data.archivo);
+        
+                            $("#vistaprevia").fadeIn();
+                       }
+                    },
+                    "json"
+            );
+
+
+        } catch (error) {
+            mostrarMensaje(error,'mensaje_error');
+        }
+        
         return false
     });
 })
@@ -518,66 +557,48 @@ detalles = () =>{
     
     TABLA.each(function(){
         let ITEM        = $(this).find('td').eq(1).text(),
-            IDDETORDEN  = $(this).data("idorden"),
+            //IDDETORDEN  = $(this).data("idorden"),
             IDDETPED    = $(this).data("idpedido"),
             IDPROD      = $(this).data("idproducto"),
-            IDINGRESO   = $(this).data("idingreso"),
-            IDDESPACHO  = $(this).data("iddespacho"),
+            //IDINGRESO   = $(this).data("idingreso"),
+            //IDDESPACHO  = $(this).data("iddespacho"),
             PEDIDO      = $(this).data("pedido"),
             ORDEN       = $(this).data("orden"),
             INGRESO     = $(this).data("ingreso"),
-            ALMACEN     = $("#codigo_almacen").val(),
+            ALMACEN     = $("#codigo_almacen_origen").val(),
             CANTIDAD    = $(this).find('td').eq(5).text(),// cantidad
-            CANTDESP    = $(this).find('td').eq(7).children().val(),
-            SALDO       = $(this).find('td').eq(8).text(),
-            OBSER       = $(this).find('td').eq(9).children().val(),
-            VENCE       = "",
-            SERIE       = "",
+            CANTDESP    = $(this).find('td').eq(6).children().val(),
+            OBSER       = $(this).find('td').eq(7).children().val(),
             CODIGO      = $(this).find('td').eq(2).text(),//codigo
             DESCRIPCION = $(this).find('td').eq(3).text(),//descripcion
             UNIDAD      = $(this).find('td').eq(4).text(),//unidad
-            NESTADO     = '',
-            CESTADO     = '',
-            UBICACION   = "",
             DESTINO     = $("#codigo_almacen_destino").val(),
     
         item = {};
 
-        item['item']        = ITEM;
-        item['iddetorden']  = IDDETORDEN;
-        item['iddetped']    = IDDETPED;
-        item['idingreso']   = IDINGRESO;
-        item['iddespacho']    = IDDESPACHO;
-        item['idprod']      = IDPROD;
-        item['pedido']      = ORDEN;
-        item['orden']       = PEDIDO;
-        item['ingreso']     = INGRESO;
-        item['almacen']     = ALMACEN;
-        item['cantidad']    = CANTIDAD;
-        item['obser']       = OBSER;
-        item['vence']       = VENCE;
-        item['serie']       = SERIE;
+        item['item']         = ITEM;
+        //item['iddetorden'] = IDDETORDEN;
+        item['iddetped']     = IDDETPED;
+        //item['idingreso']  = IDINGRESO;
+        //item['iddespacho'] = IDDESPACHO;
+        item['idprod']       = IDPROD;
+        item['pedido']       = ORDEN;
+        item['orden']        = PEDIDO;
+        item['ingreso']      = INGRESO;
+        item['almacen']      = ALMACEN;
+        item['cantidad']     = CANTIDAD;
+        item['cantdesp']     = CANTDESP;
+        item['obser']        = OBSER;
 
-        item['codigo']     = CODIGO;
-        item['descripcion']= DESCRIPCION;
-        item['unidad']     = UNIDAD;
-        item['nestado']    = NESTADO;
-        item['cestado']    = CESTADO;
-        item['ubicacion']  = UBICACION;
-        item['cantdesp']   = CANTDESP;
-
-        item['destino'] = DESTINO;
-        item['saldo']   = SALDO;
-
+        item['codigo']       = CODIGO;
+        item['descripcion']  = DESCRIPCION;
+        item['unidad']       = UNIDAD;
+        item['destino']      = DESTINO;
+        
         DETALLES.push(item);
     })
 
     return DETALLES; 
 }
 
-printTrigger = (elementId) => {
-    let getMyFrame = document.getElementById(elementId); 
-        getMyFrame.focus(); 
-        getMyFrame.contentWindow.print();
-}
 

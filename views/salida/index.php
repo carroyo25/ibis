@@ -84,7 +84,12 @@
                         <div class="seccion_medio">
                             <div class="column2">
                                 <label for="almacen_origen_despacho">Almacen Origen:</label>
-                                <input type="text" name="almacen_origen_despacho" id="almacen_origen_despacho" class="busqueda" readonly>
+                                <input type="text" name="almacen_origen_despacho" id="almacen_origen_despacho" class="mostrarLista busqueda" readonly>
+                                <div class="lista" id="listaAlmacenDestino">
+                                   <ul>
+                                       <?php echo $this->listaAlmacen?>
+                                   </ul> 
+                                </div>
                             </div>
                             <div class="column2">
                                 <label for="almacen_destino_despacho">Almacen Destino:</label>
@@ -202,15 +207,6 @@
             </div>
         </div>
     </div>
-    <div class="modal" id="vistaprevia">
-        <div class="ventanaVistaPrevia">
-            <div class="tituloVista">
-                <h3>Vista Previa</h3>
-                <a href="#" id="closePreview" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
-            </div>
-            <iframe src=""></iframe>
-        </div>
-    </div>
     <div class="modal" id="vistadocumento">
         <div class="ventanaDocumento">
             <form method="post" id="guiaremision">
@@ -235,6 +231,7 @@
                     </div>
                     <div>
                         <a href="#" id="printDocument" title="Imprimir Guia"><i class="fas fa-print"></i></a>
+                        <a href="#" id="previewDocument" title="Vista previa"><i class="fas fa-eye"></i></a>
                         <a href="#" id="closeDocument" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
                     </div>
                 </div>
@@ -244,8 +241,6 @@
                         <div >
                             <label for="fgemision">Fecha Emisión:</label>
                             <input type="date" name="fgemision" id="fgemision" value="<?php echo date("Y-m-d")?>">
-                            <label for="ftransporte">Fecha Ent.Transpor.:</label>
-                            <input type="date" name="ftransporte" id="ftransporte">
                         </div>
                         <div>
                             <p class="titulo_seccion"><strong>Datos del destinatario</strong></p>
@@ -260,7 +255,7 @@
                             <p><strong>Domicilio de partida</strong></p>
                             <div class="dos_columnas_interna">
                                 <label for="almacen_origen">Almacen Origen: </label>
-                                <input type="text" name="almacen_origen" id="almacen_origen" class=" busqueda" >
+                                <input type="text" name="almacen_origen" id="almacen_origen" class="mostrarLista busqueda" >
                                 <div class="lista" id="listaOrigen">
                                    <ul>
                                        <?php echo $this->listaAlmacen?>
@@ -268,31 +263,24 @@
                                 </div>
                                 <label for="almacen_origen_direccion ">Dirección:</label>
                                 <input type="text" name="almacen_origen_direccion" id="almacen_origen_direccion">
-                                <label for="almacen_origen_dpto">Departamento :</label>
-                                <input type="text" name="almacen_origen_dpto" id="almacen_origen_dpto">
-                                <label for="almacen_origen_prov">Provincia:</label>
-                                <input type="text" name="almacen_origen_prov" id="almacen_origen_prov">
-                                <label for="almacen_origen_dist">Distrito:</label>
-                                <input type="text" name="almacen_origen_dist" id="almacen_origen_dist">
                             </div>
                             <p><strong>Domicilio de Llegada</strong></p>
                             <div class="dos_columnas_interna">
                                 <label for="almacen_destino">Almacen Destino: </label>
-                                <input type="text" name="almacen_destino" id="almacen_destino" class="busqueda" readonly>
+                                <input type="text" name="almacen_destino" id="almacen_destino" class="mostrarLista busqueda">
+                                <div class="lista" id="listaDestino">
+                                   <ul>
+                                       <?php echo $this->listaAlmacen?>
+                                   </ul> 
+                                </div>
                                 <label for="almacen_destino_direccion ">Dirección:</label>
                                 <input type="text" name="almacen_destino_direccion" id="almacen_destino_direccion">
-                                <label for="almacen_destino_dpto">Departamento :</label>
-                                <input type="text" name="almacen_destino_dpto" id="almacen_destino_dpto">
-                                <label for="almacen_destino_prov">Provincia:</label>
-                                <input type="text" name="almacen_destino_prov" id="almacen_destino_prov">
-                                <label for="almacen_destino_dist">Distrito:</label>
-                                <input type="text" name="almacen_destino_dist" id="almacen_destino_dist">
                             </div>
                             <p><strong>Empresa de Transporte</strong></p>
                             <div class="dos_columnas_interna">
                                 <label for="empresa_transporte_razon">Razón Social</label>
                                 <input type="text" name="empresa_transporte_razon" id="empresa_transporte_razon" class="mostrarListaInterna busqueda" 
-                                    placeholder="Elija opción" readonly>
+                                    placeholder="Elija opción">
                                 <div class="lista" id="listaEntidad">
                                    <ul>
                                        <?php echo $this->listaEntidad?>
@@ -318,27 +306,16 @@
                                     <?php echo $this->listaEnvio?>
                                 </ul> 
                             </div>
-                            <label for="nro_bultos">N° Bultos/Palets</label>
-                            <input type="text" name="nro_bultos" id="nro_bultos" class="tres">
-                            <label for="peso_bruto">Peso Bruto:</label>
-                            <input type="text" name="peso_bruto" id="peso_bruto" placeholder="Kg.">
                             <label for="autoriza">Autoriza:</label>
                             <input type="text" name="autoriza" id="autoriza" class="dos mostrarListaInterna busqueda" placeholder="Elija opción" readonly>
-                            <div class="lista uno rowFour" id="listaAutoriza">
-                                <ul>
-                                    <?php echo $this->listaPersonal?>
-                                </ul> 
-                            </div>
-                            <label for="despacha">Despacha:</label>
-                            <input type="text" name="despacha" id="despacha"  class="dos mostrarListaInterna busqueda" placeholder="Elija opción" readonly>
-                            <div class="lista uno rowFive" id="listaDespacha">
+                            <div class="lista uno rowThree" id="listaAutoriza">
                                 <ul>
                                     <?php echo $this->listaPersonal?>
                                 </ul> 
                             </div>
                             <label for="destinatario">Destinatario:</label>
                             <input type="text" name="destinatario" id="destinatario" class="dos mostrarListaInterna busqueda" placeholder="Elija opción" readonly>
-                            <div class="lista uno rowSix" id="listaDestinatario">
+                            <div class="lista uno rowFour" id="listaDestinatario">
                                 <ul>
                                     <?php echo $this->listaPersonal?>
                                 </ul> 
@@ -348,14 +325,10 @@
                         </div>
                         <p><strong>Datos del Conductor</strong></p>
                         <div class="dos_columnas_interna">
-                            <label for="dni_conductor">DNI :</label>
-                            <input type="text" name="dni_conductor" id="dni_conductor">
                             <label for="nombre_conductor">Nombre :</label>
                             <input type="text" name="nombre_conductor" id="nombre_conductor">
                             <label for="licencia_conducir">N° Licencia :</label>
                             <input type="text" name="licencia_conducir" id="licencia_conducir">
-                            <label for="nro_certificado">N°.Cert.Inscrip.:</label>
-                            <input type="text" name="nro_certificado" id="nro_certificado">
                         </div>
                         <p><strong>Datos del Vehiculo</strong></p>
                         <div class="dos_columnas_interna">
@@ -370,6 +343,24 @@
                 </div>
             </form>
             
+        </div>
+    </div>
+    <div class="modal" id="vistaprevia">
+        <div class="ventanaVistaPrevia">
+            <div class="tituloVista">
+                <h3>Vista Previa</h3>
+                <a href="#" id="closePreview" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
+            </div>
+            <iframe src=""></iframe>
+        </div>
+    </div>
+    <div class="modal" id="imprimir">
+        <div class="ventanaVistaPrevia">
+            <div class="tituloVista">
+                <h3>Vista Previa</h3>
+                <a href="#" id="closePreview" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
+            </div>
+            <iframe src="" id="iFramePdf"></iframe>
         </div>
     </div>
     <div class="cabezaModulo">

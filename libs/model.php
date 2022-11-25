@@ -877,8 +877,7 @@
                 $sql = $this->db->connect()->query("SELECT
                                                         ncodalm,
                                                         UPPER( cdesalm ) AS almacen,
-                                                        UPPER(
-                                                        CONCAT_WS( ' ', cdesvia, cnrovia )) AS direccion,
+                                                        UPPER( ctipovia ) AS direccion,
                                                         distritos.cdubigeo AS dist,
                                                         provincias.cdubigeo AS prov,
                                                         dptos.cdubigeo AS dpto 
