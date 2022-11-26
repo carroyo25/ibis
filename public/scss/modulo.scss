@@ -835,6 +835,14 @@ $anulado:#c2c2c2;
         height: 10rem;
         overflow: auto;
     }
+
+    .opcionesProceso{
+        padding: 10px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        height: 38%;
+    }
 }
 
 .ventanaAdjuntos{
@@ -1771,6 +1779,11 @@ $anulado:#c2c2c2;
 .w50por{
     width: 50%;
 }
+
+.w60por{
+    width: 60%;
+}
+
 
 .w65por{
     width: 65%;

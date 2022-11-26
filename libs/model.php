@@ -2430,8 +2430,6 @@
             }
         }
 
-       
-
         public function generarDocumento($cabecera,$condicion,$detalles){
             require_once("public/formatos/ordenes.php");
 
@@ -2810,13 +2808,14 @@
                                         data-iddetped="'.$rs['niddetaPed'].'"
                                         data-iddetnota="'.$rs['niddeta'].'">
                                         <td class="textoCentro"><a href="'.$rs['id_regalm'].'" class="eliminarItem"><i class="fas fa-minus"></i></a></td>
+                                        <td class="textoCentro"><input type="checkbox" checked readonly></td>
                                         <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="pl20px">'.$rs['cdesprod'].'</td>
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                         <td class="pr20px textoDerecha">'.$rs['cantidad_orden'].'</td>
                                         <td class="pr5px"><input type="text" class="textoDerecha" value="'.$rs['ncantidad'].'"></td>
-                                        <td><input type="text" value="'.$rs['cobserva'].'"></td>
+                                        <td><input type="text" value="'.$rs['cobserva'].'" readonly></td>
                                         <td class="pr20px textoDerecha"></td>
                                         <td class="textoCentro"><a href="'.$rs['id_regalm'].'"><i class="fas fa-barcode"></i></a></td>
                                     </tr>';
@@ -2980,6 +2979,111 @@
                 $sql->execute(["estado"=>$est,"id"=>$post['id']]);
 
                 return true;
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        //listar las ordenes para los ingresos y salidad
+        public function listarOrdenes($tipoMov){
+            try {
+                $salida = "";
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        lg_ordencab.id_regmov,
+                                                        tb_costusu.ncodproy,
+                                                        lg_ordencab.id_refpedi,
+                                                        lg_ordencab.ntipdoc,
+                                                        LPAD( lg_ordencab.cnumero, 6, 0 ) AS cnumero,
+                                                        DATE_FORMAT( lg_ordencab.ffechadoc, '%d/%m/%Y' ) AS ffechadoc,
+                                                        lg_ordencab.nEstadoDoc,
+                                                        tb_proyectos.ccodproy,
+                                                        CONCAT_WS(
+                                                            ' ',
+                                                            tb_proyectos.ccodproy,
+                                                        UPPER( tb_proyectos.cdesproy )) AS costos,
+                                                        CONCAT_WS(
+                                                            ' ',
+                                                            tb_area.ccodarea,
+                                                        UPPER( tb_area.cdesarea )) AS area,
+                                                        cm_entidad.crazonsoc 
+                                                    FROM
+                                                        tb_costusu
+                                                        INNER JOIN lg_ordencab ON tb_costusu.ncodproy = lg_ordencab.ncodpry
+                                                        INNER JOIN tb_proyectos ON lg_ordencab.ncodpry = tb_proyectos.nidreg
+                                                        INNER JOIN tb_area ON lg_ordencab.ncodarea = tb_area.ncodarea
+                                                        INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi 
+                                                    WHERE
+                                                        tb_costusu.id_cuser = :usr 
+                                                        AND tb_costusu.nflgactivo = 1 
+                                                        AND lg_ordencab.nEstadoDoc = 60
+                                                    ORDER BY id_regmov ASC");
+                $sql->execute(["usr"=>$_SESSION['iduser']]);
+                $rowCount = $sql->rowCount();
+
+
+                if ($rowCount > 0) {
+                    while ($rs = $sql->fetch()) {
+                        //compara la orden si fue ingresada completa y no la muestra
+
+                        if ($tipoMov == 1)
+                            $diferencia = $this->calcularIngresosOrden($rs['id_regmov']) - $this->calcularCantidadIngresa($rs['id_regmov']);
+                        else
+                            $diferencia = 56;
+
+
+                        if (($diferencia) > 0 ) {
+                            $salida.='<tr data-orden="'.$rs['id_regmov'].'">
+                                    <td class="textoCentro">'.$rs['cnumero'].'</td>
+                                    <td class="textoCentro">'.$rs['ffechadoc'].'</td>
+                                    <td class="pl20px">'.$rs['area'].'</td>
+                                    <td class="textoDerecha pr5px">'.$rs['ccodproy'].'</td>
+                                    <td class="pl20px">'.$rs['crazonsoc'].'</td>
+                                </tr>';
+                        }
+                    }
+                }
+                return $salida;
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        public function calcularIngresosOrden($id){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT SUM(lg_ordendet.ncanti) AS cantidad_orden FROM lg_ordendet WHERE id_orden =:id");
+                $sql->execute(["id"=>$id]);
+                $result = $sql->fetchAll();
+
+                return $result[0]['cantidad_orden'];
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        public function calcularCantidadIngresa($id) {
+            //aca me equivqque esta pedido con orden
+            try {
+                $sql = $this->db->connect()->prepare("SELECT SUM(alm_recepdet.ncantidad) AS recepcionado_orden FROM alm_recepdet WHERE pedido =:id");
+                $sql->execute(["id"=>$id]);
+                $result = $sql->fetchAll();
+
+                return $result[0]['recepcionado_orden'];
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        public function calcularCantidadsalida($id){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT SUM(lg_ordendet.ncanti) AS cantidad_orden FROM lg_ordendet WHERE id_orden =:id");
+                $sql->execute(["id"=>$id]);
+                $result = $sql->fetchAll();
+
+                return $result[0]['cantidad_orden'];
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
                 return false;

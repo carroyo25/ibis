@@ -1096,6 +1096,15 @@
   height: 10rem;
   overflow: auto;
 }
+.ventanaProceso .opcionesProceso {
+  padding: 10px;
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 1fr 20px 1fr;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  height: 38%;
+}
 
 .ventanaAdjuntos {
   width: 45%;
@@ -1987,6 +1996,10 @@
 
 .w50por {
   width: 50%;
+}
+
+.w60por {
+  width: 60%;
 }
 
 .w65por {

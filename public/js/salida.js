@@ -106,9 +106,9 @@ $(function() {
         
         if ( accion == 'n') {
             try {
-                $.post(RUTA+"salida/ingresos",
+                $.post(RUTA+"salida/ordenes",
                 function (data, textStatus, jqXHR) {
-                    $("#notas tbody")
+                    $("#ordenes tbody")
                         .empty()
                         .append(data);
 

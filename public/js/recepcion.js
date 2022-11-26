@@ -1,7 +1,9 @@
 $(function(){
     let accion = "",
         co = 1;
-
+    
+    var tipoVista = null;
+       
     $("#esperar").fadeOut();
 
     $("#tablaPrincipal tbody").on("click","tr", function (e) {
@@ -40,9 +42,9 @@ $(function(){
                 $("#estado").val(data.cabecera[0].estado);
                 $("#movimiento").val(1);
                 
-
                 let swqaqc = data.cabecera[0].nflgCalidad == 1 ? true: false;
-                let suma = 0;
+                tipoVista = true;
+                accion = "u";
                 
                 $("#qaqc").prop("checked",swqaqc);
                 
@@ -84,6 +86,7 @@ $(function(){
         $("#proceso").fadeIn();
         
         accion = 'n';
+        tipoVista = null;
 
         return false;
     });
@@ -198,6 +201,9 @@ $(function(){
 
     $("#ordenes tbody").on("click","tr", function (e) {
         e.preventDefault();
+
+        $("#tipo").val("ORDEN DE COMPRA");
+        $("#codigo_movimiento").val(89);
 
         $.post(RUTA+"recepcion/ordenId",{id:$(this).data("orden")},
             function (data, textStatus, jqXHR) {
@@ -491,14 +497,10 @@ $(function(){
         });
 
         try {
-            if (result['codigo_almacen'] == '') throw "Elija el Almacen";
-            if (result['codigo_costos'] == '') throw "Elija Centro de Costos";
-            if (result['codigo_aprueba'] == '') throw "Elija la persona que aprueba";
-            if (result['codigo_movimiento'] == '') throw "Elija tipo de movimiento";
-            if (result['guia'] == '') throw "Escriba el número de guia"
+            if (tipoVista == null) throw "Debe grabar el documento...";
 
             $.post(RUTA+"recepcion/documentopdf",{cabecera:result,
-                                                    detalles:JSON.stringify(detalles()),
+                                                    detalles:JSON.stringify(detalles(tipoVista)),
                                                     condicion:0},
                 function (data, textStatus, jqXHR) {
                     $(".ventanaVistaPrevia iframe")
@@ -621,10 +623,101 @@ $(function(){
 
         return false;
     });
-    
+
+    $("#saveOrden").click(function (e) { 
+        e.preventDefault();
+        
+        let result = {},
+            solicitada = 0,
+            recibida = 0,
+            cerrarOrden = false;
+
+        $.each($("#formProceso").serializeArray(),function(){
+            result[this.name] = this.value;
+        });
+
+        try {
+            if (result['codigo_almacen'] == '') throw "Elija el Almacen";
+            if (result['codigo_costos'] == '') throw "Elija Centro de Costos";
+            if (result['codigo_aprueba'] == '') throw "Elija la persona que aprueba";
+            if (result['codigo_movimiento'] == '') throw "Elija tipo de movimiento";
+            if (result['guia'] == '') throw "Escriba el número de guia";
+
+            $("#tablaDetalles tbody  > tr").each(function () {
+                solicitada += parseFloat($(this).find('td').eq(5).text() || 0,10);
+                recibida += parseFloat($(this).find('td').eq(6).children().val() || 0,10)
+            })
+
+            cerrarOrden = solicitada == recibida ? 62 : 60;
+
+            if (accion == "n") {
+                $.post(RUTA+"recepcion/nuevoIngreso", {cabecera:result,
+                    detalles:JSON.stringify(detalles()),
+                    series:JSON.stringify(series()),
+                    cerrar:cerrarOrden},
+                        function (data, textStatus, jqXHR) {
+                            $("#codigo_ingreso").val(data.indice);
+                            $("#proceso").fadeOut();
+                            mostrarMensaje("Nota Grabada","mensaje_correcto");
+                            $("#tablaPrincipal tbody")
+                                .empty()
+                                .append(data.listado);
+                        },
+                        "json"
+                    );
+            }
+
+            
+
+        } catch (error) {
+            mostrarMensaje(error,'mensaje_error');
+        }
+
+        return false;
+    });
+
+    $("#btnPendientes, #btnTotales").click(function (e) { 
+        e.preventDefault();
+
+        tipoVista = e.target.id == "btnTotales"?true:false;
+
+        let result = {};
+
+        $.each($("#formProceso").serializeArray(),function(){
+            result[this.name] = this.value;
+        });
+
+        try {
+            if(accion != "n") throw "Documento registrado";
+            if (result['codigo_almacen'] == '') throw "Elija el Almacen";
+            if (result['codigo_aprueba'] == '') throw "Elija la persona que aprueba";
+            if (result['guia'] == '') throw "Escriba el número de guia";
+
+            if (accion == "n") {
+                $.post(RUTA+"recepcion/nuevoIngreso", {cabecera:result,
+                    detalles:JSON.stringify(detalles(tipoVista)),
+                    series:JSON.stringify(series())},
+                        function (data, textStatus, jqXHR) {
+                            $("#codigo_ingreso").val(data.indice);
+                            mostrarMensaje("Nota Grabada","mensaje_correcto");
+                            $("#tablaPrincipal tbody")
+                                .empty()
+                                .append(data.listado);
+                            accion = "u";
+                        },
+                        "json"
+                    );
+            }
+
+        } catch (error) {
+            mostrarMensaje(error,'mensaje_error');
+        }
+        
+        return false;
+    });
 })
 
-detalles = () =>{
+detalles = (flag) =>{
     DETALLES = [];
 
     let TABLA = $("#tablaDetalles tbody >tr");
@@ -637,45 +730,47 @@ detalles = () =>{
             PEDIDO      = $("#codigo_pedido").val(),
             ORDEN       = $("#codigo_orden").val(),
             ALMACEN     = $("#codigo_almacen").val(),
-            CANTSOL     = parseFloat($(this).find('td').eq(5).text()),
-            CANTREC     = $(this).find('td').eq(6).children().val(),// cantidad
+            CANTSOL     = parseFloat($(this).find('td').eq(6).text()),
+            CANTREC     = $(this).find('td').eq(7).children().val(),// cantidad
             CANTSAL     = null,
-            OBSER       = $(this).find('td').eq(7).children().val(),
+            OBSER       = $(this).find('td').eq(8).children().val(),
             VENCE       = null,
-            CODIGO      = $(this).find('td').eq(2).text(),//codigo
-            DESCRIPCION = $(this).find('td').eq(3).text(),//descripcion
-            UNIDAD      = $(this).find('td').eq(4).text(),//unidad
+            CODIGO      = $(this).find('td').eq(3).text(),//codigo
+            DESCRIPCION = $(this).find('td').eq(4).text(),//descripcion
+            UNIDAD      = $(this).find('td').eq(5).text(),//unidad
             NESTADO     = null,
             CESTADO     = null //$(this).find("select[name='estado'] option:selected").text(),
-            UBICACION   = "";
+            UBICACION   = "",
+            CHECKED     = $(this).find('td').eq(1).children().prop("checked");//codigo
 
     
         item = {};
 
-        if (CANTREC > 0) {
-            item['item']        = ITEM;
-            item['iddetorden']  = IDDETORDEN;
-            item['iddetped']    = IDDETPED;
-            item['idprod']      = IDPROD;
-            item['pedido']      = ORDEN;
-            item['orden']       = PEDIDO;
-            item['almacen']     = ALMACEN;
-            item['cantrec']     = CANTREC;
-            item['cantsol']     = CANTSOL;
-            item['cantsal']     = CANTSAL;
-            item['obser']       = OBSER;
-            item['vence']       = VENCE;
+        if ( CHECKED == flag)  {
+            if (CANTREC > 0) {
+                item['item']        = ITEM;
+                item['iddetorden']  = IDDETORDEN;
+                item['iddetped']    = IDDETPED;
+                item['idprod']      = IDPROD;
+                item['pedido']      = ORDEN;
+                item['orden']       = PEDIDO;
+                item['almacen']     = ALMACEN;
+                item['cantrec']     = CANTREC;
+                item['cantsol']     = CANTSOL;
+                item['cantsal']     = CANTSAL;
+                item['obser']       = OBSER;
+                item['vence']       = VENCE;
 
-            item['codigo']     = CODIGO;
-            item['descripcion']= DESCRIPCION;
-            item['unidad']     = UNIDAD;
-            item['nestado']    = NESTADO;
-            item['cestado']    = CESTADO;
-            item['ubicacion']  = UBICACION;
+                item['codigo']     = CODIGO;
+                item['descripcion']= DESCRIPCION;
+                item['unidad']     = UNIDAD;
+                item['nestado']    = NESTADO;
+                item['cestado']    = CESTADO;
+                item['ubicacion']  = UBICACION;
 
-            DETALLES.push(item);
-        }
-        
+                DETALLES.push(item);
+            }
+        }  
     })
 
     return DETALLES; 

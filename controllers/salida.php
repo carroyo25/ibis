@@ -20,8 +20,8 @@
             $this->view->render('salida/index');
         }
 
-        function ingresos() {
-            echo $this->model->listarIngresos();
+        function ordenes(){
+            echo $this->model->listarOrdenes(2);
         }
 
         function actualizaDespachos(){

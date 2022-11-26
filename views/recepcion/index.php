@@ -33,9 +33,9 @@
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
                         <div>
-                            <button type="button" id="saveOrden" title="Grabar Nota" class="boton3">
+                            <!-- <button type="button" id="saveOrden" title="Grabar Nota" class="boton3">
                                 <p><i class="far fa-save"></i> Grabar </p> 
-                            </button>
+                            </button> -->
                             <button type="button" id="importData" title="Importar Orden" class="boton3">
                                 <i class="fab fa-wpexplorer"></i> Importar Orden
                             </button>
@@ -148,6 +148,10 @@
                                     <label for="qaqc">Verificar Calidad</label>
                                 </div>
                             </div>
+                            <div class="opcionesProceso">
+                                <button id="btnPendientes" class="boton3"><i class="far fa-square"></i> Grabar Pendientes</button>
+                                <button id="btnTotales" class="boton3"><i class="far fa-check-square"></i> Grabar Marcadas</button>
+                            </div>
                         </div>
                     </div>
                     <div class="barraOpciones">
@@ -166,6 +170,7 @@
                             <thead>
                                 <tr class="stickytop">
                                         <th width="5%"> - </th>
+                                        <th width="5%"> ... </th>
                                         <th class="">Item</th>
                                         <th class="">Codigo</th>
                                         <th class="">Descripcion</th>
@@ -187,7 +192,7 @@
         </div>
     </div>
     <div class="modal" id="busqueda">
-        <div class="ventanaBusqueda w75por">
+        <div class="ventanaBusqueda w60por">
             <div class="tituloVentana">
                 <span id="tituloBusqueda">Ordenes</span>
                 <div>
@@ -303,10 +308,11 @@
     </div>
     <div class="itemsTabla">
         <table id="tablaPrincipal">
-            <thead>
+            <thead class="stickytop">
                 <tr>
                     <th>Num. Guia</th>
                     <th>F.Emisión</th>
+                    <th>Nro. Ingreso</th>
                     <th>Almacen</th>
                     <th>Proyecto/Sede/Costos</th>
                     <th>Area</th>

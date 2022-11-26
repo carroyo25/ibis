@@ -48,7 +48,8 @@
                                                     WHERE
                                                         tb_costusu.id_cuser = :usr 
                                                         AND tb_costusu.nflgactivo = 1
-                                                        AND alm_recepcab.nEstadoDoc = 60");
+                                                        AND alm_recepcab.nEstadoDoc = 60
+                                                    ORDER BY nnronota DESC");
                 $sql->execute(["usr"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowcount();
                 if ($rowCount > 0){
@@ -56,8 +57,9 @@
                         $salida.='<tr class="pointer" data-indice="'.$rs['id_regalm'].'">
                                     <td class="textoCentro">'.$rs['cnumguia'].'</td>
                                     <td class="textoCentro">'.date("d/m/Y", strtotime($rs['ffecdoc'])).'</td>
+                                    <td class="textoCentro">'.$rs['nnronota'].'</td>
                                     <td class="pl20px">'.$rs['almacen'].'</td>
-                                    <td class="pl20px">'.$rs['ccodproy'].'</td>
+                                    <td class="textoDerecha pr5px">'.$rs['ccodproy'].'</td>
                                     <td class="pl20px">'.$rs['area'].'</td>
                                     <td class="pl20px">'.$rs['crazonsoc'].'</td>
                                     <td class="textoCentro">'.$rs['orden'].'</td>
@@ -73,7 +75,7 @@
             }
         }
 
-        public function insertar($cabecera,$detalles,$series,$cerrar){
+        public function insertar($cabecera,$detalles,$series){
             try {
                 $indice = $this->lastInsertId("SELECT MAX(id_regalm) AS id FROM alm_recepcab");
 
@@ -274,66 +276,6 @@
             }
         }
 
-        public function listarOrdenes(){
-            try {
-                $salida = "";
-                $sql = $this->db->connect()->prepare("SELECT
-                                                        lg_ordencab.id_regmov,
-                                                        tb_costusu.ncodproy,
-                                                        lg_ordencab.id_refpedi,
-                                                        lg_ordencab.ntipdoc,
-                                                        LPAD( lg_ordencab.cnumero, 6, 0 ) AS cnumero,
-                                                        DATE_FORMAT( lg_ordencab.ffechadoc, '%d/%m/%Y' ) AS ffechadoc,
-                                                        lg_ordencab.nEstadoDoc,
-                                                        tb_proyectos.ccodproy,
-                                                        CONCAT_WS(
-                                                            ' ',
-                                                            tb_proyectos.ccodproy,
-                                                        UPPER( tb_proyectos.cdesproy )) AS costos,
-                                                        CONCAT_WS(
-                                                            ' ',
-                                                            tb_area.ccodarea,
-                                                        UPPER( tb_area.cdesarea )) AS area,
-                                                        cm_entidad.crazonsoc 
-                                                    FROM
-                                                        tb_costusu
-                                                        INNER JOIN lg_ordencab ON tb_costusu.ncodproy = lg_ordencab.ncodpry
-                                                        INNER JOIN tb_proyectos ON lg_ordencab.ncodpry = tb_proyectos.nidreg
-                                                        INNER JOIN tb_area ON lg_ordencab.ncodarea = tb_area.ncodarea
-                                                        INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi 
-                                                    WHERE
-                                                        tb_costusu.id_cuser = :usr 
-                                                        AND tb_costusu.nflgactivo = 1 
-                                                        AND lg_ordencab.nEstadoDoc = 60
-                                                    ORDER BY id_regmov ASC");
-                $sql->execute(["usr"=>$_SESSION['iduser']]);
-                $rowCount = $sql->rowCount();
-
-
-                if ($rowCount > 0) {
-                    while ($rs = $sql->fetch()) {
-                        //compara la orden si fue ingresada completa y no la muestra
-
-                        $diferencia_ingreso = $this->calcularIngresosOrden($rs['id_regmov']) - $this->calcularCantidadIngresa($rs['id_regmov']);
-
-                        if (($diferencia_ingreso) > 0 ) {
-                            $salida.='<tr data-orden="'.$rs['id_regmov'].'">
-                                    <td class="textoCentro">'.$rs['cnumero'].'</td>
-                                    <td class="textoCentro">'.$rs['ffechadoc'].'</td>
-                                    <td class="pl20px">'.$rs['area'].'</td>
-                                    <td class="pl20px">'.$rs['ccodproy'].'</td>
-                                    <td class="pl20px">'.$rs['crazonsoc'].'</td>
-                                </tr>';
-                        }
-                    }
-                }
-                return $salida;
-            } catch (PDOException $th) {
-                echo "Error: " . $th->getMessage();
-                return false;
-            }
-        }
-
         public function consultarOrdenIdRecepcion($id){
             try {
                 $sql = $this->db->connect()->prepare("SELECT
@@ -460,6 +402,7 @@
                                         data-iddetped="'.$rs['niddeta'].'"
                                         data-saldo="'.$saldo.'">
                                     <td class="textoCentro"><a href="'.$rs['id_orden'].'" data-accion="deleteItem" class="eliminarItem"><i class="fas fa-minus"></i></a></td>
+                                    <td class="textoCentro"><input type="checkbox"></td>
                                     <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
                                     <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                     <td class="pl20px">'.$rs['cdesprod'].'</td>
@@ -496,33 +439,6 @@
 
                 return $result[0]['pendiente'];
 
-            } catch (PDOException $th) {
-                echo "Error: " . $th->getMessage();
-                return false;
-            }
-        }
-
-        private function calcularIngresosOrden($id){
-            try {
-                $sql = $this->db->connect()->prepare("SELECT SUM(lg_ordendet.ncanti) AS cantidad_orden FROM lg_ordendet WHERE id_orden =:id");
-                $sql->execute(["id"=>$id]);
-                $result = $sql->fetchAll();
-
-                return $result[0]['cantidad_orden'];
-            } catch (PDOException $th) {
-                echo "Error: " . $th->getMessage();
-                return false;
-            }
-        }
-
-        private function calcularCantidadIngresa($id) {
-            //aca me equivqque esta pedido con orden
-            try {
-                $sql = $this->db->connect()->prepare("SELECT SUM(alm_recepdet.ncantidad) AS recepcionado_orden FROM alm_recepdet WHERE pedido =:id");
-                $sql->execute(["id"=>$id]);
-                $result = $sql->fetchAll();
-
-                return $result[0]['recepcionado_orden'];
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
                 return false;
@@ -841,7 +757,7 @@
                                     <td class="textoCentro">'.$rs['cnumero'].'</td>
                                     <td class="textoCentro">'.$rs['ffechadoc'].'</td>
                                     <td class="pl20px">'.$rs['area'].'</td>
-                                    <td class="pl20px">'.$rs['ccodproy'].'</td>
+                                    <td class="textoDerecha pr5px">'.$rs['ccodproy'].'</td>
                                     <td class="pl20px">'.$rs['crazonsoc'].'</td>
                                 </tr>';
                         }

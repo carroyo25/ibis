@@ -27,11 +27,11 @@
         }
 
         function ordenes(){
-            echo $this->model->listarOrdenes();
+            echo $this->model->listarOrdenes(1);
         }
 
         function nuevoIngreso(){
-            echo json_encode($this->model->insertar($_POST['cabecera'],$_POST['detalles'],$_POST['series'],$_POST['cerrar']));
+            echo json_encode($this->model->insertar($_POST['cabecera'],$_POST['detalles'],$_POST['series']));
         }
 
         function adjuntos(){
