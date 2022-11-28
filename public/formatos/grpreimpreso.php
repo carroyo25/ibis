@@ -64,19 +64,19 @@
                 $this->SetFont('Times',"",7);
 
 
-                $this->SetXY(13,36);
+                $this->SetXY(13,32);
                 $this->SetFont('Arial',"",7);
                 $this->Cell(15,6,"ORIGEN :",0,0);
                 $this->Cell(10,6,$this->origen,0,1);
                 
-                $this->SetXY(150,42);
+                $this->SetXY(150,41);
                 $this->SetFont('Arial',"",5);
                 $this->Cell(20,6,$this->anio.' 001 - '.$this->nguia,0,0);
                 $this->Cell(5,6,"R.S:",0,0);
                 $this->Cell(5,6,str_pad($this->referido,5,0,STR_PAD_LEFT),0,1);
                 $this->SetFont('Arial',"",6);
 
-                $this->SetXY(13,44);
+                $this->SetXY(13,42);
                 $this->Cell(30,6,"",0,0);
                 $this->Cell(30,6,$this->fecha_emision,0,0);
                 $this->Cell(10,6,"Envio",0,0);
@@ -98,7 +98,7 @@
                 $this->SetXY(108,50);
                 //$this->SetFont('Arial','',5);
                 $this->Cell(92,5,"",0,1,"C",false);
-                $this->SetXY(110,55);
+                $this->SetXY(110,50);
                 $this->Cell(25,5,"",0,0);
                 $this->Cell(15,5,utf8_decode($this->raztransp),0,1);
                 $this->SetX(110);
@@ -108,22 +108,24 @@
                 $this->Cell(15,5,"",0,0);
                 $this->Cell(15,5, $this->ructransp,0,1);
                 //$this->RoundedRect(13, 72, 92, 20, 1, '1234', 'D');
-                $this->SetXY(13,70);
+
+                //punto de partida-punto de llegada
+                $this->SetXY(13, 68);
                 $this->SetFont('Arial','',7);
                 $this->Cell(92,5,"",0,1,"C",false);
                 $this->SetX(15);
                 $this->Cell(92,5,utf8_decode($this->vianomorg),0,1);
     
                 //$this->RoundedRect(108, 72, 92, 20, 1, '1234', 'D');
-                $this->SetXY(108,72);
+                $this->SetXY(108,68);
                 $this->Cell(92,5,"",0,1,"C",false);
                 $this->SetX(110);
                 $this->Cell(92,5,utf8_decode($this->vianomodest ." - ". $this->depdest),0,1);
     
                 //$this->RoundedRect(13, 94, 187, 20, 1, '1234', 'D');
-                $this->SetXY(13,80);
+                //$this->SetXY(13,80);
                 //$this->Cell(187,5,"UNIDAD DE TRANSPORTE Y CONDUCTOR",1,1,"C",true);
-                $this->SetXY(15,100);
+                $this->SetXY(15,90);
                 $this->Cell(35,5,"",0,0);
                 $this->Cell(45,5,utf8_decode($this->marca . "-" .$this->placa),0,0);
                 $this->Cell(45,5,"",0,0);
@@ -138,7 +140,7 @@
                 $this->Ln(1);
                 $this->SetFillColor(0, 0, 0);
                 $this->SetTextColor(255,255,255);
-                $this->SetXY(2,112); //detalle del documento
+                $this->SetXY(2,105); //detalle del documento
                 $this->SetFont('Arial','',6);
                 $this->SetWidths(array(10,15,15,147));
                 $this->SetAligns(array("C","C","C","C"));
@@ -181,7 +183,7 @@
                 $this->Cell(5,4,"",0,0,"C");
                 $this->SetXY(37,268);
                 $this->Cell(25,4,"",0,0);
-                $this->SetXY(37,274);
+                $this->SetXY(37,245);
                 $this->Cell(15,4,"",0,0);
                 $this->Cell(90,4,utf8_decode($this->modtras),0,0);
     

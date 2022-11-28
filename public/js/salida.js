@@ -230,9 +230,9 @@ $(function() {
                                                 detalles:JSON.stringify(detalles(tipoVista)),
                                                 condicion:0},
                 function (data, textStatus, jqXHR) {
-                    $(".ventanaVistaPrevia object")
-                    .attr("data","")
-                    .attr("data",data);
+                    $(".ventanaVistaPrevia iframe")
+                    .attr("src","")
+                    .attr("src",data);
 
                     $("#vistaprevia").fadeIn();
                 },
@@ -468,7 +468,7 @@ $(function() {
                             .attr("src","")
                             .attr("src",data.archivo);
 
-                            $("#imprimir").fadeOut();
+                            $("#imprimir").fadeIn();
                        }
                     },
                     "json"
@@ -488,9 +488,9 @@ $(function() {
         return false;
     });
 
-    $("#imprimir #iFramePdf").on('load', function() {
+    /*$("#imprimir #iFramePdf").on('load', function() {
         $("iframe")[0].contentWindow.print();
-    })
+    })*/
     
 })
 
