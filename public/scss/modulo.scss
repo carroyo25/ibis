@@ -739,7 +739,13 @@ $anulado:#c2c2c2;
         justify-content: space-between;
         padding: .5rem;
         border-bottom: 1px solid #c2c2c2;
-        margin-bottom: 5px;  
+        margin-bottom: 5px; 
+        
+        .opciones_documento{
+            width: 15%;
+            display: flex;
+            justify-content: space-between;
+        }
     }
 
     p {
@@ -842,6 +848,17 @@ $anulado:#c2c2c2;
         grid-template-columns: 1fr 1fr;
         gap: 20px;
         height: 38%;
+
+        a{
+            height: 4rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            i {
+                margin-right: 10px;
+            }
+        }
     }
 }
 
@@ -1048,6 +1065,11 @@ $anulado:#c2c2c2;
         textarea {
             border:1px solid $sombra;
             padding:3px;
+        }
+
+        .fechas {
+            display: flex;
+            gap: 10px;
         }
     }
     

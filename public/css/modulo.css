@@ -1006,6 +1006,15 @@
   border-bottom: 1px solid #c2c2c2;
   margin-bottom: 5px;
 }
+.ventanaResumen .tituloDocumento .opciones_documento {
+  width: 15%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
 .ventanaResumen p {
   display: block;
   margin-bottom: 10px;
@@ -1104,6 +1113,21 @@
   grid-template-columns: 1fr 1fr;
   gap: 20px;
   height: 38%;
+}
+.ventanaProceso .opcionesProceso a {
+  height: 4rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+.ventanaProceso .opcionesProceso a i {
+  margin-right: 10px;
 }
 
 .ventanaAdjuntos {
@@ -1330,6 +1354,12 @@
 .ventanaDocumento .dos_columnas textarea {
   border: 1px solid #c3c3c3;
   padding: 3px;
+}
+.ventanaDocumento .dos_columnas .fechas {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  gap: 10px;
 }
 
 .ventanaCorreo {

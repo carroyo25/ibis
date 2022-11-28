@@ -149,8 +149,8 @@
                                 </div>
                             </div>
                             <div class="opcionesProceso">
-                                <button id="btnPendientes" class="boton3"><i class="far fa-square"></i> Grabar Pendientes</button>
-                                <button id="btnTotales" class="boton3"><i class="far fa-check-square"></i> Grabar Marcadas</button>
+                                <a id="btnPendientes" class="boton3"><i class="far fa-square"></i> Grabar Pendientes</a>
+                                <a id="btnTotales" class="boton3"><i class="far fa-check-square"></i> Grabar Marcadas</a>
                             </div>
                         </div>
                     </div>

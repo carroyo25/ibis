@@ -2998,6 +2998,7 @@
                                                         DATE_FORMAT( lg_ordencab.ffechadoc, '%d/%m/%Y' ) AS ffechadoc,
                                                         lg_ordencab.nEstadoDoc,
                                                         tb_proyectos.ccodproy,
+                                                        tb_proyectos.nidreg,
                                                         CONCAT_WS(
                                                             ' ',
                                                             tb_proyectos.ccodproy,
@@ -3016,8 +3017,8 @@
                                                     WHERE
                                                         tb_costusu.id_cuser = :usr 
                                                         AND tb_costusu.nflgactivo = 1 
-                                                        AND lg_ordencab.nEstadoDoc = 60
-                                                    ORDER BY id_regmov ASC");
+                                                        AND lg_ordencab.nEstadoDoc BETWEEN 60 AND 62
+                                                    ORDER BY tb_proyectos.ccodproy ASC");
                 $sql->execute(["usr"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowCount();
 
@@ -3029,11 +3030,11 @@
                         if ($tipoMov == 1)
                             $diferencia = $this->calcularIngresosOrden($rs['id_regmov']) - $this->calcularCantidadIngresa($rs['id_regmov']);
                         else
-                            $diferencia = 56;
+                            $diferencia = 5;
 
 
                         if (($diferencia) > 0 ) {
-                            $salida.='<tr data-orden="'.$rs['id_regmov'].'">
+                            $salida.='<tr data-orden="'.$rs['id_regmov'].'" data-idcosto="'.$rs['nidreg'].'">
                                     <td class="textoCentro">'.$rs['cnumero'].'</td>
                                     <td class="textoCentro">'.$rs['ffechadoc'].'</td>
                                     <td class="pl20px">'.$rs['area'].'</td>
@@ -3079,7 +3080,7 @@
 
         public function calcularCantidadsalida($id){
             try {
-                $sql = $this->db->connect()->prepare("SELECT SUM(lg_ordendet.ncanti) AS cantidad_orden FROM lg_ordendet WHERE id_orden =:id");
+                $sql = $this->db->connect()->prepare("SELECT SUM(alm_despachodet.ncanti) AS cantidad_orden FROM alm_despachodet WHERE nroorden =:id");
                 $sql->execute(["id"=>$id]);
                 $result = $sql->fetchAll();
 
@@ -3089,5 +3090,7 @@
                 return false;
             }
         }
+
+        
     }
 ?>

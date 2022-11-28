@@ -5,10 +5,15 @@
         }
 
         function render() {
-            $this->view->id = $_SESSION['user'];
-            $this->view->rol = $_SESSION['rol'];
-            $this->view->iniciales = strtoupper($_SESSION['inicial']);
-            $this->view->acordeon = $this->model->acordeon($_SESSION['iduser']);
+            if (isset($_SESSION['user'])) {
+                $this->view->id = $_SESSION['user'];
+                $this->view->rol = $_SESSION['rol'];
+                $this->view->iniciales = strtoupper($_SESSION['inicial']);
+                $this->view->acordeon = $this->model->acordeon($_SESSION['iduser']);
+            }else {
+                header('Location: '.constant('URL'));
+            }
+            
             $this->view->render('panel/index');
         }
 

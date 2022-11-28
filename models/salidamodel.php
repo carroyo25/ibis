@@ -76,195 +76,89 @@
             return str_pad($indice,6,0,STR_PAD_LEFT);
         }
 
-        public function listarIngresos(){
+        public function pasarDetallesOrden($id,$costo){
             try {
-                $salida = "";
-                $sql = $this->db->connect()->prepare("SELECT
-                                                        alm_recepcab.id_regalm,
-                                                        alm_recepcab.nnronota,
-                                                        alm_recepcab.cnumguia,
-                                                        tb_proyectos.nidreg,
-                                                        alm_recepcab.idref_pedi AS pedido,
-                                                         alm_recepcab.idref_abas AS orden,
-                                                        CONCAT_WS(' ',tb_proyectos.ccodproy,tb_proyectos.cdesproy) AS proyecto,
-                                                        tb_parametros.cdescripcion,
-                                                        UPPER( tb_almacen.cdesalm ) AS almacen,
-                                                        UPPER( tb_area.cdesarea ) AS area,
-                                                        DATE_FORMAT(alm_recepcab.ffecdoc,'%d/%m/%Y') AS fecha  
-                                                    FROM
-                                                        tb_costusu
-                                                        INNER JOIN alm_recepcab ON tb_costusu.ncodproy = alm_recepcab.ncodpry
-                                                        INNER JOIN tb_proyectos ON alm_recepcab.ncodpry = tb_proyectos.nidreg
-                                                        INNER JOIN tb_parametros ON alm_recepcab.ncodmov = tb_parametros.nidreg
-                                                        INNER JOIN tb_almacen ON alm_recepcab.ncodalm1 = tb_almacen.ncodalm
-                                                        INNER JOIN tb_area ON alm_recepcab.ncodarea = tb_area.ncodarea 
-                                                    WHERE
-                                                        tb_costusu.id_cuser = :user 
-                                                        AND tb_costusu.nflgactivo = 1 
-                                                        AND alm_recepcab.nEstadoDoc = 60
-                                                    ORDER BY tb_proyectos.ccodproy");
-                $sql->execute(["user"=>$_SESSION['iduser']]);
-                $rowCount = $sql->rowCount();
-
-                $item = 1;
-
-                if ($rowCount > 0) {
-                    while ($rs = $sql->fetch()) {
-                        $salida .= '<tr class="pointer" data-pedido="'.$rs['pedido'].'"
-                                                        data-orden="'.$rs['orden'].'"
-                                                        data-ingreso="'.$rs['id_regalm'].'"
-                                                        data-costos="'.$rs['nidreg'].'">
-                                        <td class="textoCentro"><input type="checkbox"></td>
-                                        <td class="textoCentro">'.$rs['fecha'].'</td>
-                                        <td class="pl20px">'.$rs['proyecto'].'</td>
-                                        <td class="textoCentro">'.str_pad($rs['pedido'],6,0,STR_PAD_LEFT).'</td>
-                                        <td class="textoCentro">'.str_pad($rs['orden'],6,0,STR_PAD_LEFT).'</td>
-                                        <td class="textoCentro">'.$rs['nnronota'].'</td>
-                                        <td class="pl20px">'.$rs['area'].'</td>
-                                        <td class="pl20px">'.$rs['cdescripcion'].'</td>
-                                        <td class="pl20px">'.$rs['almacen'].'</td>
-                                    </tr>';
-                    }
-                }
-
-                return $salida;
+                return array("numero"=>$this->ultimoIndice(),
+                            "items"=>$this->ordenDetalles($id),
+                            "costos"=>$this->centroCostos($costo));
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;
             }
         }
-        
-        public function filtrarIngresos($id) {
-            $salida = "";
+
+        private function ordenDetalles($id) {
             try {
+                $salida ="";
+
                 $sql = $this->db->connect()->prepare("SELECT
-                                                        alm_recepcab.id_regalm,
-                                                        alm_recepcab.nnronota,
-                                                        alm_recepcab.cnumguia,
-                                                        alm_recepcab.idref_pedi AS pedido,
-                                                        alm_recepcab.idref_abas AS orden,
-                                                        tb_proyectos.nidreg,
-                                                        CONCAT_WS(' ',tb_proyectos.ccodproy,tb_proyectos.cdesproy) AS proyecto,
-                                                        tb_parametros.cdescripcion,
-                                                        UPPER( tb_almacen.cdesalm ) AS almacen,
-                                                        UPPER( tb_area.cdesarea ) AS area,
-                                                        DATE_FORMAT(alm_recepcab.ffecdoc,'%d/%m/%Y') AS fecha  
+                                                        lg_ordendet.nitemord,
+                                                        lg_ordendet.id_regmov,
+                                                        lg_ordendet.niddeta,
+                                                        lg_ordendet.nidpedi,
+                                                        lg_ordendet.id_cprod,
+                                                        lg_ordendet.id_orden,
+                                                        cm_producto.ccodprod,
+                                                        UPPER( CONCAT_WS( ' ', cm_producto.cdesprod, tb_pedidodet.observaciones, tb_pedidodet.docEspec ) ) AS cdesprod,
+                                                        cm_producto.nund,
+                                                        tb_unimed.cabrevia,
+                                                        tb_pedidodet.idpedido,
+                                                        tb_pedidodet.nroparte,
+                                                        REPLACE ( FORMAT( lg_ordendet.ncanti, 2 ), ',', '' ) AS cantidad,
+                                                        despacho.pendiente AS total_despachado,
+                                                        @id := lg_ordendet.nitemord AS idorden 
                                                     FROM
-                                                        tb_costusu
-                                                        INNER JOIN alm_recepcab ON tb_costusu.ncodproy = alm_recepcab.ncodpry
-                                                        INNER JOIN tb_proyectos ON alm_recepcab.ncodpry = tb_proyectos.nidreg
-                                                        INNER JOIN tb_parametros ON alm_recepcab.ncodmov = tb_parametros.nidreg
-                                                        INNER JOIN tb_almacen ON alm_recepcab.ncodalm1 = tb_almacen.ncodalm
-                                                        INNER JOIN tb_area ON alm_recepcab.ncodarea = tb_area.ncodarea 
+                                                        lg_ordendet
+                                                        INNER JOIN cm_producto ON lg_ordendet.id_cprod = cm_producto.id_cprod
+                                                        INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                        INNER JOIN tb_pedidodet ON lg_ordendet.niddeta = tb_pedidodet.iditem
+                                                        LEFT JOIN ( SELECT SUM( alm_despachodet.ncantidad ) 
+                                                            AS pendiente, niddetaOrd 
+                                                            FROM alm_despachodet 
+                                                            WHERE alm_despachodet.niddetaOrd = @id ) AS despacho ON lg_ordendet.nitemord = despacho.niddetaOrd 
                                                     WHERE
-                                                        tb_costusu.id_cuser = :usr 
-                                                        AND tb_costusu.nflgactivo = 1 
-                                                        AND alm_recepcab.nEstadoDoc = 62
-                                                        AND alm_recepcab.id_regalm = :id
-                                                    ORDER BY tb_proyectos.ccodproy");
-                $sql->execute(["usr"=>$_SESSION['iduser'],'id'=>$id]);
+                                                        lg_ordendet.id_orden = :id");
+                $sql->execute(["id"=>$id]);
+                
                 $rowCount = $sql->rowCount();
-                $item = 1;
 
                 if ($rowCount > 0) {
+                    $item=1;
+                    
                     while ($rs = $sql->fetch()){
-                        $salida .= '<tr class="pointer" data-pedido="'.$rs['pedido'].'"
-                                                       data-orden="'.$rs['orden'].'"
-                                                       data-ingreso="'.$rs['ingreso'].'"
-                                                       data-costos="'.$rs['nidreg'].'">
-                                        <td class="textoCentro"><input type="checkbox"></td>
-                                        <td class="textoCentro">'.$rs['fecha'].'</td>
-                                        <td class="pl20px">'.$rs['proyecto'].'</td>
-                                        <td class="textoCentro">'.str_pad($rs['pedido'],6,0,STR_PAD_LEFT).'</td>
-                                        <td class="textoCentro">'.str_pad($rs['orden'],6,0,STR_PAD_LEFT).'</td>
-                                        <td class="textoCentro">'.$rs['nnronota'].'</td>
-                                        <td class="pl20px">'.$rs['area'].'</td>
-                                        <td class="pl20px">'.$rs['cdescripcion'].'</td>
-                                        <td class="pl20px">'.$rs['almacen'].'</td>
-                                    </tr>';
-                    }
-                }
+                        $saldo = $rs['cantidad']-$rs['total_despachado'];
 
-                return $salida;
-            } catch (PDOException $th) {
-                echo "Error: ".$th->getMessage();
-                return false;
-            }
-        }
-
-        public function importarItems($data){
-            $indices = implode($data);
-            $indices = str_replace("[","(",$indices);
-            $indices = str_replace("]",")",$indices);
-
-            $salida = "";
-            $qry = "SELECT
-                        alm_recepdet.niddeta,
-                        cm_producto.ccodprod,
-                        cm_producto.id_cprod,
-                        UPPER(cm_producto.cdesprod) AS descripcion,
-                        tb_unimed.cabrevia AS unidad,
-                        tb_pedidodet.observaciones,
-                        tb_pedidodet.iditem AS iditem,
-                        LPAD(tb_pedidocab.nrodoc, 6, 0) AS pedido,
-                        REPLACE (
-                            FORMAT(lg_ordendet.ncanti, 2),
-                            '',
-                            ','
-                        ) AS cantidad,
-                        tb_almacen.cdesalm,
-                        alm_recepcab.nnronota AS ingreso,
-                        lg_ordencab.id_regmov AS idorden,
-                        LPAD(lg_ordencab.cnumero, 6, 0) AS orden
-                    FROM
-                        alm_recepdet
-                    INNER JOIN cm_producto ON alm_recepdet.id_cprod = cm_producto.id_cprod
-                    INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
-                    INNER JOIN tb_pedidodet ON alm_recepdet.niddetaPed = tb_pedidodet.iditem
-                    INNER JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
-                    INNER JOIN lg_ordendet ON alm_recepdet.niddetaOrd = lg_ordendet.nitemord
-                    INNER JOIN tb_almacen ON alm_recepdet.ncodalm1 = tb_almacen.ncodalm
-                    INNER JOIN alm_recepcab ON alm_recepdet.id_regalm = alm_recepcab.id_regalm
-                    INNER JOIN lg_ordencab ON tb_pedidocab.idorden = lg_ordencab.id_regmov
-                    WHERE
-                        alm_recepdet.id_regalm IN $indices";
-
-            try {
-                $sql = $this->db->connect()->query($qry);
-                $sql->execute();
-                $rowCount = $sql->rowCount();
-                $item=1;
-                $numero = $this->ultimoIndice();
-
-                if ($rowCount > 0){
-                    while ($rs = $sql->fetch()) {
-                        $salida .= '<tr class="pointer" data-pedido="'.$rs['pedido'].'" 
-                                                        data-orden="'.$rs['orden'].'" 
-                                                        data-ingreso="'.$rs['ingreso'].'" 
-                                                        data-despacho="'.$numero.'"
-                                                        data-idpedido="'.$rs['iditem'].'"
-                                                        data-idproducto="'.$rs['id_cprod'].'">
-                                    <td class="textoCentro"><a href="'.$rs['niddeta'].'" data-accion="deleteItem" class="eliminarItem"><i class="fas fa-minus"></i></a></td>
+                        if ( $saldo > 0) {
+                            $salida.='<tr data-detorden="'.$rs['nitemord'].'" 
+                                        data-idprod="'.$rs['id_cprod'].'"
+                                        data-iddetped="'.$rs['niddeta'].'"
+                                        data-saldo="'.$saldo.'"
+                                        data_pedido="'.$rs['nidpedi'].'"
+                                        data_orden="'.$rs['id_orden'].'">
+                                    <td class="textoCentro"><a href="'.$rs['id_orden'].'" data-accion="deleteItem" class="eliminarItem"><i class="fas fa-minus"></i></a></td>
+                                    <td class="textoCentro"><input type="checkbox"></td>
                                     <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
                                     <td class="textoCentro">'.$rs['ccodprod'].'</td>
-                                    <td class="pl20px">'.$rs['descripcion'].'</td>
-                                    <td class="textoCentro">'.$rs['unidad'].'</td>
-                                    <td class="textoDerecha pr5px">'.$rs['cantidad'].'</td>
-                                    <td><input type="number" value="'.$rs['cantidad'].'"></td>
+                                    <td class="pl20px">'.$rs['cdesprod'].'</td>
+                                    <td class="textoCentro">'.$rs['cabrevia'].'</td>
+                                    <td class="textoDerecha pr20px">'.$rs['cantidad'].'</td>
+                                    <td>
+                                        <input type="number" 
+                                            step="any" 
+                                            placeholder="0.00" 
+                                            onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)" value="'.$saldo.'">
+                                    </td>
                                     <td><input type="text"></td>
-                                    <td class="textoCentro">'.$rs['pedido'].'</td>
-                                    <td class="textoCentro">'.$rs['orden'].'</td>
-                                    <td class="textoCentro">'.$rs['ingreso'].'</td>
+                                    <td class="textoCentro">'.str_pad($rs['nidpedi'],6,0,STR_PAD_LEFT).'</td>
+                                    <td class="textoCentro">'.str_pad($rs['id_orden'],6,0,STR_PAD_LEFT).'</td>
                                 </tr>';
+                        }
                     }
                 }
 
-                
-
-                return array("items" => $salida,
-                            "numero" => $numero);
+                return $salida;
             } catch (PDOException $th) {
-                echo "Error: ".$th->getMessage();
+                echo "Error: " . $th->getMessage();
                 return false;
             }
         }
@@ -284,11 +178,9 @@
                 $mes = $fecha[1];
                 $anio = $fecha[0];
 
-                //$cargo = $this->rrhhCargo($cabecera['codigo_aprueba']);
-                //aca probar el api
                 $cargo = "Jefe de Almacen";
 
-                $file = uniqid("NS")."_".$cabecera['numero']."_".$cabecera['codigo_almacen'].".pdf";
+                $file = uniqid("NS")."_".$cabecera['numero']."_".$cabecera['almacen_origen_despacho'].".pdf";
 
                 if ($condicion == 0){
                     $filename = "public/documentos/notas_salida/vistaprevia/".$file;
@@ -334,19 +226,45 @@
             }    
         }
 
-        public function generarVistaPrevia($cabecera,$detalles){
+        public function generarVistaPrevia($cabecera,$detalles,$proyecto){
             try {
                 require_once("public/formatos/guiaremision.php");
                 
                 $archivo = "public/documentos/guias_remision/".$cabecera['numero_guia'].".pdf";
                 $datos = json_decode($detalles);
                 $nreg = count($datos);
+                $fecha_emision = date("d/m/Y", strtotime($cabecera['fgemision']));
+                $fecha_traslado = date("d/m/Y", strtotime($cabecera['ftraslado']));
+                $referido = $this->generarRS(); 
+                $anio = explode('-',$cabecera['fgemision']);
 
-                $pdf = new PDF($cabecera['numero_guia'],$cabecera['fgemision'],$cabecera['destinatario_ruc'],$cabecera['destinatario_razon'],$cabecera['destinatario_direccion'],
-                                $cabecera['empresa_transporte_razon'],$cabecera['ruc_entidad_transporte'],$cabecera['direccion_entidad_transporte'],
-                                $cabecera['almacen_origen_direccion'],null,
-                                null,null,$cabecera['fgemision'],$cabecera['modalidad_traslado'],$cabecera['almacen_destino_direccion'],null,
-                                null,null,$cabecera['marca'],$cabecera['placa'],$cabecera['nombre_conductor'],$cabecera['licencia_conducir'],'A4');
+                $pdf = new PDF($cabecera['numero_guia'],
+                                $fecha_emision,
+                                $cabecera['destinatario_ruc'],
+                                $cabecera['destinatario_razon'],
+                                $cabecera['destinatario_direccion'],
+                                $cabecera['empresa_transporte_razon'],
+                                $cabecera['ruc_proveedor'],
+                                $cabecera['direccion_proveedor'],
+                                $cabecera['almacen_origen_direccion'],
+                                null,
+                                null,
+                                null,
+                                $fecha_traslado,
+                                $cabecera['modalidad_traslado'],
+                                $cabecera['almacen_destino_direccion'],
+                                null,
+                                null,
+                                null,
+                                $cabecera['marca'],
+                                $cabecera['placa'],
+                                $cabecera['nombre_conductor'],
+                                $cabecera['licencia_conducir'],
+                                $cabecera['tipo_envio'],
+                                $referido,
+                                $proyecto,
+                                $anio[0],
+                                'A4');
                 $pdf->AliasNbPages();
                 $pdf->AddPage();
                 $pdf->SetWidths(array(10,15,15,147));
@@ -362,7 +280,8 @@
                 for($i=1;$i<=$nreg;$i++){
 
                     $pdf->SetX(13);
-                    $pdf->SetCellHeight(4);
+                    $pdf->SetCellHeight(3);
+                    //$pdf->SetFont('Arial','',3);
 
                     $pdf->SetAligns(array("R","R","C","L"));
                     $pdf->Row(array(str_pad($i,3,"0",STR_PAD_LEFT),
@@ -393,19 +312,45 @@
             }
         }
 
-        public function imprimirFormato($cabecera,$detalles){
+        public function imprimirFormato($cabecera,$detalles,$proyecto){
             try {
                 require_once("public/formatos/grpreimpreso.php");
                 
                 $archivo = "public/documentos/temp/".uniqid().".pdf";
                 $datos = json_decode($detalles);
                 $nreg = count($datos);
+                $fecha_emision = date("d/m/Y", strtotime($cabecera['fgemision']));
+                $fecha_traslado = date("d/m/Y", strtotime($cabecera['ftraslado']));
+                $referido = $this->generarRS(); 
+                $anio = explode('-',$cabecera['fgemision']);
 
-                $pdf = new PDF($cabecera['numero_guia'],$cabecera['fgemision'],$cabecera['destinatario_ruc'],$cabecera['destinatario_razon'],$cabecera['destinatario_direccion'],
-                                $cabecera['empresa_transporte_razon'],$cabecera['ruc_entidad_transporte'],$cabecera['direccion_entidad_transporte'],
-                                $cabecera['almacen_origen_direccion'],null,
-                                null,null,$cabecera['fgemision'],$cabecera['modalidad_traslado'],$cabecera['almacen_destino_direccion'],null,
-                                null,null,$cabecera['marca'],$cabecera['placa'],$cabecera['nombre_conductor'],$cabecera['licencia_conducir'],'A4');
+                $pdf = new PDF($cabecera['numero_guia'],
+                                $fecha_emision,
+                                $cabecera['destinatario_ruc'],
+                                $cabecera['destinatario_razon'],
+                                $cabecera['destinatario_direccion'],
+                                $cabecera['empresa_transporte_razon'],
+                                $cabecera['ruc_proveedor'],
+                                $cabecera['direccion_proveedor'],
+                                $cabecera['almacen_origen_direccion'],
+                                null,
+                                null,
+                                null,
+                                $fecha_traslado,
+                                $cabecera['modalidad_traslado'],
+                                $cabecera['almacen_destino_direccion'],
+                                null,
+                                null,
+                                null,
+                                $cabecera['marca'],
+                                $cabecera['placa'],
+                                $cabecera['nombre_conductor'],
+                                $cabecera['licencia_conducir'],
+                                $cabecera['tipo_envio'],
+                                $referido,
+                                $proyecto,
+                                $anio[0],
+                                'A4');
                 $pdf->AliasNbPages();
                 $pdf->AddPage();
                 $pdf->SetWidths(array(10,15,15,147));
@@ -420,8 +365,9 @@
 
                 for($i=1;$i<=$nreg;$i++){
 
-                    $pdf->SetX(13);
-                    $pdf->SetCellHeight(4);
+                    $pdf->SetX(8);
+                    $pdf->SetCellHeight(3);
+                    //$pdf->SetFont('Arial','',3);
 
                     $pdf->SetAligns(array("R","R","C","L"));
                     $pdf->Row(array(str_pad($i,3,"0",STR_PAD_LEFT),
@@ -572,6 +518,97 @@
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function centroCostos($id){
+            try {
+                $sql=$this->db->connect()->prepare("SELECT UPPER(CONCAT_WS(' ',tb_proyectos.ccodproy,tb_proyectos.cdesproy)) AS nombre
+                                                    FROM tb_proyectos
+                                                    WHERE tb_proyectos.nidreg =:id");
+                $sql->execute(["id"=>$id]);
+                $result=$sql->fetchAll();
+
+                return $result[0]['nombre'];
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        public function filtrarOrdenesID($id){
+            try {
+                $salida = "";
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        lg_ordencab.id_regmov,
+                                                        tb_costusu.ncodproy,
+                                                        lg_ordencab.id_refpedi,
+                                                        lg_ordencab.ntipdoc,
+                                                        LPAD( lg_ordencab.cnumero, 6, 0 ) AS cnumero,
+                                                        DATE_FORMAT( lg_ordencab.ffechadoc, '%d/%m/%Y' ) AS ffechadoc,
+                                                        lg_ordencab.nEstadoDoc,
+                                                        tb_proyectos.ccodproy,
+                                                        tb_proyectos.nidreg,
+                                                        CONCAT_WS(
+                                                            ' ',
+                                                            tb_proyectos.ccodproy,
+                                                        UPPER( tb_proyectos.cdesproy )) AS costos,
+                                                        CONCAT_WS(
+                                                            ' ',
+                                                            tb_area.ccodarea,
+                                                        UPPER( tb_area.cdesarea )) AS area,
+                                                        cm_entidad.crazonsoc 
+                                                    FROM
+                                                        tb_costusu
+                                                        INNER JOIN lg_ordencab ON tb_costusu.ncodproy = lg_ordencab.ncodpry
+                                                        INNER JOIN tb_proyectos ON lg_ordencab.ncodpry = tb_proyectos.nidreg
+                                                        INNER JOIN tb_area ON lg_ordencab.ncodarea = tb_area.ncodarea
+                                                        INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi 
+                                                    WHERE
+                                                        tb_costusu.id_cuser = :usr
+                                                        AND lg_ordencab.id_regmov = :id 
+                                                        AND tb_costusu.nflgactivo = 1 
+                                                        AND lg_ordencab.nEstadoDoc BETWEEN 60 AND 62
+                                                    ORDER BY id_regmov DESC");
+                $sql->execute(["usr"=>$_SESSION['iduser'],"id"=>$id]);
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0) {
+                    while ($rs = $sql->fetch()) {
+                        //compara la orden si fue ingresada esta completa y no la muestra
+                        $diferencia_ingreso = $this->calcularIngresosOrden($rs['id_regmov']) - $this->calcularCantidadsalida($rs['id_regmov']);
+
+                        if (($diferencia_ingreso) > 0 ) {
+                            $salida.='<tr data-orden="'.$rs['id_regmov'].'" data-idcosto="'.$rs['nidreg'].'">
+                                    <td class="textoCentro">'.$rs['cnumero'].'</td>
+                                    <td class="textoCentro">'.$rs['ffechadoc'].'</td>
+                                    <td class="pl20px">'.$rs['area'].'</td>
+                                    <td class="textoDerecha pr5px">'.$rs['ccodproy'].'</td>
+                                    <td class="pl20px">'.$rs['crazonsoc'].'</td>
+                                </tr>';
+                        }
+                    }
+                }
+                return $salida;
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        public function generarRS() {
+            try {
+                $sql = $this->db->connect()->query("SELECT MAX(nReferido) AS rs FROM alm_despachocab");
+                $sql->execute();
+                $resultado = $sql->fetchAll();
+
+                $rs = gettype($resultado[0]['rs']) == "NULL" ? 5000 : $resultado[0]['rs']; 
+
+                return $rs;
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
                 return false;
             }
         }

@@ -28,29 +28,28 @@
 
         }
 
-        function filtraIngreso(){
-            echo $this->model->filtrarIngresos($_POST['id']);
-        }
-
-        function llamarData() {
-            echo json_encode($this->model->importarItems($_POST));
-        }
-
         function documentopdf(){
             echo $this->model->generarPdfSalida($_POST['cabecera'],$_POST['detalles'],$_POST['condicion']);
         }
 
         function vistaPreviaGuiaRemision(){
-            echo json_encode($this->model->generarVistaPrevia($_POST['cabecera'],$_POST['detalles']));
+            echo json_encode($this->model->generarVistaPrevia($_POST['cabecera'],$_POST['detalles'],$_POST['proyecto']));
         }
 
         function preImpreso(){
-            echo json_encode($this->model->imprimirFormato($_POST['cabecera'],$_POST['detalles']));
+            echo json_encode($this->model->imprimirFormato($_POST['cabecera'],$_POST['detalles'],$_POST['proyecto']));
         }
 
         function nuevasalida(){
             echo json_encode($this->model->grabarDespacho($_POST['cabecera'],$_POST['detalles']));
         }
-  
+
+        function ordenId() {
+            echo json_encode($this->model->pasarDetallesOrden($_POST['id'],$_POST['costo']));
+        }
+        
+        function filtraOrden() {
+            echo $this->model->filtrarOrdenesID($_POST['id']);
+        }
     }
 ?>

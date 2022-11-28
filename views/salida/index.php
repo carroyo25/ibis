@@ -27,7 +27,7 @@
                     <input type="hidden" name="codigo_area" id="codigo_area">
                     <input type="hidden" name="codigo_movimiento" id="codigo_movimiento">
                     <input type="hidden" name="codigo_aprueba" id="codigo_aprueba">
-                    <input type="hidden" name="codigo_almacen" id="codigo_almacen">
+                    <input type="hidden" name="codigo_almacen_origen" id="codigo_almacen_origen">
                     <input type="hidden" name="codigo_almacen_destino" id="codigo_almacen_destino">
                     <input type="hidden" name="codigo_pedido" id="codigo_pedido">
                     <input type="hidden" name="codigo_orden" id="codigo_orden">
@@ -36,6 +36,7 @@
                     <input type="hidden" name="codigo_ingreso" id="codigo_ingreso">
                     <input type="hidden" name="codigo_salida" id="codigo_salida">
                     <input type="hidden" name="id_centi" id="id_centi">
+                    <input type="hidden" name="guia" id="guia">
 
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
@@ -85,7 +86,7 @@
                             <div class="column2">
                                 <label for="almacen_origen_despacho">Almacen Origen:</label>
                                 <input type="text" name="almacen_origen_despacho" id="almacen_origen_despacho" class="mostrarLista busqueda" readonly>
-                                <div class="lista" id="listaAlmacenDestino">
+                                <div class="lista" id="listaOrigen">
                                    <ul>
                                        <?php echo $this->listaAlmacen?>
                                    </ul> 
@@ -94,7 +95,7 @@
                             <div class="column2">
                                 <label for="almacen_destino_despacho">Almacen Destino:</label>
                                 <input type="text" name="almacen_destino_despacho" id="almacen_destino_despacho" class="mostrarLista busqueda" readonly>
-                                <div class="lista" id="listaAlmacenDestino">
+                                <div class="lista" id="listaDestino">
                                    <ul>
                                        <?php echo $this->listaAlmacen?>
                                    </ul> 
@@ -105,8 +106,9 @@
                                     <label for="movimiento">Mov Almacen:</label>
                                     <input type="text" name="movimiento" id="movimiento" class="w100por" readonly>
                                 </div>
-                                <div class="column2_46">
-                                    <input type="hidden" name="guia" id="guia" class="cerrarLista">
+                                <div class="column2">
+                                    <label for="estado">Estado:</label>
+                                    <input type="text" name="estado" id="estado" class="textoCentro estado w100por procesando" readonly value="EN PROCESO">
                                 </div>
                             </div>
                         </div>
@@ -121,14 +123,10 @@
                                    </ul> 
                                 </div>
                             </div>
-                            <div class="column4_55">
-                                <div class="column2">
-                                    <label for="estado">Estado:</label>
-                                    <input type="text" name="estado" id="estado" class="textoCentro estado w100por procesando" readonly value="EN PROCESO">
-                                </div>
-                                
+                            <div class="opcionesProceso">
+                                <a href="#" id="btnPendientes" class="boton3"><i class="far fa-square"></i>  Grabar Pendientes</a>
+                                <a href="#" id="btnTotales" class="boton3"><i class="far fa-check-square"></i>  Grabar Marcadas</a>
                             </div>
-                           
                         </div>
                     </div>
                     <div class="barraOpciones">
@@ -136,9 +134,6 @@
                         <div>
                             <button type="button" id="atachDocs" title="Documentos Adjuntos" class="cerrarLista boton3">
                                 <i class="fas fa-paperclip"></i> Documentos Adjuntos
-                            </button>
-                            <button type="button" id="asocOrd" title="Orden de Compra Asociada" class="cerrarLista boton3">
-                                <i class="far fa-file-pdf"></i> Orden Asociada
                             </button>
                             <button type="button" id="guiaRemision" title="Guia de Remision" class="cerrarLista boton3">
                                 <i class="fas fa-upload"></i> Guia de Remision
@@ -149,17 +144,17 @@
                         <table class="tabla" id="tablaDetalles">
                             <thead>
                                 <tr class="stickytop">
-                                        <th class="">...</th>
-                                        <th class="">Item</th>
-                                        <th class="">Codigo</th>
-                                        <th class="">Descripcion</th>
-                                        <th class="">Unidad</th>
-                                        <th width="7%">Cantidad</br>Orden</th>
-                                        <th width="7%">Cantidad</br>Despacho</th>
-                                        <th class="">Observaciones</th>
-                                        <th width="4%">Pedido</th>
-                                        <th width="4%">Orden</th>
-                                        <th width="4%">Ingreso</th>
+                                    <th width="4%">...</th>
+                                    <th width="4%">...</th>
+                                    <th class="">Item</th>
+                                    <th class="">Codigo</th>
+                                    <th class="">Descripcion</th>
+                                    <th class="">Unidad</th>
+                                    <th width="7%">Cantidad</br>Orden</th>
+                                    <th width="7%">Cantidad</br>Despacho</th>
+                                    <th class="">Observaciones</th>
+                                    <th width="4%">Pedido</th>
+                                    <th width="4%">Orden</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -172,7 +167,7 @@
         </div>
     </div>
     <div class="modal" id="busqueda">
-        <div class="ventanaBusqueda w75por">
+        <div class="ventanaBusqueda w60por">
             <div class="tituloVentana">
                 <span id="tituloBusqueda">Ordenes</span>
                 <div>
@@ -226,7 +221,7 @@
                         <input type="text" name="serie_guia" id="serie_guia" class="w10por" value="0001" readonly>
                         <input type="text" name="numero_guia" id="numero_guia">    
                     </div>
-                    <div>
+                    <div class="opciones_documento">
                         <a href="#" id="printDocument" title="Imprimir Guia"><i class="fas fa-print"></i></a>
                         <a href="#" id="previewDocument" title="Vista previa"><i class="fas fa-eye"></i></a>
                         <a href="#" id="closeDocument" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
@@ -235,9 +230,15 @@
                 <hr>
                 <div class="dos_columnas">
                     <div class="columna_izquierda">
-                        <div >
-                            <label for="fgemision">Fecha Emisión:</label>
-                            <input type="date" name="fgemision" id="fgemision" value="<?php echo date("Y-m-d")?>">
+                        <div class="fechas">
+                            <div>
+                                <label for="fgemision">Fecha Emisión:</label>
+                                <input type="date" name="fgemision" id="fgemision" value="<?php echo date("Y-m-d")?>">
+                            </div>
+                            <div>
+                                <label for="ftraslado">Fecha Traslado:</label>
+                                <input type="date" name="ftraslado" id="ftraslado" value="<?php echo date("Y-m-d")?>">
+                            </div>
                         </div>
                         <div>
                             <p class="titulo_seccion"><strong>Datos del destinatario</strong></p>
@@ -283,6 +284,10 @@
                                        <?php echo $this->listaEntidad?>
                                    </ul> 
                                 </div>
+                                <label for="ruc_proveedor">R.U.C.</label>
+                                <input type="text" name="ruc_proveedor" id="ruc_proveedor">
+                                <label for="direccion_proveedor">Dirección</label>
+                                <input type="text" name="direccion_proveedor" id="direccion_proveedor">
                             </div>
                         </div>
                     </div>
@@ -318,7 +323,7 @@
                                 </ul> 
                             </div>
                             <label for="observaciones_guia">Observaciones:</label>
-                            <textarea name="observaciones" id="observaciones" placeholder="Observaciones" class="dos"></textarea>    
+                            <textarea name="observaciones" id="observaciones" placeholder="Observaciones" class="dos"></textarea>
                         </div>
                         <p><strong>Datos del Conductor</strong></p>
                         <div class="dos_columnas_interna">
@@ -333,8 +338,6 @@
                             <input type="text" name="marca" id="marca">
                             <label for="placa">Nro. Placa :</label>
                             <input type="text" name="placa" id="placa">
-                            <label for="configuracion">Conf. Vehicular :</label>
-                            <input type="text" name="configuracion" id="configuracion">
                         </div>
                     </div>
                 </div>
@@ -348,14 +351,14 @@
                 <h3>Vista Previa</h3>
                 <a href="#" id="closePreview" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
             </div>
-            <iframe src=""></iframe>
+            <object data=""></object>
         </div>
     </div>
     <div class="modal" id="imprimir">
         <div class="ventanaVistaPrevia">
             <div class="tituloVista">
                 <h3>Vista Previa</h3>
-                <a href="#" id="closePreview" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
+                <a href="#" id="closePreviewPrinter" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
             </div>
             <iframe src="" id="iFramePdf"></iframe>
         </div>

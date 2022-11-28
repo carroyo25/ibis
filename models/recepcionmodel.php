@@ -742,12 +742,12 @@
                                                         tb_costusu.id_cuser = :usr
                                                         AND lg_ordencab.id_regmov = :id 
                                                         AND tb_costusu.nflgactivo = 1 
-                                                        AND lg_ordencab.nEstadoDoc = 60
+                                                        AND lg_ordencab.nEstadoDoc BETWEEN 60 AND 62
                                                     ORDER BY id_regmov DESC");
                 $sql->execute(["usr"=>$_SESSION['iduser'],"id"=>$id]);
                 $rowCount = $sql->rowCount();
 
-                //if ($rowCount > 0) {
+                if ($rowCount > 0) {
                     while ($rs = $sql->fetch()) {
                         //compara la orden si fue ingresada esta completa y no la muestra
                         $diferencia_ingreso = $this->calcularIngresosOrden($rs['id_regmov']) - $this->calcularCantidadIngresa($rs['id_regmov']);
@@ -762,7 +762,7 @@
                                 </tr>';
                         }
                     }
-                //}
+                }
                 return $salida;
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
