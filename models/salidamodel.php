@@ -19,9 +19,11 @@
                                                         YEAR(ffecdoc) AS anio,
                                                         alm_despachocab.ncodpry,
                                                         UPPER(origen.cdesalm) AS origen,
+                                                        UPPER(origen.ctipovia) AS direccion_origen,
                                                         alm_despachocab.nEstadoDoc,
                                                         alm_despachocab.cnumguia,
                                                         UPPER(destino.cdesalm) AS destino,
+                                                        UPPER(destino.ctipovia) AS direccion_destino,
                                                         UPPER(
                                                             CONCAT_WS(
                                                                 ' ',
@@ -73,12 +75,15 @@
             $indice = $this->lastInsertId("SELECT MAX(id_regalm) AS id FROM alm_despachocab"); 
             $indice = gettype($indice) == "NULL" ? 1 : $indice;
 
+            $indice = $indice + 1;
+
             return str_pad($indice,6,0,STR_PAD_LEFT);
         }
 
         public function pasarDetallesOrden($id,$costo){
             try {
-                return array("numero"=>$this->ultimoIndice(),
+                $indice = $this->ultimoIndice();
+                return array("numero"=>$indice,
                             "items"=>$this->ordenDetalles($id),
                             "costos"=>$this->centroCostos($costo));
             } catch (PDOException $th) {
@@ -312,9 +317,11 @@
             }
         }
 
-        public function imprimirFormato($cabecera,$detalles,$proyecto){
+        public function imprimirFormato($cabecera,$detalles,$proyecto,$nro_despacho){
             try {
                 require_once("public/formatos/grpreimpreso.php");
+
+
                 
                 $archivo = "public/documentos/temp/".uniqid().".pdf";
                 $datos = json_decode($detalles);
@@ -323,6 +330,16 @@
                 $fecha_traslado = date("d/m/Y", strtotime($cabecera['ftraslado']));
                 $referido = $this->generarRS(); 
                 $anio = explode('-',$cabecera['fgemision']);
+
+                $sql = $this->db->connect()->prepare("UPDATE alm_despachocab 
+                                                        SET ffecenvio=:envio,nReferido=:referido,cnumguia=:guia,id_centi=:entidad
+                                                        WHERE id_regalm =:despacho");
+                
+                $sql->execute(["envio"=>$cabecera['ftraslado'],
+                                "referido"=>$referido,
+                                "guia"=>$cabecera['numero_guia'],
+                                "entidad"=>$cabecera['codigo_entidad_transporte'],
+                                "despacho"=>$nro_despacho]);
 
                 $pdf = new PDF($cabecera['numero_guia'],
                                 $fecha_emision,
@@ -405,9 +422,10 @@
                 $error = true;
 
                 $query = "SELECT COUNT( alm_despachocab.id_regalm ) AS numero FROM alm_despachocab WHERE ncodalm1 =:cod";
-                $numero = $this->generarNumero($cabecera["codigo_almacen"],$query);
+                $nota = $this->generarNumero($cabecera["codigo_almacen_origen"],$query);
                 $indice = $this->lastInsertId("SELECT MAX(id_regalm) AS id FROM alm_despachocab");
                 $indice = gettype($indice) == "NULL" ? 1 : $indice;
+                $indice = $indice + 1;
 
                 $fecha = explode("-",$cabecera['fecha']);
 
@@ -419,44 +437,33 @@
                                                                                         ncodalm2 = :ncodalm2,
                                                                                         ffecdoc = :ffecdoc,
                                                                                         ncodpry = :ncodpry,
-                                                                                        ncodarea = :ncodarea,
-                                                                                        idref_pedi = :idref_pedi,
-                                                                                        idref_ord=:idref_ord,
-                                                                                        idref_abas=:idref_abas,
                                                                                         nnronota=:nnronota,
                                                                                         id_userAprob = :id_userAprob,
+                                                                                        id_userElabora = :id_user,
                                                                                         nEstadoDoc = :nEstadoDoc,
-                                                                                        nflgactivo = :nflgactivo,
-                                                                                        cnumguia=:nguia");
+                                                                                        nflgactivo = :nflgactivo");
 
                 $sql->execute(["ntipmov"=>$cabecera['codigo_movimiento'],
-                                "nnromov"=>$cabecera['movimiento'],
+                                "nnromov"=>null,
                                 "cper"=>$fecha[0],
                                 "cmes"=>$fecha[1],
-                                "ncodalm1"=>$cabecera['codigo_almacen'],
+                                "ncodalm1"=>$cabecera['codigo_almacen_origen'],
                                 "ncodalm2"=>$cabecera['codigo_almacen_destino'],
                                 "ffecdoc"=>$cabecera['fecha'],
                                 "ncodpry"=>$cabecera['codigo_costos'],
-                                "ncodarea"=>null,
-                                "idref_pedi"=>$cabecera['pedido'],
-                                "idref_ord"=>$cabecera['orden'],
-                                "idref_abas"=>$cabecera['ingreso'],
-                                "nnronota"=>$numero['numero'],
+                                "nnronota"=>$nota['numero'],
                                 "id_userAprob"=>$cabecera['codigo_aprueba'],
                                 "nEstadoDoc"=>62,
                                 "nflgactivo"=>1,
-                                "nguia"=>null]);
+                                "id_user"=>$_SESSION['iduser']]);
                 
                                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0) {
-
                     $mensaje = "Registro grabado";
                     $clase = "mensaje_correcto";
                     $error = "false";
-                    $indice = $this->lastInsertId("SELECT MAX(id_regalm) AS id FROM alm_despachocab");
-                    $indice = gettype($indice) == "NULL" ? 1 : $indice;
-                    $this->grabarDetallesDespacho($indice,$detalles,$cabecera['codigo_almacen']);
+                    $this->grabarDetallesDespacho($indice,$detalles,$cabecera['codigo_almacen_origen']);
                 }
                 
                 return array("mensaje"=>$mensaje, 
@@ -474,6 +481,9 @@
             try {
                 $datos = json_decode($detalles);
                 $nreg = count($datos);
+                $indice = $this->lastInsertId("SELECT MAX(id_regalm) AS id FROM alm_despachocab");
+                $indice = gettype($indice) == "NULL" ? 1 : $indice;
+                $indice = $indice + 1;
 
                 for ($i=0; $i < $nreg; $i++) { 
                     try {
@@ -481,7 +491,6 @@
                                                                                             ncodalm1=:ori,
                                                                                             id_cprod=:cpro,
                                                                                             ncantidad=:cant,
-                                                                                            cSerie=:ser,
                                                                                             niddetaPed=:idpedido,
                                                                                             nflgactivo=:flag,
                                                                                             nestadoreg=:estadoItem,
@@ -492,24 +501,20 @@
                                                                                             nropedido=:pedido,
                                                                                             ndespacho=:candesp,
                                                                                             cobserva=:observac");
-                         $sql->execute(["cod"=>$id,
+                         $sql->execute(["cod"=>$indice,
                                         "ori"=>$almacen,
                                         "cpro"=>$datos[$i]->idprod,
                                         "cant"=>$datos[$i]->cantidad,
-                                        "ser"=>null,
                                         "idpedido"=>$datos[$i]->iddetped,
-                                        "idorden"=>null,
                                         "flag"=>1,
                                         "estadoItem"=>49,
-                                        "ingreso"=>$datos[$i]->ingreso,
-                                        "saldo"=>null,
+                                        "ingreso"=>null,
                                         "destino"=>$datos[$i]->destino,
                                         "candesp"=>$datos[$i]->cantdesp,
                                         "itemIngreso"=>null,
                                         "pedido"=>$datos[$i]->pedido,
                                         "orden"=>$datos[$i]->orden,
-                                        "observac"=>$datos[$i]->obser
-                                        ]);
+                                        "observac"=>$datos[$i]->obser]);
                     } catch (PDOException $th) {
                         echo $th->getMessage();
                         return false;
@@ -604,11 +609,146 @@
                 $sql->execute();
                 $resultado = $sql->fetchAll();
 
-                $rs = gettype($resultado[0]['rs']) == "NULL" ? 5000 : $resultado[0]['rs']; 
+                $rs = gettype($resultado[0]['rs']) == "NULL" ? 5000 : $resultado[0]['rs'];
+                $rs = $rs+1; 
 
                 return $rs;
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        public function consultarSalidaId($indice){
+            try {
+                $sql=$this->db->connect()->prepare("SELECT
+                                                    alm_despachocab.id_regalm,
+                                                    alm_despachocab.ncodalm1,
+                                                    alm_despachocab.ncodalm2,
+                                                    DATE_FORMAT(
+                                                        alm_despachocab.ffecdoc,
+                                                        '%d/%m/%Y'
+                                                    ) AS fecha_despacho,
+                                                    alm_despachocab.ffecdoc,
+                                                    alm_despachocab.cnumguia,
+                                                    alm_despachocab.ncodpry,
+                                                    alm_despachocab.nEstadoDoc,
+                                                    UPPER(origen.cdesalm) AS origen,
+                                                    UPPER(origen.ctipovia) AS direccion_origen,
+                                                    UPPER(destino.cdesalm) AS destino,
+                                                    UPPER(destino.ctipovia) AS direccion_destino,
+                                                    UPPER(
+                                                        CONCAT_WS(
+                                                            ' ',
+                                                            tb_proyectos.ccodproy,
+                                                            tb_proyectos.cdesproy
+                                                        )
+                                                    ) AS costos,
+                                                    alm_despachocab.id_userAprob,
+                                                    tb_user.cnombres,
+                                                    movimientos.nidreg,
+                                                    movimientos.cdescripcion AS tipo_movimiento,
+                                                    estado.cdescripcion AS estado
+                                                FROM
+                                                    alm_despachocab
+                                                INNER JOIN tb_almacen AS origen ON alm_despachocab.ncodalm1 = origen.ncodalm
+                                                INNER JOIN tb_almacen AS destino ON alm_despachocab.ncodalm2 = destino.ncodalm
+                                                INNER JOIN tb_proyectos ON alm_despachocab.ncodpry = tb_proyectos.nidreg
+                                                INNER JOIN tb_user ON alm_despachocab.id_userAprob = tb_user.iduser
+                                                INNER JOIN tb_parametros AS movimientos ON alm_despachocab.ntipmov = movimientos.nidreg
+                                                INNER JOIN tb_parametros AS estado ON alm_despachocab.nEstadoDoc = estado.nidreg
+                                                WHERE
+                                                    id_regalm = :indice");
+                $sql->execute(["indice"=>$indice]);
+                $docData = array();
+                while($row=$sql->fetch(PDO::FETCH_ASSOC)){
+                    $docData[] = $row;
+                }
+
+                return array("cabecera"=>$docData,
+                            "detalles"=>$this->salidaDetalles($indice));
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }  
+        }
+
+        private function salidaDetalles($indice){
+            try {
+                $salida="";
+                $sql=$this->db->connect()->prepare("SELECT
+                                                        alm_despachodet.id_regalm,
+                                                        alm_despachodet.ncodalm1,
+                                                        alm_despachodet.fvence,
+                                                        alm_despachodet.ncantidad,
+                                                        alm_despachodet.id_cprod,
+                                                        alm_despachodet.niddetaPed,
+                                                        alm_despachodet.niddetaOrd,
+                                                        alm_despachodet.niddeta,
+                                                        alm_despachodet.ndespacho,
+                                                        alm_despachodet.cobserva,
+                                                        alm_despachodet.niddetaIng,
+                                                        LPAD(alm_despachodet.nropedido,6,0) AS nropedido,
+                                                        LPAD(alm_despachodet.nroorden,6,0) AS nroorden,
+                                                        alm_despachodet.ingreso,
+                                                        FORMAT(alm_despachodet.nsaldo, 2) AS nsaldo,
+                                                        cm_producto.ccodprod,
+                                                        FORMAT(alm_despachodet.ncantidad, 2) AS cantidad,
+                                                        UPPER(
+                                                            CONCAT_WS(
+                                                                ' ',
+                                                                cm_producto.cdesprod,
+                                                                tb_pedidodet.observaciones
+                                                            )
+                                                        ) AS cdesprod,
+                                                        tb_unimed.nfactor,
+                                                        tb_unimed.cabrevia,
+                                                        tb_pedidocab.nrodoc
+                                                    FROM
+                                                        alm_despachodet
+                                                    INNER JOIN cm_producto ON alm_despachodet.id_cprod = cm_producto.id_cprod
+                                                    INNER JOIN tb_pedidodet ON alm_despachodet.niddetaPed = tb_pedidodet.iditem
+                                                    INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                    INNER JOIN tb_pedidocab ON alm_despachodet.nropedido = tb_pedidocab.idreg
+                                                    WHERE
+                                                        alm_despachodet.id_regalm = :id");
+                $sql->execute(["id"=>$indice]);
+
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0) {
+                    $item = 1;
+                    while ($rs = $sql->fetch()){
+
+                        $fecha = $rs['fvence'] == "0000-00-00" ? "" : date("d-m-Y", strtotime($rs['fvence']));
+                        $series = $this->buscarSeries($rs['id_cprod'],$rs['id_regalm'],$rs['ncodalm1']);
+
+                        $salida.='<tr   data-idorden="'.$rs['niddetaOrd'].'" 
+                                        data-idpedido="'.$rs['niddetaPed'].'" 
+                                        data-idingreso="'.$rs['niddetaIng'].'"
+                                        data-iddespacho="'.$rs['niddeta'].'"
+                                        data-idproducto ="'.$rs['id_cprod'].'"
+                                        data-pedido ="'.$rs['nropedido'].'"
+                                        data-orden ="'.$rs['nroorden'].'">
+                                        <td></td>
+                                        <td class="textoCentro"><input type="checkbox" checked></td>
+                                        <td class="textoCentro">'.str_pad($item,3,0,STR_PAD_LEFT).'</td>
+                                        <td class="textoCentro">'.$rs['ccodprod'].'</td>
+                                        <td class="pl20px">'.$rs['cdesprod'].'  :'.$series.'</td>
+                                        <td class="textoCentro">'.$rs['cabrevia'].'</td>
+                                        <td class="textoDerecha pr20px">'.$rs['cantidad'].'</td>
+                                        <td><input type="number" step="any" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"
+                                            value="'.$rs['ndespacho'].'" readonly></td>
+                                        <td class="pr20px"><input type="text" value="'.$rs['cobserva'].'"></td>
+                                        <td class="textoCentro">'.str_pad($rs['nrodoc'],6,0,STR_PAD_LEFT).'</td>
+                                        <td class="textoCentro">'.str_pad($rs['nroorden'],6,0,STR_PAD_LEFT).'</td>
+                                    </tr>';
+                    }
+                }
+
+                return $salida;
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
                 return false;
             }
         }

@@ -25,7 +25,7 @@
         }
 
         function actualizaDespachos(){
-
+            echo $this->model->listarNotasDespacho();
         }
 
         function documentopdf(){
@@ -37,7 +37,7 @@
         }
 
         function preImpreso(){
-            echo json_encode($this->model->imprimirFormato($_POST['cabecera'],$_POST['detalles'],$_POST['proyecto']));
+            echo json_encode($this->model->imprimirFormato($_POST['cabecera'],$_POST['detalles'],$_POST['proyecto'],$_POST['despacho']));
         }
 
         function nuevasalida(){
@@ -50,6 +50,14 @@
         
         function filtraOrden() {
             echo $this->model->filtrarOrdenesID($_POST['id']);
+        }
+
+        function nuevoDespacho(){
+            echo json_decode($this->model->insertarDespacho($_POST['cabecera'],$_POST['detalles']));
+        }
+
+        function salidaId(){
+            echo json_encode($this->model->consultarSalidaId($_POST['id']));
         }
     }
 ?>

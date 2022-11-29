@@ -13,37 +13,28 @@ $(function() {
                 let estado = "textoCentro w100por estado " + data.cabecera[0].cabrevia,
                     numero = $.strPad(data.cabecera[0].id_regalm,6);
                 
+                $("#codigo_salida").val(data.cabecera[0].id_regalm);
                 $("#codigo_costos").val(data.cabecera[0].ncodpry);
-                $("#codigo_area").val(data.cabecera[0].ncodarea);
                 $("#codigo_movimiento").val(data.cabecera[0].ncodmov);
                 $("#codigo_aprueba").val(data.cabecera[0].id_userAprob);
                 $("#codigo_almacen").val(data.cabecera[0].ncodalm1);
                 $("#codigo_almacen_destino").val(data.cabecera[0].ncodalm2);
-                $("#codigo_pedido").val(data.cabecera[0].idref_pedi);
-                $("#codigo_orden").val(data.cabecera[0].idref_ord);
                 $("#codigo_estado").val(data.cabecera[0].nEstadoDoc);
                 $("#codigo_entidad").val(data.cabecera[0].id_centi);
-                $("#codigo_ingreso").val(data.cabecera[0].idref_abas);
-                $("#codigo_salida").val(data.cabecera[0].id_regalm);
-                $("#almacen_origen_despacho").val(data.cabecera[0].origen);
-                $("#almacen_destino_despacho").val(data.cabecera[0].destino);
+                $("#almacen_origen_despacho,#almacen_origen").val(data.cabecera[0].origen);
+                $("#almacen_destino_despacho,#almacen_destino").val(data.cabecera[0].destino);
                 $("#fecha").val(data.cabecera[0].ffecdoc);
                 $("#numero").val(numero);
                 $("#costos").val(data.cabecera[0].costos);
-                $("#area").val(data.cabecera[0].area);
-                $("#solicita").val(data.cabecera[0].nombres);
-                $("#orden").val(data.cabecera[0].orden);
-                $("#pedido").val(data.cabecera[0].pedido);
                 $("#ruc").val(data.cabecera[0].cnumdoc);
                 $("#guia").val(data.cabecera[0].cnumguia);
                 $("#razon").val(data.cabecera[0].crazonsoc);
-                $("#concepto").val(data.cabecera[0].concepto);
-                $("#aprueba").val(data.cabecera[0].cnombres);
+                $("#aprueba,#autoriza").val(data.cabecera[0].cnombres);
                 $("#tipo").val(data.cabecera[0].tipo_movimiento);
                 $("#estado").val(data.cabecera[0].estado);
                 $("#movimiento").val(data.cabecera[0].movimiento);
-                $("#fecha_pedido").val(data.cabecera[0].emision);
-                $("#fecha_orden").val(data.cabecera[0].ffechadoc);
+                $("#almacen_origen_direccion").val(data.cabecera[0].direccion_origen);
+                $("#almacen_destino_direccion").val(data.cabecera[0].direccion_destino);
                 
                 
                 $("#estado")
@@ -52,7 +43,9 @@ $(function() {
                 
                 $("#tablaDetalles tbody")
                     .empty()
-                    .append(data.detalles)
+                    .append(data.detalles);
+
+                tipoVista = true;
             },
             "json"
         );
@@ -205,7 +198,7 @@ $(function() {
         }else if(contenedor_padre == "listaEnvio"){
             $("#codigo_tipo").val(codigo);
         }else if(contenedor_padre == "listaEntidad"){
-            $("codigo_entidad_transporte").val(codigo)
+            $("#codigo_entidad_transporte").val(codigo)
             $("#ruc_proveedor").val($(this).data("ruc"));
             $("#direccion_proveedor").val($(this).data("direccion"));
         }
@@ -330,22 +323,20 @@ $(function() {
             if (result['codigo_almacen_destino'] == '') throw "Elija el Almacen";
             if (result['codigo_aprueba'] == '') throw "Elija la persona que aprueba";
 
-            console.log(detalles(tipoVista));
-
             if (accion == "n") {
-                /*$.post(RUTA+"recepcion/nuevoIngreso", {cabecera:result,
-                    detalles:JSON.stringify(detalles(tipoVista)),
-                    series:JSON.stringify(series())},
+                $.post(RUTA+"salida/nuevasalida", {cabecera:result,
+                    detalles:JSON.stringify(detalles(tipoVista))},
                         function (data, textStatus, jqXHR) {
                             $("#codigo_ingreso").val(data.indice);
                             mostrarMensaje("Nota Grabada","mensaje_correcto");
-                            $("#tablaPrincipal tbody")
+                            /*$("#tablaPrincipal tbody")
                                 .empty()
-                                .append(data.listado);
+                                .append(data.listado);*/
+                            $("#codigo_salida").val(data.indice);
                             accion = "u";
                         },
                         "json"
-                    );*/
+                    );
             }
 
         } catch (error) {
@@ -420,9 +411,9 @@ $(function() {
                 function (data, textStatus, jqXHR) {
                         
                        if (data.archivo !== ""){
-                            $(".ventanaVistaPrevia object")
-                            .attr("data","")
-                            .attr("data",data.archivo);
+                            $(".ventanaVistaPrevia iframe")
+                            .attr("src","")
+                            .attr("src",data.archivo);
         
                             $("#vistaprevia").fadeIn();
                        }
@@ -459,16 +450,20 @@ $(function() {
             if (result['codigo_traslado'] == "") throw "Seleccione la modalidad de traslado";
             
             $.post(RUTA+"salida/preImpreso", {cabecera:result,
-                                                            detalles:JSON.stringify(detalles(tipoVista)),
-                                                            proyecto: $("#costos").val()},
+                                              detalles:JSON.stringify(detalles(tipoVista)),
+                                              proyecto: $("#costos").val(),
+                                              despacho: $("#codigo_salida").val()},
                 function (data, textStatus, jqXHR) {
                         
                        if (data.archivo !== ""){
-                            $(".ventanaVistaPrevia iframe")
+                            $("#imprimir iframe")
                             .attr("src","")
                             .attr("src",data.archivo);
 
-                            $("#imprimir").fadeIn();
+                            $("#imprimir").fadeIn(function(){
+                                $("#imprimir").fadeOut();
+                                document.getElementById("iFramePdf").contentWindow.print();
+                            })
                        }
                     },
                     "json"
@@ -488,8 +483,10 @@ $(function() {
         return false;
     });
 
-    /*$("#imprimir #iFramePdf").on('load', function() {
-        $("iframe")[0].contentWindow.print();
+    /*$("#imprimir #iFramePdf").on('load', function(e) {
+        
+        if (e.target.id == "iFramePdf")
+            document.getElementById("iFramePdf").contentWindow.print();
     })*/
     
 })

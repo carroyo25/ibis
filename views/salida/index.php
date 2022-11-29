@@ -41,9 +41,9 @@
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
                         <div>
-                            <button type="button" id="saveDoc" title="Grabar Nota" class="boton3">
+                            <!-- <button type="button" id="saveDoc" title="Grabar Nota" class="boton3">
                                 <p><i class="far fa-save"></i> Grabar </p> 
-                            </button>
+                            </button> -->
                             <button type="button" id="importData" title="Importar Ingresos" class="boton3">
                                 <i class="fab fa-wpexplorer"></i> Importar Ordenes
                             </button>
@@ -213,7 +213,6 @@
                 <input type="hidden" name="codigo_modalidad" id="codigo_modalidad">
                 <input type="hidden" name="codigo_tipo" id="codigo_tipo">
                 <input type="hidden" name="motivo_traslado" id="motivo_traslado">
-                <iframe id="iFramePdf" src="" class="oculto"></iframe>
 
                 <div class="tituloDocumento">
                     <div>
@@ -351,7 +350,7 @@
                 <h3>Vista Previa</h3>
                 <a href="#" id="closePreview" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
             </div>
-            <object data=""></object>
+            <iframe src="" id="pdfPreview"></iframe>
         </div>
     </div>
     <div class="modal" id="imprimir">
