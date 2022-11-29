@@ -320,14 +320,18 @@
         public function imprimirFormato($cabecera,$detalles,$proyecto,$nro_despacho){
             try {
                 require_once("public/formatos/grpreimpreso.php");
-
-
                 
                 $archivo = "public/documentos/temp/".uniqid().".pdf";
                 $datos = json_decode($detalles);
                 $nreg = count($datos);
+                
                 $fecha_emision = date("d/m/Y", strtotime($cabecera['fgemision']));
-                $fecha_traslado = date("d/m/Y", strtotime($cabecera['ftraslado']));
+                
+                if ($cabecera['ftraslado'] !== "")
+                    $fecha_traslado = date("d/m/Y", strtotime($cabecera['ftraslado']));
+                else 
+                    $fecha_traslado = "";
+
                 $referido = $this->generarRS(); 
                 $anio = explode('-',$cabecera['fgemision']);
 
@@ -367,6 +371,8 @@
                                 $referido,
                                 $proyecto,
                                 $anio[0],
+                                $cabecera["observaciones"],
+                                $cabecera["destinatario"],
                                 'A4');
                 $pdf->AliasNbPages();
                 $pdf->AddPage();
@@ -374,7 +380,7 @@
                 $pdf->SetFillColor(255,255,255);
                 $pdf->SetTextColor(0,0,0);
                 
-                $pdf->SetFont('Arial','',7);
+                $pdf->SetFont('Arial','',9);
                 $lc = 0;
                 $rc = 0;
 
@@ -382,7 +388,7 @@
 
                 for($i=1;$i<=$nreg;$i++){
 
-                    $pdf->SetX(8);
+                    $pdf->SetX(3);
                     $pdf->SetCellHeight(3);
                     //$pdf->SetFont('Arial','',3);
 
@@ -401,10 +407,10 @@
                 }
 
                 $pdf->Ln(1);
-                    $pdf->SetX(13);
+                    /*$pdf->SetX(13);
                     $pdf->MultiCell(190,2,utf8_decode($cabecera["observaciones"]));
                     $pdf->Ln(2);
-                    $pdf->SetX(13);
+                    $pdf->SetX(13);*/
                     $pdf->Output($archivo,'F');
                     
                     return array("archivo"=>$archivo);

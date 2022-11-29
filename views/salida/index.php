@@ -236,7 +236,7 @@
                             </div>
                             <div>
                                 <label for="ftraslado">Fecha Traslado:</label>
-                                <input type="date" name="ftraslado" id="ftraslado" value="<?php echo date("Y-m-d")?>">
+                                <input type="date" name="ftraslado" id="ftraslado">
                             </div>
                         </div>
                         <div>
