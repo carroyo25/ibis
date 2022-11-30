@@ -699,6 +699,7 @@
 
         private function salidaDetalles($indice){
             try {
+                //aca hubo un problema orden por pedido
                 $salida="";
                 $sql=$this->db->connect()->prepare("SELECT
                                                         alm_despachodet.id_regalm,
@@ -712,8 +713,8 @@
                                                         alm_despachodet.ndespacho,
                                                         alm_despachodet.cobserva,
                                                         alm_despachodet.niddetaIng,
-                                                        LPAD(alm_despachodet.nropedido,6,0) AS nropedido,
-                                                        LPAD(alm_despachodet.nroorden,6,0) AS nroorden,
+                                                        LPAD(alm_despachodet.nropedido,6,0) AS orden,
+                                                        LPAD(alm_despachodet.nroorden,6,0) AS pedido,
                                                         alm_despachodet.ingreso,
                                                         FORMAT(alm_despachodet.nsaldo, 2) AS nsaldo,
                                                         cm_producto.ccodprod,
@@ -752,8 +753,8 @@
                                         data-idingreso="'.$rs['niddetaIng'].'"
                                         data-iddespacho="'.$rs['niddeta'].'"
                                         data-idproducto ="'.$rs['id_cprod'].'"
-                                        data-pedido ="'.$rs['nropedido'].'"
-                                        data-orden ="'.$rs['nroorden'].'">
+                                        data-pedido ="'.$rs['pedido'].'"
+                                        data-orden ="'.$rs['orden'].'">
                                         <td></td>
                                         <td class="textoCentro"><input type="checkbox" checked></td>
                                         <td class="textoCentro">'.str_pad($item,3,0,STR_PAD_LEFT).'</td>
@@ -764,8 +765,8 @@
                                         <td><input type="number" step="any" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"
                                             value="'.$rs['ndespacho'].'" readonly></td>
                                         <td class="pr20px"><input type="text" value="'.$rs['cobserva'].'"></td>
-                                        <td class="textoCentro">'.str_pad($rs['nrodoc'],6,0,STR_PAD_LEFT).'</td>
-                                        <td class="textoCentro">'.str_pad($rs['nroorden'],6,0,STR_PAD_LEFT).'</td>
+                                        <td class="textoCentro">'.str_pad($rs['pedido'],6,0,STR_PAD_LEFT).'</td>
+                                        <td class="textoCentro">'.str_pad($rs['orden'],6,0,STR_PAD_LEFT).'</td>
                                     </tr>';
                     }
                 }
