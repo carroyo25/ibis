@@ -5,7 +5,7 @@
         // Cabecera de página
             public function __construct($nguia,$fecha_emision,$ruc,$razondest,$direccdest,$raztransp,$ructransp,$dirtransp,
                                         $vianomorg,$nroorg,$distorg,$zonaorg,$feenttrans,$modtras,$vianomodest,$nrodest,$zondest,$depdest,
-                                        $marca,$placa,$detcond,$licencia,$tipoEnvio,$referido,$origen,$anio){
+                                        $marca,$placa,$detcond,$licencia,$tipoEnvio,$referido,$origen,$anio,$observaciones,$atencion){
                 parent::__construct();
                 $this->nguia = $nguia;
                 $this->fecha_emision = $fecha_emision;
@@ -33,6 +33,8 @@
                 $this->referido = $referido;
                 $this->origen = $origen;
                 $this->anio = $anio;
+                $this->observaciones = $observaciones;
+                $this->atencion = $atencion;
             }
 
             function Header(){
@@ -150,6 +152,12 @@
             function Footer(){
                 $this->SetFillColor(229, 229, 229);
                 $this->SetY(-60);
+                //$this->SetXY(30,230);
+                $this->SetX(30);
+                $this->SetFont('Arial','',9);
+                $this->Cell(90,4,"Atención : ".$this->atencion,0,1);
+                $this->SetX(30);
+                $this->Cell(90,4,"Observaciones : ".$this->observaciones,0,1);
                 $this->RoundedRect(13, 250, 187, 30, 1, '1234', 'D');
                 $this->SetXY(13,250);
                 $this->SetFont('Arial','',8);

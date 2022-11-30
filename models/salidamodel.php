@@ -101,6 +101,7 @@
                                                         lg_ordendet.id_cprod,
                                                         lg_ordendet.id_orden,
                                                         cm_producto.ccodprod,
+                                                        LPAD(tb_pedidocab.nrodoc,6,0) AS pedido,
                                                         UPPER( CONCAT_WS( ' ', cm_producto.cdesprod, tb_pedidodet.observaciones, tb_pedidodet.docEspec ) ) AS cdesprod,
                                                         cm_producto.nund,
                                                         tb_unimed.cabrevia,
@@ -114,6 +115,7 @@
                                                         INNER JOIN cm_producto ON lg_ordendet.id_cprod = cm_producto.id_cprod
                                                         INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
                                                         INNER JOIN tb_pedidodet ON lg_ordendet.niddeta = tb_pedidodet.iditem
+                                                        INNER JOIN tb_pedidocab ON tb_pedidocab.idreg = tb_pedidodet.idpedido
                                                         LEFT JOIN ( SELECT SUM( alm_despachodet.ncantidad ) 
                                                             AS pendiente, niddetaOrd 
                                                             FROM alm_despachodet 
@@ -151,7 +153,7 @@
                                             onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)" value="'.$saldo.'">
                                     </td>
                                     <td><input type="text"></td>
-                                    <td class="textoCentro">'.str_pad($rs['nidpedi'],6,0,STR_PAD_LEFT).'</td>
+                                    <td class="textoCentro">'.$rs['pedido'].'</td>
                                     <td class="textoCentro">'.str_pad($rs['id_orden'],6,0,STR_PAD_LEFT).'</td>
                                 </tr>';
                         }
@@ -205,7 +207,7 @@
                                             $datos[$rc]->codigo,
                                             utf8_decode($datos[$rc]->descripcion),
                                             $datos[$rc]->unidad,
-                                            $datos[$rc]->cantidad,
+                                            $datos[$rc]->cantdesp,
                                             $datos[$rc]->obser,
                                             "",
                                             "",
@@ -266,6 +268,8 @@
                                 $referido,
                                 $proyecto,
                                 $anio[0],
+                                $cabecera["observaciones"],
+                                $cabecera["destinatario"],
                                 'A4');
                 $pdf->AliasNbPages();
                 $pdf->AddPage();
@@ -287,7 +291,7 @@
 
                     $pdf->SetAligns(array("R","R","C","L"));
                     $pdf->Row(array(str_pad($i,3,"0",STR_PAD_LEFT),
-                                    $datos[$rc]->cantidad,
+                                    $datos[$rc]->cantdesp,
                                     $datos[$rc]->unidad,
                                     utf8_decode($datos[$rc]->codigo .' '. $datos[$rc]->descripcion  .' '.'P : '.$datos[$rc]->pedido.' O : '.$datos[$rc]->orden)));
                     $lc++;
@@ -301,7 +305,7 @@
 
                 $pdf->Ln(1);
                     $pdf->SetX(13);
-                    $pdf->MultiCell(190,2,utf8_decode($cabecera["observaciones"]));
+                    //$pdf->MultiCell(190,2,utf8_decode($cabecera["observaciones"]));
                     $pdf->Ln(2);
                     $pdf->SetX(13);
                     $pdf->Output($archivo,'F');
@@ -391,7 +395,7 @@
 
                     $pdf->SetAligns(array("R","R","C","L"));
                     $pdf->Row(array(str_pad($i,3,"0",STR_PAD_LEFT),
-                                    $datos[$rc]->cantidad,
+                                    $datos[$rc]->cantdesp,
                                     $datos[$rc]->unidad,
                                     utf8_decode($datos[$rc]->codigo .' '. $datos[$rc]->descripcion  .' '.'P : '.$datos[$rc]->pedido.' O : '.$datos[$rc]->orden)));
                     $lc++;
