@@ -3016,7 +3016,8 @@
                                                         INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi 
                                                     WHERE
                                                         tb_costusu.id_cuser = :usr 
-                                                        AND tb_costusu.nflgactivo = 1 
+                                                        AND tb_costusu.nflgactivo = 1
+                                                        AND lg_ordencab.ntipmov = 37 
                                                         AND lg_ordencab.nEstadoDoc BETWEEN 60 AND 62
                                                     ORDER BY tb_proyectos.ccodproy ASC");
                 $sql->execute(["usr"=>$_SESSION['iduser']]);

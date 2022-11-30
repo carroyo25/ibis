@@ -99,13 +99,13 @@
                 $this->SetFont('Arial','',8);
                 $this->Cell(92,5,"",0,1,"C",false);
                 $this->SetX(15);
-                $this->Cell(92,5,utf8_decode($this->vianomorg),0,1);
+                $this->MultiCell(80,4,utf8_decode($this->vianomorg),0,1);
     
                 //$this->RoundedRect(108, 72, 92, 20, 1, '1234', 'D');
                 $this->SetXY(108,68);
                 $this->Cell(92,5,"",0,1,"C",false);
                 $this->SetX(110);
-                $this->MultiCell(92,5,utf8_decode($this->vianomodest ." - ". $this->depdest),0,1);
+                $this->MultiCell(80,4,utf8_decode($this->vianomodest ." - ". $this->depdest),0,1);
     
                 //$this->RoundedRect(13, 94, 187, 20, 1, '1234', 'D');
                 //$this->SetXY(13,80);

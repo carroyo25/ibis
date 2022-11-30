@@ -59,5 +59,9 @@
         function salidaId(){
             echo json_encode($this->model->consultarSalidaId($_POST['id']));
         }
+
+        function filtraDespachos() {
+            echo $this->model-> filtrarNotasDespacho($_POST);
+        }
     }
 ?>

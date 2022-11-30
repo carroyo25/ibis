@@ -27,8 +27,9 @@
                                                         UPPER(
                                                             CONCAT_WS(
                                                                 ' ',
-                                                                tb_proyectos.cdesproy,
-                                                                tb_proyectos.ccodproy
+                                                                tb_proyectos.ccodproy,
+                                                                tb_proyectos.cdesproy
+                                                                
                                                             )
                                                         ) AS costos,
                                                         tb_parametros.cdescripcion,
@@ -72,18 +73,14 @@
 
         //esto se usara para todos los documentos
         private function ultimoIndice(){
-            $indice = $this->lastInsertId("SELECT MAX(id_regalm) AS id FROM alm_despachocab"); 
-            $indice = gettype($indice) == "NULL" ? 1 : $indice;
-
-            $indice = $indice + 1;
-
-            return str_pad($indice,6,0,STR_PAD_LEFT);
+            $indice = $this->lastInsertId("SELECT COUNT(id_regalm) + 1 AS id FROM alm_despachocab"); 
+            return str_pad($indice++,6,0,STR_PAD_LEFT);
         }
 
         public function pasarDetallesOrden($id,$costo){
             try {
                 $indice = $this->ultimoIndice();
-                return array("numero"=>$indice,
+                return array("numero"=>$indice++,
                             "items"=>$this->ordenDetalles($id),
                             "costos"=>$this->centroCostos($costo));
             } catch (PDOException $th) {
@@ -407,10 +404,7 @@
                 }
 
                 $pdf->Ln(1);
-                    /*$pdf->SetX(13);
-                    $pdf->MultiCell(190,2,utf8_decode($cabecera["observaciones"]));
-                    $pdf->Ln(2);
-                    $pdf->SetX(13);*/
+                    
                     $pdf->Output($archivo,'F');
                     
                     return array("archivo"=>$archivo);
@@ -429,9 +423,7 @@
 
                 $query = "SELECT COUNT( alm_despachocab.id_regalm ) AS numero FROM alm_despachocab WHERE ncodalm1 =:cod";
                 $nota = $this->generarNumero($cabecera["codigo_almacen_origen"],$query);
-                $indice = $this->lastInsertId("SELECT MAX(id_regalm) AS id FROM alm_despachocab");
-                $indice = gettype($indice) == "NULL" ? 1 : $indice;
-                $indice = $indice + 1;
+                $indice = $this->lastInsertId("SELECT COUNT(id_regalm) + 1 AS id FROM alm_despachocab");
 
                 $fecha = explode("-",$cabecera['fecha']);
 
@@ -470,6 +462,7 @@
                     $clase = "mensaje_correcto";
                     $error = "false";
                     $this->grabarDetallesDespacho($indice,$detalles,$cabecera['codigo_almacen_origen']);
+                    $this->actualizarDetallesPedido($indice,$detalles);
                 }
                 
                 return array("mensaje"=>$mensaje, 
@@ -487,9 +480,8 @@
             try {
                 $datos = json_decode($detalles);
                 $nreg = count($datos);
-                $indice = $this->lastInsertId("SELECT MAX(id_regalm) AS id FROM alm_despachocab");
-                $indice = gettype($indice) == "NULL" ? 1 : $indice;
-                $indice = $indice + 1;
+                //$indice = $this->lastInsertId("SELECT MAX(id_regalm) AS id FROM alm_despachocab");
+                //$indice = gettype($indice) == "NULL" ? 1 : $indice;
 
                 for ($i=0; $i < $nreg; $i++) { 
                     try {
@@ -507,7 +499,7 @@
                                                                                             nropedido=:pedido,
                                                                                             ndespacho=:candesp,
                                                                                             cobserva=:observac");
-                         $sql->execute(["cod"=>$indice,
+                         $sql->execute(["cod"=>$id,
                                         "ori"=>$almacen,
                                         "cpro"=>$datos[$i]->idprod,
                                         "cant"=>$datos[$i]->cantidad,
@@ -530,6 +522,28 @@
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;
+            }
+        }
+
+        private function actualizarDetallesPedido($despacho,$detalles){
+            
+            try {
+                $datos = json_decode($detalles);
+                $nreg = count($datos);
+
+                for ($i=0; $i < $nreg; $i++) {
+                    $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet 
+                                                            SET iddespacho=:despacho,
+                                                                estadoItem=:estado
+                                                            WHERE iditem=:id");
+                    $sql->execute(["despacho"=>$despacho,
+                                    "estado"=>62,
+                                    "id"=>$datos[$i]->iddetped]);
+                }
+
+            } catch (PDOException $th) {
+                        echo $th->getMessage();
+                        return false;
             }
         }
 
@@ -755,6 +769,87 @@
                 return $salida;
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        public function filtrarNotasDespacho($parametros){
+            try {
+
+                $mes  = date("m");
+
+                $guia   = $parametros['guiaSearch'] == "" ? "%" : "%".$parametros['guiaSearch']."%";
+                $costos = $parametros['costosSearch'] == -1 ? "%" : "%".$parametros['costosSearch']."%";
+                $mes    = $parametros['mesSearch'] == -1 ? $mes :  $parametros['mesSearch'];
+                $anio   = $parametros['anioSearch'];
+
+                $salida = "";
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        alm_despachocab.id_regalm,
+                                                        alm_despachocab.cmes,
+                                                        DATE_FORMAT(
+                                                            alm_despachocab.ffecdoc,
+                                                            '%d/%m/%Y'
+                                                        ) AS ffecdoc,
+                                                        YEAR(ffecdoc) AS anio,
+                                                        alm_despachocab.ncodpry,
+                                                        UPPER(origen.cdesalm) AS origen,
+                                                        UPPER(origen.ctipovia) AS direccion_origen,
+                                                        alm_despachocab.nEstadoDoc,
+                                                        alm_despachocab.cnumguia,
+                                                        UPPER(destino.cdesalm) AS destino,
+                                                        UPPER(destino.ctipovia) AS direccion_destino,
+                                                        UPPER(
+                                                            CONCAT_WS(
+                                                                ' ',
+                                                                tb_proyectos.ccodproy,
+                                                                tb_proyectos.cdesproy
+                                                                
+                                                            )
+                                                        ) AS costos,
+                                                        tb_parametros.cdescripcion,
+                                                        tb_parametros.cabrevia
+                                                    FROM
+                                                        tb_costusu
+                                                    INNER JOIN alm_despachocab ON tb_costusu.ncodproy = alm_despachocab.ncodpry
+                                                    INNER JOIN tb_almacen AS origen ON alm_despachocab.ncodalm1 = origen.ncodalm
+                                                    INNER JOIN tb_almacen AS destino ON alm_despachocab.ncodalm2 = destino.ncodalm
+                                                    INNER JOIN tb_proyectos ON alm_despachocab.ncodpry = tb_proyectos.nidreg
+                                                    INNER JOIN tb_parametros ON alm_despachocab.nEstadoDoc = tb_parametros.nidreg
+                                                    WHERE
+                                                        tb_costusu.nflgactivo = 1
+                                                        AND tb_costusu.id_cuser = :usr
+                                                        AND alm_despachocab.nEstadoDoc = 62
+                                                        AND alm_despachocab.ncodpry LIKE :costos 
+                                                        AND alm_despachocab.cnumguia LIKE :guia 
+                                                        AND MONTH ( alm_despachocab.ffecdoc ) = :mes
+                                                        AND YEAR ( alm_despachocab.ffecdoc ) = :anio
+                                                    ORDER BY alm_despachocab.ffecdoc ASC");
+                $sql->execute(["usr"=>$_SESSION['iduser'],
+                                "guia"=>$guia,
+                                "costos"=>$costos,
+                                "mes"=>$mes,
+                                "anio"=>$anio]);
+
+                $rowCount = $sql->rowcount();
+                if ($rowCount > 0){
+                    while($rs = $sql->fetch()){
+                        $salida.='<tr data-indice="'.$rs['id_regalm'].'" class="pointer">
+                        <td class="textoCentro">'.str_pad($rs['id_regalm'],6,0,STR_PAD_LEFT).'</td>
+                        <td class="textoCentro">'.$rs['ffecdoc'].'</td>
+                        <td class="textoCentro">'.$rs['origen'].'</td>
+                        <td class="pl20px">'.$rs['destino'].'</td>
+                        <td class="pl20px">'.$rs['costos'].'</td>
+                        <td class="textoCentro">'.$rs['anio'].'</td>
+                        <td class="textoCentro">'.$rs['cnumguia'].'</td>
+                        <td class="textoCentro '.$rs['cabrevia'].'">'.$rs['cdescripcion'].'</td>
+                    </tr>';
+                    }
+                }
+
+                return $salida;
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
                 return false;
             }
         }

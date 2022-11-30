@@ -483,11 +483,21 @@ $(function() {
         return false;
     });
 
-    /*$("#imprimir #iFramePdf").on('load', function(e) {
+    $("#btnConsulta").click(function (e) { 
+        e.preventDefault();
         
-        if (e.target.id == "iFramePdf")
-            document.getElementById("iFramePdf").contentWindow.print();
-    })*/
+        let str = $("#formConsulta").serialize();
+
+        $.post(RUTA+"salida/filtraDespachos", str,
+            function (data, textStatus, jqXHR) {
+                $("#tablaPrincipal tbody")
+                    .empty()
+                    .append(data);
+            },
+            "text"
+        );
+        return false;
+    });
     
 })
 

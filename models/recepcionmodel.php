@@ -636,8 +636,9 @@
                         $salida.='<tr class="pointer" data-indice="'.$rs['id_regalm'].'">
                                     <td class="textoCentro">'.$rs['cnumguia'].'</td>
                                     <td class="textoCentro">'.date("d/m/Y", strtotime($rs['ffecdoc'])).'</td>
+                                    <td class="textoCentro">'.$rs['nnronota'].'</td>
                                     <td class="pl20px">'.$rs['almacen'].'</td>
-                                    <td class="pl20px">'.$rs['ccodproy'].'</td>
+                                    <td class="textoDerecha pr5px">'.$rs['ccodproy'].'</td>
                                     <td class="pl20px">'.$rs['area'].'</td>
                                     <td class="pl20px">'.$rs['crazonsoc'].'</td>
                                     <td class="textoCentro">'.$rs['orden'].'</td>
