@@ -39,8 +39,7 @@
                                                         INNER JOIN tb_parametros ON lg_ordencab.nNivAten = tb_parametros.nidreg 
                                                     WHERE
                                                         tb_costusu.id_cuser = :user 
-                                                        AND tb_costusu.nflgactivo = 1
-                                                        AND lg_ordencab.nEstadoDoc = 59");
+                                                        AND tb_costusu.nflgactivo = 1");
                 $sql->execute(["user"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowCount();
 
