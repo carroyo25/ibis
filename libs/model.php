@@ -3031,7 +3031,7 @@
                         if ($tipoMov == 1)
                             $diferencia = $this->calcularIngresosOrden($rs['id_regmov']) - $this->calcularCantidadIngresa($rs['id_regmov']);
                         else
-                            $diferencia = 5;
+                        $diferencia = $this->calcularIngresosOrden($rs['id_regmov']) - $this->calcularCantidadDespacha($rs['id_regmov']);
 
 
                         if (($diferencia) > 0 ) {
@@ -3066,7 +3066,7 @@
         }
 
         public function calcularCantidadIngresa($id) {
-            //aca me equivqque esta pedido con orden
+            //aca me equivoque esta pedido con orden
             try {
                 $sql = $this->db->connect()->prepare("SELECT SUM(alm_recepdet.ncantidad) AS recepcionado_orden FROM alm_recepdet WHERE pedido =:id");
                 $sql->execute(["id"=>$id]);
@@ -3079,19 +3079,17 @@
             }
         }
 
-        public function calcularCantidadsalida($id){
+        public function calcularCantidadDespacha($id){
             try {
-                $sql = $this->db->connect()->prepare("SELECT SUM(alm_despachodet.ncanti) AS cantidad_orden FROM alm_despachodet WHERE nroorden =:id");
+                $sql = $this->db->connect()->prepare("SELECT SUM(alm_despachodet.ndespacho) AS cantidad_despacho FROM alm_despachodet WHERE nropedido =:id");
                 $sql->execute(["id"=>$id]);
                 $result = $sql->fetchAll();
 
-                return $result[0]['cantidad_orden'];
+                return $result[0]['cantidad_despacho'];
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
                 return false;
             }
         }
-
-        
     }
 ?>

@@ -130,8 +130,8 @@
                     $item=1;
                     
                     while ($rs = $sql->fetch()){
-                        $saldo = $rs['cantidad']-$rs['total_despachado'];
-
+                        $saldo = $rs['cantidad'] - $this->calcularSaldosItemsDespachados($rs['id_orden'],$rs['id_cprod']);
+                       
                         if ( $saldo > 0) {
                             $salida.='<tr data-detorden="'.$rs['nitemord'].'" 
                                         data-idprod="'.$rs['id_cprod'].'"
@@ -205,7 +205,7 @@
                     $pdf->SetAligns(array("C","L","L","L","R","L","L","L","L"));
                     $pdf->Row(array(str_pad($i,3,"0",STR_PAD_LEFT),
                                             $datos[$rc]->codigo,
-                                            utf8_decode($datos[$rc]->descripcion),
+                                            'P:'.$datos[$rc]->orden.' '.'O:'.$datos[$rc]->pedido.' '.utf8_decode($datos[$rc]->descripcion),
                                             $datos[$rc]->unidad,
                                             $datos[$rc]->cantdesp,
                                             $datos[$rc]->obser,
@@ -293,7 +293,7 @@
                     $pdf->Row(array(str_pad($i,3,"0",STR_PAD_LEFT),
                                     $datos[$rc]->cantdesp,
                                     $datos[$rc]->unidad,
-                                    utf8_decode($datos[$rc]->codigo .' '. $datos[$rc]->descripcion  .' '.'P : '.$datos[$rc]->pedido.' O : '.$datos[$rc]->orden)));
+                                    utf8_decode($datos[$rc]->codigo .' '. $datos[$rc]->descripcion  .' '.'O : '.$datos[$rc]->pedido.' P : '.$datos[$rc]->orden)));
                     $lc++;
                     $rc++;
 
@@ -397,7 +397,7 @@
                     $pdf->Row(array(str_pad($i,3,"0",STR_PAD_LEFT),
                                     $datos[$rc]->cantdesp,
                                     $datos[$rc]->unidad,
-                                    utf8_decode($datos[$rc]->codigo .' '. $datos[$rc]->descripcion  .' '.'P : '.$datos[$rc]->pedido.' O : '.$datos[$rc]->orden)));
+                                    'O : '.$datos[$rc]->pedido.' P : '.$datos[$rc]->orden .' '. utf8_decode($datos[$rc]->codigo .' '. $datos[$rc]->descripcion )));
                     $lc++;
                     $rc++;
 
@@ -484,8 +484,6 @@
             try {
                 $datos = json_decode($detalles);
                 $nreg = count($datos);
-                //$indice = $this->lastInsertId("SELECT MAX(id_regalm) AS id FROM alm_despachocab");
-                //$indice = gettype($indice) == "NULL" ? 1 : $indice;
 
                 for ($i=0; $i < $nreg; $i++) { 
                     try {
@@ -607,7 +605,7 @@
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()) {
                         //compara la orden si fue ingresada esta completa y no la muestra
-                        $diferencia_ingreso = $this->calcularIngresosOrden($rs['id_regmov']) - $this->calcularCantidadsalida($rs['id_regmov']);
+                        $diferencia_ingreso = $this->calcularIngresosOrden($rs['id_regmov']) - $this->calcularCantidadDespacha($rs['id_regmov']);
 
                         if (($diferencia_ingreso) > 0 ) {
                             $salida.='<tr data-orden="'.$rs['id_regmov'].'" data-idcosto="'.$rs['nidreg'].'">
@@ -858,5 +856,20 @@
                 return false;
             }
         }
+
+        public function calcularSaldosItemsDespachados($orden,$idprod){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT SUM(ndespacho) AS totalItemDespachado 
+                                                        FROM alm_despachodet 
+                                                        WHERE nropedido = :orden AND id_cprod = :producto");
+                $sql->execute(["orden"=>$orden,"producto"=>$idprod]);
+                $result = $sql->fetchAll();
+
+                return $result[0]['totalItemDespachado'];
+            } catch (\Throwable $th) {
+                //throw $th;
+            }
+        }
+
     } 
 ?>

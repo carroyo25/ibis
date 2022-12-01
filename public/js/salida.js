@@ -88,6 +88,7 @@ $(function() {
                     grabado = false;
                     $("form")[0].reset();
                     $("form")[1].reset();
+                    $("form")[2].reset();
                 });
             },
             "text"
