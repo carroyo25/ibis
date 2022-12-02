@@ -129,7 +129,13 @@
                 $this->Cell(35,5,utf8_decode("MARCA Y N° DE PLACA:"),0,0);
                 $this->Cell(45,5,utf8_decode($this->marca . "-" .$this->placa),0,0);
                 $this->Cell(45,5,utf8_decode("FECHA DE INICIO DEL TRASLADO:"),0,0);
-                $this->Cell(92,5,$this->feenttrans,0,1);
+
+                if ($this->feenttrans =="")
+                    $this->Cell(92,5,"",0,1);
+                else
+                    $this->Cell(92,5,$this->feenttrans,0,1);
+
+                //$this->Cell(92,5,$this->feenttrans,0,1);
                 $this->SetX(15);
                 $this->Cell(35,5,utf8_decode("REPRESENTANTE:"),0,0);
                 $this->Cell(45,5,utf8_decode($this->detcond),0,0);
