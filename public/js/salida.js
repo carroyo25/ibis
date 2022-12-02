@@ -513,13 +513,13 @@ detalles = (flag) =>{
             IDDETORDEN  = $(this).data("idorden"),
             IDDETPED    = $(this).data("iddetped"),
             IDPROD      = $(this).data("idprod"),
-            PEDIDO      = $(this).find('td').eq(9).text(),
-            ORDEN       = $(this).find('td').eq(10).text(),
+            PEDIDO      = $(this).find('td').eq(11).text(),
+            ORDEN       = $(this).find('td').eq(12).text(),
             INGRESO     = $(this).data("ingreso"),
             ALMACEN     = $("#codigo_almacen_origen").val(),
             CANTIDAD    = $(this).find('td').eq(6).text(),// cantidad
-            CANTDESP    = $(this).find('td').eq(7).children().val(),
-            OBSER       = $(this).find('td').eq(8).children().val(),
+            CANTDESP    = $(this).find('td').eq(8).children().val(),
+            OBSER       = $(this).find('td').eq(10).children().val(),
             CODIGO      = $(this).find('td').eq(3).text(),//codigo
             DESCRIPCION = $(this).find('td').eq(4).text(),//descripcion
             UNIDAD      = $(this).find('td').eq(5).text(),//unidad

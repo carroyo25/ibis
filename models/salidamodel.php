@@ -131,6 +131,8 @@
                     
                     while ($rs = $sql->fetch()){
                         $saldo = $rs['cantidad'] - $this->calcularSaldosItemsDespachados($rs['id_orden'],$rs['id_cprod']);
+                        $cantidad_ingresada = $this->ingresosRegistrados($rs['id_regmov'],$rs['nitemord']);
+                        $pendientes = $rs['cantidad'] - $this->ingresosRegistrados($rs['id_regmov'],$rs['nitemord']);
                        
                         if ( $saldo > 0) {
                             $salida.='<tr data-detorden="'.$rs['nitemord'].'" 
@@ -146,12 +148,14 @@
                                     <td class="pl20px">'.$rs['cdesprod'].'</td>
                                     <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                     <td class="textoDerecha pr20px">'.$rs['cantidad'].'</td>
+                                    <td class="textoDerecha pr20px">'.number_format($cantidad_ingresada,2).'</td>
                                     <td>
                                         <input type="number" 
                                             step="any" 
                                             placeholder="0.00" 
-                                            onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)" value="'.$saldo.'">
+                                            onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)" value="'.$cantidad_ingresada.'">
                                     </td>
+                                    <td class="textoDerecha pr20px">'. number_format($pendientes,2) .'</td>
                                     <td><input type="text"></td>
                                     <td class="textoCentro">'.$rs['pedido'].'</td>
                                     <td class="textoCentro">'.str_pad($rs['id_orden'],6,0,STR_PAD_LEFT).'</td>
@@ -242,6 +246,11 @@
                 $referido = $this->generarRS(); 
                 $anio = explode('-',$cabecera['fgemision']);
 
+                if ($cabecera['ftraslado'] !== "")
+                    $fecha_traslado = date("d/m/Y", strtotime($cabecera['ftraslado']));
+                else 
+                    $fecha_traslado = "";
+
                 $pdf = new PDF($cabecera['numero_guia'],
                                 $fecha_emision,
                                 $cabecera['destinatario_ruc'],
@@ -297,7 +306,7 @@
                     $lc++;
                     $rc++;
 
-                    if ($lc == 23) {
+                    if ($lc == 26) {
                         $pdf->AddPage();
                         $lc = 0;
                     }
@@ -401,7 +410,7 @@
                     $lc++;
                     $rc++;
 
-                    if ($lc == 23) {
+                    if ($lc == 26) {
                         $pdf->AddPage();
                         $lc = 0;
                     }
@@ -743,8 +752,8 @@
                     $item = 1;
                     while ($rs = $sql->fetch()){
 
-                        $fecha = $rs['fvence'] == "0000-00-00" ? "" : date("d-m-Y", strtotime($rs['fvence']));
                         $series = $this->buscarSeries($rs['id_cprod'],$rs['id_regalm'],$rs['ncodalm1']);
+                        $pendiente = $rs['cantidad'] - $rs['ndespacho'];
 
                         $salida.='<tr   data-idorden="'.$rs['niddetaOrd'].'" 
                                         data-idpedido="'.$rs['niddetaPed'].'" 
@@ -760,8 +769,10 @@
                                         <td class="pl20px">'.$rs['cdesprod'].'  :'.$series.'</td>
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                         <td class="textoDerecha pr20px">'.$rs['cantidad'].'</td>
+                                        <td class="textoDerecha pr20px">'.$rs['ndespacho'].'</td>
                                         <td><input type="number" step="any" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"
-                                            value="'.$rs['ndespacho'].'" readonly></td>
+                                        value="'.$rs['ndespacho'].'" ></td>
+                                        <td class="textoDerecha pr20px">'.$pendiente.'</td>
                                         <td class="pr20px"><input type="text" value="'.$rs['cobserva'].'"></td>
                                         <td class="textoCentro">'.str_pad($rs['pedido'],6,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.str_pad($rs['orden'],6,0,STR_PAD_LEFT).'</td>
@@ -861,13 +872,30 @@
             try {
                 $sql = $this->db->connect()->prepare("SELECT SUM(ndespacho) AS totalItemDespachado 
                                                         FROM alm_despachodet 
-                                                        WHERE nropedido = :orden AND id_cprod = :producto");
+                                                        WHERE nroorden = :orden AND id_cprod = :producto");
                 $sql->execute(["orden"=>$orden,"producto"=>$idprod]);
                 $result = $sql->fetchAll();
 
                 return $result[0]['totalItemDespachado'];
-            } catch (\Throwable $th) {
-                //throw $th;
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        private function ingresosRegistrados($orden,$idOrden){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT 
+                                                        FORMAT(SUM(ncantidad),2) AS  totalItemIngresado 
+                                                        FROM alm_recepdet 
+                                                        WHERE pedido = :orden AND niddetaOrd=:item");
+                $sql->execute(["orden"=>$orden,"item"=>$idOrden]);
+                $result = $sql->fetchAll();
+
+                return $result[0]['totalItemIngresado'];
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
             }
         }
 
