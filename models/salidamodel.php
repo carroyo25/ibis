@@ -153,7 +153,7 @@
                                         <input type="number" 
                                             step="any" 
                                             placeholder="0.00" 
-                                            onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)" value="'.$cantidad_ingresada.'">
+                                            onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)" value="'.$saldo.'">
                                     </td>
                                     <td class="textoDerecha pr20px">'. number_format($pendientes,2) .'</td>
                                     <td><input type="text"></td>
@@ -764,7 +764,7 @@
                                         data-orden ="'.$rs['orden'].'">
                                         <td></td>
                                         <td class="textoCentro"><input type="checkbox" checked></td>
-                                        <td class="textoCentro">'.str_pad($item,3,0,STR_PAD_LEFT).'</td>
+                                        <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="pl20px">'.$rs['cdesprod'].'  :'.$series.'</td>
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
@@ -872,7 +872,7 @@
             try {
                 $sql = $this->db->connect()->prepare("SELECT SUM(ndespacho) AS totalItemDespachado 
                                                         FROM alm_despachodet 
-                                                        WHERE nroorden = :orden AND id_cprod = :producto");
+                                                        WHERE nropedido = :orden AND id_cprod = :producto");
                 $sql->execute(["orden"=>$orden,"producto"=>$idprod]);
                 $result = $sql->fetchAll();
 
@@ -898,6 +898,5 @@
                 return false;
             }
         }
-
     } 
 ?>

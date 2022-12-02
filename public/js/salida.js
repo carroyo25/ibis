@@ -499,7 +499,14 @@ $(function() {
         );
         return false;
     });
-    
+
+    $("#tablaDetalles tbody").on("click","a", function (e) {
+        e.preventDefault();
+
+        $(this).parent().parent().remove();
+        
+        return false;
+    });    
 })
 
 
