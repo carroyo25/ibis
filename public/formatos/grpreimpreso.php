@@ -56,14 +56,14 @@
                 $this->Cell(15,6,"ORIGEN :",0,0);
                 $this->Cell(10,6,$this->origen,0,1);
                 
-                $this->SetXY(150,41);
+                $this->SetXY(150,40);
                 $this->SetFont('Arial',"",7);
-                $this->Cell(20,6,$this->anio.' 001 - '.$this->nguia,0,0);
+                $this->Cell(35,6,$this->anio.' 001 - '.$this->nguia,0,0);
                 $this->Cell(5,6,"R.S:",0,0);
                 $this->Cell(5,6,str_pad($this->referido,5,0,STR_PAD_LEFT),0,1);
                 $this->SetFont('Arial',"",9);
 
-                $this->SetXY(13,42);
+                $this->SetXY(11,42);
                 $this->Cell(30,6,"",0,0);
                 $this->Cell(30,6,$this->fecha_emision,0,0);
                 $this->Cell(10,6,"Envio",0,0);
@@ -164,7 +164,7 @@
     
                 $this->SetXY(40,225);
                 $this->SetFont('Arial','',9);
-                $this->Cell(90,4,$this->atencion,0,1);
+                $this->Cell(90,4,"ATENCION".$this->atencion,0,1);
                 $this->SetX(35);
                 $this->Cell(90,4,$this->observaciones,0,1);
                 $this->SetXY(40,261);
@@ -175,7 +175,7 @@
                 $this->Cell(5,4,"",0,0,"C");
                 $this->SetXY(37,268);
                 $this->Cell(25,4,"",0,0);
-                $this->SetXY(35,266);
+                $this->SetXY(35,270);
                 $this->Cell(15,4,"",0,0);
                 $this->Cell(90,4,utf8_decode($this->modtras),0,0);
     
