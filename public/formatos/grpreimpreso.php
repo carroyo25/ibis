@@ -63,7 +63,7 @@
                 $this->Cell(5,6,str_pad($this->referido,5,0,STR_PAD_LEFT),0,1);
                 $this->SetFont('Arial',"",9);
 
-                $this->SetXY(11,42);
+                $this->SetXY(11,40);
                 $this->Cell(30,6,"",0,0);
                 $this->Cell(30,6,$this->fecha_emision,0,0);
                 $this->Cell(10,6,"Envio",0,0);
@@ -175,7 +175,7 @@
                 $this->Cell(5,4,"",0,0,"C");
                 $this->SetXY(37,268);
                 $this->Cell(25,4,"",0,0);
-                $this->SetXY(35,270);
+                $this->SetXY(35,272);
                 $this->Cell(15,4,"",0,0);
                 $this->Cell(90,4,utf8_decode($this->modtras),0,0);
     
