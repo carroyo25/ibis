@@ -175,15 +175,81 @@
         }
 
         private function ultimoIndice(){
-            $indice = $this->lastInsertId("SELECT SUM(idreg) AS id FROM alm_cabexist");
+            $indice = $this->lastInsertId("SELECT MAX(idreg) AS id FROM alm_cabexist");
             $indice = $indice  + 1;
             return str_pad($indice,6,0,STR_PAD_LEFT);
         }
 
         public function grabarRegistros($cabecera,$detalles) {
             try {
-                var_dump($cabecera);
-                var_dump($detalles);
+                $indice = $this->ultimoIndice();
+                $sql = $this->db->connect()->prepare("INSERT INTO alm_cabexist SET idcostos=:costos,
+                                                                                    iddespacho=:despacho,
+                                                                                    ffechadoc=:fecha,
+                                                                                    idautoriza=:autoriza,
+                                                                                    idrecepciona=:recepciona,
+                                                                                    numguia=:guia,
+                                                                                    nreferido=:referido,
+                                                                                    nalmacen=:almacen");
+                $sql->execute(["costos" =>$cabecera['codigo_costos'],
+                                "despacho"=>$cabecera['codigo_despacho'],
+                                "fecha"=>$cabecera['codigo_costos'],
+                                "autoriza"=>$cabecera['codigo_autoriza'],
+                                "recepciona"=>$cabecera['codigo_recepcion'],
+                                "guia"=>$cabecera['cnumguia'],
+                                "referido"=>$cabecera['referido'],
+                                "almacen"=>$cabecera['codigo_almacen']]);
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0) {
+                    return array("estado"=>true);
+                    $this->grabarDetalllesIngreso($indice,$detalles);
+                }else{
+                    return array("estado"=>false);
+                }
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        public function listarIngresos() {
+            try {
+                //code...
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        
+
+        private function grabarDetalllesIngreso($indice,$detalles){
+            try {
+                $datos = json_decode($detalles);
+                $nreg = count($datos);
+
+                for ($i=0; $i < $nreg; $i++) {
+                    $sql = $this->db->connect()->prepare("INSERT INTO alm_existencia 
+                                                        SET idalm=:almacen,
+                                                            idregistro=:indice,
+                                                            iddespacho=:despacho,
+                                                            codprod=:item,
+                                                            tipo=1,
+                                                            cant_ingr=:cantidad,
+                                                            nguia=:guia,
+                                                            observaciones=:observ,
+                                                            ubicacion=:ubica");
+                    $sql->execute(["almacen", 
+                                    "indice",
+                                    "despacho",
+                                    "item",
+                                    "cantidad",
+                                    "guia",
+                                    "observaciones",
+                                    "ubica"]);
+                }
+
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;

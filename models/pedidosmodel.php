@@ -334,7 +334,7 @@
                     $mail->addAddress($data[$i]->correo,$data[$i]->nombre);
                 }
 
-                $mail->addAddress("carroyo@sepcon.net","carroyo@sepcon.net");
+                //$mail->addAddress("carroyo@sepcon.net","carroyo@sepcon.net");
 
                 $mail->Subject = $subject;
                 $mail->msgHTML(utf8_decode($messaje));

@@ -16,9 +16,9 @@
                     <input type="hidden" name="codigo_almacen" id="codigo_almacen_origen">
                     <input type="hidden" name="codigo_almacen_destino" id="codigo_almacen_destino">
                     <input type="hidden" name="codigo_estado" id="codigo_estado">
-                    <input type="hidden" name="codigo_salida" id="codigo_despacho">
-                    <input type="hidden" name="codigo_recepciona" id="codigo_autoriza">
-                    <input type="hidden" name="codigo_recepciona" id="codigo_recepcion" value="<?php echo $_SESSION['iduser']?>">
+                    <input type="hidden" name="codigo_despacho" id="codigo_despacho">
+                    <input type="hidden" name="codigo_autoriza" id="codigo_autoriza">
+                    <input type="hidden" name="codigo_recepcion" id="codigo_recepcion" value="<?php echo $_SESSION['iduser']?>">
 
 
                     <div class="barraOpciones primeraBarra">

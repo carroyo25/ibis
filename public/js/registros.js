@@ -136,12 +136,15 @@ $(function(){
 
         try {
             if (result['codigo_autoriza'] == '') throw "Elija el responsable de la recepcion";
-
-            console.log(detalles());  
+            if (result['cnumguia'] == '') throw "Seleccione un numero de guia";
             
             $.post(RUTA+"registros/nuevoRegistro", {cabecera:result,detalles:JSON.stringify(detalles())},
                 function (data, textStatus, jqXHR) {
-                    console.log(data);  
+                    if (data.estado){
+                        mostrarMensaje("Ingreso correcto","mensaje_correcto");
+                    }else {
+                        mostrarMensaje("Hubo un problema con el registro","mensaje_error");
+                    }
                 },
                 "json"
             );
@@ -193,8 +196,8 @@ $(function(){
                 $("#codigo_almacen_origen").val(data.cabecera[0].ncodalm1);
                 $("#codigo_almacen_destino").val(data.cabecera[0].ncodalm2);
                 $("#codigo_costos").val(data.cabecera[0].ncodpry);
+                $("#codigo_despacho").val(data.cabecera[0].id_regalm);
                 
-
                 $("#tablaDetalles tbody")
                     .empty()
                     .append(data.detalles);
