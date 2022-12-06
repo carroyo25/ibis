@@ -13,14 +13,13 @@
                 <form action="#" id="formProceso" autocomplete="off">
                     <input type="hidden" name="codigo_costos" id="codigo_costos"> 
                     <input type="hidden" name="codigo_area" id="codigo_area">
-                    <input type="hidden" name="codigo_almacen" id="codigo_almacen">
+                    <input type="hidden" name="codigo_almacen" id="codigo_almacen_origen">
                     <input type="hidden" name="codigo_almacen_destino" id="codigo_almacen_destino">
-                    <input type="hidden" name="codigo_pedido" id="codigo_pedido">
-                    <input type="hidden" name="codigo_orden" id="codigo_orden">
                     <input type="hidden" name="codigo_estado" id="codigo_estado">
-                    <input type="hidden" name="codigo_ingreso" id="codigo_ingreso">
-                    <input type="hidden" name="codigo_salida" id="codigo_salida">
-                    <input type="hidden" name="codigo_recepciona" id="codigo_recepciona">
+                    <input type="hidden" name="codigo_salida" id="codigo_despacho">
+                    <input type="hidden" name="codigo_recepciona" id="codigo_autoriza">
+                    <input type="hidden" name="codigo_recepciona" id="codigo_recepcion" value="<?php echo $_SESSION['iduser']?>">
+
 
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
@@ -53,36 +52,41 @@
                         <div class="seccion_medio">
                             <div class="column2">
                                 <label for="almacen_origen_despacho">Almacen Origen:</label>
-                                <input type="text" name="almacen_origen_despacho" id="almacen_origen_despacho" class="busqueda" readonly>
+                                <input type="text" name="almacen_origen_ingreso" id="almacen_origen_ingreso" class="busqueda" readonly>
                             </div>
                             <div class="column2">
                                 <label for="almacen_destino_despacho">Almacen Destino:</label>
-                                <input type="text" name="almacen_destino_despacho" id="almacen_destino_despacho" class="mostrarLista busqueda" readonly>
+                                <input type="text" name="almacen_destino_ingreso" id="almacen_destino_ingreso" class="mostrarLista busqueda" readonly>
                             </div>
                             
                         </div>
                         <div class="seccion_derecha">
                             <div class="column2">
-                                <label for="recepciona">Recepciona:</label>
-                                <input type="text" name="recepciona" id="recepciona" class="mostrarLista busqueda" placeholder="Elija opción" readonly>
+                                <label for="recepciona">Autoriza:</label>
+                                <input type="text" name="autoriza" id="autoriza" class="mostrarLista busqueda" placeholder="Elija opción" readonly>
                                 <div class="lista uno rowFive" id="listaRecepciona">
                                 <ul>
                                     <?php echo $this->listaRecepciona?>
                                 </ul> 
                             </div>
                             </div>
-                            <div class="column2">
-                                <label for="concepto">Concepto:</label>
-                                <input type="text" name="concepto" id="concepto" readonly>
+                            <div class="column4_55">
+                                <div class="column2_3957">
+                                    <label for="guia">N° Guia :</label>
+                                    <input type="text" name="cnumguia" id="guia">
+                                </div>
+                                <div class="column2_46">
+                                    <label for="RS :">R.S.:</label>
+                                    <input type="text" name="referido" id="referido">
+                                </div>
                             </div>
-                            
                         </div>
                     </div>
                     <div class="barraOpciones">
                         <span>Detalles</span>
                         <div>
                             <button type="button" id="itemsImport" title="Importar Items" class="cerrarLista boton3">
-                                <i class="fas fa-upload"></i> Impotar Items
+                                <i class="fas fa-upload"></i> Buscar Guias
                             </button>
                         </div>
                     </div>
@@ -97,10 +101,11 @@
                                         <th width="7%">Cantidad <br/> Enviada</th>
                                         <th width="7%">Cantidad <br/> Recep.</th>
                                         <th class="">Observaciones</th>
-                                        <th class="">Serie</th>
+                                        <th class="">Area</th>
                                         <th class="">Fecha </br> Vencimiento</th>
                                         <th class="">Ubicación</th>
-                                        <th class="">Estado</th>
+                                        <th class="">Pedido</th>
+                                        <th class="">Orden</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -125,13 +130,18 @@
                 <button type="button" class="boton3" id="btnAceptItems">Aceptar</button>
             </div>
             <div class="tablaBusqueda">
-                <table class="tablaWrap" id="ordenes">
+                <table class="tablaWrap" id="despachos">
                     <thead>
                         <tr class="stickytop" >
+                            <th>Despacho</th>
+                            <th>Fecha</th>
+                            <th>Origen</th>
+                            <th>Destino</th>
+                            <th>Costos/Proyecto</th>
+                            <th>Año</th>
+                            <th>Guia</th>
+                            <th>RS</th>
                             <th>Orden</th>
-                            <th>Emisión</th>
-                            <th>Area</th>
-                            <th>Centro de Costos</th>
                         </tr>
                     </thead>
                     <tbody>

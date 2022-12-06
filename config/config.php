@@ -13,7 +13,7 @@
         
     
     //define('HOST','localhost');
-    //define('HOST1','localhost');
+    //echodefine('HOST1','localhost');
     define('HOST','192.168.1.30');
     define('HOST1','192.168.1.30');
     

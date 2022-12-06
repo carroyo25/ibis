@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pedidos Bienes/Servicios</title>
+    <link rel="stylesheet" href="<?php echo constant('URL')?>public/css/ibis.css?<?php echo constant('VERSION')?>">
 </head>
 <body>
     <div class="mensaje">
@@ -38,7 +38,6 @@
                     <input type="hidden" name="codigo_atencion" id="codigo_atencion" value="47">
                     <input type="hidden" name="vista_previa" id="vista_previa">
                     <input type="hidden" name="emitido" id="emitido">
-                    
 
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
@@ -106,7 +105,7 @@
                             </div>
                             <div class="column2">
                                 <label for="concepto">Concepto:</label>
-                                <input type="text" name="concepto" id="concepto" class="cerrarLista">
+                                <input type="text" name="concepto" id="concepto" class="cerrarLista mayusculas">
                             </div>
                             <div class="column2">
                                 <label for="solicitante">Solicitante:</label>
@@ -166,7 +165,7 @@
                     </div>
                     <div class="tablaInterna mininoTablaInterna">
                         <table class="tabla" id="tablaDetalles">
-                            <thead>
+                            <thead class="stickytop">
                                 <tr>
                                     <th width="3%">...</th>
                                     <th width="5%">Item</th>
@@ -352,9 +351,9 @@
     </div>
     <div class="itemsTabla">
         <table id="tablaPrincipal">
-            <thead>
+            <thead class="stickytop">
                 <tr>
-                    <th>Num.</th>
+                    <th>Item.</th>
                     <th>Emision</th>
                     <th>Tipo</th>
                     <th>Descripción</th>

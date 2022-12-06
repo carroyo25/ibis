@@ -66,7 +66,8 @@
                                                         tb_usermod
                                                         INNER JOIN sysmenu ON tb_usermod.ncodmod = sysmenu.ncodmenu 
                                                     WHERE
-                                                        tb_usermod.iduser = :user AND flgactivo = 1 
+                                                        tb_usermod.iduser = :user AND flgactivo = 1
+                                                    GROUP BY sysmenu.cdescripcion     
                                                     ORDER BY
                                                         sysmenu.copcion ASC");
                 $sql->execute(["user"=>$user]);

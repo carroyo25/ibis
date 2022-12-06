@@ -1041,20 +1041,18 @@
         }
 
 
-        /*public function ultimoIndice($tabla) {
+        public function ultimoIndiceTabla($query) {
             try {
-                $sql = $this->db->connect()->prepare($query);
-                $sql->execute(["cod"=>$id]);
+                $sql = $this->db->connect()->query($query);
+                $sql->execute();
                 $result = $sql->fetchAll();
 
-                return $salida = array("numero"=>str_pad($result[0]['numero'] + 1,6,0,STR_PAD_LEFT),
-                                        "codigo"=>uniqid(),
-                                        "movimiento"=>str_pad($this->genNumberIngresos($id)+1,6,0,STR_PAD_LEFT)); 
+                return $result[0]['indice'];
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage;
                 return false;
             }
-        }*/
+        }
         
 
         public function generarNumeroPedido($id,$query){

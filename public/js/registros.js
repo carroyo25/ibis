@@ -9,7 +9,11 @@ $(function(){
             .removeClass()
             .addClass("textoCentro w35por estado procesando");
         $("#proceso").fadeIn();
+        $("form")[1].reset();
+        $("#tablaDetalles tbody").empty();
+
         accion = 'n';
+
 
         return false;
     });
@@ -23,7 +27,7 @@ $(function(){
             function (data, textStatus, jqXHR) {
                 $("#codigo_costos").val(data.cabecera[0].codigo_costos);
                 $("#codigo_area").val(data.cabecera[0].codigo_area);
-                $("#codigo_almacen").val(data.cabecera[0].codigo_origen);
+                $("#codigo_almacen_origen").val(data.cabecera[0].codigo_origen);
                 $("#codigo_almacen_destino").val(data.cabecera[0].codigo_destino);
                 $("#codigo_pedido").val(data.cabecera[0].codigo_pedido);
                 $("#codigo_orden").val(data.cabecera[0].codigo_orden);
@@ -65,7 +69,7 @@ $(function(){
 
         $("#proceso").fadeOut()
 
-        $.post(RUTA+"registros/actualizarDespachos",
+        /*$.post(RUTA+"registros/actualizarDespachos",
             function (data, textStatus, jqXHR) {
                 $(".itemsTabla table tbody")
                     .empty()
@@ -78,7 +82,7 @@ $(function(){
                 });
             },
             "text"
-        );
+        );*/
 
         return false;
     });
@@ -114,24 +118,12 @@ $(function(){
         id = destino.attr("id");
 
         if(contenedor_padre == "listaRecepciona"){
-            $("#codigo_recepciona").val(codigo);
+            $("#codigo_autoriza").val(codigo);
         }
 
         return false;
     });
 
-    $("#tablaDetalles tbody").on('keypress','input', function (e) {
-        if (e.which == 13) {
-            let cant = parseFloat($(this).parent().parent().find("td").eq(4).text()) - $(this).parent().parent().find("td").eq(5).children().val();
-            
-            try {
-                if (cant < 0) throw "Error en el ingreso";
-
-            } catch (error) {
-                mostrarMensaje(error,"mensaje_error");
-            }
-        }
-    });
 
     $("#updateDocument").click(function(e){
         e.preventDefault();
@@ -143,25 +135,16 @@ $(function(){
         });
 
         try {
-            if (result['codigo_recepciona'] == '') throw "Elija el responsable de la recepcion";
-            
+            if (result['codigo_autoriza'] == '') throw "Elija el responsable de la recepcion";
 
-            $.post(RUTA+"registros/ingresoAlmacen",{detalles:JSON.stringify(detalles()),
-                almacen:$('#codigo_almacen_destino').val(),
-                pedido:$('#codigo_pedido').val(),
-                orden:$('#codigo_orden').val(),
-                recepciona:$('#codigo_recepciona').val(),
-                salida:$('#codigo_salida').val(),
-                cabecera:result},
+            console.log(detalles());  
+            
+            $.post(RUTA+"registros/nuevoRegistro", {cabecera:result,detalles:JSON.stringify(detalles())},
                 function (data, textStatus, jqXHR) {
-                    if (data) {
-                        mostrarMensaje("Items añadidos","mensaje_correcto");
-                    }else{
-                        mostrarMensaje("no se actualizo correctamente","mensaje_error");
-                    }
+                    console.log(data);  
                 },
-                    "text"
-                );
+                "json"
+            );
         } catch (error) {
             mostrarMensaje(error,'mensaje_error');
         }
@@ -172,9 +155,56 @@ $(function(){
     $("#itemsImport").click(function (e) { 
         e.preventDefault();
 
-        $("#busqueda").fadeIn();
+        $.post(RUTA+"registros/despachos",
+            function (data, textStatus, jqXHR) {
+                $("#despachos tbody")
+                    .empty()
+                    .append(data);
+                
+                    $("#busqueda").fadeIn();
+
+            },
+            "text"
+        );
 
         return false;
+    });
+
+    $("#closeSearch").click(function (e) { 
+        e.preventDefault();
+        
+        $("#busqueda").fadeOut();
+
+        return false;
+    });
+
+    $("#despachos tbody").on("click","tr", function (e) {
+        e.preventDefault();
+
+        $.post(RUTA+"registros/consultaID", {indice:$(this).data("indice")},
+            function (data, textStatus, jqXHR) {
+
+                $("#numero").val(data.numero);
+                $("#costos").val(data.cabecera[0].costos);
+                $("#almacen_destino_ingreso").val(data.cabecera[0].destino);
+                $("#almacen_origen_ingreso").val(data.cabecera[0].origen);
+                $("#guia").val(data.cabecera[0].cnumguia);
+                $("#referido").val(data.cabecera[0].nReferido);
+                $("#codigo_almacen_origen").val(data.cabecera[0].ncodalm1);
+                $("#codigo_almacen_destino").val(data.cabecera[0].ncodalm2);
+                $("#codigo_costos").val(data.cabecera[0].ncodpry);
+                
+
+                $("#tablaDetalles tbody")
+                    .empty()
+                    .append(data.detalles);
+                $("#busqueda").fadeOut();
+            },
+            "json"
+        );
+       
+
+        return false
     });
 
 })
@@ -185,34 +215,36 @@ detalles = () =>{
     let TABLA = $("#tablaDetalles tbody tr");
 
     TABLA.each(function(){
-        let ITEMPEDIDO      = $(this).data("itempedido"),
-            ITEMDESPACHO    = $(this).data("itemdespacho"),
-            IDPRODUCTO      = $(this).data("idproducto"),
-            CANTIDAD        = $(this).find('td').eq(4).text(),
-            INGRESO         = $(this).find('td').eq(5).children().val(),
-            OBSERVACIONES   = $(this).find('td').eq(6).children().val(),
-            SERIES          = $(this).find('td').eq(7).text(),
-            VENCIMIENTO     = $(this).find('td').eq(8).text(),
-            UBICACION       = $(this).find('td').eq(9).children().val(),
-            RECEPCIONA      = $("#codigo_recepciona").val();
-            //ojo grabar el estado del material
+        let IDDEPET     = $(this).data("idpet"),
+            CODPROD     = $(this).data("codprod"),
+            AREA        = $(this).data("area"),
+            ALMACEN     = $(this).data("almacen"),
+            COSTOS       = $(this).data("costos"),
+            CANTRECEP   = $(this).find('td').eq(5).children().val(),
+            OBSERVAC    = $(this).find('td').eq(6).children().val(),
+            VENCE       = $(this).find('td').eq(8).children().val(),
+            UBICA       = $(this).find('td').eq(9).children().val(),
+            ORDEN       = $(this).find('td').eq(10).children().text(),
+            PEDIDO      = $(this).find('td').eq(11).text();
 
         item = {};
 
-        if ( CANTIDAD > 0 ) {
-            item['itempedido']      = ITEMPEDIDO;
-            item['itemdespacho']    = ITEMDESPACHO;
-            item['idproducto']      = IDPRODUCTO;
-            item['cantidad']        = CANTIDAD;
-            item['observaciones']   = OBSERVACIONES;
-            item['series']          = SERIES;
-            item['vencimiento']     = VENCIMIENTO;
-            item['ubicacion']       = UBICACION;
-            item['recepciona']      = RECEPCIONA;
-            item['ingreso']         = INGRESO;
-        }
+        if ( CANTRECEP > 0 ) {
 
-        DETALLES.push(item);
+            item['iddepet']     = IDDEPET;
+            item['codprod']     = CODPROD;
+            item['area']        = AREA;
+            item['cantrecep']   = CANTRECEP;
+            item['observac']    = OBSERVAC;
+            item['vence']       = VENCE;
+            item['ubica']       = UBICA;
+            item['pedido']      = PEDIDO;
+            item['orden']       = ORDEN;
+            item['almacen']     = ALMACEN;
+            item['costos']      = COSTOS;
+            
+            DETALLES.push(item);
+        }
     })
 
     return DETALLES

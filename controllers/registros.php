@@ -12,22 +12,21 @@
             $this->view->render('registros/index');
         }
 
-        function despachosID(){
-            echo json_encode($this->model->importarDespacho($_POST['id']));
+        function consultaID(){
+            echo json_encode($this->model->importarDespacho($_POST['indice']));
         }
         
-        function ingresoAlmacen(){
-            echo json_encode($this->model->insertarIngreso($_POST['detalles'],
-                                                            $_POST['almacen'],
-                                                            $_POST['pedido'],
-                                                            $_POST['orden'],
-                                                            $_POST['recepciona'],
-                                                            $_POST['salida'],
-                                                            $_POST['cabecera']));
+        function nuevoRegistro(){
+            echo json_encode($this->model->grabarRegistros($_POST['cabecera'],
+                                                            $_POST['detalles']));
         }
 
         function actualizarDespachos(){
             echo $this->model->listarGuias();
+        }
+
+        function despachos() {
+            echo $this->model->listarDespachos();
         }
     }
 ?>

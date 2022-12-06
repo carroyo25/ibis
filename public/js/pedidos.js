@@ -214,11 +214,12 @@ $(function(){
                     function (data, textStatus, jqXHR) {
                         mostrarMensaje(data.mensaje,data.clase);
 
-                        $("#fileAtachs").trigger("submit");
-                        //$("#saveItem").addClass("desactivado");
-                        
                         grabado = true;
                         accion = null;
+                        $("#codigo_pedido").val(data.indice);
+
+                        $("#fileAtachs").trigger("submit");
+                                               
                     },
                     "json"
                 );
@@ -228,8 +229,7 @@ $(function(){
                         mostrarMensaje(data.mensaje,data.clase);
                         accion = null;
                     },
-                    "json"
-            );
+                    "json");
             }
 
         } catch (error) {
@@ -554,9 +554,8 @@ $(function(){
         try {
 
             if ($("#subject").val() == " ") throw "Indique el motivo del correo";
-            //if ($("#mailMessage").length == 1) throw "Indique el mensaje del correo";
+            //if ($("#mailMessage").length == 1) throw "Escriba el mensaje del correo";
 
-            console.log($("#mailMessage").length);
             let result = {};
 
             $.each($("#formProceso").serializeArray(),function(){
@@ -576,9 +575,6 @@ $(function(){
         } catch (error) {
             mostrarMensaje(error,"mensaje_error");
         }
-
-        
-
         
         return false;
     });
@@ -594,7 +590,6 @@ $(function(){
                 parametros.append("detalles",JSON.stringify(itemsPreview()));
                 parametros.append("emitido",$("#vista_previa").val());
                 
-
             $.ajax({
                     // URL to move the uploaded image file to server
                     url: RUTA + 'pedidos/envioCorreos',
@@ -728,7 +723,6 @@ itemsSave = () =>{
             CALIDAD     = 0,
             ESTADO      = $(this).data('grabado');
             ESPECIFICA  = $(this).find('td').eq(6).children().val();
-
 
         item= {};
         

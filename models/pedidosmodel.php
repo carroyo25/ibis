@@ -44,8 +44,8 @@
                                         <td class="textoCentro">'.str_pad($rs['nrodoc'],4,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.date("d/m/Y", strtotime($rs['emision'])).'</td>
                                         <td class="textoCentro">'.$tipo.'</td>
-                                        <td class="pl20px">'.utf8_decode($rs['concepto']).'</td>
-                                        <td class="pl20px">'.utf8_decode($rs['costos']).'</td>
+                                        <td class="pl20px">'.$rs['concepto'].'</td>
+                                        <td class="pl20px">'.$rs['costos'].'</td>
                                         <td class="pl20px">'.$rs['nombres'].'</td>
                                         <td class="textoCentro '.$rs['cabrevia'].'">'.$rs['estado'].'</td>
                                         <td class="textoCentro '.strtolower($rs['atencion']).'">'.$rs['atencion'].'</td>
@@ -124,7 +124,6 @@
 
         public function insertar($datos,$detalles){
             try {
-
                 $salida = false;
                 $respuesta = false;
                 $mensaje = "Error en el registro";
@@ -175,11 +174,13 @@
                     $respuesta = true;
                     $mensaje = "Pedido Grabado";
                     $clase = "mensaje_correcto";
+                    $indice = $this->ultimoIndiceTabla("SELECT MAX(idreg) AS indice FROM tb_pedidocab");
                 }
 
                 $salida = array("respuesta"=>$respuesta,
                                 "mensaje"=>$mensaje,
-                                "clase"=>$clase);
+                                "clase"=>$clase,
+                                "indice"=>$indice);
 
                 
                 return $salida;
@@ -247,13 +248,13 @@
                 for ($i=0; $i < $nreg; $i++) { 
                     //graba el item si no se ha insertado como nuevo
                     if( $details[$i]->itempedido == '-' ){
-                        $this->saveItems($datos['codigo_verificacion'],
-                                $datos['codigo_estado'],
-                                $datos['codigo_atencion'],
-                                $datos['codigo_tipo'],
-                                $datos['codigo_costos'],
-                                $datos['codigo_area'],
-                                $detalles);
+                        $this->saveItem($datos['codigo_verificacion'],
+                                        $datos['codigo_estado'],
+                                        $datos['codigo_atencion'],
+                                        $datos['codigo_tipo'],
+                                        $datos['codigo_costos'],
+                                        $datos['codigo_area'],
+                                        $details[$i]);
                     }else{
                     //cambia los datos 
                         for ($i=0; $i < count($details); $i++) { 
@@ -333,6 +334,8 @@
                     $mail->addAddress($data[$i]->correo,$data[$i]->nombre);
                 }
 
+                $mail->addAddress("carroyo@sepcon.net","carroyo@sepcon.net");
+
                 $mail->Subject = $subject;
                 $mail->msgHTML(utf8_decode($messaje));
                     
@@ -351,9 +354,6 @@
                 }else {
                     $mensaje = "Mensaje de correo enviado";
                     $estadoEnvio = true; 
-                }
-
-                if ($estadoEnvio){
                     $clase = "mensaje_correcto";
                     $this->actualizarCabecera("tb_pedidocab",$estado,$pedido,$emitido,null);
                     $this->actualizarDetalles("tb_pedidodet",$estado,$detalles);
@@ -386,6 +386,35 @@
             return $rowCount;
         }
 
+        //Gtaba un solo Item de la modificacion
+        private function saveItem($codigo,$estado,$atencion,$tipo,$costos,$area,$detalles){
+            $indice = $this->obtenerIndice($codigo,"SELECT idreg AS numero FROM tb_pedidocab WHERE tb_pedidocab.verificacion =:id");
+
+           try {
+                $sql = $this->db->connect()->prepare("INSERT INTO tb_pedidodet SET idpedido=:ped,idprod=:prod,idtipo=:tipo,unid=:und,
+                                                                                   cant_pedida=:cant,estadoItem=:est,tipoAten=:aten,
+                                                                                   verificacion=:ver,nflgqaqc=:qaqc,idcostos=:costos,idarea=:area,
+                                                                                   observaciones=:espec");
+                       $sql ->execute([
+                                       "ped"=>$indice,
+                                       "prod"=>$detalles->idprod,
+                                       "tipo"=>$tipo,
+                                       "und"=>$detalles->unidad,
+                                       "cant"=>$detalles->cantidad,
+                                       "est"=>$estado,
+                                       "aten"=>$atencion,
+                                       "ver"=>$codigo,
+                                       "qaqc"=>$detalles->calidad,
+                                       "costos"=>$costos,
+                                       "area"=>$area,
+                                       "espec"=>$detalles->especifica]);
+                  
+            } catch (PDOException $th) {
+                   echo "Error: ".$th->getMessage();
+                   return false;
+            }
+        }
+       
         private function saveItems($codigo,$estado,$atencion,$tipo,$costos,$area,$detalles){
             $indice = $this->obtenerIndice($codigo,"SELECT idreg AS numero FROM tb_pedidocab WHERE tb_pedidocab.verificacion =:id");
 

@@ -308,9 +308,8 @@
 
         public function quitarItem($id,$modulo,$usuario){
             try {
-
                 if ($modulo == 1){
-                    $query = "UPDATE tb_usermod SET flgactivo  = 0 WHERE ncodmod =:id AND iduser=:usr";
+                    $query = "UPDATE tb_usermod SET flgactivo  = 0 WHERE idreg =:id AND iduser=:usr";
                 }else if ($modulo == 2){
                     $query = "UPDATE tb_costusu SET nflgactivo = 0 WHERE ncodcos =:id AND iduser=:usr";
                 }else if ($modulo == 3){
@@ -354,15 +353,22 @@
 
             for ($i=0; $i < count($data); $i++) { 
                 try {
-                    $sql = $this->db->connect()->prepare("INSERT INTO tb_usermod 
-                                                            SET iduser=:id,
-                                                                ncodmod=:codigo,
-                                                                classmenu=:clase,
-                                                                copcion=:opcion");
-                    $sql->execute(["id"=>$data[$i]->iduser,
-                                    "codigo"=>$data[$i]->codm,
-                                    "clase"=>$data[$i]->clas,
-                                    "opcion"=>$data[$i]->opci]);
+                    $select = "SELECT COUNT( idreg ) AS contador FROM tb_usermod WHERE classmenu = :id AND iduser = :usr AND flgactivo = 1";
+                    $sw = $this->verificaExisteItem($data[$i]->clas,$data[$i]->iduser,$select);
+
+                    if ($sw == 0) {
+                        $sql = $this->db->connect()->prepare("INSERT INTO tb_usermod 
+                                                                SET iduser=:id,
+                                                                    ncodmod=:codigo,
+                                                                    classmenu=:clase,
+                                                                    copcion=:opcion");
+                        $sql->execute(["id"=>$data[$i]->iduser,
+                            "codigo"=>$data[$i]->codm,
+                            "clase"=>$data[$i]->clas,
+                            "opcion"=>$data[$i]->opci]);
+                    }
+
+                   
                 } catch (PDOException $th) {
                     echo $th->getMessage();
                     return false;
@@ -374,10 +380,17 @@
             $data = json_decode($costos);
             try {
                 for ($i=0; $i < count($data); $i++) { 
-                    $sql = $this->db->connect()->prepare("INSERT INTO tb_costusu SET ncodproy=:cod,id_cuser=:usr,nflgactivo=:est");
-                    $sql->execute(["cod"=>$data[$i]->codpr,
-                                    "usr"=>$data[$i]->iduser,
-                                    "est"=>1]);
+                    
+                    $select = "SELECT COUNT( ncodcos ) AS contador FROM tb_costusu WHERE ncodproy = :id AND iduser = :usr AND nflgactivo = 1";
+                    $sw = $this->verificaExisteItem($data[$i]->codpr,$data[$i]->iduser,$select);
+                    
+                    if ($sw == 0){
+                        $sql = $this->db->connect()->prepare("INSERT INTO tb_costusu SET ncodproy=:cod,id_cuser=:usr,nflgactivo=:est");
+                        $sql->execute(["cod"=>$data[$i]->codpr,
+                                        "usr"=>$data[$i]->iduser,
+                                        "est"=>1]);
+                    }
+                   
                 }
             } catch (PDOException $th) {
                 echo $th->getMessage();
@@ -389,10 +402,17 @@
             $data = json_decode($almacenes);
             try {
                 for ($i=0; $i < count($data); $i++) { 
-                    $sql = $this->db->connect()->prepare("INSERT INTO tb_almausu SET nalmacen=:cod,id_cuser=:usr,nflgactivo=:est");
-                    $sql->execute(["cod"=>$data[$i]->codalm,
+
+                    $select = "SELECT COUNT( ncodalm ) AS contador FROM tb_almausu WHERE nalmacen = :id AND id_cuser = :usr AND nflgactivo = 1";
+                    $sw = $this->verificaExisteItem($data[$i]->codalm,$data[$i]->iduser,$select);
+
+                    if ($sw == 0) {
+                        $sql = $this->db->connect()->prepare("INSERT INTO tb_almausu SET nalmacen=:cod,id_cuser=:usr,nflgactivo=:est");
+                        $sql->execute(["cod"=>$data[$i]->codalm,
                                     "usr"=>$data[$i]->iduser,
                                     "est"=>1]);
+                    }
+                    
                 }
             } catch (PDOException $th) {
                 echo $th->getMessage();
@@ -404,6 +424,7 @@
             $salida = "";
             try {
                 $sql = $this->db->connect()->prepare("SELECT
+                                                        tb_almausu.ncodalm,
                                                         tb_almausu.nalmacen,
                                                         tb_almausu.id_cuser,
                                                         tb_almausu.nflgactivo,
@@ -421,7 +442,7 @@
                 if($rowCount > 0) {
                     while ($rs = $sql->fetch()) {
                         $salida .= '<tr data-grabado="1" data-codigo="'.$rs['nalmacen'].'">
-                                            <td class="textoCentro"><a href="'.$rs['nalmacen'].'"><i class="fas fa-eraser"></i></a></td>
+                                            <td class="textoCentro"><a href="'.$rs['ncodalm'].'"><i class="fas fa-eraser"></i></a></td>
                                             <td class="textoCentro">'.str_pad($filas++,2,0,STR_PAD_LEFT).'</td>
                                             <td class="pl10px">'.$rs['descripcion'].'</td>
                                     </tr>';
@@ -472,7 +493,7 @@
                         $all = $rs['todos'] == 1 ? "checked":"";
 
                         $salida .= '<tr data-grabado="1" data-codigo="'.$rs['ncodmod'].'" data-clase="'.$rs['classmenu'].'" data-opcion="'.$rs['copcion'].'">
-                                        <td class="textoCentro"><a href="'.$rs['ncodmod'].'"><i class="fas fa-eraser"></i></a> </td>
+                                        <td class="textoCentro"><a href="'.$rs['idreg'].'"><i class="fas fa-eraser"></i></a> </td>
                                         <td class="textoCentro">'.str_pad($filas++,2,0,STR_PAD_LEFT).'</td>
                                         <td class="pl10px">'.$rs['modulo'].'</td>
                                         <td class="textoCentro"><input type="checkbox" '.$add.'></td>
@@ -522,7 +543,22 @@
                 echo $th->getMessage();
                 return false;
             }
+
             return $salida;
+        }
+
+        private function verificaExisteItem($id,$user,$query) {
+            try {
+                $sql = $this->db->connect()->prepare($query);
+                $sql->execute(["id"=>$id,"usr"=>$user]);
+                $result = $sql->fetch();
+
+                return $result[0]['contador'];
+
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
         }
     }
 ?>
