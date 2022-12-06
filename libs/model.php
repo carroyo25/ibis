@@ -1590,8 +1590,7 @@
                                                     ON 
                                                         tb_pedidodet.unid = tb_unimed.ncodmed
                                                 WHERE
-                                                    tb_pedidodet.idpedido = :id 
-                                                    AND tb_pedidodet.cant_resto != 0
+                                                    tb_pedidodet.idpedido = :id
                                                     AND tb_pedidodet.nflgActivo = 1");
                 $sql->execute(["id"=>$id]);
                 $rowCount = $sql->rowCount();

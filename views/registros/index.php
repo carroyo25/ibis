@@ -13,7 +13,7 @@
                 <form action="#" id="formProceso" autocomplete="off">
                     <input type="hidden" name="codigo_costos" id="codigo_costos"> 
                     <input type="hidden" name="codigo_area" id="codigo_area">
-                    <input type="hidden" name="codigo_almacen" id="codigo_almacen_origen">
+                    <input type="hidden" name="codigo_almacen_origen" id="codigo_almacen_origen">
                     <input type="hidden" name="codigo_almacen_destino" id="codigo_almacen_destino">
                     <input type="hidden" name="codigo_estado" id="codigo_estado">
                     <input type="hidden" name="codigo_despacho" id="codigo_despacho">
@@ -203,12 +203,11 @@
                 <tr>
                     <th>Item</th>
                     <th>F.Emisión</th>
+                    <th>Almacen Origen</th>
                     <th>Almacen Destino</th>
                     <th>Centro de Costos</th>
-                    <th>Año</th>
                     <th>Guia</br>Remision</th>
-                    <th>Detalle</th>
-                    <th>Estado</th>
+                    <th>R.S.</th>
                 </tr>
             </thead>
             <tbody>

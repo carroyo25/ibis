@@ -183,6 +183,7 @@
         public function grabarRegistros($cabecera,$detalles) {
             try {
                 $indice = $this->ultimoIndice();
+                $estado = false;
                 $sql = $this->db->connect()->prepare("INSERT INTO alm_cabexist SET idcostos=:costos,
                                                                                     iddespacho=:despacho,
                                                                                     ffechadoc=:fecha,
@@ -190,23 +191,26 @@
                                                                                     idrecepciona=:recepciona,
                                                                                     numguia=:guia,
                                                                                     nreferido=:referido,
-                                                                                    nalmacen=:almacen");
+                                                                                    ncodalm1=:origen,
+                                                                                    ncodalm2=:destino");
                 $sql->execute(["costos" =>$cabecera['codigo_costos'],
                                 "despacho"=>$cabecera['codigo_despacho'],
-                                "fecha"=>$cabecera['codigo_costos'],
+                                "fecha"=>$cabecera['fecha'],
                                 "autoriza"=>$cabecera['codigo_autoriza'],
                                 "recepciona"=>$cabecera['codigo_recepcion'],
                                 "guia"=>$cabecera['cnumguia'],
                                 "referido"=>$cabecera['referido'],
-                                "almacen"=>$cabecera['codigo_almacen']]);
+                                "origen"=>$cabecera['codigo_almacen_origen'],
+                                "destino"=>$cabecera['codigo_almacen_destino']]);
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0) {
+                    $this->grabarDetalllesIngreso($indice,$detalles,$cabecera['codigo_despacho'],$cabecera['cnumguia']);
                     return array("estado"=>true);
-                    $this->grabarDetalllesIngreso($indice,$detalles);
                 }else{
                     return array("estado"=>false);
                 }
+                
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;
@@ -215,7 +219,48 @@
 
         public function listarIngresos() {
             try {
-                //code...
+                $salida = "";
+                $item = 1;
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        alm_cabexist.idcostos,
+                                                        alm_cabexist.iddespacho,
+                                                        alm_cabexist.ffechadoc,
+                                                        alm_cabexist.idautoriza,
+                                                        alm_cabexist.idrecepciona,
+                                                        alm_cabexist.numguia,
+                                                        alm_cabexist.nreferido,
+                                                        alm_cabexist.ncodalm1,
+                                                        alm_cabexist.ncodalm2,
+                                                        UPPER( origen.cdesalm ) AS origen,
+                                                        UPPER( destino.cdesalm ) AS destino,
+                                                        CONCAT_WS(' ',tb_proyectos.ccodproy,tb_proyectos.cdesproy) AS costos
+                                                    FROM
+                                                        tb_costusu
+                                                        INNER JOIN alm_cabexist ON tb_costusu.ncodproy = alm_cabexist.idcostos
+                                                        INNER JOIN tb_almacen AS origen ON alm_cabexist.ncodalm1 = origen.ncodalm
+                                                        INNER JOIN tb_almacen AS destino ON alm_cabexist.ncodalm2 = destino.ncodalm
+                                                        INNER JOIN tb_proyectos ON alm_cabexist.idcostos = tb_proyectos.nidreg 
+                                                    WHERE
+                                                        tb_costusu.id_cuser = :usr 
+                                                        AND tb_costusu.nflgactivo = 1");
+                $sql->execute(["usr"=>$_SESSION["iduser"]]);
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0) {
+                    while ($rs = $sql->fetch()){
+                        $salida.='<tr class="pointer">
+                                    <td class="textoCentro">'.str_pad($item++,6,0,STR_PAD_LEFT).'</td>
+                                    <td class="textoCentro">'.$rs['ffechadoc'].'</td>
+                                    <td class="pl20px">'.$rs['origen'].'</td>
+                                    <td class="pl20px">'.$rs['destino'].'</td>
+                                    <td class="pl20px">'.$rs['costos'].'</td>
+                                    <td>'.$rs['numguia'].'</td>
+                                    <td>'.$rs['nreferido'].'</td>
+                                </tr>';
+                    }
+
+                    return $salida;
+                }
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;
@@ -224,30 +269,36 @@
 
         
 
-        private function grabarDetalllesIngreso($indice,$detalles){
+        private function grabarDetalllesIngreso($indice,$detalles,$despacho,$guia){
             try {
+                $datos = json_decode($detalles);
+                $nreg = count($datos);
+
+        
                 $datos = json_decode($detalles);
                 $nreg = count($datos);
 
                 for ($i=0; $i < $nreg; $i++) {
                     $sql = $this->db->connect()->prepare("INSERT INTO alm_existencia 
-                                                        SET idalm=:almacen,
-                                                            idregistro=:indice,
-                                                            iddespacho=:despacho,
-                                                            codprod=:item,
-                                                            tipo=1,
-                                                            cant_ingr=:cantidad,
-                                                            nguia=:guia,
-                                                            observaciones=:observ,
-                                                            ubicacion=:ubica");
-                    $sql->execute(["almacen", 
-                                    "indice",
-                                    "despacho",
-                                    "item",
-                                    "cantidad",
-                                    "guia",
-                                    "observaciones",
-                                    "ubica"]);
+                                                            SET idalm=:almacen,
+                                                                idregistro=:indice,
+                                                                iddespacho=:despacho,
+                                                                codprod=:item,
+                                                                tipo=1,
+                                                                cant_ingr=:cantidad,
+                                                                nguia=:guia,
+                                                                observaciones=:observ,
+                                                                ubicacion=:ubica,
+                                                                area=:areapedido");
+                    $sql->execute(["almacen" =>$datos[$i]->almacen, 
+                                    "indice" =>$indice,
+                                    "despacho"=>$despacho,
+                                    "item"=>$datos[$i]->codprod,
+                                    "cantidad"=>$datos[$i]->cantrecep,
+                                    "guia"=>$guia,
+                                    "observ"=>$datos[$i]->observac,
+                                    "ubica"=>$datos[$i]->ubica,
+                                    "areapedido"=>$datos[$i]->area]);
                 }
 
             } catch (PDOException $th) {
