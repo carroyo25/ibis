@@ -94,9 +94,10 @@
 
                     $detalles = $this->detallesDespacho($indice);
                 }
-
+                
+                $indice = $this->ultimoIndice() + 1;
                 return array("cabecera"=>$docData,
-                             "numero"=>$this->ultimoIndice(),
+                             "numero"=>str_pad($indice,6,0,STR_PAD_LEFT),
                              "detalles"=>$detalles);
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
@@ -176,14 +177,12 @@
 
         private function ultimoIndice(){
             $indice = $this->lastInsertId("SELECT MAX(idreg) AS id FROM alm_cabexist");
-            $indice = $indice  + 1;
-            return str_pad($indice,6,0,STR_PAD_LEFT);
+            return $indice;
         }
 
         public function grabarRegistros($cabecera,$detalles) {
             try {
-                $indice = $this->ultimoIndice();
-                $estado = false;
+                
                 $sql = $this->db->connect()->prepare("INSERT INTO alm_cabexist SET idcostos=:costos,
                                                                                     iddespacho=:despacho,
                                                                                     ffechadoc=:fecha,
@@ -203,6 +202,7 @@
                                 "origen"=>$cabecera['codigo_almacen_origen'],
                                 "destino"=>$cabecera['codigo_almacen_destino']]);
                 $rowCount = $sql->rowCount();
+                $indice = $this->ultimoIndice();
 
                 if ($rowCount > 0) {
                     $this->grabarDetalllesIngreso($indice,$detalles,$cabecera['codigo_despacho'],$cabecera['cnumguia']);
@@ -222,9 +222,10 @@
                 $salida = "";
                 $item = 1;
                 $sql = $this->db->connect()->prepare("SELECT
+                                                        alm_cabexist.idreg,
                                                         alm_cabexist.idcostos,
                                                         alm_cabexist.iddespacho,
-                                                        alm_cabexist.ffechadoc,
+                                                        DATE_FORMAT(alm_cabexist.ffechadoc,'%d/%m/%Y') AS ffechadoc,
                                                         alm_cabexist.idautoriza,
                                                         alm_cabexist.idrecepciona,
                                                         alm_cabexist.numguia,
@@ -248,14 +249,14 @@
 
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()){
-                        $salida.='<tr class="pointer">
+                        $salida.='<tr class="pointer" data-indice="'.$rs['idreg'].'">
                                     <td class="textoCentro">'.str_pad($item++,6,0,STR_PAD_LEFT).'</td>
                                     <td class="textoCentro">'.$rs['ffechadoc'].'</td>
                                     <td class="pl20px">'.$rs['origen'].'</td>
                                     <td class="pl20px">'.$rs['destino'].'</td>
                                     <td class="pl20px">'.$rs['costos'].'</td>
-                                    <td>'.$rs['numguia'].'</td>
-                                    <td>'.$rs['nreferido'].'</td>
+                                    <td class="textoCentro">'.$rs['numguia'].'</td>
+                                    <td class="textoCentro">'.$rs['nreferido'].'</td>
                                 </tr>';
                     }
 
@@ -267,14 +268,8 @@
             }
         }
 
-        
-
         private function grabarDetalllesIngreso($indice,$detalles,$despacho,$guia){
             try {
-                $datos = json_decode($detalles);
-                $nreg = count($datos);
-
-        
                 $datos = json_decode($detalles);
                 $nreg = count($datos);
 
@@ -289,7 +284,12 @@
                                                                 nguia=:guia,
                                                                 observaciones=:observ,
                                                                 ubicacion=:ubica,
-                                                                area=:areapedido");
+                                                                area_solicita=:areapedido,
+                                                                cant_ord=:cant_orden,
+                                                                vence=:fecha_vence,
+                                                                idpedido=:itempedido,
+                                                                nropedido=:pedido,
+                                                                nroorden=:orden");
                     $sql->execute(["almacen" =>$datos[$i]->almacen, 
                                     "indice" =>$indice,
                                     "despacho"=>$despacho,
@@ -298,13 +298,117 @@
                                     "guia"=>$guia,
                                     "observ"=>$datos[$i]->observac,
                                     "ubica"=>$datos[$i]->ubica,
-                                    "areapedido"=>$datos[$i]->area]);
+                                    "areapedido"=>$datos[$i]->area,
+                                    "cant_orden"=>$datos[$i]->cantenv,
+                                    "fecha_vence"=>$datos[$i]->vence,
+                                    "itempedido"=>$datos[$i]->iddepet,
+                                    "pedido"=>$datos[$i]->pedido,
+                                    "orden"=>$datos[$i]->orden]);
                 }
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;
             }
+        }
+
+        public function consultarID($indice){
+            try {
+               $sql = $this->db->connect()->prepare("SELECT
+                                                    alm_cabexist.ffechadoc,
+                                                    alm_cabexist.idautoriza,
+                                                    alm_cabexist.idreg,
+                                                    UPPER( origen.cdesalm ) AS origen,
+                                                    UPPER(
+                                                    CONCAT_WS( ' ', tb_proyectos.ccodproy, tb_proyectos.cdesproy )) AS costos,
+                                                    alm_cabexist.numguia,
+                                                    alm_cabexist.nreferido,
+                                                    alm_cabexist.idcostos,
+                                                    alm_cabexist.iddespacho,
+                                                    alm_cabexist.ncodalm1,
+                                                    alm_cabexist.ncodalm2,
+                                                    tb_proyectos.nidreg,
+                                                    LPAD(alm_cabexist.idreg,6,0) AS numero,
+                                                    UPPER( destino.cdesalm ) AS destino,
+                                                    alm_cabexist.idrecepciona,
+                                                    tb_user.cnombres  
+                                                FROM
+                                                    alm_cabexist
+                                                    INNER JOIN tb_almacen AS origen ON alm_cabexist.ncodalm1 = origen.ncodalm
+                                                    INNER JOIN tb_almacen AS destino ON alm_cabexist.ncodalm2 = destino.ncodalm
+                                                    INNER JOIN tb_proyectos ON alm_cabexist.idcostos = tb_proyectos.nidreg
+                                                    INNER JOIN tb_user ON alm_cabexist.idautoriza = tb_user.iduser 
+                                                WHERE
+                                                    alm_cabexist.idreg = :id");
+                $sql->execute(["id"=>$indice]);
+
+                $docData = array();
+                while($row=$sql->fetch(PDO::FETCH_ASSOC)){
+                    $docData[] = $row;
+                }
+
+                return array("cabecera"=>$docData,
+                            "detalles"=>$this->registroDetalles($indice));
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function registroDetalles($indice){
+            try {
+                $salida = "";
+                $item=1;
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        LPAD(alm_existencia.nropedido,6,0) AS pedido,
+                                                        LPAD(alm_existencia.nroorden,6,0) AS orden,
+                                                        FORMAT(alm_existencia.cant_ingr,2) AS cant_ingr,
+                                                        FORMAT(alm_existencia.cant_ord,2) AS cant_ord,
+                                                        cm_producto.ccodprod,
+                                                        UPPER(
+                                                        CONCAT_WS( ' ', cm_producto.cdesprod, tb_pedidodet.observaciones )) AS descripcion,
+                                                        tb_unimed.cabrevia,
+                                                        UPPER( tb_area.cdesarea ) AS area_solicita,
+                                                        alm_existencia.observaciones,
+                                                        alm_existencia.ubicacion,
+                                                        alm_existencia.vence,
+                                                        alm_existencia.idreg 
+                                                    FROM
+                                                        alm_existencia
+                                                        INNER JOIN cm_producto ON alm_existencia.codprod = cm_producto.id_cprod
+                                                        INNER JOIN tb_pedidodet ON alm_existencia.idpedido = tb_pedidodet.iditem
+                                                        INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                        INNER JOIN tb_area ON alm_existencia.area_solicita = tb_area.ncodarea 
+                                                    WHERE
+                                                        alm_existencia.idregistro = :id");
+                $sql->execute(["id"=>$indice]);
+
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0){
+                    while ($rs = $sql->fetch()){
+                        $salida .= '<tr>
+                                        <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
+                                        <td class="textoCentro">'.$rs['ccodprod'].'</td>
+                                        <td class="pl20px">'.$rs['descripcion'].'</td>
+                                        <td class="textoCentro">'.$rs['cabrevia'].'</td>
+                                        <td class="textoDerecha pr5px">'.$rs['cant_ord'].'</td>
+                                        <td class="textoDerecha pr5px">'.$rs['cant_ingr'].'</td>
+                                        <td class="pl20px">'.$rs['observaciones'].'</td>
+                                        <td class="pl20px">'.$rs['area_solicita'].'</td>
+                                        <td class="textoCentro">'.$rs['vence'].'</td>
+                                        <td class="pl20px">'.$rs['ubicacion'].'</td>
+                                        <td class="textoCentro">'.$rs['pedido'].'</td>
+                                        <td class="textoCentro">'.$rs['orden'].'</td>
+                                    </tr>';
+                    }
+                }
+                return $salida;
+
+             } catch (PDOException $th) {
+                 echo "Error: ".$th->getMessage();
+                 return false;
+             }
         }
     }
 ?>

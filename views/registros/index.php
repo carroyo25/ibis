@@ -18,6 +18,7 @@
                     <input type="hidden" name="codigo_estado" id="codigo_estado">
                     <input type="hidden" name="codigo_despacho" id="codigo_despacho">
                     <input type="hidden" name="codigo_autoriza" id="codigo_autoriza">
+                    <input type="hidden" name="codigo_ingreso" id="codigo_ingreso">
                     <input type="hidden" name="codigo_recepcion" id="codigo_recepcion" value="<?php echo $_SESSION['iduser']?>">
 
 

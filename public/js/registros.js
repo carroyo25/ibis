@@ -14,7 +14,6 @@ $(function(){
 
         accion = 'n';
 
-
         return false;
     });
 
@@ -23,32 +22,24 @@ $(function(){
     $("#tablaPrincipal tbody").on("click","tr", function (e) {
         e.preventDefault();
 
-        $.post(RUTA+"registros/despachosID", {id:$(this).data("despacho")},
+        $.post(RUTA+"registros/registroID",{id:$(this).data("indice")},
             function (data, textStatus, jqXHR) {
-                $("#codigo_costos").val(data.cabecera[0].codigo_costos);
-                $("#codigo_area").val(data.cabecera[0].codigo_area);
-                $("#codigo_almacen_origen").val(data.cabecera[0].codigo_origen);
-                $("#codigo_almacen_destino").val(data.cabecera[0].codigo_destino);
-                $("#codigo_pedido").val(data.cabecera[0].codigo_pedido);
-                $("#codigo_orden").val(data.cabecera[0].codigo_orden);
-                $("#codigo_estado").val(data.cabecera[0].nEstadoDoc);
-                $("#codigo_entidad").val(data.cabecera[0].id_centi);
-                $("#codigo_ingreso").val(data.cabecera[0].idref_abas);
-                $("#codigo_salida").val(data.cabecera[0].id_despacho);
-                $("#almacen_origen_despacho").val(data.cabecera[0].origen);
-                $("#almacen_destino_despacho").val(data.cabecera[0].destino);
-                $("#numero").val(data.numero);
+
+                $("#fecha").val(data.cabecera[0].ffechadoc);
                 $("#costos").val(data.cabecera[0].costos);
-                $("#area").val(data.cabecera[0].area);
-                $("#solicita").val(data.cabecera[0].solicita);
-                $("#orden").val(data.cabecera[0].orden);
-                $("#pedido").val(data.cabecera[0].pedido);
-                $("#guia").val(data.cabecera[0].guia);
-                $("#concepto").val(data.cabecera[0].concepto);
-                $("#fecha_pedido").val(data.cabecera[0].emision);
-                $("#fecha_orden").val(data.cabecera[0].fecha_orden);
-                $("#bultos").val(data.cabecera[0].nbultos);
-                $("#peso").val(data.cabecera[0].npesotot);
+                $("#codigo_costos").val(data.idcostos);
+                $("#codigo_almacen_origen").val(data.cabecera[0].ncodalm1);
+                $("#codigo_almacen_destino").val(data.cabecera[0].ncodalm2);
+                $("#codigo_autoriza").val(data.cabecera[0].idautoriza);
+                $("#codigo_recepcion").val(data.cabecera[0].idrecepciona);
+                $("#codigo_ingreso").val(data.cabecera[0].idreg);
+                $("#guia").val(data.cabecera[0].numguia);
+                $("#referido").val(data.cabecera[0].nreferido);
+                $("#almacen_origen_ingreso").val(data.cabecera[0].origen);
+                $("#almacen_destino_ingreso").val(data.cabecera[0].destino);
+                $("#autoriza").val(data.cabecera[0].cnombres);
+                $("#numero").val(data.cabecera[0].numero);
+                
                 
                 $("#tablaDetalles tbody")
                     .empty()
@@ -69,20 +60,14 @@ $(function(){
 
         $("#proceso").fadeOut()
 
-        /*$.post(RUTA+"registros/actualizarDespachos",
+        $.post(RUTA+"registros/actualizarRegistros",
             function (data, textStatus, jqXHR) {
-                $(".itemsTabla table tbody")
+                $("#tablaPrincipal tbody")
                     .empty()
                     .append(data);
-
-                $("#proceso").fadeOut(function(){
-                    grabado = false;
-                    $("form")[0].reset();
-                    $("form")[1].reset();
-                });
             },
             "text"
-        );*/
+        );
 
         return false;
     });
@@ -124,9 +109,9 @@ $(function(){
         return false;
     });
 
-
     $("#updateDocument").click(function(e){
         e.preventDefault();
+        
 
         let result = {};
 
@@ -137,7 +122,8 @@ $(function(){
         try {
             if (result['codigo_autoriza'] == '') throw "Elija el responsable de la recepcion";
             if (result['cnumguia'] == '') throw "Seleccione un numero de guia";
-            
+            if (accion != "n") throw "No se puede grabar";
+        
             $.post(RUTA+"registros/nuevoRegistro", {cabecera:result,detalles:JSON.stringify(detalles())},
                 function (data, textStatus, jqXHR) {
                     if (data.estado){
@@ -159,17 +145,16 @@ $(function(){
         e.preventDefault();
 
         $.post(RUTA+"registros/despachos",
-            function (data, textStatus, jqXHR) {
-                $("#despachos tbody")
-                    .empty()
-                    .append(data);
-                
-                    $("#busqueda").fadeIn();
-
-            },
-            "text"
+                function (data, textStatus, jqXHR) {
+                    $("#despachos tbody")
+                        .empty()
+                        .append(data);
+                    
+                        $("#busqueda").fadeIn();
+                },
+                "text"
         );
-
+        
         return false;
     });
 
@@ -222,12 +207,13 @@ detalles = () =>{
             CODPROD     = $(this).data("codprod"),
             AREA        = $(this).data("area"),
             ALMACEN     = $(this).data("almacen"),
-            COSTOS       = $(this).data("costos"),
+            COSTOS      = $(this).data("costos"),
+            CANTENV     = $(this).find('td').eq(4).text(),
             CANTRECEP   = $(this).find('td').eq(5).children().val(),
             OBSERVAC    = $(this).find('td').eq(6).children().val(),
             VENCE       = $(this).find('td').eq(8).children().val(),
             UBICA       = $(this).find('td').eq(9).children().val(),
-            ORDEN       = $(this).find('td').eq(10).children().text(),
+            ORDEN       = $(this).find('td').eq(10).text(),
             PEDIDO      = $(this).find('td').eq(11).text();
 
         item = {};
@@ -245,6 +231,7 @@ detalles = () =>{
             item['orden']       = ORDEN;
             item['almacen']     = ALMACEN;
             item['costos']      = COSTOS;
+            item['cantenv']     = CANTENV;
             
             DETALLES.push(item);
         }

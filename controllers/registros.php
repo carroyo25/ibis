@@ -21,12 +21,16 @@
                                                             $_POST['detalles']));
         }
 
-        function actualizarDespachos(){
-            echo $this->model->listarGuias();
+        function actualizarRegistros(){
+            echo $this->model->listarIngresos();
         }
 
         function despachos() {
             echo $this->model->listarDespachos();
+        }
+
+        function registroID(){
+            echo json_encode($this->model->consultarID($_POST['id']));
         }
     }
 ?>
