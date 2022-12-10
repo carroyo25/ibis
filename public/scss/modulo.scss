@@ -721,13 +721,129 @@ $anulado:#c2c2c2;
 .ventanaDocumento,
 .ventanaResumen,
 .ventanaCambio,
-.ventanaOperador{
+.ventanaOperador,
+.ventanaDetalles{
     background:$blanco;
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     box-shadow: 5px 8px 5px #000;
+}
+
+.ventanaDetalles{
+    .tituloDocumento{
+        display: flex;
+        justify-content: space-between;
+        padding: .5rem;
+        border-bottom: 1px solid #c2c2c2;
+        margin-bottom: 5px; 
+    }
+
+    .cuerpoOrdenes{
+        display: grid;
+        padding: 10px; 
+        grid-template-columns: 25rem 50rem; 
+        grid-template-rows: 1fr 1fr 1fr; 
+        gap: 10px 10px; 
+        grid-template-areas: 
+            "seccion1 seccion4"
+            "seccion2 seccion4"
+            "seccion3 seccion4";
+
+        section {
+            border: 1px solid #c2c2c2;
+            padding: 5px;
+        }
+            
+        .seccion1 { 
+            grid-area: seccion1;
+            
+            .infoOrden {
+                padding: 10px;
+                
+                div {
+                    line-height: 1.5rem;
+                    display:grid;
+                    grid-template-columns: 120px 3px 1fr;
+                    gap: 10px;
+                    font-size: .9rem;
+
+                    label:nth-child(3) {
+                        font-weight: bold;
+                    }
+                }
+            }
+        }
+        
+        .seccion2 { grid-area: seccion2; 
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                font-size: 0.7rem;
+
+                thead {
+                    color: #fff;
+                    
+                }
+
+                tbody {
+                    tr,td {
+                        border: 1px solid #c2c2c2;
+
+                        i {
+                            color: red;
+                            font-size: 1.2rem;
+                        }
+                    }
+                }
+            }
+        }
+        
+        .seccion3 { 
+            grid-area: seccion3;
+            
+            ul {
+                display: flex;
+                padding: 10px;
+                overflow: auto;
+                flex-wrap: wrap;
+
+                a {
+                    font-size: 0.9rem;
+                    display:flex;
+                    display:block;
+                    text-align: center;
+                    margin: 0 10px;
+                    align-items:center;
+                    border: 1px solid #fff;
+                    transition: border .5s;
+                    padding: 5px;
+
+                    i {
+                        color: red;
+                        font-size: 1.2rem;
+                    }
+
+                    p {
+                        font-size: 0.6rem;
+                        min-width: 25%;
+                    }
+
+                    &:hover{
+                        border: 1px solid #c3c3c3;
+                    }
+                }
+
+            }
+        }
+        
+        .seccion4 { 
+            grid-area: seccion4;
+            background: #343333; 
+        }
+        
+    }
 }
 
 .ventanaResumen{

@@ -97,8 +97,10 @@
             $this->Cell(20,3,utf8_decode("Número RUC:"),0); 
             $this->Cell(57,3,$this->ruc,"R",1); //envia de parametro
 
+            
             $this->Cell(13,3,utf8_decode("Dirección :"),"L",0);
-            $this->Cell(100,3,utf8_decode($this->direccion),0,0); //envia de parametro
+            $this->MultiCell(95,3,utf8_decode($this->direccion),0); //envia de parametro
+            $this->SetXY(123,52);
             $this->Cell(20,3,utf8_decode("Forma de Pago: "),"L",0);
             $this->Cell(57,3,$this->pago,"R",1); //envia de parametro
 
@@ -135,10 +137,11 @@
             $this->Cell(40,3,utf8_decode($this->contacto),0,0); //envia de parametro
             $this->Cell(20,3,utf8_decode("Teléfono :"),0,0);
             $this->Cell(27,3,utf8_decode($this->tel_contacto),0,0); //envia de parametro
-            $this->Cell(13,3,utf8_decode("Observ :"),"L",0);
+            $this->Cell(77,3,utf8_decode("Observ :"),"LR",0);
 
             $this->SetFillColor(255, 255, 0);
             $this->SetFont('Arial','',5);
+            $this->SetXY(133,65);
             $this ->MultiCell(64,2,utf8_decode($this->detalle), 0, 'L', 1);
             $this->SetY(67);
             $this->SetFont('Arial','',6);
@@ -215,7 +218,7 @@ SEPCON no se responsabiliza por la pérdida o extravío de documentos que no lle
             
         $this->Ln(2);
         $this->MultiCell(189,3.3,utf8_decode('En SEPCON contribuimos con la protección, cuidado y conservación del Medio Ambiente, por ello les alcanzamos algunas eco recomendaciones: 
-(i) Use con responsabilidad y de forma racional los recursos no renovables. (ii) Reduzca el consumo de materiales desechables; busque, evalúe y proponga opciones “eco-amigables” y reutilice lo más posible. (iii) Si transporta materiales peligrosos, asegurarse de contar con permisos, plan de contingencia, hojas SDS, recursos y personal capacitado.'),1);
+(i) Use con responsabilidad y de forma racional los recursos no renovables. (ii) Reduzca el consumo de materiales desechables; busque, evalúe y proponga opciones "eco-amigables" y reutilice lo más posible. (iii) Si transporta materiales peligrosos, asegurarse de contar con permisos, plan de contingencia, hojas SDS, recursos y personal capacitado.'),1);
 
         $this->Ln(1);
         $this->Cell(189,6,utf8_decode("** SOMOS AGENTE DE RETENCIÓN DEL IGV DE ACUERDO A R.S.219-2006 **"),0,0,"C");

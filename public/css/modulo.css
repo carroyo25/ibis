@@ -978,7 +978,8 @@
 .ventanaDocumento,
 .ventanaResumen,
 .ventanaCambio,
-.ventanaOperador {
+.ventanaOperador,
+.ventanaDetalles {
   background: #fff;
   position: absolute;
   top: 50%;
@@ -987,6 +988,121 @@
           transform: translate(-50%, -50%);
   -webkit-box-shadow: 5px 8px 5px #000;
           box-shadow: 5px 8px 5px #000;
+}
+
+.ventanaDetalles .tituloDocumento {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  padding: 0.5rem;
+  border-bottom: 1px solid #c2c2c2;
+  margin-bottom: 5px;
+}
+.ventanaDetalles .cuerpoOrdenes {
+  display: -ms-grid;
+  display: grid;
+  padding: 10px;
+  -ms-grid-columns: 25rem 10px 50rem;
+  grid-template-columns: 25rem 50rem;
+  -ms-grid-rows: 1fr 10px 1fr 10px 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  gap: 10px 10px;
+      grid-template-areas: "seccion1 seccion4" "seccion2 seccion4" "seccion3 seccion4";
+}
+.ventanaDetalles .cuerpoOrdenes section {
+  border: 1px solid #c2c2c2;
+  padding: 5px;
+}
+.ventanaDetalles .cuerpoOrdenes .seccion1 {
+  -ms-grid-row: 1;
+  -ms-grid-column: 1;
+  grid-area: seccion1;
+}
+.ventanaDetalles .cuerpoOrdenes .seccion1 .infoOrden {
+  padding: 10px;
+}
+.ventanaDetalles .cuerpoOrdenes .seccion1 .infoOrden div {
+  line-height: 1.5rem;
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 120px 10px 3px 10px 1fr;
+  grid-template-columns: 120px 3px 1fr;
+  gap: 10px;
+  font-size: 0.9rem;
+}
+.ventanaDetalles .cuerpoOrdenes .seccion1 .infoOrden div label:nth-child(3) {
+  font-weight: bold;
+}
+.ventanaDetalles .cuerpoOrdenes .seccion2 {
+  -ms-grid-row: 3;
+  -ms-grid-column: 1;
+  grid-area: seccion2;
+}
+.ventanaDetalles .cuerpoOrdenes .seccion2 table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.7rem;
+}
+.ventanaDetalles .cuerpoOrdenes .seccion2 table thead {
+  color: #fff;
+}
+.ventanaDetalles .cuerpoOrdenes .seccion2 table tbody tr, .ventanaDetalles .cuerpoOrdenes .seccion2 table tbody td {
+  border: 1px solid #c2c2c2;
+}
+.ventanaDetalles .cuerpoOrdenes .seccion2 table tbody tr i, .ventanaDetalles .cuerpoOrdenes .seccion2 table tbody td i {
+  color: red;
+  font-size: 1.2rem;
+}
+.ventanaDetalles .cuerpoOrdenes .seccion3 {
+  -ms-grid-row: 5;
+  -ms-grid-column: 1;
+  grid-area: seccion3;
+}
+.ventanaDetalles .cuerpoOrdenes .seccion3 ul {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  padding: 10px;
+  overflow: auto;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+}
+.ventanaDetalles .cuerpoOrdenes .seccion3 ul a {
+  font-size: 0.9rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  display: block;
+  text-align: center;
+  margin: 0 10px;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  border: 1px solid #fff;
+  -webkit-transition: border 0.5s;
+  transition: border 0.5s;
+  padding: 5px;
+}
+.ventanaDetalles .cuerpoOrdenes .seccion3 ul a i {
+  color: red;
+  font-size: 1.2rem;
+}
+.ventanaDetalles .cuerpoOrdenes .seccion3 ul a p {
+  font-size: 0.6rem;
+  min-width: 25%;
+}
+.ventanaDetalles .cuerpoOrdenes .seccion3 ul a:hover {
+  border: 1px solid #c3c3c3;
+}
+.ventanaDetalles .cuerpoOrdenes .seccion4 {
+  -ms-grid-row: 1;
+  -ms-grid-row-span: 5;
+  -ms-grid-column: 3;
+  grid-area: seccion4;
+  background: #343333;
 }
 
 .ventanaResumen {
