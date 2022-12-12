@@ -264,7 +264,7 @@
                 </tr>
             </thead>
             <tbody>
-                    
+                    <?php echo $this->listaCargoPlan?>
             </tbody>
         </table>
     </div>
