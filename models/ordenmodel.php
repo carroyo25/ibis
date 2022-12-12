@@ -92,13 +92,15 @@
 
         public function importarPedidos(){
             try {
+
+                //REPLACE(FORMAT(tb_pedidodet.cant_pedida,2),',','') AS cant_pedida,
                 $salida = "";
                 $sql = $this->db->connect()->prepare("SELECT
                                                         tb_pedidodet.idpedido,
-                                                        FORMAT(tb_pedidodet.cant_aprob, 2) AS cantidad,
-                                                        FORMAT(tb_pedidodet.cant_resto, 2) AS saldo,
+                                                        REPLACE(FORMAT(tb_pedidodet.cant_aprob, 2),',','') AS cantidad,
+                                                        REPLACE(FORMAT(tb_pedidodet.cant_resto, 2),',','') AS saldo,
                                                         FORMAT(tb_pedidodet.precio, 2) AS precio,
-                                                        FORMAT(tb_pedidodet.cant_pedida,2) AS cantidad_pedida,
+                                                        REPLACE(FORMAT(tb_pedidodet.cant_pedida,2),',','') AS cantidad_pedida,
                                                         tb_pedidodet.igv,
                                                         FORMAT(tb_pedidodet.total, 2) AS total,
                                                         tb_pedidodet.estadoItem,

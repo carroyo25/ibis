@@ -31,14 +31,16 @@
                                                          lg_ordencab.nfirmaLog,
                                                          lg_ordencab.nfirmaFin,
                                                          lg_ordencab.nfirmaOpe,
-                                                         tb_parametros.cdescripcion AS atencion 
+                                                         tb_parametros.cdescripcion AS atencion,
+                                                         estados.cdescripcion 
                                                      FROM
                                                          tb_costusu
                                                          INNER JOIN lg_ordencab ON tb_costusu.ncodproy = lg_ordencab.ncodpry
                                                          INNER JOIN tb_pedidocab ON lg_ordencab.id_refpedi = tb_pedidocab.idreg
                                                          INNER JOIN tb_area ON lg_ordencab.ncodarea = tb_area.ncodarea
                                                          INNER JOIN tb_proyectos ON lg_ordencab.ncodpry = tb_proyectos.nidreg
-                                                         INNER JOIN tb_parametros ON lg_ordencab.nNivAten = tb_parametros.nidreg 
+                                                         INNER JOIN tb_parametros ON lg_ordencab.nNivAten = tb_parametros.nidreg
+                                                         INNER JOIN tb_parametros AS estados ON lg_ordencab.nEstadoDoc = estados.nidreg 
                                                      WHERE
                                                          tb_costusu.id_cuser = :user 
                                                          AND tb_costusu.nflgactivo = 1
@@ -72,7 +74,7 @@
                                      <td class="pl20px">'.$rs['concepto'].'</td>
                                      <td class="pl20px">'.utf8_decode($rs['costos']).'</td>
                                      <td class="pl20px">'.$rs['area'].'</td>
-                                     <td class="textoCentro">'.$estado.'</td>
+                                     <td class="textoCentro">'.$rs['cdescripcion'].'</td>
                                      </tr>';
                      }
                  }
