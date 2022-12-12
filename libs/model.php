@@ -971,7 +971,7 @@
 
         public function costosPorUsuarioSelect($id){
             try {
-                $salida = "<option value='-1' selected class='oculto'>Seleccione una opción</option>";
+                $salida = "<option value='-1' selected >Seleccione una opción</option>";
 
                 $sql = $this->db->connect()->prepare("SELECT
                                                     UPPER( tb_proyectos.ccodproy ) AS codigo_costos,
@@ -1040,7 +1040,6 @@
             }
         }
 
-
         public function ultimoIndiceTabla($query) {
             try {
                 $sql = $this->db->connect()->query($query);
@@ -1053,8 +1052,7 @@
                 return false;
             }
         }
-        
-
+    
         public function generarNumeroPedido($id,$query){
             try {
                 $sql = $this->db->connect()->prepare($query);
@@ -1083,19 +1081,6 @@
                 return false;
             }
         }
-
-        /*public function obtenerIndiceTabla($tabla){
-            try {
-                $sql = $this->db->connect()->query("$query");
-                $sql->execute();
-                $result = $sql->fetchAll();
-
-                return $result[0]['numero'];
-            } catch (PDOException $th) {
-                echo "Error: ".$th->getMessage();
-                return false;
-            }
-        }*/
 
         private function listarPartidas($codigo) {
             try {
@@ -1784,11 +1769,11 @@
                                                     tb_pedidodet.idtipo,
                                                     tb_pedidodet.nroparte,
                                                     tb_pedidodet.unid,
-                                                    tb_pedidodet.observaciones,
+                                                    UPPER(tb_pedidodet.observaciones) AS observaciones,
                                                     REPLACE(FORMAT(tb_pedidodet.cant_pedida,2),',','') AS cant_pedida,
                                                     tb_pedidodet.estadoItem,
                                                     cm_producto.ccodprod,
-                                                    cm_producto.cdesprod,
+                                                    UPPER(cm_producto.cdesprod) AS cdesprod,
                                                     tb_unimed.cabrevia,
                                                     tb_pedidodet.nflgqaqc 
                                                 FROM

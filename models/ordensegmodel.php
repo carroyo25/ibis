@@ -6,7 +6,7 @@
             parent::__construct();
         }
 
-        public function listarOrdenesSeguimiento($user){
+        public function listarOrdenesSeguimiento(){
             try {
                  $salida = "";
                  $sql = $this->db->connect()->prepare("SELECT
@@ -19,6 +19,7 @@
                                                          lg_ordencab.nNivAten,
                                                          lg_ordencab.nEstadoDoc,
                                                          lg_ordencab.ncodpago,
+                                                         lg_ordencab.ntipmov,
                                                          lg_ordencab.nplazo,
                                                          lg_ordencab.cdocPDF,
                                                          UPPER( tb_pedidocab.concepto ) AS concepto,
@@ -40,7 +41,8 @@
                                                          INNER JOIN tb_parametros ON lg_ordencab.nNivAten = tb_parametros.nidreg 
                                                      WHERE
                                                          tb_costusu.id_cuser = :user 
-                                                         AND tb_costusu.nflgactivo = 1");
+                                                         AND tb_costusu.nflgactivo = 1
+                                                    ORDER BY id_regmov");
                  $sql->execute(["user"=>$_SESSION['iduser']]);
                  $rowCount = $sql->rowCount();
  
@@ -57,8 +59,10 @@
                          if($flog && $fope && $ffin){
                             $estado = "Aprobado";
                          }
+
+                        $tipo = $rs['ntipmov'] == 37 ? "bienes":"servicios"; 
  
-                         $salida .='<tr class="pointer '.$resaltado.'" data-indice="'.$rs['id_regmov'].'" 
+                         $salida .='<tr class="pointer '.$resaltado. ' ' . $tipo .'" data-indice="'.$rs['id_regmov'].'" 
                                                          data-estado="'.$rs['nEstadoDoc'].'"
                                                          data-finanzas="'.$ffin.'"
                                                          data-logistica="'.$flog.'"
@@ -187,6 +191,98 @@
                 return $salida;
             } catch (PDOException $th) {
                 echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function filtrarSeguimiento($parametros){
+            try {
+                $salida = "";
+                $mes  = date("m");
+
+                $orden   = $parametros['ordenSearch'] == "" ? "%" : $parametros['ordenSearch'];
+                $costos  = $parametros['costosSearch'] == -1 ? "%" : $parametros['costosSearch'];
+                $mes     = $parametros['mesSearch'] == -1 ? "%" :  $parametros['mesSearch'];
+                $anio    = $parametros['anioSearch'];
+
+                 $salida = "";
+                 $sql = $this->db->connect()->prepare("SELECT
+                                                         tb_costusu.ncodcos,
+                                                         tb_costusu.ncodproy,
+                                                         tb_costusu.id_cuser,
+                                                         lg_ordencab.id_regmov,
+                                                         lg_ordencab.cnumero,
+                                                         lg_ordencab.ffechadoc,
+                                                         lg_ordencab.nNivAten,
+                                                         lg_ordencab.nEstadoDoc,
+                                                         lg_ordencab.ncodpago,
+                                                         lg_ordencab.ntipmov,
+                                                         lg_ordencab.nplazo,
+                                                         lg_ordencab.cdocPDF,
+                                                         UPPER( tb_pedidocab.concepto ) AS concepto,
+                                                         UPPER( tb_pedidocab.detalle ) AS detalle,
+                                                         UPPER(
+                                                         CONCAT_WS(' ', tb_area.ccodarea, tb_area.cdesarea )) AS area,
+                                                         UPPER(
+                                                         CONCAT_WS(' ', tb_proyectos.ccodproy, tb_proyectos.cdesproy )) AS costos,
+                                                         lg_ordencab.nfirmaLog,
+                                                         lg_ordencab.nfirmaFin,
+                                                         lg_ordencab.nfirmaOpe,
+                                                         tb_parametros.cdescripcion AS atencion 
+                                                     FROM
+                                                         tb_costusu
+                                                         INNER JOIN lg_ordencab ON tb_costusu.ncodproy = lg_ordencab.ncodpry
+                                                         INNER JOIN tb_pedidocab ON lg_ordencab.id_refpedi = tb_pedidocab.idreg
+                                                         INNER JOIN tb_area ON lg_ordencab.ncodarea = tb_area.ncodarea
+                                                         INNER JOIN tb_proyectos ON lg_ordencab.ncodpry = tb_proyectos.nidreg
+                                                         INNER JOIN tb_parametros ON lg_ordencab.nNivAten = tb_parametros.nidreg 
+                                                     WHERE
+                                                        tb_costusu.id_cuser = :user 
+                                                        AND tb_costusu.nflgactivo = 1
+                                                        AND id_regmov LIKE  :nroOrden
+                                                        AND ncodproy LIKE :proyecto
+                                                        AND MONTH (ibis.lg_ordencab.ffechadoc) LIKE :mes
+                                                        AND YEAR (ibis.lg_ordencab.ffechadoc) = :anio");
+                 $sql->execute(["user"=>$_SESSION['iduser'],
+                                "nroOrden"=>$orden,
+                                "proyecto"=>$costos,
+                                "mes"=>$mes,
+                                "anio"=>$anio]);
+
+                 $rowCount = $sql->rowCount();
+ 
+                 if ($rowCount > 0){
+                     while ($rs = $sql->fetch()) {
+ 
+                         $flog = is_null($rs['nfirmaLog']) ? 0 : 1;
+                         $fope = is_null($rs['nfirmaOpe']) ? 0 : 1;
+                         $ffin = is_null($rs['nfirmaFin']) ? 0 : 1;
+                         $estado = "Emitido";
+
+                         $resaltado = $rs['nEstadoDoc'] == 59 ? "resaltado_firma" :  "";
+
+                         if($flog && $fope && $ffin){
+                            $estado = "Aprobado";
+                         }
+ 
+                         $salida .='<tr class="pointer '.$resaltado.' bienes" data-indice="'.$rs['id_regmov'].'" 
+                                                         data-estado="'.$rs['nEstadoDoc'].'"
+                                                         data-finanzas="'.$ffin.'"
+                                                         data-logistica="'.$flog.'"
+                                                         data-operaciones="'.$fope.'">
+                                        <td class="textoCentro">'.str_pad($rs['cnumero'],4,0,STR_PAD_LEFT).'</td>
+                                        <td class="textoCentro">'.date("d/m/Y", strtotime($rs['ffechadoc'])).'</td>
+                                        <td class="pl20px">'.$rs['concepto'].'</td>
+                                        <td class="pl20px">'.utf8_decode($rs['costos']).'</td>
+                                        <td class="pl20px">'.$rs['area'].'</td>
+                                        <td class="textoCentro">'.$estado.'</td>
+                                     </tr>';
+                     }
+                 }
+ 
+                 return $salida;                    
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
                 return false;
             }
         }

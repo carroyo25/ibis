@@ -1104,6 +1104,10 @@
   grid-area: seccion4;
   background: #343333;
 }
+.ventanaDetalles .cuerpoOrdenes .seccion4 iframe {
+  width: 100%;
+  height: 100%;
+}
 
 .ventanaResumen {
   border-radius: 8px;

@@ -14,8 +14,6 @@
 
         function ordenId(){
             echo json_encode($this->model->consultarOrdenId($_POST['id']));
-
-            
         }
 
         function datosOrden(){
@@ -28,6 +26,10 @@
 
         function vistaPedido() {
             echo $this->model->generateRequestPDF($_POST['id']);
+        }
+
+        function filtroOrdenes(){
+            echo $this->model->filtrarSeguimiento($_POST);
         }
     }
 ?>

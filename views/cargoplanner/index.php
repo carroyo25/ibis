@@ -218,41 +218,49 @@
         <table id="cargoPlanDescrip">
             <thead>
                 <tr class="stickytop">
-                    <th>Items</th>
+                    <th width="30px">Items</th>
                     <th>Estado</br>Actual</th>
-                    <th>Proyecto</th>
-                    <th>Area</th>
-                    <th>Partida</th>
-                    <th>tipo</th>
-                    <th>Pedido</th>
-                    <th>Emisión</br>Pedido</th>
-                    <th>Aprobacion</br>Pedido</th>
-                    <th>Concepto</th>
-                    <th>Codigo</th>
-                    <th>UND</th>
-                    <th>Descripcion</th>
-                    <th>Cant</br>Sol.</th>
-                    <th>Orden</th>
+                    <th>Codigo</br>Proyecto</th>
+                    <th width="150px">Area</th>
+                    <th width="150px">Partida</th>
+                    <th>Atencion</th>
+                    <th>Tipo</th>
+                    <th>Año</br> Pedido</th>
+                    <th>N°</br>Pedido</th>
+                    <th>N°</br>Mtto.</th>
+                    <th>Creación </br>Pedido</th>
+                    <th>Aprobación</br>Pedido</th>
+                    <th>Codigo del</br>Bien/Servicio</th>
+                    <th>Unidad</br>Medida</th>
+                    <th width="400px">Descripcion del Bien/Servicio</th>
+                    <th>Cantidad</br>Solicitada</th>
+                    <th>Tipo</br>Orden</th>
+                    <th>Año</br>Orden</th>
+                    <th>N°</br>Orden</th>
                     <th>Fecha</br>Orden</th>
-                    <th>Cant.</br>Orden</th>
-                    <th>Proveedor</th>
-                    <th>Fecha</br>Entrega</br>Proveedor</th>
-                    <th>Dias</br>Entrega</th>
-                    <th>Dias</br>Atraso</th>
+                    <th width="200px">Descripcion Proveedor</th>
+                    <th>Fecha Envio</br>Proveedor</th>
+                    <th>Cantidad</br>Recibida</th>
+                    <th>Saldo por</br>Recibir</th>
+                    <th>Días</br>Entrega</th>
+                    <th>Días</br>Atrazo</th>
                     <th>Semaforo</th>
-                    <th>Cant.</br>Recibida</th>
-                    <th>Saldo</br>Recibir</th>
                     <th>Nota</br>Ingreso</th>
                     <th>Guia</br>Ingreso</th>
                     <th>Fecha</br>Ingreso</th>
                     <th>Nota</br>Salida</th>
-                    <th>Cant.</br>Enviada</th>
-                    <th>Guia</br>Remisión</th>
-                    <th>Fecha</br>Guia</br>Remisión</th>
-                    <th>Cant</br>Rec.</br>Obra</th>
-                    <th>Nota</br>Ing.</br>Obra</th>
+                    <th>Guia</br>Remision</th>
+                    <th>Fecha Guia</br>Remision</th>
+                    <th>Cantidad</br>Recibida</br>Obra</th>
+                    <th>Nota</br>Ingreso</br>Obra</th>
                     <th>Fecha</br>Recep</br>Obra</th>
-                    <th>Observaciones</th>
+                    <th>Estado</br>Pedido</th>
+                    <th>Estado</br>Item</th>
+                    <th>N°</br>Parte</th>
+                    <th>Codigo</br>Activo</th>
+                    <th>Operador</br>Logístico</th>
+                    <th>Tipo</br>Transporte</th>
+                    <th>Observaciones/Concepto</th>
                 </tr>
             </thead>
             <tbody>

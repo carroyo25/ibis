@@ -225,7 +225,6 @@
                 return $salida;
         }
 
-
         public function listarPedidosUsuarioFiltrados($parametros){
             try {
                 $salida = "";

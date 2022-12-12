@@ -144,22 +144,43 @@ $(function(){
     $("#closeDocument").click(function (e) { 
         e.preventDefault();
 
+        $(".seccion4 iframe").attr("src","");
         $("#detalles").fadeOut();
         
         return false;
     });
 
-    $("#lista_pedidos tbody tr").on("click","a", function (e) {
+    $("#lista_pedidos tbody").on("click","a", function (e) {
         e.preventDefault();
 
         $.post(RUTA+"ordenseg/vistaPedido", {id:$(this).attr("href")},
-            function (data, textStatus, jqXHR) {
-                console.log(data);
+            function (data, textStatus, jqXHR){
+                let archivo = RUTA+"public/documentos/temp/"+data
+                $(".seccion4 iframe")
+                    .attr("src","")
+                    .attr("src",archivo);
             },
             "text"
         );
 
         return false;
+    });
+
+    $("#btnConsulta").click(function (e) { 
+        e.preventDefault();
+        
+        let srt = $("#formConsulta").serialize();
+
+        $.post(RUTA+"ordenseg/filtroOrdenes", srt,
+            function (data, text, requestXHR) {
+                $("#tablaPrincipal tbody")
+                    .empty()
+                    .append(data);
+            },
+            "text"
+        );
+        
+        return false
     });
 })
 
