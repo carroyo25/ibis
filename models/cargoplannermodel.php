@@ -64,7 +64,7 @@
                                                             INNER JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
                                                             INNER JOIN tb_proyectos ON tb_pedidocab.idcostos = tb_proyectos.nidreg
                                                             INNER JOIN tb_area ON tb_pedidocab.idarea = tb_area.ncodarea
-                                                            LEFT JOIN (SELECT tb_partidas.idcc,tb_partidas.cdescripcion FROM tb_partidas ) AS partidas ON tb_pedidocab.idpartida = partidas.idcc
+                                                            LEFT JOIN tb_partidas AS partidas ON tb_pedidocab.idpartida = partidas.idreg
                                                             LEFT JOIN ( SELECT id_orden, ncanti, niddeta FROM lg_ordendet ) AS detalles_orden ON tb_pedidodet.iditem = detalles_orden.niddeta
 	                                                        LEFT JOIN ( SELECT id_regmov, ffechadoc, ffechaent, id_centi, ncodmon, nplazo, id_cuser, ctiptransp, FechaFin FROM lg_ordencab ) AS cabecera_orden ON detalles_orden.id_orden = cabecera_orden.id_regmov
                                                             LEFT JOIN ( SELECT id_centi, crazonsoc FROM cm_entidad ) AS proveedores ON cabecera_orden.id_centi = proveedores.id_centi
@@ -134,6 +134,7 @@
                         if( $rs['orden'] ) {
                             $estadoFila = "item_orden";
                             $porcentaje = "20%";
+                            $estado = "Orden";
                         }
                         
                         if( !$rs['orden'] && $ingresos[0]['ingresos'] > 0)  {
@@ -154,16 +155,18 @@
                         if( $despachos[0]['nota_salida'] )  {
                             $estadoFila = "item_registro_salida";
                             $porcentaje = "60%";
+                            $estado = "Despacho";
                         }
 
                         if( $despachos[0]['guia_sepcon'] )  {
                             $estadoFila = "item_transito";
-                            $porcentaje = "75%";
+                            $estado = "Transito";
                         }
 
                         if( $ingObra[0]['nota_recepcion'] )  {
                             $estadoFila = "item_obra";
                             $porcentaje = "100%";
+                            $estado = "Atendido";
                         }
 
                         if ( $rs['orden'] != "0000") {
@@ -209,7 +212,7 @@
                                     <td class="textoDerecha pr15px">'.$ingObra[0]['ingreso_obra'].'</td>
                                     <td class="textoCentro">'.$ingObra[0]['nota_recepcion'].'</td>
                                     <td class="textoCentro">'.$ingObra[0]['fecha_recepcion'].'</td>
-                                    <td class="textoCentro">'.$rs['estado_pedido'].'</td>
+                                    <td class="textoCentro">'.$estado.'</td>
                                     <td class="textoCentro">'.$estadoItem.'</td>
                                     <td class=""></td>
                                     <td class=""></td>
@@ -223,173 +226,6 @@
                     }
                 }
                 return $salida;
-            } catch (PDOException $th) {
-                echo "Error: ".$th->getMessage();
-                return false;
-            }
-        }
-
-        public function filtrarCargoPlan($parametros){
-            try {
-                /**$tipo = $parametros['tipoSearch'];
-                $costos = $parametros['costosSearch'] == -1 ? "%" : "%".$parametros['costosSearch']."%";
-                $codigo = "%".$parametros['codigoSearch']."%";
-                $orden = "%".$parametros['ordenSearch']."%";
-                $pedido = "%".$parametros['pedidoSearch']."%";
-                $concepto = "%".$parametros['conceptoSearch']."%";
-
-                $salida = "";
-
-                $sql = $this->db->connect()->prepare("SELECT
-                                                        tb_costusu.id_cuser,
-                                                        tb_pedidodet.iditem,
-                                                        tb_pedidodet.idtipo,
-                                                        tb_pedidodet.cant_aprob,
-                                                        tb_pedidodet.cant_pedida,
-                                                        tb_pedidodet.cant_atend,
-                                                        tb_pedidodet.estadoItem,
-                                                        tb_pedidodet.idcostos,
-                                                        tb_pedidodet.idtipo,
-                                                        cm_producto.ccodprod,
-                                                        tb_unimed.cabrevia AS unidad,
-                                                        UPPER(CONCAT_WS(' ',cm_producto.cdesprod,tb_pedidodet.observaciones)) AS descripcion,
-                                                        DATE_FORMAT(tb_pedidocab.emision,'%d/%m/%Y') AS emision_pedido,
-                                                        DATE_FORMAT(tb_pedidocab.faprueba,'%d/%m/%Y') AS faprueba,
-                                                        tb_pedidocab.concepto,LPAD(tb_pedidocab.idreg, 6, 0) AS pedido,
-                                                        tb_pedidocab.concepto,LPAD(tb_pedidocab.nrodoc, 6, 0) AS nropedido,
-                                                        tb_proyectos.ccodproy,
-                                                        UPPER(tb_area.cdesarea) AS area,
-                                                        LPAD(detalles_orden.id_orden,6,0) AS orden,
-                                                        FORMAT(detalles_orden.ncanti,2) AS cantidad_orden,
-                                                        DATE_FORMAT(ffechadoc,'%d/%m/%Y') AS emision_orden,
-                                                        DATE_FORMAT(ffechaent,'%d/%m/%Y') AS entrega_proveedor,
-                                                        DATEDIFF(NOW(), cabecera_orden.ffechaent) AS retraso,
-                                                        FORMAT(cabecera_orden.nplazo,0) AS nplazo,
-                                                        recepcion_detalles.ncantidad AS cantidad_recibida,
-                                                        DATE_FORMAT(recepcion_cabecera.ffecdoc,'%d/%m/%Y') AS fecha_recepcion,
-                                                        proveedores.crazonsoc,
-                                                        LPAD(recepcion_cabecera.id_regalm,6,0) AS nota_ingreso,
-                                                        recepcion_cabecera.cnumguia AS guia_proveedor,
-                                                        detalle_despacho.ncantidad AS cantidad_despachada,
-                                                        LPAD(despacho_cabecera.id_regalm,6,0) AS nota_salida,
-                                                        despacho_cabecera.cnumguia AS guia_remision_sepcon,
-                                                        DATE_FORMAT(guias.ffechdoc,'%d/%m/%Y') AS fecha_guia_sepcon,
-                                                        tb_parametros.cabrevia,
-                                                        tb_parametros.cobservacion,
-                                                        tb_partidas.ccodigo,
-                                                        tb_partidas.cdescripcion
-                                                        FROM
-                                                        tb_costusu
-                                                        INNER JOIN tb_pedidodet ON tb_costusu.ncodproy = tb_pedidodet.idcostos
-                                                        INNER JOIN cm_producto ON tb_pedidodet.idprod = cm_producto.id_cprod
-                                                        INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
-                                                        INNER JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
-                                                        INNER JOIN tb_proyectos ON tb_pedidocab.idcostos = tb_proyectos.nidreg
-                                                        INNER JOIN tb_area ON tb_pedidocab.idarea = tb_area.ncodarea
-                                                        INNER JOIN tb_parametros ON tb_pedidodet.estadoItem = tb_parametros.nidreg
-                                                        LEFT JOIN (SELECT id_orden,ncanti,niddeta FROM lg_ordendet) AS detalles_orden ON tb_pedidodet.iditem = detalles_orden.niddeta
-                                                        LEFT JOIN (SELECT id_regmov,ffechadoc,ffechaent,id_centi,ncodmon,nplazo FROM lg_ordencab) AS cabecera_orden ON detalles_orden.id_orden = cabecera_orden.id_regmov
-                                                        LEFT JOIN (SELECT id_centi,crazonsoc FROM cm_entidad) AS proveedores ON cabecera_orden.id_centi = proveedores.id_centi
-                                                        LEFT JOIN (SELECT ncantidad,nsaldo,ncodalm1,id_regalm,niddetaPed FROM alm_recepdet ) AS recepcion_detalles ON tb_pedidodet.iditem = recepcion_detalles.niddetaPed
-                                                        LEFT JOIN (SELECT id_regalm,cnumguia,ffecdoc FROM alm_recepcab ) AS recepcion_cabecera ON recepcion_detalles.id_regalm = recepcion_cabecera.id_regalm
-                                                        LEFT JOIN (SELECT ncantidad,niddetaPed,id_regalm FROM alm_despachodet ) AS detalle_despacho ON tb_pedidodet.iditem = detalle_despacho.niddetaPed
-                                                        LEFT JOIN (SELECT id_regalm,cnumguia,ffecdoc FROM alm_despachocab) AS despacho_cabecera ON detalle_despacho.id_regalm = despacho_cabecera.id_regalm
-                                                        LEFT JOIN tb_partidas ON tb_pedidocab.idpartida = tb_partidas.idreg
-                                                        LEFT JOIN (SELECT id_despacho,ffechdoc,cnumero FROM lg_docusunat ) AS guias ON despacho_cabecera.id_regalm = guias.id_despacho
-                                                        WHERE 
-                                                            tb_costusu.id_cuser = :user 
-                                                            AND tb_costusu.nflgactivo = 1
-                                                            AND tb_pedidodet.idtipo = :tipo
-                                                            AND tb_pedidodet.idcostos LIKE :costos
-                                                            AND cm_producto.ccodprod LIKE :codigo
-                                                            AND tb_pedidocab.nrodoc LIKE :pedido
-                                                            AND IFNULL(cabecera_orden.id_regmov, '') LIKE :orden
-                                                            AND tb_pedidocab.concepto LIKE :concepto");
-                        $sql->execute(["tipo"=>$tipo,
-                                        "costos"=>$costos,
-                                        "codigo"=>$codigo,
-                                        "pedido"=>$pedido,
-                                        "orden"=>$orden,
-                                        "concepto"=>$concepto,
-                                        "user"=>$_SESSION['iduser']]);
-                    
-
-                        $rowCount = $sql->rowCount();
-                        $item = 1;
-                        $avance = 0;
-
-                        if ($rowCount > 0) {
-                            while ($rs = $sql->fetch()) {
-                                $cantidad = $rs['cant_aprob'] == null ? $rs['cant_pedida'] : $rs['cant_aprob'];
-        
-                                $saldo_recibir = $cantidad - $rs['cantidad_recibida'];
-                                $saldo_mostrar = $saldo_recibir > 0 ? number_format($saldo_recibir, 2, '.', '') : " ";
-                                $clase_avance = 0;
-        
-                                $retraso =  $rs['retraso'] <= 0 && $saldo_mostrar != "" ? " " : $rs['retraso'];
-                                $tipo = $rs['idtipo'] == 37 ? "B" : "S";
-        
-                                $avance_entrega = round((( $rs['cantidad_recibida']  * 100)/$cantidad),2);
-        
-                                $nplazo = (int)$rs['nplazo'] > 0 ? (int)$rs['nplazo']:" "; 
-        
-                                if ($avance_entrega > 0) {
-                                    $porcentaje_entrega = $avance_entrega."%";
-        
-                                    if ($avance_entrega == 100) {
-                                        $clase_avance = "entrega__completa";
-                                    }else if ($avance_entrega <= 25) {
-                                        $clase_avance = "entrega__125";
-                                    }else if ($avance_entrega > 26) {
-                                        $clase_avance = "entrega__2699";
-                                    } 
-                                }else {
-                                    $porcentaje_entrega = "";
-                                }
-        
-                                $salida .='<tr class="pointer">
-                                                <td class="textoCentro">'.str_pad($item++,6,0,STR_PAD_LEFT).'</td>
-                                                <td class="textoCentro '.$rs['cabrevia'].'" title="'.strtoupper($rs['cabrevia']).'">'.$rs['cobservacion'].'</td>
-                                                <td class="textoDerecha pr10px">'.$rs['ccodproy'].'</td>
-                                                <td class="pl20px">'.$rs['area'].'</td>
-                                                <td class="pl20px">'.$rs['cdescripcion'].'</td>
-                                                <td>'.$tipo.'</td>
-                                                <td class="textoCentro">'.$rs['nropedido'].'</td>
-                                                <td class="textoCentro">'.$rs['emision_pedido'].'</td>
-                                                <td class="textoCentro">'.$rs['faprueba'].'</td>
-                                                <td class="pl20px">'.strtoupper($rs['concepto']).'</td>
-                                                <td class="textoCentro">'.$rs['ccodprod'].'</td>
-                                                <td>'.$rs['unidad'].'</td>
-                                                <td width="20%" class="pl20px">'.$rs['descripcion'].'</td>
-                                                <td class="textoDerecha pr10px">'.$cantidad.'</td>
-                                                <td class="textoCentro">'.$rs['orden'].'</td>
-                                                <td class="textoCentro">'.$rs['emision_orden'].'</td>
-                                                <td class="textoDerecha pr10px">'.$rs['cantidad_orden'].'</td>
-                                                <td>'.$rs['crazonsoc'].'</td>
-                                                <td class="textoDerecha pr10px">'.$rs['entrega_proveedor'].'</td>
-                                                <td class="textoCentro">'.$nplazo.'</td>
-                                                <td class="textoDerecha pr10px">'.$retraso.'</td>
-                                                <td class="textoCentro '.$clase_avance.'">'.round($porcentaje_entrega,2).'</td>
-                                                <td class="textoDerecha pr10px">'.$rs['cantidad_recibida'].'</td>
-                                                <td class="textoCentro "></td>
-                                                <td class="textoCentro">'.$rs['nota_ingreso'].'</td>
-                                                <td>'.$rs['guia_proveedor'].'</td>
-                                                <td class="textoCentro">'.$rs['fecha_recepcion'].'</td>
-                                                <td class="textoCentro">'.$rs['nota_salida'].'</td>
-                                                <td class="textoCentro">'.$rs['cantidad_despachada'].'</td>
-                                                <td>'.$rs['guia_remision_sepcon'].'</td>
-                                                <td class="textoCentro">'.$rs['fecha_guia_sepcon'].'</td>
-                                                <td class="textoDerecha pr10px"></td>
-                                                <td class="textoCentro"></td>
-                                                <td class="textoCentro"></td>
-                                                <td></td>
-                                                <td></td>
-                                            </tr>';
-                            }
-                        }*/
-            
-            //return $salida;
-
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;
@@ -498,18 +334,66 @@
 
                 $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel,'Excel2007');
                 $objWriter->save('public/documentos/reportes/catalogo.xlsx');
-                $objPHPExcel->getActiveSheet()->mergeCells('A1:AW1');
+                $objPHPExcel->getActiveSheet()->mergeCells('A1:AQ1');
                 $objPHPExcel->getActiveSheet()->setCellValue('A1','CARGO PLAN');
 
-                $objPHPExcel->getActiveSheet()->getStyle('A2:AW2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                $objPHPExcel->getActiveSheet()->getStyle('A2:AW2')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('A1:AQ2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('A1:AQ2')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+
+                $objPHPExcel->getActiveSheet()->getRowDimension('2')->setRowHeight(60);
+
+                $objPHPExcel->getActiveSheet()->getColumnDimension("D")->setAutoSize(true);
+                $objPHPExcel->getActiveSheet()->getColumnDimension("E")->setAutoSize(true);
+                $objPHPExcel->getActiveSheet()->getColumnDimension("K")->setAutoSize(true);
+                $objPHPExcel->getActiveSheet()->getColumnDimension("L")->setAutoSize(true);
+                $objPHPExcel->getActiveSheet()->getColumnDimension("M")->setAutoSize(true);
+                $objPHPExcel->getActiveSheet()->getColumnDimension("O")->setAutoSize(true);
+                $objPHPExcel->getActiveSheet()->getColumnDimension("T")->setAutoSize(true);
+                $objPHPExcel->getActiveSheet()->getColumnDimension("U")->setAutoSize(true);
+                $objPHPExcel->getActiveSheet()->getColumnDimension("V")->setAutoSize(true);
+                $objPHPExcel->getActiveSheet()->getColumnDimension("AG")->setAutoSize(true);
+                $objPHPExcel->getActiveSheet()->getColumnDimension("AJ")->setAutoSize(true);
+                $objPHPExcel->getActiveSheet()->getColumnDimension("AK")->setAutoSize(true);
+                $objPHPExcel->getActiveSheet()->getColumnDimension("AL")->setAutoSize(true);
+                $objPHPExcel->getActiveSheet()->getColumnDimension("AO")->setAutoSize(true);
+                $objPHPExcel->getActiveSheet()->getColumnDimension("AP")->setAutoSize(true);
+                $objPHPExcel->getActiveSheet()->getColumnDimension("AQ")->setAutoSize(true);
 
                 $objPHPExcel->getActiveSheet()
-                            ->getStyle('A1:AP2')
+                            ->getStyle('A2:P2')
                             ->getFill()
                             ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
                             ->getStartColor()
-                            ->setRGB('FDE9D9');
+                            ->setRGB('BFCDDB');
+
+                $objPHPExcel->getActiveSheet()
+                            ->getStyle('Q2:V2')
+                            ->getFill()
+                            ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
+                            ->getStartColor()
+                            ->setRGB('00FFFF');
+
+                $objPHPExcel->getActiveSheet()
+                            ->getStyle('AE2:AJ2')
+                            ->getFill()
+                            ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
+                            ->getStartColor()
+                            ->setRGB('FFFF00');
+
+                $objPHPExcel->getActiveSheet()
+                            ->getStyle('AK2:AN2')
+                            ->getFill()
+                            ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
+                            ->getStartColor()
+                            ->setRGB('BFCDDB');
+                
+                
+                $objPHPExcel->getActiveSheet()
+                            ->getStyle('AO2:AQ2')
+                            ->getFill()
+                            ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
+                            ->getStartColor()
+                            ->setRGB('C0DCC0');
                 
                 $objPHPExcel->getActiveSheet()->getStyle('A1:AW2')->getAlignment()->setWrapText(true);
 
@@ -532,28 +416,30 @@
                 $objPHPExcel->getActiveSheet()->setCellValue('Q2','Tipo Orden'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('R2','Año Orden'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('S2','Fecha Orden'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('T2','Descripcion Proveedor'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('U2','Fecha Envio Proveedor'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('V2','Cantida Recibida'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('W2','Saldo por Recibir'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('X2','Dias Entrega'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('Y2','Días Atrazo'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('Z2','Semáforo'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AA2','Nota Ingreso'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AB2','Guia Ingreso'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AC2','Fecha Ingreso'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AD2','Nota Salida'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AE2','Guia Remision'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AF2','Fecha Guia Remisión'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AG2','Cantidad Recibida Obra'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AH2','Nota Ingreso Obra'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AI2','Fecha Recep Obra'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AJ2','Estado Item'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AK2','N° Parte'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AL2','Codigo Activo'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AM2','Operador Logístico'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AO2','Tipo Transporte'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AP2','Observaciones/Concepto'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('T2','Nro. Orden'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('U2','Descripcion Proveedor'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('V2','Fecha Envio Proveedor'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('W2','Cantidad Recibida'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('X2','Saldo por Recibir'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('Y2','Dias Entrega'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('Z2','Días Atrazo'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AA2','Semáforo'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AB2','Nota Ingreso'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AC2','Guia Ingreso'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AD2','Fecha Ingreso'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AE2','Nota Salida'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AF2','Guia Remision'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AG2','Fecha Guia Remisión'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AH2','Cantidad Recibida Obra'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AI2','Nota Ingreso Obra'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AJ2','Fecha Recep Obra'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AK2','Estado Pedido'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AL2','Estado Item'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AM2','N° Parte'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AN2','Codigo Activo'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AO2','Operador Logístico'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AP2','Tipo Transporte'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AQ2','Observaciones/Concepto'); // esto cambia
                
                 $fila = 3;
                 $datos = json_decode($registros);
@@ -571,11 +457,62 @@
                     $objPHPExcel->getActiveSheet()->setCellValue('I'.$fila,$datos[$i]->num_pedido);
                     $objPHPExcel->getActiveSheet()->setCellValue('J'.$fila,$datos[$i]->num_mmto);
                     $objPHPExcel->getActiveSheet()->setCellValue('K'.$fila,$datos[$i]->crea_pedido);
-                    $objPHPExcel->getActiveSheet()->setCellValue('L'.$fila,$datos[$i]->fecha_pedido);
-
+                    $objPHPExcel->getActiveSheet()->setCellValue('L'.$fila,$datos[$i]->apro_pedido);
+                    $objPHPExcel->getActiveSheet()->setCellValue('M'.$fila,$datos[$i]->codigo);
+                    $objPHPExcel->getActiveSheet()->setCellValue('N'.$fila,$datos[$i]->unidad);
+                    $objPHPExcel->getActiveSheet()->setCellValue('O'.$fila,$datos[$i]->descripcion);
+                    $objPHPExcel->getActiveSheet()->setCellValue('P'.$fila,$datos[$i]->cantidad);
+                    $objPHPExcel->getActiveSheet()->setCellValue('Q'.$fila,$datos[$i]->tipo_orden);
+                    $objPHPExcel->getActiveSheet()->setCellValue('R'.$fila,$datos[$i]->anio_orden);
+                    $objPHPExcel->getActiveSheet()->setCellValue('T'.$fila,$datos[$i]->fecha_orden);
+                    $objPHPExcel->getActiveSheet()->setCellValue('S'.$fila,$datos[$i]->nro_orden);
+                    $objPHPExcel->getActiveSheet()->setCellValue('U'.$fila,$datos[$i]->proveedor);
+                    $objPHPExcel->getActiveSheet()->setCellValue('V'.$fila,$datos[$i]->envio_proveedor);
+                    $objPHPExcel->getActiveSheet()->setCellValue('W'.$fila,$datos[$i]->cantidad_recibida);
+                    $objPHPExcel->getActiveSheet()->setCellValue('X'.$fila,$datos[$i]->saldo_recibir);
+                    $objPHPExcel->getActiveSheet()->setCellValue('Y'.$fila,$datos[$i]->dias_entrega);
+                    $objPHPExcel->getActiveSheet()->setCellValue('Z'.$fila,$datos[$i]->dias_atraso);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AA'.$fila,$datos[$i]->semaforo);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AB'.$fila,$datos[$i]->nota_ingreso);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AC'.$fila,$datos[$i]->guia_ingreso);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AD'.$fila,$datos[$i]->fecha_ingreso);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AE'.$fila,$datos[$i]->nota_salida);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AF'.$fila,$datos[$i]->guia_remision);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AG'.$fila,$datos[$i]->fecha_guiaremision);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AH'.$fila,$datos[$i]->cantidad_obra);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AI'.$fila,$datos[$i]->nota_ingresoobra);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AJ'.$fila,$datos[$i]->fecha_recepobra);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AK'.$fila,$datos[$i]->estado_pedido);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AL'.$fila,$datos[$i]->estado_item);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AM'.$fila,$datos[$i]->numero_parte);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AN'.$fila,$datos[$i]->codigo_activo);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AO'.$fila,$datos[$i]->operador);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AP'.$fila,$datos[$i]->transporte);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AQ'.$fila,$datos[$i]->observaciones);
 
                     $fila++;
                 }
+
+                $objPHPExcel->getActiveSheet()->getStyle('A:C')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('A:C')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                
+                $objPHPExcel->getActiveSheet()->getStyle('F:N')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('F:N')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+
+                $objPHPExcel->getActiveSheet()->getStyle('Q:T')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('Q:T')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+
+                $objPHPExcel->getActiveSheet()->getStyle('V')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('V')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+
+                $objPHPExcel->getActiveSheet()->getStyle('AA:AG')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('AA:AG')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+
+                $objPHPExcel->getActiveSheet()->getStyle('AI:AL')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('AI:AL')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+
+                $objPHPExcel->getActiveSheet()->getStyle('AP')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('AP')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
                 $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel,'Excel2007');
                 $objWriter->save('public/documentos/reportes/cargoplan.xlsx');
