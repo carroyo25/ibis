@@ -1,18 +1,21 @@
 $(function() {
-
     
-
-
+    $("#esperar").fadeOut();
+    
     $("#btnProcesa").click(function(e){
         e.preventDefault();
 
         let str = $("#formConsulta").serialize();
+
+        $("#esperar").css({"display":"block","opacity":"1"});
 
         $.post(RUTA+"cargoplanner/filtroCargoPlan",str,
             function (data, text, requestXHR) {
                 $(".itemsCargoPlanner table tbody")
                     .empty()
                     .append(data);
+
+                    $("#esperar").fadeOut();
 
             "text"
         });
@@ -21,6 +24,13 @@ $(function() {
 
     $("#btnExporta").click(function (e) { 
         e.preventDefault();
+
+        $.post(RUTA+"cargoplanner/export", {registros:JSON.stringify(detalles())},
+            function (data, textStatus, jqXHR) {
+                window.location.href = data.documento;
+            },
+            "json"
+        );
 
         /*let wb = XLSX.utils.table_to_book(document.getElementById('cargoPlanDescrip'), {sheet:"Cargo Plan"});
         let wbout = XLSX.write(wb, {bookType:'xlsx', bookSST:true, type: 'binary'});
@@ -37,7 +47,7 @@ $(function() {
 
         XLSX.writeFile(workbook, "cargoplan.xlsx", { compression: true });*/
         
-        tableToExcel(document.getElementById('cargoPlanDescrip'),"cargoPlan")
+        //tableToExcel(document.getElementById('cargoPlanDescrip'),"cargoPlan")
 
         return false;
     });
@@ -56,9 +66,13 @@ detalles = () =>{
             PROYECTO    = $(this).find('td').eq(2).text(),
             AREA        = $(this).find('td').eq(3).text(),
             PARTIDA     = $(this).find('td').eq(4).text(),
-            TIPO        = $(this).find('td').eq(5).text(),
-            PEDIDO      = $(this).find('td').eq(6).text(),
-            FECH_PED    = $(this).find('td').eq(7).text(),
+            ATENCION    = $(this).find('td').eq(5).text(),
+            TIPO        = $(this).find('td').eq(6).text(),
+            ANIO_PEDIDO = $(this).find('td').eq(7).text(),
+            NUM_PEDIDO  = $(this).find('td').eq(8).text(),
+            NUM_MMTO    = $(this).find('td').eq(9).text(),
+            CREA_PEDIDO = $(this).find('td').eq(10).text(),
+            FECHA_PEDIDO= $(this).find('td').eq(11).text(),
           
 
         item = {};
@@ -68,9 +82,14 @@ detalles = () =>{
         item['proyecto']    = PROYECTO;
         item['area']        = AREA;
         item['partida']     = PARTIDA;
+        item['atencion']    = ATENCION;
         item['tipo']        = TIPO;
-        item['pedido']      = PEDIDO;
-        item['fecha_ped']   = FECH_PED;
+        item['anio_pedido'] = ANIO_PEDIDO;
+        item['num_pedido']  = NUM_PEDIDO;
+        item['num_mmto']    = NUM_MMTO;
+        item['crea_pedido'] = CREA_PEDIDO;
+        item['fecha_pedido']= FECHA_PEDIDO;
+
 
         DATA.push(item);
     })

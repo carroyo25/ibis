@@ -8,6 +8,24 @@
     <title>Document</title>
 </head>
 <body>
+    <div class="modal" id="esperar">
+        <div class="loadingio-spinner-spinner-5ulcsi06hlf">
+            <div class="ldio-fifgg00y5y">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+    </div>
+    </div>
     <div class="modal" id="vistaprevia">
         <div class="ventanaVistaPrevia">
             <div class="tituloVista">
@@ -167,6 +185,7 @@
                         <div class="w5por">
                             <label for="tipo">Tipo : </label>
                             <select name="tipoSearch" id="tipoSearch">
+                                <option value="-1">Seleccione una opcion</option>
                                 <option value="37">Bienes</option>
                                 <option value="38">Servicios</option>
                             </select>    
@@ -195,16 +214,15 @@
                             <input type="text" name="conceptoSearch" id="conceptoSearch">
                         </div>
                         <div class="procesos">
-                            <div class="procesando"><a href="#">10</a></div>
-                            <div class="emitido"><a href="#">20</div>
-                            <div class="consulta"><a href="#">30</a></div>
-                            <div class="aprobacion"><a href="#">40</a></div>
-                            <div class="aprobado"><a href="#">50</a></div>
-                            <div class="orden"><a href="#">60</a></div>
-                            <div class="firmas"><a href="#">70</a></div>
-                            <div class="recepcion"><a href="#">80</a></div>
-                            <div class="despacho"><a href="#">90</a></div>
-                            <div class="culminado"><a href="#">100</a></div>
+                            <div class="item_anulado"><a href="#">0%</a></div>
+                            <div class="item_aprobado"><a href="#">15%</div>
+                            <div class="item_orden"><a href="#">20%</a></div>
+                            <div class="item_parcial"><a href="#">25%</a></div>
+                            <div class="item_ingreso_parcial"><a href="#">40%</a></div>
+                            <div class="item_ingreso_total"><a href="#">50%</a></div>
+                            <div class="item_registro_salida"><a href="#">60%</a></div>
+                            <div class="item_transito"><a href="#">75%</a></div>
+                            <div class="item_obra"><a href="#">100%</a></div>
                         </div>
                 </div>
                 <div class="botonesConsulta">
@@ -264,10 +282,11 @@
                 </tr>
             </thead>
             <tbody>
-                    <?php echo $this->listaCargoPlan?>
+                <?php //echo $this->listaCargoPlan?>
             </tbody>
         </table>
     </div>
+    
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
     <script src="<?php echo constant('URL');?>public/js/funciones.js?<?php echo constant('VERSION')?>"></script>
     <script src="<?php echo constant('URL');?>public/js/tableToExcel.js"></script>

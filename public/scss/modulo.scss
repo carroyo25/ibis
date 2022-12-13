@@ -560,11 +560,10 @@ $anulado:#c2c2c2;
                 align-items: center;
     
                 div{
-                    border: 1px solid #000;
+                    border: 1px solid transparent;
                     padding: 5px;
 
                     a {
-                        color: #fff;
                         font-size: 8pt;
                     }
                 }
@@ -578,9 +577,9 @@ $anulado:#c2c2c2;
             
             button {
                 height: 20px;
-                border-radius: 8px;
+                //border-radius: 8px;
                 transition: all .5s;
-                color: #d2c2d2;
+                color: #000;
 
                 &:hover{
                     box-shadow: 2px 3px 6px #005D84;

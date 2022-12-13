@@ -833,11 +833,10 @@
           align-items: center;
 }
 .barraTrabajo .variasConsultasColumna .datosConsultaCargoPlan .procesos div {
-  border: 1px solid #000;
+  border: 1px solid transparent;
   padding: 5px;
 }
 .barraTrabajo .variasConsultasColumna .datosConsultaCargoPlan .procesos div a {
-  color: #fff;
   font-size: 8pt;
 }
 .barraTrabajo .variasConsultasColumna .botonesConsulta {
@@ -852,10 +851,9 @@
 }
 .barraTrabajo .variasConsultasColumna .botonesConsulta button {
   height: 20px;
-  border-radius: 8px;
   -webkit-transition: all 0.5s;
   transition: all 0.5s;
-  color: #d2c2d2;
+  color: #000;
 }
 .barraTrabajo .variasConsultasColumna .botonesConsulta button:hover {
   -webkit-box-shadow: 2px 3px 6px #005D84;

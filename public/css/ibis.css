@@ -405,6 +405,58 @@ input[type=number]::-webkit-outer-spin-button {
   z-index: 1;
 }
 
+.semaforoVerde {
+  background: lightgreen;
+}
+
+.semaforoRojo {
+  background: red;
+}
+
+.semaforoAmarillo {
+  background: yellow;
+}
+
+.semaforoNaranja {
+  background: gold;
+}
+
+.item_anulado {
+  background: #c8c8c8;
+}
+
+.item_aprobado {
+  background: #ff0000;
+}
+
+.item_orden {
+  background: #A6CAF0;
+}
+
+.item_parcial {
+  background: #C0DCC0;
+}
+
+.item_ingreso_parcial {
+  background: #ffffe1;
+}
+
+.item_ingreso_total {
+  background: #ffff00;
+}
+
+.item_registro_salida {
+  background: #ff00ff;
+}
+
+.item_transito {
+  background: #00ffff;
+}
+
+.item_obra {
+  background: #00ff00;
+}
+
 /*loader*/
 .loadingio-spinner-spinner-5ulcsi06hlf {
   width: 200px;

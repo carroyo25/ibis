@@ -6,8 +6,16 @@
             parent::__construct();
         }
 
-        public function listarCargoPlan(){
+        public function listarCargoPlan($parametros){
             try {
+
+                $tipo       = $parametros['tipoSearch'] == -1 ? "%" : $parametros['tipoSearch'];
+                $costo      = $parametros['costosSearch'] == -1 ? "%" : $parametros['costosSearch'];
+                $codigo     = $parametros['codigoSearch'] == "" ? "%" : "%".$parametros['codigoSearch']."%";
+                $orden      = $parametros['ordenSearch'] == "" ? "%" : $parametros['ordenSearch'];
+                $pedido     = $parametros['pedidoSearch'] == "" ? "%" : $parametros['pedidoSearch'];
+                $concepto   = $parametros['conceptoSearch'] == "" ? "%" : "%".$parametros['conceptoSearch']."%";
+                
                 $salida="";
                 $item = 1;
                 $sql = $this->db->connect()->prepare("SELECT
@@ -19,6 +27,8 @@
                                                             tb_pedidodet.cant_atend,
                                                             tb_pedidodet.estadoItem,
                                                             tb_pedidodet.idcostos,
+                                                            tb_pedidodet.idtipo,
+                                                            tb_pedidocab.nrodoc,
                                                             if (tb_pedidodet.idtipo = 37,'B','S') AS tipo,
                                                             cm_producto.id_cprod,
                                                             cm_producto.ccodprod,
@@ -45,7 +55,7 @@
                                                             UPPER(operadores.cnombres) AS operador,
                                                             tb_parametros.cdescripcion AS estado_pedido,
                                                             transporte.modo_transporte,
-                                                            DATEDIFF(NOW(),FechaFin) AS dias_atraso  
+                                                            DATEDIFF(NOW(),cabecera_orden.ffechaent) AS dias_atraso  
                                                         FROM
                                                             tb_costusu
                                                             INNER JOIN tb_pedidodet ON tb_costusu.ncodproy = tb_pedidodet.idcostos
@@ -65,9 +75,22 @@
                                                             tb_costusu.id_cuser = :user 
                                                             AND tb_costusu.nflgactivo = 1 
                                                             AND tb_pedidodet.nflgActivo = 1
+                                                            AND tb_pedidodet.idtipo LIKE :tipo
+                                                            AND tb_pedidodet.idcostos LIKE :costo
+                                                            AND cm_producto.ccodprod LIKE :codigo
+                                                            AND tb_pedidodet.idorden LIKE :orden
+                                                            AND tb_pedidocab.nrodoc LIKE :pedido
+                                                            AND tb_pedidocab.concepto LIKE :concepto
                                                         ORDER BY tb_proyectos.ccodproy");
                 
-                $sql->execute(["user"=>$_SESSION['iduser']]);
+                $sql->execute(["user"       => $_SESSION['iduser'],
+                               "tipo"       => $tipo,
+                               "costo"      => $costo,
+                               "codigo"     => $codigo,
+                               "orden"      => $orden,
+                               "pedido"     => $pedido,
+                               "concepto"   => $concepto]);
+                
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0) {
@@ -82,20 +105,75 @@
 
                         $saldoRecibir = intval($rs['cantidad_solicitada']) - intval($ingresos[0]['ingresos']);
 
+                        $semaforo = "";
+                        $estadoSemaforo ="";
+
+                        if ( $saldoRecibir == 0 ) {
+                            $semaforo = "Verde";
+                            $estadoSemaforo ="semaforoVerde";
+                        }else if ( $ingresos[0]['ingresos'] == 0 && $rs['dias_atraso'] >= 10 && $rs['orden']) {
+                            $semaforo = "Rojo";
+                            $estadoSemaforo ="semaforoRojo";
+                        }else if ( $ingresos[0]['ingresos'] == 0 && $rs['dias_atraso'] <= 10 && $rs['orden']) {
+                            $semaforo = "Amarillo";
+                            $estadoSemaforo ="semaforoAmarillo";
+                        }
+
                         $estadoFila = "";
                         $porcentaje = "*";
 
-                        if ($rs['estadoItem'] == 105) {
-                            $estadoFila = "anulado";
+                        if ( $rs['estadoItem'] == 105 ) {
+                            $estadoFila = "item_anulado";
                             $porcentaje = "0%";
                         }
+                        
+                        if( $rs['estadoItem'] == 49 || $rs['estadoItem'] == 54 || $rs['estadoItem'] == 60 ) {
+                            $estadoFila = "item_aprobado";
+                            $porcentaje = "15%";
+                        }
+                        if( $rs['orden'] ) {
+                            $estadoFila = "item_orden";
+                            $porcentaje = "20%";
+                        }
+                        
+                        if( !$rs['orden'] && $ingresos[0]['ingresos'] > 0)  {
+                            $estadoFila = "item_parcial";
+                            $porcentaje = "25%";
+                        }
+                        
+                        if( $rs['orden'] && $ingresos[0]['ingresos'] != $rs['cantidad_solicitada'] && $ingresos[0]['ingresos'])  {
+                            $estadoFila = "item_ingreso_parcial";
+                            $porcentaje = "40%";
+                        }
 
-                        $salida.='<tr class="pointer" 
+                        if( $rs['orden'] && $ingresos[0]['ingresos'] == $rs['cantidad_solicitada'])  {
+                            $estadoFila = "item_ingreso_total";
+                            $porcentaje = "50%";
+                        }
+
+                        if( $despachos[0]['nota_salida'] )  {
+                            $estadoFila = "item_registro_salida";
+                            $porcentaje = "60%";
+                        }
+
+                        if( $despachos[0]['guia_sepcon'] )  {
+                            $estadoFila = "item_transito";
+                            $porcentaje = "75%";
+                        }
+
+                        if( $ingObra[0]['nota_recepcion'] )  {
+                            $estadoFila = "item_obra";
+                            $porcentaje = "100%";
+                        }
+
+                        if ( $rs['orden'] != "0000") {
+                            $salida.='<tr class="pointer" 
                                     data-itempedido="'.$rs['iditem'].'" 
                                     data-pedido="'.$rs['idpedido'].'" 
                                     data-prod="'.$rs['id_cprod'].'"
-                                    data-orden="'.$rs['idorden'].'">
-                                    <td class="textoCentro">'.str_pad($item++,6,0,STR_PAD_LEFT).'</td>
+                                    data-orden="'.$rs['idorden'].'"
+                                    data-estado="'.$rs['estadoItem'].'">
+                                    <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
                                     <td class="textoCentro '.$estadoFila.'">'.$porcentaje.'</td>
                                     <td class="textoDerecha pr15px">'.$rs['ccodproy'].'</td>
                                     <td class="pl20px">'.$rs['area'].'</td>
@@ -121,8 +199,8 @@
                                     <td class="textoDerecha pr15px">'.number_format($saldoRecibir,2).'</td>
                                     <td class="textoDerecha pr15px">'.$rs['nplazo'].'</td>
                                     <td class="textoDerecha pr15px">'.$rs['dias_atraso'].'</td>
-                                    <td class=""></td>
-                                    <td class="textoCentro">'.$ingresos[0]['nota_ingreso'].'</td>
+                                    <td class="textoCentro '.$estadoSemaforo.'">'.$semaforo.'</td>
+                                    <td class="textoCentro ">'.$ingresos[0]['nnronota'].'</td>
                                     <td class="textoCentro">'.$ingresos[0]['guia_proveedor'].'</td>
                                     <td class="textoCentro">'.$ingresos[0]['fecha_ingreso'].'</td>
                                     <td class="textoCentro">'.$despachos[0]['guia_sepcon'].'</td>
@@ -140,6 +218,8 @@
                                     <td class="">'.$rs['concepto'].'</td>
                                     
                                 </tr>';
+                        }
+                        
                     }
                 }
                 return $salida;
@@ -321,6 +401,7 @@
                 $sql = $this->db->connect()->prepare("SELECT
                                                 FORMAT(SUM( alm_recepdet.ncantidad ),2) AS ingresos,
                                                 LPAD(alm_recepdet.id_regalm,6,0) AS nota_ingreso,
+                                                alm_recepcab.nnronota,
                                                 alm_recepcab.cnumguia AS guia_proveedor,
                                                 DATE_FORMAT(alm_recepcab.ffecdoc,'%d/%m/%Y') AS fecha_ingreso
                                             FROM
@@ -384,6 +465,124 @@
                 $result = $sql->fetchAll();
 
                 return $result;
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        public function exportExcel($registros){
+            require_once('public/PHPExcel/PHPExcel.php');
+            try {
+                $objPHPExcel = new PHPExcel();
+                $objPHPExcel->getProperties()
+                    ->setCreator("Sical")
+                    ->setLastModifiedBy("Sical")
+                    ->setTitle("Cargo Plan")
+                    ->setSubject("Template excel")
+                    ->setDescription("Cargo Plan")
+                    ->setKeywords("Template excel");
+
+                $cuerpo = array(
+                    'font'  => array(
+                    'bold'  => false,
+                    'size'  => 7,
+                ));
+
+                $objWorkSheet = $objPHPExcel->createSheet(1);
+
+                $objPHPExcel->setActiveSheetIndex(0);
+                $objPHPExcel->getActiveSheet()->setTitle("Cargo Plan");
+
+
+                $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel,'Excel2007');
+                $objWriter->save('public/documentos/reportes/catalogo.xlsx');
+                $objPHPExcel->getActiveSheet()->mergeCells('A1:AW1');
+                $objPHPExcel->getActiveSheet()->setCellValue('A1','CARGO PLAN');
+
+                $objPHPExcel->getActiveSheet()->getStyle('A2:AW2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('A2:AW2')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+
+                $objPHPExcel->getActiveSheet()
+                            ->getStyle('A1:AP2')
+                            ->getFill()
+                            ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
+                            ->getStartColor()
+                            ->setRGB('FDE9D9');
+                
+                $objPHPExcel->getActiveSheet()->getStyle('A1:AW2')->getAlignment()->setWrapText(true);
+
+                $objPHPExcel->getActiveSheet()->setCellValue('A2','Items'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('B2','Estado Actual'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('C2','Codigo Proyecto'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('D2','Area'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('E2','Partida'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('F2','Atención'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('G2','Tipo'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('H2','Año Pedido'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('I2','N° Pedido'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('J2','N° Mtto'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('K2','Creación Pedido'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('L2','Aprobación Pedido'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('M2','Codigo del Bien/Servicio'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('N2','Unidad Medida'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('O2','Descripcion del Bien/Servicio'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('P2','Cantidad Solicitada'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('Q2','Tipo Orden'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('R2','Año Orden'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('S2','Fecha Orden'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('T2','Descripcion Proveedor'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('U2','Fecha Envio Proveedor'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('V2','Cantida Recibida'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('W2','Saldo por Recibir'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('X2','Dias Entrega'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('Y2','Días Atrazo'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('Z2','Semáforo'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AA2','Nota Ingreso'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AB2','Guia Ingreso'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AC2','Fecha Ingreso'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AD2','Nota Salida'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AE2','Guia Remision'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AF2','Fecha Guia Remisión'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AG2','Cantidad Recibida Obra'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AH2','Nota Ingreso Obra'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AI2','Fecha Recep Obra'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AJ2','Estado Item'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AK2','N° Parte'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AL2','Codigo Activo'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AM2','Operador Logístico'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AO2','Tipo Transporte'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AP2','Observaciones/Concepto'); // esto cambia
+               
+                $fila = 3;
+                $datos = json_decode($registros);
+                $nreg = count($datos);
+
+                for ($i=0; $i < $nreg ; $i++) { 
+                    $objPHPExcel->getActiveSheet()->setCellValue('A'.$fila,$datos[$i]->item);
+                    $objPHPExcel->getActiveSheet()->setCellValue('B'.$fila,$datos[$i]->estado);
+                    $objPHPExcel->getActiveSheet()->setCellValue('C'.$fila,$datos[$i]->proyecto);
+                    $objPHPExcel->getActiveSheet()->setCellValue('D'.$fila,$datos[$i]->area);
+                    $objPHPExcel->getActiveSheet()->setCellValue('E'.$fila,$datos[$i]->partida);
+                    $objPHPExcel->getActiveSheet()->setCellValue('F'.$fila,$datos[$i]->atencion);
+                    $objPHPExcel->getActiveSheet()->setCellValue('G'.$fila,$datos[$i]->tipo);
+                    $objPHPExcel->getActiveSheet()->setCellValue('H'.$fila,$datos[$i]->anio_pedido);
+                    $objPHPExcel->getActiveSheet()->setCellValue('I'.$fila,$datos[$i]->num_pedido);
+                    $objPHPExcel->getActiveSheet()->setCellValue('J'.$fila,$datos[$i]->num_mmto);
+                    $objPHPExcel->getActiveSheet()->setCellValue('K'.$fila,$datos[$i]->crea_pedido);
+                    $objPHPExcel->getActiveSheet()->setCellValue('L'.$fila,$datos[$i]->fecha_pedido);
+
+
+                    $fila++;
+                }
+
+                $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel,'Excel2007');
+                $objWriter->save('public/documentos/reportes/cargoplan.xlsx');
+
+                return array("documento"=>'public/documentos/reportes/cargoplan.xlsx');
+
+                exit();
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
