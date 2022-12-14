@@ -308,6 +308,7 @@
             }
         }
 
+
         public function exportExcel($registros){
             require_once('public/PHPExcel/PHPExcel.php');
             try {
@@ -394,6 +395,19 @@
                             ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
                             ->getStartColor()
                             ->setRGB('C0DCC0');
+
+                $veinte = array(
+                    'fill' => array(
+                        'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                        'startcolor' => array(
+                            'argb' => '4CCAE2',
+                        ),
+                        'endcolor' => array(
+                            'argb' => '4CCAE2',
+                        ),
+                    ),
+                );
+
                 
                 $objPHPExcel->getActiveSheet()->getStyle('A1:AW2')->getAlignment()->setWrapText(true);
 
@@ -447,7 +461,12 @@
 
                 for ($i=0; $i < $nreg ; $i++) { 
                     $objPHPExcel->getActiveSheet()->setCellValue('A'.$fila,$datos[$i]->item);
+
                     $objPHPExcel->getActiveSheet()->setCellValue('B'.$fila,$datos[$i]->estado);
+                    
+                    /*if( $datos[$i]->estado == "20%")
+                        $objPHPExcel->getActiveSheet()->getStyle('B'.$fila)->applyFromArray($veinte);*/
+                        
                     $objPHPExcel->getActiveSheet()->setCellValue('C'.$fila,$datos[$i]->proyecto);
                     $objPHPExcel->getActiveSheet()->setCellValue('D'.$fila,$datos[$i]->area);
                     $objPHPExcel->getActiveSheet()->setCellValue('E'.$fila,$datos[$i]->partida);
