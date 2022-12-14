@@ -65,7 +65,7 @@
                                                             INNER JOIN tb_proyectos ON tb_pedidocab.idcostos = tb_proyectos.nidreg
                                                             INNER JOIN tb_area ON tb_pedidocab.idarea = tb_area.ncodarea
                                                             LEFT JOIN tb_partidas AS partidas ON tb_pedidocab.idpartida = partidas.idreg
-                                                            LEFT JOIN ( SELECT id_orden, ncanti, niddeta FROM lg_ordendet ) AS detalles_orden ON tb_pedidodet.iditem = detalles_orden.niddeta
+                                                            LEFT JOIN ( SELECT id_orden, ncanti, niddeta FROM lg_ordendet WHERE ISNULL(nEstadoReg) ) AS detalles_orden ON tb_pedidodet.iditem = detalles_orden.niddeta
 	                                                        LEFT JOIN ( SELECT id_regmov, ffechadoc, ffechaent, id_centi, ncodmon, nplazo, id_cuser, ctiptransp, FechaFin FROM lg_ordencab ) AS cabecera_orden ON detalles_orden.id_orden = cabecera_orden.id_regmov
                                                             LEFT JOIN ( SELECT id_centi, crazonsoc FROM cm_entidad ) AS proveedores ON cabecera_orden.id_centi = proveedores.id_centi
                                                             LEFT JOIN ( SELECT tb_user.cnameuser,tb_user.cnombres,tb_user.iduser FROM tb_user ) AS operadores ON cabecera_orden.id_cuser = operadores.iduser

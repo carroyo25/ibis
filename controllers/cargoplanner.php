@@ -7,7 +7,6 @@
 
         function render(){
             $this->view->listaCostos = $this->model->costosPorUsuarioSelect($_SESSION['iduser']);
-            //$this->view->listaCargoPlan = $this->model->listarCargoPlan();
             $this->view->render('cargoplanner/index');
         }
 
