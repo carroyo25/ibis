@@ -464,8 +464,8 @@
 
                     $objPHPExcel->getActiveSheet()->setCellValue('B'.$fila,$datos[$i]->estado);
                     
-                    /*if( $datos[$i]->estado == "20%")
-                        $objPHPExcel->getActiveSheet()->getStyle('B'.$fila)->applyFromArray($veinte);*/
+                    if( $datos[$i]->estado == "20%")
+                        $objPHPExcel->getActiveSheet()->getStyle('B'.$fila)->applyFromArray($veinte);
                         
                     $objPHPExcel->getActiveSheet()->setCellValue('C'.$fila,$datos[$i]->proyecto);
                     $objPHPExcel->getActiveSheet()->setCellValue('D'.$fila,$datos[$i]->area);
