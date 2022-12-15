@@ -12,7 +12,6 @@
     </div>
     <div class="modal" id="esperar">
     </div>
-    
     <div class="modal" id="pregunta">
         <div class="ventanaPregunta">
             <h3>Desea culminar el pedido?</h3>

@@ -234,7 +234,7 @@
                                                         alm_cabexist.ncodalm2,
                                                         UPPER( origen.cdesalm ) AS origen,
                                                         UPPER( destino.cdesalm ) AS destino,
-                                                        CONCAT_WS(' ',tb_proyectos.ccodproy,tb_proyectos.cdesproy) AS costos
+                                                        UPPER(CONCAT_WS(' ',tb_proyectos.ccodproy,tb_proyectos.cdesproy)) AS costos
                                                     FROM
                                                         tb_costusu
                                                         INNER JOIN alm_cabexist ON tb_costusu.ncodproy = alm_cabexist.idcostos
