@@ -12,21 +12,18 @@
             <div class="cabezaProceso">
                 <form action="#" id="formProceso" autocomplete="off">
                     <input type="hidden" name="codigo_costos" id="codigo_costos"> 
-                    <input type="hidden" name="codigo_area" id="codigo_area">
-                    <input type="hidden" name="codigo_almacen_origen" id="codigo_almacen_origen">
-                    <input type="hidden" name="codigo_almacen_destino" id="codigo_almacen_destino">
+                    <input type="hidden" name="codigo_almacen" id="codigo_almacen">
                     <input type="hidden" name="codigo_estado" id="codigo_estado">
-                    <input type="hidden" name="codigo_despacho" id="codigo_despacho">
                     <input type="hidden" name="codigo_autoriza" id="codigo_autoriza">
-                    <input type="hidden" name="codigo_ingreso" id="codigo_ingreso">
-                    <input type="hidden" name="codigo_recepcion" id="codigo_recepcion" value="<?php echo $_SESSION['iduser']?>">
-
+                    <input type="hidden" name="codigo_stock" id="codigo_stock">
+                    <input type="hidden" name="codigo_tipo" id="codigo_tipo">
+                    <input type="hidden" name="tipo" id="tipo" value="37">
 
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
                         <div>
-                            <button type="button" id="updateDocument" title="Cerrar Salida" class="boton3">
-                                <i class="far fa-save"></i> Grabar Ingreso
+                            <button type="button" id="saveDocument" title="Cerrar Salida" class="boton3">
+                                <i class="far fa-save"></i> Grabar Control
                             </button>
                             <button type="button" id="closeProcess" title="Cerrar" class="boton3">
                                 <i class="fas fa-window-close"></i>
@@ -47,38 +44,48 @@
                             </div>
                             <div class="column2">
                                 <label for="costos">Ccostos:</label>
-                                <input type="text" name="costos" id="costos" readonly>
+                                <input type="text" name="costos" id="costos" class="mostrarLista busqueda" placeholder="Elija opción" readonly>
+                                <div class="lista" id="listaCostos">
+                                    <ul>
+                                        <?php echo $this->listaCostos?>
+                                    </ul> 
+                                </div>
                             </div>
                         </div>
                         <div class="seccion_medio">
                             <div class="column2">
-                                <label for="almacen_origen_despacho">Almacen Origen:</label>
-                                <input type="text" name="almacen_origen_ingreso" id="almacen_origen_ingreso" class="busqueda" readonly>
+                                <label for="almacen">Almacen:</label>
+                                <input type="text" name="almacen" id="almacen" class="mostrarLista busqueda" placeholder="Elija opción" readonly>
+                                <div class="lista" id="listaAlmacen">
+                                    <ul>
+                                        <?php echo $this->listaAlmacen?>
+                                    </ul> 
+                                </div>
                             </div>
                             <div class="column2">
-                                <label for="almacen_destino_despacho">Almacen Destino:</label>
-                                <input type="text" name="almacen_destino_ingreso" id="almacen_destino_ingreso" class="mostrarLista busqueda" readonly>
+                                <label for="recepciona">Autoriza:</label>
+                                <input type="text" name="registra" id="registra" class="mostrarLista busqueda" placeholder="Elija opción" readonly>
+                                <div class="lista" id="listaRecepciona">
+                                    <ul>
+                                        <?php echo $this->listaRecepciona?>
+                                    </ul> 
+                                </div>
                             </div>
-                            
                         </div>
                         <div class="seccion_derecha">
                             <div class="column2">
-                                <label for="recepciona">Autoriza:</label>
-                                <input type="text" name="autoriza" id="autoriza" class="mostrarLista busqueda" placeholder="Elija opción" readonly>
-                                <div class="lista uno rowFive" id="listaRecepciona">
-                                <ul>
-                                    <?php echo $this->listaRecepciona?>
-                                </ul> 
-                            </div>
+                                    <label for="tipo">Tipo :</label>
+                                    <input type="text" name="tipoMovimiento" id="tipoMovimiento" class="mostrarLista busqueda" placeholder="Elija opción">
+                                    <div class="lista" id="listaTipo">
+                                        <ul>
+                                            <?php echo $this->listaMovimiento?>
+                                        </ul> 
+                                    </div>
                             </div>
                             <div class="column4_55">
-                                <div class="column2_3957">
-                                    <label for="guia">N° Guia :</label>
-                                    <input type="text" name="cnumguia" id="guia">
-                                </div>
                                 <div class="column2_46">
-                                    <label for="RS :">R.S.:</label>
-                                    <input type="text" name="referido" id="referido">
+                                    <label for="tipo">Fecha Ingreso :</label>
+                                    <input type="date" name="fechaIngreso" id="fechaIngreso" class="cerrarLista" value="<?php echo date("Y-m-d");?>" readonly>
                                 </div>
                             </div>
                         </div>
@@ -86,8 +93,8 @@
                     <div class="barraOpciones">
                         <span>Detalles</span>
                         <div>
-                            <button type="button" id="itemsImport" title="Importar Items" class="cerrarLista boton3">
-                                <i class="fas fa-upload"></i> Buscar Guias
+                            <button type="button" id="itemsImport" title="Agregar Items" class="cerrarLista boton3">
+                                <i class="fas fa-upload"></i> Agregar Item
                             </button>
                         </div>
                     </div>
@@ -95,18 +102,20 @@
                         <table class="tabla" id="tablaDetalles">
                             <thead>
                                 <tr class="stickytop">
-                                        <th class="">Item</th>
-                                        <th class="">Codigo</th>
-                                        <th class="">Descripcion</th>
-                                        <th class="">Unidad</th>
-                                        <th width="7%">Cantidad <br/> Enviada</th>
-                                        <th width="7%">Cantidad <br/> Recep.</th>
-                                        <th class="">Observaciones</th>
-                                        <th class="">Area</th>
-                                        <th class="">Fecha </br> Vencimiento</th>
-                                        <th class="">Ubicación</th>
-                                        <th class="">Pedido</th>
-                                        <th class="">Orden</th>
+                                        <th>Item</th>
+                                        <th>Codigo</th>
+                                        <th>Descripcion</th>
+                                        <th>Unidad</th>
+                                        <th width="7%">Cantidad <br/> Ingresar</th>
+                                        <th>PSI</th>
+                                        <th>Serie</th>
+                                        <th>Nro. Cert </br> Calidad</th>
+                                        <th>Fecha </br> Calibración</th>
+                                        <th>Fecha </br> Vencimiento</th>
+                                        <th>Nro.</br> Certificado</th>
+                                        <th>Condición</th>
+                                        <th>Ubicación</th>
+                                        <th>Observaciones</th>
                                 </tr>
                             </thead>
                             <tbody>

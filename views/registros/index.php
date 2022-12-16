@@ -66,10 +66,10 @@
                                 <label for="recepciona">Autoriza:</label>
                                 <input type="text" name="autoriza" id="autoriza" class="mostrarLista busqueda" placeholder="Elija opción" readonly>
                                 <div class="lista uno rowFive" id="listaRecepciona">
-                                <ul>
-                                    <?php echo $this->listaRecepciona?>
-                                </ul> 
-                            </div>
+                                    <ul>
+                                        <?php echo $this->listaRecepciona?>
+                                    </ul> 
+                                </div>
                             </div>
                             <div class="column4_55">
                                 <div class="column2_3957">

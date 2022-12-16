@@ -62,5 +62,48 @@
                 return false;
             }
         }
+
+        public function nuevoRegistro() {
+            try {
+                $sql = $this->db->connect()->query("SELECT MAX(idreg) AS numero FROM alm_cabexist");
+                $sql->execute();
+
+                $result = $sql->fetchAll();
+
+                return array("numero"=>str_pad($result[0]['numero']+1,6,0,STR_PAD_LEFT));
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage;
+                return false;
+            }
+        }
+
+        public function grabarRegistro($cabecera,$detalles){
+            try {
+                /*$sql = $this->db->connect()->query("SELECT MAX(idreg) AS numero FROM alm_cabexist");
+                $sql->execute();
+
+                $result = $sql->fetchAll();
+
+                return array("numero"=>str_pad($result[0]['numero']+1,6,0,STR_PAD_LEFT));*/
+                var_dump($cabecera);
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage;
+                return false;
+            }
+        }
+
+        private function grabarDetalles($detalles,$indice){
+            try {
+                /*$sql = $this->db->connect()->query("SELECT MAX(idreg) AS numero FROM alm_cabexist");
+                $sql->execute();
+
+                $result = $sql->fetchAll();
+
+                return array("numero"=>str_pad($result[0]['numero']+1,6,0,STR_PAD_LEFT));*/
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage;
+                return false;
+            }
+        }
     }
 ?>
