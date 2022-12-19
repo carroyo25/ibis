@@ -142,7 +142,7 @@
                                                     AND tb_pedidodet.estadoItem = 54
                                                     AND tb_pedidodet.idasigna = :user_asigna
                                                     AND tb_pedidodet.nflgOrden = 0
-                                                    AND (tb_pedidodet.cant_aprob = 0 OR ISNULL(tb_pedidodet.cant_aprob))");
+                                                    AND (tb_pedidodet.cant_aprob > 0 OR ISNULL(tb_pedidodet.cant_aprob))");
 
                 //se cambia el 58 para llama los items directo con aprobacion
                 $sql->execute(["user"=>$_SESSION['iduser'],
