@@ -18,15 +18,9 @@ $(() => {
     $("#closeProcess").click(function (e) { 
         e.preventDefault();
 
-        $("#proceso").fadeOut()
-
-        return false;
-    });
-
-    $("#itemsImport").click(function (e) { 
-        e.preventDefault();
-        
-        $("#busqueda").fadeIn();
+        $("#proceso").fadeOut();
+        $("#form")[0].reset();
+        $("#tablaDetalles tbody").empty();
 
         return false;
     });
@@ -47,7 +41,7 @@ $(() => {
         return false;
     });
 
-     $(".cerrarLista").focus(function (e) { 
+    $(".cerrarLista").focus(function (e) { 
         e.preventDefault();
         
         $(".lista").fadeOut();
@@ -82,7 +76,7 @@ $(() => {
         return false;
     });
 
-    $("#itemsImport").click(function (e) { 
+    $("#itemsAdd").click(function (e) { 
         e.preventDefault();
         
         $.post(RUTA+"pedidos/llamaProductos", {tipo:37},
@@ -95,6 +89,44 @@ $(() => {
             "text"
         );
         
+        return false;
+    });
+
+    $("#itemsImport").click(function (e) { 
+        e.preventDefault();
+
+        $("#fileUpload").trigger("click");
+        
+        return false;
+    });
+
+
+    $("#fileUpload").change(function (e) { 
+        e.preventDefault();
+
+        const input = document.querySelector('#fileUpload');
+
+        try {
+            if (validarExtension(input)) throw "Archivo Inválido";
+
+            const formData = new FormData();
+            formData.append('fileUpload', input.files[0]);
+
+            fetch (RUTA+'stocks/importarItems',{
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                $("#tablaDetalles tbody")
+                    .empty()
+                    .append(data.datos);
+            })
+
+        } catch (error) {
+            mostrarMensaje(error,'mensaje_error');
+        }
+
         return false;
     });
 
@@ -158,6 +190,9 @@ $(() => {
                     <td class="textoCentro"><input type="text"></td>
                     <td class="textoCentro"><input type="text"></td>
                     <td class="textoCentro"><input type="text"></td>
+                    <td class="textoCentro"><input type="text"></td>
+                    <td class="textoCentro"><input type="text"></td>
+                    <td class="textoCentro"><input type="text"></td>
                     <td class="textoCentro"><input type="date"></td>
                     <td class="textoCentro"><input type="date"></td>
                     <td class="textoCentro"><input type="text"></td>
@@ -189,7 +224,7 @@ $(() => {
 
             $.post(RUTA+"stocks/grabaRegisto", {cabecera:result,detalles:JSON.stringify(itemsSave())},
                     function (data, textStatus, jqXHR) {
-                        mostrarMensaje(data.mensaje,data.clase);
+                        mostrarMensaje(data.mensaje,'mensaje_correcto');
                     },
                     "json"
                 );
@@ -202,48 +237,86 @@ $(() => {
 
     $("#tablaPrincipal tbody").on("click","tr", function (e) {
         e.preventDefault();
+        
+        $.post(RUTA+"stocks/resumen",{codigo:$(this).data("idprod")},
+            function (data, textStatus, jqXHR) {
+                console.log(data);
+                $("#numero_pedidos").text(data.pedidos);
+                $("#numero_ordenes").text(data.ordenes);
+                $("#inventario").text(data.inventario);
+                $("#ingresos").text(data.ingresos);
+                $("#pendientes").text(data.pendientes);
+                $("#tabla_precios tbody").empty().append(data.precios);
+                $("#tabla_existencias tbody").empty().append(data.existencias);
+
+                $("#saldo").text(data.inventario + data.ingresos);
+            },
+            "json"
+        );
+        $("#codigo_item").text( $(this).find('td').eq(1).text() );
+        $("#descripcion_item").text( $(this).find('td').eq(2).text() );
 
         $("#vistadocumento").fadeIn();
 
         return false;
     });
+
+    $("#closeDocument").click(function (e) { 
+        e.preventDefault();
+        
+        $("#vistadocumento").fadeOut();
+
+        return false;
+    });
 })
+
+
 
 itemsSave = () =>{
     DATA = [];
     let TABLA = $("#tablaDetalles tbody >tr");
 
     TABLA.each(function(){
-        let IDPROD      = $(this).data('idprod'),
-            UNIDAD      = $(this).data('codund'),
-            ESTADO      = $(this).data('grabado');
-            CANTIDAD    = $(this).find('td').eq(4).children().val(),
-            PSI         = $(this).find('td').eq(5).children().val(),
-            SERIE       = $(this).find('td').eq(6).children().val(),
-            NCERTCAL    = $(this).find('td').eq(7).children().val(),
-            FECCAL      = $(this).find('td').eq(8).children().val(),
-            VENCE       = $(this).find('td').eq(9).children().val(),
-            NCERT       = $(this).find('td').eq(10).children().val(),
-            CONDICION   = $(this).find('td').eq(11).children().val(),
-            UBICACION   = $(this).find('td').eq(12).children().val(),
-            ESPECIFICA  = $(this).find('td').eq(13).children().val();
+        let IDPROD          = $(this).data('idprod'),
+            UNIDAD          = $(this).data('codund'),
+            GRABADO         = $(this).data('grabado');
+            CANTIDAD        = $(this).find('td').eq(4).children().val(),
+            ORDEN           = $(this).find('td').eq(5).children().val(),
+            MARCA           = $(this).find('td').eq(6).children().val(),
+            PSI             = $(this).find('td').eq(7).children().val(),
+            SERIE           = $(this).find('td').eq(8).children().val(),
+            NCERTCAL        = $(this).find('td').eq(9).children().val(),
+            FECCAL          = $(this).find('td').eq(10).children().val(),
+            VENCE           = $(this).find('td').eq(11).children().val(),
+            NCERT           = $(this).find('td').eq(12).children().val(),
+            ESTADO          = $(this).find('td').eq(13).children().val(),
+            CONDICION       = $(this).find('td').eq(14).children().val(),
+            CONTENEDOR      = $(this).find('td').eq(15).children().val(),
+            ESTANTE         = $(this).find('td').eq(16).children().val(),
+            FILA            = $(this).find('td').eq(17).children().val(),
+            OBSERVACIONES   = $(this).find('td').eq(18).children().val();
            
 
         item= {};
         
-        if (ESTADO == 0) {
-            item['idprod']      = IDPROD;
-            item['unidad']      = UNIDAD;
-            item['cantidad']    = CANTIDAD;
-            item['psi']         = PSI;
-            item['serie']       = SERIE;
-            item['ncertcal']    = NCERTCAL;
-            item['feccal']      = FECCAL;
-            item['vence']       = VENCE;
-            item['ncert']       = NCERT;
-            item['condicion']   = CONDICION;
-            item['ubicacion']   = UBICACION;
-            item['especifica']  = ESPECIFICA;
+        if ( GRABADO == 0) {
+            item['idprod']         = IDPROD;
+            item['unidad']         = UNIDAD;
+            item['cantidad']       = CANTIDAD;
+            item['orden']          = ORDEN;
+            item['marca']          = MARCA;
+            item['psi']            = PSI;
+            item['serie']          = SERIE;
+            item['ncertcal']       = NCERTCAL;
+            item['feccal']         = FECCAL;
+            item['vence']          = VENCE;
+            item['ncert']          = NCERT;
+            item['estado']         = ESTADO;
+            item['condicion']      = CONDICION;
+            item['contenedor']     = CONTENEDOR;
+            item['estante']        = ESTANTE;
+            item['fila']           = FILA;
+            item['observaciones']  = OBSERVACIONES;
 
             DATA.push(item);
         } 

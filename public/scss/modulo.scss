@@ -945,6 +945,95 @@ $anulado:#c2c2c2;
             font-size: 0.8rem;
         }
     }
+
+    .cuerpoResumem{
+        display: grid; 
+        grid-auto-columns: 1fr; 
+        grid-template-columns: 1.5fr 2fr 2fr; 
+        grid-template-rows: 0.2fr 1.8fr; 
+        gap: 7px 7px;
+        padding: 20px;
+        grid-template-areas: 
+            "area1 area1 area1"
+            "area2 area3 area4";
+            
+        .area1{
+            grid-area: area1;
+            padding:5px;
+            display:grid;
+            grid-template-columns: max-content 20px 1fr;
+            grid-template-rows: 1fr 1fr;
+            border:1px solid #d1d1d1;
+            line-height: 2rem;
+            column-gap:10px;
+        }
+
+        .area2{
+            grid-area: area2;
+            padding: 5px;
+            display:flex;
+            flex-direction: column;
+            border:1px solid #d1d1d1;
+            gap: 5px;
+            
+            div {
+                display:grid;
+                grid-template-columns: max-content 20px 1fr;
+                grid-template-rows: 1fr 1fr;
+                gap:20px;
+                padding: 20px;
+                //border:1px solid #d1d1d1;
+            }
+        }
+
+        .area3{
+            grid-area: area3;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            border:1px solid #d1d1d1;
+            padding: 2px;
+
+            h4 {
+                margin-bottom: 20px;
+            }
+
+            div {
+                min-height: 14rem;
+                height:10rem;
+            }
+
+            table{
+                border-collapse: collapse;
+                width: 100%;
+                font-size: .8rem;
+
+                thead {
+                    background:#000;
+                    color: #fff;
+                }
+
+                tbody {
+                    tr,td {
+                        border-bottom: 1px dotted #c2c2c2;
+                    }
+                }
+            }
+        }
+
+        .area4{
+            grid-area: area4;
+            gap: 10px;
+            display: flex;
+            flex-direction: column;
+            
+            div {
+                min-height: 5rem;
+                height:10rem;
+                border:1px solid #d1d1d1;
+            }
+        }
+    }
 }
 
 .ventanaProceso {
@@ -1959,7 +2048,7 @@ $anulado:#c2c2c2;
 
 //altos
 .mininoTablaInterna{
-    min-height: 15rem;
+    min-height: 25rem;
 }
 
 //margenes

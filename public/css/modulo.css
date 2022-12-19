@@ -1209,6 +1209,165 @@
   bottom: 0;
   font-size: 0.8rem;
 }
+.ventanaResumen .cuerpoResumem {
+  display: -ms-grid;
+  display: grid;
+  grid-auto-columns: 1fr;
+  -ms-grid-columns: 1.5fr 7px 2fr 7px 2fr;
+  grid-template-columns: 1.5fr 2fr 2fr;
+  -ms-grid-rows: 0.2fr 7px 1.8fr;
+  grid-template-rows: 0.2fr 1.8fr;
+  gap: 7px 7px;
+  padding: 20px;
+      grid-template-areas: "area1 area1 area1" "area2 area3 area4";
+}
+.ventanaResumen .cuerpoResumem .area1 {
+  -ms-grid-row: 1;
+  -ms-grid-column: 1;
+  -ms-grid-column-span: 5;
+  grid-area: area1;
+  padding: 5px;
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: -webkit-max-content 10px 20px 10px 1fr;
+  -ms-grid-columns: max-content 10px 20px 10px 1fr;
+  grid-template-columns: -webkit-max-content 20px 1fr;
+  grid-template-columns: max-content 20px 1fr;
+  -ms-grid-rows: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  border: 1px solid #d1d1d1;
+  line-height: 2rem;
+  -webkit-column-gap: 10px;
+     -moz-column-gap: 10px;
+          column-gap: 10px;
+}
+.ventanaResumen .cuerpoResumem .area1 > *:nth-child(1) {
+  -ms-grid-row: 1;
+  -ms-grid-column: 1;
+}
+.ventanaResumen .cuerpoResumem .area1 > *:nth-child(2) {
+  -ms-grid-row: 1;
+  -ms-grid-column: 3;
+}
+.ventanaResumen .cuerpoResumem .area1 > *:nth-child(3) {
+  -ms-grid-row: 1;
+  -ms-grid-column: 5;
+}
+.ventanaResumen .cuerpoResumem .area1 > *:nth-child(4) {
+  -ms-grid-row: 2;
+  -ms-grid-column: 1;
+}
+.ventanaResumen .cuerpoResumem .area1 > *:nth-child(5) {
+  -ms-grid-row: 2;
+  -ms-grid-column: 3;
+}
+.ventanaResumen .cuerpoResumem .area1 > *:nth-child(6) {
+  -ms-grid-row: 2;
+  -ms-grid-column: 5;
+}
+.ventanaResumen .cuerpoResumem .area2 {
+  -ms-grid-row: 3;
+  -ms-grid-column: 1;
+  grid-area: area2;
+  padding: 5px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  border: 1px solid #d1d1d1;
+  gap: 5px;
+}
+.ventanaResumen .cuerpoResumem .area2 div {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: -webkit-max-content 20px 20px 20px 1fr;
+  -ms-grid-columns: max-content 20px 20px 20px 1fr;
+  grid-template-columns: -webkit-max-content 20px 1fr;
+  grid-template-columns: max-content 20px 1fr;
+  -ms-grid-rows: 1fr 20px 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 20px;
+  padding: 20px;
+}
+.ventanaResumen .cuerpoResumem .area2 div > *:nth-child(1) {
+  -ms-grid-row: 1;
+  -ms-grid-column: 1;
+}
+.ventanaResumen .cuerpoResumem .area2 div > *:nth-child(2) {
+  -ms-grid-row: 1;
+  -ms-grid-column: 3;
+}
+.ventanaResumen .cuerpoResumem .area2 div > *:nth-child(3) {
+  -ms-grid-row: 1;
+  -ms-grid-column: 5;
+}
+.ventanaResumen .cuerpoResumem .area2 div > *:nth-child(4) {
+  -ms-grid-row: 3;
+  -ms-grid-column: 1;
+}
+.ventanaResumen .cuerpoResumem .area2 div > *:nth-child(5) {
+  -ms-grid-row: 3;
+  -ms-grid-column: 3;
+}
+.ventanaResumen .cuerpoResumem .area2 div > *:nth-child(6) {
+  -ms-grid-row: 3;
+  -ms-grid-column: 5;
+}
+.ventanaResumen .cuerpoResumem .area3 {
+  -ms-grid-row: 3;
+  -ms-grid-column: 3;
+  grid-area: area3;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  gap: 20px;
+  border: 1px solid #d1d1d1;
+  padding: 2px;
+}
+.ventanaResumen .cuerpoResumem .area3 h4 {
+  margin-bottom: 20px;
+}
+.ventanaResumen .cuerpoResumem .area3 div {
+  min-height: 14rem;
+  height: 10rem;
+}
+.ventanaResumen .cuerpoResumem .area3 table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.8rem;
+}
+.ventanaResumen .cuerpoResumem .area3 table thead {
+  background: #000;
+  color: #fff;
+}
+.ventanaResumen .cuerpoResumem .area3 table tbody tr, .ventanaResumen .cuerpoResumem .area3 table tbody td {
+  border-bottom: 1px dotted #c2c2c2;
+}
+.ventanaResumen .cuerpoResumem .area4 {
+  -ms-grid-row: 3;
+  -ms-grid-column: 5;
+  grid-area: area4;
+  gap: 10px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+.ventanaResumen .cuerpoResumem .area4 div {
+  min-height: 5rem;
+  height: 10rem;
+  border: 1px solid #d1d1d1;
+}
 
 .ventanaProceso {
   border-radius: 8px;
@@ -2179,7 +2338,7 @@
 }
 
 .mininoTablaInterna {
-  min-height: 15rem;
+  min-height: 25rem;
 }
 
 .izq20px {

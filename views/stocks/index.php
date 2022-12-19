@@ -10,7 +10,7 @@
     <div class="modal" id="proceso">
         <div class="ventanaProceso tamanioProceso">
             <div class="cabezaProceso">
-                <form action="#" id="formProceso" autocomplete="off">
+                <form action="#" id="formProceso" autocomplete="off" enctype='multipart/form-data'>
                     <input type="hidden" name="codigo_costos" id="codigo_costos"> 
                     <input type="hidden" name="codigo_almacen" id="codigo_almacen">
                     <input type="hidden" name="codigo_estado" id="codigo_estado">
@@ -18,6 +18,7 @@
                     <input type="hidden" name="codigo_stock" id="codigo_stock">
                     <input type="hidden" name="codigo_tipo" id="codigo_tipo">
                     <input type="hidden" name="tipo" id="tipo" value="37">
+                    <input type="file" name="fileUpload" id="fileUpload" accept=".xls,.xlsx" class="oculto" >
 
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
@@ -85,7 +86,7 @@
                             <div class="column4_55">
                                 <div class="column2_46">
                                     <label for="tipo">Fecha Ingreso :</label>
-                                    <input type="date" name="fechaIngreso" id="fechaIngreso" class="cerrarLista" value="<?php echo date("Y-m-d");?>" readonly>
+                                    <input type="date" name="fechaIngreso" id="fechaIngreso" class="cerrarLista" value="<?php echo date("Y-m-d");?>">
                                 </div>
                             </div>
                         </div>
@@ -93,8 +94,11 @@
                     <div class="barraOpciones">
                         <span>Detalles</span>
                         <div>
-                            <button type="button" id="itemsImport" title="Agregar Items" class="cerrarLista boton3">
+                            <button type="button" id="itemsAdd" title="Agregar Items" class="cerrarLista boton3">
                                 <i class="fas fa-upload"></i> Agregar Item
+                            </button>
+                            <button type="button" id="itemsImport" title="Agregar Items" class="cerrarLista boton3">
+                            <i class="fas fa-file-excel"></i> Importar Items
                             </button>
                         </div>
                     </div>
@@ -102,20 +106,28 @@
                         <table class="tabla" id="tablaDetalles">
                             <thead>
                                 <tr class="stickytop">
-                                        <th>Item</th>
-                                        <th>Codigo</th>
-                                        <th>Descripcion</th>
-                                        <th>Unidad</th>
-                                        <th width="7%">Cantidad <br/> Ingresar</th>
-                                        <th>PSI</th>
-                                        <th>Serie</th>
-                                        <th>Nro. Cert </br> Calidad</th>
-                                        <th>Fecha </br> Calibración</th>
-                                        <th>Fecha </br> Vencimiento</th>
-                                        <th>Nro.</br> Certificado</th>
-                                        <th>Condición</th>
-                                        <th>Ubicación</th>
-                                        <th>Observaciones</th>
+                                        <th rowspan="2">Item</th>
+                                        <th rowspan="2">Codigo</th>
+                                        <th rowspan="2">Descripcion</th>
+                                        <th rowspan="2">Unidad</th>
+                                        <th rowspan="2" width="7%">Cantidad</th>
+                                        <th rowspan="2" width="7%">Orden</th>
+                                        <th rowspan="2">Marca</th>
+                                        <th rowspan="2">PSI</th>
+                                        <th rowspan="2">Serie</th>
+                                        <th rowspan="2">Nro. Cert </br> Calidad</th>
+                                        <th rowspan="2">Fecha </br> Calibración</th>
+                                        <th rowspan="2">Fecha </br> Vencimiento</th>
+                                        <th rowspan="2">Nro.</br> Certificado</th>
+                                        <th rowspan="2">Estado</th>
+                                        <th rowspan="2">Condicion</th>
+                                        <th colspan="3">Ubicación</th>
+                                        <th rowspan="2">Observaciones</th>
+                                </tr>
+                                <tr class="stickytop">
+                                        <th>Cont.</th>
+                                        <th>Estante</th>
+                                        <th>Fila/Col</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -156,140 +168,102 @@
         </div>
     </div>
     <div class="modal" id="vistadocumento">
-        <div class="ventanaResumen">
-            <form method="post" id="cargoplan">
+        <div class="ventanaResumen tamanioProceso">
                 <div class="tituloDocumento">
                     <div>
-                        <p class="titulo_seccion"><strong> Detalle Cargo Plan : </strong></p>
+                        <p class="titulo_seccion"><strong> Detalle Almacen : </strong></p>
                     </div>
                     <div>
                         <a href="#" id="closeDocument" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
                     </div>
                 </div>
                 <hr>
-                <div class="cuerpoDocumento">
-                    <section class="seccion1">
+                <div class="cuerpoResumem">
+                   <div class="area1">
+                        <label>Codigo</label>
+                        <label>:</label>
+                        <label id="codigo_item"></label>
+                        <label>Descripción del Material</label>
+                        <label>:</label>
+                        <label id="descripcion_item"></label>
+                   </div>
+                   <div class="area2">
                         <div>
-                            <label for="codigo">Código</label>
-                            <input type="text" name="codigo" id="codigo" readonly class="pl10">
+                            <label>Pedidos Solicitados</label>
+                            <label>:</label>
+                            <label id="numero_pedidos"></label>
+                            <label>Ordenes Solicitadas</label>
+                            <label>:</label>
+                            <label id="numero_ordenes"></label>
                         </div>
                         <div>
-                            <label for="producto">Descripción</label>
-                            <input type="text" name="producto" id="producto" readonly class="pl10">
+                            <label>Ingreso Inventario</label>
+                            <label>:</label>
+                            <label id="inventario"></label>
+                            <label>Ingresos Almacen</label>
+                            <label>:</label>
+                            <label id="ingresos"></label>
+                            <label>Salidas Cosumo</label>
+                            <label>:</label>
+                            <label id="consumo"></label>
+                            <label>Saldo Actual</label>
+                            <label>:</label>
+                            <label id="saldo"></label>
                         </div>
                         <div>
-                            <label for="unidad">Unidad</label>
-                            <input type="text" name="unidad" id="unidad" class="drch pr10" readonly>
+                            <label>Solicitado OC</label>
+                            <label>:</label>
+                            <label id="pendiente_compra"></label>
+                        </div>
+                   </div>
+                   <div class="area3">
+                        <div>
+                            <h4>Precios</h4>
+                            <table id="tabla_precios">
+                                <thead class="stickytop">
+                                    <tr class="pointer">
+                                        <th>Fecha</th>
+                                        <th>Moneda</th>
+                                        <th>T.C</th>
+                                        <th>Precio</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
                         </div>
                         <div>
-                            <label for="cantidad">Cant. </br> Solicitada</label>
-                            <input type="text" name="cantidad" id="cantidad" class="textoDerecha pr10px" readonly>
+                            <h4>Existencias Centro de costos</h4>
+                            <table id="tabla_existencias">
+                                <thead class="stickytop">
+                                    <tr class="pointer">
+                                        <th>Centro de Costos</th>
+                                        <th>unidad</th>
+                                        <th>Ingresos</th>
+                                        <th>Salidas</th>
+                                        <th>Saldo</th>
+                                        <th>Almacen</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                   </div>
+                   <div class="area4">
+                        <div>
+                            <h4>Ingresos</h4>
                         </div>
                         <div>
-                            <label for="estado">Estado:</label>
-                            <input type="text" name="estado" id="estado" class="centro destino" readonly>
-                        </div>
-                    </section>
-                    <section class="seccion2">
-                        <div>
-                            <label for="nropedido">N° Pedido:</label>
-                            <input type="text" name="nropedido" id="nropedido" class="drch pr10" readonly>
+                            <h4>Salidas</h4>
                         </div>
                         <div>
-                            <label for="tipo_pedido">Tipo</label>
-                            <input type="text" name="tipo_pedido" id="tipo_pedido" class="centro" readonly>
+                            <h4>Saldos</h4>
                         </div>
-                        <div>
-                            <label for="emision_pedido">Fecha</br>Emisión</label>
-                            <input type="date" name="emision_pedido" id="emision_pedido" class="centro unstyled" readonly>
-                        </div>
-                        <div>
-                            <label for="aprobacion_pedido">Fecha</br>Aprobación</label>
-                            <input type="date" name="aprobacion_pedido" id="aprobacion_pedido" class="centro unstyled" readonly>
-                        </div>
-                        <div>
-                            <label for="aprobado_por">Aprobado por:</label>
-                            <input type="text" name="aprobado_por" id="aprobado_por" class="pl10" readonly>
-                        </div>
-                        <div>
-                            <div></div>
-                            <a href="#" id="pdfpedido" class="callpreview"><i class="far fa-file-pdf"></i></a>
-                        </div>
-                    </section>
-                    <section class="seccion3">
-                        <div>
-                            <label for="orden">N° Orden:</label>
-                            <input type="text" name="nroorden" id="nroorden" class="drch pr10" readonly>
-                        </div>
-                        <div>
-                            <label for="emision_orden">Fecha</br>Emisión</label>
-                            <input type="date" name="emision_orden" id="emision_orden" class="centro unstyled" readonly>
-                        </div>
-                        <div>
-                            <label for="aprobacion_logistica">Fec. Aprob.</br>Logistica</label>
-                            <input type="date" name="aprobacion_logistica" id="aprobacion_logistica" class="centro unstyled" readonly>
-                        </div>
-                        <div>
-                            <label for="aprobacion_operaciones">Fec. Aprob.</br>Operaciones</label>
-                            <input type="date" name="aprobacion_operaciones" id="aprobacion_operaciones" class="centro unstyled" readonly>
-                        </div>
-                        <div>
-                            <label for="aprobacion_finanzas">Fec. Aprob.</br>Finanzas</label>
-                            <input type="date" name="aprobacion_finanzas" id="aprobacion_finanzas" class="centro unstyled" readonly>
-                        </div>
-                        <div>
-                            <div></div>
-                            <a href="#" id="pdforden" class="callpreview"><i class="far fa-file-pdf"></i></a>
-                        </div>
-                    </section>
-                    <section class="seccion4">
-                        <div>
-                            <label for="ingreso">N° Ingreso:</label>
-                            <input type="text" name="ingreso" id="ingreso" class="drch pr5" readonly>
-                        </div>
-                        <div>
-                            <label for="fecha_ingreso">Fecha Ingreso</label>
-                            <input type="date" name="fecha_ingreso" id="fecha_ingreso" class="centro unstyled" readonly>
-                        </div>
-                        <div>
-                            <label for="ingresada">Cantidad</br>Ingreso</label>
-                            <input type="text" name="ingresada" id="ingresada" class="textoDerecha pr10px" readonly>
-                        </div>
-                        <div>
-                            <label for="enviada">Porcentaje</br>Recibido</label>
-                            <div class="porcentaje textoCentro" id="ingresado_porcentaje"><span id="porcentaje_ingresado">0%</span></div>
-                        </div>
-                        <div></div>
-                        <div>
-                            <div></div>
-                            <a href="#" id="pdfingreso" class="callpreview"><i class="far fa-file-pdf"></i></a>
-                        </div>
-                    </section>
-                    <section class="seccion5">
-                        <div>
-                            <label for="despacho">N°. Despacho:</label>
-                            <input type="text" name="despacho" id="despacho" readonly>
-                        </div>
-                        <div>
-                            <label for="fecha_salida">Fecha Salida</label>
-                            <input type="date" name="fecha_salida" id="fecha_salida" class="centro unstyled" readonly>
-                        </div>
-                        <div>
-                            <label for="enviada">Cantidad</br>Despachada</label>
-                            <input type="text" name="enviada" id="enviada" class="textoDerecha pr10px" readonly>
-                        </div>
-                        <div>
-                            <label for="enviada">Porcentaje</br>Enviado</label>
-                            <div class="porcentaje textoCentro" id="enviado_porcentaje"><span id="porcentaje_despacho">0%</span></div>
-                        </div>
-                        <div></div>
-                        <div>
-                            <div></div>
-                            <a href="#" id="pdfsalida" class="callpreview"><i class="far fa-file-pdf"></i></a>
-                        </div>
-                    </section>
+                   </div>
                 </div>
-            </form>
         </div>
     </div>
     <div class="cabezaModulo">
@@ -303,24 +277,16 @@
         <form action="#" id="formConsulta">
             <div class="variasConsultas">
                     <div>
-                        <label for="tipo">Codigo : </label>
+                        <label for="codigoBusqueda">Codigo : </label>
                         <input type="text" name="codigoBusqueda" id="codigoBusqueda">
                     </div>
                     <div>
-                        <label for="costosSearch">Centro de Costos: </label>
-                        <select name="costosSearch" id="costosSearch" class="item4">
-                            <?php echo $this->listaCostosSelect ?>
-                        </select>
+                        <label for="descripcionSearch">Descripcion: </label>
+                        <input type="text" name="descripcionSearch" id="descripcionSearch">
                     </div>
                     <div>
-                        <label for="almacenSearch">Almacen</label>
-                        <select name="almacenSearch" id="almacenSearch">
-                            
-                        </select>
                     </div>
                     <div>
-                        <label for="anio">Año :</label>
-                        <input type="number" name="anioSearch" id="anioSearch" value="<?php echo date("Y")?>" class="textoCentro">
                     </div>
                     <button type="button" id="btnConsulta" class="boton3">Consultar</button> 
             </div>
@@ -329,13 +295,11 @@
     <div class="itemsTabla">
         <table id="tablaPrincipal">
             <thead>
-                <tr>
+                <tr class="stickytop">
                     <th>Item</th>
                     <th>Codigo</th>
                     <th>Descripcion</th>
                     <th>Unidad</th>
-                    <th>Almacen</th>
-                    <th>Centro Costos</th>
                     <th>Cantidad<br>Ingreso</th>
                     <th>Cantidad<br>Salida</th>
                     <th>Saldo</th>
@@ -347,7 +311,7 @@
         </table>
     </div>
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
-    <script src="<?php echo constant('URL');?>public/js/funciones.js"></script>
+    <script src="<?php echo constant('URL');?>public/js/funciones.js?<?php echo constant('VERSION')?>"></script>
     <script src="<?php echo constant('URL');?>public/js/stocks.js?<?php echo constant('VERSION')?>"></script>
 </body>
 </html>

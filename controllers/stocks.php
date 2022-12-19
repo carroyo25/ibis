@@ -25,6 +25,14 @@
         function grabaRegisto() {
             echo json_encode($this->model->grabarRegistro($_POST['cabecera'],$_POST['detalles']));
         }
+
+        function importarItems(){
+            echo json_encode($this->model->importFromXsl($_FILES['fileUpload']));
+        }
+
+        function resumen() {
+            echo json_encode($this->model->obtenerResumen($_POST['codigo']));
+        }
         
     }
 ?>
