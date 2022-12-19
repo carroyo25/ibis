@@ -165,6 +165,7 @@
             return $salida;
         }
 
+        //ACTUALIZA LA CABECERA
         private function actCabPedAprueba($estado,$pedido,$aprobado){
             try {
                 $sql = $this->db->connect()->prepare("UPDATE tb_pedidocab 
@@ -181,6 +182,7 @@
             }
         }
 
+        //ACTUALIZAR DETALLES DEL PEDIDO
         private function actDetPedAprueba($estado,$detalles){
             $datos = json_decode($detalles);
             $nreg =  count($datos);

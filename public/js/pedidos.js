@@ -209,13 +209,13 @@ $(function(){
             if ($("#tablaDetalles tbody tr").length <= 0) throw "El pedido no tienes items";
             if (checkCantTables($("#tablaDetalles tbody > tr"),5)) throw "No ingreso cantidad en un item";
 
-            if (accion == 'n'){
+            if ( accion == 'n' ){
                 $.post(RUTA+"pedidos/nuevoPedido", {cabecera:result,detalles:JSON.stringify(itemsSave())},
                     function (data, textStatus, jqXHR) {
                         mostrarMensaje(data.mensaje,data.clase);
 
                         grabado = true;
-                        accion = null;
+                        accion = '';
                         $("#codigo_pedido").val(data.indice);
 
                         $("#fileAtachs").trigger("submit");
@@ -250,7 +250,7 @@ $(function(){
         }else if(dias <= 7){
             $("#codigo_atencion").val(46);
         }else if(dias > 7){
-            $("#codigo_atencion").val(47);
+            $("#codigo_atencion").val(46);
         };
         
         return false;

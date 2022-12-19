@@ -98,7 +98,10 @@
                                 <i class="fas fa-upload"></i> Agregar Item
                             </button>
                             <button type="button" id="itemsImport" title="Agregar Items" class="cerrarLista boton3">
-                            <i class="fas fa-file-excel"></i> Importar Items
+                                <i class="fas fa-file-excel"></i> Importar Items
+                            </button>
+                            <button type="button" id="itemsVerify" title="Verificar Codigos" class="cerrarLista boton3">
+                                <i class="fas fa-file-excel"></i> Verificar Items
                             </button>
                         </div>
                     </div>
@@ -112,13 +115,13 @@
                                         <th rowspan="2">Unidad</th>
                                         <th rowspan="2" width="7%">Cantidad</th>
                                         <th rowspan="2" width="7%">Orden</th>
-                                        <th rowspan="2">Marca</th>
-                                        <th rowspan="2">PSI</th>
+                                        <th rowspan="2">N° Colada/Lote</th>
+                                        <th rowspan="2">N° TAG</th>
                                         <th rowspan="2">Serie</th>
                                         <th rowspan="2">Nro. Cert </br> Calidad</th>
                                         <th rowspan="2">Fecha </br> Calibración</th>
                                         <th rowspan="2">Fecha </br> Vencimiento</th>
-                                        <th rowspan="2">Nro.</br> Certificado</th>
+                                        <th rowspan="2">Nro.Registro</br> Liberación </th>
                                         <th rowspan="2">Estado</th>
                                         <th rowspan="2">Condicion</th>
                                         <th colspan="3">Ubicación</th>

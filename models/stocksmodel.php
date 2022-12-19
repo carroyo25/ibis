@@ -149,6 +149,7 @@
         public function importFromXsl(){
             require_once('public/PHPExcel/PHPExcel.php');
             try {
+                
                 $temporal	 = $_FILES['fileUpload']['tmp_name'];
 
                 $objPHPExcel = PHPExcel_IOFactory::load($temporal);
@@ -159,9 +160,10 @@
                 foreach ($objHoja as $iIndice=>$objCelda) {
                     if ( $objCelda['B'] && $objCelda['B']!="CODIGO") {
 
-                        $codigo = $this->establecerCodigos($objCelda['B']);
+                        //$codigo = $this->establecerCodigos($objCelda['B']);
+                        //$codigo = "";
                         
-                        $datos .='<tr data-grabado="0" data-idprod="'.$codigo['codigo'].'" data-codund="'.$codigo['unidad'].'" data-idx="-">
+                        $datos .='<tr data-grabado="0" data-idprod="" data-codund="" data-idx="-">
                                     <td class="textoCentro">'.str_pad($fila++,6,0,STR_PAD_LEFT).'</td>
                                     <td class="textoCentro">'.$objCelda['B'].'</td>
                                     <td class="pl20px">'.$objCelda['C'].'</td>
@@ -208,8 +210,10 @@
 
                 $result = $sql->fetchAll();
 
-
-                return array("codigo"=>$result[0]['id_cprod'],"unidad"=>$result[0]['nund']);
+                if(gettype($result) == NULL)
+                    return array("codigo"=>"X","unidad"=>"X");
+                else    
+                    return array("codigo"=>$result[0]['id_cprod'],"unidad"=>$result[0]['nund']);
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
