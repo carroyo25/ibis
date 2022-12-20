@@ -164,17 +164,19 @@
                 
 
                 if ($rowCount > 0){
+                    $indice = $this->ultimoIndiceTabla("SELECT MAX(idreg) AS indice FROM tb_pedidocab");
                     $this->saveItems($datos['codigo_verificacion'],
                                     $datos['codigo_estado'],
                                     $datos['codigo_atencion'],
                                     $datos['codigo_tipo'],
                                     $datos['codigo_costos'],
                                     $datos['codigo_area'],
-                                    $detalles);
+                                    $detalles,
+                                    $indice);
                     $respuesta = true;
                     $mensaje = "Pedido Grabado";
                     $clase = "mensaje_correcto";
-                    $indice = $this->ultimoIndiceTabla("SELECT MAX(idreg) AS indice FROM tb_pedidocab");
+                    
                 }
 
                 $salida = array("respuesta"=>$respuesta,
@@ -386,7 +388,7 @@
             return $rowCount;
         }
 
-        //Gtaba un solo Item de la modificacion
+        //Graba un solo Item de la modificacion
         private function saveItem($codigo,$estado,$atencion,$tipo,$costos,$area,$detalles){
             $indice = $this->obtenerIndice($codigo,"SELECT idreg AS numero FROM tb_pedidocab WHERE tb_pedidocab.verificacion =:id");
 
@@ -415,36 +417,56 @@
             }
         }
        
-        private function saveItems($codigo,$estado,$atencion,$tipo,$costos,$area,$detalles){
-            $indice = $this->obtenerIndice($codigo,"SELECT idreg AS numero FROM tb_pedidocab WHERE tb_pedidocab.verificacion =:id");
+        private function saveItems($codigo,$estado,$atencion,$tipo,$costos,$area,$detalles,$indice){
 
             $datos = json_decode($detalles);
             $nreg = count($datos);
 
             for ($i=0; $i < $nreg; $i++) { 
                 try {
-                        $sql = $this->db->connect()->prepare("INSERT INTO tb_pedidodet SET idpedido=:ped,idprod=:prod,idtipo=:tipo,unid=:und,
-                                                                                    cant_pedida=:cant,estadoItem=:est,tipoAten=:aten,
-                                                                                    verificacion=:ver,nflgqaqc=:qaqc,idcostos=:costos,idarea=:area,
-                                                                                    observaciones=:espec");
-                        $sql ->execute([
-                                        "ped"=>$indice,
-                                        "prod"=>$datos[$i]->idprod,
-                                        "tipo"=>$tipo,
-                                        "und"=>$datos[$i]->unidad,
-                                        "cant"=>$datos[$i]->cantidad,
-                                        "est"=>$estado,
-                                        "aten"=>$atencion,
-                                        "ver"=>$codigo,
-                                        "qaqc"=>$datos[$i]->calidad,
-                                        "costos"=>$costos,
-                                        "area"=>$area,
-                                        "espec"=>$datos[$i]->especifica]);
+                        //$existe = $this->vericaExiste($datos[$i]->idprod,$datos[$i]->cantidad,$datos[$i]->especifica);
+
+                        //if ( $existe == 0) {
+                            $sql = $this->db->connect()->prepare("INSERT INTO tb_pedidodet SET idpedido=:ped,idprod=:prod,idtipo=:tipo,unid=:und,
+                            cant_pedida=:cant,estadoItem=:est,tipoAten=:aten,
+                            verificacion=:ver,nflgqaqc=:qaqc,idcostos=:costos,idarea=:area,
+                            observaciones=:espec");
+                            $sql ->execute([
+                                "ped"=>$indice,
+                                "prod"=>$datos[$i]->idprod,
+                                "tipo"=>$tipo,
+                                "und"=>$datos[$i]->unidad,
+                                "cant"=>$datos[$i]->cantidad,
+                                "est"=>$estado,
+                                "aten"=>$atencion,
+                                "ver"=>$codigo,
+                                "qaqc"=>$datos[$i]->calidad,
+                                "costos"=>$costos,
+                                "area"=>$area,
+                                "espec"=>$datos[$i]->especifica]);
+                        //}
+                       
                    
                 } catch (PDOException $th) {
                     echo "Error: ".$th->getMessage();
                     return false;
                 }
+            }
+        }
+
+        private function vericaExiste($prod,$cant,$observa){
+            try {
+                $sql=$this->db->connect()->prepare("SELECT COUNT(idprod)  AS numero
+                                                    FROM tb_pedidodet 
+                                                    WHERE  idprod=:producto
+                                                    AND cant_pedida=:cantidad");
+                $sql->execute(["producto"=>$prod, "cantidad"=>$cant]);
+                $result = $sql->fetchAll();
+
+                return $result[0]['numero'];
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
             }
         }
 

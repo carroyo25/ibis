@@ -73,8 +73,7 @@
         </div>
     </div>
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
-    <script src="<?php echo constant('URL');?>public/code/highcharts.js"></script>
-    <script src="<?php echo constant('URL');?>public/code/highcharts-3d.js"></script>
+    
     <script src="<?php echo constant('URL');?>public/js/chart.js"></script>
 
 </body>

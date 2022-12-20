@@ -313,7 +313,8 @@ itemsPreview = () =>{
             APROBADA    = $(this).find('td').eq(6).children().val(),
             NROPARTE    = $(this).find('td').eq(7).text(),
             OBSERVA     = $(this).find('td').eq(8).children().val(),
-            VERIFICA    = $(this).find('td').eq(9).children().prop("checked"),
+            VERIFICA    = true;
+            //VERIFICA    = $(this).find('td').eq(9).children().prop("checked"),  //aca esta el problema
             ITEMPEDIDO  = $(this).data('idx');
             OBSERVAC    = ""
 

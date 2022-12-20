@@ -361,14 +361,6 @@
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
     <script src="<?php echo constant('URL');?>public/js/funciones.js?<?php echo constant('VERSION')?>"></script>
     <script src="<?php echo constant('URL');?>public/js/segpedgen.js?<?php echo constant('VERSION')?>"></script>
-
-    <script src="<?php echo constant('URL');?>public/code/highcharts.js"></script>
-    <script src="<?php echo constant('URL');?>public/code/highcharts-more.js"></script>
-    <script src="<?php echo constant('URL');?>public/code/modules/solid-gauge.js"></script>
-    <script src="<?php echo constant('URL');?>public/code/modules/exporting.js"></script>
-    <script src="<?php echo constant('URL');?>public/code/modules/export-data.js"></script>
-    <script src="<?php echo constant('URL');?>public/code/modules/accessibility.js"></script>
-
     <script src="<?php echo constant('URL');?>public/js/gauge.js?<?php echo constant('VERSION')?>"></script>
 </body>
 </html>

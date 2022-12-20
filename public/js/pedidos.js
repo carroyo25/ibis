@@ -145,7 +145,6 @@ $(function(){
 
                 $("#proceso").fadeOut(function(){
                     grabado = false;
-                    $("form")[0].reset();
                     $("form")[1].reset();
                     $("#tablaDetalles tbody,.listaArchivos").empty();
                     $(".lista").fadeOut();
@@ -192,7 +191,7 @@ $(function(){
 
     $("#saveItem").click(function (e) { 
         e.preventDefault();
-
+        
         let result = {};
 
         $.each($("#formProceso").serializeArray(),function(){
@@ -215,19 +214,20 @@ $(function(){
                         mostrarMensaje(data.mensaje,data.clase);
 
                         grabado = true;
-                        accion = '';
+                        accion = "u";
+                        $("#tablaDetalles tbody > tr").attr("data-grabado","1")
+
                         $("#codigo_pedido").val(data.indice);
 
                         $("#fileAtachs").trigger("submit");
-                                               
                     },
                     "json"
                 );
-            }else{
+            }else if(accion == 'u'){
                 $.post(RUTA+"pedidos/modificaPedido", {cabecera:result,detalles:JSON.stringify(itemsSave())},
                     function (data, textStatus, jqXHR) {
                         mostrarMensaje(data.mensaje,data.clase);
-                        accion = null;
+                        accion = "";
                     },
                     "json");
             }
@@ -691,7 +691,7 @@ itemsPreview = () =>{
             OBSERVAC    = "",
             NROPARTE    = $(this).find('td').eq(7).text(),
 
-        item= {};
+        item = {};
         
         item['item']        = ITEM;
         item['codigo']      = CODIGO;
