@@ -207,6 +207,7 @@ $(function(){
             if (result['codigo_tipo'] == '') throw "Elija el tipo de pedido";
             if ($("#tablaDetalles tbody tr").length <= 0) throw "El pedido no tienes items";
             if (checkCantTables($("#tablaDetalles tbody > tr"),5)) throw "No ingreso cantidad en un item";
+            
 
             if ( accion == 'n' ){
                 $.post(RUTA+"pedidos/nuevoPedido", {cabecera:result,detalles:JSON.stringify(itemsSave())},
@@ -215,7 +216,8 @@ $(function(){
 
                         grabado = true;
                         accion = "u";
-                        $("#tablaDetalles tbody > tr").attr("data-grabado","1")
+                        
+                        $("#tablaDetalles tbody > tr").attr("data-grabado",1);
 
                         $("#codigo_pedido").val(data.indice);
 
@@ -721,7 +723,7 @@ itemsSave = () =>{
             NROPARTE    = $(this).find('td').eq(7).text(),
             IDX         = $(this).data('idx'),
             CALIDAD     = 0,
-            ESTADO      = $(this).data('grabado');
+            ESTADO      = $(this).attr('data-grabado');
             ESPECIFICA  = $(this).find('td').eq(6).children().val();
 
         item= {};
@@ -734,6 +736,7 @@ itemsSave = () =>{
             item['itempedido']  = IDX;
             item['calidad']     = CALIDAD;
             item['especifica']  = ESPECIFICA;
+            item['estado']      = ESTADO;
 
             DATA.push(item);
         } 
