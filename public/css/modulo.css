@@ -1805,6 +1805,14 @@
   width: 33%;
   margin-right: 10px;
 }
+.ventanaArchivos table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.ventanaArchivos table thead {
+  background: #000;
+  color: #fff;
+}
 
 .tabs_labels {
   display: -webkit-box;
@@ -1930,6 +1938,9 @@
           justify-content: space-evenly;
   padding: 10px;
   border-radius: 8px;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
 }
 .ventanaProceso .dataProceso .igv label, .ventanaProceso .dataProceso_2 .igv label, .ventanaProceso .dataProceso_flex .igv label, .ventanaProceso .dataProceso_flex_columna .igv label {
   margin-top: 0 !important;

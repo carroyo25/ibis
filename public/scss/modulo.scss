@@ -1451,6 +1451,16 @@ $anulado:#c2c2c2;
             margin-right: 10px;
         }
     }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+
+        thead{
+            background: #000;
+            color: #fff;
+        }
+    }
 }
 
 .tabs_labels{
@@ -1572,6 +1582,7 @@ $anulado:#c2c2c2;
             justify-content: space-evenly;
             padding: 10px;
             border-radius: 8px;
+            align-items: center;
 
             label {
                 margin-top: 0 !important;

@@ -1597,7 +1597,7 @@
                                                         placeholder="0.00" 
                                                         onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"
                                                         onclick="this.select()" 
-                                                        value="'.$rs['cant_pendiente'].'"
+                                                        value="'.$rs['cant_pedida'].'"
                                                         class="valorAtendido">
                                         </td>
                                         <td></td>

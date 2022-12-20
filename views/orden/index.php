@@ -180,8 +180,8 @@
                                     <input type="text" name="ncotiz" id="ncotiz" class="cerrarLista">
                                 </div>
                                 <div class="column2">
-                                    <label for="dscto">Descuentos %:</label>
-                                    <input type="text" name="dscto" id="dscto" class="cerrarLista">
+                                    <label for="dscto">Referencia</label>
+                                    <input type="text" name="referencia" id="referencia" class="cerrarLista">
                                 </div>
                             </div>
                             <div class="column2">
@@ -199,6 +199,9 @@
                     <div class="barraOpciones">
                         <span>Detalles</span>
                         <div>
+                            <button type="button" id="addCharges" title="Otros Cargos" class="cerrarLista boton3">
+                                <i class="far fa-paper-plane"></i> Otros Adicionales
+                            </button>
                             <button type="button" id="uploadCotiz" title="Adjuntar Coizacion" class="cerrarLista boton3">
                                 <i class="far fa-file-pdf"></i> Adjuntar archivos
                             </button>
@@ -382,6 +385,34 @@
                 <div class="opcionesArchivos">
                     <button type="button" class="boton3" id="btnConfirmAtach">Aceptar</button>
                     <button type="button" class="boton3" id="btnCancelAtach">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="modal" id="adicionales">
+        <div class="ventanaArchivos">
+            <form action="#" id="fileAtachs" enctype='multipart/form-data'>
+                <div class="tituloArchivos">
+                    <h3>Cargos adicionales</h3>
+                    <a href="#" id="openArch" title="Adjuntar Archivos"><i class="fas fa-file-medical"></i><p>Añadir</p></a>
+                </div>            
+                <div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Descripcion</th>
+                                <th>Moneda</th>
+                                <th>Valor</th>
+                            </tr>
+                            <tbody>
+
+                            </tbody>
+                        </thead>
+                    </table>
+                </div>
+                <div class="opcionesArchivos">
+                    <button type="button" class="boton3" id="btnConfirmAdic">Aceptar</button>
+                    <button type="button" class="boton3" id="btnCancelAdic">Cancelar</button>
                 </div>
             </form>
         </div>

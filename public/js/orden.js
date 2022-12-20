@@ -780,6 +780,23 @@ $(function(){
 
         return false        
     });
+
+    $("#addCharges").click(function(e){
+        e.preventDefault();
+
+        $("#adicionales").fadeIn();
+
+        return false;
+    });
+
+    $("#btnCancelAdic").on("click", function (e) {
+        e.preventDefault();
+
+        $("#adicionales").fadeOut();
+
+        return false;
+
+    });
 })
 
 
