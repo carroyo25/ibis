@@ -462,6 +462,7 @@ $(function(){
         });
         formData.append("detalles",JSON.stringify(detalles()));
         formData.append("comentarios",JSON.stringify(comentarios()));
+        formData.append("adicionales",JSON.stringify(adicionales()));
 
         try {
             if ($("#codigo_estado").val() == 59) throw "La orden esta en firmas.";
@@ -783,19 +784,55 @@ $(function(){
 
     $("#addCharges").click(function(e){
         e.preventDefault();
+        
+        try {
+            if ($("#codigo_costos").val() == "") throw "Faltan datos en la orden";
+            if ($("#codigo_moneda").val() == "") throw "Seleccione el tipo de moneda";
 
-        $("#adicionales").fadeIn();
-
+            $("#adicionales").fadeIn();
+            
+        } catch (error) {
+            mostrarMensaje(error,"mensaje_error");
+        }
+        
         return false;
     });
 
     $("#btnCancelAdic").on("click", function (e) {
         e.preventDefault();
 
+        $("#tablaAdicionales tbody").empty();
         $("#adicionales").fadeOut();
 
         return false;
+    });
 
+    $("#btnConfirmAdic").on("click", function (e) {
+        e.preventDefault();
+
+        $("#adicionales").fadeOut();
+
+        $("#total_adicional").val(sumarAdicionales($("#tablaAdicionales tbody >tr"),2));
+
+        return false;
+    });
+
+    $("#addAdic").click(function (e) { 
+        e.preventDefault();
+        
+        let moneda = $("#moneda").val();
+
+        let row =  `<tr class="pointer">
+                        <td><input type="text" class="pl20px mayusculas"></td>
+                        <td class="textoCentro">${moneda}</td>
+                        <td><input type="number" class="textoDerecha"></td>
+                        <td class="textoCentro"><a href="#"></a><i class="fas fa-minus"></i></td>
+                    </tr>`;
+
+        $("#tablaAdicionales tbody")
+            .append(row);
+
+        return false;
     });
 })
 
@@ -901,5 +938,41 @@ mailsList = () => {
     })
 
     return CORREOS;
+}
+
+adicionales = () => {
+    ADICIONALES = [];
+
+    let TABLA = $("#tablaAdicionales tbody >tr");
+
+    TABLA.each(function (){
+        let ENTIDAD      = $("#codigo_entidad").val(),
+            MONEDA       = $("#codigo_moneda").val(),
+            DESCRIPCION  = $(this).find('td').eq(0).children().val(),
+            VALOR        = $(this).find('td').eq(2).children().val();
+
+        item = {};
+
+        item['entidad']     = ENTIDAD;
+        item['moneda']      = MONEDA;
+        item['descripcion'] = DESCRIPCION;
+        item['valor']       = VALOR;
+
+        ADICIONALES.push(item);
+    });
+
+    return ADICIONALES;
+}
+
+
+//funcion para sumar eliminando el problema de las comas 
+sumarAdicionales = (TABLA,indice) =>{
+    let sum = 0;
+
+    TABLA.each(function() {  
+        sum += parseFloat($(this).find('td').eq(indice).children().val().replace(/,/g, ''), 10);  
+    }); 
+       
+    return sum.toFixed(2);
 }
 

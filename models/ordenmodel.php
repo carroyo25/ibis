@@ -311,7 +311,7 @@
             return $salida;
         }
 
-        public function insertarOrden($cabecera,$detalles,$comentarios,$adjuntos){
+        public function insertarOrden($cabecera,$detalles,$comentarios,$adjuntos,$adicionales){
             try {
                 $salida = false;
                 $respuesta = false;
@@ -334,7 +334,8 @@
                                                                                 nigv=:igv,ntotal=:total,ncodpry=:proyecto,ncodcos=:ccostos,ncodarea=:area,
                                                                                 ctiptransp=:transporte,id_cuser=:elabora,ncodpago=:pago,nplazo=:pentrega,cnumcot=:cotizacion,
                                                                                 cdocPDF=:adjunto,nEstadoDoc=:est,ncodalm=:almacen,nflgactivo=:flag,nNivAten=:atencion,
-                                                                                cverificacion=:verif,cObservacion=:observacion");
+                                                                                cverificacion=:verif,cObservacion=:observacion,cReferencia=:referencia,
+                                                                                nAdicional=:adicional");
 
                 $sql ->execute(["pedi"=>$cab->codigo_pedido,
                                 "anio"       =>$periodo[0],
@@ -363,13 +364,16 @@
                                 "atencion"   =>47,
                                 "verif"      =>$cab->codigo_verificacion,
                                 "cotizacion" =>$cab->ncotiz,
-                                "observacion"=>$cab->concepto]);
+                                "observacion"=>$cab->concepto,
+                                "referencia" =>$cab->referencia,
+                                "adicional"  =>$cab->total_adicional]);
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0){
                     $this->subirArchivos($orden,$adjuntos);
                     $this->grabarDetalles($cab->codigo_verificacion,$detalles,$cab->codigo_costos,$orden);
                     $this->grabarComentarios($cab->codigo_orden,$comentarios);
+                    $this->grabarAdicionales($cab->codigo_orden,$adicionales);
                     $this->actualizarDetallesPedido(84,$detalles,$orden,$cab->codigo_entidad);
                     $this->actualizarCabeceraPedido(58,$cab->codigo_pedido,$orden);
                     $respuesta = true;
@@ -389,6 +393,28 @@
                 echo "Error: ".$th->getMessage();
                 return false;
             }    
+        }
+
+        private function grabarAdicionales($codigo,$adicionales){
+            try {
+                $indice = $this->obtenerIndice($codigo,"SELECT id_regmov AS numero FROM lg_ordencab WHERE lg_ordencab.cverificacion =:id");
+                $datos = json_decode($adicionales);
+                $nreg = count($datos);
+
+                for ($i=0; $i < $nreg ; $i++) { 
+                    $sql = $this->db->connect()->prepare("INSERT INTO lg_ordenadic SET idorden=:orden,
+                                                                                        idcenti=:entidad,
+                                                                                        cconcepto=:concepto,
+                                                                                        nmonto=:total");
+                    $sql->execute(["orden"=>$indice,
+                                    "entidad"=>$datos->entidad,
+                                    "concepto"=>$datos->descripcion,
+                                    "total"=>$datos->valor]);
+                }
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
         }
 
         private function grabarDetalles($codigo,$detalles,$costos,$idx){

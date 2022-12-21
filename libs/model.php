@@ -2391,7 +2391,7 @@
             $orden = $cabecera['sw'] == 0 ? $noc : $cabecera['numero'];
             $titulo = $titulo . " " .$anio[0]. " - " . $orden;
             
-            $file = $prefix.$noc."_".$cabecera['codigo_costos'].".pdf";
+            $file = $cabecera['entidad']."_".$prefix.$noc.".pdf";
             $entrega = $this->calcularDias($cabecera['fentrega']);
 
             $pdf = new PDF($titulo,$condicion,$cabecera['emision'],$cabecera['moneda'],$entrega,
@@ -2399,7 +2399,7 @@
                             $cabecera['costos'],$cabecera['concepto'],$_SESSION['nombres'],$cabecera['entidad'],$cabecera['ruc_entidad'],
                             $cabecera['direccion_entidad'],$cabecera['telefono_entidad'],$cabecera['correo_entidad'],$cabecera['retencion'],
                             $cabecera['atencion'],$cabecera['telefono_contacto'],$cabecera['correo_contacto'],
-                            $cabecera['direccion_almacen']);
+                            $cabecera['direccion_almacen'],$cabecera['referencia']);
 
             $pdf->AddPage();
             $pdf->AliasNbPages();
@@ -2435,11 +2435,10 @@
             $pdf->SetFillColor(229, 229, 229);
             $pdf->SetFont('Arial','B',10);
             $pdf->Cell(20,6,"TOTAL :","LTB",0,"C",true);
-            $pdf->SetFont('Arial','B',8);
             
             $pdf->SetFont('Arial','B',10);
 
-            if ($cabecera['radioIgv'] ==  0){
+            if ($cabecera['radioIgv'] == 0){
                 $pdf->Cell(140,6,$this->convertir($cabecera['total_numero'])." ".$cabecera['moneda'],"TBR",0,"L",true); 
                 $pdf->Cell(30,6,number_format($cabecera['total_numero'],2),"1",1,"R",true);
             }
@@ -2447,7 +2446,6 @@
                 $pdf->Cell(140,6,$this->convertir($cabecera['total_numero']*1.18)." ".$cabecera['moneda'],"TBR",0,"L",true);
                 $pdf->Cell(30,6,number_format($cabecera['total_numero']*1.18,2),"1",1,"R",true);
             }
-                
 
             $pdf->Ln(1);
             $pdf->SetFont('Arial',"","7");
@@ -2456,66 +2454,72 @@
             $pdf->Cell(80,6,utf8_decode("Información Bancaria del Proveedor"),1,0,"C",true);
             $pdf->Cell(10,6,"",0,0);
 
-            if ($cabecera['radioIgv'] ==  0) {
-                $pdf->Cell(45,6,"Valor Venta",0,0);
-                $pdf->Cell(10,6,number_format($cabecera['total_numero'],2),0,1,"R");
-            }else {
-                $total_sin_igv = round($cabecera['total_numero'],2);
-                
-                $pdf->Cell(45,6,"Valor Venta",0,0);
-                $pdf->Cell(10,6,number_format($cabecera['total_numero'],2),0,1,"R");
-            }
+            $pdf->SetX(146);
+
+            $pdf->Cell(33,6,"Valor Venta",0,0);
+            $pdf->Cell(20,6,number_format($cabecera['total_numero'],2),0,1,"R");
+            
 
             $pdf->Cell(10,6,utf8_decode("Año"),1,0);   
             $pdf->Cell(10,6,"Tipo",1,0);
             $pdf->Cell(10,6,"Pedido",1,0);
             $pdf->Cell(10,6,"Mantto",1,0);
             $pdf->Cell(5,6,"",0,0);
-            $pdf->Cell(35,4,"Detalle del Banco",1,0);
-            $pdf->Cell(15,4,"Moneda",1,0);
-            $pdf->Cell(30,4,"Nro. Cuenta Bancaria",1,0);
+            $pdf->Cell(35,6,"Detalle del Banco",1,0);
+            $pdf->Cell(15,6,"Moneda",1,0);
+            $pdf->Cell(30,6,"Nro. Cuenta Bancaria",1,0);
+
+            $pdf->SetX(146);
 
             if($cabecera['radioIgv'] ==  0) {
                 $pdf->SetX(146);
-                $pdf->Cell(8,6,"",0,0);
-                $pdf->Cell(20,6,"",0,0);
+                $pdf->Cell(8,3,"",0,0);
+                $pdf->Cell(20,3,"",0,0);
                 $pdf->SetX(185);
-                $pdf->Cell(20,6,"",0,1); 
+                $pdf->Cell(20,3,"",0,1); 
             }else{
                 $igv = round((floatval($cabecera['total_numero'])*0.18),2);
-                $total_sin_igv = number_format($cabecera['total_numero'] - $igv,2);
                 $pdf->SetX(146);
-                $pdf->Cell(8,6,"IGV",0,0);
-                $pdf->Cell(36,6,"(18%)",0,0);
-                $pdf->Cell(10,6,number_format($igv,2),0,1,"R");
+                $pdf->Cell(13,3,"IGV",0,0);
+                $pdf->Cell(20,3,"(18%)",0,0);
+                $pdf->Cell(20,3,number_format($igv,2),0,1,"R");
             }
 
-            $pdf->SetFont('Arial',"","7");
-            $pdf->Cell(10,6,$anio[0],1,0);
-            $pdf->Cell(10,6,$tipo,1,0,"C");
-            $pdf->Cell(10,6,str_pad($cabecera['nro_pedido'],6,0,STR_PAD_LEFT),1,0);
-            $pdf->Cell(10,6,"",1,0);
-            $pdf->Cell(5,6,"",0,0);
+            $pdf->SetX(146);
 
-            $pdf->Cell(90,4,"",0,0);
+            if ( $cabecera['total_adicional'] ) {
+                $pdf->Cell(33,6,"CARGO(0)",0,0);
+                $pdf->Cell(20,6,number_format($cabecera['total_adicional'],2),0,1,"R");
+            }else {
+                $pdf->Cell(43,6,"",0,0);
+                $pdf->Cell(30,6,"",0,1);
+            }
+            
+            $pdf->SetX(146);
             $pdf->SetFont('Arial',"B","8");
             $pdf->Cell(20,4,"TOTAL",1,0,"L",true);
             $pdf->Cell(15,4,$cabecera['moneda'],1,0,"C",true);
 
             if ( $cabecera['radioIgv'] ==  0 )
-                $pdf->Cell(20,4,number_format($cabecera['total_numero'],2),1,1,"R",true);
+                $pdf->Cell(20,4,number_format($cabecera['total_numero']+$cabecera['total_adicional'],2),1,1,"R",true);
             else 
-                $pdf->Cell(20,4,number_format($cabecera['total_numero']*1.18,2),1,1,"R",true);
-            
+                $pdf->Cell(20,4,number_format(($cabecera['total_numero']*1.18)+$cabecera['total_adicional'],2),1,1,"R",true);
+
+           
             $nreg = count($bancos);
 
-            
             $x = $pdf->GetX();
             $y = $pdf->GetY();
-            
 
-            $pdf->SetXY(55,$y-6);
-            $pdf->SetFont('Arial',"B","6");
+            $pdf->SetXY(10,$y-7);
+            $pdf->SetFont('Arial',"","7");
+            $pdf->Cell(10,6,$anio[0],1,0);
+            $pdf->Cell(10,6,$tipo,1,0,"C");
+            $pdf->Cell(10,6,str_pad($cabecera['nro_pedido'],6,0,STR_PAD_LEFT),1,0);
+            $pdf->Cell(10,6,"",1,0);
+            
+            $pdf->SetXY(55,$y-7);
+            $pdf->SetFont('Arial',"","6");
 
             for ($i=0;$i<$nreg;$i++){
                 $pdf->Cell(35,4,$bancos[$i]['banco'],1,0);
@@ -2523,7 +2527,6 @@
                 $pdf->Cell(30,4,$bancos[$i]['cuenta'],1,1);
                 $pdf->Cell(45,4,"",0,0);
             }
-            $pdf->SetFont('Arial',"B","8");
 
             if ($condicion == 0){
                 $filename = "public/documentos/ordenes/vistaprevia/".$file;
@@ -2623,7 +2626,7 @@
                             $datosOrden[0]['costos'],$datosOrden[0]['concepto'],$datosOrden[0]['cnameuser'],$datosOrden[0]['crazonsoc'],
                             $datosOrden[0]['cnumdoc'],$datosOrden[0]['cviadireccion'],$datosOrden[0]['ctelefono1'],$datosOrden[0]['cemail'],$datosOrden[0]['nagenret'],
                             $datosOrden[0]['cnombres'],$datosOrden[0]['ctelefono1'],$datosOrden[0]['mail_entidad'],
-                            $datosOrden[0]['direccion']);
+                            $datosOrden[0]['direccion'],$datosOrden[0]['cReferencia']);
 
             $pdf->AddPage();
             $pdf->AliasNbPages();
@@ -2746,6 +2749,8 @@
                                                                 lg_ordencab.ntcambio,
                                                                 lg_ordencab.cnumcot,
                                                                 lg_ordencab.userModifica,
+                                                                lg_ordencab.nAdicional,
+                                                                lg_ordencab.cReferencia,
                                                                 UPPER(tb_pedidocab.concepto) AS concepto,
                                                                 UPPER(tb_pedidocab.detalle) AS detalle,
                                                                 UPPER(

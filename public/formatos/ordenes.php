@@ -7,7 +7,7 @@
                                     $lugar,$cotizacion,$fentrega,$pago,$importe,
                                     $info,$detalle,$usuario,$razon_social,
                                     $ruc,$direccion,$telefono,$correo,$retencion,
-                                    $contacto,$tel_contacto,$cor_contacto,$direccion_almacen)
+                                    $contacto,$tel_contacto,$cor_contacto,$direccion_almacen,$referencia)
         {
             parent::__construct();
             $this->titulo           = $titulo;
@@ -32,7 +32,8 @@
             $this->tel_contacto     = $tel_contacto;
             $this->cor_contacto     = $cor_contacto;
             $this->usuario          = $usuario;
-            $this->direccion_almacen   = $direccion_almacen;
+            $this->direccion_almacen= $direccion_almacen;
+            $this->referencia       = $referencia;
         }
 
         function header(){
@@ -106,7 +107,7 @@
 
             $this->Cell(113,3,"","L",0);
             $this->Cell(20,3,utf8_decode("Referencia Pago: "),"L",0);
-            $this->Cell(57,3,"","R",1); //ver de donde sale
+            $this->Cell(57,3,strtoupper($this->referencia),"R",1); //ver de donde sale
 
             $this->Cell(13,3,utf8_decode("Atención :"),"L",0);
             $this->Cell(40,3,utf8_decode($this->contacto),0); //envia de parametro
@@ -168,8 +169,10 @@
             $this->SetFont('Arial',"","7");
 		    $this->cell(30,4,"ELABORADO POR",1,0,"C",true);
             $this->cell(30,4,"IMPRESO POR",1,1,"C",true);
+            $this->SetFont('Arial',"","5");
             $this->cell(30,4,utf8_decode($this->usuario),1,0,"C"); //envia de parametro
             $this->cell(30,4,"SYSTEM",1,1,"C");
+            $this->SetFont('Arial',"","7");
             $this->cell(30,4,"EMITIDO",1,0,"C",true);
             $this->cell(30,4,"FOLIO",1,1,"C",true);
             $this->cell(30,4,"17/01/2021 01:39",1,0,"C");

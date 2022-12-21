@@ -53,6 +53,7 @@
                     <input type="hidden" name="total_numero" id="total_numero">
                     <input type="hidden" name="user_modifica" id="user_modifica">
                     <input type="hidden" name="nro_pedido" id="nro_pedido">
+                    <input type="hidden" name="total_adicional" id="total_adicional" value="0">
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
                         <div>
@@ -394,15 +395,16 @@
             <form action="#" id="fileAtachs" enctype='multipart/form-data'>
                 <div class="tituloArchivos">
                     <h3>Cargos adicionales</h3>
-                    <a href="#" id="openArch" title="Adjuntar Archivos"><i class="fas fa-file-medical"></i><p>Añadir</p></a>
+                    <a href="#" id="addAdic" title="Agregar Costos"><i class="far fa-plus-square"></i><p>Añadir Item</p></a>
                 </div>            
                 <div>
-                    <table>
+                    <table id="tablaAdicionales">
                         <thead>
                             <tr>
                                 <th>Descripcion</th>
                                 <th>Moneda</th>
                                 <th>Valor</th>
+                                <th>...</th>
                             </tr>
                             <tbody>
 

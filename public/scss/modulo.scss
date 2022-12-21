@@ -1007,6 +1007,7 @@ $anulado:#c2c2c2;
                 border-collapse: collapse;
                 width: 100%;
                 font-size: .8rem;
+                margin-bottom: 20px;
 
                 thead {
                     background:#000;
@@ -1455,10 +1456,24 @@ $anulado:#c2c2c2;
     table {
         width: 100%;
         border-collapse: collapse;
+        margin-bottom: 20px;
 
         thead{
             background: #000;
             color: #fff;
+        }
+
+        tbody{
+            tr,td {
+                border: 1px dotted #c2c2c2;
+
+                input{
+                    width: 100%;
+                    outline: none;
+                    line-height: 1.5rem;
+                }
+            }
+
         }
     }
 }

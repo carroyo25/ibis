@@ -29,7 +29,11 @@
         }
 
         function nuevoRegistro(){
-            echo json_encode($this->model->insertarOrden($_POST['cabecera'],$_POST['detalles'],$_POST['comentarios'],$_FILES));
+            echo json_encode($this->model->insertarOrden($_POST['cabecera'],
+                                                        $_POST['detalles'],
+                                                        $_POST['comentarios'],
+                                                        $_FILES,
+                                                        $_POST['adicionales']));
         }
 
         function modificaRegistro(){

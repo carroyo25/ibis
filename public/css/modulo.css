@@ -1342,6 +1342,7 @@
   border-collapse: collapse;
   width: 100%;
   font-size: 0.8rem;
+  margin-bottom: 20px;
 }
 .ventanaResumen .cuerpoResumem .area3 table thead {
   background: #000;
@@ -1808,10 +1809,19 @@
 .ventanaArchivos table {
   width: 100%;
   border-collapse: collapse;
+  margin-bottom: 20px;
 }
 .ventanaArchivos table thead {
   background: #000;
   color: #fff;
+}
+.ventanaArchivos table tbody tr, .ventanaArchivos table tbody td {
+  border: 1px dotted #c2c2c2;
+}
+.ventanaArchivos table tbody tr input, .ventanaArchivos table tbody td input {
+  width: 100%;
+  outline: none;
+  line-height: 1.5rem;
 }
 
 .tabs_labels {
