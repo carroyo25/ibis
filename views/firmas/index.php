@@ -48,6 +48,7 @@
                     <input type="hidden" name="radioIgv" id="radioIgv">
                     <input type="hidden" name="total_numero" id="total_numero">
                     <input type="hidden" name="estado_firmas" id="estado_firmas">
+                    <input type="hidden" name="total_adicional" id="total_adicional" value="0">
 
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
@@ -127,6 +128,12 @@
                                 <div class="column2_46">
                                     <label for="estado">Estado:</label>
                                     <input type="text" name="estado" id="estado" class="textoCentro estado procesando" readonly value="EN PROCESO">
+                                </div>
+                            </div>
+                            <div class="column4_55">
+                                <div class="column2_3957">
+                                    <label for="referencia">Referencia :</label>
+                                    <input type="text" name="referencia" id="referencia" class="cerrarLista" readonly>
                                 </div>
                             </div>
                         </div>

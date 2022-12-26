@@ -84,6 +84,12 @@
                                     <input type="text" name="estado" id="estado" class="textoCentro estado procesando" readonly value="EN PROCESO">
                                 </div>
                             </div>
+                            <div class="column4_55">
+                                <div class="column2_3957">
+                                    <label for="referencia">Referencia :</label>
+                                    <input type="text" name="referencia" id="referencia" class="cerrarLista" readonly>
+                                </div>
+                            </div>
                         </div>
                         <div class="seccion_derecha">
                             <div class="column2">
