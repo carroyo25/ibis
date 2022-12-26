@@ -51,6 +51,9 @@
                     <input type="hidden" name="sw" id="sw" value="0">
                     <input type="hidden" name="detalle" id="detalle">
                     <input type="hidden" name="total_numero" id="total_numero">
+                    <input type="hidden" name="total_adicional" id="total_adicional" value="0">
+                    <input type="hidden" name="nro_pedido" id="nro_pedido">
+                    <input type="hidden" name="user_modifica" id="user_modifica" value="<?php echo $_SESSION["id_user"]?>">
 
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
@@ -179,8 +182,8 @@
                                     <input type="text" name="ncotiz" id="ncotiz" class="cerrarLista">
                                 </div>
                                 <div class="column2">
-                                    <label for="dscto">Descuentos %:</label>
-                                    <input type="text" name="dscto" id="dscto" class="cerrarLista">
+                                    <label for="dscto">Referencia</label>
+                                    <input type="text" name="referencia" id="referencia" class="cerrarLista">
                                 </div>
                             </div>
                             <div class="column2">
@@ -223,6 +226,7 @@
                                     <th width="10%">Total</th>
                                     <th>Nro.</br>Parte</th>
                                     <th>Pedido</th>
+                                    <th>Detalles</th>
                                 </tr>
                             </thead>
                             <tbody>

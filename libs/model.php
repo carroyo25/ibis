@@ -2404,7 +2404,7 @@
             $pdf->AddPage();
             $pdf->AliasNbPages();
             $pdf->SetWidths(array(10,15,15,10,95,17,13,15));
-            $pdf->SetFont('Arial','',6);
+            $pdf->SetFont('Arial','',5);
             $lc = 0;
             $rc = 0;
 
@@ -2631,7 +2631,7 @@
             $pdf->AddPage();
             $pdf->AliasNbPages();
             $pdf->SetWidths(array(10,15,15,10,95,17,13,15));
-            $pdf->SetFont('Arial','',5);
+            $pdf->SetFont('Arial','',4);
             $lc = 0;
             $rc = 0;
                 

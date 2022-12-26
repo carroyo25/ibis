@@ -374,11 +374,11 @@ $(function(){
             if (result['codigo_transporte'] == "") throw "Elija la forma de transporte";
             if (result['codigo_almacen'] == "") throw "Indique el lugar de entrega";
 
-            $.post(RUTA+"ordenedit/vistaPreliminar", {cabecera:result,condicion:0,detalles:JSON.stringify(detalles())},
+            $.post(RUTA+"ordenedit/vistaPreliminar", {cabecera:result,condicion:2,detalles:JSON.stringify(detalles())},
                 function (data, textStatus, jqXHR) {
                     $(".ventanaVistaPrevia iframe")
                         .attr("src","")
-                        .attr("src","public/documentos/ordenes/vistaprevia/"+data);
+                        .attr("src","public/documentos/ordenes/aprobadas/"+data);
                     
                     $("#vista_previa").val(data);    
                     $("#vistaprevia").fadeIn();
@@ -697,7 +697,10 @@ detalles = () => {
             GRABAR      = $(this).data('grabado'),
             CANTPED     = $(this).data('cant'),
             ITEMORDEN   = $(this).data('itord'),
-            SALDO       = $(this).data('cant')-$(this).find('td').eq(5).children().val();
+            SALDO       = $(this).data('cant')-$(this).find('td').eq(5).children().val(),
+            DETALLES    = $(this).find('td').eq(10).children().val();
+
+
 
         item= {};
         
@@ -719,6 +722,8 @@ detalles = () => {
             item['cantped']     = CANTPED;
             item['itemorden']   = ITEMORDEN;
             item['saldo']       = SALDO;
+            item['detalles']    = DETALLES;
+
             DATA.push(item);
         //}
     });

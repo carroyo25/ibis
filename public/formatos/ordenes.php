@@ -54,7 +54,7 @@
         	$this->SetFillColor(229, 229, 229);
         	$this->Rect(70,24,70,5,"F"); //fondo de mensaje
         	$this->Image('public/img/logo.png',12,12,25);
-	        $this->SetFont('Arial','B',12);
+	        $this->SetFont('Arial','B',11);
 			$this->SetTextColor(0,0,0);
 	 		$this->SetFillColor(229, 229, 229);
 	        $this->Cell(190,7,utf8_decode($this->titulo),0,1,'C'); //envia de parametro
@@ -113,9 +113,10 @@
             $this->Cell(40,3,utf8_decode($this->contacto),0); //envia de parametro
             $this->Cell(13,3,utf8_decode("Teléfono :"),0); 
             $this->Cell(47,3,utf8_decode($this->telefono),0); //envia de parametro
+            $this->SetFont('Arial','',6);
             $this->Cell(15,3,utf8_decode("N°.Cotización :"),"L",0);
-            $this->Cell(15,3,utf8_decode($this->cotizacion),0); //envia de parametro
-            $this->Cell(30,3,utf8_decode("N°. Contrato :"),0);
+            $this->Cell(20,3,utf8_decode($this->cotizacion),0); //envia de parametro
+            $this->Cell(25,3,utf8_decode("N°. Contrato :"),0);
             $this->Cell(17,3,utf8_decode(""),"R",1); //envia de parametro
 
             $this->Cell(13,3,utf8_decode("E-mail :"),"BL",0);

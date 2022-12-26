@@ -39,7 +39,8 @@
                                                         INNER JOIN tb_parametros ON lg_ordencab.nNivAten = tb_parametros.nidreg 
                                                     WHERE
                                                         tb_costusu.id_cuser = :user 
-                                                        AND tb_costusu.nflgactivo = 1");
+                                                        AND tb_costusu.nflgactivo = 1
+                                                    ORDER BY id_regmov");
                 $sql->execute(["user"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowCount();
 
@@ -178,7 +179,7 @@
             return $salida;
         }
 
-        public function generarDocumento($cabecera,$condicion,$detalles){
+        /*public function generarDocumento($cabecera,$condicion,$detalles){
             require_once("public/formatos/ordenes.php");
 
             $bancos = $this->bancosProveedor($cabecera['codigo_entidad']);
@@ -343,7 +344,7 @@
             $pdf->Output($filename,'F');
 
             return $file;
-        }
+        }*/
 
         public function modificarOrden($cabecera,$detalles){
             try {
@@ -401,7 +402,7 @@
                     $sql = $this->db->connect()->prepare("UPDATE lg_ordendet SET ncanti=:cant,nunitario=:unit,nigv=:igv,ntotal=:total,
                                                                                 nmonref=:moneda,nSaldo=:saldo
                                                                                 WHERE nitemord = :id");
-                    $sql->execute(["id"=>$indice,
+                    $sql->execute(["id"=>$codigo,
                                     "cant"=>$datos[$i]->cantidad,
                                     "unit"=>$datos[$i]->precio,
                                     "igv"=>$datos[$i]->igv,
@@ -563,14 +564,6 @@
             $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet SET nflgactivo = 0,idorden = null,estadoItem = 54 WHERE iditem = :item");
             $sql->execute(["item"=>$itemPedido]);
         }
-
-        /*private function calcularDias($fechaEntrega){
-            $date1 = new DateTime(Date('Y-m-d'));
-            $date2 = new DateTime($fechaEntrega);
-            $diff = $date1->diff($date2);
-            // will output 2 days
-            return $diff->days . ' dias ';
-        }*/
 
         private function datosPedido($pedido){
             try {
