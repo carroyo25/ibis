@@ -32,7 +32,8 @@
                                                         lg_ordencab.nfirmaOpe,
                                                         tb_parametros.cdescripcion AS atencion,
                                                         cm_entidad.crazonsoc,
-                                                        UPPER(tb_user.cnameuser) AS cnameuser 
+                                                        UPPER( tb_user.cnameuser ) AS cnameuser,
+                                                        ( SELECT COUNT( lg_ordencomenta.id_regmov ) FROM lg_ordencomenta WHERE lg_ordencomenta.id_regmov = lg_ordencab.id_regmov ) AS comentario 
                                                     FROM
                                                         tb_costusu
                                                         INNER JOIN lg_ordencab ON tb_costusu.ncodproy = lg_ordencab.ncodpry
@@ -43,9 +44,10 @@
                                                         INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
                                                         INNER JOIN tb_user ON lg_ordencab.id_cuser = tb_user.iduser 
                                                     WHERE
-                                                        tb_costusu.id_cuser = :user 
-                                                        AND tb_costusu.nflgactivo = 1
-                                                        AND lg_ordencab.nEstadoDoc BETWEEN 49 AND 59");
+                                                        tb_costusu.id_cuser = :user
+                                                        AND tb_costusu.nflgactivo = 1 
+                                                        AND lg_ordencab.nEstadoDoc BETWEEN 49 
+                                                        AND 59");
                 $sql->execute(["user"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowCount();
 
@@ -61,6 +63,8 @@
                         $ffin = is_null($rs['nfirmaFin']) ? 0 : 1;
 
                         $resaltado = $rs['nEstadoDoc'] == 59 ? "resaltado_firma" :  "";
+                        $observado = $rs['comentario'] != 0 ?  1 :  "";
+                        $obs_alerta = $rs['comentario'] != 0 ?  "urgente" :  "";
 
 
                         $salida .='<tr class="pointer '.$resaltado.'" data-indice="'.$rs['id_regmov'].'" 
@@ -79,6 +83,7 @@
                                     <td class="textoCentro">'.$log.'</td>
                                     <td class="textoCentro">'.$fin.'</td>
                                     <td class="textoCentro">'.$ope.'</td>
+                                    <td class="textoCentro '.$obs_alerta.'">'.$observado.'</td>
                                     </tr>';
                     }
                 }
@@ -856,9 +861,9 @@
                 $salida = "";
                 $mes  = date("m");
 
-                $tipo   = $parametros['tipoSearch'] == -1 ? "" : "%".$parametros['tipoSearch']."%";
-                $costos = $parametros['costosSearch'] == -1 ? "" : $parametros['costosSearch'];
-                $mes    = $parametros['mesSearch'] == -1 ? $mes :  $parametros['mesSearch'];
+                $tipo   = $parametros['tipoSearch'] == -1 ? "%" : "%".$parametros['tipoSearch']."%";
+                $costos = $parametros['costosSearch'] == -1 ? "%" : $parametros['costosSearch'];
+                $mes    = $parametros['mesSearch'] == -1 ? "%" :  $parametros['mesSearch'];
                 $anio   = $parametros['anioSearch'];
 
                  $sql = $this->db->connect()->prepare("SELECT
@@ -873,6 +878,7 @@
                                                         lg_ordencab.ncodpago,
                                                         lg_ordencab.nplazo,
                                                         lg_ordencab.cdocPDF,
+                                                        tb_proyectos.ccodproy,
                                                         UPPER( tb_pedidocab.concepto ) AS concepto,
                                                         UPPER( tb_pedidocab.detalle ) AS detalle,
                                                         UPPER(
@@ -883,9 +889,9 @@
                                                         lg_ordencab.nfirmaFin,
                                                         lg_ordencab.nfirmaOpe,
                                                         tb_parametros.cdescripcion AS atencion,
-                                                        lg_ordencab.ntipdoc,
-                                                        lg_ordencab.ntipmov,
-                                                        cm_entidad.crazonsoc 
+                                                        cm_entidad.crazonsoc,
+                                                        UPPER( tb_user.cnameuser ) AS cnameuser,
+                                                        ( SELECT COUNT( lg_ordencomenta.id_regmov ) FROM lg_ordencomenta WHERE lg_ordencomenta.id_regmov = lg_ordencab.id_regmov ) AS comentario 
                                                     FROM
                                                         tb_costusu
                                                         INNER JOIN lg_ordencab ON tb_costusu.ncodproy = lg_ordencab.ncodpry
@@ -893,15 +899,15 @@
                                                         INNER JOIN tb_area ON lg_ordencab.ncodarea = tb_area.ncodarea
                                                         INNER JOIN tb_proyectos ON lg_ordencab.ncodpry = tb_proyectos.nidreg
                                                         INNER JOIN tb_parametros ON lg_ordencab.nNivAten = tb_parametros.nidreg
-                                                        INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi 
+                                                        INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
+                                                        INNER JOIN tb_user ON lg_ordencab.id_cuser = tb_user.iduser 
                                                     WHERE
-                                                        tb_costusu.id_cuser = :user 
+                                                        tb_costusu.id_cuser = :user
                                                         AND tb_costusu.nflgactivo = 1 
-                                                        AND lg_ordencab.nEstadoDoc BETWEEN 49 
-                                                        AND 59 
-                                                        AND lg_ordencab.ncodpry =:costos 
-                                                        AND lg_ordencab.ntipmov =:tipomov 
-                                                        AND MONTH ( lg_ordencab.ffechadoc ) = :mes
+                                                        AND lg_ordencab.nEstadoDoc BETWEEN 49 AND 59
+                                                        AND lg_ordencab.ncodpry LIKE :costos 
+                                                        AND lg_ordencab.ntipmov LIKE :tipomov 
+                                                        AND MONTH ( lg_ordencab.ffechadoc ) LIKE :mes
                                                         AND YEAR ( lg_ordencab.ffechadoc ) = :anio");
                 $sql->execute(["user"=>$_SESSION['iduser'],
                                 "tipomov"=>$tipo,
@@ -911,36 +917,40 @@
                  $rowCount = $sql->rowCount();
  
                  if ($rowCount > 0){
-                     while ($rs = $sql->fetch()) {
- 
-                         $log = is_null($rs['nfirmaLog']) ? '<i class="far fa-square"></i>' : '<i class="far fa-check-square"></i>';
-                         $ope = is_null($rs['nfirmaOpe']) ? '<i class="far fa-square"></i>' : '<i class="far fa-check-square"></i>';
-                         $fin = is_null($rs['nfirmaFin']) ? '<i class="far fa-square"></i>' : '<i class="far fa-check-square"></i>';
- 
-                         $flog = is_null($rs['nfirmaLog']) ? 0 : 1;
-                         $fope = is_null($rs['nfirmaOpe']) ? 0 : 1;
-                         $ffin = is_null($rs['nfirmaFin']) ? 0 : 1;
- 
-                         $resaltado = $rs['nEstadoDoc'] == 59 ? "resaltado_firma" :  "";
- 
- 
-                         $salida .='<tr class="pointer '.$resaltado.'" data-indice="'.$rs['id_regmov'].'" 
-                                                         data-estado="'.$rs['nEstadoDoc'].'"
-                                                         data-finanzas="'.$ffin.'"
-                                                         data-logistica="'.$flog.'"
-                                                         data-operaciones="'.$fope.'">
-                                        <td class="textoCentro">'.str_pad($rs['cnumero'],6,0,STR_PAD_LEFT).'</td>
-                                        <td class="textoCentro">'.date("d/m/Y", strtotime($rs['ffechadoc'])).'</td>
-                                        <td class="pl20px">'.$rs['concepto'].'</td>
-                                        <td class="pl20px">'.utf8_decode($rs['costos']).'</td>
-                                        <td class="pl20px">'.$rs['area'].'</td>
-                                        <td class="pl20px">'.$rs['crazonsoc'].'</td>
-                                        <td class="textoCentro '.strtolower($rs['atencion']).'">'.$rs['atencion'].'</td>
-                                        <td class="textoCentro">'.$log.'</td>
-                                        <td class="textoCentro">'.$ope.'</td>
-                                        <td class="textoCentro">'.$fin.'</td>
-                                     </tr>';
-                     }
+                    while ($rs = $sql->fetch()) {
+
+                        $log = is_null($rs['nfirmaLog']) ? '<i class="far fa-square"></i>' : '<i class="far fa-check-square"></i>';
+                        $ope = is_null($rs['nfirmaOpe']) ? '<i class="far fa-square"></i>' : '<i class="far fa-check-square"></i>';
+                        $fin = is_null($rs['nfirmaFin']) ? '<i class="far fa-square"></i>' : '<i class="far fa-check-square"></i>';
+
+                        $flog = is_null($rs['nfirmaLog']) ? 0 : 1;
+                        $fope = is_null($rs['nfirmaOpe']) ? 0 : 1;
+                        $ffin = is_null($rs['nfirmaFin']) ? 0 : 1;
+
+                        $resaltado = $rs['nEstadoDoc'] == 59 ? "resaltado_firma" :  "";
+                        $observado = $rs['comentario'] != 0 ?  1 :  "";
+                        $obs_alerta = $rs['comentario'] != 0 ?  "urgente" :  "";
+
+
+                        $salida .='<tr class="pointer '.$resaltado.'" data-indice="'.$rs['id_regmov'].'" 
+                                                        data-estado="'.$rs['nEstadoDoc'].'"
+                                                        data-finanzas="'.$ffin.'"
+                                                        data-logistica="'.$flog.'"
+                                                        data-operaciones="'.$fope.'">
+                                    <td class="textoCentro">'.str_pad($rs['cnumero'],6,0,STR_PAD_LEFT).'</td>
+                                    <td class="textoCentro">'.date("d/m/Y", strtotime($rs['ffechadoc'])).'</td>
+                                    <td class="pl20px">'.$rs['concepto'].'</td>
+                                    <td class="pl20px">'.utf8_decode($rs['ccodproy']).'</td>
+                                    <td class="pl20px">'.$rs['area'].'</td>
+                                    <td class="pl20px">'.$rs['crazonsoc'].'</td>
+                                    <td class="pl5px">'.$rs['cnameuser'].'</td>
+                                    <td class="textoCentro '.strtolower($rs['atencion']).'">'.$rs['atencion'].'</td>
+                                    <td class="textoCentro">'.$log.'</td>
+                                    <td class="textoCentro">'.$fin.'</td>
+                                    <td class="textoCentro">'.$ope.'</td>
+                                    <td class="textoCentro '.$obs_alerta.'">'.$observado.'</td>
+                                    </tr>';
+                    }
                  }
  
                  return $salida;                    
@@ -948,6 +958,6 @@
                 echo "Error: " . $th->getMessage();
                 return false;
             }
-         }
+        }
     }
 ?>
