@@ -143,8 +143,9 @@
     </div>
     <div class="itemsTabla">
         <table id="tablaPrincipal">
-            <thead>
+            <thead class="stickytop">
                 <tr>
+                    <th width="3%">Item</th>
                     <th width="10%">Codigo</th>
                     <th>Tipo</th>
                     <th>Denominación</th>

@@ -8,6 +8,8 @@ $(function() {
     $("#nuevoRegistro").click(function (e) { 
         e.preventDefault();
 
+        $("form")[0].reset();
+
         $("#proceso").fadeIn();
         accion = 'n';
 
@@ -25,6 +27,9 @@ $(function() {
     $("#tipo_item").click(function (e) { 
         e.preventDefault();
 
+        if (accion == "u")
+            return false;
+
         $("input").val("");
         
         $(this).next().slideDown();
@@ -34,6 +39,9 @@ $(function() {
 
     $("#grupo").click(function (e) { 
         e.preventDefault();
+
+        if (accion == "u")
+            return false;
 
         $("#codigo_clase,#codigo_familia,#clase,#familia").val('');
         
@@ -56,6 +64,9 @@ $(function() {
     $("#clase").click(function (e) { 
         e.preventDefault();
 
+        if (accion == "u")
+            return false;
+
         $("#codigo_familia,#familia").val('');
         
         if ($("#grupo").val() != "") {
@@ -76,6 +87,9 @@ $(function() {
 
     $("#familia").click(function (e) { 
         e.preventDefault();
+
+        if (accion == "u")
+            return false;
         
         if ($("#clase").val() != "") {
             $.post(RUTA+"bienes/familias", {grupo:$("#codigo_grupo").val(),clase:$("#codigo_clase").val()},
@@ -114,7 +128,7 @@ $(function() {
 
     $(".lista").on("click",'a', function (e) {
         e.preventDefault();
-
+        
         let control = $(this).parent().parent().parent();
         let destino = $(this).parent().parent().parent().prev();
         let contenedor_padre = $(this).parent().parent().parent().attr("id");
@@ -145,6 +159,9 @@ $(function() {
 
     $("#descripcion").blur(function (e) { 
         e.preventDefault();
+
+        if (accion == "u")
+            return false;
         
         if ($(this).val() !== ""){
             $.post(RUTA+"bienes/codigo", {codigo:$("#codigo_catalogo").val()},
@@ -232,7 +249,7 @@ $(function() {
                 $("#descripcion,#codigo,#codigo_unidad,#unidad,#nro_parte").val('');
                 $("input[type=checkbox]").prop("checked",false);
                 $("#foto").attr('src','public/img/noimagen.jpg');
-                $("form")[0].reset();
+                $("form")[1].reset();
                 $("#tablaPrincipal tbody")
                     .empty()
                     .append(data);
@@ -241,8 +258,7 @@ $(function() {
             "text"
         );
         
-        
-
+    
         return false
     });
 
@@ -266,6 +282,9 @@ $(function() {
 
     $("#tablaPrincipal tbody").on("click",".pointer", function (e) {
         e.preventDefault();
+
+        accion = 'u';
+        console.log(accion);
 
         $.post(RUTA+"bienes/itemsId", {id:$(this).data("id")},
             function (data, textStatus, jqXHR) {
@@ -311,8 +330,7 @@ $(function() {
                             .attr('height', '250px');
 
                 $("#proceso").fadeIn();
-                accion = 'u';
-
+                
             },
             "json"
         );
@@ -356,7 +374,7 @@ $(function() {
     });
 
     $("#consulta").on("keypress", function (e) {
-        if(e.which == 13 && $(this).val().length > 1) {
+        if(e.which == 13) {
             $("#waitmodal").fadeIn();
             $.post(RUTA+"bienes/buscaPalabra", {criterio:$(this).val()},
                 function (data, textStatus, jqXHR) {

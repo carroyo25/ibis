@@ -23,7 +23,7 @@
                                                 WHERE
                                                     cm_producto.flgActivo = 1
                                                 ORDER BY id_cprod ASC
-                                                LIMIT 500");
+                                                LIMIT 1000");
                 $sql->execute();
                 $rc = $sql->rowcount();
                 $item = 1;
@@ -31,6 +31,7 @@
                 if ($rc > 0){
                     while( $rs = $sql->fetch()) {
                         $salida .='<tr data-id="'.$rs['id_cprod'].'" class="pointer">
+                                        <td class="textoCentro">'.str_pad($item,5,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="textoCentro '.strtolower($rs['tipo']).'">'.$rs['tipo'].'</td>
                                         <td class="pl20px">'.$rs['cdesprod'].'</td>
@@ -51,6 +52,8 @@
 
         public function buscarItemsPalabra($criterio){
             try {
+                $palabra = $criterio == "" ? "%" : "%".$criterio."%";
+
                 $salida = "";
                 $sql = $this->db->connect()->prepare("SELECT
                                                     cm_producto.id_cprod,
@@ -65,14 +68,16 @@
                                                     INNER JOIN tb_parametros ON cm_producto.ntipo = tb_parametros.nidreg 
                                                 WHERE
                                                     cm_producto.flgActivo = 1 AND
-                                                    cm_producto.cdesprod LIKE :criterio");
-                $sql->execute(["criterio"=>"%".$criterio."%"]);
+                                                    cm_producto.cdesprod LIKE :criterio
+                                                    LIMIT 1000");
+                $sql->execute(["criterio"=>$palabra]);
                 $rc = $sql->rowcount();
                 $item = 1;
 
                 if ($rc > 0){
                     while( $rs = $sql->fetch()) {
                         $salida .='<tr data-id="'.$rs['id_cprod'].'" class="pointer">
+                                        <td class="textoCentro">'.str_pad($item,5,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="textoCentro '.strtolower($rs['tipo']).'">'.$rs['tipo'].'</td>
                                         <td class="pl20px">'.$rs['cdesprod'].'</td>
