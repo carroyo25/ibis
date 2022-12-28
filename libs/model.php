@@ -2215,7 +2215,7 @@
                                     <td class="textoDerecha pr5px">'.$rs['ntotal'].'</td>
                                     <td class="textoCentro">'.$rs['nroparte'].'</td>
                                     <td class="pl20px">'.$rs['nro_pedido'].'</td>
-                                    <td><textarea readonly>'.$rs['cobserva'].'</textarea></td>
+                                    <td><textarea>'.$rs['cobserva'].'</textarea></td>
                                 </tr>';
                     }
                 }

@@ -426,13 +426,15 @@
                     $sql = $this->db->connect()->prepare("UPDATE lg_ordendet SET ncanti = :cantidad, 
                                                                         nunitario=:precio,
                                                                         nsaldo = :saldo,
-                                                                        ntotal = :total
+                                                                        ntotal = :total,
+                                                                        cobserva =:observaciones 
                                                 WHERE lg_ordendet.nitemord = :id");
                     $sql->execute([ "cantidad"=>$datos[$i]->cantidad,
                                     "precio"=>$datos[$i]->precio,
                                     "saldo" =>$datos[$i]->saldo,
                                     "total"=>$datos[$i]->total,
-                                    "id"=>$datos[$i]->itemorden]);
+                                    "id"=>$datos[$i]->itemorden,
+                                    "observaciones"=>$datos[$i]->detalles]);
                 } catch (PDOException $th) {
                     echo "Error: ".$th->getMessage();
                     return false;

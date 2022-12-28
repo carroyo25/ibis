@@ -53,7 +53,7 @@
                     <input type="hidden" name="total_numero" id="total_numero">
                     <input type="hidden" name="total_adicional" id="total_adicional" value="0">
                     <input type="hidden" name="nro_pedido" id="nro_pedido">
-                    <input type="hidden" name="user_modifica" id="user_modifica" value="<?php echo $_SESSION["id_user"]?>">
+                    <input type="hidden" name="user_modifica" id="user_modifica" value="<?php echo $_SESSION["iduser"]?>">
 
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
