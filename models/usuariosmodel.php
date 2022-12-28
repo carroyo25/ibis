@@ -400,6 +400,7 @@
 
         private function grabarAlmacenes($almacenes){
             $data = json_decode($almacenes);
+            
             try {
                 for ($i=0; $i < count($data); $i++) { 
 
