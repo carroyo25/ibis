@@ -168,14 +168,15 @@
                             <thead class="stickytop">
                                 <tr>
                                     <th width="3%">...</th>
+                                    <th width="3%">...</th>
                                     <th width="5%">Item</th>
                                     <th width="8%">Codigo</th>
                                     <th>Descripcion</th>
                                     <th width="5%">Und.</th>
                                     <th width="6%">Cant.</th>
-                                    <th width="30%">Especificaciones</th>
+                                    <th width="15%">Especificaciones</th>
                                     <th>Nro. Parte</th>
-                                    <th>Bien/Activo</th>
+                                    <th width="8%">Bien/Activo</th>
                                 </tr>
                             </thead>
                             <tbody>
