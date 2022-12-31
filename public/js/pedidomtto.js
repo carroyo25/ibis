@@ -99,8 +99,6 @@ $(function() {
                     $("#listaPartidas ul")
                         .empty()
                         .append(data.partidas);
-
-
                 },
                 "json"
             );
@@ -186,23 +184,19 @@ $(function() {
         let descrip = $(this).children('td:eq(1)').text();
         let unidad = $(this).children('td:eq(2)').text();
         let grabado = 0;
-        let items = "";
-
-        equipos.forEach(element => {
-            items += `<option value="${element.valor}">${element.registro}</option>`
-        });
+        
 
         let row = `<tr data-grabado="${grabado}" data-idprod="${idprod}" data-codund="${nunid}" data-idx="-">
                     <td class="textoCentro"><a href="#" title="eliminar" data-accion ="delete"><i class="fas fa-eraser"></i></a></td>
                     <td class="textoCentro"><a href="#" title="cambiar" data-accion ="change"><i class="fas fa-exchange-alt"></i></a></td>
-                    <td class="textoCentro">${nFilas}</td>
+                    <td class="textoCentro duplicate">${nFilas}</td>
                     <td class="textoCentro">${codigo}</td>
                     <td class="pl20px">${descrip}</td>
                     <td class="textoCentro">${unidad}</td>
                     <td><input type="number" step="any" placeholder="0.00" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"></td>
                     <td><textarea></textarea></td>
                     <td class="textoCentro"><input type="text"></td>
-                    <td class="textoCentro"><select name="registro">${items}</select></td>
+                    <td class="textoCentro select"></td>
                 </tr>`;
 
 
@@ -210,7 +204,31 @@ $(function() {
             $("#tablaDetalles tbody").append(row);
         }
        
-       
+        return false;
+    });
+
+    $("#tablaDetalles tbody").on("click",".select", function (e) {
+        e.preventDefault();
+
+        let items = "";
+
+        equipos.forEach(element => {
+            items += `<option value="${element.valor}">${element.registro}</option>`;
+        });
+
+        if ( $(this).children().length == 0 ) {
+            let select = `<select name="registro">${items}</select>`;
+            $(this).append(select);
+        }
+
+        return false;
+    });
+
+    $("#tablaDetalles tbody").on("click",".duplicate", function (e) {
+        e.preventDefault();
+
+        $(this).parent().clone().insertAfter($(this).parent());
+        fillTables($("#tablaDetalles tbody > tr"),2);
 
         return false;
     });
@@ -245,8 +263,6 @@ $(function() {
                         $("#tablaDetalles tbody > tr").attr("data-grabado",1);
 
                         $("#codigo_pedido").val(data.indice);
-
-                        //$("#fileAtachs").trigger("submit");
                     },
                     "json"
                 );
@@ -340,17 +356,16 @@ $(function() {
         let fila = $(this).parent().parent();
 
         if ($(this).data("accion") == "delete") {
-           
 
             if ($(this).attr("href") == "#") {
                     $(this).parent().parent().remove();
-                    fillTables($("#tablaDetalles tbody > tr"),1);
+                    fillTables($("#tablaDetalles tbody > tr"),2);
             }else {
                 $.post(RUTA+"pedidos/quitarItem", {query:"UPDATE tb_pedidodet SET tb_pedidodet.nflgactivo =:estado WHERE tb_pedidodet.iditem =:id",
                                                             id:$(this).attr("href")},
                     function (data, text, requestXHR) {
                         fila.remove();
-                        fillTables($("#tablaDetalles tbody > tr"),1);
+                        fillTables($("#tablaDetalles tbody > tr"),2);
                     },
                     "text"
                 );
@@ -375,6 +390,166 @@ $(function() {
         
         return false;
     });
+
+    //filtrar Item del pedido
+    $("#txtBuscarCodigo, #txtBuscarDescrip").on("keypress", function (e) {
+        if(e.which == 13) {
+            $("#esperar").fadeIn();
+            
+            $.post(RUTA+"pedidos/filtraItems", {codigo:$("#txtBuscarCodigo").val(),
+                                                descripcion:$("#txtBuscarDescrip").val(),
+                                                tipo:$("#codigo_tipo").val()},
+                    function (data, textStatus, jqXHR) {
+                        $("#tablaModulos tbody")
+                            .empty()
+                            .append(data);
+                        $("#esperar").fadeOut();
+                    },
+                    "text"
+                );
+        }
+    });
+
+    $("#sendItem,#requestAprob").click(function (e) { 
+        e.preventDefault();
+                
+        if (grabado){
+
+            $("#estadoPedido,#codigo_estado").val($(this).data("estado"));
+            $("#subject").val("Pedido : "+$("#numero").val()+ " - " + $("#costos").val());
+
+            $.post(RUTA+"pedidos/buscaRol", {rol:$(this).data("rol"),cc:$("#codigo_costos").val()},
+                function (data, textStatus, jqXHR) {
+                    $("#listaCorreos tbody").empty().append(data);
+                    $("#sendMail").fadeIn();
+                },
+                "text"
+            );
+        }else{
+            mostrarMensaje("Por favor grabar el pedido","mensaje_error");
+        }
+
+        return false;
+    });
+
+    $("#closeMail").click(function (e) { 
+        e.preventDefault();
+
+        $("form")[2].reset();
+        $(".atachs").empty();
+        $(".messaje div").empty();
+        $("#sendMail").fadeOut();
+        $("#estadoPedido,#codigo_estado").val(49);
+
+        return false;
+    });
+
+    $("#btnConfirmSend").click(function (e) { 
+        e.preventDefault();
+
+        try {
+
+            if ($("#subject").val() == " ") throw "Indique el motivo del correo";
+            //if ($("#mailMessage").length == 1) throw "Escriba el mensaje del correo";
+
+            let result = {};
+
+            $.each($("#formProceso").serializeArray(),function(){
+                result[this.name] = this.value;
+            });
+
+            $("#esperar").fadeIn();
+
+            $.post(RUTA+"pedidos/vistaprevia", {cabecera:result,detalles:JSON.stringify(itemsPreview())},
+                function (data, textStatus, jqXHR) {
+                    $("#vista_previa").val(data);
+                    $("#formMails").trigger("submit"); 
+                },
+                "text"
+            );
+            
+        } catch (error) {
+            mostrarMensaje(error,"mensaje_error");
+        }
+        
+        return false;
+    });
+
+    $("#preview").click(function (e) { 
+        e.preventDefault();
+    
+        if ($("#numero").val() == ""){
+            mostrarMensaje("Faltan datos del pedido","mensaje_error")
+        }else{
+            let result = {};
+
+            $.each($("#formProceso").serializeArray(),function(){
+                result[this.name] = this.value;
+            })
+
+            $.post(RUTA+"pedidos/vistaprevia", {cabecera:result,detalles:JSON.stringify(itemsPreview(accion))},
+                function (data, textStatus, jqXHR) {
+                    $(".ventanaVistaPrevia iframe")
+                    .attr("src","")
+                    .attr("src","public/documentos/pedidos/vistaprevia/"+data);
+
+                    $("#vista_previa").val(data);
+
+                    $("#vistaprevia").fadeIn();
+                },
+                "text"
+            );
+        }
+        
+        return false;
+    });
+
+    $("#closePreview").click(function (e) { 
+        e.preventDefault();
+
+        $(".ventanaVistaPrevia iframe").attr("src","");
+        $("#vistaprevia").fadeOut();
+
+        return false;
+    });
+
+    $("#formMails").submit(function (e) { 
+        e.preventDefault();
+
+            let parametros = new FormData( this );
+                parametros.append("correos", JSON.stringify(mailsList()));
+                parametros.append("mensaje",$(".messaje div").html());
+                parametros.append("pedido",$("#codigo_pedido").val());
+                parametros.append("detalles",JSON.stringify(itemsPreview()));
+                parametros.append("emitido",$("#vista_previa").val());
+                
+            $.ajax({
+                    // URL to move the uploaded image file to server
+                    url: RUTA + 'pedidos/envioCorreos',
+                    // Request type
+                    type: "POST", 
+                    // To send the full form data
+                    data: parametros,
+                    contentType:false,      
+                    processData:false,
+                    dataType:"json",    
+                    // UI response after the file upload
+                    beforeSend: function () {
+                        $("#esperar").fadeIn();
+                    },  
+                    success: function(response)
+                    {   
+                        mostrarMensaje(response.mensaje,response.clase);
+                        $("#proceso, #sendMail,#esperar").fadeOut();
+                        $("#tablaPrincipal tbody")
+                            .empty()
+                            .append(response.pedidos);
+                    }
+                });
+
+        return false;
+    });
+
 })
 
 listarEquipos = () => {
@@ -428,3 +603,78 @@ itemsSave = () =>{
 
     return DATA;
 }
+
+itemsPreview = (accion) => {
+    DATA = [];
+    let TABLA = $("#tablaDetalles tbody >tr");
+
+    TABLA.each(function(){
+        let IDPROD      = $(this).data('idprod'),
+            UNIDAD      = $(this).find('td').eq(5).text(),
+            CANTIDAD    = $(this).find('td').eq(6).children().val(),
+            IDX         = $(this).data('idx'),
+            CALIDAD     = 0,
+            ESTADO      = $(this).attr('data-grabado'),
+            ESPECIFICA  = $(this).find('td').eq(7).children().val(),
+            ITEM        = $(this).find('td').eq(2).text(),
+            CODIGO      = $(this).find('td').eq(3).text(),
+            DESCRIPCION = $(this).find('td').eq(4).text();
+
+            if (accion == "n") {
+                NROPARTE    = $(this).find('td').eq(8).children().val();
+                REGISTRO    = $(this).find("select[name='registro'] option:selected").val();
+                REGISTEXT   = $(this).find("select[name='registro'] option:selected").text();
+            }else {
+                NROPARTE    = $(this).find('td').eq(8).text();
+                REGISTRO    = $(this).find('td').eq(9).text();
+                REGISTEXT   = $(this).find('td').eq(9).text();
+            }
+
+        item= {};
+        
+        //if (ESTADO == 0) {
+            item['idprod']          = IDPROD;
+            item['unidad']          = UNIDAD;
+            item['cantidad']        = CANTIDAD;
+            item['nroparte']        = NROPARTE;
+            item['itempedido']      = IDX;
+            item['calidad']         = CALIDAD;
+            item['especifica']      = ESPECIFICA;
+            item['estado']          = ESTADO;
+            item['registro']        = REGISTRO;
+            item['registext']       = REGISTEXT;
+            item['item']            = ITEM;
+            item['codigo']          = CODIGO;
+            item['descripcion']     = DESCRIPCION;
+
+            DATA.push(item);
+        //} 
+    })
+
+    return DATA;
+}
+
+mailsList = () => {
+    CORREOS = [];
+
+    let TABLA =  $("#listaCorreos tbody >tr");
+
+    TABLA.each(function(){
+        let CORREO      = $(this).find('td').eq(1).text(),
+            NOMBRE      = $(this).find('td').eq(0).text(),
+            ENVIAR      = $(this).find('td').eq(2).children().prop("checked"),
+
+        item= {};
+        
+        if (ENVIAR) {
+            item['nombre']= NOMBRE;
+            item['correo']= CORREO;
+
+            CORREOS.push(item);
+        }
+        
+    })
+
+    return CORREOS;
+}
+

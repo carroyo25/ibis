@@ -96,6 +96,8 @@
             $nreg = count($details);
 
             for($i=1;$i<=$nreg;$i++){
+                $registro = isset( $details[$rc]->registext) ? $details[$rc]->registext : "";
+
 			    $pdf->SetAligns(array("L","L","L","L","R","L","L","L","L","L"));
                 $pdf->Row(array($details[$rc]->item,
                                 $details[$rc]->codigo,
@@ -105,13 +107,13 @@
                                 '',
                                 '',
                                 '',
-                                '',
-                                ''));
+                                $details[$rc]->nroparte,
+                                $registro));
                 
                 $lc++;
                 $rc++;
 
-                if ($lc == 52) {
+                if ($lc == 17) {
 				    $pdf->AddPage();
 				    $lc = 0;
 			    }	

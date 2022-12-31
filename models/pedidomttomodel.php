@@ -174,6 +174,8 @@
             $nreg = count($datos);
 
             for ($i=0; $i < $nreg; $i++) { 
+                $registro = isset($datos[$i]->registro) ? $datos[$i]->registro : NULL; 
+
                 try {
                         $sql = $this->db->connect()->prepare("INSERT INTO tb_pedidodet 
                                                                 SET idpedido=:ped,idprod=:prod,idtipo=:tipo,unid=:und,
@@ -193,7 +195,7 @@
                                 "costos"=>$costos,
                                 "area"=>$area,
                                 "espec"=>$datos[$i]->especifica,
-                                "registro"=>$datos[$i]->registro,
+                                "registro"=>$registro,
                                 "parte"=>$datos[$i]->nroparte]);    
                 } catch (PDOException $th) {
                     echo "Error: ".$th->getMessage();

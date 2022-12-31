@@ -175,8 +175,8 @@
                                     <th width="5%">Und.</th>
                                     <th width="6%">Cant.</th>
                                     <th width="15%">Especificaciones</th>
-                                    <th>Nro. Parte</th>
-                                    <th width="8%">Bien/Activo</th>
+                                    <th width="8%">Nro. Parte</th>
+                                    <th width="15%">Bien/Activo</th>
                                 </tr>
                             </thead>
                             <tbody>

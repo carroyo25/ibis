@@ -1463,12 +1463,6 @@
 
                 if ( $proceso == 49){
                     $detalles = $this->consultarDetallesProcesoMtto($id);
-                }else if ( $proceso == 51){
-                    $detalles = $this->consultarDetallesStockMtto($id);
-                }else if ( $proceso == 53 ){
-                    $detalles = $this->consultarDetallesAprobacionMtto($id);
-                }else if ( $proceso == 54 ){
-                    $detalles = $this->consultarDetallesAprobacionMtto($id);
                 }
                     
 
@@ -1503,7 +1497,7 @@
                                                 tb_pedidodet
                                                 INNER JOIN cm_producto ON tb_pedidodet.idprod = cm_producto.id_cprod
                                                 INNER JOIN tb_unimed ON tb_pedidodet.unid = tb_unimed.ncodmed
-                                                INNER JOIN tb_equipmtto ON tb_pedidodet.nregistro = tb_equipmtto.idreg 
+                                                LEFT JOIN tb_equipmtto ON tb_pedidodet.nregistro = tb_equipmtto.idreg 
                                             WHERE
                                                 tb_pedidodet.idpedido = :id 
                                                 AND tb_pedidodet.nflgActivo = 1");
@@ -1516,7 +1510,7 @@
                         $salida .='<tr data-grabado="1" data-idprod="'.$rs['idprod'].'" data-codund="'.$rs['unid'].'" data-idx="'.$rs['iditem'].'">
                                         <td class="textoCentro"><a href="'.$rs['iditem'].'" title="Eliminar" data-accion="delete"><i class="fas fa-eraser"></i></a></td>
                                         <td class="textoCentro"><a href="'.$rs['iditem'].'" title="Cambiar" data-accion="change"><i class="fas fa-exchange-alt"></i></a></td>
-                                        <td class="textoCentro">'.str_pad($filas++,3,0,STR_PAD_LEFT).'</td>
+                                        <td class="textoCentro duplicate">'.str_pad($filas++,3,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="pl20px">'.strtoupper($rs['cdesprod']).'</td>
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
@@ -1542,7 +1536,7 @@
             }
         }
 
-        private function consultarDetallesStockMtto($id){
+        /*private function consultarDetallesStockMtto($id){
             try {
                 $salida ="";
 
@@ -1676,7 +1670,7 @@
                 echo $th->getMessage();
                 return false;
             }
-        }
+        }*/
 
         public function buscarSeries($idprod,$ingreso,$almacen){
             try {
@@ -1835,33 +1829,29 @@
                 $salida ="";
 
                 $sql=$this->db->connect()->prepare("SELECT
-                                                    tb_pedidodet.iditem, 
-                                                    tb_pedidodet.idpedido, 
-                                                    tb_pedidodet.idprod, 
-                                                    tb_pedidodet.idtipo, 
-                                                    tb_pedidodet.nroparte, 
-                                                    tb_pedidodet.unid, 
-                                                    REPLACE(FORMAT(tb_pedidodet.cant_pedida,2),',','') AS cant_pedida,
-                                                    REPLACE(FORMAT(tb_pedidodet.cant_resto,2),',','') AS cant_pendiente, 
-                                                    REPLACE(FORMAT(tb_pedidodet.cant_atend,2),',','') AS cant_atendida,
-                                                    tb_pedidodet.estadoItem, 
-                                                    cm_producto.ccodprod, 
-                                                    CONCAT_WS(' ',cm_producto.cdesprod,tb_pedidodet.observaciones) AS cdesprod, 
-                                                    tb_unimed.cabrevia, 
-                                                    tb_pedidodet.nflgqaqc, 
-                                                    tb_pedidodet.especificaciones 
+                                                    tb_pedidodet.iditem,
+                                                    tb_pedidodet.idpedido,
+                                                    tb_pedidodet.idprod,
+                                                    tb_pedidodet.idtipo,
+                                                    tb_pedidodet.nroparte,
+                                                    tb_pedidodet.unid,
+                                                    REPLACE ( FORMAT( tb_pedidodet.cant_pedida, 2 ), ',', '' ) AS cant_pedida,
+                                                    REPLACE ( FORMAT( tb_pedidodet.cant_resto, 2 ), ',', '' ) AS cant_pendiente,
+                                                    REPLACE ( FORMAT( tb_pedidodet.cant_atend, 2 ), ',', '' ) AS cant_atendida,
+                                                    tb_pedidodet.estadoItem,
+                                                    cm_producto.ccodprod,
+                                                    CONCAT_WS( ' ', cm_producto.cdesprod, tb_pedidodet.observaciones ) AS cdesprod,
+                                                    tb_unimed.cabrevia,
+                                                    tb_pedidodet.nflgqaqc,
+                                                    tb_pedidodet.especificaciones,
+                                                    CONCAT_WS('/', tb_equipmtto.cregistro, tb_equipmtto.cdescripcion ) AS registro 
                                                 FROM
                                                     tb_pedidodet
-                                                    INNER JOIN
-                                                    cm_producto
-                                                    ON 
-                                                        tb_pedidodet.idprod = cm_producto.id_cprod
-                                                    INNER JOIN
-                                                    tb_unimed
-                                                    ON 
-                                                        tb_pedidodet.unid = tb_unimed.ncodmed
+                                                    INNER JOIN cm_producto ON tb_pedidodet.idprod = cm_producto.id_cprod
+                                                    INNER JOIN tb_unimed ON tb_pedidodet.unid = tb_unimed.ncodmed
+                                                    LEFT JOIN tb_equipmtto ON tb_pedidodet.nregistro = tb_equipmtto.idreg 
                                                 WHERE
-                                                    tb_pedidodet.idpedido = :id
+                                                    tb_pedidodet.idpedido = :id 
                                                     AND tb_pedidodet.nflgActivo = 1");
                 $sql->execute(["id"=>$id]);
                 $rowCount = $sql->rowCount();
@@ -1886,8 +1876,9 @@
                                                         value="'.$rs['cant_pedida'].'"
                                                         class="valorAtendido">
                                         </td>
-                                        <td></td>
+                                        <td class="textoCentro">'.$rs['nroparte'].'</td>
                                         <td class="textoCentro"><input type="text"></td>
+                                        <td class="textoCentro">'.$rs['registro'].'</td>
                                         <td class="textoCentro"><input type="checkbox" checked></td>
                                     </tr>';
                     }
@@ -3485,7 +3476,7 @@
                                             ibis.tb_user.ncodper = rrhh.tabla_aquarius.internal
                                     WHERE
                                         ibis.tb_user.nrol = 68 AND
-                                        ibis.tb_user.nflgactivo = 1");
+                                        ibis.tb_user.nestado = 7");
                 $sql->execute();
                 $rowcount = $sql->rowcount();
 

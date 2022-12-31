@@ -71,7 +71,7 @@
                             </div>
                             <div class="column2">
                                 <label for="concepto">Concepto:</label>
-                                <input type="text" name="concepto" id="concepto">
+                                <input type="text" name="concepto" id="concepto" class="mayusculas">
                             </div>
                             <div class="column2">
                                 <label for="solicitante">Solicitante:</label>
@@ -114,6 +114,7 @@
                                     <th width="7%">Cant.</br>Aprobada</th>
                                     <th>Nro.</br>Parte</th>
                                     <th width="15%">Observaciones</th>
+                                    <th width="15%">Bien/Activo</th>
                                     <th>...</th>
                                 </tr>
                             </thead>
