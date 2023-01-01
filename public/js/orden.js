@@ -66,6 +66,7 @@ $(function(){
                 $("#tcambio").val(data.cabecera[0].ntcambio);
                 $("#user_modifica").val(data.cabecera[0].userModifica);
                 $("#nro_pedido").val(data.cabecera[0].nrodoc);
+                $("#total_adicional").val(data.total_adicionales);
 
                if (data.cabecera[0].nigv != 0) {
                     $("#si").prop("checked", true);
@@ -85,6 +86,11 @@ $(function(){
                 $("#tablaComentarios tbody")
                     .empty()
                     .append(data.comentarios);
+
+
+                $("#tablaAdicionales tbody")
+                    .empty()
+                    .append(data.adicionales);
 
                 $("#sw").val(1);
 
@@ -263,6 +269,7 @@ $(function(){
                 total       = 0,
                 cod_prod    = $(this).data("codprod"),
                 id_item     = $(this).data("iditem"),
+                nro_parte   = $(this).data("nroparte"),
                 grabado     = 0;
 
             $("#nro_pedido").val(nroreq);
@@ -296,12 +303,12 @@ $(function(){
                                     onclick="this.select()">
                             </td>
                             <<td class="textoDerecha pr5px"></td>
-                            <td></td>
+                            <td class="textoCentro">${nro_parte}</td>
                             <td class="textoCentro">${nroreq}</td>
                             <td class="pl20px"><textarea></textarea></td>
                         </tr>`;
 
-                $.post(RUTA+"orden/marcaItem", {id:$(this).data("iditem"),"estado":1},
+                $.post(RUTA+"orden/marcaItem", {id:$(this).data("iditem"),"estado":1,io:$(this).data("itord")},
                     function (data, text, requestXHR) {
                         item.remove();
                         $("#tablaDetalles tbody").append(row);

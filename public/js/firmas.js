@@ -59,6 +59,7 @@ $(function() {
                 $("#radioIgv").val(data.cabecera[0].nigv);
                 $("#total_numero").val(data.cabecera[0].ntotal);
                 $("#pedidopdf").val(data.cabecera[0].docPdfAprob);
+                $("#total_adicional").val(data.total_adicionales);
                 
                 if (data.bocadillo != 0) {
                     $(".button__comment")

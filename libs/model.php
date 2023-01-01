@@ -1081,6 +1081,19 @@
                 return false;
             }
         }
+        
+        public function lastInsertOrder(){
+            try {
+                $sql = $this->db->connect()->query("SELECT MAX(id_regmov) AS numero FROM lg_ordencab");
+                $sql->execute();
+                $result = $sql->fetchAll();
+
+                return $result[0]['numero'];
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
 
         private function listarPartidas($codigo) {
             try {
@@ -2375,13 +2388,16 @@
                 $total = $this->calculaTotalOrden($id);
                 $ncomentarios = $this->consultarTotalComentarios($id);
                 $adjuntos = $this->verAdjuntosOrden($id);
+                $adicionales = $this->consultarAdicionales($id);
 
                 return array("cabecera"=>$docData,
                             "detalles"=>$detalles,
                             "comentarios"=>$comentarios,
                             "total"=>$total,
                             "bocadillo"=>$ncomentarios,
-                            "adjuntos"=>$adjuntos);
+                            "adjuntos"=>$adjuntos,
+                            "adicionales"=>$adicionales,
+                            "total_adicionales"=>$this->totalAdicionales($id));
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
@@ -2538,6 +2554,42 @@
             }
         }
 
+        private function consultarAdicionales($id){
+            try {
+                $salida="";
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        UPPER(lg_ordenadic.cconcepto) AS cconcepto,
+                                                        lg_ordenadic.nmonto,
+                                                        tb_parametros.cabrevia,
+                                                        lg_ordenadic.idorden,
+                                                        tb_parametros.cdescripcion 
+                                                    FROM
+                                                        lg_ordenadic
+                                                        INNER JOIN lg_ordencab ON lg_ordenadic.idorden = lg_ordencab.id_regmov
+                                                        INNER JOIN tb_parametros ON lg_ordencab.ncodmon = tb_parametros.nidreg 
+                                                    WHERE
+                                                        lg_ordenadic.idorden = :id");
+                $sql->execute(["id"=>$id]);
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0) {
+                    while ($rs = $sql->fetch()){
+                        $salida.='<tr>
+                                    <td><input type="text" value="'.$rs['cconcepto'].'" readonly></td>
+                                    <td>'.$rs['cdescripcion'].'</td>
+                                    <td><input type="number" value="'.$rs['nmonto'].'" readonly></td>
+                                    <td class="con_borde centro"><a href="#"><i class="far fa-trash-alt"></i></a></td>
+                                </tr>';
+                    }
+                }
+
+                return $salida;
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
         private function consultarTotalComentarios($id){
             try {
                 $salida="";
@@ -2571,6 +2623,25 @@
                 return $result[0]["total"];
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function totalAdicionales($id){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        SUM( lg_ordenadic.nmonto ) AS total_adicionales 
+                                                    FROM
+                                                        lg_ordenadic 
+                                                    WHERE
+                                                        lg_ordenadic.idorden = :id");
+                $sql->execute(['id'=>$id]);
+                $result = $sql->fetchAll();
+
+                return $result[0]['total_adicionales'];
+
+            } catch (PDOException $th) {
+                echo $th->getMessage();
                 return false;
             }
         }
@@ -2701,7 +2772,7 @@
                 $lc++;
                 $rc++;
                 
-                if ($lc == 52) {
+                if ($lc == 17) {
                     $pdf->AddPage();
                     $lc = 0;
                 }
@@ -2777,10 +2848,12 @@
             $pdf->Cell(20,4,"TOTAL",1,0,"L",true);
             $pdf->Cell(15,4,$cabecera['moneda'],1,0,"C",true);
 
+            $total_adicional = gettype( $cabecera['total_adicional'] == NULL) ? 0 :  $cabecera['total_adicional']; 
+
             if ( $cabecera['radioIgv'] ==  0 )
                 $pdf->Cell(20,4,number_format($cabecera['total_numero']+$cabecera['total_adicional'],2),1,1,"R",true);
             else 
-                $pdf->Cell(20,4,number_format(($cabecera['total_numero']*1.18)+$cabecera['total_adicional'],2),1,1,"R",true);
+                $pdf->Cell(20,4,number_format(($cabecera['total_numero']*1.18)+$total_adicional,2),1,1,"R",true);
 
            
             $nreg = count($bancos);

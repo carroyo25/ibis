@@ -126,6 +126,8 @@
                                                         UPPER(tb_area.cdesarea) AS area,
                                                         tb_pedidodet.iditem,
                                                         tb_pedidodet.idcostos,
+                                                        tb_pedidodet.nroparte,
+                                                        tb_pedidodet.nregistro,
                                                         tb_pedidodet.idarea,
                                                         tb_pedidocab.idreg,
                                                         LPAD(tb_pedidocab.nrodoc,6,0) AS nrodoc,
@@ -169,8 +171,9 @@
                                                        data-codprod="'.$rs['id_cprod'].'"
                                                        data-iditem="'.$rs['iditem'].'"
                                                        data-costos="'.$rs['idcostos'].'"
-                                                       data-itord="-">
-                                                       data-nropedido="">
+                                                       data-itord="-"
+                                                       data-nropedido=""
+                                                       data-nroparte="'.$rs['nroparte'].'">
                                         <td class="textoCentro">'.str_pad($rs['nrodoc'],6,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.date("d/m/Y", strtotime($rs['emision'])).'</td>
                                         <td class="pl5px">'.$rs['concepto'].'</td>
@@ -220,6 +223,8 @@
                                                         tb_pedidodet.idcostos,
                                                         tb_pedidodet.idarea,
                                                         tb_pedidocab.idreg,
+                                                        tb_pedidodet.idcostos,
+                                                        tb_pedidodet.nroparte,
                                                         LPAD(tb_pedidocab.nrodoc,6,0) AS nrodoc,
                                                         tb_pedidocab.emision,
                                                         tb_pedidocab.concepto,
@@ -263,8 +268,9 @@
                                                        data-codprod="'.$rs['id_cprod'].'"
                                                        data-iditem="'.$rs['iditem'].'"
                                                        data-costos="'.$rs['idcostos'].'"
-                                                       data-itord="-">
-                                                       data-nropedido="">
+                                                       data-itord="-"
+                                                       data-nropedido=""
+                                                       data-nroparte="'.$rs['nroparte'].'">
                                         <td class="textoCentro">'.str_pad($rs['nrodoc'],6,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.date("d/m/Y", strtotime($rs['emision'])).'</td>
                                         <td class="pl5px">'.$rs['concepto'].'</td>
@@ -316,7 +322,7 @@
             return $salida;
         }
 
-        public function insertarOrden($cabecera,$detalles,$comentarios,$adjuntos,$adicionales){
+        public function insertarOrden($cabecera,$detalles,$comentarios,$adicionales,$adjuntos){
             try {
                 $salida = false;
                 $respuesta = false;
@@ -375,10 +381,11 @@
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0){
+                    $indice = $this->lastInsertOrder();
                     $this->subirArchivos($orden,$adjuntos);
-                    $this->grabarDetalles($cab->codigo_verificacion,$detalles,$cab->codigo_costos,$orden);
-                    $this->grabarComentarios($cab->codigo_orden,$comentarios);
-                    $this->grabarAdicionales($cab->codigo_orden,$adicionales);
+                    $this->grabarDetalles($indice,$detalles,$cab->codigo_costos,$orden);
+                    $this->grabarComentarios($indice,$comentarios);
+                    $this->grabarAdicionales($indice,$adicionales);
                     $this->actualizarDetallesPedido(84,$detalles,$orden,$cab->codigo_entidad);
                     $this->actualizarCabeceraPedido(58,$cab->codigo_pedido,$orden);
                     $respuesta = true;
@@ -390,8 +397,10 @@
                                 "mensaje"=>$mensaje,
                                 "clase"=>$clase);
 
-                
+            
                 return $salida;
+
+                var_dump($adicionales);
 
                 
             } catch (PDOException $th) {
@@ -400,9 +409,9 @@
             }    
         }
 
-        private function grabarAdicionales($codigo,$adicionales){
+        private function grabarAdicionales($indice,$adicionales){
             try {
-                $indice = $this->obtenerIndice($codigo,"SELECT id_regmov AS numero FROM lg_ordencab WHERE lg_ordencab.cverificacion =:id");
+                
                 $datos = json_decode($adicionales);
                 $nreg = count($datos);
 
@@ -412,9 +421,9 @@
                                                                                         cconcepto=:concepto,
                                                                                         nmonto=:total");
                     $sql->execute(["orden"=>$indice,
-                                    "entidad"=>$datos->entidad,
-                                    "concepto"=>$datos->descripcion,
-                                    "total"=>$datos->valor]);
+                                    "entidad"=>$datos[$i]->entidad,
+                                    "concepto"=>$datos[$i]->descripcion,
+                                    "total"=>$datos[$i]->valor]);
                 }
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
@@ -422,9 +431,8 @@
             }
         }
 
-        private function grabarDetalles($codigo,$detalles,$costos,$idx){
+        private function grabarDetalles($indice,$detalles,$costos,$idx){
             try {
-                $indice = $this->obtenerIndice($codigo,"SELECT id_regmov AS numero FROM lg_ordencab WHERE lg_ordencab.cverificacion =:id");
                 
                 $datos = json_decode($detalles);
                 
@@ -446,7 +454,7 @@
                                         "igv"=>$datos[$i]->igv,
                                         "total"=>$datos[$i]->total,
                                         "est"=>1,
-                                        "verif"=>$codigo,
+                                        "verif"=>"",
                                         "moneda"=>$datos[$i]->moneda,
                                         "costos"=>$costos,
                                         "ordenidx"=>$idx,

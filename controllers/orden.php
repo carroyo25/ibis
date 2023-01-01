@@ -32,8 +32,7 @@
             echo json_encode($this->model->insertarOrden($_POST['cabecera'],
                                                         $_POST['detalles'],
                                                         $_POST['comentarios'],
-                                                        $_FILES,
-                                                        $_POST['adicionales']));
+                                                        $_POST['adicionales'],$_FILES));
         }
 
         function modificaRegistro(){
