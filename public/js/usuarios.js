@@ -9,7 +9,7 @@ $(function(){
     $("#nuevoRegistro").click(function (e) { 
         e.preventDefault();
 
-        $("form")[0].reset();
+        $("form")[1].reset();
         $("#modulos tbody,#costos tbody,#almacen tbody").empty();
         $("#proceso").fadeIn();
         accion = 'n';

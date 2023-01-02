@@ -348,7 +348,7 @@
             }
         }
 
-        private function grabarModulos($modulos){
+        private function grabarModulos($id,$modulos){
             $data = json_decode($modulos);
 
             for ($i=0; $i < count($data); $i++) { 
@@ -362,7 +362,7 @@
                                                                     ncodmod=:codigo,
                                                                     classmenu=:clase,
                                                                     copcion=:opcion");
-                        $sql->execute(["id"=>$data[$i]->iduser,
+                        $sql->execute(["id"=>$id,
                             "codigo"=>$data[$i]->codm,
                             "clase"=>$data[$i]->clas,
                             "opcion"=>$data[$i]->opci]);
@@ -376,18 +376,18 @@
             }
         }
 
-        private function grabarCostos($costos){
+        private function grabarCostos($id,$costos){
             $data = json_decode($costos);
             try {
                 for ($i=0; $i < count($data); $i++) { 
                     
-                    $select = "SELECT COUNT( ncodcos ) AS contador FROM tb_costusu WHERE ncodproy = :id AND iduser = :usr AND nflgactivo = 1";
+                    $select = "SELECT COUNT( ncodcos ) AS contador FROM tb_costusu WHERE ncodproy = :id AND id_cuser = :usr AND nflgactivo = 1";
                     $sw = $this->verificaExisteItem($data[$i]->codpr,$data[$i]->iduser,$select);
                     
                     if ($sw == 0){
                         $sql = $this->db->connect()->prepare("INSERT INTO tb_costusu SET ncodproy=:cod,id_cuser=:usr,nflgactivo=:est");
                         $sql->execute(["cod"=>$data[$i]->codpr,
-                                        "usr"=>$data[$i]->iduser,
+                                        "usr"=>$id,
                                         "est"=>1]);
                     }
                    
@@ -398,7 +398,7 @@
             }
         }
 
-        private function grabarAlmacenes($almacenes){
+        private function grabarAlmacenes($id,$almacenes){
             $data = json_decode($almacenes);
             
             try {
@@ -410,7 +410,7 @@
                     if ($sw == 0) {
                         $sql = $this->db->connect()->prepare("INSERT INTO tb_almausu SET nalmacen=:cod,id_cuser=:usr,nflgactivo=:est");
                         $sql->execute(["cod"=>$data[$i]->codalm,
-                                    "usr"=>$data[$i]->iduser,
+                                    "usr"=>$id,
                                     "est"=>1]);
                     }
                     
