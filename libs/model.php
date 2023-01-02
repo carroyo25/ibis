@@ -2848,13 +2848,17 @@
             $pdf->Cell(20,4,"TOTAL",1,0,"L",true);
             $pdf->Cell(15,4,$cabecera['moneda'],1,0,"C",true);
 
-            $total_adicional = gettype( $cabecera['total_adicional'] == NULL) ? 0 :  $cabecera['total_adicional']; 
+            $total_adicional = $cabecera['total_adicional'] == ""  ? 0 :  $cabecera['total_adicional']; 
 
-            if ( $cabecera['radioIgv'] ==  0 )
-                $pdf->Cell(20,4,number_format($cabecera['total_numero']+$cabecera['total_adicional'],2),1,1,"R",true);
-            else 
-                $pdf->Cell(20,4,number_format(($cabecera['total_numero']*1.18)+$total_adicional,2),1,1,"R",true);
-
+            if ( $cabecera['radioIgv'] == 0 ){
+                $pdf->Cell(20,4,number_format($cabecera['total_numero'] +  $total_adicional ,2),1,1,"R",true);
+                $pdf->Cell(20,4,$cabecera['total_adicional'],1,1,"R",true);
+            }        
+            else {
+                $pdf->Cell(20,4,number_format((($cabecera['total_numero']*1.18)+ $total_adicional ),2),1,1,"R",true);
+                $pdf->Cell(20,4,$cabecera['total_adicional'],1,1,"R",true);
+            }
+                
            
             $nreg = count($bancos);
 
