@@ -755,7 +755,8 @@
                         $series = $this->buscarSeries($rs['id_cprod'],$rs['id_regalm'],$rs['ncodalm1']);
                         $pendiente = $rs['cantidad'] - $rs['ndespacho'];
 
-                        $salida.='<tr   data-idorden="'.$rs['niddetaOrd'].'" 
+                        if ( $rs['ndespacho'] > 0) {
+                            $salida.='<tr   data-idorden="'.$rs['niddetaOrd'].'" 
                                         data-idpedido="'.$rs['niddetaPed'].'" 
                                         data-idingreso="'.$rs['niddetaIng'].'"
                                         data-iddespacho="'.$rs['niddeta'].'"
@@ -777,6 +778,9 @@
                                         <td class="textoCentro">'.str_pad($rs['pedido'],6,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.str_pad($rs['orden'],6,0,STR_PAD_LEFT).'</td>
                                     </tr>';
+                        }
+
+                        
                     }
                 }
 
