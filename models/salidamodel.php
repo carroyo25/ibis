@@ -402,17 +402,19 @@
                     $pdf->SetCellHeight(3);
                     //$pdf->SetFont('Arial','',3);
 
-                    $pdf->SetAligns(array("R","R","C","L"));
-                    $pdf->Row(array(str_pad($i,3,"0",STR_PAD_LEFT),
-                                    $datos[$rc]->cantdesp,
-                                    $datos[$rc]->unidad,
-                                    '  O : '.$datos[$rc]->pedido.' P : '.$datos[$rc]->orden .' '. utf8_decode($datos[$rc]->codigo .' '. $datos[$rc]->descripcion )));
-                    $lc++;
-                    $rc++;
+                    if( $datos[$rc]->cantdesp > 0) {
+                        $pdf->SetAligns(array("R","R","C","L"));
+                        $pdf->Row(array(str_pad($i,3,"0",STR_PAD_LEFT),
+                                        $datos[$rc]->cantdesp,
+                                        $datos[$rc]->unidad,
+                                        '  O : '.$datos[$rc]->pedido.' P : '.$datos[$rc]->orden .' '. utf8_decode($datos[$rc]->codigo .' '. $datos[$rc]->descripcion )));
+                        $lc++;
+                        $rc++;
 
-                    if ($lc == 26) {
-                        $pdf->AddPage();
-                        $lc = 0;
+                        if ($lc == 24) {
+                            $pdf->AddPage();
+                            $lc = 0;
+                        }
                     }
                 }
 
