@@ -1059,10 +1059,21 @@
                 $sql->execute(["cod"=>$id]);
                 $result = $sql->fetchAll();
 
-                return $salida = array("numero"=>str_pad($result[0]['numero'] + 1,6,0,STR_PAD_LEFT),
+                $inicial = 0;
+
+                if( $id == 3){
+                    $inicial = 880;
+                }else if ( $id ==  18) {
+                    $inicial = 371;
+                }else if( $id == 19 ){
+                    $inicial = 73;
+                }
+
+                return $salida = array("numero"=>str_pad(($result[0]['numero'] + $inicial) + 1,6,0,STR_PAD_LEFT),
                                         "codigo"=>uniqid(),
                                         "movimiento"=>str_pad($this->genNumberIngresos($id)+1,6,0,STR_PAD_LEFT),
-                                        "partidas"=>$this->listarPartidas($id)); 
+                                        "partidas"=>$this->listarPartidas($id),
+                                        "numeromtto"=>$result[0]['numero'] + 1 ); 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage;
                 return false;
