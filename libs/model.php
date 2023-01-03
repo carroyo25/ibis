@@ -1560,142 +1560,6 @@
             }
         }
 
-        /*private function consultarDetallesStockMtto($id){
-            try {
-                $salida ="";
-
-                $sql=$this->db->connect()->prepare("SELECT
-                                                    tb_pedidodet.iditem, 
-                                                    tb_pedidodet.idpedido, 
-                                                    tb_pedidodet.idprod, 
-                                                    tb_pedidodet.idtipo, 
-                                                    tb_pedidodet.nroparte, 
-                                                    tb_pedidodet.unid, 
-                                                    REPLACE(FORMAT(tb_pedidodet.cant_pedida,2),',','') AS cant_pedida, 
-                                                    tb_pedidodet.estadoItem, 
-                                                    cm_producto.ccodprod, 
-                                                    CONCAT_WS(' ',cm_producto.cdesprod,tb_pedidodet.observaciones) AS cdesprod, 
-                                                    tb_unimed.cabrevia, 
-                                                    tb_pedidodet.nflgqaqc, 
-                                                    tb_pedidodet.especificaciones 
-                                                FROM
-                                                    tb_pedidodet
-                                                    INNER JOIN
-                                                    cm_producto
-                                                    ON 
-                                                        tb_pedidodet.idprod = cm_producto.id_cprod
-                                                    INNER JOIN
-                                                    tb_unimed
-                                                    ON 
-                                                        tb_pedidodet.unid = tb_unimed.ncodmed
-                                                WHERE
-                                                    tb_pedidodet.idpedido = :id
-                                                    AND tb_pedidodet.nflgActivo = 1");
-                $sql->execute(["id"=>$id]);
-                $rowCount = $sql->rowCount();
-                
-                if ($rowCount > 0){
-                    $filas = 1;
-                    while ($rs = $sql->fetch()) {
-                        $salida .='<tr data-grabado="1" data-idprod="'.$rs['idprod'].'" data-codund="'.$rs['unid'].'" data-idx="'.$rs['iditem'].'">
-                                        <td class="textoCentro"><a href="'.$rs['idprod'].'"><i class="far fa-eye"></i></a></td>
-                                        <td class="textoCentro">'.str_pad($filas++,3,0,STR_PAD_LEFT).'</td>
-                                        <td class="textoCentro">'.$rs['ccodprod'].'</td>
-                                        <td class="pl20px">'.strtoupper($rs['cdesprod']).'</td>
-                                        <td class="textoCentro">'.$rs['cabrevia'].'</td>
-                                        <td class="textoCentro">'.$rs['cant_pedida'].'</td>
-                                        <td>
-                                            <input type="number" 
-                                                        step="any" 
-                                                        placeholder="0.00" 
-                                                        onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"
-                                                        onclick="this.select()" 
-                                                        value=""
-                                                        class="valorAtendido">
-                                        </td>
-                                        <td></td>
-                                        <td class="textoCentro"><input type="text"></td>
-                                    </tr>';
-                    }
-                }
-                
-                return $salida;
-            } catch (PDOException $th) {
-                echo $th->getMessage();
-                return false;
-            }
-        }
-
-        private function consultarDetallesAprobacionMtto($id){
-            try {
-                $salida ="";
-
-                $sql=$this->db->connect()->prepare("SELECT
-                                                    tb_pedidodet.iditem, 
-                                                    tb_pedidodet.idpedido, 
-                                                    tb_pedidodet.idprod, 
-                                                    tb_pedidodet.idtipo, 
-                                                    tb_pedidodet.nroparte, 
-                                                    tb_pedidodet.unid, 
-                                                    REPLACE(FORMAT(tb_pedidodet.cant_pedida,2),',','') AS cant_pedida,
-                                                    REPLACE(FORMAT(tb_pedidodet.cant_resto,2),',','') AS cant_pendiente, 
-                                                    REPLACE(FORMAT(tb_pedidodet.cant_atend,2),',','') AS cant_atendida,
-                                                    tb_pedidodet.estadoItem, 
-                                                    cm_producto.ccodprod, 
-                                                    CONCAT_WS(' ',cm_producto.cdesprod,tb_pedidodet.observaciones) AS cdesprod, 
-                                                    tb_unimed.cabrevia, 
-                                                    tb_pedidodet.nflgqaqc, 
-                                                    tb_pedidodet.especificaciones 
-                                                FROM
-                                                    tb_pedidodet
-                                                    INNER JOIN
-                                                    cm_producto
-                                                    ON 
-                                                        tb_pedidodet.idprod = cm_producto.id_cprod
-                                                    INNER JOIN
-                                                    tb_unimed
-                                                    ON 
-                                                        tb_pedidodet.unid = tb_unimed.ncodmed
-                                                WHERE
-                                                    tb_pedidodet.idpedido = :id
-                                                    AND tb_pedidodet.nflgActivo = 1");
-                $sql->execute(["id"=>$id]);
-                $rowCount = $sql->rowCount();
-                
-                if ($rowCount > 0){
-                    $filas = 1;
-                    while ($rs = $sql->fetch()) {
-                        
-                        $salida .='<tr data-grabado="1" data-idprod="'.$rs['idprod'].'" data-codund="'.$rs['unid'].'" data-idx="'.$rs['iditem'].'">
-                                        <td class="textoCentro">'.str_pad($filas++,3,0,STR_PAD_LEFT).'</td>
-                                        <td class="textoCentro">'.$rs['ccodprod'].'</td>
-                                        <td class="pl20px">'.strtoupper($rs['cdesprod']).'</td>
-                                        <td class="textoCentro">'.$rs['cabrevia'].'</td>
-                                        <td class="textoCentro">'.$rs['cant_pedida'].'</td>
-                                        <td class="textoCentro">'.$rs['cant_atendida'].'</td>
-                                        <td>
-                                            <input type="number" 
-                                                        step="any" 
-                                                        placeholder="0.00" 
-                                                        onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"
-                                                        onclick="this.select()" 
-                                                        value="'.$rs['cant_pedida'].'"
-                                                        class="valorAtendido">
-                                        </td>
-                                        <td></td>
-                                        <td class="textoCentro"><input type="text"></td>
-                                        <td class="textoCentro"><input type="checkbox" checked></td>
-                                    </tr>';
-                    }
-                }
-                
-                return $salida;
-            } catch (PDOException $th) {
-                echo $th->getMessage();
-                return false;
-            }
-        }*/
-
         public function buscarSeries($idprod,$ingreso,$almacen){
             try {
                 $salida = "";
@@ -2797,13 +2661,15 @@
             
             $pdf->SetFont('Arial','B',10);
 
+            $total_adicional = $cabecera['total_adicional'] == ""  ? 0 :  $cabecera['total_adicional']; 
+
             if ($cabecera['radioIgv'] == 0){
-                $pdf->Cell(140,6,$this->convertir($cabecera['total_numero'])." ".$cabecera['moneda'],"TBR",0,"L",true); 
-                $pdf->Cell(30,6,number_format($cabecera['total_numero'],2),"1",1,"R",true);
+                $pdf->Cell(140,6,$this->convertir($cabecera['total_numero']+$total_adicional)." ".$cabecera['moneda'],"TBR",0,"L",true); 
+                $pdf->Cell(30,6,number_format($cabecera['total_numero']+$total_adicional,2),"1",1,"R",true);
             }
             else {
-                $pdf->Cell(140,6,$this->convertir($cabecera['total_numero']*1.18)." ".$cabecera['moneda'],"TBR",0,"L",true);
-                $pdf->Cell(30,6,number_format($cabecera['total_numero']*1.18,2),"1",1,"R",true);
+                $pdf->Cell(140,6,$this->convertir(($cabecera['total_numero']*1.18)+$total_adicional)." ".$cabecera['moneda'],"TBR",0,"L",true);
+                $pdf->Cell(30,6,number_format(($cabecera['total_numero']*1.18)+$total_adicional,2),"1",1,"R",true);
             }
 
             $pdf->Ln(1);
@@ -2859,15 +2725,12 @@
             $pdf->Cell(20,4,"TOTAL",1,0,"L",true);
             $pdf->Cell(15,4,$cabecera['moneda'],1,0,"C",true);
 
-            $total_adicional = $cabecera['total_adicional'] == ""  ? 0 :  $cabecera['total_adicional']; 
 
             if ( $cabecera['radioIgv'] == 0 ){
                 $pdf->Cell(20,4,number_format($cabecera['total_numero'] +  $total_adicional ,2),1,1,"R",true);
-                $pdf->Cell(20,4,$cabecera['total_adicional'],1,1,"R",true);
             }        
             else {
                 $pdf->Cell(20,4,number_format((($cabecera['total_numero']*1.18)+ $total_adicional ),2),1,1,"R",true);
-                $pdf->Cell(20,4,$cabecera['total_adicional'],1,1,"R",true);
             }
                 
            
@@ -3641,7 +3504,7 @@
                         if ($tipoMov == 1)
                             $diferencia = $this->calcularIngresosOrden($rs['id_regmov']) - $this->calcularCantidadIngresa($rs['id_regmov']);
                         else
-                        $diferencia = $this->calcularIngresosOrden($rs['id_regmov']) - $this->calcularCantidadDespacha($rs['id_regmov']);
+                            $diferencia = $this->calcularIngresosOrden($rs['id_regmov']) - $this->calcularCantidadDespacha($rs['id_regmov']);
 
 
                         if (($diferencia) > 0 ) {
