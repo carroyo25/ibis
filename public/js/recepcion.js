@@ -715,6 +715,8 @@ $(function(){
         
         return false;
     });
+
+    
 })
 
 detalles = (flag) =>{

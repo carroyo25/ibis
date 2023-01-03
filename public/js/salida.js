@@ -300,6 +300,8 @@ $(function() {
                 $("#tablaDetalles tbody").append(data.items);
                 $("#costos").val(data.costos);
                 $("#codigo_costos").val(codigo_costos);
+                
+                fillTables($("#tablaDetalles tbody > tr"),2);
             },
             "json"
         );
@@ -517,7 +519,7 @@ detalles = (flag) =>{
     
     TABLA.each(function(){
         let ITEM        = $(this).find('td').eq(1).text(),
-            IDDETORDEN  = $(this).data("idorden"),
+            IDDETORDEN  = $(this).data("detorden"),
             IDDETPED    = $(this).data("iddetped"),
             IDPROD      = $(this).data("idprod"),
             PEDIDO      = $(this).find('td').eq(11).text(),

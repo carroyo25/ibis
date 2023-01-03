@@ -45,7 +45,7 @@
                                                         tb_costusu.nflgactivo = 1
                                                     AND tb_costusu.id_cuser = :usr
                                                     AND alm_despachocab.nEstadoDoc = 62
-                                                    ORDER BY alm_despachocab.ffecdoc ASC");
+                                                    ORDER BY alm_despachocab.ffecdoc DESC");
                 $sql->execute(["usr"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowCount();
 
@@ -101,7 +101,7 @@
                                                         lg_ordendet.id_cprod,
                                                         lg_ordendet.id_orden,
                                                         cm_producto.ccodprod,
-                                                        LPAD(tb_pedidocab.nrodoc,6,0) AS pedido,
+                                                        LPAD( tb_pedidocab.nrodoc, 6, 0 ) AS pedido,
                                                         UPPER( CONCAT_WS( ' ', cm_producto.cdesprod, tb_pedidodet.observaciones, tb_pedidodet.docEspec ) ) AS cdesprod,
                                                         cm_producto.nund,
                                                         tb_unimed.cabrevia,
@@ -109,17 +109,15 @@
                                                         tb_pedidodet.nroparte,
                                                         REPLACE ( FORMAT( lg_ordendet.ncanti, 2 ), ',', '' ) AS cantidad,
                                                         despacho.pendiente AS total_despachado,
-                                                        @id := lg_ordendet.nitemord AS idorden 
+                                                        @id := lg_ordendet.nitemord AS idorden,
+                                                        ( SELECT SUM( alm_recepdet.ncantidad ) FROM alm_recepdet WHERE alm_recepdet.pedido = lg_ordendet.id_orden AND alm_recepdet.niddetaOrd = @id ) AS ingresos 
                                                     FROM
                                                         lg_ordendet
                                                         INNER JOIN cm_producto ON lg_ordendet.id_cprod = cm_producto.id_cprod
                                                         INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
                                                         INNER JOIN tb_pedidodet ON lg_ordendet.niddeta = tb_pedidodet.iditem
                                                         INNER JOIN tb_pedidocab ON tb_pedidocab.idreg = tb_pedidodet.idpedido
-                                                        LEFT JOIN ( SELECT SUM( alm_despachodet.ncantidad ) 
-                                                            AS pendiente, niddetaOrd 
-                                                            FROM alm_despachodet 
-                                                            WHERE alm_despachodet.niddetaOrd = @id ) AS despacho ON lg_ordendet.nitemord = despacho.niddetaOrd 
+                                                        LEFT JOIN ( SELECT SUM( alm_despachodet.ncantidad ) AS pendiente, niddetaOrd FROM alm_despachodet WHERE alm_despachodet.niddetaOrd = @id ) AS despacho ON lg_ordendet.nitemord = despacho.niddetaOrd 
                                                     WHERE
                                                         lg_ordendet.id_orden = :id");
                 $sql->execute(["id"=>$id]);
@@ -130,36 +128,38 @@
                     $item=1;
                     
                     while ($rs = $sql->fetch()){
-                        $saldo = $rs['cantidad'] - $this->calcularSaldosItemsDespachados($rs['id_orden'],$rs['id_cprod']);
-                        $cantidad_ingresada = $this->ingresosRegistrados($rs['id_regmov'],$rs['nitemord']);
-                        $pendientes = $rs['cantidad'] - $this->ingresosRegistrados($rs['id_regmov'],$rs['nitemord']);
+                        $saldo = $rs['ingresos'] - $this->calcularSaldosItemsDespachados($rs['id_orden'],$rs['nitemord']);
+                        $pendientes = $rs['cantidad'] - $rs['ingresos'];
                        
-                        if ( $saldo > 0) {
-                            $salida.='<tr data-detorden="'.$rs['nitemord'].'" 
-                                        data-idprod="'.$rs['id_cprod'].'"
-                                        data-iddetped="'.$rs['niddeta'].'"
-                                        data-saldo="'.$saldo.'"
-                                        data_pedido="'.$rs['nidpedi'].'"
-                                        data_orden="'.$rs['id_orden'].'">
-                                    <td class="textoCentro"><a href="'.$rs['id_orden'].'" data-accion="deleteItem" class="eliminarItem"><i class="fas fa-minus"></i></a></td>
-                                    <td class="textoCentro"><input type="checkbox"></td>
-                                    <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
-                                    <td class="textoCentro">'.$rs['ccodprod'].'</td>
-                                    <td class="pl20px">'.$rs['cdesprod'].'</td>
-                                    <td class="textoCentro">'.$rs['cabrevia'].'</td>
-                                    <td class="textoDerecha pr20px">'.$rs['cantidad'].'</td>
-                                    <td class="textoDerecha pr20px">'.number_format($cantidad_ingresada,2).'</td>
-                                    <td>
-                                        <input type="number" 
-                                            step="any" 
-                                            placeholder="0.00" 
-                                            onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)" value="'.$saldo.'">
-                                    </td>
-                                    <td class="textoDerecha pr20px">'. number_format($pendientes,2) .'</td>
-                                    <td><input type="text"></td>
-                                    <td class="textoCentro">'.$rs['pedido'].'</td>
-                                    <td class="textoCentro">'.str_pad($rs['id_orden'],6,0,STR_PAD_LEFT).'</td>
-                                </tr>';
+                        if ( $rs['ingresos'] > 0 ) {
+                            if ( $saldo > 0 ) {
+                                $salida.='<tr data-detorden="'.$rs['nitemord'].'" 
+                                            data-idprod="'.$rs['id_cprod'].'"
+                                            data-iddetped="'.$rs['niddeta'].'"
+                                            data-saldo="'.$saldo.'"
+                                            data_pedido="'.$rs['nidpedi'].'"
+                                            data_orden="'.$rs['id_orden'].'">
+                                        <td class="textoCentro"><a href="'.$rs['id_orden'].'" data-accion="deleteItem" class="eliminarItem"><i class="fas fa-minus"></i></a></td>
+                                        <td class="textoCentro"><input type="checkbox"></td>
+                                        <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
+                                        <td class="textoCentro">'.$rs['ccodprod'].'</td>
+                                        <td class="pl20px">'.$rs['cdesprod'].'</td>
+                                        <td class="textoCentro">'.$rs['cabrevia'].'</td>
+                                        <td class="textoDerecha pr20px">'.$rs['cantidad'].'</td>
+                                        <td class="textoDerecha pr20px">'.number_format($rs['ingresos'],2).'</td>
+                                        <td>
+                                            <input type="number" 
+                                                step="any" 
+                                                placeholder="0.00" 
+                                                onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)" value="'.$rs['ingresos'].'">
+                                        </td>
+                                        <td class="textoDerecha pr20px">'. number_format($pendientes,2) .'</td>
+                                        <td><input type="text"></td>
+                                        <td class="textoCentro">'.$rs['pedido'].'</td>
+                                        <td class="textoCentro">'.str_pad($rs['id_orden'],6,0,STR_PAD_LEFT).'</td>
+                                    </tr>';
+                            }
+                                
                         }
                     }
                 }
@@ -503,6 +503,7 @@
                                                                                             id_cprod=:cpro,
                                                                                             ncantidad=:cant,
                                                                                             niddetaPed=:idpedido,
+                                                                                            niddetaOrd=:idorden,
                                                                                             nflgactivo=:flag,
                                                                                             nestadoreg=:estadoItem,
                                                                                             ingreso=:ingreso,
@@ -517,6 +518,7 @@
                                         "cpro"=>$datos[$i]->idprod,
                                         "cant"=>$datos[$i]->cantidad,
                                         "idpedido"=>$datos[$i]->iddetped,
+                                        "idorden"=>$datos[$i]->iddetorden,
                                         "flag"=>1,
                                         "estadoItem"=>49,
                                         "ingreso"=>null,
@@ -727,7 +729,7 @@
                                                         alm_despachodet.ingreso,
                                                         FORMAT(alm_despachodet.nsaldo, 2) AS nsaldo,
                                                         cm_producto.ccodprod,
-                                                        FORMAT(alm_despachodet.ncantidad, 2) AS cantidad,
+                                                        REPLACE(FORMAT(alm_despachodet.ncantidad, 2),',','') AS cantidad,
                                                         UPPER(
                                                             CONCAT_WS(
                                                                 ' ',
@@ -876,9 +878,19 @@
 
         public function calcularSaldosItemsDespachados($orden,$idprod){
             try {
-                $sql = $this->db->connect()->prepare("SELECT SUM(ndespacho) AS totalItemDespachado 
-                                                        FROM alm_despachodet 
-                                                        WHERE nropedido = :orden AND id_cprod = :producto");
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        alm_despachodet.niddetaPed,
+                                                        lg_ordendet.nitemord,
+                                                        lg_ordendet.id_orden,
+                                                        alm_despachodet.ncantidad,
+                                                        lg_ordendet.ncanti,
+                                                        SUM( alm_despachodet.ndespacho ) AS totalItemDespachado 
+                                                    FROM
+                                                        alm_despachodet
+                                                        INNER JOIN lg_ordendet ON alm_despachodet.niddetaPed = lg_ordendet.niddeta 
+                                                    WHERE
+                                                        alm_despachodet.nropedido = :orden 
+                                                        AND lg_ordendet.nitemord = :producto");
                 $sql->execute(["orden"=>$orden,"producto"=>$idprod]);
                 $result = $sql->fetchAll();
 
