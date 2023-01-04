@@ -47,7 +47,8 @@
                                                         tb_costusu.id_cuser = :user
                                                         AND tb_costusu.nflgactivo = 1 
                                                         AND lg_ordencab.nEstadoDoc BETWEEN 49 
-                                                        AND 59");
+                                                        AND 59
+                                                    ORDER BY  lg_ordencab.id_regmov DESC");
                 $sql->execute(["user"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowCount();
 
@@ -916,7 +917,8 @@
                                                         AND lg_ordencab.ncodpry LIKE :costos 
                                                         AND lg_ordencab.ntipmov LIKE :tipomov 
                                                         AND MONTH ( lg_ordencab.ffechadoc ) LIKE :mes
-                                                        AND YEAR ( lg_ordencab.ffechadoc ) = :anio");
+                                                        AND YEAR ( lg_ordencab.ffechadoc ) = :anio
+                                                    ORDER BY  lg_ordencab.id_regmov DESC");
                 $sql->execute(["user"=>$_SESSION['iduser'],
                                 "tipomov"=>$tipo,
                                 "costos"=>$costos,

@@ -30,7 +30,9 @@
                                                     INNER JOIN rrhh.tabla_aquarius ON ibis.tb_pedidocab.idsolicita = rrhh.tabla_aquarius.internal
                                                     INNER JOIN ibis.tb_proyectos ON ibis.tb_pedidocab.idcostos = ibis.tb_proyectos.nidreg
                                                     INNER JOIN ibis.tb_parametros AS atenciones ON ibis.tb_pedidocab.nivelAten = atenciones.nidreg
-                                                    INNER JOIN ibis.tb_parametros AS estados ON ibis.tb_pedidocab.estadodoc = estados.nidreg");
+                                                    INNER JOIN ibis.tb_parametros AS estados ON ibis.tb_pedidocab.estadodoc = estados.nidreg
+                                                WHERE YEAR(ibis.tb_pedidocab.emision) = YEAR(NOW())
+                                                ORDER BY ibis.tb_pedidocab.emision DESC");
                 $sql->execute();
                 $rowCount = $sql->rowCount();
 
@@ -539,8 +541,8 @@
                 $mes  = date("m");
 
                 $tipo   = $parametros['tipoSearch'] == -1 ? "%" : "%".$parametros['tipoSearch']."%";
-                $costos = $parametros['costosSearch'] == -1 ? "" : $parametros['costosSearch'];
-                $mes    = $parametros['mesSearch'] == -1 ? $mes :  $parametros['mesSearch'];
+                $costos = $parametros['costosSearch'] == -1 ? "%" : $parametros['costosSearch'];
+                $mes    = $parametros['mesSearch'] == -1 ? "%" :  $parametros['mesSearch'];
                 $anio   = $parametros['anioSearch'];
 
                 
@@ -578,10 +580,11 @@
                                                     INNER JOIN ibis.tb_parametros AS estados ON ibis.tb_pedidocab.estadodoc = estados.nidreg
                                                     WHERE
                                                         ibis.tb_pedidocab.idtipomov LIKE :tipomov
-                                                    AND ibis.tb_pedidocab.idcostos = :costos
-                                                    AND MONTH (ibis.tb_pedidocab.emision) = :mes
+                                                    AND ibis.tb_pedidocab.idcostos LIKE :costos
+                                                    AND MONTH (ibis.tb_pedidocab.emision) LIKE :mes
                                                     AND YEAR (ibis.tb_pedidocab.emision) = :anio
-                                                    AND ibis.tb_pedidocab.estadodoc");
+                                                    AND ibis.tb_pedidocab.estadodoc
+                                                    ORDER BY ibis.tb_pedidocab.emision DESC");
                 $sql->execute(["tipomov"=>$tipo,
                                 "costos"=>$costos,
                                 "mes"=>$mes,

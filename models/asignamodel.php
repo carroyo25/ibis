@@ -36,7 +36,8 @@
                                             WHERE
                                                 ibis.tb_pedidocab.estadodoc = 54
                                                 AND ibis.tb_pedidocab.nflgactivo = 1
-                                                AND ISNULL(ibis.tb_pedidocab.asigna)");
+                                                AND ISNULL(ibis.tb_pedidocab.asigna)
+                                            ORDER BY ibis.tb_pedidocab.emision DESC");
                 $sql->execute();
                 $rowCount = $sql->rowCount();
 

@@ -94,19 +94,7 @@ $(function() {
 
             $.post(RUTA+"pedidos/numeroDocumento", {cc:codigo},
                 function (data, textStatus, jqXHR) {
-                    let inicial = 0;
-
-                    //inicial para algunos registro de los 3 proyectos
-
-                    /*if( $("#codigo_costos").val(codigo) == 3){
-                        inicial = 880;
-                    }else if ( $("#codigo_costos").val(codigo) ==  18) {
-                        inicial = 371;
-                    }else if( $("#codigo_costos").val(codigo) == 19 ){
-                        inicial = 74;
-                    }*/
-
-                    $("#numero").val(data.numero + inicial);
+                    $("#numero").val(data.numero );
                     $("#nropedidoatach,#codigo_verificacion").val(data.codigo);
                     $("#listaPartidas ul")
                         .empty()
@@ -608,6 +596,8 @@ itemsSave = () =>{
             item['estado']      = ESTADO;
             item['registro']    = REGISTRO;
             item['registext']   = REGISTEXT;
+            item['atendida']    = 0;
+            item['observac']    = "";
 
             DATA.push(item);
         } 
@@ -658,6 +648,8 @@ itemsPreview = (accion) => {
             item['item']            = ITEM;
             item['codigo']          = CODIGO;
             item['descripcion']     = DESCRIPCION;
+            item['atendida']        = 0;
+            item['observac']        = "";
 
             DATA.push(item);
         //} 
