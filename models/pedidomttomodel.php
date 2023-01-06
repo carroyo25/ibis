@@ -67,7 +67,7 @@
 
                 $sql = $this->db->connect()->query("SELECT
                                                     tb_equipmtto.idreg,
-                                                    CONCAT_WS(' / ',tb_equipmtto.cregistro,tb_equipmtto.cdescripcion) AS registro
+                                                    CONCAT_WS(' / ',tb_equipmtto.cregistro) AS registro
                                                 FROM
                                                     tb_equipmtto 
                                                 WHERE
