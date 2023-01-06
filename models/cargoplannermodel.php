@@ -8,7 +8,6 @@
 
         public function listarCargoPlan($parametros){
             try {
-
                 $tipo       = $parametros['tipoSearch'] == -1 ? "%" : $parametros['tipoSearch'];
                 $costo      = $parametros['costosSearch'] == -1 ? "%" : $parametros['costosSearch'];
                 $codigo     = $parametros['codigoSearch'] == "" ? "%" : "%".$parametros['codigoSearch']."%";
@@ -19,72 +18,79 @@
                 $salida="";
                 $item = 1;
                 $sql = $this->db->connect()->prepare("SELECT
-                                                            tb_pedidodet.iditem,
-                                                            tb_pedidodet.idpedido,
-                                                            tb_pedidodet.idorden,
-                                                            FORMAT(tb_pedidodet.cant_aprob,2) AS cantidad_aprobada,
-                                                            FORMAT(tb_pedidodet.cant_pedida,2) AS cantidad_solicitada,
-                                                            tb_pedidodet.cant_atend,
-                                                            tb_pedidodet.estadoItem,
-                                                            tb_pedidodet.idcostos,
-                                                            tb_pedidodet.idtipo,
-                                                            tb_pedidocab.nrodoc,
-                                                            if (tb_pedidodet.idtipo = 37,'B','S') AS tipo,
-                                                            cm_producto.id_cprod,
-                                                            cm_producto.ccodprod,
-                                                            tb_unimed.cabrevia AS unidad,
-                                                            UPPER(
-                                                            CONCAT_WS( ' ', cm_producto.cdesprod, tb_pedidodet.observaciones )) AS descripcion,
-                                                            DATE_FORMAT( tb_pedidocab.emision, '%d/%m/%Y' ) AS emision_pedido,
-                                                            DATE_FORMAT( tb_pedidocab.faprueba, '%d/%m/%Y' ) AS aprobacion_pedido,
-                                                            UPPER(tb_pedidocab.concepto) AS concepto,
-                                                            YEAR( tb_pedidocab.emision) AS anio_pedido,
-                                                            LPAD( tb_pedidocab.idreg, 6, 0 ) AS pedido,
-                                                            LPAD( tb_pedidocab.nrodoc, 6, 0 ) AS nropedido,
-                                                            IF(tb_pedidocab.nivelAten = 47,'N','U') AS atencion,
-                                                            tb_proyectos.ccodproy,
-                                                            UPPER(tb_area.cdesarea) AS area,
-                                                            UPPER(partidas.cdescripcion) AS partida,
-                                                            LPAD(detalles_orden.id_orden,6,0) AS orden,
-                                                            FORMAT(detalles_orden.ncanti,2) AS cantidad_orden,
-                                                            YEAR(cabecera_orden.ffechadoc) AS anio_orden,
-                                                            DATE_FORMAT( cabecera_orden.ffechadoc, '%d/%m/%Y' ) AS emision_orden,
-                                                            DATE_FORMAT( cabecera_orden.ffechaent, '%d/%m/%Y' ) AS entrega_proveedor,
-                                                            FORMAT(cabecera_orden.nplazo,0) AS nplazo,
-                                                            proveedores.crazonsoc,
-                                                            UPPER(operadores.cnombres) AS operador,
-                                                            tb_parametros.cdescripcion AS estado_pedido,
-                                                            transporte.modo_transporte,
-                                                            DATEDIFF(NOW(),cabecera_orden.ffechaent) AS dias_atraso  
-                                                        FROM
-                                                            tb_costusu
-                                                            INNER JOIN tb_pedidodet ON tb_costusu.ncodproy = tb_pedidodet.idcostos
-                                                            INNER JOIN cm_producto ON tb_pedidodet.idprod = cm_producto.id_cprod
-                                                            INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
-                                                            INNER JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
-                                                            INNER JOIN tb_proyectos ON tb_pedidocab.idcostos = tb_proyectos.nidreg
-                                                            INNER JOIN tb_area ON tb_pedidocab.idarea = tb_area.ncodarea
-                                                            LEFT JOIN tb_partidas AS partidas ON tb_pedidocab.idpartida = partidas.idreg
-                                                            LEFT JOIN ( SELECT id_orden, ncanti, niddeta FROM lg_ordendet WHERE ISNULL(nEstadoReg) ) AS detalles_orden ON tb_pedidodet.iditem = detalles_orden.niddeta
-	                                                        LEFT JOIN ( SELECT id_regmov, ffechadoc, ffechaent, id_centi, ncodmon, nplazo, id_cuser, ctiptransp, FechaFin FROM lg_ordencab ) AS cabecera_orden ON detalles_orden.id_orden = cabecera_orden.id_regmov
-                                                            LEFT JOIN ( SELECT id_centi, crazonsoc FROM cm_entidad ) AS proveedores ON cabecera_orden.id_centi = proveedores.id_centi
-                                                            LEFT JOIN ( SELECT tb_user.cnameuser,tb_user.cnombres,tb_user.iduser FROM tb_user ) AS operadores ON cabecera_orden.id_cuser = operadores.iduser
-                                                            LEFT JOIN ( SELECT cdescripcion AS modo_transporte,nidreg FROM tb_parametros ) AS transporte ON transporte.nidreg = cabecera_orden.ctiptransp
-                                                            INNER JOIN tb_parametros ON tb_pedidocab.estadodoc = tb_parametros.nidreg 
+                                                        LPAD( tb_pedidocab.nrodoc, 6, 0 ) AS numero_pedido,
+                                                        DATE_FORMAT( tb_pedidocab.emision, '%d/%m/%Y' ) AS fecha_pedido,
+                                                        DATE_FORMAT( tb_pedidocab.faprueba, '%d/%m/%Y' ) AS aprobacion_pedido,
+                                                        tb_pedidocab.anio AS anio_pedido,
+                                                        tb_pedidodet.iditem,
+                                                        tb_pedidodet.idpedido,
+                                                        tb_pedidodet.idtipo AS tipo_pedido,
+                                                        LPAD( tb_pedidodet.idorden, 6, 0 ) AS numero_orden,
+                                                        tb_pedidodet.idprod,
+                                                        tb_pedidodet.idcostos,
+                                                        REPLACE(FORMAT(tb_pedidodet.cant_pedida,2),',','') AS cantidad_pedida,
+                                                        cm_producto.ccodprod,
+                                                        tb_pedidodet.estadoItem,
+                                                        tb_proyectos.ccodproy,
+                                                        UPPER( CONCAT_WS( ' ', cm_producto.cdesprod, tb_pedidodet.observaciones ) ) AS cdesprod,
+                                                        tb_pedidodet.cant_orden,
+                                                        SUM( alm_recepdet.ncantidad ) AS ingresos,
+                                                        SUM( alm_despachodet.ndespacho ) AS despachos,
+                                                        SUM( alm_existencia.cant_ingr ) AS ingreso_obra,
+                                                        lg_ordencab.cper AS anio_orden,
+                                                        lg_ordencab.ntipmov AS tipo_orden,
+                                                        DATEDIFF(NOW(),lg_ordencab.ffechaent) AS dias_atraso,
+                                                        FORMAT(lg_ordencab.nplazo,0) AS nplazo,
+                                                        DATE_FORMAT( lg_ordencab.ffechadoc, '%d/%m/%Y' ) AS fecha_orden,
+                                                        DATE_FORMAT(lg_ordencab.ffechaent, '%d/%m/%Y' ) AS fecha_entrega,
+                                                        tb_partidas.cdescripcion AS partidas,
+                                                        UPPER( tb_area.cdesarea ) AS cdesarea,
+                                                        UPPER(cm_entidad.crazonsoc) AS proveedor,
+                                                        UPPER( tb_user.cnameuser ) AS operador,
+                                                        alm_recepcab.nnronota AS nota_ingreso,
+                                                        alm_recepcab.cnumguia AS guia_proveedor,
+                                                        LPAD(alm_despachocab.nnronota,6,0) AS nota_despacho,
+                                                        DATE_FORMAT(alm_recepcab.ffecdoc, '%d/%m/%Y' ) AS fecha_ingreso,
+                                                        DATE_FORMAT(alm_despachocab.ffecdoc, '%d/%m/%Y' ) AS fecha_despacho,
+                                                        alm_despachocab.cnumguia AS guia_sepcon,
+                                                        alm_despachocab.ffecenvio AS fecha_envio_despacho,
+                                                        alm_cabexist.ffechadoc AS fecha_obra,
+                                                        alm_cabexist.idreg AS nota_obra,
+                                                        tb_parametros.cdescripcion,
+                                                        atencion.cdescripcion AS atencion,
+                                                        tb_unimed.cabrevia AS unidad
+                                                    FROM
+                                                        tb_pedidodet
+                                                        INNER JOIN cm_producto ON tb_pedidodet.idprod = cm_producto.id_cprod
+                                                        LEFT JOIN alm_recepdet ON tb_pedidodet.iditem = alm_recepdet.niddetaPed
+                                                        LEFT JOIN alm_despachodet ON tb_pedidodet.iditem = alm_despachodet.niddetaPed
+                                                        LEFT JOIN alm_existencia ON tb_pedidodet.iditem = alm_existencia.idpedido
+                                                        INNER JOIN tb_proyectos ON tb_pedidodet.idcostos = tb_proyectos.nidreg
+                                                        INNER JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
+                                                        LEFT JOIN lg_ordencab ON tb_pedidodet.idorden = lg_ordencab.id_regmov
+                                                        LEFT JOIN tb_partidas ON tb_pedidocab.idpartida = tb_partidas.idreg
+                                                        INNER JOIN tb_area ON tb_pedidocab.idarea = tb_area.ncodarea
+                                                        LEFT JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
+                                                        LEFT JOIN tb_user ON lg_ordencab.id_cuser = tb_user.iduser
+                                                        LEFT JOIN alm_recepcab ON alm_recepdet.id_regalm = alm_recepcab.id_regalm
+                                                        LEFT JOIN alm_despachocab ON alm_despachodet.id_regalm = alm_despachocab.id_regalm
+                                                        LEFT JOIN alm_cabexist ON alm_existencia.idregistro = alm_cabexist.idreg
+                                                        LEFT JOIN tb_parametros ON lg_ordencab.ctiptransp = tb_parametros.nidreg
+                                                        INNER JOIN tb_parametros AS atencion ON tb_pedidodet.tipoAten = atencion.nidreg
+                                                        INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed 
                                                         WHERE
-                                                            tb_costusu.id_cuser = :user 
-                                                            AND tb_costusu.nflgactivo = 1 
-                                                            AND tb_pedidodet.nflgActivo = 1
+                                                            tb_pedidodet.nflgActivo 
+                                                            AND tb_pedidodet.idpedido 
                                                             AND tb_pedidodet.idtipo LIKE :tipo
                                                             AND tb_pedidodet.idcostos LIKE :costo
                                                             AND cm_producto.ccodprod LIKE :codigo
-                                                            AND tb_pedidodet.idorden LIKE :orden
                                                             AND tb_pedidocab.nrodoc LIKE :pedido
                                                             AND tb_pedidocab.concepto LIKE :concepto
-                                                        ORDER BY tb_proyectos.ccodproy");
+                                                            AND (tb_pedidodet.idorden LIKE :orden OR ISNULL(tb_pedidodet.idorden))
+                                                        GROUP BY tb_pedidodet.iditem
+                                                        ORDER BY tb_pedidocab.anio DESC");
                 
-                $sql->execute(["user"       => $_SESSION['iduser'],
-                               "tipo"       => $tipo,
+                $sql->execute(["tipo"       => $tipo,
                                "costo"      => $costo,
                                "codigo"     => $codigo,
                                "orden"      => $orden,
@@ -95,34 +101,47 @@
 
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()){
+                            
+                            $estado = "";
+                            $porcentaje = 0;
+                            $estadoFila = 0;
+                            $estadoSemaforo = "";
+                            $semaforo = "";
+                            $saldoRecibir = "";
+                            $saldo = 0;
 
-                        $tipo  = $rs['tipo'] == 'B' ? 'bienes':'servicios';
-                        $orden = $rs['tipo'] == 'B' ? 'C':'S';
-                        $estadoItem = $rs['estadoItem'] != 105 ? "ATENDIDO":"ANULADO";
-                        $ingresos = $this->cantidadesRecepcion($rs['id_cprod'],$rs['idpedido'],$rs['iditem']);
-                        $despachos= $this->cantidadesDespacho($rs['id_cprod'],$rs['idorden'],$rs['iditem']);
-                        $ingObra  = $this->cantidadesRecepcionObra($rs['id_cprod'],$rs['idorden'],$rs['iditem']);
+                            $tipo_pedido = $rs['tipo_pedido'] == 37 ? 'B' : 'S';
+                            $tipo_orden = $rs['tipo_pedido'] == 37 ? 'C' : 'S';
+                            $clase_operacion = $rs['tipo_pedido'] == 37 ? 'bienes' : 'servicios';
 
-                        $saldoRecibir = intval($rs['cantidad_solicitada']) - intval($ingresos[0]['ingresos']);
+                            if ( $rs['estadoItem'] == 105 ) {
+                                $estadoFila = "item_anulado";
+                                $porcentaje = "0%";
+                            }
 
-                        $semaforo = "";
-                        $estadoSemaforo ="";
+                            if ( $rs['tipo_pedido'] == 37 ){
+                                $saldo = intval($rs['cantidad_pedida']) - intval($rs['ingresos']);
+                                $saldoRecibir = number_format($saldo,2);
+                            }
 
-                        if ( $saldoRecibir == 0 ) {
-                            $semaforo = "Verde";
-                            $estadoSemaforo ="semaforoVerde";
-                        }else if ( $ingresos[0]['ingresos'] == 0 && $rs['dias_atraso'] >= 10 && $rs['orden']) {
-                            $semaforo = "Rojo";
-                            $estadoSemaforo ="semaforoRojo";
-                        }else if ( $ingresos[0]['ingresos'] == 0 && $rs['dias_atraso'] <= 10 && $rs['orden']) {
-                            $semaforo = "Amarillo";
-                            $estadoSemaforo ="semaforoAmarillo";
-                        }
+                            $dias_atraso = $rs['tipo_pedido'] == 37 ? $rs['dias_atraso'] : " ";
+                            $dias_atraso = $rs['dias_atraso'] < 0 ? " " : $dias_atraso;
 
-                        $estadoFila = "";
-                        $porcentaje = "*";
+                            $dias_atraso = $saldo == 0 ? " " : $dias_atraso; 
 
-                        if ( $rs['estadoItem'] == 105 ) {
+                            /*
+                                 if ( $saldoRecibir == 0 ) {
+                                    $semaforo = "Verde";
+                                    $estadoSemaforo ="semaforoVerde";
+                                }else if ( $ingresos[0]['ingresos'] == 0 && $rs['dias_atraso'] >= 10 && $rs['orden']) {
+                                    $semaforo = "Rojo";
+                                    $estadoSemaforo ="semaforoRojo";
+                                }else if ( $ingresos[0]['ingresos'] == 0 && $rs['dias_atraso'] <= 10 && $rs['orden']) {
+                                    $semaforo = "Amarillo";
+                                    $estadoSemaforo ="semaforoAmarillo";
+                                }
+
+                                if ( $rs['estadoItem'] == 105 ) {
                             $estadoFila = "item_anulado";
                             $porcentaje = "0%";
                         }
@@ -168,61 +187,57 @@
                             $porcentaje = "100%";
                             $estado = "Atendido";
                         }
+                            */
 
-                        if ( $rs['orden'] != "0000") {
                             $salida.='<tr class="pointer" 
-                                    data-itempedido="'.$rs['iditem'].'" 
-                                    data-pedido="'.$rs['idpedido'].'" 
-                                    data-prod="'.$rs['id_cprod'].'"
-                                    data-orden="'.$rs['idorden'].'"
-                                    data-estado="'.$rs['estadoItem'].'">
+                                    data-itempedido="" 
+                                    data-pedido="" 
+                                    data-prod=""
+                                    data-orden=""
+                                    data-estado="">
                                     <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
                                     <td class="textoCentro '.$estadoFila.'">'.$porcentaje.'</td>
                                     <td class="textoDerecha pr15px">'.$rs['ccodproy'].'</td>
-                                    <td class="pl20px">'.$rs['area'].'</td>
-                                    <td class="pl20px">'.$rs['partida'].'</td>
-                                    <td class="textoCentro">'.$rs['atencion'].'</td>
-                                    <td class="textoCentro '.$tipo.'">'.$rs['tipo'].'</td>
+                                    <td class="pl20px">'.$rs['cdesarea'].'</td>
+                                    <td class="pl20px">'.$rs['partidas'].'</td>
+                                    <td class="textoCentro '.strtolower($rs['atencion']).'">'.$rs['atencion'].'</td>
+                                    <td class="textoCentro '.$clase_operacion.'">'.$tipo_pedido.'</td>
                                     <td class="textoCentro">'.$rs['anio_pedido'].'</td>
-                                    <td class="textoCentro">'.$rs['nropedido'].'</td>
-                                    <td class="textoCentro"></td>
-                                    <td class="textoCentro">'.$rs['emision_pedido'].'</td>
+                                    <td class="textoCentro">'.$rs['numero_pedido'].'</td>
+                                    <td class="textoCentro">'.$rs['fecha_pedido'].'</td>
                                     <td class="textoCentro">'.$rs['aprobacion_pedido'].'</td>
                                     <td class="textoCentro">'.$rs['ccodprod'].'</td>
-                                    <td class="pl10px">'.$rs['unidad'].'</td>
-                                    <td class="pl10px">'.$rs['descripcion'].'</td>
-                                    <td class="textoDerecha pr15px">'.$rs['cantidad_solicitada'].'</td>
-                                    <td class="textoCentro '.$tipo.' ">'.$orden.'</td>
+                                    <td class="textoCentro">'.$rs['unidad'].'</td>
+                                    <td class="pl10px">'.$rs['cdesprod'].'</td>
+                                    <td class="textoDerecha pr15px">'.$rs['cantidad_pedida'].'</td>
+                                    <td class="textoCentro '.$clase_operacion.'">'.$tipo_orden.'</td>
                                     <td class="textoCentro">'.$rs['anio_orden'].'</td>
-                                    <td class="textoCentro">'.$rs['orden'].'</td>
-                                    <td class="textoCentro">'.$rs['emision_orden'].'</td>
-                                    <td class="pl10px">'.$rs['crazonsoc'].'</td>
-                                    <td class="textoCentro">'.$rs['entrega_proveedor'].'</td>
-                                    <td class="textoDerecha pr15px">'.$ingresos[0]['ingresos'].'</td>
-                                    <td class="textoDerecha pr15px">'.number_format($saldoRecibir,2).'</td>
+                                    <td class="textoCentro">'.$rs['numero_orden'].'</td>
+                                    <td class="textoCentro">'.$rs['fecha_orden'].'</td>
+                                    <td class="pl10px">'.$rs['proveedor'].'</td>
+                                    <td class="textoCentro">'.$rs['fecha_entrega'].'</td>
+                                    <td class="textoDerecha pr15px">'.$rs['ingresos'].'</td>
+                                    <td class="textoDerecha pr15px">'.$saldoRecibir.'</td>
                                     <td class="textoDerecha pr15px">'.$rs['nplazo'].'</td>
-                                    <td class="textoDerecha pr15px">'.$rs['dias_atraso'].'</td>
+                                    <td class="textoDerecha pr15px">'.$dias_atraso.'</td>
                                     <td class="textoCentro '.$estadoSemaforo.'">'.$semaforo.'</td>
-                                    <td class="textoCentro ">'.$ingresos[0]['nnronota'].'</td>
-                                    <td class="textoCentro">'.$ingresos[0]['guia_proveedor'].'</td>
-                                    <td class="textoCentro">'.$ingresos[0]['fecha_ingreso'].'</td>
-                                    <td class="textoCentro">'.$despachos[0]['guia_sepcon'].'</td>
-                                    <td class="textoCentro">'.$despachos[0]['nota_salida'].'</td>
-                                    <td class="textoCentro">'.$despachos[0]['fecha_despacho'].'</td>
-                                    <td class="textoDerecha pr15px">'.$ingObra[0]['ingreso_obra'].'</td>
-                                    <td class="textoCentro">'.$ingObra[0]['nota_recepcion'].'</td>
-                                    <td class="textoCentro">'.$ingObra[0]['fecha_recepcion'].'</td>
-                                    <td class="textoCentro">'.$estado.'</td>
-                                    <td class="textoCentro">'.$estadoItem.'</td>
+                                    <td class="textoCentro">'.$rs['nota_ingreso'].'</td>
+                                    <td class="textoCentro">'.$rs['guia_proveedor'].'</td>
+                                    <td class="textoCentro">'.$rs['fecha_ingreso'].'</td>
+                                    <td class="textoCentro">'.$rs['nota_despacho'].'</td>
+                                    <td class="textoCentro">'.$rs['guia_sepcon'].'</td>
+                                    <td class="textoCentro">'.$rs['fecha_despacho'].'</td>
+                                    <td class="textoDerecha pr15px"></td>
+                                    <td class="textoCentro"></td>
+                                    <td class="textoCentro"></td>
+                                    <td class="textoCentro"></td>
+                                    <td class="textoCentro"></td>
                                     <td class=""></td>
                                     <td class=""></td>
-                                    <td class="pl20px">'.$rs['operador'].'</td>
-                                    <td class="pl10px">'.$rs['modo_transporte'].'</td>
-                                    <td class="">'.$rs['concepto'].'</td>
-                                    
+                                    <td class="pl20px"></td>
+                                    <td class="pl10px"></td>
+                                    <td class=""></td>
                                 </tr>';
-                        }
-                        
                     }
                 }
                 return $salida;

@@ -245,26 +245,25 @@
                     <th>Tipo</th>
                     <th>Año</br> Pedido</th>
                     <th>N°</br>Pedido</th>
-                    <th>N°</br>Mtto.</th>
-                    <th>Creación </br>Pedido</th>
-                    <th>Aprobación</br>Pedido</th>
+                    <th width="80px">Creación</br>Pedido</th>
+                    <th width="80px">Aprobación</br>Pedido</th>
                     <th>Codigo del</br>Bien/Servicio</th>
                     <th>Unidad</br>Medida</th>
                     <th width="400px">Descripcion del Bien/Servicio</th>
                     <th>Cantidad</br>Solicitada</th>
-                    <th>Tipo</br>Orden</th>
-                    <th>Año</br>Orden</th>
+                    <th width="40px">Tipo</br>Orden</th>
+                    <th width="50px">Año</br>Orden</th>
                     <th>N°</br>Orden</th>
                     <th>Fecha</br>Orden</th>
                     <th width="200px">Descripcion Proveedor</th>
-                    <th>Fecha Envio</br>Proveedor</th>
-                    <th>Cantidad</br>Recibida</th>
+                    <th>Fecha Entrega</br>Proveedor</th>
+                    <th width="50px">Cantidad</br>Recibida</th>
                     <th>Saldo por</br>Recibir</th>
-                    <th>Días</br>Entrega</th>
+                    <th width="50px">Días</br>Entrega</th>
                     <th>Días</br>Atrazo</th>
                     <th>Semaforo</th>
                     <th>Nota</br>Ingreso</th>
-                    <th>Guia</br>Ingreso</th>
+                    <th width="80px">Guia</br>Ingreso</th>
                     <th>Fecha</br>Ingreso</th>
                     <th>Nota</br>Salida</th>
                     <th>Guia</br>Remision</th>
