@@ -1520,13 +1520,14 @@
                                                 tb_pedidodet.nroparte,
                                                 tb_pedidodet.unid,
                                                 tb_pedidodet.observaciones,
+                                                tb_pedidodet.nregistro,
                                                 REPLACE ( FORMAT( tb_pedidodet.cant_pedida, 2 ), ',', '' ) AS cant_pedida,
                                                 tb_pedidodet.estadoItem,
                                                 cm_producto.ccodprod,
                                                 cm_producto.cdesprod,
                                                 tb_unimed.cabrevia,
                                                 tb_pedidodet.nflgqaqc,
-                                                CONCAT_WS( '/', tb_equipmtto.cregistro, tb_equipmtto.cdescripcion ) AS registro 
+                                                CONCAT_WS( '/', tb_equipmtto.cregistro, tb_equipmtto.cdescripcion ) AS desc_registro 
                                             FROM
                                                 tb_pedidodet
                                                 INNER JOIN cm_producto ON tb_pedidodet.idprod = cm_producto.id_cprod
@@ -1541,7 +1542,11 @@
                 if ($rowCount > 0){
                     $filas = 1;
                     while ($rs = $sql->fetch()) {
-                        $salida .='<tr data-grabado="1" data-idprod="'.$rs['idprod'].'" data-codund="'.$rs['unid'].'" data-idx="'.$rs['iditem'].'">
+                        $salida .='<tr data-grabado="1" 
+                                        data-idprod="'.$rs['idprod'].'" 
+                                        data-codund="'.$rs['unid'].'" 
+                                        data-idx="'.$rs['iditem'].'"
+                                        data-registro="'.$rs['nregistro'].'">
                                         <td class="textoCentro"><a href="'.$rs['iditem'].'" title="Eliminar" data-accion="delete"><i class="fas fa-eraser"></i></a></td>
                                         <td class="textoCentro"><a href="'.$rs['iditem'].'" title="Cambiar" data-accion="change"><i class="fas fa-exchange-alt"></i></a></td>
                                         <td class="textoCentro duplicate">'.str_pad($filas++,3,0,STR_PAD_LEFT).'</td>
@@ -1557,8 +1562,8 @@
                                                         value="'.$rs['cant_pedida'].'">
                                         </td>
                                         <td class="pl20px"><textarea>'.$rs['observaciones'].'</textarea></td>
-                                        <td class="textoCentro">'.$rs['nroparte'].'</td>
-                                        <td class="textoCentro">'.$rs['registro'].'</td>
+                                        <td class="textoCentro"><input type="text" value="'.$rs['nroparte'].'"></td>
+                                        <td class="textoCentro select">'.$rs['desc_registro'].'</td>
                                     </tr>';
                     }
                 }

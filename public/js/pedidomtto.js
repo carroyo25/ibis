@@ -4,6 +4,8 @@ $(function() {
     var aprobacion = 0;
     let items = "";
     let sw_accion = "";
+    let fila_reemplazar;
+    let registro;
 
     let equipos = listarEquipos();
     
@@ -166,7 +168,7 @@ $(function() {
         var value = $(this).val().toLowerCase();
         $(this).next().attr("id");
 
-        //aignar a una variable el contenido
+        //asignar a una variable el contenido
         let l = "#"+ $(this).next().attr("id")+ " li a"
 
         $(l).filter(function() {
@@ -186,7 +188,7 @@ $(function() {
         let grabado = 0;
         
 
-        let row = `<tr data-grabado="${grabado}" data-idprod="${idprod}" data-codund="${nunid}" data-idx="-">
+        let row = `<tr data-grabado="${grabado}" data-idprod="${idprod}" data-codund="${nunid}" data-idx="-" data-registro="">
                     <td class="textoCentro"><a href="#" title="eliminar" data-accion ="delete"><i class="fas fa-eraser"></i></a></td>
                     <td class="textoCentro"><a href="#" title="cambiar" data-accion ="change"><i class="fas fa-exchange-alt"></i></a></td>
                     <td class="textoCentro duplicate">${nFilas}</td>
@@ -200,8 +202,18 @@ $(function() {
                 </tr>`;
 
 
-        if (sw_accion == "n") {
+        if ( sw_accion == "n" ) {
             $("#tablaDetalles tbody").append(row);
+            //$("#tablaDetalles tbody tr").last().find("td").eq(6).children().setFocus();
+        }else {
+            fila_reemplazar.attr("data-grabado",0);
+            fila_reemplazar.attr("data-idprod",idprod);
+            fila_reemplazar.attr("data-codund",nunid);
+            fila_reemplazar.find("td").eq(3).text(codigo);
+            fila_reemplazar.find("td").eq(4).text(descrip);
+            fila_reemplazar.find("td").eq(5).text(unidad);
+
+            $("#busqueda").fadeOut();
         }
        
         return false;
@@ -212,14 +224,27 @@ $(function() {
 
         let items = "";
 
+        registro = $(this);
+
         equipos.forEach(element => {
-            items += `<option value="${element.valor}">${element.registro}</option>`;
+            items += `<tr data-equipo="${element.valor}" class="pointer">
+                        <td class="pl20px">${element.registro}</td>
+                        <td class="pl20px">${element.descripcion}</td>
+                    </tr>`;
         });
 
-        if ( $(this).children().length == 0 ) {
-            let select = `<select name="registro">${items}</select>`;
-            $(this).append(select);
-        }
+        $("#tablaEquipos tbody").empty().append(items);
+        $("#busquedaEquipos").fadeIn();
+
+        return false;
+    });
+
+    $("#tablaEquipos tbody").on("click","tr", function (e) {
+        e.preventDefault();
+        
+        registro.parent().attr("data-registro",$(this).data("equipo"));
+        registro.parent().attr("data-grabado",0);
+        registro.text($(this).find("td").eq(0).text());
 
         return false;
     });
@@ -371,20 +396,19 @@ $(function() {
                 );
             };
         }else {
-            fila.remove();
+            fila_reemplazar = $(this).parent().parent();
 
             $.post(RUTA+"pedidos/llamaProductos", {tipo:$("#codigo_tipo").val()},
-            function (data, textStatus, jqXHR) {
-                $("#tablaModulos tbody")
-                    .empty()
-                    .append(data);
+                function (data, textStatus, jqXHR) {
+                    $("#tablaModulos tbody")
+                        .empty()
+                        .append(data);
 
-                $("#busqueda").fadeIn();
-                sw_accion = "c";
-            },
-            "text"
-        );
-            
+                    $("#busqueda").fadeIn();
+                    sw_accion = "c";
+                },
+                "text"
+            );
         }
 
         
@@ -477,7 +501,7 @@ $(function() {
 
     $("#preview").click(function (e) { 
         e.preventDefault();
-    
+
         if ($("#numero").val() == ""){
             mostrarMensaje("Faltan datos del pedido","mensaje_error")
         }else{
@@ -550,6 +574,28 @@ $(function() {
         return false;
     });
 
+    //cuando cambia algo en la tabla de detalles
+    $("#tablaDetalles tbody ").on("change","input,textarea", function (e) {
+        //e.preventDefault();
+
+        if (accion == 'u') {
+            $(this).parent().parent().attr("data-grabado",0);
+        }
+        
+       return false;
+    });
+
+    $("#txtBuscarEquipo").keyup(function(){
+        _this = this;
+
+        $.each($("#tablaEquipos tbody tr"), function () { 
+            if($(this).text().toLowerCase().indexOf($(_this).val().toLowerCase()) === -1)
+                $(this).hide();
+            else
+                $(this).show();
+        });
+    })
+
 })
 
 listarEquipos = () => {
@@ -580,8 +626,8 @@ itemsSave = () =>{
             ESTADO      = $(this).attr('data-grabado'),
             ESPECIFICA  = $(this).find('td').eq(7).children().val(),
             NROPARTE    = $(this).find('td').eq(8).children().val(),
-            REGISTRO    = $(this).find("select[name='registro']").val(),
-            REGISTEXT   = $(this).find("select[name='registro'] option:selected").text();
+            REGISTRO    = $(this).data('registro'),
+            REGISTEXT   = $(this).find('td').eq(9).text();
 
         item= {};
         
@@ -621,16 +667,9 @@ itemsPreview = (accion) => {
             ITEM        = $(this).find('td').eq(2).text(),
             CODIGO      = $(this).find('td').eq(3).text(),
             DESCRIPCION = $(this).find('td').eq(4).text();
-
-            if (accion == "n") {
-                NROPARTE    = $(this).find('td').eq(8).children().val();
-                REGISTRO    = $(this).find("select[name='registro'] option:selected").val();
-                REGISTEXT   = $(this).find("select[name='registro'] option:selected").text();
-            }else {
-                NROPARTE    = $(this).find('td').eq(8).text();
-                REGISTRO    = $(this).find('td').eq(9).text();
-                REGISTEXT   = $(this).find('td').eq(9).text();
-            }
+            NROPARTE    = $(this).find('td').eq(8).children().val();
+            REGISTRO    = $(this).data('registro');
+            REGISTEXT   = $(this).find('td').eq(9).text();
 
         item= {};
         

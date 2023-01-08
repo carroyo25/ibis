@@ -27,6 +27,10 @@
         function consultaId(){
             echo json_encode($this->model->consultarReqIdMtto($_POST['id'],49,50,49,null));
         }
+
+        function modificaPedido(){
+            echo json_encode($this->model->modificar($_POST['cabecera'],$_POST['detalles']));
+        }
         
     }
 ?>

@@ -93,7 +93,7 @@ $(function(){
             let opcion = $(this).data("opcion");
         
             if (!checkExistTable($("#modulos tbody tr"),nombre,2)) {
-                    let row = `<tr data-grabado="0" data-codigo="${codigo}" data-clase="${clase}" data-opcion="${opcion}">
+                    let row = `<tr data-grabado="0" data-codigo="${codigo}" data-clase="${clase}" data-opcion="${opcion}" data-registro="">
                                     <td class="textoCentro"><a href="#"><i class="fas fa-eraser"></i></a> </td>
                                     <td class="textoCentro">${nFilas}</td>
                                     <td class="pl10px">${nombre}</td>

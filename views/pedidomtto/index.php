@@ -234,6 +234,32 @@
             </div>
         </div>
     </div>
+    <div class="modal" id="busquedaEquipos">
+        <div class="ventanaBusqueda w50por">
+            <div class="tituloVentana">
+                <span id="tituloBusqueda">Catálogo Bienes/Servicios</span>
+                <div>
+                    <a href="#"><i class="fas fa-window-close"></i></a>
+                </div>
+            </div>
+            <div class="textoBusqueda">
+                <input type="text" name="txtBuscarEquipo" id="txtBuscarEquipo" placeholder="Buscar Codigo" class="mayusculas">
+            </div>
+            <div class="tablaBusqueda">
+                <table class="tabla" id="tablaEquipos">
+                    <thead >
+                        <tr class="stickytop">
+                            <th width="10%">Codigo</th>
+                            <th>Descripcion</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
     <div class="modal" id="vistaprevia">
         <div class="ventanaVistaPrevia">
             <div class="tituloVista">

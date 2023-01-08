@@ -101,7 +101,7 @@ buscar = (_this) => {
             $(this).hide();
         else
             $(this).show();
-        });
+    });
 }
 
 previewImg = (event,img) => {

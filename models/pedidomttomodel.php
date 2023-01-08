@@ -66,12 +66,15 @@
                 $salida=array();
 
                 $sql = $this->db->connect()->query("SELECT
-                                                    tb_equipmtto.idreg,
-                                                    CONCAT_WS(' / ',tb_equipmtto.cregistro) AS registro
-                                                FROM
-                                                    tb_equipmtto 
-                                                WHERE
-                                                    tb_equipmtto.nflgactivo = 1");
+                                                        tb_equipmtto.idreg,
+                                                        UPPER( tb_equipmtto.cregistro) AS registro,
+                                                        UPPER(tb_equipmtto.cdescripcion) AS descripcion
+                                                    FROM
+                                                        tb_equipmtto 
+                                                    WHERE
+                                                        tb_equipmtto.nflgactivo = 1 
+                                                    ORDER BY
+                                                        tb_equipmtto.cregistro");
                 $sql->execute();
                 $rowCount = $sql->rowCount();
 
@@ -80,13 +83,13 @@
                     while ($rs = $sql->fetch()) {
                         $item['valor']    =$rs['idreg'];
                         $item['registro'] =$rs['registro'];
+                        $item['descripcion'] =$rs['descripcion'];
 
                         array_push($salida,$item);
 
                     }
                 }
-
-
+                
                 return $salida;
 
             } catch (PDOException $th) {
@@ -165,6 +168,133 @@
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;
+            }
+        }
+
+        public function modificar($datos,$detalles){
+            try {
+                $salida = false;
+                $respuesta = false;
+                $mensaje = "Error en el registro";
+                $clase = "mensaje_error";
+                $rowDetails = 0;
+
+                $sql = $this->db->connect()->prepare("UPDATE tb_pedidocab SET vence=:vence,concepto=:concep,detalle=:det,nivelAten=:aten,
+                                                                                docfPdfPrev=:dprev
+                                                                                WHERE idreg=:id");
+                 $sql->execute([
+                    "vence"=>$datos['vence'],
+                    "concep"=>$datos['concepto'],
+                    "det"=>$datos['espec_items'],
+                    "aten"=>$datos['codigo_atencion'],
+                    "dprev"=>$datos['vista_previa'],
+                    "id"=>$datos['codigo_pedido']
+                ]);
+
+                $rowCount = $sql->rowCount();
+
+                $details = json_decode($detalles);
+                $nreg = count($details);
+                
+                for ($i=0; $i < $nreg; $i++) { 
+                    //graba el item si no se ha insertado como nuevo
+                    if( $details[$i]->itempedido == '-' ){
+                        $this->saveItemMtto($datos['codigo_verificacion'],
+                                        $datos['codigo_estado'],
+                                        $datos['codigo_atencion'],
+                                        $datos['codigo_tipo'],
+                                        $datos['codigo_costos'],
+                                        $datos['codigo_area'],
+                                        $details[$i]);
+                    }else{
+                    //cambia los datos 
+                        for ($i=0; $i < count($details); $i++) { 
+                            $rowDetails = $this->updateItemsMtto($datos['codigo_atencion'],
+                                                             $details[$i]->cantidad,
+                                                             $details[$i]->calidad,
+                                                             $details[$i]->itempedido,
+                                                             $details[$i]->especifica,
+                                                             $details[$i]->nroparte,
+                                                             $details[$i]->registro,
+                                                             $details[$i]->idprod);
+                         }
+                    }
+                }
+
+                if ($rowCount > 0 || $rowDetails > 0){
+                    $respuesta = true;
+                    $mensaje = "Pedido Modificado";
+                    $clase = "mensaje_correcto";
+                }else{
+                    $respuesta = true;
+                    $mensaje = "Pedido Modificado";
+                    $clase = "mensaje_correcto";
+                }
+
+                $salida = array("respuesta"=>$respuesta,
+                                "mensaje"=>$mensaje,
+                                "clase"=>$clase);
+
+                
+                return $salida;
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }            
+        }
+
+        private function updateItemsMtto($aten,$cant,$qaqc,$idx,$especifica,$parte,$registro,$producto){
+            $sql = $this->db->connect()->prepare("UPDATE ibis.tb_pedidodet SET 
+                                            cant_pedida = :cant, 
+                                            nflgqaqc = :qaqc,
+                                            tipoAten = :aten,
+                                            observaciones=:espec,
+                                            nroparte=:parte,
+                                            nregistro=:nreg,
+                                            idprod=:prod
+                                        WHERE iditem = :id");
+            $sql ->execute(["cant"=>$cant,
+                            "qaqc"=>$qaqc,
+                            "aten"=>$aten,
+                            "espec"=>$especifica,
+                            "id"=>$idx,
+                            "parte"=>$parte,
+                            "nreg"=>$registro,
+                            "prod"=>$producto]);
+            $rowCount = $sql->rowCount();
+            return $rowCount;
+        }
+
+        //Graba un solo Item de la modificacion
+        private function saveItemMtto($codigo,$estado,$atencion,$tipo,$costos,$area,$detalles){
+            $indice = $this->obtenerIndice($codigo,"SELECT idreg AS numero FROM tb_pedidocab WHERE tb_pedidocab.verificacion =:id");
+
+           try {
+                $sql = $this->db->connect()->prepare("INSERT INTO tb_pedidodet SET idpedido=:ped,idprod=:prod,idtipo=:tipo,unid=:und,
+                                                                                   cant_pedida=:cant,estadoItem=:est,tipoAten=:aten,
+                                                                                   verificacion=:ver,nflgqaqc=:qaqc,idcostos=:costos,idarea=:area,
+                                                                                   observaciones=:espec,nregistro=:registro,nroparte=:parte");
+                       $sql ->execute([
+                                       "ped"=>$indice,
+                                       "prod"=>$detalles->idprod,
+                                       "tipo"=>$tipo,
+                                       "und"=>$detalles->unidad,
+                                       "cant"=>$detalles->cantidad,
+                                       "est"=>$estado,
+                                       "aten"=>$atencion,
+                                       "ver"=>$codigo,
+                                       "qaqc"=>$detalles->calidad,
+                                       "costos"=>$costos,
+                                       "area"=>$area,
+                                       "espec"=>$detalles->especifica,
+                                       "registro"=>$detalles->registro,
+                                       "nroparte"=>$datos[$i]->nroparte
+                                    ]);
+                  
+            } catch (PDOException $th) {
+                   echo "Error: ".$th->getMessage();
+                   return false;
             }
         }
 
