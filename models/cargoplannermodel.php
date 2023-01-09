@@ -57,9 +57,12 @@
                                                         alm_despachocab.ffecenvio AS fecha_envio_despacho,
                                                         DATE_FORMAT( alm_cabexist.ffechadoc , '%d/%m/%Y' )AS fecha_obra,
                                                         LPAD(alm_cabexist.idreg,6,0) AS nota_obra,
-                                                        tb_parametros.cdescripcion,
+                                                        tb_parametros.cdescripcion AS transporte,
                                                         atencion.cdescripcion AS atencion,
-                                                        tb_unimed.cabrevia AS unidad
+                                                        tb_unimed.cabrevia AS unidad,
+                                                        tb_pedidodet.nroparte,
+	                                                    tb_equipmtto.cregistro,
+	                                                    lg_ordencab.ctiptransp 
                                                     FROM
                                                         tb_pedidodet
                                                         INNER JOIN cm_producto ON tb_pedidodet.idprod = cm_producto.id_cprod
@@ -78,7 +81,8 @@
                                                         LEFT JOIN alm_cabexist ON alm_existencia.idregistro = alm_cabexist.idreg
                                                         LEFT JOIN tb_parametros ON lg_ordencab.ctiptransp = tb_parametros.nidreg
                                                         INNER JOIN tb_parametros AS atencion ON tb_pedidodet.tipoAten = atencion.nidreg
-                                                        INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed 
+                                                        INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                        LEFT JOIN tb_equipmtto ON tb_pedidodet.nregistro = tb_equipmtto.idreg 
                                                         WHERE
                                                             tb_pedidodet.nflgActivo 
                                                             AND tb_pedidodet.idpedido 
@@ -108,7 +112,7 @@
                             $estadoFila = 0;
                             $estadoSemaforo = "";
                             $semaforo = "";
-                            $saldoRecibir = "";
+                            $saldoRecibir = 0;
                             $saldo = 0;
 
                             $tipo_pedido = $rs['tipo_pedido'] == 37 ? 'B' : 'S';
@@ -128,74 +132,80 @@
                             $dias_atraso = $rs['tipo_pedido'] == 37 ? $rs['dias_atraso'] : " ";
                             $dias_atraso = $rs['dias_atraso'] < 0 ? " " : $dias_atraso;
 
-                            $dias_atraso = $saldo == 0 ? " " : $dias_atraso; 
+                            $dias_atraso = $saldo == 0 ? " " : $dias_atraso;
+                            $transporte = $rs['ctiptransp'] == 39 ? "TERRESTRE": $rs['transporte'];
 
-                            /*
-                                 if ( $saldoRecibir == 0 ) {
-                                    $semaforo = "Verde";
-                                    $estadoSemaforo ="semaforoVerde";
-                                }else if ( $ingresos[0]['ingresos'] == 0 && $rs['dias_atraso'] >= 10 && $rs['orden']) {
-                                    $semaforo = "Rojo";
-                                    $estadoSemaforo ="semaforoRojo";
-                                }else if ( $ingresos[0]['ingresos'] == 0 && $rs['dias_atraso'] <= 10 && $rs['orden']) {
-                                    $semaforo = "Amarillo";
-                                    $estadoSemaforo ="semaforoAmarillo";
+                            /*if ( $saldoRecibir == 0 ) {
+                                $semaforo = "Verde";
+                                $estadoSemaforo ="semaforoVerde";
+                            }else if ( $saldoRecibir == 0  && $rs['cantidad_pedida'] == $rs['ingreso_obra']) {
+                                $semaforo = "Entregado";
+                                $estadoSemaforo ="Entregado";
+                            }else if ( $ingresos[0]['ingresos'] == 0 && $rs['dias_atraso'] <= 10 && $rs['orden']) {
+                                $semaforo = "Amarillo";
+                                $estadoSemaforo ="semaforoAmarillo";
+                            }*/
+
+                            if ( $saldoRecibir == 0  && $rs['cantidad_pedida'] == $rs['ingreso_obra']) {
+                                $semaforo = "entregado";
+                                $estadoSemaforo ="semaforoNaranja";
+                            }
+                            
+                            /*if ( $saldoRecibir  == 0) {
+                                $semaforo = "Verde";
+                                $estadoSemaforo ="semaforoVerde";
+                            }
+                        
+                                /*if( $rs['estadoItem'] == 49 || $rs['estadoItem'] == 54 || $rs['estadoItem'] == 60 ) {
+                                    $estadoFila = "item_aprobado";
+                                    $porcentaje = "15%";
+                                }
+                                if( $rs['orden'] ) {
+                                    $estadoFila = "item_orden";
+                                    $porcentaje = "20%";
+                                    $estado = "Orden";
+                                }
+                                
+                                if( !$rs['orden'] && $ingresos[0]['ingresos'] > 0)  {
+                                    $estadoFila = "item_parcial";
+                                    $porcentaje = "25%";
+                                }
+                                
+                                if( $rs['orden'] && $ingresos[0]['ingresos'] != $rs['cantidad_solicitada'] && $ingresos[0]['ingresos'])  {
+                                    $estadoFila = "item_ingreso_parcial";
+                                    $porcentaje = "40%";
                                 }
 
-                                if ( $rs['estadoItem'] == 105 ) {
-                            $estadoFila = "item_anulado";
-                            $porcentaje = "0%";
-                        }
-                        
-                        if( $rs['estadoItem'] == 49 || $rs['estadoItem'] == 54 || $rs['estadoItem'] == 60 ) {
-                            $estadoFila = "item_aprobado";
-                            $porcentaje = "15%";
-                        }
-                        if( $rs['orden'] ) {
-                            $estadoFila = "item_orden";
-                            $porcentaje = "20%";
-                            $estado = "Orden";
-                        }
-                        
-                        if( !$rs['orden'] && $ingresos[0]['ingresos'] > 0)  {
-                            $estadoFila = "item_parcial";
-                            $porcentaje = "25%";
-                        }
-                        
-                        if( $rs['orden'] && $ingresos[0]['ingresos'] != $rs['cantidad_solicitada'] && $ingresos[0]['ingresos'])  {
-                            $estadoFila = "item_ingreso_parcial";
-                            $porcentaje = "40%";
-                        }
+                                if( $rs['orden'] && $ingresos[0]['ingresos'] == $rs['cantidad_solicitada'])  {
+                                    $estadoFila = "item_ingreso_total";
+                                    $porcentaje = "50%";
+                                }
 
-                        if( $rs['orden'] && $ingresos[0]['ingresos'] == $rs['cantidad_solicitada'])  {
-                            $estadoFila = "item_ingreso_total";
-                            $porcentaje = "50%";
-                        }
+                                if( $despachos[0]['nota_salida'] )  {
+                                    $estadoFila = "item_registro_salida";
+                                    $porcentaje = "60%";
+                                    $estado = "Despacho";
+                                }
 
-                        if( $despachos[0]['nota_salida'] )  {
-                            $estadoFila = "item_registro_salida";
-                            $porcentaje = "60%";
-                            $estado = "Despacho";
-                        }
+                                if( $despachos[0]['guia_sepcon'] )  {
+                                    $estadoFila = "item_transito";
+                                    $estado = "Transito";
+                                }
 
-                        if( $despachos[0]['guia_sepcon'] )  {
-                            $estadoFila = "item_transito";
-                            $estado = "Transito";
-                        }
-
-                        if( $ingObra[0]['nota_recepcion'] )  {
-                            $estadoFila = "item_obra";
-                            $porcentaje = "100%";
-                            $estado = "Atendido";
-                        }
-                            */
+                                if( $ingObra[0]['nota_recepcion'] )  {
+                                    $estadoFila = "item_obra";
+                                    $porcentaje = "100%";
+                                    $estado = "Atendido";
+                                }
+                                    */
 
                             $salida.='<tr class="pointer" 
                                     data-itempedido="" 
-                                    data-pedido="" 
+                                    data-pedido="'.$rs['idpedido'].'" 
                                     data-prod=""
                                     data-orden=""
-                                    data-estado="">
+                                    data-estado=""
+                                    data-producto="'.$rs['idprod'].'">
                                     <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
                                     <td class="textoCentro '.$estadoFila.'">'.$porcentaje.'</td>
                                     <td class="textoDerecha pr15px">'.$rs['ccodproy'].'</td>
@@ -218,7 +228,7 @@
                                     <td class="pl10px">'.$rs['proveedor'].'</td>
                                     <td class="textoCentro">'.$rs['fecha_entrega'].'</td>
                                     <td class="textoDerecha pr15px">'.$rs['ingresos'].'</td>
-                                    <td class="textoDerecha pr15px">'.$saldoRecibir.'</td>
+                                    <td class="textoDerecha pr15px '.$estadoSemaforo.'">'.$saldoRecibir.'</td>
                                     <td class="textoDerecha pr15px">'.$rs['nplazo'].'</td>
                                     <td class="textoDerecha pr15px">'.$dias_atraso.'</td>
                                     <td class="textoCentro '.$estadoSemaforo.'">'.$semaforo.'</td>
@@ -233,10 +243,10 @@
                                     <td class="textoCentro">'.$rs['fecha_obra'].'</td>
                                     <td class="textoCentro"></td>
                                     <td class="textoCentro"></td>
-                                    <td class=""></td>
-                                    <td class=""></td>
-                                    <td class="pl20px"></td>
-                                    <td class="pl10px"></td>
+                                    <td class="">'.$rs['nroparte'].'</td>
+                                    <td class="">'.$rs['cregistro'].'</td>
+                                    <td class="pl20px">'.$rs['operador'].'</td>
+                                    <td class="pl10px">'.$transporte.'</td>
                                     <td class="">'.$rs['concepto'].'</td>
                                 </tr>';
                     }

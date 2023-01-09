@@ -263,7 +263,7 @@
                     <th>Días</br>Atrazo</th>
                     <th>Semaforo</th>
                     <th>Nota</br>Ingreso</th>
-                    <th width="80px">Guia</br>Ingreso</th>
+                    <th width="100px">Guia</br>Ingreso</th>
                     <th>Fecha</br>Ingreso</th>
                     <th>Nota</br>Salida</th>
                     <th>Guia</br>Remision</th>
@@ -274,7 +274,7 @@
                     <th>Estado</br>Pedido</th>
                     <th>Estado</br>Item</th>
                     <th>N°</br>Parte</th>
-                    <th>Codigo</br>Activo</th>
+                    <th width="150px">Codigo</br>Activo</th>
                     <th>Operador</br>Logístico</th>
                     <th>Tipo</br>Transporte</th>
                     <th>Observaciones/Concepto</th>

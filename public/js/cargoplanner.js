@@ -32,23 +32,6 @@ $(function() {
             "json"
         );
 
-        /*let wb = XLSX.utils.table_to_book(document.getElementById('cargoPlanDescrip'), {sheet:"Cargo Plan"});
-        let wbout = XLSX.write(wb, {bookType:'xlsx', bookSST:true, type: 'binary'});
-        saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), 'cargoPlan.xlsx');*/
-       
-        /*let worksheet = XLSX.utils.json_to_sheet(detalles());
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Cargo Plan");
-        XLSX.utils.sheet_add_aoa(worksheet, [["Item", "Estado"]], { origin: "A1" });
-
-        worksheet["!cols"] = [ { wch: 10 } ];
-        let range = XLSX.utils.decode_range("A1:50");
-        let a1_range = XLSX.utils.encode_range({ s: { c: 0, r: 0 }, e: { c: 3, r: 2 } });
-
-        XLSX.writeFile(workbook, "cargoplan.xlsx", { compression: true });*/
-        
-        //tableToExcel(document.getElementById('cargoPlanDescrip'),"cargoPlan")
-
         return false;
     });
 
