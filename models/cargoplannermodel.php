@@ -22,6 +22,7 @@
                                                         DATE_FORMAT( tb_pedidocab.emision, '%d/%m/%Y' ) AS fecha_pedido,
                                                         DATE_FORMAT( tb_pedidocab.faprueba, '%d/%m/%Y' ) AS aprobacion_pedido,
                                                         tb_pedidocab.anio AS anio_pedido,
+                                                        UPPER(tb_pedidocab.concepto) AS concepto,
                                                         tb_pedidodet.iditem,
                                                         tb_pedidodet.idpedido,
                                                         tb_pedidodet.idtipo AS tipo_pedido,
@@ -36,7 +37,7 @@
                                                         tb_pedidodet.cant_orden,
                                                         SUM( alm_recepdet.ncantidad ) AS ingresos,
                                                         SUM( alm_despachodet.ndespacho ) AS despachos,
-                                                        SUM( alm_existencia.cant_ingr ) AS ingreso_obra,
+                                                        FORMAT(SUM( alm_existencia.cant_ingr ),2) AS ingreso_obra,
                                                         lg_ordencab.cper AS anio_orden,
                                                         lg_ordencab.ntipmov AS tipo_orden,
                                                         DATEDIFF(NOW(),lg_ordencab.ffechaent) AS dias_atraso,
@@ -54,8 +55,8 @@
                                                         DATE_FORMAT(alm_despachocab.ffecdoc, '%d/%m/%Y' ) AS fecha_despacho,
                                                         alm_despachocab.cnumguia AS guia_sepcon,
                                                         alm_despachocab.ffecenvio AS fecha_envio_despacho,
-                                                        alm_cabexist.ffechadoc AS fecha_obra,
-                                                        alm_cabexist.idreg AS nota_obra,
+                                                        DATE_FORMAT( alm_cabexist.ffechadoc , '%d/%m/%Y' )AS fecha_obra,
+                                                        LPAD(alm_cabexist.idreg,6,0) AS nota_obra,
                                                         tb_parametros.cdescripcion,
                                                         atencion.cdescripcion AS atencion,
                                                         tb_unimed.cabrevia AS unidad
@@ -227,16 +228,16 @@
                                     <td class="textoCentro">'.$rs['nota_despacho'].'</td>
                                     <td class="textoCentro">'.$rs['guia_sepcon'].'</td>
                                     <td class="textoCentro">'.$rs['fecha_despacho'].'</td>
-                                    <td class="textoDerecha pr15px"></td>
-                                    <td class="textoCentro"></td>
-                                    <td class="textoCentro"></td>
+                                    <td class="textoDerecha pr15px">'.$rs['ingreso_obra'].'</td>
+                                    <td class="textoCentro">'.$rs['nota_obra'].'</td>
+                                    <td class="textoCentro">'.$rs['fecha_obra'].'</td>
                                     <td class="textoCentro"></td>
                                     <td class="textoCentro"></td>
                                     <td class=""></td>
                                     <td class=""></td>
                                     <td class="pl20px"></td>
                                     <td class="pl10px"></td>
-                                    <td class=""></td>
+                                    <td class="">'.$rs['concepto'].'</td>
                                 </tr>';
                     }
                 }
