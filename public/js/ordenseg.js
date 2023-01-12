@@ -182,6 +182,16 @@ $(function(){
         
         return false
     });
+
+    $("#documentos_adjuntos").on('click','a', function(e) {
+        e.preventDefault();
+
+        let adjunto = RUTA+'/public/documentos/ordenes/adjuntos/'+$(this).attr("href");
+
+        $(".seccion4 iframe").attr("src","").attr("src",adjunto);
+
+        return false;
+    });
 })
 
 itemsClear = () =>{

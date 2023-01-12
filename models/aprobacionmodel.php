@@ -407,5 +407,38 @@
                 return false;
             }
         }
+
+        public function cancelarPedido($id){
+            try {
+                $sql = $this->db->connect()->prepare("UPDATE tb_pedidocab 
+                                                SET tb_pedidocab.estadodoc = 49,
+                                                    tb_pedidocab.cancela =:user
+                                                WHERE idreg = :id
+                                                LIMIT 1");
+                $sql->execute(["id" => $id,"user"=>$_SESSION['iduser']]);
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0) {
+                    $this->cancelarDetalles($id);
+
+                    return "Pedido Cancelado";
+                }
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        private function cancelarDetalles($id){
+            try {
+                $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet 
+                                                SET tb_pedidodet.estadoItem = 49
+                                                WHERE idpedido = :id");
+                $sql->execute(["id" => $id]);
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
     }
 ?>

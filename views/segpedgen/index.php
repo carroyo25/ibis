@@ -120,6 +120,7 @@
                                     <th width="6%">Cant.</th>
                                     <th width="30%">Especificaciones</th>
                                     <th>Nro. Parte</th>
+                                    <th>Bien/Activo</th>
                                 </tr>
                             </thead>
                             <tbody>

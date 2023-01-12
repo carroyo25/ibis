@@ -245,10 +245,11 @@ itemsPreview = () =>{
             DESCRIPCION = $(this).find('td').eq(3).text(),
             UNIDAD      = $(this).find('td').eq(4).text(),
             CANTIDAD    = $(this).find('td').eq(5).children().val(),
-            ESPECIFICA  = $(this).find('td').eq(6).children().val();
+            ESPECIFICA  = $(this).find('td').eq(6).children().val(),
             ITEMPEDIDO  = $(this).data('idx'),
             OBSERVAC    = "",
             NROPARTE    = $(this).find('td').eq(7).text(),
+            ACTIVO      = $(this).find('td').eq(8).text(),
 
         item= {};
         
@@ -262,6 +263,7 @@ itemsPreview = () =>{
         item['observac']    = OBSERVAC;
         item['atendida']    = 0;
         item['nroparte']    = NROPARTE;
+        item['activo']      = ACTIVO;
 
         DATA.push(item);
     })

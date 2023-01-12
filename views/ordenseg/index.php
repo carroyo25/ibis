@@ -136,15 +136,6 @@
             </div>
         </div>
     </div>
-    <div class="modal" id="vistaprevia">
-        <div class="ventanaVistaPrevia">
-            <div class="tituloVista">
-                <h3>Vista Previa</h3>
-                <a href="#" id="closePreview" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
-            </div>
-            <iframe src=""></iframe>
-        </div>
-    </div>
     <div class="modal" id="detalles">
         <div class="ventanaDetalles">
             <form method="post" id="cargoplan">
@@ -221,6 +212,15 @@
                     </section>
                 </div>
             </form>
+        </div>
+    </div>
+    <div class="modal" id="vistaprevia">
+        <div class="ventanaVistaPrevia">
+            <div class="tituloVista">
+                <h3>Vista Previa</h3>
+                <a href="#" id="closePreview" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
+            </div>
+            <iframe src=""></iframe>
         </div>
     </div>
     <div class="cabezaModulo">

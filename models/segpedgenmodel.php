@@ -283,8 +283,8 @@
                 $detalles[$i]['unidad'],
                 utf8_decode($detalles[$i]['cdesprod']),
                 $detalles[$i]['pedido'],
-                "",
-                ""));
+                $detalles[$i]['nroparte'],
+                $detalles[$i]['activo']));
                 $lc++;
                 $rc++;
                                 

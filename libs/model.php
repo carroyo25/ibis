@@ -1617,11 +1617,14 @@
                                                     cm_producto.ccodprod,
                                                     cm_producto.cdesprod,
                                                     tb_unimed.cabrevia,
-                                                    tb_pedidodet.nflgqaqc 
+                                                    tb_pedidodet.nflgqaqc,
+                                                    tb_equipmtto.cdescripcion,
+	                                                tb_equipmtto.cregistro 
                                                 FROM
                                                     tb_pedidodet
                                                     INNER JOIN cm_producto ON tb_pedidodet.idprod = cm_producto.id_cprod
-                                                    INNER JOIN tb_unimed ON tb_pedidodet.unid = tb_unimed.ncodmed 
+                                                    INNER JOIN tb_unimed ON tb_pedidodet.unid = tb_unimed.ncodmed
+                                                    LEFT JOIN tb_equipmtto ON tb_pedidodet.nregistro = tb_equipmtto.idreg 
                                                 WHERE
                                                     tb_pedidodet.idpedido = :id 
                                                     AND tb_pedidodet.nflgActivo = 1");
@@ -1649,7 +1652,8 @@
                                                         value="'.$rs['cant_pedida'].'">
                                         </td>
                                         <td class="pl20px"><textarea>'.$rs['observaciones'].'</textarea></td>
-                                        <td class="textoCentro"></td>
+                                        <td class="textoCentro">'.$rs['nroparte'].'</td>
+                                        <td class="textoCentro">'.$rs['cregistro'].'</td>
                                     </tr>';
                     }
                 }

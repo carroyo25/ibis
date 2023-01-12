@@ -256,6 +256,8 @@ $(function(){
         return false
     });
 
+    //Anular pedido
+
     $("#cancelRequest").click(function (e) { 
         e.preventDefault();
         
@@ -294,6 +296,42 @@ $(function(){
         e.preventDefault();
 
         $("#preguntaAnula").fadeOut();
+        
+        return false;
+    });
+
+    //Cancelar pedido
+
+    $("#returnRequest").click(function (e) { 
+        e.preventDefault();
+        
+        $("#preguntaCancela").fadeIn();
+
+        return false;
+    });
+
+    $("#btnCancelarCancela").click(function (e) { 
+        e.preventDefault();
+
+        $("#preguntaCancela").fadeOut();
+        
+        return false;
+    });
+
+    $("#btnAceptarCancela").click(function (e) { 
+        e.preventDefault();
+
+        $("#ventanaEspera").fadeIn();
+
+        $.post(RUTA+"aprobacion/cancelapedido", {id:$("#codigo_pedido").val()},
+            function (data, textStatus, jqXHR) {
+                $("#preguntaAnula").fadeOut();
+                $("#ventanaEspera").fadeIn();
+
+                mostrarMensaje(data,"mensaje_correcto");
+            },
+            "text"
+        );
         
         return false;
     });

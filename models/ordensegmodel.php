@@ -186,7 +186,7 @@
 
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()){
-                        $salida .= '<li><a href="'.$rs['nidrefer'].'"><i class="fas fa-file-pdf"></i><p>'.$rs['cdocumento'].'</p></a></li>';
+                        $salida .= '<li><a href="'.$rs['creferencia'].'"><i class="fas fa-file-pdf"></i><p>'.$rs['cdocumento'].'</p></a></li>';
                     }
                 }
 

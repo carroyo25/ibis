@@ -41,5 +41,9 @@
         function anulapedido() {
             echo $this->model->anularPedido($_POST['id']);
         }
+
+        function cancelapedido() {
+            echo $this->model->cancelarPedido($_POST['id']);
+        }
     }
 ?>

@@ -97,9 +97,14 @@
                     </div>
                     <div class="barraOpciones">
                         <span>Detalles</span>
-                        <button type="button" id="cancelRequest"  title="Anular Pedido" class="boton4">
-                            <i class="fas fa-ban"></i> Anular Pedido
-                        </button>
+                        <div>
+                            <button type="button" id="returnRequest"  title="Anular Pedido" class="boton3">
+                                <i class="fas fa-ban"></i> Cancelar Aprobacion
+                            </button>
+                            <button type="button" id="cancelRequest"  title="Anular Pedido" class="boton4">
+                                <i class="fas fa-ban"></i> Anular Pedido
+                            </button>
+                        </div>
                     </div>
                     <div class="tablaInterna mininoTablaInterna">
                         <table class="tabla" id="tablaDetalles">
@@ -163,6 +168,15 @@
             <div>
                 <button type="button" id="btnAceptarAnula">Aceptar</button>
                 <button type="button" id="btnCancelarAnula">Cancelar</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="preguntaCancela">
+        <div class="ventanaPregunta">
+            <h3>¿Cancelar el pedido?</h3>
+            <div>
+                <button type="button" id="btnAceptarCancela">Aceptar</button>
+                <button type="button" id="btnCancelarCancela">Cancelar</button>
             </div>
         </div>
     </div>
