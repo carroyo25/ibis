@@ -622,12 +622,10 @@
                                                         AND alm_recepcab.nEstadoDoc = 60
                                                         AND alm_recepcab.ncodpry LIKE :costos 
                                                         AND alm_recepcab.cnumguia LIKE :guia 
-                                                        AND MONTH ( alm_recepcab.ffecdoc ) = :mes
                                                         AND YEAR ( alm_recepcab.ffecdoc ) = :anio");
                 $sql->execute(["usr"=>$_SESSION['iduser'],
                                 "guia"=>$guia,
                                 "costos"=>$costos,
-                                "mes"=>$mes,
                                 "anio"=>$anio]);
 
                 $rowCount = $sql->rowcount();

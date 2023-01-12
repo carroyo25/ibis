@@ -35,8 +35,8 @@
                                                         tb_proyectos.ccodproy,
                                                         UPPER( CONCAT_WS( ' ', cm_producto.cdesprod, tb_pedidodet.observaciones ) ) AS cdesprod,
                                                         tb_pedidodet.cant_orden,
-                                                        SUM( alm_recepdet.ncantidad ) AS ingresos,
-                                                        SUM( alm_despachodet.ndespacho ) AS despachos,
+                                                        (SELECT SUM( alm_recepdet.ncantidad ) FROM alm_recepdet WHERE alm_recepdet.niddetaPed = tb_pedidodet.iditem )AS ingresos,
+	                                                    (SELECT SUM( alm_despachodet.ndespacho) FROM alm_despachodet WHERE alm_despachodet.niddetaPed = tb_pedidodet.iditem ) AS despachos,
                                                         FORMAT(SUM( alm_existencia.cant_ingr ),2) AS ingreso_obra,
                                                         lg_ordencab.cper AS anio_orden,
                                                         lg_ordencab.ntipmov AS tipo_orden,
@@ -135,26 +135,18 @@
                             $dias_atraso = $saldo == 0 ? " " : $dias_atraso;
                             $transporte = $rs['ctiptransp'] == 39 ? "TERRESTRE": $rs['transporte'];
 
-                            /*if ( $saldoRecibir == 0 ) {
-                                $semaforo = "Verde";
-                                $estadoSemaforo ="semaforoVerde";
-                            }else if ( $saldoRecibir == 0  && $rs['cantidad_pedida'] == $rs['ingreso_obra']) {
-                                $semaforo = "Entregado";
-                                $estadoSemaforo ="Entregado";
-                            }else if ( $ingresos[0]['ingresos'] == 0 && $rs['dias_atraso'] <= 10 && $rs['orden']) {
-                                $semaforo = "Amarillo";
-                                $estadoSemaforo ="semaforoAmarillo";
-                            }*/
-
-                            if ( $saldoRecibir == 0  && $rs['cantidad_pedida'] == $rs['ingreso_obra']) {
+                            if ( $saldoRecibir == $rs['ingreso_obra']) {
                                 $semaforo = "entregado";
                                 $estadoSemaforo ="semaforoNaranja";
+                            }else if ( $rs['ingresos'] == $rs['cantidad_pedida'] && $dias_atraso <= 7){
+                                $semaforo = "verde";
+                                $estadoSemaforo ="semaforoVerde";
+                            }else if ( $rs['ingresos'] == $rs['cantidad_pedida'] && $dias_atraso > 7){
+                                $semaforo = "Rojo";
+                                $estadoSemaforo ="semaforoRojo";
                             }
                             
-                            /*if ( $saldoRecibir  == 0) {
-                                $semaforo = "Verde";
-                                $estadoSemaforo ="semaforoVerde";
-                            }
+                            
                         
                                 /*if( $rs['estadoItem'] == 49 || $rs['estadoItem'] == 54 || $rs['estadoItem'] == 60 ) {
                                     $estadoFila = "item_aprobado";
