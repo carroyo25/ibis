@@ -62,6 +62,7 @@
                                                         tb_unimed.cabrevia AS unidad,
                                                         tb_pedidodet.nroparte,
 	                                                    tb_equipmtto.cregistro,
+                                                        lg_ordendet.ncanti, 
 	                                                    lg_ordencab.ctiptransp 
                                                     FROM
                                                         tb_pedidodet
@@ -82,6 +83,7 @@
                                                         LEFT JOIN tb_parametros ON lg_ordencab.ctiptransp = tb_parametros.nidreg
                                                         INNER JOIN tb_parametros AS atencion ON tb_pedidodet.tipoAten = atencion.nidreg
                                                         INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                        LEFT JOIN Lg_ordendet ON tb_pedidodet.iditem = lg_ordendet.niddeta
                                                         LEFT JOIN tb_equipmtto ON tb_pedidodet.nregistro = tb_equipmtto.idreg 
                                                         WHERE
                                                             tb_pedidodet.nflgActivo 
@@ -91,7 +93,7 @@
                                                             AND cm_producto.ccodprod LIKE :codigo
                                                             AND tb_pedidocab.nrodoc LIKE :pedido
                                                             AND tb_pedidocab.concepto LIKE :concepto
-                                                            AND (tb_pedidodet.idorden LIKE :orden OR ISNULL(tb_pedidodet.idorden))
+                                                            AND tb_pedidodet.idorden LIKE :orden
                                                         GROUP BY tb_pedidodet.iditem
                                                         ORDER BY tb_pedidocab.anio DESC");
                 
@@ -146,13 +148,13 @@
                                 $estadoSemaforo ="semaforoRojo";
                             }
                             
-                            
-                        
-                                /*if( $rs['estadoItem'] == 49 || $rs['estadoItem'] == 54 || $rs['estadoItem'] == 60 ) {
-                                    $estadoFila = "item_aprobado";
-                                    $porcentaje = "15%";
-                                }
-                                if( $rs['orden'] ) {
+                            /*if( $rs['estadoItem'] == 49 || $rs['estadoItem'] == 54 || $rs['estadoItem'] == 60 ) {
+                                $estadoFila = "item_aprobado";
+                                $porcentaje = "15%";
+                            }
+
+
+                                /*if( $rs['orden'] ) {
                                     $estadoFila = "item_orden";
                                     $porcentaje = "20%";
                                     $estado = "Orden";
@@ -212,11 +214,12 @@
                                     <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                     <td class="textoCentro">'.$rs['unidad'].'</td>
                                     <td class="pl10px">'.$rs['cdesprod'].'</td>
-                                    <td class="textoDerecha pr15px">'.$rs['cantidad_pedida'].'</td>
+                                    <td class="textoDerecha pr10px">'.$rs['cantidad_pedida'].'</td>
                                     <td class="textoCentro '.$clase_operacion.'">'.$tipo_orden.'</td>
                                     <td class="textoCentro">'.$rs['anio_orden'].'</td>
                                     <td class="textoCentro">'.$rs['numero_orden'].'</td>
                                     <td class="textoCentro">'.$rs['fecha_orden'].'</td>
+                                    <td class="textoDerecha pr15px" style="background:#e8e8e8;font-weight: bold">'.$rs['ncanti'].'</td>
                                     <td class="pl10px">'.$rs['proveedor'].'</td>
                                     <td class="textoCentro">'.$rs['fecha_entrega'].'</td>
                                     <td class="textoDerecha pr15px">'.$rs['ingresos'].'</td>

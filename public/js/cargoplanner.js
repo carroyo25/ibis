@@ -35,6 +35,16 @@ $(function() {
         return false;
     });
 
+
+    $("#cargoPlanDescrip tbody").on('click', function(e) {
+        e.preventDefault();
+
+        $("#vistadocumento").fadeIn();
+
+        console.log("no se ve");
+        
+        return false;
+    });
     
 })
 

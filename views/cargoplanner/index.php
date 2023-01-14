@@ -250,11 +250,12 @@
                     <th>Codigo del</br>Bien/Servicio</th>
                     <th>Unidad</br>Medida</th>
                     <th width="400px">Descripcion del Bien/Servicio</th>
-                    <th>Cantidad</br>Solicitada</th>
+                    <th>Cantidad</br>Pedida</th>
                     <th width="40px">Tipo</br>Orden</th>
                     <th width="50px">Año</br>Orden</th>
                     <th>N°</br>Orden</th>
                     <th>Fecha</br>Orden</th>
+                    <th>Cantidad</br>Orden</th>
                     <th width="200px">Descripcion Proveedor</th>
                     <th>Fecha Entrega</br>Proveedor</th>
                     <th width="50px">Cantidad</br>Recibida</th>
