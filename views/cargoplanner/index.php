@@ -237,41 +237,41 @@
             <thead>
                 <tr class="stickytop">
                     <th width="30px">Items</th>
-                    <th>Estado</br>Actual</th>
-                    <th>Codigo</br>Proyecto</th>
-                    <th width="150px">Area</th>
-                    <th width="150px">Partida</th>
-                    <th>Atencion</th>
-                    <th>Tipo</th>
-                    <th>Año</br> Pedido</th>
-                    <th>N°</br>Pedido</th>
-                    <th width="80px">Creación</br>Pedido</th>
-                    <th width="80px">Aprobación</br>Pedido</th>
-                    <th>Codigo del</br>Bien/Servicio</th>
-                    <th>Unidad</br>Medida</th>
-                    <th width="400px">Descripcion del Bien/Servicio</th>
-                    <th>Cantidad</br>Pedida</th>
-                    <th width="40px">Tipo</br>Orden</th>
-                    <th width="50px">Año</br>Orden</th>
-                    <th>N°</br>Orden</th>
-                    <th>Fecha</br>Orden</th>
-                    <th>Cantidad</br>Orden</th>
-                    <th width="200px">Descripcion Proveedor</th>
+                    <th style="background:#40D1FB; color:#000">Estado</br>Actual</th>
+                    <th style="background:#40D1FB; color:#000">Codigo</br>Proyecto</th>
+                    <th style="background:#40D1FB; color:#000">Area</th>
+                    <th style="background:#40D1FB; color:#000">Partida</th>
+                    <th style="background:#40D1FB; color:#000">Atencion</th>
+                    <th style="background:#40D1FB; color:#000">Tipo</th>
+                    <th style="background:#FBD341; color:#000">Año</br> Pedido</th>
+                    <th style="background:#FBD341; color:#000">N°</br>Pedido</th>
+                    <th style="background:#FBD341; color:#000" width="80px">Creación</br>Pedido</th>
+                    <th style="background:#FBD341; color:#000" width="80px">Aprobación</br>Pedido</th>
+                    <th style="background:#FBD341; color:#000">Cantidad</br>Pedida</th>
+                    <th style="background:#A6CAF0; color:#000">Codigo del</br>Bien/Servicio</th>
+                    <th style="background:#A6CAF0; color:#000">Unidad</br>Medida</th>
+                    <th style="background:#A6CAF0; color:#000">Descripcion del Bien/Servicio</th>
+                    <th style="background:#AAFFAA; color:#000" width="40px">Tipo</br>Orden</th>
+                    <th style="background:#AAFFAA; color:#000" width="50px">Año</br>Orden</th>
+                    <th style="background:#AAFFAA; color:#000">N°</br>Orden</th>
+                    <th style="background:#AAFFAA; color:#000">Fecha</br>Orden</th>
+                    <th style="background:#AAFFAA; color:#000">Cantidad</br>Orden</th>
+                    <th style="background:#AB7FAB; color:#000">Descripcion Proveedor</th>
                     <th>Fecha Entrega</br>Proveedor</th>
                     <th width="50px">Cantidad</br>Recibida</th>
                     <th>Saldo por</br>Recibir</th>
                     <th width="50px">Días</br>Entrega</th>
                     <th>Días</br>Atrazo</th>
                     <th>Semaforo</th>
-                    <th>Nota</br>Ingreso</th>
-                    <th width="100px">Guia</br>Ingreso</th>
-                    <th>Fecha</br>Ingreso</th>
-                    <th>Nota</br>Salida</th>
-                    <th>Guia</br>Remision</th>
-                    <th>Fecha Guia</br>Remision</th>
-                    <th>Cantidad</br>Recibida</br>Obra</th>
-                    <th>Nota</br>Ingreso</br>Obra</th>
-                    <th>Fecha</br>Recep</br>Obra</th>
+                    <th style="background:#3E5555; color:#000">Nota</br>Ingreso</th>
+                    <th style="background:#3E5555; color:#000" width="100px">Guia</br>Ingreso</th>
+                    <th style="background:#3E5555; color:#000">Fecha</br>Ingreso</th>
+                    <th style="background:#25AFF3; color:#000">Nota</br>Salida</th>
+                    <th style="background:#25AFF3; color:#000">Guia</br>Remision</th>
+                    <th style="background:#25AFF3; color:#000">Fecha Guia</br>Remision</th>
+                    <th style="background:#DA500B; color:#000">Cantidad</br>Recibida</br>Obra</th>
+                    <th style="background:#DA500B; color:#000">Nota</br>Ingreso</br>Obra</th>
+                    <th style="background:#DA500B; color:#000">Fecha</br>Recep</br>Obra</th>
                     <th>Estado</br>Pedido</th>
                     <th>Estado</br>Item</th>
                     <th>N°</br>Parte</th>

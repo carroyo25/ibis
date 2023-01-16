@@ -446,6 +446,12 @@ input[type=number]::-webkit-outer-spin-button {
     background:gold;
 }
 
+.columnaGeneral {
+    background:#40D1FB !important;
+    color: #000 !important;
+    padding:0 5px;
+}
+
 .item_anulado{
     background:#c8c8c8;
 }
@@ -479,7 +485,7 @@ input[type=number]::-webkit-outer-spin-button {
     background:#00ffff;
 }
 
-.item_obra {
+.item_obra,.entregado {
     background:#00ff00;
 }
 

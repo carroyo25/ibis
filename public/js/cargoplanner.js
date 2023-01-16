@@ -40,10 +40,16 @@ $(function() {
         e.preventDefault();
 
         $("#vistadocumento").fadeIn();
-
-        console.log("no se ve");
         
         return false;
+    });
+
+    $("#closeDocument").click(function (e) { 
+        e.preventDefault();
+        
+        $("#vistadocumento").fadeOut();
+
+        return false
     });
     
 })

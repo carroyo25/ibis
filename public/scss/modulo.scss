@@ -643,39 +643,37 @@ $anulado:#c2c2c2;
 
 .itemsCargoPlanner{
     overflow: auto;
-    height: 65vh;
+    height: 75vh;
     margin-top: 5px;
 
     table {
         border-collapse: collapse;
-        width: 150%;
-        
+        width: max-content;
+        font-size: 0.6rem;
 
         thead {
-            background:$negro;
-            color:$blanco;
-            height: 1.2rem;
-            font-size: 0.6rem;
+            height: 1.3rem;
+
+            th{
+                padding:5px 5px;
+                color: $blanco;
+            }
         }
 
-        tbody {
+        tbody{
+            tr,td {
+                border: 1px dotted #ccc;
+            }
+
             .pointer{
                 cursor: pointer;
                 height: 25px;
-                
-                td{
-                    border: 1px solid  #000;
-                    line-height: 1rem;
-                    padding: 0 2px;
-                    font-size: 0.6rem;
-                }
-                
+
                 &:hover {
                     background:rgba(255,255,43,.7);
                 }
             };
         }
-
     }
 }
 

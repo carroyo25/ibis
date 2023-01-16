@@ -908,28 +908,29 @@
 
 .itemsCargoPlanner {
   overflow: auto;
-  height: 65vh;
+  height: 75vh;
   margin-top: 5px;
 }
 .itemsCargoPlanner table {
   border-collapse: collapse;
-  width: 150%;
+  width: -webkit-max-content;
+  width: -moz-max-content;
+  width: max-content;
+  font-size: 0.6rem;
 }
 .itemsCargoPlanner table thead {
-  background: #000;
+  height: 1.3rem;
+}
+.itemsCargoPlanner table thead th {
+  padding: 5px 5px;
   color: #fff;
-  height: 1.2rem;
-  font-size: 0.6rem;
+}
+.itemsCargoPlanner table tbody tr, .itemsCargoPlanner table tbody td {
+  border: 1px dotted #ccc;
 }
 .itemsCargoPlanner table tbody .pointer {
   cursor: pointer;
   height: 25px;
-}
-.itemsCargoPlanner table tbody .pointer td {
-  border: 1px solid #000;
-  line-height: 1rem;
-  padding: 0 2px;
-  font-size: 0.6rem;
 }
 .itemsCargoPlanner table tbody .pointer:hover {
   background: rgba(255, 255, 43, 0.7);
