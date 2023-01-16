@@ -2387,6 +2387,10 @@
   background: #c2c2c2;
 }
 
+.pedidoCreado {
+  background: #F8CAAD;
+}
+
 .aprobacion {
   background: #C9E2F4;
 }
@@ -2403,8 +2407,12 @@
   background: #C0CA33;
 }
 
+.stock {
+  background: #B3C5E6;
+}
+
 .adjudicado {
-  background: rgba(145, 93, 152, 0.5);
+  background: #ED7D31;
 }
 
 .conformidad {

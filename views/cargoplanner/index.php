@@ -215,9 +215,11 @@
                         </div>
                         <div class="procesos">
                             <div class="item_anulado"><a href="#">0%</a></div>
+                            <div class="pedidoCreado"><a href="#">10%</a></div>
                             <div class="item_aprobado"><a href="#">15%</div>
-                            <div class="item_orden"><a href="#">20%</a></div>
-                            <div class="item_parcial"><a href="#">25%</a></div>
+                            <div class="stock"><a href="#">20%</a></div>
+                            <div class="item_orden"><a href="#">25%</a></div>
+                            <div class="item_parcial"><a href="#">30%</a></div>
                             <div class="item_ingreso_parcial"><a href="#">40%</a></div>
                             <div class="item_ingreso_total"><a href="#">50%</a></div>
                             <div class="item_registro_salida"><a href="#">60%</a></div>
@@ -256,7 +258,7 @@
                     <th style="background:#AAFFAA; color:#000">N°</br>Orden</th>
                     <th style="background:#AAFFAA; color:#000">Fecha</br>Orden</th>
                     <th style="background:#AAFFAA; color:#000">Cantidad</br>Orden</th>
-                    <th style="background:#AB7FAB; color:#000">Descripcion Proveedor</th>
+                    <th style="background:#AB7FAB; color:#fff">Descripcion Proveedor</th>
                     <th>Fecha Entrega</br>Proveedor</th>
                     <th width="50px">Cantidad</br>Recibida</th>
                     <th>Saldo por</br>Recibir</th>
