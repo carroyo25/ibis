@@ -69,19 +69,19 @@ detalles = () =>{
             TIPO                = $(this).find('td').eq(6).text(),
             ANIO_PEDIDO         = $(this).find('td').eq(7).text(),
             NUM_PEDIDO          = $(this).find('td').eq(8).text(),
-            NUM_MMTO            = $(this).find('td').eq(9).text(),
-            CREA_PEDIDO         = $(this).find('td').eq(10).text(),
-            APRO_PEDIDO         = $(this).find('td').eq(11).text(),
+            CREA_PEDIDO         = $(this).find('td').eq(9).text(),
+            APRO_PEDIDO         = $(this).find('td').eq(10).text(),
+            CANTIDAD            = $(this).find('td').eq(11).text(),
             CODIGO              = $(this).find('td').eq(12).text(),
             UNIDAD              = $(this).find('td').eq(13).text(),
             DESCRIPCION         = $(this).find('td').eq(14).text(),
-            CANTIDAD            = $(this).find('td').eq(15).text(),
-            TIPO_ORDEN          = $(this).find('td').eq(16).text(),
-            ANIO_ORDEN          = $(this).find('td').eq(17).text(),
-            NRO_ORDEN           = $(this).find('td').eq(18).text(),
-            FECHA_ORDEN         = $(this).find('td').eq(19).text(),
+            TIPO_ORDEN          = $(this).find('td').eq(15).text(),
+            ANIO_ORDEN          = $(this).find('td').eq(16).text(),
+            NRO_ORDEN           = $(this).find('td').eq(17).text(),
+            FECHA_ORDEN         = $(this).find('td').eq(18).text(),
+            CANTIDAD_ORDEN      = $(this).find('td').eq(19).text(),
             PROVEEDOR           = $(this).find('td').eq(20).text(),
-            ENVIO_PROVEEDOR     = $(this).find('td').eq(21).text(),
+            FECHA_ENTREGA       = $(this).find('td').eq(21).text(),
             CANTIDAD_RECIBIDA   = $(this).find('td').eq(22).text(),
             SALDO_RECIBIR       = $(this).find('td').eq(23).text(),
             DIAS_ENTREGA        = $(this).find('td').eq(24).text(),
@@ -116,7 +116,6 @@ detalles = () =>{
         item['tipo']                = TIPO;
         item['anio_pedido']         = ANIO_PEDIDO;
         item['num_pedido']          = NUM_PEDIDO;
-        item['num_mmto']            = NUM_MMTO;
         item['crea_pedido']         = CREA_PEDIDO;
         item['apro_pedido']         = APRO_PEDIDO;
         item['codigo']              = CODIGO;
@@ -128,7 +127,7 @@ detalles = () =>{
         item['nro_orden']           = NRO_ORDEN;
         item['fecha_orden']         = FECHA_ORDEN;
         item['proveedor']           = PROVEEDOR;
-        item['envio_proveedor']     = ENVIO_PROVEEDOR;
+        item['fecha_entrega']       = FECHA_ENTREGA;
         item['cantidad_recibida']   = CANTIDAD_RECIBIDA;
         item['saldo_recibir']       = SALDO_RECIBIR;
         item['dias_entrega']        = DIAS_ENTREGA;
@@ -150,6 +149,7 @@ detalles = () =>{
         item['operador']            = OPERADOR;
         item['transporte']          = TRANSPORTE;
         item['observaciones']       = OBSERVACIONES;
+        item['cantidad_orden']      = CANTIDAD_ORDEN;
         
         DATA.push(item);
     })

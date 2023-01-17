@@ -410,6 +410,18 @@
                             ->getStartColor()
                             ->setRGB('C0DCC0');
 
+                $normal = array(
+                    'fill' => array(
+                        'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                        'startcolor' => array(
+                            'argb' => 'FFFFFF',
+                        ),
+                        'endcolor' => array(
+                            'argb' => 'FFFFFF',
+                        ),
+                    ),
+                );
+
                 $veinte = array(
                     'fill' => array(
                         'type' => PHPExcel_Style_Fill::FILL_SOLID,
@@ -422,6 +434,20 @@
                     ),
                 );
 
+                $anulado = array(
+                    'fill' => array(
+                        'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                        'startcolor' => array(
+                            'argb' => 'C8C8C8',
+                        ),
+                        'endcolor' => array(
+                            'argb' => 'C8C8C8',
+                        ),
+                    ),
+                );
+
+                
+                $estado = $normal;
                 
                 $objPHPExcel->getActiveSheet()->getStyle('A1:AW2')->getAlignment()->setWrapText(true);
 
@@ -473,13 +499,17 @@
                 $datos = json_decode($registros);
                 $nreg = count($datos);
 
-                for ($i=0; $i < $nreg ; $i++) { 
+                for ($i=0; $i < $nreg ; $i++) {
+                    
+                    if ( $datos[$i]->estado == "0%"){
+                        $estado = $anulado;
+                    }
+
                     $objPHPExcel->getActiveSheet()->setCellValue('A'.$fila,$datos[$i]->item);
 
                     $objPHPExcel->getActiveSheet()->setCellValue('B'.$fila,$datos[$i]->estado);
                     
-                    if( $datos[$i]->estado == "20%")
-                        $objPHPExcel->getActiveSheet()->getStyle('B'.$fila)->applyFromArray($veinte);
+                    $objPHPExcel->getActiveSheet()->getStyle('B'.$fila)->applyFromArray($estado);
                         
                     $objPHPExcel->getActiveSheet()->setCellValue('C'.$fila,$datos[$i]->proyecto);
                     $objPHPExcel->getActiveSheet()->setCellValue('D'.$fila,$datos[$i]->area);
@@ -488,9 +518,9 @@
                     $objPHPExcel->getActiveSheet()->setCellValue('G'.$fila,$datos[$i]->tipo);
                     $objPHPExcel->getActiveSheet()->setCellValue('H'.$fila,$datos[$i]->anio_pedido);
                     $objPHPExcel->getActiveSheet()->setCellValue('I'.$fila,$datos[$i]->num_pedido);
-                    $objPHPExcel->getActiveSheet()->setCellValue('J'.$fila,$datos[$i]->num_mmto);
-                    /*$objPHPExcel->getActiveSheet()->setCellValue('K'.$fila,$datos[$i]->crea_pedido);
-                    $objPHPExcel->getActiveSheet()->setCellValue('L'.$fila,$datos[$i]->apro_pedido);
+                    $objPHPExcel->getActiveSheet()->setCellValue('J'.$fila,$datos[$i]->crea_pedido);
+                    $objPHPExcel->getActiveSheet()->setCellValue('K'.$fila,$datos[$i]->apro_pedido);
+                    $objPHPExcel->getActiveSheet()->setCellValue('L'.$fila,$datos[$i]->cantidad);
                     $objPHPExcel->getActiveSheet()->setCellValue('M'.$fila,$datos[$i]->codigo);
                     $objPHPExcel->getActiveSheet()->setCellValue('N'.$fila,$datos[$i]->unidad);
                     $objPHPExcel->getActiveSheet()->setCellValue('O'.$fila,$datos[$i]->descripcion);
@@ -498,10 +528,9 @@
                     $objPHPExcel->getActiveSheet()->setCellValue('Q'.$fila,$datos[$i]->tipo_orden);
                     $objPHPExcel->getActiveSheet()->setCellValue('R'.$fila,$datos[$i]->anio_orden);
                     $objPHPExcel->getActiveSheet()->setCellValue('T'.$fila,$datos[$i]->fecha_orden);
-                    $objPHPExcel->getActiveSheet()->setCellValue('S'.$fila,$datos[$i]->nro_orden);
-                    $objPHPExcel->getActiveSheet()->setCellValue('U'.$fila,$datos[$i]->proveedor);
-                    $objPHPExcel->getActiveSheet()->setCellValue('V'.$fila,$datos[$i]->envio_proveedor);
-                    $objPHPExcel->getActiveSheet()->setCellValue('W'.$fila,$datos[$i]->cantidad_recibida);
+                    $objPHPExcel->getActiveSheet()->setCellValue('U'.$fila,$datos[$i]->cantidad_orden);
+                    $objPHPExcel->getActiveSheet()->setCellValue('v'.$fila,$datos[$i]->proveedor);
+                    $objPHPExcel->getActiveSheet()->setCellValue('W'.$fila,$datos[$i]->fecha_entrega);
                     $objPHPExcel->getActiveSheet()->setCellValue('X'.$fila,$datos[$i]->saldo_recibir);
                     $objPHPExcel->getActiveSheet()->setCellValue('Y'.$fila,$datos[$i]->dias_entrega);
                     $objPHPExcel->getActiveSheet()->setCellValue('Z'.$fila,$datos[$i]->dias_atraso);
@@ -521,7 +550,7 @@
                     $objPHPExcel->getActiveSheet()->setCellValue('AN'.$fila,$datos[$i]->codigo_activo);
                     $objPHPExcel->getActiveSheet()->setCellValue('AO'.$fila,$datos[$i]->operador);
                     $objPHPExcel->getActiveSheet()->setCellValue('AP'.$fila,$datos[$i]->transporte);
-                    $objPHPExcel->getActiveSheet()->setCellValue('AQ'.$fila,$datos[$i]->observaciones);*/
+                    $objPHPExcel->getActiveSheet()->setCellValue('AQ'.$fila,$datos[$i]->observaciones);
 
                     $fila++;
                 }
@@ -535,8 +564,8 @@
                 $objPHPExcel->getActiveSheet()->getStyle('Q:T')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
                 $objPHPExcel->getActiveSheet()->getStyle('Q:T')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-                $objPHPExcel->getActiveSheet()->getStyle('V')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                $objPHPExcel->getActiveSheet()->getStyle('V')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                /*$objPHPExcel->getActiveSheet()->getStyle('V')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                /*$objPHPExcel->getActiveSheet()->getStyle('V')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);*/
 
                 $objPHPExcel->getActiveSheet()->getStyle('AA:AG')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
                 $objPHPExcel->getActiveSheet()->getStyle('AA:AG')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
