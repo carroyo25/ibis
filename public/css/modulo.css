@@ -906,33 +906,33 @@
   background: rgba(255, 255, 43, 0.7);
 }
 
-.itemsCargoPlanner {
+.itemsCargoPlanner, .itemsValorizado {
   overflow: auto;
   height: 75vh;
   margin-top: 5px;
 }
-.itemsCargoPlanner table {
+.itemsCargoPlanner table, .itemsValorizado table {
   border-collapse: collapse;
   width: -webkit-max-content;
   width: -moz-max-content;
   width: max-content;
   font-size: 0.6rem;
 }
-.itemsCargoPlanner table thead {
+.itemsCargoPlanner table thead, .itemsValorizado table thead {
   height: 1.3rem;
 }
-.itemsCargoPlanner table thead th {
+.itemsCargoPlanner table thead th, .itemsValorizado table thead th {
   padding: 5px 5px;
   color: #fff;
 }
-.itemsCargoPlanner table tbody tr, .itemsCargoPlanner table tbody td {
+.itemsCargoPlanner table tbody tr, .itemsCargoPlanner table tbody td, .itemsValorizado table tbody tr, .itemsValorizado table tbody td {
   border: 1px dotted #ccc;
 }
-.itemsCargoPlanner table tbody .pointer {
+.itemsCargoPlanner table tbody .pointer, .itemsValorizado table tbody .pointer {
   cursor: pointer;
   height: 25px;
 }
-.itemsCargoPlanner table tbody .pointer:hover {
+.itemsCargoPlanner table tbody .pointer:hover, .itemsValorizado table tbody .pointer:hover {
   background: rgba(255, 255, 43, 0.7);
 }
 
