@@ -51,51 +51,54 @@
                         <label for="anio">Año :</label>
                         <input type="number" name="anioSearch" id="anioSearch" value="<?php echo date("Y")?>" class="textoCentro">
                     </div>
-                    <button type="button" id="btnConsulta" class="boton3">Consultar</button> 
+                    <div>
+                        <button type="button" id="btnConsulta" class="boton3">Consultar</button> 
+                        <button type="button" id="btnExporta" class="boton3">Exportar</button> 
+                    </div>
             </div>
         </form>
     </div>
     <div class="itemsValorizado">
-        <table id="table_valorizado">
+        <table id="tableValorizado">
             <thead>
                 <tr class="stickytop">
-                    <th width="30px">Item</th>
-                    <th style="background:#40D1FB; color:#000">Codigo</br>Proyecto</th>
-                    <th style="background:#40D1FB; color:#000" with="10%">Descripcion Proyecto/Obra</th>
-                    <th style="background:#40D1FB; color:#000">Area</th>
-                    <th style="background:#40D1FB; color:#000">Fecha</br>Registro</th>
-                    <th style="background:#40D1FB; color:#000">Año</br>Orden</th>
-                    <th style="background:#40D1FB; color:#000">Tipo</th>
-                    <th style="background:#FBD341; color:#000">Año</br> Pedido</th>
-                    <th style="background:#FBD341; color:#000">N°</br>Orden</th>
-                    <th style="background:#FBD341; color:#000" >N°</br>Pedido</th>
-                    <th style="background:#A6CAF0; color:#000">Codigo del</br>Bien/Servicio</th>
-                    <th style="background:#A6CAF0; color:#000" with="15%">Descripcion del Bien/Servicio</th>
-                    <th style="background:#A6CAF0; color:#000">Unidad</br>Medida</th>
-                    <th style="background:#AAFFAA; color:#000">Proveedor</th>
-                    <th style="background:#AAFFAA; color:#000">Cantidad</th>
-                    <th style="background:#AAFFAA; color:#000">Precio</th>
-                    <th style="background:#AAFFAA; color:#000">Tipo<br>Moneda</th>
-                    <th style="background:#AAFFAA; color:#000">Importe Total</th>
-                    <th style="background:#AB7FAB; color:#fff">Tipo<br>Cambio</th>
-                    <th>Contable ME<br> Total Dólares</th>
-                    <th>Contable MN<br>Total Soles</th>
-                    <th>Fecha de <br> Aprobación</th>
-                    <th >Clasificación<br>Grupo</th>
-                    <th>Clasificación</br>Clase</th>
-                    <th>Direccion de Proveedor</th>
-                    <th style="background:#3E5555; color:#000">Forma de Pago</th>
-                    <th style="background:#3E5555; color:#000">Fecha de </br>Entrega</th>
-                    <th style="background:#3E5555; color:#000">N°<br>Dias</th>
-                    <th style="background:#25AFF3; color:#000">N°</br>R.U.C</th>
-                    <th style="background:#25AFF3; color:#000">N° de</br>Cotización Adjudicado</th>
-                    <th style="background:#25AFF3; color:#000">N° de Parte<br>Maq. Edquipo</th>
-                    <th style="background:#DA500B; color:#000">Código<br>Maq. Equipo</th>
-                    <th style="background:#DA500B; color:#000">Estado</th>
+                    <th width="30px" data-titulo="item">Item</th>
+                    <th style="background:#40D1FB; color:#000" data-titulo="codigoproyecto">Codigo</br>Proyecto</th>
+                    <th style="background:#40D1FB; color:#000" data-titulo="descripcionproyecto" with="10%">Descripcion Proyecto/Obra</th>
+                    <th style="background:#40D1FB; color:#000" data-titulo="area">Area</th>
+                    <th style="background:#40D1FB; color:#000" data-titulo="fecharegistro">Fecha</br>Registro</th>
+                    <th style="background:#40D1FB; color:#000" data-titulo="anioorden">Año</br>Orden</th>
+                    <th style="background:#40D1FB; color:#000" data-titulo="tipo">Tipo</th>
+                    <th style="background:#FBD341; color:#000" data-titulo="aniopedido">Año</br> Pedido</th>
+                    <th style="background:#FBD341; color:#000" data-titulo="nroorden">N°</br>Orden</th>
+                    <th style="background:#FBD341; color:#000" data-titulo="nropedido">N°</br>Pedido</th>
+                    <th style="background:#A6CAF0; color:#000" data-titulo="codigo_producto">Codigo del</br>Bien/Servicio</th>
+                    <th style="background:#A6CAF0; color:#000" data-titulo="descripcion" with="15%">Descripcion del Bien/Servicio</th>
+                    <th style="background:#A6CAF0; color:#000" data-titulo="unidad">Unidad</br>Medida</th>
+                    <th style="background:#AAFFAA; color:#000" data-titulo="proveedor">Proveedor</th>
+                    <th style="background:#AAFFAA; color:#000" data-titulo="cantidad">Cantidad</th>
+                    <th style="background:#AAFFAA; color:#000" data-titulo="precio">Precio</th>
+                    <th style="background:#AAFFAA; color:#000" data-titulo="moneda">Tipo<br>Moneda</th>
+                    <th style="background:#AAFFAA; color:#000" data-titulo="total">Importe Total</th>
+                    <th style="background:#AB7FAB; color:#fff" data-titulo="cambio">Tipo<br>Cambio</th>
+                    <th data-titulo="dolares">Contable ME<br> Total Dólares</th>
+                    <th data-titulo="soles">Contable MN<br>Total Soles</th>
+                    <th data-titulo="aprobacion">Fecha de <br> Aprobación</th>
+                    <th data-titulo="grupo" >Clasificación<br>Grupo</th>
+                    <th data-titulo="clase">Clasificación</br>Clase</th>
+                    <th data-titulo="direccion">Direccion de Proveedor</th>
+                    <th data-titulo="pago" style="background:#3E5555; color:#000">Forma de Pago</th>
+                    <th data-titulo="entrega" style="background:#3E5555; color:#000">Fecha de </br>Entrega</th>
+                    <th data-titulo="dias" style="background:#3E5555; color:#000">N°<br>Dias</th>
+                    <th data-titulo="ruc" style="background:#25AFF3; color:#000">N°</br>R.U.C</th>
+                    <th data-titulo="cotizacion" style="background:#25AFF3; color:#000">N° de</br>Cotización Adjudicado</th>
+                    <th data-titulo="parte" style="background:#25AFF3; color:#000">N° de Parte<br>Maq. Edquipo</th>
+                    <th data-titulo="equipo" style="background:#DA500B; color:#000">Código<br>Maq. Equipo</th>
+                    <th data-titulo="estado" style="background:#DA500B; color:#000">Estado</th>
                 </tr>
             </thead>
             <tbody>
-                <?php echo $this->valorizado?>
+                
             </tbody>
         </table>
     </div>

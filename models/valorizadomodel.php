@@ -6,9 +6,17 @@
             parent::__construct();
         }
 
-        public function listarOrdenes($costo){
+        public function listarOrdenes($parametros){
             try {
+
+                $tipo   = $parametros['tipoSearch'] == -1 ? "%" : "%".$parametros['tipoSearch']."%";
+                $costos = $parametros['costosSearch'] == -1 ? "%" : $parametros['costosSearch'];
+                $mes    = $parametros['mesSearch'] == -1 ? "%" :  $parametros['mesSearch'];
+                $anio   = $parametros['anioSearch'];
+
+
                 $salida = "";
+
                 $sql = $this->db->connect()->prepare("SELECT
                                                     lg_ordencab.id_regmov,
                                                     lg_ordencab.cper,
@@ -22,8 +30,10 @@
                                                     lg_ordencab 
                                                 WHERE
                                                     lg_ordencab.nEstadoDoc != 105 
-                                                    AND lg_ordencab.ncodcos = :costo");
-                $sql->execute(["costo" => $costo]);
+                                                    AND lg_ordencab.ncodcos LIKE :costo
+                                                    AND YEAR(lg_ordencab.ffechadoc) LIKE :anio");
+                $sql->execute(["costo" => $costos,
+                                "anio" => $anio]);
                 
                 $rowCount = $sql->rowcount();
 
@@ -103,17 +113,21 @@
                                                     lg_ordencab.cnumcot,
                                                     tb_pedidodet.nroparte,
                                                     tb_pedidodet.nregistro,
-                                                    fpagos.cdescripcion,
+                                                    fpagos.cdescripcion AS tipo_pago,
                                                     cm_entidad.cnumdoc,
                                                     tb_grupo.cdescrip AS grupo,
-                                                    cm_entidad.cviadireccion,
+                                                    UPPER(cm_entidad.cviadireccion) as cviadireccion,
                                                     lg_ordencab.nfirmaOpe,
                                                     lg_ordencab.nfirmaFin,
                                                     lg_ordencab.nfirmaLog,
                                                     alm_recepdet.ncantidad,
                                                     tb_clase.cdescrip AS clase,
                                                     LPAD(lg_ordencab.id_regmov,6,0) AS orden,
-                                                    tb_pedidocab.anio 
+                                                    tb_pedidocab.anio,
+                                                    lg_ordendet.ntotal,
+                                                    DATE_FORMAT( lg_ordencab.ffechadoc, '%d/%m/%Y' ) AS fecha_entrega,
+                                                    FORMAT( IF ( lg_ordencab.ncodmon = 21, lg_ordendet.ntotal, lg_ordendet.ntotal / lg_ordencab.ntcambio ), 2 ) AS dolares,
+	                                                FORMAT( IF ( lg_ordencab.ncodmon = 20, lg_ordendet.ntotal, lg_ordendet.ntotal * lg_ordencab.ntcambio ), 2 ) AS soles
                                                 FROM
                                                     lg_ordendet
                                                     INNER JOIN cm_producto ON lg_ordendet.id_cprod = cm_producto.id_cprod
@@ -128,7 +142,8 @@
                                                     INNER JOIN tb_grupo ON cm_producto.ngrupo = tb_grupo.ncodgrupo
                                                     LEFT JOIN alm_recepdet ON lg_ordendet.niddeta = alm_recepdet.niddeta
                                                     INNER JOIN tb_clase ON cm_producto.nclase = tb_clase.ncodclase
-                                                WHERE lg_ordendet.id_orden = :id");
+                                                WHERE lg_ordendet.id_orden = :id
+                                                LIMIT 10");
 
                 $sql->execute(["id" => $id]);
 
@@ -139,6 +154,17 @@
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()) {
                         $tipo = $rs['ntipmov'] == 37 ? 'B':'S';
+                        $moneda = $rs['ncodmon'] == 20 ? "S/.":"$";
+                        $total = $rs['nunitario'] * $rs['ncanti'];
+                        $estado = "";
+
+                        if ( $rs['ncantidad'] == 0 ) {
+                            $estado = "RECEPCIONADA";
+                        }elseif ( $rs['nfirmaOpe'] && $rs['nfirmaFin'] && $rs['nfirmaLog']) {
+                            $estado = "APROBADA";
+                        }
+
+
                         $salida .='<tr class="pointer">
                                         <td class="textoCentro">'.str_pad($item++,4,0,STR_PAD_LEFT).'</td>
                                         <td class="pl20px">'.$rs['ccodproy'].'</td>
@@ -156,23 +182,23 @@
                                         <td class="pl20px">'.$rs['crazonsoc'].'</td>
                                         <td class="textoDerecha">'.$rs['ncanti'].'</td>
                                         <td class="textoDerecha">'.$rs['nunitario'].'</td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
+                                        <td class="textoDerecha">'.$moneda.'</td>
+                                        <td class="textoDerecha">'.$rs['ntotal'].'</td>
+                                        <td class="textoDerecha">'.$rs['ntcambio'].'</td>
+                                        <td class="textoDerecha">'.$rs['dolares'].'</td>
+                                        <td class="textoDerecha">'.$rs['soles'].'</td>
+                                        <td class="textoDerecha">'.$rs['FechaFin'].'</td>
+                                        <td class="pl20px">'.$rs['grupo'].'</td>
+                                        <td class="pl20px">'.$rs['clase'].'</td>
+                                        <td class="pl20px">'.$rs['cviadireccion'].'</td>
+                                        <td class="pl20px">'.$rs['tipo_pago'].'</td>
+                                        <td class="textoCentro">'.$rs['fecha_entrega'].'</td>
+                                        <td class="textoCentro">'.$rs['nplazo'].'</td>
+                                        <td class="textoCentro">'.$rs['cnumdoc'].'</td>
+                                        <td class="pl20px">'.$rs['cnumcot'].'</td>
+                                        <td class="pl20px">'.$rs['nroparte'].'</td>
+                                        <td class="pl20px">'.$rs['nregistro'].'</td>
+                                        <td class="textoCentro">'.$estado.'</td>
                                     </tr>';
                     }
                 }
@@ -181,6 +207,15 @@
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
+            }
+        }
+
+        public function exportarValorizado($detalles){
+            require_once('public/PHPExcel/PHPExcel.php');
+            try {
+                //code...
+            } catch (\Throwable $th) {
+                //throw $th;
             }
         }
     }
