@@ -8,7 +8,7 @@
 </head>
 <body>
     <div class="modal" id="proceso">
-        <div class="ventanaProceso tamanioProceso">
+        <div class="ventanaProceso ">
             <div class="cabezaProceso">
                 <form action="#" id="formProceso" autocomplete="off" enctype='multipart/form-data'>
                     <input type="hidden" name="codigo_costos" id="codigo_costos"> 
@@ -107,12 +107,13 @@
                     </div>
                     <div class="tablaInterna mininoTablaInterna">
                         <table class="tabla" id="tablaDetalles">
-                            <thead>
-                                <tr class="stickytop">
+                            <thead class="stickytop">
+                                <tr >
                                         <th rowspan="2">Item</th>
                                         <th rowspan="2">Codigo</th>
                                         <th rowspan="2">Descripcion</th>
                                         <th rowspan="2">Unidad</th>
+                                        <th rowspan="2">Marca</th>
                                         <th rowspan="2" width="7%">Cantidad</th>
                                         <th rowspan="2" width="7%">Orden</th>
                                         <th rowspan="2">N° Colada/Lote</th>
@@ -127,7 +128,7 @@
                                         <th colspan="3">Ubicación</th>
                                         <th rowspan="2">Observaciones</th>
                                 </tr>
-                                <tr class="stickytop">
+                                <tr>
                                         <th>Cont.</th>
                                         <th>Estante</th>
                                         <th>Fila/Col</th>

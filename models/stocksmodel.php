@@ -126,6 +126,7 @@
                                 "indice"                =>$indice,
                                 "item"                  =>$datos[$i]->idprod,
                                 "cantidad"              =>$datos[$i]->cantidad,
+                                "marca"                 =>$datos[$i]->marca,
                                 "observ"                =>$datos[$i]->observaciones,
                                 "ubica"                 =>$datos[$i]->contenedor.'-'.$datos[$i]->estante.'-'.$datos[$i]->fila,
                                 "fecha_vence"           =>$datos[$i]->vence,
@@ -160,29 +161,30 @@
                 foreach ($objHoja as $iIndice=>$objCelda) {
                     if ( $objCelda['B'] && $objCelda['B']!="CODIGO") {
 
-                        //$codigo = $this->establecerCodigos($objCelda['B']);
-                        //$codigo = "";
-                        
-                        $datos .='<tr data-grabado="0" data-idprod="" data-codund="" data-idx="-">
+                        $sw = $this->compareCode("B220100010006");
+                        //$sw = "B220100010006";
+
+                        $datos .='<tr data-grabado="0" data-idprod="" data-codund="" data-idx="-" data-existe="'.$sw.'">
                                     <td class="textoCentro">'.str_pad($fila++,6,0,STR_PAD_LEFT).'</td>
                                     <td class="textoCentro">'.$objCelda['B'].'</td>
                                     <td class="pl20px">'.$objCelda['C'].'</td>
                                     <td class="textoCentro">'.$objCelda['D'].'</td>
                                     <td><input type="number" value="'.$objCelda['E'].'"></td>
-                                    <td class="textoCentro"><input type="text" value="'.$objCelda['F'].'"></td>
+                                    <td><input type="number" value="'.$objCelda['F'].'"></td>
                                     <td class="textoCentro"><input type="text" value="'.$objCelda['G'].'"></td>
                                     <td class="textoCentro"><input type="text" value="'.$objCelda['H'].'"></td>
                                     <td class="textoCentro"><input type="text" value="'.$objCelda['I'].'"></td>
                                     <td class="textoCentro"><input type="text" value="'.$objCelda['J'].'"></td>
-                                    <td class="textoCentro"><input type="date" value="'.$objCelda['K'].'"></td>
+                                    <td class="textoCentro"><input type="text" value="'.$objCelda['K'].'"></td>
                                     <td class="textoCentro"><input type="date" value="'.$objCelda['L'].'"></td>
-                                    <td class="textoCentro"><input type="text" value="'.$objCelda['M'].'"></td>
+                                    <td class="textoCentro"><input type="date" value="'.$objCelda['M'].'"></td>
                                     <td class="textoCentro"><input type="text" value="'.$objCelda['N'].'"></td>
                                     <td class="textoCentro"><input type="text" value="'.$objCelda['O'].'"></td>
-                                    <td ><input type="text" class="textoCentro"  value="'.$objCelda['P'].'"></td>
+                                    <td class="textoCentro"><input type="text"   value="'.$objCelda['P'].'"></td>
                                     <td ><input type="text" class="textoCentro"  value="'.$objCelda['Q'].'"></td>
                                     <td ><input type="text" class="textoCentro"  value="'.$objCelda['R'].'"></td>
-                                    <td><textarea>'.$objCelda['T'].'</textarea></td>
+                                    <td ><input type="text" class="textoCentro"  value="'.$objCelda['S'].'"></td>
+                                    <td><textarea>'.$objCelda['U'].'</textarea></td>
                                 </tr>';
                     }
                 }
@@ -390,6 +392,26 @@
 
                 return $salida;
 
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function compareCode($codigo){
+            try {
+                $sql=$this->db->connect()->prepare("SELECT
+                                                       cm_producto.id_cprod AS codigo 
+                                                    FROM
+                                                        cm_producto 
+                                                    WHERE
+                                                        cm_producto.ccodprod = :codigo
+                                                    LIMIT 1");
+                $sql->execute(["codigo" => $codigo]);
+
+                $result = $sql->fetchAll();
+
+                return $result[0]['codigo'];
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;

@@ -3,11 +3,14 @@ $(() => {
 
     $("#nuevoRegistro").click(function (e) { 
         e.preventDefault();
-        
+        $("form")[1].reset();
+        $("#tablaDetalles tbody").empty();
+
         $.post(RUTA+"stocks/nuevoRegistro",
             function (data, textStatus, jqXHR) {
                 $("#numero").val(data.numero);
                 $("#proceso").fadeIn();
+                
             },
             "json"
         );
@@ -19,7 +22,7 @@ $(() => {
         e.preventDefault();
 
         $("#proceso").fadeOut();
-        $("#form")[0].reset();
+        $("form")[1].reset();
         $("#tablaDetalles tbody").empty();
 
         return false;
@@ -269,7 +272,6 @@ $(() => {
         return false;
     });
 })
-
 
 
 itemsSave = () =>{
