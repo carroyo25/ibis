@@ -15,7 +15,7 @@
         }
 
         function exportar(){
-            echo $this->model->exportarValorizado($detalles);
+            echo json_encode($this->model->exportarValorizado($_POST['detalles']));  
         }
     }
 ?>

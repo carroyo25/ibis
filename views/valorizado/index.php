@@ -8,7 +8,7 @@
 </head>
 <body>
 <div class="cabezaModulo">
-        <h1>Cargo Plan</h1>
+        <h1>Reporte Valorizado</h1>
         <div>
             <a href="#" id="irInicio"><i class="fas fa-home"></i></a>
         </div>
