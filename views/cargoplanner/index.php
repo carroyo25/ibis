@@ -214,17 +214,18 @@
                             <input type="text" name="conceptoSearch" id="conceptoSearch">
                         </div>
                         <div class="procesos">
-                            <div class="item_anulado"><a href="#">0%</a></div>
-                            <div class="pedidoCreado"><a href="#">10%</a></div>
-                            <div class="item_aprobado"><a href="#">15%</div>
-                            <div class="stock"><a href="#">20%</a></div>
-                            <div class="item_orden"><a href="#">25%</a></div>
-                            <div class="item_parcial"><a href="#">30%</a></div>
-                            <div class="item_ingreso_parcial"><a href="#">40%</a></div>
-                            <div class="item_ingreso_total"><a href="#">50%</a></div>
-                            <div class="item_registro_salida"><a href="#">60%</a></div>
-                            <div class="item_transito"><a href="#">75%</a></div>
-                            <div class="item_obra"><a href="#">100%</a></div>
+                            <div class="item_anulado"><a href="#" title="Anulado">0%<p>Anulado</p></a></div>
+                            <div class="pedidoCreado"><a href="#" title="Pedido Creado">10%<p>Creado</p></a></div>
+                            <div class="item_aprobado"><a href="#" title="Pedido Aprobado">15%<p>Aprob.</p></div>
+                            <div class="stock"><a href="#" title="Atencion x Stock">20%<p>Stock</p></a></div>
+                            <div class="item_orden"><a href="#" title="con OC/OS">25%<p>OC/OS</p></a></div>
+                            <div class="item_parcial"><a href="#" title="Enviado Proveedor">30%<p>Enviado</p></a></div>
+                            <div class="item_ingreso_parcial" title="Atencion Parcial"><a href="#">40%<p>At.Parcial</p></a></div>
+                            <div class="item_ingreso_total" title="Atención Total"><a href="#">50%<p>At.Total</p></a></div>
+                            <div class="item_registro_salida" title="Atencion cx compras locales"><a href="#">60%<p>Com.Local</p></a></div>
+                            <div class="item_registro_gerencia" title="Pedido Gerencia"><a href="#">70%<p>P.Gerencia</p></a></div>
+                            <div class="item_transito" title="En transito"><a href="#">75%<p>Transito</p></a></div>
+                            <div class="item_obra" title="En Obra"><a href="#">100%<p>Obra</p></a></div>
                         </div>
                 </div>
                 <div class="botonesConsulta">
@@ -291,7 +292,6 @@
     
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
     <script src="<?php echo constant('URL');?>public/js/funciones.js?<?php echo constant('VERSION')?>"></script>
-    <script src="<?php echo constant('URL');?>public/js/tableToExcel.js"></script>
     <script src="<?php echo constant('URL');?>public/js/cargoplanner.js?<?php echo constant('VERSION')?>"></script>
 </body>
 </html>

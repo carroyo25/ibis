@@ -98,7 +98,8 @@
                                                         AND IFNULL(lg_ordendet.id_orden,'') LIKE :orden
                                                         AND tb_pedidodet.idcostos LIKE :costo
                                                         AND tb_pedidodet.idtipo like :tipo
-                                                    ORDER BY lg_ordencab.id_regmov DESC");
+                                                    GROUP BY tb_pedidodet.iditem
+                                                    ORDER BY tb_pedidodet.iditem  DESC");
                 
                 $sql->execute(["pedido"=>$pedido,
                                 "orden"=>$orden,
@@ -410,45 +411,6 @@
                             ->getStartColor()
                             ->setRGB('C0DCC0');
 
-                $normal = array(
-                    'fill' => array(
-                        'type' => PHPExcel_Style_Fill::FILL_SOLID,
-                        'startcolor' => array(
-                            'argb' => 'FFFFFF',
-                        ),
-                        'endcolor' => array(
-                            'argb' => 'FFFFFF',
-                        ),
-                    ),
-                );
-
-                $veinte = array(
-                    'fill' => array(
-                        'type' => PHPExcel_Style_Fill::FILL_SOLID,
-                        'startcolor' => array(
-                            'argb' => '4CCAE2',
-                        ),
-                        'endcolor' => array(
-                            'argb' => '4CCAE2',
-                        ),
-                    ),
-                );
-
-                $anulado = array(
-                    'fill' => array(
-                        'type' => PHPExcel_Style_Fill::FILL_SOLID,
-                        'startcolor' => array(
-                            'argb' => 'C8C8C8',
-                        ),
-                        'endcolor' => array(
-                            'argb' => 'C8C8C8',
-                        ),
-                    ),
-                );
-
-                
-                $estado = $normal;
-                
                 $objPHPExcel->getActiveSheet()->getStyle('A1:AW2')->getAlignment()->setWrapText(true);
 
                 $objPHPExcel->getActiveSheet()->setCellValue('A2','Items'); // esto cambia
@@ -500,16 +462,76 @@
                 $nreg = count($datos);
 
                 for ($i=0; $i < $nreg ; $i++) {
+
+                    $color_mostrar  = 'FFFFFF';
+                    $color_semaforo = 'FFFFFF';
                     
+
+                    //color estado Item
                     if ( $datos[$i]->estado == "0%"){
-                        $estado = $anulado;
+                        $color_mostrar = 'C8C8C8';
+                    }else if ( $datos[$i]->estado == "10%") {
+                        $color_mostrar = 'F8CAAD';
+                    }else if ( $datos[$i]->estado == "15%") {
+                        $color_mostrar = 'FF0000';
+                    }else if ( $datos[$i]->estado == "20%") {
+                        $color_mostrar = 'B3C5E6';
+                    }else if ( $datos[$i]->estado == "25%") {
+                        $color_mostrar = 'FFFF00';
+                    }else if ( $datos[$i]->estado == "30%") {
+                        $color_mostrar = 'C0DCC0';
+                    }else if ( $datos[$i]->estado == "40%") {
+                        $color_mostrar = 'FFFFE1';
+                    }else if ( $datos[$i]->estado == "50%") {
+                        $color_mostrar = 'A9D08F';
+                    }else if ( $datos[$i]->estado == "60%") {
+                        $color_mostrar = 'FF00FF';
+                    }else if ( $datos[$i]->estado == "70%") {
+                        $color_mostrar = 'FFC000';
+                    }else if ( $datos[$i]->estado == "75%") {
+                        $color_mostrar = '00FFFF';
+                    }else if ( $datos[$i]->estado == "100%") {
+                        $color_mostrar = '00FF00';
                     }
 
-                    $objPHPExcel->getActiveSheet()->setCellValue('A'.$fila,$datos[$i]->item);
-
-                    $objPHPExcel->getActiveSheet()->setCellValue('B'.$fila,$datos[$i]->estado);
+                    //color semaforo
+                    if($datos[$i]->semaforo == "Verde" ) {
+                        $color_semaforo = '90EE90';
+                    }else if($datos[$i]->semaforo == "Entregado" ) {
+                        $color_semaforo = '90EE90';
+                    }else if($datos[$i]->semaforo == "Naranja" ) {
+                        $color_semaforo = 'FFD700';
+                    }else if($datos[$i]->semaforo == "Rojo" ) {
+                        $color_semaforo = 'FF0000';
+                    }
                     
-                    $objPHPExcel->getActiveSheet()->getStyle('B'.$fila)->applyFromArray($estado);
+                    $color = array(
+                        'fill' => array(
+                            'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                            'startcolor' => array(
+                                'argb' => $color_mostrar,
+                            ),
+                            'endcolor' => array(
+                                'argb' =>  $color_mostrar,
+                            ),
+                        ),
+                    );
+
+                    $semaforo = array(
+                        'fill' => array(
+                            'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                            'startcolor' => array(
+                                'argb' => $color_semaforo,
+                            ),
+                            'endcolor' => array(
+                                'argb' =>  $color_semaforo,
+                            ),
+                        ),
+                    );
+
+                    $objPHPExcel->getActiveSheet()->setCellValue('A'.$fila,$datos[$i]->item);
+                    $objPHPExcel->getActiveSheet()->setCellValue('B'.$fila,$datos[$i]->estado);
+                    $objPHPExcel->getActiveSheet()->getStyle('B'.$fila)->applyFromArray($color);
                         
                     $objPHPExcel->getActiveSheet()->setCellValue('C'.$fila,$datos[$i]->proyecto);
                     $objPHPExcel->getActiveSheet()->setCellValue('D'.$fila,$datos[$i]->area);
@@ -527,14 +549,18 @@
                     $objPHPExcel->getActiveSheet()->setCellValue('P'.$fila,$datos[$i]->cantidad);
                     $objPHPExcel->getActiveSheet()->setCellValue('Q'.$fila,$datos[$i]->tipo_orden);
                     $objPHPExcel->getActiveSheet()->setCellValue('R'.$fila,$datos[$i]->anio_orden);
+                    $objPHPExcel->getActiveSheet()->setCellValue('S'.$fila,$datos[$i]->nro_orden);
                     $objPHPExcel->getActiveSheet()->setCellValue('T'.$fila,$datos[$i]->fecha_orden);
                     $objPHPExcel->getActiveSheet()->setCellValue('U'.$fila,$datos[$i]->cantidad_orden);
-                    $objPHPExcel->getActiveSheet()->setCellValue('v'.$fila,$datos[$i]->proveedor);
+                    $objPHPExcel->getActiveSheet()->setCellValue('V'.$fila,$datos[$i]->proveedor);
                     $objPHPExcel->getActiveSheet()->setCellValue('W'.$fila,$datos[$i]->fecha_entrega);
                     $objPHPExcel->getActiveSheet()->setCellValue('X'.$fila,$datos[$i]->saldo_recibir);
                     $objPHPExcel->getActiveSheet()->setCellValue('Y'.$fila,$datos[$i]->dias_entrega);
                     $objPHPExcel->getActiveSheet()->setCellValue('Z'.$fila,$datos[$i]->dias_atraso);
+                    
                     $objPHPExcel->getActiveSheet()->setCellValue('AA'.$fila,$datos[$i]->semaforo);
+                    $objPHPExcel->getActiveSheet()->getStyle('AA'.$fila)->applyFromArray($semaforo);
+                    
                     $objPHPExcel->getActiveSheet()->setCellValue('AB'.$fila,$datos[$i]->nota_ingreso);
                     $objPHPExcel->getActiveSheet()->setCellValue('AC'.$fila,$datos[$i]->guia_ingreso);
                     $objPHPExcel->getActiveSheet()->setCellValue('AD'.$fila,$datos[$i]->fecha_ingreso);
