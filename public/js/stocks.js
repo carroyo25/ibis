@@ -1,4 +1,8 @@
 $(() => {
+
+    let accion = 0;
+    let fila = "";
+
     $("#esperar").fadeOut();
 
     $("#nuevoRegistro").click(function (e) { 
@@ -99,6 +103,8 @@ $(() => {
         e.preventDefault();
 
         $("#fileUpload").trigger("click");
+
+        accion = 1;
         
         return false;
     });
@@ -115,6 +121,8 @@ $(() => {
             const formData = new FormData();
             formData.append('fileUpload', input.files[0]);
 
+            $("#esperar").fadeIn();
+
             fetch (RUTA+'stocks/importarItems',{
                 method: 'POST',
                 body: formData
@@ -124,6 +132,8 @@ $(() => {
                 $("#tablaDetalles tbody")
                     .empty()
                     .append(data.datos);
+
+                $("#esperar").fadeOut();
             })
 
         } catch (error) {
@@ -155,20 +165,9 @@ $(() => {
     $("#tablaDetalles").on('click','a', function(e) {
         e.preventDefault();
 
-        let fila = $(this).parent().parent();
+        fila = $(this).parent().parent();
 
-        if ($(this).attr("href") == "#") {
-                $(this).parent().parent().remove();
-                fillTables($("#tablaDetalles tbody > tr"),1);
-        }else {
-            $.post(RUTA+"stocks/quitarItem", {query:"",id:""},
-                function (data, text, requestXHR) {
-                    fila.remove();
-                    fillTables($("#tablaDetalles tbody > tr"),1);
-                },
-                "text"
-            );
-        };
+        $("#busqueda").fadeIn();
 
         return false;
     });
@@ -184,27 +183,32 @@ $(() => {
         let unidad = $(this).children('td:eq(2)').text();
         let grabado = 0;
 
-        let row = `<tr data-grabado="${grabado}" data-idprod="${idprod}" data-codund="${nunid}" data-idx="-">
-                    <td class="textoCentro">${nFilas}</td>
-                    <td class="textoCentro">${codigo}</td>
-                    <td class="pl20px">${descrip}</td>
-                    <td class="textoCentro">${unidad}</td>
-                    <td><input type="number" step="any" placeholder="0.00" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"></td>
-                    <td class="textoCentro"><input type="text"></td>
-                    <td class="textoCentro"><input type="text"></td>
-                    <td class="textoCentro"><input type="text"></td>
-                    <td class="textoCentro"><input type="text"></td>
-                    <td class="textoCentro"><input type="text"></td>
-                    <td class="textoCentro"><input type="text"></td>
-                    <td class="textoCentro"><input type="date"></td>
-                    <td class="textoCentro"><input type="date"></td>
-                    <td class="textoCentro"><input type="text"></td>
-                    <td class="textoCentro"><input type="text"></td>
-                    <td class="textoCentro"><input type="text"></td>
-                    <td><textarea></textarea></td>
-                </tr>`;
+        if ( !accion ){
+            let row = `<tr data-grabado="${grabado}" data-idprod="${idprod}" data-codund="${nunid}" data-idx="-">
+                        <td class="textoCentro">${nFilas}</td>
+                        <td class="textoCentro">${codigo}</td>
+                        <td class="pl20px">${descrip}</td>
+                        <td class="textoCentro">${unidad}</td>
+                        <td><input type="number" step="any" placeholder="0.00" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"></td>
+                        <td class="textoCentro"><input type="text"></td>
+                        <td class="textoCentro"><input type="text"></td>
+                        <td class="textoCentro"><input type="text"></td>
+                        <td class="textoCentro"><input type="text"></td>
+                        <td class="textoCentro"><input type="text"></td>
+                        <td class="textoCentro"><input type="text"></td>
+                        <td class="textoCentro"><input type="date"></td>
+                        <td class="textoCentro"><input type="date"></td>
+                        <td class="textoCentro"><input type="text"></td>
+                        <td class="textoCentro"><input type="text"></td>
+                        <td class="textoCentro"><input type="text"></td>
+                        <td><textarea></textarea></td>
+                    </tr>`;
 
-        $("#tablaDetalles tbody").append(row);
+            $("#tablaDetalles tbody").append(row);
+        }else{
+            changeValues(fila,idprod);
+        } 
+        
 
         return false;
     });
@@ -325,4 +329,11 @@ itemsSave = () =>{
     })
 
     return DATA;
+}
+
+changeValues = (fila,codigo) => {
+    fila
+        .attr('data-idprod',codigo)
+        .attr('data-estado',1)
+        .css('background','rgba(56,132,192,0.2)');
 }

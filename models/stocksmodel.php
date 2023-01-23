@@ -161,13 +161,26 @@
                 foreach ($objHoja as $iIndice=>$objCelda) {
                     if ( $objCelda['B'] && $objCelda['B']!="CODIGO") {
 
-                        $sw = $this->compareCode("B220100010006");
-                        //$sw = "B220100010006";
+                        $codigo_sical = $this->compareCode(RTRIM($objCelda['B']));
 
-                        $datos .='<tr data-grabado="0" data-idprod="" data-codund="" data-idx="-" data-existe="'.$sw.'">
+                        if ( $codigo_sical == 0 ){
+                            $codigo_sical = $this->compareDescription(TRIM($objCelda['C']));
+                        }
+
+                        $estado      = $codigo_sical  != 0 ? 1 : 0;
+                        $fondo_fila  = $codigo_sical  != 0 ? "rgba(56,132,192,0.2)" : "rgba(255,0,57,0.2)";
+                        $descripcion = $codigo_sical  != 0 ? $objCelda['C'] : '<a href="#">'.$objCelda['C'].'</a>';
+                        
+
+                        $datos .='<tr data-grabado="0" 
+                                        data-idprod="'.$codigo_sical.'" 
+                                        data-codund="" 
+                                        data-idx="-" 
+                                        data_estado="'.$estado.'"
+                                        style = background:'.$fondo_fila.'>
                                     <td class="textoCentro">'.str_pad($fila++,6,0,STR_PAD_LEFT).'</td>
                                     <td class="textoCentro">'.$objCelda['B'].'</td>
-                                    <td class="pl20px">'.$objCelda['C'].'</td>
+                                    <td class="pl20px">'.$descripcion.'</td>
                                     <td class="textoCentro">'.$objCelda['D'].'</td>
                                     <td><input type="number" value="'.$objCelda['E'].'"></td>
                                     <td><input type="number" value="'.$objCelda['F'].'"></td>
@@ -405,13 +418,38 @@
                                                     FROM
                                                         cm_producto 
                                                     WHERE
-                                                        cm_producto.ccodprod = :codigo
-                                                    LIMIT 1");
+                                                        cm_producto.ccodprod = :codigo");
                 $sql->execute(["codigo" => $codigo]);
 
                 $result = $sql->fetchAll();
 
-                return $result[0]['codigo'];
+                $codigo = isset($result[0]['codigo'])  ? $result[0]['codigo'] : 0;
+
+                return $codigo;
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function compareDescription($descripcion) {
+            try {
+                $sql=$this->db->connect()->prepare("SELECT
+                                                        cm_producto.id_cprod AS codigo 
+                                                    FROM
+                                                        cm_producto 
+                                                    WHERE
+                                                        cm_producto.cdesprod LIKE :descripcion
+                                                    LIMIT 1");
+                $sql->execute(["descripcion" => "%".$descripcion."%"]);
+
+                $result = $sql->fetchAll();
+
+                $codigo = isset($result[0]['codigo'])  ? $result[0]['codigo'] : 0;
+
+                return $codigo;
+
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;

@@ -101,7 +101,7 @@
                                 <i class="fas fa-file-excel"></i> Importar Items
                             </button>
                             <button type="button" id="itemsVerify" title="Verificar Codigos" class="cerrarLista boton3">
-                                <i class="fas fa-file-excel"></i> Verificar Items
+                                <i class="fas fa-wrench"></i> Verificar Items
                             </button>
                         </div>
                     </div>
