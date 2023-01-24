@@ -1,33 +1,14 @@
 <?php
-    class StocksModel extends Model{
+    class InventarioModel extends Model{
 
         public function __construct(){
             parent::__construct();
         }
 
-        public function listarItems(){
+        public function listarEntradas(){
             try {
                 $salida = "";
-                $sql = $this->db->connect()->query("SELECT
-                                                        alm_existencia.idreg,
-                                                        alm_existencia.idalm,
-                                                        alm_existencia.idpedido,
-                                                        alm_existencia.idorden,
-                                                        alm_existencia.codprod,
-                                                        alm_existencia.serie,
-                                                        FORMAT(alm_existencia.cant_ingr,2) AS cantidad_ingreso,
-                                                        alm_existencia.cant_sal,
-                                                        cm_producto.ccodprod,
-                                                        UPPER(cm_producto.cdesprod) AS descripcion,
-                                                        alm_existencia.idprod,
-                                                        tb_unimed.cabrevia,
-                                                        SUM(alm_existencia.cant_ingr) AS ingreso	
-                                                    FROM
-                                                        alm_existencia
-                                                        INNER JOIN cm_producto ON alm_existencia.codprod = cm_producto.id_cprod
-                                                        INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
-                                                    GROUP BY alm_existencia.codprod
-                                                    ORDER BY cm_producto.cdesprod");
+                /*$sql = $this->db->connect()->query("");
                 $sql->execute();
                 $rowCount = $sql->rowCount();
                 $item = 1;
@@ -43,7 +24,7 @@
                                         <td class="textoDerecha"></td>
                                   </tr>';
                     }
-                }
+                }*/
 
                 return $salida;
 
@@ -55,35 +36,38 @@
 
         public function nuevoRegistro() {
             try {
-                $sql = $this->db->connect()->query("SELECT MAX(idreg) AS numero FROM alm_cabexist");
+                $sql = $this->db->connect()->query("SELECT MAX(idreg) AS numero FROM alm_inventariocab");
                 $sql->execute();
 
                 $result = $sql->fetchAll();
 
-                return array("numero"=>str_pad($result[0]['numero'],6,0,STR_PAD_LEFT));
+                $numero = isset($result[0]['numero']) ? $result[0]['numero']+1 : 1;
+
+                return array("numero"=>str_pad($numero,6,0,STR_PAD_LEFT));
             } catch (PDOException $th) {
-                echo "Error: ".$th->getMessage;
+                echo "Error: ".$th->getMessage();
                 return false;
             }
         }
 
         public function grabarRegistro($cabecera,$detalles){
             try {
-                $sql = $this->db->connect()->prepare("INSERT INTO alm_invetariocab 
+                $sql = $this->db->connect()->prepare("INSERT INTO alm_inventariocab 
                                                     SET idcostos=:costo,ffechadoc=:fechadoc,ncodalm2=:almacen,ntipomov=:movimiento,
-                                                        ffechaInv=:fechaInv");
+                                                        ffechaInv=:fechaInv,idautoriza=:autoriza");
                 $sql->execute(["costo"=>$cabecera["codigo_costos"],
                                 "fechadoc"=>$cabecera["fecha"],
                                 "almacen"=>$cabecera["codigo_almacen"],
                                 "movimiento"=>$cabecera["codigo_tipo"],
-                                "fechaInv"=>$cabecera["fechaIngreso"]
+                                "fechaInv"=>$cabecera["fechaIngreso"],
+                                "autoriza"=>$cabecera["codigo_autoriza"]
                             ]);
 
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0){
                     $indice = $this->nuevoRegistro();
-                    $this->grabarDetalles($detalles,$indice["numero"],$cabecera["codigo_tipo"],$cabecera["codigo_almacen"]);
+                    //$this->grabarDetalles($detalles,$indice["numero"],$cabecera["codigo_tipo"],$cabecera["codigo_almacen"]);
                     $mensaje = "Registrado Correctamente";
                 }
                 else {

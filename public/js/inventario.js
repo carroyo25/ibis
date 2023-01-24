@@ -10,7 +10,7 @@ $(() => {
         $("form")[1].reset();
         $("#tablaDetalles tbody").empty();
 
-        $.post(RUTA+"stocks/nuevoRegistro",
+        $.post(RUTA+"inventario/nuevoRegistro",
             function (data, textStatus, jqXHR) {
                 $("#numero").val(data.numero);
                 $("#proceso").fadeIn();
@@ -123,7 +123,7 @@ $(() => {
 
             $("#esperar").fadeIn();
 
-            fetch (RUTA+'stocks/importarItems',{
+            fetch (RUTA+'inventario/importarItems',{
                 method: 'POST',
                 body: formData
             })
@@ -227,9 +227,9 @@ $(() => {
             if (result['codigo_almacen'] == '') throw "Elija un almacen";
             if (result['codigo_tipo'] == '') throw "Elija el concepto de ingreso";
             if ($("#tablaDetalles tbody tr").length <= 0) throw "El pedido no tienes items";
-            if (checkCantTables($("#tablaDetalles tbody > tr"),4)) throw "No ingreso cantidad en un item";
+            if (checkCantTables($("#tablaDetalles tbody > tr"),5)) throw "No ingreso cantidad en un item";
 
-            $.post(RUTA+"stocks/grabaRegisto", {cabecera:result,detalles:JSON.stringify(itemsSave())},
+            $.post(RUTA+"inventario/grabaRegisto", {cabecera:result,detalles:JSON.stringify(itemsSave())},
                     function (data, textStatus, jqXHR) {
                         mostrarMensaje(data.mensaje,'mensaje_correcto');
                     },
@@ -245,7 +245,7 @@ $(() => {
     $("#tablaPrincipal tbody").on("click","tr", function (e) {
         e.preventDefault();
         
-        $.post(RUTA+"stocks/resumen",{codigo:$(this).data("idprod")},
+        $.post(RUTA+"inventario/resumen",{codigo:$(this).data("idprod")},
             function (data, textStatus, jqXHR) {
                 console.log(data);
                 $("#numero_pedidos").text(data.pedidos);
@@ -284,7 +284,6 @@ itemsSave = () =>{
 
     TABLA.each(function(){
         let IDPROD          = $(this).data('idprod'),
-            UNIDAD          = $(this).data('codund'),
             GRABADO         = $(this).data('grabado'),
             MARCA           = $(this).find('td').eq(4).children().val(),
             CANTIDAD        = $(this).find('td').eq(5).children().val(),
@@ -308,7 +307,6 @@ itemsSave = () =>{
         
         if ( GRABADO == 0) {
             item['idprod']         = IDPROD;
-            item['unidad']         = UNIDAD;
             item['marca']          = MARCA;
             item['cantidad']       = CANTIDAD;
             item['orden']          = ORDEN;
@@ -318,7 +316,6 @@ itemsSave = () =>{
             item['ncertcal']       = NCERTCAL;
             item['feccal']         = FECCAL;
             item['vence']          = VENCE;
-            item['ncert']          = NCERT;
             item['reglib']         = REGLIB;
             item['estado']         = ESTADO;
             item['condicion']      = CONDICION;
