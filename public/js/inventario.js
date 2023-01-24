@@ -244,26 +244,29 @@ $(() => {
 
     $("#tablaPrincipal tbody").on("click","tr", function (e) {
         e.preventDefault();
-        
-        $.post(RUTA+"inventario/resumen",{codigo:$(this).data("idprod")},
-            function (data, textStatus, jqXHR) {
-                console.log(data);
-                $("#numero_pedidos").text(data.pedidos);
-                $("#numero_ordenes").text(data.ordenes);
-                $("#inventario").text(data.inventario);
-                $("#ingresos").text(data.ingresos);
-                $("#pendientes").text(data.pendientes);
-                $("#tabla_precios tbody").empty().append(data.precios);
-                $("#tabla_existencias tbody").empty().append(data.existencias);
 
-                $("#saldo").text(data.inventario + data.ingresos);
+        $.post(RUTA+"inventario/consulta", {id:$(this).data('doc')},
+            function (data, text, requestXHR) {
+                $("#codigo_costos").val(data.cabecera[0].idcostos);
+                $("#codigo_almacen").val(data.cabecera[0].ncodalm);
+                $("#codigo_autoriza").val(data.cabecera[0].iduser);
+                $("#codigo_tipo").val(data.cabecera[0].ntipomov);
+                $("#fecha").val(data.cabecera[0].ffechadoc);
+                $("#numero").val($.strPad(data.cabecera[0].idreg,6));
+                $("#costos").val(data.cabecera[0].cdesproy);
+                $("#almacen").val(data.cabecera[0].almacen);
+                $("#registra").val(data.cabecera[0].cnombres);
+                $("#tipoMovimiento").val(data.cabecera[0].cdescripcion);
+                $("#fechaIngreso").val(data.cabecera[0].ffechaInv);
+
+                $("#tablaDetalles tbody")
+                    .empty()
+                    .append(data.detalles);
             },
             "json"
         );
-        $("#codigo_item").text( $(this).find('td').eq(1).text() );
-        $("#descripcion_item").text( $(this).find('td').eq(2).text() );
 
-        $("#vistadocumento").fadeIn();
+        $("#proceso").fadeIn();
 
         return false;
     });

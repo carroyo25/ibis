@@ -301,12 +301,11 @@
             <thead>
                 <tr class="stickytop">
                     <th>Item</th>
-                    <th>Codigo</th>
-                    <th>Descripcion</th>
-                    <th>Unidad</th>
-                    <th>Cantidad<br>Ingreso</th>
-                    <th>Cantidad<br>Salida</th>
-                    <th>Saldo</th>
+                    <th>Fecha Registro</th>
+                    <th>Fecha Inventario</th>
+                    <th>Autorizado</th>
+                    <th>Almacen</th>
+                    <th>Centro Costos</th>
                 </tr>
             </thead>
             <tbody>

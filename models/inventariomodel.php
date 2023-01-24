@@ -8,23 +8,34 @@
         public function listarEntradas(){
             try {
                 $salida = "";
-                /*$sql = $this->db->connect()->query("");
-                $sql->execute();
+                $sql = $this->db->connect()->query("SELECT
+                                        tb_proyectos.cdesproy,
+                                        alm_inventariocab.idreg,
+                                        DATE_FORMAT( alm_inventariocab.ffechadoc, '%d/%m%/%Y' ) AS fecha_documento,
+                                        DATE_FORMAT( alm_inventariocab.ffechaInv, '%d/%m%/%Y' ) AS fecha_inventario,
+                                        tb_user.cnombres,
+                                        UPPER( tb_almacen.cdesalm ) AS almacen,
+                                        tb_proyectos.ccodproy 
+                                    FROM
+                                        alm_inventariocab
+                                        INNER JOIN tb_proyectos ON alm_inventariocab.idcostos = tb_proyectos.nidreg
+                                        INNER JOIN tb_user ON alm_inventariocab.idautoriza = tb_user.iduser
+                                        INNER JOIN tb_almacen ON alm_inventariocab.ncodalm2 = tb_almacen.ncodalm");
+                                        $sql->execute();
                 $rowCount = $sql->rowCount();
                 $item = 1;
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()){
-                        $salida.='<tr class="pointer" data-idprod="'.$rs['codprod'].'">
-                                        <td class="textoCentro">'.str_pad($item++,4,0,STR_PAD_LEFT).'</td>
-                                        <td class="textoCentro">'.$rs['ccodprod'].'</td>
-                                        <td class="pl20px">'.$rs['descripcion'].'</td>
-                                        <td class="textoCentro">'.$rs['cabrevia'].'</td>
-                                        <td class="textoDerecha">'.$rs['cantidad_ingreso'].'</td>
-                                        <td class="textoDerecha"></td>
-                                        <td class="textoDerecha"></td>
+                        $salida.='<tr class="pointer" data-doc="'.$rs['idreg'].'">
+                                        <td class="textoCentro">'.str_pad($rs['idreg'],4,0,STR_PAD_LEFT).'</td>
+                                        <td class="textoCentro">'.$rs['fecha_documento'].'</td>
+                                        <td class="textoCentro">'.$rs['fecha_inventario'].'</td>
+                                        <td class="pl20px">'.$rs['cnombres'].'</td>
+                                        <td class="pl20px">'.$rs['almacen'].'</td>
+                                        <td class="pl20px">'.$rs['ccodproy'].'</td>
                                   </tr>';
                     }
-                }*/
+                }
 
                 return $salida;
 
@@ -41,7 +52,7 @@
 
                 $result = $sql->fetchAll();
 
-                $numero = isset($result[0]['numero']) ? $result[0]['numero']+1 : 1;
+                $numero = isset($result[0]['numero']) ? $result[0]['numero'] : 1;
 
                 return array("numero"=>str_pad($numero,6,0,STR_PAD_LEFT));
             } catch (PDOException $th) {
@@ -67,7 +78,7 @@
 
                 if ($rowCount > 0){
                     $indice = $this->nuevoRegistro();
-                    //$this->grabarDetalles($detalles,$indice["numero"],$cabecera["codigo_tipo"],$cabecera["codigo_almacen"]);
+                    $this->grabarDetalles($detalles,$indice["numero"],$cabecera["codigo_tipo"],$cabecera["codigo_almacen"]);
                     $mensaje = "Registrado Correctamente";
                 }
                 else {
@@ -91,39 +102,42 @@
                                                             SET idalm=:almacen,
                                                                 idregistro=:indice,
                                                                 codprod=:item,
-                                                                cant_ingr=:cantidad,
-                                                                observaciones=:observ,
-                                                                ubicacion=:ubica,
-                                                                ntipmov=:movimiento,
-                                                                vence=:fecha_vence,
-                                                                psi=:numpsi,
-                                                                ncertcal=:certificado_calidad,
-                                                                ffeccalibra=:fecha_calibracion,
-                                                                ncertificado=:numero_certificado,
-                                                                condicion=:condicion_item,
-                                                                nroorden=:orden,
-                                                                serie=:nroserie,
-                                                                estado=:estado_item,
-                                                                marca=:item_marca");
+                                                                cmarca=:item_marca,
+                                                                cant_ingr=:item_cantidad,
+                                                                nroorden=:item_nro_orden,
+                                                                ncolada=:item_colada,
+                                                                ntag=:item_tag,
+                                                                cserie=:item_serie,
+                                                                ncertificado=:item_ncertificado,
+                                                                ffeccalibra=:item_calibra,
+                                                                vence=:item_vence,
+                                                                nreglib=:item_reglib,
+                                                                estado=:item_estado,
+                                                                condicion=:item_condicion,
+                                                                ccontenedor=:item_contenedor,
+                                                                cestante=:item_estante,
+                                                                cfila=:item_fila,
+                                                                observaciones=:item_observaciones");
                                                             
                 $sql->execute(["almacen"                =>$almacen, 
                                 "indice"                =>$indice,
                                 "item"                  =>$datos[$i]->idprod,
-                                "cantidad"              =>$datos[$i]->cantidad,
-                                "marca"                 =>$datos[$i]->marca,
-                                "observ"                =>$datos[$i]->observaciones,
-                                "ubica"                 =>$datos[$i]->contenedor.'-'.$datos[$i]->estante.'-'.$datos[$i]->fila,
-                                "fecha_vence"           =>$datos[$i]->vence,
-                                "movimiento"            =>$movimiento,
-                                "numpsi"                =>$datos[$i]->psi,
-                                "certificado_calidad"   =>$datos[$i]->ncertcal,
-                                "fecha_calibracion"     =>$datos[$i]->feccal,
-                                "numero_certificado"    =>$datos[$i]->ncert,
-                                "condicion_item"        =>$datos[$i]->condicion,
-                                "estado_item"           =>$datos[$i]->estado,
-                                "nroserie"              =>$datos[$i]->serie,
-                                "orden"                 =>$datos[$i]->orden,
-                                "item_marca"            =>$datos[$i]->marca]);
+                                "item_marca"            =>$datos[$i]->marca,
+                                "item_cantidad"         =>$datos[$i]->cantidad,
+                                "item_nro_orden"        =>$datos[$i]->orden,
+                                "item_colada"           =>$datos[$i]->colada,
+                                "item_tag"              =>$datos[$i]->tag,
+                                "item_serie"            =>$datos[$i]->serie,
+                                "item_ncertificado"     =>$datos[$i]->ncertcal,
+                                "item_calibra"          =>$datos[$i]->feccal,
+                                "item_vence"            =>$datos[$i]->vence,
+                                "item_reglib"           =>$datos[$i]->reglib,
+                                "item_estado"           =>$datos[$i]->estado,
+                                "item_condicion"        =>$datos[$i]->condicion,
+                                "item_contenedor"       =>$datos[$i]->contenedor,
+                                "item_estante"          =>$datos[$i]->estante,
+                                "item_fila"             =>$datos[$i]->ncertcal,
+                                "item_observaciones"    =>$datos[$i]->observaciones]);
                 }
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
@@ -439,6 +453,126 @@
                 $codigo = isset($result[0]['codigo'])  ? $result[0]['codigo'] : 0;
 
                 return $codigo;
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        public function consultarInventario($idx){
+            try {
+                    $sql = $this->db->connect()->prepare("SELECT
+                                                        tb_proyectos.cdesproy,
+                                                        alm_inventariocab.idreg,
+                                                        alm_inventariocab.ffechadoc,
+                                                        alm_inventariocab.ffechaInv,
+                                                        tb_user.cnombres,
+                                                        UPPER( tb_almacen.cdesalm ) AS almacen,
+                                                        tb_proyectos.ccodproy,
+                                                        alm_inventariocab.idcostos,
+                                                        alm_inventariocab.ncodalm2,
+                                                        tb_user.iduser,
+                                                        tb_almacen.ncodalm,
+                                                        alm_inventariocab.ntipomov,
+                                                        tb_parametros.cdescripcion 
+                                                    FROM
+                                                        alm_inventariocab
+                                                        INNER JOIN tb_proyectos ON alm_inventariocab.idcostos = tb_proyectos.nidreg
+                                                        INNER JOIN tb_user ON alm_inventariocab.idautoriza = tb_user.iduser
+                                                        INNER JOIN tb_almacen ON alm_inventariocab.ncodalm2 = tb_almacen.ncodalm
+                                                        INNER JOIN tb_parametros ON alm_inventariocab.ntipomov = tb_parametros.nidreg 
+                                                    WHERE
+                                                        alm_inventariocab.idreg = :idx");
+                    $sql->execute(["idx" => $idx]);
+
+                    $rowCount = $sql->rowcount();
+
+                    if ($rowCount > 0) {
+                        $docData = array();
+                        while($row=$sql->fetch(PDO::FETCH_ASSOC)){
+                            $docData[] = $row;
+                        }
+                    }
+
+                    return array("cabecera" => $docData,
+                                "detalles" =>$this->detallesInventario($idx));
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+           
+        }
+
+        private function detallesInventario($idx){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        alm_inventariodet.idreg,
+                                                        alm_inventariodet.cant_ingr,
+                                                        alm_inventariodet.nroorden,
+                                                        alm_inventariodet.ncertcal,
+                                                        alm_inventariodet.ffeccalibra,
+                                                        alm_inventariodet.ncertificado,
+                                                        alm_inventariodet.condicion,
+                                                        alm_inventariodet.cmarca,
+                                                        alm_inventariodet.estado,
+                                                        alm_inventariodet.ncolada,
+                                                        alm_inventariodet.ntag,
+                                                        alm_inventariodet.cserie,
+                                                        alm_inventariodet.ccontenedor,
+                                                        alm_inventariodet.cestante,
+                                                        alm_inventariodet.cfila,
+                                                        alm_inventariodet.nreglib,
+                                                        alm_inventariodet.cestado,
+                                                        alm_inventariodet.idprod,
+                                                        cm_producto.cdesprod,
+                                                        cm_producto.ccodprod,
+                                                        tb_unimed.cabrevia,
+                                                        alm_inventariodet.idregistro,
+                                                        alm_inventariodet.vence,
+                                                        alm_inventariodet.observaciones
+                                                    FROM
+                                                        alm_inventariodet
+                                                        INNER JOIN cm_producto ON alm_inventariodet.codprod = cm_producto.id_cprod
+                                                        INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed 
+                                                    WHERE
+                                                        alm_inventariodet.idregistro =:idx");
+                $sql->execute(["idx" => $idx]);
+
+                $rowCount = $sql->rowcount();
+                $salida = "";
+                $item = 1;
+
+                if ($rowCount > 0) {
+                    while($rs = $sql->fetch()){
+                        $salida .= '<tr class="pointer">
+                                        <td class="textoCentro">'.$item++.'</td>
+                                        <td class="textoCentro">'.$rs['ccodprod'].'</td>
+                                        <td class="textoCentro">'.$rs['cdesprod'].'</td>
+                                        <td class="textoCentro">'.$rs['cabrevia'].'</td>
+                                        <td class="textoCentro">'.$rs['cmarca'].'</td>
+                                        <td class="textoCentro">'.$rs['cant_ingr'].'</td>
+                                        <td class="textoCentro">'.$rs['nroorden'].'</td>
+                                        <td class="textoCentro">'.$rs['ncolada'].'</td>
+                                        <td class="textoCentro">'.$rs['ntag'].'</td>
+                                        <td class="textoCentro">'.$rs['cserie'].'</td>
+                                        <td class="textoCentro">'.$rs['ncertificado'].'</td>
+                                        <td class="textoCentro">'.$rs['ffeccalibra'].'</td>
+                                        <td class="textoCentro">'.$rs['vence'].'</td>
+                                        <td class="textoCentro">'.$rs['nreglib'].'</td>
+                                        <td class="textoCentro">'.$rs['cestado'].'</td>
+                                        <td class="textoCentro">'.$rs['condicion'].'</td>
+                                        <td class="textoCentro">'.$rs['ccontenedor'].'</td>
+                                        <td class="textoCentro">'.$rs['cestante'].'</td>
+                                        <td class="textoCentro">'.$rs['cfila'].'</td>
+                                        <td class="textoCentro">'.$rs['observaciones'].'</td>
+                                        <td class="textoCentro"></td>
+                                        <td class="textoCentro"></td>
+                                    </tr>';
+                    }
+                }
+
+                return $salida;
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();

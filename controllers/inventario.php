@@ -33,6 +33,10 @@
         function resumen() {
             echo json_encode($this->model->obtenerResumen($_POST['codigo']));
         }
+
+        function consulta(){
+            echo json_encode($this->model->consultarInventario($_POST['id']));
+        }
         
     }
 ?>
