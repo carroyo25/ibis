@@ -243,7 +243,9 @@
                                                         tb_costusu.nflgactivo = 1
                                                     AND tb_costusu.id_cuser = :user
                                                     AND tb_pedidodet.idasigna = :user_asigna
-                                                    AND tb_pedidodet.cant_aprob <> tb_pedidodet.cant_orden");
+                                                    AND tb_pedidodet.cant_aprob <> tb_pedidodet.cant_orden
+                                                    AND ISNULL(tb_pedidodet.idorden)
+                                                    AND tb_pedidodet.estadoItem = 54");
 
                 //se cambia el 58 para llama los items directo con aprobacion
                 $sql->execute(["user"=>$_SESSION['iduser'],

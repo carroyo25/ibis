@@ -1414,7 +1414,7 @@
                     $detalles = $this->consultarDetallesAprobacion($id);
                 }else if ( $proceso == 56 ){
                     $detalles = $this->obtenerProformas($id);
-                }else if ($proceso ==57) {
+                }else if ($proceso == 57) {
                     $detalles = $this->consultarDetallesConformidad($id);
                 }
                     
@@ -1605,35 +1605,35 @@
                 $salida ="";
 
                 $sql=$this->db->connect()->prepare("SELECT
-                                                    tb_pedidodet.iditem,
-                                                    tb_pedidodet.idpedido,
-                                                    tb_pedidodet.idprod,
-                                                    tb_pedidodet.idtipo,
-                                                    tb_pedidodet.nroparte,
-                                                    tb_pedidodet.unid,
-                                                    tb_pedidodet.observaciones,
-                                                    REPLACE(FORMAT(tb_pedidodet.cant_pedida,2),',','') AS cant_pedida,
-                                                    tb_pedidodet.estadoItem,
-                                                    cm_producto.ccodprod,
-                                                    cm_producto.cdesprod,
-                                                    tb_unimed.cabrevia,
-                                                    tb_pedidodet.nflgqaqc,
-                                                    tb_equipmtto.cdescripcion,
-	                                                tb_equipmtto.cregistro 
-                                                FROM
-                                                    tb_pedidodet
-                                                    INNER JOIN cm_producto ON tb_pedidodet.idprod = cm_producto.id_cprod
-                                                    INNER JOIN tb_unimed ON tb_pedidodet.unid = tb_unimed.ncodmed
-                                                    LEFT JOIN tb_equipmtto ON tb_pedidodet.nregistro = tb_equipmtto.idreg 
-                                                WHERE
-                                                    tb_pedidodet.idpedido = :id 
-                                                    AND tb_pedidodet.nflgActivo = 1");
+                                                        tb_pedidodet.iditem,
+                                                        tb_pedidodet.idpedido,
+                                                        tb_pedidodet.idprod,
+                                                        tb_pedidodet.idtipo,
+                                                        tb_pedidodet.nroparte,
+                                                        tb_pedidodet.unid,
+                                                        UPPER(tb_pedidodet.observaciones) AS observaciones,
+                                                        REPLACE(FORMAT(tb_pedidodet.cant_pedida,2),',','') AS cant_pedida,
+                                                        tb_pedidodet.estadoItem,
+                                                        cm_producto.ccodprod,
+                                                        UPPER(cm_producto.cdesprod) AS cdesprod,
+                                                        tb_unimed.cabrevia,
+                                                        tb_pedidodet.nflgqaqc,
+                                                        tb_equipmtto.cdescripcion,
+                                                        tb_equipmtto.cregistro 
+                                                    FROM
+                                                        tb_pedidodet
+                                                        LEFT JOIN cm_producto ON tb_pedidodet.idprod = cm_producto.id_cprod
+                                                        LEFT JOIN tb_unimed ON tb_pedidodet.unid = tb_unimed.ncodmed
+                                                        LEFT JOIN tb_equipmtto ON tb_pedidodet.nregistro = tb_equipmtto.idreg 
+                                                    WHERE
+                                                        tb_pedidodet.idpedido = :id 
+                                                        AND tb_pedidodet.nflgActivo = 1");
                 $sql->execute(["id"=>$id]);
                 $rowCount = $sql->rowCount();
                 
                 if ($rowCount > 0){
                     $filas = 1;
-                    while ($rs = $sql->fetch()) {
+                    while ( $rs = $sql->fetch() ) {
 
                         $checked = $rs['nflgqaqc'] == 1 ? "checked ": " ";
                         
@@ -1641,7 +1641,7 @@
                                         <td class="textoCentro"><a href="'.$rs['iditem'].'"><i class="fas fa-eraser"></i></a></td>
                                         <td class="textoCentro">'.str_pad($filas++,3,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
-                                        <td class="pl20px">'.strtoupper($rs['cdesprod']).'</td>
+                                        <td class="pl20px">'.$rs['cdesprod'].'</td>
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                         <td>
                                             <input type="number" 

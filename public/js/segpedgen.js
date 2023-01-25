@@ -4,6 +4,8 @@ $(function(){
 
         $.post(RUTA+"pedidoseg/seguimientoID", {id:$(this).data("indice")},
             function (data, textStatus, jqXHR) {
+
+            
                 
                 let numero = $.strPad(data.cabecera[0].nrodoc,6);
                 let estado = "textoCentro w35por estado " + data.cabecera[0].cabrevia;
@@ -32,18 +34,6 @@ $(function(){
                 $("#espec_items").val(data.cabecera[0].detalle);
                 $("#partida").val(data.cabecera[0].cdescripcion);
                
-                if (data.cabecera[0].idtipomov == 38) {
-                    $("#requestAprob").removeClass("desactivado");
-                    $("#sendItem").addClass("desactivado");
-                }else {
-                    if ( data.cabecera[0].veralm == 0 ){
-                        $("#requestAprob").removeClass("desactivado");
-                        $("#sendItem").addClass("desactivado");
-                    }else {
-                        $("#requestAprob").addClass("desactivado");
-                        $("#sendItem").removeClass("desactivado");
-                    }                    
-                }
 
                 $("#tablaDetalles tbody")
                     .empty()

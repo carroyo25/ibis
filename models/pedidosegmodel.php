@@ -32,8 +32,7 @@
                                                     INNER JOIN ibis.tb_parametros AS atenciones ON ibis.tb_pedidocab.nivelAten = atenciones.nidreg
                                                     INNER JOIN ibis.tb_parametros AS estados ON ibis.tb_pedidocab.estadodoc = estados.nidreg 
                                                 WHERE
-                                                    ibis.tb_pedidocab.usuario = :user 
-                                                    AND ibis.tb_pedidocab.estadodoc BETWEEN 49 AND 63");
+                                                    ibis.tb_pedidocab.estadodoc BETWEEN 49 AND 200");
                 $sql->execute(["user"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowCount();
 
