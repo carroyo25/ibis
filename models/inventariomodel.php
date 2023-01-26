@@ -47,14 +47,14 @@
 
         public function nuevoRegistro() {
             try {
-                $sql = $this->db->connect()->query("SELECT MAX(idreg) AS numero FROM alm_inventariocab");
+                $sql = $this->db->connect()->query("SELECT COUNT(idreg) AS numero FROM alm_inventariocab");
                 $sql->execute();
 
                 $result = $sql->fetchAll();
 
-                $numero = isset($result[0]['numero']) ? $result[0]['numero'] : 1;
+                $numero = $result[0]['numero'] != 0 ? $result[0]['numero'] : 1;
 
-                return array("numero"=>str_pad($numero,6,0,STR_PAD_LEFT));
+                return array("numero"=>str_pad($numero+1,6,0,STR_PAD_LEFT),"indice"=>$numero);
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;
@@ -78,7 +78,7 @@
 
                 if ($rowCount > 0){
                     $indice = $this->nuevoRegistro();
-                    $this->grabarDetalles($detalles,$indice["numero"],$cabecera["codigo_tipo"],$cabecera["codigo_almacen"]);
+                    $this->grabarDetalles($detalles,$indice["indice"],$cabecera["codigo_tipo"],$cabecera["codigo_almacen"]);
                     $mensaje = "Registrado Correctamente";
                 }
                 else {
@@ -174,6 +174,7 @@
                         $estado      = $codigo_sical  != 0 ? 1 : 0;
                         $fondo_fila  = $codigo_sical  != 0 ? "rgba(56,132,192,0.2)" : "rgba(255,0,57,0.2)";
                         $descripcion = $codigo_sical  != 0 ? $objCelda['C'] : '<a href="#">'.$objCelda['C'].'</a>';
+                        $observaciones =  $codigo_sical  != 0 ? $objCelda['U']: $objCelda['C'];
                         
 
                         $datos .='<tr data-grabado="0" 
@@ -201,7 +202,7 @@
                                     <td ><input type="text" class="textoCentro"  value="'.$objCelda['Q'].'"></td>
                                     <td ><input type="text" class="textoCentro"  value="'.$objCelda['R'].'"></td>
                                     <td ><input type="text" class="textoCentro"  value="'.$objCelda['S'].'"></td>
-                                    <td><textarea>'.$objCelda['U'].'</textarea></td>
+                                    <td><textarea>'.$observaciones.'</textarea></td>
                                 </tr>';
                     }
                 }
@@ -533,8 +534,8 @@
                                                         alm_inventariodet.observaciones
                                                     FROM
                                                         alm_inventariodet
-                                                        INNER JOIN cm_producto ON alm_inventariodet.codprod = cm_producto.id_cprod
-                                                        INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed 
+                                                        LEFT JOIN cm_producto ON alm_inventariodet.codprod = cm_producto.id_cprod
+                                                        LEFT JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed 
                                                     WHERE
                                                         alm_inventariodet.idregistro =:idx");
                 $sql->execute(["idx" => $idx]);
@@ -545,13 +546,17 @@
 
                 if ($rowCount > 0) {
                     while($rs = $sql->fetch()){
-                        $salida .= '<tr class="pointer">
+
+                        $descripcion = is_null($rs['ccodprod']) ? '<a href="#">'.$rs['observaciones'].'</a>' : $rs['cdesprod'];
+                        $fondo_fila  = is_null($rs['ccodprod']) ? "rgba(255,0,57,0.2)" : "rgba(56,132,192,0.2)";
+
+                        $salida .= '<tr class="pointer" style=background:'.$fondo_fila.' data-grabado="1">
                                         <td class="textoCentro">'.$item++.'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
-                                        <td class="textoCentro">'.$rs['cdesprod'].'</td>
+                                        <td class="pl20px">'.$descripcion.'</td>
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                         <td class="textoCentro">'.$rs['cmarca'].'</td>
-                                        <td class="textoCentro">'.$rs['cant_ingr'].'</td>
+                                        <td class="textoDerecha">'.$rs['cant_ingr'].'</td>
                                         <td class="textoCentro">'.$rs['nroorden'].'</td>
                                         <td class="textoCentro">'.$rs['ncolada'].'</td>
                                         <td class="textoCentro">'.$rs['ntag'].'</td>
@@ -565,9 +570,7 @@
                                         <td class="textoCentro">'.$rs['ccontenedor'].'</td>
                                         <td class="textoCentro">'.$rs['cestante'].'</td>
                                         <td class="textoCentro">'.$rs['cfila'].'</td>
-                                        <td class="textoCentro">'.$rs['observaciones'].'</td>
-                                        <td class="textoCentro"></td>
-                                        <td class="textoCentro"></td>
+                                        <td class="pl20px">'.$rs['observaciones'].'</td>
                                     </tr>';
                     }
                 }

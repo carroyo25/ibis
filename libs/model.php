@@ -1850,7 +1850,7 @@
                     $rc++;
                     $item++;
 
-                    if ($lc == 52) {
+                    if ($lc == 17) {
                         $pdf->AddPage();
                         $lc = 0;
                     }
@@ -2248,6 +2248,7 @@
                                                     lg_ordencab.cverificacion,
                                                     lg_ordencab.ntotal,
                                                     lg_ordencab.nigv,
+                                                    lg_ordencab.cReferencia,
                                                     FORMAT(lg_ordencab.ntotal,2) AS ctotal,
 	                                                tb_pedidocab.nivelAten,
                                                     LPAD(tb_pedidocab.nrodoc,6,0) AS nrodoc 
@@ -2666,7 +2667,7 @@
                 $lc++;
                 $rc++;
                 
-                if ($lc >= 17) {
+                if ($lc > 7) {
                     $pdf->AddPage();
                     $lc = 0;
                 }
@@ -2788,51 +2789,6 @@
             return $file;
         }
 
-        private function bancosProveedor($entidad){
-            try {
-                $bancos = [];
-                $item = array();
-
-                $sql = $this->db->connect()->prepare("SELECT
-                                                    bancos.cdescripcion AS banco,
-                                                    cm_entidadbco.cnrocta AS cuenta,
-                                                    monedas.cdescripcion AS moneda
-                                                FROM
-                                                    cm_entidadbco
-                                                    INNER JOIN tb_parametros AS bancos ON cm_entidadbco.ncodbco = bancos.nidreg
-                                                    INNER JOIN tb_parametros AS monedas ON cm_entidadbco.cmoneda = monedas.nidreg 
-                                                WHERE
-                                                    cm_entidadbco.nflgactivo = 7 
-                                                    AND cm_entidadbco.id_centi = :entidad");
-                $sql->execute(["entidad"=>$entidad]);
-                $rowCount = $sql->rowCount();
-
-                if($rowCount > 0){
-                    while ($rs = $sql->fetch()) {
-                        $item['banco'] = $rs['banco'];
-                        $item['moneda'] = $rs['moneda'];
-                        $item['cuenta'] = $rs['cuenta'];
-                        
-                        array_push($bancos,$item);
-                    }
-                }
-
-                return $bancos;
-
-            } catch (PDOException $th) {
-                echo "Error: " . $th->getMessage();
-                return false;
-            }
-        }
-
-        public function calcularDias($fechaEntrega){
-            $date1 = new DateTime(Date('Y-m-d'));
-            $date2 = new DateTime($fechaEntrega);
-            $diff = $date1->diff($date2);
-            // will output 2 days
-            return $diff->days . ' dias ';
-        }
-
         public function generarVistaOrden($id){
             require_once("public/formatos/ordenes.php");
 
@@ -2843,7 +2799,7 @@
                 $titulo = "ORDEN DE COMPRA" ;
 
                 if ( $datosOrden[0]['userModifica'] != null) {
-                    $titulo = "ORDEN DE COMPRA - R1" ;
+                    $titulo = "ORDEN DE COMPRA" ;
                 }
 
                 $prefix = "OC";
@@ -2897,7 +2853,7 @@
                 $lc++;
                 $rc++;
                                 
-                    if ($lc >= 17) {
+                    if ($lc >= 7) {
                         $pdf->AddPage();
                         $lc = 0;
                     }
@@ -2975,6 +2931,51 @@
             $pdf->Output($filename,'F');
 
             return $filename;
+        }
+
+        private function bancosProveedor($entidad){
+            try {
+                $bancos = [];
+                $item = array();
+
+                $sql = $this->db->connect()->prepare("SELECT
+                                                    bancos.cdescripcion AS banco,
+                                                    cm_entidadbco.cnrocta AS cuenta,
+                                                    monedas.cdescripcion AS moneda
+                                                FROM
+                                                    cm_entidadbco
+                                                    INNER JOIN tb_parametros AS bancos ON cm_entidadbco.ncodbco = bancos.nidreg
+                                                    INNER JOIN tb_parametros AS monedas ON cm_entidadbco.cmoneda = monedas.nidreg 
+                                                WHERE
+                                                    cm_entidadbco.nflgactivo = 7 
+                                                    AND cm_entidadbco.id_centi = :entidad");
+                $sql->execute(["entidad"=>$entidad]);
+                $rowCount = $sql->rowCount();
+
+                if($rowCount > 0){
+                    while ($rs = $sql->fetch()) {
+                        $item['banco'] = $rs['banco'];
+                        $item['moneda'] = $rs['moneda'];
+                        $item['cuenta'] = $rs['cuenta'];
+                        
+                        array_push($bancos,$item);
+                    }
+                }
+
+                return $bancos;
+
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        public function calcularDias($fechaEntrega){
+            $date1 = new DateTime(Date('Y-m-d'));
+            $date2 = new DateTime($fechaEntrega);
+            $diff = $date1->diff($date2);
+            // will output 2 days
+            return $diff->days . ' dias ';
         }
 
         private function cabeceraOrden($id){

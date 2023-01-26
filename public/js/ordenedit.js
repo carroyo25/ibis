@@ -65,6 +65,7 @@ $(function(){
                 $("#total_numero").val(data.cabecera[0].ntotal);
                 $("#ncotiz").val(data.cabecera[0].cnumcot);
                 $("#tcambio").val(data.cabecera[0].ntcambio);
+                $("#referencia").val(data.cabecera[0].cReferencia);
 
                 $("#estado")
                     .removeClass()

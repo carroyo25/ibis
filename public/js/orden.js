@@ -66,6 +66,7 @@ $(function(){
                 $("#user_modifica").val(data.cabecera[0].userModifica);
                 $("#nro_pedido").val(data.cabecera[0].nrodoc);
                 $("#total_adicional").val(data.total_adicionales);
+                $("#referencia").val(data.cabecera[0].cReferencia);
 
                if (data.cabecera[0].nigv != 0) {
                     $("#si").prop("checked", true);

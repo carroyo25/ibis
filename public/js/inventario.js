@@ -13,8 +13,7 @@ $(() => {
         $.post(RUTA+"inventario/nuevoRegistro",
             function (data, textStatus, jqXHR) {
                 $("#numero").val(data.numero);
-                $("#proceso").fadeIn();
-                
+                $("#proceso").fadeIn(); 
             },
             "json"
         );
@@ -64,7 +63,6 @@ $(() => {
         let contenedor_padre = $(this).parent().parent().parent().attr("id");
         let id = "";
         let codigo = $(this).attr("href");
-        let catalogo = $(this).data("catalogo");
         
         control.slideUp()
         destino.val($(this).text());
@@ -266,6 +264,8 @@ $(() => {
             "json"
         );
 
+        accion = 1;
+
         $("#proceso").fadeIn();
 
         return false;
@@ -338,5 +338,6 @@ changeValues = (fila,codigo) => {
     fila
         .attr('data-idprod',codigo)
         .attr('data-estado',1)
-        .css('background','rgba(56,132,192,0.2)');
+        .css('background','rgba(56,132,192,0.2)')
+        .children().children().text("cambiar");
 }
