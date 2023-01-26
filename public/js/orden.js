@@ -4,7 +4,6 @@ $(function(){
         entidad  = "",
         pedido   = 0,
         proforma = "",
-        moneda   = "",
         ingresos = 0,
         swcoment = false,
         autorizado = 0,
@@ -471,6 +470,8 @@ $(function(){
         formData.append("comentarios",JSON.stringify(comentarios()));
         formData.append("adicionales",JSON.stringify(adicionales()));
 
+        
+
         try {
             if ($("#codigo_estado").val() == 59) throw "La orden esta en firmas.";
             if (result['numero'] == "") throw "No tiene numero de orden";
@@ -503,6 +504,7 @@ $(function(){
                     {   
                         mostrarMensaje(response.mensaje,response.clase);
                         $("#proceso, #sendMail,#esperar").fadeOut();
+                        $("#tablaDetalles tbody tr").attr('data-grabado',1);
                         $("#tablaPrincipal tbody")
                             .empty()
                             .append(response.pedidos);
@@ -513,6 +515,7 @@ $(function(){
                                                         detalles:JSON.stringify(detalles()),
                                                         comentarios:JSON.stringify(comentarios())},
                     function (data, textStatus, jqXHR) {
+                        $("#tablaDetalles tbody tr").attr('data-grabado',1);
                         mostrarMensaje(data.mensaje,data.clase);
                     },
                     "json"
@@ -522,8 +525,6 @@ $(function(){
         } catch (error) {
             mostrarMensaje(error,'mensaje_error'); 
         }
-
-        
 
         return false;
     });
@@ -864,8 +865,9 @@ detalles = () => {
             ITEMPEDIDO  = $(this).data('itped'),
             GRABAR      = $(this).data('grabado'),
             CANTPED     = $(this).data('cant'),
-            REFPEDI      = $(this).data('refpedi'),
+            REFPEDI     = $(this).data('refpedi'),
             DETALLES    = $(this).find('td').eq(10).children().val();
+            INDICE     = $(this).data('itord');
 
         item= {};
         
@@ -887,6 +889,7 @@ detalles = () => {
             item['cantped']     = CANTPED;
             item['refpedi']     = REFPEDI;
             item['detalles']    = DETALLES;
+            item['indice']      = INDICE;
 
             DATA.push(item);
         //}

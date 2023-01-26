@@ -96,105 +96,8 @@
            }
         }
 
-        /*public function importarPedidos(){
-            try {
-
-                $salida = "";
-                $sql = $this->db->connect()->prepare("SELECT
-                                                        tb_pedidodet.idpedido,
-                                                        REPLACE(FORMAT(tb_pedidodet.cant_aprob, 2),',','') AS cantidad,
-                                                        REPLACE(FORMAT(tb_pedidodet.cant_resto, 2),',','') AS saldo,
-                                                        FORMAT(tb_pedidodet.precio, 2) AS precio,
-                                                        REPLACE(FORMAT(tb_pedidodet.cant_pedida,2),',','') AS cantidad_pedida,
-                                                        tb_pedidodet.igv,
-                                                        FORMAT(tb_pedidodet.total, 2) AS total,
-                                                        tb_pedidodet.estadoItem,
-                                                        UPPER(
-                                                            CONCAT_WS(
-                                                                ' ',
-                                                                cm_producto.cdesprod,
-                                                                tb_pedidodet.observaciones
-                                                            )
-                                                        ) AS cdesprod,
-                                                        cm_producto.ccodprod,
-                                                        cm_producto.id_cprod,
-                                                        tb_unimed.ncodmed,
-                                                        tb_unimed.cabrevia AS unidad,
-                                                        UPPER(tb_proyectos.cdesproy) AS costos,
-                                                        tb_proyectos.ccodproy,
-                                                        tb_area.ncodarea,
-                                                        UPPER(tb_area.cdesarea) AS area,
-                                                        tb_pedidodet.iditem,
-                                                        tb_pedidodet.idcostos,
-                                                        tb_pedidodet.nroparte,
-                                                        tb_pedidodet.nregistro,
-                                                        tb_pedidodet.idarea,
-                                                        tb_pedidocab.idreg,
-                                                        LPAD(tb_pedidocab.nrodoc,6,0) AS nrodoc,
-                                                        tb_pedidocab.emision,
-                                                        UPPER(tb_pedidocab.concepto) AS concepto,
-                                                        tb_pedidodet.entidad,
-                                                        tb_pedidodet.total AS total_numero
-                                                    FROM
-                                                        tb_costusu
-                                                    INNER JOIN tb_pedidodet ON tb_costusu.ncodproy = tb_pedidodet.idcostos
-                                                    INNER JOIN cm_producto ON tb_pedidodet.idprod = cm_producto.id_cprod
-                                                    INNER JOIN tb_unimed ON tb_pedidodet.unid = tb_unimed.ncodmed
-                                                    INNER JOIN tb_proyectos ON tb_pedidodet.idcostos = tb_proyectos.nidreg
-                                                    INNER JOIN tb_area ON tb_pedidodet.idarea = tb_area.ncodarea
-                                                    INNER JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
-                                                    WHERE
-                                                        tb_costusu.nflgactivo = 1
-                                                    AND tb_costusu.id_cuser = :user
-                                                    AND tb_pedidodet.estadoItem = 54
-                                                    AND tb_pedidodet.idasigna = :user_asigna
-                                                    AND tb_pedidodet.nflgOrden = 0
-                                                    AND (tb_pedidodet.cant_aprob > 0 OR ISNULL(tb_pedidodet.cant_aprob))");
-
-                //se cambia el 58 para llama los items directo con aprobacion
-                $sql->execute(["user"=>$_SESSION['iduser'],
-                                "user_asigna"=>$_SESSION['iduser']]);
-                $rowCount = $sql->rowCount();
-
-                if ($rowCount > 0) {
-                    while ($rs = $sql->fetch()) {
-
-                        //hace los cálculos de los saldos 
-                        $cantidad = $this->obtenerCantidades($rs['idpedido'],$rs['iditem']);
-                        $cant = $cantidad == null  ? $rs['cantidad_pedida'] : $rs['cantidad_pedida']-$cantidad;
-                       
-                        $salida .='<tr class="pointer" data-pedido="'.$rs['idpedido'].'"
-                                                       data-entidad="'.$rs['entidad'].'"
-                                                       data-unidad="'.$rs['unidad'].'"
-                                                       data-cantidad ="'.$cant.'"
-                                                       data-total="'.$rs['total_numero'].'"
-                                                       data-codprod="'.$rs['id_cprod'].'"
-                                                       data-iditem="'.$rs['iditem'].'"
-                                                       data-costos="'.$rs['idcostos'].'"
-                                                       data-itord="-"
-                                                       data-nropedido=""
-                                                       data-nroparte="'.$rs['nroparte'].'">
-                                        <td class="textoCentro">'.str_pad($rs['nrodoc'],6,0,STR_PAD_LEFT).'</td>
-                                        <td class="textoCentro">'.date("d/m/Y", strtotime($rs['emision'])).'</td>
-                                        <td class="pl5px">'.$rs['concepto'].'</td>
-                                        <td class="pl5px">'.$rs['area'].'</td>
-                                        <td class="textoCentro">'.$rs['ccodproy'].'</td>
-                                        <td class="textoCentro">'.$rs['ccodprod'].'</td>
-                                        <td class="pl5px">'.$rs['cdesprod'].'</td>
-                                    </tr>';
-                    }
-                }
-
-                return $salida;
-            } catch (PDOException $th) {
-                echo $th->getMessage();
-                return false;
-            }
-        }*/
-
         public function importarPedidos(){
             try {
-
                 $salida = "";
                 $sql = $this->db->connect()->prepare("SELECT
                                                         tb_pedidodet.idpedido,
@@ -262,7 +165,7 @@
                         $salida .='<tr class="pointer" data-pedido="'.$rs['idpedido'].'"
                                                        data-entidad="'.$rs['entidad'].'"
                                                        data-unidad="'.$rs['unidad'].'"
-                                                       data-cantidad ="'.$cant.'"
+                                                       data-cantidad ="'.$rs['cantidad_pedida'].'"
                                                        data-total="'.$rs['total_numero'].'"
                                                        data-codprod="'.$rs['id_cprod'].'"
                                                        data-iditem="'.$rs['iditem'].'"
@@ -286,103 +189,6 @@
                 echo $th->getMessage();
                 return false;
             }
-        }
-
-        public function importarPedidosCostos($costo){
-            /*try {
-                $salida = "";
-                $sql = $this->db->connect()->prepare("SELECT
-                                                        tb_pedidodet.idpedido,
-                                                        FORMAT(tb_pedidodet.cant_aprob, 2) AS cantidad,
-                                                        FORMAT(tb_pedidodet.cant_resto, 2) AS saldo,
-                                                        FORMAT(tb_pedidodet.precio, 2) AS precio,
-                                                        FORMAT(tb_pedidodet.cant_pedida,2) AS cantidad_pedida,
-                                                        tb_pedidodet.igv,
-                                                        FORMAT(tb_pedidodet.total, 2) AS total,
-                                                        tb_pedidodet.estadoItem,
-                                                        UPPER(
-                                                            CONCAT_WS(
-                                                                ' ',
-                                                                cm_producto.cdesprod,
-                                                                tb_pedidodet.observaciones
-                                                            )
-                                                        ) AS cdesprod,
-                                                        cm_producto.ccodprod,
-                                                        cm_producto.id_cprod,
-                                                        tb_unimed.ncodmed,
-                                                        tb_unimed.cabrevia AS unidad,
-                                                        UPPER(tb_proyectos.cdesproy) AS costos,
-                                                        tb_proyectos.ccodproy,
-                                                        tb_area.ncodarea,
-                                                        UPPER(tb_area.cdesarea) AS area,
-                                                        tb_pedidodet.iditem,
-                                                        tb_pedidodet.idcostos,
-                                                        tb_pedidodet.idarea,
-                                                        tb_pedidocab.idreg,
-                                                        tb_pedidodet.idcostos,
-                                                        tb_pedidodet.nroparte,
-                                                        LPAD(tb_pedidocab.nrodoc,6,0) AS nrodoc,
-                                                        tb_pedidocab.emision,
-                                                        tb_pedidocab.concepto,
-                                                        tb_pedidodet.entidad,
-                                                        tb_pedidodet.total AS total_numero
-                                                    FROM
-                                                        tb_costusu
-                                                    INNER JOIN tb_pedidodet ON tb_costusu.ncodproy = tb_pedidodet.idcostos
-                                                    INNER JOIN cm_producto ON tb_pedidodet.idprod = cm_producto.id_cprod
-                                                    INNER JOIN tb_unimed ON tb_pedidodet.unid = tb_unimed.ncodmed
-                                                    INNER JOIN tb_proyectos ON tb_pedidodet.idcostos = tb_proyectos.nidreg
-                                                    INNER JOIN tb_area ON tb_pedidodet.idarea = tb_area.ncodarea
-                                                    INNER JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
-                                                    WHERE
-                                                        tb_costusu.nflgactivo = 1
-                                                    AND tb_costusu.id_cuser = :user
-                                                    AND tb_pedidodet.idasigna = :user_asigna
-                                                    AND tb_pedidodet.idcostos = :costo
-                                                    AND (tb_pedidodet.cant_aprob > 0 OR ISNULL(tb_pedidodet.cant_aprob))
-                                                    AND tb_pedidodet.cant_resto <> tb_pedidodet.cant_orden");
-
-
-                //se cambia el 58 para llama los items directo con aprobacion
-                $sql->execute(["user"=>$_SESSION['iduser'],
-                                "user_asigna"=>$_SESSION['iduser'],
-                                "costo"=>$costo]);
-                $rowCount = $sql->rowCount();
-
-                if ($rowCount > 0) {
-                    while ($rs = $sql->fetch()) {
-
-                        //hace los cálculos de los saldos 
-                        $cantidad = $this->obtenerCantidades($rs['idpedido'],$rs['iditem']);
-                        $cant = $cantidad == null  ? $rs['cantidad_pedida'] : $rs['cantidad_pedida']-$cantidad;
-                       
-                        $salida .='<tr class="pointer" data-pedido="'.$rs['idpedido'].'"
-                                                       data-entidad="'.$rs['entidad'].'"
-                                                       data-unidad="'.$rs['unidad'].'"
-                                                       data-cantidad ="'.$cant.'"
-                                                       data-total="'.$rs['total_numero'].'"
-                                                       data-codprod="'.$rs['id_cprod'].'"
-                                                       data-iditem="'.$rs['iditem'].'"
-                                                       data-costos="'.$rs['idcostos'].'"
-                                                       data-itord="-"
-                                                       data-nropedido=""
-                                                       data-nroparte="'.$rs['nroparte'].'">
-                                        <td class="textoCentro">'.str_pad($rs['nrodoc'],6,0,STR_PAD_LEFT).'</td>
-                                        <td class="textoCentro">'.date("d/m/Y", strtotime($rs['emision'])).'</td>
-                                        <td class="pl5px">'.$rs['concepto'].'</td>
-                                        <td class="pl5px">'.$rs['area'].'</td>
-                                        <td class="textoCentro">'.$rs['ccodproy'].'</td>
-                                        <td class="textoCentro">'.$rs['ccodprod'].'</td>
-                                        <td class="pl5px">'.$rs['cdesprod'].'</td>
-                                    </tr>';
-                    }
-                }
-
-                return $salida;
-            } catch (PDOException $th) {
-                echo $th->getMessage();
-                return false;
-            }*/
         }
 
         private function obtenerCantidades($pedido,$item){
@@ -529,7 +335,6 @@
 
         private function grabarDetalles($indice,$detalles,$costos,$idx){
             try {
-                
                 $datos = json_decode($detalles);
                 
                 $nreg = count($datos);
@@ -556,7 +361,18 @@
                                         "ordenidx"=>$idx,
                                         "saldo"=>$datos[$i]->cantidad,
                                         "detalles"=>$datos[$i]->detalles]);
-                    }//aca poner para la modificacion de ordenes
+                    }else{
+                        $sql = $this->db->connect()->prepare("UPDATE lg_ordendet 
+                                                            SET ncanti=:cant,nunitario=:unit,nigv=:igv,
+                                                                ntotal=:total,cobserva=:detalles
+                                                            WHERE lg_ordendet.nitemord =:idx");
+                        $sql->execute(["cant"=>$datos[$i]->cantidad,
+                                        "unit"=>$datos[$i]->precio,
+                                        "igv"=>$datos[$i]->igv,
+                                        "total"=>$datos[$i]->total,
+                                        "detalles"=>$datos[$i]->detalles,
+                                        "idx"=>$datos[$i]->indice]);
+                    }
                     
                 }
             } catch (PDOException $th) {
