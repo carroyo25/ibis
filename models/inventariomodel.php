@@ -44,7 +44,7 @@
                 return false;
             }
         }
-
+        
         public function nuevoRegistro() {
             try {
                 $sql = $this->db->connect()->query("SELECT COUNT(idreg) AS numero FROM alm_inventariocab");
@@ -86,6 +86,57 @@
                 }
 
                 return array("mensaje"=>$mensaje);
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        public function actualizarInventario($detalles){
+            try {
+                $datos = json_decode($detalles);
+                $nreg = count($datos);
+
+                for ($i=0; $i < $nreg ; $i++) { 
+                    $sql = $this->db->connect()->prepare("UPDATE alm_inventariodet 
+                                                            SET codprod=:item,
+                                                                cmarca=:item_marca,
+                                                                cant_ingr=:item_cantidad,
+                                                                nroorden=:item_nro_orden,
+                                                                ncolada=:item_colada,
+                                                                ntag=:item_tag,
+                                                                cserie=:item_serie,
+                                                                ncertificado=:item_ncertificado,
+                                                                ffeccalibra=:item_calibra,
+                                                                vence=:item_vence,
+                                                                nreglib=:item_reglib,
+                                                                estado=:item_estado,
+                                                                condicion=:item_condicion,
+                                                                ccontenedor=:item_contenedor,
+                                                                cestante=:item_estante,
+                                                                cfila=:item_fila,
+                                                                observaciones=:item_observaciones
+                                                            WHERE idreg =:item_registro");
+
+                    $sql->execute([ "item"                  =>$datos[$i]->idprod,
+                                    "item_marca"            =>$datos[$i]->marca,
+                                    "item_cantidad"         =>$datos[$i]->cantidad,
+                                    "item_nro_orden"        =>$datos[$i]->orden,
+                                    "item_colada"           =>$datos[$i]->colada,
+                                    "item_tag"              =>$datos[$i]->tag,
+                                    "item_serie"            =>$datos[$i]->serie,
+                                    "item_ncertificado"     =>$datos[$i]->ncertcal,
+                                    "item_calibra"          =>$datos[$i]->feccal,
+                                    "item_vence"            =>$datos[$i]->vence,
+                                    "item_reglib"           =>$datos[$i]->reglib,
+                                    "item_estado"           =>$datos[$i]->estado,
+                                    "item_condicion"        =>$datos[$i]->condicion,
+                                    "item_contenedor"       =>$datos[$i]->contenedor,
+                                    "item_estante"          =>$datos[$i]->estante,
+                                    "item_fila"             =>$datos[$i]->fila,
+                                    "item_observaciones"    =>$datos[$i]->observaciones,
+                                    "item_registro"         =>$datos[$i]->idreg]);
+                }
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;
@@ -136,7 +187,7 @@
                                 "item_condicion"        =>$datos[$i]->condicion,
                                 "item_contenedor"       =>$datos[$i]->contenedor,
                                 "item_estante"          =>$datos[$i]->estante,
-                                "item_fila"             =>$datos[$i]->ncertcal,
+                                "item_fila"             =>$datos[$i]->fila,
                                 "item_observaciones"    =>$datos[$i]->observaciones]);
                 }
             } catch (PDOException $th) {
@@ -181,7 +232,8 @@
                                         data-idprod="'.$codigo_sical.'" 
                                         data-codund="" 
                                         data-idx="-" 
-                                        data_estado="'.$estado.'"
+                                        data-estado="'.$estado.'"
+                                        data-registro="-"
                                         style = background:'.$fondo_fila.'>
                                     <td class="textoCentro">'.str_pad($fila++,6,0,STR_PAD_LEFT).'</td>
                                     <td class="textoCentro">'.$objCelda['B'].'</td>
@@ -525,7 +577,7 @@
                                                         alm_inventariodet.cfila,
                                                         alm_inventariodet.nreglib,
                                                         alm_inventariodet.cestado,
-                                                        alm_inventariodet.idprod,
+                                                        alm_inventariodet.codprod,
                                                         cm_producto.cdesprod,
                                                         cm_producto.ccodprod,
                                                         tb_unimed.cabrevia,
@@ -550,27 +602,30 @@
                         $descripcion = is_null($rs['ccodprod']) ? '<a href="#">'.$rs['observaciones'].'</a>' : $rs['cdesprod'];
                         $fondo_fila  = is_null($rs['ccodprod']) ? "rgba(255,0,57,0.2)" : "rgba(56,132,192,0.2)";
 
-                        $salida .= '<tr class="pointer" style=background:'.$fondo_fila.' data-grabado="1">
+                        $salida .= '<tr class="pointer" style=background:'.$fondo_fila.' 
+                                        data-grabado="1" 
+                                        data-idprod="'.$rs['codprod'].'"
+                                        data-registro="'.$rs['idreg'].'">
                                         <td class="textoCentro">'.$item++.'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="pl20px">'.$descripcion.'</td>
-                                        <td class="textoCentro">'.$rs['cabrevia'].'</td>
-                                        <td class="textoCentro">'.$rs['cmarca'].'</td>
-                                        <td class="textoDerecha">'.$rs['cant_ingr'].'</td>
-                                        <td class="textoCentro">'.$rs['nroorden'].'</td>
-                                        <td class="textoCentro">'.$rs['ncolada'].'</td>
-                                        <td class="textoCentro">'.$rs['ntag'].'</td>
-                                        <td class="textoCentro">'.$rs['cserie'].'</td>
-                                        <td class="textoCentro">'.$rs['ncertificado'].'</td>
-                                        <td class="textoCentro">'.$rs['ffeccalibra'].'</td>
-                                        <td class="textoCentro">'.$rs['vence'].'</td>
-                                        <td class="textoCentro">'.$rs['nreglib'].'</td>
-                                        <td class="textoCentro">'.$rs['cestado'].'</td>
-                                        <td class="textoCentro">'.$rs['condicion'].'</td>
-                                        <td class="textoCentro">'.$rs['ccontenedor'].'</td>
-                                        <td class="textoCentro">'.$rs['cestante'].'</td>
-                                        <td class="textoCentro">'.$rs['cfila'].'</td>
-                                        <td class="pl20px">'.$rs['observaciones'].'</td>
+                                        <td class="textoCentro"> <input type="text" value="'.$rs['cabrevia'].'"</td>
+                                        <td class="textoCentro"> <input type="text" value="'.$rs['cmarca'].'"</td>
+                                        <td class="textoDerecha"> <input type="number" value="'.$rs['cant_ingr'].'"</td>
+                                        <td class="textoCentro"> <input type="number" value="'.$rs['nroorden'].'"</td>
+                                        <td class="textoCentro"> <input type="text" value="'.$rs['ncolada'].'"</td>
+                                        <td class="textoCentro"> <input type="text" value="'.$rs['ntag'].'"</td>
+                                        <td class="textoCentro"> <input type="text" value="'.$rs['cserie'].'"</td>
+                                        <td class="textoCentro"> <input type="text" value="'.$rs['ncertificado'].'"</td>
+                                        <td class="textoCentro"> <input type="date" value="'.$rs['ffeccalibra'].'"</td>
+                                        <td class="textoCentro"> <input type="date" value="'.$rs['vence'].'"</td>
+                                        <td class="textoCentro"> <input type="number" value="'.$rs['nreglib'].'"</td>
+                                        <td class="textoCentro"> <input type="text" value="'.$rs['cestado'].'"</td>
+                                        <td class="textoCentro"> <input type="text" value="'.$rs['condicion'].'"</td>
+                                        <td class="textoCentro"> <input type="text" value="'.$rs['ccontenedor'].'"</td>
+                                        <td class="textoCentro"> <input type="text" value="'.$rs['cestante'].'"</td>
+                                        <td class="textoCentro"> <input type="text" value="'.$rs['cfila'].'"</td>
+                                        <td><textarea>'.$rs['observaciones'].'</textarea></td>
                                     </tr>';
                     }
                 }

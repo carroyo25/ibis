@@ -22,8 +22,12 @@
 
         }
 
-        function grabaRegisto() {
+        function grabaRegistro() {
             echo json_encode($this->model->grabarRegistro($_POST['cabecera'],$_POST['detalles']));
+        }
+
+        function actualizaDetalles() {
+            echo json_encode($this->model->actualizarInventario($_POST['detalles']));
         }
 
         function importarItems(){

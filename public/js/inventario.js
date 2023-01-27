@@ -18,6 +18,8 @@ $(() => {
             "json"
         );
 
+        accion = 0;
+
         return false;
     });
 
@@ -61,7 +63,6 @@ $(() => {
         let control = $(this).parent().parent().parent();
         let destino = $(this).parent().parent().parent().prev();
         let contenedor_padre = $(this).parent().parent().parent().attr("id");
-        let id = "";
         let codigo = $(this).attr("href");
         
         control.slideUp()
@@ -100,9 +101,8 @@ $(() => {
     $("#itemsImport").click(function (e) { 
         e.preventDefault();
 
-        $("#fileUpload").trigger("click");
-
-        accion = 1;
+        if (accion == 0)
+            $("#fileUpload").trigger("click");
         
         return false;
     });
@@ -204,7 +204,7 @@ $(() => {
 
             $("#tablaDetalles tbody").append(row);
         }else{
-            changeValues(fila,idprod);
+            changeValues(fila,idprod,descrip,codigo,unidad);
         } 
         
 
@@ -227,13 +227,21 @@ $(() => {
             if ($("#tablaDetalles tbody tr").length <= 0) throw "El pedido no tienes items";
             if (checkCantTables($("#tablaDetalles tbody > tr"),5)) throw "No ingreso cantidad en un item";
 
-            $.post(RUTA+"inventario/grabaRegisto", {cabecera:result,detalles:JSON.stringify(itemsSave())},
+            if (accion == 0) {
+                $.post(RUTA+"inventario/grabaRegistro", {cabecera:result,detalles:JSON.stringify(itemsSave())},
                     function (data, textStatus, jqXHR) {
                         mostrarMensaje(data.mensaje,'mensaje_correcto');
                     },
                     "json"
                 );
-
+            }else {
+                $.post(RUTA+"inventario/actualizaDetalles", {detalles:JSON.stringify(itemsSave())},
+                    function (data, textStatus, jqXHR) {
+                        mostrarMensaje(data.mensaje,'mensaje_correcto');
+                    },
+                    "json"
+                );
+            }
         } catch (error) {
             mostrarMensaje(error,'mensaje_error');
         }
@@ -288,6 +296,7 @@ itemsSave = () =>{
     TABLA.each(function(){
         let IDPROD          = $(this).data('idprod'),
             GRABADO         = $(this).data('grabado'),
+            IDREG           = $(this).data('registro'),
             MARCA           = $(this).find('td').eq(4).children().val(),
             CANTIDAD        = $(this).find('td').eq(5).children().val(),
             ORDEN           = $(this).find('td').eq(6).children().val(),
@@ -308,7 +317,7 @@ itemsSave = () =>{
 
         item= {};
         
-        if ( GRABADO == 0) {
+        //if ( GRABADO == 0) {
             item['idprod']         = IDPROD;
             item['marca']          = MARCA;
             item['cantidad']       = CANTIDAD;
@@ -326,18 +335,22 @@ itemsSave = () =>{
             item['estante']        = ESTANTE;
             item['fila']           = FILA;
             item['observaciones']  = OBSERVACIONES;
+            item['idreg']          = IDREG;
 
             DATA.push(item);
-        } 
+        //} 
     })
 
     return DATA;
 }
 
-changeValues = (fila,codigo) => {
+changeValues = (fila,idprod,descripcion,codigo,unidad) => {
     fila
-        .attr('data-idprod',codigo)
+        .attr('data-idprod',idprod)
         .attr('data-estado',1)
         .css('background','rgba(56,132,192,0.2)')
-        .children().children().text("cambiar");
+        .children().children().text(descripcion)
+        .end()
+        .parent().find('td').eq(1).text(codigo)
+        .parent().find('td').eq(3).text(unidad)
 }

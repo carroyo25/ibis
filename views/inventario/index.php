@@ -101,7 +101,7 @@
                                 <i class="fas fa-file-excel"></i> Importar Items
                             </button>
                             <button type="button" id="itemsVerify" title="Verificar Codigos" class="cerrarLista boton3">
-                                <i class="fas fa-wrench"></i> Verificar Items
+                                <i class="fas fa-wrench"></i> Exportar Items
                             </button>
                         </div>
                     </div>
@@ -129,7 +129,7 @@
                                         <th rowspan="2" width="20%">Observaciones</th>
                                 </tr>
                                 <tr>
-                                        <th>Cont.</th>
+                                        <th>Contenedor</th>
                                         <th>Estante</th>
                                         <th>Fila/Col</th>
                                 </tr>
