@@ -109,29 +109,29 @@
                         <table class="tabla" id="tablaDetalles">
                             <thead class="stickytop">
                                 <tr >
-                                        <th rowspan="2">Item</th>
-                                        <th rowspan="2">Codigo</th>
-                                        <th rowspan="2" width="20%">Descripcion</th>
-                                        <th rowspan="2">Unidad</th>
-                                        <th rowspan="2">Marca</th>
-                                        <th rowspan="2" width="7%">Cantidad</th>
-                                        <th rowspan="2" width="7%">Orden</th>
-                                        <th rowspan="2">N° Colada/Lote</th>
-                                        <th rowspan="2">N° TAG</th>
-                                        <th rowspan="2">Serie</th>
-                                        <th rowspan="2">Nro. Cert </br> Calidad</th>
-                                        <th rowspan="2">Fecha </br> Calibración</th>
-                                        <th rowspan="2">Fecha </br> Vencimiento</th>
-                                        <th rowspan="2">Nro.Registro</br> Liberación </th>
-                                        <th rowspan="2">Estado</th>
-                                        <th rowspan="2">Condicion</th>
-                                        <th colspan="3">Ubicación</th>
-                                        <th rowspan="2" width="20%">Observaciones</th>
+                                        <th rowspan="2" data-titulo="item">Item</th>
+                                        <th rowspan="2" data-titulo="codigo">Codigo</th>
+                                        <th rowspan="2" data-titulo="descripcion" width="20%">Descripcion</th>
+                                        <th rowspan="2" data-titulo="unidad">Unidad</th>
+                                        <th rowspan="2" data-titulo="Marca">Marca</th>
+                                        <th rowspan="2" data-titulo="Cantidad" width="7%">Cantidad</th>
+                                        <th rowspan="2" data-titulo="Orden" width="7%">Orden</th>
+                                        <th rowspan="2" data-titulo="Colada/Lote">N° Colada/Lote</th>
+                                        <th rowspan="2" data-titulo="TAG">N° TAG</th>
+                                        <th rowspan="2" data-titulo="Serie">Serie</th>
+                                        <th rowspan="2" data-titulo="N° Cert. Calidad">Nro. Cert </br> Calidad</th>
+                                        <th rowspan="2" data-titulo="Fecha Calibración">Fecha </br> Calibración</th>
+                                        <th rowspan="2" data-titulo="Fecha Vencimiento">Fecha </br> Vencimiento</th>
+                                        <th rowspan="2" data-titulo="Nro. Registro">Nro.Registro</br> Liberación </th>
+                                        <th rowspan="2" data-titulo="Estado">Estado</th>
+                                        <th rowspan="2" data-titulo="Condicion">Condicion</th>
+                                        <th colspan="3" data-titulo="Ubicacion">Ubicación</th>
+                                        <th rowspan="2" data-titulo="Observaciones" width="20%">Observaciones</th>
                                 </tr>
                                 <tr>
-                                        <th>Contenedor</th>
-                                        <th>Estante</th>
-                                        <th>Fila/Col</th>
+                                        <th data-titulo="contenedor">Contenedor</th>
+                                        <th data-titulo="estante">Estante</th>
+                                        <th data-titulo="fila">Fila/Col</th>
                                 </tr>
                             </thead>
                             <tbody>

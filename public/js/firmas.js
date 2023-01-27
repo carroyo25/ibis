@@ -88,6 +88,7 @@ $(function() {
                     .append(data.adjuntos.adjuntos);
 
                 grabado = true;
+                ingresos = 0;
             },
             "json"
         );
@@ -365,8 +366,6 @@ comentarios = () => {
 
             COMENTARIOS.push(item);
         }
-
-        
     });
 
     return COMENTARIOS;

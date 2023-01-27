@@ -35,7 +35,6 @@ $(function() {
         return false;
     });
 
-
     $("#cargoPlanDescrip tbody").on('click', function(e) {
         e.preventDefault();
 
@@ -175,4 +174,4 @@ var tableToExcel = (function() {
       var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
       window.location.href = uri + base64(format(template, ctx))
     }
-  })()
+})()

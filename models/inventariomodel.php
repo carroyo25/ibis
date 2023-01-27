@@ -637,5 +637,84 @@
                 return false;
             }
         }
+
+        public function exportar($detalles){
+            require_once('public/PHPExcel/PHPExcel.php');
+            try {
+                $objPHPExcel = new PHPExcel();
+                $objPHPExcel->getProperties()
+                    ->setCreator("Sical")
+                    ->setLastModifiedBy("Sical")
+                    ->setTitle("Registro Inventario")
+                    ->setSubject("Template excel")
+                    ->setDescription("Registro Inventario")
+                    ->setKeywords("Template excel");
+
+                $cuerpo = array(
+                    'font'  => array(
+                    'bold'  => false,
+                    'size'  => 7,
+                ));
+
+                $objWorkSheet = $objPHPExcel->createSheet(1);
+
+                $objPHPExcel->setActiveSheetIndex(0);
+                $objPHPExcel->getActiveSheet()->setTitle("Registro Inventario");
+
+                $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel,'Excel2007');
+                $objWriter->save('public/documentos/reportes/inventario.xlsx');
+
+                $objPHPExcel->getActiveSheet()->mergeCells('A1:AQ1');
+                $objPHPExcel->getActiveSheet()->setCellValue('A1','CARGO PLAN');
+
+                $objPHPExcel->getActiveSheet()->getStyle('A1:AQ2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('A1:AQ2')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+
+                $objPHPExcel->getActiveSheet()->getRowDimension('2')->setRowHeight(60);
+
+                $objPHPExcel->getActiveSheet()->getColumnDimension("A:AZ")->setAutoSize(true);
+                
+                $objPHPExcel->getActiveSheet()
+                            ->getStyle('A2:AZ2')
+                            ->getFill()
+                            ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
+                            ->getStartColor()
+                            ->setRGB('BFCDDB');
+
+                $objPHPExcel->getActiveSheet()->setCellValue('A2','Items'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('B2','Código'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('C2','Descripcion'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('D2','Unidad'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('E2','Marca'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('F2','Cantidad'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('G2','Orden'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('I2','N° Pedido'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('H2','N° Orden'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('J2','N° Colada Lote'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('K2','N° TAG'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('L2','Serie'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('M2','N° Cert. Calidad'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('N2','Fecha Calibración'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('O2','Fecha Vencimiento'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('P2','N°. Registro Liberacion'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('Q2','Estado'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('R2','Condicion'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('S2','Contenedor'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('T2','Estante'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('U2','Fila/Col'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('V2','Observaciones'); // esto cambia
+                
+                $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel,'Excel2007');
+                $objWriter->save('public/documentos/reportes/inventario.xlsx');
+
+                return array("documento"=>'public/documentos/reportes/inventario.xlsx');
+
+                exit();
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
     }
 ?>

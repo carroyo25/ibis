@@ -2667,7 +2667,7 @@
                 $lc++;
                 $rc++;
                 
-                if ($lc > 7) {
+                if ($lc > 10) {
                     $pdf->AddPage();
                     $lc = 0;
                 }
@@ -2853,7 +2853,7 @@
                 $lc++;
                 $rc++;
                                 
-                    if ($lc >= 7) {
+                    if ($lc >= 10) {
                         $pdf->AddPage();
                         $lc = 0;
                     }

@@ -41,8 +41,7 @@ $(function(){
             array.push(obj);/* Añadimos al Array Principal*/
         }
 
-        //console.log(array[0]);
-
+        console.log(array[0]);
 
         $.post(RUTA+"valorizado/exportar", {detalles:JSON.stringify(array)},
             function (data, textStatus, jqXHR) {

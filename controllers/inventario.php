@@ -41,6 +41,10 @@
         function consulta(){
             echo json_encode($this->model->consultarInventario($_POST['id']));
         }
+
+        function xlsExport(){
+            echo json_encode($this->model->exportar($_POST['detalles'])); 
+        }
         
     }
 ?>
