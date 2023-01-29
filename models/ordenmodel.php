@@ -64,9 +64,14 @@
                         $ffin = is_null($rs['nfirmaFin']) ? 0 : 1;
 
                         $resaltado = $rs['nEstadoDoc'] == 59 ? "resaltado_firma" :  "";
-                        $observado = $rs['comentario'] != 0 ?  1 :  "";
-                        $obs_alerta = $rs['comentario'] != 0 ?  "urgente" :  "";
+                        $observado = $rs['comentario'] != 0 ?  $rs['comentario'] :  "";
+                        $obs_alerta = $rs['comentario'] != 0 ?  "semaforoNaranja" :  "";
 
+                        //cambiar cóodigo con la base de datos
+                        $alerta_logistica = $this-> buscarUserComentario($rs['id_regmov'],'62146c91025c9') > 0 && $flog == 0 ? "urgente":" ";  //logistica
+                        $alerta_finanzas = $this-> buscarUserComentario($rs['id_regmov'],'6288328f58068') > 0 && $ffin == 0 ? "urgente":" ";  //Finanzas
+                        $alerta_operaciones = $this-> buscarUserComentario($rs['id_regmov'],'62883306d1cd3') > 0 && $fope == 0? "urgente":" ";  //operaciones
+                        /*por ahora qued asi*/
 
                         $salida .='<tr class="pointer '.$resaltado.'" data-indice="'.$rs['id_regmov'].'" 
                                                         data-estado="'.$rs['nEstadoDoc'].'"
@@ -81,10 +86,10 @@
                                     <td class="pl20px">'.$rs['crazonsoc'].'</td>
                                     <td class="pl5px">'.$rs['cnameuser'].'</td>
                                     <td class="textoCentro '.strtolower($rs['atencion']).'">'.$rs['atencion'].'</td>
-                                    <td class="textoCentro">'.$log.'</td>
-                                    <td class="textoCentro">'.$fin.'</td>
-                                    <td class="textoCentro">'.$ope.'</td>
-                                    <td class="textoCentro '.$obs_alerta.'">'.$observado.'</td>
+                                    <td class="textoCentro '.$alerta_logistica.'">'.$log.'</td>
+                                    <td class="textoCentro '.$alerta_finanzas.'">'.$fin.'</td>
+                                    <td class="textoCentro '.$alerta_operaciones.'">'.$ope.'</td>
+                                    <td class="textoCentro '.$obs_alerta.'" >'.$observado.'</td>
                                     </tr>';
                     }
                 }
@@ -190,6 +195,8 @@
                 return false;
             }
         }
+
+        
 
         private function obtenerCantidades($pedido,$item){
             try {
@@ -341,6 +348,7 @@
 
                 for ($i=0; $i < $nreg; $i++) { 
                     if(!$datos[$i]->grabado) {
+                        $total = $datos[$i]->cantidad * $datos[$i]->precio;
                         $sql = $this->db->connect()->prepare("INSERT INTO lg_ordendet SET id_regmov=:id,niddeta=:nidp,id_cprod=:cprod,ncanti=:cant,
                                                                                     nunitario=:unit,nigv=:igv,ntotal=:total,
                                                                                     nestado=:est,cverifica=:verif,nidpedi=:pedido,
@@ -353,7 +361,7 @@
                                         "cant"=>$datos[$i]->cantidad,
                                         "unit"=>$datos[$i]->precio,
                                         "igv"=>$datos[$i]->igv,
-                                        "total"=>$datos[$i]->total,
+                                        "total"=>$total,
                                         "est"=>1,
                                         "verif"=>"",
                                         "moneda"=>$datos[$i]->moneda,

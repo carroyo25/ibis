@@ -2202,72 +2202,76 @@
         public function consultarOrdenId($id){
             try {
                 $sql = $this->db->connect()->prepare("SELECT
-                                                    lg_ordencab.id_regmov,
-                                                    LPAD(lg_ordencab.cnumero,6,0) AS cnumero,
-                                                    lg_ordencab.ffechadoc,
-                                                    lg_ordencab.ncodcos,
-                                                    lg_ordencab.ncodarea,
-                                                    lg_ordencab.id_centi,
-                                                    lg_ordencab.ctiptransp,
-                                                    lg_ordencab.ncodpago,
-                                                    lg_ordencab.nplazo,
-                                                    lg_ordencab.ncodcot,
-                                                    lg_ordencab.cnumcot,
-                                                    lg_ordencab.nEstadoDoc,
-                                                    lg_ordencab.id_refpedi,
-                                                    lg_ordencab.ntcambio,
-                                                    lg_ordencab.cnumcot,
-                                                    lg_ordencab.userModifica,
-                                                    UPPER(tb_pedidocab.concepto) AS concepto,
-                                                    UPPER(tb_pedidocab.detalle) AS detalle,
-                                                    tb_pedidocab.docPdfAprob,
-                                                    UPPER(CONCAT_WS(' ',tb_proyectos.ccodproy,tb_proyectos.cdesproy)) AS costos,
-                                                    lg_ordencab.ncodpry,
-                                                    lg_ordencab.ncodalm,
-                                                    UPPER(CONCAT_WS(' ',tb_area.ccodarea,tb_area.cdesarea)) AS area,
-                                                    lg_ordencab.ncodmon,
-                                                    monedas.cdescripcion AS nombre_moneda,
-                                                    monedas.cabrevia AS abrevia_moneda,
-                                                    lg_ordencab.ntipmov,
-                                                    tipos.cdescripcion AS tipo,
-                                                    pagos.cdescripcion AS pagos,
-                                                    lg_ordencab.ffechaent,
-                                                    estados.cabrevia AS estado,
-                                                    estados.cdescripcion AS descripcion_estado,
-                                                    cm_entidad.crazonsoc,
-                                                    cm_entidad.cnumdoc,
-                                                    UPPER(cm_entidadcon.cnombres) as cnombres,
-                                                    cm_entidadcon.cemail,
-                                                    cm_entidadcon.ctelefono1,
-                                                    transportes.cdescripcion AS transporte,
-                                                    UPPER(tb_almacen.cdesalm) AS cdesalm,
-                                                    UPPER(tb_almacen.ctipovia) AS direccion,
-                                                    cm_entidad.cviadireccion,
-	                                                cm_entidad.cemail AS mail_entidad,
-                                                    cm_entidad.nagenret,
-                                                    lg_ordencab.cverificacion,
-                                                    lg_ordencab.ntotal,
-                                                    lg_ordencab.nigv,
-                                                    lg_ordencab.cReferencia,
-                                                    FORMAT(lg_ordencab.ntotal,2) AS ctotal,
-	                                                tb_pedidocab.nivelAten,
-                                                    LPAD(tb_pedidocab.nrodoc,6,0) AS nrodoc 
-                                                FROM
-                                                    lg_ordencab
-                                                    INNER JOIN tb_pedidocab ON lg_ordencab.id_refpedi = tb_pedidocab.idreg
-                                                    INNER JOIN tb_proyectos ON lg_ordencab.ncodcos = tb_proyectos.nidreg
-                                                    INNER JOIN tb_area ON lg_ordencab.ncodarea = tb_area.ncodarea
-                                                    INNER JOIN tb_parametros AS monedas ON lg_ordencab.ncodmon = monedas.nidreg
-                                                    INNER JOIN tb_parametros AS tipos ON lg_ordencab.ntipmov = tipos.nidreg
-                                                    INNER JOIN tb_parametros AS pagos ON lg_ordencab.ncodpago = pagos.nidreg
-                                                    INNER JOIN tb_parametros AS estados ON lg_ordencab.nEstadoDoc = estados.nidreg
-                                                    INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
-                                                    INNER JOIN cm_entidadcon ON cm_entidad.id_centi = cm_entidadcon.id_centi
-                                                    INNER JOIN tb_parametros AS transportes ON lg_ordencab.ctiptransp = transportes.nidreg
-                                                    INNER JOIN tb_almacen ON lg_ordencab.ncodalm = tb_almacen.ncodalm 
-                                                WHERE
-                                                    lg_ordencab.id_regmov =:id 
-                                                    AND lg_ordencab.nflgactivo = 1");
+                                                        lg_ordencab.id_regmov,
+                                                        LPAD( lg_ordencab.cnumero, 6, 0 ) AS cnumero,
+                                                        lg_ordencab.ffechadoc,
+                                                        lg_ordencab.ncodcos,
+                                                        lg_ordencab.ncodarea,
+                                                        lg_ordencab.id_centi,
+                                                        lg_ordencab.ctiptransp,
+                                                        lg_ordencab.ncodpago,
+                                                        lg_ordencab.nplazo,
+                                                        lg_ordencab.ncodcot,
+                                                        lg_ordencab.nEstadoDoc,
+                                                        lg_ordencab.id_refpedi,
+                                                        lg_ordencab.ntcambio,
+                                                        lg_ordencab.cnumcot,
+                                                        lg_ordencab.userModifica,
+                                                        UPPER( tb_pedidocab.concepto ) AS concepto,
+                                                        UPPER( tb_pedidocab.detalle ) AS detalle,
+                                                        tb_pedidocab.docPdfAprob,
+                                                        UPPER(
+                                                        CONCAT_WS( ' ', tb_proyectos.ccodproy, tb_proyectos.cdesproy )) AS costos,
+                                                        lg_ordencab.ncodpry,
+                                                        lg_ordencab.ncodalm,
+                                                        UPPER(
+                                                        CONCAT_WS( ' ', tb_area.ccodarea, tb_area.cdesarea )) AS area,
+                                                        lg_ordencab.ncodmon,
+                                                        monedas.cdescripcion AS nombre_moneda,
+                                                        monedas.cabrevia AS abrevia_moneda,
+                                                        lg_ordencab.ntipmov,
+                                                        tipos.cdescripcion AS tipo,
+                                                        pagos.cdescripcion AS pagos,
+                                                        lg_ordencab.ffechaent,
+                                                        estados.cabrevia AS estado,
+                                                        estados.cdescripcion AS descripcion_estado,
+                                                        cm_entidad.crazonsoc,
+                                                        cm_entidad.cnumdoc,
+                                                        UPPER( cm_entidadcon.cnombres ) AS cnombres,
+                                                        cm_entidadcon.cemail,
+                                                        cm_entidadcon.ctelefono1,
+                                                        transportes.cdescripcion AS transporte,
+                                                        UPPER( tb_almacen.cdesalm ) AS cdesalm,
+                                                        UPPER( tb_almacen.ctipovia ) AS direccion,
+                                                        cm_entidad.cviadireccion,
+                                                        cm_entidad.cemail AS mail_entidad,
+                                                        cm_entidad.nagenret,
+                                                        lg_ordencab.cverificacion,
+                                                        lg_ordencab.ntotal,
+                                                        lg_ordencab.nigv,
+                                                        lg_ordencab.cReferencia,
+                                                        FORMAT( lg_ordencab.ntotal, 2 ) AS ctotal,
+                                                        tb_pedidocab.nivelAten,
+                                                        LPAD( tb_pedidocab.nrodoc, 6, 0 ) AS nrodoc,
+                                                        ( SELECT SUM( lg_ordendet.nunitario * lg_ordendet.ncanti ) FROM lg_ordendet WHERE lg_ordendet.id_orden = lg_ordencab.id_regmov ) AS total_multiplicado 
+                                                    FROM
+                                                        lg_ordencab
+                                                        INNER JOIN tb_pedidocab ON lg_ordencab.id_refpedi = tb_pedidocab.idreg
+                                                        INNER JOIN tb_proyectos ON lg_ordencab.ncodcos = tb_proyectos.nidreg
+                                                        INNER JOIN tb_area ON lg_ordencab.ncodarea = tb_area.ncodarea
+                                                        INNER JOIN tb_parametros AS monedas ON lg_ordencab.ncodmon = monedas.nidreg
+                                                        INNER JOIN tb_parametros AS tipos ON lg_ordencab.ntipmov = tipos.nidreg
+                                                        INNER JOIN tb_parametros AS pagos ON lg_ordencab.ncodpago = pagos.nidreg
+                                                        INNER JOIN tb_parametros AS estados ON lg_ordencab.nEstadoDoc = estados.nidreg
+                                                        INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
+                                                        INNER JOIN cm_entidadcon ON cm_entidad.id_centi = cm_entidadcon.id_centi
+                                                        INNER JOIN tb_parametros AS transportes ON lg_ordencab.ctiptransp = transportes.nidreg
+                                                        INNER JOIN tb_almacen ON lg_ordencab.ncodalm = tb_almacen.ncodalm
+                                                        INNER JOIN lg_ordendet ON lg_ordencab.id_regmov = lg_ordendet.id_regmov 
+                                                    WHERE
+                                                        lg_ordencab.id_regmov = :id 
+                                                        AND lg_ordencab.nflgactivo = 1 
+                                                        LIMIT 1");
                 $sql->execute(["id"=>$id]);
                 $rowCount = $sql->rowCount();
                 
@@ -2320,52 +2324,84 @@
             }
         }
 
+        public function buscarUserComentario($id,$user){
+            try {
+                $sql= $this->db->connect()->prepare("SELECT
+                                                        COUNT( lg_ordencomenta.id_regmov ) AS total_comentario
+                                                    FROM
+                                                        lg_ordencomenta
+                                                        INNER JOIN tb_user ON lg_ordencomenta.id_cuser = tb_user.iduser 
+                                                    WHERE
+                                                        lg_ordencomenta.id_regmov = :id 
+                                                        AND lg_ordencomenta.id_cuser = :user");
+                $sql->execute(["id"=>$id,"user"=>$user]);
+                $result = $sql->fetchAll();
+
+                return $result[0]['total_comentario'];
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        private function calcularTotalOrden($id) {
+            try {
+                $sql= $this->db->connect()->prepare("SELECT
+                                                        SUM( lg_ordendet.nunitario * lg_ordendet.ncanti ) AS total,
+                                                    FROM
+                                                        lg_ordendet 
+                                                    WHERE
+                                                        lg_ordendet.id_orden = :id");
+                $sql->execute(["id"=>$id]);
+
+                $result = $sql->fetchAll();
+
+                return $result[0]['total'];
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
         private function consultarDetallesOrden($id){
             try {
                 $salida = "";
                 $sql=$this->db->connect()->prepare("SELECT
-                                                        lg_ordendet.nitemord,
-                                                        lg_ordendet.id_regmov,
-                                                        lg_ordendet.niddeta,
-                                                        lg_ordendet.nidpedi,
-                                                        lg_ordendet.cobserva,
-                                                        lg_ordendet.id_cprod,
-                                                        REPLACE(FORMAT(lg_ordendet.ncanti, 2),',','') AS ncanti,
-                                                        lg_ordendet.nunitario AS nunitario,
-                                                        FORMAT(lg_ordendet.nigv, 2) AS nigv,
-                                                        FORMAT(
-                                                            tb_pedidodet.total - lg_ordendet.nigv,
-                                                            2
-                                                        ) AS subtotal,
-                                                        FORMAT(lg_ordendet.ntotal, 2) AS ntotal,
-                                                        cm_producto.ccodprod,
-                                                        UPPER(
-                                                            CONCAT_WS(
-                                                                ' ',
-                                                                cm_producto.cdesprod,
-                                                                tb_pedidodet.observaciones,
-                                                                tb_pedidodet.docEspec
-                                                            )
-                                                        ) AS cdesprod,
-                                                        cm_producto.nund,
-                                                        tb_unimed.cabrevia,
-                                                        FORMAT(tb_pedidodet.total, 2) AS total,
-                                                        tb_pedidodet.idpedido,
-                                                        tb_pedidodet.nroparte,
-                                                        tb_pedidodet.estadoItem,
-                                                        monedas.cabrevia AS moneda,
-                                                        tb_pedidodet.total AS total_numero,
-                                                        LPAD(tb_pedidocab.nrodoc,6,0) as nro_pedido
-                                                    FROM
-                                                        lg_ordendet
-                                                    INNER JOIN cm_producto ON lg_ordendet.id_cprod = cm_producto.id_cprod
-                                                    INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
-                                                    INNER JOIN tb_pedidodet ON lg_ordendet.niddeta = tb_pedidodet.iditem
-                                                    INNER JOIN tb_parametros AS monedas ON lg_ordendet.nmonref = monedas.nidreg
-                                                    INNER JOIN tb_pedidocab ON lg_ordendet.nidpedi = tb_pedidocab.idreg
-                                                    WHERE
-                                                        lg_ordendet.id_orden = :id
-                                                    AND ISNULL(lg_ordendet.nflgactivo)");
+                                            lg_ordendet.nitemord,
+                                            lg_ordendet.id_regmov,
+                                            lg_ordendet.niddeta,
+                                            lg_ordendet.nidpedi,
+                                            lg_ordendet.cobserva,
+                                            lg_ordendet.id_cprod,
+                                            REPLACE ( FORMAT( lg_ordendet.ncanti, 2 ), ',', '' ) AS ncanti,
+                                            lg_ordendet.nunitario AS nunitario,
+                                            FORMAT( lg_ordendet.nigv, 2 ) AS nigv,
+                                            FORMAT( tb_pedidodet.total - lg_ordendet.nigv, 2 ) AS subtotal,
+                                            FORMAT( lg_ordendet.ntotal, 2 ) AS ntotal,
+                                            REPLACE ( FORMAT( lg_ordendet.nunitario * lg_ordendet.ncanti, 2 ), ',', '' ) AS total_real,
+                                            cm_producto.ccodprod,
+                                            UPPER( CONCAT_WS( ' ', cm_producto.cdesprod, tb_pedidodet.observaciones, tb_pedidodet.docEspec ) ) AS cdesprod,
+                                            cm_producto.nund,
+                                            tb_unimed.cabrevia,
+                                            FORMAT( tb_pedidodet.total, 2 ) AS total,
+                                            tb_pedidodet.idpedido,
+                                            tb_pedidodet.nroparte,
+                                            tb_pedidodet.estadoItem,
+                                            monedas.cabrevia AS moneda,
+                                            tb_pedidodet.total AS total_numero,
+                                            LPAD( tb_pedidocab.nrodoc, 6, 0 ) AS nro_pedido 
+                                        FROM
+                                            lg_ordendet
+                                            INNER JOIN cm_producto ON lg_ordendet.id_cprod = cm_producto.id_cprod
+                                            INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                            INNER JOIN tb_pedidodet ON lg_ordendet.niddeta = tb_pedidodet.iditem
+                                            INNER JOIN tb_parametros AS monedas ON lg_ordendet.nmonref = monedas.nidreg
+                                            INNER JOIN tb_pedidocab ON lg_ordendet.nidpedi = tb_pedidocab.idreg 
+                                        WHERE
+                                            lg_ordendet.id_orden = :id 
+                                            AND ISNULL(
+                                            lg_ordendet.nflgactivo)");
                 $sql->execute(["id"=>$id]);
                 $rowCount = $sql->rowCount();
                 $item = 1;
@@ -2400,7 +2436,7 @@
                                         value='.$rs['nunitario'].'
                                         class="textoDerecha">
                                     </td>
-                                    <td class="textoDerecha pr5px">'.$rs['ntotal'].'</td>
+                                    <td class="textoDerecha pr5px">'.$rs['total_real'].'</td>
                                     <td class="textoCentro">'.$rs['nroparte'].'</td>
                                     <td class="pl20px">'.$rs['nro_pedido'].'</td>
                                     <td><textarea>'.$rs['cobserva'].'</textarea></td>
@@ -2660,19 +2696,23 @@
                                 $datos[$i]->codigo,
                                 $datos[$i]->cantidad,
                                 $datos[$i]->unidad,
-                                utf8_decode(strtoupper($datos[$i]->descripcion .' '. $datos[$i]->detalles)),
+                                TRIM(utf8_decode(strtoupper($datos[$i]->descripcion .' '. $datos[$i]->detalles))),
                                 $datos[$i]->pedido,
                                 $datos[$i]->precio,
                                 $datos[$i]->total));
                 $lc++;
                 $rc++;
                 
-                if ($lc > 10) {
+                //aca vamos modificando 
+                if ($lc >= 10) {
                     $pdf->AddPage();
                     $lc = 0;
                 }
-            }
 
+                
+            }
+            $pdf->Cell(20,6,"LINEA :",0,"C",true);
+           
             $pdf->Ln(3);
 
             $pdf->SetFillColor(229, 229, 229);
@@ -2752,7 +2792,6 @@
             else {
                 $pdf->Cell(20,4,number_format((($cabecera['total_numero']*1.18)+ $total_adicional ),2),1,1,"R",true);
             }
-                
            
             $nreg = count($bancos);
 
@@ -2853,7 +2892,7 @@
                 $lc++;
                 $rc++;
                                 
-                    if ($lc >= 10) {
+                    if ($lc >= 7) {
                         $pdf->AddPage();
                         $lc = 0;
                     }

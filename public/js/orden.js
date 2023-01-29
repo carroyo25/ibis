@@ -106,8 +106,10 @@ $(function(){
             "json"
         );
     
-        accion = "u";
-        grabado = true;
+        accion      = "u";
+        grabado     = true;
+        ingresos    = 0
+        swcoment    = false;
         $("#proceso").fadeIn();
     
         return false;

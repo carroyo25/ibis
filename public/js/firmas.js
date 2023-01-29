@@ -87,8 +87,9 @@ $(function() {
                     .empty()
                     .append(data.adjuntos.adjuntos);
 
-                grabado = true;
-                ingresos = 0;
+                grabado     = true;
+                ingresos    = 0
+                swcoment    = false;
             },
             "json"
         );

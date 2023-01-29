@@ -10,41 +10,42 @@
             try {
                  $salida = "";
                  $sql = $this->db->connect()->query("SELECT
-                                                        lg_ordencab.id_regmov,
-                                                        lg_ordencab.cnumero,
-                                                        lg_ordencab.ffechadoc,
-                                                        lg_ordencab.nNivAten,
-                                                        lg_ordencab.nEstadoDoc,
-                                                        lg_ordencab.ncodpago,
-                                                        lg_ordencab.nplazo,
-                                                        lg_ordencab.nfirmaLog,
-                                                        lg_ordencab.nfirmaFin,
-                                                        lg_ordencab.nfirmaOpe,
-                                                        FORMAT(lg_ordencab.ntotal,2) as ntotal,
-                                                        UPPER( tb_pedidocab.concepto ) AS concepto,
-                                                        lg_ordencab.cdocPDF,
-                                                        cm_entidad.crazonsoc,
-                                                        tb_proyectos.ccodproy,
-                                                        UPPER( CONCAT_WS( ' ', tb_area.ccodarea, tb_area.cdesarea ) ) AS area,
-                                                        UPPER( CONCAT_WS( ' ', tb_proyectos.ccodproy, tb_proyectos.cdesproy ) ) AS costos,
-                                                        tb_proyectos.nidreg,
-                                                        tb_parametros.cdescripcion AS atencion,
-                                                        ( lg_ordencab.nfirmaLog + lg_ordencab.nfirmaFin + lg_ordencab.nfirmaOpe ) AS estado_firmas 
-                                                    FROM
-                                                        lg_ordencab
-                                                        INNER JOIN tb_pedidocab ON lg_ordencab.id_refpedi = tb_pedidocab.idreg
-                                                        INNER JOIN tb_area ON lg_ordencab.ncodarea = tb_area.ncodarea
-                                                        INNER JOIN tb_proyectos ON lg_ordencab.ncodpry = tb_proyectos.nidreg
-                                                        INNER JOIN tb_parametros ON lg_ordencab.nNivAten = tb_parametros.nidreg
-                                                        INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi 
-                                                    WHERE
-                                                        lg_ordencab.nEstadoDoc = 59 
-                                                        AND (
-                                                            lg_ordencab.nfirmaLog IS NULL 
-                                                                OR lg_ordencab.nfirmaOpe IS NULL 
-                                                                OR lg_ordencab.nfirmaFin IS NULL 
-                                                        )
-                                                        ORDER BY  lg_ordencab.id_regmov DESC");
+                                                    lg_ordencab.id_regmov,
+                                                    lg_ordencab.cnumero,
+                                                    lg_ordencab.ffechadoc,
+                                                    lg_ordencab.nNivAten,
+                                                    lg_ordencab.nEstadoDoc,
+                                                    lg_ordencab.ncodpago,
+                                                    lg_ordencab.nplazo,
+                                                    lg_ordencab.nfirmaLog,
+                                                    lg_ordencab.nfirmaFin,
+                                                    lg_ordencab.nfirmaOpe,
+                                                    FORMAT( lg_ordencab.ntotal, 2 ) AS ntotal,
+                                                    UPPER( tb_pedidocab.concepto ) AS concepto,
+                                                    lg_ordencab.cdocPDF,
+                                                    cm_entidad.crazonsoc,
+                                                    tb_proyectos.ccodproy,
+                                                    UPPER( CONCAT_WS( ' ', tb_area.ccodarea, tb_area.cdesarea ) ) AS area,
+                                                    UPPER( CONCAT_WS( ' ', tb_proyectos.ccodproy, tb_proyectos.cdesproy ) ) AS costos,
+                                                    tb_proyectos.nidreg,
+                                                    tb_parametros.cdescripcion AS atencion,
+                                                    ( lg_ordencab.nfirmaLog + lg_ordencab.nfirmaFin + lg_ordencab.nfirmaOpe ) AS estado_firmas,
+                                                    ( SELECT FORMAT( SUM( lg_ordendet.nunitario * lg_ordendet.ncanti ), 2 ) FROM lg_ordendet WHERE lg_ordendet.id_orden = lg_ordencab.id_regmov ) AS total_orden 
+                                                FROM
+                                                    lg_ordencab
+                                                    INNER JOIN tb_pedidocab ON lg_ordencab.id_refpedi = tb_pedidocab.idreg
+                                                    INNER JOIN tb_area ON lg_ordencab.ncodarea = tb_area.ncodarea
+                                                    INNER JOIN tb_proyectos ON lg_ordencab.ncodpry = tb_proyectos.nidreg
+                                                    INNER JOIN tb_parametros ON lg_ordencab.nNivAten = tb_parametros.nidreg
+                                                    INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
+                                                    INNER JOIN lg_ordendet ON lg_ordencab.id_regmov = lg_ordendet.id_orden 
+                                                WHERE
+                                                    lg_ordencab.nEstadoDoc = 59 
+                                                    AND ( lg_ordencab.nfirmaLog IS NULL OR lg_ordencab.nfirmaOpe IS NULL OR lg_ordencab.nfirmaFin IS NULL ) 
+                                                GROUP BY
+                                                    lg_ordencab.id_regmov 
+                                                ORDER BY
+                                                    lg_ordencab.id_regmov DESC");
                  $sql->execute();
                  $rowCount = $sql->rowCount();
  
@@ -66,6 +67,10 @@
                          }else {
                             $resaltado = "";
                          }
+
+                         $alerta_logistica = $this-> buscarUserComentario($rs['id_regmov'],'62146c91025c9') > 0 && $flog == 0 ? "urgente":" ";  //logistica
+                         $alerta_finanzas = $this-> buscarUserComentario($rs['id_regmov'],'6288328f58068')> 0 && $ffin == 0 ? "urgente":" ";  //Finanzas
+                         $alerta_operaciones = $this-> buscarUserComentario($rs['id_regmov'],'62883306d1cd3') > 0 && $fope == 0? "urgente":" ";  //operaciones
  
                          $salida .='<tr class="pointer '.$resaltado.'" data-indice="'.$rs['id_regmov'].'" 
                                                          data-estado="'.$rs['nEstadoDoc'].'"
@@ -80,10 +85,10 @@
                                         <td class="pl20px">'.$rs['crazonsoc'].'</td>
                                         <td class="pl20px">'.$rs['area'].'</td>
                                         <td class="textoCentro '.strtolower($rs['atencion']).'">'.$rs['atencion'].'</td>
-                                        <td class="textoDerecha pr10px">'.$rs['ntotal'].'</td>
-                                        <td class="textoCentro">'.$log.'</td>
-                                        <td class="textoCentro">'.$fin.'</td>
-                                        <td class="textoCentro">'.$ope.'</td>
+                                        <td class="textoDerecha pr10px">'.$rs['total_orden'].'</td>
+                                        <td class="textoCentro '.$alerta_logistica.'">'.$log.'</td>
+                                        <td class="textoCentro '.$alerta_finanzas.'">'.$fin.'</td>
+                                        <td class="textoCentro '.$alerta_operaciones.'">'.$ope.'</td>
                                     </tr>';
                      }
                  }

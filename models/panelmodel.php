@@ -401,7 +401,8 @@
                                                     WHERE
                                                         tb_costusu.id_cuser = :user
                                                     AND tb_pedidocab.estadodoc BETWEEN 49 AND 54
-                                                    AND tb_costusu.nflgactivo = 1");
+                                                    AND tb_costusu.nflgactivo = 1
+                                                    ORDER BY tb_pedidocab.emision DESC");
                 $sql->execute(["user"=>$_SESSION['iduser']]);
                 $rowcount = $sql->rowcount();
                 if ($rowcount > 0) {
@@ -459,7 +460,7 @@
                                                         tb_costusu.id_cuser = :user 
                                                         AND tb_costusu.nflgactivo = 1
                                                         AND lg_ordencab.nEstadoDoc BETWEEN 49 AND 59
-                                                    ORDER BY id_regmov ASC");
+                                                    ORDER BY id_regmov DESC");
                                                     
                 $sql->execute(["user"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowCount();
@@ -477,15 +478,21 @@
 
                         $estado = $rs['nEstadoDoc'] == 59 ? "resaltado_firma" : "";
 
+                         //cambiar cóodigo con la base de datos
+                         $alerta_logistica = $this-> buscarUserComentario($rs['id_regmov'],'62146c91025c9') > 0 && $flog == 0 ? "urgente":" ";  //logistica
+                         $alerta_finanzas = $this-> buscarUserComentario($rs['id_regmov'],'6288328f58068')> 0 && $ffin == 0 ? "urgente":" ";  //Finanzas
+                         $alerta_operaciones = $this-> buscarUserComentario($rs['id_regmov'],'62883306d1cd3') > 0 && $fope == 0? "urgente":" ";  //operaciones
+                         /*por ahora qued asi*/
+
                         $salida .='<tr class="pointer '.$estado.'" data-estado="'.$rs['nEstadoDoc'].'">
                                         <td class="textoCentro">'.str_pad($rs['cnumero'],4,0,STR_PAD_LEFT).'</td>
                                         <td class="pl20px">'.$rs['concepto'].'</td>
                                         <td class="textoCentro">'.date("d/m/Y", strtotime($rs['ffechadoc'])).'</td>
                                         <td class="pl20px">'.utf8_decode($rs['costos']).'</td>
                                         <td class="textoCentro '.strtolower($rs['atencion']).'">'.$rs['atencion'].'</td>
-                                        <td class="textoCentro">'.$log.'</td>
-                                        <td class="textoCentro">'.$ope.'</td>
-                                        <td class="textoCentro">'.$fin.'</td>
+                                        <td class="textoCentro '.$alerta_logistica.'">'.$log.'</td>
+                                        <td class="textoCentro '.$alerta_operaciones.'">'.$ope.'</td>
+                                        <td class="textoCentro '.$alerta_finanzas.'">'.$fin.'</td>
                                     </tr>';
                     }
                 }

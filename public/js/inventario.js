@@ -289,31 +289,12 @@ $(() => {
     $("#itemsVerify").click(function(e){
        e.preventDefault();
 
-       var array = [];
-       /* Obtenemos todos los tr del Body*/
-       var rowsBody= $("#tablaDetalles").find('tbody > tr');
-       /* Obtenemos todos los th del Thead */
-       var rowsHead= $("#tablaDetalles").find('thead > tr > th');
-       
-       /* Iteramos sobre as filas del tbody*/
-       for (var i = 0; i < rowsBody.length; i++) {
-           var obj={};/* auxiliar*/
-           for (var j = 0;j < rowsHead.length;j++) /*  Iteramos sobre los th de THead*/
-               /*Asignamos como clave el text del th del thead*/
-               /*Asignamos como Valor el text del tr del tbody*/
-               obj[rowsHead[j].dataset.titulo] =  rowsBody[i].getElementsByTagName('td')[j].innerText;
-           
-           array.push(obj);/* Añadimos al Array Principal*/
-       }
-
-       //console.log(array[0]);
-       
-       /*$.post(RUTA+"inventario/xlsExport", {detalles:JSON.stringify(itemsSave())},
+       $.post(RUTA+"inventario/xlsExport", {detalles:JSON.stringify(itemsSave())},
         function (data, text, requestXHR) {
-            console.log("archivo creado");
+            window.location.href = data.documento;
         },
         "json"
-       );*/
+       );
 
        return false;
     });
@@ -344,6 +325,9 @@ itemsSave = () =>{
             ESTANTE         = $(this).find('td').eq(17).children().val(),
             FILA            = $(this).find('td').eq(18).children().val(),
             OBSERVACIONES   = $(this).find('td').eq(19).children().val(),
+            CODIGO          = $(this).find('td').eq(1).text(),
+            DESCRIPCION     = $(this).find('td').eq(2).text();
+            UNIDAD          = $(this).find('td').eq(3).text();
            
 
         item= {};
@@ -367,6 +351,9 @@ itemsSave = () =>{
             item['fila']           = FILA;
             item['observaciones']  = OBSERVACIONES;
             item['idreg']          = IDREG;
+            item['codigo']         = CODIGO;
+            item['descripcion']    = DESCRIPCION;
+            item['unidad']         = UNIDAD;
 
             DATA.push(item);
         //} 

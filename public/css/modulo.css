@@ -906,7 +906,7 @@
   height: 25px;
 }
 .itemsTabla table tbody .pointer td {
-  border: 1px solid #616161;
+  border: 1px dotted #c2c2c2;
   line-height: 1rem;
   font-size: 0.7rem;
 }
