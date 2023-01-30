@@ -97,14 +97,18 @@
                                                         AND tb_pedidocab.nrodoc LIKE :pedido
                                                         AND IFNULL(lg_ordendet.id_orden,'') LIKE :orden
                                                         AND tb_pedidodet.idcostos LIKE :costo
-                                                        AND tb_pedidodet.idtipo like :tipo
+                                                        AND tb_pedidodet.idtipo LIKE :tipo
+                                                        AND cm_producto.ccodprod LIKE :codigo
+                                                        AND tb_pedidocab.concepto LIKE :concepto
                                                     GROUP BY tb_pedidodet.iditem
                                                     ORDER BY tb_pedidodet.iditem  DESC");
                 
                 $sql->execute(["pedido"=>$pedido,
                                 "orden"=>$orden,
                                 "costo"=>$costo,
-                                "tipo"=>$tipo]);
+                                "tipo"=>$tipo,
+                                "codigo"=>$codigo,
+                                "concepto"=>$concepto]);
                 
                 $rowCount = $sql->rowCount();
 
@@ -322,7 +326,6 @@
                 return false;
             }
         }
-
 
         public function exportExcel($registros){
             require_once('public/PHPExcel/PHPExcel.php');
