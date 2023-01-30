@@ -2636,6 +2636,7 @@
         }
 
         public function generarDocumento($cabecera,$condicion,$detalles){
+            //genera vista previa
             require_once("public/formatos/ordenes.php");
 
             $bancos = $this->bancosProveedor($cabecera['codigo_entidad']);
@@ -2684,13 +2685,18 @@
             $pdf->AliasNbPages();
             $pdf->SetWidths(array(10,15,15,10,95,17,13,15));
             $pdf->SetFont('Arial','',5);
+            
             $lc = 0;
             $rc = 0;
+            $do = false; //para imprimir los detalles de la oc
 
             $datos = json_decode($detalles);
             $nreg = count($datos);
+           
 
             for ($i=0; $i < $nreg; $i++) { 
+               
+
                 $pdf->SetAligns(array("C","C","R","C","L","C","R","R"));
                 $pdf->Row(array($datos[$i]->item,
                                 $datos[$i]->codigo,
@@ -2700,20 +2706,17 @@
                                 $datos[$i]->pedido,
                                 $datos[$i]->precio,
                                 $datos[$i]->total));
-                $lc++;
-                $rc++;
-                
-                //aca vamos modificando 
-                if ($lc >= 10) {
-                    $pdf->AddPage();
-                    $lc = 0;
-                }
+                    $lc++;
 
-                
+                    if ($pdf->getY() >= 200) {
+                        $pdf->AddPage();
+                        $lc = 0;
+                    }
             }
-            $pdf->Cell(20,6,"LINEA :",0,"C",true);
+            
+            
            
-            $pdf->Ln(3);
+            $pdf->Ln(2);
 
             $pdf->SetFillColor(229, 229, 229);
             $pdf->SetFont('Arial','B',10);
@@ -2892,10 +2895,10 @@
                 $lc++;
                 $rc++;
                                 
-                    if ($lc >= 7) {
-                        $pdf->AddPage();
-                        $lc = 0;
-                    }
+                if ($pdf->getY() >= 200) {
+                    $pdf->AddPage();
+                    $lc = 0;
+                }
             }
                 
             $pdf->Ln(3);

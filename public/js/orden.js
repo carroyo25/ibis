@@ -21,6 +21,8 @@ $(function(){
             function (data, textStatus, jqXHR) {
 
                 let estado = "textoCentro " + data.cabecera[0].estado;
+                let total = parseFloat(data.cabecera[0].total_multiplicado).toFixed(2);
+                total =  formatoNumeroConComas(total,2,'.',',');
 
                 $("#codigo_costos").val(data.cabecera[0].ncodcos);
                 $("#codigo_area").val(data.cabecera[0].ncodarea);
@@ -51,7 +53,7 @@ $(function(){
                 $("#concepto").val(data.cabecera[0].concepto);
                 $("#detalle").val(data.cabecera[0].detalle);
                 $("#moneda").val(data.cabecera[0].nombre_moneda);
-                $("#total").val(data.cabecera[0].ctotal);
+                $("#total").val(total);
                 $("#tipo").val(data.cabecera[0].tipo);
                 $("#fentrega").val(data.cabecera[0].ffechaent);
                 $("#cpago").val(data.cabecera[0].pagos);
@@ -60,7 +62,7 @@ $(function(){
                 $("#atencion").val(data.cabecera[0].cnombres);
                 $("#transporte").val(data.cabecera[0].transporte);
                 $("#lentrega").val(data.cabecera[0].cdesalm);
-                $("#total_numero").val(data.cabecera[0].ntotal);
+                $("#total_numero").val(data.cabecera[0].total_multiplicado);
                 $("#ncotiz").val(data.cabecera[0].cnumcot);
                 $("#tcambio").val(data.cabecera[0].ntcambio);
                 $("#user_modifica").val(data.cabecera[0].userModifica);

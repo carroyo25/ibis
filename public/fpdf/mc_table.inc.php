@@ -22,7 +22,7 @@ class PDF_MC_Table extends FPDF {
      * @var number
      * @access public
      */
-    public $cell_height = 3;
+    public $cell_height = 2.6;
     
     /**
      * True if the table row should be colored
@@ -95,7 +95,7 @@ class PDF_MC_Table extends FPDF {
         for ($i=0;$i<count($data);$i++) {
             $nb=max($nb,$this->NbLines($this->widths[$i],$data[$i]));
         }
-        $h=3.5*$nb;
+        $h=2.8*$nb;
         // Issue a page break first if needed and return so that you can add the table header again
         if ($this->CheckPageBreak($h)) {
             return false;

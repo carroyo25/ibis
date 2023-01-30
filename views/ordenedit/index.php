@@ -222,11 +222,11 @@
                                     <th>Descripcion</th>
                                     <th>Und.</th>
                                     <th width="7%">Cant.</th>
-                                    <th width="10%">Precio</th>
-                                    <th width="10%">Total</th>
+                                    <th width="8%">Precio</th>
+                                    <th width="8%">Total</th>
                                     <th>Nro.</br>Parte</th>
                                     <th>Pedido</th>
-                                    <th>Detalles</th>
+                                    <th width="20%">Detalles</th>
                                 </tr>
                             </thead>
                             <tbody>

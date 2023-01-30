@@ -228,7 +228,7 @@
                                     <th width="10%">Total</th>
                                     <th>Nro.</br>Parte</th>
                                     <th width="7%">Pedido</th>
-                                    <th width="15%">Detalle Item</th>
+                                    <th width="25%">Detalle Item</th>
                                 </tr>
                             </thead>
                             <tbody>
