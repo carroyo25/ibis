@@ -9,38 +9,37 @@
             try {
                 $salida = "";
                 $sql = $this->db->connect()->query("SELECT
-                                                        alm_existencia.idreg,
-                                                        alm_existencia.idalm,
-                                                        alm_existencia.idpedido,
-                                                        alm_existencia.idorden,
-                                                        alm_existencia.codprod,
-                                                        alm_existencia.serie,
-                                                        FORMAT(alm_existencia.cant_ingr,2) AS cantidad_ingreso,
-                                                        alm_existencia.cant_sal,
-                                                        cm_producto.ccodprod,
-                                                        UPPER(cm_producto.cdesprod) AS descripcion,
-                                                        alm_existencia.idprod,
-                                                        tb_unimed.cabrevia,
-                                                        SUM(alm_existencia.cant_ingr) AS ingreso	
-                                                    FROM
-                                                        alm_existencia
-                                                        INNER JOIN cm_producto ON alm_existencia.codprod = cm_producto.id_cprod
-                                                        INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
-                                                    GROUP BY alm_existencia.codprod
-                                                    ORDER BY cm_producto.cdesprod");
+                                                    cm_producto.id_cprod,
+                                                    cm_producto.ccodprod,
+                                                    UPPER( cm_producto.cdesprod ) AS descripcion,
+                                                    tb_unimed.cabrevia,
+                                                    ( SELECT SUM( alm_existencia.cant_ingr ) FROM alm_existencia WHERE alm_existencia.codprod = cm_producto.id_cprod ) AS ingreso_guias,
+                                                    ( SELECT SUM( alm_inventariodet.cant_ingr ) FROM alm_inventariodet WHERE alm_inventariodet.codprod = cm_producto.id_cprod ) AS ingreso_inventario 
+                                                FROM
+                                                    cm_producto
+                                                    INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed 
+                                                WHERE
+                                                    cm_producto.ntipo = 37 
+                                                    AND ( SELECT SUM( alm_existencia.cant_ingr ) FROM alm_existencia WHERE alm_existencia.codprod = cm_producto.id_cprod ) > 0 
+                                                    OR ( SELECT SUM( alm_inventariodet.cant_ingr ) FROM alm_inventariodet WHERE alm_inventariodet.codprod = cm_producto.id_cprod ) > 0
+                                                ORDER BY cm_producto.cdesprod");
                 $sql->execute();
                 $rowCount = $sql->rowCount();
                 $item = 1;
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()){
-                        $salida.='<tr class="pointer" data-idprod="'.$rs['codprod'].'">
+                        $saldo = $rs['ingreso_guias']+$rs['ingreso_inventario'];
+                        $estado = $saldo > 0 ? "semaforoVerde":"semaforoRojo";
+
+                        $salida.='<tr class="pointer" data-idprod="'.$rs['id_cprod'].'">
                                         <td class="textoCentro">'.str_pad($item++,4,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="pl20px">'.$rs['descripcion'].'</td>
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
-                                        <td class="textoDerecha">'.$rs['cantidad_ingreso'].'</td>
+                                        <td class="textoDerecha">'.number_format($rs['ingreso_guias'],2).'</td>
+                                        <td class="textoDerecha">'.number_format($rs['ingreso_inventario'],2).'</td>
                                         <td class="textoDerecha"></td>
-                                        <td class="textoDerecha"></td>
+                                        <td class="textoDerecha '.$estado.'">'.number_format($saldo,2).'</td>
                                   </tr>';
                     }
                 }
@@ -53,200 +52,11 @@
             }
         }
 
-        public function nuevoRegistro() {
-            try {
-                $sql = $this->db->connect()->query("SELECT MAX(idreg) AS numero FROM alm_cabexist");
-                $sql->execute();
-
-                $result = $sql->fetchAll();
-
-                return array("numero"=>str_pad($result[0]['numero'],6,0,STR_PAD_LEFT));
-            } catch (PDOException $th) {
-                echo "Error: ".$th->getMessage;
-                return false;
-            }
-        }
-
-        public function grabarRegistro($cabecera,$detalles){
-            try {
-                $sql = $this->db->connect()->prepare("INSERT INTO alm_invetariocab 
-                                                    SET idcostos=:costo,ffechadoc=:fechadoc,ncodalm2=:almacen,ntipomov=:movimiento,
-                                                        ffechaInv=:fechaInv");
-                $sql->execute(["costo"=>$cabecera["codigo_costos"],
-                                "fechadoc"=>$cabecera["fecha"],
-                                "almacen"=>$cabecera["codigo_almacen"],
-                                "movimiento"=>$cabecera["codigo_tipo"],
-                                "fechaInv"=>$cabecera["fechaIngreso"]
-                            ]);
-
-                $rowCount = $sql->rowCount();
-
-                if ($rowCount > 0){
-                    $indice = $this->nuevoRegistro();
-                    $this->grabarDetalles($detalles,$indice["numero"],$cabecera["codigo_tipo"],$cabecera["codigo_almacen"]);
-                    $mensaje = "Registrado Correctamente";
-                }
-                else {
-                    $mensaje = "Hubo un error en el registro";
-                }
-
-                return array("mensaje"=>$mensaje);
-            } catch (PDOException $th) {
-                echo "Error: ".$th->getMessage();
-                return false;
-            }
-        }
-
-        private function grabarDetalles($detalles,$indice,$movimiento,$almacen){
-            try {
-                $datos = json_decode($detalles);
-                $nreg = count($datos);
-
-                for ($i=0; $i < $nreg; $i++) {
-                    $sql = $this->db->connect()->prepare("INSERT INTO alm_inventariodet 
-                                                            SET idalm=:almacen,
-                                                                idregistro=:indice,
-                                                                codprod=:item,
-                                                                cant_ingr=:cantidad,
-                                                                observaciones=:observ,
-                                                                ubicacion=:ubica,
-                                                                ntipmov=:movimiento,
-                                                                vence=:fecha_vence,
-                                                                psi=:numpsi,
-                                                                ncertcal=:certificado_calidad,
-                                                                ffeccalibra=:fecha_calibracion,
-                                                                ncertificado=:numero_certificado,
-                                                                condicion=:condicion_item,
-                                                                nroorden=:orden,
-                                                                serie=:nroserie,
-                                                                estado=:estado_item,
-                                                                marca=:item_marca");
-                                                            
-                $sql->execute(["almacen"                =>$almacen, 
-                                "indice"                =>$indice,
-                                "item"                  =>$datos[$i]->idprod,
-                                "cantidad"              =>$datos[$i]->cantidad,
-                                "marca"                 =>$datos[$i]->marca,
-                                "observ"                =>$datos[$i]->observaciones,
-                                "ubica"                 =>$datos[$i]->contenedor.'-'.$datos[$i]->estante.'-'.$datos[$i]->fila,
-                                "fecha_vence"           =>$datos[$i]->vence,
-                                "movimiento"            =>$movimiento,
-                                "numpsi"                =>$datos[$i]->psi,
-                                "certificado_calidad"   =>$datos[$i]->ncertcal,
-                                "fecha_calibracion"     =>$datos[$i]->feccal,
-                                "numero_certificado"    =>$datos[$i]->ncert,
-                                "condicion_item"        =>$datos[$i]->condicion,
-                                "estado_item"           =>$datos[$i]->estado,
-                                "nroserie"              =>$datos[$i]->serie,
-                                "orden"                 =>$datos[$i]->orden,
-                                "item_marca"            =>$datos[$i]->marca]);
-                }
-            } catch (PDOException $th) {
-                echo "Error: ".$th->getMessage();
-                return false;
-            }
-        }
-
-        public function importFromXsl(){
-            require_once('public/PHPExcel/PHPExcel.php');
-            try {
-                
-                $temporal	 = $_FILES['fileUpload']['tmp_name'];
-
-                if (move_uploaded_file($temporal,'./public/documentos/temp/temp.xlsx')){
-                    $mensaje = "El archivo ha sido cargado correctamente.";
-                }else{
-                    $mensaje = "Ocurrió algún error al subir el fichero. No pudo guardarse.";
-                }
-
-                $objPHPExcel = PHPExcel_IOFactory::load("./public/documentos/temp/temp.xlsx");
-                $objHoja=$objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
-                $fila = 1;
-                $datos= "";
-
-                foreach ($objHoja as $iIndice=>$objCelda) {
-                    if ( $objCelda['B'] && $objCelda['B']!="CODIGO") {
-
-                        $codigo_sical = $this->compareCode(RTRIM($objCelda['B']));
-
-                        if ( $codigo_sical == 0 ){
-                            $codigo_sical = $this->compareDescription(TRIM($objCelda['C']));
-                        }
-
-                        $estado      = $codigo_sical  != 0 ? 1 : 0;
-                        $fondo_fila  = $codigo_sical  != 0 ? "rgba(56,132,192,0.2)" : "rgba(255,0,57,0.2)";
-                        $descripcion = $codigo_sical  != 0 ? $objCelda['C'] : '<a href="#">'.$objCelda['C'].'</a>';
-                        
-
-                        $datos .='<tr data-grabado="0" 
-                                        data-idprod="'.$codigo_sical.'" 
-                                        data-codund="" 
-                                        data-idx="-" 
-                                        data_estado="'.$estado.'"
-                                        style = background:'.$fondo_fila.'>
-                                    <td class="textoCentro">'.str_pad($fila++,6,0,STR_PAD_LEFT).'</td>
-                                    <td class="textoCentro">'.$objCelda['B'].'</td>
-                                    <td class="pl20px">'.$descripcion.'</td>
-                                    <td class="textoCentro">'.$objCelda['D'].'</td>
-                                    <td><input type="number" value="'.$objCelda['E'].'"></td>
-                                    <td><input type="number" value="'.$objCelda['F'].'"></td>
-                                    <td class="textoCentro"><input type="text" value="'.$objCelda['G'].'"></td>
-                                    <td class="textoCentro"><input type="text" value="'.$objCelda['H'].'"></td>
-                                    <td class="textoCentro"><input type="text" value="'.$objCelda['I'].'"></td>
-                                    <td class="textoCentro"><input type="text" value="'.$objCelda['J'].'"></td>
-                                    <td class="textoCentro"><input type="text" value="'.$objCelda['K'].'"></td>
-                                    <td class="textoCentro"><input type="date" value="'.$objCelda['L'].'"></td>
-                                    <td class="textoCentro"><input type="date" value="'.$objCelda['M'].'"></td>
-                                    <td class="textoCentro"><input type="text" value="'.$objCelda['N'].'"></td>
-                                    <td class="textoCentro"><input type="text" value="'.$objCelda['O'].'"></td>
-                                    <td class="textoCentro"><input type="text"   value="'.$objCelda['P'].'"></td>
-                                    <td ><input type="text" class="textoCentro"  value="'.$objCelda['Q'].'"></td>
-                                    <td ><input type="text" class="textoCentro"  value="'.$objCelda['R'].'"></td>
-                                    <td ><input type="text" class="textoCentro"  value="'.$objCelda['S'].'"></td>
-                                    <td><textarea>'.$objCelda['U'].'</textarea></td>
-                                </tr>';
-                    }
-                }
-
-                return array("datos"=>$datos);
-
-            } catch (PDOException $th) {
-                echo "Error: ".$th->getMessage();
-                return false;
-            }
-        }
-
-        private function establecerCodigos($codigo){
-            try {
-                $sql = $this->db->connect()->prepare("SELECT
-                                                cm_producto.ccodprod,
-                                                cm_producto.nund,
-                                                cm_producto.id_cprod 
-                                            FROM
-                                                cm_producto 
-                                            WHERE
-                                                cm_producto.ccodprod = :codigo 
-                                            LIMIT 1");
-                $sql->execute(["codigo"=>$codigo]);
-
-                $result = $sql->fetchAll();
-
-                if(gettype($result) == NULL)
-                    return array("codigo"=>"X","unidad"=>"X");
-                else    
-                    return array("codigo"=>$result[0]['id_cprod'],"unidad"=>$result[0]['nund']);
-
-            } catch (PDOException $th) {
-                echo "Error: ".$th->getMessage();
-                return false;
-            }
-        }
-
         public function obtenerResumen($codigo){
             return  array("pedidos"=>$this->numeroPedidos($codigo),
                           "ordenes"=>$this->numeroOrdenes($codigo),
-                          "inventario"=>$this->verIngresos($codigo,91),
-                          "ingresos"=>$this->verIngresos($codigo,92),
+                          "inventario"=>$this->inventarios($codigo),
+                          "ingresos"=>$this->verIngresos($codigo),
                           "pendientes"=>$this->pendientesOC($codigo),
                           "precios"=>$this->listaPrecios($codigo),
                           "existencias"=>$this->listaExistencias($codigo));
@@ -295,19 +105,18 @@
             }
         }
 
-        private function verIngresos($codigo,$tipo){
+        private function verIngresos($codigo){
             try {
                 $sql=$this->db->connect()->prepare("SELECT
                                                     SUM( alm_existencia.cant_ingr ) AS ingresos 
                                                 FROM
                                                     alm_existencia 
                                                 WHERE
-                                                    alm_existencia.codprod = :codigo
-                                                    AND ntipmov =:movimiento");
-                $sql->execute(["codigo"=>$codigo,"movimiento"=>$tipo]);
+                                                    alm_existencia.codprod = :codigo");
+                $sql->execute(["codigo"=>$codigo]);
                 $result = $sql->fetchAll();
 
-                return $result[0]['ingresos'];
+                return isset($result[0]['ingresos']) ? $result[0]['ingresos'] : 0;
                 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
@@ -327,7 +136,7 @@
                 $sql->execute(["codigo"=>$codigo]);
                 $result = $sql->fetchAll();
 
-                return $result[0]['cantidad_pendiente'];
+                return isset($result[0]['cantidad_pendiente']) ? $result[0]['cantidad_pendiente'] : 0;
                 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
@@ -349,7 +158,8 @@
                                                         INNER JOIN tb_parametros ON lg_ordencab.ncodmon = tb_parametros.nidreg 
                                                     WHERE
                                                         lg_ordendet.id_cprod = :codigo 
-                                                        AND lg_ordendet.id_orden IS NOT NULL");
+                                                        AND lg_ordendet.id_orden IS NOT NULL
+                                                    GROUP BY lg_ordendet.nunitario,lg_ordencab.ffechadoc,lg_ordencab.ntcambio");
                 $sql->execute(["codigo"=>$codigo]);
                 $rowCount = $sql->rowCount();
 
@@ -416,22 +226,20 @@
                 return false;
             }
         }
-
-        private function compareCode($codigo){
+    
+        private function inventarios($codigo){
             try {
                 $sql=$this->db->connect()->prepare("SELECT
-                                                       cm_producto.id_cprod AS codigo 
+                                                        SUM( alm_inventariodet.cant_ingr ) AS inventario 
                                                     FROM
-                                                        cm_producto 
+                                                        alm_inventariodet 
                                                     WHERE
-                                                        cm_producto.ccodprod = :codigo");
-                $sql->execute(["codigo" => $codigo]);
-
+                                                        alm_inventariodet.codprod = :codigo");
+                $sql->execute(["codigo"=>$codigo]);
                 $result = $sql->fetchAll();
 
-                $codigo = isset($result[0]['codigo'])  ? $result[0]['codigo'] : 0;
-
-                return $codigo;
+                
+                return isset( $result[0]['inventario'] ) ? $result[0]['inventario'] : 0;
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
@@ -439,23 +247,86 @@
             }
         }
 
-        private function compareDescription($descripcion) {
+        public function exportarExcel($registros) {
             try {
-                $sql=$this->db->connect()->prepare("SELECT
-                                                        cm_producto.id_cprod AS codigo 
-                                                    FROM
-                                                        cm_producto 
-                                                    WHERE
-                                                        cm_producto.cdesprod LIKE :descripcion
-                                                    LIMIT 1");
-                $sql->execute(["descripcion" => "%".$descripcion."%"]);
+                require_once('public/PHPExcel/PHPExcel.php');
+                $objPHPExcel = new PHPExcel();
+                $objPHPExcel->getProperties()
+                ->setCreator("Sical")
+                ->setLastModifiedBy("Sical")
+                ->setTitle("Control Almacen")
+                ->setSubject("Template excel")
+                ->setDescription("Control Almacen")
+                ->setKeywords("Template excel");
 
-                $result = $sql->fetchAll();
+                $objWorkSheet = $objPHPExcel->createSheet(1);
 
-                $codigo = isset($result[0]['codigo'])  ? $result[0]['codigo'] : 0;
+                $objPHPExcel->setActiveSheetIndex(0);
+                $objPHPExcel->getActiveSheet()->setTitle("Inventario");
 
-                return $codigo;
+                //combinar celdas
+                $objPHPExcel->getActiveSheet()->mergeCells('A1:G1');
 
+                //alineacion
+                $objPHPExcel->getActiveSheet()->getStyle('A1:G4')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('A1:G4')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+
+                $objPHPExcel->getActiveSheet()->getStyle('A1:G5')->getAlignment()->setWrapText(true);
+
+                //ancho de columnas
+                $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(10);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(40);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(27);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(30);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(20);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(20);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(20);
+                        
+                //Titulo 
+                $objPHPExcel->getActiveSheet()->setCellValue('A1','Control de Almacén');
+
+                $objPHPExcel->getActiveSheet()
+                    ->getStyle('A1:G4')
+                    ->getFill()
+                    ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
+                    ->getStartColor()
+                    ->setRGB('FDE9D9');
+
+                $objPHPExcel->getActiveSheet()->setCellValue('A4','ITEM'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('B4','CODIGO'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('C4','DESCRIPCION'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('D4','UNIDAD'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('E4','CANTIDAD GUIAS'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('F4','INGRESO INVENTARIO'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('G4','CANTIDAD SALIDAS'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('H4','SALDO'); // esto cambia
+
+       
+                $fila = 5;
+                $datos = json_decode($registros);
+                $nreg = count($datos);
+
+                for ($i=0; $i < $nreg; $i++) { 
+                    $objPHPExcel->getActiveSheet()->setCellValue('A'.$fila,$datos[$i]['item']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('B'.$fila,$datos[$i]['codigo']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('C'.$fila,$datos[$i]['descripcion']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('D'.$fila,$datos[$i]['unidad']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('E'.$fila,$datos[$i]['ingreso']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('F'.$fila,$datos[$i]['inventario']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('G'.$fila,$datos[$i]['salida']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('H'.$fila,$datos[$i]['saldo']);
+                    
+                    $fila++;
+                }
+
+                $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel,'Excel2007');
+                $objWriter->save('public/documentos/reportes/control.xlsx');
+
+                return array("documento"=>'public/documentos/reportes/control.xlsx');
+
+                exit();
+               
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;

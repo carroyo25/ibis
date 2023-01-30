@@ -2708,7 +2708,7 @@
                                 $datos[$i]->total));
                     $lc++;
 
-                    if ($pdf->getY() >= 200) {
+                    if ($pdf->getY() >= 190) {
                         $pdf->AddPage();
                         $lc = 0;
                     }
@@ -2895,7 +2895,7 @@
                 $lc++;
                 $rc++;
                                 
-                if ($pdf->getY() >= 200) {
+                if ($pdf->getY() >= 190) {
                     $pdf->AddPage();
                     $lc = 0;
                 }

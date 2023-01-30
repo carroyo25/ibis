@@ -677,7 +677,7 @@
 
                 $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(12);
                 $objPHPExcel->getActiveSheet()->getColumnDimension("B")->setWidth(12);
-                $objPHPExcel->getActiveSheet()->getColumnDimension("C")-setAutoSize(true);
+                $objPHPExcel->getActiveSheet()->getColumnDimension("C")->setAutoSize(true);
                 $objPHPExcel->getActiveSheet()->getColumnDimension("D")->setWidth(24);
                 $objPHPExcel->getActiveSheet()->getColumnDimension("E")->setWidth(12);;
                 $objPHPExcel->getActiveSheet()->getColumnDimension("F")->setWidth(12);;

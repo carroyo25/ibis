@@ -18,10 +18,6 @@
             echo json_encode($this->model->nuevoRegistro());
         }
 
-        function quitarItem(){
-
-        }
-
         function grabaRegisto() {
             echo json_encode($this->model->grabarRegistro($_POST['cabecera'],$_POST['detalles']));
         }
@@ -32,6 +28,10 @@
 
         function resumen() {
             echo json_encode($this->model->obtenerResumen($_POST['codigo']));
+        }
+
+        function exporta() {
+            echo json_encode($this->model->exportarExcel($_POST['detalles']));
         }
         
     }
