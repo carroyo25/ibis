@@ -10,6 +10,18 @@
     <div class="mensaje">
         <p></p>
     </div>
+    <div class="modal" id="comentarios">
+        <div class="ventanaComentarios">
+            <h3>Observaciones</h3>
+            <hr>
+            <div class="cuerpoComentarios">
+                
+            </div>
+            <div>
+                <button type="button" id="btnAceptarDialogo">Aceptar</button>
+            </div>
+        </div>
+    </div>
     <div class="cabezaModulo">
         <h1>Consumos</h1>
         <div>
@@ -40,9 +52,9 @@
                         <label for="cargo">Cargo</label>
                         <input type="cargo" id="cargo" name="cargo">
                     </div>
-                    <button type="button" class="boton3" id="btnConsulta">Firmar</button>
+                    <button type="button" class="boton3" id="btnFirma">Firmar</button>
             </div>
-            <input type="text" name="codeRead" id="codeRead" style="opacity:0"> 
+            <input type="text" name="codeRead" id="codeRead" style="opacity:1" value="B110700090010"> 
         </form>
     </div>
     <div class="itemsTabla">

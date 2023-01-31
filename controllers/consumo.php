@@ -15,7 +15,7 @@
         }
 
         function productos(){
-            echo $this->model->buscarProductos($_POST['codigo']);
+            echo json_encode($this->model->buscarProductos($_POST['codigo']));
         }
         
     }

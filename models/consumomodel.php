@@ -28,8 +28,8 @@
                                                         cm_producto.id_cprod,
                                                         cm_producto.ccodprod,
                                                         cm_producto.cdesprod,
-                                                        cm_producto.ntipo,
-                                                        tb_unimed.cabrevia 
+                                                        tb_unimed.cabrevia,
+                                                        NOW() AS fecha
                                                     FROM
                                                         cm_producto
                                                         INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed 
@@ -40,21 +40,20 @@
                 $sql->execute(["codigo"=>$codigo]);
 
                 $rowCount = $sql->rowCount();
+                $result = $sql->fetchAll();
 
                 if ($rowCount > 0) {
                     $respuesta = array("descripcion"=>$result[0]['cdesprod'],
                                         "codigo"=>$result[0]['ccodprod'],
-                                        "ncodmed"=>$result[0]['ncodmed'],
                                         "unidad"=>$result[0]['cabrevia'],
-                                        "idprod"=>$result[0]['id_prod'],
+                                        "idprod"=>$result[0]['id_cprod'],
+                                        "fecha"=>$result[0]['fecha'],
                                         "registrado"=>true);
                 }else{
                     $respuesta = array("registrado"=>false); 
                 }
 
                 return $respuesta;
-
-                return $producto;
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
