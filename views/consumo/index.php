@@ -7,7 +7,10 @@
     <title>Document</title>
 </head>
 <body>
-<div class="cabezaModulo">
+    <div class="mensaje">
+        <p></p>
+    </div>
+    <div class="cabezaModulo">
         <h1>Consumos</h1>
         <div>
             <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
@@ -16,10 +19,9 @@
     <div class="barraTrabajo">
         <form action="#" id="formConsulta">
             <div class="variasConsultas4campos">
-                    <div>
-                        <label for="docident">N°. Documento </label>
-                        <input type="text" id="docident" name="docident">
-                    </div>
+                    <input type="hidden" name="cut" id="cut">
+                    <input type="hidden" name="correo" id="correo">
+                    
                     <div>
                         <label for="costosSearch">Centro de Costos: </label>
                         <select name="costosSearch" id="costosSearch" class="item4">
@@ -27,15 +29,20 @@
                         </select>
                     </div>
                     <div>
-                        <label for="mes">Nombre</label>
-                        <input type="nombre">
+                        <label for="docident">N°. Documento </label>
+                        <input type="text" id="docident" name="docident">
+                    </div>
+                    <div>
+                        <label for="nombre">Nombre</label>
+                        <input type="text" id="nombre" name="nombre">
                     </div>
                     <div>
                         <label for="cargo">Cargo</label>
-                        <input type="cargo">
+                        <input type="cargo" id="cargo" name="cargo">
                     </div>
-                    <button type="button" class="boton3" id="btnConsulta">Firmar</button> 
+                    <button type="button" class="boton3" id="btnConsulta">Firmar</button>
             </div>
+            <input type="text" name="codeRead" id="codeRead" style="opacity:0"> 
         </form>
     </div>
     <div class="itemsTabla">

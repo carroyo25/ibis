@@ -6,8 +6,16 @@
         }
 
         function render(){
-            $this->view->listaCostos = "";
+            $this->view->listaCostosSelect = $this->model->costosPorUsuarioSelect($_SESSION['iduser']);
             $this->view->render('consumo/index');
+        }
+
+        function datosapi(){
+            echo json_encode($this->model->buscarDatos($_POST['documento']));
+        }
+
+        function productos(){
+            echo $this->model->buscarProductos($_POST['codigo']);
         }
         
     }

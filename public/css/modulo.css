@@ -477,8 +477,8 @@
   padding: 5px 15px;
   display: -ms-grid;
   display: grid;
-  -ms-grid-columns: 10% 15px 25% 15px 25% 15px 25% 15px 10%;
-  grid-template-columns: 10% 25% 25% 25% 10%;
+  -ms-grid-columns: 25% 15px 10% 15px 25% 15px 25% 15px 10%;
+  grid-template-columns: 25% 10% 25% 25% 10%;
   -webkit-column-gap: 15px;
      -moz-column-gap: 15px;
           column-gap: 15px;
