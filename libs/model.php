@@ -3542,7 +3542,9 @@
                                                             ' ',
                                                             tb_area.ccodarea,
                                                         UPPER( tb_area.cdesarea )) AS area,
-                                                        cm_entidad.crazonsoc 
+                                                        cm_entidad.crazonsoc,
+                                                        (SELECT SUM(lg_ordendet.ncanti) FROM lg_ordendet WHERE id_orden = lg_ordencab.id_regmov) AS ingresos,
+                                                        (SELECT SUM(alm_recepdet.ncantidad)  FROM alm_recepdet WHERE pedido = lg_ordencab.id_regmov ) AS salidas
                                                     FROM
                                                         tb_costusu
                                                         INNER JOIN lg_ordencab ON tb_costusu.ncodproy = lg_ordencab.ncodpry
@@ -3551,10 +3553,11 @@
                                                         INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi 
                                                     WHERE
                                                         tb_costusu.id_cuser = :usr 
-                                                        AND tb_costusu.nflgactivo = 1
+                                                        AND tb_costusu.nflgactivo = 1 
                                                         AND lg_ordencab.ntipmov = 37 
-                                                        AND lg_ordencab.nEstadoDoc BETWEEN 60 AND 62
-                                                    ORDER BY tb_proyectos.ccodproy ASC");
+                                                        AND lg_ordencab.nEstadoDoc BETWEEN 60 AND 62 
+                                                    ORDER BY
+                                                        tb_proyectos.ccodproy ASC");
                 $sql->execute(["usr"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowCount();
 
@@ -3563,13 +3566,15 @@
                     while ($rs = $sql->fetch()) {
                         //compara la orden si fue ingresada completa y no la muestra
 
-                        if ($tipoMov == 1)
+                        /*if ($tipoMov == 1)
                             $diferencia = $this->calcularIngresosOrden($rs['id_regmov']) - $this->calcularCantidadIngresa($rs['id_regmov']);
                         else
-                            $diferencia = $this->calcularIngresosOrden($rs['id_regmov']) - $this->calcularCantidadDespacha($rs['id_regmov']);
+                            $diferencia = $this->calcularIngresosOrden($rs['id_regmov']) - $this->calcularCantidadDespacha($rs['id_regmov']);*/
+
+                        $diferencia = 2;
 
 
-                        if (($diferencia) > 0 ) {
+                        if ( $rs['ingresos'] != $rs['salidas'] ) {
                             $salida.='<tr data-orden="'.$rs['id_regmov'].'" data-idcosto="'.$rs['nidreg'].'">
                                     <td class="textoCentro">'.$rs['cnumero'].'</td>
                                     <td class="textoCentro">'.$rs['ffechadoc'].'</td>

@@ -128,7 +128,7 @@
                     $item=1;
                     
                     while ($rs = $sql->fetch()){
-                        $saldo = $rs['ingresos'] - $this->calcularSaldosItemsDespachados($rs['id_orden'],$rs['nitemord']);
+                        $saldo = 1;
                         $pendientes = $rs['cantidad'] - $rs['ingresos'];
                        
                         if ( $rs['ingresos'] > 0 ) {

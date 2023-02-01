@@ -398,7 +398,7 @@
                 $sql = $this->db->connect()->prepare("INSERT INTO tb_pedidodet SET idpedido=:ped,idprod=:prod,idtipo=:tipo,unid=:und,
                                                                                    cant_pedida=:cant,estadoItem=:est,tipoAten=:aten,
                                                                                    verificacion=:ver,nflgqaqc=:qaqc,idcostos=:costos,idarea=:area,
-                                                                                   observaciones=:espec");
+                                                                                   observaciones=:espec,item=:nropos");
                        $sql ->execute([
                                        "ped"=>$indice,
                                        "prod"=>$detalles->idprod,
@@ -411,7 +411,8 @@
                                        "qaqc"=>$detalles->calidad,
                                        "costos"=>$costos,
                                        "area"=>$area,
-                                       "espec"=>$detalles->especifica]);
+                                       "espec"=>$detalles->especifica,
+                                       "nropos"=>$datos[$i]->item]);
                   
             } catch (PDOException $th) {
                    echo "Error: ".$th->getMessage();
@@ -429,10 +430,11 @@
                         //$existe = $this->vericaExiste($datos[$i]->idprod,$datos[$i]->cantidad,$datos[$i]->especifica);
 
                         //if ( $existe == 0) {
-                            $sql = $this->db->connect()->prepare("INSERT INTO tb_pedidodet SET idpedido=:ped,idprod=:prod,idtipo=:tipo,unid=:und,
-                            cant_pedida=:cant,estadoItem=:est,tipoAten=:aten,
-                            verificacion=:ver,nflgqaqc=:qaqc,idcostos=:costos,idarea=:area,
-                            observaciones=:espec");
+                            $sql = $this->db->connect()->prepare("INSERT INTO tb_pedidodet 
+                                                                    SET idpedido=:ped,idprod=:prod,idtipo=:tipo,unid=:und,
+                                                                        cant_pedida=:cant,estadoItem=:est,tipoAten=:aten,
+                                                                        verificacion=:ver,nflgqaqc=:qaqc,idcostos=:costos,idarea=:area,
+                                                                        observaciones=:espec,item=:nropos");
                             $sql ->execute([
                                 "ped"=>$indice,
                                 "prod"=>$datos[$i]->idprod,
@@ -445,7 +447,8 @@
                                 "qaqc"=>$datos[$i]->calidad,
                                 "costos"=>$costos,
                                 "area"=>$area,
-                                "espec"=>$datos[$i]->especifica]);
+                                "espec"=>$datos[$i]->especifica,
+                                "nropos"=>$datos[$i]->item]);
                         //}
                        
                    

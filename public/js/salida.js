@@ -292,19 +292,27 @@ $(function() {
     $("#ordenes tbody").on("click","tr", function (e) {
         e.preventDefault();
 
-        let codigo_costos = $(this).data("idcosto"); 
+        try {
+            if ( $("#codigo_costos").val() != "" ) throw "Los orden es de otro centro de costos";
 
-        $.post(RUTA+"salida/ordenId", {id:$(this).data("orden"),costo:$(this).data("idcosto")},
+            $.post(RUTA+"salida/ordenId", {id:$(this).data("orden"),costo:$(this).data("idcosto")},
             function (data, textStatus, jqXHR) {
                 $("#numero").val(data.numero);
                 $("#tablaDetalles tbody").append(data.items);
                 $("#costos").val(data.costos);
-                $("#codigo_costos").val(codigo_costos);
+
+                if ( $("#codigo_costos").val() == "" )
+                    $("#codigo_costos").val(codigo_costos);
                 
                 fillTables($("#tablaDetalles tbody > tr"),2);
             },
             "json"
         );
+        } catch (error) {
+            mostrarMensaje(error,"mensaje_error");
+        }
+
+        
 
         return false; 
     });

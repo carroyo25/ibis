@@ -721,9 +721,10 @@ itemsSave = () =>{
             UNIDAD      = $(this).data('codund'),
             CANTIDAD    = $(this).find('td').eq(5).children().val(),
             NROPARTE    = $(this).find('td').eq(7).text(),
+            ITEM        = $(this).find('td').eq(0).text(),
             IDX         = $(this).data('idx'),
             CALIDAD     = 0,
-            ESTADO      = $(this).attr('data-grabado');
+            ESTADO      = $(this).attr('data-grabado'),
             ESPECIFICA  = $(this).find('td').eq(6).children().val();
 
         item= {};
@@ -737,6 +738,7 @@ itemsSave = () =>{
             item['calidad']     = CALIDAD;
             item['especifica']  = ESPECIFICA;
             item['estado']      = ESTADO;
+            item['item']        = ITEM;
 
             DATA.push(item);
         } 
