@@ -30,6 +30,7 @@
                                                         alm_recepcab.nEstadoDoc,
                                                         alm_recepcab.nflgCalidad,
                                                         tb_proyectos.ccodproy,
+                                                        lg_ordencab.id_regmov,
                                                         UPPER( tb_almacen.cdesalm ) AS almacen,
                                                         UPPER( tb_proyectos.cdesproy ) AS proyecto,
                                                         UPPER( tb_area.cdesarea ) AS area,
@@ -49,7 +50,7 @@
                                                         tb_costusu.id_cuser = :usr 
                                                         AND tb_costusu.nflgactivo = 1
                                                         AND alm_recepcab.nEstadoDoc = 60
-                                                    ORDER BY nnronota DESC");
+                                                    ORDER BY lg_ordencab.id_regmov DESC");
                 $sql->execute(["usr"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowcount();
                 if ($rowCount > 0){

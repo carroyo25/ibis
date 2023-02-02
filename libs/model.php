@@ -3542,9 +3542,10 @@
                                                             ' ',
                                                             tb_area.ccodarea,
                                                         UPPER( tb_area.cdesarea )) AS area,
-                                                        cm_entidad.crazonsoc,
-                                                        (SELECT SUM(lg_ordendet.ncanti) FROM lg_ordendet WHERE id_orden = lg_ordencab.id_regmov) AS ingresos,
-                                                        (SELECT SUM(alm_recepdet.ncantidad)  FROM alm_recepdet WHERE pedido = lg_ordencab.id_regmov ) AS salidas
+                                                        UPPER( cm_entidad.crazonsoc ) AS crazonsoc,
+                                                        ( SELECT SUM( alm_recepdet.ncantidad ) FROM alm_recepdet WHERE pedido = lg_ordencab.id_regmov ) AS ingresos,
+                                                        ( SELECT SUM( alm_despachodet.ndespacho ) FROM alm_despachodet WHERE alm_despachodet.nropedido = lg_ordencab.id_regmov ) AS despachos,
+                                                        ( SELECT SUM( lg_ordendet.ncanti ) FROM lg_ordendet WHERE lg_ordendet.id_orden = lg_ordencab.id_regmov ) AS cantidad_orden 
                                                     FROM
                                                         tb_costusu
                                                         INNER JOIN lg_ordencab ON tb_costusu.ncodproy = lg_ordencab.ncodpry
@@ -3555,34 +3556,38 @@
                                                         tb_costusu.id_cuser = :usr 
                                                         AND tb_costusu.nflgactivo = 1 
                                                         AND lg_ordencab.ntipmov = 37 
-                                                        AND lg_ordencab.nEstadoDoc BETWEEN 60 AND 62 
+                                                        AND lg_ordencab.nEstadoDoc BETWEEN 60 
+                                                        AND 62 
                                                     ORDER BY
-                                                        tb_proyectos.ccodproy ASC");
+                                                        lg_ordencab.id_regmov DESC");
                 $sql->execute(["usr"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowCount();
 
 
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()) {
-                        //compara la orden si fue ingresada completa y no la muestra
 
-                        /*if ($tipoMov == 1)
-                            $diferencia = $this->calcularIngresosOrden($rs['id_regmov']) - $this->calcularCantidadIngresa($rs['id_regmov']);
-                        else
-                            $diferencia = $this->calcularIngresosOrden($rs['id_regmov']) - $this->calcularCantidadDespacha($rs['id_regmov']);*/
-
-                        $diferencia = 2;
-
-
-                        if ( $rs['ingresos'] != $rs['salidas'] ) {
-                            $salida.='<tr data-orden="'.$rs['id_regmov'].'" data-idcosto="'.$rs['nidreg'].'">
+                        if ($tipoMov == 2){
+                            if ( $rs['ingresos'] != $rs['despachos'] &&  $rs['ingresos'] > 0 ) {
+                                $salida.='<tr data-orden="'.$rs['id_regmov'].'" data-idcosto="'.$rs['nidreg'].'" data-ingresos="'.$rs['ingresos'].'">
+                                        <td class="textoCentro">'.$rs['cnumero'].'</td>
+                                        <td class="textoCentro">'.$rs['ffechadoc'].'</td>
+                                        <td class="pl20px">'.$rs['area'].'</td>
+                                        <td class="textoDerecha pr5px">'.$rs['ccodproy'].'</td>
+                                        <td class="pl20px">'.$rs['crazonsoc'].'</td>
+                                    </tr>';
+                            }
+                        }else {
+                            if ( $rs['ingresos'] == NULL ||  $rs['ingresos'] !=  $rs['cantidad_orden']) {
+                                $salida.='<tr data-orden="'.$rs['id_regmov'].'" data-idcosto="'.$rs['nidreg'].'" data-ingresos="'.$rs['ingresos'].'">
                                     <td class="textoCentro">'.$rs['cnumero'].'</td>
                                     <td class="textoCentro">'.$rs['ffechadoc'].'</td>
                                     <td class="pl20px">'.$rs['area'].'</td>
                                     <td class="textoDerecha pr5px">'.$rs['ccodproy'].'</td>
                                     <td class="pl20px">'.$rs['crazonsoc'].'</td>
                                 </tr>';
-                        }
+                            }
+                        } 
                     }
                 }
                 return $salida;

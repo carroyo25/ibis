@@ -41,9 +41,6 @@
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
                         <div>
-                            <!-- <button type="button" id="saveDoc" title="Grabar Nota" class="boton3">
-                                <p><i class="far fa-save"></i> Grabar </p> 
-                            </button> -->
                             <button type="button" id="importData" title="Importar Ingresos" class="boton3">
                                 <i class="fab fa-wpexplorer"></i> Importar Ordenes
                             </button>

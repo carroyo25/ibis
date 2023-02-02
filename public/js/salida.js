@@ -292,8 +292,10 @@ $(function() {
     $("#ordenes tbody").on("click","tr", function (e) {
         e.preventDefault();
 
+        let cc = $(this).data("idcosto");
+
         try {
-            if ( $("#codigo_costos").val() != "" ) throw "Los orden es de otro centro de costos";
+            if ( $("#codigo_costos").val() != cc && $("#codigo_costos").val() != "" ) throw "Los orden es de otro centro de costos";
 
             $.post(RUTA+"salida/ordenId", {id:$(this).data("orden"),costo:$(this).data("idcosto")},
             function (data, textStatus, jqXHR) {
@@ -302,7 +304,7 @@ $(function() {
                 $("#costos").val(data.costos);
 
                 if ( $("#codigo_costos").val() == "" )
-                    $("#codigo_costos").val(codigo_costos);
+                    $("#codigo_costos").val(cc);
                 
                 fillTables($("#tablaDetalles tbody > tr"),2);
             },

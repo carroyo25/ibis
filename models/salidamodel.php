@@ -108,16 +108,14 @@
                                                         tb_pedidodet.idpedido,
                                                         tb_pedidodet.nroparte,
                                                         REPLACE ( FORMAT( lg_ordendet.ncanti, 2 ), ',', '' ) AS cantidad,
-                                                        despacho.pendiente AS total_despachado,
-                                                        @id := lg_ordendet.nitemord AS idorden,
-                                                        ( SELECT SUM( alm_recepdet.ncantidad ) FROM alm_recepdet WHERE alm_recepdet.pedido = lg_ordendet.id_orden AND alm_recepdet.niddetaOrd = @id ) AS ingresos 
+                                                        ( SELECT SUM( alm_recepdet.ncantidad ) FROM alm_recepdet WHERE alm_recepdet.niddetaOrd = lg_ordendet.nitemord ) AS ingresos,
+                                                        ( SELECT SUM( alm_despachodet.ndespacho ) FROM alm_despachodet WHERE alm_despachodet.niddetaOrd = lg_ordendet.nitemord ) AS despachos 
                                                     FROM
                                                         lg_ordendet
                                                         INNER JOIN cm_producto ON lg_ordendet.id_cprod = cm_producto.id_cprod
                                                         INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
                                                         INNER JOIN tb_pedidodet ON lg_ordendet.niddeta = tb_pedidodet.iditem
-                                                        INNER JOIN tb_pedidocab ON tb_pedidocab.idreg = tb_pedidodet.idpedido
-                                                        LEFT JOIN ( SELECT SUM( alm_despachodet.ncantidad ) AS pendiente, niddetaOrd FROM alm_despachodet WHERE alm_despachodet.niddetaOrd = @id ) AS despacho ON lg_ordendet.nitemord = despacho.niddetaOrd 
+                                                        INNER JOIN tb_pedidocab ON tb_pedidocab.idreg = tb_pedidodet.idpedido 
                                                     WHERE
                                                         lg_ordendet.id_orden = :id");
                 $sql->execute(["id"=>$id]);
@@ -128,10 +126,10 @@
                     $item=1;
                     
                     while ($rs = $sql->fetch()){
-                        $saldo = 1;
+                        $saldo = $rs['ingresos'] - $rs['despachos'];
                         $pendientes = $rs['cantidad'] - $rs['ingresos'];
                        
-                        if ( $rs['ingresos'] > 0 ) {
+                        //if ( $rs['ingresos'] > 0 ) {
                             if ( $saldo > 0 ) {
                                 $salida.='<tr data-detorden="'.$rs['nitemord'].'" 
                                             data-idprod="'.$rs['id_cprod'].'"
@@ -151,7 +149,7 @@
                                             <input type="number" 
                                                 step="any" 
                                                 placeholder="0.00" 
-                                                onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)" value="'.$rs['ingresos'].'">
+                                                onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)" value="'.$saldo.'">
                                         </td>
                                         <td class="textoDerecha pr20px">'. number_format($pendientes,2) .'</td>
                                         <td><input type="text"></td>
@@ -160,7 +158,7 @@
                                     </tr>';
                             }
                                 
-                        }
+                        //}
                     }
                 }
 
@@ -713,41 +711,36 @@
                 //aca hubo un problema orden por pedido
                 $salida="";
                 $sql=$this->db->connect()->prepare("SELECT
-                                                        alm_despachodet.id_regalm,
-                                                        alm_despachodet.ncodalm1,
-                                                        alm_despachodet.fvence,
-                                                        alm_despachodet.ncantidad,
-                                                        alm_despachodet.id_cprod,
-                                                        alm_despachodet.niddetaPed,
-                                                        alm_despachodet.niddetaOrd,
-                                                        alm_despachodet.niddeta,
-                                                        alm_despachodet.ndespacho,
-                                                        alm_despachodet.cobserva,
-                                                        alm_despachodet.niddetaIng,
-                                                        LPAD(alm_despachodet.nropedido,6,0) AS orden,
-                                                        LPAD(alm_despachodet.nroorden,6,0) AS pedido,
-                                                        alm_despachodet.ingreso,
-                                                        FORMAT(alm_despachodet.nsaldo, 2) AS nsaldo,
-                                                        cm_producto.ccodprod,
-                                                        REPLACE(FORMAT(alm_despachodet.ncantidad, 2),',','') AS cantidad,
-                                                        UPPER(
-                                                            CONCAT_WS(
-                                                                ' ',
-                                                                cm_producto.cdesprod,
-                                                                tb_pedidodet.observaciones
-                                                            )
-                                                        ) AS cdesprod,
-                                                        tb_unimed.nfactor,
-                                                        tb_unimed.cabrevia,
-                                                        tb_pedidocab.nrodoc
-                                                    FROM
-                                                        alm_despachodet
+                                                    alm_despachodet.id_regalm,
+                                                    alm_despachodet.ncodalm1,
+                                                    alm_despachodet.fvence,
+                                                    alm_despachodet.ncantidad,
+                                                    alm_despachodet.id_cprod,
+                                                    alm_despachodet.niddetaPed,
+                                                    alm_despachodet.niddetaOrd,
+                                                    alm_despachodet.niddeta,
+                                                    alm_despachodet.ndespacho,
+                                                    alm_despachodet.cobserva,
+                                                    alm_despachodet.niddetaIng,
+                                                    LPAD( alm_despachodet.nropedido, 6, 0 ) AS orden,
+                                                    LPAD( alm_despachodet.nroorden, 6, 0 ) AS pedido,
+                                                    alm_despachodet.ingreso,
+                                                    FORMAT( alm_despachodet.nsaldo, 2 ) AS nsaldo,
+                                                    cm_producto.ccodprod,
+                                                    REPLACE ( FORMAT( alm_despachodet.ncantidad, 2 ), ',', '' ) AS cantidad,
+                                                    UPPER( CONCAT_WS( ' ', cm_producto.cdesprod, tb_pedidodet.observaciones ) ) AS cdesprod,
+                                                    tb_unimed.nfactor,
+                                                    tb_unimed.cabrevia,
+                                                    tb_pedidocab.nrodoc,
+                                                    (SELECT	 SUM(alm_recepdet.ncantidad) FROM alm_recepdet WHERE alm_recepdet.niddetaOrd = alm_despachodet.niddetaOrd) AS ingresado
+                                                FROM
+                                                    alm_despachodet
                                                     INNER JOIN cm_producto ON alm_despachodet.id_cprod = cm_producto.id_cprod
                                                     INNER JOIN tb_pedidodet ON alm_despachodet.niddetaPed = tb_pedidodet.iditem
                                                     INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
-                                                    INNER JOIN tb_pedidocab ON alm_despachodet.nropedido = tb_pedidocab.idreg
-                                                    WHERE
-                                                        alm_despachodet.id_regalm = :id");
+                                                    INNER JOIN tb_pedidocab ON alm_despachodet.nropedido = tb_pedidocab.idreg 
+                                                WHERE
+                                                    alm_despachodet.id_regalm = :id");
                 $sql->execute(["id"=>$indice]);
 
                 $rowCount = $sql->rowCount();
@@ -757,7 +750,7 @@
                     while ($rs = $sql->fetch()){
 
                         $series = $this->buscarSeries($rs['id_cprod'],$rs['id_regalm'],$rs['ncodalm1']);
-                        $pendiente = $rs['cantidad'] - $rs['ndespacho'];
+                        $pendiente = $rs['cantidad'] - $rs['ingresado'];
 
                         if ( $rs['ndespacho'] > 0) {
                             $salida.='<tr   data-idorden="'.$rs['niddetaOrd'].'" 
@@ -774,7 +767,7 @@
                                         <td class="pl20px">'.$rs['cdesprod'].'  :'.$series.'</td>
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                         <td class="textoDerecha pr20px">'.$rs['cantidad'].'</td>
-                                        <td class="textoDerecha pr20px">'.$rs['ndespacho'].'</td>
+                                        <td class="textoDerecha pr20px">'.$rs['ingresado'].'</td>
                                         <td><input type="number" step="any" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"
                                         value="'.$rs['ndespacho'].'" ></td>
                                         <td class="textoDerecha pr20px">'.$pendiente.'</td>

@@ -194,9 +194,7 @@
                 echo $th->getMessage();
                 return false;
             }
-        }
-
-        
+        } 
 
         private function obtenerCantidades($pedido,$item){
             try {
@@ -353,7 +351,7 @@
                                                                                     nunitario=:unit,nigv=:igv,ntotal=:total,
                                                                                     nestado=:est,cverifica=:verif,nidpedi=:pedido,
                                                                                     nmonref=:moneda,ncodcos=:costos,id_orden=:ordenidx,
-                                                                                    nSaldo=:saldo,cobserva=:detalles");
+                                                                                    nSaldo=:saldo,cobserva=:detalles,item=:itemord");
                         $sql->execute(["id"=>$indice,
                                         "nidp"=>$datos[$i]->itped,
                                         "pedido"=>$datos[$i]->refpedi,
@@ -368,7 +366,8 @@
                                         "costos"=>$costos,
                                         "ordenidx"=>$idx,
                                         "saldo"=>$datos[$i]->cantidad,
-                                        "detalles"=>$datos[$i]->detalles]);
+                                        "detalles"=>$datos[$i]->detalles,
+                                        "itemord"=>$datos[$i]->item]);
                     }else{
                         $sql = $this->db->connect()->prepare("UPDATE lg_ordendet 
                                                             SET ncanti=:cant,nunitario=:unit,nigv=:igv,
