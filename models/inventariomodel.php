@@ -492,6 +492,8 @@
 
         private function compareDescription($descripcion) {
             try {
+                //$valor = strtok($descripcion);
+                
                 $sql=$this->db->connect()->prepare("SELECT
                                                         cm_producto.id_cprod AS codigo 
                                                     FROM

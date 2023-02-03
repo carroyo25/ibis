@@ -115,7 +115,13 @@
     </div>
     <div class="barraTrabajo">
         <form action="#" id="formConsulta">
-            <div class="variasConsultas">
+            <div class="variasConsultas4campos">
+                    <div>
+                        <label for="costosSearch">Centro Costos: </label>
+                        <select name="costosSearch" id="costosSearch">
+                            <?php echo $this->listaCostosSelect ?>
+                        </select>
+                    </div>
                     <div>
                         <label for="codigoBusqueda">Codigo : </label>
                         <input type="text" name="codigoBusqueda" id="codigoBusqueda">
@@ -123,8 +129,6 @@
                     <div>
                         <label for="descripcionSearch">Descripcion: </label>
                         <input type="text" name="descripcionSearch" id="descripcionSearch">
-                    </div>
-                    <div>
                     </div>
                     <div>
                     </div>
@@ -138,7 +142,7 @@
                 <tr class="stickytop">
                     <th>Item</th>
                     <th>Codigo</th>
-                    <th>Descripcion</th>
+                    <th width="50%">Descripcion</th>
                     <th>Unidad</th>
                     <th>Cantidad<br>Ingreso</th>
                     <th>Ingreso<br>Inventario</th>
@@ -147,7 +151,7 @@
                 </tr>
             </thead>
             <tbody>
-                <?php echo $this->listaItems;?>
+                
             </tbody>
         </table>
     </div>

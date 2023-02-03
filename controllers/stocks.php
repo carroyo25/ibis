@@ -6,11 +6,9 @@
         }
 
         function render(){
-            $this->view->listaItems = $this->model->listarItems();
+            $this->view->listaItems = $this->model->listarItems(-1);
             $this->view->listaRecepciona = $this->model->listarPersonalRol(4);
-            $this->view->listaCostos = $this->model->costosPorUsuario($_SESSION['iduser']);
-            $this->view->listaAlmacen = $this->model->listarAlmacenGuia();
-            $this->view->listaMovimiento = $this->model->listarParametros(12);
+            $this->view->listaCostosSelect = $this->model->costosPorUsuarioSelect($_SESSION['iduser']);
             $this->view->render('stocks/index');
         }
 
@@ -32,6 +30,10 @@
 
         function exporta() {
             echo json_encode($this->model->exportarExcel($_POST['detalles']));
+        }
+
+        function consulta(){
+            echo $this->model->listarItems($_POST['cc']);
         }
         
     }

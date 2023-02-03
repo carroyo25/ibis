@@ -76,6 +76,21 @@ $(() => {
         return false;
         
     });
+
+    $("#btnConsulta").click(function (e) { 
+        e.preventDefault();
+        
+        $.post(RUTA+"stocks/consulta", {cc:$("#costosSearch").val()},
+            function (data, textStatus, jqXHR) {
+                $("#tablaPrincipal tbody")
+                    .empty()
+                    .append(data);
+            },
+            "text"
+        );
+
+        return false;
+    });
 })
 
 

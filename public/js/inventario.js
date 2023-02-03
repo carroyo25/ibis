@@ -367,8 +367,8 @@ changeValues = (fila,idprod,descripcion,codigo,unidad) => {
         .attr('data-idprod',idprod)
         .attr('data-estado',1)
         .css('background','rgba(56,132,192,0.2)')
-        .children().children().text(descripcion)
         .end()
         .parent().find('td').eq(1).text(codigo)
         .parent().find('td').eq(3).text(unidad)
+        .parent().find('td').eq(2).text(descripcion);
 }

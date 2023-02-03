@@ -253,13 +253,13 @@
                     <th style="background:#FBD341; color:#000">Cantidad</br>Pedida</th>
                     <th style="background:#A6CAF0; color:#000">Codigo del</br>Bien/Servicio</th>
                     <th style="background:#A6CAF0; color:#000">Unidad</br>Medida</th>
-                    <th style="background:#A6CAF0; color:#000">Descripcion del Bien/Servicio</th>
+                    <th style="background:#A6CAF0; color:#000" width="10%">Descripcion del Bien/Servicio</th>
                     <th style="background:#AAFFAA; color:#000" width="40px">Tipo</br>Orden</th>
                     <th style="background:#AAFFAA; color:#000" width="50px">Año</br>Orden</th>
                     <th style="background:#AAFFAA; color:#000">N°</br>Orden</th>
                     <th style="background:#AAFFAA; color:#000">Fecha</br>Orden</th>
                     <th style="background:#AAFFAA; color:#000">Cantidad</br>Orden</th>
-                    <th style="background:#AB7FAB; color:#fff">Descripcion Proveedor</th>
+                    <th style="background:#AB7FAB; color:#fff" width="10%">Descripcion Proveedor</th>
                     <th>Fecha Entrega</br>Proveedor</th>
                     <th width="50px">Cantidad</br>Recibida</th>
                     <th>Saldo por</br>Recibir</th>

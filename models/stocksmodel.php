@@ -5,25 +5,31 @@
             parent::__construct();
         }
 
-        public function listarItems(){
+        public function listarItems($cc){
             try {
-                $salida = "";
-                $sql = $this->db->connect()->query("SELECT
-                                                    cm_producto.id_cprod,
-                                                    cm_producto.ccodprod,
-                                                    UPPER( cm_producto.cdesprod ) AS descripcion,
-                                                    tb_unimed.cabrevia,
-                                                    ( SELECT SUM( alm_existencia.cant_ingr ) FROM alm_existencia WHERE alm_existencia.codprod = cm_producto.id_cprod ) AS ingreso_guias,
-                                                    ( SELECT SUM( alm_inventariodet.cant_ingr ) FROM alm_inventariodet WHERE alm_inventariodet.codprod = cm_producto.id_cprod ) AS ingreso_inventario 
-                                                FROM
-                                                    cm_producto
-                                                    INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed 
-                                                WHERE
-                                                    cm_producto.ntipo = 37 
-                                                    AND ( SELECT SUM( alm_existencia.cant_ingr ) FROM alm_existencia WHERE alm_existencia.codprod = cm_producto.id_cprod ) > 0 
-                                                    OR ( SELECT SUM( alm_inventariodet.cant_ingr ) FROM alm_inventariodet WHERE alm_inventariodet.codprod = cm_producto.id_cprod ) > 0
-                                                ORDER BY cm_producto.cdesprod");
-                $sql->execute();
+                $salida = '';
+
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        lg_ordendet.id_cprod,
+                                                        cm_producto.ccodprod,
+                                                        UPPER(
+                                                        CONCAT_WS( ' ', cm_producto.cdesprod, tb_pedidodet.observaciones )) AS descripcion,
+                                                        cm_producto.ntipo,
+                                                        lg_ordendet.ncodcos,
+                                                        lg_ordendet.id_orden,
+                                                        ( SELECT SUM( alm_existencia.cant_ingr ) FROM alm_existencia WHERE alm_existencia.idpedido = tb_pedidodet.iditem ) AS ingreso_guias,
+                                                        ( SELECT SUM( alm_inventariodet.cant_ingr ) FROM alm_inventariodet WHERE alm_inventariodet.codprod = cm_producto.id_cprod ) AS ingreso_inventario,
+                                                        tb_unimed.cabrevia 
+                                                    FROM
+                                                        lg_ordendet
+                                                        INNER JOIN cm_producto ON lg_ordendet.id_cprod = cm_producto.id_cprod
+                                                        INNER JOIN tb_pedidodet ON lg_ordendet.niddeta = tb_pedidodet.iditem
+                                                        INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed 
+                                                    WHERE
+                                                        cm_producto.ntipo = 37 
+                                                        AND lg_ordendet.ncodcos = :cc 
+                                                        AND ISNULL( id_orden ) = FALSE");
+                $sql->execute(["cc"=>$cc]);
                 $rowCount = $sql->rowCount();
                 $item = 1;
                 if ($rowCount > 0) {
@@ -31,23 +37,27 @@
                         $saldo = $rs['ingreso_guias']+$rs['ingreso_inventario'];
                         $estado = $saldo > 0 ? "semaforoVerde":"semaforoRojo";
 
-                        $salida.='<tr class="pointer" data-idprod="'.$rs['id_cprod'].'">
-                                        <td class="textoCentro">'.str_pad($item++,4,0,STR_PAD_LEFT).'</td>
-                                        <td class="textoCentro">'.$rs['ccodprod'].'</td>
-                                        <td class="pl20px">'.$rs['descripcion'].'</td>
-                                        <td class="textoCentro">'.$rs['cabrevia'].'</td>
-                                        <td class="textoDerecha">'.number_format($rs['ingreso_guias'],2).'</td>
-                                        <td class="textoDerecha">'.number_format($rs['ingreso_inventario'],2).'</td>
-                                        <td class="textoDerecha"></td>
-                                        <td class="textoDerecha '.$estado.'">'.number_format($saldo,2).'</td>
-                                  </tr>';
+                        if ( $rs['ingreso_guias'] != 0 AND $rs['ingreso_guias'] != 0)
+
+                            $salida.='<tr class="pointer" data-idprod="'.$rs['id_cprod'].'">
+                                            <td class="textoCentro">'.str_pad($item++,4,0,STR_PAD_LEFT).'</td>
+                                            <td class="textoCentro">'.$rs['ccodprod'].'</td>
+                                            <td class="pl20px">'.$rs['descripcion'].'</td>
+                                            <td class="textoCentro">'.$rs['cabrevia'].'</td>
+                                            <td class="textoDerecha">'.number_format($rs['ingreso_guias'],2).'</td>
+                                            <td class="textoDerecha">'.number_format($rs['ingreso_inventario'],2).'</td>
+                                            <td class="textoDerecha"></td>
+                                            <td class="textoDerecha '.$estado.'">'.number_format($saldo,2).'</td>
+                                    </tr>';
                     }
+                }else {
+                    $salida = '<tr colspan="8">No hay registros</tr>';
                 }
 
                 return $salida;
 
             } catch (PDOException $th) {
-                echo "Error: ".$th->getMessage;
+                echo "Error: ".$th->getMessage();
                 return false;
             }
         }
@@ -265,13 +275,13 @@
                 $objPHPExcel->getActiveSheet()->setTitle("Inventario");
 
                 //combinar celdas
-                $objPHPExcel->getActiveSheet()->mergeCells('A1:G1');
+                $objPHPExcel->getActiveSheet()->mergeCells('A1:H1');
 
                 //alineacion
-                $objPHPExcel->getActiveSheet()->getStyle('A1:G4')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                $objPHPExcel->getActiveSheet()->getStyle('A1:G4')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('A1:H4')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('A1:H4')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-                $objPHPExcel->getActiveSheet()->getStyle('A1:G5')->getAlignment()->setWrapText(true);
+                $objPHPExcel->getActiveSheet()->getStyle('A1:H5')->getAlignment()->setWrapText(true);
 
                 //ancho de columnas
                 $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(10);
@@ -281,13 +291,13 @@
                 $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(30);
                 $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(20);
                 $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(20);
-                $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(20);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('H')->setWidth(20);
                         
                 //Titulo 
                 $objPHPExcel->getActiveSheet()->setCellValue('A1','Control de Almacén');
 
                 $objPHPExcel->getActiveSheet()
-                    ->getStyle('A1:G4')
+                    ->getStyle('A1:H4')
                     ->getFill()
                     ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
                     ->getStartColor()
@@ -308,14 +318,14 @@
                 $nreg = count($datos);
 
                 for ($i=0; $i < $nreg; $i++) { 
-                    $objPHPExcel->getActiveSheet()->setCellValue('A'.$fila,$datos[$i]['item']);
-                    $objPHPExcel->getActiveSheet()->setCellValue('B'.$fila,$datos[$i]['codigo']);
-                    $objPHPExcel->getActiveSheet()->setCellValue('C'.$fila,$datos[$i]['descripcion']);
-                    $objPHPExcel->getActiveSheet()->setCellValue('D'.$fila,$datos[$i]['unidad']);
-                    $objPHPExcel->getActiveSheet()->setCellValue('E'.$fila,$datos[$i]['ingreso']);
-                    $objPHPExcel->getActiveSheet()->setCellValue('F'.$fila,$datos[$i]['inventario']);
-                    $objPHPExcel->getActiveSheet()->setCellValue('G'.$fila,$datos[$i]['salida']);
-                    $objPHPExcel->getActiveSheet()->setCellValue('H'.$fila,$datos[$i]['saldo']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('A'.$fila,$datos[$i]->item);
+                    $objPHPExcel->getActiveSheet()->setCellValue('B'.$fila,$datos[$i]->codigo);
+                    $objPHPExcel->getActiveSheet()->setCellValue('C'.$fila,$datos[$i]->descripcion);
+                    $objPHPExcel->getActiveSheet()->setCellValue('D'.$fila,$datos[$i]->unidad);
+                    $objPHPExcel->getActiveSheet()->setCellValue('E'.$fila,$datos[$i]->ingreso);
+                    $objPHPExcel->getActiveSheet()->setCellValue('F'.$fila,$datos[$i]->inventario);
+                    $objPHPExcel->getActiveSheet()->setCellValue('G'.$fila,$datos[$i]->salida);
+                    $objPHPExcel->getActiveSheet()->setCellValue('H'.$fila,$datos[$i]->saldo);
                     
                     $fila++;
                 }
