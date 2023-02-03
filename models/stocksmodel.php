@@ -9,27 +9,31 @@
             try {
                 $salida = '';
 
-                $sql = $this->db->connect()->prepare("SELECT
-                                                        lg_ordendet.id_cprod,
-                                                        cm_producto.ccodprod,
-                                                        UPPER(
-                                                        CONCAT_WS( ' ', cm_producto.cdesprod, tb_pedidodet.observaciones )) AS descripcion,
-                                                        cm_producto.ntipo,
-                                                        lg_ordendet.ncodcos,
-                                                        lg_ordendet.id_orden,
-                                                        ( SELECT SUM( alm_existencia.cant_ingr ) FROM alm_existencia WHERE alm_existencia.idpedido = tb_pedidodet.iditem ) AS ingreso_guias,
-                                                        ( SELECT SUM( alm_inventariodet.cant_ingr ) FROM alm_inventariodet WHERE alm_inventariodet.codprod = cm_producto.id_cprod ) AS ingreso_inventario,
-                                                        tb_unimed.cabrevia 
-                                                    FROM
-                                                        lg_ordendet
-                                                        INNER JOIN cm_producto ON lg_ordendet.id_cprod = cm_producto.id_cprod
-                                                        INNER JOIN tb_pedidodet ON lg_ordendet.niddeta = tb_pedidodet.iditem
-                                                        INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed 
-                                                    WHERE
-                                                        cm_producto.ntipo = 37 
-                                                        AND lg_ordendet.ncodcos = :cc 
-                                                        AND ISNULL( id_orden ) = FALSE");
-                $sql->execute(["cc"=>$cc]);
+                $sql = $this->db->connect()->query("SELECT
+                                                    cm_producto.id_cprod,
+                                                    cm_producto.ccodprod,
+                                                    cm_producto.ntipo,
+                                                    UPPER( cm_producto.cdesprod ) AS descripcion,
+                                                    SUM( alm_inventariodet.cant_ingr ) AS ingreso_inventario,
+                                                    SUM( alm_existencia.cant_ingr ) AS ingreso_guias,
+                                                    alm_inventariocab.idcostos AS cc_inventario,
+                                                    alm_cabexist.idcostos AS cc_guias,
+                                                    tb_unimed.cabrevia,
+                                                    IF (ISNULL(alm_cabexist.idcostos),alm_inventariocab.idcostos,alm_cabexist.idcostos) AS costos
+                                                FROM
+                                                    cm_producto
+                                                    LEFT JOIN alm_inventariodet ON cm_producto.id_cprod = alm_inventariodet.codprod
+                                                    LEFT JOIN alm_existencia ON cm_producto.id_cprod = alm_existencia.codprod
+                                                    LEFT JOIN alm_inventariocab ON alm_inventariodet.idregistro = alm_inventariocab.idreg
+                                                    LEFT JOIN alm_cabexist ON alm_existencia.idregistro = alm_cabexist.idreg
+                                                    INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed 
+                                                WHERE
+                                                    cm_producto.ntipo = 37 
+                                                    AND alm_inventariocab.idcostos > 0 
+                                                    OR alm_existencia.cant_ingr > 0 
+                                                GROUP BY
+                                                    cm_producto.id_cprod");
+                $sql->execute();
                 $rowCount = $sql->rowCount();
                 $item = 1;
                 if ($rowCount > 0) {
@@ -37,9 +41,8 @@
                         $saldo = $rs['ingreso_guias']+$rs['ingreso_inventario'];
                         $estado = $saldo > 0 ? "semaforoVerde":"semaforoRojo";
 
-                        if ( $rs['ingreso_guias'] != 0 AND $rs['ingreso_guias'] != 0)
-
-                            $salida.='<tr class="pointer" data-idprod="'.$rs['id_cprod'].'">
+                        if ( $rs['costos'] == $cc ){
+                            $salida.='<tr class="pointer" data-idprod="'.$rs['id_cprod'].'" data-costos="'.$rs['costos'].'">
                                             <td class="textoCentro">'.str_pad($item++,4,0,STR_PAD_LEFT).'</td>
                                             <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                             <td class="pl20px">'.$rs['descripcion'].'</td>
@@ -47,8 +50,9 @@
                                             <td class="textoDerecha">'.number_format($rs['ingreso_guias'],2).'</td>
                                             <td class="textoDerecha">'.number_format($rs['ingreso_inventario'],2).'</td>
                                             <td class="textoDerecha"></td>
-                                            <td class="textoDerecha '.$estado.'">'.number_format($saldo,2).'</td>
+                                            <td class="textoDerecha '.$estado.'"><div>'.number_format($saldo,2).'</div></td>
                                     </tr>';
+                        }
                     }
                 }else {
                     $salida = '<tr colspan="8">No hay registros</tr>';

@@ -225,7 +225,7 @@
                         $estado      = $codigo_sical  != 0 ? 1 : 0;
                         $fondo_fila  = $codigo_sical  != 0 ? "rgba(56,132,192,0.2)" : "rgba(255,0,57,0.2)";
                         $descripcion = $codigo_sical  != 0 ? $objCelda['C'] : '<a href="#">'.$objCelda['C'].'</a>';
-                        $observaciones =  $codigo_sical  != 0 ? $objCelda['U']: $objCelda['C'];
+                        $observaciones =  $codigo_sical  != 0 ? $objCelda['T']: $objCelda['C'];
                         
 
                         $datos .='<tr data-grabado="0" 
