@@ -47,6 +47,9 @@
                             <button type="button" id="preview" title="Vista Previa" class="boton3">
                                 <i class="far fa-file-pdf"></i> Vista Previa
                             </button>
+                            <button type="button" id="saveRegister" title="Grabar Registro" class="boton3">
+                                <i class="far fa-file-pdf"></i> Grabar Registro
+                            </button>
                             <button type="button" id="closeProcess" title="Cerrar" class="boton3">
                                 <i class="fas fa-window-close"></i>
                             </button>
@@ -410,4 +413,4 @@
     <script src="<?php echo constant('URL');?>public/js/funciones.js?<?php echo constant('VERSION')?>"></script>
     <script src="<?php echo constant('URL');?>public/js/transferencias.js?<?php echo constant('VERSION')?>"></script>
 </body>
-</html>:5
+</html>

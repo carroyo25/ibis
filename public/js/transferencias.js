@@ -162,4 +162,79 @@ $(function(){
 
         return false;
     });
+
+    $("#tablaDetalles tbody").on('blur','input', function (e) {
+            try {
+                let ingreso = parseInt($(this).parent().parent().find("td").eq(6).children().val());
+                let stock = parseInt($(this).parent().parent().find("td").eq(7).text());
+
+                if(ingreso > stock) {
+                    mostrarMensaje('La cantidad ingresada, es mayor al stock','mensaje_error')
+                    return false;
+                }
+
+            } catch (error) {
+                
+            }
+    });
+
+    $("#tablaDetalles tbody").on('keypress','input', function (e) {
+        if (e.which == 13) {
+            $('#tablaDetalles tbody tr:last').find('td').eq(5).children().focus();
+        }
+    });
+
+    $(".tituloDocumento").on("click","#closeDocument", function (e) {
+        e.preventDefault();
+
+        $(this).parent().parent().parent().parent().parent().fadeOut();
+
+        return false;
+    });
+
+    $("#saveRegister").click(function(e){
+        e.preventDefault();
+
+        
+
+        return false;
+    });
 })
+
+detalles = (flag) =>{
+    DETALLES = [];
+
+    let TABLA = $("#tablaDetalles tbody >tr");
+    
+    TABLA.each(function(){
+        let ITEM            = $(this).find('td').eq(2).text(),
+            IDPROD          = $(this).data("idprod"),
+            ALMACEN         = $("#codigo_almacen_origen").val(),
+            CANTIDAD        = $(this).find('td').eq(6).text(),// cantidad
+            OBSER           = $(this).find('td').eq(8).children().val(),
+            CODIGO          = $(this).find('td').eq(3).text(),//codigo
+            UNIDAD          = $(this).find('td').eq(5).text(),//unidad
+            DESTINO         = $("#codigo_almacen_destino").val(),
+            DESCRIPCION     = $(this).find('td').eq(4).text(),//unidad
+    
+        item = {};
+
+        if (!flag) {
+            item['item']         = ITEM;
+            item['idprod']       = IDPROD;
+            item['almacen']      = ALMACEN;
+            item['cantidad']     = CANTIDAD;
+            item['cantdesp']     = CANTDESP;
+            item['obser']        = OBSER;
+
+            item['codigo']       = CODIGO;
+            item['descripcion']  = DESCRIPCION;
+            item['unidad']       = UNIDAD;
+            item['destino']      = DESTINO;
+            
+            DETALLES.push(item);
+        }
+    })
+
+    return DETALLES; 
+}

@@ -521,7 +521,7 @@
                 $lc++;
                 $rc++;
                 
-                if ($lc == 52) {
+                if ($pdf->getY() >= 190) {
                     $pdf->AddPage();
                     $lc = 0;
                 }	
