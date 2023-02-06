@@ -195,7 +195,11 @@ $(function(){
     $("#saveRegister").click(function(e){
         e.preventDefault();
 
-        
+        try {
+            
+        } catch (error) {
+            
+        }
 
         return false;
     });

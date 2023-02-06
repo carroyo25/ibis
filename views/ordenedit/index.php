@@ -207,6 +207,9 @@
                             <button type="button" id="loadRequest" title="Importar Pedido" class="cerrarLista boton3">
                                 <i class="fas fa-upload"></i> Importar Items
                             </button>
+                            <button type="button" id="updatItems" title="Importar Pedido" class="cerrarLista boton3">
+                                <i class="fas fa-upload"></i> Actualizar Nro
+                            </button>
                             <!-- <button type="button" id="sendEntOrden" title="Enviar Proveedor" class="cerrarLista boton3">
                                 <i class="far fa-paper-plane"></i> Enviar Orden
                             </button> -->

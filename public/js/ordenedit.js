@@ -709,8 +709,6 @@ detalles = () => {
             SALDO       = $(this).data('cant')-$(this).find('td').eq(5).children().val(),
             DETALLES    = $(this).find('td').eq(10).children().val();
 
-
-
         item= {};
         
         //if (GRABAR == 0) {
@@ -790,5 +788,24 @@ mailsList = () => {
     })
 
     return CORREOS;
+}
+
+updates = () => {
+    DATA = [];
+    let TABLA = $("#tablaDetalles tbody >tr");
+
+    TABLA.each(function(){
+        let ITEM        = $(this).find('td').eq(1).text(),
+            CODIGO      = $(this).data('itord')
+            
+        item= {};
+        
+        item['item']        = ITEM;
+        item['codigo']      = CODIGO;
+
+        DATA.push(item);
+    });
+
+    return DATA;
 }
 
