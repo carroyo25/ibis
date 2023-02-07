@@ -70,8 +70,8 @@
                     <th style="background:#40D1FB; color:#000" data-titulo="anioorden">Año</br>Orden</th>
                     <th style="background:#40D1FB; color:#000" data-titulo="tipo">Tipo</th>
                     <th style="background:#FBD341; color:#000" data-titulo="aniopedido">Año</br> Pedido</th>
-                    <th style="background:#FBD341; color:#000" data-titulo="nroorden">N°</br>Orden</th>
-                    <th style="background:#FBD341; color:#000" data-titulo="nropedido">N°</br>Pedido</th>
+                    <th style="background:#FBD341; color:#000" data-titulo="nroorden">N°</br>Pedido</th>
+                    <th style="background:#FBD341; color:#000" data-titulo="nropedido">N°</br>Orden</th>
                     <th style="background:#A6CAF0; color:#000" data-titulo="codigo_producto">Codigo del</br>Bien/Servicio</th>
                     <th style="background:#A6CAF0; color:#000" data-titulo="descripcion" with="15%">Descripcion del Bien/Servicio</th>
                     <th style="background:#A6CAF0; color:#000" data-titulo="unidad">Unidad</br>Medida</th>

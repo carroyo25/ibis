@@ -12,8 +12,7 @@
                 $tipo   = $parametros['tipoSearch'] == -1 ? "%" : "%".$parametros['tipoSearch']."%";
                 $costos = $parametros['costosSearch'] == -1 ? "%" : $parametros['costosSearch'];
                 $mes    = $parametros['mesSearch'] == -1 ? "%" :  $parametros['mesSearch'];
-                $anio   = $parametros['anioSearch'];
-
+                $anio   = $parametros['anioSearch'] == "" ? "%" : $parametros['anioSearch'];
 
                 $salida = "";
 
@@ -55,7 +54,7 @@
                                         <td></td>
                                         <td></td>
                                         <td></td>
-                                        <td><b>Total Orden</b></td>
+                                        <td><b>Total Orden '.$rs['id_regmov'].'</b></td>
                                         <td></td>
                                         <td></td>
                                         <td class="textoDerecha">'.$rs['ntotal'].'</td>
@@ -94,6 +93,7 @@
                                                     lg_ordendet.id_cprod,
                                                     lg_ordendet.ncanti,
                                                     lg_ordendet.nunitario,
+                                                    LPAD(lg_ordendet.id_orden,6,0) AS orden,
                                                     UPPER(
                                                     CONCAT_WS( '', cm_producto.cdesprod, tb_pedidodet.observaciones )) AS descripcion,
                                                     tb_unimed.cabrevia AS unidad,
@@ -122,7 +122,7 @@
                                                     lg_ordencab.nfirmaLog,
                                                     alm_recepdet.ncantidad,
                                                     tb_clase.cdescrip AS clase,
-                                                    LPAD(lg_ordencab.id_regmov,6,0) AS orden,
+                                                    lg_ordencab.id_regmov,
                                                     tb_pedidocab.anio,
                                                     lg_ordendet.ntotal,
                                                     DATE_FORMAT( lg_ordencab.ffechaent, '%d/%m/%Y' ) AS fecha_entrega,
@@ -142,8 +142,7 @@
                                                     INNER JOIN tb_grupo ON cm_producto.ngrupo = tb_grupo.ncodgrupo
                                                     LEFT JOIN alm_recepdet ON lg_ordendet.niddeta = alm_recepdet.niddeta
                                                     INNER JOIN tb_clase ON cm_producto.nclase = tb_clase.ncodclase
-                                                WHERE lg_ordendet.id_orden = :id
-                                                LIMIT 10");
+                                                WHERE lg_ordendet.id_orden = :id");
 
                 $sql->execute(["id" => $id]);
 
@@ -245,7 +244,7 @@
 
                 $objPHPExcel->getActiveSheet()->getColumnDimension("D")->setAutoSize(true);
                 $objPHPExcel->getActiveSheet()->getColumnDimension("E")->setAutoSize(true);
-                $objPHPExcel->getActiveSheet()->getColumnDimension("K")->setAutoSize(true);
+                //$objPHPExcel->getActiveSheet()->getColumnDimension("K")->setAutoSize(true);
                 $objPHPExcel->getActiveSheet()->getColumnDimension("L")->setAutoSize(true);
                 $objPHPExcel->getActiveSheet()->getColumnDimension("M")->setAutoSize(true);
                 $objPHPExcel->getActiveSheet()->getColumnDimension("O")->setAutoSize(true);
@@ -287,8 +286,8 @@
                 $objPHPExcel->getActiveSheet()->setCellValue('F2','Año Orden'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('G2','Tipo'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('H2','Año Pedido'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('I2','N° Orden'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('J2','N° Pedido'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('I2','N° Pedido'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('J2','N° Orden'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('K2','Codigo del Bien/Servicio'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('L2','Descripcion del Bien/Servicio'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('M2','Unidad Medida'); // esto cambia
