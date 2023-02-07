@@ -763,5 +763,28 @@
                 return false;
             }
         }
+
+        public function ordenarItems($items) {
+            $data = json_decode($items);
+            $nreg = count($data);
+            $counter = 0;
+
+            //return array("actualizados"=>$nreg);
+            
+           
+                try {
+                    for ($i=0; $i < $nreg; $i++) {
+                        $sql = $this->db->connect()->prepare("UPDATE lg_ordendet SET lg_ordendet.item =:nroItem WHERE lg_ordendet.nitemord =:idItem");
+                        $sql->execute(["nroItem"=>$data[$i]->item,"idItem"=>$data[$i]->codigo]);
+                        $counter++;
+                    }
+                    
+                    return array("actualizados"=>$counter);
+
+                }catch (PDOException $th) {
+                    echo $th->getMessage();
+                    return false;
+                }
+        }
     }
 ?>

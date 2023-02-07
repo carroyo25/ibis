@@ -225,6 +225,7 @@
                             <div class="item_registro_salida" title="Atencion cx compras locales"><a href="#">60%<p>Com.Local</p></a></div>
                             <div class="item_registro_gerencia" title="Pedido Gerencia"><a href="#">70%<p>P.Gerencia</p></a></div>
                             <div class="item_transito" title="En transito"><a href="#">75%<p>Transito</p></a></div>
+                            <div class="item_ingreso_parcial" title="Parcial Obra"><a href="#">85%<p>Rec.Parcial</p></a></div>
                             <div class="item_obra" title="En Obra"><a href="#">100%<p>Obra</p></a></div>
                         </div>
                 </div>
@@ -259,6 +260,8 @@
                     <th style="background:#AAFFAA; color:#000">N°</br>Orden</th>
                     <th style="background:#AAFFAA; color:#000">Fecha</br>Orden</th>
                     <th style="background:#AAFFAA; color:#000">Cantidad</br>Orden</th>
+                    <th style="background:#AAFFAA; color:#000">Item</br>Orden</th>
+                    <th style="background:#AAFFAA; color:#000">Fecha</br>Autorización</th>
                     <th style="background:#AB7FAB; color:#fff" width="10%">Descripcion Proveedor</th>
                     <th>Fecha Entrega</br>Proveedor</th>
                     <th width="50px">Cantidad</br>Recibida</th>

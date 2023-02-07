@@ -71,5 +71,9 @@
         function modificaOrden(){
             echo json_encode($this->model->modificarOrden($_POST['cabecera'],$_POST['detalles']));
         }
+
+        function numeraItems() {
+            echo json_encode($this->model->ordenarItems($_POST['items']));
+        }
     }
 ?>

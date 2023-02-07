@@ -682,6 +682,22 @@ $(function(){
          $(".listaArchivos").empty();
  
      });
+
+
+     $("#updateItems").click(function (e) { 
+        e.preventDefault();
+        
+        console.log(JSON.stringify(updates()));
+
+        $.post(RUTA+"ordenedit/numeraItems", {items: JSON.stringify(updates())},
+            function (data, textStatus, jqXHR) {
+                mostrarMensaje("Actualizados  " + data.actualizados,"mensaje_correcto");
+            },
+            "json"
+        );
+
+        return false;
+     });
 })
 
 

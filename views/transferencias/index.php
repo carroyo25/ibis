@@ -128,10 +128,6 @@
                                    </ul> 
                                 </div>
                             </div>
-                            <!--<div class="opcionesProceso">
-                                <a href="#" id="btnPendientes" class="boton3"><i class="far fa-square"></i>  Grabar Pendientes</a>
-                                <a href="#" id="btnTotales" class="boton3"><i class="far fa-check-square"></i>  Grabar Marcadas</a>
-                            </div>-->
                         </div>
                     </div>
                     <div class="barraOpciones">

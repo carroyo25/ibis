@@ -34,6 +34,7 @@
                                                         DATE_FORMAT( tb_pedidocab.faprueba, '%d/%m/%Y' ) AS aprobacion_pedido,
                                                         REPLACE ( FORMAT( tb_pedidodet.cant_pedida, 2 ), ',', '' ) AS cantidad_pedido,
                                                         REPLACE ( FORMAT( lg_ordendet.ncanti, 2 ), ',', '' ) AS cantidad_orden,
+                                                        LPAD(lg_ordendet.item,3,0) as item,
                                                         tb_pedidodet.estadoItem,
                                                         tb_pedidocab.anio AS anio_pedido,
                                                         tb_pedidocab.estadodoc AS estado_pedido,
@@ -51,6 +52,7 @@
                                                         lg_ordencab.ntipmov AS tipo_orden,
                                                         DATE_FORMAT( lg_ordencab.ffechadoc, '%d/%m/%Y' ) AS fecha_orden,
                                                         DATE_FORMAT(lg_ordencab.ffechaent, '%d/%m/%Y' ) AS fecha_entrega,
+                                                        DATE_FORMAT(lg_ordencab.fechafin, '%d/%m/%Y' ) AS fecha_autorizacion,
                                                         LPAD(lg_ordencab.id_regmov,6,0) AS nro_orden,
                                                         UPPER(cm_entidad.crazonsoc) AS proveedor,
                                                         DATEDIFF(NOW(),lg_ordencab.ffechaent) AS dias_atraso,
@@ -218,6 +220,8 @@
                                         <td class="textoCentro">'.$rs['nro_orden'].'</td>
                                         <td class="textoCentro">'.$rs['fecha_orden'].'</td>
                                         <td class="textoDerecha pr15px" style="background:#e8e8e8;font-weight: bold">'.$rs['cantidad_orden'].'</td>
+                                        <td class="pl10px">'.$rs['item'].'</td>
+                                        <td class="pl10px">'.$rs['fecha_autorizacion'].'</td>
                                         <td class="pl10px">'.$rs['proveedor'].'</td>
                                         <td class="textoCentro">'.$rs['fecha_entrega'].'</td>
                                         <td class="textoDerecha pr15px">'.$rs['ingreso'].'</td>
