@@ -132,7 +132,7 @@
                                                     lg_ordendet
                                                     INNER JOIN cm_producto ON lg_ordendet.id_cprod = cm_producto.id_cprod
                                                     INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
-                                                    INNER JOIN lg_ordencab ON lg_ordendet.id_regmov = lg_ordencab.id_regmov
+                                                    INNER JOIN lg_ordencab ON lg_ordendet.id_orden = lg_ordencab.id_regmov
                                                     INNER JOIN tb_pedidodet ON lg_ordendet.niddeta = tb_pedidodet.iditem
                                                     INNER JOIN tb_proyectos ON lg_ordendet.ncodcos = tb_proyectos.nidreg
                                                     INNER JOIN tb_area ON tb_pedidodet.idarea = tb_area.ncodarea
