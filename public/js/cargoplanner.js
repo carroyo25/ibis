@@ -79,29 +79,24 @@ detalles = () =>{
             NRO_ORDEN           = $(this).find('td').eq(17).text(),
             FECHA_ORDEN         = $(this).find('td').eq(18).text(),
             CANTIDAD_ORDEN      = $(this).find('td').eq(19).text(),
-            PROVEEDOR           = $(this).find('td').eq(20).text(),
-            FECHA_ENTREGA       = $(this).find('td').eq(21).text(),
-            CANTIDAD_RECIBIDA   = $(this).find('td').eq(22).text(),
-            SALDO_RECIBIR       = $(this).find('td').eq(23).text(),
-            DIAS_ENTREGA        = $(this).find('td').eq(24).text(),
-            DIAS_ATRASO         = $(this).find('td').eq(25).text(),
-            SEMAFORO            = $(this).find('td').eq(26).text(),
-            NOTA_INGRESO        = $(this).find('td').eq(27).text(),
-            GUIA_INGRESO        = $(this).find('td').eq(28).text(),
-            FECHA_INGRESO       = $(this).find('td').eq(29).text(),
-            NOTA_SALIDA         = $(this).find('td').eq(30).text(),
-            GUIA_REMISION       = $(this).find('td').eq(31).text(),
-            FECHA_GUIAREMISION  = $(this).find('td').eq(32).text(),
-            CANTIDA_OBRA        = $(this).find('td').eq(33).text(),
-            NOTA_INGRESOOBRA    = $(this).find('td').eq(34).text(),
-            FECHA_RECEPOBRA     = $(this).find('td').eq(35).text(),
-            ESTADO_PEDIDO       = $(this).find('td').eq(36).text(),
-            ESTADO_ITEM         = $(this).find('td').eq(37).text(),
-            NUMERO_PARTE        = $(this).find('td').eq(38).text(),
-            CODIGO_ACTIVO       = $(this).find('td').eq(39).text(),
-            OPERADOR            = $(this).find('td').eq(40).text(),
-            TRANSPORTE          = $(this).find('td').eq(41).text(),
-            OBSERVACIONES       = $(this).find('td').eq(42).text();
+            ITEM_ORDEN          = $(this).find('td').eq(20).text(),
+            AUTORIZA_ORDEN      = $(this).find('td').eq(21).text(),
+            PROVEEDOR           = $(this).find('td').eq(22).text(),
+            FECHA_ENTREGA       = $(this).find('td').eq(23).text(),
+            CANTIDAD_RECIBIDA   = $(this).find('td').eq(24).text(),
+            SALDO_RECIBIR       = $(this).find('td').eq(25).text(),
+            DIAS_ENTREGA        = $(this).find('td').eq(26).text(),
+            DIAS_ATRASO         = $(this).find('td').eq(27).text(),
+            SEMAFORO            = $(this).find('td').eq(28).text(),
+            DESPACHO            = $(this).find('td').eq(29).text(),
+            CANTIDA_OBRA        = $(this).find('td').eq(30).text(),
+            ESTADO_PEDIDO       = $(this).find('td').eq(31).text(),
+            ESTADO_ITEM         = $(this).find('td').eq(32).text(),
+            NUMERO_PARTE        = $(this).find('td').eq(33).text(),
+            CODIGO_ACTIVO       = $(this).find('td').eq(34).text(),
+            OPERADOR            = $(this).find('td').eq(35).text(),
+            TRANSPORTE          = $(this).find('td').eq(36).text(),
+            OBSERVACIONES       = $(this).find('td').eq(37).text();
           
 
         item = {};
@@ -132,15 +127,7 @@ detalles = () =>{
         item['dias_entrega']        = DIAS_ENTREGA;
         item['dias_atraso']         = DIAS_ATRASO;
         item['semaforo']            = SEMAFORO;
-        item['nota_ingreso']        = NOTA_INGRESO;
-        item['guia_ingreso']        = GUIA_INGRESO;
-        item['fecha_ingreso']       = FECHA_INGRESO;
-        item['nota_salida']         = NOTA_SALIDA;
-        item['guia_remision']       = GUIA_REMISION;
-        item['fecha_guiaremision']  = FECHA_GUIAREMISION;
         item['cantidad_obra']       = CANTIDA_OBRA;
-        item['nota_ingresoobra']    = NOTA_INGRESOOBRA;
-        item['fecha_recepobra']     = FECHA_RECEPOBRA;
         item['estado_pedido']       = ESTADO_PEDIDO;
         item['estado_item']         = ESTADO_ITEM;
         item['numero_parte']        = NUMERO_PARTE;
@@ -149,6 +136,9 @@ detalles = () =>{
         item['transporte']          = TRANSPORTE;
         item['observaciones']       = OBSERVACIONES;
         item['cantidad_orden']      = CANTIDAD_ORDEN;
+        item['despacho']            = DESPACHO;
+        item['item_orden']          = ITEM_ORDEN;
+        item['autoriza_orden']      = AUTORIZA_ORDEN;
         
         DATA.push(item);
     })
@@ -163,15 +153,3 @@ function s2ab(s) {
     for (var i=0; i<s.length; i++) view[i] = s.charCodeAt(i) & 0xFF;
     return buf;
 }
-
-var tableToExcel = (function() {
-    var uri = 'data:application/vnd.ms-excel;base64,'
-      , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--><meta http-equiv="content-type" content="application/vnd.ms-excel; charset=UTF-8"></head><body><table>{table}</table></body></html>'
-      , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
-      , format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
-    return function(table, name) {
-      if (!table.nodeType) table = document.getElementById(table)
-      var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
-      window.location.href = uri + base64(format(template, ctx))
-    }
-})()

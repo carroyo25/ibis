@@ -220,7 +220,7 @@
                             <div class="stock"><a href="#" title="Atencion x Stock">20%<p>Stock</p></a></div>
                             <div class="item_orden"><a href="#" title="con OC/OS">25%<p>OC/OS</p></a></div>
                             <div class="item_parcial"><a href="#" title="Enviado Proveedor">30%<p>Enviado</p></a></div>
-                            <div class="item_ingreso_parcial" title="Atencion Parcial"><a href="#">40%<p>At.Parcial</p></a></div>
+                            <div class="item_ingreso_parcial" title="Atencion Parcial"><a href="#">40%<p>Ing.Parcial</p></a></div>
                             <div class="item_ingreso_total" title="Atención Total"><a href="#">50%<p>At.Total</p></a></div>
                             <div class="item_registro_salida" title="Atencion cx compras locales"><a href="#">60%<p>Com.Local</p></a></div>
                             <div class="item_registro_gerencia" title="Pedido Gerencia"><a href="#">70%<p>P.Gerencia</p></a></div>
@@ -269,15 +269,8 @@
                     <th width="50px">Días</br>Entrega</th>
                     <th>Días</br>Atrazo</th>
                     <th>Semaforo</th>
-                    <th style="background:#3E5555; color:#000">Nota</br>Ingreso</th>
-                    <th style="background:#3E5555; color:#000" width="100px">Guia</br>Ingreso</th>
-                    <th style="background:#3E5555; color:#000">Fecha</br>Ingreso</th>
-                    <th style="background:#25AFF3; color:#000">Nota</br>Salida</th>
-                    <th style="background:#25AFF3; color:#000">Guia</br>Remision</th>
-                    <th style="background:#25AFF3; color:#000">Fecha Guia</br>Remision</th>
+                    <th style="background:#25AFF3; color:#000">Cantidad</br>Enviada</th>
                     <th style="background:#DA500B; color:#000">Cantidad</br>Recibida</br>Obra</th>
-                    <th style="background:#DA500B; color:#000">Nota</br>Ingreso</br>Obra</th>
-                    <th style="background:#DA500B; color:#000">Fecha</br>Recep</br>Obra</th>
                     <th>Estado</br>Pedido</th>
                     <th>Estado</br>Item</th>
                     <th>N°</br>Parte</th>
@@ -288,7 +281,7 @@
                 </tr>
             </thead>
             <tbody>
-                <?php //echo $this->listaCargoPlan?>
+                
             </tbody>
         </table>
     </div>
