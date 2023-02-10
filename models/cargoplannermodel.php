@@ -148,12 +148,12 @@
                                 $estadofila = "anulado";
                                 $estado_item = "anulado";
                                 $estado_pedido = "anulado";
-                            }else if ($rs['estadoItem'] == 49) {
+                            }else if ($rs['estadoItem'] == 49 || $rs['estadoItem'] == 53) {
                                 $porcentaje = "10%";
                                 $estadofila = "pedidoCreado";
                                 $estado_item = "creado";
                                 $estado_pedido = "creado";   
-                            }else if ($rs['estadoItem'] == 60) {
+                            }else if ($rs['estadoItem'] == 54 ) {
                                 $porcentaje = "15%";
                                 $estadofila = "item_aprobado";
                                 $estado_item = "aprobado";
@@ -163,7 +163,7 @@
                                 $estadofila = "item_orden";
                                 $estado_item = "atendido";
                                 $estado_pedido = "atendido";
-                            }else if ( $rs['cantidad_orden'] == $rs['ingreso']  && !$rs['despachos']) {
+                            }else if ( $rs['cantidad_orden'] == $rs['ingreso']  && !$rs['despachos'] && $rs['cantidad_orden']) {
                                 $porcentaje = "50%";
                                 $estadofila = "item_ingreso_total";
                                 $estado_item = "aprobado";
@@ -176,7 +176,7 @@
                             }else if ( $rs['ingreso_obra'] != $rs['cantidad_orden'] ) {
                                 $porcentaje = "85%";
                                 $estadofila = "item_parcial";
-                            }else if ( $rs['ingreso_obra'] == $rs['cantidad_orden'] ) {
+                            }else if ( $rs['ingreso_obra'] == $rs['cantidad_orden'] &&  $rs['ingreso_obra']) {
                                 $porcentaje = "100%";
                                 $estadofila = "item_obra";
                             }
