@@ -575,7 +575,7 @@
 
                 $mes  = date("m");
 
-                $guia   = $parametros['guiaSearch'] == "" ? "%" : "%".$parametros['guiaSearch']."%";
+                $orden   = $parametros['ordenSearch'] == "" ? "%" : "%".$parametros['ordenSearch']."%";
                 $costos = $parametros['costosSearch'] == -1 ? "%" : "%".$parametros['costosSearch']."%";
                 $mes    = $parametros['mesSearch'] == -1 ? $mes :  $parametros['mesSearch'];
                 $anio   = $parametros['anioSearch'];
@@ -622,10 +622,11 @@
                                                         AND tb_costusu.nflgactivo = 1
                                                         AND alm_recepcab.nEstadoDoc = 60
                                                         AND alm_recepcab.ncodpry LIKE :costos 
-                                                        AND alm_recepcab.cnumguia LIKE :guia 
-                                                        AND YEAR ( alm_recepcab.ffecdoc ) = :anio");
+                                                        AND alm_recepcab.idref_abas LIKE :orden 
+                                                        AND YEAR ( alm_recepcab.ffecdoc ) = :anio
+                                                    ORDER BY lg_ordencab.id_regmov DESC");
                 $sql->execute(["usr"=>$_SESSION['iduser'],
-                                "guia"=>$guia,
+                                "orden"=>$orden,
                                 "costos"=>$costos,
                                 "anio"=>$anio]);
 

@@ -271,8 +271,8 @@
         <form action="#" id="formConsulta">
             <div class="variasConsultas">
                     <div>
-                        <label for="tipo">Guia N°. </label>
-                        <input type="text" id="guiaSearch" name="guiaSearch">
+                        <label for="tipo">N°. Orden</label>
+                        <input type="text" id="ordenSearch" name="ordenSearch">
                     </div>
                     <div>
                         <label for="costosSearch">Centro de Costos: </label>

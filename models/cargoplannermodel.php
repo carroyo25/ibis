@@ -408,8 +408,8 @@
                 $objPHPExcel->getActiveSheet()->setCellValue('H2','Año Pedido'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('I2','N° Pedido'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('J2','Creación Pedido'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('K2','Aprobación Pedido'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('L2','Cantidad Pedido'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('K2','Aprobación del Pedido'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('L2','Cantidad Pedida'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('M2','Codigo del Bien/Servicio'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('N2','Unidad Medida'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('O2','Descripcion del Bien/Servicio'); // esto cambia
