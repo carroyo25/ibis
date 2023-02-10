@@ -43,11 +43,11 @@
                                                     tb_unimed.cabrevia AS unidad,
                                                     lg_ordencab.cper AS anio_orden,
                                                     lg_ordencab.ntipmov,
-                                                    lg_ordencab.nplazo AS plazo,
+                                                    FORMAT(lg_ordencab.nplazo,0) AS plazo,
                                                     DATE_FORMAT( lg_ordencab.ffechadoc, '%d/%m/%Y' ) AS fecha_orden,
                                                     DATE_FORMAT( lg_ordencab.ffechaent, '%d/%m/%Y' ) AS fecha_entrega,
                                                     DATE_FORMAT( lg_ordencab.fechafin, '%d/%m/%Y' ) AS fecha_autorizacion_orden,
-                                                    cm_entidad.crazonsoc AS proveedor,
+                                                    UPPER(cm_entidad.crazonsoc) AS proveedor,
                                                     lg_ordendet.ncanti AS cantidad_orden,
                                                     ( SELECT SUM( alm_recepdet.ncantidad ) FROM alm_recepdet WHERE alm_recepdet.niddetaOrd = lg_ordendet.nitemord ) AS ingreso,
                                                     ( SELECT SUM( alm_despachodet.ndespacho ) FROM alm_despachodet WHERE alm_despachodet.niddetaPed = lg_ordendet.niddeta ) AS despachos,
@@ -66,7 +66,7 @@
                                                     LEFT JOIN tb_area ON tb_pedidodet.idarea = tb_area.ncodarea
                                                     LEFT JOIN tb_partidas ON tb_pedidocab.idpartida = tb_partidas.idreg
                                                     INNER JOIN tb_unimed ON tb_pedidodet.unid = tb_unimed.ncodmed
-                                                    LEFT JOIN lg_ordencab ON lg_ordendet.id_regmov = lg_ordencab.id_regmov
+                                                    LEFT JOIN lg_ordencab ON lg_ordendet.id_orden = lg_ordencab.id_regmov
                                                     LEFT JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
                                                     LEFT JOIN tb_user ON lg_ordencab.id_cuser = tb_user.iduser
                                                     LEFT JOIN tb_parametros AS transporte ON lg_ordencab.ctiptransp = transporte.nidreg 
@@ -148,37 +148,46 @@
                                 $estadofila = "anulado";
                                 $estado_item = "anulado";
                                 $estado_pedido = "anulado";
-                            }else if ($rs['estadoItem'] == 49 || $rs['estadoItem'] == 53) {
-                                $porcentaje = "10%";
-                                $estadofila = "pedidoCreado";
-                                $estado_item = "creado";
-                                $estado_pedido = "creado";   
-                            }else if ($rs['estadoItem'] == 54 ) {
+                            }else if (!$rs['orden']) {
                                 $porcentaje = "15%";
                                 $estadofila = "item_aprobado";
                                 $estado_item = "aprobado";
                                 $estado_pedido = "aprobado";   
-                            }else if ( $rs['cantidad_orden'] > $rs['ingreso'] ) {
-                                $porcentaje = "40%";
+                            }else if ( $rs['orden'] && !$rs['proveedor']) {
+                                $porcentaje = "25%";
                                 $estadofila = "item_orden";
+                                $estado_item = "aprobado";
+                                $estado_pedido = "aprobado";   
+                            }else if ( $rs['proveedor'] && !$rs['ingreso'] ) {
+                                $porcentaje = "30%";
+                                $estadofila = "item_enviado";
                                 $estado_item = "atendido";
                                 $estado_pedido = "atendido";
-                            }else if ( $rs['cantidad_orden'] == $rs['ingreso']  && !$rs['despachos'] && $rs['cantidad_orden']) {
+                            }else  if( $rs['ingreso'] && $rs['ingreso'] < $rs['cantidad_orden']) {
+                                $porcentaje = "40%";
+                                $estadofila = "item_ingreso_parcial";
+                                $estado_item = "atendido";
+                                $estado_pedido = "atendido";
+                            }else  if( !$rs['despachos'] && $rs['ingreso'] && $rs['ingreso'] == $rs['cantidad_orden'] ) {
                                 $porcentaje = "50%";
                                 $estadofila = "item_ingreso_total";
-                                $estado_item = "aprobado";
-                                $estado_pedido = "aprobado";
-                            }else if ( $rs['despachos'] && !$rs['ingreso_obra']  ) {
+                                $estado_item = "atendido";
+                                $estado_pedido = "atendido";
+                            }else if ( $rs['despachos'] && !$rs['ingreso_obra'] ) {
                                 $porcentaje = "75%";
                                 $estadofila = "item_transito";
-                                $estado_item = "aprobado";
-                                $estado_pedido = "aprobado";
-                            }else if ( $rs['ingreso_obra'] != $rs['cantidad_orden'] ) {
+                                $estado_item = "atendido";
+                                $estado_pedido = "atendido";
+                            }else if ( $rs['ingreso_obra'] && $rs['ingreso_obra'] < $rs['cantidad_orden']) {
                                 $porcentaje = "85%";
-                                $estadofila = "item_parcial";
-                            }else if ( $rs['ingreso_obra'] == $rs['cantidad_orden'] &&  $rs['ingreso_obra']) {
+                                $estadofila = "item_ingreso_parcial";
+                                $estado_item = "atendido";
+                                $estado_pedido = "atendido";
+                            }else if ( $rs['ingreso_obra'] && $rs['ingreso_obra'] == $rs['cantidad_orden']) {
                                 $porcentaje = "100%";
-                                $estadofila = "item_obra";
+                                $estadofila = "entregado";
+                                $estado_item = "atendido";
+                                $estado_pedido = "atendido";
                             }
     
                             $salida.='<tr class="pointer" 

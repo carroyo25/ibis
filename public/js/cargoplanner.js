@@ -35,13 +35,13 @@ $(function() {
         return false;
     });
 
-    /*$("#cargoPlanDescrip tbody").on('click', function(e) {
+    $("#cargoPlanDescrip tbody").on('click', function(e) {
         e.preventDefault();
 
         $("#vistadocumento").fadeIn();
         
         return false;
-    });*/
+    });
 
     $("#closeDocument").click(function (e) { 
         e.preventDefault();

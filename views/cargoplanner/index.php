@@ -97,30 +97,18 @@
                         </div>
                     </section>
                     <section class="seccion3">
-                        <div>
-                            <label for="orden">N° Orden:</label>
-                            <input type="text" name="nroorden" id="nroorden" class="drch pr10" readonly>
-                        </div>
-                        <div>
-                            <label for="emision_orden">Fecha</br>Emisión</label>
-                            <input type="date" name="emision_orden" id="emision_orden" class="centro unstyled" readonly>
-                        </div>
-                        <div>
-                            <label for="aprobacion_logistica">Fec. Aprob.</br>Logistica</label>
-                            <input type="date" name="aprobacion_logistica" id="aprobacion_logistica" class="centro unstyled" readonly>
-                        </div>
-                        <div>
-                            <label for="aprobacion_operaciones">Fec. Aprob.</br>Operaciones</label>
-                            <input type="date" name="aprobacion_operaciones" id="aprobacion_operaciones" class="centro unstyled" readonly>
-                        </div>
-                        <div>
-                            <label for="aprobacion_finanzas">Fec. Aprob.</br>Finanzas</label>
-                            <input type="date" name="aprobacion_finanzas" id="aprobacion_finanzas" class="centro unstyled" readonly>
-                        </div>
-                        <div>
-                            <div></div>
-                            <a href="#" id="pdforden" class="callpreview"><i class="far fa-file-pdf"></i></a>
-                        </div>
+                        <p>Ingresos</p>
+                        <table id="tabla_despachos">
+                            <thead>
+                                <th>Nro. Ingreso</th>
+                                <th>Nro. Guia Proveedor</th>
+                                <th>Fecha Recepcion</th>
+                                <th>...</th>
+                            </thead>
+                        </table>
+                        <tbody>
+                            
+                        </tbody>
                     </section>
                     <section class="seccion4">
                         <div>
