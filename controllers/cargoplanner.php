@@ -17,5 +17,9 @@
         function export() {
             echo json_encode($this->model->exportExcel($_POST['registros']));
         }
+
+        function resumen() {
+            echo json_encode($this->model->consultaResumen($_POST['orden']));
+        }
     }
 ?>

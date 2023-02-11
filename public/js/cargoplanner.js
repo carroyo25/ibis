@@ -39,6 +39,31 @@ $(function() {
         e.preventDefault();
 
         $("#vistadocumento").fadeIn();
+
+        let tabla = $("#cargoPlanDescrip tbody >tr")
+
+        $("#codigo").val(tabla.find('td').eq(12).text());
+        $("#producto").val(tabla.find('td').eq(14).text());
+        $("#unidad").val(tabla.find('td').eq(13).text());
+        $("#cantidad").val(tabla.find('td').eq(11).text());
+        $("#estado").val(tabla.find('td').eq(1).text());
+        $("#nropedido").val(tabla.find('td').eq(8).text());
+        $("#tipo_pedido").val(tabla.find('td').eq(6).text());
+        $("#emision_pedido").val(tabla.find('td').eq(9).text());
+        $("#aprobacion_pedido").val(tabla.find('td').eq(10).text());
+        $("#aprobado_por").val(tabla.data("aprueba"));
+
+        $.post(RUTA+"cargoplanner/resumen", {orden:tabla.data("orden")},
+            function (data, textStatus, jqXHR) {
+                $("#tablaOrdenes tbody").empty().append(data.orden);
+                $("#tablaIngresos tbody").empty().append(data.ingresos);
+                $("#tablaDespachos tbody").empty().append(data.despachos);
+            },
+            "json"
+        );
+
+        
+        $("#aprobado_por").val();
         
         return false;
     });

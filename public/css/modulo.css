@@ -1204,23 +1204,20 @@
   grid-template-columns: 15% 55% 8% 8% 12%;
 }
 .ventanaResumen .seccion2 {
-  -ms-grid-columns: 1fr 5% 1fr 1fr 1.5fr 1fr;
-  grid-template-columns: 1fr 5% 1fr 1fr 1.5fr 1fr;
+  -ms-grid-columns: 1fr 10% 1fr 1fr 1.5fr 1fr;
+  grid-template-columns: 1fr 10% 1fr 1fr 1.5fr 1fr;
 }
-.ventanaResumen .seccion3 {
-  -ms-grid-columns: (1fr)[6];
-  grid-template-columns: repeat(6, 1fr);
+.ventanaResumen .seccion3 table, .ventanaResumen .seccion4 table, .ventanaResumen .seccion5 table {
+  border: 1px dotted #c2c2c2;
+  font-size: 9.9pt;
+  border-collapse: collapse;
 }
-.ventanaResumen .seccion3 a {
-  margin-left: 30px;
+.ventanaResumen .seccion3 table thead, .ventanaResumen .seccion4 table thead, .ventanaResumen .seccion5 table thead {
+  background: #3180BE;
+  color: #fff;
 }
-.ventanaResumen .seccion4 {
-  -ms-grid-columns: (1fr)[6];
-  grid-template-columns: repeat(6, 1fr);
-}
-.ventanaResumen .seccion5 {
-  -ms-grid-columns: (1fr)[6];
-  grid-template-columns: repeat(6, 1fr);
+.ventanaResumen .seccion3 table tr, .ventanaResumen .seccion3 table td, .ventanaResumen .seccion4 table tr, .ventanaResumen .seccion4 table td, .ventanaResumen .seccion5 table tr, .ventanaResumen .seccion5 table td {
+  border: 1px solid #c2c2c2;
 }
 .ventanaResumen .porcentaje {
   background: rgb(33, 167, 227);

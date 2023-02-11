@@ -936,23 +936,24 @@ $anulado:#c2c2c2;
     }
 
     .seccion2{
-        grid-template-columns: 1fr 5% 1fr 1fr 1.5fr 1fr;
+        grid-template-columns: 1fr 10% 1fr 1fr 1.5fr 1fr;
     }
 
-    .seccion3{
-        grid-template-columns: repeat(6,1fr);
+    .seccion3, .seccion4, .seccion5{
+        table {
+            border: 1px dotted #c2c2c2;
+            font-size: 9.9pt;
+            border-collapse: collapse;
 
-        a{
-            margin-left: 30px;
+            thead {
+                background: #3180BE;
+                color:#fff;
+            }
+
+            tr,td {
+                border: 1px solid #c2c2c2;
+            }
         }
-    }
-
-    .seccion4{
-        grid-template-columns: repeat(6,1fr);
-    }
-
-    .seccion5{
-        grid-template-columns: repeat(6,1fr);
     }
 
     .porcentaje{

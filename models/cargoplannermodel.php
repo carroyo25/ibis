@@ -56,7 +56,8 @@
                                                     UPPER( tb_pedidocab.concepto ) AS concepto,
                                                     DATEDIFF( NOW(), lg_ordencab.ffechaent ) AS dias_atraso,
                                                     transporte.cdescripcion AS transporte,
-                                                    transporte.nidreg 
+                                                    transporte.nidreg,
+                                                    user_aprueba.cnombres 
                                                 FROM
                                                     tb_pedidodet
                                                     INNER JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
@@ -69,7 +70,8 @@
                                                     LEFT JOIN lg_ordencab ON lg_ordendet.id_orden = lg_ordencab.id_regmov
                                                     LEFT JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
                                                     LEFT JOIN tb_user ON lg_ordencab.id_cuser = tb_user.iduser
-                                                    LEFT JOIN tb_parametros AS transporte ON lg_ordencab.ctiptransp = transporte.nidreg 
+                                                    LEFT JOIN tb_parametros AS transporte ON lg_ordencab.ctiptransp = transporte.nidreg
+                                                    INNER JOIN tb_user AS user_aprueba ON tb_pedidocab.aprueba = user_aprueba.iduser  
                                                 WHERE
                                                     tb_pedidodet.nflgActivo 
                                                     AND ISNULL( lg_ordendet.nflgactivo ) 
@@ -191,12 +193,12 @@
                             }
     
                             $salida.='<tr class="pointer" 
-                                        data-itempedido="" 
-                                        data-pedido="" 
-                                        data-prod=""
-                                        data-orden=""
+                                        data-itempedido="'.$rs['iditem'].'" 
+                                        data-pedido="'.$rs['idpedido'].'" 
+                                        data-orden="'.$rs['orden'].'"
                                         data-estado="'.$rs['estadoItem'].'"
-                                        data-producto="">
+                                        data-producto="'.$rs['idprod'].'"
+                                        data-aprueba="'.$rs['cnombres'].'">
                                         <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro '.$estadofila.'">'.$porcentaje.'</td>
                                         <td class="textoDerecha pr15px">'.$rs['ccodproy'].'</td>
@@ -587,6 +589,125 @@
                 return array("documento"=>'public/documentos/reportes/cargoplan.xlsx');
 
                 exit();
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        public function consultaResumen($orden) {
+            return array("orden"=>$this->ordenes($orden),
+                        "ingresos"=>$this->ingresos($orden),
+                        "despachos"=>$this->despachos($orden));
+        }
+
+        private function ordenes($orden) {
+            try {
+                $salida = "";
+                $sql = $this->db->connect()->prepare("SELECT
+                                                            lg_ordencab.id_regmov,
+                                                            DATE_FORMAT( lg_ordencab.ffechadoc, '%d/%m/%Y' ) AS ffechadoc,
+                                                            tb_proyectos.ccodproy,
+                                                            cm_entidad.crazonsoc 
+                                                        FROM
+                                                            lg_ordencab
+                                                            INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
+                                                            INNER JOIN tb_proyectos ON lg_ordencab.ncodpry = tb_proyectos.nidreg 
+                                                        WHERE
+                                                            lg_ordencab.id_regmov = :orden");
+                $sql->execute(["orden"=>$orden]);
+                $rowCount = $sql->rowCount();
+                
+                if($rowCount > 0) {
+                    while($rs = $sql->fetch()){
+                        $salida .= '<tr>
+                                        <td class="textoCentro">'.$rs['id_regmov'].'</td>
+                                        <td class="textoCentro">'.$rs['ffechadoc'].'</td>
+                                        <td class="pl20px">'.$rs['crazonsoc'].'</td>
+                                        <td class="pl20px">'.$rs['ccodproy'].'</td>
+                                        <td class="textoCentro"><a href="'.$rs['id_regmov'].'"><i class="far fa-file-pdf"></i></a></td>
+                                    </tr>';
+                    }
+                }
+
+                return $salida;
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function ingresos($orden) {
+            try {
+                $salida = "";
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        alm_recepcab.nnronota,
+                                                        DATE_FORMAT(  alm_recepcab.ffecdoc, '%d/%m/%Y' ) AS ffecdoc,
+                                                        alm_recepcab.cnumguia,
+                                                        alm_recepcab.idref_abas,
+                                                        alm_recepcab.id_regalm 
+                                                    FROM
+                                                        alm_recepcab 
+                                                    WHERE
+                                                        alm_recepcab.idref_abas =:orden");
+                $sql->execute(["orden"=>$orden]);
+                $rowCount = $sql->rowCount();
+                
+                if($rowCount > 0) {
+                    while($rs = $sql->fetch()){
+                        $salida .= '<tr>
+                                        <td class="textoCentro">'.$rs['nnronota'].'</td>
+                                        <td class="textoCentro">'.$rs['ffecdoc'].'</td>
+                                        <td class="textoCentro">'.$rs['cnumguia'].'</td>
+                                        <td class="textoCentro"><a href="'.$rs['id_regalm'].'"><i class="far fa-file-pdf"></i></a></td>
+                                    </tr>';
+                    }
+                }
+
+                return $salida;
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function despachos($orden) {
+            try {
+                $salida = "";
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        alm_despachodet.niddeta,
+                                                        alm_despachodet.id_regalm,
+                                                        alm_despachodet.nropedido,
+                                                        DATE_FORMAT(alm_despachocab.ffecdoc,'%d/%m/%Y') AS ffecdoc,
+                                                        alm_despachocab.cnumguia,
+                                                        alm_despachocab.nnronota,
+                                                        alm_despachocab.nReferido 
+                                                    FROM
+                                                        alm_despachodet
+                                                        INNER JOIN alm_despachocab ON alm_despachodet.id_regalm = alm_despachocab.id_regalm 
+                                                    WHERE
+                                                        alm_despachodet.nropedido = :orden 
+                                                    GROUP BY
+                                                        alm_despachocab.cnumguia");
+                $sql->execute(["orden"=>$orden]);
+                $rowCount = $sql->rowCount();
+                
+                if($rowCount > 0) {
+                    while($rs = $sql->fetch()){
+                        $salida .= '<tr>
+                                        <td class="textoCentro">'.$rs['nnronota'].'</td>
+                                        <td class="textoCentro">'.$rs['ffecdoc'].'</td>
+                                        <td class="textoCentro">'.$rs['cnumguia'].'</td>
+                                        <td class="textoCentro">'.$rs['nReferido'].'</td>
+                                        <td class="textoCentro"><a href="'.$rs['id_regalm'].'"><i class="far fa-file-pdf"></i></a></td>
+                                    </tr>';
+                    }
+                }
+
+                return $salida;
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();

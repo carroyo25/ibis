@@ -81,11 +81,11 @@
                         </div>
                         <div>
                             <label for="emision_pedido">Fecha</br>Emisión</label>
-                            <input type="date" name="emision_pedido" id="emision_pedido" class="centro unstyled" readonly>
+                            <input type="text" name="emision_pedido" id="emision_pedido" class="centro unstyled" readonly>
                         </div>
                         <div>
                             <label for="aprobacion_pedido">Fecha</br>Aprobación</label>
-                            <input type="date" name="aprobacion_pedido" id="aprobacion_pedido" class="centro unstyled" readonly>
+                            <input type="text" name="aprobacion_pedido" id="aprobacion_pedido" class="centro unstyled" readonly>
                         </div>
                         <div>
                             <label for="aprobado_por">Aprobado por:</label>
@@ -97,64 +97,48 @@
                         </div>
                     </section>
                     <section class="seccion3">
-                        <p>Ingresos</p>
-                        <table id="tabla_despachos">
+                        <table id="tablaOrdenes">
+                            <caption>Ordenes</caption>
                             <thead>
-                                <th>Nro. Ingreso</th>
-                                <th>Nro. Guia Proveedor</th>
-                                <th>Fecha Recepcion</th>
+                                <th>Nro. Orden</th>
+                                <th>Fecha</th>
+                                <th>Proveedor</th>
+                                <th>CC</th>
                                 <th>...</th>
                             </thead>
+                            <tbody>
+                                 
+                            </tbody>
                         </table>
-                        <tbody>
-                            
-                        </tbody>
                     </section>
                     <section class="seccion4">
-                        <div>
-                            <label for="ingreso">N° Ingreso:</label>
-                            <input type="text" name="ingreso" id="ingreso" class="drch pr5" readonly>
-                        </div>
-                        <div>
-                            <label for="fecha_ingreso">Fecha Ingreso</label>
-                            <input type="date" name="fecha_ingreso" id="fecha_ingreso" class="centro unstyled" readonly>
-                        </div>
-                        <div>
-                            <label for="ingresada">Cantidad</br>Ingreso</label>
-                            <input type="text" name="ingresada" id="ingresada" class="textoDerecha pr10px" readonly>
-                        </div>
-                        <div>
-                            <label for="enviada">Porcentaje</br>Recibido</label>
-                            <div class="porcentaje textoCentro" id="ingresado_porcentaje"><span id="porcentaje_ingresado">0%</span></div>
-                        </div>
-                        <div></div>
-                        <div>
-                            <div></div>
-                            <a href="#" id="pdfingreso" class="callpreview"><i class="far fa-file-pdf"></i></a>
-                        </div>
+                        <table id="tablaIngresos">
+                            <caption>Ingresos</caption>
+                            <thead>
+                                <th>Nro. Ingreso</th>
+                                <th>Fecha Ingreso</th>
+                                <th>Guia Proveedor</th>
+                                <th>...</th>
+                            </thead>
+                            <tbody>
+                                 
+                            </tbody>
+                        </table>
                     </section>
                     <section class="seccion5">
-                        <div>
-                            <label for="despacho">N°. Despacho:</label>
-                            <input type="text" name="despacho" id="despacho" readonly>
-                        </div>
-                        <div>
-                            <label for="fecha_salida">Fecha Salida</label>
-                            <input type="date" name="fecha_salida" id="fecha_salida" class="centro unstyled" readonly>
-                        </div>
-                        <div>
-                            <label for="enviada">Cantidad</br>Despachada</label>
-                            <input type="text" name="enviada" id="enviada" class="textoDerecha pr10px" readonly>
-                        </div>
-                        <div>
-                            <label for="enviada">Porcentaje</br>Enviado</label>
-                            <div class="porcentaje textoCentro" id="enviado_porcentaje"><span id="porcentaje_despacho">0%</span></div>
-                        </div>
-                        <div></div>
-                        <div>
-                            <div></div>
-                            <a href="#" id="pdfsalida" class="callpreview"><i class="far fa-file-pdf"></i></a>
-                        </div>
+                        <table id="tablaDespachos">
+                            <caption>Despachos</caption>
+                            <thead>
+                                <th>Nro. Salida</th>
+                                <th>Fecha Salida</th>
+                                <th>Nro. Guia</th>
+                                <th>Nro. Referido</th>
+                                <th>...</th>
+                            </thead>
+                            <tbody>
+                                 
+                            </tbody>
+                        </table>
                     </section>
                 </div>
             </form>
