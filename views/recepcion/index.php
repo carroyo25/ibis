@@ -33,9 +33,6 @@
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
                         <div>
-                            <!-- <button type="button" id="saveOrden" title="Grabar Nota" class="boton3">
-                                <p><i class="far fa-save"></i> Grabar </p> 
-                            </button> -->
                             <button type="button" id="importData" title="Importar Orden" class="boton3">
                                 <i class="fab fa-wpexplorer"></i> Importar Orden
                             </button>
@@ -158,10 +155,7 @@
                         <span>Detalles</span>
                         <div>
                             <button type="button" id="atachDocs" title="Documentos Adjuntos" class="cerrarLista boton3">
-                                <i class="fas fa-upload"></i> Documentos Adjuntos
-                            </button>
-                            <button type="button" id="sendEntOrden" title="Enviar Proveedor" class="cerrarLista boton3">
-                                <i class="far fa-paper-plane"></i> Cerrar Nota
+                                <i class="fas fa-upload"></i> Ver Adjuntos
                             </button>
                         </div>
                     </div>

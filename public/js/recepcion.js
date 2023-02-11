@@ -66,13 +66,15 @@ $(function(){
                     .append(data.adjuntos);
 
                 $("#items").val($("#tablaDetalles tbody tr").length);
+
+                accion = "u";
+                grabado = true;
+                $("#proceso").fadeIn();
+
+                console.log(accion);
             },
             "json"
         );
-
-        accion = "u";
-        grabado = true;
-        $("#proceso").fadeIn();
 
         return false;
     });
@@ -370,6 +372,8 @@ $(function(){
                         },
                         "json"
                     );
+            }else{
+                console.log('Aca vamos a actualizar');
             }
 
             
@@ -688,7 +692,7 @@ $(function(){
         });
 
         try {
-            if(accion != "n") throw "Documento registrado";
+            //if(accion != "n") throw "Documento registrado";
             if (result['codigo_almacen'] == '') throw "Elija el Almacen";
             if (result['codigo_aprueba'] == '') throw "Elija la persona que aprueba";
             if (result['guia'] == '') throw "Escriba el número de guia";
@@ -707,6 +711,8 @@ $(function(){
                         },
                         "json"
                     );
+            }else{
+                console.log("Aca hay que ver para modificar");
             }
 
         } catch (error) {
@@ -715,8 +721,6 @@ $(function(){
         
         return false;
     });
-
-    
 })
 
 detalles = (flag) =>{
