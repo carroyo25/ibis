@@ -2,7 +2,7 @@
 	require_once "public/fpdf/mc_table.inc.php";
 
 	class PDF extends PDF_MC_Table{
-        public function __construct($ndoc,$condicion,$dia,$mes,$anio,$proyecto,$origen,$movimiento,$orden,$nped,$nguia,$nautoriza,$cautoriza,$tipo)
+        public function __construct($ndoc,$condicion,$dia,$mes,$anio,$proyecto,$origen,$movimiento,$orden,$nped,$nguia,$nautoriza,$cautoriza,$tipo,$autoriza)
         {
             parent::__construct();
             $this->ndoc         = $ndoc;
@@ -19,6 +19,7 @@
             $this->nautoriza    = $nautoriza;
             $this->cautoriza    = $cautoriza;
 			$this->tipo			= $tipo;
+			$this->autoriza 	= $autoriza;
         }
 	// Cabecera de página
 		function Header(){
@@ -85,11 +86,17 @@
 		function Footer(){
 		    $this->SetY(-70);
 		    //$this->Ln(20);
-		    $this->Line(20, 225, 65, 225);
+
+			$firma = './public/img/'.$this->autoriza.'.jpg';
+
+			if ( file_exists($firma) ){
+				$this->Image($firma,30,211,25);
+			}
+
+			$this->Line(20, 225, 65, 225);
 		    $this->Line(80, 225, 130, 225);
 		    $this->Line(150, 225, 190, 225);
-
-			$this->Image('public/img/firma_diego.jpg',30,213,25);
+			
 		    $this->SetFont('Arial','B',8);
 		    $this->Cell(64,4,utf8_decode($this->nautoriza),0,0,"C"); //pasa dato
 		    $this->Cell(64,4,"",0,0,"C"); //pasa dato

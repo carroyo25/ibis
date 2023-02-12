@@ -71,7 +71,6 @@ $(function(){
                 grabado = true;
                 $("#proceso").fadeIn();
 
-                console.log(accion);
             },
             "json"
         );
@@ -331,59 +330,7 @@ $(function(){
  
     });
 
-    $("#saveOrden").click(function (e) { 
-        e.preventDefault();
-        
-        let result = {},
-            solicitada = 0,
-            recibida = 0,
-            cerrarOrden = false;
 
-        $.each($("#formProceso").serializeArray(),function(){
-            result[this.name] = this.value;
-        });
-
-        try {
-            if (result['codigo_almacen'] == '') throw "Elija el Almacen";
-            if (result['codigo_costos'] == '') throw "Elija Centro de Costos";
-            if (result['codigo_aprueba'] == '') throw "Elija la persona que aprueba";
-            if (result['codigo_movimiento'] == '') throw "Elija tipo de movimiento";
-            if (result['guia'] == '') throw "Escriba el número de guia";
-
-            $("#tablaDetalles tbody  > tr").each(function () {
-                solicitada += parseFloat($(this).find('td').eq(5).text() || 0,10);
-                recibida += parseFloat($(this).find('td').eq(6).children().val() || 0,10)
-            })
-
-            cerrarOrden = solicitada == recibida ? 62 : 60;
-
-            if (accion == "n") {
-                $.post(RUTA+"recepcion/nuevoIngreso", {cabecera:result,
-                    detalles:JSON.stringify(detalles()),
-                    series:JSON.stringify(series()),
-                    cerrar:cerrarOrden},
-                        function (data, textStatus, jqXHR) {
-                            $("#codigo_ingreso").val(data.indice);
-                            $("#proceso").fadeOut();
-                            mostrarMensaje("Nota Grabada","mensaje_correcto");
-                            $("#tablaPrincipal tbody")
-                                .empty()
-                                .append(data.listado);
-                        },
-                        "json"
-                    );
-            }else{
-                console.log('Aca vamos a actualizar');
-            }
-
-            
-
-        } catch (error) {
-            mostrarMensaje(error,'mensaje_error');
-        }
-
-        return false;
-    });
 
     $("#closeDocument").click(function (e) { 
         e.preventDefault();
@@ -446,7 +393,7 @@ $(function(){
         e.preventDefault();
 
         if ($(this).data("accion") == "setSerial") {
-            let filas = parseInt($(this).parent().parent().find("td").eq(6).children().val()),
+            let filas = parseInt($(this).parent().parent().find("td").eq(7).children().val()),
             orden = $(this).parent().parent().data('detorden'),
             producto = $(this).parent().parent().data('idprod'),
             almacen = $("#codigo_almacen").val(),
@@ -628,58 +575,6 @@ $(function(){
         return false;
     });
 
-    $("#saveOrden").click(function (e) { 
-        e.preventDefault();
-        
-        let result = {},
-            solicitada = 0,
-            recibida = 0,
-            cerrarOrden = false;
-
-        $.each($("#formProceso").serializeArray(),function(){
-            result[this.name] = this.value;
-        });
-
-        try {
-            if (result['codigo_almacen'] == '') throw "Elija el Almacen";
-            if (result['codigo_costos'] == '') throw "Elija Centro de Costos";
-            if (result['codigo_aprueba'] == '') throw "Elija la persona que aprueba";
-            if (result['codigo_movimiento'] == '') throw "Elija tipo de movimiento";
-            if (result['guia'] == '') throw "Escriba el número de guia";
-
-            $("#tablaDetalles tbody  > tr").each(function () {
-                solicitada += parseFloat($(this).find('td').eq(5).text() || 0,10);
-                recibida += parseFloat($(this).find('td').eq(6).children().val() || 0,10)
-            })
-
-            cerrarOrden = solicitada == recibida ? 62 : 60;
-
-            if (accion == "n") {
-                $.post(RUTA+"recepcion/nuevoIngreso", {cabecera:result,
-                    detalles:JSON.stringify(detalles()),
-                    series:JSON.stringify(series()),
-                    cerrar:cerrarOrden},
-                        function (data, textStatus, jqXHR) {
-                            $("#codigo_ingreso").val(data.indice);
-                            $("#proceso").fadeOut();
-                            mostrarMensaje("Nota Grabada","mensaje_correcto");
-                            $("#tablaPrincipal tbody")
-                                .empty()
-                                .append(data.listado);
-                        },
-                        "json"
-                    );
-            }
-
-            
-
-        } catch (error) {
-            mostrarMensaje(error,'mensaje_error');
-        }
-
-        return false;
-    });
-
     $("#btnPendientes, #btnTotales").click(function (e) { 
         e.preventDefault();
 
@@ -712,13 +607,52 @@ $(function(){
                         "json"
                     );
             }else{
-                console.log("Aca hay que ver para modificar");
+                $.post(RUTA+"recepcion/modificarRegistro",  {cabecera:result,
+                    detalles:JSON.stringify(detalles(true))},
+                    function (data, textStatus, jqXHR) {
+                        mostrarMensaje("Nota Modifcada","mensaje_correcto");
+                    },
+                    "json"
+                );
             }
 
         } catch (error) {
             mostrarMensaje(error,'mensaje_error');
         }
         
+        return false;
+    });
+
+    //para no poner cantidades mayores en el formulario
+    $("#tablaDetalles tbody").on('blur','input', function (e) {
+        try {
+            let ingreso = parseInt($(this).parent().parent().find("td").eq(7).children().val());
+            let stock = parseInt($(this).parent().parent().find("td").eq(6).text());
+
+            if(ingreso > stock) {
+                mostrarMensaje('La cantidad ingresada, es mayor al stock','mensaje_error')
+                return false;
+            }
+
+        } catch (error) {
+            
+        }
+    });
+
+    $("#atachDocs").click(function (e) { 
+        e.preventDefault();
+
+        $("#vistaAdjuntos").fadeIn();
+
+        return false;
+    });
+
+    $("#closeAtach").click(function(e){
+        e.preventDefault();
+
+        $("#vistaAdjuntos").fadeOut();
+        $(".ventanaAdjuntos iframe").attr("src","");
+
         return false;
     });
 })
@@ -733,6 +667,7 @@ detalles = (flag) =>{
             IDDETORDEN  = $(this).data("detorden"),
             IDDETPED    = $(this).data("iddetped"),
             IDPROD      = $(this).data("idprod"),
+            IDDETING    = $(this).data("iddetnota"),
             PEDIDO      = $("#codigo_pedido").val(),
             ORDEN       = $("#codigo_orden").val(),
             ALMACEN     = $("#codigo_almacen").val(),
@@ -758,6 +693,7 @@ detalles = (flag) =>{
                 item['iddetorden']  = IDDETORDEN;
                 item['iddetped']    = IDDETPED;
                 item['idprod']      = IDPROD;
+                item['iddeting']    = IDDETING;
                 item['pedido']      = ORDEN;
                 item['orden']       = PEDIDO;
                 item['almacen']     = ALMACEN;

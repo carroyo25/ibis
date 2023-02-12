@@ -34,6 +34,10 @@
             echo json_encode($this->model->insertar($_POST['cabecera'],$_POST['detalles'],$_POST['series']));
         }
 
+        function modificarRegistro(){
+            echo json_encode($this->model->modificarRegistro($_POST['cabecera'],$_POST['detalles']));
+        }
+
         function adjuntos(){
             echo $this->model->subirAdjuntos($_POST['nroIngreso'],$_FILES['uploadAtach']);
         }

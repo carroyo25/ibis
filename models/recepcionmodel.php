@@ -347,6 +347,50 @@
             return $this->generarNumero($almacen,$sql);
         }
 
+        public function modificarRegistro($cabecera,$detalles){
+            try {
+                $sql = $this->db->connect()->prepare("UPDATE alm_recepcab 
+                                                        SET cnumguia=:guia,
+                                                            id_userAprob=:aprueba
+                                                        WHERE id_regalm=:idnota");
+                $sql->execute(["guia"=>$cabecera['guia'],
+                                "aprueba"=>$cabecera['codigo_aprueba'],
+                                "idnota"=>$cabecera['codigo_ingreso']]);
+                
+                $this->actualizarItems($detalles);                
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        private function actualizarItems($detalles){
+            try {
+                $datos = json_decode($detalles);
+                $nreg = count($datos);
+
+                for ($i=0; $i < $nreg; $i++) { 
+                        try {
+                            $sql = $this->db->connect()->prepare("UPDATE alm_recepdet SET ncantidad=:cantidad,
+                                                                                    cObserva=:observacion,
+                                                                                    ncodalm1=:almacen
+                                                                        WHERE niddeta=:id");
+                            $sql ->execute(["id"=>$datos[$i]->iddeting,
+                                            "almacen"=>$datos[$i]->almacen,
+                                            "cantidad"=>$datos[$i]->cantrec,
+                                            "observacion"=>$datos[$i]->obser]);
+                    
+                    } catch (PDOException $th) {
+                        echo "Error: ".$th->getMessage();
+                        return false;
+                    }
+                }
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
         private function ordenDetalles($id) {
             try {
                 $salida ="";
@@ -499,7 +543,7 @@
 
             $pdf = new PDF($cabecera['numero'],$condicion,$dia,$mes,$anio,
                             $cabecera['proyecto'],$cabecera['almacen'],$cabecera['tipo'],$cabecera['orden'],
-                            $cabecera['pedido'],$cabecera['guia'],$cabecera['aprueba'],$cargo,"I");
+                            $cabecera['pedido'],$cabecera['guia'],$cabecera['aprueba'],$cargo,"I",$cabecera['codigo_aprueba']);
             
             $pdf->AliasNbPages();
             $pdf->AddPage();

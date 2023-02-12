@@ -227,24 +227,6 @@
             <iframe src=""></iframe>
         </div>
     </div>
-    <div class="modal" id="archivos">
-        <div class="ventanaArchivos">
-            <form action="#" id="fileAtachs" enctype='multipart/form-data'>
-                <input type="file" name="uploadAtach[]" id="uploadAtach" multiple class="oculto">
-                <div class="tituloArchivos">
-                    <h3>Adjuntar Archivos</h3>
-                    <a href="#" id="openArch" title="Adjuntar Archivos"><i class="fas fa-file-medical"></i></a>
-                </div>            
-                <ul class="listaArchivos">
-
-                </ul>
-                <div class="opcionesArchivos">
-                    <button type="button" class="boton3" id="btnConfirmAtach">Aceptar</button>
-                    <button type="button" class="boton3" id="btnCancelAtach">Cancelar</button>
-                </div>
-            </form>
-        </div>
-    </div>
     <div class="modal" id="pregunta">
         <div class="ventanaPregunta">
             <h3>Desea eliminar el registro?</h3>
@@ -252,6 +234,18 @@
                 <button type="button" id="btnAceptarPregunta">Aceptar</button>
                 <button type="button" id="btnCancelarPregunta">Cancelar</button>
             </div>
+        </div>
+    </div>
+    <div class="modal" id="vistaAdjuntos">
+        <div class="ventanaAdjuntos">
+            <div class="tituloAdjuntos">
+                <h3>Adjuntos Orden</h3>
+                <a href="#" id="closeAtach" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
+            </div>
+            <ul id="listaAdjuntos">
+
+            </ul>
+            <iframe src=""></iframe>
         </div>
     </div>
     <div class="cabezaModulo">
