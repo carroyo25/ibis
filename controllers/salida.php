@@ -37,7 +37,7 @@
         }
 
         function preImpreso(){
-            echo json_encode($this->model->imprimirFormato($_POST['cabecera'],$_POST['detalles'],$_POST['proyecto'],$_POST['despacho']));
+            echo json_encode($this->model->imprimirFormato($_POST['cabecera'],$_POST['detalles'],$_POST['proyecto'],$_POST['despacho'],$_POST['operacion']));
         }
 
         function nuevasalida(){
@@ -62,6 +62,10 @@
 
         function filtraDespachos() {
             echo $this->model-> filtrarNotasDespacho($_POST);
+        }
+
+        function modificarSalida() {
+            echo $this->model-> modificar($_POST['cabecera'],$_POST['detalles']);
         }
     }
 ?>

@@ -161,7 +161,7 @@
                 //$this->SetXY(30,230);
                 $this->SetX(30);
                 $this->SetFont('Arial','',9);
-                $this->Cell(90,4,"Atención : ".$this->atencion,0,1);
+                $this->Cell(90,4,utf8_decode("Atención : ").$this->atencion,0,1);
                 $this->SetX(30);
                 $this->Cell(90,4,"Observaciones : ".$this->observaciones,0,1);
                 $this->RoundedRect(13, 250, 187, 30, 1, '1234', 'D');

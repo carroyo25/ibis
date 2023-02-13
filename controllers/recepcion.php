@@ -69,5 +69,9 @@
         function filtraOrden() {
             echo $this->model->filtrarOrdenesID($_POST['id']);
         }
+
+        function verAdjuntos(){
+            echo json_encode($this->model->verAdjuntosOrden($_POST['id']));
+        }
     }
 ?>

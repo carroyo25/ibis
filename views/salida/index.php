@@ -212,6 +212,7 @@
                 <input type="hidden" name="codigo_modalidad" id="codigo_modalidad">
                 <input type="hidden" name="codigo_tipo" id="codigo_tipo">
                 <input type="hidden" name="motivo_traslado" id="motivo_traslado">
+                <input type="hidden" name="id_guia" id="id_guia" value=0>
 
                 <div class="tituloDocumento">
                     <div>
@@ -249,9 +250,10 @@
                                 <input type="text" name="destinatario_direccion" id="destinatario_direccion" value="AV. SAN BORJA NORTE N° 445 - SAN BORJA-LIMA-PERU." readonly>
                             </div>
                             <p><strong>Domicilio de partida</strong></p>
-                            <div class="dos_columnas_interna">
+                            <div class="tres_columnas_interna">
                                 <label for="almacen_origen">Almacen Origen: </label>
-                                <input type="text" name="almacen_origen" id="almacen_origen" class="mostrarLista busqueda" >
+                                <input type="text" name="almacen_origen" id="almacen_origen" class="cerrarLista" >
+                                <button type="button" id="btnAlmacenOrigen" class="btnCallMenu boton3">+</button>
                                 <div class="lista" id="listaOrigen">
                                    <ul>
                                        <?php echo $this->listaAlmacen?>
@@ -261,9 +263,10 @@
                                 <input type="text" name="almacen_origen_direccion" id="almacen_origen_direccion">
                             </div>
                             <p><strong>Domicilio de Llegada</strong></p>
-                            <div class="dos_columnas_interna">
+                            <div class="tres_columnas_interna">
                                 <label for="almacen_destino">Almacen Destino: </label>
-                                <input type="text" name="almacen_destino" id="almacen_destino" class="mostrarLista busqueda">
+                                <input type="text" name="almacen_destino" id="almacen_destino">
+                                <button type="button" class="btnCallMenu boton3">+</button>
                                 <div class="lista" id="listaDestino">
                                    <ul>
                                        <?php echo $this->listaAlmacen?>
@@ -273,48 +276,53 @@
                                 <input type="text" name="almacen_destino_direccion" id="almacen_destino_direccion">
                             </div>
                             <p><strong>Empresa de Transporte</strong></p>
-                            <div class="dos_columnas_interna">
+                            <div class="tres_columnas_interna">
                                 <label for="empresa_transporte_razon">Razón Social</label>
-                                <input type="text" name="empresa_transporte_razon" id="empresa_transporte_razon" class="mostrarListaInterna busqueda" 
-                                    placeholder="Elija opción">
+                                <input type="text" name="empresa_transporte_razon" id="empresa_transporte_razon">
+                                <button type="button" class="btnCallMenu boton3">+</button>
                                 <div class="lista" id="listaEntidad">
                                    <ul>
                                        <?php echo $this->listaEntidad?>
                                    </ul> 
                                 </div>
-                                <label for="ruc_proveedor">R.U.C.</label>
-                                <input type="text" name="ruc_proveedor" id="ruc_proveedor">
                                 <label for="direccion_proveedor">Dirección</label>
                                 <input type="text" name="direccion_proveedor" id="direccion_proveedor">
+                                <span></span>
+                                <label for="ruc_proveedor">R.U.C.</label>
+                                <input type="text" name="ruc_proveedor" id="ruc_proveedor">
                             </div>
                         </div>
                     </div>
                     <div class="columna_derecha">
                         <p><strong>Motivo</strong></p>
-                        <div class="cuatro_columnas_interna">
+                        <div class="tres_columnas_interna">
                             <label for="modalidad_traslado" class="uno">Modalidad Traslado :</label>
-                            <input type="text" name="modalidad_traslado" id="modalidad_traslado" class="dos mostrarListaInterna busqueda" placeholder="Elija opción" readonly>
+                            <input type="text" name="modalidad_traslado" id="modalidad_traslado" class="dos mostrarListaInterna busqueda">
+                            <button type="button" class="btnCallMenu boton3">+</button>
                             <div class="lista rowOne uno" id="listaModalidad">
                                 <ul>
                                     <?php echo $this->listaModalidad?>
                                 </ul> 
                             </div>
                             <label for="tipo_envio">Tipo Envio</label>
-                            <input type="text" name="tipo_envio" id="tipo_envio" class="dos mostrarListaInterna busqueda" placeholder="Elija opción" readonly>
+                            <input type="text" name="tipo_envio" id="tipo_envio" class="dos mostrarListaInterna busqueda" placeholder="Elija opción">
+                            <button type="button" class="btnCallMenu boton3">+</button>
                             <div class="lista uno rowTwo" id="listaEnvio">
                                 <ul>
                                     <?php echo $this->listaEnvio?>
                                 </ul> 
                             </div>
                             <label for="autoriza">Autoriza:</label>
-                            <input type="text" name="autoriza" id="autoriza" class="dos mostrarListaInterna busqueda" placeholder="Elija opción" readonly>
+                            <input type="text" name="autoriza" id="autoriza" class="dos mostrarListaInterna busqueda" placeholder="Elija opción">
+                            <button type="button" class="btnCallMenu boton3">+</button>
                             <div class="lista uno rowThree" id="listaAutoriza">
                                 <ul>
                                     <?php echo $this->listaPersonal?>
                                 </ul> 
                             </div>
                             <label for="destinatario">Destinatario:</label>
-                            <input type="text" name="destinatario" id="destinatario" class="dos mostrarListaInterna busqueda" placeholder="Elija opción" readonly>
+                            <input type="text" name="destinatario" id="destinatario" class="busqueda" placeholder="Elija opción">
+                            <button type="button" class="btnCallMenu boton3">+</button>
                             <div class="lista uno rowFour" id="listaDestinatario">
                                 <ul>
                                     <?php echo $this->listaPersonal?>
@@ -324,16 +332,18 @@
                             <textarea name="observaciones" id="observaciones" placeholder="Observaciones" class="dos"></textarea>
                         </div>
                         <p><strong>Datos del Conductor</strong></p>
-                        <div class="dos_columnas_interna">
+                        <div class="tres_columnas_interna">
                             <label for="nombre_conductor">Nombre :</label>
-                            <input type="text" name="nombre_conductor" id="nombre_conductor">
+                            <input type="text" name="nombre_conductor" id="nombre_conductor" class="cerrarLista">
+                            <span></span>
                             <label for="licencia_conducir">N° Licencia :</label>
-                            <input type="text" name="licencia_conducir" id="licencia_conducir">
+                            <input type="text" name="licencia_conducir" id="licencia_conducir" class="cerrarLista">
                         </div>
                         <p><strong>Datos del Vehiculo</strong></p>
-                        <div class="dos_columnas_interna">
+                        <div class="tres_columnas_interna">
                             <label for="marca">Marca :</label>
                             <input type="text" name="marca" id="marca">
+                            <span></span>
                             <label for="placa">Nro. Placa :</label>
                             <input type="text" name="placa" id="placa">
                         </div>
@@ -372,8 +382,8 @@
         <form action="#" id="formConsulta">
             <div class="variasConsultas">
                     <div>
-                        <label for="tipo">Guia N°. </label>
-                        <input type="text" id="guiaSearch" name="guiaSearch">
+                        <label for="tipo">Nro. Orden</label>
+                        <input type="text" id="ordenSearch" name="ordenSearch">
                     </div>
                     <div>
                         <label for="costosSearch">Centro de Costos: </label>
@@ -409,7 +419,7 @@
     </div>
     <div class="itemsTabla">
         <table id="tablaPrincipal">
-            <thead>
+            <thead class="stickytop">
                 <tr>
                     <th>Num. Nota</th>
                     <th>F.Emisión</th>
@@ -418,7 +428,8 @@
                     <th>Centro de Costos</th>
                     <th>Año</th>
                     <th>Guia</br>Remision</th>
-                    <th>Estado</th>
+                    <th>Orden</th>
+                    <th>Pedido</th>
                 </tr>
             </thead>
             <tbody>

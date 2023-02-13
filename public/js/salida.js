@@ -1,6 +1,7 @@
 $(function() {
     let accion = "",
-        tipoVista = null;
+        tipoVista = null,
+        cc = "";
 
     $("#esperar").fadeOut();
 
@@ -14,10 +15,11 @@ $(function() {
                     numero = $.strPad(data.cabecera[0].id_regalm,6);
                 
                 $("#codigo_salida").val(data.cabecera[0].id_regalm);
+                $("#id_guia").val(data.cabecera[0].id_regalm);
                 $("#codigo_costos").val(data.cabecera[0].ncodpry);
                 $("#codigo_movimiento").val(data.cabecera[0].ncodmov);
                 $("#codigo_aprueba").val(data.cabecera[0].id_userAprob);
-                $("#codigo_almacen").val(data.cabecera[0].ncodalm1);
+                $("#codigo_almacen_origen").val(data.cabecera[0].ncodalm1);
                 $("#codigo_almacen_destino").val(data.cabecera[0].ncodalm2);
                 $("#codigo_estado").val(data.cabecera[0].nEstadoDoc);
                 $("#codigo_entidad").val(data.cabecera[0].id_centi);
@@ -35,7 +37,29 @@ $(function() {
                 $("#movimiento").val(data.cabecera[0].movimiento);
                 $("#almacen_origen_direccion").val(data.cabecera[0].direccion_origen);
                 $("#almacen_destino_direccion").val(data.cabecera[0].direccion_destino);
+
+                //guias
                 
+                $("#id_guia").val(data.guias[0].idreg);
+                $("#numero_guia").val(data.guias[0].cnumguia);
+                $("#fgemision").val(data.guias[0].fguia);
+                $("#ftraslado").val(data.guias[0].ftraslado);
+                $("#almacen_origen").val(data.guias[0].corigen);
+                $("#almacen_origen_direccion").val(data.guias[0].cdirorigen);
+                $("#almacen_destino").val(data.guias[0].cdestino);
+                $("#almacen_destino_direccion").val(data.guias[0].cdirdest);
+                $("#empresa_transporte_razon").val(data.guias[0].centi);
+                $("#direccion_proveedor").val(data.guias[0].centidir);
+                $("#ruc_proveedor").val(data.guias[0].centiruc);
+                $("#modalidad_traslado").val(data.guias[0].ctraslado);
+                $("#tipo_envio").val(data.guias[0].cenvio);
+                $("#autoriza").val(data.guias[0].cautoriza);
+                $("#destinatario").val(data.guias[0].cdestinatario);
+                $("#observaciones").val(data.guias[0].cobserva);
+                $("#nombre_conductor").val(data.guias[0].cnombre);
+                $("#licencia_conducir").val(data.guias[0].clicencia);
+                $("#marca").val(data.guias[0].cmarca);
+                $("#placa").val(data.guias[0].cplaca);
                 
                 $("#estado")
                     .removeClass()
@@ -45,15 +69,15 @@ $(function() {
                     .empty()
                     .append(data.detalles);
 
+                accion = "u";
+                grabado = true;
+            
+                $("#proceso").fadeIn();
+
                 tipoVista = true;
             },
             "json"
         );
-
-        accion = "u";
-        grabado = true;
-
-        $("#proceso").fadeIn();
 
         return false;
     });
@@ -71,6 +95,7 @@ $(function() {
         $("#codigo_movimiento").val(144);
         
         accion = 'n';
+        cc = "";
 
         return false;
     });
@@ -84,12 +109,9 @@ $(function() {
                     .empty()
                     .append(data);
 
-                $("#proceso").fadeOut(function(){
-                    grabado = false;
-                    $("form")[0].reset();
-                    $("form")[1].reset();
-                    $("form")[2].reset();
-                });
+                $("#proceso").fadeOut();
+                $("#codigo_costos").val("");
+               
             },
             "text"
         );
@@ -134,10 +156,6 @@ $(function() {
 
     $(".mostrarLista").focus(function (e) { 
         e.preventDefault();
-
-        if (accion !="n") {
-            return false;
-        }
         
         $(this).next().slideDown();
 
@@ -175,6 +193,7 @@ $(function() {
         id = destino.attr("id");
 
         if(contenedor_padre == "listaMovimiento"){
+            
             $("#codigo_movimiento").val(codigo);
         }else if(contenedor_padre == "listaAprueba"){
             $("#codigo_aprueba").val(codigo);
@@ -189,17 +208,22 @@ $(function() {
             $("#almacen_destino").val($(this).text());
             $("#almacen_destino_direccion").val($(this).data('direccion'));
         }else if(contenedor_padre == "listaAutoriza"){
+            $("#autoriza").val($(this).text());
             $("#codigo_autoriza").val(codigo);
         }else if(contenedor_padre == "listaDespacha"){
             $("#codigo_despacha").val(codigo);
         }else if(contenedor_padre == "listaDestinatario"){
+            $("#destinatario").val($(this).text());
             $("#codigo_destinatario").val(codigo);
         }else if(contenedor_padre == "listaModalidad"){
+            $("#modalidad_traslado").val($(this).text());
             $("#codigo_modalidad").val(codigo);
         }else if(contenedor_padre == "listaEnvio"){
+            $("#tipo_envio").val($(this).text());
             $("#codigo_tipo").val(codigo);
         }else if(contenedor_padre == "listaEntidad"){
-            $("#codigo_entidad_transporte").val(codigo)
+            $("#codigo_entidad_transporte").val(codigo);
+            $("#empresa_transporte_razon").val($(this).text());
             $("#ruc_proveedor").val($(this).data("ruc"));
             $("#direccion_proveedor").val($(this).data("direccion"));
         }
@@ -240,38 +264,6 @@ $(function() {
         return false;
     });
 
-    $("#saveDoc").click(function (e) { 
-        e.preventDefault();
-
-        try {
-           let result = {};
-
-            $.each($("#formProceso").serializeArray(),function(){
-                result[this.name] = this.value;
-            });
-            
-            if (accion == 'n'){
-                if (result['codigo_movimiento'] == "") throw "Elija el tipo de movimiento";
-                if (result['codigo_aprueba'] == "") throw "Seleccione la persona que aprueba";
-                if (result['codigo_almacen_destino'] == "") throw "Seleccione el almacen destino";
-            
-                $.post(RUTA+"salida/nuevaSalida", {cabecera:result,
-                                                   detalles:JSON.stringify(detalles())},
-                    function (data, textStatus, jqXHR) {
-                        mostrarMensaje(data.mensaje,data.clase);
-                        $("#codigo_salida").val(data.indice);
-                    },
-                    "json"
-                );
-
-            }
-        } catch (error) {
-            mostrarMensaje(error,'mensaje_error');
-        }
-
-        return false;
-    });
-
     $("#closePreview").click(function (e) { 
         e.preventDefault();
 
@@ -292,7 +284,7 @@ $(function() {
     $("#ordenes tbody").on("click","tr", function (e) {
         e.preventDefault();
 
-        let cc = $(this).data("idcosto");
+        cc = $(this).data("idcosto");
 
         try {
             if ( $("#codigo_costos").val() != cc && $("#codigo_costos").val() != "" ) throw "Los orden es de otro centro de costos";
@@ -307,14 +299,14 @@ $(function() {
                     $("#codigo_costos").val(cc);
                 
                 fillTables($("#tablaDetalles tbody > tr"),2);
+
+                $("#busqueda").fadeOut();
             },
             "json"
         );
         } catch (error) {
             mostrarMensaje(error,"mensaje_error");
         }
-
-        
 
         return false; 
     });
@@ -331,7 +323,6 @@ $(function() {
         });
 
         try {
-            if(accion != "n") throw "Documento registrado";
             if (result['codigo_almacen_origen'] == '') throw "Elija el Almacen";
             if (result['codigo_almacen_destino'] == '') throw "Elija el Almacen";
             if (result['codigo_aprueba'] == '') throw "Elija la persona que aprueba";
@@ -348,8 +339,22 @@ $(function() {
                             $("#codigo_salida").val(data.indice);
                             accion = "u";
                         },
-                        "json"
-                    );
+                    "json"
+                );
+            }else {
+                $.post(RUTA+"salida/modificarsalida", {cabecera:result,
+                    detalles:JSON.stringify(detalles(true))},
+                        function (data, textStatus, jqXHR) {
+                            $("#codigo_ingreso").val(data.indice);
+                            mostrarMensaje("Nota Grabada","mensaje_correcto");
+                            /*$("#tablaPrincipal tbody")
+                                .empty()
+                                .append(data.listado);*/
+                            $("#codigo_salida").val(data.indice);
+                            accion = "u";
+                        },
+                    "json"
+                );
             }
 
         } catch (error) {
@@ -395,13 +400,19 @@ $(function() {
         var value = $(this).val().toLowerCase();
         $(this).next().attr("id");
 
-        //aignar a una variable el contenido
-        let l = "#"+ $(this).next().attr("id")+ " li a"
+        if ($(this).val() == "") {
+            $(".lista").fadeOut();
+        }else {
+            //aignar a una variable el contenido
+            let l = "#"+ $(this).next().attr("id")+ " li a"
 
-        $(l).filter(function() {
-            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-        });
+            $(l).filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        }
+
     });
+
 
     $("#previewDocument").click(function (e) { 
         e.preventDefault();
@@ -465,7 +476,8 @@ $(function() {
             $.post(RUTA+"salida/preImpreso", {cabecera:result,
                                               detalles:JSON.stringify(detalles(tipoVista)),
                                               proyecto: $("#costos").val(),
-                                              despacho: $("#codigo_salida").val()},
+                                              despacho: $("#codigo_salida").val(),
+                                              operacion:accion},
                 function (data, textStatus, jqXHR) {
                         
                        if (data.archivo !== ""){
@@ -518,7 +530,40 @@ $(function() {
         $(this).parent().parent().remove();
         
         return false;
-    });    
+    });
+
+    $("#tablaDetalles tbody").on('blur','input', function (e) {
+        try {
+            let despacho = parseInt($(this).parent().parent().find("td").eq(8).children().val());
+            let stock = parseInt($(this).parent().parent().find("td").eq(7).text());
+
+            if(despacho > stock) {
+                mostrarMensaje('La cantidad ingresada, es mayor al stock','mensaje_error')
+                return false;
+            }
+
+        } catch (error) {
+            
+        }
+    });
+
+    $(".cerrarLista").focus(function (e) { 
+        e.preventDefault();
+        
+        $(".lista").fadeOut();
+
+        return false;
+    });
+    
+    $(".btnCallMenu").click(function (e) { 
+        e.preventDefault();
+        
+        let callButtom = e.target.id;
+
+        $(this).next().fadeIn();
+
+        return false
+    });
 })
 
 
@@ -532,6 +577,7 @@ detalles = (flag) =>{
             IDDETORDEN  = $(this).data("detorden"),
             IDDETPED    = $(this).data("iddetped"),
             IDPROD      = $(this).data("idprod"),
+            IDDESPACHO  = $(this).data("iddespacho"),
             PEDIDO      = $(this).find('td').eq(11).text(),
             ORDEN       = $(this).find('td').eq(12).text(),
             INGRESO     = $(this).data("ingreso"),
@@ -559,6 +605,7 @@ detalles = (flag) =>{
             item['cantidad']     = CANTIDAD;
             item['cantdesp']     = CANTDESP;
             item['obser']        = OBSER;
+            item['iddespacho']   = IDDESPACHO;
 
             item['codigo']       = CODIGO;
             item['descripcion']  = DESCRIPCION;

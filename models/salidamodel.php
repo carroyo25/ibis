@@ -8,23 +8,24 @@
 
         public function listarNotasDespacho(){
             $salida = "";
+
             try {
                 $sql = $this->db->connect()->prepare("SELECT
-                                                        alm_despachocab.id_regalm,
-                                                        alm_despachocab.cmes,
-                                                        DATE_FORMAT(
+                                                    alm_despachocab.cmes,
+                                                    DATE_FORMAT(
                                                             alm_despachocab.ffecdoc,
                                                             '%d/%m/%Y'
                                                         ) AS ffecdoc,
-                                                        YEAR(ffecdoc) AS anio,
-                                                        alm_despachocab.ncodpry,
-                                                        UPPER(origen.cdesalm) AS origen,
-                                                        UPPER(origen.ctipovia) AS direccion_origen,
-                                                        alm_despachocab.nEstadoDoc,
-                                                        alm_despachocab.cnumguia,
-                                                        UPPER(destino.cdesalm) AS destino,
-                                                        UPPER(destino.ctipovia) AS direccion_destino,
-                                                        UPPER(
+                                                    YEAR(ffecdoc) AS anio,
+                                                    alm_despachodet.nropedido AS orden,
+                                                    alm_despachodet.nroorden AS pedido,
+                                                    UPPER(origen.cdesalm) AS origen,
+                                                    UPPER(origen.ctipovia) AS direccion_origen,
+                                                    UPPER(destino.cdesalm) AS destino,
+                                                    UPPER(destino.ctipovia) AS direccion_destino,
+                                                    alm_despachocab.cnumguia,
+                                                    alm_despachocab.nEstadoDoc,
+                                                    UPPER(
                                                             CONCAT_WS(
                                                                 ' ',
                                                                 tb_proyectos.ccodproy,
@@ -32,19 +33,24 @@
                                                                 
                                                             )
                                                         ) AS costos,
-                                                        tb_parametros.cdescripcion,
-                                                        tb_parametros.cabrevia
-                                                    FROM
-                                                        tb_costusu
-                                                    INNER JOIN alm_despachocab ON tb_costusu.ncodproy = alm_despachocab.ncodpry
+                                                    tb_costusu.nflgactivo,
+                                                    tb_parametros.cdescripcion,
+                                                    tb_parametros.cabrevia,
+                                                    alm_despachocab.id_regalm 
+                                                FROM
+                                                    alm_despachodet
+                                                    INNER JOIN alm_despachocab ON alm_despachodet.id_regalm = alm_despachocab.id_regalm
                                                     INNER JOIN tb_almacen AS origen ON alm_despachocab.ncodalm1 = origen.ncodalm
                                                     INNER JOIN tb_almacen AS destino ON alm_despachocab.ncodalm2 = destino.ncodalm
                                                     INNER JOIN tb_proyectos ON alm_despachocab.ncodpry = tb_proyectos.nidreg
-                                                    INNER JOIN tb_parametros ON alm_despachocab.nEstadoDoc = tb_parametros.nidreg
-                                                    WHERE
-                                                        tb_costusu.nflgactivo = 1
+                                                    INNER JOIN tb_costusu ON alm_despachocab.ncodpry = alm_despachocab.ncodpry
+                                                    INNER JOIN tb_parametros ON alm_despachocab.nEstadoDoc = tb_parametros.nidreg 
+                                                WHERE
+                                                    tb_costusu.nflgactivo = 1 
                                                     AND tb_costusu.id_cuser = :usr
+                                                    AND alm_despachocab.cper = YEAR(NOW())
                                                     AND alm_despachocab.nEstadoDoc = 62
+                                                GROUP BY alm_despachocab.id_regalm
                                                     ORDER BY alm_despachocab.ffecdoc DESC");
                 $sql->execute(["usr"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowCount();
@@ -59,7 +65,8 @@
                                         <td class="pl20px">'.$rs['costos'].'</td>
                                         <td class="textoCentro">'.$rs['anio'].'</td>
                                         <td class="textoCentro">'.$rs['cnumguia'].'</td>
-                                        <td class="textoCentro '.$rs['cabrevia'].'">'.$rs['cdescripcion'].'</td>
+                                        <td class="textoCentro ">'.str_pad($rs['orden'],6,0,STR_PAD_LEFT).'</td>
+                                        <td class="textoCentro ">'.str_pad($rs['pedido'],6,0,STR_PAD_LEFT).'</td>
                                     </tr>';
                     }
                 }
@@ -325,7 +332,7 @@
             }
         }
 
-        public function imprimirFormato($cabecera,$detalles,$proyecto,$nro_despacho){
+        public function imprimirFormato($cabecera,$detalles,$proyecto,$nro_despacho,$operacion){
             try {
                 require_once("public/formatos/grpreimpreso.php");
                 
@@ -346,6 +353,12 @@
                 $sql = $this->db->connect()->prepare("UPDATE alm_despachocab 
                                                         SET ffecenvio=:envio,nReferido=:referido,cnumguia=:guia,id_centi=:entidad
                                                         WHERE id_regalm =:despacho");
+
+                if ( $operacion == "n" ){
+                    $this->grabarDatosGuia($cabecera,$nro_despacho,$fecha_emision,$fecha_traslado);
+                }else{
+                    $this->modificarDatosGuia($cabecera,$nro_despacho,$fecha_emision,$fecha_traslado);
+                }
                 
                 $sql->execute(["envio"=>$cabecera['ftraslado'],
                                 "referido"=>$referido,
@@ -468,7 +481,7 @@
                                 "nflgactivo"=>1,
                                 "id_user"=>$_SESSION['iduser']]);
                 
-                                $rowCount = $sql->rowCount();
+                $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0) {
                     $mensaje = "Registro grabado";
@@ -690,8 +703,7 @@
                                                 INNER JOIN tb_user ON alm_despachocab.id_userAprob = tb_user.iduser
                                                 INNER JOIN tb_parametros AS movimientos ON alm_despachocab.ntipmov = movimientos.nidreg
                                                 INNER JOIN tb_parametros AS estado ON alm_despachocab.nEstadoDoc = estado.nidreg
-                                                WHERE
-                                                    id_regalm = :indice");
+                                                WHERE id_regalm = :indice");
                 $sql->execute(["indice"=>$indice]);
                 $docData = array();
                 while($row=$sql->fetch(PDO::FETCH_ASSOC)){
@@ -699,7 +711,8 @@
                 }
 
                 return array("cabecera"=>$docData,
-                            "detalles"=>$this->salidaDetalles($indice));
+                            "detalles"=>$this->salidaDetalles($indice),
+                            "guias"=>$this->consultarDatosGuia($indice));
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;
@@ -788,87 +801,6 @@
             }
         }
 
-        public function filtrarNotasDespacho($parametros){
-            try {
-
-                $mes  = date("m");
-
-                $guia   = $parametros['guiaSearch'] == "" ? "%" : "%".$parametros['guiaSearch']."%";
-                $costos = $parametros['costosSearch'] == -1 ? "%" : "%".$parametros['costosSearch']."%";
-                $mes    = $parametros['mesSearch'] == -1 ? $mes :  $parametros['mesSearch'];
-                $anio   = $parametros['anioSearch'];
-
-                $salida = "";
-                $sql = $this->db->connect()->prepare("SELECT
-                                                        alm_despachocab.id_regalm,
-                                                        alm_despachocab.cmes,
-                                                        DATE_FORMAT(
-                                                            alm_despachocab.ffecdoc,
-                                                            '%d/%m/%Y'
-                                                        ) AS ffecdoc,
-                                                        YEAR(ffecdoc) AS anio,
-                                                        alm_despachocab.ncodpry,
-                                                        UPPER(origen.cdesalm) AS origen,
-                                                        UPPER(origen.ctipovia) AS direccion_origen,
-                                                        alm_despachocab.nEstadoDoc,
-                                                        alm_despachocab.cnumguia,
-                                                        UPPER(destino.cdesalm) AS destino,
-                                                        UPPER(destino.ctipovia) AS direccion_destino,
-                                                        UPPER(
-                                                            CONCAT_WS(
-                                                                ' ',
-                                                                tb_proyectos.ccodproy,
-                                                                tb_proyectos.cdesproy
-                                                                
-                                                            )
-                                                        ) AS costos,
-                                                        tb_parametros.cdescripcion,
-                                                        tb_parametros.cabrevia
-                                                    FROM
-                                                        tb_costusu
-                                                    INNER JOIN alm_despachocab ON tb_costusu.ncodproy = alm_despachocab.ncodpry
-                                                    INNER JOIN tb_almacen AS origen ON alm_despachocab.ncodalm1 = origen.ncodalm
-                                                    INNER JOIN tb_almacen AS destino ON alm_despachocab.ncodalm2 = destino.ncodalm
-                                                    INNER JOIN tb_proyectos ON alm_despachocab.ncodpry = tb_proyectos.nidreg
-                                                    INNER JOIN tb_parametros ON alm_despachocab.nEstadoDoc = tb_parametros.nidreg
-                                                    WHERE
-                                                        tb_costusu.nflgactivo = 1
-                                                        AND tb_costusu.id_cuser = :usr
-                                                        AND alm_despachocab.nEstadoDoc = 62
-                                                        AND alm_despachocab.ncodpry LIKE :costos 
-                                                        AND alm_despachocab.cnumguia LIKE :guia 
-                                                        AND MONTH ( alm_despachocab.ffecdoc ) = :mes
-                                                        AND YEAR ( alm_despachocab.ffecdoc ) = :anio
-                                                    ORDER BY alm_despachocab.ffecdoc ASC");
-                $sql->execute(["usr"=>$_SESSION['iduser'],
-                                "guia"=>$guia,
-                                "costos"=>$costos,
-                                "mes"=>$mes,
-                                "anio"=>$anio]);
-
-                $rowCount = $sql->rowcount();
-                if ($rowCount > 0){
-                    while($rs = $sql->fetch()){
-                        $salida.='<tr data-indice="'.$rs['id_regalm'].'" class="pointer">
-                        <td class="textoCentro">'.str_pad($rs['id_regalm'],6,0,STR_PAD_LEFT).'</td>
-                        <td class="textoCentro">'.$rs['ffecdoc'].'</td>
-                        <td class="textoCentro">'.$rs['origen'].'</td>
-                        <td class="pl20px">'.$rs['destino'].'</td>
-                        <td class="pl20px">'.$rs['costos'].'</td>
-                        <td class="textoCentro">'.$rs['anio'].'</td>
-                        <td class="textoCentro">'.$rs['cnumguia'].'</td>
-                        <td class="textoCentro '.$rs['cabrevia'].'">'.$rs['cdescripcion'].'</td>
-                    </tr>';
-                    }
-                }
-
-                return $salida;
-            } catch (PDOException $th) {
-                echo "Error: " . $th->getMessage();
-                return false;
-            }
-        }
-
         public function calcularSaldosItemsDespachados($orden,$idprod){
             try {
                 $sql = $this->db->connect()->prepare("SELECT
@@ -909,5 +841,263 @@
                 return false;
             }
         }
+
+        public function filtrarNotasDespacho($parametros){
+            try {
+
+                $mes  = date("m");
+
+                $orden  = $parametros['ordenSearch'] == "" ? "%" : "%".$parametros['ordenSearch']."%";
+                $costos = $parametros['costosSearch'] == -1 ? "%" : "%".$parametros['costosSearch']."%";
+                $mes    = $parametros['mesSearch'] == -1 ? "%" :  $parametros['mesSearch'];
+                $anio   = $parametros['anioSearch'] == "" ? "%" : $parametros['anioSearch'];
+
+                $salida = "";
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        alm_despachocab.cmes,
+                                                        DATE_FORMAT( alm_despachocab.ffecdoc, '%d/%m/%Y' ) AS ffecdoc,
+                                                        YEAR ( ffecdoc ) AS anio,
+                                                        alm_despachodet.nropedido AS orden,
+                                                        alm_despachodet.nroorden AS pedido,
+                                                        UPPER( origen.cdesalm ) AS origen,
+                                                        UPPER( origen.ctipovia ) AS direccion_origen,
+                                                        UPPER( destino.cdesalm ) AS destino,
+                                                        UPPER( destino.ctipovia ) AS direccion_destino,
+                                                        alm_despachocab.cnumguia,
+                                                        alm_despachocab.nEstadoDoc,
+                                                        UPPER( CONCAT_WS( ' ', tb_proyectos.ccodproy, tb_proyectos.cdesproy ) ) AS costos,
+                                                        tb_costusu.nflgactivo,
+                                                        tb_parametros.cdescripcion,
+                                                        tb_parametros.cabrevia,
+                                                        alm_despachocab.id_regalm 
+                                                    FROM
+                                                        alm_despachodet
+                                                        INNER JOIN alm_despachocab ON alm_despachodet.id_regalm = alm_despachocab.id_regalm
+                                                        INNER JOIN tb_almacen AS origen ON alm_despachocab.ncodalm1 = origen.ncodalm
+                                                        INNER JOIN tb_almacen AS destino ON alm_despachocab.ncodalm2 = destino.ncodalm
+                                                        INNER JOIN tb_proyectos ON alm_despachocab.ncodpry = tb_proyectos.nidreg
+                                                        INNER JOIN tb_costusu ON alm_despachocab.ncodpry = alm_despachocab.ncodpry
+                                                        INNER JOIN tb_parametros ON alm_despachocab.nEstadoDoc = tb_parametros.nidreg 
+                                                    WHERE
+                                                        tb_costusu.nflgactivo = 1 
+                                                        AND tb_costusu.id_cuser = :usr 
+                                                        AND alm_despachodet.nropedido LIKE :orden 
+                                                        AND alm_despachocab.ncodpry LIKE :costos 
+                                                        AND alm_despachocab.cper LIKE :anio 
+                                                        AND alm_despachocab.cmes LIKE :mes 
+                                                        GROUP BY alm_despachocab.id_regalm");
+                
+                $sql->execute(["usr"=>$_SESSION['iduser'],
+                                "orden"=>$orden,
+                                "costos"=>$costos,
+                                "mes"=>$mes,
+                                "anio"=>$anio]);
+
+                $rowCount = $sql->rowcount();
+                if ($rowCount > 0){
+                    while($rs = $sql->fetch()){
+                        $salida .='<tr data-indice="'.$rs['id_regalm'].'" class="pointer">
+                                        <td class="textoCentro">'.str_pad($rs['id_regalm'],6,0,STR_PAD_LEFT).'</td>
+                                        <td class="textoCentro">'.$rs['ffecdoc'].'</td>
+                                        <td class="textoCentro">'.$rs['origen'].'</td>
+                                        <td class="pl20px">'.$rs['destino'].'</td>
+                                        <td class="pl20px">'.$rs['costos'].'</td>
+                                        <td class="textoCentro">'.$rs['anio'].'</td>
+                                        <td class="textoCentro">'.$rs['cnumguia'].'</td>
+                                        <td class="textoCentro ">'.str_pad($rs['orden'],6,0,STR_PAD_LEFT).'</td>
+                                        <td class="textoCentro ">'.str_pad($rs['pedido'],6,0,STR_PAD_LEFT).'</td>
+                                    </tr>';
+                    }
+                }
+
+                return $salida;
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        public function modificar($cabecera,$detalles){
+            try {
+                $sql = $this->db->connect()->prepare("UPDATE alm_despachocab SET ncodalm1 = :ncodalm1,
+                                                                                 ncodalm2 = :ncodalm2,
+                                                                                 id_userAprob = :id_userAprob
+                                                                            WHERE id_regalm = :despacho
+                                                                            LIMIT 1");
+
+                $sql->execute(["ncodalm1"=>$cabecera['codigo_almacen_origen'],
+                               "ncodalm2"=>$cabecera['codigo_almacen_destino'],
+                               "id_userAprob"=>$cabecera['codigo_aprueba'],
+                               "despacho"=>$cabecera['codigo_salida']]);
+
+                $rowCount = $sql->rowCount();
+
+                $this->modificarDetalles($detalles);
+
+                if ($rowCount > 0) {
+                    return true;
+                }
+                
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        private function modificarDetalles($detalles){
+            try {
+                $datos = json_decode($detalles);
+                $nreg = count($datos);
+
+                for ($i=0; $i < $nreg; $i++) { 
+                        try {
+                            $sql = $this->db->connect()->prepare("UPDATE alm_despachodet SET 
+                                                                                cobserva=:observac,
+                                                                                ncodalm1=:origen,
+                                                                                ncodalm2=:destino,
+                                                                                ndespacho=:candesp
+                                                                        WHERE niddeta=:id");
+                            $sql->execute(["id"=>$datos[$i]->iddespacho,
+                                            "origen"=>$datos[$i]->almacen,
+                                            "destino"=>$datos[$i]->destino,
+                                            "candesp"=>$datos[$i]->cantdesp,
+                                            "observac"=>$datos[$i]->obser]);
+                    
+                    } catch (PDOException $th) {
+                        echo "Error: ".$th->getMessage();
+                        return false;
+                    }
+                }
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        public function grabarDatosGuia($cabeceraGuia,$despacho,$emision,$traslado){
+            try {
+                $sql = $this->db->connect()->prepare("INSERT INTO lg_guias SET id_regalm=:despacho,cnumguia=:guia,corigen=:origen,
+                                                                                cdirorigen=:direccion_origen,cdestino=:destino,
+                                                                                cdirdest=:direccion_destino,centi=:entidad,centidir=:direccion_entidad,
+                                                                                centiruc=:ruc_entidad,ctraslado=:traslado,cenvio=:envio,
+                                                                                cautoriza=:autoriza,cdestinatario=:destinatario,cobserva=:observaciones,
+                                                                                cnombre=:nombres,cmarca=:marca,clicencia=:licencia,cplaca=:placa,
+                                                                                ftraslado=:fecha_traslado,fguia=:fecha_guia");
+
+                $sql->execute([ "despacho"=>$despacho,
+                                "guia"=>$cabeceraGuia['numero_guia'],
+                                "origen"=>$cabeceraGuia['almacen_origen'],
+                                "direccion_origen"=>$cabeceraGuia['almacen_origen_direccion'],
+                                "destino"=>$cabeceraGuia['almacen_destino'],
+                                "direccion_destino"=>$cabeceraGuia['almacen_destino_direccion'],
+                                "entidad"=>$cabeceraGuia['empresa_transporte_razon'],
+                                "direccion_entidad"=>$cabeceraGuia['direccion_proveedor'],
+                                "ruc_entidad"=>$cabeceraGuia['ruc_proveedor'],
+                                "traslado"=>$cabeceraGuia['modalidad_traslado'],
+                                "envio"=>$cabeceraGuia['tipo_envio'],
+                                "autoriza"=>$cabeceraGuia['autoriza'],
+                                "destinatario"=>$cabeceraGuia['destinatario'],
+                                "observaciones"=>$cabeceraGuia['observaciones'],
+                                "nombres"=>$cabeceraGuia['nombre_conductor'],
+                                "marca"=>$cabeceraGuia['marca'],
+                                "licencia"=>$cabeceraGuia['licencia_conducir'],
+                                "placa"=>$cabeceraGuia['placa'],
+                                "fecha_traslado"=>$traslado,
+                                "fecha_guia"=>$emision]);
+                
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        public function modificarDatosGuia($cabeceraGuia,$despacho,$emision,$traslado){
+            try {
+                $sql = $this->db->connect()->prepare("UPDATE lg_guias SET cnumguia=:guia,corigen=:origen,
+                                                                          cdirorigen=:direccion_origen,cdestino=:destino,
+                                                                          cdirdest=:direccion_destino,centi=:entidad,centidir=:direccion_entidad,
+                                                                          centiruc=:ruc_entidad,ctraslado=:traslado,cenvio=:envio,
+                                                                          cautoriza=:autoriza,cdestinatario=:destinatario,cobserva=:observaciones,
+                                                                          cnombre=:nombres,cmarca=:marca,clicencia=:licencia,cplaca=:placa,
+                                                                          ftraslado=:fecha_traslado,fguia=:fecha_guia
+                                                                    WHERE idreg =:idguia");
+
+                $sql->execute([ "idguia"=>$cabeceraGuia['id_guia'],
+                                "guia"=>$cabeceraGuia['numero_guia'],
+                                "origen"=>$cabeceraGuia['almacen_origen'],
+                                "direccion_origen"=>$cabeceraGuia['almacen_origen_direccion'],
+                                "destino"=>$cabeceraGuia['almacen_destino'],
+                                "direccion_destino"=>$cabeceraGuia['almacen_destino_direccion'],
+                                "entidad"=>$cabeceraGuia['empresa_transporte_razon'],
+                                "direccion_entidad"=>$cabeceraGuia['direccion_proveedor'],
+                                "ruc_entidad"=>$cabeceraGuia['ruc_proveedor'],
+                                "traslado"=>$cabeceraGuia['modalidad_traslado'],
+                                "envio"=>$cabeceraGuia['tipo_envio'],
+                                "autoriza"=>$cabeceraGuia['autoriza'],
+                                "destinatario"=>$cabeceraGuia['destinatario'],
+                                "observaciones"=>$cabeceraGuia['observaciones'],
+                                "nombres"=>$cabeceraGuia['nombre_conductor'],
+                                "marca"=>$cabeceraGuia['marca'],
+                                "licencia"=>$cabeceraGuia['licencia_conducir'],
+                                "placa"=>$cabeceraGuia['placa'],
+                                "fecha_traslado"=>$cabeceraGuia['fgemision'],
+                                "fecha_guia"=>$cabeceraGuia['ftraslado']]);
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+
+        private function consultarDatosGuia($despacho){
+            try {
+                $docData=[];
+                $sql=$this->db->connect()->prepare("SELECT
+                                                        lg_guias.idreg,
+                                                        lg_guias.id_regalm,
+                                                        lg_guias.cnumguia,
+                                                        lg_guias.corigen,
+                                                        lg_guias.cdirorigen,
+                                                        lg_guias.cdestino,
+                                                        lg_guias.cdirdest,
+                                                        lg_guias.centi,
+                                                        lg_guias.centidir,
+                                                        lg_guias.centiruc,
+                                                        lg_guias.ctraslado,
+                                                        lg_guias.cenvio,
+                                                        lg_guias.cautoriza,
+                                                        lg_guias.cmarca,
+                                                        lg_guias.cplaca,
+                                                        lg_guias.cnombre,
+                                                        lg_guias.clicencia,
+                                                        lg_guias.ftraslado,
+                                                        lg_guias.fguia,
+                                                        lg_guias.cobserva,
+                                                        lg_guias.cdestinatario,
+                                                        lg_guias.cmotivo 
+                                                FROM
+                                                    lg_guias 
+                                                WHERE
+                                                    lg_guias.id_regalm =:despacho");
+                $sql->execute(["despacho"=>$despacho]);
+
+                $rowCount = $sql->rowCount();
+                
+                if ($rowCount > 0) {
+                    $docData = array();
+                    while($row=$sql->fetch(PDO::FETCH_ASSOC)){
+                        $docData[] = $row;
+                    }
+                }
+
+                return $docData;
+
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+
     } 
 ?>

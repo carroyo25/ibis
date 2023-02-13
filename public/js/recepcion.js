@@ -642,8 +642,20 @@ $(function(){
     $("#atachDocs").click(function (e) { 
         e.preventDefault();
 
-        $("#vistaAdjuntos").fadeIn();
+        try {
+            if ($("#codigo_orden").val() == "") throw "Seleccione un orden, para ver los adjuntos";
 
+            $.post(RUTA+"recepcion/verAdjuntos", {id:$("#codigo_orden").val()},
+                function (data, textStatus, jqXHR) {
+                    $("#listaAdjuntos").empty().append(data.adjuntos);
+                    $("#vistaAdjuntos").fadeIn();
+                },
+                "json"
+            );
+        } catch (error) {
+            mostrarMensaje(error,'mensaje_error')
+        }
+       
         return false;
     });
 
@@ -653,6 +665,16 @@ $(function(){
         $("#vistaAdjuntos").fadeOut();
         $(".ventanaAdjuntos iframe").attr("src","");
 
+        return false;
+    });
+
+    $("#vistaAdjuntos").on("click","a", function (e) {
+        e.preventDefault();
+        
+        $(".ventanaAdjuntos iframe")
+            .attr("src","")
+            .attr("src","public/documentos/ordenes/adjuntos/"+$(this).attr("href"));
+        
         return false;
     });
 })

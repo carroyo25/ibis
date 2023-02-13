@@ -1252,6 +1252,16 @@ $anulado:#c2c2c2;
             row-gap: 5px;
         }
 
+        .tres_columnas_interna{
+            display:grid;
+            position: relative;
+            grid-template-columns: 28% 1fr 10%;
+            column-gap: 3px;
+            row-gap: 5px;
+        }
+
+        .cua
+
         .cuatro_columnas_interna{
             display:grid;
             position: relative;

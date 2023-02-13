@@ -2577,7 +2577,7 @@
             }
         }
 
-        private function verAdjuntosOrden($id){
+        public function verAdjuntosOrden($id){
             try {
                 $salida = "";
                 $sql = $this->db->connect()->prepare("SELECT creferencia,cdocumento 
@@ -3520,7 +3520,7 @@
             }
         }
 
-        //listar las ordenes para los ingresos y salidad
+        //listar las ordenes para los ingresos y salidas
         public function listarOrdenes($tipoMov){
             try {
                 $salida = "";

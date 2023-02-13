@@ -162,9 +162,9 @@
                 $this->Cell(15,4,"",0,0);
                 $this->Cell(5,4,"",0,0,"C");
     
-                $this->SetXY(40,225);
+                $this->SetXY(40,230);
                 $this->SetFont('Arial','',9);
-                $this->Cell(90,4,"ATENCION".$this->atencion,0,1);
+                $this->Cell(90,4,"ATENCION :".$this->atencion,0,1);
                 $this->SetX(35);
                 $this->Cell(90,4,$this->observaciones,0,1);
                 $this->SetXY(40,261);
