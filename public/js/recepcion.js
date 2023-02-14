@@ -1,6 +1,8 @@
 $(function(){
     let accion = "",
-        co = 1;
+        co = 1,
+        fila = "",
+        idfila = "";
     
     var tipoVista = null;
        
@@ -241,8 +243,6 @@ $(function(){
             },
             "json"
         );
-        
-
         return false
     });
 
@@ -330,8 +330,6 @@ $(function(){
  
     });
 
-
-
     $("#closeDocument").click(function (e) { 
         e.preventDefault();
         
@@ -386,38 +384,6 @@ $(function(){
             }
         });
         
-        return false;
-    });
-
-    $("#tablaDetalles tbody").on("click","a", function (e) {
-        e.preventDefault();
-
-        if ($(this).data("accion") == "setSerial") {
-            let filas = parseInt($(this).parent().parent().find("td").eq(7).children().val()),
-            orden = $(this).parent().parent().data('detorden'),
-            producto = $(this).parent().parent().data('idprod'),
-            almacen = $("#codigo_almacen").val(),
-            nombre = $(this).parent().parent().find("td").eq(3).text();
-
-            row = `<tr data-orden="${orden}" data-producto="${producto}" data-almacen="${almacen}">
-                        <td>${nombre}</td>
-                        <td><input type="text"></td>
-                    </tr>`
-
-            if (accion == 'n') {
-                $("#tablaSeries tbody").empty();
-
-                for (let index = 0; index < filas; index++) {
-                    $("#tablaSeries").append(row);        
-                }
-            }
-
-            $("#series").fadeIn();
-        }else {
-            $(this).parent().parent().remove();
-        }
-        
-
         return false;
     });
 
@@ -557,24 +523,6 @@ $(function(){
         }
     });
 
-    $("#btnAceptarPregunta").click(function (e) { 
-        e.preventDefault();
-
-        $(this).parent().parent().remove();
-        
-        $("#pregunta").fadeOut();
-
-        return false;
-    });
-
-    $("#btnCancelarPregunta").click(function (e) { 
-        e.preventDefault();
-        
-        $("#pregunta").fadeOut();
-
-        return false;
-    });
-
     $("#btnPendientes, #btnTotales").click(function (e) { 
         e.preventDefault();
 
@@ -591,6 +539,7 @@ $(function(){
             if (result['codigo_almacen'] == '') throw "Elija el Almacen";
             if (result['codigo_aprueba'] == '') throw "Elija la persona que aprueba";
             if (result['guia'] == '') throw "Escriba el número de guia";
+            if (verificarCantidadesInput()) throw "Verifque las cantidades ingresadas";
 
             if (accion == "n") {
                 $.post(RUTA+"recepcion/nuevoIngreso", {cabecera:result,
@@ -675,6 +624,74 @@ $(function(){
             .attr("src","")
             .attr("src","public/documentos/ordenes/adjuntos/"+$(this).attr("href"));
         
+        return false;
+    });
+
+    $("#tablaDetalles tbody").on("click","a", function (e) {
+        e.preventDefault();
+
+        fila = $(this).parent().parent();
+        idfila = $(this).parent().parent().data('iddetped');
+
+        if ($(this).data("accion") == "setSerial") {
+            let filas = parseInt($(this).parent().parent().find("td").eq(7).children().val()),
+            orden = $(this).parent().parent().data('detorden'),
+            producto = $(this).parent().parent().data('idprod'),
+            almacen = $("#codigo_almacen").val(),
+            nombre = $(this).parent().parent().find("td").eq(3).text();
+
+            row = `<tr data-orden="${orden}" data-producto="${producto}" data-almacen="${almacen}">
+                        <td>${nombre}</td>
+                        <td><input type="text"></td>
+                    </tr>`
+
+            if (accion == 'n') {
+                $("#tablaSeries tbody").empty();
+
+                for (let index = 0; index < filas; index++) {
+                    $("#tablaSeries").append(row);        
+                }
+            }
+
+            $("#series").fadeIn();
+        }else {
+            $.post(RUTA+"recepcion/existeSalida", {id:$(this).parent().parent().data('iddetped')},
+                function (data, textStatus, jqXHR) {
+                    if (data == 1)
+                      mostrarMensaje("EL item ya tiene registro de salida","mensaje_error");
+                    else
+                        $("#pregunta").fadeIn();
+                       
+                },
+                "text"
+            );
+        }
+        
+
+        return false;
+    });
+
+    $("#btnAceptarPregunta").click(function (e) { 
+        e.preventDefault();
+
+        $.post(RUTA+"recepcion/marcaItem", {id:idfila},
+            function (data, textStatus, jqXHR) {
+                fila.remove();
+                fillTables($("#tablaDetalles tbody > tr"),2);
+
+                $("#pregunta").fadeOut();
+            },
+            "text"
+        );
+        
+        return false;
+    });
+
+    $("#btnCancelarPregunta").click(function (e) { 
+        e.preventDefault();
+        
+        $("#pregunta").fadeOut();
+
         return false;
     });
 })
@@ -766,4 +783,20 @@ series = () => {
     })
 
     return SERIES;
+}
+
+verificarCantidadesInput = () =>{
+    let TABLA = $("#tablaDetalles tbody >tr"),
+        errorCantidad = false;
+
+    TABLA.each(function(){
+        let cantidad    = parseInt($(this).find("td").eq(6).text()),// cantidad
+            cantdesp    = parseInt($(this).find('td').eq(7).children().val());
+
+        if( cantidad < cantdesp) {
+            errorCantidad = true
+        }       
+    })
+
+    return errorCantidad;
 }

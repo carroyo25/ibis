@@ -10,6 +10,8 @@ $(function() {
 
         $.post(RUTA+"salida/salidaId", {id:$(this).data("indice")},
             function (data, textStatus, jqXHR) {
+
+                console.log(data.guias.length);
                 
                 let estado = "textoCentro w100por estado " + data.cabecera[0].cabrevia,
                     numero = $.strPad(data.cabecera[0].id_regalm,6);
@@ -39,27 +41,29 @@ $(function() {
                 $("#almacen_destino_direccion").val(data.cabecera[0].direccion_destino);
 
                 //guias
-                
-                $("#id_guia").val(data.guias[0].idreg);
-                $("#numero_guia").val(data.guias[0].cnumguia);
-                $("#fgemision").val(data.guias[0].fguia);
-                $("#ftraslado").val(data.guias[0].ftraslado);
-                $("#almacen_origen").val(data.guias[0].corigen);
-                $("#almacen_origen_direccion").val(data.guias[0].cdirorigen);
-                $("#almacen_destino").val(data.guias[0].cdestino);
-                $("#almacen_destino_direccion").val(data.guias[0].cdirdest);
-                $("#empresa_transporte_razon").val(data.guias[0].centi);
-                $("#direccion_proveedor").val(data.guias[0].centidir);
-                $("#ruc_proveedor").val(data.guias[0].centiruc);
-                $("#modalidad_traslado").val(data.guias[0].ctraslado);
-                $("#tipo_envio").val(data.guias[0].cenvio);
-                $("#autoriza").val(data.guias[0].cautoriza);
-                $("#destinatario").val(data.guias[0].cdestinatario);
-                $("#observaciones").val(data.guias[0].cobserva);
-                $("#nombre_conductor").val(data.guias[0].cnombre);
-                $("#licencia_conducir").val(data.guias[0].clicencia);
-                $("#marca").val(data.guias[0].cmarca);
-                $("#placa").val(data.guias[0].cplaca);
+
+                if (data.guias.length == 1) {
+                    $("#id_guia").val(data.guias[0].idreg);
+                    $("#numero_guia").val(data.guias[0].cnumguia);
+                    $("#fgemision").val(data.guias[0].fguia);
+                    $("#ftraslado").val(data.guias[0].ftraslado);
+                    $("#almacen_origen").val(data.guias[0].corigen);
+                    $("#almacen_origen_direccion").val(data.guias[0].cdirorigen);
+                    $("#almacen_destino").val(data.guias[0].cdestino);
+                    $("#almacen_destino_direccion").val(data.guias[0].cdirdest);
+                    $("#empresa_transporte_razon").val(data.guias[0].centi);
+                    $("#direccion_proveedor").val(data.guias[0].centidir);
+                    $("#ruc_proveedor").val(data.guias[0].centiruc);
+                    $("#modalidad_traslado").val(data.guias[0].ctraslado);
+                    $("#tipo_envio").val(data.guias[0].cenvio);
+                    $("#autoriza").val(data.guias[0].cautoriza);
+                    $("#destinatario").val(data.guias[0].cdestinatario);
+                    $("#observaciones").val(data.guias[0].cobserva);
+                    $("#nombre_conductor").val(data.guias[0].cnombre);
+                    $("#licencia_conducir").val(data.guias[0].clicencia);
+                    $("#marca").val(data.guias[0].cmarca);
+                    $("#placa").val(data.guias[0].cplaca);
+                }
                 
                 $("#estado")
                     .removeClass()
@@ -326,6 +330,7 @@ $(function() {
             if (result['codigo_almacen_origen'] == '') throw "Elija el Almacen";
             if (result['codigo_almacen_destino'] == '') throw "Elija el Almacen";
             if (result['codigo_aprueba'] == '') throw "Elija la persona que aprueba";
+            if (verificarCantidadesInput()) throw "Verifque las cantidades ingresadas";
 
             if (accion == "n") {
                 $.post(RUTA+"salida/nuevasalida", {cabecera:result,
@@ -333,9 +338,7 @@ $(function() {
                         function (data, textStatus, jqXHR) {
                             $("#codigo_ingreso").val(data.indice);
                             mostrarMensaje("Nota Grabada","mensaje_correcto");
-                            /*$("#tablaPrincipal tbody")
-                                .empty()
-                                .append(data.listado);*/
+                           
                             $("#codigo_salida").val(data.indice);
                             accion = "u";
                         },
@@ -347,9 +350,7 @@ $(function() {
                         function (data, textStatus, jqXHR) {
                             $("#codigo_ingreso").val(data.indice);
                             mostrarMensaje("Nota Grabada","mensaje_correcto");
-                            /*$("#tablaPrincipal tbody")
-                                .empty()
-                                .append(data.listado);*/
+                            
                             $("#codigo_salida").val(data.indice);
                             accion = "u";
                         },
@@ -412,7 +413,6 @@ $(function() {
         }
 
     });
-
 
     $("#previewDocument").click(function (e) { 
         e.preventDefault();
@@ -538,8 +538,11 @@ $(function() {
             let stock = parseInt($(this).parent().parent().find("td").eq(7).text());
 
             if(despacho > stock) {
-                mostrarMensaje('La cantidad ingresada, es mayor al stock','mensaje_error')
+                mostrarMensaje('La cantidad ingresada, es mayor al stock','mensaje_error');
+                errorCantidad = true;
                 return false;
+            }else {
+                errorCantidad = false;
             }
 
         } catch (error) {
@@ -566,6 +569,22 @@ $(function() {
     });
 })
 
+
+verificarCantidadesInput = () =>{
+    let TABLA = $("#tablaDetalles tbody >tr"),
+        errorCantidad = false;
+
+    TABLA.each(function(){
+        let cantidad    = parseInt($(this).find("td").eq(7).text()),// cantidad
+            cantdesp    = parseInt($(this).find('td').eq(8).children().val());
+
+        if( cantidad < cantdesp) {
+            errorCantidad = true
+        }       
+    })
+
+    return errorCantidad;
+}
 
 detalles = (flag) =>{
     DETALLES = [];

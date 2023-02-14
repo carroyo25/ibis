@@ -341,6 +341,8 @@
                 $nreg = count($datos);
                 
                 $fecha_emision = date("d/m/Y", strtotime($cabecera['fgemision']));
+
+                //$series = $this->buscarSeries($rs['id_cprod'],$rs['id_regalm'],$rs['ncodalm1']);
                 
                 if ($cabecera['ftraslado'] !== "")
                     $fecha_traslado = date("d/m/Y", strtotime($cabecera['ftraslado']));
@@ -354,6 +356,8 @@
                                                         SET ffecenvio=:envio,nReferido=:referido,cnumguia=:guia,id_centi=:entidad
                                                         WHERE id_regalm =:despacho");
 
+
+                //$this->grabarDatosGuia($cabecera,$nro_despacho,$fecha_emision,$fecha_traslado);
                 if ( $operacion == "n" ){
                     $this->grabarDatosGuia($cabecera,$nro_despacho,$fecha_emision,$fecha_traslado);
                 }else{
@@ -763,6 +767,7 @@
                     while ($rs = $sql->fetch()){
 
                         $series = $this->buscarSeries($rs['id_cprod'],$rs['id_regalm'],$rs['ncodalm1']);
+                        
                         $pendiente = $rs['cantidad'] - $rs['ingresado'];
 
                         if ( $rs['ndespacho'] > 0) {
@@ -773,7 +778,7 @@
                                         data-idproducto ="'.$rs['id_cprod'].'"
                                         data-pedido ="'.$rs['pedido'].'"
                                         data-orden ="'.$rs['orden'].'">
-                                        <td></td>
+                                        <td class="textoCentro"><a href="'.$rs['niddeta'].'" data-accion="deleteItem" class="eliminarItem"><i class="fas fa-minus"></i></a></td>
                                         <td class="textoCentro"><input type="checkbox" checked></td>
                                         <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
@@ -1048,10 +1053,9 @@
             }
         }
 
-
         private function consultarDatosGuia($despacho){
             try {
-                $docData=[];
+                $docData="";
                 $sql=$this->db->connect()->prepare("SELECT
                                                         lg_guias.idreg,
                                                         lg_guias.id_regalm,

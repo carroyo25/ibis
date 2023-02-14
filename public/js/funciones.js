@@ -132,6 +132,10 @@ sumarTotales = (table) => {
     return suma;
 }
 
+verificarCantidades = (table) => {
+
+}
+
 
 fechaActual = () => {
     var d = new Date(); 

@@ -3328,7 +3328,8 @@
                                                 INNER JOIN lg_ordendet ON alm_recepdet.niddetaOrd = lg_ordendet.nitemord
                                                 INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
                                                 WHERE
-                                                    alm_recepdet.id_regalm = :id");
+                                                    alm_recepdet.id_regalm = :id
+                                                AND alm_recepdet.nflgactivo = 1");
                 $sql->execute(['id'=>$indice]);
                 $rowCount = $sql->rowCount();
 
@@ -3543,7 +3544,7 @@
                                                             tb_area.ccodarea,
                                                         UPPER( tb_area.cdesarea )) AS area,
                                                         UPPER( cm_entidad.crazonsoc ) AS crazonsoc,
-                                                        ( SELECT SUM( alm_recepdet.ncantidad ) FROM alm_recepdet WHERE pedido = lg_ordencab.id_regmov ) AS ingresos,
+                                                        ( SELECT SUM( alm_recepdet.ncantidad ) FROM alm_recepdet WHERE pedido = lg_ordencab.id_regmov AND nflgactivo = 1 ) AS ingresos,
                                                         ( SELECT SUM( alm_despachodet.ndespacho ) FROM alm_despachodet WHERE alm_despachodet.nropedido = lg_ordencab.id_regmov ) AS despachos,
                                                         ( SELECT SUM( lg_ordendet.ncanti ) FROM lg_ordendet WHERE lg_ordendet.id_orden = lg_ordencab.id_regmov ) AS cantidad_orden 
                                                     FROM
@@ -3578,7 +3579,7 @@
                                     </tr>';
                             }
                         }else {
-                            if ( $rs['ingresos'] == NULL ||  $rs['ingresos'] !=  $rs['cantidad_orden']) {
+                            if ( $rs['ingresos'] == NULL ||  $rs['ingresos'] !=  $rs['cantidad_orden'] ) {
                                 $salida.='<tr data-orden="'.$rs['id_regmov'].'" data-idcosto="'.$rs['nidreg'].'" data-ingresos="'.$rs['ingresos'].'">
                                     <td class="textoCentro">'.$rs['cnumero'].'</td>
                                     <td class="textoCentro">'.$rs['ffechadoc'].'</td>

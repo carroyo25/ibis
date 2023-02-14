@@ -229,7 +229,7 @@
     </div>
     <div class="modal" id="pregunta">
         <div class="ventanaPregunta">
-            <h3>Desea eliminar el registro?</h3>
+            <h3>¿Desea eliminar el registro?</h3>
             <div>
                 <button type="button" id="btnAceptarPregunta">Aceptar</button>
                 <button type="button" id="btnCancelarPregunta">Cancelar</button>

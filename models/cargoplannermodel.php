@@ -49,7 +49,7 @@
                                                     DATE_FORMAT( lg_ordencab.fechafin, '%d/%m/%Y' ) AS fecha_autorizacion_orden,
                                                     UPPER(cm_entidad.crazonsoc) AS proveedor,
                                                     lg_ordendet.ncanti AS cantidad_orden,
-                                                    ( SELECT SUM( alm_recepdet.ncantidad ) FROM alm_recepdet WHERE alm_recepdet.niddetaOrd = lg_ordendet.nitemord ) AS ingreso,
+                                                    ( SELECT SUM( alm_recepdet.ncantidad ) FROM alm_recepdet WHERE alm_recepdet.niddetaOrd = lg_ordendet.nitemord AND alm_recepdet.nflgactivo = 1) AS ingreso,
                                                     ( SELECT SUM( alm_despachodet.ndespacho ) FROM alm_despachodet WHERE alm_despachodet.niddetaPed = lg_ordendet.niddeta ) AS despachos,
                                                     ( SELECT SUM( alm_existencia.cant_ingr ) FROM alm_existencia WHERE alm_existencia.idpedido = lg_ordendet.niddeta ) AS ingreso_obra,
                                                     UPPER( tb_user.cnameuser ) AS operador,

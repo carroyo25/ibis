@@ -71,7 +71,15 @@
         }
 
         function verAdjuntos(){
-            echo json_encode($this->model->verAdjuntosOrden($_POST['id']));
+            echo json_encode($this->model->verAdjuntosOrden($_POST['idprod']));
+        }
+
+        function existeSalida(){
+            echo $this->model->verDespacho($_POST['id']);
+        }
+
+        function marcaItem(){
+            echo $this->model->marcarItem($_POST['id']);
         }
     }
 ?>

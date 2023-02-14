@@ -405,31 +405,18 @@
                                                     lg_ordendet.id_cprod,
                                                     lg_ordendet.id_orden,
                                                     cm_producto.ccodprod,
-                                                    UPPER(
-                                                        CONCAT_WS(
-                                                            ' ',
-                                                            cm_producto.cdesprod,
-                                                            tb_pedidodet.observaciones,
-                                                            tb_pedidodet.docEspec
-                                                        )
-                                                    ) AS cdesprod,
+                                                    UPPER( CONCAT_WS( ' ', cm_producto.cdesprod, tb_pedidodet.observaciones, tb_pedidodet.docEspec ) ) AS cdesprod,
                                                     cm_producto.nund,
                                                     tb_unimed.cabrevia,
                                                     tb_pedidodet.idpedido,
                                                     tb_pedidodet.nroparte,
-                                                    REPLACE(FORMAT(lg_ordendet.ncanti, 2),',','') AS cantidad,
-                                                    recepcion.pendiente AS saldo,
-                                                    @id := lg_ordendet.nitemord AS idorden,
-                                                    recepcion.pendiente
+                                                    REPLACE ( FORMAT( lg_ordendet.ncanti, 2 ), ',', '' ) AS cantidad,
+                                                    ( SELECT SUM( alm_recepdet.ncantidad ) FROM alm_recepdet WHERE alm_recepdet.niddetaOrd = lg_ordendet.nitemord AND alm_recepdet.nflgactivo = 1 ) AS pendiente 
                                                 FROM
                                                     lg_ordendet
-                                                INNER JOIN cm_producto ON lg_ordendet.id_cprod = cm_producto.id_cprod
-                                                INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
-                                                INNER JOIN tb_pedidodet ON lg_ordendet.niddeta = tb_pedidodet.iditem
-                                                LEFT JOIN ( SELECT SUM(alm_recepdet.ncantidad) AS pendiente,niddetaOrd FROM alm_recepdet
-                                                    WHERE
-                                                        alm_recepdet.niddetaOrd = @id
-                                                ) AS recepcion ON lg_ordendet.nitemord = recepcion.niddetaOrd
+                                                    INNER JOIN cm_producto ON lg_ordendet.id_cprod = cm_producto.id_cprod
+                                                    INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                    INNER JOIN tb_pedidodet ON lg_ordendet.niddeta = tb_pedidodet.iditem 
                                                 WHERE
                                                     lg_ordendet.id_orden = :id");
                 $sql->execute(["id"=>$id]);
@@ -440,9 +427,9 @@
                     $item=1;
                     
                     while ($rs = $sql->fetch()){
-                        $saldo = $rs['cantidad']-$this->calcularSaldosIngresados($rs['nitemord']);
+                        $saldo = $rs['cantidad'] - $rs['pendiente'];
 
-                        if ( $saldo > 0) {
+                        if ( $saldo > 0 ) {
                             $salida.='<tr data-detorden="'.$rs['nitemord'].'" 
                                         data-idprod="'.$rs['id_cprod'].'"
                                         data-iddetped="'.$rs['niddeta'].'"
@@ -777,7 +764,9 @@
                                                             ' ',
                                                             tb_area.ccodarea,
                                                         UPPER( tb_area.cdesarea )) AS area,
-                                                        cm_entidad.crazonsoc 
+                                                        cm_entidad.crazonsoc,
+                                                        ( SELECT SUM( alm_recepdet.ncantidad ) FROM alm_recepdet WHERE pedido = lg_ordencab.id_regmov AND nflgactivo = 1 ) AS ingresos,
+                                                        ( SELECT SUM( lg_ordendet.ncanti ) FROM lg_ordendet WHERE lg_ordendet.id_orden = lg_ordencab.id_regmov ) AS cantidad_orden 
                                                     FROM
                                                         tb_costusu
                                                         INNER JOIN lg_ordencab ON tb_costusu.ncodproy = lg_ordencab.ncodpry
@@ -785,18 +774,20 @@
                                                         INNER JOIN tb_area ON lg_ordencab.ncodarea = tb_area.ncodarea
                                                         INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi 
                                                     WHERE
-                                                        tb_costusu.id_cuser = :usr
+                                                        tb_costusu.id_cuser = :usr 
                                                         AND lg_ordencab.id_regmov = :id 
                                                         AND tb_costusu.nflgactivo = 1 
-                                                        AND lg_ordencab.nEstadoDoc BETWEEN 60 AND 62
-                                                    ORDER BY id_regmov DESC");
+                                                        AND lg_ordencab.nEstadoDoc BETWEEN 60 
+                                                        AND 62 
+                                                    ORDER BY
+                                                        id_regmov DESC");
                 $sql->execute(["usr"=>$_SESSION['iduser'],"id"=>$id]);
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()) {
                         //compara la orden si fue ingresada esta completa y no la muestra
-                        $diferencia_ingreso = $this->calcularIngresosOrden($rs['id_regmov']) - $this->calcularCantidadIngresa($rs['id_regmov']);
+                        $diferencia_ingreso = $rs['cantidad_orden'] - $rs['ingresos'];
 
                         if (($diferencia_ingreso) > 0 ) {
                             $salida.='<tr data-orden="'.$rs['id_regmov'].'">
@@ -810,6 +801,30 @@
                     }
                 }
                 return $salida;
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        public function verDespacho($id){
+            try {
+               $sql = $this->db->connect()->prepare("SELECT COUNT(alm_despachodet.niddeta) AS existe FROM alm_despachodet WHERE niddetaPed =:despacho");
+               $sql->execute(["despacho"=>$id]);
+               $result =$sql->fetchAll();
+               
+               return $result[0]['existe'];
+
+            }catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        public function marcarItem($id) {
+            try {
+                $sql = $this->db->connect()->prepare("UPDATE alm_recepdet SET alm_recepdet.nflgactivo=0 WHERE alm_recepdet.niddetaPed =:id");
+                $sql->execute(["id"=>$id]);
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
                 return false;
