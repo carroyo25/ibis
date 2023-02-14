@@ -138,6 +138,9 @@
                        
                         //if ( $rs['ingresos'] > 0 ) {
                             if ( $saldo > 0 ) {
+
+                                $series  = strlen($this->itemSeries($rs['niddeta'])) == 0 ? "" : strtoupper("N/S :".$this->itemSeries($rs['niddeta']));
+
                                 $salida.='<tr data-detorden="'.$rs['nitemord'].'" 
                                             data-idprod="'.$rs['id_cprod'].'"
                                             data-iddetped="'.$rs['niddeta'].'"
@@ -148,7 +151,7 @@
                                         <td class="textoCentro"><input type="checkbox"></td>
                                         <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
-                                        <td class="pl20px">'.$rs['cdesprod'].'</td>
+                                        <td class="pl20px">'.$rs['cdesprod'].' '.$series.'</td>
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                         <td class="textoDerecha pr20px">'.$rs['cantidad'].'</td>
                                         <td class="textoDerecha pr20px">'.number_format($rs['ingresos'],2).'</td>
@@ -357,7 +360,6 @@
                                                         WHERE id_regalm =:despacho");
 
 
-                //$this->grabarDatosGuia($cabecera,$nro_despacho,$fecha_emision,$fecha_traslado);
                 if ( $operacion == "n" ){
                     $this->grabarDatosGuia($cabecera,$nro_despacho,$fecha_emision,$fecha_traslado);
                 }else{
@@ -757,7 +759,8 @@
                                                     INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
                                                     INNER JOIN tb_pedidocab ON alm_despachodet.nropedido = tb_pedidocab.idreg 
                                                 WHERE
-                                                    alm_despachodet.id_regalm = :id");
+                                                    alm_despachodet.id_regalm = :id
+                                                    AND alm_despachodet.nflgactivo = 1");
                 $sql->execute(["id"=>$indice]);
 
                 $rowCount = $sql->rowCount();
@@ -766,7 +769,7 @@
                     $item = 1;
                     while ($rs = $sql->fetch()){
 
-                        $series = $this->buscarSeries($rs['id_cprod'],$rs['id_regalm'],$rs['ncodalm1']);
+                        //$series = $this->buscarSeries($rs['id_cprod'],$rs['id_regalm'],$rs['ncodalm1']);
                         
                         $pendiente = $rs['cantidad'] - $rs['ingresado'];
 
@@ -1102,6 +1105,30 @@
             }
         }
 
+        public function verificarItem($id){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT COUNT(alm_existencia.idpedido) AS existe 
+                                                        FROM alm_existencia WHERE alm_existencia.idpedido =:id");
+                $sql->execute(["id"=>$id]);
 
+                $result =$sql->fetchAll();
+               
+                return $result[0]['existe'];
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        public function marcarItemDespacho($id){
+            try {
+                $sql = $this->db->connect()->prepare("UPDATE alm_despachodet SET alm_despachodet.nflgactivo = 0
+                                                    WHERE alm_despachodet.niddetaPed =:id");
+                $sql->execute(["id"=>$id]);
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
     } 
 ?>

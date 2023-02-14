@@ -50,7 +50,7 @@
                                                     UPPER(cm_entidad.crazonsoc) AS proveedor,
                                                     lg_ordendet.ncanti AS cantidad_orden,
                                                     ( SELECT SUM( alm_recepdet.ncantidad ) FROM alm_recepdet WHERE alm_recepdet.niddetaOrd = lg_ordendet.nitemord AND alm_recepdet.nflgactivo = 1) AS ingreso,
-                                                    ( SELECT SUM( alm_despachodet.ndespacho ) FROM alm_despachodet WHERE alm_despachodet.niddetaPed = lg_ordendet.niddeta ) AS despachos,
+                                                    ( SELECT SUM( alm_despachodet.ndespacho ) FROM alm_despachodet WHERE alm_despachodet.niddetaPed = lg_ordendet.niddeta AND alm_despachodet.nflgactivo = 1) AS despachos,
                                                     ( SELECT SUM( alm_existencia.cant_ingr ) FROM alm_existencia WHERE alm_existencia.idpedido = lg_ordendet.niddeta ) AS ingreso_obra,
                                                     UPPER( tb_user.cnameuser ) AS operador,
                                                     UPPER( tb_pedidocab.concepto ) AS concepto,
@@ -651,7 +651,8 @@
                                                     FROM
                                                         alm_recepcab 
                                                     WHERE
-                                                        alm_recepcab.idref_abas =:orden");
+                                                        alm_recepcab.idref_abas =:orden
+                                                    AND alm_recepcab.nflgactivo = 1");
                 $sql->execute(["orden"=>$orden]);
                 $rowCount = $sql->rowCount();
                 
@@ -689,7 +690,8 @@
                                                         alm_despachodet
                                                         INNER JOIN alm_despachocab ON alm_despachodet.id_regalm = alm_despachocab.id_regalm 
                                                     WHERE
-                                                        alm_despachodet.nropedido = :orden 
+                                                        alm_despachodet.nropedido = :orden
+                                                        AND alm_despachodet.nflgactivo = 1
                                                     GROUP BY
                                                         alm_despachocab.cnumguia");
                 $sql->execute(["orden"=>$orden]);

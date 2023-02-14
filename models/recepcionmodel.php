@@ -264,11 +264,12 @@
                 if ($nreg > 0 ) {
                     for ($i=0; $i < $nreg; $i++) { 
                         $sql= $this->db->connect()->prepare("INSERT INTO alm_recepserie SET id_cprod=:cprod,idref_movi=:nota,idref_alma=:almacen,
-                                                                                            cdesserie=:serie");
+                                                                                            cdesserie=:serie,idref_pedido=:itempedido");
                          $sql ->execute(["cprod"=>$datos[$i]->producto,
-                                        "almacen"=>$datos[$i]->almacen,
-                                        "nota"=>$id,
-                                        "serie"=>$datos[$i]->serie]);
+                                         "almacen"=>$datos[$i]->almacen,
+                                         "nota"=>$id,
+                                         "serie"=>$datos[$i]->serie,
+                                         "itempedido"=>$datos[$i]->idped]);
                     }
                 }
                 
@@ -541,9 +542,13 @@
 
             for($i=1;$i<=$nreg;$i++){
                 $pdf->SetAligns(array("C","L","L","L","R","L","L","L","L"));
+
+                $series = strlen($this->itemSeries($datos[$rc]->iddetped)) == 0 ? "" : "N/S: ".$this->itemSeries($datos[$rc]->iddetped);
+
+
                 $pdf->Row(array(str_pad($i,3,"0",STR_PAD_LEFT),
                                         $datos[$rc]->codigo,
-                                        utf8_decode($datos[$rc]->descripcion),
+                                        utf8_decode($datos[$rc]->descripcion).' '.strtoupper($series) ,
                                         $datos[$rc]->unidad,
                                         $datos[$rc]->cantrec,
                                         $datos[$rc]->obser,

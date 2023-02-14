@@ -10,15 +10,6 @@
     <div class="mensaje">
         <p></p>
     </div>
-    <div class="modal" id="pregunta">
-        <div class="ventanaPregunta">
-            <h3>Desea eliminar el registro?</h3>
-            <div>
-                <button type="button" id="btnAceptarPregunta">Aceptar</button>
-                <button type="button" id="btnCancelarPregunta">Cancelar</button>
-            </div>
-        </div>
-    </div>
     <div class="modal" id="proceso">
         <div class="ventanaProceso tamanioProceso">
             <div class="cabezaProceso">
@@ -369,6 +360,15 @@
                 <a href="#" id="closePreviewPrinter" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
             </div>
             <iframe src="" id="iFramePdf"></iframe>
+        </div>
+    </div>
+    <div class="modal" id="pregunta">
+        <div class="ventanaPregunta">
+            <h3>Desea eliminar el registro?</h3>
+            <div>
+                <button type="button" id="btnAceptarPregunta">Aceptar</button>
+                <button type="button" id="btnCancelarPregunta">Cancelar</button>
+            </div>
         </div>
     </div>
     <div class="cabezaModulo">

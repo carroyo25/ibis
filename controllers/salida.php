@@ -65,7 +65,15 @@
         }
 
         function modificarSalida() {
-            echo $this->model-> modificar($_POST['cabecera'],$_POST['detalles']);
+            echo $this->model->modificar($_POST['cabecera'],$_POST['detalles']);
+        }
+        
+        function existeObra() {
+            echo $this->model->verificarItem($_POST['id']);
+        }
+
+        function marcaItem(){
+            echo $this->model->marcarItemDespacho($_POST['id']);
         }
     }
 ?>

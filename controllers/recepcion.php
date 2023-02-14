@@ -71,7 +71,7 @@
         }
 
         function verAdjuntos(){
-            echo json_encode($this->model->verAdjuntosOrden($_POST['idprod']));
+            echo json_encode($this->model->verAdjuntosOrden($_POST['id']));
         }
 
         function existeSalida(){

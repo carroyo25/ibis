@@ -1600,6 +1600,29 @@
             }
         }
 
+        public function itemSeries($id) {
+            try {
+                $salida = "";
+
+                $sql = $this->db->connect()->prepare("SELECT cdesserie FROM alm_recepserie 
+                                                         WHERE idref_pedido = :id");
+                $sql ->execute(["id"=>$id]);
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0) {
+                    while ($rs = $sql->fetch()) {
+                        $salida .= $rs['cdesserie'].", "; 
+                    }
+                }
+                
+                return $salida;
+                
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
         private function consultarDetallesProceso($id){
             try {
                 $salida ="";

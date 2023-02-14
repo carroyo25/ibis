@@ -1,7 +1,9 @@
 $(function() {
     let accion = "",
         tipoVista = null,
-        cc = "";
+        cc = "",
+        fila = "",
+        idfila = "";
 
     $("#esperar").fadeOut();
 
@@ -527,7 +529,18 @@ $(function() {
     $("#tablaDetalles tbody").on("click","a", function (e) {
         e.preventDefault();
 
-        $(this).parent().parent().remove();
+        fila = $(this).parent().parent();
+        idfila = $(this).parent().parent().data('idpedido');
+
+        $.post(RUTA+"salida/existeObra", {id:$(this).parent().parent().data('idpedido')},
+            function (data, textStatus, jqXHR) {
+                if (data == 1)
+                    mostrarMensaje("EL item tiene ingreso a obra","mensaje_error");
+                else
+                    $("#pregunta").fadeIn();       
+            },
+            "text"
+         );
         
         return false;
     });
@@ -566,6 +579,30 @@ $(function() {
         $(this).next().fadeIn();
 
         return false
+    });
+
+    $("#btnAceptarPregunta").click(function (e) { 
+        e.preventDefault();
+
+        $.post(RUTA+"salida/marcaItem",{id:idfila},
+            function (data, textStatus, jqXHR) {
+                fila.remove();
+                fillTables($("#tablaDetalles tbody > tr"),2);
+
+                $("#pregunta").fadeOut();
+            },
+            "text"
+        );
+
+        return false;
+    });
+
+    $("#btnCancelarPregunta").click(function (e) { 
+        e.preventDefault();
+        
+        $("#pregunta").fadeOut();
+
+        return false;
     });
 })
 

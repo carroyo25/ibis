@@ -535,7 +535,6 @@ $(function(){
         });
 
         try {
-            //if(accion != "n") throw "Documento registrado";
             if (result['codigo_almacen'] == '') throw "Elija el Almacen";
             if (result['codigo_aprueba'] == '') throw "Elija la persona que aprueba";
             if (result['guia'] == '') throw "Escriba el número de guia";
@@ -634,13 +633,14 @@ $(function(){
         idfila = $(this).parent().parent().data('iddetped');
 
         if ($(this).data("accion") == "setSerial") {
-            let filas = parseInt($(this).parent().parent().find("td").eq(7).children().val()),
-            orden = $(this).parent().parent().data('detorden'),
-            producto = $(this).parent().parent().data('idprod'),
-            almacen = $("#codigo_almacen").val(),
-            nombre = $(this).parent().parent().find("td").eq(3).text();
+            let filas   = parseInt($(this).parent().parent().find("td").eq(7).children().val()),
+            orden       = $(this).parent().parent().data('detorden'),
+            producto    = $(this).parent().parent().data('idprod'),
+            almacen     = $("#codigo_almacen").val(),
+            nombre      = $(this).parent().parent().find("td").eq(3).text(),
+            item        = $(this).parent().parent().data('iddetped');
 
-            row = `<tr data-orden="${orden}" data-producto="${producto}" data-almacen="${almacen}">
+            row = `<tr data-orden="${orden}" data-producto="${producto}" data-almacen="${almacen}" data-itempedido="${item}">
                         <td>${nombre}</td>
                         <td><input type="text"></td>
                     </tr>`
@@ -767,15 +767,17 @@ series = () => {
         let ORDEN   = $(this).data('orden'),
             ALMACEN = $("#codigo_almacen").val(),
             PRODUCTO = $(this).data('producto'),
+            IDPED    = $(this).data('itempedido')
             SERIE  = $(this).find('td').eq(1).children().val();
     
         item = {};
 
         if (SERIE != ""){
-            item['orden'] = ORDEN;
-            item['almacen'] = ALMACEN;
-            item['producto'] = PRODUCTO;
-            item['serie']= SERIE;
+            item['orden']       = ORDEN;
+            item['almacen']     = ALMACEN;
+            item['producto']    = PRODUCTO;
+            item['serie']       = SERIE;
+            item['idped']       = IDPED;
         }
         
 
