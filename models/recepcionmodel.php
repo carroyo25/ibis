@@ -657,7 +657,7 @@
                                                     WHERE
                                                         tb_costusu.id_cuser = :usr 
                                                         AND tb_costusu.nflgactivo = 1
-                                                        AND alm_recepcab.nEstadoDoc = 60
+                                                        AND alm_recepcab.nEstadoDoc BETWEEN  60 AND 62
                                                         AND alm_recepcab.ncodpry LIKE :costos 
                                                         AND alm_recepcab.idref_abas LIKE :orden 
                                                         AND YEAR ( alm_recepcab.ffecdoc ) = :anio

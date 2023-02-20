@@ -93,7 +93,7 @@
             }
         }
 
-        public function consultarCargoPlan($codigo,$pedido,$orden,$ingreso,$despacho,$item,$estado){
+        /*public function consultarCargoPlan($codigo,$pedido,$orden,$ingreso,$despacho,$item,$estado){
             $detallePedido = $this->detallePedido($item);
             $datosPedido = $this->pedido($pedido);
             $datosOrden = $this->orden($orden);
@@ -105,7 +105,7 @@
                          "orden"=>$datosOrden,
                          "ingreso"=>$datosIngreso,
                          "despacho"=>$datosDespacho);
-        }
+        }*/
         
         private function detallePedido($item){
             try {
@@ -220,8 +220,10 @@
                                             ON 
                                                 alm_recepdet.id_regalm = alm_recepcab.id_regalm
                                         WHERE
-                                            alm_recepdet.niddetaPed = :item AND
-                                            alm_recepdet.id_regalm = :ingreso");
+                                            alm_recepdet.niddetaPed = :item 
+                                        AND
+                                            alm_recepdet.id_regalm = :ingreso
+                                        AND alm_recepdet.nflactivo = 1");
                 $sql->execute(["ingreso"=>$ingreso, "item"=>$item]);
 
                 $docData = array();

@@ -115,8 +115,10 @@
                                                         tb_pedidodet.idpedido,
                                                         tb_pedidodet.nroparte,
                                                         REPLACE ( FORMAT( lg_ordendet.ncanti, 2 ), ',', '' ) AS cantidad,
-                                                        ( SELECT SUM( alm_recepdet.ncantidad ) FROM alm_recepdet WHERE alm_recepdet.niddetaOrd = lg_ordendet.nitemord ) AS ingresos,
-                                                        ( SELECT SUM( alm_despachodet.ndespacho ) FROM alm_despachodet WHERE alm_despachodet.niddetaOrd = lg_ordendet.nitemord ) AS despachos 
+                                                        ( SELECT SUM( alm_recepdet.ncantidad ) FROM alm_recepdet WHERE alm_recepdet.niddetaOrd = lg_ordendet.nitemord 
+                                                            AND alm_recepdet.nflgActivo = 1) AS ingresos,
+                                                        ( SELECT SUM( alm_despachodet.ndespacho ) FROM alm_despachodet WHERE alm_despachodet.niddetaOrd = lg_ordendet.nitemord 
+                                                        AND alm_despachodet.nflgActivo = 1) AS despachos 
                                                     FROM
                                                         lg_ordendet
                                                         INNER JOIN cm_producto ON lg_ordendet.id_cprod = cm_producto.id_cprod
@@ -751,7 +753,9 @@
                                                     tb_unimed.nfactor,
                                                     tb_unimed.cabrevia,
                                                     tb_pedidocab.nrodoc,
-                                                    (SELECT	 SUM(alm_recepdet.ncantidad) FROM alm_recepdet WHERE alm_recepdet.niddetaOrd = alm_despachodet.niddetaOrd) AS ingresado
+                                                    (SELECT	 SUM(alm_recepdet.ncantidad) FROM alm_recepdet 
+                                                        WHERE alm_recepdet.niddetaOrd = alm_despachodet.niddetaOrd 
+                                                         AND  alm_recepdet.nflgactivo = 1) AS ingresado
                                                 FROM
                                                     alm_despachodet
                                                     INNER JOIN cm_producto ON alm_despachodet.id_cprod = cm_producto.id_cprod
@@ -785,7 +789,7 @@
                                         <td class="textoCentro"><input type="checkbox" checked></td>
                                         <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
-                                        <td class="pl20px">'.$rs['cdesprod'].'  :'.$series.'</td>
+                                        <td class="pl20px">'.$rs['cdesprod'].'</td>
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                         <td class="textoDerecha pr20px">'.$rs['cantidad'].'</td>
                                         <td class="textoDerecha pr20px">'.$rs['ingresado'].'</td>

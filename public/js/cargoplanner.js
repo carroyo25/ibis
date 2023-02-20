@@ -35,12 +35,12 @@ $(function() {
         return false;
     });
 
-    $("#cargoPlanDescrip tbody").on('click', function(e) {
+    $("#cargoPlanDescrip tbody").on('click','tr', function(e) {
         e.preventDefault();
 
         $("#vistadocumento").fadeIn();
 
-        let tabla = $("#cargoPlanDescrip tbody >tr")
+        let tabla = $("#cargoPlanDescrip tbody > tr");
 
         $("#codigo").val(tabla.find('td').eq(12).text());
         $("#producto").val(tabla.find('td').eq(14).text());
@@ -53,7 +53,7 @@ $(function() {
         $("#aprobacion_pedido").val(tabla.find('td').eq(10).text());
         $("#aprobado_por").val(tabla.data("aprueba"));
 
-        $.post(RUTA+"cargoplanner/resumen", {orden:tabla.data("orden")},
+        $.post(RUTA+"cargoplanner/resumen", {orden:tabla.data("orden"),refpedido:$(this).data('itempedido')},
             function (data, textStatus, jqXHR) {
                 $("#tablaOrdenes tbody").empty().append(data.orden);
                 $("#tablaIngresos tbody").empty().append(data.ingresos);
@@ -62,9 +62,6 @@ $(function() {
             "json"
         );
 
-        
-        $("#aprobado_por").val();
-        
         return false;
     });
 

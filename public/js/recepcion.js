@@ -121,9 +121,9 @@ $(function(){
     $(".mostrarLista").focus(function (e) { 
         e.preventDefault();
 
-        if (accion !="n") {
+        /*if (accion !="n") {
             return false;
-        }
+        }*/
         
         $(this).next().slideDown();
 

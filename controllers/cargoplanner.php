@@ -19,7 +19,7 @@
         }
 
         function resumen() {
-            echo json_encode($this->model->consultaResumen($_POST['orden']));
+            echo json_encode($this->model->consultaResumen($_POST['orden'],$_POST['refpedido']));
         }
     }
 ?>

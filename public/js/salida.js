@@ -3,7 +3,8 @@ $(function() {
         tipoVista = null,
         cc = "",
         fila = "",
-        idfila = "";
+        idfila = "",
+        ordenes = [];
 
     $("#esperar").fadeOut();
 
@@ -294,6 +295,7 @@ $(function() {
 
         try {
             if ( $("#codigo_costos").val() != cc && $("#codigo_costos").val() != "" ) throw "Los orden es de otro centro de costos";
+            if (buscarOrden($(this).data("orden"))) throw "La orden se esta duplicada";
 
             $.post(RUTA+"salida/ordenId", {id:$(this).data("orden"),costo:$(this).data("idcosto")},
             function (data, textStatus, jqXHR) {
@@ -673,6 +675,22 @@ detalles = (flag) =>{
     })
 
     return DETALLES; 
+}
+
+buscarOrden = (orden) => {
+    existe = false;
+
+    let TABLA = $("#tablaDetalles tbody >tr");
+
+    TABLA.each(function(){
+            ingresada    = $(this).find('td').eq(12).text()
+
+        if (ingresada == orden) {
+            existe = true;
+        }
+    })
+
+    return existe;
 }
 
 

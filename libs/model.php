@@ -3568,8 +3568,8 @@
                                                         UPPER( tb_area.cdesarea )) AS area,
                                                         UPPER( cm_entidad.crazonsoc ) AS crazonsoc,
                                                         ( SELECT SUM( alm_recepdet.ncantidad ) FROM alm_recepdet WHERE pedido = lg_ordencab.id_regmov AND nflgactivo = 1 ) AS ingresos,
-                                                        ( SELECT SUM( alm_despachodet.ndespacho ) FROM alm_despachodet WHERE alm_despachodet.nropedido = lg_ordencab.id_regmov ) AS despachos,
-                                                        ( SELECT SUM( lg_ordendet.ncanti ) FROM lg_ordendet WHERE lg_ordendet.id_orden = lg_ordencab.id_regmov ) AS cantidad_orden 
+                                                        ( SELECT SUM( alm_despachodet.ndespacho ) FROM alm_despachodet WHERE alm_despachodet.nropedido = lg_ordencab.id_regmov AND nflgactivo = 1) AS despachos,
+                                                        ( SELECT SUM( lg_ordendet.ncanti ) FROM lg_ordendet WHERE lg_ordendet.id_orden = lg_ordencab.id_regmov  ) AS cantidad_orden 
                                                     FROM
                                                         tb_costusu
                                                         INNER JOIN lg_ordencab ON tb_costusu.ncodproy = lg_ordencab.ncodpry

@@ -596,10 +596,10 @@
             }
         }
 
-        public function consultaResumen($orden) {
+        public function consultaResumen($orden,$refpedido) {
             return array("orden"=>$this->ordenes($orden),
-                        "ingresos"=>$this->ingresos($orden),
-                        "despachos"=>$this->despachos($orden));
+                        "ingresos"=>$this->ingresos($refpedido),
+                        "despachos"=>$this->despachos($refpedido));
         }
 
         private function ordenes($orden) {
@@ -639,21 +639,23 @@
             }
         }
 
-        private function ingresos($orden) {
+        private function ingresos($refpedi) {
             try {
                 $salida = "";
                 $sql = $this->db->connect()->prepare("SELECT
+                                                        alm_recepdet.niddeta,
+                                                        alm_recepdet.niddetaPed,
+                                                        alm_recepdet.niddetaOrd,
                                                         alm_recepcab.nnronota,
-                                                        DATE_FORMAT(  alm_recepcab.ffecdoc, '%d/%m/%Y' ) AS ffecdoc,
-                                                        alm_recepcab.cnumguia,
-                                                        alm_recepcab.idref_abas,
-                                                        alm_recepcab.id_regalm 
+                                                        DATE_FORMAT( alm_recepcab.ffecdoc, '%d/%m,/%Y' ) AS ffecdoc,
+                                                        alm_recepcab.cnumguia 
                                                     FROM
-                                                        alm_recepcab 
+                                                        alm_recepdet
+                                                        INNER JOIN alm_recepcab ON alm_recepdet.id_regalm = alm_recepcab.id_regalm 
                                                     WHERE
-                                                        alm_recepcab.idref_abas =:orden
-                                                    AND alm_recepcab.nflgactivo = 1");
-                $sql->execute(["orden"=>$orden]);
+                                                        alm_recepdet.niddetaPed = :ref_pedi 
+                                                        AND alm_recepdet.nflgactivo = 1");
+                $sql->execute(["ref_pedi"=>$refpedi]);
                 $rowCount = $sql->rowCount();
                 
                 if($rowCount > 0) {
@@ -662,7 +664,7 @@
                                         <td class="textoCentro">'.$rs['nnronota'].'</td>
                                         <td class="textoCentro">'.$rs['ffecdoc'].'</td>
                                         <td class="textoCentro">'.$rs['cnumguia'].'</td>
-                                        <td class="textoCentro"><a href="'.$rs['id_regalm'].'"><i class="far fa-file-pdf"></i></a></td>
+                                        <td class="textoCentro"><a href="'.$rs['nnronota'].'"><i class="far fa-file-pdf"></i></a></td>
                                     </tr>';
                     }
                 }
@@ -675,26 +677,26 @@
             }
         }
 
-        private function despachos($orden) {
+        private function despachos($refpedi) {
             try {
                 $salida = "";
                 $sql = $this->db->connect()->prepare("SELECT
-                                                        alm_despachodet.niddeta,
-                                                        alm_despachodet.id_regalm,
-                                                        alm_despachodet.nropedido,
-                                                        DATE_FORMAT(alm_despachocab.ffecdoc,'%d/%m/%Y') AS ffecdoc,
-                                                        alm_despachocab.cnumguia,
-                                                        alm_despachocab.nnronota,
-                                                        alm_despachocab.nReferido 
+                                                        alm_despachodet.niddeta, 
+                                                        alm_despachocab.nnronota, 
+                                                        alm_despachocab.ffecdoc, 
+                                                        alm_despachocab.cnumguia, 
+                                                        alm_despachocab.ffecenvio, 
+                                                        alm_despachocab.nReferido
                                                     FROM
                                                         alm_despachodet
-                                                        INNER JOIN alm_despachocab ON alm_despachodet.id_regalm = alm_despachocab.id_regalm 
+                                                        INNER JOIN
+                                                        alm_despachocab
+                                                        ON 
+                                                            alm_despachodet.id_regalm = alm_despachocab.id_regalm
                                                     WHERE
-                                                        alm_despachodet.nropedido = :orden
-                                                        AND alm_despachodet.nflgactivo = 1
-                                                    GROUP BY
-                                                        alm_despachocab.cnumguia");
-                $sql->execute(["orden"=>$orden]);
+                                                        alm_despachodet.niddetaPed = :ref_pedi
+                                                        AND alm_despachodet.nflgactivo = 1");
+                $sql->execute(["ref_pedi"=>$refpedi]);
                 $rowCount = $sql->rowCount();
                 
                 if($rowCount > 0) {
@@ -704,7 +706,7 @@
                                         <td class="textoCentro">'.$rs['ffecdoc'].'</td>
                                         <td class="textoCentro">'.$rs['cnumguia'].'</td>
                                         <td class="textoCentro">'.$rs['nReferido'].'</td>
-                                        <td class="textoCentro"><a href="'.$rs['id_regalm'].'"><i class="far fa-file-pdf"></i></a></td>
+                                        <td class="textoCentro"><a href="'.$rs['nnronota'].'"><i class="far fa-file-pdf"></i></a></td>
                                     </tr>';
                     }
                 }
