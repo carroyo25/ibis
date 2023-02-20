@@ -57,7 +57,8 @@
                                                     DATEDIFF( NOW(), lg_ordencab.ffechaent ) AS dias_atraso,
                                                     transporte.cdescripcion AS transporte,
                                                     transporte.nidreg,
-                                                    user_aprueba.cnombres 
+                                                    user_aprueba.cnombres,
+                                                    alm_despachocab.cnumguia  
                                                 FROM
                                                     tb_pedidodet
                                                     INNER JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
@@ -71,7 +72,9 @@
                                                     LEFT JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
                                                     LEFT JOIN tb_user ON lg_ordencab.id_cuser = tb_user.iduser
                                                     LEFT JOIN tb_parametros AS transporte ON lg_ordencab.ctiptransp = transporte.nidreg
-                                                    INNER JOIN tb_user AS user_aprueba ON tb_pedidocab.aprueba = user_aprueba.iduser  
+                                                    INNER JOIN tb_user AS user_aprueba ON tb_pedidocab.aprueba = user_aprueba.iduser
+                                                    LEFT JOIN alm_despachodet ON tb_pedidodet.iditem = alm_despachodet.niddetaPed
+	                                                LEFT JOIN alm_despachocab ON alm_despachodet.id_regalm = alm_despachocab.id_regalm   
                                                 WHERE
                                                     tb_pedidodet.nflgActivo 
                                                     AND ISNULL( lg_ordendet.nflgactivo ) 
@@ -229,6 +232,7 @@
                                         <td class="textoDerecha pr15px">'.$dias_atraso.'</td>
                                         <td class="textoCentro '.$estadoSemaforo.'">'.$semaforo.'</td>
                                         <td class="textoDerecha">'.$rs['despachos'].'</td>
+                                        <td class="textoCentro">'.$rs['cnumguia'].'</td>
                                         <td class="textoCentro">'.$rs['ingreso_obra'].'</td>
                                         <td class="textoCentro">'.$estado_pedido.'</td>
                                         <td class="textoCentro">'.$estado_item.'</td>
@@ -392,7 +396,7 @@
                             ->setRGB('00FFFF');
 
                 $objPHPExcel->getActiveSheet()
-                            ->getStyle('AE2:AK2')
+                            ->getStyle('AE2:AL2')
                             ->getFill()
                             ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
                             ->getStartColor()
@@ -438,14 +442,15 @@
                 $objPHPExcel->getActiveSheet()->setCellValue('AA2','Días Atrazo'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('AB2','Semáforo'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('AC2','Cantidad Despachada'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AD2','Cantidad en Obra'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AE2','Estado Pedido'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AF2','Estado Item'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AG2','N° Parte'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AH2','Codigo Activo'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AI2','Operador Logístico'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AJ2','Tipo Transporte'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AK2','Observaciones/Concepto'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AD2','Nro. Guia'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AE2','Cantidad en Obra'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AF2','Estado Pedido'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AG2','Estado Item'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AH2','N° Parte'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AJ2','Codigo Activo'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AJ2','Operador Logístico'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AK2','Tipo Transporte'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AL2','Observaciones/Concepto'); // esto cambia
                
                 $fila = 3;
                 $datos = json_decode($registros);
@@ -553,13 +558,14 @@
                     $objPHPExcel->getActiveSheet()->getStyle('AB'.$fila)->applyFromArray($semaforo);
                     
                     $objPHPExcel->getActiveSheet()->setCellValue('AC'.$fila,$datos[$i]->despacho);
-                    $objPHPExcel->getActiveSheet()->setCellValue('AD'.$fila,$datos[$i]->cantidad_obra);
-                    $objPHPExcel->getActiveSheet()->setCellValue('AE'.$fila,$datos[$i]->estado_pedido);
-                    $objPHPExcel->getActiveSheet()->setCellValue('AF'.$fila,$datos[$i]->estado_item);
-                    $objPHPExcel->getActiveSheet()->setCellValue('AG'.$fila,$datos[$i]->numero_parte);
-                    $objPHPExcel->getActiveSheet()->setCellValue('AH'.$fila,$datos[$i]->codigo_activo);
-                    $objPHPExcel->getActiveSheet()->setCellValue('AI'.$fila,$datos[$i]->operador);
-                    $objPHPExcel->getActiveSheet()->setCellValue('AJ'.$fila,$datos[$i]->transporte);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AD'.$fila,"");
+                    $objPHPExcel->getActiveSheet()->setCellValue('AE'.$fila,$datos[$i]->cantidad_obra);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AF'.$fila,$datos[$i]->estado_pedido);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AG'.$fila,$datos[$i]->estado_item);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AH'.$fila,$datos[$i]->numero_parte);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AI'.$fila,$datos[$i]->codigo_activo);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AJ'.$fila,$datos[$i]->operador);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AK'.$fila,$datos[$i]->transporte);
                     $objPHPExcel->getActiveSheet()->setCellValue('AK'.$fila,$datos[$i]->observaciones);
 
                     $fila++;

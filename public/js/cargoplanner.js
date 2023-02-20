@@ -111,14 +111,15 @@ detalles = () =>{
             DIAS_ATRASO         = $(this).find('td').eq(27).text(),
             SEMAFORO            = $(this).find('td').eq(28).text(),
             DESPACHO            = $(this).find('td').eq(29).text(),
-            CANTIDA_OBRA        = $(this).find('td').eq(30).text(),
-            ESTADO_PEDIDO       = $(this).find('td').eq(31).text(),
-            ESTADO_ITEM         = $(this).find('td').eq(32).text(),
-            NUMERO_PARTE        = $(this).find('td').eq(33).text(),
-            CODIGO_ACTIVO       = $(this).find('td').eq(34).text(),
-            OPERADOR            = $(this).find('td').eq(35).text(),
-            TRANSPORTE          = $(this).find('td').eq(36).text(),
-            OBSERVACIONES       = $(this).find('td').eq(37).text();
+            CANTIDA_OBRA        = $(this).find('td').eq(31).text(),
+            NUMERO_GUIA         = $(this).find('td').eq(30).text(),
+            ESTADO_PEDIDO       = $(this).find('td').eq(33).text(),
+            ESTADO_ITEM         = $(this).find('td').eq(34).text(),
+            NUMERO_PARTE        = $(this).find('td').eq(35).text(),
+            CODIGO_ACTIVO       = $(this).find('td').eq(36).text(),
+            OPERADOR            = $(this).find('td').eq(37).text(),
+            TRANSPORTE          = $(this).find('td').eq(38).text(),
+            OBSERVACIONES       = $(this).find('td').eq(39).text();
           
 
         item = {};
@@ -161,6 +162,7 @@ detalles = () =>{
         item['despacho']            = DESPACHO;
         item['item_orden']          = ITEM_ORDEN;
         item['autoriza_orden']      = AUTORIZA_ORDEN;
+        item['numero_guia']         = NUMERO_GUIA;
         
         DATA.push(item);
     })

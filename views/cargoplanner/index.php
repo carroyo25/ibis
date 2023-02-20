@@ -242,6 +242,7 @@
                     <th>Días</br>Atrazo</th>
                     <th>Semaforo</th>
                     <th style="background:#25AFF3; color:#000">Cantidad</br>Enviada</th>
+                    <th style="background:#25AFF3; color:#000">Nro. Guia</th>
                     <th style="background:#DA500B; color:#000">Cantidad</br>Recibida</br>Obra</th>
                     <th>Estado</br>Pedido</th>
                     <th>Estado</br>Item</th>

@@ -859,7 +859,7 @@
 
                 $mes  = date("m");
 
-                $orden  = $parametros['ordenSearch'] == "" ? "%" : "%".$parametros['ordenSearch']."%";
+                $orden  = $parametros['ordenSearch'] == "" ? "%" : $parametros['ordenSearch'];
                 $costos = $parametros['costosSearch'] == -1 ? "%" : "%".$parametros['costosSearch']."%";
                 $mes    = $parametros['mesSearch'] == -1 ? "%" :  $parametros['mesSearch'];
                 $anio   = $parametros['anioSearch'] == "" ? "%" : $parametros['anioSearch'];
@@ -893,7 +893,7 @@
                                                     WHERE
                                                         tb_costusu.nflgactivo = 1 
                                                         AND tb_costusu.id_cuser = :usr 
-                                                        AND alm_despachodet.nropedido LIKE :orden 
+                                                        AND alm_despachodet.nropedido = :orden 
                                                         AND alm_despachocab.ncodpry LIKE :costos 
                                                         AND alm_despachocab.cper LIKE :anio 
                                                         AND alm_despachocab.cmes LIKE :mes 
