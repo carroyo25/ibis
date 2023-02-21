@@ -210,7 +210,7 @@
 
                 $objPHPExcel = PHPExcel_IOFactory::load("./public/documentos/temp/temp.xlsx");
                 $objHoja=$objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
-                $fila = 1;
+                $fila = 9;
                 $datos= "";
 
                 foreach ($objHoja as $iIndice=>$objCelda) {

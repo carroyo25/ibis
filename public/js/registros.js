@@ -144,7 +144,10 @@ $(function(){
     $("#itemsImport").click(function (e) { 
         e.preventDefault();
 
-        $.post(RUTA+"registros/despachos",
+        try {
+            if (guias()) throw "La guia ya esta registrado";
+
+            $.post(RUTA+"registros/despachos",{guia:$("#txtBuscar").val()},
                 function (data, textStatus, jqXHR) {
                     $("#despachos tbody")
                         .empty()
@@ -153,7 +156,13 @@ $(function(){
                         $("#busqueda").fadeIn();
                 },
                 "text"
-        );
+            );
+
+        } catch (error) {
+            console.log(error);
+        }
+
+        
         
         return false;
     });
@@ -193,6 +202,17 @@ $(function(){
        
 
         return false
+    });
+
+    $("#txtBuscar").keyup(function(){
+        let _this = this;
+
+        $.each($("#despachos tbody > tr"), function() {
+            if($(this).text().toLowerCase().indexOf($(_this).val().toLowerCase()) === -1)
+                $(this).hide();
+            else
+                $(this).show();
+        });
     });
 
 })
@@ -238,4 +258,20 @@ detalles = () =>{
     })
 
     return DETALLES
+}
+
+guias = (guia) => {
+    existe = false;
+
+    let TABLA = $("#tablaDetalles tbody >tr");
+
+    TABLA.each(function(){
+            ingresada    = $(this).find('td').eq(12).text()
+
+        if (ingresada == guia) {
+            existe = true;
+        }
+    })
+
+    return existe;
 }

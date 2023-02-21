@@ -408,8 +408,6 @@
                             ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
                             ->getStartColor()
                             ->setRGB('BFCDDB');
-                
-                
 
                 $objPHPExcel->getActiveSheet()->getStyle('A1:AK2')->getAlignment()->setWrapText(true);
 

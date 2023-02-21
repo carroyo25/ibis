@@ -107,6 +107,7 @@
                                         <th class="">Ubicación</th>
                                         <th class="">Pedido</th>
                                         <th class="">Orden</th>
+                                        <th class="">Guia Remision</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -200,7 +201,7 @@
     </div>
     <div class="itemsTabla">
         <table id="tablaPrincipal">
-            <thead>
+            <thead class="stickytop">
                 <tr>
                     <th>Item</th>
                     <th>F.Emisión</th>
