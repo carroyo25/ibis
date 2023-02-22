@@ -26,7 +26,7 @@
         }
 
         function despachos() {
-            echo $this->model->listarDespachos();
+            echo $this->model->listarDespachos($_POST['guia']);
         }
 
         function registroID(){

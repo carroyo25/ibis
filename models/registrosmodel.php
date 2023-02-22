@@ -6,8 +6,11 @@
             parent::__construct();
         }
 
-        public function listarDespachos(){
+        public function listarDespachos($guia){
             $salida = "";
+
+            $nguia = $guia == "" ? "%":$guia;
+            
             try {
                 $sql = $this->db->connect()->prepare("SELECT  alm_despachocab.id_regalm,
                                                         YEAR(ffecdoc) AS anio,
@@ -21,7 +24,8 @@
                                                         tb_parametros.cabrevia,
                                                         alm_despachocab.nEstadoDoc,
                                                         alm_despachocab.cnumguia,
-                                                        alm_despachocab.nReferido 
+                                                        ( SELECT SUM( alm_despachodet.ndespacho ) FROM alm_despachodet WHERE alm_despachodet.id_regalm = alm_despachocab.id_regalm ) AS despachos,
+	                                                    ( SELECT SUM( alm_existencia.cant_ingr ) FROM alm_existencia WHERE alm_existencia.iddespacho = alm_despachocab.id_regalm ) AS ingresos  
                                                     FROM
                                                         tb_costusu
                                                         INNER JOIN alm_despachocab ON tb_costusu.ncodproy = alm_despachocab.ncodpry
@@ -32,25 +36,31 @@
                                                     WHERE
                                                         tb_costusu.id_cuser = :usr
                                                         AND tb_costusu.nflgactivo = 1 
-                                                        AND alm_despachocab.nEstadoDoc = 62 
+                                                        AND alm_despachocab.nEstadoDoc = 62
+                                                        AND alm_despachocab.cnumguia LIKE :guia 
                                                     ORDER BY
                                                         alm_despachocab.ffecdoc ASC");
-                $sql->execute(["usr"=>$_SESSION['iduser']]);
+                $sql->execute(["usr"=>$_SESSION['iduser'],"guia"=>$nguia]);
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()){
-                        $salida .='<tr data-indice="'.$rs['id_regalm'].'" class="pointer">                                        
-                                        <td class="textoCentro">'.str_pad($rs['id_regalm'],6,0,STR_PAD_LEFT).'</td>
-                                        <td class="pl20px">'.$rs['ffecdoc'].'</td>
-                                        <td class="pl20px">'.$rs['origen'].'</td>
-                                        <td class="pl20px">'.$rs['destino'].'</td>
-                                        <td class="pl20px">'.$rs['costos'].'</td>
-                                        <td class="textoCentro">'.$rs['anio'].'</td>
-                                        <td class="textoCentro">'.$rs['cnumguia'].'</td>
-                                        <td class="textoCentro">'.$rs['nReferido'].'</td>
-                                        <td></td>
-                                    </tr>';
+                        $resto  = $rs['despachos'] - $rs['ingresos'];
+                        
+                        if ( $resto != 0 ) {
+                            $salida .='<tr data-indice="'.$rs['id_regalm'].'" class="pointer" data-guia="'.$rs['cnumguia'].'">                                        
+                                    <td class="textoCentro">'.str_pad($rs['id_regalm'],6,0,STR_PAD_LEFT).'</td>
+                                    <td class="pl20px">'.$rs['ffecdoc'].'</td>
+                                    <td class="pl20px">'.$rs['origen'].'</td>
+                                    <td class="pl20px">'.$rs['destino'].'</td>
+                                    <td class="pl20px">'.$rs['costos'].'</td>
+                                    <td class="textoCentro">'.$rs['anio'].'</td>
+                                    <td class="textoCentro">'.$rs['cnumguia'].'</td>
+                                    <td class="textoCentro">'.$rs['nReferido'].'</td>
+                                    <td></td>
+                                </tr>';
+                        }
+                       
                     }
                 }
 
@@ -131,7 +141,8 @@
                                                         ibis.tb_area.ncodarea,
                                                         rrhh.tabla_aquarius.apellidos,
                                                         rrhh.tabla_aquarius.nombres,
-                                                        ibis.tb_pedidocab.idcostos 
+                                                        ibis.tb_pedidocab.idcostos,
+                                                        ibis.alm_despachocab.cnumguia  
                                                     FROM
                                                         ibis.alm_despachodet
                                                         INNER JOIN ibis.cm_producto ON alm_despachodet.id_cprod = cm_producto.id_cprod
@@ -139,7 +150,8 @@
                                                         INNER JOIN ibis.tb_pedidodet ON alm_despachodet.niddetaPed = tb_pedidodet.iditem
                                                         INNER JOIN ibis.tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
                                                         INNER JOIN ibis.tb_area ON tb_pedidocab.idarea = tb_area.ncodarea
-                                                        INNER JOIN rrhh.tabla_aquarius ON ibis.tb_pedidocab.idsolicita = rrhh.tabla_aquarius.internal 
+                                                        INNER JOIN rrhh.tabla_aquarius ON ibis.tb_pedidocab.idsolicita = rrhh.tabla_aquarius.internal
+                                                        INNER JOIN ibis.alm_despachocab ON ibis.alm_despachodet.id_regalm = ibis.alm_despachocab.id_regalm
                                                     WHERE
                                                         alm_despachodet.id_regalm = :indice");
                 $sql->execute(["indice"=>$indice]);
@@ -164,6 +176,7 @@
                                         <td><input type="text"></td>
                                         <td class="textoCentro">'.$rs['pedido'].'</td>
                                         <td class="textoCentro">'.$rs['orden'].'</td>
+                                        <td class="textoCentro">'.$rs['cnumguia'].'</td>
                                     </tr>';
                     }
                     
@@ -400,6 +413,7 @@
                                         <td class="pl20px">'.$rs['ubicacion'].'</td>
                                         <td class="textoCentro">'.$rs['pedido'].'</td>
                                         <td class="textoCentro">'.$rs['orden'].'</td>
+                                        <td class="textoCentro"></td>
                                     </tr>';
                     }
                 }
