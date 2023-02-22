@@ -58,13 +58,13 @@
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
                         <div>
-                            <button type="button" id="saveOrden" title="Grabar Orden" class="boton3">
+                            <!--<button type="button" id="saveOrden" title="Grabar Orden" class="boton3">
                                 <p><i class="far fa-save"></i> Grabar </p> 
                             </button>
                             <button type="button" id="cancelOrder" title="Cancelar Orden" class="boton3">
                                 <i class="fab fa-wpexplorer"></i> Cancelar
                             </button>
-                           <!--  <button type="button" id="addMessage" title="Comentarios" class="boton3">
+                             <button type="button" id="addMessage" title="Comentarios" class="boton3">
                                 <i class="far fa-comments"></i> Agregar comentarios
                                 <span class="button__comment">0</span>
                             </button> -->
@@ -203,7 +203,7 @@
                         <div>
                             <!-- <button type="button" id="uploadCotiz" title="Adjuntar Coizacion" class="cerrarLista boton3">
                                 <i class="far fa-file-pdf"></i> Adjuntar archivos
-                            </button> -->
+                            </button> 
                             <button type="button" id="loadRequest" title="Importar Pedido" class="cerrarLista boton3">
                                 <i class="fas fa-upload"></i> Importar Items
                             </button>
@@ -390,7 +390,7 @@
         </div>
     </div>
     <div class="cabezaModulo">
-        <h1>Editar Orden</h1>
+        <h1>Consultar Ordenes</h1>
         <div>
             <a href="#" id="nuevoRegistro"><i class="far fa-file"></i><p>Nuevo</p></a>
             <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
