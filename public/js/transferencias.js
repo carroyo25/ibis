@@ -21,6 +21,9 @@ $(function(){
     $("#closeProcess").click(function (e) { 
         e.preventDefault();
 
+        $("form")[0].reset();
+        $("form")[1].reset();
+
         /*$.post(RUTA+"salida/actualizaDespachos",
             function (data, textStatus, jqXHR) {
                 $(".itemsTabla table tbody")
@@ -112,8 +115,6 @@ $(function(){
         } catch (error) {
             mostrarMensaje(error,"mensaje_error");
         }
-
-        
         
         return false
     });
@@ -130,7 +131,7 @@ $(function(){
         e.preventDefault();
 
         let nFilas = $.strPad($("#tablaDetalles tr").length,3);
-        let idprod = $(this).data("id_cprod");
+        let idprod = $(this).data("idprod");
         let nunid = $(this).data("ncomed");
         let codigo = $(this).children('td:eq(1)').text();
         let descrip = $(this).children('td:eq(2)').text();
@@ -148,6 +149,7 @@ $(function(){
                     <td><input type="number" step="any" placeholder="0.00" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"></td>
                     <td class="textoDerecha">${saldo}</td>
                     <td><textarea></textarea></td>
+                    <td></td>
                 </tr>`;
 
         $("#tablaDetalles tbody").append(row);
@@ -195,17 +197,138 @@ $(function(){
     $("#saveRegister").click(function(e){
         e.preventDefault();
 
+        let result = {};
+
+        $.each($("#formProceso").serializeArray(),function(){
+            result[this.name] = this.value;
+        });
+
         try {
-            
+            console.log(JSON.stringify(detalles()));
         } catch (error) {
             
         }
 
         return false;
     });
+
+    $(".cerrarLista").focus(function (e) { 
+        e.preventDefault();
+        
+        $(".lista").fadeOut();
+
+        return false;
+    });
+    
+    $(".btnCallMenu").click(function (e) { 
+        e.preventDefault();
+        
+        $(this).next().fadeIn();
+
+        return false
+    });
+
+    $(".lista").on("click",'a', function (e) {
+        e.preventDefault();
+
+        let control = $(this).parent().parent().parent();
+        let destino = $(this).parent().parent().parent().prev();
+        let contenedor_padre = $(this).parent().parent().parent().attr("id");
+        let id = "";
+        let codigo = $(this).attr("href");
+        
+        control.slideUp()
+
+        destino.val($(this).text());
+        id = destino.attr("id");
+
+        if(contenedor_padre == "listaMovimiento"){
+            
+            $("#codigo_movimiento").val(codigo);
+        }else if(contenedor_padre == "listaAprueba"){
+            $("#codigo_aprueba").val(codigo);
+            $("#autoriza").val($(this).text());
+        }else if(contenedor_padre == "listaOrigen"){
+            $("#codigo_almacen_origen").val(codigo);
+            $("#codigo_origen").val(codigo);
+            $("#almacen_origen").val($(this).text());
+            $("#almacen_origen_direccion").val($(this).data('direccion'));
+        }else if(contenedor_padre == "listaDestino"){
+            $("#codigo_almacen_destino").val(codigo);
+            $("#almacen_destino").val($(this).text());
+            $("#almacen_destino_direccion").val($(this).data('direccion'));
+        }else if(contenedor_padre == "listaAutoriza"){
+            $("#autoriza").val($(this).text());
+            $("#codigo_autoriza").val(codigo);
+        }else if(contenedor_padre == "listaDespacha"){
+            $("#codigo_despacha").val(codigo);
+        }else if(contenedor_padre == "listaDestinatario"){
+            $("#destinatario").val($(this).text());
+            $("#codigo_destinatario").val(codigo);
+        }else if(contenedor_padre == "listaModalidad"){
+            $("#modalidad_traslado").val($(this).text());
+            $("#codigo_modalidad").val(codigo);
+        }else if(contenedor_padre == "listaEnvio"){
+            $("#tipo_envio").val($(this).text());
+            $("#codigo_tipo").val(codigo);
+        }else if(contenedor_padre == "listaEntidad"){
+            $("#codigo_entidad_transporte").val(codigo);
+            $("#empresa_transporte_razon").val($(this).text());
+            $("#ruc_proveedor").val($(this).data("ruc"));
+            $("#direccion_proveedor").val($(this).data("direccion"));
+        }
+
+        return false;
+    });
+
+    $("#importRequest").click(function (e) { 
+        e.preventDefault();
+
+        try {
+            if ($("#codigo_costos").val() == 0) throw "Indique el centro de costos"; 
+
+            $("#esperar").fadeIn();
+
+            $.post(RUTA+"transferencias/pedidos", {cc:$("#codigo_costos").val(),pedido:$("txtBuscarPedido").val()},
+                function (data, textStatus, jqXHR) {
+                    $("#tablaPedidos tbody")
+                        .empty()
+                        .append(data);
+                        $("#pedidos").fadeIn();
+                        $("#esperar").fadeOut();
+                },
+                "text"
+            );
+        } catch (error) {
+            mostrarMensaje(error,"mensaje_error");
+        }
+        
+        return false
+    });
+
+    $("#tablaPedidos tbody").on("click","tr", function () {
+        $.post(RUTA+"transferencias/items", {indice:$(this).data('indice'),origen:$("#codigo_almacen_origen").val()},
+            function (data, textStatus, jqXHR) {
+                $("#tablaDetalles tbody")
+                    .empty()
+                    .append(data);
+            },
+            "text"
+        );
+    });
+
+    $("#tablaDetalles tbody").on("click","a", function (e) {
+        e.preventDefault();
+        
+        if ($(this).data("accion") == "delete") {
+            $(this).parent().parent().remove
+        }
+
+        return false;
+    });
 })
 
-detalles = (flag) =>{
+detalles = () =>{
     DETALLES = [];
 
     let TABLA = $("#tablaDetalles tbody >tr");
@@ -214,7 +337,7 @@ detalles = (flag) =>{
         let ITEM            = $(this).find('td').eq(2).text(),
             IDPROD          = $(this).data("idprod"),
             ALMACEN         = $("#codigo_almacen_origen").val(),
-            CANTIDAD        = $(this).find('td').eq(6).text(),// cantidad
+            CANTIDAD        = $(this).find('td').eq(6).children().val(),// cantidad
             OBSER           = $(this).find('td').eq(8).children().val(),
             CODIGO          = $(this).find('td').eq(3).text(),//codigo
             UNIDAD          = $(this).find('td').eq(5).text(),//unidad
@@ -223,21 +346,19 @@ detalles = (flag) =>{
     
         item = {};
 
-        if (!flag) {
-            item['item']         = ITEM;
-            item['idprod']       = IDPROD;
-            item['almacen']      = ALMACEN;
-            item['cantidad']     = CANTIDAD;
-            item['cantdesp']     = CANTDESP;
-            item['obser']        = OBSER;
+        item['item']         = ITEM;
+        item['idprod']       = IDPROD;
+        item['almacen']      = ALMACEN;
+        item['cantidad']     = CANTIDAD;
+        item['cantdesp']     = CANTDESP;
+        item['obser']        = OBSER;
 
-            item['codigo']       = CODIGO;
-            item['descripcion']  = DESCRIPCION;
-            item['unidad']       = UNIDAD;
-            item['destino']      = DESTINO;
+        item['codigo']       = CODIGO;
+        item['descripcion']  = DESCRIPCION;
+        item['unidad']       = UNIDAD;
+        item['destino']      = DESTINO;
             
-            DETALLES.push(item);
-        }
+        DETALLES.push(item);
     })
 
     return DETALLES; 

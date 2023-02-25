@@ -26,15 +26,6 @@
             </div>
     </div>
     </div>
-    <div class="modal" id="vistaprevia">
-        <div class="ventanaVistaPrevia">
-            <div class="tituloVista">
-                <h3>Vista Previa</h3>
-                <a href="#" id="closePreview" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
-            </div>
-            <iframe src=""></iframe>
-        </div>
-    </div>
     <div class="modal" id="vistadocumento">
         <div class="ventanaResumen">
             <form method="post" id="cargoplan">
@@ -144,6 +135,15 @@
             </form>
         </div>
     </div>
+    <div class="modal" id="vistaprevia">
+        <div class="ventanaVistaPrevia">
+            <div class="tituloVista">
+                <h3>Vista Previa</h3>
+                <a href="#" id="closePreview" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
+            </div>
+            <iframe src=""></iframe>
+        </div>
+    </div>
     <div class="cabezaModulo">
         <h1>Cargo Plan</h1>
         <div>
@@ -237,12 +237,14 @@
                     <th style="background:#AB7FAB; color:#fff" width="10%">Descripcion Proveedor</th>
                     <th>Fecha Entrega</br>Proveedor</th>
                     <th width="50px">Cantidad</br>Recibida</th>
+                    <th width="50px">Nota</br>Ingreso</th>
                     <th>Saldo por</br>Recibir</th>
                     <th width="50px">Días</br>Entrega</th>
                     <th>Días</br>Atrazo</th>
                     <th>Semaforo</th>
                     <th style="background:#25AFF3; color:#000">Cantidad</br>Enviada</th>
                     <th style="background:#25AFF3; color:#000">Nro. Guia</th>
+                    <th style="background:#DA500B; color:#000">Registro</br>Almacen</th>
                     <th style="background:#DA500B; color:#000">Cantidad</br>Recibida</br>Obra</th>
                     <th>Estado</br>Pedido</th>
                     <th>Estado</br>Item</th>

@@ -1,4 +1,5 @@
 $(function() {
+    let idpedido = "";
     
     $("#esperar").fadeOut();
     
@@ -40,7 +41,9 @@ $(function() {
 
         $("#vistadocumento").fadeIn();
 
-        let tabla = $("#cargoPlanDescrip tbody > tr");
+        let tabla = $(this);
+
+        idpedido = tabla.data('pedido');
 
         $("#codigo").val(tabla.find('td').eq(12).text());
         $("#producto").val(tabla.find('td').eq(14).text());
@@ -71,6 +74,52 @@ $(function() {
         $("#vistadocumento").fadeOut();
 
         return false
+    });
+
+    $("#pdfpedido").click(function (e) { 
+        e.preventDefault();
+
+
+        $.post(RUTA+"panel/pdfPedido",{"pedido":idpedido},
+            function (data, textStatus, jqXHR) {
+              $(".ventanaVistaPrevia iframe")
+                .attr("src","")
+                .attr("src","public/documentos/temp/"+data);
+
+                $("#vistaprevia").fadeIn();
+            },
+            "text"
+          );
+
+        return false;
+    });
+
+    $("#tablaOrdenes").on('click','a', function(e) {
+        e.preventDefault();
+
+        $.post(RUTA+"pedidoseg/datosOrden", {id: $(this).attr("href")},
+            function (data, text, requestXHR) {
+                $(".ventanaVistaPrevia iframe")
+                .attr("src","")
+                .attr("src",data);
+
+                $("#vistaprevia").fadeIn();
+            },"text"
+        );
+
+        return false;
+    });
+
+
+    $("#closePreview").click(function (e) { 
+        e.preventDefault();
+        
+        $(".ventanaVistaPrevia iframe")
+            .attr("src","");
+
+        $("#vistaprevia").fadeOut();
+
+        return false;
     });
     
 })
@@ -106,20 +155,22 @@ detalles = () =>{
             PROVEEDOR           = $(this).find('td').eq(22).text(),
             FECHA_ENTREGA       = $(this).find('td').eq(23).text(),
             CANTIDAD_RECIBIDA   = $(this).find('td').eq(24).text(),
-            SALDO_RECIBIR       = $(this).find('td').eq(25).text(),
-            DIAS_ENTREGA        = $(this).find('td').eq(26).text(),
-            DIAS_ATRASO         = $(this).find('td').eq(27).text(),
-            SEMAFORO            = $(this).find('td').eq(28).text(),
-            DESPACHO            = $(this).find('td').eq(29).text(),
-            CANTIDA_OBRA        = $(this).find('td').eq(31).text(),
-            NUMERO_GUIA         = $(this).find('td').eq(30).text(),
-            ESTADO_PEDIDO       = $(this).find('td').eq(33).text(),
-            ESTADO_ITEM         = $(this).find('td').eq(34).text(),
-            NUMERO_PARTE        = $(this).find('td').eq(35).text(),
-            CODIGO_ACTIVO       = $(this).find('td').eq(36).text(),
-            OPERADOR            = $(this).find('td').eq(37).text(),
-            TRANSPORTE          = $(this).find('td').eq(38).text(),
-            OBSERVACIONES       = $(this).find('td').eq(39).text();
+            NOTA_INGRESO        = $(this).find('td').eq(25).text(),
+            SALDO_RECIBIR       = $(this).find('td').eq(26).text(),
+            DIAS_ENTREGA        = $(this).find('td').eq(27).text(),
+            DIAS_ATRASO         = $(this).find('td').eq(28).text(),
+            SEMAFORO            = $(this).find('td').eq(29).text(),
+            DESPACHO            = $(this).find('td').eq(30).text(),
+            NUMERO_GUIA         = $(this).find('td').eq(31).text(),
+            REGISTRO_ALMACEN    = $(this).find('td').eq(32).text(),
+            CANTIDA_OBRA        = $(this).find('td').eq(33).text(),
+            ESTADO_PEDIDO       = $(this).find('td').eq(34).text(),
+            ESTADO_ITEM         = $(this).find('td').eq(35).text(),
+            NUMERO_PARTE        = $(this).find('td').eq(36).text(),
+            CODIGO_ACTIVO       = $(this).find('td').eq(37).text(),
+            OPERADOR            = $(this).find('td').eq(38).text(),
+            TRANSPORTE          = $(this).find('td').eq(39).text(),
+            OBSERVACIONES       = $(this).find('td').eq(40).text();
           
 
         item = {};
@@ -143,13 +194,19 @@ detalles = () =>{
         item['anio_orden']          = ANIO_ORDEN;
         item['nro_orden']           = NRO_ORDEN;
         item['fecha_orden']         = FECHA_ORDEN;
+        item['item_orden']          = ITEM_ORDEN;
+        item['autoriza_orden']      = AUTORIZA_ORDEN;
         item['proveedor']           = PROVEEDOR;
         item['fecha_entrega']       = FECHA_ENTREGA;
         item['cantidad_recibida']   = CANTIDAD_RECIBIDA;
+        item['nota_ingreso']        = NOTA_INGRESO;
         item['saldo_recibir']       = SALDO_RECIBIR;
         item['dias_entrega']        = DIAS_ENTREGA;
         item['dias_atraso']         = DIAS_ATRASO;
         item['semaforo']            = SEMAFORO;
+        item['despacho']            = DESPACHO;
+        item['numero_guia']         = NUMERO_GUIA;
+        item['registro_almacen']    = REGISTRO_ALMACEN;
         item['cantidad_obra']       = CANTIDA_OBRA;
         item['estado_pedido']       = ESTADO_PEDIDO;
         item['estado_item']         = ESTADO_ITEM;
@@ -159,10 +216,6 @@ detalles = () =>{
         item['transporte']          = TRANSPORTE;
         item['observaciones']       = OBSERVACIONES;
         item['cantidad_orden']      = CANTIDAD_ORDEN;
-        item['despacho']            = DESPACHO;
-        item['item_orden']          = ITEM_ORDEN;
-        item['autoriza_orden']      = AUTORIZA_ORDEN;
-        item['numero_guia']         = NUMERO_GUIA;
         
         DATA.push(item);
     })

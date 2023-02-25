@@ -256,14 +256,15 @@
                                                         INNER JOIN tb_proyectos ON alm_cabexist.idcostos = tb_proyectos.nidreg 
                                                     WHERE
                                                         tb_costusu.id_cuser = :usr 
-                                                        AND tb_costusu.nflgactivo = 1");
+                                                        AND tb_costusu.nflgactivo = 1
+                                                    ORDER BY  alm_cabexist.idreg");
                 $sql->execute(["usr"=>$_SESSION["iduser"]]);
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()){
                         $salida.='<tr class="pointer" data-indice="'.$rs['idreg'].'">
-                                    <td class="textoCentro">'.str_pad($item++,6,0,STR_PAD_LEFT).'</td>
+                                    <td class="textoCentro">'.str_pad($rs['idreg'],6,0,STR_PAD_LEFT).'</td>
                                     <td class="textoCentro">'.$rs['ffechadoc'].'</td>
                                     <td class="pl20px">'.$rs['origen'].'</td>
                                     <td class="pl20px">'.$rs['destino'].'</td>

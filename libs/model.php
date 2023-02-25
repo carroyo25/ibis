@@ -2626,6 +2626,32 @@
             }
         }
 
+        public function verAdjuntosPedido($id){
+            try {
+                $salida = "";
+                $sql = $this->db->connect()->prepare("SELECT creferencia,cdocumento 
+                                                        FROM lg_regdocumento 
+                                                        WHERE nidrefer=:id
+                                                        AND cmodulo='PED'");
+                $sql->execute(['id'=>$id]);
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0) {
+                    while ($rs = $sql->fetch()) {
+                        $salida .= '<li><a href="'.$rs['creferencia'].'" data-archivo="'.$rs['creferencia'].'"><i class="far fa-file"></i><p>'.$rs['cdocumento'].'</p></a></li>';
+                    }
+                }
+                
+                $ret = array("adjuntos"=>$salida,
+                            "archivos"=>$rowCount);
+
+                return $ret;
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
         //marcar items para no ser consultados
         public function itemMarcado($id,$estado,$io){
             try {
@@ -2731,7 +2757,7 @@
                                 $datos[$i]->total));
                     $lc++;
 
-                    if ($pdf->getY() >= 190) {
+                    if ($pdf->getY() >= 185) {
                         $pdf->AddPage();
                         $lc = 0;
                     }

@@ -44,6 +44,9 @@
                             <button type="button" id="importData" title="Importar Items" class="boton3">
                                 <i class="fab fa-wpexplorer"></i> Importar Items
                             </button>
+                            <button type="button" id="importRequest" title="Importar Pedido" class="boton3">
+                                <i class="fab fa-wpexplorer"></i> Importar Pedido
+                            </button>
                             <button type="button" id="preview" title="Vista Previa" class="boton3">
                                 <i class="far fa-file-pdf"></i> Vista Previa
                             </button>
@@ -154,6 +157,7 @@
                                     <th width="7%">Cantidad</th>
                                     <th width="7%">Stock</th>
                                     <th class="">Observaciones</th>
+                                    <th class="">Pedido</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -186,6 +190,35 @@
                             <th>Descripcion</th>
                             <th>Und.</th>
                             <th>Stock Almacen</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="pedidos">
+        <div class="ventanaBusqueda w50por">
+            <div class="tituloVentana">
+                <span id="tituloBusqueda">Pedidos</span>
+                <div>
+                    <a href="#"><i class="fas fa-window-close"></i></a>
+                </div>
+            </div>
+            <div class="textoBusqueda">
+                <input type="text" name="txtBuscarPedido" id="txtBuscarPedido" placeholder="Buscar Pedido">
+            </div>
+            <div class="tablaBusqueda">
+                <table class="tabla " id="tablaPedidos">
+                    <thead >
+                        <tr class="stickytop">
+                            <th width="10%">Pedido</th>
+                            <th width="10%">Fecha</th>
+                            <th>Descripcion</th>
+                            <th>CC</th>
+                            <th>Solicitante</th>
                         </tr>
                     </thead>
                     <tbody>

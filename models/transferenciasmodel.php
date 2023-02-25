@@ -72,5 +72,111 @@
                 return false;
             }
         }
+
+        public function listarPedidosAtencion(){
+            try {
+                $salida = "";
+                $sql = $this->db->connect()->query("SELECT
+                                                ibis.tb_pedidocab.nrodoc,
+                                                UPPER( ibis.tb_pedidocab.concepto ) AS concepto,
+                                                ibis.tb_pedidocab.idreg,
+                                                ibis.tb_pedidocab.estadodoc,
+                                                ibis.tb_pedidocab.emision,
+                                                ibis.tb_pedidocab.vence,
+                                                ibis.tb_pedidocab.idtipomov,
+                                                UPPER(
+                                                CONCAT_WS( ' ', ibis.tb_proyectos.ccodproy, ibis.tb_proyectos.cdesproy )) AS costos,
+                                                ibis.tb_pedidocab.nivelAten,
+                                                CONCAT_WS( ' ', rrhh.tabla_aquarius.apellidos, rrhh.tabla_aquarius.nombres ) AS nombres,
+                                                estados.cdescripcion AS estado,
+                                                atencion.cdescripcion AS atencion,
+                                                estados.cabrevia,
+                                                ibis.tb_pedidocab.idcostos,
+                                                ibis.tb_proyectos.ccodproy,
+                                                ibis.tb_proyectos.cdesproy 
+                                            FROM
+                                                ibis.tb_pedidocab
+                                                INNER JOIN rrhh.tabla_aquarius ON ibis.tb_pedidocab.idsolicita = rrhh.tabla_aquarius.internal
+                                                INNER JOIN ibis.tb_parametros AS estados ON ibis.tb_pedidocab.estadodoc = estados.nidreg
+                                                INNER JOIN ibis.tb_parametros AS atencion ON ibis.tb_pedidocab.nivelAten = atencion.nidreg
+                                                INNER JOIN ibis.tb_proyectos ON ibis.tb_pedidocab.idcostos = ibis.tb_proyectos.nidreg 
+                                            WHERE
+                                                ibis.tb_pedidocab.estadodoc = 54
+                                                AND ibis.tb_pedidocab.nflgactivo = 1
+                                                AND ibis.tb_pedidocab.idtipomov = 37 
+                                                AND ISNULL(ibis.tb_pedidocab.asigna)
+                                            ORDER BY ibis.tb_pedidocab.emision DESC");
+                $sql->execute();
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0) {
+                    while ($rs = $sql->fetch()) {
+                        $tipo = $rs['idtipomov'] == 37 ? "B":"S";
+                        $salida .='<tr class="pointer" data-indice="'.$rs['idreg'].'">
+                                        <td class="textoCentro">'.str_pad($rs['nrodoc'],4,0,STR_PAD_LEFT).'</td>
+                                        <td class="textoCentro">'.date("d/m/Y", strtotime($rs['emision'])).'</td>
+                                        <td class="pl20px">'.$rs['concepto'].'</td>
+                                        <td class="pl20px">'.utf8_decode($rs['costos']).'</td>
+                                        <td class="pl20px">'.$rs['nombres'].'</td>
+                                    </tr>';
+                    }
+                }
+
+                return $salida;
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function consultarPedidos($indice,$origen){
+            try {
+                $salida = "";
+                $item = 1;
+                $sql = $this->db->connect()->prepare("SELECT
+                                                    tb_pedidodet.iditem,
+                                                    tb_pedidodet.idpedido,
+                                                    tb_pedidodet.idprod,
+                                                    tb_pedidodet.cant_pedida,
+                                                    cm_producto.ccodprod,
+                                                    UPPER(cm_producto.cdesprod) AS cdesprod,
+                                                    tb_unimed.cabrevia,
+                                                    LPAD(tb_pedidocab.nrodoc,6,0) AS nrodoc,
+                                                    ( SELECT SUM( alm_existencia.cant_ingr ) FROM alm_existencia WHERE alm_existencia.idalm = :ingresos AND alm_existencia.codprod = cm_producto.id_cprod ) AS ingreso,
+                                                    ( SELECT SUM( alm_inventariodet.cant_ingr ) FROM alm_inventariodet WHERE alm_inventariodet.idalm = :inventario AND alm_inventariodet.codprod = cm_producto.id_cprod ) AS inventario 
+                                                FROM
+                                                    tb_pedidodet
+                                                    INNER JOIN cm_producto ON tb_pedidodet.idprod = cm_producto.id_cprod
+                                                    INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                    INNER JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg 
+                                                WHERE
+                                                    idpedido = :indice");
+                $sql -> execute(['indice'=>$indice,"ingresos"=>$origen,"inventario"=>$origen]);
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0) {
+                    while($rs = $sql->fetch()) {
+                        $existencia = $rs['ingreso']+$rs['inventario'];
+                        $salida .= '<tr>
+                                        <td class="textoCentro"><a href="'.$rs['iditem'].'" title="Eliminar" data-accion="delete"><i class="fas fa-eraser"></i></a></td>
+                                        <td class="textoCentro"><a href="'.$rs['iditem'].'" title="Cambiar" data-accion="change"><i class="fas fa-exchange-alt"></i></a></td>
+                                        <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
+                                        <td class="textoCentro">'.$rs['ccodprod'].'</td>
+                                        <td class="pl20px">'.$rs['cdesprod'].'</td>
+                                        <td class="textoCentro">'.$rs['cabrevia'].'</td>
+                                        <td><input type="number"></td>
+                                        <td class="textoDerecha">'.number_format($existencia,2).'</td>
+                                        <td><input type="text"></td>
+                                        <td  class="textoCentro">'.$rs['nrodoc'].'</td>
+                                    </tr>';
+                    }
+                }
+
+                return $salida;
+            }catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
     }
 ?>
