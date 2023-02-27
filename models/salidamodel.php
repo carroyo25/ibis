@@ -637,9 +637,9 @@
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()) {
                         //compara la orden si fue ingresada esta completa y no la muestra
-                        $diferencia_ingreso = $this->calcularIngresosOrden($rs['id_regmov']) - $this->calcularCantidadDespacha($rs['id_regmov']);
+                        //$diferencia_ingreso = $this->calcularIngresosOrden($rs['id_regmov']) - $this->calcularCantidadDespacha($rs['id_regmov']);
 
-                        if (($diferencia_ingreso) > 0 ) {
+                        //if (($diferencia_ingreso) > 0 ) {
                             $salida.='<tr data-orden="'.$rs['id_regmov'].'" data-idcosto="'.$rs['nidreg'].'">
                                     <td class="textoCentro">'.$rs['cnumero'].'</td>
                                     <td class="textoCentro">'.$rs['ffechadoc'].'</td>
@@ -647,7 +647,7 @@
                                     <td class="textoDerecha pr5px">'.$rs['ccodproy'].'</td>
                                     <td class="pl20px">'.$rs['crazonsoc'].'</td>
                                 </tr>';
-                        }
+                        //}
                     }
                 }
                 return $salida;
