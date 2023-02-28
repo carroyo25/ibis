@@ -3707,5 +3707,17 @@
                 return false;
             }
         }
+
+        function norepite() {
+            $rand = range(8, 10000);
+            shuffle($rand);
+            $numero = 0;
+            
+            foreach ($rand as $val) {
+                $val.=$val;
+            }
+            
+            return $val;
+        }
     }
 ?>

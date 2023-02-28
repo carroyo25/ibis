@@ -11,11 +11,23 @@
         }
 
         function datosapi(){
-            echo json_encode($this->model->buscarDatos($_POST['documento']));
+            echo json_encode($this->model->buscarDatos($_POST['documento'],$_POST['costos']));
         }
 
         function productos(){
             echo json_encode($this->model->buscarProductos($_POST['codigo']));
+        }
+
+        function firma(){
+            echo $this->model->subirFirma($_POST['detalles']);
+        }
+
+        function consulta(){
+            echo $this->model->cosultarAnteriores($_POST['costos'],$_POST['documentos']);
+        }
+
+        function buscaCodigo(){
+            echo $this->model->buscarConsumoPersonal($_POST['codigo'],$_POST['documento'],$_POST['costos']);
         }
         
     }

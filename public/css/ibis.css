@@ -35,6 +35,9 @@ ul, li {
 
 input[type=text], input[type=mail], input[type=password], input[type=date] {
   padding-left: 10px;
+  padding-left: 10px;
+  border: 1px solid #c2c2c2;
+  line-height: 2rem;
 }
 
 textarea {
