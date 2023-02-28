@@ -29,6 +29,10 @@
         function items(){
             echo $this->model->consultarPedidos($_POST['indice'],$_POST['origen']);
         }
+
+        function registro() {
+            echo $this->model->insertarTransferencia($_POST['cabecera'],$_POST['detalles']);
+        }
         
     }
 ?>
