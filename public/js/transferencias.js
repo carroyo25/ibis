@@ -204,9 +204,17 @@ $(function(){
         });
 
         try {
-            console.log(JSON.stringify(detalles()));
+
+            if  ( checkCantTables($("#tablaDetalles tbody > tr"),6) ) throw "Revise las cantidades ingresadas";
+
+            $.post(RUTA+"transferencias/registro",{cabecera:result,detalles:JSON.stringify(detalles())},
+                function (data, textStatus, jqXHR) {
+                    console.log(data);
+                },
+                "text"
+            );
         } catch (error) {
-            
+            mostrarMensaje(error,'mensaje_error');
         }
 
         return false;
@@ -336,7 +344,7 @@ detalles = () =>{
     TABLA.each(function(){
         let ITEM            = $(this).find('td').eq(2).text(),
             IDPROD          = $(this).data("idprod"),
-            ALMACEN         = $("#codigo_almacen_origen").val(),
+            ORIGEN          = $("#codigo_almacen_origen").val(),
             CANTIDAD        = $(this).find('td').eq(6).children().val(),// cantidad
             OBSER           = $(this).find('td').eq(8).children().val(),
             CODIGO          = $(this).find('td').eq(3).text(),//codigo
@@ -348,9 +356,8 @@ detalles = () =>{
 
         item['item']         = ITEM;
         item['idprod']       = IDPROD;
-        item['almacen']      = ALMACEN;
+        item['origen']       = ORIGEN;
         item['cantidad']     = CANTIDAD;
-        item['cantdesp']     = CANTDESP;
         item['obser']        = OBSER;
 
         item['codigo']       = CODIGO;

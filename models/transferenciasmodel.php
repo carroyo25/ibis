@@ -178,5 +178,20 @@
                 return false;
             }
         }
+
+        public function insertarTransferencia($cabecera,$detalles){
+            try {
+                $sql = $this->db->connect()->prepare("INSERT INTO alm_transfercab SET idcc,idaprueba,almorigen");
+
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        private function insertarDetalles($indice,$detalles){
+            $datos(json_decode($detalles));
+            $nreg = count($detalles);
+        }
     }
 ?>

@@ -2684,6 +2684,7 @@
             }
         }
 
+        //genera la vista de la orden
         public function generarDocumento($cabecera,$condicion,$detalles){
             //genera vista previa
             require_once("public/formatos/ordenes.php");
@@ -2880,6 +2881,8 @@
             return $file;
         }
 
+
+        /*para generar la vista de los previos*/
         public function generarVistaOrden($id){
             require_once("public/formatos/ordenes.php");
 
@@ -3022,6 +3025,24 @@
             $pdf->Output($filename,'F');
 
             return $filename;
+        }
+
+        public function generarNotaIngreso(){
+            try {
+                //code...
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function generarNotaSalida(){
+            try {
+                //code...
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
         }
 
         private function bancosProveedor($entidad){
@@ -3685,6 +3706,18 @@
                 echo "Error: " . $th->getMessage();
                 return false;
             }
+        }
+
+        function norepite() {
+            $rand = range(8, 10000);
+            shuffle($rand);
+            $numero = 0;
+            
+            foreach ($rand as $val) {
+                $val.=$val;
+            }
+            
+            return $val;
         }
     }
 ?>
