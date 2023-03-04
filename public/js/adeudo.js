@@ -6,7 +6,7 @@ $(function(){
 
     $("#docident").keypress(function (e) { 
         if(e.which == 13) { 
-            $.post(RUTA+"consumo/datosapi",{documento:$(this).val(),costos:$("#costosSearch").val()},
+            $.post(RUTA+"adeudo/datosapi",{documento:$(this).val(),costos:$("#costosSearch").val()},
                 function (data, textStatus, jqXHR) {
                     if (data.registrado) {
                         $("#nombre").val(data.datos[0].paterno+' '+data.datos[0].materno+' '+data.datos[0].nombres);
@@ -28,7 +28,23 @@ $(function(){
         }
     });
 
-    $("#codeRead").keypress(function (e) { 
+    $("#btnAdeudo").click(function(e){
+        e.preventDefault();
+
+        $("#adeudo").fadeIn();
+
+        return false; 
+    });
+
+    $("#btnAceptarAdeudo").click(function(e){
+        e.preventDefault();
+
+        $("#adeudo").fadeOut();
+
+        return false; 
+    });
+
+    /*$("#codeRead").keypress(function (e) { 
         if(e.which == 13) {
             $.post(RUTA+"consumo/productos", {codigo:$(this).val()},
                 function (data, textStatus, jqXHR) {
@@ -42,7 +58,6 @@ $(function(){
                                 <td class="textoCentro">${data.unidad}</td>
                                 <td class=""><input type="text" value=1 class="textoDerecha unstyled entrada" onFocus="this.select();"></td>
                                 <td class=""><input type="date" class="unstyled textoCentro entrada" value="${fecha}"></td>
-                                <td class=""><input type="text" class="entrada"></td>
                                 <td class=""><input type="text" class="entrada"></td>
                                 <td class=""><input type="text" class="entrada"></td>
                                 <td class=""><input type="text" class="entrada"></td>
@@ -172,7 +187,7 @@ $(function(){
         $("#dialogo").fadeOut();
         
         return false;
-    });
+    });*/
 })
 
 detalles = () => {
@@ -181,8 +196,8 @@ detalles = () => {
 
     TABLA.each(function(){
         let ITEM        = $(this).find('td').eq(0).text(),
-            IDPROD      = $(this).data("idprod"),
-            GRABADO     = $(this).data("grabado"),
+            IDPROD      = $(this).data("idprod");
+            GRABADO     = $(this).data("grabado");
             CODIGO      = $(this).find('td').eq(1).text(),
             DESCRIPCION = $(this).find('td').eq(2).text(),
             UNIDAD      = $(this).find('td').eq(3).text(),
@@ -191,9 +206,8 @@ detalles = () => {
             HOJA        = $(this).find('td').eq(6).children().val(),
             ISOMETRICO  = $(this).find('td').eq(7).children().val(),
             OBSERVAC    = $(this).find('td').eq(8).children().val(),
-            SERIE       = $(this).find('td').eq(9).children().val(),
-            PATRIMONIO  = $(this).find('td').eq(10).children().prop('checked'),
-            ESTADO      = $(this).find('td').eq(11).children().val(),
+            PATRIMONIO  = $(this).find('td').eq(9).children().prop('checked'),
+            ESTADO      = $(this).find('td').eq(10).children().val(),
             COSTOS      = $("#costosSearch").val(),
             NRODOC      = $("#docident").val();
 
@@ -215,10 +229,9 @@ detalles = () => {
             item['costos']      = COSTOS;
             item['nrodoc']      = NRODOC;
             item['idprod']      = IDPROD;
-            item['serie']       = SERIE;
-
-            DATA.push(item);
         }
+        
+        DATA.push(item);
     })
 
     return DATA;

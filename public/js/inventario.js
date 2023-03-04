@@ -125,6 +125,7 @@ $(() => {
                 body: formData
             })
             .then(response => response.json())
+            .catch(error => console.error('Error:', error))
             .then(data => {
                 $("#tablaDetalles tbody")
                     .empty()

@@ -210,8 +210,10 @@
 
                 $objPHPExcel = PHPExcel_IOFactory::load("./public/documentos/temp/temp.xlsx");
                 $objHoja=$objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
-                $fila = 9;
+                $fila = 1;
                 $datos= "";
+
+                //$item = array();
 
                 foreach ($objHoja as $iIndice=>$objCelda) {
                     if ( $objCelda['B'] && $objCelda['B']!="CODIGO") {
@@ -226,9 +228,9 @@
                         $fondo_fila  = $codigo_sical  != 0 ? "rgba(56,132,192,0.2)" : "rgba(255,0,57,0.2)";
                         $descripcion = $codigo_sical  != 0 ? $objCelda['C'] : '<a href="#">'.$objCelda['C'].'</a>';
                         $observaciones =  $codigo_sical  != 0 ? $objCelda['T']: $objCelda['C'];
-                        
+                                             
 
-                        $datos .='<tr data-grabado="0" 
+                       $datos .='<tr data-grabado="0" 
                                         data-idprod="'.$codigo_sical.'" 
                                         data-codund="" 
                                         data-idx="-" 

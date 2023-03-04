@@ -10,7 +10,7 @@
     <div class="mensaje">
         <p></p>
     </div>
-    <div class="modal" id="comentarios">
+    <div class="modal" id="adeudo">
         <div class="ventanaComentarios">
             <h3>Observaciones</h3>
             <hr>
@@ -18,7 +18,7 @@
                 
             </div>
             <div>
-                <button type="button" id="btnAceptarComentarios">Aceptar</button>
+                <button type="button" id="btnAceptarAdeudo">Aceptar</button>
             </div>
         </div>
     </div>
@@ -44,16 +44,15 @@
         </div>
     </div>
     <div class="cabezaModulo">
-        <h1>Consumos</h1>
+        <h1>Libre Adeudo</h1>
         <div>
             <a href="#" id="btnBuscar"><i class="fas fa-search-location"></i><p>Buscar</p></a>
+            <a href="#" id="btnAdeudo"><i class="far fa-file-alt"></i><p>Libre Adeudo</p></a>
             <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
         </div>
     </div>
-    
-    
+    <input type="text" name="codeRead" id="codeRead" style="opacity:0;position:fixed" value=""> 
     <div class="barraTrabajo">
-    
             <div class="variasConsultas4campos">
                     <input type="hidden" name="cut" id="cut">
                     <input type="hidden" name="correo" id="correo">
@@ -76,14 +75,8 @@
                         <label for="cargo">Cargo</label>
                         <input type="cargo" id="cargo" name="cargo">
                     </div>
-                    
                     <button id="btnGrabarKardex" class="oculto boton3">Aceptar</button>
                     <button type="button" class="boton3" id="btnFirmar" onclick="StartSign()">Firmar</button>
-
-                    <div>
-                        <label for="codeRead">Codigo: </label>
-                        <input type="text" name="codeRead" id="codeRead" style="opacity:1;position:relative" value=""> 
-                    </div>
             </div>
     </div>
     <div class="itemsTabla">
@@ -95,6 +88,7 @@
                     <th>Descripcion</th>
                     <th>UND.</th>
                     <th>Cant.</th>
+                    <th>Cant.</br>Devolucion</th>
                     <th>Fecha</br>Salida</th>
                     <th>N° Hoja</th>
                     <th>Isometricos</th>
@@ -103,6 +97,7 @@
                     <th>Patrimonio</th>
                     <th>Estado</th>
                     <th width="20px">Firma</th>
+                    <th width="20px">Firma Almacen</th>
                     <th>...</th>
                 </tr>
             </thead>
@@ -120,6 +115,6 @@
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
     <script src="<?php echo constant('URL');?>public/js/regfirma.js"></script>
     <script src="<?php echo constant('URL');?>public/js/funciones.js?<?php echo constant('VERSION')?>"></script>
-    <script src="<?php echo constant('URL');?>public/js/consumo.js?<?php echo constant('VERSION')?>"></script>
+    <script src="<?php echo constant('URL');?>public/js/adeudo.js?<?php echo constant('VERSION')?>"></script>
 </body>
 </html>

@@ -3708,7 +3708,7 @@
             }
         }
 
-        function norepite() {
+        public function norepite() {
             $rand = range(8, 10000);
             shuffle($rand);
             $numero = 0;
@@ -3718,6 +3718,25 @@
             }
             
             return $val;
+        }
+
+        public function cantidadItems($d,$c) {
+            try {
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        COUNT( idreg ) AS nroitems
+                                                    FROM
+                                                        alm_consumo 
+                                                    WHERE
+                                                        nrodoc = :documento 
+                                                        AND ncostos = :cc");
+                $sql->execute(["documento"=>$d,"cc"=>$c]);
+                $result = $sql->fetchAll();
+
+                return $result[0]['nroitems'];
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
         }
     }
 ?>
