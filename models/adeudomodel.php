@@ -65,7 +65,7 @@
                         $marcado = $rs['flgdevolver'] == 1 ? "checked" : "";
                         $firma = "public/documentos/firmas/".$rs['cfirma'].".png";
 
-                        $salida .= '<tr class="pointer" data-grabado="1">
+                        $salida .= '<tr class="pointer" data-grabado="1" data-idreg = "idreg">
                                         <td class="textoDerecha">'.$numero_item--.'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="pl5px">'.$rs['cdesprod'].'</td>
