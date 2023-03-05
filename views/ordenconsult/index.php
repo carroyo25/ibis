@@ -58,21 +58,12 @@
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
                         <div>
-                            <button type="button" id="saveOrden" title="Grabar Orden" class="boton3">
-                                <p><i class="far fa-save"></i> Grabar </p> 
-                            </button>
-                            <button type="button" id="cancelOrder" title="Cancelar Orden" class="boton3">
-                                <i class="fab fa-wpexplorer"></i> Cancelar
-                            </button>
-                             <button type="button" id="addMessage" title="Comentarios" class="boton3">
-                                <i class="far fa-comments"></i> Agregar comentarios
+                            <button type="button" id="verDetalles" title="Comentarios" class="boton3">
+                                <i class="far fa-comments"></i> Ver detalles
                                 <span class="button__comment">0</span>
                             </button>
                             <button type="button" id="preview" title="Vista Previa" class="boton3">
                                 <i class="far fa-file-pdf"></i> Vista Previa
-                            </button>
-                            <button type="button" id="requestAprob"  title="Solicitar Aprobacion" class="boton3" data-rol="5">
-                                <i class="fas fa-signature"></i> Solicitar Aprobacion
                             </button>
                             <button type="button" id="closeProcess" title="Cerrar" class="boton3">
                                 <i class="fas fa-window-close"></i>
@@ -200,20 +191,6 @@
                     </div>
                     <div class="barraOpciones">
                         <span>Detalles</span>
-                        <div>
-                            <button type="button" id="uploadCotiz" title="Adjuntar Coizacion" class="cerrarLista boton3">
-                                <i class="far fa-file-pdf"></i> Adjuntar archivos
-                            </button> 
-                            <button type="button" id="loadRequest" title="Importar Pedido" class="cerrarLista boton3">
-                                <i class="fas fa-upload"></i> Importar Items
-                            </button>
-                            <button type="button" id="updateItems" title="Importar Pedido" class="cerrarLista boton3">
-                                <i class="fas fa-upload"></i> Actualizar Nro
-                            </button>
-                            <button type="button" id="sendEntOrden" title="Enviar Proveedor" class="cerrarLista boton3">
-                                <i class="far fa-paper-plane"></i> Enviar Orden
-                            </button>
-                        </div>
                     </div>
                     <div class="tablaInterna mininoTablaInterna">
                         <table class="tabla" id="tablaDetalles">
@@ -241,38 +218,6 @@
             </div>
         </div>
     </div>
-    <div class="modal" id="busqueda">
-        <div class="ventanaBusqueda w75por">
-            <div class="tituloVentana">
-                <span id="tituloBusqueda">Pedidos</span>
-                <div>
-                    <a href="#" id="closeSearch"><i class="fas fa-window-close"></i></a>
-                </div>
-            </div>
-            <div class="textoBusqueda">
-                <input type="text" name="txtBuscar" id="txtBuscar" placeholder="Buscar" class="w90por">
-                <button type="button" class="boton3" id="btnAceptItems">Aceptar</button>
-            </div>
-            <div class="tablaBusqueda">
-                <table class="tablaWrap" id="pedidos">
-                    <thead>
-                        <tr class="stickytop">
-                            <th width="4%">Pedido</th>
-                            <th width="5%">Emisión</th>
-                            <th width="15%">Concepto</th>
-                            <th width="15%">Area</th>
-                            <th width="15%">Centro de Costos</th>
-                            <th width="7%">Codigo</th>
-                            <th width="20%">Descripción</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
     <div class="modal" id="esperar">
         <div class="loadingio-spinner-spinner-5ulcsi06hlf">
             <div class="ldio-fifgg00y5y">
@@ -291,6 +236,84 @@
             </div>
         </div>
     </div>
+    <div class="modal" id="detalles">
+        <div class="ventanaDetalles">
+            <form method="post" id="cargoplan">
+                <div class="tituloDocumento">
+                    <div>
+                        <p class="titulo_seccion"><strong> Resumen Orden : </strong></p>
+                    </div>
+                    <div>
+                        <a href="#" id="closeDocument" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
+                    </div>
+                </div>
+                <hr>
+                <div class="cuerpoOrdenes">
+                    <section class="seccion1">
+                        <h4>Detalles orden</h4>
+                        <div class="infoOrden">
+                            <div>
+                                <label>Fecha Elaboración</label>
+                                <label>:</label>
+                                <label id="fecha_documento"></label>
+                            </div>
+                            <div>
+                                <label>Fecha Envio </label>
+                                <label>:</label>
+                                <label id="envio"></label>
+                            </div>
+                            <div>
+                                <label>Elaborado Por</label>
+                                <label>:</label>
+                                <label id="elaborado"></label>
+                            </div>
+                            <div>
+                                <label>Firma Lógistica</label>
+                                <label>:</label>
+                                <label id="firma_logistica"></label>
+                            </div>
+                            <div>
+                                <label>Firma Operaciones</label>
+                                <label>:</label>
+                                <label id="firma_operaciones"></label>
+                            </div>
+                            <div>
+                                <label>Firma Finanzas:</label>
+                                <label>:</label>
+                                <label id="firma_finanzas"></label>
+                            </div>
+                        </div>
+                    </section>
+                    <section class="seccion2">
+                        <h4>Pedidos</h4>
+                        <table id="lista_pedidos">
+                            <thead class="stickytop">
+                                <tr>
+                                    <th>Pedido</th>
+                                    <th>Emitido</th>
+                                    <th>Aprobado</th>
+                                    <th>Aprobado por</th>
+                                    <th>Documento</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                               
+                            </tbody>
+                        </table>
+                    </section>
+                    <section class="seccion3">
+                        <h4>Documentos Adjuntos</h4>
+                        <ul id="documentos_adjuntos">
+
+                        </ul>
+                    </section>
+                    <section class="seccion4">
+                        <iframe src=""></iframe>
+                    </section>
+                </div>
+            </form>
+        </div>
+    </div>
     <div class="modal" id="vistaprevia">
         <div class="ventanaVistaPrevia">
             <div class="tituloVista">
@@ -300,99 +323,9 @@
             <iframe src=""></iframe>
         </div>
     </div>
-    <div class="modal" id="comentarios">
-        <div class="ventanaComentarios">
-            <h3>Observaciones</h3>
-            <hr>
-            <div class="cuerpoComentarios">
-                <table class="tabla" id="tablaComentarios">
-                    <thead>
-                         <tr>
-                             <th>Usuario:</th>
-                             <th>Fecha:</th>
-                             <th>Comentarios</th>
-                             <th>...</th>
-                         </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-            </div>
-            <div>
-                <button type="button" id="btnAceptarDialogo">Aceptar</button>
-            </div>
-        </div>
-    </div>
-    <div class="modal" id="sendMail">
-        <form action="#" method="post" id="formMails">
-            <input type="hidden" name="estadoPedido" id="estadoPedido">
-            <div class="ventanaCorreo">
-                    <input type="file" name="mailAtach[]" id="mailAtach" multiple class="oculto">
-                    <div class="tituloCorreo">
-                        <h3 class="w100por">Enviar Correo</h3>
-                        <a href="#" id="closeMail" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
-                        <hr>
-                    </div>
-                    <div class="cuerpoCorreo">
-                        <div class="correoIzq">
-                            <div class="asunto">
-                                <label for="subject">Asunto :</label>
-                                <input type="text" name="subject" id="subject">
-                            </div>
-                            <div class="opciones">
-                                <button class="boton3 js-boton" data-type="bold" type="button"><i class="fas fa-bold"></i></button>
-                                <button class="boton3 js-boton" data-type="italic" type="button"><i class="fas fa-italic"></i></button>
-                            </div>
-                            <div class="messaje">
-                                <div contenteditable="true">
-
-                                </div>
-                            </div>
-                            <div class="commands">
-                                <button class="boton3" id="btnConfirmSend">Enviar</button>
-                            </div>
-                        </div>
-                        <div class="correoDerch">
-                            <h4>Correos</h4>
-                            <table id="listaCorreos" class="tabla">
-                                <thead>
-                                    <tr>
-                                        <th>Nombre</th>
-                                        <th>Correo</th>
-                                        <th>...</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-            </div>
-        </form>
-    </div>
-    <div class="modal" id="archivos">
-        <div class="ventanaArchivos">
-            <form action="#" id="fileAtachs" enctype='multipart/form-data'>
-                <input type="hidden" name="nroordenatach" id="nroordenatach">
-                <input type="file" name="uploadAtach" id="uploadAtach" multiple class="oculto">
-                <div class="tituloArchivos">
-                    <h3>Adjuntar Archivos</h3>
-                    <a href="#" id="openArch" title="Adjuntar Archivos"><i class="fas fa-file-medical"></i></a>
-                </div>            
-                <ul class="listaArchivos" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
-                </ul>
-                <div class="opcionesArchivos">
-                    <button type="button" class="boton3" id="btnConfirmAtach">Aceptar</button>
-                    <button type="button" class="boton3" id="btnCancelAtach">Cancelar</button>
-                </div>
-            </form>
-        </div>
-    </div>
     <div class="cabezaModulo">
-        <h1>Editar Ordenes</h1>
+        <h1>Consultar Ordenes</h1>
         <div>
-            <a href="#" id="nuevoRegistro"><i class="far fa-file"></i><p>Nuevo</p></a>
             <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
         </div>
     </div>
@@ -400,31 +333,44 @@
         <form action="#" id="formConsulta">
             <div class="variasConsultas">
                     <div>
-                        <label for="tipo">Tipo : </label>
-                        <select name="tipoSearch" id="tipoSearch">
-                            <option value="37">Bienes</option>
-                            <option value="38">Servicios</option>
+                        <label for="tipo">Nro.Orden : </label>
+                        <input type="text" name="ordenSearch" id="ordenSearch">
+                    </div>
+                    <div>
+                        <label for="costosSearch">Centro de Costos: </label>
+                        <select name="costosSearch" id="costosSearch" class="item4">
+                            <?php echo $this->listaCostosSelect ?>
                         </select>
                     </div>
                     <div>
-                        <label for="costosSearch">Centro de Costos</label>
-                        <input type="text" name="costosSearch" id="costosSearch">
-                    </div>
-                    <div>
                         <label for="mes">Mes</label>
-                        <input type="number" name="mesSearch" id="mesSearch" value="<?php echo date("m")?>" class="textoCentro">
+                        <select name="mesSearch" id="mesSearch">
+                            <option value="-1">Mes</option>
+                            <option value="01">Enero</option>
+                            <option value="02">Febrero</option>
+                            <option value="03">Marzo</option>
+                            <option value="04">Abril</option>
+                            <option value="05">Mayo</option>
+                            <option value="06">Junio</option>
+                            <option value="07">Julio</option>
+                            <option value="08">Agosto</option>
+                            <option value="09">Setiembre</option>
+                            <option value="10">Octubre</option>
+                            <option value="11">Noviembre</option>
+                            <option value="12">Diciembre</option>
+                        </select>
                     </div>
                     <div>
                         <label for="anio">Año :</label>
-                        <input type="number" name="anioSearch" id="anioSearch" value="<?php echo date("Y")?>" class="textoCentro">
+                        <input type="number" name="anioSearch" id="anioSearch" class="textoCentro">
                     </div>
-                    <button type="button">Procesar</button> 
+                    <button type="button" id="btnConsult">Procesar</button> 
             </div>
         </form>
     </div>
     <div class="itemsTabla">
         <table id="tablaPrincipal">
-            <thead>
+            <thead class="stickytop">
                     <tr>
                     <th rowspan="2">Num.</th>  
                     <th rowspan="2">Emision</th>
@@ -449,6 +395,6 @@
     </div>
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
     <script src="<?php echo constant('URL');?>public/js/funciones.js?<?php echo constant('VERSION')?>"></script>
-    <script src="<?php echo constant('URL');?>public/js/ordenedit.js?<?php echo constant('VERSION')?>"></script>
+    <script src="<?php echo constant('URL');?>public/js/ordenconsult.js?<?php echo constant('VERSION')?>"></script>
 </body>
 </html>
