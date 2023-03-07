@@ -1,5 +1,5 @@
 <?php
-    class Pedidos extends Controller{
+    class PedidoEdit extends Controller{
         function __construct()
         {
             parent::__construct();
@@ -14,10 +14,10 @@
             $this->view->listaAquarius  = $this->model->listarAquarius();
             $this->view->listaPedidos = $this->model->listarPedidosUsuario();
 
-            $this->view->render('pedidos/index');
+            $this->view->render('pedidoedit/index');
         }
 
-        function numeroDocumento(){
+        /*function numeroDocumento(){
             $sql = "SELECT COUNT(idreg) AS numero FROM tb_pedidocab WHERE tb_pedidocab.idcostos =:cod";
             echo json_encode($this->model->generarNumeroPedido($_POST['cc'],$sql));
         }
@@ -75,6 +75,5 @@
 
         function filtroPedidos(){
             echo $this->model->pedidosFiltrados($_POST);
-        }
+        }*/
     }
-?>
