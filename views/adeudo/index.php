@@ -10,16 +10,13 @@
     <div class="mensaje">
         <p></p>
     </div>
-    <div class="modal" id="adeudo">
-        <div class="ventanaComentarios">
-            <h3>Observaciones</h3>
-            <hr>
-            <div class="cuerpoComentarios">
-                
+    <div class="modal" id="vistaprevia">
+        <div class="ventanaVistaPrevia">
+            <div class="tituloVista">
+                <h3>Vista Previa</h3>
+                <a href="#" id="closePreview" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
             </div>
-            <div>
-                <button type="button" id="btnAceptarAdeudo">Aceptar</button>
-            </div>
+            <iframe src=""></iframe>
         </div>
     </div>
     <div class="modal" id="pregunta">
@@ -46,7 +43,6 @@
     <div class="cabezaModulo">
         <h1>Libre Adeudo</h1>
         <div>
-            <a href="#" id="btnBuscar"><i class="fas fa-search-location"></i><p>Buscar</p></a>
             <a href="#" id="btnAdeudo"><i class="far fa-file-alt"></i><p>Libre Adeudo</p></a>
             <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
         </div>
@@ -88,17 +84,17 @@
                     <th>Descripcion</th>
                     <th>UND.</th>
                     <th>Cant.</th>
-                    <th>Cant.</br>Devolucion</th>
+                    <th width="10px">Cant.</br>Devolucion</th>
                     <th>Fecha</br>Salida</th>
+                    <th>Fecha</br>Devolucion</th>
                     <th>N° Hoja</th>
                     <th>Isometricos</th>
                     <th>Observaciones</th>
                     <th>Serie</th>
                     <th>Patrimonio</th>
-                    <th>Estado</th>
+                    <th>Estado</br>Devolucion</th>
                     <th width="20px">Firma</th>
                     <th width="20px">Firma Almacen</th>
-                    <th>...</th>
                 </tr>
             </thead>
             <tbody>

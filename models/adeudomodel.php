@@ -37,8 +37,10 @@
                                                         alm_consumo.cobserentrega,
                                                         alm_consumo.cobserdevuelto,
                                                         alm_consumo.cestado,
+                                                        alm_consumo.ncondicion,
                                                         alm_consumo.flgdevolver,
                                                         alm_consumo.cfirma,
+                                                        alm_consumo.reguserdevol,
                                                         alm_consumo.cserie,
                                                         cm_producto.ccodprod,
                                                         UPPER(cm_producto.cdesprod) AS cdesprod,
@@ -57,34 +59,34 @@
                 $rowCount = $sql->rowCount();
                 $item = 1;
                 $salida ="No hay registros";
-                $numero_item = $this->cantidadItems($d,$c);
 
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()){
 
                         $marcado = $rs['flgdevolver'] == 1 ? "checked" : "";
                         $firma = "public/documentos/firmas/".$rs['cfirma'].".png";
+                        $fecha = date("Y-m-d");
 
-                        $salida .= '<tr class="pointer" data-grabado="1">
-                                        <td class="textoDerecha">'.$numero_item--.'</td>
+                        $salida .= '<tr class="pointer" data-grabado="1" data-item="'.$rs['idreg'].'" data-condicion="'.$rs['ncondicion'].'">
+                                        <td class="textoDerecha">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="pl5px">'.$rs['cdesprod'].'</td>
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                         <td class="textoDerecha">'.$rs['cantsalida'].'</td>
-                                        <td class="textoDerecha"><input type="text"></td>
+                                        <td ><input type="number" class="textoDerecha" value="'.$rs['cantdevolucion'].'"></td>
                                         <td class="textoCentro">'.$rs['fechasalida'].'</td>
+                                        <td class="textoCentro"><input type="date" value="'.$fecha.'"></td>
                                         <td class="textoCentro">'.$rs['nhoja'].'</td>
                                         <td class="pl5px">'.$rs['cisometrico'].'</td>
-                                        <td class="pl5px">'.$rs['cobserentrega'].'</td>
+                                        <td class="pl5px"><input type="text" value="'.$rs['cobserdevuelto'].'"></td>
                                         <td class="pl5px">'.$rs['cserie'].'</td>
                                         <td class="textoCentro"><input type="checkbox" '.$marcado.'></td>
-                                        <td class="pl5px">'.$rs['cestado'].'</td>
+                                        <td class="pl5px"><input type="text" value="'.$rs['cestado'].'"></td>
                                         <td class="textoCentro">
                                             <div style ="width:110px !important; text-align:center">
                                                 <img src = '.$firma.' style ="width:100% !important">
                                             </div>
                                         </td>
-                                        <td></td>
                                         <td></td>
                                     </tr>';
                     }
@@ -98,7 +100,7 @@
             }  
         }
 
-        /*public function buscarProductos($codigo){
+        public function buscarProductos($codigo){
             try {
                 $salida = "";
                 $sql = $this->db->connect()->prepare("SELECT
@@ -137,7 +139,7 @@
             }
         }
 
-        public function subirFirma($detalles) {
+        public function subirFirmaAlmacen($detalles) {
             if (array_key_exists('img',$_REQUEST)) {
                 // convierte la imagen recibida en base64
                 // Eliminamos los 22 primeros caracteres, que 
@@ -151,7 +153,7 @@
         
                 $namefile = uniqid();
         
-                $file = 'public/documentos/firmas/'.$namefile.'.png';
+                $file = 'public/documentos/almacen/'.$namefile.'.png';
             
                 // borrar primero la imagen si existía previamente
                 if (file_exists($file)) { unlink($file); }
@@ -169,42 +171,30 @@
                     $kardex = $this->norepite();
 
                     for ($i=0; $i<$nreg; $i++){
-                        $sql = $this->db->connect()->prepare("INSERT INTO alm_consumo 
-                                                                    SET reguser=:user,
-                                                                        nrodoc=:documento,
-                                                                        idprod=:producto,
-                                                                        cantsalida=:cantidad,
-                                                                        fechasalida=:salida,
-                                                                        nhoja=:hoja,
-                                                                        cisometrico=:isometrico,
-                                                                        cobserentrega=:observaciones,
-                                                                        flgdevolver=:patrimonio,
-                                                                        cestado=:estado,
-                                                                        nkardex=:kardex,
-                                                                        cfirma=:firma,
-                                                                        ncostos=:cc");
-                        $sql->execute(["user"=>$_SESSION['iduser'],
-                                        "documento"=>$datos[$i]->nrodoc,
-                                        "producto"=>$datos[$i]->idprod,
-                                        "cantidad"=>$datos[$i]->cantidad,
-                                        "salida"=>$datos[$i]->fecha,
-                                        "hoja"=>$datos[$i]->hoja,
-                                        "isometrico"=>$datos[$i]->isometrico,
+                        $sql = $this->db->connect()->prepare("UPDATE alm_consumo 
+                                                                    SET alm_consumo.cantdevolucion=:devolucion,
+                                                                        alm_consumo.fechadevolucion=:salida,
+                                                                        alm_consumo.cobserdevuelto=:observaciones,
+                                                                        alm_consumo.cestado=:estado,
+                                                                        alm_consumo.ncondicion = 1,
+                                                                        alm_consumo.reguserdevol =:user,
+                                                                        alm_consumo.calmacen =:firma
+                                                                    WHERE idreg=:item
+                                                                    LIMIT 1");
+
+                        $sql->execute(["item"=>$datos[$i]->idreg,
+                                        "devolucion"=>$datos[$i]->devuelto,
+                                        "salida"=>$datos[$i]->fdevuelto,
                                         "observaciones"=>$datos[$i]->observac,
-                                        "patrimonio"=>$datos[$i]->patrimonio,
                                         "estado"=>$datos[$i]->estado,
-                                        "kardex"=>$kardex,
                                         "firma"=>$namefile,
-                                        "cc"=>$datos[$i]->costos]);
+                                        "user"=>$_SESSION['iduser']]);
                     }
-                }            
+                }      
             }
         
             return  $respuesta;
         }
-
-
-       
 
         public function buscarConsumoPersonal($cod,$d,$cc){
             try {
@@ -280,23 +270,85 @@
             }  
         }
 
-        private function cantidadItems($d,$c) {
+        public function generarAdeudo($parametros){
+            require_once("public/formatos/libreadeudo.php");
+
+            $costo  = $parametros['cc'];
+            $doc    = $parametros['doc'];
+            $nombre = $parametros['nombre'];
+            $almacen= "";
+            $fecha = "";
+
+            $file = uniqid();
+
+            $pdf = new PDF($doc,$nombre,$almacen,$costo,$fecha);
+
+            $pdf->AddPage();
+            $pdf->AliasNbPages();
+            $pdf->SetWidths(array(15,25,130,20));
+            $pdf->SetFont('Arial','',5);
+
+            $lc = 0;
+
+            $detalle = $this->itemsAdeudo($costo,$doc);
+            $nreg = count($detalle);
+
+            for ($i=0; $i < $nreg; $i++) { 
+                $pdf->SetAligns(array("C","C","L","R"));
+                $pdf->Row(array(str_pad($lc++,3,0,STR_PAD_LEFT),
+                                $detalle[$i]['ccodprod'],
+                                $detalle[$i]['cdesprod'],
+                                $detalle[$i]['cantdevolucion']));
+                    $lc++;
+
+                    if ($pdf->getY() >= 185) {
+                        $pdf->AddPage();
+                        $lc = 0;
+                    }
+            }
+
+            $filename = "public/documentos/adeudos/".$file;
+
+            $pdf->Output($filename,'F');
+
+            return $file;
+
+        }
+
+        private function itemsAdeudo($cc,$doc) {
             try {
                 $sql = $this->db->connect()->prepare("SELECT
-                                                        COUNT( idreg ) AS nroitems
+                                                        alm_consumo.idreg,
+                                                        alm_consumo.reguser,
+                                                        alm_consumo.nrodoc,
+                                                        FORMAT(alm_consumo.cantdevolucion,2) AS cantdevolucion,
+                                                        alm_consumo.fechasalida,
+                                                        alm_consumo.calmacen,
+                                                        alm_consumo.cfirma,
+                                                        cm_producto.ccodprod,
+                                                        UPPER(cm_producto.cdesprod) AS cdesprod,
+                                                        tb_unimed.cabrevia,
+                                                        alm_consumo.ncostos,
+                                                        alm_consumo.ncondicion,
+                                                        alm_consumo.flgdevolver 
                                                     FROM
-                                                        alm_consumo 
+                                                        alm_consumo
+                                                        INNER JOIN cm_producto ON alm_consumo.idprod = cm_producto.id_cprod
+                                                        INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed 
                                                     WHERE
-                                                        nrodoc = :documento 
-                                                        AND ncostos = :cc");
-                $sql->execute(["documento"=>$d,"cc"=>$c]);
+                                                        alm_consumo.nrodoc = :doc 
+                                                        AND alm_consumo.ncostos = :cc 
+                                                        AND alm_consumo.flgdevolver = 1 
+                                                        AND alm_consumo.ncondicion = 1");
+                $sql->execute(["doc"=>$doc,"cc"=>$cc]);
                 $result = $sql->fetchAll();
 
-                return $result[0]['nroitems'];
-            } catch (PDOException $th) {
+                return $result;
+
+            }catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
-            }
-        }*/
+            } 
+        }
     }
 ?>

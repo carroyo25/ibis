@@ -15,7 +15,7 @@
         }
 
         function firma(){
-            echo $this->model->subirFirma($_POST['detalles']);
+            echo $this->model->subirFirmaAlmacen($_POST['detalles']);
         }
 
         /*function consulta(){
@@ -25,6 +25,10 @@
         function buscaCodigo(){
             echo $this->model->buscarConsumoPersonal($_POST['codigo'],$_POST['documento'],$_POST['costos']);
         }*/
+
+        function formato(){
+            echo $this->model->generarAdeudo($_POST);
+        }
         
     }
 ?>
