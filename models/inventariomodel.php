@@ -198,22 +198,19 @@
 
         public function importFromXsl(){
             require_once('public/PHPExcel/PHPExcel.php');
-            try {
-                
-                $temporal	 = $_FILES['fileUpload']['tmp_name'];
 
-                if (move_uploaded_file($temporal,'./public/documentos/temp/temp.xlsx')){
-                    $mensaje = "El archivo ha sido cargado correctamente.";
-                }else{
-                    $mensaje = "Ocurrió algún error al subir el fichero. No pudo guardarse.";
-                }
+            $archivo = './public/documentos/temp/temp.xlsx';
+            $temporal	 = $_FILES['fileUpload']['tmp_name'];
 
-                $objPHPExcel = PHPExcel_IOFactory::load("./public/documentos/temp/temp.xlsx");
+
+            if (move_uploaded_file($temporal,$archivo)){
+                $mensaje = "El archivo ha sido cargado correctamente.";
+
+                $objPHPExcel = PHPExcel_IOFactory::load($archivo);
                 $objHoja=$objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
+
                 $fila = 1;
                 $datos= "";
-
-                //$item = array();
 
                 foreach ($objHoja as $iIndice=>$objCelda) {
                     if ( $objCelda['B'] && $objCelda['B']!="CODIGO") {
@@ -228,7 +225,6 @@
                         $fondo_fila  = $codigo_sical  != 0 ? "rgba(56,132,192,0.2)" : "rgba(255,0,57,0.2)";
                         $descripcion = $codigo_sical  != 0 ? $objCelda['C'] : '<a href="#">'.$objCelda['C'].'</a>';
                         $observaciones =  $codigo_sical  != 0 ? $objCelda['T']: $objCelda['C'];
-                                             
 
                        $datos .='<tr data-grabado="0" 
                                         data-idprod="'.$codigo_sical.'" 
@@ -260,13 +256,12 @@
                                 </tr>';
                     }
                 }
-
-                return array("datos"=>$datos);
-
-            } catch (PDOException $th) {
-                echo "Error: ".$th->getMessage();
-                return false;
+            }else{
+                $mensaje = "Ocurrió algún error al subir el fichero. No pudo guardarse.";
             }
+
+            return array("datos"=>$datos);
+
         }
 
         private function establecerCodigos($codigo){
