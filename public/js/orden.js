@@ -267,7 +267,7 @@ $(function(){
                 codigo      = $(this).children('td:eq(5)').text(),
                 request     = $(this).data("pedido"),
                 nroreq      = $(this).children('td:eq(0)').text(),
-                descrip     = $(this).children('td:eq(6)').text(),
+                descrip     = $(this).children('td:eq(7)').text(),
                 cantidad    = $(this).data("cantidad"),
                 unidad      = $(this).data("unidad"),
                 total       = 0,

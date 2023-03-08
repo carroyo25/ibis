@@ -10,29 +10,29 @@
                 $salida = '';
 
                 $sql = $this->db->connect()->query("SELECT
-                                                    cm_producto.id_cprod,
-                                                    cm_producto.ccodprod,
-                                                    cm_producto.ntipo,
-                                                    UPPER( cm_producto.cdesprod ) AS descripcion,
-                                                    SUM( alm_inventariodet.cant_ingr ) AS ingreso_inventario,
-                                                    SUM( alm_existencia.cant_ingr ) AS ingreso_guias,
-                                                    alm_inventariocab.idcostos AS cc_inventario,
-                                                    alm_cabexist.idcostos AS cc_guias,
-                                                    tb_unimed.cabrevia,
-                                                    IF (ISNULL(alm_cabexist.idcostos),alm_inventariocab.idcostos,alm_cabexist.idcostos) AS costos
-                                                FROM
-                                                    cm_producto
-                                                    LEFT JOIN alm_inventariodet ON cm_producto.id_cprod = alm_inventariodet.codprod
-                                                    LEFT JOIN alm_existencia ON cm_producto.id_cprod = alm_existencia.codprod
-                                                    LEFT JOIN alm_inventariocab ON alm_inventariodet.idregistro = alm_inventariocab.idreg
-                                                    LEFT JOIN alm_cabexist ON alm_existencia.idregistro = alm_cabexist.idreg
-                                                    INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed 
-                                                WHERE
-                                                    cm_producto.ntipo = 37 
-                                                    AND alm_inventariocab.idcostos > 0 
-                                                    OR alm_existencia.cant_ingr > 0 
-                                                GROUP BY
-                                                    cm_producto.id_cprod");
+                                                        cm_producto.id_cprod,
+                                                        cm_producto.ccodprod,
+                                                        cm_producto.ntipo,
+                                                        UPPER( cm_producto.cdesprod ) AS descripcion,
+                                                        SUM( alm_inventariodet.cant_ingr ) AS ingreso_inventario,
+                                                        SUM( alm_existencia.cant_ingr ) AS ingreso_guias,
+                                                        alm_inventariocab.idcostos AS cc_inventario,
+                                                        alm_cabexist.idcostos AS cc_guias,
+                                                        tb_unimed.cabrevia,
+                                                        IF (ISNULL(alm_cabexist.idcostos),alm_inventariocab.idcostos,alm_cabexist.idcostos) AS costos
+                                                    FROM
+                                                        cm_producto
+                                                        LEFT JOIN alm_inventariodet ON cm_producto.id_cprod = alm_inventariodet.codprod
+                                                        LEFT JOIN alm_existencia ON cm_producto.id_cprod = alm_existencia.codprod
+                                                        LEFT JOIN alm_inventariocab ON alm_inventariodet.idregistro = alm_inventariocab.idreg
+                                                        LEFT JOIN alm_cabexist ON alm_existencia.idregistro = alm_cabexist.idreg
+                                                        INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed 
+                                                    WHERE
+                                                        cm_producto.ntipo = 37 
+                                                        AND alm_inventariocab.idcostos > 0 
+                                                        OR alm_existencia.cant_ingr > 0 
+                                                    GROUP BY
+                                                        cm_producto.id_cprod");
                 $sql->execute();
                 $rowCount = $sql->rowCount();
                 $item = 1;
