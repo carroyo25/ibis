@@ -1392,8 +1392,8 @@
                                                     LEFT JOIN ibis.tb_partidas ON ibis.tb_pedidocab.idpartida = ibis.tb_partidas.idreg 
                                                     WHERE
                                                         tb_pedidocab.idreg = :id 
-                                                        AND tb_pedidocab.estadodoc BETWEEN :min 
-                                                        AND :max");
+                                                    AND tb_pedidocab.estadodoc BETWEEN :min 
+                                                    AND :max");
                 $sql->execute(['id'=>$id, 'min'=>$min, 'max'=>$max]);
                 $rowCount = $sql->rowCount();
                 

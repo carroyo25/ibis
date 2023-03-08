@@ -249,6 +249,7 @@
                 </div>
             </div>
             <div class="textoBusqueda">
+                <!--<input type="text" id="pedidoSearch" name="pedidoSearch" placeholder="Nro. Pedido">-->
                 <select name="itemCostos" id="itemCostos">
                     <?php echo $this->listaCostosSelect ?>
                 </select>
@@ -264,6 +265,7 @@
                             <th width="15%">Area</th>
                             <th>Centro Costos</th>
                             <th width="7%">Codigo</th>
+                            <th width="7%">Cantidad</th>
                             <th>Descripción</th>
                         </tr>
                     </thead>

@@ -29,6 +29,9 @@
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
                         <div>
+                            <button type="button" id="viewAtach" title="Ver Adjunto" class="boton3">
+                                <p><i class="fas fa-paperclip"></i> ver Adjuntos</p> 
+                            </button>
                             <button type="button" id="asingRequest" title="Asignar Pedido" class="boton3">
                                 <p><i class="fas fa-wrench"></i> Asignar Operador</p> 
                             </button>
@@ -132,6 +135,18 @@
                 <button type="button" id="aceptaAsigna">Asignar</button>
                 <button type="button" id="cancelaAsigna">Cancelar</button>
             </div>
+        </div>
+    </div>
+    <div class="modal" id="vistaAdjuntos">
+        <div class="ventanaAdjuntos">
+            <div class="tituloAdjuntos">
+                <h3>Adjuntos Pedido</h3>
+                <a href="#" id="closeAtach" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
+            </div>
+            <ul id="listaAdjuntos">
+
+            </ul>
+            <iframe src=""></iframe>
         </div>
     </div>
      <div class="cabezaModulo">

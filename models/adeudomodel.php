@@ -35,6 +35,7 @@
                                                         alm_consumo.nhoja,
                                                         alm_consumo.cisometrico,
                                                         alm_consumo.cobserentrega,
+                                                        DATE_FORMAT(alm_consumo.fechadevolucion,'%d/%m/%Y') AS fechadevolucion,
                                                         alm_consumo.cobserdevuelto,
                                                         alm_consumo.cestado,
                                                         alm_consumo.ncondicion,
@@ -42,6 +43,7 @@
                                                         alm_consumo.cfirma,
                                                         alm_consumo.reguserdevol,
                                                         alm_consumo.cserie,
+                                                        alm_consumo.calmacen,
                                                         cm_producto.ccodprod,
                                                         UPPER(cm_producto.cdesprod) AS cdesprod,
                                                         tb_unimed.cabrevia 
@@ -64,10 +66,39 @@
                     while ($rs = $sql->fetch()){
 
                         $marcado = $rs['flgdevolver'] == 1 ? "checked" : "";
-                        $firma = "public/documentos/firmas/".$rs['cfirma'].".png";
+                        $firma =   "public/documentos/firmas/".$rs['cfirma'].".png";
+                        $almacen = "public/documentos/almacen/".$rs['calmacen'].".png";
                         $fecha = date("Y-m-d");
 
-                        $salida .= '<tr class="pointer" data-grabado="1" data-item="'.$rs['idreg'].'" data-condicion="'.$rs['ncondicion'].'">
+                        if ($rs['ncondicion'] == 1) {
+                            $salida .= '<tr class="pointer" data-grabado="1" data-item="'.$rs['idreg'].'" data-condicion="'.$rs['ncondicion'].'">
+                                        <td class="textoDerecha">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
+                                        <td class="textoCentro">'.$rs['ccodprod'].'</td>
+                                        <td class="pl5px">'.$rs['cdesprod'].'</td>
+                                        <td class="textoCentro">'.$rs['cabrevia'].'</td>
+                                        <td class="textoDerecha">'.$rs['cantsalida'].'</td>
+                                        <td class="textoDerecha" >'.$rs['cantdevolucion'].'</td>
+                                        <td class="textoCentro">'.$rs['fechasalida'].'</td>
+                                        <td class="textoCentro">'.$rs['fechadevolucion'].'</td>
+                                        <td class="textoCentro">'.$rs['nhoja'].'</td>
+                                        <td class="pl5px">'.$rs['cisometrico'].'</td>
+                                        <td class="pl5px">'.$rs['cobserdevuelto'].'</td>
+                                        <td class="pl5px">'.$rs['cserie'].'</td>
+                                        <td class="textoCentro"><input type="checkbox" '.$marcado.' readonly></td>
+                                        <td class="pl5px">'.$rs['cestado'].'</td>
+                                        <td class="textoCentro">
+                                            <div style ="width:110px !important; text-align:center">
+                                                <img src = '.$firma.' style ="width:100% !important">
+                                            </div>
+                                        </td>
+                                        <td class="textoCentro">
+                                            <div style ="width:110px !important; text-align:center">
+                                                <img src = '.$almacen.' style ="width:100% !important">
+                                            </div>
+                                        </td>
+                                    </tr>';
+                        }else {
+                            $salida .= '<tr class="pointer" data-grabado="0" data-item="'.$rs['idreg'].'" data-condicion="'.$rs['ncondicion'].'">
                                         <td class="textoDerecha">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="pl5px">'.$rs['cdesprod'].'</td>
@@ -87,8 +118,13 @@
                                                 <img src = '.$firma.' style ="width:100% !important">
                                             </div>
                                         </td>
-                                        <td></td>
+                                        <td class="textoCentro">
+                                            <div style ="width:110px !important; text-align:center">
+                                                <img src = '.$almacen.' style ="width:100% !important">
+                                            </div>
+                                        </td>
                                     </tr>';
+                        }
                     }
                 }
 
@@ -171,7 +207,8 @@
                     $kardex = $this->norepite();
 
                     for ($i=0; $i<$nreg; $i++){
-                        $sql = $this->db->connect()->prepare("UPDATE alm_consumo 
+                        if ($datos[$i]->devuelto > 0) {
+                            $sql = $this->db->connect()->prepare("UPDATE alm_consumo 
                                                                     SET alm_consumo.cantdevolucion=:devolucion,
                                                                         alm_consumo.fechadevolucion=:salida,
                                                                         alm_consumo.cobserdevuelto=:observaciones,
@@ -182,13 +219,15 @@
                                                                     WHERE idreg=:item
                                                                     LIMIT 1");
 
-                        $sql->execute(["item"=>$datos[$i]->idreg,
-                                        "devolucion"=>$datos[$i]->devuelto,
-                                        "salida"=>$datos[$i]->fdevuelto,
-                                        "observaciones"=>$datos[$i]->observac,
-                                        "estado"=>$datos[$i]->estado,
-                                        "firma"=>$namefile,
-                                        "user"=>$_SESSION['iduser']]);
+                            $sql->execute(["item"=>$datos[$i]->idreg,
+                                            "devolucion"=>$datos[$i]->devuelto,
+                                            "salida"=>$datos[$i]->fdevuelto,
+                                            "observaciones"=>$datos[$i]->observac,
+                                            "estado"=>$datos[$i]->estado,
+                                            "firma"=>$namefile,
+                                            "user"=>$_SESSION['iduser']]);
+                        }
+                       
                     }
                 }      
             }

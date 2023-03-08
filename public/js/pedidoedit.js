@@ -2,7 +2,7 @@ $(function(){
     $("#tablaPrincipal tbody").on("click","tr", function (e) {
         e.preventDefault();
 
-        $.post(RUTA+"pedidos/consultaId", {id:$(this).data("indice")},
+        $.post(RUTA+"pedidoseg/seguimientoID", {id:$(this).data("indice")},
             function (data, textStatus, jqXHR) {
                 
                 let numero = $.strPad(data.cabecera[0].nrodoc,6);
@@ -31,20 +31,7 @@ $(function(){
                 $("#estado").val(data.cabecera[0].estado);
                 $("#espec_items").val(data.cabecera[0].detalle);
                 $("#partida").val(data.cabecera[0].cdescripcion);
-
                
-                if (data.cabecera[0].idtipomov == 38) {
-                    $("#requestAprob").removeClass("desactivado");
-                    $("#sendItem").addClass("desactivado");
-                }else {
-                    if ( data.cabecera[0].veralm == 0 ){
-                        $("#requestAprob").removeClass("desactivado");
-                        $("#sendItem").addClass("desactivado");
-                    }else {
-                        $("#requestAprob").addClass("desactivado");
-                        $("#sendItem").removeClass("desactivado");
-                    }                    
-                }
 
                 $("#tablaDetalles tbody")
                     .empty()
@@ -59,10 +46,31 @@ $(function(){
             "json"
         );
 
-        accion = "u";
         $("#proceso").fadeIn();
-        $("#saveItem").remove("desactivado");
 
+        return false;
+    });
+
+    $("#closeProcess").click(function (e) { 
+        e.preventDefault();
+
+        $("#proceso").fadeOut();
+
+        /*$.post(RUTA+"pedidos/actualizaListado",
+            function (data, textStatus, jqXHR) {
+                $(".itemsTabla table tbody")
+                    .empty()
+                    .append(data);
+
+                $("#proceso").fadeOut(function(){
+                    grabado = false;
+                    $("form")[1].reset();
+                    $("#tablaDetalles tbody,.listaArchivos").empty();
+                    $(".lista").fadeOut();
+                });
+            },
+            "text"
+        );*/
         return false;
     });
 })

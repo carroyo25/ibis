@@ -92,7 +92,7 @@ $(function(){
         $.post(RUTA+'adeudo/firma', {img : canvas.toDataURL(),detalles:JSON.stringify(detalles())},
             function (data, textStatus, jqXHR) {
                 if (data) {
-                    mostrarMensaje("Consumo registrado","mensaje_correcto");
+                    mostrarMensaje("Devolucion registrada","mensaje_correcto");
                 }else {
                     mostrarMensaje("Hubo un error al grabar","mensaje_error");
                 }

@@ -62,6 +62,8 @@ $(function(){
                             $('#tablaPrincipal tbody tr:first').find('td').eq(4).children().focus();
                         }   
                     }
+
+                    $("#codeRead").val('').focus();
                 },
                 "json"
             );
@@ -107,6 +109,11 @@ $(function(){
             function (data, textStatus, jqXHR) {
                 if (data) {
                     mostrarMensaje("Consumo registrado","mensaje_correcto");
+                    
+                    $("#tablaPrincipal tbody").empty();
+                    $("#costosSearch").val(-1);
+                    $(".ingreso").val("");
+                    
                 }else {
                     mostrarMensaje("Hubo un error al grabar","mensaje_error");
                 }
@@ -122,6 +129,10 @@ $(function(){
 
     $("#btnCancelarGrabar").click(function (e) { 
         e.preventDefault();
+
+        $("#tablaPrincipal tbody").empty();
+        $("#costosSearch").val(-1);
+        $(".ingreso").val("");
 
         $("#pregunta").fadeOut();
         
@@ -141,6 +152,8 @@ $(function(){
         } catch (error) {
             mostrarMensaje(error,"mensaje_error");
         }
+
+       
 
         return false;
     });

@@ -32,6 +32,7 @@
                                                     INNER JOIN ibis.tb_parametros AS atenciones ON ibis.tb_pedidocab.nivelAten = atenciones.nidreg
                                                     INNER JOIN ibis.tb_parametros AS estados ON ibis.tb_pedidocab.estadodoc = estados.nidreg
                                                 WHERE YEAR(ibis.tb_pedidocab.emision) = YEAR(NOW())
+                                                    AND ibis.tb_pedidocab.estadodoc != 105
                                                 ORDER BY ibis.tb_pedidocab.emision DESC");
                 $sql->execute();
                 $rowCount = $sql->rowCount();
@@ -583,7 +584,7 @@
                                                     AND ibis.tb_pedidocab.idcostos LIKE :costos
                                                     AND MONTH (ibis.tb_pedidocab.emision) LIKE :mes
                                                     AND YEAR (ibis.tb_pedidocab.emision) = :anio
-                                                    AND ibis.tb_pedidocab.estadodoc
+                                                    AND ibis.tb_pedidocab.estadodoc != 105
                                                     ORDER BY ibis.tb_pedidocab.emision DESC");
                 $sql->execute(["tipomov"=>$tipo,
                                 "costos"=>$costos,

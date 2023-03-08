@@ -137,6 +137,47 @@ $(function(){
         
         return false
     });
+
+    $("#viewAtach").click(function (e) { 
+        e.preventDefault();
+
+        $.post(RUTA+"aprobacion/adjuntos", {id:$("#codigo_pedido").val()},
+            function (data, textStatus, jqXHR) {
+                if (data.archivos > 0){
+                    $("#listaAdjuntos")
+                        .empty()
+                        .append(data.adjuntos);
+                        $("#vistaAdjuntos").fadeIn();
+                }else{
+                    mostrarMensaje("No hay archivos adjuntos","mensaje_error");
+                }
+            },
+            "json"
+        );
+        
+        
+        
+        return false;
+    });
+
+    $("#closeAtach").click(function (e) { 
+        e.preventDefault();
+
+        $(".ventanaAdjuntos iframe").attr("src","");
+        $("#vistaAdjuntos").fadeOut();
+
+        return false;
+    });
+
+    $("#vistaAdjuntos").on("click","a", function (e) {
+        e.preventDefault();
+        
+        $(".ventanaAdjuntos iframe")
+            .attr("src","")
+            .attr("src","public/documentos/pedidos/adjuntos/"+$(this).attr("href"));
+        
+        return false;
+    });
 })
 
 

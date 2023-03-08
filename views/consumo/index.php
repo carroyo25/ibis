@@ -50,41 +50,36 @@
             <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
         </div>
     </div>
-    
-    
     <div class="barraTrabajo">
-    
-            <div class="variasConsultas4campos">
-                    <input type="hidden" name="cut" id="cut">
-                    <input type="hidden" name="correo" id="correo">
-                    
-                    <div>
-                        <label for="costosSearch">Centro de Costos: </label>
-                        <select name="costosSearch" id="costosSearch" class="item4">
-                            <?php echo $this->listaCostosSelect ?>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="docident">N°. Documento </label>
-                        <input type="text" id="docident" name="docident">
-                    </div>
-                    <div>
-                        <label for="nombre">Nombre</label>
-                        <input type="text" id="nombre" name="nombre">
-                    </div>
-                    <div>
-                        <label for="cargo">Cargo</label>
-                        <input type="cargo" id="cargo" name="cargo">
-                    </div>
-                    
-                    <button id="btnGrabarKardex" class="oculto boton3">Aceptar</button>
-                    <button type="button" class="boton3" id="btnFirmar" onclick="StartSign()">Firmar</button>
-
-                    <div>
-                        <label for="codeRead">Codigo: </label>
-                        <input type="text" name="codeRead" id="codeRead" style="opacity:1;position:relative" value=""> 
-                    </div>
-            </div>
+        <div class="variasConsultas4campos">
+                <input type="hidden" name="cut" id="cut">
+                <input type="hidden" name="correo" id="correo">
+                <div>
+                    <label for="costosSearch">Centro de Costos: </label>
+                    <select name="costosSearch" id="costosSearch" class="item4">
+                        <?php echo $this->listaCostosSelect ?>
+                    </select>
+                </div>
+                <div>
+                    <label for="docident">N°. Documento </label>
+                    <input type="text" id="docident" name="docident" class="ingreso">
+                </div>
+                <div>
+                    <label for="nombre">Nombre</label>
+                    <input type="text" id="nombre" name="nombre" class="ingreso">
+                </div>
+                <div>
+                    <label for="cargo">Cargo</label>
+                    <input type="cargo" id="cargo" name="cargo" class="ingreso">
+                </div>
+                
+                <button id="btnGrabarKardex" class="oculto boton3">Aceptar</button>
+                <button type="button" class="boton3" id="btnFirmar" onclick="StartSign()">Firmar</button>
+                <div>
+                    <label for="codeRead">Codigo: </label>
+                    <input type="text" name="codeRead" id="codeRead" style="opacity:1;position:relative" value=""> 
+                </div>
+        </div>
     </div>
     <div class="itemsTabla">
         <table id="tablaPrincipal">

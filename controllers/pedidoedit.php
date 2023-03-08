@@ -17,6 +17,10 @@
             $this->view->render('pedidoedit/index');
         }
 
+        function consultaId(){
+            echo json_encode($this->model->consultarReqId($_POST['id'],49,54,49,null));
+        }
+
         /*function numeroDocumento(){
             $sql = "SELECT COUNT(idreg) AS numero FROM tb_pedidocab WHERE tb_pedidocab.idcostos =:cod";
             echo json_encode($this->model->generarNumeroPedido($_POST['cc'],$sql));

@@ -4,8 +4,6 @@ $(function(){
 
         $.post(RUTA+"pedidoseg/seguimientoID", {id:$(this).data("indice")},
             function (data, textStatus, jqXHR) {
-
-            
                 
                 let numero = $.strPad(data.cabecera[0].nrodoc,6);
                 let estado = "textoCentro w35por estado " + data.cabecera[0].cabrevia;
