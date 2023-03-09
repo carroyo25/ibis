@@ -40,6 +40,10 @@
             echo json_encode($this->model->imprimirFormato($_POST['cabecera'],$_POST['detalles'],$_POST['proyecto'],$_POST['despacho'],$_POST['operacion']));
         }
 
+        function GrabaGuia(){
+            echo json_encode($this->model->grabarGuia($_POST['cabecera'],$_POST['detalles'],$_POST['proyecto'],$_POST['despacho'],$_POST['operacion']));
+        }
+
         function nuevasalida(){
             echo json_encode($this->model->grabarDespacho($_POST['cabecera'],$_POST['detalles']));
         }

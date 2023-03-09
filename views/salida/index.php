@@ -212,6 +212,7 @@
                         <input type="text" name="numero_guia" id="numero_guia">    
                     </div>
                     <div class="opciones_documento">
+                        <a href="#" id="saveDocument" title="Imprimir Guia"><i class="fas fa-save"></i></a>
                         <a href="#" id="printDocument" title="Imprimir Guia"><i class="fas fa-print"></i></a>
                         <a href="#" id="previewDocument" title="Vista previa"><i class="fas fa-eye"></i></a>
                         <a href="#" id="closeDocument" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>

@@ -463,6 +463,29 @@ $(function() {
         return false;
     });
 
+    $("#saveDocument").click(function(e){
+        e.preventDefault();
+
+        let result = {};
+
+        $.each($("#guiaremision").serializeArray(),function(){
+            result[this.name] = this.value;
+        });
+
+        $.post(RUTA+"salida/GrabaGuia", {cabecera:result,
+                                        detalles:JSON.stringify(detalles(tipoVista)),
+                                        proyecto: $("#costos").val(),
+                                        despacho: $("#codigo_salida").val(),
+                                        operacion:accion},
+                function (data, textStatus, jqXHR) {
+                    
+                },
+                "json"
+            );
+
+        return false;
+    });
+
     $("#printDocument").click(function (e) { 
         e.preventDefault();
         

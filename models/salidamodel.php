@@ -337,6 +337,51 @@
             }
         }
 
+        public function grabarGuia($cabeceraGuia,$detalles,$proyecto,$despacho,$operacion) {
+            try {
+
+                if ($cabeceraGuia['ftraslado'] !== "")
+                    $fecha_traslado = date("d/m/Y", strtotime($cabeceraGuia['ftraslado']));
+                else 
+                    $fecha_traslado = "";
+
+                $fecha_emision = date("d/m/Y", strtotime($cabeceraGuia['fgemision']));
+
+                $sql = $this->db->connect()->prepare("INSERT INTO lg_guias SET id_regalm=:despacho,cnumguia=:guia,corigen=:origen,
+                                                                                cdirorigen=:direccion_origen,cdestino=:destino,
+                                                                                cdirdest=:direccion_destino,centi=:entidad,centidir=:direccion_entidad,
+                                                                                centiruc=:ruc_entidad,ctraslado=:traslado,cenvio=:envio,
+                                                                                cautoriza=:autoriza,cdestinatario=:destinatario,cobserva=:observaciones,
+                                                                                cnombre=:nombres,cmarca=:marca,clicencia=:licencia,cplaca=:placa,
+                                                                                ftraslado=:fecha_traslado,fguia=:fecha_guia");
+
+                $sql->execute([ "despacho"=>$despacho,
+                                "guia"=>$cabeceraGuia['numero_guia'],
+                                "origen"=>$cabeceraGuia['almacen_origen'],
+                                "direccion_origen"=>$cabeceraGuia['almacen_origen_direccion'],
+                                "destino"=>$cabeceraGuia['almacen_destino'],
+                                "direccion_destino"=>$cabeceraGuia['almacen_destino_direccion'],
+                                "entidad"=>$cabeceraGuia['empresa_transporte_razon'],
+                                "direccion_entidad"=>$cabeceraGuia['direccion_proveedor'],
+                                "ruc_entidad"=>$cabeceraGuia['ruc_proveedor'],
+                                "traslado"=>$cabeceraGuia['modalidad_traslado'],
+                                "envio"=>$cabeceraGuia['tipo_envio'],
+                                "autoriza"=>$cabeceraGuia['autoriza'],
+                                "destinatario"=>$cabeceraGuia['destinatario'],
+                                "observaciones"=>$cabeceraGuia['observaciones'],
+                                "nombres"=>$cabeceraGuia['nombre_conductor'],
+                                "marca"=>$cabeceraGuia['marca'],
+                                "licencia"=>$cabeceraGuia['licencia_conducir'],
+                                "placa"=>$cabeceraGuia['placa'],
+                                "fecha_traslado"=>$fecha_traslado,
+                                "fecha_guia"=>$cabeceraGuia['fgemision']]);
+                
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
         public function imprimirFormato($cabecera,$detalles,$proyecto,$nro_despacho,$operacion){
             try {
                 require_once("public/formatos/grpreimpreso.php");
