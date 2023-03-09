@@ -283,6 +283,8 @@ $(function() {
     $(".tituloDocumento").on("click","#closeDocument", function (e) {
         e.preventDefault();
 
+        document.getElementById("guiaremision").reset();
+
         $(this).parent().parent().parent().parent().parent().fadeOut();
 
         return false;
