@@ -337,8 +337,10 @@
             }
         }
 
-        public function grabarGuia($cabeceraGuia,$detalles,$proyecto,$despacho,$operacion) {
+        public function grabarGuia($cabeceraGuia,$detalles,$proyecto,$despacho,$operacion,$guia) {
             try {
+
+                $accion = "";
 
                 if ($cabeceraGuia['ftraslado'] !== "")
                     $fecha_traslado = date("d/m/Y", strtotime($cabeceraGuia['ftraslado']));
@@ -347,35 +349,36 @@
 
                 $fecha_emision = date("d/m/Y", strtotime($cabeceraGuia['fgemision']));
 
-                $sql = $this->db->connect()->prepare("INSERT INTO lg_guias SET id_regalm=:despacho,cnumguia=:guia,corigen=:origen,
-                                                                                cdirorigen=:direccion_origen,cdestino=:destino,
-                                                                                cdirdest=:direccion_destino,centi=:entidad,centidir=:direccion_entidad,
-                                                                                centiruc=:ruc_entidad,ctraslado=:traslado,cenvio=:envio,
-                                                                                cautoriza=:autoriza,cdestinatario=:destinatario,cobserva=:observaciones,
-                                                                                cnombre=:nombres,cmarca=:marca,clicencia=:licencia,cplaca=:placa,
-                                                                                ftraslado=:fecha_traslado,fguia=:fecha_guia");
+                if ($guia == "") {
+                    $salida = $this->grabarDatosGuia($cabeceraGuia,$despacho,$fecha_emision,$fecha_traslado);
+                    $guia = $cabeceraGuia['numero_guia'];
+                }else {
+                    $salida = $this->modificarDatosGuia($cabeceraGuia,$despacho,$fecha_emision,$fecha_traslado);
+                    $guia = $cabeceraGuia['numero_guia'];
+                }
 
-                $sql->execute([ "despacho"=>$despacho,
-                                "guia"=>$cabeceraGuia['numero_guia'],
-                                "origen"=>$cabeceraGuia['almacen_origen'],
-                                "direccion_origen"=>$cabeceraGuia['almacen_origen_direccion'],
-                                "destino"=>$cabeceraGuia['almacen_destino'],
-                                "direccion_destino"=>$cabeceraGuia['almacen_destino_direccion'],
-                                "entidad"=>$cabeceraGuia['empresa_transporte_razon'],
-                                "direccion_entidad"=>$cabeceraGuia['direccion_proveedor'],
-                                "ruc_entidad"=>$cabeceraGuia['ruc_proveedor'],
-                                "traslado"=>$cabeceraGuia['modalidad_traslado'],
-                                "envio"=>$cabeceraGuia['tipo_envio'],
-                                "autoriza"=>$cabeceraGuia['autoriza'],
-                                "destinatario"=>$cabeceraGuia['destinatario'],
-                                "observaciones"=>$cabeceraGuia['observaciones'],
-                                "nombres"=>$cabeceraGuia['nombre_conductor'],
-                                "marca"=>$cabeceraGuia['marca'],
-                                "licencia"=>$cabeceraGuia['licencia_conducir'],
-                                "placa"=>$cabeceraGuia['placa'],
-                                "fecha_traslado"=>$fecha_traslado,
-                                "fecha_guia"=>$cabeceraGuia['fgemision']]);
+            $referido = $this->generarRS();     
+            $this->actualizarGuiaEnDespacho($cabeceraGuia,$referido,$despacho);
+
+            return array("mensaje"=>$salida,"guia"=>$guia);    
                 
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        private function actualizarGuiaEnDespacho($cabecera,$referido,$nro_despacho){
+            try {
+                $sql = $this->db->connect()->prepare("UPDATE alm_despachocab 
+                                                        SET ffecenvio=:envio,nReferido=:referido,cnumguia=:guia,id_centi=:entidad
+                                                        WHERE id_regalm =:despacho");
+                
+                $sql->execute(["envio"=>$cabecera['ftraslado'],
+                                "referido"=>$referido,
+                                "guia"=>$cabecera['numero_guia'],
+                                "entidad"=>$cabecera['codigo_entidad_transporte'],
+                                "despacho"=>$nro_despacho]);
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
                 return false;
@@ -402,23 +405,7 @@
                 $referido = $this->generarRS(); 
                 $anio = explode('-',$cabecera['fgemision']);
 
-                $sql = $this->db->connect()->prepare("UPDATE alm_despachocab 
-                                                        SET ffecenvio=:envio,nReferido=:referido,cnumguia=:guia,id_centi=:entidad
-                                                        WHERE id_regalm =:despacho");
-
-
-                if ( $operacion == "n" ){
-                    $this->grabarDatosGuia($cabecera,$nro_despacho,$fecha_emision,$fecha_traslado);
-                }else{
-                    $this->modificarDatosGuia($cabecera,$nro_despacho,$fecha_emision,$fecha_traslado);
-                }
                 
-                $sql->execute(["envio"=>$cabecera['ftraslado'],
-                                "referido"=>$referido,
-                                "guia"=>$cabecera['numero_guia'],
-                                "entidad"=>$cabecera['codigo_entidad_transporte'],
-                                "despacho"=>$nro_despacho]);
-
                 $pdf = new PDF($cabecera['numero_guia'],
                                 $fecha_emision,
                                 $cabecera['destinatario_ruc'],
@@ -1062,6 +1049,15 @@
                                 "fecha_traslado"=>$traslado,
                                 "fecha_guia"=>$emision]);
                 
+                $rowCount = $sql->rowcount();
+
+                if ($rowCount > 0) {
+                    $mensaje = "Registro grabado";
+                }else {
+                    $mensaje = "Error al crear el registro";
+                }
+
+                return $mensaje;                
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
                 return false;
@@ -1099,6 +1095,16 @@
                                 "placa"=>$cabeceraGuia['placa'],
                                 "fecha_traslado"=>$cabeceraGuia['fgemision'],
                                 "fecha_guia"=>$cabeceraGuia['ftraslado']]);
+
+                $rowCount = $sql->rowcount();
+
+                if ($rowCount > 0) {
+                    $mensaje = "Registro modificado";
+                }else {
+                    $mensaje = "Error al modificar el registro";
+                }
+                
+                return $mensaje; 
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
                 return false;

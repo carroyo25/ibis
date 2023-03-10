@@ -4,7 +4,8 @@ $(function() {
         cc = "",
         fila = "",
         idfila = "",
-        ordenes = [];
+        ordenes = [],
+        sw=0;
 
     $("#esperar").fadeOut();
 
@@ -97,6 +98,12 @@ $(function() {
             .addClass("textoCentro estado w100por procesando");
         $("#tablaDetalles tbody").empty();
         $("#proceso").fadeIn();
+       
+
+        document.getElementById("formProceso").reset();
+        document.getElementById("guiaremision").reset();
+
+        $('input[type="hidden"]').val('');
 
         $("#tipo").val("SALIDA X OC");
         $("#codigo_movimiento").val(144);
@@ -118,6 +125,9 @@ $(function() {
 
                 $("#proceso").fadeOut();
                 $("#codigo_costos").val("");
+
+                document.getElementById("formProceso").reset();
+                document.getElementById("guiaremision").reset();
                
             },
             "text"
@@ -283,7 +293,7 @@ $(function() {
     $(".tituloDocumento").on("click","#closeDocument", function (e) {
         e.preventDefault();
 
-        document.getElementById("guiaremision").reset();
+        //document.getElementById("guiaremision").reset();
 
         $(this).parent().parent().parent().parent().parent().fadeOut();
 
@@ -478,9 +488,11 @@ $(function() {
                                         detalles:JSON.stringify(detalles(tipoVista)),
                                         proyecto: $("#costos").val(),
                                         despacho: $("#codigo_salida").val(),
-                                        operacion:accion},
+                                        operacion:accion,
+                                        guia:$("#guia").val()},
                 function (data, textStatus, jqXHR) {
-                    
+                    mostrarMensaje(data.mensaje,"mensaje_correcto");
+                    $("#guia").val(data.guia);
                 },
                 "json"
             );

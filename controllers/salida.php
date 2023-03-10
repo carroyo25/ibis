@@ -41,7 +41,12 @@
         }
 
         function GrabaGuia(){
-            echo json_encode($this->model->grabarGuia($_POST['cabecera'],$_POST['detalles'],$_POST['proyecto'],$_POST['despacho'],$_POST['operacion']));
+            echo json_encode($this->model->grabarGuia($_POST['cabecera'],
+                                                    $_POST['detalles'],
+                                                    $_POST['proyecto'],
+                                                    $_POST['despacho'],
+                                                    $_POST['operacion'],
+                                                    $_POST['guia']));
         }
 
         function nuevasalida(){
