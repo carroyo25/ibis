@@ -197,17 +197,22 @@
         }
 
         public function importFromXsl(){
+            
             require_once('public/PHPExcel/PHPExcel.php');
 
-            $archivo = './public/documentos/temp/temp.xlsx';
+            $archivo = './public/documentos/temp/temp.ods';
             $temporal	 = $_FILES['fileUpload']['tmp_name'];
 
 
             if (move_uploaded_file($temporal,$archivo)){
                 $mensaje = "El archivo ha sido cargado correctamente.";
 
-                $objPHPExcel = PHPExcel_IOFactory::load($archivo);
-                $objHoja=$objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
+                $objReader = new PHPExcel_Reader_OOCalc();
+                $objPHPOds = $objReader->load($archivo);
+
+                $objHoja=$objPHPOds->getActiveSheet()->toArray(null,true,true,true);
+
+                $datos = "";
 
                 $fila = 1;
                 $datos= "";
@@ -608,22 +613,22 @@
                                         <td class="textoCentro">'.$item++.'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="pl20px">'.$descripcion.'</td>
-                                        <td class="textoCentro"> <input type="text" value="'.$rs['cabrevia'].'"</td>
-                                        <td class="textoCentro"> <input type="text" value="'.$rs['cmarca'].'"</td>
-                                        <td class="textoDerecha"> <input type="number" value="'.$rs['cant_ingr'].'"</td>
-                                        <td class="textoCentro"> <input type="number" value="'.$rs['nroorden'].'"</td>
-                                        <td class="textoCentro"> <input type="text" value="'.$rs['ncolada'].'"</td>
-                                        <td class="textoCentro"> <input type="text" value="'.$rs['ntag'].'"</td>
-                                        <td class="textoCentro"> <input type="text" value="'.$rs['cserie'].'"</td>
-                                        <td class="textoCentro"> <input type="text" value="'.$rs['ncertificado'].'"</td>
-                                        <td class="textoCentro"> <input type="date" value="'.$rs['ffeccalibra'].'"</td>
-                                        <td class="textoCentro"> <input type="date" value="'.$rs['vence'].'"</td>
-                                        <td class="textoCentro"> <input type="number" value="'.$rs['nreglib'].'"</td>
-                                        <td class="textoCentro"> <input type="text" value="'.$rs['cestado'].'"</td>
-                                        <td class="textoCentro"> <input type="text" value="'.$rs['condicion'].'"</td>
-                                        <td class="textoCentro"> <input type="text" value="'.$rs['ccontenedor'].'"</td>
-                                        <td class="textoCentro"> <input type="text" value="'.$rs['cestante'].'"</td>
-                                        <td class="textoCentro"> <input type="text" value="'.$rs['cfila'].'"</td>
+                                        <td class="textoCentro"> <input type="text" value="'.$rs['cabrevia'].'"></td>
+                                        <td class="textoCentro"> <input type="text" value="'.$rs['cmarca'].'"></td>
+                                        <td class="textoDerecha"> <input type="number" value="'.$rs['cant_ingr'].'"></td>
+                                        <td class="textoCentro"> <input type="number" value="'.$rs['nroorden'].'"></td>
+                                        <td class="textoCentro"> <input type="text" value="'.$rs['ncolada'].'"></td>
+                                        <td class="textoCentro"> <input type="text" value="'.$rs['ntag'].'"></td>
+                                        <td class="textoCentro"> <input type="text" value="'.$rs['cserie'].'"></td>
+                                        <td class="textoCentro"> <input type="text" value="'.$rs['ncertificado'].'"></td>
+                                        <td class="textoCentro"> <input type="date" value="'.$rs['ffeccalibra'].'"></td>
+                                        <td class="textoCentro"> <input type="date" value="'.$rs['vence'].'"></td>
+                                        <td class="textoCentro"> <input type="number" value="'.$rs['nreglib'].'"></td>
+                                        <td class="textoCentro"> <input type="text" value="'.$rs['cestado'].'"></td>
+                                        <td class="textoCentro"> <input type="text" value="'.$rs['condicion'].'"></td>
+                                        <td class="textoCentro"> <input type="text" value="'.$rs['ccontenedor'].'"></td>
+                                        <td class="textoCentro"> <input type="text" value="'.$rs['cestante'].'"></td>
+                                        <td class="textoCentro"> <input type="text" value="'.$rs['cfila'].'"></td>
                                         <td><textarea>'.$rs['observaciones'].'</textarea></td>
                                     </tr>';
                     }

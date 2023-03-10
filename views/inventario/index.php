@@ -18,7 +18,7 @@
                     <input type="hidden" name="codigo_stock" id="codigo_stock">
                     <input type="hidden" name="codigo_tipo" id="codigo_tipo">
                     <input type="hidden" name="tipo" id="tipo" value="37">
-                    <input type="file" name="fileUpload" id="fileUpload" accept=".xls,.xlsx" class="oculto" >
+                    <input type="file" name="fileUpload" id="fileUpload" accept=".xls,.xlsx,.ods" class="oculto" >
 
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
@@ -111,7 +111,7 @@
                                 <tr >
                                         <th rowspan="2" data-titulo="item">Item</th>
                                         <th rowspan="2" data-titulo="codigo">Codigo</th>
-                                        <th rowspan="2" data-titulo="descripcion" width="20%">Descripcion</th>
+                                        <th rowspan="2" data-titulo="descripcion">Descripcion</th>
                                         <th rowspan="2" data-titulo="unidad">Unidad</th>
                                         <th rowspan="2" data-titulo="Marca">Marca</th>
                                         <th rowspan="2" data-titulo="Cantidad" width="7%">Cantidad</th>
@@ -126,7 +126,7 @@
                                         <th rowspan="2" data-titulo="Estado">Estado</th>
                                         <th rowspan="2" data-titulo="Condicion">Condicion</th>
                                         <th colspan="3" data-titulo="Ubicacion">Ubicación</th>
-                                        <th rowspan="2" data-titulo="Observaciones" width="20%">Observaciones</th>
+                                        <th rowspan="2" data-titulo="Observaciones">Observaciones</th>
                                 </tr>
                                 <tr>
                                         <th data-titulo="contenedor">Contenedor</th>
