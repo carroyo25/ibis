@@ -1093,8 +1093,8 @@
                                 "marca"=>$cabeceraGuia['marca'],
                                 "licencia"=>$cabeceraGuia['licencia_conducir'],
                                 "placa"=>$cabeceraGuia['placa'],
-                                "fecha_traslado"=>$cabeceraGuia['fgemision'],
-                                "fecha_guia"=>$cabeceraGuia['ftraslado']]);
+                                "fecha_traslado"=>$cabeceraGuia['ftraslado'],
+                                "fecha_guia"=>$cabeceraGuia['fgemision']]);
 
                 $rowCount = $sql->rowcount();
 
