@@ -74,7 +74,7 @@
                                                         LEFT JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
                                                         LEFT JOIN tb_user ON lg_ordencab.id_cuser = tb_user.iduser
                                                         LEFT JOIN tb_parametros AS transporte ON lg_ordencab.ctiptransp = transporte.nidreg
-                                                        INNER JOIN tb_user AS user_aprueba ON tb_pedidocab.aprueba = user_aprueba.iduser
+                                                        LEFT JOIN tb_user AS user_aprueba ON tb_pedidocab.aprueba = user_aprueba.iduser
                                                         LEFT JOIN alm_despachodet ON tb_pedidodet.iditem = alm_despachodet.niddetaPed
                                                         LEFT JOIN alm_despachocab ON alm_despachodet.id_regalm = alm_despachocab.id_regalm
                                                         LEFT JOIN alm_recepdet ON tb_pedidodet.iditem = alm_recepdet.niddetaPed
