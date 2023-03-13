@@ -5,7 +5,7 @@
             parent::__construct();
         }
 
-        public function listarItems($cc){
+        public function listarItems($parametros){
             try {
                 $salida = '';
 
@@ -32,7 +32,8 @@
                                                         AND alm_inventariocab.idcostos > 0 
                                                         OR alm_existencia.cant_ingr > 0 
                                                     GROUP BY
-                                                        cm_producto.id_cprod");
+                                                        cm_producto.id_cprod
+                                                    ORDER BY cm_producto.ccodprod");
                 $sql->execute();
                 $rowCount = $sql->rowCount();
                 $item = 1;

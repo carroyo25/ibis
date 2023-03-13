@@ -106,6 +106,8 @@
                 </div>
         </div>
     </div>
+    <div class="modal" id="esperar">
+    </div>
     <div class="cabezaModulo">
         <h1>Control de Almacen</h1>
         <div>

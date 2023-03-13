@@ -79,12 +79,18 @@ $(() => {
 
     $("#btnConsulta").click(function (e) { 
         e.preventDefault();
+
+        let str = $("#formConsulta").serialize();
+
+        $("#esperar").fadeIn();
         
-        $.post(RUTA+"stocks/consulta", {cc:$("#costosSearch").val()},
+        $.post(RUTA+"stocks/consulta", {str},
             function (data, textStatus, jqXHR) {
                 $("#tablaPrincipal tbody")
                     .empty()
                     .append(data);
+
+                    $("#esperar").fadeOut();
             },
             "text"
         );

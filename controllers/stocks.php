@@ -6,8 +6,8 @@
         }
 
         function render(){
-            $this->view->listaItems = $this->model->listarItems(-1);
-            $this->view->listaRecepciona = $this->model->listarPersonalRol(4);
+            //$this->view->listaItems = $this->model->listarItems(-1);
+            //$this->view->listaRecepciona = $this->model->listarPersonalRol(4);
             $this->view->listaCostosSelect = $this->model->costosPorUsuarioSelect($_SESSION['iduser']);
             $this->view->render('stocks/index');
         }
@@ -33,7 +33,7 @@
         }
 
         function consulta(){
-            echo $this->model->listarItems($_POST['cc']);
+            echo $this->model->listarItems($_POST);
         }
         
     }
