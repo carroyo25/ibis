@@ -84,7 +84,7 @@ $(() => {
 
         $("#esperar").fadeIn();
         
-        $.post(RUTA+"stocks/consulta", {str},
+        $.post(RUTA+"stocks/consulta",str,
             function (data, textStatus, jqXHR) {
                 $("#tablaPrincipal tbody")
                     .empty()

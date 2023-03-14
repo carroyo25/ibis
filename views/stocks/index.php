@@ -149,6 +149,7 @@
                     <th>Cantidad<br>Ingreso</th>
                     <th>Ingreso<br>Inventario</th>
                     <th>Cantidad<br>Salida</th>
+                    <th>Cantidad<br>Devolucion</th>
                     <th>Saldo</th>
                 </tr>
             </thead>
