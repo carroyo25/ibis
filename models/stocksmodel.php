@@ -9,6 +9,7 @@
             try {
                 $salida = '';
                 $cc = $parametros['costosSearch'];
+                $cp = $parametros['codigoBusqueda'] == "" ? "%" : $parametros['codigoBusqueda'];
 
                 $sql = $this->db->connect()->prepare("SELECT
                                                         cm_producto.id_cprod,
@@ -67,14 +68,19 @@
                                                     WHERE
                                                         cm_producto.ntipo LIKE 37 
                                                         AND cm_producto.flgActivo = 1 
+                                                        AND cm_producto.ccodprod LIKE :codigo
                                                     ORDER BY
                                                         cm_producto.cdesprod");
                 $sql->execute(["guias"=>$cc,
                                 "inventarios"=>$cc,
-                                "consumo"=>$cc]);
+                                "consumo"=>$cc,
+                                "codigo"=>$cp]);
                 $rowCount = $sql->rowCount();
                 $item = 1;
+                $salida = '<tr><td colspan="9">No hay registros para mostrar</td></tr>';
+
                 if ($rowCount > 0) {
+                    $salida="";
                     while ($rs = $sql->fetch()){
                         $saldo = ($rs['ingreso_guias']+$rs['ingreso_inventario']+$rs['devolucion'])-$rs['consumo'];
                         $estado = $saldo > 0 ? "semaforoVerde":"semaforoRojo";

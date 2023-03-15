@@ -1768,6 +1768,7 @@
                                                     REPLACE ( FORMAT( tb_pedidodet.cant_pedida, 2 ), ',', '' ) AS cant_pedida,
                                                     REPLACE ( FORMAT( tb_pedidodet.cant_resto, 2 ), ',', '' ) AS cant_pendiente,
                                                     REPLACE ( FORMAT( tb_pedidodet.cant_atend, 2 ), ',', '' ) AS cant_atendida,
+                                                    REPLACE ( FORMAT( tb_pedidodet.cant_aprob, 2 ), ',', '' ) AS cant_aprob,
                                                     tb_pedidodet.estadoItem,
                                                     cm_producto.ccodprod,
                                                     CONCAT_WS( ' ', cm_producto.cdesprod, tb_pedidodet.observaciones ) AS cdesprod,
@@ -1803,8 +1804,8 @@
                                                         placeholder="0.00" 
                                                         onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"
                                                         onclick="this.select()" 
-                                                        value="'.$rs['cant_pedida'].'"
-                                                        class="valorAtendido">
+                                                        value="'.$rs['cant_aprob'].'"
+                                                        class="valorAtendido" readonly>
                                         </td>
                                         <td class="textoCentro">'.$rs['nroparte'].'</td>
                                         <td class="textoCentro"><input type="text"></td>

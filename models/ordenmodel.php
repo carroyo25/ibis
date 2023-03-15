@@ -152,7 +152,8 @@
                                                     AND tb_costusu.id_cuser = :user
                                                     AND tb_pedidodet.idasigna = :user_asigna
                                                     AND tb_pedidodet.cant_aprob <> tb_pedidodet.cant_orden
-                                                    AND tb_pedidodet.estadoItem = 54");
+                                                    AND tb_pedidodet.estadoItem = 54
+                                                    AND tb_pedidodet.nflgActivo = 1");
                 
                 //AND ISNULL(tb_pedidodet.idorden)
                 //se cambia el 58 para llama los items directo con aprobacion

@@ -82,18 +82,25 @@ $(() => {
 
         let str = $("#formConsulta").serialize();
 
-        $("#esperar").fadeIn();
-        
-        $.post(RUTA+"stocks/consulta",str,
-            function (data, textStatus, jqXHR) {
-                $("#tablaPrincipal tbody")
-                    .empty()
-                    .append(data);
+        try {
+            if ( $("#costosSearch").val() == -1) throw "Por favor elija un centro de costos para la consulta";
 
-                    $("#esperar").fadeOut();
-            },
-            "text"
-        );
+            $("#esperar").fadeIn();
+        
+            $.post(RUTA+"stocks/consulta",str,
+                function (data, textStatus, jqXHR) {
+                    $("#tablaPrincipal tbody")
+                        .empty()
+                        .append(data);
+
+                        $("#esperar").fadeOut();
+                },
+                "text"
+            );
+        } catch (error) {
+            mostrarMensaje(error,"mensaje_error");
+        }
+        
 
         return false;
     });
