@@ -3728,7 +3728,8 @@
                                                         alm_consumo 
                                                     WHERE
                                                         nrodoc = :documento 
-                                                        AND ncostos = :cc");
+                                                        AND ncostos = :cc
+                                                        AND alm_consumo.flgactivo = 1");
                 $sql->execute(["documento"=>$d,"cc"=>$c]);
                 $result = $sql->fetchAll();
 

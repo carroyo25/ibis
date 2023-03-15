@@ -31,6 +31,15 @@
             </div>
         </div>
     </div>
+    <div class="modal" id="borrarFila">
+        <div class="ventanaPregunta">
+            <h3>¿Borrar la fila?</h3>
+            <div>
+                <button type="button" id="btnAceptarBorrar">Aceptar</button>
+                <button type="button" id="btnCancelarBorrar">Cancelar</button>
+            </div>
+        </div>
+    </div>
     <div class="modal" id="dialogo">
         <div class="ventanaPregunta">
             <h3>Ingrese Codigo</h3>

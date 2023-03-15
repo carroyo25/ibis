@@ -1,4 +1,8 @@
 $(function(){
+    let fila = "",
+        registro = 0,
+        sw = 0;
+
     $("#espera").fadeOut();
 
     let row = ``;
@@ -126,7 +130,6 @@ $(function(){
         return false;
     });
 
-
     $("#btnCancelarGrabar").click(function (e) { 
         e.preventDefault();
 
@@ -178,11 +181,48 @@ $(function(){
         return false;
     });
 
-
     $("#btnCancelarDialogo").click(function (e) { 
         e.preventDefault();
 
         $("#dialogo").fadeOut();
+        
+        return false;
+    });
+
+    $("#tablaPrincipal tbody").on("click","a", function (e) {
+        e.preventDefault();
+
+        fila = $(this).parent().parent();
+        sw = fila.data("registrado");
+        registro = $(this).attr("href");
+
+        $("#borrarFila").fadeIn();
+
+        return false;
+    });
+
+    $("#btnAceptarBorrar").click(function (e) { 
+        e.preventDefault();
+
+       if (sw) {
+            $.post(RUTA+"consumo/borraFila",{id:registro},
+                function (data, textStatus, jqXHR) {
+                    mostrarMensaje(data.mensaje,"mensaje_correcto");
+                },
+                "json"
+            );
+       }
+
+       fila.remove();
+       $("#borrarFila").fadeOut();
+        
+        return false;
+    });
+
+    $("#btnCancelarBorrar").click(function (e) { 
+        e.preventDefault();
+
+        $("#borrarFila").fadeOut();
         
         return false;
     });

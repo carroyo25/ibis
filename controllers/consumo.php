@@ -29,6 +29,10 @@
         function buscaCodigo(){
             echo $this->model->buscarConsumoPersonal($_POST['codigo'],$_POST['documento'],$_POST['costos']);
         }
+
+        function borraFila() {
+            echo json_encode($this->model->eliminar($_POST));
+        }
         
     }
 ?>

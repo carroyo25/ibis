@@ -156,8 +156,8 @@
                                                     WHERE
                                                             nrodoc = :documento 
                                                         AND ncostos = :cc
-                                                    ORDER BY alm_consumo.freg DESC"
-                                                    );
+                                                        AND alm_consumo.flgactivo = 1
+                                                    ORDER BY alm_consumo.freg DESC" );
                 $sql->execute(["documento"=>$d,"cc"=>$c]);
                 $rowCount = $sql->rowCount();
                 $item = 1;
@@ -170,7 +170,7 @@
                         $marcado = $rs['flgdevolver'] == 1 ? "checked" : "";
                         $firma = "public/documentos/firmas/".$rs['cfirma'].".png";
 
-                        $salida .= '<tr class="pointer" data-grabado="1">
+                        $salida .= '<tr class="pointer" data-grabado="1" data-registrado="1">
                                         <td class="textoDerecha">'.$numero_item--.'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="pl5px">'.$rs['cdesprod'].'</td>
@@ -188,7 +188,7 @@
                                                 <img src = '.$firma.' style ="width:100% !important">
                                             </div>
                                         </td>
-                                        <td></td>
+                                        <td class="textoCentro"><a href="'.$rs['idreg'].'"><i class="far fa-trash-alt"></i></a></td>
                                     </tr>';
                     }
                 }
@@ -229,6 +229,7 @@
                                                         nrodoc = :documento 
                                                         AND ncostos = :cc
                                                         AND cm_producto.ccodprod =:codigo
+                                                        AND alm_consumo.flgactivo = 1
                                                     ORDER BY alm_consumo.freg DESC");
 
                 $sql->execute(["documento"=>$d,"cc"=>$cc,"codigo"=>$cod]);
@@ -276,6 +277,26 @@
             }  
         }
 
-       
+        public function eliminar($parametros) {
+            $id = $parametros['id'];
+            $menssaje = "Error al eliminar";
+
+            try {
+                $sql = $this->db->connect()->prepare("UPDATE alm_consumo 
+                                                        SET alm_consumo.flgactivo = 0 
+                                                        WHERE alm_consumo.idreg =:id");
+                $sql->execute(["id"=>$id]);
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount) {
+                    $mensaje = "Fila eliminada...";
+                }
+                
+                return array("mensaje"=>$mensaje);
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            } 
+        } 
     }
 ?>
