@@ -1383,7 +1383,6 @@
   -ms-grid-row: 3;
   -ms-grid-column: 5;
   grid-area: area4;
-  gap: 10px;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -1391,11 +1390,29 @@
   -webkit-box-direction: normal;
       -ms-flex-direction: column;
           flex-direction: column;
+  gap: 20px;
+  border: 1px solid #d1d1d1;
+  padding: 2px;
+}
+.ventanaResumen .cuerpoResumem .area4 h4 {
+  margin-bottom: 20px;
 }
 .ventanaResumen .cuerpoResumem .area4 div {
-  min-height: 5rem;
+  min-height: 14rem;
   height: 10rem;
-  border: 1px solid #d1d1d1;
+}
+.ventanaResumen .cuerpoResumem .area4 table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.8rem;
+  margin-bottom: 20px;
+}
+.ventanaResumen .cuerpoResumem .area4 table thead {
+  background: #000;
+  color: #fff;
+}
+.ventanaResumen .cuerpoResumem .area4 table tbody tr, .ventanaResumen .cuerpoResumem .area4 table tbody td {
+  border-bottom: 1px dotted #c2c2c2;
 }
 
 .ventanaProceso {

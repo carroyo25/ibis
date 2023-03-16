@@ -149,7 +149,8 @@
                                                     FROM
                                                         lg_ordendet 
                                                     WHERE
-                                                        lg_ordendet.id_cprod = :codigo");
+                                                        lg_ordendet.id_cprod = :codigo
+                                                    AND lg_ordendet.id_orden != 0");
                 $sql->execute(["codigo"=>$codigo]);
                 $result = $sql->fetchAll();
 

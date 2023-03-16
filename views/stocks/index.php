@@ -46,6 +46,9 @@
                             <label>Salidas Cosumo</label>
                             <label>:</label>
                             <label id="consumo"></label>
+                            <label>Transferencias</label>
+                            <label>:</label>
+                            <label id="transferencia"></label>
                             <label>Saldo Actual</label>
                             <label>:</label>
                             <label id="saldo"></label>
@@ -73,36 +76,27 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div>
-                            <h4>Existencias Centro de costos</h4>
-                            <table id="tabla_existencias">
-                                <thead class="stickytop">
-                                    <tr class="pointer">
-                                        <th>Centro de Costos</th>
-                                        <th>unidad</th>
-                                        <th>Ingresos</th>
-                                        <th>Salidas</th>
-                                        <th>Saldo</th>
-                                        <th>Almacen</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    
-                                </tbody>
-                            </table>
-                        </div>
                    </div>
-                   <div class="area4">
-                        <div>
-                            <h4>Ingresos</h4>
+                    <div class="area4">
+                            <div>
+                                <h4>Existencias Centro de costos</h4>
+                                <table id="tabla_existencias">
+                                    <thead class="stickytop">
+                                        <tr class="pointer">
+                                            <th>Centro de Costos</th>
+                                            <th>unidad</th>
+                                            <th>Ingresos</th>
+                                            <th>Salidas</th>
+                                            <th>Saldo</th>
+                                            <th>Almacen</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        
+                                    </tbody>
+                                </table>
                         </div>
-                        <div>
-                            <h4>Salidas</h4>
-                        </div>
-                        <div>
-                            <h4>Saldos</h4>
-                        </div>
-                   </div>
+                    </div>
                 </div>
         </div>
     </div>
