@@ -297,7 +297,7 @@ $(function(){
 
             $("#esperar").fadeIn();
 
-            $.post(RUTA+"transferencias/pedidos", {cc:$("#codigo_costos").val(),pedido:$("txtBuscarPedido").val()},
+            $.post(RUTA+"transferencias/pedidos", {cc:$("#codigo_costos").val(),pedido:""},
                 function (data, textStatus, jqXHR) {
                     $("#tablaPedidos tbody")
                         .empty()

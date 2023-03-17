@@ -23,7 +23,7 @@
         }
 
         function pedidos(){
-            echo $this->model->listarPedidosAtencion();
+            echo $this->model->listarPedidosAtencion($cc,$pedido);
         }
 
         function items(){

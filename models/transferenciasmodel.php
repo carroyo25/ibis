@@ -73,40 +73,45 @@
             }
         }
 
-        public function listarPedidosAtencion(){
+        public function listarPedidosAtencion($cc,$pedido){
             try {
+                $p = $pedido == "" ? "%" : $pedido;
+
                 $salida = "";
-                $sql = $this->db->connect()->query("SELECT
-                                                ibis.tb_pedidocab.nrodoc,
-                                                UPPER( ibis.tb_pedidocab.concepto ) AS concepto,
-                                                ibis.tb_pedidocab.idreg,
-                                                ibis.tb_pedidocab.estadodoc,
-                                                ibis.tb_pedidocab.emision,
-                                                ibis.tb_pedidocab.vence,
-                                                ibis.tb_pedidocab.idtipomov,
-                                                UPPER(
-                                                CONCAT_WS( ' ', ibis.tb_proyectos.ccodproy, ibis.tb_proyectos.cdesproy )) AS costos,
-                                                ibis.tb_pedidocab.nivelAten,
-                                                CONCAT_WS( ' ', rrhh.tabla_aquarius.apellidos, rrhh.tabla_aquarius.nombres ) AS nombres,
-                                                estados.cdescripcion AS estado,
-                                                atencion.cdescripcion AS atencion,
-                                                estados.cabrevia,
-                                                ibis.tb_pedidocab.idcostos,
-                                                ibis.tb_proyectos.ccodproy,
-                                                ibis.tb_proyectos.cdesproy 
-                                            FROM
-                                                ibis.tb_pedidocab
-                                                INNER JOIN rrhh.tabla_aquarius ON ibis.tb_pedidocab.idsolicita = rrhh.tabla_aquarius.internal
-                                                INNER JOIN ibis.tb_parametros AS estados ON ibis.tb_pedidocab.estadodoc = estados.nidreg
-                                                INNER JOIN ibis.tb_parametros AS atencion ON ibis.tb_pedidocab.nivelAten = atencion.nidreg
-                                                INNER JOIN ibis.tb_proyectos ON ibis.tb_pedidocab.idcostos = ibis.tb_proyectos.nidreg 
-                                            WHERE
-                                                ibis.tb_pedidocab.estadodoc = 54
-                                                AND ibis.tb_pedidocab.nflgactivo = 1
-                                                AND ibis.tb_pedidocab.idtipomov = 37 
-                                                AND ISNULL(ibis.tb_pedidocab.asigna)
-                                            ORDER BY ibis.tb_pedidocab.emision DESC");
-                $sql->execute();
+                
+                $sql = $this->db->connect()->prepare("SELECT
+                                                    ibis.tb_pedidocab.nrodoc,
+                                                    UPPER( ibis.tb_pedidocab.concepto ) AS concepto,
+                                                    ibis.tb_pedidocab.idreg,
+                                                    ibis.tb_pedidocab.estadodoc,
+                                                    ibis.tb_pedidocab.emision,
+                                                    ibis.tb_pedidocab.vence,
+                                                    ibis.tb_pedidocab.idtipomov,
+                                                    UPPER(
+                                                    CONCAT_WS( ' ', ibis.tb_proyectos.ccodproy, ibis.tb_proyectos.cdesproy )) AS costos,
+                                                    ibis.tb_pedidocab.nivelAten,
+                                                    CONCAT_WS( ' ', rrhh.tabla_aquarius.apellidos, rrhh.tabla_aquarius.nombres ) AS nombres,
+                                                    estados.cdescripcion AS estado,
+                                                    atencion.cdescripcion AS atencion,
+                                                    estados.cabrevia,
+                                                    ibis.tb_pedidocab.idcostos,
+                                                    ibis.tb_proyectos.ccodproy,
+                                                    ibis.tb_proyectos.cdesproy 
+                                                FROM
+                                                    ibis.tb_pedidocab
+                                                    INNER JOIN rrhh.tabla_aquarius ON ibis.tb_pedidocab.idsolicita = rrhh.tabla_aquarius.internal
+                                                    INNER JOIN ibis.tb_parametros AS estados ON ibis.tb_pedidocab.estadodoc = estados.nidreg
+                                                    INNER JOIN ibis.tb_parametros AS atencion ON ibis.tb_pedidocab.nivelAten = atencion.nidreg
+                                                    INNER JOIN ibis.tb_proyectos ON ibis.tb_pedidocab.idcostos = ibis.tb_proyectos.nidreg 
+                                                WHERE
+                                                    ibis.tb_pedidocab.estadodoc BETWEEN 54 
+                                                    AND 70 
+                                                    AND ibis.tb_pedidocab.nflgactivo = 1 
+                                                    AND ibis.tb_pedidocab.idtipomov = 37 
+                                                    AND tb_pedidocab.nrodoc LIKE :pedido 
+                                                ORDER BY
+                                                    ibis.tb_pedidocab.emision DESC");
+                $sql->execute(["pedido"=>$pedido]);
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0) {
