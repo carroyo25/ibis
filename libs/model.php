@@ -1230,7 +1230,7 @@
                                                         INNER JOIN rrhh.tabla_aquarius ON ibis.tb_user.ncodper = rrhh.tabla_aquarius.internal
                                                         INNER JOIN ibis.tb_proyectos ON ibis.tb_costusu.ncodproy = ibis.tb_proyectos.nidreg 
                                                     WHERE
-                                                        ibis.tb_user.nrol = :rol 
+                                                        (ibis.tb_user.nrol = 3 OR ibis.tb_user.nrol = 228) 
                                                         AND ibis.tb_costusu.ncodproy = :cc
                                                         AND ibis.tb_costusu.nflgactivo = 1");
                 $sql->execute(["rol"=>$rol,"cc"=>$cc]);
@@ -2759,7 +2759,7 @@
                                 $datos[$i]->total));
                     $lc++;
 
-                    //aca controla la linea de impresion para los formatos 
+                    //aca controla la linea de impresion 
                     if ($pdf->getY() >= 185) {
                         $pdf->AddPage();
                         $lc = 0;
@@ -3561,8 +3561,8 @@
                                         ON 
                                             ibis.tb_user.ncodper = rrhh.tabla_aquarius.internal
                                     WHERE
-                                        ibis.tb_user.nrol = 68 AND
-                                        ibis.tb_user.nestado = 7");
+                                        (ibis.tb_user.nrol = 68 OR ibis.tb_user.nrol = 228) 
+                                        AND ibis.tb_user.nestado = 7");
                 $sql->execute();
                 $rowcount = $sql->rowcount();
 
