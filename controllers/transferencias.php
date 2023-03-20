@@ -10,10 +10,10 @@
             $this->view->listaAprueba = $this->model->apruebaRecepción();
             $this->view->listaAlmacen = $this->model->listarAlmacenGuia();
             $this->view->listaMovimiento = $this->model->listarParametros(12);
-            $this->view->listaEntidad = $this->model->listarEntidades();
             $this->view->listaModalidad = $this->model->listarParametros(14);
             $this->view->listaPersonal = $this->model->listarPersonalRol(4);
             $this->view->listaEnvio = $this->model->listarParametros('08');
+            $this->view->listaAtencion = $this->model->listarPedidosAtendidos();
 
             $this->view->render('transferencias/index');
         }
@@ -23,7 +23,7 @@
         }
 
         function pedidos(){
-            echo $this->model->listarPedidosAtencion($cc,$pedido);
+            echo $this->model->listarPedidosAtencion($_POST['cc'],$_POST['pedido']);
         }
 
         function items(){
@@ -31,7 +31,9 @@
         }
 
         function registro() {
-            echo $this->model->insertarTransferencia($_POST['cabecera'],$_POST['detalles']);
+            echo json_encode($this->model->insertarTransferencia($_POST['cabecera'],
+                                                    $_POST['detalles'],
+                                                    $_POST['idpedido']));
         }
         
     }

@@ -9,35 +9,7 @@
         public function listarPedidos(){
             try {
                 $salida = "";
-                $sql = $this->db->connect()->prepare("SELECT
-                                                        ibis.tb_costusu.id_cuser,
-                                                        ibis.tb_costusu.ncodproy,
-                                                        ibis.tb_pedidocab.nrodoc,
-                                                        UPPER( ibis.tb_pedidocab.concepto ) AS concepto,
-                                                        ibis.tb_pedidocab.idreg,
-                                                        ibis.tb_pedidocab.estadodoc,
-                                                        ibis.tb_pedidocab.emision,
-                                                        ibis.tb_pedidocab.vence,
-                                                        ibis.tb_pedidocab.idtipomov,
-                                                        UPPER(
-                                                        CONCAT_WS( ' ', ibis.tb_proyectos.ccodproy, ibis.tb_proyectos.cdesproy )) AS costos,
-                                                        ibis.tb_pedidocab.nivelAten,
-                                                        CONCAT_WS(' ',rrhh.tabla_aquarius.apellidos,rrhh.tabla_aquarius.nombres) AS nombres,
-                                                        estados.cdescripcion AS estado,
-                                                        atencion.cdescripcion AS atencion,
-                                                        estados.cabrevia 
-                                                    FROM
-                                                        ibis.tb_costusu
-                                                        INNER JOIN ibis.tb_pedidocab ON tb_costusu.ncodproy = tb_pedidocab.idcostos
-                                                        INNER JOIN ibis.tb_proyectos ON tb_costusu.ncodproy = tb_proyectos.nidreg
-                                                        INNER JOIN rrhh.tabla_aquarius ON ibis.tb_pedidocab.idsolicita = rrhh.tabla_aquarius.internal
-                                                        INNER JOIN ibis.tb_parametros AS estados ON ibis.tb_pedidocab.estadodoc = estados.nidreg
-                                                        INNER JOIN ibis.tb_parametros AS atencion ON ibis.tb_pedidocab.nivelAten = atencion.nidreg 
-                                                    WHERE
-                                                        tb_costusu.id_cuser = :user 
-                                                        AND tb_pedidocab.estadodoc = 53
-                                                        AND tb_costusu.nflgactivo = 1
-                                                    ORDER BY tb_pedidocab.emision DESC");
+                $sql = $this->db->connect()->prepare("");
                 $sql->execute(["user"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowCount();
 

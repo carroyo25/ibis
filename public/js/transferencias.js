@@ -133,19 +133,24 @@ $(function(){
         let nFilas = $.strPad($("#tablaDetalles tr").length,3);
         let idprod = $(this).data("idprod");
         let nunid = $(this).data("ncomed");
+        let aprobado = $(this).data("aprobado");
         let codigo = $(this).children('td:eq(1)').text();
         let descrip = $(this).children('td:eq(2)').text();
         let unidad = $(this).children('td:eq(3)').text();
         let saldo = $(this).children('td:eq(4)').text();
         let grabado = 0;
 
-        let row = `<tr data-grabado="${grabado}" data-idprod="${idprod}" data-codund="${nunid}" data-idx="-">
+        let row = `<tr data-grabado="${grabado}" 
+                        data-idprod="${idprod}" 
+                        data-codund="${nunid}" 
+                        data-idx="-">
                     <td class="textoCentro"><a href="#"><i class="fas fa-eraser"></i></a></td>
                     <td class="textoCentro"><a href="#"><i class="fas fa-exchange-alt"></i></a></td>
                     <td class="textoCentro">${nFilas}</td>
                     <td class="textoCentro">${codigo}</td>
                     <td class="pl20px">${descrip}</td>
                     <td class="textoCentro">${unidad}</td>
+                    <td class="textoDerecha">${aprobado}</td>
                     <td><input type="number" step="any" placeholder="0.00" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"></td>
                     <td class="textoDerecha">${saldo}</td>
                     <td><textarea></textarea></td>
@@ -167,8 +172,8 @@ $(function(){
 
     $("#tablaDetalles tbody").on('blur','input', function (e) {
             try {
-                let ingreso = parseInt($(this).parent().parent().find("td").eq(6).children().val());
-                let stock = parseInt($(this).parent().parent().find("td").eq(7).text());
+                let ingreso = parseInt($(this).parent().parent().find("td").eq(7).children().val());
+                let stock = parseInt($(this).parent().parent().find("td").eq(8).text());
 
                 if(ingreso > stock) {
                     mostrarMensaje('La cantidad ingresada, es mayor al stock','mensaje_error')
@@ -197,7 +202,8 @@ $(function(){
     $("#saveRegister").click(function(e){
         e.preventDefault();
 
-        let result = {};
+        let result = {},
+            pedido = $("#tablaDetalles tbody >tr").data("pedido");
 
         $.each($("#formProceso").serializeArray(),function(){
             result[this.name] = this.value;
@@ -207,12 +213,21 @@ $(function(){
 
             if  ( checkCantTables($("#tablaDetalles tbody > tr"),6) ) throw "Revise las cantidades ingresadas";
 
-            $.post(RUTA+"transferencias/registro",{cabecera:result,detalles:JSON.stringify(detalles())},
+            
+            $.post(RUTA+"transferencias/registro",{cabecera:result,
+                                                    detalles:JSON.stringify(detalles()),
+                                                    idpedido:pedido},
                 function (data, textStatus, jqXHR) {
-                    console.log(data);
+                    if(data.estado){
+                        mostrarMensaje(data.mensaje,"mensaje_correcto");
+                    }else{
+                        mostrarMensaje(data.mensaje,"mensaje_error");
+                    }
                 },
-                "text"
+                "json"
             );
+
+
         } catch (error) {
             mostrarMensaje(error,'mensaje_error');
         }
@@ -344,28 +359,40 @@ detalles = () =>{
     TABLA.each(function(){
         let ITEM            = $(this).find('td').eq(2).text(),
             IDPROD          = $(this).data("idprod"),
+            GRABADO         = $(this).data("grabado"),
+            COSTOS          = $(this).data("costos"),
             ORIGEN          = $("#codigo_almacen_origen").val(),
-            CANTIDAD        = $(this).find('td').eq(6).children().val(),// cantidad
-            OBSER           = $(this).find('td').eq(8).children().val(),
+            CANTIDAD        = $(this).find('td').eq(8).children().val(),// cantidad
+            OBSER           = $(this).find('td').eq(10).children().val(),
             CODIGO          = $(this).find('td').eq(3).text(),//codigo
             UNIDAD          = $(this).find('td').eq(5).text(),//unidad
             DESTINO         = $("#codigo_almacen_destino").val(),
             DESCRIPCION     = $(this).find('td').eq(4).text(),//unidad
+            PEDIDO          = $(this).data("pedido"),
+            IDITEM          = $(this).data("iditem"),
+            APROBADO        = $(this).data("aprobado");
+            COMPRADO        = $(this).find('td').eq(7).text()
     
         item = {};
 
-        item['item']         = ITEM;
-        item['idprod']       = IDPROD;
-        item['origen']       = ORIGEN;
-        item['cantidad']     = CANTIDAD;
-        item['obser']        = OBSER;
-
-        item['codigo']       = CODIGO;
-        item['descripcion']  = DESCRIPCION;
-        item['unidad']       = UNIDAD;
-        item['destino']      = DESTINO;
-            
-        DETALLES.push(item);
+        if (!GRABADO) {
+            item['item']         = ITEM;
+            item['idprod']       = IDPROD;
+            item['origen']       = ORIGEN;
+            item['cantidad']     = CANTIDAD;
+            item['obser']        = OBSER;
+            item['codigo']       = CODIGO;
+            item['descripcion']  = DESCRIPCION;
+            item['unidad']       = UNIDAD;
+            item['destino']      = DESTINO;
+            item['iditem']       = IDITEM;
+            item['pedido']       = PEDIDO;
+            item['aprobado']     = APROBADO;
+            item['comprado']     = COMPRADO;
+            item['costos']       = COSTOS;
+                
+            DETALLES.push(item);
+        }     
     })
 
     return DETALLES; 

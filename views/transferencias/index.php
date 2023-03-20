@@ -41,9 +41,9 @@
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
                         <div>
-                            <button type="button" id="importData" title="Importar Items" class="boton3">
+                            <!--<button type="button" id="importData" title="Importar Items" class="boton3">
                                 <i class="fab fa-wpexplorer"></i> Importar Items
-                            </button>
+                            </button>-->
                             <button type="button" id="importRequest" title="Importar Pedido" class="boton3">
                                 <i class="fab fa-wpexplorer"></i> Importar Pedido
                             </button>
@@ -51,7 +51,7 @@
                                 <i class="far fa-file-pdf"></i> Vista Previa
                             </button>
                             <button type="button" id="saveRegister" title="Grabar Registro" class="boton3">
-                                <i class="far fa-file-pdf"></i> Grabar Registro
+                                <i class="fas fa-save"></i> Grabar Registro
                             </button>
                             <button type="button" id="closeProcess" title="Cerrar" class="boton3">
                                 <i class="fas fa-window-close"></i>
@@ -154,7 +154,9 @@
                                     <th class="">Codigo</th>
                                     <th class="">Descripcion</th>
                                     <th class="">Unidad</th>
-                                    <th width="7%">Cantidad</th>
+                                    <th class="">Cantidad</br>Aprobada</th>
+                                    <th class="">Cantidad</br>Comprada</th>
+                                    <th width="7%">Cantidad por</br>Atender</th>
                                     <th width="7%">Stock</th>
                                     <th class="">Observaciones</th>
                                     <th class="">Pedido</th>
@@ -433,18 +435,15 @@
         <table id="tablaPrincipal">
             <thead class="stickytop">
                 <tr>
-                    <th>Num. Nota</th>
+                    <th>Registro</th>
                     <th>F.Emisión</th>
                     <th>Almacen Origen</th>
                     <th>Almacen Destino</th>
                     <th>Centro de Costos</th>
-                    <th>Año</th>
-                    <th>Guia</br>Remision</th>
-                    <th>Estado</th>
                 </tr>
             </thead>
             <tbody>
-               <!-- <?php echo $this->listaNotasSalidas;?> -->
+               <?php echo $this->listaAtencion;?>
             </tbody>
         </table>
     </div>
