@@ -1,5 +1,35 @@
 $(function(){
+    let accion = "u";
+
     $("#esperar").fadeOut();
+
+    $("#tablaPrincipal tbody").on('click','tr', function(e) {
+        e.preventDefault();
+
+        $.post(RUTA+"transferencias/consultID",{id:$(this).data('indice')},
+            function (data, text, requestXHR) {
+
+                let numero = $.strPad(data.cabecera[0].idreg,6);
+
+                $("#codigo_costos").val(data.cabecera[0].idcc);
+                $("#numero").val(numero);
+                $("#costos").val(data.cabecera[0].proyecto);
+                $("#aprueba").val(data.cabecera[0].cnombres);
+                $("#almacen_origen_despacho").val(data.cabecera[0].origen);
+                $("#almacen_destino_despacho").val(data.cabecera[0].destino);
+                $("#tipo").val(data.cabecera[0].cdescripcion);
+
+                $("#tablaDetalles tbody")
+                    .empty()
+                    .append(data.detalles);
+            },
+            "json"
+        );
+
+        $("#proceso").fadeIn();
+
+        return false;
+    });
 
     $("#nuevoRegistro").click(function (e) { 
         e.preventDefault();
@@ -213,20 +243,20 @@ $(function(){
 
             if  ( checkCantTables($("#tablaDetalles tbody > tr"),6) ) throw "Revise las cantidades ingresadas";
 
-            
-            $.post(RUTA+"transferencias/registro",{cabecera:result,
+            if (accion == "n") {
+                $.post(RUTA+"transferencias/registro",{cabecera:result,
                                                     detalles:JSON.stringify(detalles()),
                                                     idpedido:pedido},
-                function (data, textStatus, jqXHR) {
-                    if(data.estado){
-                        mostrarMensaje(data.mensaje,"mensaje_correcto");
-                    }else{
-                        mostrarMensaje(data.mensaje,"mensaje_error");
-                    }
-                },
-                "json"
-            );
-
+                    function (data, textStatus, jqXHR) {
+                        if(data.estado){
+                            mostrarMensaje(data.mensaje,"mensaje_correcto");
+                        }else{
+                            mostrarMensaje(data.mensaje,"mensaje_error");
+                        }
+                    },
+                    "json"
+                );
+            }
 
         } catch (error) {
             mostrarMensaje(error,'mensaje_error');
@@ -349,6 +379,8 @@ $(function(){
 
         return false;
     });
+
+
 })
 
 detalles = () =>{

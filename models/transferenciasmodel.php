@@ -6,7 +6,6 @@
             parent::__construct();
         }
 
-
         public function listarPedidosAtendidos(){
             try {
                 $salida = "";
@@ -39,6 +38,118 @@
                                         <td class="pl20px">'.$rs['almacenorigen'].'</td>
                                         <td class="pl20px">'.$rs['almacendestino'].'</td>
                                         <td class="pl20px">'.$rs['proyecto'].'</td>
+                                    </tr>';
+                    }
+                }
+
+                return $salida;
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function consultarTransferencia($id) {
+            try {
+                $cabecera = "";
+                $result = [];
+
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        alm_transfercab.idreg,
+                                                        alm_transfercab.idcc,
+                                                        alm_transfercab.idaprueba,
+                                                        alm_transfercab.almorigen,
+                                                        alm_transfercab.almdestino,
+                                                        alm_transfercab.ftraslado,
+                                                        tb_user.cnombres,
+                                                        UPPER( almacenOrigen.cdesalm ) AS origen,
+                                                        UPPER( almacenDestino.cdesalm ) AS destino,
+                                                        UPPER( tb_proyectos.cdesproy ) AS proyecto,
+                                                        tb_parametros.cdescripcion,
+                                                        alm_transfercab.ntipmov 
+                                                    FROM
+                                                        alm_transfercab
+                                                        INNER JOIN tb_user ON alm_transfercab.idaprueba = tb_user.iduser COLLATE utf8_unicode_ci
+                                                        INNER JOIN tb_almacen AS almacenOrigen ON alm_transfercab.almorigen = almacenOrigen.ncodalm
+                                                        INNER JOIN tb_almacen AS almacenDestino ON alm_transfercab.almdestino = almacenDestino.ncodalm
+                                                        INNER JOIN tb_proyectos ON alm_transfercab.idcc = tb_proyectos.nidreg
+                                                        INNER JOIN tb_parametros ON alm_transfercab.ntipmov = tb_parametros.nidreg 
+                                                    WHERE
+                                                        alm_transfercab.idreg = :id 
+                                                        AND alm_transfercab.nflgactivo = 1");
+                
+                $sql->execute(["id"=>$id]);
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0) {
+                    $docData = array();
+                    while($row=$sql->fetch(PDO::FETCH_ASSOC)){
+                        $docData[] = $row;
+                    }
+                }
+
+                return array("cabecera"=>$docData,
+                            "detalles"=>$this->detalles($id));
+
+
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        private function detalles($id){
+            try {
+                $salida = "";
+
+                $sql = $this->db->connect()->prepare("SELECT
+                                                    alm_transferdet.iditem,
+                                                    alm_transferdet.idtransfer,
+                                                    alm_transferdet.iddetped,
+                                                    alm_transferdet.idcprod,
+                                                    alm_transferdet.ncanti,
+                                                    alm_transferdet.cobserva,
+                                                    alm_transferdet.idPedido,
+                                                    cm_producto.ccodprod,
+                                                    UPPER(cm_producto.cdesprod) AS producto,
+                                                    tb_pedidodet.cant_aprob,
+                                                    tb_pedidodet.cant_orden,
+                                                    alm_transferdet.nflgactivo,
+                                                    tb_unimed.cabrevia,
+                                                    LPAD(tb_pedidocab.nrodoc,3,0) AS pedido  
+                                                FROM
+                                                    alm_transferdet
+                                                    INNER JOIN cm_producto ON alm_transferdet.idcprod = cm_producto.id_cprod
+                                                    INNER JOIN tb_pedidodet ON alm_transferdet.iddetped = tb_pedidodet.iditem
+                                                    INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                    INNER JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg  
+                                                WHERE
+                                                    alm_transferdet.idtransfer = :id 
+                                                    AND alm_transferdet.nflgactivo = 1");
+                $sql->execute(["id"=>$id]);
+
+                $rowCount = $sql->rowCount();
+                $item = 1;
+
+                if ($rowCount > 0) {
+                    while ( $rs = $sql->fetch()){
+                        $salida .= '<tr class="pointer"
+                                            data-grabado="" 
+                                            data-idprod="" 
+                                            data-codund="" 
+                                            data-idx="">
+                                        <td class="textoCentro"><a href="#"><i class="fas fa-eraser"></i></a></td>
+                                        <td class="textoCentro"><a href="#"><i class="fas fa-exchange-alt"></i></a></td>
+                                        <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
+                                        <td class="textoCentro">'.$rs['ccodprod'].'</td>
+                                        <td class="pl20px">'.$rs['producto'].'</td>
+                                        <td class="textoCentro">'.$rs['cabrevia'].'</td>
+                                        <td class="textoDerecha">'.$rs['cant_aprob'].'</td>
+                                        <td class="textoDerecha">'.$rs['cant_orden'].'</td>
+                                        <td class="textoDerecha">'.$rs['ncanti'].'</td>
+                                        <td></td>
+                                        <td><textarea readonly></textarea>'.$rs['cobserva'].'</textarea></td>
+                                        <td class="textoCentro">'.$rs['pedido'].'</td>
                                     </tr>';
                     }
                 }

@@ -2759,6 +2759,7 @@
                                 $datos[$i]->total));
                     $lc++;
 
+                    //aca controla la linea de impresion para los formatos 
                     if ($pdf->getY() >= 185) {
                         $pdf->AddPage();
                         $lc = 0;

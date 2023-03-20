@@ -136,12 +136,12 @@
                     <div class="barraOpciones">
                         <span>Detalles</span>
                         <div>
-                            <button type="button" id="atachDocs" title="Documentos Adjuntos" class="cerrarLista boton3">
+                            <!--<button type="button" id="atachDocs" title="Documentos Adjuntos" class="cerrarLista boton3">
                                 <i class="fas fa-paperclip"></i> Documentos Adjuntos
                             </button>
                             <button type="button" id="guiaRemision" title="Guia de Remision" class="cerrarLista boton3">
                                 <i class="fas fa-upload"></i> Guia de Remision
-                            </button>
+                            </button>-->
                         </div>
                     </div>
                     <div class="tablaInterna mininoTablaInterna">

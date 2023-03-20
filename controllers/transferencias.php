@@ -35,6 +35,10 @@
                                                     $_POST['detalles'],
                                                     $_POST['idpedido']));
         }
+
+        function consultID(){
+            echo json_encode($this->model->consultarTransferencia($_POST['id']));
+        }
         
     }
 ?>
