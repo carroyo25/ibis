@@ -144,7 +144,7 @@ $(function () {
                   });
             }
         });
-    }else if ( $("#rol_user").val() == 3 ) {
+    }else if ( $("#rol_user").val() == 3 || $("#rol_user").val() == 248) {
         $.ajax({
             type: "POST",
             url: RUTA+"panel/pedidosxAprobar",

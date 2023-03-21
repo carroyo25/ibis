@@ -79,7 +79,7 @@
                             require 'views/adm.php'; 
                         else if ($_SESSION['rol'] == 5 )
                             require 'views/aprob.php';
-                        else if ($_SESSION['rol'] == 3 )
+                        else if ($_SESSION['rol'] == 3 || $_SESSION['rol'] == 228)
                             require 'views/aped.php';
                         else if ($_SESSION['rol'] == 68 )
                             require 'views/comp.php';

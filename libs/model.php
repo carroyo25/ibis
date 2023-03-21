@@ -1230,7 +1230,7 @@
                                                         INNER JOIN rrhh.tabla_aquarius ON ibis.tb_user.ncodper = rrhh.tabla_aquarius.internal
                                                         INNER JOIN ibis.tb_proyectos ON ibis.tb_costusu.ncodproy = ibis.tb_proyectos.nidreg 
                                                     WHERE
-                                                        (ibis.tb_user.nrol = 3 OR ibis.tb_user.nrol = 228) 
+                                                        (ibis.tb_user.nrol = :rol OR ibis.tb_user.nrol = 228) 
                                                         AND ibis.tb_costusu.ncodproy = :cc
                                                         AND ibis.tb_costusu.nflgactivo = 1");
                 $sql->execute(["rol"=>$rol,"cc"=>$cc]);
