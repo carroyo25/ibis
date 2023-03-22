@@ -58,6 +58,9 @@
                             <label>:</label>
                             <label id="pendiente_compra"></label>
                         </div>
+                        <div>
+                            <button type="button" class="boton3" id="btnStock">Registrar Stock Minimo</button>
+                        </div>
                    </div>
                    <div class="area3">
                         <div>
@@ -102,6 +105,19 @@
     </div>
     <div class="modal" id="esperar">
     </div>
+    <div class="modal" id="registroStock">
+        <div class="ventanaPregunta">
+            <h3>Registrar Stock Minimo</h3>
+            <div> 
+                <input type="number" id="stockMin">
+                <hr>
+            </div>
+            <div>
+                <button type="button" id="btnAceptarStock">Aceptar</button>
+                <button type="button" id="btnCancelarStock">Cancelar</button>
+            </div>
+        </div>
+    </div>
     <div class="cabezaModulo">
         <h1>Control de Almacen</h1>
         <div>
@@ -144,6 +160,7 @@
                     <th rowspan="2">Ingreso<br>Inventario</th>
                     <th rowspan="2">Cantidad<br>Salida</th>
                     <th rowspan="2">Cantidad<br>Devolucion</th>
+                    <th rowspan="2">Cantidad<br>Minima</th>
                     <th rowspan="2">Saldo</th>
                     <th colspan="9">Condicion</th>
                 </tr>

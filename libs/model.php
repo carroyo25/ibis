@@ -1805,7 +1805,7 @@
                                                         onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"
                                                         onclick="this.select()" 
                                                         value="'.$rs['cant_aprob'].'"
-                                                        class="valorAtendido" readonly>
+                                                        class="valorAtendido">
                                         </td>
                                         <td class="textoCentro">'.$rs['nroparte'].'</td>
                                         <td class="textoCentro"><input type="text"></td>

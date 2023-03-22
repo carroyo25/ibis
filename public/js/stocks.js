@@ -2,6 +2,7 @@ $(() => {
 
     let accion = 0;
     let fila = "";
+    let idprod = 0;
 
     $("#esperar").fadeOut();
 
@@ -32,6 +33,8 @@ $(() => {
 
     $("#tablaPrincipal tbody").on("click","tr", function (e) {
         e.preventDefault();
+
+        idprod = $(this).data("idprod");
         
         $.post(RUTA+"stocks/resumen",{codigo:$(this).data("idprod")},
             function (data, textStatus, jqXHR) {
@@ -101,6 +104,37 @@ $(() => {
             mostrarMensaje(error,"mensaje_error");
         }
         
+
+        return false;
+    });
+
+    $("#btnStock").click(function(e){
+        e.preventDefault();
+
+        $("#registroStock").fadeIn();
+
+        return false;
+    });
+
+    $("#btnAceptarStock").click(function(e){
+        e.preventDefault();
+
+        $.post(RUTA+"stocks/minimo", { cc:$(costosSearch).val(),
+                                        prod:idprod,
+                                        cantidad:$(stockMin).val()},
+            function (data, text, requestXHR) {
+                $("#registroStock").fadeOut();
+            },
+            "json"
+        );
+        
+        return false;
+    });
+
+    $("#btnCancelarStock").click(function(e){
+        e.preventDefault();
+
+        $("#registroStock").fadeOut();
 
         return false;
     });

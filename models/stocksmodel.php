@@ -110,6 +110,7 @@
                                             <td class="textoDerecha">'.number_format($rs['ingreso_inventario'],2).'</td>
                                             <td class="textoDerecha">'.number_format($rs['consumo'],2).'</td>
                                             <td class="textoDerecha">'.number_format($rs['devolucion'],2).'</td>
+                                            <td></td>
                                             <td class="textoDerecha '.$estado.'"><div>'.number_format($saldo,2).'</div></td>
                                             <td class="textoCentro">'.$c1.'</td>
                                             <td class="textoCentro">'.$c2.'</td>
@@ -411,6 +412,37 @@
 
                 exit();
                
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        public function registrarMinimo($parametros){
+            try {
+                $mensaje = "Error en el ingreso";
+                $sw = false;
+
+                $sql = $this->db->connect()->prepare("INSERT INTO alm_minimo 
+                                                            SET iduser=:user,
+                                                                idprod=:producto,
+                                                                ncostos=:costos,
+                                                                ncantidad=:cantidad");
+                $sql->execute(["costos"=>$parametros["cc"],
+                        "producto"=>$parametros["prod"],
+                        "user"=>$_SESSION['iduser'],
+                        "cantidad"=>$parametros["cantidad"]]);
+
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0){
+                    $mensaje = "Se agrego el registro..";
+                    $sw = true;
+                }
+
+                return array("mensaje"=>$mensaje,
+                            "sw"=>$sw);
+
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;

@@ -33,6 +33,10 @@
         function consulta(){
             echo $this->model->listarItems($_POST);
         }
+
+        function minimo(){
+            echo json_encode($this->model->registrarMinimo($_POST));
+        }
         
     }
 ?>
