@@ -134,17 +134,29 @@
     </div>
     <div class="itemsTabla">
         <table id="tablaPrincipal">
-            <thead>
-                <tr class="stickytop">
-                    <th>Item</th>
-                    <th>Codigo</th>
-                    <th width="50%">Descripcion</th>
-                    <th>Unidad</th>
-                    <th>Cantidad<br>Ingreso</th>
-                    <th>Ingreso<br>Inventario</th>
-                    <th>Cantidad<br>Salida</th>
-                    <th>Cantidad<br>Devolucion</th>
-                    <th>Saldo</th>
+            <thead class="stickytop">
+                <tr>
+                    <th rowspan="2">Item</th>
+                    <th rowspan="2">Codigo</th>
+                    <th rowspan="2" width="50%">Descripcion</th>
+                    <th rowspan="2">Unidad</th>
+                    <th rowspan="2">Cantidad<br>Ingreso</th>
+                    <th rowspan="2">Ingreso<br>Inventario</th>
+                    <th rowspan="2">Cantidad<br>Salida</th>
+                    <th rowspan="2">Cantidad<br>Devolucion</th>
+                    <th rowspan="2">Saldo</th>
+                    <th colspan="9">Condicion</th>
+                </tr>
+                <tr>
+                    <th>1A</th>
+                    <th>1B</th>
+                    <th>1C</th>
+                    <th>2A</th>
+                    <th>2B</th>
+                    <th>2C</th>
+                    <th>3A</th>
+                    <th>3B</th>
+                    <th>3C</th>
                 </tr>
             </thead>
             <tbody>

@@ -10,6 +10,7 @@
                 $salida = '';
                 $cc = $parametros['costosSearch'];
                 $cp = $parametros['codigoBusqueda'] == "" ? "%" : $parametros['codigoBusqueda'];
+                $de = $parametros['descripcionSearch'] == "" ? "%" : "%".$parametros['descripcionSearch']."%";
 
                 $sql = $this->db->connect()->prepare("SELECT
                                                         cm_producto.id_cprod,
@@ -20,6 +21,7 @@
                                                         g.idcostos AS guias,
                                                         i.ingreso_inventario,
                                                         i.idcostos AS inventario,
+                                                        i.condicion,
                                                         c.consumo,
                                                         c.devolucion 
                                                     FROM
@@ -44,6 +46,7 @@
                                                         SELECT
                                                             alm_inventariodet.codprod,
                                                             SUM( alm_inventariodet.cant_ingr ) AS ingreso_inventario,
+                                                            alm_inventariodet.condicion,
                                                             alm_inventariocab.idcostos 
                                                         FROM
                                                             alm_inventariodet
@@ -69,12 +72,14 @@
                                                         cm_producto.ntipo LIKE 37 
                                                         AND cm_producto.flgActivo = 1 
                                                         AND cm_producto.ccodprod LIKE :codigo
+                                                        AND cm_producto.cdesprod LIKE :descripcion
                                                     ORDER BY
                                                         cm_producto.cdesprod");
                 $sql->execute(["guias"=>$cc,
                                 "inventarios"=>$cc,
                                 "consumo"=>$cc,
-                                "codigo"=>$cp]);
+                                "codigo"=>$cp,
+                                "descripcion"=>$de]);
                 $rowCount = $sql->rowCount();
                 $item = 1;
                 $salida = '<tr><td colspan="9">No hay registros para mostrar</td></tr>';
@@ -84,6 +89,16 @@
                     while ($rs = $sql->fetch()){
                         $saldo = ($rs['ingreso_guias']+$rs['ingreso_inventario']+$rs['devolucion'])-$rs['consumo'];
                         $estado = $saldo > 0 ? "semaforoVerde":"semaforoRojo";
+
+                        $c1 = ($rs['condicion'] == '1A' || $rs['condicion'] == '1.A.' || $rs['condicion'] == '1.A') ? '1A': "";
+                        $c2 = ($rs['condicion'] == '1B' || $rs['condicion'] == '1.B.' || $rs['condicion'] == '1.B') ? '1B': "";
+                        $c3 = ($rs['condicion'] == '1C' || $rs['condicion'] == '1.C.' || $rs['condicion'] == '1.C') ? '1C': "";
+                        $c4 = ($rs['condicion'] == '2A' || $rs['condicion'] == '2.A.' || $rs['condicion'] == '2.A') ? '2A': "";
+                        $c5 = ($rs['condicion'] == '2B' || $rs['condicion'] == '2.B.' || $rs['condicion'] == '2.B') ? '2B': "";
+                        $c6 = ($rs['condicion'] == '2C' || $rs['condicion'] == '2.C.' || $rs['condicion'] == '2.C') ? '2C': "";
+                        $c7 = ($rs['condicion'] == '3A' || $rs['condicion'] == '3.A.' || $rs['condicion'] == '3.A') ? '3A': "";
+                        $c8 = ($rs['condicion'] == '3B' || $rs['condicion'] == '3.B.' || $rs['condicion'] == '3.B') ? '3B': "";
+                        $c9 = ($rs['condicion'] == '3C' || $rs['condicion'] == '3.C.' || $rs['condicion'] == '3.C') ? '3C': "";
 
                         if ( $saldo ){
                             $salida.='<tr class="pointer" data-idprod="'.$rs['id_cprod'].'" data-costos="'.$rs['guias'].'">
@@ -96,6 +111,15 @@
                                             <td class="textoDerecha">'.number_format($rs['consumo'],2).'</td>
                                             <td class="textoDerecha">'.number_format($rs['devolucion'],2).'</td>
                                             <td class="textoDerecha '.$estado.'"><div>'.number_format($saldo,2).'</div></td>
+                                            <td class="textoCentro">'.$c1.'</td>
+                                            <td class="textoCentro">'.$c2.'</td>
+                                            <td class="textoCentro">'.$c3.'</td>
+                                            <td class="textoCentro">'.$c4.'</td>
+                                            <td class="textoCentro">'.$c5.'</td>
+                                            <td class="textoCentro">'.$c6.'</td>
+                                            <td class="textoCentro">'.$c7.'</td>
+                                            <td class="textoCentro">'.$c8.'</td>
+                                            <td class="textoCentro">'.$c9.'</td>
                                     </tr>';
                         }
                     }

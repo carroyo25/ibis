@@ -156,7 +156,7 @@
                                         <td class="pl20px">'.$rs['cdesprod'].' '.$series.'</td>
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                         <td class="textoDerecha pr20px">'.$rs['cantidad'].'</td>
-                                        <td class="textoDerecha pr20px">'.number_format($rs['ingresos'],2).'</td>
+                                        <td class="textoDerecha pr20px">'.$rs['ingresos'].'</td>
                                         <td>
                                             <input type="number" 
                                                 step="any" 
