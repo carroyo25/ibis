@@ -167,10 +167,8 @@
                 <tr>
                     <th>1A</th>
                     <th>1B</th>
-                    <th>1C</th>
                     <th>2A</th>
                     <th>2B</th>
-                    <th>2C</th>
                     <th>3A</th>
                     <th>3B</th>
                     <th>3C</th>
