@@ -90,15 +90,13 @@
                         $saldo = ($rs['ingreso_guias']+$rs['ingreso_inventario']+$rs['devolucion'])-$rs['consumo'];
                         $estado = $saldo > 0 ? "semaforoVerde":"semaforoRojo";
 
-                        $c1 = ($rs['condicion'] == '1A' || $rs['condicion'] == '1.A.' || $rs['condicion'] == '1.A') ? '1A': "";
-                        $c2 = ($rs['condicion'] == '1B' || $rs['condicion'] == '1.B.' || $rs['condicion'] == '1.B') ? '1B': "";
-                        $c3 = ($rs['condicion'] == '1C' || $rs['condicion'] == '1.C.' || $rs['condicion'] == '1.C') ? '1C': "";
-                        $c4 = ($rs['condicion'] == '2A' || $rs['condicion'] == '2.A.' || $rs['condicion'] == '2.A') ? '2A': "";
-                        $c5 = ($rs['condicion'] == '2B' || $rs['condicion'] == '2.B.' || $rs['condicion'] == '2.B') ? '2B': "";
-                        $c6 = ($rs['condicion'] == '2C' || $rs['condicion'] == '2.C.' || $rs['condicion'] == '2.C') ? '2C': "";
-                        $c7 = ($rs['condicion'] == '3A' || $rs['condicion'] == '3.A.' || $rs['condicion'] == '3.A') ? '3A': "";
-                        $c8 = ($rs['condicion'] == '3B' || $rs['condicion'] == '3.B.' || $rs['condicion'] == '3.B') ? '3B': "";
-                        $c9 = ($rs['condicion'] == '3C' || $rs['condicion'] == '3.C.' || $rs['condicion'] == '3.C') ? '3C': "";
+                        $c1 = ($rs['condicion'] == '1A' || $rs['condicion'] == '1.A.' || $rs['condicion'] == '1.A') ? number_format($rs['ingreso_inventario']) : "";
+                        $c2 = ($rs['condicion'] == '1B' || $rs['condicion'] == '1.B.' || $rs['condicion'] == '1.B') ? number_format($rs['ingreso_inventario']) : "";
+                        $c3 = ($rs['condicion'] == '2A' || $rs['condicion'] == '2.A.' || $rs['condicion'] == '2.A') ? number_format($rs['ingreso_inventario']) : "";
+                        $c4 = ($rs['condicion'] == '2B' || $rs['condicion'] == '2.B.' || $rs['condicion'] == '2.B') ? number_format($rs['ingreso_inventario']) : "";
+                        $c5 = ($rs['condicion'] == '3A' || $rs['condicion'] == '3.A.' || $rs['condicion'] == '3.A') ? number_format($rs['ingreso_inventario']) : "";
+                        $c6 = ($rs['condicion'] == '3B' || $rs['condicion'] == '3.B.' || $rs['condicion'] == '3.B') ? number_format($rs['ingreso_inventario']) : "";
+                        $c7 = ($rs['condicion'] == '3C' || $rs['condicion'] == '3.C.' || $rs['condicion'] == '3.C') ? number_format($rs['ingreso_inventario']) : "";
 
                         if ( $saldo ){
                             $salida.='<tr class="pointer" data-idprod="'.$rs['id_cprod'].'" data-costos="'.$rs['guias'].'">
@@ -119,8 +117,6 @@
                                             <td class="textoCentro">'.$c5.'</td>
                                             <td class="textoCentro">'.$c6.'</td>
                                             <td class="textoCentro">'.$c7.'</td>
-                                            <td class="textoCentro">'.$c8.'</td>
-                                            <td class="textoCentro">'.$c9.'</td>
                                     </tr>';
                         }
                     }

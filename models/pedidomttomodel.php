@@ -171,7 +171,7 @@
             }
         }
 
-        public function modificar($datos,$detalles){
+        public function modificar($cabecera,$detalles){
             try {
                 $salida = false;
                 $respuesta = false;
@@ -183,12 +183,12 @@
                                                                                 docfPdfPrev=:dprev
                                                                                 WHERE idreg=:id");
                  $sql->execute([
-                    "vence"=>$datos['vence'],
-                    "concep"=>$datos['concepto'],
-                    "det"=>$datos['espec_items'],
-                    "aten"=>$datos['codigo_atencion'],
-                    "dprev"=>$datos['vista_previa'],
-                    "id"=>$datos['codigo_pedido']
+                    "vence"=>$cabecera['vence'],
+                    "concep"=>$cabecera['concepto'],
+                    "det"=>$cabecera['espec_items'],
+                    "aten"=>$cabecera['codigo_atencion'],
+                    "dprev"=>$cabecera['vista_previa'],
+                    "id"=>$cabecera['codigo_pedido']
                 ]);
 
                 $rowCount = $sql->rowCount();
@@ -199,12 +199,12 @@
                 for ($i=0; $i < $nreg; $i++) { 
                     //graba el item si no se ha insertado como nuevo
                     if( $details[$i]->itempedido == '-' ){
-                        $this->saveItemMtto($datos['codigo_verificacion'],
-                                        $datos['codigo_estado'],
-                                        $datos['codigo_atencion'],
-                                        $datos['codigo_tipo'],
-                                        $datos['codigo_costos'],
-                                        $datos['codigo_area'],
+                        $this->saveItemMtto($cabecera['codigo_verificacion'],
+                                        $cabecera['codigo_estado'],
+                                        $cabecera['codigo_atencion'],
+                                        $cabecera['codigo_tipo'],
+                                        $cabecera['codigo_costos'],
+                                        $cabecera['codigo_area'],
                                         $details[$i]);
                     }else{
                     //cambia los datos 
@@ -271,10 +271,20 @@
             $indice = $this->obtenerIndice($codigo,"SELECT idreg AS numero FROM tb_pedidocab WHERE tb_pedidocab.verificacion =:id");
 
            try {
-                $sql = $this->db->connect()->prepare("INSERT INTO tb_pedidodet SET idpedido=:ped,idprod=:prod,idtipo=:tipo,unid=:und,
-                                                                                   cant_pedida=:cant,estadoItem=:est,tipoAten=:aten,
-                                                                                   verificacion=:ver,nflgqaqc=:qaqc,idcostos=:costos,idarea=:area,
-                                                                                   observaciones=:espec,nregistro=:registro,nroparte=:parte");
+                $sql = $this->db->connect()->prepare("INSERT INTO tb_pedidodet SET idpedido=:ped,
+                                                                                   idprod=:prod,
+                                                                                   idtipo=:tipo,
+                                                                                   unid=:und,
+                                                                                   cant_pedida=:cant,
+                                                                                   estadoItem=:est,
+                                                                                   tipoAten=:aten,
+                                                                                   verificacion=:ver,
+                                                                                   nflgqaqc=:qaqc,
+                                                                                   idcostos=:costos,
+                                                                                   idarea=:area,
+                                                                                   observaciones=:espec,
+                                                                                   nregistro=:registro,
+                                                                                   nroparte=:parte");
                        $sql ->execute([
                                        "ped"=>$indice,
                                        "prod"=>$detalles->idprod,
@@ -289,48 +299,12 @@
                                        "area"=>$area,
                                        "espec"=>$detalles->especifica,
                                        "registro"=>$detalles->registro,
-                                       "nroparte"=>$datos[$i]->nroparte
+                                       "parte"=>$detalles->nroparte
                                     ]);
                   
             } catch (PDOException $th) {
                    echo "Error: ".$th->getMessage();
                    return false;
-            }
-        }
-
-        private function saveItemsMtto($codigo,$estado,$atencion,$tipo,$costos,$area,$detalles,$indice){
-
-            $datos = json_decode($detalles);
-            $nreg = count($datos);
-
-            for ($i=0; $i < $nreg; $i++) { 
-                $registro = isset($datos[$i]->registro) ? $datos[$i]->registro : NULL; 
-
-                try {
-                        $sql = $this->db->connect()->prepare("INSERT INTO tb_pedidodet 
-                                                                SET idpedido=:ped,idprod=:prod,idtipo=:tipo,unid=:und,
-                                                                    cant_pedida=:cant,estadoItem=:est,tipoAten=:aten,
-                                                                    verificacion=:ver,nflgqaqc=:qaqc,idcostos=:costos,idarea=:area,
-                                                                    observaciones=:espec,nregistro=:registro,nroparte=:parte");
-                            $sql ->execute([
-                                "ped"=>$indice,
-                                "prod"=>$datos[$i]->idprod,
-                                "tipo"=>$tipo,
-                                "und"=>$datos[$i]->unidad,
-                                "cant"=>$datos[$i]->cantidad,
-                                "est"=>$estado,
-                                "aten"=>$atencion,
-                                "ver"=>$codigo,
-                                "qaqc"=>$datos[$i]->calidad,
-                                "costos"=>$costos,
-                                "area"=>$area,
-                                "espec"=>$datos[$i]->especifica,
-                                "registro"=>$registro,
-                                "parte"=>$datos[$i]->nroparte]);    
-                } catch (PDOException $th) {
-                    echo "Error: ".$th->getMessage();
-                    return false;
-                }
             }
         }
     }
