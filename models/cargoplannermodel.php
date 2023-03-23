@@ -121,11 +121,16 @@
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()){
 
-                            if ( $nro_orden == $rs['orden'] ) {
-                                $itemOrden++;
-                            }else{
-                                $itemOrden = 1;
+                            if ($rs['orden'] ){
+                                if ( $nro_orden == $rs['orden'] ) {
+                                    $itemOrden++;
+                                }else{
+                                    $itemOrden = 1;
+                                }
+                            }else {
+                                $itemOrden = "";
                             }
+                            
                             
                             $tipo_orden = $rs['idtipomov'] == 37 ? 'BIENES' : 'SERVICIO';
                             $clase_operacion = $rs['idtipomov'] == 37 ? 'bienes' : 'servicios';
@@ -161,6 +166,11 @@
                                 $estadofila = "anulado";
                                 $estado_item = "anulado";
                                 $estado_pedido = "anulado";
+                            }else if( $rs['estadoItem'] == 52 ) {
+                                $porcentaje = "20%";
+                                $estadofila = "stock";
+                                $estado_item = "item_stock";
+                                $estado_pedido = "stock";
                             }else if (!$rs['orden']) {
                                 $porcentaje = "15%";
                                 $estadofila = "item_aprobado";
@@ -230,7 +240,7 @@
                                         <td class="textoCentro">'.$rs['orden'].'</td>
                                         <td class="textoCentro">'.$rs['fecha_orden'].'</td>
                                         <td class="textoDerecha pr15px" style="background:#e8e8e8;font-weight: bold">'.$rs['cantidad_orden'].'</td>
-                                        <td class="pl10px">'.str_pad($itemOrden,3,0,STR_PAD_LEFT).'</td>
+                                        <td class="pl10px">'.$itemOrden.'</td>
                                         <td class="pl10px">'.$rs['fecha_autorizacion_orden'].'</td>
                                         <td class="pl10px">'.$rs['proveedor'].'</td>
                                         <td class="textoCentro">'.$rs['fecha_entrega'].'</td>
