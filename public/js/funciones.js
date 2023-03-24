@@ -18,6 +18,7 @@ var emailreg = /^[a-zA-Z0-9_\.\-]+@[a-zA-Z0-9\-]+\.[a-zA-Z0-9\-\.]+$/;
 var numeros = /^[0-9]*\.?[0-9]*$/;
 var fecha = /^([0-9]{4}\-[0-9]{2}\-[0-9]{2})$/;
 var ruc = /^[0-9]{11}$/;
+var url = encodeURI('http://192.168.1.30/postulante/documentos/pdf/62a4da4d7a120.pdf');
 
 $.strPad = function(i,l,s) {
     var o = i.toString();

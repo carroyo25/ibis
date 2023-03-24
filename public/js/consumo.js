@@ -3,6 +3,11 @@ $(function(){
         registro = 0,
         sw = 0;
 
+    /*let url = 'https://rrhhperu.sepcon.net/postulante/documentos/pdf/61afc04f3f4c3.pdf';*/
+    //PDFJS.disableWorker = true;
+
+    
+
     $("#espera").fadeOut();
 
     let row = ``;
@@ -20,6 +25,13 @@ $(function(){
                         $("#tablaPrincipal tbody")
                             .empty()
                             .append(data.anteriores);
+
+                        pdfjsLib.getDocument('http://192.168.1.30/postulante/documentos/pdf/61afc04f3f4c3.pdf').promise.then(doc => {
+                            pdf = doc;
+                            render();
+                        });
+
+                        //capture()
     
                         $("#codeRead").focus();
                     }else{
@@ -275,4 +287,46 @@ detalles = () => {
     })
 
     return DATA;
+}
+
+function render() {
+    pdf.getPage(1).then(page => {
+        var myCanvas = document.getElementById("pdfCanvas");
+        var context = myCanvas.getContext("2d");
+        var viewport = page.getViewport({ scale: 1 });
+
+        //const imagen = document.getElementById('vistafirma');
+        var imageContentRaw = myCanvas.getContext('2d').getImageData(50,450,220,110);
+
+        myCanvas.width = 600;
+        myCanvas.height = 700;
+
+        var canvasImg = document.createElement('canvas');
+    // with the correct size
+    canvasImg.width = 220;
+    canvasImg.height = 110;
+    canvasImg.getContext('2d').putImageData(imageContentRaw, 0, 0);
+
+    imagen.src = canvasImg.toDataURL("image/jpeg", 1.0);
+        
+        page.render({
+            canvasContext: context,
+            viewport: viewport
+        });
+    });
+}
+
+function capture(){
+    const canvas = document.getElementById('pdfCanvas');
+    const imagen = document.getElementById('vistafirma');
+
+    var imageContentRaw = canvas.getContext('2d').getImageData(50,450,220,110);
+    //
+    var canvasImg = document.createElement('canvas');
+    // with the correct size
+    canvasImg.width = 220;
+    canvasImg.height = 110;
+    canvasImg.getContext('2d').putImageData(imageContentRaw, 0, 0);
+
+    imagen.src = canvasImg.toDataURL("image/jpeg", 1.0);
 }

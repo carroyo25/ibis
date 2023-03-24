@@ -456,6 +456,33 @@ $anulado:#c2c2c2;
         }
     }
 
+    .variasConsultas5campos {
+        color: $blanco;
+        padding: 5px 15px;
+        display:grid;
+        grid-template-columns: 20% 8% 18% 20% 20% 10%;
+        column-gap: 15px;
+        position: relative;
+
+        label{
+            line-height: 2rem;
+        }
+
+        input,select{
+            height: 2rem;
+            outline: none;
+            border:none;
+            padding-left: 20px;
+            border-radius: 8px;
+            width: 100%;
+        }
+
+        #vistafirma {
+            position: absolute;
+            border: 1px solid #000;
+        }
+    }
+
     .variasConsultasColumna{
         display: grid;
         grid-template-columns: 1fr 5%;

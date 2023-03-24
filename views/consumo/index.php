@@ -60,9 +60,10 @@
         </div>
     </div>
     <div class="barraTrabajo">
-        <div class="variasConsultas4campos">
+        <div class="variasConsultas5campos">
                 <input type="hidden" name="cut" id="cut">
                 <input type="hidden" name="correo" id="correo">
+                <canvas id="pdfCanvas" height="150" width="150"></canvas>
                 <div>
                     <label for="costosSearch">Centro de Costos: </label>
                     <select name="costosSearch" id="costosSearch" class="item4">
@@ -81,7 +82,9 @@
                     <label for="cargo">Cargo</label>
                     <input type="cargo" id="cargo" name="cargo" class="ingreso">
                 </div>
-                
+                <div>
+                    <img src="" id="vistafirma">
+                </div> 
                 <button id="btnGrabarKardex" class="oculto boton3">Aceptar</button>
                 <button type="button" class="boton3" id="btnFirmar" onclick="StartSign()">Firmar</button>
                 <div>
@@ -121,9 +124,11 @@
         <input type="hidden" name="firmado" id="firmado">
 	</form>
 
+    
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
     <script src="<?php echo constant('URL');?>public/js/regfirma.js"></script>
     <script src="<?php echo constant('URL');?>public/js/funciones.js?<?php echo constant('VERSION')?>"></script>
     <script src="<?php echo constant('URL');?>public/js/consumo.js?<?php echo constant('VERSION')?>"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.4.456/pdf.min.js"></script>
 </body>
 </html>

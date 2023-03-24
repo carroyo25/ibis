@@ -22,6 +22,7 @@
     
     define('DB','rrhh');
     define('DB2','ibis');
+    define('DB3','documentos');
     define('MAILPASSWORD','aK8izG1WEQwwB1X');
     define('MAILUSER','sistema_ibis@sepcon.net');
     define('CHARSET','utf8mb4');
