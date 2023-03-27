@@ -22,16 +22,15 @@ $(function(){
                         $("#cargo").val(data.datos[0].cargo.toUpperCase());
                         $("#cut").val(data.datos[0].cut);
                         $("#correo").val(data.datos[0].correo);
+
                         $("#tablaPrincipal tbody")
                             .empty()
                             .append(data.anteriores);
 
-                        pdfjsLib.getDocument('http://192.168.1.30/postulante/documentos/pdf/61afc04f3f4c3.pdf').promise.then(doc => {
+                        pdfjsLib.getDocument(data.ruta).promise.then(doc => {
                             pdf = doc;
                             render();
                         });
-
-                        //capture()
     
                         $("#codeRead").focus();
                     }else{
@@ -294,39 +293,32 @@ function render() {
         var myCanvas = document.getElementById("pdfCanvas");
         var context = myCanvas.getContext("2d");
         var viewport = page.getViewport({ scale: 1 });
-
-        //const imagen = document.getElementById('vistafirma');
-        var imageContentRaw = myCanvas.getContext('2d').getImageData(50,450,220,110);
-
+        
         myCanvas.width = 600;
         myCanvas.height = 700;
-
-        var canvasImg = document.createElement('canvas');
-    // with the correct size
-    canvasImg.width = 220;
-    canvasImg.height = 110;
-    canvasImg.getContext('2d').putImageData(imageContentRaw, 0, 0);
-
-    imagen.src = canvasImg.toDataURL("image/jpeg", 1.0);
         
-        page.render({
+
+        // Render PDF page into canvas context
+        let renderContext = {
             canvasContext: context,
             viewport: viewport
+        };
+
+        let renderTask = page.render(renderContext);
+        
+        renderTask.promise.then(function () {
+            const canvas = document.getElementById('pdfCanvas');
+            const imagen = document.getElementById('vistafirma');
+
+            let imageContentRaw = canvas.getContext('2d').getImageData(50,450,220,110);
+            let canvasImg = document.createElement('canvas');
+
+            canvasImg.width = 220;
+            canvasImg.height = 110;
+            canvasImg.getContext('2d').putImageData(imageContentRaw, 0, 0);
+
+            imagen.src = canvasImg.toDataURL("image/jpeg", 1.0)
         });
     });
 }
 
-function capture(){
-    const canvas = document.getElementById('pdfCanvas');
-    const imagen = document.getElementById('vistafirma');
-
-    var imageContentRaw = canvas.getContext('2d').getImageData(50,450,220,110);
-    //
-    var canvasImg = document.createElement('canvas');
-    // with the correct size
-    canvasImg.width = 220;
-    canvasImg.height = 110;
-    canvasImg.getContext('2d').putImageData(imageContentRaw, 0, 0);
-
-    imagen.src = canvasImg.toDataURL("image/jpeg", 1.0);
-}

@@ -109,6 +109,7 @@
                                             <td class="textoDerecha">'.number_format($rs['consumo'],2).'</td>
                                             <td class="textoDerecha">'.number_format($rs['devolucion'],2).'</td>
                                             <td></td>
+                                            <td></td>
                                             <td class="textoDerecha '.$estado.'"><div>'.number_format($saldo,2).'</div></td>
                                             <td class="textoCentro">'.$c1.'</td>
                                             <td class="textoCentro">'.$c2.'</td>

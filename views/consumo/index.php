@@ -63,7 +63,7 @@
         <div class="variasConsultas5campos">
                 <input type="hidden" name="cut" id="cut">
                 <input type="hidden" name="correo" id="correo">
-                <canvas id="pdfCanvas" height="150" width="150"></canvas>
+                <canvas id="pdfCanvas" height="150" width="150" class="oculto"></canvas>
                 <div>
                     <label for="costosSearch">Centro de Costos: </label>
                     <select name="costosSearch" id="costosSearch" class="item4">

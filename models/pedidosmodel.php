@@ -412,7 +412,7 @@
                                        "costos"=>$costos,
                                        "area"=>$area,
                                        "espec"=>$detalles->especifica,
-                                       "nropos"=>$datos[$i]->item]);
+                                       "nropos"=>$detalles->item]);
                   
             } catch (PDOException $th) {
                    echo "Error: ".$th->getMessage();

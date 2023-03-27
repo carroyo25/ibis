@@ -242,7 +242,7 @@
                                     <td class="textoCentro">'.$objCelda['B'].'</td>
                                     <td class="pl20px">'.$descripcion.'</td>
                                     <td class="textoCentro">'.$objCelda['D'].'</td>
-                                    <td><input type="number" value="'.$objCelda['E'].'"></td>
+                                    <td><input type="text" value="'.$objCelda['E'].'"></td>
                                     <td><input type="number" value="'.$objCelda['F'].'"></td>
                                     <td class="textoCentro"><input type="text" value="'.$objCelda['G'].'"></td>
                                     <td class="textoCentro"><input type="text" value="'.$objCelda['H'].'"></td>

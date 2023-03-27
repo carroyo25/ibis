@@ -10,8 +10,13 @@
         public function buscarDatos($doc,$cc) {
             $registrado = false;
             $url = "http://sicalsepcon.net/api/activesapi.php?documento=".$doc;
-            $api = file_get_contents($url);
+            $img = "http://sicalsepcon.net/api/firmasapi.php?doc=".$doc;
             
+            
+            $api = file_get_contents($url);
+            $ap2 = file_get_contents($img);
+
+
             $datos =  json_decode($api);
             $nreg = count($datos);
 
@@ -19,7 +24,8 @@
 
             return array("datos" => $datos,
                         "registrado"=>$registrado,
-                        "anteriores"=>$this->kardexAnterior($doc,$cc));
+                        "anteriores"=>$this->kardexAnterior($doc,$cc),
+                        "ruta"=>'http://192.168.1.30/postulante/documentos/pdf/'.$ap2);
         }
 
         public function buscarProductos($codigo){
