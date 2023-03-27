@@ -97,7 +97,7 @@
                     </div>
                     <div class="tablaInterna mininoTablaInterna">
                         <table class="tabla" id="tablaDetalles">
-                            <thead>
+                            <thead class="stickytop">
                                 <tr>
                                     <th width="5%">Item</th>
                                     <th width="7%">Codigo</th>
@@ -201,7 +201,7 @@
     </div>
     <div class="itemsTabla">
         <table id="tablaPrincipal">
-            <thead>
+            <thead class="stickytop">
                 <tr>
                     <th>Num.</th>
                     <th>Emision</th>

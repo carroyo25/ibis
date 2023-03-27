@@ -273,7 +273,7 @@ $(function(){
                 total       = 0,
                 cod_prod    = $(this).data("codprod"),
                 id_item     = $(this).data("iditem"),
-                nro_parte   = $(this).data("nroparte"),
+                nro_parte   = $(this).data("nparte"),
                 grabado     = 0;
 
             $("#nro_pedido").val(nroreq);
@@ -285,7 +285,8 @@ $(function(){
                                 data-codprod="${cod_prod}" 
                                 data-itPed  ="${id_item}"
                                 data-cant   ="${cantidad}"
-                                data-refpedi="${request}">
+                                data-refpedi="${request}"
+                                data-nro_parte="${nro_parte}">
                             <td class="textoCentro"><a href="#"><i class="fas fa-ban"></i></a></td>
                             <td class="textoCentro">${nFilas}</td>
                             <td class="textoCentro">${codigo}</td>
@@ -311,6 +312,9 @@ $(function(){
                             <td class="textoCentro">${nroreq}</td>
                             <td class="pl20px"><textarea></textarea></td>
                         </tr>`;
+
+
+                        console.log(row);
 
                 $.post(RUTA+"orden/marcaItem", {id:$(this).data("iditem"),"estado":1,io:$(this).data("itord")},
                     function (data, text, requestXHR) {

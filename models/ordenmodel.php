@@ -31,7 +31,7 @@
                                                         lg_ordencab.nfirmaFin,
                                                         lg_ordencab.nfirmaOpe,
                                                         tb_parametros.cdescripcion AS atencion,
-                                                        cm_entidad.crazonsoc,
+                                                        UPPER(cm_entidad.crazonsoc) AS crazonsoc,
                                                         UPPER( tb_user.cnameuser ) AS cnameuser,
                                                         ( SELECT COUNT( lg_ordencomenta.id_regmov ) FROM lg_ordencomenta WHERE lg_ordencomenta.id_regmov = lg_ordencab.id_regmov ) AS comentario 
                                                     FROM
@@ -111,6 +111,7 @@
                                                         FORMAT(tb_pedidodet.precio, 2) AS precio,
                                                         REPLACE(FORMAT(tb_pedidodet.cant_pedida,2),',','') AS cantidad_pedida,
                                                         tb_pedidodet.igv,
+                                                        tb_pedidodet.cant_aprob,
                                                         FORMAT(tb_pedidodet.total, 2) AS total,
                                                         tb_pedidodet.estadoItem,
                                                         UPPER(
@@ -138,7 +139,8 @@
                                                         tb_pedidocab.emision,
                                                         UPPER(tb_pedidocab.concepto) AS concepto,
                                                         tb_pedidodet.entidad,
-                                                        tb_pedidodet.total AS total_numero
+                                                        tb_pedidodet.total AS total_numero,
+                                                        tb_equipmtto.cregistro 
                                                     FROM
                                                         tb_costusu
                                                     INNER JOIN tb_pedidodet ON tb_costusu.ncodproy = tb_pedidodet.idcostos
@@ -147,6 +149,7 @@
                                                     INNER JOIN tb_proyectos ON tb_pedidodet.idcostos = tb_proyectos.nidreg
                                                     INNER JOIN tb_area ON tb_pedidodet.idarea = tb_area.ncodarea
                                                     INNER JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
+                                                    LEFT JOIN tb_equipmtto ON tb_pedidodet.nregistro = tb_equipmtto.idreg 
                                                     WHERE
                                                         tb_costusu.nflgactivo = 1
                                                     AND tb_costusu.id_cuser = :user
@@ -172,14 +175,14 @@
                         $salida .='<tr class="pointer" data-pedido="'.$rs['idpedido'].'"
                                                        data-entidad="'.$rs['entidad'].'"
                                                        data-unidad="'.$rs['unidad'].'"
-                                                       data-cantidad ="'.$rs['cantidad_pedida'].'"
+                                                       data-cantidad ="'.$rs['cant_aprob'].'"
                                                        data-total="'.$rs['total_numero'].'"
                                                        data-codprod="'.$rs['id_cprod'].'"
                                                        data-iditem="'.$rs['iditem'].'"
                                                        data-costos="'.$rs['idcostos'].'"
                                                        data-itord="-"
                                                        data-nropedido=""
-                                                       data-nroparte="'.$rs['nroparte'].'">
+                                                       data-nparte="'.$rs['nroparte'].'">
                                         <td class="textoCentro">'.str_pad($rs['nrodoc'],6,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.date("d/m/Y", strtotime($rs['emision'])).'</td>
                                         <td class="pl5px">'.$rs['concepto'].'</td>
@@ -397,7 +400,7 @@
 
                 $sql = $this->db->connect()->prepare("UPDATE lg_ordencab 
                                                         SET  ffechaent=:entrega,ntotal=:total,ctiptransp=:transp,
-                                                             nplazo=:plazo,ncodalm=:alm,nigv =:igv
+                                                             nplazo=:plazo,ncodalm=:alm,nigv =:igv,id_centi=:enti
                                                         WHERE id_regmov = :id");
                 $sql->execute(['entrega'=>$cabecera['fentrega'],
                                 "total"=>$cabecera['total_numero'],
@@ -405,7 +408,8 @@
                                 "plazo"=>$entrega,
                                 "alm"=>$cabecera['codigo_almacen'],
                                 "igv"=>$cabecera['radioIgv'],
-                                "id"=>$cabecera['codigo_orden']]);
+                                "id"=>$cabecera['codigo_orden'],
+                                "enti"=>$cabecera['codigo_entidad']]);
                 
                 $this->grabarDetalles($cabecera['codigo_verificacion'],$detalles,$cabecera['codigo_costos'],$cabecera['codigo_orden']);
                 $this->grabarComentarios($cabecera['codigo_verificacion'],$comentarios);

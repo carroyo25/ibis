@@ -1411,13 +1411,14 @@
                 }else if ( $proceso == 53 ){
                     $detalles = $this->consultarDetallesAprobacion($id);
                 }else if ( $proceso == 54 ){
-                    $detalles = $this->consultarDetallesAprobacion($id);
+                    $detalles = $this->consultarDetallesAsignacion($id);
                 }else if ( $proceso == 56 ){
                     $detalles = $this->obtenerProformas($id);
                 }else if ($proceso == 57) {
                     $detalles = $this->consultarDetallesConformidad($id);
                 }
                     
+               //var_dump($detalles);
 
                 return array("cabecera"=>$docData,
                             "detalles"=>$detalles);
@@ -1795,6 +1796,74 @@
                                         <td class="textoCentro">'.str_pad($filas++,3,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="pl20px">'.strtoupper($rs['cdesprod']).'</td>
+                                        <td class="textoCentro">'.$rs['cabrevia'].'</td>
+                                        <td class="textoCentro">'.$rs['cant_pedida'].'</td>
+                                        <td class="textoCentro">'.$rs['cant_atendida'].'</td>
+                                        <td>
+                                            <input type="number" 
+                                                        step="any" 
+                                                        placeholder="0.00" 
+                                                        onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"
+                                                        onclick="this.select()" 
+                                                        value="'.$rs['cant_pedida'].'"
+                                                        class="valorAtendido">
+                                        </td>
+                                        <td class="textoCentro">'.$rs['nroparte'].'</td>
+                                        <td class="textoCentro"><input type="text"></td>
+                                        <td class="textoCentro">'.$rs['registro'].'</td>
+                                        <td class="textoCentro"><input type="checkbox" checked></td>
+                                    </tr>';
+                    }
+                }
+                
+                return $salida;
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        private function consultarDetallesAsignacion($id){
+            try {
+                $salida ="";
+
+                $sql=$this->db->connect()->prepare("SELECT
+                                                    tb_pedidodet.iditem,
+                                                    tb_pedidodet.idpedido,
+                                                    tb_pedidodet.idprod,
+                                                    tb_pedidodet.idtipo,
+                                                    tb_pedidodet.nroparte,
+                                                    tb_pedidodet.unid,
+                                                    REPLACE ( FORMAT( tb_pedidodet.cant_pedida, 2 ), ',', '' ) AS cant_pedida,
+                                                    REPLACE ( FORMAT( tb_pedidodet.cant_resto, 2 ), ',', '' ) AS cant_pendiente,
+                                                    REPLACE ( FORMAT( tb_pedidodet.cant_atend, 2 ), ',', '' ) AS cant_atendida,
+                                                    REPLACE ( FORMAT( tb_pedidodet.cant_aprob, 2 ), ',', '' ) AS cant_aprob,
+                                                    tb_pedidodet.estadoItem,
+                                                    cm_producto.ccodprod,
+                                                    UPPER(CONCAT_WS( ' ', cm_producto.cdesprod, tb_pedidodet.observaciones )) AS cdesprod,
+                                                    tb_unimed.cabrevia,
+                                                    tb_pedidodet.nflgqaqc,
+                                                    tb_pedidodet.especificaciones,
+                                                    CONCAT_WS('/', tb_equipmtto.cregistro, tb_equipmtto.cdescripcion ) AS registro 
+                                                FROM
+                                                    tb_pedidodet
+                                                    LEFT JOIN cm_producto ON tb_pedidodet.idprod = cm_producto.id_cprod
+                                                    LEFT JOIN tb_unimed ON tb_pedidodet.unid = tb_unimed.ncodmed
+                                                    LEFT JOIN tb_equipmtto ON tb_pedidodet.nregistro = tb_equipmtto.idreg 
+                                                WHERE
+                                                    tb_pedidodet.idpedido = :id 
+                                                    AND tb_pedidodet.nflgActivo = 1");
+                $sql->execute(["id"=>$id]);
+                $rowCount = $sql->rowCount();
+                
+                if ($rowCount > 0){
+                    $filas = 1;
+                    while ($rs = $sql->fetch()) {
+                        
+                        $salida .='<tr data-grabado="1" data-idprod="'.$rs['idprod'].'" data-codund="'.$rs['unid'].'" data-idx="'.$rs['iditem'].'">
+                                        <td class="textoCentro">'.str_pad($filas++,3,0,STR_PAD_LEFT).'</td>
+                                        <td class="textoCentro">'.$rs['ccodprod'].'</td>
+                                        <td class="pl20px">'.$rs['cdesprod'].'</td>
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                         <td class="textoCentro">'.$rs['cant_pedida'].'</td>
                                         <td class="textoCentro">'.$rs['cant_atendida'].'</td>
@@ -2747,13 +2816,14 @@
 
             for ($i=0; $i < $nreg; $i++) { 
                
+                $nparte = $datos[$i]->nroparte != "" ? "NP:". $datos[$i]->nroparte : "";
 
                 $pdf->SetAligns(array("C","C","R","C","L","C","R","R"));
                 $pdf->Row(array($datos[$i]->item,
                                 $datos[$i]->codigo,
                                 $datos[$i]->cantidad,
                                 $datos[$i]->unidad,
-                                TRIM(utf8_decode(strtoupper($datos[$i]->descripcion .' '. $datos[$i]->detalles))),
+                                TRIM(utf8_decode(strtoupper($datos[$i]->descripcion .' '. $datos[$i]->detalles .' '. $nparte))),
                                 $datos[$i]->pedido,
                                 $datos[$i]->precio,
                                 $datos[$i]->total));
