@@ -230,10 +230,20 @@
             }
         }
 
-        public function listarIngresos() {
+        public function listarIngresos($parametros) {
             try {
                 $salida = "";
                 $item = 1;
+
+                $guia = "%";
+                $cc   = "%";
+                $mes  = "%";
+
+                if ($parametros != "" ) {
+                    $guia = $parametros['guiaSearch'] == "" ? "%" : "%".$parametros['guiaSearch']."%";
+                    $cc = $parametros['costosSearch'] == -1 ? "%" : "%".$parametros['costosSearch']."%";
+                }
+
                 $sql = $this->db->connect()->prepare("SELECT
                                                         alm_cabexist.idreg,
                                                         alm_cabexist.idcostos,
@@ -257,8 +267,12 @@
                                                     WHERE
                                                         tb_costusu.id_cuser = :usr 
                                                         AND tb_costusu.nflgactivo = 1
+                                                        AND alm_cabexist.numguia LIKE :guia
+                                                        AND alm_cabexist.idcostos LIKE :cc
                                                     ORDER BY  alm_cabexist.idreg");
-                $sql->execute(["usr"=>$_SESSION["iduser"]]);
+                $sql->execute(["usr"=>$_SESSION["iduser"],
+                                "guia"=>$guia,
+                                "cc"=>$cc]);
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0) {

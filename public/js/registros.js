@@ -215,6 +215,25 @@ $(function(){
         });
     });
 
+    $("#btnConsulta").click(function(e){
+        e.preventDefault();
+
+        let str = $("#formConsulta").serialize();
+
+        $.post(RUTA+"registros/filtro", str,
+            function (data, text, requestXHR) {
+                $("#tablaPrincipal tbody")
+                    .empty()
+                    .append(data);
+            },
+            "text"
+        );
+
+
+
+        return false;
+    });
+
 })
 
 detalles = () =>{

@@ -8,7 +8,7 @@
         function render(){
             $this->view->listaCostosSelect = $this->model->costosPorUsuarioSelect($_SESSION['iduser']);
             $this->view->listaRecepciona = $this->model->listarPersonalRol(4);
-            $this->view->listaIngresos = $this->model->listarIngresos();
+            $this->view->listaIngresos = $this->model->listarIngresos("");
             $this->view->render('registros/index');
         }
 
@@ -22,7 +22,7 @@
         }
 
         function actualizarRegistros(){
-            echo $this->model->listarIngresos();
+            echo $this->model->listarIngresos("");
         }
 
         function despachos() {
@@ -31,6 +31,10 @@
 
         function registroID(){
             echo json_encode($this->model->consultarID($_POST['id']));
+        }
+
+        function filtro(){
+            echo $this->model->listarIngresos($_POST);
         }
     }
 ?>

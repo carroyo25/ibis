@@ -924,6 +924,7 @@
                                                         INNER JOIN tb_parametros ON alm_despachocab.nEstadoDoc = tb_parametros.nidreg 
                                                     WHERE
                                                         tb_costusu.nflgactivo = 1 
+                                                        AND alm_despachocab.nEstadoDoc = 62
                                                         AND tb_costusu.id_cuser = :usr 
                                                         AND alm_despachodet.nropedido = :orden 
                                                         AND alm_despachocab.ncodpry LIKE :costos 

@@ -13,73 +13,80 @@
                 $de = $parametros['descripcionSearch'] == "" ? "%" : "%".$parametros['descripcionSearch']."%";
 
                 $sql = $this->db->connect()->prepare("SELECT
-                                                        cm_producto.id_cprod,
-                                                        cm_producto.ccodprod,
-                                                        tb_unimed.cabrevia,
-                                                        UPPER( cm_producto.cdesprod ) AS cdesprod,
-                                                        g.ingreso_guias,
-                                                        g.idcostos AS guias,
-                                                        i.ingreso_inventario,
-                                                        i.idcostos AS inventario,
-                                                        i.condicion,
-                                                        c.consumo,
-                                                        c.devolucion 
-                                                    FROM
-                                                        cm_producto
-                                                        INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
-                                                        LEFT JOIN (
-                                                        SELECT
-                                                            alm_existencia.codprod,
-                                                            SUM( alm_existencia.cant_ingr ) AS ingreso_guias,
-                                                            alm_cabexist.idcostos,
-                                                            alm_existencia.nflgActivo 
+                                                            cm_producto.id_cprod,
+                                                            cm_producto.ccodprod,
+                                                            tb_unimed.cabrevia,
+                                                            UPPER( cm_producto.cdesprod ) AS cdesprod,
+                                                            g.ingreso_guias,
+                                                            g.idcostos AS guias,
+                                                            i.ingreso_inventario,
+                                                            i.idcostos AS inventario,
+                                                            i.condicion,
+                                                            c.consumo,
+                                                            c.devolucion,
+                                                            m.ncantidad AS minimo 
                                                         FROM
-                                                            alm_cabexist
-                                                            LEFT JOIN alm_existencia ON alm_existencia.idregistro = alm_cabexist.idreg 
+                                                            cm_producto
+                                                            INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                            LEFT JOIN (
+                                                            SELECT
+                                                                alm_existencia.codprod,
+                                                                SUM( alm_existencia.cant_ingr ) AS ingreso_guias,
+                                                                alm_cabexist.idcostos,
+                                                                alm_existencia.nflgActivo 
+                                                            FROM
+                                                                alm_cabexist
+                                                                LEFT JOIN alm_existencia ON alm_existencia.idregistro = alm_cabexist.idreg 
+                                                            WHERE
+                                                                alm_existencia.nflgActivo = 1 
+                                                                AND alm_cabexist.idcostos = :guias
+                                                            GROUP BY
+                                                                alm_existencia.codprod 
+                                                            ) AS g ON cm_producto.id_cprod = g.codprod
+                                                            LEFT JOIN (
+                                                            SELECT
+                                                                alm_inventariodet.codprod,
+                                                                SUM( alm_inventariodet.cant_ingr ) AS ingreso_inventario,
+                                                                alm_inventariodet.condicion,
+                                                                alm_inventariocab.idcostos 
+                                                            FROM
+                                                                alm_inventariodet
+                                                                LEFT JOIN alm_inventariocab ON alm_inventariodet.idregistro = alm_inventariocab.idreg 
+                                                            WHERE
+                                                                alm_inventariocab.idcostos = :inventarios
+                                                            GROUP BY
+                                                                alm_inventariodet.codprod 
+                                                            ) AS i ON cm_producto.id_cprod = i.codprod
+                                                            LEFT JOIN (
+                                                            SELECT
+                                                                alm_consumo.idprod,
+                                                                SUM( alm_consumo.cantsalida ) AS consumo,
+                                                                SUM( alm_consumo.cantdevolucion ) AS devolucion 
+                                                            FROM
+                                                                alm_consumo 
+                                                            WHERE
+                                                                alm_consumo.ncostos = :consumo  
+                                                            GROUP BY
+                                                                alm_consumo.idprod 
+                                                            ) AS c ON cm_producto.id_cprod = c.idprod
+                                                            LEFT JOIN ( 
+                                                            SELECT alm_minimo.dfecha, alm_minimo.idprod, alm_minimo.ncantidad 
+                                                                    FROM alm_minimo 
+                                                                    WHERE alm_minimo.ncostos = :minimo ) 
+                                                                    AS m ON cm_producto.id_cprod = m.idprod 
                                                         WHERE
-                                                            alm_existencia.nflgActivo = 1 
-                                                            AND alm_cabexist.idcostos = :guias 
-                                                        GROUP BY
-                                                            alm_existencia.codprod 
-                                                        ) AS g ON cm_producto.id_cprod = g.codprod
-                                                        LEFT JOIN (
-                                                        SELECT
-                                                            alm_inventariodet.codprod,
-                                                            SUM( alm_inventariodet.cant_ingr ) AS ingreso_inventario,
-                                                            alm_inventariodet.condicion,
-                                                            alm_inventariocab.idcostos 
-                                                        FROM
-                                                            alm_inventariodet
-                                                            LEFT JOIN alm_inventariocab ON alm_inventariodet.idregistro = alm_inventariocab.idreg 
-                                                        WHERE
-                                                            alm_inventariocab.idcostos = :inventarios 
-                                                        GROUP BY
-                                                            alm_inventariodet.codprod 
-                                                        ) AS i ON cm_producto.id_cprod = i.codprod
-                                                        LEFT JOIN (
-                                                        SELECT
-                                                            alm_consumo.idprod,
-                                                            SUM( alm_consumo.cantsalida ) AS consumo,
-                                                            SUM( alm_consumo.cantdevolucion ) AS devolucion 
-                                                        FROM
-                                                            alm_consumo 
-                                                        WHERE
-                                                            alm_consumo.ncostos = :consumo 
-                                                        GROUP BY
-                                                            alm_consumo.idprod 
-                                                        ) AS c ON cm_producto.id_cprod = c.idprod 
-                                                    WHERE
-                                                        cm_producto.ntipo LIKE 37 
-                                                        AND cm_producto.flgActivo = 1 
-                                                        AND cm_producto.ccodprod LIKE :codigo
-                                                        AND cm_producto.cdesprod LIKE :descripcion
-                                                    ORDER BY
-                                                        cm_producto.cdesprod");
+                                                            cm_producto.ntipo LIKE 37 
+                                                            AND cm_producto.flgActivo = 1 
+                                                            AND cm_producto.ccodprod LIKE :codigo 
+                                                            AND cm_producto.cdesprod LIKE :descripcion 
+                                                        ORDER BY
+                                                            cm_producto.cdesprod");
                 $sql->execute(["guias"=>$cc,
                                 "inventarios"=>$cc,
                                 "consumo"=>$cc,
                                 "codigo"=>$cp,
-                                "descripcion"=>$de]);
+                                "descripcion"=>$de,
+                                "minimo"=>$cc]);
                 $rowCount = $sql->rowCount();
                 $item = 1;
                 $salida = '<tr><td colspan="9">No hay registros para mostrar</td></tr>';
@@ -109,7 +116,7 @@
                                             <td class="textoDerecha">'.number_format($rs['consumo'],2).'</td>
                                             <td class="textoDerecha">'.number_format($rs['devolucion'],2).'</td>
                                             <td></td>
-                                            <td></td>
+                                            <td class="textoDerecha">'.number_format($rs['minimo'],2).'</td>
                                             <td class="textoDerecha '.$estado.'"><div>'.number_format($saldo,2).'</div></td>
                                             <td class="textoCentro">'.$c1.'</td>
                                             <td class="textoCentro">'.$c2.'</td>
