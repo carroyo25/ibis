@@ -20,6 +20,8 @@
                                                         lg_ordencab.ncodpago,
                                                         lg_ordencab.nplazo,
                                                         lg_ordencab.cdocPDF,
+                                                        lg_ordencab.ntotal,
+                                                        lg_ordencab.ncodmon,
                                                         UPPER( tb_pedidocab.concepto ) AS concepto,
                                                         UPPER( tb_pedidocab.detalle ) AS detalle,
                                                         UPPER(
@@ -48,8 +50,13 @@
                 $sql->execute(["user"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowCount();
 
+                
+
                 if ($rowCount > 0){
                     while ($rs = $sql->fetch()) {
+
+                        $montoDolares = 0;
+                        $montoSoles = 0;
 
                         $log = is_null($rs['nfirmaLog']) ? '<i class="far fa-square"></i>' : '<i class="far fa-check-square"></i>';
                         $ope = is_null($rs['nfirmaOpe']) ? '<i class="far fa-square"></i>' : '<i class="far fa-check-square"></i>';
@@ -60,6 +67,15 @@
                         $ffin = is_null($rs['nfirmaFin']) ? 0 : 1;
 
                         $resaltado = $rs['nEstadoDoc'] == 59 ? "resaltado_firma" :  "";
+
+
+                        if ( $rs['ncodmon'] == 20) {
+                            $montoSoles = "S/. ".number_format($rs['ntotal'],2);
+                            $montoDolares = "";
+                        }else{
+                            $montoSoles = "";
+                            $montoDolares =  "$ ".number_format($rs['ntotal'],2);
+                        }
 
 
                         $salida .='<tr class="pointer '.$resaltado.'" data-indice="'.$rs['id_regmov'].'" 
@@ -73,6 +89,8 @@
                                     <td class="pl20px">'.utf8_decode($rs['ccodproy']).'</td>
                                     <td class="pl20px">'.$rs['area'].'</td>
                                     <td class="pl20px">'.$rs['proveedor'].'</td>
+                                    <td class="textoDerecha">'.$montoSoles.'</td>
+                                    <td class="textoDerecha">'.$montoDolares.'</td>
                                     <td class="textoCentro '.strtolower($rs['atencion']).'">'.$rs['atencion'].'</td>
                                     <td class="textoCentro">'.$log.'</td>
                                     <td class="textoCentro">'.$ope.'</td>
@@ -257,6 +275,8 @@
                                                         lg_ordencab.ncodpago,
                                                         lg_ordencab.nplazo,
                                                         lg_ordencab.cdocPDF,
+                                                        lg_ordencab.ntotal,
+                                                        lg_ordencab.ncodmon,
                                                         UPPER( tb_pedidocab.concepto ) AS concepto,
                                                         UPPER( tb_pedidocab.detalle ) AS detalle,
                                                         UPPER(
@@ -297,6 +317,9 @@
                 if ($rowCount > 0){
                     while ($rs = $sql->fetch()) {
 
+                        $montoDolares = 0;
+                        $montoSoles = 0;
+
                         $log = is_null($rs['nfirmaLog']) ? '<i class="far fa-square"></i>' : '<i class="far fa-check-square"></i>';
                         $ope = is_null($rs['nfirmaOpe']) ? '<i class="far fa-square"></i>' : '<i class="far fa-check-square"></i>';
                         $fin = is_null($rs['nfirmaFin']) ? '<i class="far fa-square"></i>' : '<i class="far fa-check-square"></i>';
@@ -304,6 +327,17 @@
                         $flog = is_null($rs['nfirmaLog']) ? 0 : 1;
                         $fope = is_null($rs['nfirmaOpe']) ? 0 : 1;
                         $ffin = is_null($rs['nfirmaFin']) ? 0 : 1;
+
+                        $resaltado = $rs['nEstadoDoc'] == 59 ? "resaltado_firma" :  "";
+
+
+                        if ( $rs['ncodmon'] == 20) {
+                            $montoSoles = "S/. ".number_format($rs['ntotal'],2);
+                            $montoDolares = "";
+                        }else{
+                            $montoSoles = "";
+                            $montoDolares =  "$ ".number_format($rs['ntotal'],2);
+                        }
 
                         $resaltado = $rs['nEstadoDoc'] == 59 ? "resaltado_firma" :  "";
 
@@ -319,6 +353,8 @@
                                     <td class="pl20px">'.utf8_decode($rs['ccodproy']).'</td>
                                     <td class="pl20px">'.$rs['area'].'</td>
                                     <td class="pl20px">'.$rs['proveedor'].'</td>
+                                    <td class="textoDerecha">'.$montoSoles.'</td>
+                                    <td class="textoDerecha">'.$montoDolares.'</td>
                                     <td class="textoCentro '.strtolower($rs['atencion']).'">'.$rs['atencion'].'</td>
                                     <td class="textoCentro">'.$log.'</td>
                                     <td class="textoCentro">'.$ope.'</td>

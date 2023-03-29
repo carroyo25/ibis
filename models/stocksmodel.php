@@ -97,6 +97,8 @@
                         $saldo = ($rs['ingreso_guias']+$rs['ingreso_inventario']+$rs['devolucion'])-$rs['consumo'];
                         $estado = $saldo > 0 ? "semaforoVerde":"semaforoRojo";
 
+                        $alerta_minimo = ( $rs['minimo']*.7 ) > $saldo ? "semaforoRojo":"";
+
                         $c1 = ($rs['condicion'] == '1A' || $rs['condicion'] == '1.A.' || $rs['condicion'] == '1.A') ? number_format($rs['ingreso_inventario']) : "";
                         $c2 = ($rs['condicion'] == '1B' || $rs['condicion'] == '1.B.' || $rs['condicion'] == '1.B') ? number_format($rs['ingreso_inventario']) : "";
                         $c3 = ($rs['condicion'] == '2A' || $rs['condicion'] == '2.A.' || $rs['condicion'] == '2.A') ? number_format($rs['ingreso_inventario']) : "";
@@ -116,7 +118,7 @@
                                             <td class="textoDerecha">'.number_format($rs['consumo'],2).'</td>
                                             <td class="textoDerecha">'.number_format($rs['devolucion'],2).'</td>
                                             <td></td>
-                                            <td class="textoDerecha">'.number_format($rs['minimo'],2).'</td>
+                                            <td class="textoDerecha '.$alerta_minimo.'">'.number_format($rs['minimo'],2).'</td>
                                             <td class="textoDerecha '.$estado.'"><div>'.number_format($saldo,2).'</div></td>
                                             <td class="textoCentro">'.$c1.'</td>
                                             <td class="textoCentro">'.$c2.'</td>

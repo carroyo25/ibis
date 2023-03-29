@@ -166,6 +166,11 @@
                                 $estadofila = "anulado";
                                 $estado_item = "anulado";
                                 $estado_pedido = "anulado";
+                            }else if( $rs['estadoItem'] == 49 ) {
+                                $porcentaje = "10%";
+                                $estadofila = "stock";
+                                $estado_item = "item_stock";
+                                $estado_pedido = "stock";
                             }else if( $rs['estadoItem'] == 52 ) {
                                 $porcentaje = "20%";
                                 $estadofila = "stock";

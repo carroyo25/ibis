@@ -7,6 +7,7 @@
     <link rel="shortcut icon" type="image/png" href="<?php echo constant('URL')?>public/img/logo.png" />
     <link rel="stylesheet" href="<?php echo constant('URL')?>public/css/all.css">
     <link rel="stylesheet" href="<?php echo constant('URL')?>public/css/ibis.css?<?php echo constant('VERSION')?>">
+    <link rel="stylesheet" href="<?php echo constant('URL');?>public/css/exceltable.css">
     <title>Sistema Ibis -- Control de Procesos</title>
 </head>
 <body>

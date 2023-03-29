@@ -1,4 +1,9 @@
 $(function(){
+    $('#tablaPrincipal').excelTableFilter({
+        columnSelector: '.filter',
+        captions: { a_to_z: 'A - Z', z_to_a: 'Z - A', search: 'Buscar', select_all: 'Seleccionar Todo' }
+    });
+    
     $("#tablaPrincipal tbody").on("click","tr", function (e) {
         e.preventDefault();
 

@@ -326,6 +326,7 @@
     <div class="cabezaModulo">
         <h1>Consultar Ordenes</h1>
         <div>
+            <a href="#" id="btnExporta"><i class="fas fa-file-excel"></i><p>Exportar</p></a>
             <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
         </div>
     </div>
@@ -372,18 +373,20 @@
         <table id="tablaPrincipal">
             <thead class="stickytop">
                     <tr>
-                    <th rowspan="2">Num.</th>  
+                    <th rowspan="2" class="filter">Num.</th>  
                     <th rowspan="2">Emision</th>
-                    <th rowspan="2">Descripción</th>
-                    <th rowspan="2">Centro Costos</th> 
-                    <th rowspan="2">Area</th>
-                    <th rowspan="2" width="15%">Proveedor</th>
+                    <th rowspan="2" width="25%" class="filter">Descripción</th>
+                    <th rowspan="2" class="filter">Centro Costos</th> 
+                    <th rowspan="2" class="filter">Area</th>
+                    <th rowspan="2" width="15%" class="filter">Proveedor</th>
+                    <th rowspan="2" >Precio Soles</th>
+                    <th rowspan="2">Precio Dólares</th>
                     <th rowspan="2">Atencion</th>
                     <th colspan="3" width="16%">Firmas</th>
                     <tr>
                         <th>Logística</th>
-                        <th>Finanzas</th>
                         <th>Operaciones</th>
+                        <th>Finanzas</th>
                     </tr>
                     
                 </tr>
@@ -396,5 +399,6 @@
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
     <script src="<?php echo constant('URL');?>public/js/funciones.js?<?php echo constant('VERSION')?>"></script>
     <script src="<?php echo constant('URL');?>public/js/ordenconsult.js?<?php echo constant('VERSION')?>"></script>
+    <script src="<?php echo constant('URL');?>public/js/exceltable.js?<?php echo constant('VERSION')?>"></script>
 </body>
 </html>

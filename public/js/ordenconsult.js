@@ -1,5 +1,11 @@
 $(function(){
+
     $("#espera").fadeOut();
+
+    $('#tablaPrincipal').excelTableFilter({
+        columnSelector: '.filter',
+        captions: { a_to_z: 'A - Z', z_to_a: 'Z - A', search: 'Buscar', select_all: 'Seleccionar Todo' }
+    });
 
     $(".dataProceso_2, #tablaDetalles").css("pointer-events","none");
 
@@ -232,9 +238,42 @@ $(function(){
 
         return false;
     });
+
+    $("#btnExporta").click(function(e){
+        e.preventDefault();
+
+        var array = [];
+        /* Obtenemos todos los tr del Body*/
+        var rowsBody= $("#tablaPrincipal").find('tbody > tr');
+        /* Obtenemos todos los th del Thead */
+        var rowsHead= $("#tablaPrincipal").find('thead > tr > th');
+        
+        /* Iteramos sobre as filas del tbody*/
+        for (var i = 0; i < rowsBody.length; i++) {
+            var obj={};/* auxiliar*/
+            for (var j = 0;j < rowsHead.length;j++) /*  Iteramos sobre los th de THead*/
+                /*Asignamos como clave el text del th del thead*/
+                /*Asignamos como Valor el text del tr del tbody*/
+                obj[rowsHead[j].dataset.titulo] =  rowsBody[i].getElementsByTagName('td')[j].innerText;
+            
+            array.push(obj);/* Añadimos al Array Principal*/
+        }
+
+        console.log(obj);
+
+        /*$.post(RUTA+"valorizado/exportar", {detalles:JSON.stringify(array)},
+            function (data, textStatus, jqXHR) {
+                //window.location.href = data.documento;
+                console.log(data);
+            },
+            "json"
+        );*/
+
+        return false;
+    });
 })
 
-detalles = () => {
+/*detalles = () => {
     DATA = [];
     let TABLA = $("#tablaDetalles tbody >tr");
 
@@ -285,4 +324,4 @@ detalles = () => {
     });
 
     return DATA;
-}
+}*/
