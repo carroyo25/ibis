@@ -242,86 +242,52 @@ $(function(){
     $("#btnExporta").click(function(e){
         e.preventDefault();
 
-        var array = [];
-        /* Obtenemos todos los tr del Body*/
-        var rowsBody= $("#tablaPrincipal").find('tbody > tr');
-        /* Obtenemos todos los th del Thead */
-        var rowsHead= $("#tablaPrincipal").find('thead > tr > th');
-        
-        /* Iteramos sobre as filas del tbody*/
-        for (var i = 0; i < rowsBody.length; i++) {
-            var obj={};/* auxiliar*/
-            for (var j = 0;j < rowsHead.length;j++) /*  Iteramos sobre los th de THead*/
-                /*Asignamos como clave el text del th del thead*/
-                /*Asignamos como Valor el text del tr del tbody*/
-                obj[rowsHead[j].dataset.titulo] =  rowsBody[i].getElementsByTagName('td')[j].innerText;
-            
-            array.push(obj);/* Añadimos al Array Principal*/
-        }
-
-        console.log(obj);
-
-        /*$.post(RUTA+"valorizado/exportar", {detalles:JSON.stringify(array)},
+        $.post(RUTA+"ordenconsult/exporta", {detalles:JSON.stringify(array)},
             function (data, textStatus, jqXHR) {
                 //window.location.href = data.documento;
                 console.log(data);
             },
             "json"
-        );*/
+        );
 
         return false;
     });
 })
 
-/*detalles = () => {
+exports = () => {
     DATA = [];
-    let TABLA = $("#tablaDetalles tbody >tr");
+    let TABLA = $("#tablaPrincipal tbody >tr");
 
     TABLA.each(function(){
-        let ITEM        = $(this).find('td').eq(1).text(),
-            CODIGO      = $(this).find('td').eq(2).text(),
-            DESCRIPCION = $(this).find('td').eq(3).text(),
-            UNIDAD      = $(this).find('td').eq(4).text(),
-            CANTIDAD    = $(this).find('td').eq(5).children().val(),
-            PRECIO      = $(this).find('td').eq(6).children().val(),
-            IGV         = 0.18,
-            TOTAL       = $(this).find('td').eq(7).text(),
-            NROPARTE    = $(this).find('td').eq(8).text(),
-            PEDIDO      = $(this).find('td').eq(9).text(),
-            CODPROD     = $(this).data('codprod'),
-            MONEDA      = $("#codigo_moneda").val(),
-            ITEMPEDIDO  = $(this).data('itped'),
-            GRABAR      = $(this).data('grabado'),
-            CANTPED     = $(this).data('cant'),
-            ITEMORDEN   = $(this).data('itord'),
-            SALDO       = $(this).data('cant')-$(this).find('td').eq(5).children().val(),
-            DETALLES    = $(this).find('td').eq(10).children().val();
+        let ITEM        = $(this).find('td').eq(0).text(),
+            EMISION     = $(this).find('td').eq(1).text(),
+            DESCRIPCION = $(this).find('td').eq(2).text(),
+            COSTO       = $(this).find('td').eq(3).text(),
+            AREA        = $(this).find('td').eq(4).text(),
+            PROVEEDOR   = $(this).find('td').eq(5).text(),
+            SOLES       = $(this).find('td').eq(6).text(),
+            DOLARES     = $(this).find('td').eq(7).text(),
+            LOGISTICA   = $(this).data('logistica'),
+            OPERACIONES = $(this).data('operaciones'),
+            FINANZAS    = $(this).data('finanzas');
+            
 
         item= {};
         
-        //if (GRABAR == 0) {
-            item['item']        = ITEM;
-            item['codigo']      = CODIGO;
-            item['descripcion'] = DESCRIPCION;
-            item['unidad']      = UNIDAD;
-            item['cantidad']    = CANTIDAD;
-            item['precio']      = PRECIO;
-            item['igv']         = IGV;
-            item['total']       = TOTAL;
-            item['nroparte']    = NROPARTE;
-            item['pedido']      = PEDIDO;
-            item['codprod']     = CODPROD;
-            item['moneda']      = MONEDA;
-            item['itped']       = ITEMPEDIDO;
-            item['grabado']     = GRABAR;
-            item['cantped']     = CANTPED;
-            item['itemorden']   = ITEMORDEN;
-            item['saldo']       = SALDO;
-            item['detalles']    = DETALLES;
-
-            DATA.push(item);
-        //}
+        item['item']         = ITEM;
+        item['emision']      = EMISION;
+        item['descripcion']  = DESCRIPCION;
+        item['costo']        = COSTO;
+        item['area']         = AREA;
+        item['proveedor']    = PROVEEDOR;
+        item['soles']        = SOLES;
+        item['dolares']      = DOLARES;
+        item['logistica']    = LOGISTICA;
+        item['operaciones']  = OPERACIONES;
+        item['finanzas']     = FINANZAS;
+        
+        DATA.push(item);
     });
 
     return DATA;
-}*/
+}
