@@ -35,5 +35,9 @@
         function listaFiltrada() {
             echo $this->model->ordenfiltrar($_POST);
         }
+
+        function exporta() {
+            echo json_encode($this->model->exportar($_POST['detalles']));
+        }
     }
 ?>

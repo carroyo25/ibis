@@ -242,10 +242,9 @@ $(function(){
     $("#btnExporta").click(function(e){
         e.preventDefault();
 
-        $.post(RUTA+"ordenconsult/exporta", {detalles:JSON.stringify(array)},
+        $.post(RUTA+"ordenconsult/exporta", {detalles:JSON.stringify(exports())},
             function (data, textStatus, jqXHR) {
-                //window.location.href = data.documento;
-                console.log(data);
+                window.location.href = data.documento;
             },
             "json"
         );
@@ -269,8 +268,7 @@ exports = () => {
             DOLARES     = $(this).find('td').eq(7).text(),
             LOGISTICA   = $(this).data('logistica'),
             OPERACIONES = $(this).data('operaciones'),
-            FINANZAS    = $(this).data('finanzas');
-            
+            FINANZAS    = $(this).data('finanzas');  
 
         item= {};
         

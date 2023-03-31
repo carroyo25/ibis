@@ -82,7 +82,7 @@
                                                         LEFT JOIN alm_existencia ON tb_pedidodet.iditem = alm_existencia.idpedido
                                                         LEFT JOIN alm_cabexist ON alm_existencia.idregistro = alm_cabexist.idreg 
                                             WHERE
-                                                tb_pedidodet.nflgActivo 
+                                                tb_pedidodet.nflgActivo
                                                 AND ISNULL( lg_ordendet.nflgactivo ) 
                                                 AND tb_pedidocab.nrodoc LIKE :pedido 
                                                 AND IFNULL( lg_ordendet.id_orden, '' ) LIKE :orden

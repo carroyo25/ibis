@@ -363,16 +363,6 @@
 
                 exit();
 
-                /*$datos = json_decode($detalles);
-                $nreg = count($datos);
-
-                for ($i=0; $i < $nreg; $i++) { 
-                    var_dump($datos[$i]->item);
-                }*/
-                
-                
-
-
             }  catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
