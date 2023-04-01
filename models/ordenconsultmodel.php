@@ -397,18 +397,30 @@
 
                 $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel,'Excel2007');
                 $objWriter->save('public/documentos/reportes/catalogo.xlsx');
-                $objPHPExcel->getActiveSheet()->mergeCells('A1:AQ1');
+                $objPHPExcel->getActiveSheet()->mergeCells('A1:K1');
                 $objPHPExcel->getActiveSheet()->setCellValue('A1','REPORTE ORDENES');
 
-                $objPHPExcel->getActiveSheet()->getStyle('A1:AQ2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                $objPHPExcel->getActiveSheet()->getStyle('A1:AQ2')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('A1:K2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('A1:K2')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+
+                $objPHPExcel->getActiveSheet()->getStyle('I')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('I')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('J')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('J')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('K')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('K')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
                 $objPHPExcel->getActiveSheet()->getRowDimension('2')->setRowHeight(60);
 
-                $objPHPExcel->getActiveSheet()->getColumnDimension("D")->setAutoSize(true);
-                $objPHPExcel->getActiveSheet()->getColumnDimension("E")->setAutoSize(true);
-                $objPHPExcel->getActiveSheet()->getColumnDimension("K")->setAutoSize(true);
-                
+                $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(70);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(70);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(70);
+
+                $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(20);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(20);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(20);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(20);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('H')->setWidth(20);
                 
 
                 $objPHPExcel->getActiveSheet()
@@ -437,17 +449,22 @@
                 $nreg = count($datos);
 
                 for ($i=0; $i < $nreg ; $i++) {
+
+                    $logistica = $datos[$i]->logistica == 1 ? "X" : "";
+                    $operaciones = $datos[$i]->logistica == 1 ? "X" : "";
+                    $finanzas = $datos[$i]->logistica == 1 ? "X" : "";
+                    
                     $objPHPExcel->getActiveSheet()->setCellValue('A'.$fila,$datos[$i]->item);
-                    /*$objPHPExcel->getActiveSheet()->setCellValue('B'.$fila,$datos[$i]->emision);
+                    $objPHPExcel->getActiveSheet()->setCellValue('B'.$fila,$datos[$i]->emision);
                     $objPHPExcel->getActiveSheet()->setCellValue('C'.$fila,$datos[$i]->descripcion);
                     $objPHPExcel->getActiveSheet()->setCellValue('D'.$fila,$datos[$i]->costo);
                     $objPHPExcel->getActiveSheet()->setCellValue('E'.$fila,$datos[$i]->area);
                     $objPHPExcel->getActiveSheet()->setCellValue('F'.$fila,$datos[$i]->proveedor);
                     $objPHPExcel->getActiveSheet()->setCellValue('G'.$fila,$datos[$i]->soles);
                     $objPHPExcel->getActiveSheet()->setCellValue('H'.$fila,$datos[$i]->dolares);
-                    $objPHPExcel->getActiveSheet()->setCellValue('I'.$fila,$datos[$i]->logistica);
-                    $objPHPExcel->getActiveSheet()->setCellValue('J'.$fila,$datos[$i]->operaciones);
-                    $objPHPExcel->getActiveSheet()->setCellValue('K'.$fila,$datos[$i]->finanzas);*/
+                    $objPHPExcel->getActiveSheet()->setCellValue('I'.$fila,$logistica);
+                    $objPHPExcel->getActiveSheet()->setCellValue('J'.$fila,$operaciones);
+                    $objPHPExcel->getActiveSheet()->setCellValue('K'.$fila,$finanzas);
 
                     $fila++;
                 }
