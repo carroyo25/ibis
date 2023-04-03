@@ -14,10 +14,10 @@
         define('URL','http://200.115.23.164/ibis/');
     
     
-    //define('HOST','localhost');
-    //define('HOST1','localhost');
-    define('HOST','192.168.1.30');
-    define('HOST1','192.168.1.30');
+    define('HOST','localhost');
+    define('HOST1','localhost');
+    //define('HOST','192.168.1.30');
+    //define('HOST1','192.168.1.30');
     
     
     define('DB','rrhh');

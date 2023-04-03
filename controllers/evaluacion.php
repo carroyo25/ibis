@@ -6,7 +6,8 @@
         }
 
         function render(){
-            $this->view->listaOrdenes = $this->model->listarOrdenes();
+            $this->view->listaOrdenes = $this->model->listarOrdenesAprueba();
+            $this->view->listaCostosSelect = $this->model->costosPorUsuarioSelect($_SESSION['iduser']);
             $this->view->render('evaluacion/index');
         }
         
@@ -19,7 +20,7 @@
         }
 
         function actualizaTabla(){
-            echo $this->model->listarOrdenes();
+            echo $this->model->listarOrdenesAprueba();
         }
     }
 ?>

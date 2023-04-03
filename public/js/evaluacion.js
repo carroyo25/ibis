@@ -1,4 +1,6 @@
 $(function(){
+    let evaluar = false;
+
     $("#esperar").fadeOut();
 
     $("#tablaPrincipal tbody").on("click","tr", function (e) {
@@ -15,6 +17,8 @@ $(function(){
             $("#costos").val(data.cabecera[0].proyecto);
             $("#detalle").val(data.cabecera[0].concepto);
             $("#entidad").val(data.cabecera[0].entidad);
+
+            evaluar = data.evaluada;
 
             $("#tablaDetalles tbody")
                 .empty()
@@ -35,6 +39,7 @@ $(function(){
         e.preventDefault();
         
         try {
+            if (evaluar) throw "Ya registro la evaluación";
             if (checkCantTablesMinMax($("#tablaDetalles tbody > tr"),2)) throw "El puntaje debe estar entre 1 y 5";
 
             $.post(RUTA+"evaluacion/evaluar",{items:JSON.stringify(items())},
@@ -55,7 +60,7 @@ $(function(){
     $("#cerrarVentana").click(function (e) { 
         e.preventDefault();
 
-        $.post(RUTA+"evaluacion/actualizaTabla",
+        /*$.post(RUTA+"evaluacion/actualizaTabla",
             function (data, textStatus, jqXHR) {
                 $("#tablaPrincipal tbody")
                     .empty()
@@ -63,7 +68,7 @@ $(function(){
                 $("#tablaDetalles tbody").empty();
             },
             "text"
-        );
+        );*/
         
         $("#proceso").fadeOut();
         

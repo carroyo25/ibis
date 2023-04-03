@@ -6,7 +6,7 @@
             parent::__construct();
         }
 
-        public function listarOrdenes(){
+        public function listarOrdenesAprueba(){
             try {
                  $salida = "";
                  $sql = $this->db->connect()->prepare("SELECT
@@ -22,6 +22,8 @@
                                                         lg_ordencab.nplazo,
                                                         lg_ordencab.cdocPDF,
                                                         lg_ordencab.ntipmov,
+                                                        tb_proyectos.ccodproy,
+                                                        lg_ordencab.cObservacion,
                                                         UPPER( tb_pedidocab.concepto ) AS concepto,
                                                         UPPER( tb_pedidocab.detalle ) AS detalle,
                                                         UPPER(
@@ -44,9 +46,10 @@
                                                     WHERE
                                                         tb_costusu.id_cuser = :user 
                                                         AND tb_costusu.nflgactivo = 1 
-                                                        AND lg_ordencab.nEstadoDoc = 67 
-	                                                    AND lg_ordencab.userEval <> :userEval");
-                 $sql->execute(["user"=>$_SESSION['iduser'],"userEval"=>$_SESSION['iduser']]);
+                                                        AND lg_ordencab.nEstadoDoc != 105
+                                                    ORDER BY lg_ordencab.ffechadoc DESC");
+
+                 $sql->execute(["user"=>$_SESSION['iduser']]);
                  $rowCount = $sql->rowCount();
  
                  if ($rowCount > 0){
@@ -55,8 +58,8 @@
                          $salida .='<tr class="pointer" data-indice="'.$rs['id_regmov'].'" data-tipo="'.$rs['ntipmov'].'" data-rol="'.$rs['nrol'].'">
                                      <td class="textoCentro">'.str_pad($rs['cnumero'],4,0,STR_PAD_LEFT).'</td>
                                      <td class="textoCentro">'.date("d/m/Y", strtotime($rs['ffechadoc'])).'</td>
-                                     <td class="pl20px">'.$rs['detalle'].'</td>
-                                     <td class="pl20px">'.utf8_decode($rs['costos']).'</td>
+                                     <td class="pl20px">'.$rs['cObservacion'].'</td>
+                                     <td class="pl20px">'.utf8_decode($rs['ccodproy']).'</td>
                                      <td class="pl20px">'.$rs['area'].'</td>
                                      <td class="pl20px">'.$rs['proveedor'].'</td>
                                     </tr>';
@@ -72,6 +75,8 @@
 
         public function llamarOrdenID($tipo,$id){
             try {
+                $ordenEvaluada = $this->buscarEvaluados($id);
+
                 $sql=$this->db->connect()->prepare("SELECT
                                                     lg_ordencab.id_regmov,
                                                     lg_ordencab.cnumero,
@@ -99,11 +104,14 @@
                     while($row=$sql->fetch(PDO::FETCH_ASSOC)){
                         $docData[] = $row;
                     }
-                }  
+                }
+
+                $rol = $_SESSION['rol'] == '2' ? 68 : $_SESSION['rol'];
 
                 return array("cabecera"=>$docData,
                             "nrol"=>$docData[0]["nrol"],
-                            "criterios"=>$this->evaluar($docData[0]["nrol"],$docData[0]["ntipmov"]));
+                            "criterios"=>$this->evaluar($rol,$docData[0]["ntipmov"]),
+                            "evaluada"=>$ordenEvaluada);
 
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
@@ -133,8 +141,8 @@
                                     <td class="pl20px criterio">'.$rs['descripcion'].'</td>
                                     <td class="pl20px">'.$rs['ayuda'].'</td>
                                     <td>
-                                        <input type="text" value="'.$rs["puntaje"].'" maxlength="1" pattern="^[1-5]+" class="textoCentro"
-                                            onClick="this.select();" class="puntaje">
+                                        <input type="number" value="'.$rs["puntaje"].'" maxlength="1" pattern="^[1-5]+" class="textoCentro"
+                                            onClick="this.select();" class="puntaje" min="1" max="5">
                                     </td>
                                   </tr>';
                     }
@@ -187,7 +195,6 @@
                 }
 
                 if ($item > 0){
-                    $this->actualizarOrden($datos[0]->orden);
                     $mensaje = "Grabado correctamente";
                     $respuesta = false;
                     $clase = "mensaje_correcto";
@@ -199,6 +206,7 @@
 
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
+                return false;
             }
         }
 
@@ -206,6 +214,29 @@
             try {
                 $sql=$this->db->connect()->prepare("UPDATE lg_ordencab SET userEval = :usr WHERE id_regmov = :id");
                 $sql->execute(["usr"=>$_SESSION['iduser'],"id"=>$id]);            
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        private function buscarEvaluados($orden){
+            try {
+                $result = false;
+
+                $sql = $this->db->connect()->prepare("SELECT idreg 
+                                                        FROM tb_califica 
+                                                        WHERE idorden =:orden
+                                                        AND iduser=:user");
+                $sql->execute(["user"=>$_SESSION['iduser'],"orden"=>$orden]);
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0) {
+                    $result = true;
+                }
+
+                return $result;
+
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
                 return false;
