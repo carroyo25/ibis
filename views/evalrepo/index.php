@@ -57,29 +57,41 @@
         <table id="cargoPlanDescrip">
             <thead class="stickytop">
                 <tr>
-                    <th rowspan="2" class="filter">Num.</th>  
+                    <th rowspan="2" class="filter">Orden</th>  
                     <th rowspan="2">Emision</th>
-                    <th rowspan="2" width="25%" class="filter">Descripción</th>
+                    <th rowspan="2" width="15%" class="filter">Descripción</th>
                     <th rowspan="2" class="filter">Centro Costos</th> 
                     <th rowspan="2" width="15%" class="filter">Proveedor</th>
-                    <th colspan="3" width="16%">Logística</th>
-                    <th colspan="3" width="16%">Almacén</th>
-                    <th colspan="3" width="16%">Compras</th> 
+                    <th colspan="5">Almacén</th>
+                    <th colspan="11">Compras</th>
+                    <th colspan="2">QAQC</th>
+                    <th rowspan="2" class="filter">Total</th>
                 </tr>
                 <tr>
-                    <th>1</th>
-                    <th>2</th>
-                    <th>3</th>
-                    <th>1</th>
-                    <th>2</th>
-                    <th>3</th>
-                    <th>1</th>
-                    <th>2</th>
-                    <th>3</th>
+                    <th>Fecha</br>de entrega</th>
+                    <th>Condiciones</br>de Llegada</th>
+                    <th>Embalaje </br>de Proveedor</th>
+                    <th>Cantidad</br>Entregada</th>
+                    <th>Documentación</th>
+
+                    <th>Precio </br>Competitivo</th>
+                    <th>Descuento</th>
+                    <th>Aceptación de</br> Reclamos</th>
+                    <th>Forma de</br> Pago</th>
+                    <th>Comunicación</th>
+                    <th>Capacitación</th>
+                    <th>ISO 9001</th>
+                    <th>ISO 14001</th>
+                    <th>ISO 45001</th>
+                    <th>Estabilidad</br>Financiera</th>
+                    <th>Experiencia y</br>Reputación</th>
+                    
+                    <th>Cumplmiento</br>Técnico</th>
+                    <th>Documentación</th>
                 </tr>
             </thead>
             <tbody>
-                <?php //echo $this->listaOrdenes;?>
+                <?php echo $this->listarOrdenes;?>
             </tbody>
         </table>
     </div>

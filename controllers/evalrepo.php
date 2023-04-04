@@ -7,6 +7,7 @@
 
         function render(){
             $this->view->listaCostos = "";
+            $this->view->listarOrdenes = $this->model->listarEvaluaciones();
             $this->view->render('evalrepo/index');
         }
         

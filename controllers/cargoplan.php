@@ -6,21 +6,20 @@
         }
 
         function render(){
-            $this->view->listaItems = $this->model->listarCargoPlan();
-            $this->view->listaAlmacen = $this->model->selectAlmacen();
-            $this->view->listaCostos = $this->model->selectCostos();
+            $this->view->listaCostos = $this->model->costosPorUsuarioSelect($_SESSION['iduser']);
             $this->view->render('cargoplan/index');
         }
-        
 
-        function consultaItem(){
-            echo json_encode($this->model->consultarCargoPlan($_POST['codigo'],
-                                                            $_POST['pedido'],
-                                                            $_POST['orden'],
-                                                            $_POST['ingreso'],
-                                                            $_POST['despacho'],
-                                                            $_POST['item'],
-                                                            $_POST['status']));
+        function filtroCargoPlan(){
+            echo $this->model->listarCargoPlan($_POST);
+        }
+
+        function export() {
+            echo json_encode($this->model->exportExcel($_POST['registros']));
+        }
+
+        function resumen() {
+            echo json_encode($this->model->consultaResumen($_POST['orden'],$_POST['refpedido']));
         }
     }
 ?>
