@@ -31,7 +31,7 @@
                                                     INNER JOIN ibis.tb_proyectos ON ibis.tb_pedidocab.idcostos = ibis.tb_proyectos.nidreg
                                                     INNER JOIN ibis.tb_parametros AS atenciones ON ibis.tb_pedidocab.nivelAten = atenciones.nidreg
                                                     INNER JOIN ibis.tb_parametros AS estados ON ibis.tb_pedidocab.estadodoc = estados.nidreg
-                                                ORDER BY  ibis.tb_pedidocab.nrodoc DESC");
+                                                ORDER BY  ibis.tb_pedidocab.emision DESC");
                 $sql->execute();
                 $rowCount = $sql->rowCount();
 
