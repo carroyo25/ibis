@@ -282,7 +282,7 @@ $(function(){
         $.post(RUTA+"aprobacion/anulapedido", {id:$("#codigo_pedido").val()},
             function (data, textStatus, jqXHR) {
                 $("#preguntaAnula").fadeOut();
-                $("#ventanaEspera").fadeIn();
+                $("#ventanaEspera").fadeOut();
 
                 mostrarMensaje(data,"mensaje_correcto");
             },
@@ -292,14 +292,7 @@ $(function(){
         return false;
     });
 
-    $("#btnCancelarAnula").click(function (e) { 
-        e.preventDefault();
-
-        $("#preguntaAnula").fadeOut();
-        
-        return false;
-    });
-
+   
     //Cancelar pedido
 
     $("#returnRequest").click(function (e) { 

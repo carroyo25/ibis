@@ -29,6 +29,9 @@
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
                         <div>
+                            <button type="button" id="save" title="Grabar Cambios" class="boton3">
+                                <i class="fas fa-save"></i> Grabar
+                            </button>
                             <button type="button" id="preview" title="Ver Documento" class="boton3">
                                 <i class="fab fa-wpexplorer"></i> Vista Documento
                             </button>
@@ -105,13 +108,18 @@
                     <div class="barraOpciones">
                         <span>Detalles</span>
                         <div>
-                            <button type="button" id="verDetalles" title="Añadir Item" class="cerrarLista boton3">
-                                <i class="far fa-plus-square"></i> Anular
+                            <button type="button" id="btnAnular" title="Añadir Item" class="cerrarLista boton4">
+                                <i class="fas fa-ban"></i> Anular
                             </button>
-                            <button type="button" id="anular" title="Anular Pedido" class="cerrarLista boton3">
-                                <i class="far fa-plus-square"></i> Cancelar
+                            <button type="button" id="btnCancelar" title="Cancelar Aprobado" class="cerrarLista boton3">
+                                <i class="far fa-bell-slash"></i> Cancelar Aprobado
                             </button>
-                           
+                            <button type="button" id="btnRetornar" title="Retornar Proceso" class="cerrarLista boton3">
+                                <i class="fas fa-undo-alt"></i> Retornar Proceso
+                            </button>
+                            <button type="button" id="btnAgregarItem" title="Añadir Item" class="cerrarLista boton3">
+                                <i class="far fa-calendar-plus"></i> Añadir Item
+                            </button>
                         </div>
                     </div>
                     <div class="tablaInterna mininoTablaInterna">
@@ -127,6 +135,9 @@
                                     <th width="30%">Especificaciones</th>
                                     <th>Nro. Parte</th>
                                     <th>Bien/Activo</th>
+                                    <th>...</th>
+                                    <th>...</th>
+                                    <th>...</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -147,6 +158,15 @@
                 <a href="#" id="closePreview" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
             </div>
             <iframe src=""></iframe>
+        </div>
+    </div>
+    <div class="modal" id="preguntaAnula">
+        <div class="ventanaPregunta">
+            <h3>¿Anular el pedido?</h3>
+            <div>
+                <button type="button" id="btnAceptarAnula">Aceptar</button>
+                <button type="button" id="btnCancelarAnula">Cancelar</button>
+            </div>
         </div>
     </div>
     <div class="cabezaModulo">

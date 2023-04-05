@@ -2,7 +2,7 @@ $(function(){
     $("#tablaPrincipal tbody").on("click","tr", function (e) {
         e.preventDefault();
 
-        $.post(RUTA+"pedidoseg/seguimientoID", {id:$(this).data("indice")},
+        $.post(RUTA+"pedidoedit/consultaRqAdmin", {id:$(this).data("indice")},
             function (data, textStatus, jqXHR) {
                 
                 let numero = $.strPad(data.cabecera[0].nrodoc,6);
@@ -56,7 +56,7 @@ $(function(){
 
         $("#proceso").fadeOut();
 
-        /*$.post(RUTA+"pedidos/actualizaListado",
+        /*$.post(RUTA+"pedidoedit/actualizaListado",
             function (data, textStatus, jqXHR) {
                 $(".itemsTabla table tbody")
                     .empty()
@@ -71,6 +71,40 @@ $(function(){
             },
             "text"
         );*/
+        return false;
+    });
+
+    $("#btnAnular").click(function (e) { 
+        e.preventDefault();
+
+        $("#preguntaAnula").fadeIn();
+
+        return false;
+    });
+
+    $("#btnCancelarAnula").click(function (e) { 
+        e.preventDefault();
+
+        $("#preguntaAnula").fadeOut();
+        
+        return false;
+    });
+
+    $("#btnAceptarAnula").click(function (e) { 
+        e.preventDefault();
+
+        $("#ventanaEspera").fadeIn();
+
+        $.post(RUTA+"pedidoedit/anulapedido", {id:$("#codigo_pedido").val()},
+            function (data, textStatus, jqXHR) {
+                $("#preguntaAnula").fadeOut();
+                $("#ventanaEspera").fadeOut();
+
+                mostrarMensaje(data,"mensaje_correcto");
+            },
+            "text"
+        );
+        
         return false;
     });
 })

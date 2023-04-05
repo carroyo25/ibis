@@ -17,8 +17,8 @@
             $this->view->render('pedidoedit/index');
         }
 
-        function consultaId(){
-            echo json_encode($this->model->consultarReqId($_POST['id'],49,54,49,null));
+        function consultaRqAdmin(){
+            echo json_encode($this->model->consultarReqIdAdmin($_POST['id'],49,54,49,null));
         }
 
         /*function numeroDocumento(){
@@ -80,4 +80,8 @@
         function filtroPedidos(){
             echo $this->model->pedidosFiltrados($_POST);
         }*/
+
+        function anulapedido() {
+            echo $this->model->anularPedidoAdmin($_POST['id']);
+        }
     }
