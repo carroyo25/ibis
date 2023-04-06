@@ -1837,6 +1837,16 @@ $anulado:#c2c2c2;
     text-align: center;
     padding: 20px;
     line-height: 3rem;
+
+    select{
+        border: 1px solid #ccc;
+        height: 2.5rem;
+    }
+
+    input[type="number"] {
+        border: 1px solid #ccc;
+        height: 2.5rem;
+    }
     
     button {
         border:none;

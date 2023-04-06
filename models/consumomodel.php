@@ -25,7 +25,7 @@
             return array("datos" => $datos,
                         "registrado"=>$registrado,
                         "anteriores"=>$this->kardexAnterior($doc,$cc),
-                        "ruta"=>'http://192.168.1.30/postulante/documentos/pdf/'.$ap2);
+                        "ruta"=>'https://rrhhperu.sepcon.net/postulante/documentos/pdf/'.$ap2);
         }
 
         public function buscarProductos($codigo){
@@ -303,6 +303,158 @@
                 echo $th->getMessage();
                 return false;
             } 
-        } 
+        }
+        
+        public function generarReporte($cc) {
+            require_once('public/PHPExcel/PHPExcel.php');
+            try {
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        ibis.alm_consumo.nrodoc,
+                                                        ibis.alm_consumo.cserie,
+                                                        ibis.alm_consumo.cantsalida,
+                                                        ibis.alm_consumo.cantdevolucion,
+                                                        DATE_FORMAT(ibis.alm_consumo.fechasalida,'%d/%m/%Y') AS fechasalida,
+                                                        DATE_FORMAT(ibis.alm_consumo.fechadevolucion,'%d/%m/%Y') AS fechadevolucion,
+                                                        ibis.alm_consumo.nhoja,
+                                                        ibis.alm_consumo.cisometrico,
+                                                        ibis.alm_consumo.cobserentrega,
+                                                        ibis.alm_consumo.cobserdevuelto,
+                                                        ibis.alm_consumo.cestado,
+                                                        UPPER( ibis.cm_producto.ccodprod ) AS codigo,
+                                                        UPPER( ibis.cm_producto.cdesprod ) AS descripcion,
+                                                        ibis.tb_grupo.cdescrip AS grupo,
+                                                        ibis.tb_clase.cdescrip AS clase,
+                                                        ibis.tb_familia.cdescrip AS familia,
+                                                        CONCAT_WS( ' ', rrhh.tabla_aquarius.apellidos, rrhh.tabla_aquarius.nombres ) AS nombres,
+                                                        UPPER( rrhh.tabla_aquarius.dcargo ) AS cargo 
+                                                    FROM
+                                                        ibis.alm_consumo
+                                                        INNER JOIN ibis.cm_producto ON alm_consumo.idprod = cm_producto.id_cprod
+                                                        INNER JOIN ibis.tb_grupo ON cm_producto.ngrupo = tb_grupo.ncodgrupo
+                                                        INNER JOIN ibis.tb_clase ON cm_producto.nclase = tb_clase.ncodclase
+                                                        INNER JOIN ibis.tb_familia ON cm_producto.nfam = tb_familia.ncodfamilia
+                                                        INNER JOIN rrhh.tabla_aquarius ON ibis.alm_consumo.nrodoc = rrhh.tabla_aquarius.dni 
+                                                    WHERE
+                                                        alm_consumo.flgactivo 
+                                                        AND alm_consumo.ncostos =:cc
+                                                    ORDER BY ibis.alm_consumo.fechasalida ASC");
+                $sql->execute(["cc"=>$cc]);
+                $rowCount = $sql->rowCount();
+
+                $objPHPExcel = new PHPExcel();
+                $objPHPExcel->getProperties()
+                    ->setCreator("Sical")
+                    ->setLastModifiedBy("Sical")
+                    ->setTitle("Cargo Plan")
+                    ->setSubject("Template excel")
+                    ->setDescription("Reporte Ordenes")
+                    ->setKeywords("Template excel");
+
+                $cuerpo = array(
+                    'font'  => array(
+                    'bold'  => false,
+                    'size'  => 7,
+                ));
+
+                $objWorkSheet = $objPHPExcel->createSheet(1);
+
+                $objPHPExcel->setActiveSheetIndex(0);
+                $objPHPExcel->getActiveSheet()->setTitle("Reporte Consumo ");
+
+                $objPHPExcel->getActiveSheet()->mergeCells('A1:Q1');
+                $objPHPExcel->getActiveSheet()->setCellValue('A1','REPORTE CONSUMO');
+
+                $objPHPExcel->getActiveSheet()->getStyle('A1:Q2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('A1:Q2')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+
+                /*$objPHPExcel->getActiveSheet()->getStyle('I')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('I')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('J')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('J')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('K')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('K')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);*/
+
+                $objPHPExcel->getActiveSheet()->getRowDimension('2')->setRowHeight(60);
+
+                $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(80);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(80);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(20);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(80);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(50);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('L')->setWidth(50);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('M')->setWidth(50);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('N')->setWidth(50);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('O')->setWidth(50);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('P')->setWidth(50);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('Q')->setWidth(50);
+                
+
+                $objPHPExcel->getActiveSheet()
+                            ->getStyle('A2:Q2')
+                            ->getFill()
+                            ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
+                            ->getStartColor()
+                            ->setRGB('BFCDDB');
+
+                $objPHPExcel->getActiveSheet()->getStyle('A1:Q2')->getAlignment()->setWrapText(true);
+
+                $objPHPExcel->getActiveSheet()->setCellValue('A2','Número'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('B2','Documento'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('C2','Nombres'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('D2','Cargo'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('E2','Código'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('F2','Descripcion'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('G2','Fecha Salida'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('H2','Cantidad Salida'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('I2','Fecha Devolucion'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('J2','Cantidad Devolucion'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('K2','Hoja'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('L2','Isometrico'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('M2','Observaciones'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('N2','Serie'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('O2','Grupo'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('P2','Clase'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('Q2','Familia'); // esto cambia
+
+                $fila = 3;
+                $item = 1;
+
+                if ($rowCount > 0) {
+                    while($rs = $sql->fetch()) {
+                        $objPHPExcel->getActiveSheet()->setCellValue('A'.$fila,$item++);
+                        $objPHPExcel->getActiveSheet()->setCellValue('B'.$fila,$rs['nrodoc']);
+                        $objPHPExcel->getActiveSheet()->setCellValue('C'.$fila,$rs['nombres']);
+                        $objPHPExcel->getActiveSheet()->setCellValue('D'.$fila,$rs['cargo']);
+                        $objPHPExcel->getActiveSheet()->setCellValue('E'.$fila,$rs['codigo']);
+                        $objPHPExcel->getActiveSheet()->setCellValue('F'.$fila,$rs['descripcion']);
+                        $objPHPExcel->getActiveSheet()->setCellValue('G'.$fila,$rs['fechasalida']);
+                        $objPHPExcel->getActiveSheet()->setCellValue('H'.$fila,$rs['cantsalida']);
+                        $objPHPExcel->getActiveSheet()->setCellValue('I'.$fila,$rs['fechadevolucion']);
+                        $objPHPExcel->getActiveSheet()->setCellValue('J'.$fila,$rs['cantdevolucion']);
+                        $objPHPExcel->getActiveSheet()->setCellValue('K'.$fila,$rs['nhoja']);
+                        $objPHPExcel->getActiveSheet()->setCellValue('L'.$fila,$rs['cisometrico']);
+                        $objPHPExcel->getActiveSheet()->setCellValue('M'.$fila,$rs['cobserentrega']);
+                        $objPHPExcel->getActiveSheet()->setCellValue('N'.$fila,$rs['cserie']);
+                        $objPHPExcel->getActiveSheet()->setCellValue('O'.$fila,$rs['grupo']);
+                        $objPHPExcel->getActiveSheet()->setCellValue('P'.$fila,$rs['clase']);
+                        $objPHPExcel->getActiveSheet()->setCellValue('Q'.$fila,$rs['familia']);
+
+                        $fila++;
+                    }
+                }
+
+
+                $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel,'Excel2007');
+                $objWriter->save('public/documentos/reportes/consumos.xlsx');
+
+                return array("documento"=>'public/documentos/reportes/consumos.xlsx');
+
+                exit();
+
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            } 
+        }
     }
 ?>

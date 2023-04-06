@@ -52,9 +52,24 @@
             </div>
         </div>
     </div>
+    <div class="modal" id="exporta">
+        <div class="ventanaPregunta">
+            <h3>Seleccione el Centro de Costos</h3>
+            <div>
+                <select name="costosExport" id="costosExport">
+                    <?php echo $this->listaCostosSelect ?>
+                </select>
+            </div>
+            <div>
+                <button type="button" id="btnDescarga">Descargar</button>
+                <button type="button" id="btnCancelarExport">Cancelar</button>
+            </div>
+        </div>
+    </div>
     <div class="cabezaModulo">
         <h1>Consumos</h1>
         <div>
+            <a href="#" id="excelFile"><i class="fas fa-file-excel"></i><p>Reporte</p></a>
             <a href="#" id="btnBuscar"><i class="fas fa-search-location"></i><p>Buscar</p></a>
             <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
         </div>

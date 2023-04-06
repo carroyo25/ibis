@@ -33,6 +33,10 @@
         function borraFila() {
             echo json_encode($this->model->eliminar($_POST));
         }
+
+        function reporte() {
+            echo json_encode($this->model->generarReporte($_POST['cc']));
+        }
         
     }
 ?>

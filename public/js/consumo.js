@@ -3,10 +3,6 @@ $(function(){
         registro = 0,
         sw = 0;
 
-    /*let url = 'https://rrhhperu.sepcon.net/postulante/documentos/pdf/61afc04f3f4c3.pdf';*/
-    //PDFJS.disableWorker = true;
-
-    
 
     $("#espera").fadeOut();
 
@@ -27,10 +23,10 @@ $(function(){
                             .empty()
                             .append(data.anteriores);
 
-                        pdfjsLib.getDocument(data.ruta).promise.then(doc => {
+                        /*pdfjsLib.getDocument(data.ruta).promise.then(doc => {
                             pdf = doc;
                             render();
-                        });
+                        });*/
     
                         $("#codeRead").focus();
                     }else{
@@ -234,6 +230,46 @@ $(function(){
         e.preventDefault();
 
         $("#borrarFila").fadeOut();
+        
+        return false;
+    });
+
+    $("#excelFile").click(function (e) { 
+        e.preventDefault();
+
+        $("#exporta").fadeIn();
+
+        return false;
+    });
+
+
+    $("#btnCancelarExport").click(function (e) { 
+        e.preventDefault();
+
+        $("#exporta").fadeOut();
+
+        return false;
+    });
+
+    $("#btnDescarga").click(function (e) { 
+        e.preventDefault();
+
+        try {
+            if ( $("#costosExport").val() == -1) throw "Elija un centro de costos";
+
+            $("#espera").fadeIn();
+
+            $.post(RUTA+"consumo/reporte",{cc:$("#costosExport").val()},
+                function (data, textStatus, jqXHR) {
+                    $("#espera,#exporta").fadeOut();
+                    window.location.href = data.documento;
+                },
+                "json"
+            );
+        } catch (error) {
+            mostrarMensaje("Elija el centro de costos/Sede/Proyecto","mensaje_error");
+        }
+        
         
         return false;
     });

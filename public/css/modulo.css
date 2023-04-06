@@ -2168,6 +2168,14 @@
   padding: 20px;
   line-height: 3rem;
 }
+.ventanaPregunta select, .ventanaDialogo select, .ventanaComentarios select {
+  border: 1px solid #ccc;
+  height: 2.5rem;
+}
+.ventanaPregunta input[type=number], .ventanaDialogo input[type=number], .ventanaComentarios input[type=number] {
+  border: 1px solid #ccc;
+  height: 2.5rem;
+}
 .ventanaPregunta button, .ventanaDialogo button, .ventanaComentarios button {
   border: none;
   width: 45%;
