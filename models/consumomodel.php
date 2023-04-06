@@ -311,11 +311,11 @@
                 $sql = $this->db->connect()->prepare("SELECT
                                                         ibis.alm_consumo.nrodoc,
                                                         ibis.alm_consumo.cserie,
-                                                        ibis.alm_consumo.cantsalida,
-                                                        ibis.alm_consumo.cantdevolucion,
+                                                        FORMAT(ibis.alm_consumo.cantsalida,2) AS cantsalida,
+                                                        FORMAT(ibis.alm_consumo.cantdevolucion,2) AS cantdevolucion,
                                                         DATE_FORMAT(ibis.alm_consumo.fechasalida,'%d/%m/%Y') AS fechasalida,
                                                         DATE_FORMAT(ibis.alm_consumo.fechadevolucion,'%d/%m/%Y') AS fechadevolucion,
-                                                        ibis.alm_consumo.nhoja,
+                                                        FORMAT(ibis.alm_consumo.nhoja,2) AS nhoja,
                                                         ibis.alm_consumo.cisometrico,
                                                         ibis.alm_consumo.cobserentrega,
                                                         ibis.alm_consumo.cobserdevuelto,
@@ -380,7 +380,7 @@
                 $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(80);
                 $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(20);
                 $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(80);
-                $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(50);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(20);
                 $objPHPExcel->getActiveSheet()->getColumnDimension('L')->setWidth(50);
                 $objPHPExcel->getActiveSheet()->getColumnDimension('M')->setWidth(50);
                 $objPHPExcel->getActiveSheet()->getColumnDimension('N')->setWidth(50);
@@ -421,12 +421,15 @@
 
                 if ($rowCount > 0) {
                     while($rs = $sql->fetch()) {
-                        $objPHPExcel->getActiveSheet()->setCellValue('A'.$fila,$item++);
-                        $objPHPExcel->getActiveSheet()->setCellValue('B'.$fila,$rs['nrodoc']);
+                        //$objPHPExcel->getActiveSheet()->setCellValue('A'.$fila,$item);
+                        $objPHPExcel->getActiveSheet()->setCellValueExplicit('A'.$fila, $item,PHPExcel_Cell_DataType::TYPE_STRING);
+                        //$objPHPExcel->getActiveSheet()->setCellValue('B'.$fila,$rs['nrodoc']);
+                        $objPHPExcel->getActiveSheet()->setCellValueExplicit('B'.$fila, $rs['nrodoc'],PHPExcel_Cell_DataType::TYPE_STRING);
                         $objPHPExcel->getActiveSheet()->setCellValue('C'.$fila,$rs['nombres']);
                         $objPHPExcel->getActiveSheet()->setCellValue('D'.$fila,$rs['cargo']);
                         $objPHPExcel->getActiveSheet()->setCellValue('E'.$fila,$rs['codigo']);
-                        $objPHPExcel->getActiveSheet()->setCellValue('F'.$fila,$rs['descripcion']);
+                        //$objPHPExcel->getActiveSheet()->setCellValue('F'.$fila,$rs['descripcion']);
+                        $objPHPExcel->getActiveSheet()->setCellValueExplicit('F'.$fila, $rs['descripcion'],PHPExcel_Cell_DataType::TYPE_STRING);
                         $objPHPExcel->getActiveSheet()->setCellValue('G'.$fila,$rs['fechasalida']);
                         $objPHPExcel->getActiveSheet()->setCellValue('H'.$fila,$rs['cantsalida']);
                         $objPHPExcel->getActiveSheet()->setCellValue('I'.$fila,$rs['fechadevolucion']);
@@ -440,6 +443,7 @@
                         $objPHPExcel->getActiveSheet()->setCellValue('Q'.$fila,$rs['familia']);
 
                         $fila++;
+                        $item++;
                     }
                 }
 
