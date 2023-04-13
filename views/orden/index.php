@@ -203,7 +203,7 @@
                             <button type="button" id="addCharges" title="Otros Cargos" class="cerrarLista boton3">
                                 <i class="far fa-paper-plane"></i> Otros Adicionales
                             </button>
-                            <button type="button" id="uploadCotiz" title="Adjuntar Coizacion" class="cerrarLista boton3">
+                            <button type="button" id="uploadCotiz" title="Adjuntar Cotizacion" class="cerrarLista boton3">
                                 <i class="far fa-file-pdf"></i> Adjuntar archivos
                             </button>
                             <button type="button" id="loadRequest" title="Importar Pedido" class="cerrarLista boton3">
@@ -486,7 +486,7 @@
                     <th colspan="3" width="16%">Firmas</th>
                     <th rowspan="2" width="3%">Comentarios</th>
                     <tr>
-                        <th>Logística</th>
+                        <th>Procura</th>
                         <th>Finanzas</th>
                         <th>Operaciones</th>
                     </tr>

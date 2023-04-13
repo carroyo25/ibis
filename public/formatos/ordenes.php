@@ -202,7 +202,7 @@
             $this->cell(60,4,"20210003024022021122904",1,0,"C"); //envia de parametro
             $this->cell(43,4,"OPERACIONES / G.GENERAL",1,0,"C");
             $this->cell(43,4,"FINANZAS / ADMINISTRACION",1,0,"C");
-            $this->cell(43,4,"LOGISTICA",1,1,"C");
+            $this->cell(43,4,"JEFE DE PROCURA",1,1,"C");
 
             $this->Ln(2);
 

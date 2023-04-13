@@ -345,9 +345,10 @@
                     <th rowspan="2">Area</th>
                     <th rowspan="2">Atencion</th>
                     <th rowspan="2" width="80px">Total</th>
+                    <th rowspan="2" width="5%">Operador</th>
                     <th colspan="3" width="15%">Firmas</th>
                     <tr>
-                        <th>Logística</th>
+                        <th>Procura</th>
                         <th>Finanzas</th>
                         <th>Operaciones</th>
                     </tr>

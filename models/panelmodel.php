@@ -200,7 +200,7 @@
                                                         UPPER(tb_parametros.cdescripcion) AS cdescripcion,
                                                         tb_parametros.cabrevia,
                                                         UPPER(tb_proyectos.cdesproy) AS proyecto,
-                                                        tb_pedidocab.concepto,
+                                                        UPPER(tb_pedidocab.concepto) AS concepto,
                                                         lg_ordencab.nEstadoDoc,
                                                         tb_proyectos.ccodproy,
                                                         cm_entidad.crazonsoc                                               
@@ -210,7 +210,9 @@
                                                     INNER JOIN tb_proyectos ON lg_ordencab.ncodcos = tb_proyectos.nidreg
                                                     INNER JOIN tb_pedidocab ON lg_ordencab.id_refpedi = tb_pedidocab.idreg
                                                     INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
-                                                    WHERE (lg_ordencab.nfirmaLog IS NULL  OR lg_ordencab.nfirmaOpe IS NULL  OR lg_ordencab.nfirmaFin IS NULL )");
+                                                    WHERE (lg_ordencab.nfirmaLog IS NULL  OR lg_ordencab.nfirmaOpe IS NULL  OR lg_ordencab.nfirmaFin IS NULL )
+                                                        AND  lg_ordencab.nEstadoDoc != 105
+                                                    ORDER BY lg_ordencab.ffechadoc DESC");
                                                     
                 $sql->execute();
                 $rowcount = $sql->rowcount();
@@ -479,7 +481,7 @@
                         $estado = $rs['nEstadoDoc'] == 59 ? "resaltado_firma" : "";
 
                          //cambiar cóodigo con la base de datos
-                         $alerta_logistica = $this-> buscarUserComentario($rs['id_regmov'],'62146c91025c9') > 0 && $flog == 0 ? "urgente":" ";  //logistica
+                         $alerta_logistica = $this-> buscarUserComentario($rs['id_regmov'],'633ae7e588a52') > 0 && $flog == 0 ? "urgente":" ";  //logistica
                          $alerta_finanzas = $this-> buscarUserComentario($rs['id_regmov'],'6288328f58068')> 0 && $ffin == 0 ? "urgente":" ";  //Finanzas
                          $alerta_operaciones = $this-> buscarUserComentario($rs['id_regmov'],'62883306d1cd3') > 0 && $fope == 0? "urgente":" ";  //operaciones
                          /*por ahora qued asi*/
@@ -673,7 +675,8 @@
                                                         FROM
                                                             lg_ordencab 
                                                         WHERE
-                                                            YEAR ( lg_ordencab.ffechadoc ) = 2022");
+                                                            YEAR ( lg_ordencab.ffechadoc ) = YEAR(NOW())
+                                                            AND  lg_ordencab.nEstadoDoc != 105");
                 $sql->execute();
                 $result = $sql->fetchAll();
 
@@ -691,7 +694,7 @@
                 $sql = $this->db->connect()->query("SELECT COUNT(lg_ordencab.id_regmov)AS total
                                                     FROM lg_ordencab 
                                                     WHERE 
-                                                    YEAR(lg_ordencab.ffechadoc) = 2022 
+                                                    YEAR(lg_ordencab.ffechadoc) = YEAR(NOW())
                                                     AND lg_ordencab.nfirmaFin+lg_ordencab.nfirmaOpe+lg_ordencab.nfirmaOpe = 3");
                 $sql->execute();
                 $result = $sql->fetchAll();

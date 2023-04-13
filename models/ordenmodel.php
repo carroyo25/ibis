@@ -68,10 +68,10 @@
                         $obs_alerta = $rs['comentario'] != 0 ?  "semaforoNaranja" :  "";
 
                         //cambiar cóodigo con la base de datos
-                        $alerta_logistica = $this-> buscarUserComentario($rs['id_regmov'],'62146c91025c9') > 0 && $flog == 0 ? "urgente":" ";  //logistica
+                        $alerta_logistica = $this-> buscarUserComentario($rs['id_regmov'],'633ae7e588a52') > 0 && $flog == 0 ? "urgente":" ";  //logistica
                         $alerta_finanzas = $this-> buscarUserComentario($rs['id_regmov'],'6288328f58068') > 0 && $ffin == 0 ? "urgente":" ";  //Finanzas
                         $alerta_operaciones = $this-> buscarUserComentario($rs['id_regmov'],'62883306d1cd3') > 0 && $fope == 0? "urgente":" ";  //operaciones
-                        /*por ahora qued asi*/
+                        /*por ahora queda asi*/
 
                         $salida .='<tr class="pointer '.$resaltado.'" data-indice="'.$rs['id_regmov'].'" 
                                                         data-estado="'.$rs['nEstadoDoc'].'"

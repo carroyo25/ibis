@@ -2525,8 +2525,8 @@
                                         step="any" 
                                         placeholder="0.00" 
                                         onclick="this.select()"
-                                        onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"
-                                        value='.$rs['nunitario'].'
+                                        onchange="(function(el){el.value=parseFloat(el.value).toFixed(4);})(this)"
+                                        value='.NUMBER_FORMAT($rs['nunitario'],2).'
                                         class="textoDerecha">
                                     </td>
                                     <td class="textoDerecha pr5px">'.$rs['total_real'].'</td>

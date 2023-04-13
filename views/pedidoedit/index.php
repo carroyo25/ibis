@@ -35,6 +35,9 @@
                             <button type="button" id="preview" title="Ver Documento" class="boton3">
                                 <i class="fab fa-wpexplorer"></i> Vista Documento
                             </button>
+                            <button type="button" id="addAtach" title="Añadir Adjunto" class="boton3">
+                                <i class="fas fa-paperclip"></i> Añadir Adjunto
+                            </button>
                             <button type="button" id="closeProcess" title="Cerrar" class="boton3">
                                 <i class="fas fa-window-close"></i>
                             </button>
@@ -111,14 +114,11 @@
                             <button type="button" id="btnAnular" title="Añadir Item" class="cerrarLista boton4">
                                 <i class="fas fa-ban"></i> Anular
                             </button>
-                            <button type="button" id="btnCancelar" title="Cancelar Aprobado" class="cerrarLista boton3">
-                                <i class="far fa-bell-slash"></i> Cancelar Aprobado
-                            </button>
                             <button type="button" id="btnRetornar" title="Retornar Proceso" class="cerrarLista boton3">
                                 <i class="fas fa-undo-alt"></i> Retornar Proceso
                             </button>
-                            <button type="button" id="btnAgregarItem" title="Añadir Item" class="cerrarLista boton3">
-                                <i class="far fa-calendar-plus"></i> Añadir Item
+                            <button type="button" id="btnAgregar" title="Añadir Item" class="cerrarLista boton3">
+                                <i class="fas fa-plus-square"></i> Añadir Item
                             </button>
                         </div>
                     </div>
@@ -132,7 +132,7 @@
                                     <th>Descripcion</th>
                                     <th width="5%">Und.</th>
                                     <th width="6%">Cant.</th>
-                                    <th width="30%">Especificaciones</th>
+                                    <th width="20%">Especificaciones</th>
                                     <th>Nro. Parte</th>
                                     <th>Bien/Activo</th>
                                     <th>...</th>
@@ -166,6 +166,52 @@
             <div>
                 <button type="button" id="btnAceptarAnula">Aceptar</button>
                 <button type="button" id="btnCancelarAnula">Cancelar</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="preguntaProceso">
+        <div class="ventanaPregunta">
+            <h3>¿Restaurar el pedido?</h3>
+            <div>
+                <button type="button" id="btnAceptarProceso">Aceptar</button>
+                <button type="button" id="btnCancelarProceso">Cancelar</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="preguntaItemBorra">
+        <div class="ventanaPregunta">
+            <h3>¿Eliminar el item?</h3>
+            <div>
+                <button type="button" id="btnAceptarEliminaItem">Aceptar</button>
+                <button type="button" id="btnCancelarEliminaItem">Cancelar</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="busqueda">
+        <div class="ventanaBusqueda w50por">
+            <div class="tituloVentana">
+                <span id="tituloBusqueda">Catálogo Bienes/Servicios</span>
+                <div>
+                    <a href="#"><i class="fas fa-window-close"></i></a>
+                </div>
+            </div>
+            <div class="textoBusqueda">
+                <input type="text" name="txtBuscarCodigo" id="txtBuscarCodigo" placeholder="Buscar Codigo">
+                <input type="text" name="txtBuscarDescrip" id="txtBuscarDescrip" placeholder="Buscar Descripción">
+            </div>
+            <div class="tablaBusqueda">
+                <table class="tabla " id="tablaModulos">
+                    <thead >
+                        <tr class="stickytop">
+                            <th width="10%">Codigo</th>
+                            <th>Descripcion</th>
+                            <th>Und.</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

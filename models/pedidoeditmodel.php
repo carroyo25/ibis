@@ -27,7 +27,7 @@
                                                     estados.cabrevia 
                                                 FROM
                                                     ibis.tb_pedidocab
-                                                    INNER JOIN rrhh.tabla_aquarius ON ibis.tb_pedidocab.idsolicita = rrhh.tabla_aquarius.internal
+                                                    LEFT JOIN rrhh.tabla_aquarius ON ibis.tb_pedidocab.idsolicita = rrhh.tabla_aquarius.internal
                                                     INNER JOIN ibis.tb_proyectos ON ibis.tb_pedidocab.idcostos = ibis.tb_proyectos.nidreg
                                                     INNER JOIN ibis.tb_parametros AS atenciones ON ibis.tb_pedidocab.nivelAten = atenciones.nidreg
                                                     INNER JOIN ibis.tb_parametros AS estados ON ibis.tb_pedidocab.estadodoc = estados.nidreg
@@ -645,7 +645,7 @@
                                                         ibis.tb_pedidocab.idpartida
                                                     FROM
                                                         ibis.tb_pedidocab
-                                                        INNER JOIN
+                                                        LEFT JOIN
                                                         rrhh.tabla_aquarius
                                                         ON 
                                                             ibis.tb_pedidocab.idsolicita = rrhh.tabla_aquarius.internal
@@ -718,7 +718,7 @@
                         $checked = $rs['nflgqaqc'] == 1 ? "checked ": " ";
                         
                         $salida .='<tr data-grabado="1" data-idprod="'.$rs['idprod'].'" data-codund="'.$rs['unid'].'" data-idx="'.$rs['iditem'].'">
-                                        <td class="textoCentro"><a href="'.$rs['iditem'].'"><i class="fas fa-eraser"></i></a></td>
+                                        <td class="textoCentro"><a href="'.$rs['iditem'].'" data-accion="eliminar"><i class="fas fa-eraser"></i></a></td>
                                         <td class="textoCentro">'.str_pad($filas++,3,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="pl20px">'.$rs['cdesprod'].'</td>
@@ -734,9 +734,9 @@
                                         <td class="pl20px"><textarea>'.$rs['observaciones'].'</textarea></td>
                                         <td class="textoCentro">'.$rs['nroparte'].'</td>
                                         <td class="textoCentro">'.$rs['cregistro'].'</td>
-                                        <td class="textoCentro"><a href="'.$rs['iditem'].'" title="Cambiar Item"><i class="fas fa-exchange-alt"></i></a></td>
-                                        <td class="textoCentro"><a href="'.$rs['iditem'].'" title="Liberar Item"><i class="fas fa-wrench"></i></a></td>
-                                        <td class="textoCentro"><a href="'.$rs['iditem'].'" title="Agregar Item debajo"><i class="far fa-calendar-plus"></i></a></td>
+                                        <td class="textoCentro"><a href="'.$rs['iditem'].'" title="Cambiar Item" data-accion="cambiar"><i class="fas fa-exchange-alt"></i></a></td>
+                                        <td class="textoCentro"><a href="'.$rs['iditem'].'" title="Liberar Item" data-accion="liberar"><i class="fas fa-wrench"></i></a></td>
+                                        <td class="textoCentro"><a href="'.$rs['iditem'].'" title="Agregar Item debajo" data-accion="agregar"><i class="far fa-calendar-plus"></i></a></td>
                                     </tr>';
                     }
                 }
@@ -748,20 +748,25 @@
             }
         }
 
-        public function anularPedidoAdmin($id) {
+        public function cambiarPedidoAdmin($id,$valor) {
             try {
+                $mensaje = "";
+
+                $mensaje = $valor == 105 ? "Pedido Anulado":"Error en actualizar";
+                $mensaje = $valor == 49 ? "Pedido Actualizado":"Error en actualizar";
+
                 $sql = $this->db->connect()->prepare("UPDATE tb_pedidocab 
-                                                SET tb_pedidocab.estadodoc = 105,
+                                                SET tb_pedidocab.estadodoc = :valor,
                                                     tb_pedidocab.anula =:user
                                                 WHERE idreg = :id
                                                 LIMIT 1");
-                $sql->execute(["id" => $id,"user"=>$_SESSION['iduser']]);
+                $sql->execute(["id" => $id,"user"=>$_SESSION['iduser'],"valor"=>$valor]);
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0) {
-                    $this->anularDetallesAdmin($id);
+                    $this->cambiarDetallesAdmin($id,$valor);
 
-                    return "Pedido Anulado";
+                    return $mensaje;
                 }
             } catch (PDOException $th) {
                 echo $th->getMessage();
@@ -769,28 +774,54 @@
             }
         }
 
-        private function anularDetallesAdmin($id){
+        private function cambiarDetallesAdmin($id,$valor){
             try {
                 $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet 
-                                                SET tb_pedidodet.estadoItem = 105
+                                                SET tb_pedidodet.estadoItem = :valor
                                                 WHERE idpedido = :id");
-                $sql->execute(["id" => $id]);
+                $sql->execute(["id" => $id,"valor"=>$valor]);
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
             }
         }
 
-        private function anularDetalleOrdenAdmin($id){
+        public function itemActualizarAdmin($parametros){
             try {
-                $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet 
-                                                SET tb_pedidodet.estadoItem = 105
-                                                WHERE idpedido = :id");
-                $sql->execute(["id" => $id]);
-            } catch (PDOException $th) {
+                var_dump($parametros);
+            }  catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
             }
         }
+
+        private function buscarItemOrden($id){
+            try {
+                $sql=$this->db->connect()->prepare("");
+                $sql->execute(["id" => $id]);
+            }  catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        private function buscarItemIngresos(){
+            try {
+                //code...
+            }  catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        private function buscarItemDespachos(){
+            try {
+                //code...
+            }  catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
     }    
 ?>

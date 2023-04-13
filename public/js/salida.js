@@ -615,7 +615,7 @@ $(function() {
         
         let callButtom = e.target.id;
 
-        $(this).next().fadeIn();
+        $(this).next().fadeToggle();
 
         return false
     });
@@ -642,6 +642,22 @@ $(function() {
         $("#pregunta").fadeOut();
 
         return false;
+    });
+
+    $(".buscaGuia").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+        
+        if ($(this).val() == "") {
+            $(".datosEntidad").val("");
+            $(".lista").fadeOut();
+        }else {
+            //asignar a una variable el contenido
+            let l = "#"+ $(this).next().next().attr("id")+ " li a"
+
+            $(l).filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        }
     });
 })
 

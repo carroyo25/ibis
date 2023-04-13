@@ -270,7 +270,7 @@
                             <p><strong>Empresa de Transporte</strong></p>
                             <div class="tres_columnas_interna">
                                 <label for="empresa_transporte_razon">Razón Social</label>
-                                <input type="text" name="empresa_transporte_razon" id="empresa_transporte_razon">
+                                <input type="text" name="empresa_transporte_razon" id="empresa_transporte_razon" class="buscaGuia">
                                 <button type="button" class="btnCallMenu boton3">+</button>
                                 <div class="lista" id="listaEntidad">
                                    <ul>
@@ -278,10 +278,10 @@
                                    </ul> 
                                 </div>
                                 <label for="direccion_proveedor">Dirección</label>
-                                <input type="text" name="direccion_proveedor" id="direccion_proveedor">
+                                <input type="text" name="direccion_proveedor" id="direccion_proveedor" class="datosEntidad">
                                 <span></span>
                                 <label for="ruc_proveedor">R.U.C.</label>
-                                <input type="text" name="ruc_proveedor" id="ruc_proveedor">
+                                <input type="text" name="ruc_proveedor" id="ruc_proveedor" class="datosEntidad">
                             </div>
                         </div>
                     </div>

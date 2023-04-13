@@ -296,7 +296,7 @@ $(function(){
                                 <input type="number" 
                                     step="any" 
                                     placeholder="0.00" 
-                                    onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"
+                                    onchange="(function(el){el.value=parseFloat(el.value).toFixed(4);})(this)"
                                     onclick="this.select()"
                                     value=${cantidad}>
                             </td>
@@ -304,7 +304,7 @@ $(function(){
                                 <input type="number"
                                     step="any" 
                                     placeholder="0.00" 
-                                    onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"
+                                    onchange="(function(el){el.value=parseFloat(el.value).toFixed(4);})(this)"
                                     onclick="this.select()">
                             </td>
                             <<td class="textoDerecha pr5px"></td>

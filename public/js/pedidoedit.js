@@ -1,4 +1,7 @@
 $(function(){
+    let iditempedido = "",
+        fila=0;
+
     $("#tablaPrincipal tbody").on("click","tr", function (e) {
         e.preventDefault();
 
@@ -77,8 +80,13 @@ $(function(){
     $("#btnAnular").click(function (e) { 
         e.preventDefault();
 
-        $("#preguntaAnula").fadeIn();
-
+        try {
+            if ($("#codigo_estado").val() >= 54) throw "El pedido no puede ser modificado";
+            $("#preguntaAnula").fadeIn();
+        } catch (error) {
+            mostrarMensaje(error,"mensaje_correcto");
+        }
+    
         return false;
     });
 
@@ -95,7 +103,7 @@ $(function(){
 
         $("#ventanaEspera").fadeIn();
 
-        $.post(RUTA+"pedidoedit/anulapedido", {id:$("#codigo_pedido").val()},
+        $.post(RUTA+"pedidoedit/cambiaPedido", {id:$("#codigo_pedido").val(),valor:105},
             function (data, textStatus, jqXHR) {
                 $("#preguntaAnula").fadeOut();
                 $("#ventanaEspera").fadeOut();
@@ -105,6 +113,146 @@ $(function(){
             "text"
         );
         
+        return false;
+    });
+    
+    $("#btnRetornar").click(function (e) { 
+        e.preventDefault();
+
+        try {
+            if ($("#codigo_estado").val() >= 54) throw "El pedido no puede ser modificado";
+            $("#preguntaProceso").fadeIn();
+        } catch (error) {
+            mostrarMensaje(error,"mensaje_correcto");
+        }
+
+        return false;
+    });
+
+    $("#btnCancelarProceso").click(function (e) { 
+        e.preventDefault();
+
+        $("#preguntaProceso").fadeOut();
+        
+        return false;
+    });
+
+    $("#btnAceptarProceso").click(function (e) { 
+        e.preventDefault();
+
+        $("#ventanaEspera").fadeIn();
+
+        $.post(RUTA+"pedidoedit/cambiaPedido", {id:$("#codigo_pedido").val(),valor:49},
+            function (data, textStatus, jqXHR) {
+                $("#preguntaProceso").fadeOut();
+                $("#ventanaEspera").fadeOut();
+
+                mostrarMensaje(data,"mensaje_correcto");
+            },
+            "text"
+        );
+        
+        return false;
+    });
+
+    $("#tablaDetalles tbody").on("click","a", function (e) {
+        e.preventDefault();
+
+        let nro_items = $("#tablaDetalles tbody tr").length;
+
+        iditempedido = $(this).parent().parent().data('idx');
+        fila = $(this).parent().parent();
+
+        if ($(this).data('accion') == "eliminar") {
+            try {
+                if ( nro_items <= 1 ) throw new Error("El pedido sólo tiene un item");
+
+                $("#preguntaItemBorra").fadeIn();
+
+            } catch (error) {
+                mostrarMensaje(error,"mensaje_error");
+            }
+        }
+
+        return false;
+    });
+
+    $("#btnAceptarEliminaItem").click(function (e) { 
+        e.preventDefault();
+
+        $.post(RUTA+"pedidoedit/accionItem",{id:iditempedido,estado:0},
+            function (data, textStatus, jqXHR) {
+                fila.remove();
+                $("#preguntaItemBorra").fadeOut();
+                fillTables($("#tablaDetalles tbody > tr"),1);
+            },
+            "json"
+        );
+        
+        return false;
+    });
+
+    $("#btnCancelarEliminaItem").click(function (e) { 
+        e.preventDefault();
+
+        $("#preguntaItemBorra").fadeOut();
+
+        return false;
+    });
+
+    $("#btnAgregar").click(function (e) { 
+        e.preventDefault();
+        
+        $.post(RUTA+"pedidos/llamaProductos", {tipo:$("#codigo_tipo").val()},
+            function (data, textStatus, jqXHR) {
+                $("#tablaModulos tbody")
+                    .empty()
+                    .append(data);
+                $("#busqueda").fadeIn();
+            },
+            "text"
+        );
+
+        return false;
+    });
+
+    $("#tablaModulos tbody").on("click","tr", function (e) {
+        e.preventDefault();
+
+        let nFilas = $.strPad($("#tablaDetalles tr").length,3);
+        let idprod = $(this).data("idprod");
+        let nunid = $(this).data("ncomed");
+        let codigo = $(this).children('td:eq(0)').text();
+        let descrip = $(this).children('td:eq(1)').text();
+        let unidad = $(this).children('td:eq(2)').text();
+        let grabado = 0;
+        
+
+        let row = `<tr data-grabado="${grabado}" data-idprod="${idprod}" data-codund="${nunid}" data-idx="-" data-registro="">
+                    <td class="textoCentro"><a href="#" title="eliminar" data-accion ="eliminar"><i class="fas fa-eraser"></i></a></td>
+                    <td class="textoCentro">${nFilas}</td>
+                    <td class="textoCentro">${codigo}</td>
+                    <td class="pl20px">${descrip}</td>
+                    <td class="textoCentro">${unidad}</td>
+                    <td><input type="number" step="any" placeholder="0.00" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"></td>
+                    <td><textarea></textarea></td>
+                    <td class="textoCentro"><input type="text"></td>
+                    <td class="textoCentro"><input type="text"></td>
+                    <td class="textoCentro"><a href="-" title="Cambiar Item" data-accion="cambiar"><i class="fas fa-exchange-alt"></i></a></td>
+                    <td class="textoCentro"><a href="-" title="Liberar Item" data-accion="liberar"><i class="fas fa-wrench"></i></a></td>
+                    <td class="textoCentro"><a href="-" title="Agregar Item debajo" data-accion="agregar"><i class="far fa-calendar-plus"></i></a></td>
+                </tr>`;
+
+        $("#tablaDetalles tbody").append(row);
+
+        return false;
+    });
+
+    $(".tituloVentana").on("click","a", function (e) {
+        e.preventDefault();
+
+        $(this).parent().parent().parent().parent().fadeOut();
+
         return false;
     });
 })

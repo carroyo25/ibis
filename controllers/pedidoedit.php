@@ -81,7 +81,11 @@
             echo $this->model->pedidosFiltrados($_POST);
         }*/
 
-        function anulapedido() {
-            echo $this->model->anularPedidoAdmin($_POST['id']);
+        function cambiaPedido() {
+            echo $this->model->cambiarPedidoAdmin($_POST['id'],$_POST['valor']);
+        }
+
+        function accionItem(){
+            echo json_encode($this->model->itemActualizarAdmin($_POST));
         }
     }

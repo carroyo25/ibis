@@ -30,7 +30,8 @@
                                                     tb_proyectos.nidreg,
                                                     tb_parametros.cdescripcion AS atencion,
                                                     ( lg_ordencab.nfirmaLog + lg_ordencab.nfirmaFin + lg_ordencab.nfirmaOpe ) AS estado_firmas,
-                                                    ( SELECT FORMAT( SUM( lg_ordendet.nunitario * lg_ordendet.ncanti ), 2 ) FROM lg_ordendet WHERE lg_ordendet.id_orden = lg_ordencab.id_regmov ) AS total_orden 
+                                                    ( SELECT FORMAT( SUM( lg_ordendet.nunitario * lg_ordendet.ncanti ), 2 ) FROM lg_ordendet WHERE lg_ordendet.id_orden = lg_ordencab.id_regmov ) AS total_orden,
+                                                    UPPER (tb_user.cnameuser) AS operador  
                                                 FROM
                                                     lg_ordencab
                                                     INNER JOIN tb_pedidocab ON lg_ordencab.id_refpedi = tb_pedidocab.idreg
@@ -38,7 +39,8 @@
                                                     INNER JOIN tb_proyectos ON lg_ordencab.ncodpry = tb_proyectos.nidreg
                                                     INNER JOIN tb_parametros ON lg_ordencab.nNivAten = tb_parametros.nidreg
                                                     INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
-                                                    INNER JOIN lg_ordendet ON lg_ordencab.id_regmov = lg_ordendet.id_orden 
+                                                    INNER JOIN lg_ordendet ON lg_ordencab.id_regmov = lg_ordendet.id_orden
+                                                    INNER JOIN tb_user ON lg_ordencab.id_cuser = tb_user.iduser
                                                 WHERE
                                                     lg_ordencab.nEstadoDoc = 59 
                                                     AND ( lg_ordencab.nfirmaLog IS NULL OR lg_ordencab.nfirmaOpe IS NULL OR lg_ordencab.nfirmaFin IS NULL ) 
@@ -68,7 +70,7 @@
                             $resaltado = "";
                          }
 
-                         $alerta_logistica = $this-> buscarUserComentario($rs['id_regmov'],'62146c91025c9') > 0 && $flog == 0 ? "urgente":" ";  //logistica
+                         $alerta_logistica = $this-> buscarUserComentario($rs['id_regmov'],'633ae7e588a52') > 0 && $flog == 0 ? "urgente":" ";  //logistica
                          $alerta_finanzas = $this-> buscarUserComentario($rs['id_regmov'],'6288328f58068')> 0 && $ffin == 0 ? "urgente":" ";  //Finanzas
                          $alerta_operaciones = $this-> buscarUserComentario($rs['id_regmov'],'62883306d1cd3') > 0 && $fope == 0? "urgente":" ";  //operaciones
  
@@ -86,9 +88,11 @@
                                         <td class="pl20px">'.$rs['area'].'</td>
                                         <td class="textoCentro '.strtolower($rs['atencion']).'">'.$rs['atencion'].'</td>
                                         <td class="textoDerecha pr10px">'.$rs['total_orden'].'</td>
+                                        <td class="textoCentro">'.$rs['operador'].'</td>
                                         <td class="textoCentro '.$alerta_logistica.'">'.$log.'</td>
                                         <td class="textoCentro '.$alerta_finanzas.'">'.$fin.'</td>
                                         <td class="textoCentro '.$alerta_operaciones.'">'.$ope.'</td>
+                                        
                                     </tr>';
                      }
                  }

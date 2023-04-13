@@ -384,7 +384,7 @@
                     <th rowspan="2">Atencion</th>
                     <th colspan="3" width="16%">Firmas</th>
                     <tr>
-                        <th>Logística</th>
+                        <th>Procura</th>
                         <th>Operaciones</th>
                         <th>Finanzas</th>
                     </tr>

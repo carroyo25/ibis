@@ -28,7 +28,7 @@
                     </div>
                     <div>
                         <p>Ordenes Emitidas</p>
-                        <p id="pedidos_emitidos">1</p>
+                        <p id="pedidos_emitidos">0</p>
                         <p>ultimo emitido: 02/08/2022</p>
                     </div>
                 </div>

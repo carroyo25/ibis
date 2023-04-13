@@ -299,16 +299,14 @@ $(function(){
                                 <input type="number" 
                                     step="any" 
                                     placeholder="0.00" 
-                                    onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"
+                                    onchange="(function(el){el.value=parseFloat(el.value).toFixed(4);})(this)"
                                     onclick="this.select()"
                                     value=${cantidad}>
                             </td>
                             <td class="textoDerecha pr5px precio">
                                 <input type="number"
                                     step="any" 
-                                    placeholder="0.00" 
-                                    onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"
-                                    onclick="this.select()">
+                                    placeholder="0.00">
                             </td>
                             <<td class="textoDerecha pr5px"></td>
                             <td></td>
@@ -687,8 +685,6 @@ $(function(){
      $("#updateItems").click(function (e) { 
         e.preventDefault();
         
-        console.log(JSON.stringify(updates()));
-
         $.post(RUTA+"ordenedit/numeraItems", {items: JSON.stringify(updates())},
             function (data, textStatus, jqXHR) {
                 mostrarMensaje("Actualizados  " + data.actualizados,"mensaje_correcto");
