@@ -187,6 +187,15 @@
             </div>
         </div>
     </div>
+    <div class="modal" id="preguntaItemLibera">
+        <div class="ventanaPregunta">
+            <h3>¿Liberar el item?</h3>
+            <div>
+                <button type="button" id="btnAceptarLiberaItem">Aceptar</button>
+                <button type="button" id="btnCancelarLiberaItem" class="claseCancela">Cancelar</button>
+            </div>
+        </div>
+    </div>
     <div class="modal" id="busqueda">
         <div class="ventanaBusqueda w50por">
             <div class="tituloVentana">

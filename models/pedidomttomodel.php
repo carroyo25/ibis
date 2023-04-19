@@ -154,7 +154,6 @@
                     $respuesta = true;
                     $mensaje = "Pedido Grabado";
                     $clase = "mensaje_correcto";
-                    
                 }
 
                 $salida = array("respuesta"=>$respuesta,
@@ -305,6 +304,42 @@
             } catch (PDOException $th) {
                    echo "Error: ".$th->getMessage();
                    return false;
+            }
+        }
+
+        private function saveItemsMtto($codigo,$estado,$atencion,$tipo,$costos,$area,$detalles,$indice){
+
+            $datos = json_decode($detalles);
+            $nreg = count($datos);
+
+            for ($i=0; $i < $nreg; $i++) { 
+                $registro = isset($datos[$i]->registro) ? $datos[$i]->registro : NULL; 
+
+                try {
+                        $sql = $this->db->connect()->prepare("INSERT INTO tb_pedidodet 
+                                                                SET idpedido=:ped,idprod=:prod,idtipo=:tipo,unid=:und,
+                                                                    cant_pedida=:cant,estadoItem=:est,tipoAten=:aten,
+                                                                    verificacion=:ver,nflgqaqc=:qaqc,idcostos=:costos,idarea=:area,
+                                                                    observaciones=:espec,nregistro=:registro,nroparte=:parte");
+                            $sql ->execute([
+                                "ped"=>$indice,
+                                "prod"=>$datos[$i]->idprod,
+                                "tipo"=>$tipo,
+                                "und"=>$datos[$i]->unidad,
+                                "cant"=>$datos[$i]->cantidad,
+                                "est"=>$estado,
+                                "aten"=>$atencion,
+                                "ver"=>$codigo,
+                                "qaqc"=>$datos[$i]->calidad,
+                                "costos"=>$costos,
+                                "area"=>$area,
+                                "espec"=>$datos[$i]->especifica,
+                                "registro"=>$registro,
+                                "parte"=>$datos[$i]->nroparte]);    
+                } catch (PDOException $th) {
+                    echo "Error: ".$th->getMessage();
+                    return false;
+                }
             }
         }
     }

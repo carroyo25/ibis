@@ -2468,7 +2468,7 @@
                                             lg_ordendet.cobserva,
                                             lg_ordendet.id_cprod,
                                             REPLACE ( FORMAT( lg_ordendet.ncanti, 2 ), ',', '' ) AS ncanti,
-                                            lg_ordendet.nunitario AS nunitario,
+                                            REPLACE ( FORMAT(lg_ordendet.nunitario,2), ',', '') AS nunitario,
                                             FORMAT( lg_ordendet.nigv, 2 ) AS nigv,
                                             FORMAT( tb_pedidodet.total - lg_ordendet.nigv, 2 ) AS subtotal,
                                             FORMAT( lg_ordendet.ntotal, 2 ) AS ntotal,
@@ -2526,7 +2526,7 @@
                                         placeholder="0.00" 
                                         onclick="this.select()"
                                         onchange="(function(el){el.value=parseFloat(el.value).toFixed(4);})(this)"
-                                        value='.NUMBER_FORMAT($rs['nunitario'],2).'
+                                        value='.$rs['nunitario'].'
                                         class="textoDerecha">
                                     </td>
                                     <td class="textoDerecha pr5px">'.$rs['total_real'].'</td>

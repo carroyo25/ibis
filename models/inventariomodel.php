@@ -200,17 +200,21 @@
             
             require_once('public/PHPExcel/PHPExcel.php');
 
-            $archivo = './public/documentos/temp/temp.ods';
+            //$archivo = './public/documentos/temp/temp.ods';
+            $archivo = './public/documentos/temp/temp.xlsx';
+
             $temporal	 = $_FILES['fileUpload']['tmp_name'];
 
 
             if (move_uploaded_file($temporal,$archivo)){
                 $mensaje = "El archivo ha sido cargado correctamente.";
 
-                $objReader = new PHPExcel_Reader_OOCalc();
-                $objPHPOds = $objReader->load($archivo);
+                //$objReader = new PHPExcel_Reader_OOCalc();
+                //$objPHPOds = $objReader->load($archivo);
+                //$objHoja=$objPHPOds->getActiveSheet()->toArray(null,true,true,true);
 
-                $objHoja=$objPHPOds->getActiveSheet()->toArray(null,true,true,true);
+                $objPHPExcel = PHPExcel_IOFactory::load($archivo);
+                $objHoja=$objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
 
                 $datos = "";
 
@@ -218,7 +222,7 @@
                 $datos= "";
 
                 foreach ($objHoja as $iIndice=>$objCelda) {
-                    if ( $objCelda['B'] && $objCelda['B']!="CODIGO") {
+                    if ( $objCelda['B'] && $objCelda['B']!="CODIGO" && $objCelda['B']!="CODIGO") {
 
                         $codigo_sical = $this->compareCode(RTRIM($objCelda['B']));
 

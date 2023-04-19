@@ -652,7 +652,7 @@ itemsSave = () =>{
     return DATA;
 }
 
-itemsPreview = (accion) => {
+itemsPreview = () => {
     DATA = [];
     let TABLA = $("#tablaDetalles tbody >tr");
 

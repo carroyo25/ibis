@@ -1,6 +1,7 @@
 $(function(){
     let iditempedido = "",
-        fila=0;
+        fila=0,
+        estadoItem=0;
 
     $("#tablaPrincipal tbody").on("click","tr", function (e) {
         e.preventDefault();
@@ -81,8 +82,8 @@ $(function(){
         e.preventDefault();
 
         try {
-            if ($("#codigo_estado").val() >= 54) throw "El pedido no puede ser modificado";
-            $("#preguntaAnula").fadeIn();
+            if ($("#codigo_estado").val() >= 54) throw "El pedido no puede ser anulado..";
+                $("#preguntaAnula").fadeIn();
         } catch (error) {
             mostrarMensaje(error,"mensaje_correcto");
         }
@@ -103,15 +104,7 @@ $(function(){
 
         $("#ventanaEspera").fadeIn();
 
-        $.post(RUTA+"pedidoedit/cambiaPedido", {id:$("#codigo_pedido").val(),valor:105},
-            function (data, textStatus, jqXHR) {
-                $("#preguntaAnula").fadeOut();
-                $("#ventanaEspera").fadeOut();
-
-                mostrarMensaje(data,"mensaje_correcto");
-            },
-            "text"
-        );
+        cambiarPedido($("#codigo_pedido").val(),105);
         
         return false;
     });
@@ -120,7 +113,7 @@ $(function(){
         e.preventDefault();
 
         try {
-            if ($("#codigo_estado").val() >= 54) throw "El pedido no puede ser modificado";
+            if ($("#codigo_estado").val() > 54) throw "El pedido no puede ser modificado";
             $("#preguntaProceso").fadeIn();
         } catch (error) {
             mostrarMensaje(error,"mensaje_correcto");
@@ -147,9 +140,9 @@ $(function(){
                 $("#preguntaProceso").fadeOut();
                 $("#ventanaEspera").fadeOut();
 
-                mostrarMensaje(data,"mensaje_correcto");
+                mostrarMensaje(data.mensaje,"mensaje_correcto");
             },
-            "text"
+            "json"
         );
         
         return false;
@@ -161,9 +154,10 @@ $(function(){
         let nro_items = $("#tablaDetalles tbody tr").length;
 
         iditempedido = $(this).parent().parent().data('idx');
+        estadoItem =  $(this).parent().parent().data('estado');
         fila = $(this).parent().parent();
 
-        if ($(this).data('accion') == "eliminar") {
+        if ( $(this).data('accion') == "eliminar" ) {
             try {
                 if ( nro_items <= 1 ) throw new Error("El pedido sólo tiene un item");
 
@@ -172,6 +166,8 @@ $(function(){
             } catch (error) {
                 mostrarMensaje(error,"mensaje_error");
             }
+        }else if( $(this).data('accion') == "liberar" ) {
+            $("#preguntaItemLibera").fadeIn();
         }
 
         return false;
@@ -180,14 +176,19 @@ $(function(){
     $("#btnAceptarEliminaItem").click(function (e) { 
         e.preventDefault();
 
-        $.post(RUTA+"pedidoedit/accionItem",{id:iditempedido,estado:0},
-            function (data, textStatus, jqXHR) {
-                fila.remove();
-                $("#preguntaItemBorra").fadeOut();
-                fillTables($("#tablaDetalles tbody > tr"),1);
-            },
-            "json"
-        );
+        if ( iditempedido == '-') {
+            fila.remove();
+        }else{
+            $.post(RUTA+"pedidoedit/accionItem",{id:iditempedido,valor:0,estado:105},
+                function (data, textStatus, jqXHR) {
+                    fila.remove();
+                    $("#preguntaItemBorra").fadeOut();
+                    fillTables($("#tablaDetalles tbody > tr"),1);
+                    mostrarMensaje(data.mensaje,"mensaje_correcto");
+                },
+                "json"
+            );
+        }
         
         return false;
     });
@@ -255,4 +256,118 @@ $(function(){
 
         return false;
     });
+
+    $("#save").click(function (e) { 
+        e.preventDefault();
+        
+        let result = {};
+
+        $.each($("#formProceso").serializeArray(),function(){
+            result[this.name] = this.value;
+        });
+
+        try {
+            if (result['codigo_costos'] == '') throw "Elija Centro de Costos";
+            if (result['codigo_area'] == '') throw "Elija Area";
+            if (result['codigo_transporte'] == '') throw "Elija Tipo de Transporte";
+            if (result['concepto'] == '') throw "Escriba el concepto";
+            if (result['codigo_solicitante'] == '') throw "Elija Solicitante";
+            if (result['codigo_tipo'] == '') throw "Elija el tipo de pedido";
+            if ($("#tablaDetalles tbody tr").length <= 0) throw "El pedido no tienes items";
+            if (checkCantTables($("#tablaDetalles tbody > tr"),5)) throw "No ingreso cantidad en un item";
+
+            $.post(RUTA+"pedidoedit/grabaPedidoAdmin",{cabecera:result,detalles:JSON.stringify(itemsSave())},
+                function (data, textStatus, jqXHR) {
+                    data.mensaje;
+                },
+                "json"
+            );
+
+        } catch (error) {
+            mostrarMensaje(error,'mensaje_error');
+        }
+
+        return false;
+    });
+
+    $("#btnAceptarLiberaItem").click(function (e) { 
+        e.preventDefault();
+
+        try {
+            if ( estadoItem < 54 ) throw new Error("El item no tiene orden");
+
+            /*$.post(RUTA+"pedidoedit/accionItem",{id:iditempedido,valor:1,estado:54},
+                function (data, textStatus, jqXHR) {
+                    fila.remove();
+                    $(this).parent().parent().parent().fadeOut();
+                    fillTables($("#tablaDetalles tbody > tr"),1);
+                    mostrarMensaje(data.mensaje,"mensaje_correcto");
+                },
+                "json"
+            );*/
+
+        } catch (error) {
+            mostrarMensaje(error,"mensaje_error");
+        }
+
+        return false;
+    });
+    
+    $(".claseCancela").click(function (e) { 
+        e.preventDefault();
+        
+        $(this).parent().parent().parent().fadeOut();
+
+        return false;
+    });
 })
+
+itemsSave = () =>{
+    DATA = [];
+    let TABLA = $("#tablaDetalles tbody >tr");
+
+    TABLA.each(function(){
+        let IDPROD      = $(this).data('idprod'),
+            UNIDAD      = $(this).data('codund'),
+            CANTIDAD    = $(this).find('td').eq(5).children().val(),
+            IDX         = $(this).data('idx'),
+            CALIDAD     = 0,
+            ESTADO      = $(this).attr('data-grabado'),
+            ESPECIFICA  = $(this).find('td').eq(6).children().val(),
+            NROPARTE    = $(this).find('td').eq(7).text(),
+            REGISTRO    = $(this).data('registro'),
+            REGISTEXT   = $(this).find('td').eq(8).text();
+
+        item= {};
+       
+        item['idprod']      = IDPROD;
+        item['unidad']      = UNIDAD;
+        item['cantidad']    = CANTIDAD;
+        item['nroparte']    = NROPARTE;
+        item['itempedido']  = IDX;
+        item['calidad']     = CALIDAD;
+        item['especifica']  = ESPECIFICA;
+        item['estado']      = ESTADO;
+        item['registro']    = REGISTRO;
+        item['registext']   = REGISTEXT;
+        item['atendida']    = 0;
+        item['observac']    = "";
+
+        DATA.push(item);
+
+    })
+
+    return DATA;
+}
+
+cambiarPedido = (idfunction,valorfunction) => {
+    $.post(RUTA+"pedidoedit/cambiaPedido", {id:idfunction,valor:valorfunction},
+            function (data, textStatus, jqXHR) {
+                $("#preguntaAnula").fadeOut();
+                $("#ventanaEspera").fadeOut();
+
+                mostrarMensaje(data.mensaje,"mensaje_correcto");
+            },
+            "json"
+    );
+}
