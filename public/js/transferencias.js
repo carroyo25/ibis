@@ -370,17 +370,27 @@ $(function(){
         );
     });
 
-    $("#tablaDetalles tbody").on("click","a", function (e) {
+    /*$("#tablaDetalles tbody").on("click","a", function (e) {
         e.preventDefault();
+
+        $(this).parent().parent().remove;
         
         if ($(this).data("accion") == "delete") {
             $(this).parent().parent().remove
         }
 
         return false;
+    });*/
+
+    $("#tablaDetalles tbody").on("click","a", function (e) {
+        e.preventDefault();
+
+        if ($(this).data("accion") == "delete") {
+            $(this).parent().parent().remove();
+        }
+
+        return false;
     });
-
-
 })
 
 detalles = () =>{

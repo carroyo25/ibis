@@ -86,8 +86,11 @@
                     <div class="barraOpciones">
                         <span>Detalles</span>
                         <div>
-                            <button type="button" id="itemsImport" title="Importar Items" class="cerrarLista boton3">
+                            <button type="button" id="itemsImport" title="Importar Items de Guias" class="cerrarLista boton3">
                                 <i class="fas fa-upload"></i> Buscar Guias
+                            </button>
+                            <button type="button" id="itemsTransfer" title="Importar Items de Transferencia" class="cerrarLista boton3">
+                                <i class="fas fa-upload"></i> Buscar Transferencias
                             </button>
                         </div>
                     </div>

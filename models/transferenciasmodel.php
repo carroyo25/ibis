@@ -26,6 +26,7 @@
                                                     INNER JOIN tb_proyectos ON tb_costusu.ncodproy = tb_proyectos.nidreg 
                                                 WHERE
                                                     tb_costusu.nflgactivo = 1 
+                                                    AND alm_transfercab.nflgactivo = 1
                                                     AND tb_costusu.id_cuser = :user");
                 $sql->execute(["user"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowCount();
@@ -254,10 +255,10 @@
                                                         ibis.tb_proyectos.cdesproy 
                                                     FROM
                                                         ibis.tb_pedidocab
-                                                        INNER JOIN rrhh.tabla_aquarius ON ibis.tb_pedidocab.idsolicita = rrhh.tabla_aquarius.internal
-                                                        INNER JOIN ibis.tb_parametros AS estados ON ibis.tb_pedidocab.estadodoc = estados.nidreg
-                                                        INNER JOIN ibis.tb_parametros AS atencion ON ibis.tb_pedidocab.nivelAten = atencion.nidreg
-                                                        INNER JOIN ibis.tb_proyectos ON ibis.tb_pedidocab.idcostos = ibis.tb_proyectos.nidreg 
+                                                        LEFT JOIN rrhh.tabla_aquarius ON ibis.tb_pedidocab.idsolicita = rrhh.tabla_aquarius.internal
+                                                        LEFT JOIN ibis.tb_parametros AS estados ON ibis.tb_pedidocab.estadodoc = estados.nidreg
+                                                        LEFT JOIN ibis.tb_parametros AS atencion ON ibis.tb_pedidocab.nivelAten = atencion.nidreg
+                                                        LEFT JOIN ibis.tb_proyectos ON ibis.tb_pedidocab.idcostos = ibis.tb_proyectos.nidreg 
                                                     WHERE
                                                         ibis.tb_pedidocab.estadodoc = 54
                                                         AND ibis.tb_pedidocab.nflgactivo = 1 
@@ -382,7 +383,7 @@
                     $indice = $this->lastInsertId("SELECT MAX(idreg) AS id FROM alm_transfercab");
                     $this->insertarDetalles($indice,$detalles);
 
-                    if ( $this->verificarAtendidos($pedido) == 0){
+                    if ( $this->verificarAtendidos($pedido) == 0 ){
                        $this->actualizarCabeceraPedido($pedido);
                     }
                 }

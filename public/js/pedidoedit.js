@@ -168,6 +168,8 @@ $(function(){
             }
         }else if( $(this).data('accion') == "liberar" ) {
             $("#preguntaItemLibera").fadeIn();
+        }else if(  $(this).data('accion') == "cambiar"){
+
         }
 
         return false;
@@ -296,15 +298,15 @@ $(function(){
         try {
             if ( estadoItem < 54 ) throw new Error("El item no tiene orden");
 
-            /*$.post(RUTA+"pedidoedit/accionItem",{id:iditempedido,valor:1,estado:54},
+            $.post(RUTA+"pedidoedit/accionItem",{id:iditempedido,valor:1,estado:54},
                 function (data, textStatus, jqXHR) {
-                    fila.remove();
+                    //fila.remove();
                     $(this).parent().parent().parent().fadeOut();
                     fillTables($("#tablaDetalles tbody > tr"),1);
                     mostrarMensaje(data.mensaje,"mensaje_correcto");
                 },
                 "json"
-            );*/
+            );
 
         } catch (error) {
             mostrarMensaje(error,"mensaje_error");
