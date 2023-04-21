@@ -23,10 +23,10 @@ $(function(){
                             .empty()
                             .append(data.anteriores);
 
-                        /*pdfjsLib.getDocument(data.ruta).promise.then(doc => {
+                        pdfjsLib.getDocument(data.ruta).promise.then(doc => {
                             pdf = doc;
                             render();
-                        });*/
+                        });
     
                         $("#codeRead").focus();
                     }else{

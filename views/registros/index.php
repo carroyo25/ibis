@@ -20,8 +20,6 @@
                     <input type="hidden" name="codigo_autoriza" id="codigo_autoriza">
                     <input type="hidden" name="codigo_ingreso" id="codigo_ingreso">
                     <input type="hidden" name="codigo_recepcion" id="codigo_recepcion" value="<?php echo $_SESSION['iduser']?>">
-
-
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
                         <div>
@@ -86,11 +84,14 @@
                     <div class="barraOpciones">
                         <span>Detalles</span>
                         <div>
-                            <button type="button" id="itemsImport" title="Importar Items de Guias" class="cerrarLista boton3">
-                                <i class="fas fa-upload"></i> Buscar Guias
+                            <button type="button" id="itemsImport" title="Importar Guias de Remision" class="cerrarLista boton3">
+                                <i class="fas fa-upload"></i> Guias de Remisión
                             </button>
-                            <button type="button" id="itemsTransfer" title="Importar Items de Transferencia" class="cerrarLista boton3">
-                                <i class="fas fa-upload"></i> Buscar Transferencias
+                            <button type="button" id="itemsTransfer" title="Importar Transferencias" class="cerrarLista boton3">
+                                <i class="fas fa-upload"></i> Notas de Transferecia
+                            </button>
+                            <button type="button" id="itemsLocals" title="Importar compras Locales" class="cerrarLista boton3">
+                                <i class="fas fa-upload"></i> Compras Locales
                             </button>
                         </div>
                     </div>
@@ -125,9 +126,43 @@
     <div class="modal" id="busqueda">
         <div class="ventanaBusqueda w75por">
             <div class="tituloVentana">
-                <span id="tituloBusqueda">Items Despachados</span>
+                <span id="tituloBusqueda">Guias de Remision</span>
                 <div>
                     <a href="#" id="closeSearch"><i class="fas fa-window-close"></i></a>
+                </div>
+            </div>
+            <div class="textoBusqueda">
+                <input type="text" name="txtBuscar" id="txtBuscar" placeholder="Buscar" class="w90por">
+                <button type="button" class="boton3" id="btnAceptItems">Aceptar</button>
+            </div>
+            <div class="tablaBusqueda">
+                <table class="tablaWrap" id="despachos">
+                    <thead>
+                        <tr class="stickytop" >
+                            <th>Despacho</th>
+                            <th>Fecha</th>
+                            <th>Origen</th>
+                            <th>Destino</th>
+                            <th>Costos/Proyecto</th>
+                            <th>Año</th>
+                            <th>Guia</th>
+                            <th>RS</th>
+                            <th>Orden</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="Transferencias">
+        <div class="ventanaBusqueda w75por">
+            <div class="tituloVentana">
+                <span id="tituloBusqueda">Notas de Transferencia</span>
+                <div>
+                    <a href="#" id="closeSearchTrans"><i class="fas fa-window-close"></i></a>
                 </div>
             </div>
             <div class="textoBusqueda">

@@ -260,7 +260,7 @@
                                                         LEFT JOIN ibis.tb_parametros AS atencion ON ibis.tb_pedidocab.nivelAten = atencion.nidreg
                                                         LEFT JOIN ibis.tb_proyectos ON ibis.tb_pedidocab.idcostos = ibis.tb_proyectos.nidreg 
                                                     WHERE
-                                                        ibis.tb_pedidocab.estadodoc = 54
+                                                        ( ibis.tb_pedidocab.estadodoc = 54 OR ibis.tb_pedidocab.estadodoc = 59 ) 
                                                         AND ibis.tb_pedidocab.nflgactivo = 1 
                                                         AND ibis.tb_pedidocab.idtipomov = 37 
                                                         AND tb_pedidocab.nrodoc LIKE :pedido 
@@ -303,6 +303,7 @@
                                                     tb_pedidodet.cant_pedida,
                                                     tb_pedidodet.cant_orden,
                                                     tb_pedidodet.cant_aprob,
+                                                    tb_pedidodet.cant_atend,
                                                     cm_producto.ccodprod,
                                                     UPPER(cm_producto.cdesprod) AS cdesprod,
                                                     tb_unimed.cabrevia,
@@ -317,7 +318,8 @@
                                                     INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
                                                     INNER JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg 
                                                 WHERE
-                                                    idpedido = :indice");
+                                                    tb_pedidodet.idpedido = :indice
+                                                    AND tb_pedidodet.cant_orden != tb_pedidodet.cant_aprob");
                 $sql -> execute(['indice'=>$indice,"ingresos"=>$origen,"inventario"=>$origen]);
                 $rowCount = $sql->rowCount();
 
@@ -331,6 +333,8 @@
                                         data-pedido="'.$rs['idreg'].'"
                                         data-idprod="'.$rs['idprod'].'"
                                         data-costos="'.$rs['idcostos'].'"
+                                        data-orden="'.$rs['cant_orden'].'"
+                                        data-almacen="'.$rs['cant_atend'].'"
                                         data-grabado="0">
                                         <td class="textoCentro"><a href="'.$rs['iditem'].'" title="Eliminar" data-accion="delete"><i class="fas fa-eraser"></i></a></td>
                                         <td class="textoCentro"><a href="'.$rs['iditem'].'" title="Cambiar" data-accion="change"><i class="fas fa-exchange-alt"></i></a></td>
