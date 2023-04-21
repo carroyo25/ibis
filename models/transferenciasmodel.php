@@ -260,12 +260,16 @@
                                                         LEFT JOIN ibis.tb_parametros AS atencion ON ibis.tb_pedidocab.nivelAten = atencion.nidreg
                                                         LEFT JOIN ibis.tb_proyectos ON ibis.tb_pedidocab.idcostos = ibis.tb_proyectos.nidreg 
                                                     WHERE
-                                                        ( ibis.tb_pedidocab.estadodoc = 54 OR ibis.tb_pedidocab.estadodoc = 59 ) 
+                                                        ( ibis.tb_pedidocab.estadodoc = 54 
+                                                            OR ibis.tb_pedidocab.estadodoc = 59 
+                                                            OR ibis.tb_pedidocab.estadodoc = 60
+                                                            OR ibis.tb_pedidocab.estadodoc = 62) 
                                                         AND ibis.tb_pedidocab.nflgactivo = 1 
                                                         AND ibis.tb_pedidocab.idtipomov = 37 
                                                         AND tb_pedidocab.nrodoc LIKE :pedido 
                                                     ORDER BY
-                                                        ibis.tb_pedidocab.emision DESC");
+                                                        ibis.tb_pedidocab.emision 
+                                                        AND ibis.tb_proyectos.ccodproy DESC");
                 $sql->execute(["pedido"=>$p]);
                 $rowCount = $sql->rowCount();
 
