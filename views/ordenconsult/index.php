@@ -385,8 +385,8 @@
                     <th colspan="3" width="16%">Firmas</th>
                     <tr>
                         <th>Procura</th>
-                        <th>Operaciones</th>
                         <th>Finanzas</th>
+                        <th>Operaciones</th>
                     </tr>
                     
                 </tr>

@@ -439,5 +439,124 @@
                  return false;
              }
         }
+
+        public function listarTransferencias($nt){
+            try {
+                $salida = "";
+
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        alm_transfercab.idreg,
+                                                        LPAD( alm_transfercab.idreg, 5, 0 ) AS nro_nota,
+                                                        UPPER( origen.cdesalm ) AS almacen_origen,
+                                                        UPPER( destino.cdesalm ) AS almacen_destino,
+                                                        DATE_FORMAT(alm_transfercab.ftraslado,'%d/%m/%Y') AS ftraslado,
+                                                        UPPER(tb_proyectos.cdesproy ) AS cc_origen,
+                                                        YEAR(alm_transfercab.ftraslado) as anio
+                                                    FROM
+                                                        tb_almausu
+                                                        INNER JOIN alm_transfercab ON tb_almausu.nalmacen = alm_transfercab.almdestino
+                                                        INNER JOIN tb_almacen AS origen ON alm_transfercab.almorigen = origen.ncodalm
+                                                        INNER JOIN tb_almacen AS destino ON alm_transfercab.almdestino = destino.ncodalm
+                                                        INNER JOIN tb_proyectos ON alm_transfercab.idcc = tb_proyectos.nidreg 
+                                                    WHERE
+                                                        tb_almausu.nflgactivo = 1 
+                                                        AND tb_almausu.id_cuser = :id");
+                $sql->execute(['id'=>$_SESSION["iduser"]]);
+                $rowCount = $sql->rowCount();
+
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0) {
+                    while ($rs = $sql->fetch()){
+                        $salida.='<tr class="pointer" data-indice="'.$rs['idreg'].'">
+                                    <td class="textoCentro">'.$rs['nro_nota'].'</td>
+                                    <td class="textoCentro">'.$rs['ftraslado'].'</td>
+                                    <td class="pl20px">'.$rs['almacen_origen'].'</td>
+                                    <td class="pl20px">'.$rs['almacen_destino'].'</td>
+                                    <td class="pl20px">'.$rs['cc_origen'].'</td>
+                                    <td class="textoCentro">'.$rs['anio'].'</td>
+                                </tr>';
+                    }
+
+                    return $salida;
+                }
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        public function consultarTransferenciaID($indice){
+            try {
+                $sql=$this->db->connect()->prepare("SELECT
+                                                    alm_transfercab.almorigen,
+                                                    alm_transfercab.almdestino,
+                                                    alm_transfercab.idcc,
+                                                    UPPER( almacen_origen.cdesalm ) AS descripcion_origen,
+                                                    UPPER( almacen_destino.cdesalm ) AS descripcion_destino,
+                                                    almacen_origen.ncodalm AS codigo_almacen_origen,
+                                                    almacen_destino.ncodalm AS codigo_almacen_destino,
+                                                    alm_transfercab.idreg,
+                                                    alm_transfercab.ftraslado 
+                                                FROM
+                                                    alm_transfercab
+                                                    INNER JOIN tb_almacen AS almacen_origen ON alm_transfercab.almorigen = almacen_origen.ncodalm
+                                                    INNER JOIN tb_almacen AS almacen_destino ON alm_transfercab.almdestino = almacen_destino.ncodalm 
+                                                WHERE
+                                                    alm_transfercab.idreg = :idx 
+                                                    AND alm_transfercab.nflgactivo = 1");
+                $sql->execute(["idx"=>$indice]);
+
+                $docData = array();
+                while($row=$sql->fetch(PDO::FETCH_ASSOC)){
+                    $docData[] = $row;
+                }
+
+                $indice = $this->ultimoIndice() + 1;
+                return array("cabecera"=>$docData,
+                            "detalles"=>"",
+                            "numero"=>str_pad($indice,6,0,STR_PAD_LEFT),);
+                
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function registroDetallesTransferencias($indice){
+            try {
+                $salida = "";
+                $item=1;
+                $sql = $this->db->connect()->prepare("");
+                $sql->execute(["id"=>$indice]);
+
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0){
+                    while ($rs = $sql->fetch()){
+                        $salida .= '<tr>
+                                        <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
+                                        <td class="textoCentro">'.$rs['ccodprod'].'</td>
+                                        <td class="pl20px">'.$rs['descripcion'].'</td>
+                                        <td class="textoCentro">'.$rs['cabrevia'].'</td>
+                                        <td class="textoDerecha pr5px">'.$rs['cant_ord'].'</td>
+                                        <td class="textoDerecha pr5px">'.$rs['cant_ingr'].'</td>
+                                        <td class="pl20px">'.$rs['observaciones'].'</td>
+                                        <td class="pl20px">'.$rs['area_solicita'].'</td>
+                                        <td class="textoCentro">'.$rs['vence'].'</td>
+                                        <td class="pl20px">'.$rs['ubicacion'].'</td>
+                                        <td class="textoCentro">'.$rs['pedido'].'</td>
+                                        <td class="textoCentro">'.$rs['orden'].'</td>
+                                        <td class="textoCentro"></td>
+                                    </tr>';
+                    }
+                }
+                return $salida;
+
+             } catch (PDOException $th) {
+                 echo "Error: ".$th->getMessage();
+                 return false;
+             }
+        }
     }
 ?>

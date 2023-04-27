@@ -104,6 +104,8 @@ $(function(){
 
         if(contenedor_padre == "listaRecepciona"){
             $("#codigo_autoriza").val(codigo);
+        }else if (contenedor_padre == "listaCostos"){
+            $("#codigo_costos").val(codigo);
         }
 
         return false;
@@ -112,7 +114,6 @@ $(function(){
     $("#updateDocument").click(function(e){
         e.preventDefault();
         
-
         let result = {};
 
         $.each($("#formProceso").serializeArray(),function(){
@@ -145,7 +146,7 @@ $(function(){
         e.preventDefault();
 
         try {
-            if (guias()) throw "La guia ya esta registrado";
+            if (guias()) throw "La guia ya esta registrada";
 
             $.post(RUTA+"registros/despachos",{guia:$("#txtBuscar").val()},
                 function (data, textStatus, jqXHR) {
@@ -195,6 +196,7 @@ $(function(){
                 $("#tablaDetalles tbody")
                     .empty()
                     .append(data.detalles);
+
                 $("#busqueda").fadeOut();
             },
             "json"
@@ -231,6 +233,51 @@ $(function(){
 
 
 
+        return false;
+    });
+
+    $("#itemsTransfer").click(function (e) { 
+        e.preventDefault();
+
+        $.post(RUTA+"registros/transferencias",{nt:$("#txtBuscarTrans").val()},
+            function (data, textStatus, jqXHR) {
+
+                $("#transferencias tbody")
+                        .empty()
+                        .append(data);
+
+                $("#transferencias").fadeIn();
+            },
+            "text"
+        );
+
+        return false;  
+    });
+
+    $("#closeSearchTrans").click(function (e) { 
+        e.preventDefault();
+        
+        $("#transferencias").fadeOut();
+
+        return false;
+    });
+
+    $("#transferencias tbody").on("click","tr", function (e) {
+        e.preventDefault();
+
+        $.post(RUTA+"registros/transferenciasId",{id:$(this).data("indice")},
+            function (data, textStatus, jqXHR) {
+                $("#numero").val(data.numero);
+                $("#almacen_destino_ingreso").val(data.cabecera[0].descripcion_destino);
+                $("#almacen_origen_ingreso").val(data.cabecera[0].descripcion_origen);
+                $("#codigo_almacen_origen").val(data.cabecera[0].codigo_almacen_origen);
+                $("#codigo_almacen_destino").val(data.cabecera[0].codigo_almacen_destino);
+                $("#guia").val(data.cabecera[0].idreg);
+
+                $("#transferencias").fadeOut();
+            },
+            "json"
+        );
         return false;
     });
 

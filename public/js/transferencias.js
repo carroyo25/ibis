@@ -296,7 +296,6 @@ $(function(){
         id = destino.attr("id");
 
         if(contenedor_padre == "listaMovimiento"){
-            
             $("#codigo_movimiento").val(codigo);
         }else if(contenedor_padre == "listaAprueba"){
             $("#codigo_aprueba").val(codigo);

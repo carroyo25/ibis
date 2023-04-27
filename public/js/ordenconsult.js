@@ -289,3 +289,56 @@ exports = () => {
 
     return DATA;
 }
+
+detalles = () => {
+    DATA = [];
+    let TABLA = $("#tablaDetalles tbody >tr");
+
+    TABLA.each(function(){
+        let ITEM        = $(this).find('td').eq(1).text(),
+            CODIGO      = $(this).find('td').eq(2).text(),
+            DESCRIPCION = $(this).find('td').eq(3).text(),
+            UNIDAD      = $(this).find('td').eq(4).text(),
+            CANTIDAD    = $(this).find('td').eq(5).children().val(),
+            PRECIO      = $(this).find('td').eq(6).children().val(),
+            IGV         = 0.18,
+            TOTAL       = $(this).find('td').eq(7).text(),
+            NROPARTE    = $(this).find('td').eq(8).text(),
+            PEDIDO      = $(this).find('td').eq(9).text(),
+            CODPROD     = $(this).data('codprod'),
+            MONEDA      = $("#codigo_moneda").val(),
+            ITEMPEDIDO  = $(this).data('itped'),
+            GRABAR      = $(this).data('grabado'),
+            CANTPED     = $(this).data('cant'),
+            ITEMORDEN   = $(this).data('itord'),
+            SALDO       = $(this).data('cant')-$(this).find('td').eq(5).children().val(),
+            DETALLES    = $(this).find('td').eq(10).children().val();
+
+        item= {};
+        
+        //if (GRABAR == 0) {
+            item['item']        = ITEM;
+            item['codigo']      = CODIGO;
+            item['descripcion'] = DESCRIPCION;
+            item['unidad']      = UNIDAD;
+            item['cantidad']    = CANTIDAD;
+            item['precio']      = PRECIO;
+            item['igv']         = IGV;
+            item['total']       = TOTAL;
+            item['nroparte']    = NROPARTE;
+            item['pedido']      = PEDIDO;
+            item['codprod']     = CODPROD;
+            item['moneda']      = MONEDA;
+            item['itped']       = ITEMPEDIDO;
+            item['grabado']     = GRABAR;
+            item['cantped']     = CANTPED;
+            item['itemorden']   = ITEMORDEN;
+            item['saldo']       = SALDO;
+            item['detalles']    = DETALLES;
+
+            DATA.push(item);
+        //}
+    });
+
+    return DATA;
+}

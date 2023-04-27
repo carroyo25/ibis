@@ -44,8 +44,13 @@
                                 </div>
                             </div>
                             <div class="column2">
-                                <label for="costos">Ccostos:</label>
-                                <input type="text" name="costos" id="costos" readonly>
+                                <label for="costos">CCostos:</label>
+                                <input type="text" name="costos" id="costos" class="mostrarLista busqueda" placeholder="Elija una opcion">
+                                <div class="lista" id="listaCostos">
+                                   <ul>
+                                       <?php echo $this->listaCostos?>
+                                   </ul> 
+                                </div>
                             </div>
                         </div>
                         <div class="seccion_medio">
@@ -71,7 +76,7 @@
                             </div>
                             <div class="column4_55">
                                 <div class="column2_3957">
-                                    <label for="guia">N° Guia :</label>
+                                    <label for="guia">Guia/Trans/Comp.:</label>
                                     <input type="text" name="cnumguia" id="guia">
                                 </div>
                                 <div class="column2_46">
@@ -157,7 +162,7 @@
             </div>
         </div>
     </div>
-    <div class="modal" id="Transferencias">
+    <div class="modal" id="transferencias">
         <div class="ventanaBusqueda w75por">
             <div class="tituloVentana">
                 <span id="tituloBusqueda">Notas de Transferencia</span>
@@ -166,22 +171,19 @@
                 </div>
             </div>
             <div class="textoBusqueda">
-                <input type="text" name="txtBuscar" id="txtBuscar" placeholder="Buscar" class="w90por">
-                <button type="button" class="boton3" id="btnAceptItems">Aceptar</button>
+                <input type="text" name="txtBuscarTrans" id="txtBuscarTrans" placeholder="Buscar" class="w90por">
+                <button type="button" class="boton3" id="btnAceptItemsTrans">Aceptar</button>
             </div>
             <div class="tablaBusqueda">
-                <table class="tablaWrap" id="despachos">
+                <table class="tablaWrap" id="transferencias">
                     <thead>
                         <tr class="stickytop" >
-                            <th>Despacho</th>
+                            <th>Nro</th>
                             <th>Fecha</th>
                             <th>Origen</th>
                             <th>Destino</th>
-                            <th>Costos/Proyecto</th>
+                            <th>Costos/Proyecto Origen</th>
                             <th>Año</th>
-                            <th>Guia</th>
-                            <th>RS</th>
-                            <th>Orden</th>
                         </tr>
                     </thead>
                     <tbody>

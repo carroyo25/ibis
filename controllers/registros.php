@@ -9,6 +9,7 @@
             $this->view->listaCostosSelect = $this->model->costosPorUsuarioSelect($_SESSION['iduser']);
             $this->view->listaRecepciona = $this->model->listarPersonalRol(4);
             $this->view->listaIngresos = $this->model->listarIngresos("");
+            $this->view->listaCostos = $this->model->costosPorUsuario($_SESSION['iduser']);
             $this->view->render('registros/index');
         }
 
@@ -35,6 +36,14 @@
 
         function filtro(){
             echo $this->model->listarIngresos($_POST);
+        }
+
+        function transferencias() {
+            echo $this->model->listarTransferencias($_POST['nt']);
+        }
+
+        function transferenciasId() {
+            echo json_encode($this->model->consultarTransferenciaID($_POST['id']));
         }
     }
 ?>

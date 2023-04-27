@@ -69,7 +69,7 @@
 
             $num = $datos['numero'];
             $fec = $datos['emision'];
-            $usr = $_SESSION['user'];
+            $usr = $_SESSION['iduser'];
             $pry = $datos['costos'];
             $are = $datos['area'];
             $cos = $datos['costos'];
