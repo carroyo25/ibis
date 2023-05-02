@@ -19,7 +19,8 @@
         
         function nuevoRegistro(){
             echo json_encode($this->model->grabarRegistros($_POST['cabecera'],
-                                                            $_POST['detalles']));
+                                                            $_POST['detalles'],
+                                                            $_POST['tipo']));
         }
 
         function actualizarRegistros(){

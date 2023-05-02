@@ -93,7 +93,7 @@
                                 <i class="fas fa-upload"></i> Guias de Remisión
                             </button>
                             <button type="button" id="itemsTransfer" title="Importar Transferencias" class="cerrarLista boton3">
-                                <i class="fas fa-upload"></i> Notas de Transferecia
+                                <i class="fas fa-upload"></i> Notas de Transferencia
                             </button>
                             <button type="button" id="itemsLocals" title="Importar compras Locales" class="cerrarLista boton3">
                                 <i class="fas fa-upload"></i> Compras Locales
@@ -116,7 +116,7 @@
                                         <th class="">Ubicación</th>
                                         <th class="">Pedido</th>
                                         <th class="">Orden</th>
-                                        <th class="">Guia Remision</th>
+                                        <th class="">G. Remision<br/>Nr.Trans.</th>
                                 </tr>
                             </thead>
                             <tbody>

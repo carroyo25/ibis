@@ -1,6 +1,6 @@
 $(function(){
-    var accion = "";
-    var index = "";
+    let accion = "";
+    let tipoMovimiento = 0;  //guia remision  = 1, transferencias = 2
 
     $("#nuevoRegistro").click(function (e) { 
         e.preventDefault();
@@ -123,9 +123,10 @@ $(function(){
         try {
             if (result['codigo_autoriza'] == '') throw "Elija el responsable de la recepcion";
             if (result['cnumguia'] == '') throw "Seleccione un numero de guia";
-            if (accion != "n") throw "No se puede grabar";
+            if (result['codigo_costos'] == "") throw "Seleccione el centro de costos";
+            if ( accion != "n" ) throw "No se puede grabar";
         
-            $.post(RUTA+"registros/nuevoRegistro", {cabecera:result,detalles:JSON.stringify(detalles())},
+            $.post(RUTA+"registros/nuevoRegistro", {cabecera:result,detalles:JSON.stringify(detalles()),tipo:tipoMovimiento},
                 function (data, textStatus, jqXHR) {
                     if (data.estado){
                         mostrarMensaje("Ingreso correcto","mensaje_correcto");
@@ -144,6 +145,9 @@ $(function(){
 
     $("#itemsImport").click(function (e) { 
         e.preventDefault();
+
+
+        tipoMovimiento = 1;
 
         try {
             if (guias()) throw "La guia ya esta registrada";
@@ -206,7 +210,7 @@ $(function(){
         return false
     });
 
-    $("#txtBuscar").keyup(function(){
+    $("#txtBuscar,#txtBuscarTrans").keyup(function(){
         let _this = this;
 
         $.each($("#despachos tbody > tr"), function() {
@@ -215,6 +219,19 @@ $(function(){
             else
                 $(this).show();
         });
+
+    });
+
+    $("#txtBuscarTrans").keyup(function(){
+        let _this = this;
+
+        $.each($("#transferencias tbody > tr"), function() {
+            if($(this).text().toLowerCase().indexOf($(_this).val().toLowerCase()) === -1)
+                $(this).hide();
+            else
+                $(this).show();
+        });
+
     });
 
     $("#btnConsulta").click(function(e){
@@ -238,6 +255,8 @@ $(function(){
 
     $("#itemsTransfer").click(function (e) { 
         e.preventDefault();
+
+        tipoMovimiento = 2;
 
         $.post(RUTA+"registros/transferencias",{nt:$("#txtBuscarTrans").val()},
             function (data, textStatus, jqXHR) {
@@ -273,6 +292,10 @@ $(function(){
                 $("#codigo_almacen_origen").val(data.cabecera[0].codigo_almacen_origen);
                 $("#codigo_almacen_destino").val(data.cabecera[0].codigo_almacen_destino);
                 $("#guia").val(data.cabecera[0].idreg);
+
+                $("#tablaDetalles tbody")
+                    .empty()
+                    .append(data.detalles);
 
                 $("#transferencias").fadeOut();
             },

@@ -158,7 +158,7 @@
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0){
-                    while ($rs= $sql->fetch()){
+                    while ($rs = $sql->fetch()){
                         $salida .='<tr class="pointer" data-idpet="'.$rs['niddetaPed'].'"
                                                         data-area="'.$rs['ncodarea'].'"
                                                         data-almacen = "'.$rs['ncodalm2'].'"
@@ -178,8 +178,7 @@
                                         <td class="textoCentro">'.$rs['orden'].'</td>
                                         <td class="textoCentro">'.$rs['cnumguia'].'</td>
                                     </tr>';
-                    }
-                    
+                    } 
                 }
                 return $salida;
             } catch (PDOException $th) {
@@ -193,7 +192,7 @@
             return $indice;
         }
 
-        public function grabarRegistros($cabecera,$detalles) {
+        public function grabarRegistros($cabecera,$detalles,$tipo) {
             try {
                 
                 $sql = $this->db->connect()->prepare("INSERT INTO alm_cabexist SET idcostos=:costos,
@@ -218,12 +217,57 @@
                 $indice = $this->ultimoIndice();
 
                 if ($rowCount > 0) {
-                    $this->grabarDetalllesIngreso($indice,$detalles,$cabecera['codigo_despacho'],$cabecera['cnumguia']);
+                    $this->grabarDetalllesIngreso($indice,$detalles,$cabecera['codigo_despacho'],$cabecera['cnumguia'],$tipo);
                     return array("estado"=>true);
                 }else{
                     return array("estado"=>false);
                 }
                 
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function grabarDetalllesIngreso($indice,$detalles,$despacho,$guia,$tipo){
+            try {
+                $datos = json_decode($detalles);
+                $nreg = count($datos);
+
+                for ($i=0; $i < $nreg; $i++) {
+                    $sql = $this->db->connect()->prepare("INSERT INTO alm_existencia 
+                                                            SET idalm=:almacen,
+                                                                idregistro=:indice,
+                                                                iddespacho=:despacho,
+                                                                codprod=:item,
+                                                                tipo=:tipoMovimiento,
+                                                                cant_ingr=:cantidad,
+                                                                nguia=:guia,
+                                                                observaciones=:observ,
+                                                                ubicacion=:ubica,
+                                                                area_solicita=:areapedido,
+                                                                cant_ord=:cant_orden,
+                                                                vence=:fecha_vence,
+                                                                idpedido=:itempedido,
+                                                                nropedido=:pedido,
+                                                                nroorden=:orden");
+                    $sql->execute(["almacen" =>$datos[$i]->almacen, 
+                                    "indice" =>$indice,
+                                    "despacho"=>$despacho,
+                                    "item"=>$datos[$i]->codprod,
+                                    "cantidad"=>$datos[$i]->cantrecep,
+                                    "guia"=>$guia,
+                                    "observ"=>$datos[$i]->observac,
+                                    "ubica"=>$datos[$i]->ubica,
+                                    "areapedido"=>$datos[$i]->area,
+                                    "cant_orden"=>$datos[$i]->cantenv,
+                                    "fecha_vence"=>$datos[$i]->vence,
+                                    "itempedido"=>$datos[$i]->iddepet,
+                                    "pedido"=>$datos[$i]->pedido,
+                                    "orden"=>$datos[$i]->orden,
+                                    "tipoMovimiento"=>$tipo]);
+                }
+
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;
@@ -290,50 +334,6 @@
 
                     return $salida;
                 }
-            } catch (PDOException $th) {
-                echo "Error: ".$th->getMessage();
-                return false;
-            }
-        }
-
-        private function grabarDetalllesIngreso($indice,$detalles,$despacho,$guia){
-            try {
-                $datos = json_decode($detalles);
-                $nreg = count($datos);
-
-                for ($i=0; $i < $nreg; $i++) {
-                    $sql = $this->db->connect()->prepare("INSERT INTO alm_existencia 
-                                                            SET idalm=:almacen,
-                                                                idregistro=:indice,
-                                                                iddespacho=:despacho,
-                                                                codprod=:item,
-                                                                tipo=1,
-                                                                cant_ingr=:cantidad,
-                                                                nguia=:guia,
-                                                                observaciones=:observ,
-                                                                ubicacion=:ubica,
-                                                                area_solicita=:areapedido,
-                                                                cant_ord=:cant_orden,
-                                                                vence=:fecha_vence,
-                                                                idpedido=:itempedido,
-                                                                nropedido=:pedido,
-                                                                nroorden=:orden");
-                    $sql->execute(["almacen" =>$datos[$i]->almacen, 
-                                    "indice" =>$indice,
-                                    "despacho"=>$despacho,
-                                    "item"=>$datos[$i]->codprod,
-                                    "cantidad"=>$datos[$i]->cantrecep,
-                                    "guia"=>$guia,
-                                    "observ"=>$datos[$i]->observac,
-                                    "ubica"=>$datos[$i]->ubica,
-                                    "areapedido"=>$datos[$i]->area,
-                                    "cant_orden"=>$datos[$i]->cantenv,
-                                    "fecha_vence"=>$datos[$i]->vence,
-                                    "itempedido"=>$datos[$i]->iddepet,
-                                    "pedido"=>$datos[$i]->pedido,
-                                    "orden"=>$datos[$i]->orden]);
-                }
-
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;
@@ -486,7 +486,7 @@
             }
         }
 
-        public function consultarTransferenciaID($indice){
+        public function consultarTransferenciaID($id){
             try {
                 $sql=$this->db->connect()->prepare("SELECT
                                                     alm_transfercab.almorigen,
@@ -505,17 +505,19 @@
                                                 WHERE
                                                     alm_transfercab.idreg = :idx 
                                                     AND alm_transfercab.nflgactivo = 1");
-                $sql->execute(["idx"=>$indice]);
+                $sql->execute(["idx"=>$id]);
 
                 $docData = array();
+
                 while($row=$sql->fetch(PDO::FETCH_ASSOC)){
                     $docData[] = $row;
                 }
-
+               
                 $indice = $this->ultimoIndice() + 1;
+
                 return array("cabecera"=>$docData,
-                            "detalles"=>"",
-                            "numero"=>str_pad($indice,6,0,STR_PAD_LEFT),);
+                             "detalles"=>$this->detallesTransferencias($id,$docData[0]['almdestino']),
+                             "numero"=>str_pad($indice,6,0,STR_PAD_LEFT),);
                 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
@@ -523,33 +525,61 @@
             }
         }
 
-        private function registroDetallesTransferencias($indice){
+        private function detallesTransferencias($indice,$destino){
             try {
                 $salida = "";
                 $item=1;
-                $sql = $this->db->connect()->prepare("");
-                $sql->execute(["id"=>$indice]);
+
+                $sql = $this->db->connect()->prepare("SELECT
+                                                    alm_transferdet.iditem,
+                                                    alm_transferdet.idtransfer,
+                                                    alm_transferdet.iddetped,
+                                                    alm_transferdet.idPedido,
+                                                    alm_transferdet.idcprod,
+                                                    alm_transferdet.idcostos,
+                                                    alm_transferdet.ncanti,
+                                                    alm_transferdet.cobserva,
+                                                    cm_producto.ccodprod,
+                                                    UPPER( cm_producto.cdesprod ) AS cdesprod,
+                                                    tb_unimed.cabrevia,
+                                                    tb_pedidocab.nrodoc,
+                                                    tb_area.ncodarea, 
+	                                                UPPER(tb_area.cdesarea) AS cdesarea 
+                                                FROM
+                                                    alm_transferdet
+                                                    INNER JOIN cm_producto ON alm_transferdet.idcprod = cm_producto.id_cprod
+                                                    INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                    INNER JOIN tb_pedidocab ON alm_transferdet.idPedido = tb_pedidocab.idreg
+                                                    INNER JOIN tb_area ON tb_pedidocab.idarea = tb_area.ncodarea  
+                                                WHERE
+                                                    alm_transferdet.nflgactivo = 1 
+                                                    AND alm_transferdet.idtransfer =:idx");
+                $sql->execute(["idx"=>$indice]);
 
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0){
-                    while ($rs = $sql->fetch()){
-                        $salida .= '<tr>
+                    while ($rs= $sql->fetch()){
+                        $salida .='<tr class="pointer" data-idpet="'.$rs['idPedido'].'"
+                                                        data-area="'.$rs['ncodarea'].'"
+                                                        data-almacen = "'.$destino.'"
+                                                        data-codprod = "'.$rs['idcprod'].'"
+                                                        data-costos = "'.$rs['idcostos'].'">
                                         <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
-                                        <td class="textoCentro">'.$rs['ccodprod'].'</td>
-                                        <td class="pl20px">'.$rs['descripcion'].'</td>
+                                        <td class="textoCentro"> '.$rs['ccodprod'].'</td>
+                                        <td class="pl20px">'.$rs['cdesprod'].'</td>
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
-                                        <td class="textoDerecha pr5px">'.$rs['cant_ord'].'</td>
-                                        <td class="textoDerecha pr5px">'.$rs['cant_ingr'].'</td>
-                                        <td class="pl20px">'.$rs['observaciones'].'</td>
-                                        <td class="pl20px">'.$rs['area_solicita'].'</td>
-                                        <td class="textoCentro">'.$rs['vence'].'</td>
-                                        <td class="pl20px">'.$rs['ubicacion'].'</td>
-                                        <td class="textoCentro">'.$rs['pedido'].'</td>
-                                        <td class="textoCentro">'.$rs['orden'].'</td>
+                                        <td class="textoDerecha pr5px">'.$rs['ncanti'].'</td>
+                                        <td class="textoDerecha"><input type="number" min="1" value="'.$rs['ncanti'].'"></td>
+                                        <td><input type="text">'.$rs['cobserva'].'</td>
+                                        <td class="pl20px">'.$rs['cdesarea'].'</td>
+                                        <td><input type="date"></td>
+                                        <td><input type="text"></td>
+                                        <td class="textoCentro">'.$rs['nrodoc'].'</td>
                                         <td class="textoCentro"></td>
+                                        <td class="textoCentro">'.$rs['idtransfer'].'</td>
                                     </tr>';
-                    }
+                    } 
                 }
                 return $salida;
 

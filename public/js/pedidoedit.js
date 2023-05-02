@@ -1,7 +1,8 @@
 $(function(){
     let iditempedido = "",
         fila=0,
-        estadoItem=0;
+        estadoItem=0,
+        accion = "";
 
     $("#tablaPrincipal tbody").on("click","tr", function (e) {
         e.preventDefault();
@@ -169,7 +170,9 @@ $(function(){
         }else if( $(this).data('accion') == "liberar" ) {
             $("#preguntaItemLibera").fadeIn();
         }else if(  $(this).data('accion') == "cambiar"){
-
+            accion = "change";
+            fila_reemplazar = $(this).parent().parent();
+            listarItems($("#codigo_tipo").val());
         }
 
         return false;
@@ -205,17 +208,10 @@ $(function(){
 
     $("#btnAgregar").click(function (e) { 
         e.preventDefault();
-        
-        $.post(RUTA+"pedidos/llamaProductos", {tipo:$("#codigo_tipo").val()},
-            function (data, textStatus, jqXHR) {
-                $("#tablaModulos tbody")
-                    .empty()
-                    .append(data);
-                $("#busqueda").fadeIn();
-            },
-            "text"
-        );
 
+        accion = "add";
+        listarItems($("#codigo_tipo").val());
+         
         return false;
     });
 
@@ -246,7 +242,16 @@ $(function(){
                     <td class="textoCentro"><a href="-" title="Agregar Item debajo" data-accion="agregar"><i class="far fa-calendar-plus"></i></a></td>
                 </tr>`;
 
-        $("#tablaDetalles tbody").append(row);
+        if (accion == "add")
+            $("#tablaDetalles tbody").append(row);
+        else {
+            fila_reemplazar.attr("data-grabado",0);
+            fila_reemplazar.attr("data-idprod",idprod);
+            fila_reemplazar.attr("data-codund",nunid);
+            fila_reemplazar.find("td").eq(2).text(codigo);
+            fila_reemplazar.find("td").eq(3).text(descrip);
+            fila_reemplazar.find("td").eq(4).text(unidad);
+        }
 
         return false;
     });
@@ -371,5 +376,18 @@ cambiarPedido = (idfunction,valorfunction) => {
                 mostrarMensaje(data.mensaje,"mensaje_correcto");
             },
             "json"
+    );
+}
+
+listarItems = (tipoPedido) => {
+    $.post(RUTA+"pedidos/llamaProductos", {tipo:tipoPedido},
+        function (data, textStatus, jqXHR) {
+            $("#tablaModulos tbody")
+                .empty()
+                .append(data);
+            $("#busqueda").fadeIn();
+            
+        },
+        "text"
     );
 }
