@@ -252,10 +252,12 @@
             try {
                 $mes  = date("m");
 
-                $tipo   = $parametros['tipoSearch'] == -1 ? "%": "%".$parametros['tipoSearch']."%";
-                $costos = $parametros['costosSearch'] == -1 ? "%": "%".$parametros['costosSearch']."%";
+                $tipo   = $parametros['tipoSearch'] == -1 ? "%" : "%".$parametros['tipoSearch']."%";
+                //$costos = $parametros['costosSearch'] == -1 ? "%" : "%".$parametros['costosSearch']."%";
                 $mes    = $parametros['mesSearch'] == -1 ? $mes :  $parametros['mesSearch'];
                 $anio   = $parametros['anioSearch'];
+
+                $costos = $parametros['costosSearch'] == -1 ? "%" : "%".'24'."%";
 
                 $salida = "";
                  $sql = $this->db->connect()->prepare("SELECT
@@ -292,7 +294,8 @@
                                                             (
                                                                 lg_ordencab.nfirmaLog + lg_ordencab.nfirmaFin + lg_ordencab.nfirmaOpe
                                                             ) AS estado_firmas,
-                                                            cm_entidad.crazonsoc
+                                                            cm_entidad.crazonsoc,
+                                                            UPPER (tb_user.cnameuser) AS operador
                                                             FROM
                                                             lg_ordencab
                                                             INNER JOIN tb_pedidocab ON lg_ordencab.id_refpedi = tb_pedidocab.idreg
@@ -300,6 +303,7 @@
                                                             INNER JOIN tb_proyectos ON lg_ordencab.ncodpry = tb_proyectos.nidreg
                                                             INNER JOIN tb_parametros ON lg_ordencab.nNivAten = tb_parametros.nidreg
                                                             INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
+                                                            INNER JOIN tb_user ON lg_ordencab.id_cuser = tb_user.iduser
                                                             WHERE
                                                                 lg_ordencab.nEstadoDoc = 59 
                                                                 AND lg_ordencab.ncodpry LIKE :costos 
@@ -348,6 +352,7 @@
                                      <td class="pl20px">'.$rs['area'].'</td>
                                      <td class="textoCentro '.strtolower($rs['atencion']).'">'.$rs['atencion'].'</td>
                                      <td class="textoDerecha pr10px">'.$rs['ntotal'].'</td>
+                                     <td class="textoCentro">'.$rs['operador'].'</td>
                                      <td class="textoCentro">'.$log.'</td>
                                      <td class="textoCentro">'.$fin.'</td>
                                      <td class="textoCentro">'.$ope.'</td>
