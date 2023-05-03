@@ -223,6 +223,7 @@
                                                         alm_consumo.cestado,
                                                         alm_consumo.flgdevolver,
                                                         alm_consumo.cfirma,
+                                                        alm_consumo.cserie,
                                                         cm_producto.ccodprod,
                                                         UPPER(cm_producto.cdesprod) AS cdesprod,
                                                         tb_unimed.cabrevia,
@@ -335,7 +336,7 @@
                                                         INNER JOIN ibis.tb_familia ON cm_producto.nfam = tb_familia.ncodfamilia
                                                         INNER JOIN rrhh.tabla_aquarius ON ibis.alm_consumo.nrodoc = rrhh.tabla_aquarius.dni 
                                                     WHERE
-                                                        alm_consumo.flgactivo 
+                                                        alm_consumo.flgactivo = 1
                                                         AND alm_consumo.ncostos =:cc
                                                     ORDER BY ibis.alm_consumo.fechasalida ASC");
                 $sql->execute(["cc"=>$cc]);

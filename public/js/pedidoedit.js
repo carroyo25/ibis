@@ -170,9 +170,18 @@ $(function(){
         }else if( $(this).data('accion') == "liberar" ) {
             $("#preguntaItemLibera").fadeIn();
         }else if(  $(this).data('accion') == "cambiar"){
+
             accion = "change";
             fila_reemplazar = $(this).parent().parent();
-            listarItems($("#codigo_tipo").val());
+            item_accion = fila_reemplazar.data('estado');
+
+            try {
+                if ( item_accion == 60 || item_accion == 62 || item_accion == 52 ) throw new Error('El item no puede ser cambiado');
+
+                listarItems($("#codigo_tipo").val());
+            } catch (error) {
+                mostrarMensaje(error,'mensaje_error');
+            }
         }
 
         return false;
@@ -184,7 +193,7 @@ $(function(){
         if ( iditempedido == '-') {
             fila.remove();
         }else{
-            $.post(RUTA+"pedidoedit/accionItem",{id:iditempedido,valor:0,estado:105},
+            $.post(RUTA+"pedidoedit/accionItem",{id:iditempedido,valor:1,estado:105},
                 function (data, textStatus, jqXHR) {
                     fila.remove();
                     $("#preguntaItemBorra").fadeOut();
@@ -285,7 +294,7 @@ $(function(){
 
             $.post(RUTA+"pedidoedit/grabaPedidoAdmin",{cabecera:result,detalles:JSON.stringify(itemsSave())},
                 function (data, textStatus, jqXHR) {
-                    data.mensaje;
+                    mostrarMensaje(data.mensaje,data.clase)
                 },
                 "json"
             );

@@ -71,7 +71,7 @@
                             </div>
                             <div class="column2">
                                 <label for="concepto">Concepto:</label>
-                                <input type="text" name="concepto" id="concepto" class="cerrarLista" readonly>
+                                <input type="text" name="concepto" id="concepto" class="cerrarLista">
                             </div>
                             <div class="column2">
                                 <label for="solicitante">Solicitante:</label>

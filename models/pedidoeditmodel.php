@@ -339,9 +339,23 @@
         }
 
         public function grabarPedidoAdmin($cabecera,$detalles){
-            //$sql = $this->db->connect()->prepare();
+            $respuesta = false;
+            $mensaje = "Pedido no se modifico";
+            $clase = "mensaje_error";
 
-            $this->actualizarDetallesAdmin($cabecera['codigo_verificacion'],
+            $sql = $this->db->connect()->prepare("UPDATE tb_pedidocab SET vence=:vence,concepto=:concep,detalle=:det,nivelAten=:aten
+                                                                                WHERE idreg=:id");
+            $sql->execute([
+                "vence"=>$cabecera['vence'],
+                "concep"=>$cabecera['concepto'],
+                "det"=>$cabecera['espec_items'],
+                "aten"=>$cabecera['codigo_atencion'],
+                "id"=>$cabecera['codigo_pedido']
+            ]);
+
+            $rowCount = $sql->rowCount();
+            
+            $rowDetails = $this->actualizarDetallesAdmin($cabecera['codigo_verificacion'],
                                             $cabecera['codigo_estado'],
                                             $cabecera['codigo_atencion'],
                                             $cabecera['codigo_tipo'],
@@ -349,6 +363,19 @@
                                             $cabecera['codigo_area'],
                                             $cabecera['codigo_pedido'],
                                             $detalles);
+
+            if ($rowCount > 0 || $rowDetails > 0){
+                $respuesta = true;
+                $mensaje = "Pedido Modificado";
+                $clase = "mensaje_correcto";
+            }
+
+            $salida = array("respuesta"=>$respuesta,
+                            "mensaje"=>$mensaje,
+                            "clase"=>$clase);
+
+                
+            return $salida;
         }
 
         private function actualizarDetallesAdmin($codigo,$estado,$atencion,$tipo,$costos,$area,$idpedido,$detalles){
@@ -389,6 +416,8 @@
                             "espec"=>$details[$i]->especifica,
                             "registro"=>$details[$i]->registro,
                             "parte"=>$details[$i]->nroparte]);
+                        
+                        $rowCount = $sql->rowCount();
                     }catch (PDOException $th) {
                         echo $th->getMessage();
                         return false;
@@ -413,12 +442,15 @@
                                         "nreg"=>$details[$i]->registro,
                                         "prod"=>$details[$i]->idprod,
                                         "id"=>$details[$i]->itempedido]);
+                        $rowCount = $sql->rowCount();
                     } catch (PDOException $th) {
                         echo $th->getMessage();
                         return false;
                     }
                 }
             }
+
+            return $rowCount;
         }
 
         private function accionItemOrden($id,$valor,$estado){
