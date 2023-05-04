@@ -65,7 +65,7 @@
                             </button>
                             <button type="button" id="addMessage" title="Comentarios" class="boton3">
                                 <i class="far fa-comments"></i> Agregar comentarios
-                                <span class="button__comment">0</span>
+                                <span class="button__comment cookie_alert">0</span>
                             </button>
                             <button type="button" id="preview" title="Vista Previa" class="boton3">
                                 <i class="far fa-file-pdf"></i> Vista Previa
@@ -204,7 +204,8 @@
                                 <i class="far fa-paper-plane"></i> Otros Adicionales
                             </button>
                             <button type="button" id="uploadCotiz" title="Adjuntar Cotizacion" class="cerrarLista boton3">
-                                <i class="far fa-file-pdf"></i> Adjuntar archivos
+                                <i class="far fa-file-pdf"></i> Archivos Adjuntos     
+                                <span class="button__atach cookie_info" id="atach_counter"></span>
                             </button>
                             <button type="button" id="loadRequest" title="Importar Pedido" class="cerrarLista boton3">
                                 <i class="fas fa-upload"></i> Importar Items

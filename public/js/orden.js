@@ -94,9 +94,11 @@ $(function(){
                     .empty()
                     .append(data.adicionales);
 
+                $("#atach_counter").text(data.total_adjuntos);
+
                 $("#sw").val(1);
 
-                if (data.bocadillo != 0) {
+                if ( data.bocadillo != 0) {
                     $(".button__comment")
                         .text(data.bocadillo)
                         .show();
@@ -104,6 +106,7 @@ $(function(){
                     $(".button__comment").hide();
                 }
 
+                $("#proceso").fadeIn();
             },
             "json"
         );
@@ -112,7 +115,7 @@ $(function(){
         grabado     = true;
         ingresos    = 0
         swcoment    = false;
-        $("#proceso").fadeIn();
+        //$("#proceso").fadeIn();
     
         return false;
     });
@@ -472,14 +475,14 @@ $(function(){
 
         formData = new FormData();
         formData.append("cabecera",JSON.stringify(result));
+
         $.each(jQuery('#uploadAtach')[0].files, function(i, file) {
             formData.append('file-'+i, file);
         });
+
         formData.append("detalles",JSON.stringify(detalles()));
         formData.append("comentarios",JSON.stringify(comentarios()));
         formData.append("adicionales",JSON.stringify(adicionales()));
-
-        
 
         try {
             if ($("#codigo_estado").val() == 59) throw "La orden esta en firmas.";
@@ -632,8 +635,6 @@ $(function(){
             mostrarMensaje(error,'mensaje_error');
         }
 
-        
-
         return false;
     });
 
@@ -714,7 +715,17 @@ $(function(){
     $("#uploadCotiz").click(function(e){
         e.preventDefault();
 
-        $("#archivos").fadeIn();
+        $.post(RUTA+"orden/listarAdjuntos", {orden:$("#codigo_orden").val(),tipo:"ORD"},
+            function (data, text, requestXHR) {
+                $(".listaArchivos")
+                    .empty()
+                    .append(data.adjuntos);
+                $("#archivos").fadeIn();
+            },
+            "json"
+        );
+
+        
 
         return false;
     });

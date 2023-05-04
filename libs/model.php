@@ -2291,7 +2291,7 @@
             }
         }
 
-        //ordenes
+        //aca estan todas las funciones de las ordenes
         public function consultarOrdenId($id){
             try {
                 $sql = $this->db->connect()->prepare("SELECT
@@ -2381,6 +2381,7 @@
                 $ncomentarios = $this->consultarTotalComentarios($id);
                 $adjuntos = $this->verAdjuntosOrden($id);
                 $adicionales = $this->consultarAdicionales($id);
+                $nro_adjuntos = $this->contarAdjuntos($id,"ORD");
 
                 return array("cabecera"=>$docData,
                             "detalles"=>$detalles,
@@ -2389,7 +2390,8 @@
                             "bocadillo"=>$ncomentarios,
                             "adjuntos"=>$adjuntos,
                             "adicionales"=>$adicionales,
-                            "total_adicionales"=>$this->totalAdicionales($id));
+                            "total_adicionales"=>$this->totalAdicionales($id),
+                            "total_adjuntos"=>$nro_adjuntos);
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
@@ -2663,6 +2665,26 @@
                 $result = $sql->fetchAll();
 
                 return $result[0]['total_adicionales'];
+
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        private function contarAdjuntos($id,$tipo){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        COUNT( lg_regdocumento.id_regmov ) AS total_adjuntos 
+                                                    FROM
+                                                        lg_regdocumento 
+                                                    WHERE
+                                                        lg_regdocumento.nidrefer = :id
+                                                        AND lg_regdocumento.cmodulo = :tipo");
+                $sql->execute(['id'=>$id,"tipo"=>$tipo]);
+                $result = $sql->fetchAll();
+
+                return $result[0]['total_adjuntos'];
 
             } catch (PDOException $th) {
                 echo $th->getMessage();

@@ -55,7 +55,7 @@
                         <div>
                             <button type="button" id="addMessage" title="Comentarios" class="boton3">
                                 <i class="far fa-comments"></i> Observaciones
-                                <span class="button__comment">0</span> 
+                                <span class="button__comment cookie_alert">0</span> 
                             </button>
                             <button type="button" id="preview" title="Vista Previa" class="boton3">
                                 <i class="far fa-file-pdf"></i> Vista Previa

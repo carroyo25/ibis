@@ -1612,19 +1612,27 @@ $anulado:#c2c2c2;
                 border:2px solid $negro;
             }
 
-            span{
-                background: red;
+            .cookie_alert,.cookie_info{
                 color: white;
-                font-size: .5rem;
+                font-size: .8rem;
                 padding: 5px 7px;
                 position: absolute;
-                top: 0;
+                top: -10px;
                 border-radius: 20px;
-                right: -5px;
+                right: -8px;
                 display: flex;
                 justify-content: center;
                 align-items: center;
+                z-index: 2;
+            }
+
+            .cookie_alert {
+                background-color: red;
                 display: none;
+            }
+
+            .cookie_info {
+                background-color: #c514df;
             }
         }
     }

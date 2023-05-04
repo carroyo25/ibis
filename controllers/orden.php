@@ -82,5 +82,9 @@
         function ItemsPorCostos(){
             echo $this->model->importarPedidosCostos($_POST['costo']);
         }
+
+        function listarAdjuntos(){
+            echo json_encode($this->model->verAdjuntosOrden($_POST['orden']));
+        }
     }
 ?>
