@@ -153,6 +153,7 @@
                                                         alm_consumo.flgdevolver,
                                                         alm_consumo.cfirma,
                                                         cm_producto.ccodprod,
+                                                        alm_consumo.nkardex,
                                                         UPPER(cm_producto.cdesprod) AS cdesprod,
                                                         tb_unimed.cabrevia 
                                                     FROM
@@ -176,7 +177,7 @@
                         $marcado = $rs['flgdevolver'] == 1 ? "checked" : "";
                         $firma = "public/documentos/firmas/".$rs['cfirma'].".png";
 
-                        $salida .= '<tr class="pointer" data-grabado="1" data-registrado="1">
+                        $salida .= '<tr class="pointer" data-grabado="1" data-registrado="1" data-kardex = "'.$rs['nkardex'].'">
                                         <td class="textoDerecha">'.$numero_item--.'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="pl5px">'.$rs['cdesprod'].'</td>
@@ -225,6 +226,7 @@
                                                         alm_consumo.cfirma,
                                                         alm_consumo.cserie,
                                                         cm_producto.ccodprod,
+                                                        alm_consumo.nkardex,
                                                         UPPER(cm_producto.cdesprod) AS cdesprod,
                                                         tb_unimed.cabrevia,
                                                         DATEDIFF(alm_consumo.fechasalida,NOW()) AS  dias_ultima_entrega
@@ -253,8 +255,8 @@
 
                         $alerta = $rs['dias_ultima_entrega'] < 15 ? "inactivo" : "";
 
-                        $salida .= '<tr class="pointer" data-grabado="1">
-                                        <td class="textoDerecha">'.$numero_item--.'</td>
+                        $salida .= '<tr class="pointer" data-grabado="1" data-kardex="'.$rs['nkardex'].'">
+                                        <td class="textoDerecha hideItem" data-idreg="'.$rs['idreg'].'">'.$numero_item--.'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="pl5px">'.$rs['cdesprod'].'</td>
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
@@ -271,7 +273,7 @@
                                                 <img src = '.$firma.' style ="width:100% !important">
                                             </div>
                                         </td>
-                                        <td></td>
+                                        <td class="textoCentro"><a href="'.$rs['idreg'].'">X</a> </td>
                                     </tr>';
                     }
                 }
@@ -455,6 +457,29 @@
                 return array("documento"=>'public/documentos/reportes/consumos.xlsx');
 
                 exit();
+
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            } 
+        }
+
+        public function anularItem($id){
+            try {
+                $respuesta = false;
+
+                $sql = $this->db->connect()->prepare("UPDATE alm_consumo 
+                                                            SET alm_consumo.flgactivo = 0
+                                                            WHERE alm_consumo.idreg = :id");
+                $sql->execute(['id'=>$id]);
+
+                $rowCount = $sql->rowCount();	
+
+                if ($rowCount > 0) {
+                    $respuesta = true;
+                }
+
+                return $respuesta;
 
             } catch (PDOException $th) {
                 echo $th->getMessage();

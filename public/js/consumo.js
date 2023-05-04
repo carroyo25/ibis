@@ -196,6 +196,35 @@ $(function(){
         return false;
     });
 
+    $("#tablaPrincipal tbody").on("click",".hideItem", function (e) {
+        e.preventDefault();
+
+        filaAnula = $(this).parent();
+
+        console.log($("#tablaPrincipal tbody > tr").length);
+
+        try {
+
+            if ( $("#tablaPrincipal tbody > tr").length <= 1) throw new Error ("Error al eliminar");
+
+            $.post(RUTA+"consumo/anulaItem",{item:$(this).data('idreg')},
+                function (data, textStatus, jqXHR) {
+
+                    if (data) {
+                        filaAnula.remove();
+                    }
+                    
+                },
+                "text"
+            );
+        } catch (error) {
+            mostrarMensaje(error,"mensaje_error");
+        }
+
+        
+        return false;
+    });
+
     $("#tablaPrincipal tbody").on("click","a", function (e) {
         e.preventDefault();
 
@@ -241,7 +270,6 @@ $(function(){
 
         return false;
     });
-
 
     $("#btnCancelarExport").click(function (e) { 
         e.preventDefault();

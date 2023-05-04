@@ -37,6 +37,10 @@
         function reporte() {
             echo json_encode($this->model->generarReporte($_POST['cc']));
         }
+
+        function anulaItem() {
+            echo $this->model->anularItem($_POST['item']);
+        }
         
     }
 ?>

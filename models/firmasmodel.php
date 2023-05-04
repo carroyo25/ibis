@@ -250,14 +250,13 @@
 
         public function filtrarOrdenesFirmas($parametros){
             try {
-                $mes  = date("m");
+                //$mes  = date("m");
 
-                $tipo   = $parametros['tipoSearch'] == -1 ? "%" : "%".$parametros['tipoSearch']."%";
-                //$costos = $parametros['costosSearch'] == -1 ? "%" : "%".$parametros['costosSearch']."%";
-                $mes    = $parametros['mesSearch'] == -1 ? $mes :  $parametros['mesSearch'];
+                $tipo   = $parametros['tipoSearch'] == -1 ? "%" : $parametros['tipoSearch'];
+                $costos = $parametros['costosSearch'] == -1 ? "%" : $parametros['costosSearch'];
+                $mes    = $parametros['mesSearch'] == -1 ? "%" :  $parametros['mesSearch'];
                 $anio   = $parametros['anioSearch'];
 
-                $costos = $parametros['costosSearch'] == -1 ? "%" : "%".'24'."%";
 
                 $salida = "";
                  $sql = $this->db->connect()->prepare("SELECT
@@ -294,7 +293,7 @@
                                                             (
                                                                 lg_ordencab.nfirmaLog + lg_ordencab.nfirmaFin + lg_ordencab.nfirmaOpe
                                                             ) AS estado_firmas,
-                                                            cm_entidad.crazonsoc,
+                                                            UPPER(cm_entidad.crazonsoc) AS crazonsoc,
                                                             UPPER (tb_user.cnameuser) AS operador
                                                             FROM
                                                             lg_ordencab
@@ -308,8 +307,8 @@
                                                                 lg_ordencab.nEstadoDoc = 59 
                                                                 AND lg_ordencab.ncodpry LIKE :costos 
                                                                 AND lg_ordencab.ntipmov LIKE :tipomov 
-                                                                AND MONTH ( lg_ordencab.ffechadoc ) = :mes
-                                                                AND YEAR ( lg_ordencab.ffechadoc ) = :anio
+                                                                AND MONTH ( lg_ordencab.ffechadoc ) LIKE :mes
+                                                                AND YEAR ( lg_ordencab.ffechadoc ) LIKE :anio
                                                                 AND (lg_ordencab.nfirmaLog IS NULL OR lg_ordencab.nfirmaOpe IS NULL  OR lg_ordencab.nfirmaFin IS NULL )");
                                                                 
                  $sql->execute(["tipomov"=>$tipo,
