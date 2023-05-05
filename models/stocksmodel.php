@@ -65,7 +65,8 @@
                                                             FROM
                                                                 alm_consumo 
                                                             WHERE
-                                                                alm_consumo.ncostos = :consumo  
+                                                                alm_consumo.ncostos = :consumo 
+                                                                AND alm_consumo.flgactivo = 1 
                                                             GROUP BY
                                                                 alm_consumo.idprod 
                                                             ) AS c ON cm_producto.id_cprod = c.idprod
