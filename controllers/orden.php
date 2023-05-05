@@ -86,5 +86,9 @@
         function listarAdjuntos(){
             echo json_encode($this->model->verAdjuntosOrden($_POST['orden']));
         }
+
+        function archivos(){
+            echo json_encode($this->model->subirArchivos($_POST['codigo'],$_FILES));
+        }
     }
 ?>

@@ -251,7 +251,7 @@
                 
                 $periodo = explode('-',$cab->emision);
 
-                $this->subirArchivos($orden,$adjuntos);
+                //$this->subirArchivos($orden,$adjuntos);
                 
                 $sql = $this->db->connect()->prepare("INSERT INTO lg_ordencab SET id_refpedi=:pedi,cper=:anio,cmes=:mes,ntipmov=:tipo,cnumero=:orden,
                                                                                 ffechadoc=:fecha,ffechaent=:entrega,id_centi=:entidad,ncodmon=:moneda,ntcambio=:tcambio,
@@ -295,7 +295,7 @@
 
                 if ($rowCount > 0){
                     $indice = $this->lastInsertOrder();
-                    $this->subirArchivos($orden,$adjuntos);
+                    //$this->subirArchivos($orden,$adjuntos);
                     $this->grabarDetalles($indice,$detalles,$cab->codigo_costos,$orden);
                     $this->grabarComentarios($indice,$comentarios);
                     $this->grabarAdicionales($indice,$adicionales);
@@ -500,8 +500,11 @@
                     // Upload file
                     if (move_uploaded_file($adjuntos[$file]['tmp_name'],'public/documentos/ordenes/adjuntos/'.$filename)){
                         $sql= $this->db->connect()->prepare("INSERT INTO lg_regdocumento 
-                                                                    SET nidrefer=:cod,cmodulo=:mod,cdocumento=:doc,
-                                                                        creferencia=:ref,nflgactivo=:est");
+                                                                    SET nidrefer=:cod,
+                                                                        cmodulo=:mod,
+                                                                        cdocumento=:doc,
+                                                                        creferencia=:ref,
+                                                                        nflgactivo=:est");
                         $sql->execute(["cod"=>$codigo,
                                         "mod"=>"ORD",
                                         "ref"=>$filename,
@@ -514,6 +517,7 @@
                 }
             }
 
+            return array("adjuntos"=>$this->contarAdjuntos($codigo,'ORD'));
         }
 
         public function enviarCorreo($cabecera,$detalles,$correos,$asunto,$mensaje){

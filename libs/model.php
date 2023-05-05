@@ -2672,7 +2672,7 @@
             }
         }
 
-        private function contarAdjuntos($id,$tipo){
+        public function contarAdjuntos($id,$tipo){
             try {
                 $sql = $this->db->connect()->prepare("SELECT
                                                         COUNT( lg_regdocumento.id_regmov ) AS total_adjuntos 
@@ -2695,10 +2695,12 @@
         public function verAdjuntosOrden($id){
             try {
                 $salida = "";
+
                 $sql = $this->db->connect()->prepare("SELECT creferencia,cdocumento 
                                                         FROM lg_regdocumento 
                                                         WHERE nidrefer=:id
-                                                        AND cmodulo='ORD'");
+                                                        AND cmodulo='ORD'
+                                                        AND nidrefer != 0 ");
                 $sql->execute(['id'=>$id]);
                 $rowCount = $sql->rowCount();
 

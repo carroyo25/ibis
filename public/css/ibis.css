@@ -483,6 +483,10 @@ input[type=number]::-webkit-outer-spin-button {
   background: #FFC000;
 }
 
+.item_stock {
+  background: #005D84;
+}
+
 /*loader*/
 .loadingio-spinner-spinner-5ulcsi06hlf {
   width: 200px;

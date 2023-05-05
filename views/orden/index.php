@@ -377,7 +377,7 @@
     </div>
     <div class="modal" id="archivos">
         <div class="ventanaArchivos">
-            <form action="#" id="fileAtachs" enctype='multipart/form-data'>
+            <form action="#" id="fileAtachs" name="fileAtachs" enctype='multipart/form-data'>
                 <input type="hidden" name="nroordenatach" id="nroordenatach">
                 <input type="file" name="uploadAtach" id="uploadAtach" multiple class="oculto">
                 <div class="tituloArchivos">

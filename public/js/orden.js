@@ -115,7 +115,6 @@ $(function(){
         grabado     = true;
         ingresos    = 0
         swcoment    = false;
-        //$("#proceso").fadeIn();
     
         return false;
     });
@@ -126,11 +125,18 @@ $(function(){
         $("#estado")
             .removeClass()
             .addClass("textoCentro estado procesando");
-        $("form")[0].reset();
+        
+
         $("#proceso").fadeIn();
         $("#sw").val(0);
         $("#codigo_estado").val(0);
         $(".button__comment").hide();
+        $("#atach_counter").text(0);
+        $(".listaArchivos").empty();
+
+        $("input[type='hidden']").each(function(){
+            $(this).val("");
+        });
 
         accion = 'n';
         grabado = false;
@@ -317,8 +323,6 @@ $(function(){
                         </tr>`;
 
 
-                        console.log(row);
-
                 $.post(RUTA+"orden/marcaItem", {id:$(this).data("iditem"),"estado":1,io:$(this).data("itord")},
                     function (data, text, requestXHR) {
                         item.remove();
@@ -476,9 +480,9 @@ $(function(){
         formData = new FormData();
         formData.append("cabecera",JSON.stringify(result));
 
-        $.each(jQuery('#uploadAtach')[0].files, function(i, file) {
+        /*$.each(jQuery('#uploadAtach')[0].files, function(i, file) {
             formData.append('file-'+i, file);
-        });
+        });*/
 
         formData.append("detalles",JSON.stringify(detalles()));
         formData.append("comentarios",JSON.stringify(comentarios()));
@@ -725,8 +729,6 @@ $(function(){
             "json"
         );
 
-        
-
         return false;
     });
 
@@ -756,7 +758,7 @@ $(function(){
              }
  
              $(".listaArchivos").append(fragment);
-         }
+        }
  
         return false;
      });
@@ -764,9 +766,37 @@ $(function(){
      $("#btnConfirmAtach").on("click", function (e) {
          e.preventDefault();
 
-        $("#archivos").fadeOut();
- 
-         return false;
+        let formData = new FormData();
+
+        let codigo = "";
+
+        if ( $("#codigo_orden").val().length > 0 ) {
+            codigo  = $("#codigo_orden").val();
+        }else {
+            codigo  = parseInt($("#numero").val());
+        }
+
+        formData.append('codigo',codigo);
+
+        $.each($('#uploadAtach')[0].files, function(i, file) {
+            formData.append('file-'+i, file);
+        });
+
+        $.ajax({
+            type: "POST",
+            url: RUTA+"orden/archivos",
+            data: formData,
+            data: formData,
+            contentType:false,      
+            processData:false,
+            dataType: "json",
+            success: function (response) {
+                $("#atach_counter").text(response.adjuntos);
+                $("#archivos").fadeOut();
+            }
+        });
+
+        return false;
      });
  
      $("#btnCancelAtach").on("click", function (e) {
