@@ -58,7 +58,7 @@ $(function(){
     $("#closeProcess").click(function (e) { 
         e.preventDefault();
 
-        $("#proceso").fadeOut()
+        $("#proceso").fadeOut();
 
         $.post(RUTA+"registros/actualizarRegistros",
             function (data, textStatus, jqXHR) {

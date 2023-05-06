@@ -390,6 +390,22 @@ $(function(){
 
         return false;
     });
+
+    $("#txtBuscarPedido").keyup(function (e) { 
+        if(e.which == 13) {
+            $("#esperar").fadeIn();
+            
+            $.post(RUTA+"transferencias/pedidos", {cc:"%",pedido:$(this).val()},
+                function (data, textStatus, jqXHR) {
+                    $("#tablaPedidos tbody")
+                        .empty()
+                        .append(data);
+                    $("#esperar").fadeOut();
+                },
+                "text"
+            );
+        }
+    });
 })
 
 detalles = () =>{
