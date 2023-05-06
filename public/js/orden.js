@@ -519,8 +519,9 @@ $(function(){
                     success: function(response)
                     {   
                         mostrarMensaje(response.mensaje,response.clase);
-                        $("#proceso, #sendMail,#esperar").fadeOut();
+                        $("#esperar").fadeOut();
                         $("#tablaDetalles tbody tr").attr('data-grabado',1);
+                        $("#codigo_orden").val(response.orden);
                         $("#tablaPrincipal tbody")
                             .empty()
                             .append(response.pedidos);
@@ -719,22 +720,38 @@ $(function(){
     $("#uploadCotiz").click(function(e){
         e.preventDefault();
 
-        $.post(RUTA+"orden/listarAdjuntos", {orden:$("#codigo_orden").val(),tipo:"ORD"},
-            function (data, text, requestXHR) {
-                $(".listaArchivos")
-                    .empty()
-                    .append(data.adjuntos);
+        try {
+
+            if ( $("#codigo_orden").val().length == 0 ) throw new Error ("Por favor grabe la orden");
+
+            if ( parseInt($("#atach_counter").text()) > 0 ){
+
+                $.post(RUTA+"orden/listarAdjuntos", {orden:$("#codigo_orden").val(),tipo:"ORD"},
+                    function (data, text, requestXHR) {
+                        $(".listaArchivos")
+                            .empty()
+                            .append(data.adjuntos);
+                            $("#archivos").fadeIn();
+                    },
+                    "json"
+                );
+            }else {
                 $("#archivos").fadeIn();
-            },
-            "json"
-        );
+            }
+            
+            
+        } catch (error) {
+            mostrarMensaje(error,"mensaje_error");
+        }
+
+       
 
         return false;
     });
 
     $("#openArch").click(function (e) { 
         e.preventDefault();
- 
+        
         $("#uploadAtach").trigger("click");
  
         return false;
@@ -768,15 +785,7 @@ $(function(){
 
         let formData = new FormData();
 
-        let codigo = "";
-
-        if ( $("#codigo_orden").val().length > 0 ) {
-            codigo  = $("#codigo_orden").val();
-        }else {
-            codigo  = parseInt($("#numero").val());
-        }
-
-        formData.append('codigo',codigo);
+        formData.append('codigo',$("#codigo_orden").val());
 
         $.each($('#uploadAtach')[0].files, function(i, file) {
             formData.append('file-'+i, file);

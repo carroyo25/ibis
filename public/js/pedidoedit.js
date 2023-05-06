@@ -336,6 +336,42 @@ $(function(){
 
         return false;
     });
+
+    $("#btnProceso").click(function (e) { 
+        e.preventDefault();
+        
+        let str = $("#formConsulta").serialize();
+
+        $.post(RUTA+"pedidoedit/filtro",str,
+            function (data, textStatus, jqXHR) {
+                $("#tablaPrincipal tbody")
+                    .empty()
+                    .append(data);
+            },
+            "text"
+        );
+
+        return false
+    });
+
+    //filtrar Item del pedido
+    $("#txtBuscarCodigo, #txtBuscarDescrip").on("keypress", function (e) {
+        if(e.which == 13) {
+            $("#esperar").fadeIn();
+            
+            $.post(RUTA+"pedidos/filtraItems", {codigo:$("#txtBuscarCodigo").val(),
+                                                descripcion:$("#txtBuscarDescrip").val(),
+                                                tipo:$("#codigo_tipo").val()},
+                    function (data, textStatus, jqXHR) {
+                        $("#tablaModulos tbody")
+                            .empty()
+                            .append(data);
+                        $("#esperar").fadeOut();
+                    },
+                    "text"
+                );
+        }
+    });
 })
 
 itemsSave = () =>{

@@ -295,7 +295,6 @@
 
                 if ($rowCount > 0){
                     $indice = $this->lastInsertOrder();
-                    //$this->subirArchivos($orden,$adjuntos);
                     $this->grabarDetalles($indice,$detalles,$cab->codigo_costos,$orden);
                     $this->grabarComentarios($indice,$comentarios);
                     $this->grabarAdicionales($indice,$adicionales);
@@ -308,14 +307,11 @@
 
                 $salida = array("respuesta"=>$respuesta,
                                 "mensaje"=>$mensaje,
-                                "clase"=>$clase);
+                                "clase"=>$clase,
+                                "orden"=>$orden);
 
             
                 return $salida;
-
-                var_dump($adicionales);
-
-                
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;

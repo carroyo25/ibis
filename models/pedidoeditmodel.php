@@ -7,9 +7,17 @@
         }
 
         public function listarPedidosUsuario($parametros){
+
+            $anio = isset($parametros['anioSearch']) ? $parametros['anioSearch']:2023;
+            $cc   = isset($parametros['costosSearch']) ? $parametros['costosSearch']: "%";
+            $nu   = isset($parametros['numeroSearch']) ? $parametros['numeroSearch']: "%";
+
+            $c = $cc == -1 ? "%":$cc;
+            $n = $nu == "" ? "%":$nu;
+
             try {
                 $salida = "";
-                $sql = $this->db->connect()->query("SELECT
+                $sql = $this->db->connect()->prepare("SELECT
                                                     ibis.tb_pedidocab.idreg,
                                                     ibis.tb_pedidocab.idcostos,
                                                     ibis.tb_pedidocab.idarea,
@@ -31,8 +39,15 @@
                                                     INNER JOIN ibis.tb_proyectos ON ibis.tb_pedidocab.idcostos = ibis.tb_proyectos.nidreg
                                                     INNER JOIN ibis.tb_parametros AS atenciones ON ibis.tb_pedidocab.nivelAten = atenciones.nidreg
                                                     INNER JOIN ibis.tb_parametros AS estados ON ibis.tb_pedidocab.estadodoc = estados.nidreg
-                                                ORDER BY  ibis.tb_pedidocab.emision DESC");
-                $sql->execute();
+                                                WHERE 
+                                                    YEAR(ibis.tb_pedidocab.emision) = :anio
+                                                    AND ibis.tb_pedidocab.idcostos LIKE :cc
+                                                    AND ibis.tb_pedidocab.nrodoc LIKE :num
+                                                ORDER BY  ibis.tb_pedidocab.nrodoc DESC");
+                $sql->execute(["anio"=>$anio,
+                                "cc"=>$c,
+                                "num"=>$n]);
+
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0) {
@@ -40,6 +55,7 @@
                         $tipo = $rs['idtipomov'] == 37 ? "B":"S";
                         $salida .='<tr class="pointer" data-indice="'.$rs['idreg'].'">
                                         <td class="textoCentro">'.str_pad($rs['nrodoc'],4,0,STR_PAD_LEFT).'</td>
+                                        <td class="textoCentro">'.$rs['idreg'].'</td>
                                         <td class="textoCentro">'.date("d/m/Y", strtotime($rs['emision'])).'</td>
                                         <td class="textoCentro">'.$tipo.'</td>
                                         <td class="pl20px">'.$rs['concepto'].'</td>
@@ -176,7 +192,7 @@
                                         data-idx="'.$rs['iditem'].'"
                                         data-registro="'.$rs['cregistro'].'"
                                         data-estado="'.$rs['estadoItem'].'">
-                                        <td class="textoCentro"><a href="'.$rs['iditem'].'" data-accion="eliminar"><i class="fas fa-eraser"></i></a></td>
+                                        <td class="textoCentro"><a href="'.$rs['iditem'].'" data-accion="eliminar" title="'.$rs['iditem'].'"><i class="fas fa-eraser"></i></a></td>
                                         <td class="textoCentro">'.str_pad($filas++,3,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="pl20px">'.$rs['cdesprod'].'</td>
@@ -469,6 +485,8 @@
                 return false;
             }
         }
+
+        
 
     }    
 ?>

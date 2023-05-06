@@ -34,7 +34,7 @@
         }
 
         function actualizaListado(){
-            echo $this->model->listarPedidosUsuario();
+            echo $this->model->listarPedidosUsuario("");
         }
 
         function filtraItems(){
@@ -47,5 +47,9 @@
 
         function accionItem(){
             echo json_encode($this->model->itemActualizarAdmin($_POST));
+        }
+
+        function filtro() {
+            echo $this->model->listarPedidosUsuario($_POST);
         }
     }
