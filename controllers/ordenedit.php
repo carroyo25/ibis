@@ -75,5 +75,9 @@
         function numeraItems() {
             echo json_encode($this->model->ordenarItems($_POST['items']));
         }
+
+        function anula(){
+            echo json_encode($this->model->anularOrden($_POST['id']));
+        }
     }
 ?>

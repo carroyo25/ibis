@@ -57,6 +57,7 @@
 
                         $montoDolares = 0;
                         $montoSoles = 0;
+                        $estado = '';
 
                         $log = is_null($rs['nfirmaLog']) ? '<i class="far fa-square"></i>' : '<i class="far fa-check-square"></i>';
                         $ope = is_null($rs['nfirmaOpe']) ? '<i class="far fa-square"></i>' : '<i class="far fa-check-square"></i>';
@@ -65,8 +66,6 @@
                         $flog = is_null($rs['nfirmaLog']) ? 0 : 1;
                         $fope = is_null($rs['nfirmaOpe']) ? 0 : 1;
                         $ffin = is_null($rs['nfirmaFin']) ? 0 : 1;
-
-                        $resaltado = $rs['nEstadoDoc'] == 59 ? "resaltado_firma" :  "";
 
 
                         if ( $rs['ncodmon'] == 20) {
@@ -77,8 +76,22 @@
                             $montoDolares =  "$ ".number_format($rs['ntotal'],2);
                         }
 
+                        if ( $rs['nEstadoDoc'] == 49) {
+                            $estado = "procesando";
+                        }else if ( $rs['nEstadoDoc'] == 59 ) {
+                            $estado = "firmas";
+                        }else if ( $rs['nEstadoDoc'] == 60 ) {
+                            $estado = "recepcion";
+                        }else if ( $rs['nEstadoDoc'] == 62 ) {
+                            $estado = "despacho";
+                        }else if ( $rs['nEstadoDoc'] == 105 ) {
+                            $estado = "anulado";
+                            $montoDolares = "";
+                            $montoSoles = "";
+                        }
 
-                        $salida .='<tr class="pointer '.$resaltado.'" data-indice="'.$rs['id_regmov'].'" 
+
+                        $salida .='<tr class="pointer " data-indice="'.$rs['id_regmov'].'" 
                                                         data-estado="'.$rs['nEstadoDoc'].'"
                                                         data-finanzas="'.$ffin.'"
                                                         data-logistica="'.$flog.'"
@@ -92,6 +105,7 @@
                                     <td class="textoDerecha">'.$montoSoles.'</td>
                                     <td class="textoDerecha">'.$montoDolares.'</td>
                                     <td class="textoCentro '.strtolower($rs['atencion']).'">'.$rs['atencion'].'</td>
+                                    <td class="textoCentro '.$estado.'">'.strtoupper($estado).'</td>
                                     <td class="textoCentro">'.$log.'</td>
                                     <td class="textoCentro">'.$ope.'</td>
                                     <td class="textoCentro">'.$fin.'</td>

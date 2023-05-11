@@ -706,5 +706,84 @@
                     return false;
                 }
         }
+
+        public function anularOrden($id) {
+            try {
+                $respuesta = true;
+                $despachos = $this->verificarDespachos($id);
+                $ingresos = $this->verificarIngresos($id);
+
+                if ( $despachos > 0 || $ingresos > 0 ) {
+                    $respuesta = false;
+                }
+
+                if ( $respuesta ) {
+                    $sql = $this->db->connect()->prepare("UPDATE lg_ordencab 
+                                                        SET lg_ordencab.nEstadoDoc = 105,
+                                                            lg_ordencab.nflgactivo = 0
+                                                        WHERE lg_ordencab.id_regmov = :id");
+                    $sql->execute(["id"=>$id]);
+                    $rowCount = $sql->rowCount();
+
+                    if ($rowCount > 0) {
+                        $this->anularItemsOrden($id);
+                    }
+                }
+
+                return array("respuesta"=>$respuesta, 
+                            "despachos"=>$despachos,
+                            "ingresos"=>$ingresos);
+
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function verificarIngresos($id) {
+            try {
+                $sql = $this->db->connect()->prepare("SELECT COUNT(alm_recepcab.idref_abas) AS ingresos 
+                                                    FROM alm_recepcab 
+                                                    WHERE alm_recepcab.idref_abas = :id");
+                $sql->execute(["id"=>$id]);
+
+                $result = $sql->fetchAll();
+                return $result[0]['ingresos'];
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function verificarDespachos($id) {
+            try {
+                //no te olvides nropedido almacena el numero de orden
+                $sql = $this->db->connect()->prepare("SELECT COUNT(alm_despachodet.nropedido) AS despachos 
+                                                        FROM alm_despachodet 
+                                                        WHERE alm_despachodet.nropedido = :id");
+                $sql->execute(["id"=>$id]);
+
+                $result = $sql->fetchAll();
+                return $result[0]['despachos'];
+
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        private function anularItemsOrden($id) {
+            try {
+                $sql = $this->db->connect()->prepare("UPDATE lg_ordendet 
+                                                        SET lg_ordendet.nEstadoReg = 105,
+                                                            lg_ordendet.nflgactivo = 0
+                                                        WHERE lg_ordendet.id_orden = :id");
+                $sql->execute(["id"=>$id]);
+
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
     }
 ?>

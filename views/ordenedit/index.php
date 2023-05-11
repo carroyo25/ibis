@@ -12,13 +12,13 @@
     </div>
     <div class="modal" id="pregunta">
         <div class="ventanaPregunta">
-            <h3>Desea eliminar el registro?</h3>
+            <h3>Eliminar el registro?</h3>
             <div>
                 <button type="button" id="btnAceptarPregunta">Aceptar</button>
                 <button type="button" id="btnCancelarPregunta">Cancelar</button>
             </div>
         </div>
-    </div>
+    </div>  
     <div class="modal" id="proceso">
         <div class="ventanaProceso tamanioProceso">
             <div class="cabezaProceso">
@@ -207,8 +207,8 @@
                             <button type="button" id="loadRequest" title="Importar Pedido" class="cerrarLista boton3">
                                 <i class="fas fa-upload"></i> Importar Items
                             </button>
-                            <button type="button" id="updateItems" title="Importar Pedido" class="cerrarLista boton3">
-                                <i class="fas fa-upload"></i> Actualizar Nro
+                            <button type="button" id="banOrder" title="Anular Orden" class="cerrarLista boton4">
+                                <i class="fas fa-ban"></i> Anular Orden
                             </button>
                             <button type="button" id="sendEntOrden" title="Enviar Proveedor" class="cerrarLista boton3">
                                 <i class="far fa-paper-plane"></i> Enviar Orden
@@ -255,8 +255,8 @@
             </div>
             <div class="tablaBusqueda">
                 <table class="tablaWrap" id="pedidos">
-                    <thead>
-                        <tr class="stickytop">
+                    <thead class="stickytop">
+                        <tr >
                             <th width="4%">Pedido</th>
                             <th width="5%">Emisión</th>
                             <th width="15%">Concepto</th>
@@ -270,6 +270,15 @@
 
                     </tbody>
                 </table>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="anula">
+        <div class="ventanaPregunta">
+            <h3>Anular la orden?</h3>
+            <div>
+                <button type="button" id="btnAceptarAnula">Aceptar</button>
+                <button type="button" id="btnCancelarAnula">Cancelar</button>
             </div>
         </div>
     </div>
@@ -424,7 +433,7 @@
     </div>
     <div class="itemsTabla">
         <table id="tablaPrincipal">
-            <thead>
+            <thead class="stickytop">
                     <tr>
                     <th rowspan="2">Num.</th>  
                     <th rowspan="2">Emision</th>

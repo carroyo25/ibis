@@ -60,7 +60,6 @@
                         <div>
                             <button type="button" id="verDetalles" title="Comentarios" class="boton3">
                                 <i class="far fa-comments"></i> Ver detalles
-                                <span class="button__comment">0</span>
                             </button>
                             <button type="button" id="preview" title="Vista Previa" class="boton3">
                                 <i class="far fa-file-pdf"></i> Vista Previa
@@ -382,13 +381,13 @@
                     <th rowspan="2" >Precio Soles</th>
                     <th rowspan="2">Precio Dólares</th>
                     <th rowspan="2">Atencion</th>
+                    <th rowspan="2">Estado</th>
                     <th colspan="3" width="16%">Firmas</th>
                     <tr>
                         <th>Procura</th>
                         <th>Finanzas</th>
                         <th>Operaciones</th>
                     </tr>
-                    
                 </tr>
             </thead>
             <tbody>

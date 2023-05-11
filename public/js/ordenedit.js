@@ -695,6 +695,42 @@ $(function(){
 
         return false;
      });
+
+     $("#banOrder").click(function (e) { 
+        e.preventDefault();
+
+        $("#anula").fadeIn();
+
+        return false;
+     });
+
+
+    $("#btnAceptarAnula").click(function(e){
+        e.preventDefault();
+        
+        $.post(RUTA+"ordenEdit/anula",{id:$("#codigo_orden").val()},
+            function (data, textStatus, jqXHR) {
+                if (data.respuesta) {
+                    mostrarMensaje("Orden anulada","mensaje_correcto");
+                }else{
+                    mostrarMensaje("Error al anular","mensaje_error");
+                }
+
+                $("#anula").fadeOut();
+            },
+            "json"
+        );
+
+        return false;
+    })
+
+    $("#btnCancelarAnula").click(function(e){
+        e.preventDefault();
+
+        $("#anula").fadeOut();
+
+        return false;
+    })
 })
 
 
