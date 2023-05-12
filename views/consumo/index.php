@@ -67,7 +67,7 @@
         </div>
     </div>
     <div class="cabezaModulo">
-        <h1>Consumos</h1>
+        <h1>Kardex Personal</h1>
         <div>
             <a href="#" id="excelFile"><i class="fas fa-file-excel"></i><p>Reporte</p></a>
             <a href="#" id="btnBuscar"><i class="fas fa-search-location"></i><p>Buscar</p></a>
@@ -110,7 +110,7 @@
     </div>
     <div class="itemsTabla">
         <table id="tablaPrincipal">
-            <thead class="stikystop">
+            <thead class="stickytop">
                 <tr>
                     <th>Item</th>
                     <th>Codigo</th>
