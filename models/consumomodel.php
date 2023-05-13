@@ -164,10 +164,12 @@
                                                             nrodoc = :documento 
                                                         AND ncostos = :cc
                                                     GROUP BY
-                                                        alm_consumo.nrodoc, 
-                                                        alm_consumo.fechasalida, 
-                                                        alm_consumo.nkardex
-                                                        HAVING COUNT(*) >= 1
+                                                            alm_consumo.idprod,
+                                                            alm_consumo.fechasalida,
+                                                            cm_producto.ccodprod,
+                                                            alm_consumo.cantsalida,
+                                                            alm_consumo.nhoja
+                                                    HAVING COUNT(*) >= 1
                                                     ORDER BY alm_consumo.freg DESC" );
                 $sql->execute(["documento"=>$d,"cc"=>$c]);
                 $rowCount = $sql->rowCount();
@@ -245,6 +247,12 @@
                                                         AND ncostos = :cc
                                                         AND cm_producto.ccodprod =:codigo
                                                         AND alm_consumo.flgactivo = 1
+                                                        GROUP BY
+                                                            alm_consumo.idprod,
+                                                            alm_consumo.fechasalida,
+                                                            cm_producto.ccodprod,
+                                                            alm_consumo.cantsalida,
+                                                            alm_consumo.nhoja
                                                     ORDER BY alm_consumo.freg DESC");
 
                 $sql->execute(["documento"=>$d,"cc"=>$cc,"codigo"=>$cod]);
@@ -346,6 +354,12 @@
                                                     WHERE
                                                         alm_consumo.flgactivo = 1
                                                         AND alm_consumo.ncostos =:cc
+                                                    GROUP BY
+                                                            alm_consumo.idprod,
+                                                            alm_consumo.fechasalida,
+                                                            cm_producto.ccodprod,
+                                                            alm_consumo.cantsalida,
+                                                            alm_consumo.nhoja
                                                     ORDER BY ibis.alm_consumo.fechasalida ASC");
                 $sql->execute(["cc"=>$cc]);
                 $rowCount = $sql->rowCount();
