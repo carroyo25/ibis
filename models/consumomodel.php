@@ -155,21 +155,27 @@
                                                         cm_producto.ccodprod,
                                                         alm_consumo.nkardex,
                                                         UPPER(cm_producto.cdesprod) AS cdesprod,
-                                                        tb_unimed.cabrevia 
+                                                        tb_unimed.cabrevia,COUNT(*) 
                                                     FROM
                                                         alm_consumo
-                                                        INNER JOIN cm_producto ON alm_consumo.idprod = cm_producto.id_cprod
-                                                        INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed 
+                                                        LEFT JOIN cm_producto ON alm_consumo.idprod = cm_producto.id_cprod
+                                                        LEFT JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed 
                                                     WHERE
                                                             nrodoc = :documento 
                                                         AND ncostos = :cc
-                                                        AND alm_consumo.flgactivo = 1
+                                                    GROUP BY
+                                                        alm_consumo.nrodoc, 
+                                                        alm_consumo.fechasalida, 
+                                                        alm_consumo.nkardex
+                                                        HAVING COUNT(*) >= 1
                                                     ORDER BY alm_consumo.freg DESC" );
                 $sql->execute(["documento"=>$d,"cc"=>$c]);
                 $rowCount = $sql->rowCount();
                 $item = 1;
                 $salida ="No hay registros";
                 $numero_item = $this->cantidadItems($d,$c);
+
+                //SELECT DISTINCTROW nrodoc,fechasalida,nkardex FROM alm_consumo WHERE nrodoc=21136515 AND ncostos=34
 
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()){
@@ -178,7 +184,7 @@
                         $firma = "public/documentos/firmas/".$rs['cfirma'].".png";
 
                         $salida .= '<tr class="pointer" data-grabado="1" data-registrado="1" data-kardex = "'.$rs['nkardex'].'">
-                                        <td class="textoDerecha">'.$numero_item--.'</td>
+                                        <td class="textoDerecha">'.$rowCount--.'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="pl5px">'.$rs['cdesprod'].'</td>
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
