@@ -175,7 +175,7 @@
                 $salida ="No hay registros";
                 $numero_item = $this->cantidadItems($d,$c);
 
-                //SELECT DISTINCTROW nrodoc,fechasalida,nkardex FROM alm_consumo WHERE nrodoc=21136515 AND ncostos=34
+                /*SELECT DISTINCTROW nrodoc,fechasalida,nkardex FROM alm_consumo WHERE nrodoc=21136515 AND ncostos=34*/
 
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()){
