@@ -2444,6 +2444,12 @@ $anulado:#c2c2c2;
             }
 		}
     }
+
+    #repogen{
+        #repogencabecera,#graficos,#tablas{
+            display: flex;
+        }
+    }
 }
 
 @media screen and (max-width: 1024px) {
