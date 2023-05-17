@@ -2766,12 +2766,53 @@
   top: 50%;
   z-index: -1;
 }
-.resumen__wrap #repogen {
+
+#repogen #repogencabecera {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
+}
+#repogen #repogencabecera {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  position: relative;
+}
+#repogen #repogencabecera #filtros {
+  width: 80%;
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
+  padding: 0 85px;
+}
+#repogen #repogencabecera #calculado {
+  font-size: 3rem;
+  position: absolute;
+  right: 58px;
+}
+#repogen #graficos {
+  margin-top: 4rem;
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
+}
+#repogen #tablas {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 25% 5px 25% 5px 1fr;
+  grid-template-columns: 25% 25% 1fr;
+  -webkit-column-gap: 5px;
+     -moz-column-gap: 5px;
+          column-gap: 5px;
+}
+#repogen #tablas #barras {
+  border: 1px solid #000;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
 }

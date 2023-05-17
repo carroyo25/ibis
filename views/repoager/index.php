@@ -76,8 +76,8 @@
                 </div>
             </div>
             <div id="tablas">
-                <div id="div_clase" class="tabla">
-                    <table id="tablaClases">
+                <div id="div_clase">
+                    <table id="tablaClases" class="tablareporte">
                         <thead class="stickytop">
                             <tr>
                                 <th>Tipo</th>
@@ -110,8 +110,8 @@
                         </tbody>
                     </table>
                 </div>
-                <div id="div_items" class="tabla">
-                    <table id="tablaItems">
+                <div id="div_items">
+                    <table id="tablaItems" class="tablareporte">
                         <thead class="stickytop">
                             <tr>
                                 <th>Descripción</th>

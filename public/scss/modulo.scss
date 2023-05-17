@@ -2444,10 +2444,46 @@ $anulado:#c2c2c2;
             }
 		}
     }
+}
 
-    #repogen{
-        #repogencabecera,#graficos,#tablas{
-            display: flex;
+#repogen{
+    #repogencabecera{
+        display: flex;
+    }
+
+    #repogencabecera{
+        display: flex;
+        position: relative;
+
+        #filtros {
+            width: 80%;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            padding: 0 85px;
+        }
+
+        #calculado{
+            font-size: 3rem;
+            position: absolute;
+            right: 58px;
+        }
+    }
+
+    #graficos {
+        margin-top: 4rem;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    #tablas {
+        display: grid;
+        grid-template-columns: 25% 25% 1fr;
+        column-gap: 5px;
+
+        #barras {
+            border:1px solid #000;
+            width: fit-content;
+            height: fit-content;
         }
     }
 }
