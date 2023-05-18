@@ -66,9 +66,19 @@
             </div>
         </div>
     </div>
+    <div class="modal" id="hojakardex">
+        <div class="ventanaVistaPrevia">
+            <div class="tituloVista">
+                <h3>Kardex</h3>
+                <a href="#" id="closePreview" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
+            </div>
+            <iframe src=""></iframe>
+        </div>
+    </div>
     <div class="cabezaModulo">
         <h1>Kardex Personal</h1>
         <div>
+            <a href="#" id="btnKardex"><i class="fas fa-file-pdf"></i><p>Kardex</p></a>
             <a href="#" id="excelFile"><i class="fas fa-file-excel"></i><p>Reporte</p></a>
             <a href="#" id="btnBuscar"><i class="fas fa-search-location"></i><p>Buscar</p></a>
             <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
@@ -76,36 +86,36 @@
     </div>
     <div class="barraTrabajo">
         <div class="variasConsultas5campos">
-                <input type="hidden" name="cut" id="cut">
-                <input type="hidden" name="correo" id="correo">
-                <canvas id="pdfCanvas" height="150" width="150" class="oculto"></canvas>
-                <div>
-                    <label for="costosSearch">Centro de Costos: </label>
-                    <select name="costosSearch" id="costosSearch" class="item4">
-                        <?php echo $this->listaCostosSelect ?>
-                    </select>
-                </div>
-                <div>
-                    <label for="docident">N°. Documento </label>
-                    <input type="text" id="docident" name="docident" class="ingreso">
-                </div>
-                <div>
-                    <label for="nombre">Nombre</label>
-                    <input type="text" id="nombre" name="nombre" class="ingreso">
-                </div>
-                <div>
-                    <label for="cargo">Cargo</label>
-                    <input type="cargo" id="cargo" name="cargo" class="ingreso">
-                </div>
-                <div>
-                    <img src="" id="vistafirma">
-                </div> 
-                <button id="btnGrabarKardex" class="oculto boton3">Aceptar</button>
-                <button type="button" class="boton3" id="btnFirmar" onclick="StartSign()">Firmar</button>
-                <div>
-                    <label for="codeRead">Codigo: </label>
-                    <input type="text" name="codeRead" id="codeRead" style="opacity:1;position:relative" value=""> 
-                </div>
+            <input type="hidden" name="cut" id="cut">
+            <input type="hidden" name="correo" id="correo">
+            <canvas id="pdfCanvas" height="150" width="150" class="oculto"></canvas>
+            <div>
+                <label for="costosSearch">Centro de Costos: </label>
+                <select name="costosSearch" id="costosSearch" class="item4">
+                    <?php echo $this->listaCostosSelect ?>
+                </select>
+            </div>
+            <div>
+                <label for="docident">N°. Documento </label>
+                <input type="text" id="docident" name="docident" class="ingreso">
+            </div>
+            <div>
+                <label for="nombre">Nombre</label>
+                <input type="text" id="nombre" name="nombre" class="ingreso">
+            </div>
+            <div>
+                <label for="cargo">Cargo</label>
+                <input type="cargo" id="cargo" name="cargo" class="ingreso">
+            </div>
+            <div>
+                <img src="" id="vistafirma">
+            </div> 
+            <button id="btnGrabarKardex" class="oculto boton3">Aceptar</button>
+            <button type="button" class="boton3" id="btnFirmar" onclick="StartSign()">Firmar</button>
+            <div>
+                <label for="codeRead">Codigo: </label>
+                <input type="text" name="codeRead" id="codeRead" style="opacity:1;position:relative" value=""> 
+            </div>
         </div>
     </div>
     <div class="itemsTabla">

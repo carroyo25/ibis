@@ -7,6 +7,7 @@ $(function(){
     $("#espera").fadeOut();
 
     let row = ``;
+
     $("#docident").focus;
 
     $("#docident").keypress(function (e) { 
@@ -301,6 +302,48 @@ $(function(){
         
         return false;
     });
+
+    $("#btnKardex").click(function (e) { 
+        e.preventDefault();
+
+        try {
+            if ( $("#costosSearch").val() == -1 ) throw new Error("Elija centro de costos");
+            if ($("#docident").val() == "") throw new Error("Elija centro de costos");
+
+            $.post(RUTA+"consumo/kardex",{nombre:$("#nombre").val(),
+                                           doc:$("#docident").val(),
+                                           cargo:$("#cargo").val(),
+                                           cc:$("#costosSearch option:selected").text(),
+                                           detalles:JSON.stringify(detallesHoja())},
+                function (data, textStatus, jqXHR) {
+                    $(".ventanaVistaPrevia iframe")
+                    .attr("src","")
+                    .attr("src","public/documentos/kardex/"+data);
+                
+                    $("#hojakardex").fadeIn();
+                },
+                "text"
+            );
+           
+
+        } catch (error) {
+            mostrarMensaje(error,"mensaje_error");
+        }
+        
+        
+
+        return false;
+    });
+
+    $("#closePreview").click(function (e) { 
+        e.preventDefault();
+        
+        $("#hojakardex").fadeOut();
+
+        $(".ventanaVistaPrevia iframe").attr("src","");
+
+        return false;
+    });
 })
 
 detalles = () => {
@@ -347,6 +390,53 @@ detalles = () => {
 
             DATA.push(item);
         }
+    })
+
+    return DATA;
+}
+
+detallesHoja = () => {
+    DATA = [];
+    let TABLA = $("#tablaPrincipal tbody >tr");
+
+    TABLA.each(function(){
+        let ITEM        = $(this).find('td').eq(0).text(),
+            IDPROD      = $(this).data("idprod"),
+            GRABADO     = $(this).data("grabado"),
+            CODIGO      = $(this).find('td').eq(1).text(),
+            DESCRIPCION = $(this).find('td').eq(2).text(),
+            UNIDAD      = $(this).find('td').eq(3).text(),
+            CANTIDAD    = $(this).find('td').eq(4).children().val(),
+            FECHA       = $(this).find('td').eq(5).children().val(),
+            HOJA        = $(this).find('td').eq(6).children().val(),
+            ISOMETRICO  = $(this).find('td').eq(7).children().val(),
+            OBSERVAC    = $(this).find('td').eq(8).children().val(),
+            SERIE       = $(this).find('td').eq(9).children().val(),
+            PATRIMONIO  = $(this).find('td').eq(10).children().prop('checked'),
+            ESTADO      = $(this).find('td').eq(11).children().val(),
+            COSTOS      = $("#costosSearch").val(),
+            NRODOC      = $("#docident").val();
+
+
+        item = {};
+        
+        item['item']        = ITEM;
+        item['codigo']      = CODIGO;
+        item['descripcion'] = DESCRIPCION;
+        item['unidad']      = UNIDAD;
+        item['cantidad']    = CANTIDAD;
+        item['fecha']       = FECHA;
+        item['hoja']        = HOJA;
+        item['isometrico']  = ISOMETRICO;
+        item['observac']    = OBSERVAC;
+        item['patrimonio']  = PATRIMONIO;
+        item['estado']      = ESTADO;
+        item['costos']      = COSTOS;
+        item['nrodoc']      = NRODOC;
+        item['idprod']      = IDPROD;
+        item['serie']       = SERIE;
+
+        DATA.push(item);
     })
 
     return DATA;

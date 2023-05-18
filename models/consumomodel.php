@@ -506,5 +506,36 @@
                 return false;
             } 
         }
+
+        public function generarKardex($parametros){
+            require_once("public/formatos/kardex.php");
+
+            $costo  = $parametros['cc'];
+            $doc    = $parametros['doc'];
+            $nombre = $parametros['nombre'];
+            $cargo  = $parametros['cargo'];
+            $almacen= "";
+            $fecha = "";
+
+            $detalle  = json_decode($parametros['detalles']);
+            $nreg = count($detalle);
+
+            $file = $doc.".pdf";
+
+            $pdf = new PDF($doc,$nombre,$almacen,$costo,$fecha,$cargo);
+
+            /*$pdf->AddPage();
+            $pdf->AliasNbPages();
+            $pdf->SetWidths(array(15,25,130,20));
+            $pdf->SetFont('Arial','',5);
+
+            $lc = 0;*/
+
+            $filename = "public/documentos/kardex/".$file;
+
+            $pdf->Output($filename,'F');
+
+            return $file;
+        }
     }
 ?>

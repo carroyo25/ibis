@@ -41,6 +41,10 @@
         function anulaItem() {
             echo $this->model->anularItem($_POST['item']);
         }
+
+        function kardex() {
+            echo $this->model->generarKardex($_POST);
+        }
         
     }
 ?>

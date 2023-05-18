@@ -39,12 +39,10 @@ $(function(){
                     .attr("src","")
                     .attr("src","public/documentos/adeudos/"+data);
                 
-                    $("#vistaprevia").fadeIn();
+                $("#vistaprevia").fadeIn();
             },
             "text"
         );
-
-        
 
         return false; 
     });
