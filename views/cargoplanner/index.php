@@ -24,7 +24,7 @@
                 <div></div>
                 <div></div>
             </div>
-    </div>
+        </div>
     </div>
     <div class="modal" id="vistadocumento">
         <div class="ventanaResumen">

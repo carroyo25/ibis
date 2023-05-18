@@ -406,8 +406,8 @@ detallesHoja = () => {
             CODIGO      = $(this).find('td').eq(1).text(),
             DESCRIPCION = $(this).find('td').eq(2).text(),
             UNIDAD      = $(this).find('td').eq(3).text(),
-            CANTIDAD    = $(this).find('td').eq(4).children().val(),
-            FECHA       = $(this).find('td').eq(5).children().val(),
+            CANTIDAD    = $(this).find('td').eq(4).text(),
+            FECHA       = $(this).find('td').eq(5).text(),
             HOJA        = $(this).find('td').eq(6).children().val(),
             ISOMETRICO  = $(this).find('td').eq(7).children().val(),
             OBSERVAC    = $(this).find('td').eq(8).children().val(),
@@ -415,7 +415,11 @@ detallesHoja = () => {
             PATRIMONIO  = $(this).find('td').eq(10).children().prop('checked'),
             ESTADO      = $(this).find('td').eq(11).children().val(),
             COSTOS      = $("#costosSearch").val(),
-            NRODOC      = $("#docident").val();
+            NRODOC      = $("#docident").val(),
+            FIRMA       = $(this).data('firma'),
+            KARDEX      = $(this).data('kardex'),
+            DEVOLUCION  = $(this).data('devolucion'),
+            FIRMADELVOL = $(this).data('firmadevolucion');
 
 
         item = {};
@@ -435,6 +439,10 @@ detallesHoja = () => {
         item['nrodoc']      = NRODOC;
         item['idprod']      = IDPROD;
         item['serie']       = SERIE;
+        item['kardex']      = KARDEX;
+        item['firma']       = FIRMA;
+        item['devolucion']  = DEVOLUCION;
+        item['fdevolucion']  = FIRMADELVOL;
 
         DATA.push(item);
     })

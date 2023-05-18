@@ -144,6 +144,7 @@
                                                         alm_consumo.idprod,
                                                         alm_consumo.cantsalida,
                                                         DATE_FORMAT(alm_consumo.fechasalida,'%d/%m/%Y') AS fechasalida,
+                                                        DATE_FORMAT(alm_consumo.fechadevolucion,'%d/%m/%Y') AS fechadevolucion,
                                                         alm_consumo.nhoja,
                                                         alm_consumo.cisometrico,
                                                         alm_consumo.cobserentrega,
@@ -154,6 +155,7 @@
                                                         alm_consumo.cfirma,
                                                         cm_producto.ccodprod,
                                                         alm_consumo.nkardex,
+                                                        alm_consumo.calmacen,
                                                         UPPER(cm_producto.cdesprod) AS cdesprod,
                                                         tb_unimed.cabrevia,COUNT(*) 
                                                     FROM
@@ -185,7 +187,12 @@
                         $marcado = $rs['flgdevolver'] == 1 ? "checked" : "";
                         $firma = "public/documentos/firmas/".$rs['cfirma'].".png";
 
-                        $salida .= '<tr class="pointer" data-grabado="1" data-registrado="1" data-kardex = "'.$rs['nkardex'].'">
+                        $salida .= '<tr class="pointer" data-grabado="1" 
+                                                        data-registrado="1" 
+                                                        data-kardex = "'.$rs['nkardex'].'"
+                                                        data-firma = "'.$rs['cfirma'].'"
+                                                        data-devolucion = "'.$rs['fechadevolucion'].'"
+                                                        data-firmadevolucion ="'.$rs['calmacen'].'">
                                         <td class="textoDerecha">'.$rowCount--.'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="pl5px">'.$rs['cdesprod'].'</td>
@@ -269,7 +276,7 @@
 
                         $alerta = $rs['dias_ultima_entrega'] < 15 ? "inactivo" : "";
 
-                        $salida .= '<tr class="pointer" data-grabado="1" data-kardex="'.$rs['nkardex'].'">
+                        $salida .= '<tr class="pointer" data-grabado="1" data-kardex="'.$rs['nkardex'].'" data-firma="'.$rs['cfirma'].'">
                                         <td class="textoDerecha hideItem" data-idreg="'.$rs['idreg'].'">'.$numero_item--.'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="pl5px">'.$rs['cdesprod'].'</td>
@@ -516,20 +523,56 @@
             $cargo  = $parametros['cargo'];
             $almacen= "";
             $fecha = "";
+            $existe = "NO";
 
             $detalle  = json_decode($parametros['detalles']);
-            $nreg = count($detalle);
+            $nreg     = count($detalle);
+            $item     = 1;
 
             $file = $doc.".pdf";
 
             $pdf = new PDF($doc,$nombre,$almacen,$costo,$fecha,$cargo);
 
-            /*$pdf->AddPage();
+            $pdf->AddPage();
             $pdf->AliasNbPages();
-            $pdf->SetWidths(array(15,25,130,20));
-            $pdf->SetFont('Arial','',5);
+            $pdf->SetWidths(array(5,10,85,15,15,15,15,15,15));
+            $pdf->SetFont('Arial','',4);
 
-            $lc = 0;*/
+            $lc = 0;
+
+            for ($i=0; $i < $nreg; $i++) {
+                $y=$pdf->GetY();
+
+                
+                $pdf->SetXY(10,$y);
+                $pdf->Multicell(5,5,$detalle[$i]->item,"LRB","R");
+                $pdf->SetXY(15,$y);
+                $pdf->Multicell(10,5,$detalle[$i]->cantidad,"LRB","R");
+                $pdf->SetXY(25,$y);
+                $pdf->Multicell(85,5,substr($detalle[$i]->descripcion,0,100),"LRB","L");
+                $pdf->SetXY(110,$y);
+                $pdf->Multicell(15,5,"","LRB","C");
+                $pdf->SetXY(125,$y);
+                $pdf->Multicell(15,5,$detalle[$i]->fecha,"LRB","C");
+                $pdf->SetXY(140,$y);
+                $pdf->Multicell(15,5,"","LRB","C");
+                if ( file_exists("public/documentos/firmas/".$detalle[$i]->firma.".png") )
+                    $pdf->Image("public/documentos/firmas/".$detalle[$i]->firma.".png",142,$y+2,13);
+                $pdf->SetXY(155,$y);
+                $pdf->Multicell(15,5,$detalle[$i]->devolucion,"LRB","C");
+                $pdf->SetXY(170,$y);
+                $pdf->Multicell(15,5,"","LRB","C");
+                //$pdf->Multicell(15,6,$detalle[$i]->fdevolucion,"LRB","C");
+                $pdf->SetXY(185,$y);
+                $pdf->Multicell(15,5,$detalle[$i]->kardex,"LRB","C");
+                
+                $lc++;
+
+                if ($pdf->getY() >= 250) {
+                    $pdf->AddPage();
+                    $lc = 0;
+                }
+            }
 
             $filename = "public/documentos/kardex/".$file;
 

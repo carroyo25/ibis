@@ -22,7 +22,7 @@
         	$this->Image('public/img/logo.png',12,12,25);
 	        $this->SetFont('Arial','B',8);
 			$this->SetTextColor(0,0,0);
-           // $this->SetFillColor(229, 229, 229);
+           
 	        $this->Cell(190,7,"KARDEX DE EPP Y/O EQUIPOS",0,1,'C');
 	        $this->SetFont('Arial','B',10);
             $this->SetXY(170,11);
@@ -54,25 +54,30 @@
 
             $this->ln(1);
 
-            $this->SetFont('Arial','B',6);
-    		//$this->Rect(10,30,190,4,"F"); //fondo de mensaje
-    		$this->SetWidths(array(5,15,90,20,20,20,20));
-    		$this->SetAligns(array("C","C","C","C","C","C","C"));
-    		$this->Row(array(utf8_decode('N°'),utf8_decode('Cantidad'),utf8_decode('Descripción'),'Equipo Renovable','Fecha Retiro',utf8_decode('Firma Devolución'),utf8_decode('N° Registro')));
+            $this->SetFont('Arial','B',5);
+    		$this->Rect(10,73,190,5,"F"); //fondo de mensaje
+    		$this->SetWidths(array(5,10,85,15,15,15,15,15,15));
+    		$this->SetAligns(array("C","C","C","C","C","C","C","C","C"));
+    		$this->Row(array(utf8_decode('N°'),
+                            'Cantidad',
+                            utf8_decode('Descripción'),
+                            'Equipo Renovable',
+                            'Fecha Retiro',
+                            'Firma Retiro',
+                            'Fecha Devolucion',
+                            'Firma Devolucion',
+                            utf8_decode('N° Registro')));
         }
 
         // Pie de página
-		/*function Footer(){
-		    $this->SetY(-70);
-		    //$this->Ln(20);
-		    $this->Line(20, 225, 65, 225);
-		    $this->Line(80, 225, 130, 225);
-		    $this->Line(150, 225, 190, 225);
-
-		   
-		   	$this->Cell(64,4,"FIRMA JEFE DE OBRA",0,0,"C");
-		    $this->Cell(64,4,"FIRMA DEL TRABAJADOR",0,0,"C");
-		    $this->Cell(64,4,"FIRMA ALMACEN",0,1,"C");
-		}*/
+		function Footer(){
+		    $this->SetY(-30);
+            $this->SetFillColor(255, 255, 0);
+            $this->Cell(190,4,"Responsable del registro",1,1,"L",TRUE);
+		   	$this->Cell(47,8,"Nombre: ",1,0,"L");
+		    $this->Cell(47,8,"Cargo:",1,0,"L");
+		    $this->Cell(47,8,"Fecha :",1,0,"L");
+            $this->Cell(49,8,"Firma :",1,1,"L");
+		}
     }
 ?>

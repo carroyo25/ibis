@@ -23,7 +23,8 @@
                                                         g.idcostos AS guias,
                                                         i.ingreso_inventario,
                                                         i.condicion,
-                                                        m.ncantidad AS minimo 
+                                                        m.ncantidad AS minimo,
+                                                        t.ncanti AS transferencias
                                                     FROM
                                                         (
                                                         SELECT DISTINCT
@@ -73,7 +74,12 @@
                                                             SELECT alm_minimo.dfecha, alm_minimo.idprod, alm_minimo.ncantidad 
                                                                 FROM alm_minimo 
                                                                 WHERE alm_minimo.ncostos = :minimo 
-                                                        ) AS m ON q.idprod = m.idprod 
+                                                        ) AS m ON q.idprod = m.idprod
+                                                        LEFT JOIN ( 
+                                                            SELECT alm_transferdet.ncanti, alm_transferdet.idcprod 
+                                                            FROM alm_transferdet 
+                                                            WHERE alm_transferdet.idcostos = :transferencia ) 
+                                                            AS t ON q.idprod = t.idcprod 
                                                     WHERE
                                                         q.ncostos = :consumo 
                                                         AND cm_producto.flgActivo = 1 
@@ -86,6 +92,7 @@
                 $sql->execute(["guias"=>$cc,
                                 "inventarios"=>$cc,
                                 "consumo"=>$cc,
+                                "transferencia"=>$cc,
                                 "codigo"=>$cp,
                                 "descripcion"=>$de,
                                 "minimo"=>$cc]);
@@ -96,7 +103,7 @@
                 if ($rowCount > 0) {
                     $salida="";
                     while ($rs = $sql->fetch()){
-                        $saldo = ($rs['ingreso_guias']+$rs['ingreso_inventario']+$rs['devolucion'])-$rs['consumo'];
+                        $saldo = ($rs['ingreso_guias']+$rs['ingreso_inventario']+$rs['devolucion']+$rs['transferencias'])-$rs['consumo'];
                         $estado = $saldo > 0 ? "semaforoVerde":"semaforoRojo";
 
                         $alerta_minimo = ( $rs['minimo']*.7 ) > $saldo ? "semaforoRojo":"";
@@ -119,7 +126,7 @@
                                             <td class="textoDerecha">'.number_format($rs['ingreso_inventario'],2).'</td>
                                             <td class="textoDerecha">'.number_format($rs['consumo'],2).'</td>
                                             <td class="textoDerecha">'.number_format($rs['devolucion'],2).'</td>
-                                            <td></td>
+                                            <td class="textoDerecha">'.number_format($rs['transferencias'],2).'</td>
                                             <td class="textoDerecha '.$alerta_minimo.'">'.number_format($rs['minimo'],2).'</td>
                                             <td class="textoDerecha '.$estado.'"><div>'.number_format($saldo,2).'</div></td>
                                             <td class="textoCentro">'.$c1.'</td>
@@ -393,8 +400,9 @@
                 $objPHPExcel->getActiveSheet()->setCellValue('E4','CANTIDAD GUIAS'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('F4','INGRESO INVENTARIO'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('G4','CANTIDAD SALIDAS'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('H4','SALDO'); // esto cambia
-
+                $objPHPExcel->getActiveSheet()->setCellValue('H4','CANTIDAD DEVUELTO'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('I4','TRANSFERENCIAS'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('J4','SALDO'); // esto cambia
        
                 $fila = 5;
                 $datos = json_decode($registros);
@@ -408,7 +416,9 @@
                     $objPHPExcel->getActiveSheet()->setCellValue('E'.$fila,$datos[$i]->ingreso);
                     $objPHPExcel->getActiveSheet()->setCellValue('F'.$fila,$datos[$i]->inventario);
                     $objPHPExcel->getActiveSheet()->setCellValue('G'.$fila,$datos[$i]->salida);
-                    $objPHPExcel->getActiveSheet()->setCellValue('H'.$fila,$datos[$i]->saldo);
+                    $objPHPExcel->getActiveSheet()->setCellValue('H'.$fila,$datos[$i]->devuelto);
+                    $objPHPExcel->getActiveSheet()->setCellValue('I'.$fila,$datos[$i]->transferencias);
+                    $objPHPExcel->getActiveSheet()->setCellValue('J'.$fila,$datos[$i]->saldo);
                     
                     $fila++;
                 }
