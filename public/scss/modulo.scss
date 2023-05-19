@@ -2465,6 +2465,14 @@ $anulado:#c2c2c2;
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
             padding: 0 85px;
+            column-gap: 10px;
+
+            select {
+                line-height: 2rem;
+                border: 1px solid #c2c2c2c2;
+                height: 3rem;
+                padding: 5px;
+            }
         }
 
         #calculado{
@@ -2482,7 +2490,7 @@ $anulado:#c2c2c2;
 
     #tablas {
         display: grid;
-        grid-template-columns: 25% 25% 1fr;
+        grid-template-columns: 1fr 1fr 1fr;
         column-gap: 5px;
 
         #barras {

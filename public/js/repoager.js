@@ -3,6 +3,22 @@ $(function(){
     torta();
     lineas();
     barras();
+
+    $("#clase").on('change', function(e) {
+        e.preventDefault();
+        
+        $.post(RUTA+"repoager/tipos",{id:$(this).val()},
+            function (data, text, requestXHR) {
+                $("#tipo")
+                    .empty()
+                    .append(data);
+            },
+            "text"
+        );
+
+
+        return false;
+    });
 })
 
 

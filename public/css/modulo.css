@@ -2787,9 +2787,18 @@
   width: 80%;
   display: -ms-grid;
   display: grid;
-  -ms-grid-columns: 1fr 1fr 1fr;
+  -ms-grid-columns: 1fr 10px 1fr 10px 1fr;
   grid-template-columns: 1fr 1fr 1fr;
   padding: 0 85px;
+  -webkit-column-gap: 10px;
+     -moz-column-gap: 10px;
+          column-gap: 10px;
+}
+#repogen #repogencabecera #filtros select {
+  line-height: 2rem;
+  border: 1px solid rgba(194, 194, 194, 0.7607843137);
+  height: 3rem;
+  padding: 5px;
 }
 #repogen #repogencabecera #calculado {
   font-size: 3rem;
@@ -2806,8 +2815,8 @@
 #repogen #tablas {
   display: -ms-grid;
   display: grid;
-  -ms-grid-columns: 25% 5px 25% 5px 1fr;
-  grid-template-columns: 25% 25% 1fr;
+  -ms-grid-columns: 1fr 5px 1fr 5px 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   -webkit-column-gap: 5px;
      -moz-column-gap: 5px;
           column-gap: 5px;

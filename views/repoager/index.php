@@ -7,61 +7,34 @@
     <title>Reporte Gerencial - 01</title>
 </head>
 <body>
-<div class="cabezaModulo">
+    <div class="cabezaModulo">
         <h1>Resumen de Almacen</h1>
         <div>
             <a href="#" id="irInicio"><i class="fas fa-home"></i></a>
         </div>
     </div>
-    <div class="barraTrabajo">
-        <form action="#" id="formConsulta">
-            <div class="variasConsultasColumna">
-                <div class="datosConsultaCargoPlan">
-                    <div class="w5por">
-                        <label for="tipo">Tipo : </label>
-                        <select name="tipoSearch" id="tipoSearch">
-                            <option value="-1">Seleccione una opcion</option>
-                            <option value="37">Bienes</option>
-                            <option value="38">Servicios</option>
-                        </select>    
-                    </div>
-                    <div>
-                        <label for="costosSearch">Centro de Costos </label>
-                        <select name="costosSearch" id="costosSearch">
-                            <?php echo $this->listaCostos ?>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="codigo">Clase:</label>
-                        <input type="text" name="codigoSearch" id="codigoSearch" class="textoCentro">
-                    </div>
-                    <div  class="w5por">
-                        <label for="ordenSearch">Tipo :</label>
-                        <input type="text" name="ordenSearch" id="ordenSearch">
-                    </div>
-                </div>
-                <div class="botonesConsulta">
-                        <button type="button" id="btnProcesa">Procesar</button>
-                        <button type="button" id="btnExporta">Exportar</button>
-                    </div>
-            </div>
-        </form>
-    </div>
-    <div class="itemsCargoPlanner">
+    
+    <div class="itemsReporte">
         <div id="repogen">
             <div id="repogencabecera">
                   <div id="filtros">
                         <div>
                             <p>Mes</p>
-                            <select name="mes" id="mes"></select>
+                            <select name="mes" id="mes" class="w50por">
+
+                            </select>
                         </div>
                         <div>
                             <p>Clase</p>
-                            <select name="clase" id="clase"></select>
+                            <select name="clase" id="clase" class="w100por">
+                                <?php echo $this->clases ?>
+                            </select>
                         </div>
                         <div>
                             <p>Tipo</p>
-                            <select name="tipo" id="tipo"></select>
+                            <select name="tipo" id="tipo" class="w100por">
+                                <?php echo $this->tipos ?>
+                            </select>
                         </div>
                   </div>
                   <div id="calculado">
@@ -77,7 +50,7 @@
             </div>
             <div id="tablas">
                 <div id="div_clase">
-                    <table id="tablaClases" class="tablareporte">
+                    <table id="tablaClases" class="tablareporte w100por">
                         <thead class="stickytop">
                             <tr>
                                 <th>Tipo</th>
@@ -111,7 +84,7 @@
                     </table>
                 </div>
                 <div id="div_items">
-                    <table id="tablaItems" class="tablareporte">
+                    <table id="tablaItems" class="tablareporte w100por">
                         <thead class="stickytop">
                             <tr>
                                 <th>Descripción</th>
@@ -149,9 +122,6 @@
             </div>
         </div>
     </div>
-
-    
-
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
     <script src="<?php echo constant('URL');?>public/js/funciones.js"></script>
     <script src="<?php echo constant('URL');?>public/js/repoager.js?"></script>
