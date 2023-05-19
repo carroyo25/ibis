@@ -188,7 +188,7 @@
                                         <td class="pl5px">'.$rs['concepto'].'</td>
                                         <td class="pl5px">'.$rs['area'].'</td>
                                         <td class="textoCentro">'.$rs['ccodproy'].'</td>
-                                        <td class="textoCentro">'.$rs['ccodprod'].'</td>
+                                        <td class="textoCentro" data-codigo="'.$rs['id_cprod'].'">'.$rs['ccodprod'].'</td>
                                         <td class="textoDerecha">'.$rs['cantidad'].'</td>
                                         <td class="pl5px">'.$rs['cdesprod'].'</td>
                                     </tr>';

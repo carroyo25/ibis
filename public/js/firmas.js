@@ -117,7 +117,6 @@ $(function() {
             ,"text"
         );
 
-
         return false;
     });
 

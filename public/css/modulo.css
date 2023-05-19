@@ -2301,6 +2301,11 @@
   border-collapse: collapse;
   font-size: 0.7rem;
 }
+.tabla .consultaPrecios, .tablaWrap .consultaPrecios {
+  font-weight: bold;
+  cursor: -webkit-zoom-in;
+  cursor: zoom-in;
+}
 .tabla thead, .tablaWrap thead {
   background: #000;
   color: #fff;

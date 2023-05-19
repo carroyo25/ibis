@@ -241,6 +241,7 @@
                             <th>Centro de Costos</th>
                             <th>Moneda</th>
                             <th>Precio </br> Unitario</th>
+                            <th>Cantidad</th>
                             <th>Pedido</th>
                             <th>Orden</th>
                             <th>Tipo </br> Cambio</th>

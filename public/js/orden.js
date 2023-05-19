@@ -298,7 +298,7 @@ $(function(){
                                 data-nro_parte="${nro_parte}">
                             <td class="textoCentro"><a href="#"><i class="fas fa-ban"></i></a></td>
                             <td class="textoCentro">${nFilas}</td>
-                            <td class="textoCentro">${codigo}</td>
+                            <td class="textoCentro consultaPrecios">${codigo}</td>
                             <td class="pl20px">${descrip}</td>
                             <td class="textoCentro">${unidad}</td>
                             <td class="textoDerecha pr5px">
@@ -702,6 +702,31 @@ $(function(){
         }
 
         return false;
+    });
+
+    $("#tablaDetalles tbody").on('click',".consultaPrecios", function (e) {
+        e.preventDefault();
+
+          $.post(RUTA+"firmas/precios", {codigo:$(this).parent().data("codprod")},
+            function (data, text, requestXHR) {
+                $("#tablaPrecios tbody")
+                    .empty()
+                    .append(data);
+
+                $("#consultaprecios").fadeIn();
+            }
+            ,"text"
+        );       
+
+        return false;
+    });
+
+    $("#closePrices").click(function (e) { 
+        e.preventDefault();
+        
+        $("#consultaprecios").fadeOut();
+
+        return false;	
     });
 
     //filtrado en la lista de solicitante

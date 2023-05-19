@@ -192,7 +192,7 @@
                 $sql = $this->db->connect()->prepare("SELECT
                                                         cm_producto.id_cprod,
                                                         cm_producto.ccodprod,
-                                                        cm_producto.cdesprod,
+                                                        UPPER(cm_producto.cdesprod) AS cdesprod,
                                                         lg_ordendet.ncanti,
                                                         lg_ordendet.nunitario,
                                                         lg_ordencab.cnumero AS orden,
@@ -200,7 +200,7 @@
                                                         tb_parametros.cabrevia AS moneda,
                                                         LPAD(tb_pedidocab.nrodoc,6,0) AS pedido,
                                                         tb_proyectos.ccodproy,
-                                                        tb_proyectos.cdesproy,
+                                                        UPPER(tb_proyectos.cdesproy) AS cdesproy,
                                                         DATE_FORMAT(lg_ordencab.ffechadoc,'%d/%m/%Y') AS fecha,
                                                     IF
                                                         ( lg_ordencab.ncodmon != 20, FORMAT( lg_ordencab.ntcambio, 2 ), 1 ) AS tipo_cambio 
@@ -231,6 +231,7 @@
                                         <td class="pl10px">'.$rs['cdesproy'].'</td>
                                         <td class="textoCentro">'.$rs['moneda'].'</td>
                                         <td class="textoDerecha pr20px">'.$rs['nunitario'].'</td>
+                                        <td class="textoDerecha pr20px">'.$rs['ncanti'].'</td>
                                         <td class="textoCentro">'.$rs['pedido'].'</td>
                                         <td class="textoCentro">'.$rs['orden'].'</td>
                                         <td class="textoDerecha pr20px">'.$tipo_cambio.'</td>

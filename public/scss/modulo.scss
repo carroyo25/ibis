@@ -1995,6 +1995,11 @@ $anulado:#c2c2c2;
     border-collapse: collapse;
     font-size: 0.7rem;
 
+    .consultaPrecios {
+        font-weight: bold;
+        cursor: zoom-in;
+    }
+
     thead {
         background:$negro;
         color:$blanco;

@@ -422,6 +422,37 @@
             </form>
         </div>
     </div>
+    <div class="modal" id="consultaprecios">
+        <div class="ventanaPrecios">
+            <div class="tituloVista">
+                <h3>Consulta de Precios</h3>
+                <a href="#" id="closePrices" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
+                <hr>
+               
+            </div>
+            <div class="preciosCuerpo">
+                <table class="tabla" id="tablaPrecios">
+                    <thead>
+                        <tr>
+                            <th>Codigo</th>
+                            <th>Descripcion</th>
+                            <th>Centro de Costos</th>
+                            <th>Moneda</th>
+                            <th>Precio </br> Unitario</th>
+                            <th>Cantidad</th>
+                            <th>Pedido</th>
+                            <th>Orden</th>
+                            <th>Tipo </br> Cambio</th>
+                            <th>Fecha</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
     <div class="cabezaModulo">
         <h1>Registro de ordenes</h1>
         <div>
