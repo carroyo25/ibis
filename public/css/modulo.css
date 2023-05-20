@@ -2772,18 +2772,21 @@
   z-index: -1;
 }
 
-#repogen #repogencabecera {
+.itemsReporte {
+  overflow: auto;
+}
+.itemsReporte #repogen #repogencabecera {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
 }
-#repogen #repogencabecera {
+.itemsReporte #repogen #repogencabecera {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
   position: relative;
 }
-#repogen #repogencabecera #filtros {
+.itemsReporte #repogen #repogencabecera #filtros {
   width: 80%;
   display: -ms-grid;
   display: grid;
@@ -2794,34 +2797,45 @@
      -moz-column-gap: 10px;
           column-gap: 10px;
 }
-#repogen #repogencabecera #filtros select {
+.itemsReporte #repogen #repogencabecera #filtros select {
   line-height: 2rem;
   border: 1px solid rgba(194, 194, 194, 0.7607843137);
   height: 3rem;
   padding: 5px;
 }
-#repogen #repogencabecera #calculado {
+.itemsReporte #repogen #repogencabecera #calculado {
   font-size: 3rem;
   position: absolute;
   right: 58px;
 }
-#repogen #graficos {
+.itemsReporte #repogen #graficos {
   margin-top: 4rem;
   display: -ms-grid;
   display: grid;
   -ms-grid-columns: 1fr 1fr;
   grid-template-columns: 1fr 1fr;
 }
-#repogen #tablas {
+.itemsReporte #repogen #tablas {
+  margin-top: 4rem;
   display: -ms-grid;
   display: grid;
-  -ms-grid-columns: 1fr 5px 1fr 5px 1fr;
+  -ms-grid-columns: 1fr 15px 1fr 15px 1fr;
   grid-template-columns: 1fr 1fr 1fr;
-  -webkit-column-gap: 5px;
-     -moz-column-gap: 5px;
-          column-gap: 5px;
+  -webkit-column-gap: 15px;
+     -moz-column-gap: 15px;
+          column-gap: 15px;
 }
-#repogen #tablas #barras {
+.itemsReporte #repogen #tablas .tablareporte {
+  border-collapse: collapse;
+}
+.itemsReporte #repogen #tablas .tablareporte thead {
+  background: white;
+  border-bottom: 3px solid #6288AA;
+}
+.itemsReporte #repogen #tablas .tablareporte tfoot {
+  border-top: 3px solid #6288AA;
+}
+.itemsReporte #repogen #tablas #barras {
   border: 1px solid #000;
   width: -webkit-fit-content;
   width: -moz-fit-content;

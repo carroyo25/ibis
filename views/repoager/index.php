@@ -58,29 +58,7 @@
                                 <th>Suma<br/>Total</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>ROPA</td>
-                                <td>569</td>
-                                <td>S/ 76,790.10</td>
-                            </tr>
-                            <tr>
-                                <td>BOTAS SEG</td>
-                                <td>95</td>
-                                <td>S/ 14,870.28</td>
-                            </tr>
-                            <tr>
-                                <td>GUANTES</td>
-                                <td>1140</td>
-                                <td>S/. 10,962.26</td>
-                            </tr>
-                            <tr>
-                                <td>FILTROS</td>
-                                <td>192</td>
-                                <td>S/. 6,393.99</td>
-                            </tr>
-
-                        </tbody>
+                        <?php echo $this->familias?>
                     </table>
                 </div>
                 <div id="div_items">
@@ -114,6 +92,13 @@
                                 <td>S/. 229.67</td>
                             </tr>
                         </tbody>
+                        <tfoot>
+                            <tr>
+                                <th scope="row">Totals</th>
+                                <td>21,000</td>
+                                <td>21,000</td>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
                 <div id="barras">

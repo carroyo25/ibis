@@ -9,6 +9,7 @@
             $this->view->listaCostos = "";
             $this->view->clases = $this->model->listarClasesReporte();
             $this->view->tipos = $this->model->listarTipos(43);
+            $this->view->familias = $this->model->tablaFamilias(43,118);
             $this->view->render('repoager/index');
         }
         
