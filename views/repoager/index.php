@@ -51,13 +51,6 @@
             <div id="tablas">
                 <div id="div_clase">
                     <table id="tablaClases" class="tablareporte w100por">
-                        <thead class="stickytop">
-                            <tr>
-                                <th>Tipo</th>
-                                <th>suma<br/>Cantidad</th>
-                                <th>Suma<br/>Total</th>
-                            </tr>
-                        </thead>
                         <?php echo $this->familias?>
                     </table>
                 </div>

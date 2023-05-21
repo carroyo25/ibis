@@ -92,7 +92,14 @@
                 $sql->execute(["grupo"=>$grupo,"clase"=>$clase]);
 
                 $rowCount = $sql->rowCount();
-                $salida = "<tbody>";
+                $salida = "<thead class='stickytop'>
+                                <tr>
+                                    <th>Tipo</th>
+                                    <th>suma<br/>Cantidad</th>
+                                    <th>Suma<br/>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>";
                 $total_cantidad = 0;
                 $total_dinero = 0;
             

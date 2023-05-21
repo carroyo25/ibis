@@ -23,16 +23,14 @@ $(function(){
     $("#tipo").on('change', function(e) {
         e.preventDefault();
         
-        /*$.post(RUTA+"repoager/tipos",{id:$(this).val()},
+        $.post(RUTA+"repoager/clases",{clase:$(this).val(),grupo:$("#clase").val()},
             function (data, text, requestXHR) {
-                $("#tipo")
+                $("#tablaClases")
                     .empty()
                     .append(data);
             },
             "text"
-        );*/
-        console.log($(this).val(),$("#clase").val())
-
+        );
 
         return false;
     });

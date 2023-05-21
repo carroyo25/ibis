@@ -16,5 +16,9 @@
         function tipos(){
             echo $this->model->listarTipos($_POST['id']);
         }
+
+        function clases(){
+            echo $this->model->tablaFamilias($_POST['grupo'],$_POST['clase']);
+        }
     }
 ?>
