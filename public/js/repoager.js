@@ -1,6 +1,13 @@
 $(function(){
     $("#espera").fadeOut();
-    torta();
+
+    let pd = [{
+        name: 'Combustible',
+        y: 16,
+        sliced: true,
+        selected: true}];
+
+    //torta(pd);
     lineas();
     barras();
 
@@ -16,93 +23,83 @@ $(function(){
             "text"
         );
 
+        return false;
+    });
+
+    var chart1,options;
+    $("#tipo").on('change', function(e) {
+        e.preventDefault();
+
+        $.ajax({
+            url:"repoager/clases",
+            type: "POST",
+            dataType:"json",
+            data:{clase:$(this).val(),grupo:$("#clase").val()},
+            success:function(data){
+                options.series[0].data = data;
+                chart1 = new Highcharts.Chart(options);
+                console.log(data);
+            }
+        })    
+        torta();
 
         return false;
     });
 
-    $("#tipo").on('change', function(e) {
+    function torta(){
+        options = {
+            chart:{
+                renderTo: 'torta',
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false,
+                type: 'pie'
+                },
+                title: {
+                    text: 'Porcentaje de compras por familia',
+                },
+                tooltip: {
+                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                },
+                accessibility: {
+                    point: {
+                        valueSuffix: '%'
+                    }
+                },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: true,
+                            format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+                        }
+                    }
+                },
+                series: [{
+                    name: 'brands',
+                    colorByPoint: true,
+                    data: []
+                }]        
+        }
+    }
+
+    $("#tablaClases").on('click','tbody tr', function(e) {
         e.preventDefault();
-        
-        $.post(RUTA+"repoager/clases",{clase:$(this).val(),grupo:$("#clase").val()},
+
+        $.post(RUTA+"repoager/items",{grupo:$(this).data('grupo'),clase:$(this).data('clase'),familia:$(this).data('familia')},
             function (data, text, requestXHR) {
-                $("#tablaClases")
-                    .empty()
-                    .append(data);
+                console.log(data);
             },
-            "text"
+            "json"
         );
+
 
         return false;
     });
 })
 
 
-torta=()=>{
-    Highcharts.chart('torta', {
-        chart: {
-            plotBackgroundColor: null,
-            plotBorderWidth: null,
-            plotShadow: false,
-            type: 'pie'
-        },
-        title: {
-            text: 'Browser market shares in May, 2020',
-            align: 'left'
-        },
-        tooltip: {
-            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-        },
-        accessibility: {
-            point: {
-                valueSuffix: '%'
-            }
-        },
-        plotOptions: {
-            pie: {
-                allowPointSelect: true,
-                cursor: 'pointer',
-                dataLabels: {
-                    enabled: true,
-                    format: '<b>{point.name}</b>: {point.percentage:.1f} %'
-                }
-            }
-        },
-        series: [{
-            name: 'Brands',
-            colorByPoint: true,
-            data: [{
-                name: 'Chrome',
-                y: 70.67,
-                sliced: true,
-                selected: true
-            }, {
-                name: 'Edge',
-                y: 14.77
-            },  {
-                name: 'Firefox',
-                y: 4.86
-            }, {
-                name: 'Safari',
-                y: 2.63
-            }, {
-                name: 'Internet Explorer',
-                y: 1.53
-            },  {
-                name: 'Opera',
-                y: 1.40
-            }, {
-                name: 'Sogou Explorer',
-                y: 0.84
-            }, {
-                name: 'QQ',
-                y: 0.51
-            }, {
-                name: 'Other',
-                y: 2.6
-            }]
-        }]
-    });
-}
 
 lineas = () => {
     Highcharts.chart('lineas', {
@@ -131,7 +128,7 @@ barras = () => {
             type: 'column'
         },
         xAxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+            categories: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
         },
     
         plotOptions: {

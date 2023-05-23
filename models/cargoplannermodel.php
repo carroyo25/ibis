@@ -580,6 +580,14 @@
                     $objPHPExcel->getActiveSheet()->setCellValue('V'.$fila,$datos[$i]->autoriza_orden);
                     $objPHPExcel->getActiveSheet()->setCellValue('W'.$fila,$datos[$i]->proveedor);
                     $objPHPExcel->getActiveSheet()->setCellValue('X'.$fila,$datos[$i]->fecha_entrega);
+
+                    $objPHPExcel->getActiveSheet()->setCellValue('X'.$fila,$datos[$i]->fecha_entrega);
+
+                    $objPHPExcel->getActiveSheet()
+                                ->getStyle('X'.$fila,$datos[$i]->fecha_entrega)
+                                ->getNumberFormat()
+                                ->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDDSLASH);
+
                     $objPHPExcel->getActiveSheet()->setCellValue('Y'.$fila,$datos[$i]->cantidad_recibida);
                     $objPHPExcel->getActiveSheet()->setCellValue('Z'.$fila,$datos[$i]->nota_ingreso);
                     $objPHPExcel->getActiveSheet()->setCellValue('AA'.$fila,$datos[$i]->saldo_recibir);

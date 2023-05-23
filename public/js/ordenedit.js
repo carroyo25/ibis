@@ -665,13 +665,41 @@ $(function(){
         return false;
      });
  
-     $("#btnConfirmAtach").on("click", function (e) {
+    /*$("#btnConfirmAtach").on("click", function (e) {
          e.preventDefault();
 
         $("#archivos").fadeOut();
  
          return false;
-     });
+    });*/
+
+    $("#btnConfirmAtach").on("click", function (e) {
+        e.preventDefault();
+
+       let formData = new FormData();
+
+       formData.append('codigo',$("#codigo_orden").val());
+
+       $.each($('#uploadAtach')[0].files, function(i, file) {
+           formData.append('file-'+i, file);
+       });
+
+       $.ajax({
+           type: "POST",
+           url: RUTA+"orden/archivos",
+           data: formData,
+           data: formData,
+           contentType:false,      
+           processData:false,
+           dataType: "json",
+           success: function (response) {
+               $("#atach_counter").text(response.adjuntos);
+               $("#archivos").fadeOut();
+           }
+       });
+
+       return false;
+    });
  
      $("#btnCancelAtach").on("click", function (e) {
          e.preventDefault();

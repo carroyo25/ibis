@@ -2453,6 +2453,7 @@ $anulado:#c2c2c2;
 
 .itemsReporte {
     overflow: auto;
+    height: 85vh;
 
    #repogen{
         #repogencabecera{
@@ -2471,7 +2472,7 @@ $anulado:#c2c2c2;
                 column-gap: 10px;
 
                 select {
-                    line-height: 2rem;
+                    line-height: 1rem;
                     border: 1px solid #c2c2c2c2;
                     height: 3rem;
                     padding: 5px;
@@ -2486,23 +2487,38 @@ $anulado:#c2c2c2;
         }
 
         #graficos {
-            margin-top: 4rem;
+            margin-top: 1rem;
             display: grid;
             grid-template-columns: 1fr 1fr;
         }
 
         #tablas {
-            margin-top: 4rem;
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
             column-gap: 15px;
 
+            &>div {
+                height: 35vh;
+                overflow: auto;
+            }
+
             .tablareporte {
                 border-collapse: collapse;
+                
 
                 thead {
                     background:white;
                     border-bottom:3px solid #6288AA;
+                }
+
+                tbody {
+                    tr{
+                        cursor: pointer;
+
+                        &:hover{
+                            background: #588400;
+                        }
+                    }
                 }
                 
                 tfoot{
@@ -2511,7 +2527,6 @@ $anulado:#c2c2c2;
             }
 
             #barras {
-                border:1px solid #000;
                 width: fit-content;
                 height: fit-content;
             }

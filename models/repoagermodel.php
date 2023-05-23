@@ -24,7 +24,7 @@
                                                     ORDER BY tb_grupo.cdescrip");
                 $sql->execute();
                 $rowCount = $sql->rowCount();
-                $salida = "";
+                $salida = '<option value="0">Seleccionar</option>';
 
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()) {
@@ -53,7 +53,7 @@
                                                     AND tb_clase.ncodgrupo = :id");
                 
                 $sql->execute(['id'=>$id]);
-                $salida = "";
+                $salida = '<option value="0">Seleccionar</option>';
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0) {
@@ -70,11 +70,25 @@
             }
         }
 
+        public function mesActual() {
+            $salida = null;
+            $mes  = ['Todos','Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Setiembre','Octubre','Noviembre','Diciembre'];
+
+            foreach ($mes as $key =>$m) {
+                $salida .= '<option value = '.$key.'>'.$m.'</option>';
+            }
+
+            return $salida;
+        }
+
         public function tablaFamilias($grupo,$clase){
             try {
                 $sql = $this->db->connect()->prepare("SELECT
-                                                        UPPER(tb_familia.cdescrip) AS cdescrip,
+                                                        UPPER(tb_familia.cdescrip) AS name,
                                                         SUM(lg_ordendet.ncanti) AS cantidad,
+                                                        cm_producto.ngrupo,
+                                                        cm_producto.nclase,
+                                                        cm_producto.nfam,
                                                     IF
                                                         ( lg_ordencab.ncodmon = 20, SUM( lg_ordendet.ntotal )*1, SUM( lg_ordendet.ntotal )* lg_ordencab.ntcambio ) AS total
                                                     FROM
@@ -92,27 +106,76 @@
                 $sql->execute(["grupo"=>$grupo,"clase"=>$clase]);
 
                 $rowCount = $sql->rowCount();
-                $salida = "<thead class='stickytop'>
-                                <tr>
+               
+
+                if ($rowCount > 0) {
+                    $docData = array();
+                    
+                    while($row=$sql->fetch(PDO::FETCH_ASSOC)){
+                        array_push( $docData,array("name"=>$row['name'],"y"=>$row['cantidad']));
+                    }
+                }
+
+                return $docData;
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        public function tablaItems($grupo,$clase,$familia){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        SUM(lg_ordendet.ncanti) AS cantidad,
+                                                        IF
+                                                        ( lg_ordencab.ncodmon = 20, SUM( lg_ordendet.ntotal )*1, SUM( lg_ordendet.ntotal )* lg_ordencab.ntcambio ) AS total,
+                                                        lg_ordendet.id_cprod,
+                                                        cm_producto.ccodprod,
+                                                        UPPER(cm_producto.cdesprod) AS cdesprod,
+                                                        cm_producto.ngrupo,
+                                                        cm_producto.nclase,
+                                                        cm_producto.nfam 
+                                                    FROM
+                                                        lg_ordendet
+                                                        INNER JOIN cm_producto ON lg_ordendet.id_cprod = cm_producto.id_cprod
+                                                        INNER JOIN lg_ordencab ON lg_ordendet.id_regmov = lg_ordencab.id_regmov 
+                                                    WHERE
+                                                        lg_ordendet.nestado = 1 
+                                                        AND cm_producto.ngrupo =:grupo 
+                                                        AND cm_producto.nclase =:clase 
+                                                        AND cm_producto.nfam =:familia
+                                                    GROUP BY cm_producto.id_cprod");
+
+                $sql->execute(["grupo"=>$grupo,"clase"=>$clase,"familia"=>$familia]);
+                $rowCount = $sql->rowCount();
+
+                $total_cantidad = 0;
+                $total_dinero = 0;
+                $salida = "";
+
+                
+                /*$salida = "<thead class='stickytop'>
+                                <tr >
                                     <th>Tipo</th>
                                     <th>suma<br/>Cantidad</th>
                                     <th>Suma<br/>Total</th>
                                 </tr>
                             </thead>
                             <tbody>";
-                $total_cantidad = 0;
-                $total_dinero = 0;
             
                 if ($rowCount > 0) {
                     while($rs = $sql->fetch()){
-                        $salida .='<tr>
-                                        <td>'.$rs['cdescrip'].'</td>
-                                        <td class="textoDerecha"> '.$rs['cantidad'].'</td>
-                                        <td class="textoDerecha">S/. '.$rs['total'].'</td>
+                        $salida .='<tr data-grupo="'.$rs['ngrupo'].'" 
+                                        data-clase="'.$rs['nclase'].'" 
+                                        data-familia="'.$rs['nfam'].'">
+                                        <td width="50%">'.$rs['cdesprod'].'</td>
+                                        <td class="textoDerecha"> '.number_format($rs['cantidad'],2).'</td>
+                                        <td class="textoDerecha">S/. '.number_format($rs['total'],2).'</td>
                                     </tr>';
 
-                        $total_cantidad = $rs['cantidad']++;
-                        $total_dinero = $rs['total']++;
+                        $total_cantidad = $rs['cantidad'] + $total_cantidad;
+                        $total_dinero = $rs['total'] + $total_dinero;
                     }
                 }
 
@@ -120,14 +183,14 @@
 
                 $salida.='<tfoot>
                             <tr>
-                                <th scope="row">Totals</th>
-                                <td class="textoDerecha">'.$total_cantidad.'</td>
-                                <td class="textoDerecha">S/. '.$total_dinero.'</td>
+                                <th scope="row">Total</th>
+                                <td class="textoDerecha">'.number_format($total_cantidad,2).'</td>
+                                <td class="textoDerecha">S/. '.number_format($total_dinero,2).'</td>
                             </tr>
-                        </tfoot>';
+                        </tfoot>';*/
 
                 return $salida;
-
+                                    
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;

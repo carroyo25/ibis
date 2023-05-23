@@ -21,7 +21,7 @@
                         <div>
                             <p>Mes</p>
                             <select name="mes" id="mes" class="w50por">
-
+                                <?php echo $this->mes ?>
                             </select>
                         </div>
                         <div>
@@ -38,7 +38,7 @@
                         </div>
                   </div>
                   <div id="calculado">
-                    <span> S/. 136,980.94 </span> 
+                    <span>S/.  </span> 
                   </div>  
             </div>
             <div id="graficos">
@@ -51,46 +51,35 @@
             <div id="tablas">
                 <div id="div_clase">
                     <table id="tablaClases" class="tablareporte w100por">
-                        <?php echo $this->familias?>
+                        <thead class='stickytop'>
+                            <tr >
+                                <th>Tipo</th>
+                                <th>suma<br/>Cantidad</th>
+                                <th>Suma<br/>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                        </tbody>
+                        <tfoot>
+                            
+                        </tfoot>
                     </table>
                 </div>
                 <div id="div_items">
                     <table id="tablaItems" class="tablareporte w100por">
-                        <thead class="stickytop">
-                            <tr>
-                                <th>Descripción</th>
-                                <th>Cantidad</th>
-                                <th>Precio<br/>Unitario</th>
+                        <thead class='stickytop'>
+                            <tr >
+                                <th>Tipo</th>
+                                <th>suma<br/>Cantidad</th>
+                                <th>Suma<br/>Total</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>CASACA POLAR TALLA M</td>
-                                <td>1</td>
-                                <td>S/. 569.35</td>
-                            </tr>
-                            <tr>
-                                <td>CASACA POLAR TALLA XL</td>
-                                <td>1</td>
-                                <td>S/. 311.02</td>
-                            </tr>
-                            <tr>
-                                <td>CHALECO INGNIFUGO COLOR AZULMARINO TALLA L</td>
-                                <td>53</td>
-                                <td>S/. 311.02</td>
-                            </tr>
-                            <tr>
-                                <td>CHALECO INGNIFUGO COLOR AZULMARINO TALLA M</td>
-                                <td>165</td>
-                                <td>S/. 229.67</td>
-                            </tr>
+                            
                         </tbody>
                         <tfoot>
-                            <tr>
-                                <th scope="row">Totals</th>
-                                <td>21,000</td>
-                                <td>21,000</td>
-                            </tr>
+                            
                         </tfoot>
                     </table>
                 </div>

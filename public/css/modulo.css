@@ -2774,6 +2774,7 @@
 
 .itemsReporte {
   overflow: auto;
+  height: 85vh;
 }
 .itemsReporte #repogen #repogencabecera {
   display: -webkit-box;
@@ -2798,7 +2799,7 @@
           column-gap: 10px;
 }
 .itemsReporte #repogen #repogencabecera #filtros select {
-  line-height: 2rem;
+  line-height: 1rem;
   border: 1px solid rgba(194, 194, 194, 0.7607843137);
   height: 3rem;
   padding: 5px;
@@ -2809,14 +2810,13 @@
   right: 58px;
 }
 .itemsReporte #repogen #graficos {
-  margin-top: 4rem;
+  margin-top: 1rem;
   display: -ms-grid;
   display: grid;
   -ms-grid-columns: 1fr 1fr;
   grid-template-columns: 1fr 1fr;
 }
 .itemsReporte #repogen #tablas {
-  margin-top: 4rem;
   display: -ms-grid;
   display: grid;
   -ms-grid-columns: 1fr 15px 1fr 15px 1fr;
@@ -2825,6 +2825,10 @@
      -moz-column-gap: 15px;
           column-gap: 15px;
 }
+.itemsReporte #repogen #tablas > div {
+  height: 35vh;
+  overflow: auto;
+}
 .itemsReporte #repogen #tablas .tablareporte {
   border-collapse: collapse;
 }
@@ -2832,11 +2836,16 @@
   background: white;
   border-bottom: 3px solid #6288AA;
 }
+.itemsReporte #repogen #tablas .tablareporte tbody tr {
+  cursor: pointer;
+}
+.itemsReporte #repogen #tablas .tablareporte tbody tr:hover {
+  background: #588400;
+}
 .itemsReporte #repogen #tablas .tablareporte tfoot {
   border-top: 3px solid #6288AA;
 }
 .itemsReporte #repogen #tablas #barras {
-  border: 1px solid #000;
   width: -webkit-fit-content;
   width: -moz-fit-content;
   width: fit-content;

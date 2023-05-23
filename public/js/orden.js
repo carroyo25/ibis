@@ -769,8 +769,6 @@ $(function(){
             mostrarMensaje(error,"mensaje_error");
         }
 
-       
-
         return false;
     });
 
