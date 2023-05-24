@@ -240,3 +240,5 @@ formatoNumeroConComas = (number,decimals,dec_point,thousands_point) =>{
     return number;
 }
 
+addComa = (x) => { return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); } 
+

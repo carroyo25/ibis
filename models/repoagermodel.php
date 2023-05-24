@@ -106,13 +106,17 @@
                 $sql->execute(["grupo"=>$grupo,"clase"=>$clase]);
 
                 $rowCount = $sql->rowCount();
-               
 
                 if ($rowCount > 0) {
                     $docData = array();
                     
                     while($row=$sql->fetch(PDO::FETCH_ASSOC)){
-                        array_push( $docData,array("name"=>$row['name'],"y"=>$row['cantidad']));
+                        array_push( $docData,array("name"=>$row['name'],
+                                                    "y"=>$row['cantidad'],
+                                                    "total"=>$row['total'],
+                                                    "grupo"=>$row['ngrupo'],
+                                                    "clase"=>$row['nclase'],
+                                                    "familia"=>$row['nfam']));
                     }
                 }
 
@@ -128,8 +132,8 @@
             try {
                 $sql = $this->db->connect()->prepare("SELECT
                                                         SUM(lg_ordendet.ncanti) AS cantidad,
-                                                        IF
-                                                        ( lg_ordencab.ncodmon = 20, SUM( lg_ordendet.ntotal )*1, SUM( lg_ordendet.ntotal )* lg_ordencab.ntcambio ) AS total,
+                                                        FORMAT(IF
+                                                        ( lg_ordencab.ncodmon = 20, SUM( lg_ordendet.ntotal )*1, SUM( lg_ordendet.ntotal )* lg_ordencab.ntcambio ),2) AS total,
                                                         lg_ordendet.id_cprod,
                                                         cm_producto.ccodprod,
                                                         UPPER(cm_producto.cdesprod) AS cdesprod,
@@ -150,47 +154,88 @@
                 $sql->execute(["grupo"=>$grupo,"clase"=>$clase,"familia"=>$familia]);
                 $rowCount = $sql->rowCount();
 
-                $total_cantidad = 0;
-                $total_dinero = 0;
-                $salida = "";
-
-                
-                /*$salida = "<thead class='stickytop'>
-                                <tr >
-                                    <th>Tipo</th>
-                                    <th>suma<br/>Cantidad</th>
-                                    <th>Suma<br/>Total</th>
-                                </tr>
-                            </thead>
-                            <tbody>";
-            
                 if ($rowCount > 0) {
-                    while($rs = $sql->fetch()){
-                        $salida .='<tr data-grupo="'.$rs['ngrupo'].'" 
-                                        data-clase="'.$rs['nclase'].'" 
-                                        data-familia="'.$rs['nfam'].'">
-                                        <td width="50%">'.$rs['cdesprod'].'</td>
-                                        <td class="textoDerecha"> '.number_format($rs['cantidad'],2).'</td>
-                                        <td class="textoDerecha">S/. '.number_format($rs['total'],2).'</td>
-                                    </tr>';
-
-                        $total_cantidad = $rs['cantidad'] + $total_cantidad;
-                        $total_dinero = $rs['total'] + $total_dinero;
+                    $docData = array();
+                    
+                    while($row=$sql->fetch(PDO::FETCH_ASSOC)){
+                        array_push( $docData,array("name"=>$row['cdesprod'],
+                                                    "y"=>$row['cantidad'],
+                                                    "total"=>$row['total'],
+                                                    "grupo"=>$row['ngrupo'],
+                                                    "clase"=>$row['nclase'],
+                                                    "familia"=>$row['nfam'],
+                                                    "producto"=>$row['id_cprod']));
                     }
                 }
 
-                $salida.='</tbody>';
-
-                $salida.='<tfoot>
-                            <tr>
-                                <th scope="row">Total</th>
-                                <td class="textoDerecha">'.number_format($total_cantidad,2).'</td>
-                                <td class="textoDerecha">S/. '.number_format($total_dinero,2).'</td>
-                            </tr>
-                        </tfoot>';*/
-
-                return $salida;
+                return array("datos"=>$docData);
                                     
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        public function dibujarLineas($grupo,$clase,$familia,$producto){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        SUM( lg_ordendet.ncanti ) AS cantidad,
+                                                        lg_ordendet.id_orden,
+                                                        lg_ordendet.nunitario,
+                                                        lg_ordencab.cmes,
+                                                        cm_producto.ccodprod,
+                                                        UPPER( cm_producto.cdesprod ) AS cdesprod,
+                                                        cm_producto.ngrupo,
+                                                        cm_producto.nclase,
+                                                        cm_producto.nfam,
+                                                        lg_ordencab.nEstadoDoc,
+                                                        lg_ordencab.cper 
+                                                    FROM
+                                                        lg_ordendet
+                                                        INNER JOIN lg_ordencab ON lg_ordendet.id_regmov = lg_ordencab.id_regmov
+                                                        INNER JOIN cm_producto ON lg_ordendet.id_cprod = cm_producto.id_cprod 
+                                                    WHERE
+                                                        lg_ordendet.nestado = 1 
+                                                        AND lg_ordencab.nEstadoDoc <> 105 
+                                                        AND cm_producto.ngrupo = :grupo 
+                                                        AND cm_producto.nclase = :clase
+                                                        AND cm_producto.nfam = :familia
+                                                        AND cm_producto.id_cprod = :producto
+                                                    GROUP BY
+                                                        lg_ordendet.id_cprod,
+                                                        lg_ordencab.cmes 
+                                                    ORDER BY
+                                                        lg_ordencab.cmes ASC");
+                /*SELECT
+                    tb_meses.mes,
+                    (
+                    SELECT
+                    IF
+                        ( SUM( lg_ordendet.ncanti ) > 0, SUM( lg_ordendet.ncanti ), 0 ) 
+                    FROM
+                        lg_ordendet 
+                    WHERE
+                        MONTH ( lg_ordendet.fregsys ) = tb_meses.idreg 
+                        AND lg_ordendet.id_cprod = 907 
+                    ) AS SUMA 
+                FROM
+                    tb_meses*/
+
+                $sql->execute(["grupo"=>$grupo,"clase"=>$clase,"familia"=>$familia,"producto"=>$producto]);
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0) {
+                    $docData = array();
+                    
+                    while($row=$sql->fetch(PDO::FETCH_ASSOC)){
+                        array_push( $docData,array("name"=>$row['cdesprod'],
+                                                    "y"=>$row['cantidad'],
+                                                    "mes"=>$row['cmes']));
+                    }
+                }
+
+                return $docData;
+
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;

@@ -353,6 +353,20 @@
                             $montoDolares =  "$ ".number_format($rs['ntotal'],2);
                         }
 
+                        if ( $rs['nEstadoDoc'] == 49) {
+                            $estado = "procesando";
+                        }else if ( $rs['nEstadoDoc'] == 59 ) {
+                            $estado = "firmas";
+                        }else if ( $rs['nEstadoDoc'] == 60 ) {
+                            $estado = "recepcion";
+                        }else if ( $rs['nEstadoDoc'] == 62 ) {
+                            $estado = "despacho";
+                        }else if ( $rs['nEstadoDoc'] == 105 ) {
+                            $estado = "anulado";
+                            $montoDolares = "";
+                            $montoSoles = "";
+                        }
+
                         $resaltado = $rs['nEstadoDoc'] == 59 ? "resaltado_firma" :  "";
 
 
@@ -370,6 +384,7 @@
                                     <td class="textoDerecha">'.$montoSoles.'</td>
                                     <td class="textoDerecha">'.$montoDolares.'</td>
                                     <td class="textoCentro '.strtolower($rs['atencion']).'">'.$rs['atencion'].'</td>
+                                    <td class="textoCentro '.$estado.'">'.strtoupper($estado).'</td>
                                     <td class="textoCentro">'.$log.'</td>
                                     <td class="textoCentro">'.$ope.'</td>
                                     <td class="textoCentro">'.$fin.'</td>

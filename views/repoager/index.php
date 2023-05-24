@@ -62,7 +62,11 @@
                             
                         </tbody>
                         <tfoot>
-                            
+                            <tr>
+                                <td>Total</td>
+                                <td>0</td>
+                                <td>S/. 0.00</td>
+                            </tr>
                         </tfoot>
                     </table>
                 </div>
@@ -79,7 +83,11 @@
                             
                         </tbody>
                         <tfoot>
-                            
+                            <tr>
+                                <td>Total</td>
+                                <td>0</td>
+                                <td>S/. 0.00</td>
+                            </tr>
                         </tfoot>
                     </table>
                 </div>
