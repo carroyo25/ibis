@@ -2,6 +2,7 @@ $(function(){
     $("#espera").fadeOut();
 
     var chart1,options;
+    var valores = [300,0,500,0,250,0,0,0,0,0,0,0];
 
     let pd = [{
         name: 'Combustible',
@@ -10,8 +11,8 @@ $(function(){
         selected: true}];
 
     //torta(pd);
-    lineas();
-    barras();
+    lineas(valores);
+    barras(valores);
 
     $("#clase").on('change', function(e) {
         e.preventDefault();
@@ -126,6 +127,7 @@ $(function(){
         $.post(RUTA+"repoager/items",{grupo:$(this).data('grupo'),clase:$(this).data('clase'),familia:$(this).data('familia')},
             function (data, text, requestXHR) {
                 $.each(data.datos, function (index, value) { 
+
                     $("#tablaItems tbody").append(`<tr data-grupo="${data.datos[index]['grupo']}" 
                                                         data-clase="${data.datos[index]['clase']}" 
                                                         data-familia="${data.datos[index]['familia']}"
@@ -160,12 +162,15 @@ $(function(){
     $("#tablaItems tbody").on("click",'tr', function (e) {
         e.preventDefault();
 
+        producto = $(this).find('td').eq(0).text()
+
         $.post(RUTA+"repoager/graficoLineas",{grupo:$(this).data('grupo'),
                                             clase:$(this).data('clase'),
                                             familia:$(this).data('familia'),
                                             producto:$(this).data('producto')},
             function (data, textStatus, jqXHR) {
-                console.log(data);
+                lineas(data.lineas,producto);
+                barras(data.barras,producto);
             },
             "json"
         );
@@ -174,35 +179,32 @@ $(function(){
     });
 })
 
-
-
-lineas = () => {
+lineas = (valores,producto) => {
     Highcharts.chart('lineas', {
-
-       cchart: {
-        type: 'spline'
+       chart: {
+        type: 'line'
     },
     title: {
-        text: 'Monthly Average Temperature'
+        text: 'Cantidad de Items por Meses'
     },
     subtitle: {
         text: 'Source: ' +
-            '<a href="https://en.wikipedia.org/wiki/List_of_cities_by_average_temperature" ' +
-            'target="_blank">Wikipedia.com</a>'
+            '<a href="sical.sepcon.net" ' +
+            'target="_blank">sical.sepcon.net</a>'
     },
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun','Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        categories: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun','Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
         accessibility: {
-            description: 'Months of the year'
+            description: 'Meses'
         }
     },
     yAxis: {
         title: {
-            text: 'Temperature'
+            text: 'Cantidad'
         },
         labels: {
             formatter: function () {
-                return this.value + '°';
+                return this.value;
             }
         }
     },
@@ -211,24 +213,23 @@ lineas = () => {
         shared: true
     },
     plotOptions: {
-        spline: {
-            marker: {
-                radius: 4,
-                lineColor: '#666666',
-                lineWidth: 1
-            }
+        line: {
+            dataLabels: {
+                enabled: true
+            },
+            enableMouseTracking: true
         }
     },
     series: [{
-        name: 'PROTECTOR AUDITIVO TIPO TAPON',
+        name: producto,
         marker: {
             symbol: 'square'
         },
-        data: [300,0,500,0,250,0,0,0,0,0,0,0]}, ]
+        data: valores} ]
     });
 }
 
-barras = () => {
+barras = (valores) => {
     Highcharts.chart('barras', {
         chart: {
             type: 'column'
@@ -236,17 +237,17 @@ barras = () => {
         xAxis: {
             categories: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
         },
-    
         plotOptions: {
             series: {
                 pointWidth: 20
             }
         },
         title: {
-            text: 'Totales por meses',
+            text: 'Total Meses',
         },
         series: [{
-            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+            name: "",
+            data: valores
         }]
     });
 }

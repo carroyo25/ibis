@@ -179,58 +179,73 @@
         public function dibujarLineas($grupo,$clase,$familia,$producto){
             try {
                 $sql = $this->db->connect()->prepare("SELECT
-                                                        SUM( lg_ordendet.ncanti ) AS cantidad,
-                                                        lg_ordendet.id_orden,
-                                                        lg_ordendet.nunitario,
-                                                        lg_ordencab.cmes,
-                                                        cm_producto.ccodprod,
-                                                        UPPER( cm_producto.cdesprod ) AS cdesprod,
-                                                        cm_producto.ngrupo,
-                                                        cm_producto.nclase,
-                                                        cm_producto.nfam,
-                                                        lg_ordencab.nEstadoDoc,
-                                                        lg_ordencab.cper 
+                                                        tb_meses.mes,
+                                                        (
+                                                        SELECT
+                                                        IF
+                                                            ( SUM( lg_ordendet.ncanti ) > 0, SUM( lg_ordendet.ncanti ), 0 ) 
+                                                        FROM
+                                                            lg_ordendet 
+                                                        WHERE
+                                                            MONTH ( lg_ordendet.fregsys ) = tb_meses.idreg 
+                                                            AND lg_ordendet.id_cprod = :producto 
+                                                            AND (
+                                                                lg_ordendet.nEstadoReg != 105 
+                                                            OR ISNULL( lg_ordendet.nEstadoReg )) 
+                                                        ) AS suma 
                                                     FROM
-                                                        lg_ordendet
-                                                        INNER JOIN lg_ordencab ON lg_ordendet.id_regmov = lg_ordencab.id_regmov
-                                                        INNER JOIN cm_producto ON lg_ordendet.id_cprod = cm_producto.id_cprod 
-                                                    WHERE
-                                                        lg_ordendet.nestado = 1 
-                                                        AND lg_ordencab.nEstadoDoc <> 105 
-                                                        AND cm_producto.ngrupo = :grupo 
-                                                        AND cm_producto.nclase = :clase
-                                                        AND cm_producto.nfam = :familia
-                                                        AND cm_producto.id_cprod = :producto
-                                                    GROUP BY
-                                                        lg_ordendet.id_cprod,
-                                                        lg_ordencab.cmes 
-                                                    ORDER BY
-                                                        lg_ordencab.cmes ASC");
-                /*SELECT
-                    tb_meses.mes,
-                    (
-                    SELECT
-                    IF
-                        ( SUM( lg_ordendet.ncanti ) > 0, SUM( lg_ordendet.ncanti ), 0 ) 
-                    FROM
-                        lg_ordendet 
-                    WHERE
-                        MONTH ( lg_ordendet.fregsys ) = tb_meses.idreg 
-                        AND lg_ordendet.id_cprod = 907 
-                    ) AS SUMA 
-                FROM
-                    tb_meses*/
+                                                        tb_meses");
+                
 
-                $sql->execute(["grupo"=>$grupo,"clase"=>$clase,"familia"=>$familia,"producto"=>$producto]);
+                $sql->execute(["producto"=>$producto]);
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0) {
                     $docData = array();
                     
                     while($row=$sql->fetch(PDO::FETCH_ASSOC)){
-                        array_push( $docData,array("name"=>$row['cdesprod'],
-                                                    "y"=>$row['cantidad'],
-                                                    "mes"=>$row['cmes']));
+                        array_push($docData,$row['suma']);
+                    }
+                }
+
+                return array("lineas"=>$docData,
+                             "barras"=>$this->barrasTotales($grupo,$clase,$familia,$producto));
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        public function barrasTotales($grupo,$clase,$familia,$producto){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        tb_meses.mes,
+                                                        (
+                                                        SELECT
+                                                        IF
+                                                            ( SUM( lg_ordendet.ntotal ) > 0, SUM( lg_ordendet.ntotal ), 0 ) 
+                                                        FROM
+                                                            lg_ordendet 
+                                                        WHERE
+                                                            MONTH ( lg_ordendet.fregsys ) = tb_meses.idreg 
+                                                            AND lg_ordendet.id_cprod = :producto 
+                                                            AND (
+                                                                lg_ordendet.nEstadoReg != 105 
+                                                            OR ISNULL( lg_ordendet.nEstadoReg )) 
+                                                        ) AS suma 
+                                                    FROM
+                                                        tb_meses");
+                
+
+                $sql->execute(["producto"=>$producto]);
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0) {
+                    $docData = array();
+                    
+                    while($row=$sql->fetch(PDO::FETCH_ASSOC)){
+                        array_push($docData,$row['suma']);
                     }
                 }
 
