@@ -52,7 +52,8 @@
                                                         LEFT JOIN ( SELECT alm_despachodet.ndespacho, alm_despachodet.niddetaPed, alm_despachodet.nropedido FROM alm_despachodet WHERE alm_despachodet.nflgactivo = 1 ) AS d ON tb_pedidodet.iditem = d.niddetaPed 
                                                         AND d.nropedido = lg_ordendet.id_orden 
                                                     WHERE
-                                                        tb_pedidodet.nflgActivo = 1 
+                                                        tb_pedidodet.nflgActivo = 1
+                                                        tb_pedidodet.estadoItem != 105  
                                                         AND tb_pedidocab.nrodoc LIKE '%' 
                                                         AND cm_producto.ccodprod LIKE '%' 
                                                         AND lg_ordendet.id_orden LIKE '%' 

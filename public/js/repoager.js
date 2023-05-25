@@ -10,9 +10,9 @@ $(function(){
         sliced: true,
         selected: true}];
 
-    //torta(pd);
     lineas(valores);
     barras(valores);
+    torta(valores);
 
     $("#clase").on('change', function(e) {
         e.preventDefault();
@@ -72,12 +72,12 @@ $(function(){
             }
         });
 
-        torta();
+        tortaDinamica();
 
         return false;
     });
 
-    function torta(){
+    function tortaDinamica(){
         options = {
             chart:{
                 renderTo: 'torta',
@@ -250,5 +250,44 @@ barras = (valores) => {
             data: valores
         }]
     });
+}
+
+torta = (valores) => {
+    Highcharts.chart('torta', {
+        chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false,
+            type: 'pie'
+        },
+        title: {
+            text: 'Browser market shares in May, 2020',
+            align: 'left'
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+        accessibility: {
+            point: {
+                valueSuffix: '%'
+            }
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: true,
+                    format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+                }
+            }
+        },
+        series: [{
+            name: 'Brands',
+            colorByPoint: true,
+            data: valores
+        }]
+    });
+    
 }
 
