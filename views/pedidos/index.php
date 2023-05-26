@@ -38,6 +38,7 @@
                     <input type="hidden" name="codigo_atencion" id="codigo_atencion" value="47">
                     <input type="hidden" name="vista_previa" id="vista_previa">
                     <input type="hidden" name="emitido" id="emitido">
+                    <input type="hidden" name="codigo_usuario" id="codigo_usuario">
 
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
@@ -305,6 +306,7 @@
         <div>
             <a href="#" id="nuevoRegistro"><i class="far fa-file"></i><p>Nuevo</p></a>
             <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
+            <a href="#" id="closeSession" class="oculto">xxx<p>Inicio</p></a>
         </div>
     </div>
     <div class="barraTrabajo">

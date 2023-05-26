@@ -131,54 +131,59 @@
                 $mensaje = "Error en el registro";
                 $clase = "mensaje_error";
 
-                $numero = $this->generarNumero($datos['codigo_costos'],"SELECT COUNT(idreg) AS numero FROM tb_pedidocab WHERE tb_pedidocab.idcostos =:cod");
+                if ( $datos['codigo_usuario'] != ""){
+                    $numero = $this->generarNumero($datos['codigo_costos'],"SELECT COUNT(idreg) AS numero FROM tb_pedidocab WHERE tb_pedidocab.idcostos =:cod");
                
-                $cmes = date("m",strtotime($datos['emision']));
-                $cper = date("Y",strtotime($datos['emision']));
+                    $cmes = date("m",strtotime($datos['emision']));
+                    $cper = date("Y",strtotime($datos['emision']));
 
-                $sql = $this->db->connect()->prepare("INSERT INTO tb_pedidocab SET idcostos=:cost,idarea=:area,idtrans=:trans,idsolicita=:soli,idtipomov=:mov,
-                                                                                emision=:emis,vence=:vence,estadodoc=:estdoc,nrodoc=:nro,usuario=:user,
-                                                                                anio=:ano,mes=:mes,concepto=:concep,detalle=:det,nivelAten=:aten,
-                                                                                docfPdfPrev=:dprev,nflgactivo=:est,verificacion=:ver,idpartida=:partida");
-                $sql->execute([
-                    "cost"=>$datos['codigo_costos'],
-                    "area"=>$datos['codigo_area'],
-                    "trans"=>$datos['codigo_transporte'],
-                    "soli"=>$datos['codigo_solicitante'],
-                    "mov"=>$datos['codigo_tipo'],
-                    "emis"=>$datos['emision'],
-                    "vence"=>$datos['vence'],
-                    "estdoc"=>$datos['codigo_estado'],
-                    "user"=>$_SESSION['iduser'],
-                    "nro"=>$numero['numero'],
-                    "ano"=>$cper,
-                    "mes"=>$cmes,
-                    "concep"=>$datos['concepto'],
-                    "det"=>$datos['espec_items'],
-                    "aten"=>$datos['codigo_atencion'],
-                    "dprev"=>$datos['vista_previa'],
-                    "est"=>1,
-                    "ver"=>$datos['codigo_verificacion'],
-                    "partida"=>$datos['codigo_partida']
-                ]);
+                    $sql = $this->db->connect()->prepare("INSERT INTO tb_pedidocab SET idcostos=:cost,idarea=:area,idtrans=:trans,idsolicita=:soli,idtipomov=:mov,
+                                                                                    emision=:emis,vence=:vence,estadodoc=:estdoc,nrodoc=:nro,usuario=:user,
+                                                                                    anio=:ano,mes=:mes,concepto=:concep,detalle=:det,nivelAten=:aten,
+                                                                                    docfPdfPrev=:dprev,nflgactivo=:est,verificacion=:ver,idpartida=:partida");
+                    $sql->execute([
+                        "cost"=>$datos['codigo_costos'],
+                        "area"=>$datos['codigo_area'],
+                        "trans"=>$datos['codigo_transporte'],
+                        "soli"=>$datos['codigo_solicitante'],
+                        "mov"=>$datos['codigo_tipo'],
+                        "emis"=>$datos['emision'],
+                        "vence"=>$datos['vence'],
+                        "estdoc"=>$datos['codigo_estado'],
+                        "user"=>$datos['codigo_usuario'],
+                        "nro"=>$numero['numero'],
+                        "ano"=>$cper,
+                        "mes"=>$cmes,
+                        "concep"=>$datos['concepto'],
+                        "det"=>$datos['espec_items'],
+                        "aten"=>47,
+                        "dprev"=>$datos['vista_previa'],
+                        "est"=>1,
+                        "ver"=>$datos['codigo_verificacion'],
+                        "partida"=>$datos['codigo_partida']
+                    ]);
 
-                $rowCount = $sql->rowCount();
-                
-
-                if ($rowCount > 0){
-                    $indice = $this->ultimoIndiceTabla("SELECT MAX(idreg) AS indice FROM tb_pedidocab");
-                    $this->saveItems($datos['codigo_verificacion'],
-                                    $datos['codigo_estado'],
-                                    $datos['codigo_atencion'],
-                                    $datos['codigo_tipo'],
-                                    $datos['codigo_costos'],
-                                    $datos['codigo_area'],
-                                    $detalles,
-                                    $indice);
-                    $respuesta = true;
-                    $mensaje = "Pedido Grabado";
-                    $clase = "mensaje_correcto";
+                    $rowCount = $sql->rowCount();
                     
+
+                    if ($rowCount > 0){
+                        $indice = $this->ultimoIndiceTabla("SELECT MAX(idreg) AS indice FROM tb_pedidocab");
+                        $this->saveItems($datos['codigo_verificacion'],
+                                        $datos['codigo_estado'],
+                                        $datos['codigo_atencion'],
+                                        $datos['codigo_tipo'],
+                                        $datos['codigo_costos'],
+                                        $datos['codigo_area'],
+                                        $detalles,
+                                        $indice);
+                        $respuesta = true;
+                        $mensaje = "Pedido Grabado";
+                        $clase = "mensaje_correcto";
+                        
+                    }
+                }else {
+                    $mensaje = "Error al registrar el pedido";
+                    $indice = 0;
                 }
 
                 $salida = array("respuesta"=>$respuesta,

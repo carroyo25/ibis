@@ -76,5 +76,9 @@
         function filtroPedidos(){
             echo $this->model->pedidosFiltrados($_POST);
         }
+
+        function  cerrarSession() {
+            session_destroy();
+        }
     }
 ?>

@@ -1677,7 +1677,6 @@
                                         </td>
                                         <td class="pl20px"><textarea>'.$rs['observaciones'].'</textarea></td>
                                         <td class="textoCentro">'.$rs['nroparte'].'</td>
-                                        <td class="textoCentro">'.$rs['cregistro'].'</td>
                                     </tr>';
                     }
                 }

@@ -8,12 +8,23 @@ $(function(){
     $("#nuevoRegistro").click(function (e) { 
         e.preventDefault();
 
-        $("#estado")
-            .removeClass()
-            .addClass("textoCentro w35por estado procesando");
-        $("#proceso").fadeIn();
-        accion = 'n';
+        try {
+            if ( $("#id_user").val() == "" ) throw new Error("General -- reinicie el sistema");
 
+                $("#estado")
+                .removeClass()
+                .addClass("textoCentro w35por estado procesando");
+                $("#proceso").fadeIn();
+                
+                accion = 'n';
+
+                $("#codigo_usuario").val($("#id_user").val());
+
+        } catch (error) {
+            mostrarMensaje(error,"mensaje_error");
+        }
+
+       
         return false;
     });
 
@@ -674,6 +685,19 @@ $(function(){
             "text"
         );
         
+        return false
+    });
+
+    $("#closeSession").click(function (e) { 
+        e.preventDefault();
+        
+        $.post(RUTA+"pedidos/cerrarSession", 
+            function (data, textStatus, jqXHR) {
+                
+            },
+            "text"
+        );
+
         return false
     });
 })
