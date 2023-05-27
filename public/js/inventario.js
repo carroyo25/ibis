@@ -120,7 +120,7 @@ $(() => {
 
             $("#esperar").fadeIn();
 
-            fetch (RUTA+'inventario/importarItems',{
+            /*fetch (RUTA+'inventario/importarItems',{
                 method: 'POST',
                 body: formData
             })
@@ -132,7 +132,20 @@ $(() => {
                     .append(data.datos);
 
                 $("#esperar").fadeOut();
-            })
+            })*/
+
+            $.ajax({
+                type: "post",
+                url: RUTA+'inventario/importarItems',
+                data: formData,
+                dataType: "text",
+                processData:false,
+                contentType:false,
+                success: function (data) {
+                    mostrarMensaje("Archivos copiados","mensaje_correcto");
+                    $("#esperar").fadeOut();
+                }
+            });
 
         } catch (error) {
             mostrarMensaje(error,'mensaje_error');

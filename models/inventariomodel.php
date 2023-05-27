@@ -198,7 +198,7 @@
 
         public function importFromXsl(){
             
-            require_once('public/PHPExcel/PHPExcel.php');
+            /*require_once('public/PHPExcel/PHPExcel.php');
 
             //$archivo = './public/documentos/temp/temp.ods';
             $archivo = './public/documentos/temp/temp.xlsx';
@@ -267,9 +267,42 @@
                 }
             }else{
                 $mensaje = "Ocurrió algún error al subir el fichero. No pudo guardarse.";
-            }
+            }*/
 
-            return array("datos"=>$datos);
+            require_once 'public/PHPExcel/PHPExcel/IOFactory.php';    
+
+
+            /*$objReader = PHPExcel_IOFactory::createReader('Excel2007');
+            $objReader->setReadDataOnly(true);
+
+            $objPHPExcel = $objReader->load("./public/documentos/temp/temp.xlsx");
+            $objWorksheet = $objPHPExcel->getActiveSheet();
+
+            $highestRow = $objWorksheet->getHighestRow(); 
+            $highestColumn = $objWorksheet->getHighestColumn(); 
+
+            $highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn); 
+
+            $rows = array();
+
+            /*for ($row = 8; $row <= $highestRow; ++$row) {
+                for ( $col = 1; $col <= 10; ++$col ) {
+                    echo $objWorksheet->getCellByColumnAndRow($col, $row)->getValue();
+                }
+            }
+            $activeSheetData = $objWorksheet->getActiveSheet()->toArray(null, true, true, true);
+            
+            var_dump($rows);*/
+
+            // Let IOFactory determine the spreadsheet format
+            $document = PHPExcel_IOFactory::load("./public/documentos/temp/temp.xlsx");
+
+            // Get the active sheet as an array
+            $activeSheetData = $document->getActiveSheet()->toArray(null, true, true, true);
+
+            var_dump($activeSheetData);
+
+            return false;
 
         }
 
