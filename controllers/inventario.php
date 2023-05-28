@@ -45,6 +45,10 @@
         function xlsExport(){
             echo json_encode($this->model->exportar($_POST['detalles'])); 
         }
+
+        function procesado() {
+            echo $this->model->buscarProcesado($_POST['a']);
+        }
         
     }
 ?>

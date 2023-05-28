@@ -111,16 +111,17 @@ $(() => {
         e.preventDefault();
 
         const input = document.querySelector('#fileUpload');
-
+        
         try {
             if (validarExtension(input)) throw "Archivo Inválido";
 
+            $("#archivo").val(input.files[0].name);
             const formData = new FormData();
             formData.append('fileUpload', input.files[0]);
 
             $("#esperar").fadeIn();
 
-            /*fetch (RUTA+'inventario/importarItems',{
+            fetch (RUTA+'inventario/importarItems',{
                 method: 'POST',
                 body: formData
             })
@@ -132,21 +133,9 @@ $(() => {
                     .append(data.datos);
 
                 $("#esperar").fadeOut();
-            })*/
-
-            $.ajax({
-                type: "post",
-                url: RUTA+'inventario/importarItems',
-                data: formData,
-                dataType: "text",
-                processData:false,
-                contentType:false,
-                success: function (data) {
-                    mostrarMensaje("Archivos copiados","mensaje_correcto");
-                    $("#esperar").fadeOut();
-                }
-            });
-
+                
+                mostrarMensaje(data.mensaje,'mensaje_correcto');
+            });  
         } catch (error) {
             mostrarMensaje(error,'mensaje_error');
         }
@@ -220,7 +209,6 @@ $(() => {
             changeValues(fila,idprod,descrip,codigo,unidad);
         } 
         
-
         return false;
     });
 
@@ -244,6 +232,7 @@ $(() => {
                 $.post(RUTA+"inventario/grabaRegistro", {cabecera:result,detalles:JSON.stringify(itemsSave())},
                     function (data, textStatus, jqXHR) {
                         mostrarMensaje(data.mensaje,'mensaje_correcto');
+                        $("#proceso").fadeOut();
                     },
                     "json"
                 );
@@ -388,3 +377,4 @@ changeValues = (fila,idprod,descripcion,codigo,unidad) => {
         .parent().find('td').eq(3).text(unidad)
         .parent().find('td').eq(2).text(descripcion);
 }
+

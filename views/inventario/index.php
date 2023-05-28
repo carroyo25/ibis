@@ -18,6 +18,7 @@
                     <input type="hidden" name="codigo_stock" id="codigo_stock">
                     <input type="hidden" name="codigo_tipo" id="codigo_tipo">
                     <input type="hidden" name="tipo" id="tipo" value="37">
+                    <input type="hidden" name="archivo" id="archivo">
                     <input type="file" name="fileUpload" id="fileUpload" accept=".xls,.xlsx,.ods" class="oculto" >
 
                     <div class="barraOpciones primeraBarra">

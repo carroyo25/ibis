@@ -289,6 +289,7 @@ $(function(){
                     <td><input type="number" step="any" placeholder="0.00" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"></td>
                     <td><textarea></textarea></td>
                     <td class="textoCentro"></td>
+                    <td class="textoCentro"></td>
                 </tr>`;
 
         $("#tablaDetalles tbody").append(row);

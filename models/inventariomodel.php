@@ -61,17 +61,33 @@
             }
         }
 
+        public function buscarProcesado($archivo){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT COUNT(alm_inventariocab.idreg) AS archivos FROM  alm_inventariocab 
+                                                    WHERE alm_inventariocab.observaciones=:archivo");
+                $sql->execute(["archivo"=>$archivo]);
+                $result = $sql->fetchAll();
+
+                return $result[0]['archivos'];
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
         public function grabarRegistro($cabecera,$detalles){
             try {
                 $sql = $this->db->connect()->prepare("INSERT INTO alm_inventariocab 
                                                     SET idcostos=:costo,ffechadoc=:fechadoc,ncodalm2=:almacen,ntipomov=:movimiento,
-                                                        ffechaInv=:fechaInv,idautoriza=:autoriza");
+                                                        ffechaInv=:fechaInv,idautoriza=:autoriza,observaciones=:archivo");
                 $sql->execute(["costo"=>$cabecera["codigo_costos"],
                                 "fechadoc"=>$cabecera["fecha"],
                                 "almacen"=>$cabecera["codigo_almacen"],
                                 "movimiento"=>$cabecera["codigo_tipo"],
                                 "fechaInv"=>$cabecera["fechaIngreso"],
-                                "autoriza"=>$cabecera["codigo_autoriza"]
+                                "autoriza"=>$cabecera["codigo_autoriza"],
+                                "archivo"=>$cabecera["archivo"]
                             ]);
 
                 $rowCount = $sql->rowCount();
@@ -197,113 +213,76 @@
         }
 
         public function importFromXsl(){
-            
-            /*require_once('public/PHPExcel/PHPExcel.php');
+            require_once "public/PHPExcel/PHPExcel/IOFactory.php";
 
-            //$archivo = './public/documentos/temp/temp.ods';
-            $archivo = './public/documentos/temp/temp.xlsx';
+            $archivo  = './public/documentos/temp/temp.xlsx';
+            $temporal = $_FILES['fileUpload']['tmp_name'];
+            $datos    = "";
+            $nombre = $_FILES['fileUpload']['name'];
 
-            $temporal	 = $_FILES['fileUpload']['tmp_name'];
+            if ( !$this->buscarProcesado($nombre) ){
+                if ( move_uploaded_file($temporal,$archivo) ) {
+                    $document = PHPExcel_IOFactory::load($archivo);
+                    $activeSheetData = $document->getActiveSheet()->toArray(null, true, true, true);
+                    
+                    $rows = 8;
+                    $nregs = count($activeSheetData);
+                    $fila = 1;
 
+                    for ($i=8; $i < $nregs; $i++) { 
+                        if ( $activeSheetData[$i]["B"] && $activeSheetData[$i]["B"]!="CODIGO"){
+                            
+                            $codigo_sical = $this->compareCode(RTRIM($activeSheetData[$i]["B"]));
 
-            if (move_uploaded_file($temporal,$archivo)){
-                $mensaje = "El archivo ha sido cargado correctamente.";
+                            if ( $codigo_sical == 0 ){
+                                $codigo_sical = $this->compareDescription(TRIM($activeSheetData[$i]["C"]));
+                            }
 
-                //$objReader = new PHPExcel_Reader_OOCalc();
-                //$objPHPOds = $objReader->load($archivo);
-                //$objHoja=$objPHPOds->getActiveSheet()->toArray(null,true,true,true);
+                            $estado      = $codigo_sical  != 0 ? 1 : 0;
+                            $fondo_fila  = $codigo_sical  != 0 ? "rgba(56,132,192,0.2)" : "rgba(255,0,57,0.2)";
+                            $descripcion = $codigo_sical  != 0 ? $activeSheetData[$i]["C"] : '<a href="#">'.$activeSheetData[$i]["C"].'</a>';
+                            $observaciones =  $codigo_sical  != 0 ? $activeSheetData[$i]["U"]: $activeSheetData[$i]["C"];
 
-                $objPHPExcel = PHPExcel_IOFactory::load($archivo);
-                $objHoja=$objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
-
-                $datos = "";
-
-                $fila = 1;
-                $datos= "";
-
-                foreach ($objHoja as $iIndice=>$objCelda) {
-                    if ( $objCelda['B'] && $objCelda['B']!="CODIGO" && $objCelda['B']!="CODIGO") {
-
-                        $codigo_sical = $this->compareCode(RTRIM($objCelda['B']));
-
-                        if ( $codigo_sical == 0 ){
-                            $codigo_sical = $this->compareDescription(TRIM($objCelda['C']));
+                            $datos .='<tr data-grabado="0" 
+                                            data-idprod="'.$codigo_sical.'" 
+                                            data-codund="" 
+                                            data-idx="-" 
+                                            data-estado="'.$estado.'"
+                                            data-registro="-"
+                                            style = background:'.$fondo_fila.'>
+                                        <td class="textoCentro">'.str_pad($fila++,6,0,STR_PAD_LEFT).'</td>
+                                        <td class="textoCentro">'.$activeSheetData[$i]["B"].'</td>
+                                        <td class="pl20px">'.$descripcion.'</td>
+                                        <td class="textoCentro">'.$activeSheetData[$i]["D"].'</td>
+                                        <td><input type="text" value="'.$activeSheetData[$i]["E"].'"></td>
+                                        <td><input type="number" value="'.$activeSheetData[$i]["F"].'"></td>
+                                        <td class="textoCentro"><input type="text" value="'.$activeSheetData[$i]["G"].'"></td>
+                                        <td class="textoCentro"><input type="text" value="'.$activeSheetData[$i]["H"].'"></td>
+                                        <td class="textoCentro"><input type="text" value="'.$activeSheetData[$i]["I"].'"></td>
+                                        <td class="textoCentro"><input type="text" value="'.$activeSheetData[$i]["J"].'"></td>
+                                        <td class="textoCentro"><input type="date" value="'.$activeSheetData[$i]["K"].'"></td>
+                                        <td class="textoCentro"><input type="date" value="'.$activeSheetData[$i]["L"].'"></td>
+                                        <td class="textoCentro"><input type="text" value="'.$activeSheetData[$i]["M"].'"></td>
+                                        <td class="textoCentro"><input type="text" value="'.$activeSheetData[$i]["N"].'"></td>
+                                        <td class="textoCentro"><input type="text"   value="'.$activeSheetData[$i]["O"].'"></td>
+                                        <td ><input type="text" class="textoCentro"  value="'.$activeSheetData[$i]["P"].'"></td>
+                                        <td ><input type="text" class="textoCentro"  value="'.$activeSheetData[$i]["Q"].'"></td>
+                                        <td ><input type="text" class="textoCentro"  value="'.$activeSheetData[$i]["R"].'"></td>
+                                        <td ><input type="text" class="textoCentro"  value="'.$activeSheetData[$i]["S"].'"></td>
+                                        <td><textarea>'.$observaciones.'</textarea></td>
+                                    </tr>';
                         }
-
-                        $estado      = $codigo_sical  != 0 ? 1 : 0;
-                        $fondo_fila  = $codigo_sical  != 0 ? "rgba(56,132,192,0.2)" : "rgba(255,0,57,0.2)";
-                        $descripcion = $codigo_sical  != 0 ? $objCelda['C'] : '<a href="#">'.$objCelda['C'].'</a>';
-                        $observaciones =  $codigo_sical  != 0 ? $objCelda['T']: $objCelda['C'];
-
-                       $datos .='<tr data-grabado="0" 
-                                        data-idprod="'.$codigo_sical.'" 
-                                        data-codund="" 
-                                        data-idx="-" 
-                                        data-estado="'.$estado.'"
-                                        data-registro="-"
-                                        style = background:'.$fondo_fila.'>
-                                    <td class="textoCentro">'.str_pad($fila++,6,0,STR_PAD_LEFT).'</td>
-                                    <td class="textoCentro">'.$objCelda['B'].'</td>
-                                    <td class="pl20px">'.$descripcion.'</td>
-                                    <td class="textoCentro">'.$objCelda['D'].'</td>
-                                    <td><input type="text" value="'.$objCelda['E'].'"></td>
-                                    <td><input type="number" value="'.$objCelda['F'].'"></td>
-                                    <td class="textoCentro"><input type="text" value="'.$objCelda['G'].'"></td>
-                                    <td class="textoCentro"><input type="text" value="'.$objCelda['H'].'"></td>
-                                    <td class="textoCentro"><input type="text" value="'.$objCelda['I'].'"></td>
-                                    <td class="textoCentro"><input type="text" value="'.$objCelda['J'].'"></td>
-                                    <td class="textoCentro"><input type="text" value="'.$objCelda['K'].'"></td>
-                                    <td class="textoCentro"><input type="date" value="'.$objCelda['L'].'"></td>
-                                    <td class="textoCentro"><input type="date" value="'.$objCelda['M'].'"></td>
-                                    <td class="textoCentro"><input type="text" value="'.$objCelda['N'].'"></td>
-                                    <td class="textoCentro"><input type="text" value="'.$objCelda['O'].'"></td>
-                                    <td class="textoCentro"><input type="text"   value="'.$objCelda['P'].'"></td>
-                                    <td ><input type="text" class="textoCentro"  value="'.$objCelda['Q'].'"></td>
-                                    <td ><input type="text" class="textoCentro"  value="'.$objCelda['R'].'"></td>
-                                    <td ><input type="text" class="textoCentro"  value="'.$objCelda['S'].'"></td>
-                                    <td><textarea>'.$observaciones.'</textarea></td>
-                                </tr>';
                     }
+                    $mensaje = "Items procesados --- ".$fila;
+                }else {
+                    $mensaje = "Ocurrió algún error al subir el fichero. No pudo guardarse.";
                 }
-            }else{
-                $mensaje = "Ocurrió algún error al subir el fichero. No pudo guardarse.";
-            }*/
-
-            require_once 'public/PHPExcel/PHPExcel/IOFactory.php';    
-
-
-            /*$objReader = PHPExcel_IOFactory::createReader('Excel2007');
-            $objReader->setReadDataOnly(true);
-
-            $objPHPExcel = $objReader->load("./public/documentos/temp/temp.xlsx");
-            $objWorksheet = $objPHPExcel->getActiveSheet();
-
-            $highestRow = $objWorksheet->getHighestRow(); 
-            $highestColumn = $objWorksheet->getHighestColumn(); 
-
-            $highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn); 
-
-            $rows = array();
-
-            /*for ($row = 8; $row <= $highestRow; ++$row) {
-                for ( $col = 1; $col <= 10; ++$col ) {
-                    echo $objWorksheet->getCellByColumnAndRow($col, $row)->getValue();
-                }
+            }else {
+                $mensaje = "El Archivo ya fue procesado";
             }
-            $activeSheetData = $objWorksheet->getActiveSheet()->toArray(null, true, true, true);
-            
-            var_dump($rows);*/
 
-            // Let IOFactory determine the spreadsheet format
-            $document = PHPExcel_IOFactory::load("./public/documentos/temp/temp.xlsx");
-
-            // Get the active sheet as an array
-            $activeSheetData = $document->getActiveSheet()->toArray(null, true, true, true);
-
-            var_dump($activeSheetData);
-
-            return false;
-
+            return array("datos"=>$datos, 
+                        "mensaje"=>$mensaje);
         }
 
         private function establecerCodigos($codigo){
