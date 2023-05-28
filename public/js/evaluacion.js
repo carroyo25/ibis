@@ -74,6 +74,30 @@ $(function(){
         
         return false;
     });
+
+    $("#btnConsulta").click(function (e) { 
+        e.preventDefault();
+
+        let str = $("#formConsulta").serialize();
+
+        $.post(RUTA+"evaluacion/listaFiltrada",str,
+            function (data, textStatus, jqXHR) {
+                $("#tablaPrincipal tbody")
+                    .empty()
+                    .append(data);
+            },
+            "text"
+        );
+        
+        return false;
+    });
+
+    $("#tablaDetalles tbody").on('blur','input', function(e) {
+        if ( $(this).val() < 1 || $(this).val() > 5  ) {
+            mostrarMensaje("Valor de calificacion incorrecto...","mensaje_error");
+            $(this).val(5);
+        }
+    });
 })
 
 items = () =>{

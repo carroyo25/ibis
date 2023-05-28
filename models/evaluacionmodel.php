@@ -6,10 +6,15 @@
             parent::__construct();
         }
 
-        public function listarOrdenesAprueba(){
+        public function listarOrdenesEval($orden,$cc,$mes,$anio){
             try {
-                 $salida = "";
-                 $sql = $this->db->connect()->prepare("SELECT
+                $o = $orden == "" ? "%" : $orden ;
+                $m = $mes   == -1 ? "%" : $mes;
+                $c = $cc    == -1 ? "%" : $cc;
+                $a = $anio  == "" ? "%" : $anio;
+
+                $salida = "";
+                $sql = $this->db->connect()->prepare("SELECT
                                                         tb_costusu.ncodcos,
                                                         tb_costusu.ncodproy,
                                                         tb_costusu.id_cuser,
@@ -47,9 +52,18 @@
                                                         tb_costusu.id_cuser = :user 
                                                         AND tb_costusu.nflgactivo = 1 
                                                         AND lg_ordencab.nEstadoDoc != 105
-                                                    ORDER BY lg_ordencab.ffechadoc DESC");
+                                                        AND lg_ordencab.cper LIKE :anio
+                                                        AND lg_ordencab.id_regmov LIKE :orden
+                                                        AND tb_costusu.ncodproy LIKE :costos
+                                                        AND lg_ordencab.cmes LIKE :mes
+                                                    ORDER BY lg_ordencab.id_regmov DESC");
 
-                 $sql->execute(["user"=>$_SESSION['iduser']]);
+                $sql->execute(["user"=>$_SESSION['iduser'],
+                                "anio"=>$a,
+                                "orden"=>$o,
+                                "costos"=>$c,
+                                "mes"=>$m]);
+
                  $rowCount = $sql->rowCount();
  
                  if ($rowCount > 0){

@@ -306,6 +306,7 @@
                 $tipo   = $parametros['tipoSearch'] == -1 ? "%" : "%".$parametros['tipoSearch']."%";
                 $costos = $parametros['costosSearch'] == -1 ? "" : $parametros['costosSearch'];
                 $mes    = $parametros['mesSearch'] == -1 ? "%".$mes :  $parametros['mesSearch'];
+                
                 $anio   = "%".$parametros['anioSearch'];
 
                 $sql = $this->db->connect()->prepare("SELECT

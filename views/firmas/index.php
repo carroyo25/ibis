@@ -234,7 +234,7 @@
             </div>
             <div class="preciosCuerpo">
                 <table class="tabla" id="tablaPrecios">
-                    <thead>
+                    <thead class="stickytop">
                         <tr>
                             <th>Codigo</th>
                             <th>Descripcion</th>

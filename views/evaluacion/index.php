@@ -131,11 +131,8 @@
         <form action="#" id="formConsulta">
             <div class="variasConsultas">
                     <div>
-                        <label for="tipo">Tipo : </label>
-                        <select name="tipoSearch" id="tipoSearch">
-                            <option value="37">Bienes</option>
-                            <option value="38">Servicios</option>
-                        </select>
+                        <label for="nroSearch">Nro : </label>
+                        <input type="text" name="nroSearch" id="nroSearch">
                     </div>
                     <div>
                         <label for="costosSearch">Centro de Costos: </label>

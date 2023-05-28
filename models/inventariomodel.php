@@ -229,7 +229,7 @@
                     $nregs = count($activeSheetData);
                     $fila = 1;
 
-                    for ($i=8; $i < $nregs; $i++) { 
+                    for ($i=8; $i < 300; $i++) { 
                         if ( $activeSheetData[$i]["B"] && $activeSheetData[$i]["B"]!="CODIGO"){
                             
                             $codigo_sical = $this->compareCode(RTRIM($activeSheetData[$i]["B"]));

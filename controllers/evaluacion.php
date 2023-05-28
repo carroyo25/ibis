@@ -6,7 +6,7 @@
         }
 
         function render(){
-            $this->view->listaOrdenes = $this->model->listarOrdenesAprueba();
+            $this->view->listaOrdenes = $this->model->listarOrdenesEval($nroSearch="",$costosSearch = -1,$mesSearch = -1,$anioSearch=2023);
             $this->view->listaCostosSelect = $this->model->costosPorUsuarioSelect($_SESSION['iduser']);
             $this->view->render('evaluacion/index');
         }
@@ -21,6 +21,10 @@
 
         function actualizaTabla(){
             echo $this->model->listarOrdenesAprueba();
+        }
+
+        function listaFiltrada(){
+            echo $this->model->listarOrdenesEval($_POST['nroSearch'],$_POST['costosSearch'],$_POST['mesSearch'],$_POST['anioSearch']);
         }
     }
 ?>

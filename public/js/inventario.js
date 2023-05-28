@@ -228,6 +228,8 @@ $(() => {
             if ($("#tablaDetalles tbody tr").length <= 0) throw "El pedido no tienes items";
             if (checkCantTables($("#tablaDetalles tbody > tr"),5)) throw "No ingreso cantidad en un item";
 
+            $("#proceso").fadeIn();
+
             if (accion == 0) {
                 $.post(RUTA+"inventario/grabaRegistro", {cabecera:result,detalles:JSON.stringify(itemsSave())},
                     function (data, textStatus, jqXHR) {
@@ -240,6 +242,8 @@ $(() => {
                 $.post(RUTA+"inventario/actualizaDetalles", {detalles:JSON.stringify(itemsSave())},
                     function (data, textStatus, jqXHR) {
                         mostrarMensaje('Items actualizados','mensaje_correcto');
+
+                        $("#proceso").fadeOut();
                     },
                     "json"
                 );

@@ -9,50 +9,30 @@
         public function listarEvaluaciones(){
             try {
                  $salida = "";
-                 $sql = $this->db->connect()->prepare("SELECT
-                                                         tb_costusu.ncodcos,
-                                                         tb_costusu.ncodproy,
-                                                         tb_costusu.id_cuser,
-                                                         lg_ordencab.id_regmov,
-                                                         lg_ordencab.cnumero,
-                                                         lg_ordencab.ffechadoc,
-                                                         lg_ordencab.nNivAten,
-                                                         lg_ordencab.nEstadoDoc,
-                                                         lg_ordencab.ncodpago,
-                                                         lg_ordencab.nplazo,
-                                                         lg_ordencab.cdocPDF,
-                                                         lg_ordencab.ntotal,
-                                                         lg_ordencab.ncodmon,
-                                                         tb_proyectos.ccodproy,
-                                                         UPPER( tb_pedidocab.concepto ) AS concepto,
-                                                         UPPER( tb_pedidocab.detalle ) AS detalle,
-                                                         UPPER(
-                                                         CONCAT_WS( tb_area.ccodarea, tb_area.cdesarea )) AS area,
-                                                         UPPER(
-                                                         CONCAT_WS( tb_proyectos.ccodproy, tb_proyectos.cdesproy )) AS costos,
-                                                         tb_proyectos.ccodproy,
-                                                         lg_ordencab.nfirmaLog,
-                                                         lg_ordencab.nfirmaFin,
-                                                         lg_ordencab.nfirmaOpe,
-                                                         tb_parametros.cdescripcion AS atencion,
-                                                         UPPER(cm_entidad.crazonsoc) AS proveedor 
-                                                     FROM
-                                                         tb_costusu
-                                                         INNER JOIN lg_ordencab ON tb_costusu.ncodproy = lg_ordencab.ncodpry
-                                                         INNER JOIN tb_pedidocab ON lg_ordencab.id_refpedi = tb_pedidocab.idreg
-                                                         INNER JOIN tb_area ON lg_ordencab.ncodarea = tb_area.ncodarea
-                                                         INNER JOIN tb_proyectos ON lg_ordencab.ncodpry = tb_proyectos.nidreg
-                                                         INNER JOIN tb_parametros ON lg_ordencab.nNivAten = tb_parametros.nidreg
-                                                         INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi 
-                                                     WHERE
-                                                         tb_costusu.id_cuser = :user 
-                                                         AND tb_costusu.nflgactivo = 1
-                                                         AND YEAR(lg_ordencab.ffechadoc) = YEAR(NOW())
-                                                         ORDER BY id_regmov DESC");
-                 $sql->execute(["user"=>$_SESSION['iduser']]);
+                 $sql = $this->db->connect()->query("SELECT
+                                                            lg_ordencab.id_regmov,
+                                                            UPPER(cm_entidad.crazonsoc) AS proveedor,
+                                                            tb_proyectos.ccodproy,
+                                                            UPPER( tb_pedidocab.concepto ) AS concepto,
+                                                            lg_ordencab.ffechadoc,
+	                                                        lg_ordencab.cnumero, 
+                                                        IF ( ISNULL( c01.npuntaje ), 5, c01.npuntaje ) AS criterio01,
+                                                        IF ( ISNULL( c02.npuntaje ), 5, c02.npuntaje ) AS criterio02,
+                                                        IF ( ISNULL( c03.npuntaje ), 5, c03.npuntaje ) AS criterio03,
+                                                        IF ( ISNULL( c13.npuntaje ), 5, c13.npuntaje ) AS criterio13 
+                                                        FROM
+                                                            lg_ordencab
+                                                            LEFT JOIN ( SELECT tb_califica.npuntaje, tb_califica.idorden FROM tb_califica WHERE tb_califica.idcriterio = 1 ) AS c01 ON c01.idorden = lg_ordencab.id_regmov
+                                                            LEFT JOIN ( SELECT tb_califica.npuntaje, tb_califica.idorden FROM tb_califica WHERE tb_califica.idcriterio = 2 ) AS c02 ON c02.idorden = lg_ordencab.id_regmov
+                                                            LEFT JOIN ( SELECT tb_califica.npuntaje, tb_califica.idorden FROM tb_califica WHERE tb_califica.idcriterio = 3 ) AS c03 ON c03.idorden = lg_ordencab.id_regmov
+                                                            LEFT JOIN ( SELECT tb_califica.npuntaje, tb_califica.idorden FROM tb_califica WHERE tb_califica.idcriterio = 13 ) AS c13 ON c13.idorden = lg_ordencab.id_regmov
+                                                            INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
+                                                            INNER JOIN tb_proyectos ON lg_ordencab.ncodcos = tb_proyectos.nidreg
+                                                            INNER JOIN tb_pedidocab ON lg_ordencab.id_refpedi = tb_pedidocab.idreg 
+                                                        ORDER BY
+                                                            lg_ordencab.id_regmov DESC");
+                 $sql->execute();
                  $rowCount = $sql->rowCount();
- 
-                 
  
                  if ($rowCount > 0){
                      while ($rs = $sql->fetch()) {
@@ -91,6 +71,10 @@
                 echo "Error: " . $th->getMessage();
                 return false;
             }
+        }
+
+        private function calulaPuntaje($orden){
+
         }
 
         public function reportEval($detalles){
