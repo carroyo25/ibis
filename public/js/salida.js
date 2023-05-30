@@ -15,8 +15,6 @@ $(function() {
         $.post(RUTA+"salida/salidaId", {id:$(this).data("indice")},
             function (data, textStatus, jqXHR) {
 
-                console.log(data.guias.length);
-                
                 let estado = "textoCentro w100por estado " + data.cabecera[0].cabrevia,
                     numero = $.strPad(data.cabecera[0].id_regalm,6);
                 
@@ -292,8 +290,6 @@ $(function() {
 
     $(".tituloDocumento").on("click","#closeDocument", function (e) {
         e.preventDefault();
-
-        //document.getElementById("guiaremision").reset();
 
         $(this).parent().parent().parent().parent().parent().fadeOut();
 

@@ -17,7 +17,8 @@
                                                     UPPER( origen.cdesalm ) AS almacenorigen,
                                                     UPPER( destino.cdesalm ) AS almacendestino,
                                                     UPPER( tb_proyectos.cdesproy ) AS proyecto,
-                                                    alm_transfercab.ftraslado 
+                                                    alm_transfercab.ftraslado,
+                                                    alm_transfercab.cnumguia
                                                 FROM
                                                     tb_costusu
                                                     INNER JOIN alm_transfercab ON tb_costusu.ncodproy = alm_transfercab.idcc
@@ -39,6 +40,7 @@
                                         <td class="pl20px">'.$rs['almacenorigen'].'</td>
                                         <td class="pl20px">'.$rs['almacendestino'].'</td>
                                         <td class="pl20px">'.$rs['proyecto'].'</td>
+                                        <td class="pl20px">'.$rs['cnumguia'].'</td>
                                     </tr>';
                     }
                 }

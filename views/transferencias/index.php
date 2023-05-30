@@ -136,12 +136,9 @@
                     <div class="barraOpciones">
                         <span>Detalles</span>
                         <div>
-                            <!--<button type="button" id="atachDocs" title="Documentos Adjuntos" class="cerrarLista boton3">
-                                <i class="fas fa-paperclip"></i> Documentos Adjuntos
-                            </button>
                             <button type="button" id="guiaRemision" title="Guia de Remision" class="cerrarLista boton3">
                                 <i class="fas fa-upload"></i> Guia de Remision
-                            </button>-->
+                            </button>
                         </div>
                     </div>
                     <div class="tablaInterna mininoTablaInterna">
@@ -253,6 +250,7 @@
                         <input type="text" name="numero_guia" id="numero_guia">    
                     </div>
                     <div class="opciones_documento">
+                        <a href="#" id="saveDocument" title="Grabar Guia"><i class="fas fa-save"></i></a>
                         <a href="#" id="printDocument" title="Imprimir Guia"><i class="fas fa-print"></i></a>
                         <a href="#" id="previewDocument" title="Vista previa"><i class="fas fa-eye"></i></a>
                         <a href="#" id="closeDocument" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
@@ -310,7 +308,7 @@
                             <p><strong>Empresa de Transporte</strong></p>
                             <div class="tres_columnas_interna">
                                 <label for="empresa_transporte_razon">Razón Social</label>
-                                <input type="text" name="empresa_transporte_razon" id="empresa_transporte_razon">
+                                <input type="text" name="empresa_transporte_razon" id="empresa_transporte_razon" class="buscaGuia">
                                 <button type="button" class="btnCallMenu boton3">+</button>
                                 <div class="lista" id="listaEntidad">
                                    <ul>
@@ -318,10 +316,10 @@
                                    </ul> 
                                 </div>
                                 <label for="direccion_proveedor">Dirección</label>
-                                <input type="text" name="direccion_proveedor" id="direccion_proveedor">
+                                <input type="text" name="direccion_proveedor" id="direccion_proveedor" class="datosEntidad">
                                 <span></span>
                                 <label for="ruc_proveedor">R.U.C.</label>
-                                <input type="text" name="ruc_proveedor" id="ruc_proveedor">
+                                <input type="text" name="ruc_proveedor" id="ruc_proveedor" class="datosEntidad">
                             </div>
                         </div>
                     </div>
@@ -435,11 +433,12 @@
         <table id="tablaPrincipal">
             <thead class="stickytop">
                 <tr>
-                    <th>Registro</th>
+                    <th>Nro. Nota</th>
                     <th>F.Emisión</th>
                     <th>Almacen Origen</th>
                     <th>Almacen Destino</th>
                     <th>Centro de Costos</th>
+                    <th>Nro. Guia</th>
                 </tr>
             </thead>
             <tbody>

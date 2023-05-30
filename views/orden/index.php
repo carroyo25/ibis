@@ -159,7 +159,6 @@
                                     <input type="text" name="tcambio" id="tcambio" class="textoDerecha pr20px">
                                 </div>
                             </div>
-                            
                         </div>
                         <div class="seccion_derecha">
                             <div class="column2">

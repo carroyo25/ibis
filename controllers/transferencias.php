@@ -14,6 +14,7 @@
             $this->view->listaPersonal = $this->model->listarPersonalRol(4);
             $this->view->listaEnvio = $this->model->listarParametros('08');
             $this->view->listaAtencion = $this->model->listarPedidosAtendidos();
+            $this->view->listaEntidad = $this->model->listarEntidades();
 
             $this->view->render('transferencias/index');
         }
