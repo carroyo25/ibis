@@ -115,6 +115,8 @@ $(function(){
         grabado     = true;
         ingresos    = 0
         swcoment    = false;
+
+        console.log(accion);
     
         return false;
     });
@@ -125,7 +127,6 @@ $(function(){
         $("#estado")
             .removeClass()
             .addClass("textoCentro estado procesando");
-        
 
         $("#proceso").fadeIn();
         $("#sw").val(0);
@@ -140,6 +141,7 @@ $(function(){
 
         accion = 'n';
         grabado = false;
+        costos = "";
 
         return false;
     });
@@ -284,6 +286,7 @@ $(function(){
                 id_item     = $(this).data("iditem"),
                 nro_parte   = $(this).data("nparte"),
                 grabado     = 0;
+                tabPos      = $("#tablaDetalles tr").length;
 
             $("#nro_pedido").val(nroreq);
 
@@ -302,7 +305,7 @@ $(function(){
                             <td class="pl20px">${descrip}</td>
                             <td class="textoCentro">${unidad}</td>
                             <td class="textoDerecha pr5px">
-                                <input type="number" 
+                                <input type="number"
                                     step="any" 
                                     placeholder="0.00" 
                                     onchange="(function(el){el.value=parseFloat(el.value).toFixed(4);})(this)"
@@ -310,11 +313,12 @@ $(function(){
                                     value=${cantidad}>
                             </td>
                             <td class="textoDerecha pr5px precio">
-                                <input type="number"
+                                <input type="number" class="focusNext"
                                     step="any" 
                                     placeholder="0.00" 
                                     onchange="(function(el){el.value=parseFloat(el.value).toFixed(4);})(this)"
-                                    onclick="this.select()">
+                                    onclick="this.select()"
+                                    tabIndex="${tabPos}">
                             </td>
                             <<td class="textoDerecha pr5px"></td>
                             <td class="textoCentro">${nro_parte}</td>
@@ -479,16 +483,12 @@ $(function(){
 
         formData = new FormData();
         formData.append("cabecera",JSON.stringify(result));
-
-        /*$.each(jQuery('#uploadAtach')[0].files, function(i, file) {
-            formData.append('file-'+i, file);
-        });*/
-
         formData.append("detalles",JSON.stringify(detalles()));
         formData.append("comentarios",JSON.stringify(comentarios()));
         formData.append("adicionales",JSON.stringify(adicionales()));
 
         try {
+            if ( accion == "" ) throw "Orden grabada";
             if ($("#codigo_estado").val() == 59) throw "La orden esta en firmas.";
             if (result['numero'] == "") throw "No tiene numero de orden";
             if (result['fentrega'] == "") throw "Elija la fecha de entrega";
@@ -525,9 +525,11 @@ $(function(){
                         $("#tablaPrincipal tbody")
                             .empty()
                             .append(response.pedidos);
+                            
+                            accion = ' ';
                     }
                 });
-            }else {
+            }else if ( accion == 'u' ){
                 $.post(RUTA+"orden/modificaRegistro", {cabecera:result,
                                                         detalles:JSON.stringify(detalles()),
                                                         comentarios:JSON.stringify(comentarios())},
@@ -661,7 +663,15 @@ $(function(){
                 if(suma > 0) {
                     $("#total").val(numberWithCommas(suma.toFixed(2)));
                     $("#total_numero").val(suma.toFixed(2));
+                }
 
+                //para cambiar el foco con el enter
+
+                cb = parseInt($(this).attr('tabindex'));
+
+                if ($(':input[tabindex=\'' + (cb + 1) + '\']') != null) {
+                    $(':input[tabindex=\'' + (cb + 1) + '\']').focus();
+                    $(':input[tabindex=\'' + (cb + 1) + '\']').select();
                 }
 
             } catch (error) {

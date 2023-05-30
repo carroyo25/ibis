@@ -384,7 +384,7 @@
                     <h3>Adjuntar Archivos</h3>
                     <a href="#" id="openArch" title="Adjuntar Archivos"><i class="fas fa-file-medical"></i></a>
                 </div>            
-                <ul class="listaArchivos" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
+                <ul class="listaArchivos" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);" style="pointer-events:none;">
                 </ul>
                 <div class="opcionesArchivos">
                     <button type="button" class="boton3" id="btnConfirmAtach">Aceptar</button>
