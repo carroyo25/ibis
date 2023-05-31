@@ -12,6 +12,59 @@
                 $cp = $parametros['codigoBusqueda'] == "" ? "%" : $parametros['codigoBusqueda'];
                 $de = $parametros['descripcionSearch'] == "" ? "%" : "%".$parametros['descripcionSearch']."%";
 
+                /*
+                                    SELECT DISTINCTROW
+                        alm_consumo.idprod,
+                    alm_consumo.fechasalida,	
+                        SUM(alm_consumo.cantsalida) AS salidas, 
+                        SUM(alm_consumo.cantdevolucion) AS devolucion, 
+                        cm_producto.ccodprod, 
+                        UPPER(cm_producto.cdesprod)  AS desprod,
+                        alm_consumo.nrodoc
+                    FROM
+                        alm_consumo
+                        INNER JOIN
+                        cm_producto
+                        ON 
+                            alm_consumo.idprod = cm_producto.id_cprod
+                    WHERE
+                        alm_consumo.flgactivo = 1
+                        AND alm_consumo.ncostos = 38
+                    GROUP BY
+                        alm_consumo.idprod
+                                    
+                    SELECT
+	cm_producto.id_cprod,
+	cm_producto.ccodprod,
+	UPPER( cm_producto.cdesprod ) AS cdesprod,
+	tb_unimed.cabrevia,
+	c.salidas,
+	c.devolucion
+FROM
+	cm_producto
+	INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+	LEFT JOIN (
+	SELECT
+		alm_consumo.idprod,
+		SUM(alm_consumo.cantsalida) AS salidas,
+		SUM(alm_consumo.cantdevolucion) AS devolucion
+	FROM
+		alm_consumo
+	GROUP BY
+		alm_consumo.idprod,
+		alm_consumo.fechasalida,
+		alm_consumo.nhoja,
+		alm_consumo.cobserentrega,
+		alm_consumo.cserie,
+		alm_consumo.ncostos
+	) AS c on cm_producto.id_cprod = c.idprod
+WHERE
+	cm_producto.flgActivo = 1 
+	AND cm_producto.ntipo = 37 
+ORDER BY
+	cm_producto.cdesprod ASC
+                */
+
                 $sql = $this->db->connect()->prepare("SELECT
                                                         cm_producto.id_cprod,
                                                         cm_producto.ccodprod,
