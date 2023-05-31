@@ -40,6 +40,20 @@
         function consultID(){
             echo json_encode($this->model->consultarTransferencia($_POST['id']));
         }
+
+        function grabaGuia(){
+            echo json_encode($this->model->grabarGuiaTransferencia($_POST['cabecera'],
+                                                    $_POST['nota'],
+                                                    $_POST['operacion']));
+        }
+
+        function vistaPreviaGuiaRemisioNotas(){
+            echo json_encode($this->model->generarVistaPreviaGuiaNota($_POST['cabecera'],$_POST['detalles'],$_POST['proyecto']));
+        }
+
+        function preImpresoGuiasTransf(){
+            echo json_encode($this->model->imprimirFormatoGuiaTransf($_POST['cabecera'],$_POST['detalles'],$_POST['proyecto'],$_POST['nota'],$_POST['operacion']));
+        }
         
     }
 ?>

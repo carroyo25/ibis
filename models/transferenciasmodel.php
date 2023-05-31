@@ -28,7 +28,8 @@
                                                 WHERE
                                                     tb_costusu.nflgactivo = 1 
                                                     AND alm_transfercab.nflgactivo = 1
-                                                    AND tb_costusu.id_cuser = :user");
+                                                    AND tb_costusu.id_cuser = :user 
+                                                    ORDER BY  alm_transfercab.idreg DESC  ");
                 $sql->execute(["user"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowCount();
 
@@ -149,7 +150,7 @@
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                         <td class="textoDerecha">'.$rs['cant_aprob'].'</td>
                                         <td class="textoDerecha">'.$rs['cant_orden'].'</td>
-                                        <td class="textoDerecha">'.$rs['ncanti'].'</td>
+                                        <td class="textoDerecha"><input type="text" value="'.$rs['ncanti'].'" readonly></td>
                                         <td></td>
                                         <td><textarea readonly></textarea>'.$rs['cobserva'].'</textarea></td>
                                         <td class="textoCentro">'.$rs['pedido'].'</td>
@@ -400,7 +401,8 @@
 
                 return array("mensaje"=>$mensaje,
                              "estado"=>$sw,
-                             "documento"=>str_pad($indice,4,8,STR_PAD_LEFT));
+                             "documento"=>str_pad($indice,4,0,STR_PAD_LEFT),
+                             "indice"=>$indice);
                 
             } catch (PDOException $th) {
                 echo $th->getMessage();
@@ -484,6 +486,254 @@
 
             } catch (PDOException $th) {
                 echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function grabarGuiaTransferencia($cabeceraGuia,$nota,$operacion){
+            try {
+                $sql = $this->db->connect()->prepare("INSERT INTO lg_guias SET id_regalm=:nota,cnumguia=:guia,corigen=:origen,
+                                                                                cdirorigen=:direccion_origen,cdestino=:destino,
+                                                                                cdirdest=:direccion_destino,centi=:entidad,centidir=:direccion_entidad,
+                                                                                centiruc=:ruc_entidad,ctraslado=:traslado,cenvio=:envio,
+                                                                                cautoriza=:autoriza,cdestinatario=:destinatario,cobserva=:observaciones,
+                                                                                cnombre=:nombres,cmarca=:marca,clicencia=:licencia,cplaca=:placa,
+                                                                                ftraslado=:fecha_traslado,fguia=:fecha_guia,cmotivo=:motivo");
+
+                $sql->execute([ "nota"=>$nota,
+                                "guia"=>$cabeceraGuia['numero_guia'],
+                                "origen"=>$cabeceraGuia['almacen_origen'],
+                                "direccion_origen"=>$cabeceraGuia['almacen_origen_direccion'],
+                                "destino"=>$cabeceraGuia['almacen_destino'],
+                                "direccion_destino"=>$cabeceraGuia['almacen_destino_direccion'],
+                                "entidad"=>$cabeceraGuia['empresa_transporte_razon'],
+                                "direccion_entidad"=>$cabeceraGuia['direccion_proveedor'],
+                                "ruc_entidad"=>$cabeceraGuia['ruc_proveedor'],
+                                "traslado"=>$cabeceraGuia['modalidad_traslado'],
+                                "envio"=>$cabeceraGuia['tipo_envio'],
+                                "autoriza"=>$cabeceraGuia['autoriza'],
+                                "destinatario"=>$cabeceraGuia['destinatario'],
+                                "observaciones"=>$cabeceraGuia['observaciones'],
+                                "nombres"=>$cabeceraGuia['nombre_conductor'],
+                                "marca"=>$cabeceraGuia['marca'],
+                                "licencia"=>$cabeceraGuia['licencia_conducir'],
+                                "placa"=>$cabeceraGuia['placa'],
+                                "fecha_traslado"=>$cabeceraGuia['ftraslado'],
+                                "fecha_guia"=>$cabeceraGuia['fgemision'],
+                                "motivo"=>94]);
+                
+                $rowCount = $sql->rowcount();
+
+                if ($rowCount > 0) {
+                    $mensaje = "Registro grabado";
+                    $this->actualizarGuiaEnNota($cabeceraGuia,$nota);
+                }else {
+                    $mensaje = "Error al crear el registro";
+                }
+
+                return array("mensaje"=>$mensaje,
+                            "guia"=>$cabeceraGuia['numero_guia']);                
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        private function actualizarGuiaEnNota($cabecera,$nota){
+            try {
+                $sql = $this->db->connect()->prepare("UPDATE alm_transfercab 
+                                                        SET ffreg=:envio,
+                                                        cnumguia=:guia,
+                                                        WHERE idreg =:nota");
+                
+                $sql->execute(["envio"=>$cabecera['ftraslado'],
+                                "guia"=>$cabecera['numero_guia'],
+                                "nota"=>$nota]);
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        public function generarVistaPreviaGuiaNota($cabecera,$detalles,$proyecto){
+            try {
+                require_once("public/formatos/guiaremision.php");
+                
+                $archivo = "public/documentos/guias_remision/".$cabecera['numero_guia'].".pdf";
+                $datos = json_decode($detalles);
+                $nreg = count($datos);
+                $fecha_emision = date("d/m/Y", strtotime($cabecera['fgemision']));
+                $fecha_traslado = date("d/m/Y", strtotime($cabecera['ftraslado']));
+                $anio = explode('-',$cabecera['fgemision']);
+
+                if ($cabecera['ftraslado'] !== "")
+                    $fecha_traslado = date("d/m/Y", strtotime($cabecera['ftraslado']));
+                else 
+                    $fecha_traslado = "";
+
+                $pdf = new PDF($cabecera['numero_guia'],
+                                $fecha_emision,
+                                $cabecera['destinatario_ruc'],
+                                $cabecera['destinatario_razon'],
+                                $cabecera['destinatario_direccion'],
+                                $cabecera['empresa_transporte_razon'],
+                                $cabecera['ruc_proveedor'],
+                                $cabecera['direccion_proveedor'],
+                                $cabecera['almacen_origen_direccion'],
+                                null,
+                                null,
+                                null,
+                                $fecha_traslado,
+                                $cabecera['modalidad_traslado'],
+                                $cabecera['almacen_destino_direccion'],
+                                null,
+                                null,
+                                null,
+                                $cabecera['marca'],
+                                $cabecera['placa'],
+                                $cabecera['nombre_conductor'],
+                                $cabecera['licencia_conducir'],
+                                $cabecera['tipo_envio'],
+                                '',
+                                $proyecto,
+                                $anio[0],
+                                $cabecera["observaciones"],
+                                $cabecera["destinatario"],
+                                'A4');
+                $pdf->AliasNbPages();
+                $pdf->AddPage();
+                $pdf->SetWidths(array(10,15,15,147));
+                $pdf->SetFillColor(255,255,255);
+                $pdf->SetTextColor(0,0,0);
+                
+                $pdf->SetFont('Arial','',7);
+                $lc = 0;
+                $rc = 0;
+
+                //aca podria sumar la orden
+
+                for($i=1;$i<=$nreg;$i++){
+
+                    $pdf->SetX(13);
+                    $pdf->SetCellHeight(3);
+                    //$pdf->SetFont('Arial','',3);
+
+                    $pdf->SetAligns(array("R","R","C","L"));
+                    $pdf->Row(array(str_pad($i,3,"0",STR_PAD_LEFT),
+                                    $datos[$rc]->cantidad,
+                                    $datos[$rc]->unidad,
+                                    utf8_decode($datos[$rc]->codigo .' '. $datos[$rc]->descripcion  .' P : '.$datos[$rc]->nropedido)));
+                    $lc++;
+                    $rc++;
+
+                    if ($lc == 26) {
+                        $pdf->AddPage();
+                        $lc = 0;
+                    }
+                }
+
+                $pdf->Ln(1);
+                    $pdf->SetX(13);
+                    //$pdf->MultiCell(190,2,utf8_decode($cabecera["observaciones"]));
+                    $pdf->Ln(2);
+                    $pdf->SetX(13);
+                    $pdf->Output($archivo,'F');
+                    
+                    return array("archivo"=>$archivo);
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        public function imprimirFormatoGuiaTransf($cabecera,$detalles,$proyecto,$nota,$operacion){
+            try {
+                require_once("public/formatos/grpreimpreso.php");
+                
+                $archivo = "public/documentos/temp/".uniqid().".pdf";
+                $datos = json_decode($detalles);
+                $nreg = count($datos);
+                
+                $fecha_emision = date("d/m/Y", strtotime($cabecera['fgemision']));
+
+                if ($cabecera['ftraslado'] !== "")
+                    $fecha_traslado = date("d/m/Y", strtotime($cabecera['ftraslado']));
+                else 
+                    $fecha_traslado = "";
+
+                $anio = explode('-',$cabecera['fgemision']);
+
+                
+                $pdf = new PDF($cabecera['numero_guia'],
+                                $fecha_emision,
+                                $cabecera['destinatario_ruc'],
+                                $cabecera['destinatario_razon'],
+                                $cabecera['destinatario_direccion'],
+                                $cabecera['empresa_transporte_razon'],
+                                $cabecera['ruc_proveedor'],
+                                $cabecera['direccion_proveedor'],
+                                $cabecera['almacen_origen_direccion'],
+                                null,
+                                null,
+                                null,
+                                $fecha_traslado,
+                                $cabecera['modalidad_traslado'],
+                                $cabecera['almacen_destino_direccion'],
+                                null,
+                                null,
+                                null,
+                                $cabecera['marca'],
+                                $cabecera['placa'],
+                                $cabecera['nombre_conductor'],
+                                $cabecera['licencia_conducir'],
+                                $cabecera['tipo_envio'],
+                                null,
+                                $proyecto,
+                                $anio[0],
+                                $cabecera["observaciones"],
+                                $cabecera["destinatario"],
+                                'A4');
+                $pdf->AliasNbPages();
+                $pdf->AddPage();
+                $pdf->SetWidths(array(10,15,15,147));
+                $pdf->SetFillColor(255,255,255);
+                $pdf->SetTextColor(0,0,0);
+                
+                $pdf->SetFont('Arial','',9);
+                $lc = 0;
+                $rc = 0;
+
+                for($i=1;$i<=$nreg;$i++){
+
+                    $pdf->SetX(3);
+                    $pdf->SetCellHeight(3);
+                    //$pdf->SetFont('Arial','',3);
+
+                    if( $datos[$rc]->cantidad > 0) {
+                        $pdf->SetAligns(array("R","R","C","L"));
+                        $pdf->Row(array(str_pad($i,3,"0",STR_PAD_LEFT),
+                                    $datos[$rc]->cantidad,
+                                    $datos[$rc]->unidad,
+                                    utf8_decode($datos[$rc]->codigo .' '. $datos[$rc]->descripcion  .' P : '.$datos[$rc]->nropedido)));
+                        $lc++;
+                        $rc++;
+
+                        if ($lc == 24) {
+                            $pdf->AddPage();
+                            $lc = 0;
+                        }
+                    }
+                }
+
+                $pdf->Ln(1);
+                    
+                    $pdf->Output($archivo,'F');
+                    
+                    return array("archivo"=>$archivo);
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
                 return false;
             }
         }

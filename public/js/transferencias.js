@@ -18,6 +18,7 @@ $(function(){
                 $("#almacen_origen_despacho").val(data.cabecera[0].origen);
                 $("#almacen_destino_despacho").val(data.cabecera[0].destino);
                 $("#tipo").val(data.cabecera[0].cdescripcion);
+                $("#codigo_transferencia").val(data.cabecera[0].idreg);
 
                 $("#tablaDetalles tbody")
                     .empty()
@@ -195,7 +196,14 @@ $(function(){
     $("#guiaRemision").click(function (e) { 
         e.preventDefault();
         
-        $("#vistadocumento").fadeIn();
+        try {
+            if ($("#numero").val().length == 0 ) throw "Grabe el documento";
+
+            $("#vistadocumento").fadeIn();
+
+        } catch (error) {
+            mostrarMensaje(error,'mensaje_error');
+        }
 
         return false;
     });
@@ -245,11 +253,13 @@ $(function(){
 
             if (accion == "n") {
                 $.post(RUTA+"transferencias/registro",{cabecera:result,
-                                                    detalles:JSON.stringify(detalles()),
+                                                    detalles:JSON.stringify(detalles(false)),
                                                     idpedido:pedido},
                     function (data, textStatus, jqXHR) {
                         if(data.estado){
                             mostrarMensaje(data.mensaje,"mensaje_correcto");
+                            $("#numero").val(data.documento);
+                            $("#codigo_transferencia").val(data.indice);
                         }else{
                             mostrarMensaje(data.mensaje,"mensaje_error");
                         }
@@ -406,9 +416,126 @@ $(function(){
             );
         }
     });
+
+    $("#saveDocument").click(function(e){
+        e.preventDefault();
+
+        let result = {};
+
+        $.each($("#guiaremision").serializeArray(),function(){
+            result[this.name] = this.value;
+        });
+
+        $.post(RUTA+"transferencias/GrabaGuia", {cabecera:result,
+                                                nota: $("#codigo_transferencia").val(),
+                                                operacion:accion},
+            function (data, textStatus, jqXHR) {
+                mostrarMensaje(data.mensaje,"mensaje_correcto");
+                $("#guia").val(data.guia);
+            },
+            "json"
+        );
+
+        return false;
+    });
+
+    $("#previewDocument").click(function (e) { 
+        e.preventDefault();
+        
+        try {
+            let result = {};
+
+            $.each($("#guiaremision").serializeArray(),function(){
+                result[this.name] = this.value;
+            });
+
+            if (result['numero_guia'] == "") throw "Ingrese el Nro. de Guia";
+            if (result['codigo_entidad'] == "") throw "Seleccione la empresa de transportes";
+            if (result['codigo_traslado'] == "") throw "Seleccione la modalidad de traslado";
+            
+            
+            $.post(RUTA+"transferencias/vistaPreviaGuiaRemisioNotas", {cabecera:result,
+                                                            detalles:JSON.stringify(detalles(false)),
+                                                            proyecto: $("#costos").val()},
+                function (data, textStatus, jqXHR) {
+                        
+                       if (data.archivo !== ""){
+                            $(".ventanaVistaPrevia iframe")
+                            .attr("src","")
+                            .attr("src",data.archivo);
+        
+                            $("#vistaprevia").fadeIn();
+                       }
+                    },
+                    "json"
+            );
+        } catch (error) {
+            mostrarMensaje(error,'mensaje_error');
+        }
+        
+        return false
+    });
+
+    $("#closePreview").click(function (e) { 
+        e.preventDefault();
+
+        $(".ventanaVistaPrevia iframe").attr("src","");
+        $("#vistaprevia").fadeOut();
+
+        return false;
+    })
+
+    $("#printDocument").click(function (e) { 
+        e.preventDefault();
+        
+        try {
+            let result = {};
+
+            $.each($("#guiaremision").serializeArray(),function(){
+                result[this.name] = this.value;
+            });
+
+            if (result['numero_guia'] == "") throw "Ingrese el Nro. de Guia";
+            if (result['codigo_entidad'] == "") throw "Seleccione la empresa de transportes";
+            if (result['codigo_traslado'] == "") throw "Seleccione la modalidad de traslado";
+            
+            $.post(RUTA+"transferencias/preImpresoGuiasTransf", {cabecera:result,
+                                              detalles:JSON.stringify(detalles(false)),
+                                              proyecto: $("#costos").val(),
+                                              nota: $("#codigo_transferencia").val(),
+                                              operacion:accion},
+                function (data, textStatus, jqXHR) {
+                        
+                       if (data.archivo !== ""){
+                            $("#imprimir iframe")
+                            .attr("src","")
+                            .attr("src",data.archivo);
+
+                            $("#imprimir").fadeIn(function(){
+                                $("#imprimir").fadeOut();
+                                document.getElementById("iFramePdf").contentWindow.print();
+                            })
+                       }
+                    },
+                    "json"
+            );
+        } catch (error) {
+            mostrarMensaje(error,'mensaje_error');
+        }
+
+        return false;
+    });
+
+    $("#closePreviewPrinter").click(function (e) { 
+        e.preventDefault();
+        
+        $("#imprimir").fadeOut();
+
+        return false;
+    });
 })
 
-detalles = () =>{
+detalles = (flag) =>{
     DETALLES = [];
 
     let TABLA = $("#tablaDetalles tbody >tr");
@@ -427,12 +554,13 @@ detalles = () =>{
             DESCRIPCION     = $(this).find('td').eq(4).text(),//unidad
             PEDIDO          = $(this).data("pedido"),
             IDITEM          = $(this).data("iditem"),
-            APROBADO        = $(this).data("aprobado");
-            COMPRADO        = $(this).find('td').eq(7).text()
+            APROBADO        = $(this).data("aprobado"),
+            COMPRADO        = $(this).find('td').eq(7).text(),
+            NROPEDIDO       = $(this).find('td').eq(11).text()
     
         item = {};
 
-        if (!GRABADO) {
+        if (GRABADO == flag) {
             item['item']         = ITEM;
             item['idprod']       = IDPROD;
             item['origen']       = ORIGEN;
@@ -447,6 +575,7 @@ detalles = () =>{
             item['aprobado']     = APROBADO;
             item['comprado']     = COMPRADO;
             item['costos']       = COSTOS;
+            item['nropedido']    = NROPEDIDO;
                 
             DETALLES.push(item);
         }     

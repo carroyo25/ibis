@@ -35,6 +35,7 @@
                     <input type="hidden" name="codigo_moneda" id="codigo_moneda">
                     <input type="hidden" name="codigo_ingreso" id="codigo_ingreso">
                     <input type="hidden" name="codigo_salida" id="codigo_salida">
+                    <input type="hidden" name="codigo_transferencia" id="codigo_transferencia">
                     <input type="hidden" name="id_centi" id="id_centi">
                     <input type="hidden" name="guia" id="guia">
 
@@ -381,6 +382,24 @@
                 </div>
             </form>
             
+        </div>
+    </div>
+    <div class="modal" id="vistaprevia">
+        <div class="ventanaVistaPrevia">
+            <div class="tituloVista">
+                <h3>Vista Previa</h3>
+                <a href="#" id="closePreview" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
+            </div>
+            <iframe src="" id="pdfPreview"></iframe>
+        </div>
+    </div>
+    <div class="modal" id="imprimir">
+        <div class="ventanaVistaPrevia">
+            <div class="tituloVista">
+                <h3>Vista Previa</h3>
+                <a href="#" id="closePreviewPrinter" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
+            </div>
+            <iframe src="" id="iFramePdf"></iframe>
         </div>
     </div>
     <div class="cabezaModulo">
