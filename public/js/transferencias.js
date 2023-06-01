@@ -20,9 +20,34 @@ $(function(){
                 $("#tipo").val(data.cabecera[0].cdescripcion);
                 $("#codigo_transferencia").val(data.cabecera[0].idreg);
 
+                
+
                 $("#tablaDetalles tbody")
                     .empty()
                     .append(data.detalles);
+
+                if (data.guias.length == 1) {
+                    $("#id_guia").val(data.guias[0].idreg);
+                    $("#numero_guia").val(data.guias[0].cnumguia);
+                    $("#fgemision").val(data.guias[0].fguia);
+                    $("#ftraslado").val(data.guias[0].ftraslado);
+                    $("#almacen_origen").val(data.guias[0].corigen);
+                    $("#almacen_origen_direccion").val(data.guias[0].cdirorigen);
+                    $("#almacen_destino").val(data.guias[0].cdestino);
+                    $("#almacen_destino_direccion").val(data.guias[0].cdirdest);
+                    $("#empresa_transporte_razon").val(data.guias[0].centi);
+                    $("#direccion_proveedor").val(data.guias[0].centidir);
+                    $("#ruc_proveedor").val(data.guias[0].centiruc);
+                    $("#modalidad_traslado").val(data.guias[0].ctraslado);
+                    $("#tipo_envio").val(data.guias[0].cenvio);
+                    $("#autoriza").val(data.guias[0].cautoriza);
+                    $("#destinatario").val(data.guias[0].cdestinatario);
+                    $("#observaciones").val(data.guias[0].cobserva);
+                    $("#nombre_conductor").val(data.guias[0].cnombre);
+                    $("#licencia_conducir").val(data.guias[0].clicencia);
+                    $("#marca").val(data.guias[0].cmarca);
+                    $("#placa").val(data.guias[0].cplaca);
+                }
             },
             "json"
         );
@@ -34,6 +59,9 @@ $(function(){
 
     $("#nuevoRegistro").click(function (e) { 
         e.preventDefault();
+
+        document.getElementById("guiaremision").reset();
+        document.getElementById("formProceso").reset();
 
         $("#estado")
             .removeClass()
@@ -54,6 +82,8 @@ $(function(){
 
         $("form")[0].reset();
         $("form")[1].reset();
+
+        document.getElementById("guiaremision").reset();
 
         /*$.post(RUTA+"salida/actualizaDespachos",
             function (data, textStatus, jqXHR) {

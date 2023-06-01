@@ -291,7 +291,7 @@ $(function(){
                 $("#almacen_origen_ingreso").val(data.cabecera[0].descripcion_origen);
                 $("#codigo_almacen_origen").val(data.cabecera[0].codigo_almacen_origen);
                 $("#codigo_almacen_destino").val(data.cabecera[0].codigo_almacen_destino);
-                $("#guia").val(data.cabecera[0].idreg);
+                $("#guia").val(data.cabecera[0].cnumguia);
 
                 $("#tablaDetalles tbody")
                     .empty()

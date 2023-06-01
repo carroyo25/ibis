@@ -179,6 +179,7 @@
                     <thead>
                         <tr class="stickytop" >
                             <th>Nro</th>
+                            <th>Guia</th>
                             <th>Fecha</th>
                             <th>Origen</th>
                             <th>Destino</th>

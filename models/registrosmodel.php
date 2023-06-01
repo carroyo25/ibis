@@ -313,7 +313,7 @@
                                                         AND tb_costusu.nflgactivo = 1
                                                         AND alm_cabexist.numguia LIKE :guia
                                                         AND alm_cabexist.idcostos LIKE :cc
-                                                    ORDER BY  alm_cabexist.idreg");
+                                                    ORDER BY  alm_cabexist.idreg DESC");
                 $sql->execute(["usr"=>$_SESSION["iduser"],
                                 "guia"=>$guia,
                                 "cc"=>$cc]);
@@ -446,6 +446,7 @@
 
                 $sql = $this->db->connect()->prepare("SELECT
                                                         alm_transfercab.idreg,
+                                                        alm_transfercab.cnumguia,
                                                         LPAD( alm_transfercab.idreg, 5, 0 ) AS nro_nota,
                                                         UPPER( origen.cdesalm ) AS almacen_origen,
                                                         UPPER( destino.cdesalm ) AS almacen_destino,
@@ -460,7 +461,8 @@
                                                         INNER JOIN tb_proyectos ON alm_transfercab.idcc = tb_proyectos.nidreg 
                                                     WHERE
                                                         tb_almausu.nflgactivo = 1 
-                                                        AND tb_almausu.id_cuser = :id");
+                                                        AND tb_almausu.id_cuser = :id
+                                                    ORDER BY alm_transfercab.idreg DESC");
                 $sql->execute(['id'=>$_SESSION["iduser"]]);
                 $rowCount = $sql->rowCount();
 
@@ -470,6 +472,7 @@
                     while ($rs = $sql->fetch()){
                         $salida.='<tr class="pointer" data-indice="'.$rs['idreg'].'">
                                     <td class="textoCentro">'.$rs['nro_nota'].'</td>
+                                    <td class="textoCentro">'.$rs['cnumguia'].'</td>
                                     <td class="textoCentro">'.$rs['ftraslado'].'</td>
                                     <td class="pl20px">'.$rs['almacen_origen'].'</td>
                                     <td class="pl20px">'.$rs['almacen_destino'].'</td>
@@ -497,7 +500,8 @@
                                                     almacen_origen.ncodalm AS codigo_almacen_origen,
                                                     almacen_destino.ncodalm AS codigo_almacen_destino,
                                                     alm_transfercab.idreg,
-                                                    alm_transfercab.ftraslado 
+                                                    alm_transfercab.ftraslado,
+                                                    alm_transfercab.cnumguia  
                                                 FROM
                                                     alm_transfercab
                                                     INNER JOIN tb_almacen AS almacen_origen ON alm_transfercab.almorigen = almacen_origen.ncodalm
@@ -560,7 +564,8 @@
 
                 if ($rowCount > 0){
                     while ($rs= $sql->fetch()){
-                        $salida .='<tr class="pointer" data-idpet="'.$rs['idPedido'].'"
+                        if ( $rs['ncanti'] > 0) {
+                            $salida .='<tr class="pointer" data-idpet="'.$rs['iddetped'].'"
                                                         data-area="'.$rs['ncodarea'].'"
                                                         data-almacen = "'.$destino.'"
                                                         data-codprod = "'.$rs['idcprod'].'"
@@ -579,6 +584,7 @@
                                         <td class="textoCentro"></td>
                                         <td class="textoCentro">'.$rs['idtransfer'].'</td>
                                     </tr>';
+                        }
                     } 
                 }
                 return $salida;
