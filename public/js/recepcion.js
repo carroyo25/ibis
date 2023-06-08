@@ -330,7 +330,7 @@ $(function(){
  
     });
 
-    $("#closeDocument").click(function (e) { 
+    /*$("#closeDocument").click(function (e) { 
         e.preventDefault();
         
         let result = {};
@@ -358,9 +358,9 @@ $(function(){
         }
 
         return false;
-    });
+    });*/
 
-     //añadir registro de adjuntos
+     /*añadir registro de adjuntos
     $("#fileAtachs").on("submit", function (e) {
         e.preventDefault()
 
@@ -385,7 +385,7 @@ $(function(){
         });
         
         return false;
-    });
+    });*/
 
     $("#btnCancelSeries").click(function (e) { 
         e.preventDefault();
@@ -444,7 +444,7 @@ $(function(){
         return false;
     });
 
-    $("#sendEntOrden").click(function(e){
+    /*$("#sendEntOrden").click(function(e){
         e.preventDefault();
 
        let result = {};
@@ -473,7 +473,7 @@ $(function(){
         }
 
         return false;
-    });
+    });*/
 
     $("#btnConsulta").on('click', function(e) {
         e.preventDefault();

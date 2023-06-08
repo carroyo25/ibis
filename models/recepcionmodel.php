@@ -87,6 +87,8 @@
 
                 $nota = $this->generarNumero($cabecera["codigo_almacen"],"SELECT COUNT( alm_recepcab.id_regalm ) AS numero FROM alm_recepcab WHERE ncodalm1 =:cod");
 
+                //inserta la nota de ingreso
+
                 $sql = $this->db->connect()->prepare("INSERT INTO alm_recepcab SET ctipmov =:mov,cper=:anio,cmes=:mes,ncodalm1=:almacen,ffecdoc=:emision,
                                                                                     id_centi=:entidad,cnumguia=:guia,idref_pedi=:pedido,id_userAprob=:aprueba,
                                                                                     nEstadoDoc=:estado,nflgactivo=:activo,nnronota=:nota,idref_abas=:orden,

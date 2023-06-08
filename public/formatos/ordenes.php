@@ -97,18 +97,26 @@
             $this->Cell(100,3,utf8_decode($this->razon_social),"R",0); //envia de parametro
             $this->Cell(20,3,utf8_decode("Número RUC:"),0); 
             $this->Cell(57,3,$this->ruc,"R",1); //envia de parametro
-
-            
+           
             $this->Cell(13,3,utf8_decode("Dirección :"),"L",0);
             $this->MultiCell(95,3,utf8_decode($this->direccion),0); //envia de parametro
             $this->SetXY(123,52);
+            
             $this->Cell(20,3,utf8_decode("Forma de Pago: "),"L",0);
             $this->Cell(57,3,$this->pago,"R",1); //envia de parametro
 
             $this->Cell(113,3,"","L",0);
             $this->Cell(20,3,utf8_decode("Referencia Pago: "),"L",0);
-            $this->Cell(57,3,strtoupper($this->referencia),"R",1); //ver de donde sale
+            $this->SetFont('Arial','',5.2);
+            $this->MultiCell(57,2.3,strtoupper(utf8_decode($this->referencia)),0); //ver de donde sale
+            
+            $this->Line(200,50,200,60); //Lineas de caja
+            $this->Line(10,50,10,60); //Lineas de caja
+            $this->Line(123,50,123,60); //Lineas de caja
 
+
+            $this->SetY(59);
+            $this->SetFont('Arial','',6);
             $this->Cell(13,3,utf8_decode("Atención :"),"L",0);
             $this->Cell(40,3,utf8_decode($this->contacto),0); //envia de parametro
             $this->Cell(13,3,utf8_decode("Teléfono :"),0); 
@@ -133,7 +141,7 @@
             }
             
             $this->SetTextColor(0,0,0);
-            $this->SetXY(10,64);
+            $this->SetXY(10,65);
             $this->Cell(16,3,utf8_decode(""),"L",0);
             $this->Cell(10,3,utf8_decode("Contacto :"),"0",0);
             $this->Cell(40,3,utf8_decode($this->contacto),0,0); //envia de parametro
@@ -143,9 +151,9 @@
 
             $this->SetFillColor(255, 255, 0);
             $this->SetFont('Arial','',5);
-            $this->SetXY(133,65);
+            $this->SetXY(133,65.5);
             $this ->MultiCell(64,2,utf8_decode($this->detalle), 0, 'L', 1);
-            $this->SetY(67);
+            $this->SetY(68);
             $this->SetFont('Arial','',6);
             $this->Cell(16,3,utf8_decode(""),"BL",0);
             $this->Cell(13,3,utf8_decode("E-mail :"),"B",0);

@@ -115,7 +115,7 @@
                                                         tb_pedidodet.idpedido,
                                                         tb_pedidodet.nroparte,
                                                         REPLACE ( FORMAT( lg_ordendet.ncanti, 2 ), ',', '' ) AS cantidad,
-                                                        ( SELECT SUM( alm_recepdet.ncantidad ) FROM alm_recepdet WHERE alm_recepdet.niddetaOrd = lg_ordendet.nitemord 
+                                                        ( SELECT SUM( DISTINCT alm_recepdet.ncantidad ) FROM alm_recepdet WHERE alm_recepdet.niddetaOrd = lg_ordendet.nitemord 
                                                             AND alm_recepdet.nflgActivo = 1) AS ingresos,
                                                         ( SELECT SUM( alm_despachodet.ndespacho ) FROM alm_despachodet WHERE alm_despachodet.niddetaOrd = lg_ordendet.nitemord 
                                                         AND alm_despachodet.nflgActivo = 1) AS despachos 

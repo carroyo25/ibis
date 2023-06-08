@@ -27,6 +27,7 @@
                                                         tb_pedidodet.cant_pedida AS cantidad_pedido,
                                                         LPAD(tb_pedidocab.nrodoc,6,0) AS pedido,
                                                         lg_ordendet.id_orden AS orden,
+                                                        lg_ordendet.item AS item_orden,
                                                         cm_producto.ccodprod,
                                                         UPPER( CONCAT_WS( ' ', cm_producto.cdesprod, tb_pedidodet.observaciones ) ) AS descripcion,
                                                         tb_pedidodet.estadoItem,
@@ -51,7 +52,7 @@
                                                         lg_ordendet.ncanti AS cantidad_orden,
                                                         ( SELECT SUM( alm_recepdet.ncantidad ) FROM alm_recepdet WHERE alm_recepdet.niddetaOrd = lg_ordendet.nitemord AND alm_recepdet.nflgactivo = 1 ) AS ingreso,
                                                         ( SELECT SUM( alm_despachodet.ndespacho ) FROM alm_despachodet WHERE alm_despachodet.niddetaPed = lg_ordendet.niddeta AND alm_despachodet.nflgactivo = 1 ) AS despachos,
-                                                        ( SELECT SUM( alm_existencia.cant_ingr ) FROM alm_existencia WHERE alm_existencia.idpedido = lg_ordendet.niddeta ) AS ingreso_obra,
+                                                        ( SELECT SUM( alm_existencia.cant_ingr ) FROM alm_existencia WHERE alm_existencia.idpedido = tb_pedidodet.iditem ) AS ingreso_obra,
                                                         UPPER( tb_user.cnameuser ) AS operador,
                                                         UPPER( tb_pedidocab.concepto ) AS concepto,
                                                         DATEDIFF( NOW(), lg_ordencab.ffechaent ) AS dias_atraso,
@@ -121,6 +122,9 @@
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()){
 
+                            
+                        /*aca va el numero de item*/
+
                             if ($rs['orden'] ){
                                 if ( $nro_orden == $rs['orden'] ) {
                                     $itemOrden++;
@@ -130,7 +134,7 @@
                             }else {
                                 $itemOrden = "";
                             }
-                            
+                        /*fin de control de item*/    
                             
                             $tipo_orden = $rs['idtipomov'] == 37 ? 'BIENES' : 'SERVICIO';
                             $clase_operacion = $rs['idtipomov'] == 37 ? 'bienes' : 'servicios';
@@ -171,6 +175,11 @@
                                 $estadofila = "stock";
                                 $estado_item = "item_stock";
                                 $estado_pedido = "stock";
+                            }else if( $rs['estadoItem'] == 52  && $rs['ingreso_obra'] == $rs['cantidad_pedido']) {
+                                $porcentaje = "100%";
+                                $estadofila = "entregado";
+                                $estado_item = "atendido";
+                                $estado_pedido = "atendido";
                             }else if( $rs['estadoItem'] == 52 ) {
                                 $porcentaje = "20%";
                                 $estadofila = "stock";
@@ -245,7 +254,7 @@
                                         <td class="textoCentro">'.$rs['orden'].'</td>
                                         <td class="textoCentro">'.$rs['fecha_orden'].'</td>
                                         <td class="textoDerecha pr15px" style="background:#e8e8e8;font-weight: bold">'.$rs['cantidad_orden'].'</td>
-                                        <td class="pl10px">'.$itemOrden.'</td>
+                                        <td class="pl10px">'.$rs['item_orden'].'</td>
                                         <td class="pl10px">'.$rs['fecha_autorizacion_orden'].'</td>
                                         <td class="pl10px">'.$rs['proveedor'].'</td>
                                         <td class="textoCentro">'.$rs['fecha_entrega'].'</td>

@@ -107,8 +107,8 @@
                                     <td class="textoCentro '.strtolower($rs['atencion']).'">'.$rs['atencion'].'</td>
                                     <td class="textoCentro '.$estado.'">'.strtoupper($estado).'</td>
                                     <td class="textoCentro">'.$log.'</td>
-                                    <td class="textoCentro">'.$ope.'</td>
                                     <td class="textoCentro">'.$fin.'</td>
+                                    <td class="textoCentro">'.$ope.'</td>
                                     </tr>';
                     }
                 }

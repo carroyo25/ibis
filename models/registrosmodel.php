@@ -39,7 +39,7 @@
                                                         AND alm_despachocab.nEstadoDoc = 62
                                                         AND alm_despachocab.cnumguia LIKE :guia 
                                                     ORDER BY
-                                                        alm_despachocab.ffecdoc ASC");
+                                                        alm_despachocab.ffecdoc DESC");
                 $sql->execute(["usr"=>$_SESSION['iduser'],"guia"=>$nguia]);
                 $rowCount = $sql->rowCount();
 
@@ -193,8 +193,7 @@
         }
 
         public function grabarRegistros($cabecera,$detalles,$tipo) {
-            try {
-                
+            try {   
                 $sql = $this->db->connect()->prepare("INSERT INTO alm_cabexist SET idcostos=:costos,
                                                                                     iddespacho=:despacho,
                                                                                     ffechadoc=:fecha,
