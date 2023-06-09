@@ -87,7 +87,7 @@
             }
         }
 
-        public function llamarOrdenID($tipo,$id){
+        public function llamarOrdenID($tipo,$id,$rol){
             try {
                 $ordenEvaluada = $this->buscarEvaluados($id);
 
@@ -120,11 +120,12 @@
                     }
                 }
 
-                $rol = $_SESSION['rol'] == '2' ? 68 : $_SESSION['rol'];
+                $r = $rol  == 5 ? 68 : $rol;
+                $r = $rol == 9 && $docData[0]["ntipmov"] == 37 ? 109 : $rol; //evuluacion de calidad para materiales
 
                 return array("cabecera"=>$docData,
                             "nrol"=>$docData[0]["nrol"],
-                            "criterios"=>$this->evaluar($rol,$docData[0]["ntipmov"]),
+                            "criterios"=>$this->evaluar($r,$docData[0]["ntipmov"]),
                             "evaluada"=>$ordenEvaluada);
 
             } catch (PDOException $th) {

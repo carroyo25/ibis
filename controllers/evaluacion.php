@@ -12,7 +12,7 @@
         }
         
         function criterios(){
-            echo json_encode($this->model->llamarOrdenID($_POST['tipo'],$_POST['id']));
+            echo json_encode($this->model->llamarOrdenID($_POST['tipo'],$_POST['id'],$_POST['rol']));
         }
 
         function evaluar(){

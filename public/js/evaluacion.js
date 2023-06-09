@@ -6,7 +6,7 @@ $(function(){
     $("#tablaPrincipal tbody").on("click","tr", function (e) {
         e.preventDefault();
 
-       $.post(RUTA+"evaluacion/criterios", {id:$(this).data("indice"),tipo:$(this).data("tipo")},
+       $.post(RUTA+"evaluacion/criterios", {id:$(this).data("indice"),tipo:$(this).data("tipo"),rol:$('#rol_user').val()},
         function (data, textStatus, jqXHR) {
             $("#codigo_orden").val(data.cabecera[0].id_regmov);
             $("#codigo_rol").val(data.cabecera[0].nrol);
