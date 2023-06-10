@@ -6,7 +6,7 @@
             parent::__construct();
         }
 
-        public function consultarDatos($doc,$cc) {
+        public function consultarDatos($doc,$cc,$item) {
             $registrado = false;
             $url = "http://sicalsepcon.net/api/consultapi.php?documento=".$doc;
             
@@ -19,11 +19,14 @@
 
             return array("datos" => $datos,
                         "registrado"=>$registrado,
-                        "anteriores"=>$this->grupoProyectos($doc));
+                        "anteriores"=>$this->grupoProyectos($doc,$item));
         }
 
-        private function itemsKardex($d,$c){
+        private function itemsKardex($d,$c,$item){
             try {
+
+                $i = $item == '' ? "%" : $item;
+
                 $salida = "";
                 $sql = $this->db->connect()->prepare("SELECT
                                                         alm_consumo.idreg,
@@ -54,9 +57,9 @@
                                                         LEFT JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
                                                         INNER JOIN tb_proyectos ON alm_consumo.ncostos = tb_proyectos.nidreg  
                                                     WHERE
-                                                        alm_consumo.nrodoc = :documento 
-                                                    AND alm_consumo.ncostos = :costos
-                                                    
+                                                            alm_consumo.nrodoc = :documento 
+                                                        AND alm_consumo.ncostos = :costos
+                                                        AND cm_producto.ccodprod LIKE :codigo
                                                     GROUP BY
                                                             alm_consumo.idprod,
                                                             alm_consumo.fechasalida,
@@ -65,7 +68,7 @@
                                                             alm_consumo.nhoja
                                                     HAVING COUNT(*) >= 1
                                                     ORDER BY alm_consumo.freg DESC" );
-                $sql->execute(["documento"=>$d,"costos"=>$c]);
+                $sql->execute(["documento"=>$d,"costos"=>$c,"codigo"=>$i]);
                 $rowCount = $sql->rowCount();
                 $item = 1;
                 $salida ="";
@@ -113,7 +116,7 @@
             }  
         }
 
-        private function grupoProyectos($d){
+        public function grupoProyectos($d,$item){
             try {
                 $salida = "";
                 $sql = $this->db->connect()->prepare("SELECT
@@ -134,7 +137,7 @@
                         $salida .= '<tr class="separatortr">
                                         <th class="pl5px" colspan="15">'.$rs['proyecto'].'</th>
                                     </tr>';
-                        $salida .= $this->itemsKardex($d,$rs['ncostos']);            
+                        $salida .= $this->itemsKardex($d,$rs['ncostos'],$item);            
                     }
                 }
 

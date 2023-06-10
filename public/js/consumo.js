@@ -163,9 +163,7 @@ $(function(){
         } catch (error) {
             mostrarMensaje(error,"mensaje_error");
         }
-
-       
-
+        
         return false;
     });
 

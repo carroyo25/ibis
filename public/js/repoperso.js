@@ -9,7 +9,9 @@ $(function(){
 
     $("#docident").keypress(function (e) { 
         if(e.which == 13) { 
-            $.post(RUTA+"repoperso/datosapi",{documento:$(this).val(),costos:$("#costosSearch").val()},
+            $.post(RUTA+"repoperso/datosapi",{documento:$(this).val(),
+                                                costos:$("#costosSearch").val(),
+                                                codigo:$("#codigoSearch").val()},
                 function (data, textStatus, jqXHR) {
                     if (data.registrado) {
                         $("#nombre").val(data.datos[0].paterno+' '+data.datos[0].materno+' '+data.datos[0].nombres);
@@ -28,5 +30,49 @@ $(function(){
                 "json"
             );
         }
+    });
+
+    $("#btnBuscar").click(function (e) { 
+        e.preventDefault();
+
+        try {
+            if ( $("#docident").val() == "" ) throw "Indique el N° de documento";
+            if ( $("#tablaPrincipal tbody tr").length == 0 ) throw "No relleno productos";  
+            
+            $("#dialogo").fadeIn();
+
+        } catch (error) {
+            mostrarMensaje(error,"mensaje_error");
+        }
+        
+        return false;
+    });
+
+    $("#btnAceptarDialogo").click(function (e) { 
+        e.preventDefault();
+
+        $.post(RUTA+'repoperso/buscaCodigo',{codigo:$("#codigoSearch").val(),
+                                            documento:$("#docident").val(),
+                                            costos:$("#costosSearch").val()},
+                function (data, textStatus, jqXHR) {
+                
+                    $("#tablaPrincipal tbody")
+                                .empty()
+                                .append(data);
+
+                    $("#dialogo").fadeOut();
+                },
+                "text"
+            );
+        
+        return false;
+    });
+
+    $("#btnCancelarDialogo").click(function (e) { 
+        e.preventDefault();
+
+        $("#dialogo").fadeOut();
+        
+        return false;
     });
 })

@@ -7,13 +7,24 @@
     <title>Reporte Gerencial - 01</title>
 </head>
 <body>
+    <div class="modal" id="dialogo">
+        <div class="ventanaPregunta">
+            <h3>Ingrese Codigo</h3>
+            <div>
+                <input type="text" name="codigoSearch" id="codigoSearch">
+            </div>
+            <div>
+                <button type="button" id="btnAceptarDialogo">Aceptar</button>
+                <button type="button" id="btnCancelarDialogo">Cancelar</button>
+            </div>
+        </div>
+    </div>
     <div class="cabezaModulo">
         <h1>Resumen de Almacen</h1>
         <div>
             <a href="#" id="irInicio"><i class="fas fa-home"></i></a>
         </div>
     </div>
-    
     <div class="itemsReporte">
         <div id="repogen">
             <div id="repogencabecera">

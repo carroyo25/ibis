@@ -19,11 +19,22 @@
             <iframe src=""></iframe>
         </div>
     </div>
+    <div class="modal" id="dialogo">
+        <div class="ventanaPregunta">
+            <h3>Ingrese Codigo</h3>
+            <div>
+                <input type="text" name="codigoSearch" id="codigoSearch">
+            </div>
+            <div>
+                <button type="button" id="btnAceptarDialogo">Aceptar</button>
+                <button type="button" id="btnCancelarDialogo">Cancelar</button>
+            </div>
+        </div>
+    </div>
     <div class="cabezaModulo">
-        <h1>Kardex Personal</h1>
+        <h1>Reporte de Consumos - Personal</h1>
         <div>
             <a href="#" id="btnKardex"><i class="fas fa-file-pdf"></i><p>Kardex</p></a>
-            <a href="#" id="excelFile"><i class="fas fa-file-excel"></i><p>Reporte</p></a>
             <a href="#" id="btnBuscar"><i class="fas fa-search-location"></i><p>Buscar</p></a>
             <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
         </div>
@@ -81,7 +92,6 @@
             </tbody>
         </table>
     </div>
-
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
     <script src="<?php echo constant('URL');?>public/js/repoperso.js"></script>
     <script src="<?php echo constant('URL');?>public/js/funciones.js?<?php echo constant('VERSION')?>"></script>

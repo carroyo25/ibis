@@ -192,7 +192,8 @@
                                                         data-kardex = "'.$rs['nkardex'].'"
                                                         data-firma = "'.$rs['cfirma'].'"
                                                         data-devolucion = "'.$rs['fechadevolucion'].'"
-                                                        data-firmadevolucion ="'.$rs['calmacen'].'">
+                                                        data-firmadevolucion ="'.$rs['calmacen'].'"
+                                                        data-registro="'.$rs['idreg'].'">
                                         <td class="textoDerecha">'.$rowCount--.'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="pl5px">'.$rs['cdesprod'].'</td>
