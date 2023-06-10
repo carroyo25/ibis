@@ -404,6 +404,12 @@ input[type=number]::-webkit-outer-spin-button {
     background: $negro;
 }
 
+.separatortr{
+    position: sticky;
+    top: 10px;
+    background: #f2f2f2;
+}
+
 .textoCentro{
     text-align: center;
     padding: 0 5px;
