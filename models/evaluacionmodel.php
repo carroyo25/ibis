@@ -120,6 +120,8 @@
                     }
                 }
 
+                $r = $rol;
+
                 if ( $rol  == 5 ) {
                     $r = 68;
                 }else if ( $rol == 9 && $docData[0]["ntipmov"] == 37 ) {
