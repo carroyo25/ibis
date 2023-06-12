@@ -120,8 +120,15 @@
                     }
                 }
 
-                $r = $rol  == 5 ? 68 : $rol;
-                $r = $rol == 9 && $docData[0]["ntipmov"] == 37 ? 109 : $rol; //evuluacion de calidad para materiales
+                if ( $rol  == 5 ) {
+                    $r = 68;
+                }else if ( $rol == 9 && $docData[0]["ntipmov"] == 37 ) {
+                    $r = 109;
+                }
+                
+                //$r =  ? 68 : $rol;
+                //$r = $rol == 9 && $docData[0]["ntipmov"] == 37 ? 109 : $rol; //evuluacion de calidad para materiales
+
 
                 return array("cabecera"=>$docData,
                             "nrol"=>$docData[0]["nrol"],
