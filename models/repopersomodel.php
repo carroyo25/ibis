@@ -92,6 +92,7 @@
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                         <td class="textoDerecha">'.$rs['cantsalida'].'</td>
                                         <td class="textoCentro">'.$rs['fechasalida'].'</td>
+                                        <td class="textoCentro">'.$rs['fechadevolucion'].'</td>
                                         <td class="textoCentro">'.$rs['nhoja'].'</td>
                                         <td class="pl5px">'.$rs['cisometrico'].'</td>
                                         <td class="pl5px">'.$rs['cobserentrega'].'</td>
@@ -103,7 +104,6 @@
                                                 <img src = '.$firma.' style ="width:100% !important">
                                             </div>
                                         </td>
-                                        <td class="textoCentro"><a href="'.$rs['idreg'].'"><i class="far fa-trash-alt"></i></a></td>
                                     </tr>';
                     }
                 }
@@ -118,7 +118,26 @@
 
         public function grupoProyectos($d,$item){
             try {
-                $salida = "";
+                $salida = '<thead class="stickytop">
+                            <tr>
+                                <th>Item</th>
+                                <th>CCs</th>
+                                <th>Codigo</th>
+                                <th width="30%">Descripcion</th>
+                                <th>UND.</th>
+                                <th>Cant.</th>
+                                <th>Fecha</br>Salida</th>
+                                <th>Fecha</br>Salida</th>  
+                                <th>N° Hoja</th>
+                                <th>Isometricos</th>
+                                <th>Observaciones</th>
+                                <th>Serie</th>
+                                <th>Patrimonio</th>
+                                <th>Estado</th>
+                                <th width="20px">Firma</th>
+                            </tr>
+                        </thead>';
+
                 $sql = $this->db->connect()->prepare("SELECT
                                                         UPPER(CONCAT_WS(' ',tb_proyectos.ccodproy,tb_proyectos.cdesproy)) AS proyecto,
                                                         alm_consumo.ncostos 
@@ -130,14 +149,18 @@
                                                     GROUP BY alm_consumo.ncostos");
                 $sql->execute(["documento"=>$d]);
                 $rowCount = $sql->rowCount();
-                $salida ="";
+                //$salida ='';
 
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()){
-                        $salida .= '<tr class="separatortr">
-                                        <th class="pl5px" colspan="15">'.$rs['proyecto'].'</th>
-                                    </tr>';
-                        $salida .= $this->itemsKardex($d,$rs['ncostos'],$item);            
+                        $salida .= '<tbody class="cc">
+                                        <tr class="separatortr">
+                                            <th class="pl5px" colspan="15">'.$rs['proyecto'].'</th>
+                                        </tr>';
+                        $salida .= '<tbody class="items">'.$this->itemsKardex($d,$rs['ncostos'],$item).'</tbody>';
+                        
+                        $salida.='</tbody>';
+                                   
                     }
                 }
 

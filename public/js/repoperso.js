@@ -19,7 +19,7 @@ $(function(){
                         $("#cut").val(data.datos[0].cut);
                         $("#correo").val(data.datos[0].correo);
 
-                        $("#tablaPrincipal tbody")
+                        $("#tablaPrincipal")
                             .empty()
                             .append(data.anteriores);
                     }else{

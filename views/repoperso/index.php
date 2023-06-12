@@ -71,12 +71,13 @@
             <thead class="stickytop">
                 <tr>
                     <th>Item</th>
-                    <th>Centro de Costos</th>
+                    <th>CCs</th>
                     <th>Codigo</th>
-                    <th>Descripcion</th>
+                    <th width="30%">Descripcion</th>
                     <th>UND.</th>
                     <th>Cant.</th>
                     <th>Fecha</br>Salida</th>
+                    <th>Fecha</br>Salida</th>  
                     <th>N° Hoja</th>
                     <th>Isometricos</th>
                     <th>Observaciones</th>
@@ -84,12 +85,8 @@
                     <th>Patrimonio</th>
                     <th>Estado</th>
                     <th width="20px">Firma</th>
-                    <th>...</th>
                 </tr>
             </thead>
-            <tbody>
-                
-            </tbody>
         </table>
     </div>
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>

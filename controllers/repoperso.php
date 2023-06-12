@@ -14,8 +14,8 @@
             echo json_encode($this->model->consultarDatos($_POST['documento'],$_POST['costos'],$_POST['codigo']));
         }
 
-        function buscarCodigo(){
-            echo $this->model->gruproProyectos($_POST['documento'],$_POST['costos'],$_POST['codigo']);
+        function buscaCodigo(){
+            echo $this->model->grupoProyectos($_POST['documento'],$_POST['codigo']);
         }
         
     }
