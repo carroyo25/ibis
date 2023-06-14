@@ -48,7 +48,7 @@
                                                             alm_inventariodet.condicion 
                                                         FROM
                                                             alm_inventariodet
-                                                            INNER JOIN alm_inventariocab ON alm_inventariodet.idalm = alm_inventariocab.idreg 
+                                                            INNER JOIN alm_inventariocab ON alm_inventariodet.idregistro = alm_inventariocab.idreg 
                                                         WHERE
                                                             alm_inventariocab.idcostos = :cinventario 
                                                             AND alm_inventariodet.nflgActivo = 1 
@@ -104,7 +104,7 @@
                                                     WHERE
                                                         cm_producto.flgActivo = 1 
                                                         AND cm_producto.ntipo = 37 
-                                                        AND NOT ISNULL( r.ingresos ) 
+                                                        AND (NOT ISNULL( r.ingresos ) OR NOT ISNULL( i.inventarios ) OR NOT ISNULL( c.salidas ) OR NOT ISNULL( t.transferencias	) ) 
                                                         AND cm_producto.ccodprod LIKE :codigo  
                                                     AND cm_producto.cdesprod LIKE :descripcion
                                                     ORDER BY
@@ -126,7 +126,8 @@
                     $salida="";
                     while ($rs = $sql->fetch()){
                         $saldo = ( $rs['ingresos']+$rs['inventarios']+$rs['devuelto']+$rs['transferencias'] )-$rs['salidas'];
-                        $estado = $saldo > 0 ? "semaforoVerde":"semaforoRojo";
+                        $saldo = $saldo > -1 ? $saldo : $saldo*-1;
+                        $estado = $saldo > -1 ? "semaforoVerde":"semaforoRojo";
 
                         $alerta_minimo = ( $rs['minimo']*.7 ) > $saldo ? "semaforoRojo":"";
 
