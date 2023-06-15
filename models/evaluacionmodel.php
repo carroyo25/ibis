@@ -127,14 +127,16 @@
                 }else if ( $rol == 9 && $docData[0]["ntipmov"] == 37 ) {
                     $r = 109;
                 }
-                
-                //$r =  ? 68 : $rol;
-                //$r = $rol == 9 && $docData[0]["ntipmov"] == 37 ? 109 : $rol; //evuluacion de calidad para materiales
 
+                if ($ordenEvaluada) {
+                    $evaluar = $this->mostrarPuntajes($docData[0]["id_regmov"]);
+                }else {
+                    $evaluar = $this->evaluar($r,$docData[0]["ntipmov"]);
+                }
 
                 return array("cabecera"=>$docData,
                             "nrol"=>$docData[0]["nrol"],
-                            "criterios"=>$this->evaluar($r,$docData[0]["ntipmov"]),
+                            "criterios"=>$evaluar,
                             "evaluada"=>$ordenEvaluada);
 
             } catch (PDOException $th) {
@@ -142,6 +144,7 @@
                 return false;
             }
         }
+
 
         private function evaluar($rol,$tipo){
             try {
@@ -176,6 +179,44 @@
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
             }
+        }
+
+        private function mostrarPuntajes($orden){
+            try {
+                $salida = "";
+                $sql = $this->db->connect()->prepare("SELECT
+                                            lg_ordencab.cnumero,
+                                            lg_ordencab.ffechadoc,
+                                            tb_califica.npuntaje,
+                                            tb_criterios.ayuda,
+                                            tb_criterios.descripcion 
+                                        FROM
+                                            lg_ordencab
+                                            INNER JOIN tb_califica ON lg_ordencab.id_regmov = tb_califica.idorden
+                                            INNER JOIN tb_criterios ON tb_califica.idcriterio = tb_criterios.idreg 
+                                        WHERE
+                                            lg_ordencab.id_regmov =:orden");
+                $sql->execute(["orden"=>$orden]);
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0){
+                    while ($rs = $sql->fetch()){
+                        $salida.='<tr data-total="'.$rs['npuntaje'].'">
+                                    <td class="pl20px criterio">'.$rs['descripcion'].'</td>
+                                    <td class="pl20px">'.$rs['ayuda'].'</td>
+                                    <td>
+                                        <input type="number" value="'.$rs["npuntaje"].'" readonly>
+                                    </td>
+                                  </tr>';
+                    }
+                }
+
+                return $salida;
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+            }
+           
+
         }
 
         public function grabarEvaluacion($items){
@@ -266,6 +307,5 @@
                 return false;
             }
         }
-        
     }
 ?>

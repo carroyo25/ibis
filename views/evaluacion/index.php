@@ -47,6 +47,7 @@
                     <input type="hidden" name="codigo_orden" id="codigo_orden">
                     <input type="hidden" name="codigo_entidad" id="codigo_entidad">
                     <input type="hidden" name="tipo_orden" id="tipo_orden">
+                    <input type="hidden" name="estado_evaluacion" id="estado_evaluacion">
 
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>

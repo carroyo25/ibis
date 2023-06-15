@@ -25,6 +25,7 @@ $(function(){
                 .append(data.criterios);
             
             let totalOrden = sumarTotales($("#tablaDetalles tbody tr"));
+            
             $("#puntaje").val(totalOrden.toFixed(0));    
 
             $("#proceso").fadeIn();
