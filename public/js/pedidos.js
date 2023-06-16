@@ -240,7 +240,7 @@ $(function(){
                 $.post(RUTA+"pedidos/modificaPedido", {cabecera:result,detalles:JSON.stringify(itemsSave())},
                     function (data, textStatus, jqXHR) {
                         mostrarMensaje(data.mensaje,data.clase);
-                        accion = "";
+                        accion = "u";
                     },
                     "json");
             }
@@ -279,6 +279,7 @@ $(function(){
         let descrip = $(this).children('td:eq(1)').text();
         let unidad = $(this).children('td:eq(2)').text();
         let grabado = 0;
+        let tabPos  = $("#tablaDetalles tr").length;
 
         let row = `<tr data-grabado="${grabado}" data-idprod="${idprod}" data-codund="${nunid}" data-idx="-">
                     <td class="textoCentro"><a href="#"><i class="fas fa-eraser"></i></a></td>
@@ -764,6 +765,8 @@ itemsSave = () =>{
             item['especifica']  = ESPECIFICA;
             item['estado']      = ESTADO;
             item['item']        = ITEM;
+
+            $(this).attr('data-grabado',1);
 
             DATA.push(item);
         } 
