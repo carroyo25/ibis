@@ -27,7 +27,7 @@
         }
 
         function adjuntos(){
-            echo $this->model->subirAdjuntos($_POST['nropedidoatach'],$_FILES['uploadAtach']);
+            echo json_encode($this->model->subirAdjuntos($_POST['nropedidoatach'],$_FILES));
         }
 
         function vistaPrevia(){
@@ -79,6 +79,10 @@
 
         function  cerrarSession() {
             session_destroy();
+        }
+
+        function listarAdjuntos(){
+            echo json_encode($this->model->verAdjuntosPedido($_POST['pedido']));
         }
     }
 ?>

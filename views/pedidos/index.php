@@ -48,6 +48,7 @@
                             </button>
                             <button type="button" id="upAttach" title="Importar Adjuntos" class="boton3">
                                 <i class="fas fa-upload"></i> Adjuntar Archivos
+                                <span class="button__atach cookie_info" id="atach_counter"></span>
                             </button>
                             <button type="button" id="preview" title="Vista Previa" class="boton3">
                                 <i class="fab fa-wpexplorer"></i> Vista Previa
@@ -192,7 +193,7 @@
         <div class="ventanaArchivos">
             <form action="#" id="fileAtachs" enctype='multipart/form-data'>
                 <input type="hidden" name="nropedidoatach" id="nropedidoatach">
-                <input type="file" name="uploadAtach[]" id="uploadAtach" multiple class="oculto">
+                <input type="file" name="uploadAtach" id="uploadAtach" multiple class="oculto">
                 <div class="tituloArchivos">
                     <h3>Adjuntar Archivos</h3>
                     <a href="#" id="openArch" title="Adjuntar Archivos"><i class="fas fa-file-medical"></i><p>Añadir</p></a>

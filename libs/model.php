@@ -1418,10 +1418,10 @@
                     $detalles = $this->consultarDetallesConformidad($id);
                 }
                     
-               //var_dump($detalles);
 
                 return array("cabecera"=>$docData,
-                            "detalles"=>$detalles);
+                            "detalles"=>$detalles,
+                            "total_adjuntos"=>$this->contarAdjuntos($id,"PED"));
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;

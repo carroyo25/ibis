@@ -201,32 +201,60 @@
         }
 
         public function subirAdjuntos($codigo,$adjuntos){
-            $indice = $this->obtenerIndice($codigo,"SELECT idreg AS numero FROM tb_pedidocab WHERE tb_pedidocab.verificacion =:id");
-            $countfiles = count( $adjuntos['name'] );
+            $countfiles = count( $adjuntos );
 
             for($i=0;$i<$countfiles;$i++){
                 try {
-                    $ext = explode('.',$adjuntos['name'][$i]);
+                    $file = "file-".$i;
+                    $ext = explode('.',$adjuntos[$file]['name']);
                     $filename = uniqid().".".end($ext);
                     // Upload file
-                    if (move_uploaded_file($adjuntos['tmp_name'][$i],'public/documentos/pedidos/adjuntos/'.$filename)){
+                    if (move_uploaded_file($adjuntos[$file]['tmp_name'],'public/documentos/pedidos/adjuntos/'.$filename)){
                         $sql= $this->db->connect()->prepare("INSERT INTO lg_regdocumento 
                                                                     SET nidrefer=:cod,cmodulo=:mod,cdocumento=:doc,
                                                                         creferencia=:ref,nflgactivo=:est");
-                        $sql->execute(["cod"=>$indice,
+                        $sql->execute(["cod"=>$codigo,
                                         "mod"=>"PED",
                                         "ref"=>$filename,
-                                        "doc"=>$adjuntos['name'][$i],
+                                        "doc"=>$adjuntos[$file]['name'],
                                         "est"=>1]);
                     }
-                    
-
                 } catch (PDOException $th) {
                     echo "Error: ".$th->getMessage();
                     return false;
                 }
             }
 
+            return array("adjuntos"=>$this->contarAdjuntos($codigo,'PED'));
+
+        }
+
+        public function verAdjuntosPedido($id){
+            try {
+                $salida = "";
+
+                $sql = $this->db->connect()->prepare("SELECT creferencia,cdocumento 
+                                                        FROM lg_regdocumento 
+                                                        WHERE nidrefer=:id
+                                                        AND cmodulo='PED'
+                                                        AND nidrefer != 0 ");
+                $sql->execute(['id'=>$id]);
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0) {
+                    while ($rs = $sql->fetch()) {
+                        $salida .= '<li><a href="'.$rs['creferencia'].'" data-archivo="'.$rs['creferencia'].'"><i class="far fa-file"></i><p>'.$rs['cdocumento'].'</p></a></li>';
+                    }
+                }
+                
+                $ret = array("adjuntos"=>$salida,
+                            "archivos"=>$rowCount);
+
+                return $ret;
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
         }
 
         public function modificar($datos,$detalles){

@@ -813,7 +813,7 @@ $(function(){
         return false;
      });
  
-     $("#btnConfirmAtach").on("click", function (e) {
+    $("#btnConfirmAtach").on("click", function (e) {
          e.preventDefault();
 
         let formData = new FormData();
@@ -839,7 +839,7 @@ $(function(){
         });
 
         return false;
-     });
+    });
  
      $("#btnCancelAtach").on("click", function (e) {
          e.preventDefault();

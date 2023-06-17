@@ -200,6 +200,19 @@ $(function(){
        return false;
     });
 
+    $("#tablaDetalles tbody").on('keypress','input', function (e) {
+        if (e.which == 13) {
+            //para cambiar el foco con el enter
+
+            cb = parseInt($(this).attr('tabindex'));
+
+            if ($(':input[tabindex=\'' + (cb + 1) + '\']') != null) {
+                $(':input[tabindex=\'' + (cb + 1) + '\']').focus();
+                $(':input[tabindex=\'' + (cb + 1) + '\']').select();
+            }
+        }
+    });
+
     $("#saveItem").click(function (e) { 
         e.preventDefault();
         
@@ -232,7 +245,7 @@ $(function(){
 
                         $("#codigo_pedido").val(data.indice);
 
-                        $("#fileAtachs").trigger("submit");
+                        //$("#fileAtachs").trigger("submit");
                     },
                     "json"
                 );
@@ -287,7 +300,12 @@ $(function(){
                     <td class="textoCentro">${codigo}</td>
                     <td class="pl20px">${descrip}</td>
                     <td class="textoCentro">${unidad}</td>
-                    <td><input type="number" step="any" placeholder="0.00" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"></td>
+                    <td><input type="number" 
+                                step="any" 
+                                placeholder="0.00" 
+                                onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"
+                                tabIndex="${tabPos}">
+                    </td>
                     <td><textarea></textarea></td>
                     <td class="textoCentro"></td>
                     <td class="textoCentro"></td>
@@ -352,6 +370,8 @@ $(function(){
                 $("#estado")
                     .removeClass()
                     .addClass(estado);
+
+                $("#atach_counter").text(data.total_adjuntos);
                 
                 grabado = true;
             },
@@ -368,11 +388,35 @@ $(function(){
     $("#upAttach").click(function (e) { 
        e.preventDefault();
     
-       if ($("#numero").val() == ""){
-            mostrarMensaje("Faltan datos del pedido","mensaje_error")
+       /*if ($("#numero").val() == ""){
+            mostrarMensaje("Debe grabar el pedido","mensaje_error")
        }else{
             $("#archivos").fadeIn();
-       }
+       }*/
+
+       try {
+
+        if ( $("#codigo_pedido").val().length == 0 ) throw new Error ("Por favor grabe el pedido");
+
+        if ( parseInt($("#atach_counter").text()) > 0 ){
+
+            $.post(RUTA+"pedidos/listarAdjuntos", {pedido:$("#codigo_pedido").val(),tipo:"PED"},
+                function (data, text, requestXHR) {
+                    $(".listaArchivos")
+                        .empty()
+                        .append(data.adjuntos);
+                        $("#archivos").fadeIn();
+                },
+                "json"
+            );
+        }else {
+            $("#archivos").fadeIn();
+        }
+        
+        
+        } catch (error) {
+            mostrarMensaje(error,"mensaje_error");
+        }
        
        return false;
     });
@@ -449,7 +493,27 @@ $(function(){
     $("#btnConfirmAtach").on("click", function (e) {
         e.preventDefault();
 
-        $("#archivos").fadeOut();
+        let formData = new FormData();
+
+        formData.append('nropedidoatach',$("#codigo_pedido").val());
+
+        $.each($('#uploadAtach')[0].files, function(i, file) {
+            formData.append('file-'+i, file);
+        });
+
+        $.ajax({
+            type: "POST",
+            url: RUTA+"pedidos/adjuntos",
+            data: formData,
+            data: formData,
+            contentType:false,      
+            processData:false,
+            dataType: "json",
+            success: function (response) {
+                $("#atach_counter").text(response.adjuntos);
+                $("#archivos").fadeOut();
+            }
+        });
 
         return false;
     });
@@ -464,7 +528,7 @@ $(function(){
     });
 
     //añadir registro de adjuntos
-    $("#fileAtachs").on("submit", function (e) {
+    /*$("#fileAtachs").on("submit", function (e) {
         e.preventDefault()
 
         $.ajax({
@@ -485,7 +549,7 @@ $(function(){
         });
         
         return false;
-    });
+    });*/
 
     $("#sendItem,#requestAprob").click(function (e) { 
         e.preventDefault();
