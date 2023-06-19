@@ -84,5 +84,9 @@
         function listarAdjuntos(){
             echo json_encode($this->model->verAdjuntosPedido($_POST['pedido']));
         }
+
+        function borraAdjunto(){
+            echo json_encode($this->model->borraAdjuntos($_POST['codigo']));
+        }
     }
 ?>

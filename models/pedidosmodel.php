@@ -226,9 +226,7 @@
             }
 
             return array("adjuntos"=>$this->contarAdjuntos($codigo,'PED'));
-
         }
-
         
         public function modificar($datos,$detalles){
             try {

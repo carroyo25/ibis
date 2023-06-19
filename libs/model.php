@@ -1499,7 +1499,6 @@
                 if ( $proceso == 49){
                     $detalles = $this->consultarDetallesProcesoMtto($id);
                 }
-                    
 
                 return array("cabecera"=>$docData,
                             "detalles"=>$detalles);
@@ -1948,7 +1947,6 @@
                         $lc = 0;
                     }
                 }
-
 
                 $lc = 0;
                 $rc = 0;
@@ -2680,6 +2678,7 @@
                                                         lg_regdocumento 
                                                     WHERE
                                                         lg_regdocumento.nidrefer = :id
+                                                        AND lg_regdocumento.nflgactivo = 1
                                                         AND lg_regdocumento.cmodulo = :tipo");
                 $sql->execute(['id'=>$id,"tipo"=>$tipo]);
                 $result = $sql->fetchAll();
@@ -2699,8 +2698,8 @@
                 $sql = $this->db->connect()->prepare("SELECT creferencia,cdocumento 
                                                         FROM lg_regdocumento 
                                                         WHERE nidrefer=:id
-                                                        AND cmodulo='ORD'
-                                                        AND nidrefer != 0 ");
+                                                        AND nflgactivo = 1
+                                                        AND cmodulo='ORD'");
                 $sql->execute(['id'=>$id]);
                 $rowCount = $sql->rowCount();
 
@@ -2720,39 +2719,7 @@
             }
         }
 
-        public function verAdjuntosPedido($id){
-            try {
-                $salida = "";
-                $sql = $this->db->connect()->prepare("SELECT creferencia,
-                                                             cdocumento,
-                                                             id_regmov 
-                                                        FROM lg_regdocumento 
-                                                        WHERE nidrefer=:id
-                                                        AND cmodulo='PED'");
-                $sql->execute(['id'=>$id]);
-                $rowCount = $sql->rowCount();
-
-                if ($rowCount > 0) {
-                    while ($rs = $sql->fetch()) {
-
-                        $icono = $this->tipoArchivo($rs['creferencia']);
-
-                        $salida .= '<li>
-                                        <a href="'.$rs['creferencia'].'" data-archivo="'.$rs['creferencia'].'" class="icono_archivo">'.$icono.'<p>'.$rs['cdocumento'].'</p></a>
-                                        <a href="'.$rs['id_regmov'].'" class="file_delete"><i class="fas fa-ban"></i></a>
-                                    </li>';
-                    }
-                }
-                
-                $ret = array("adjuntos"=>$salida,
-                            "archivos"=>$rowCount);
-
-                return $ret;
-            } catch (PDOException $th) {
-                echo $th->getMessage();
-                return false;
-            }
-        }
+        
 
         //marcar items para no ser consultados
         public function itemMarcado($id,$estado,$io){
@@ -3878,6 +3845,62 @@
             }
 
             return $icono;
+        }
+
+        public function borraAdjuntos($codigo){
+            try {
+                $respuesta = false;
+                $sql = $this->db->connect()->prepare("UPDATE lg_regdocumento 
+                                                        SET lg_regdocumento.nflgactivo = 0
+                                                        WHERE lg_regdocumento.id_regmov = :codigo");
+                $sql->execute(["codigo" => $codigo]);
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0){
+                    $respuesta = true;
+                }
+
+                return array("respuesta"=>$respuesta,
+                             "archivos"=>$this->verAdjuntosPedido($codigo));
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function verAdjuntosPedido($id){
+            try {
+                $salida = "";
+                $sql = $this->db->connect()->prepare("SELECT creferencia,
+                                                             cdocumento,
+                                                             id_regmov 
+                                                        FROM lg_regdocumento 
+                                                        WHERE nidrefer=:id
+                                                            AND nflgactivo = 1
+                                                            AND cmodulo='PED'");
+                $sql->execute(['id'=>$id]);
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0) {
+                    while ($rs = $sql->fetch()) {
+
+                        $icono = $this->tipoArchivo($rs['creferencia']);
+
+                        $salida .= '<li>
+                                        <a href="'.$rs['creferencia'].'" data-archivo="'.$rs['creferencia'].'" class="icono_archivo">'.$icono.'<p>'.$rs['cdocumento'].'</p></a>
+                                        <a href="'.$rs['id_regmov'].'" class="file_delete"><i class="fas fa-ban"></i></a>
+                                    </li>';
+                    }
+                }
+                
+                $ret = array("adjuntos"=>$salida,
+                            "archivos"=>$rowCount);
+
+                return $ret;
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
         }
     }
 ?>

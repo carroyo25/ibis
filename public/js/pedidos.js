@@ -474,8 +474,11 @@ $(function(){
                 var fileName = items[i].name; // get file name
 
                 // append li to UL tag to display File info
-                fragment +=`<li><p><i class="far fa-file"></i></p>
-                                <p>${fileName}</p></li>`;
+                fragment +=`<li>
+                                <a class="icono_archivo"><i class="far fa-file"></i>
+                                    <p>${fileName}</p>
+                                </a>
+                            </li>`;
             }
 
             $(".listaArchivos").append(fragment);
@@ -518,32 +521,7 @@ $(function(){
         $("#archivos").fadeOut();
         $("#fileAtachs")[0].reset();
         $(".listaArchivos").empty();
-
     });
-
-    //añadir registro de adjuntos
-    /*$("#fileAtachs").on("submit", function (e) {
-        e.preventDefault()
-
-        $.ajax({
-            // URL to move the uploaded image file to server
-            url: RUTA + 'pedidos/adjuntos',
-            // Request type
-            type: "POST", 
-            // To send the full form data
-            data: new FormData( this ),
-            contentType:false,      
-            processData:false,
-            dataType:"json",    
-            // UI response after the file upload  
-            success: function(data)
-            {   
-                
-            }
-        });
-        
-        return false;
-    });*/
 
     $("#sendItem,#requestAprob").click(function (e) { 
         e.preventDefault();
@@ -775,6 +753,17 @@ $(function(){
         e.preventDefault();
 
         $(this).parent().remove();
+        $.post(RUTA+"pedidos/borraAdjunto", {codigo:$(this).attr("href")},
+            function (data, text, requestXHR) {
+                if (data.respuesta) {
+                    mostrarMensaje("Registro Eliminado", "mensaje_correcto");
+                    $("#atach_counter").text($(".listaArchivos li").length);
+                }else {
+                    mostrarMensaje("Error al eliminar", "mensaje_error");
+                }
+            },
+            "json"
+        );
 
         return false;
     });

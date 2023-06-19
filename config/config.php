@@ -24,7 +24,7 @@
     define('DB3','documentos');
     define('MAILPASSWORD','aK8izG1WEQwwB1X');
     define('MAILUSER','sistema_ibis@sepcon.net');
-    define('CHARSET','utf8mb4');
+    define('CHARSET','UTF8');
     define('USER','remoto');
     define('PASSWORD','s3pc0n2020');
     
