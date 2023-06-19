@@ -1513,14 +1513,31 @@ $anulado:#c2c2c2;
         display: flex;
         flex-wrap: wrap;
         padding: 1rem;
+        position:relative;
 
         li{
-            width: 6rem;
             text-align: center;
             margin: 10px;
+            display: flex;
+            justify-content: center;
+            border: 1px solid #ccc;
+            padding: 5px;
+            width: 25%;
+            position: relative;
+            height: fit-content;
 
-            i {
+            .icono_archivo {
                 font-size: 2rem;
+                display: block;
+                height: 2.5em;
+                overflow: hidden;
+            }
+
+            .file_delete{
+                position: absolute;
+                position: absolute;
+                top: -10px;
+                right: -7px;
             }
 
             p:nth-child(2) {
@@ -1528,8 +1545,12 @@ $anulado:#c2c2c2;
                 width: 110px;
                 text-align: center;
                 word-wrap: break-word;
+                margin-top: 2px;
             }
+
+            
         }
+
     }
 
     .opcionesArchivos{

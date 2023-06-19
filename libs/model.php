@@ -2723,7 +2723,9 @@
         public function verAdjuntosPedido($id){
             try {
                 $salida = "";
-                $sql = $this->db->connect()->prepare("SELECT creferencia,cdocumento 
+                $sql = $this->db->connect()->prepare("SELECT creferencia,
+                                                             cdocumento,
+                                                             id_regmov 
                                                         FROM lg_regdocumento 
                                                         WHERE nidrefer=:id
                                                         AND cmodulo='PED'");
@@ -2732,7 +2734,13 @@
 
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()) {
-                        $salida .= '<li><a href="'.$rs['creferencia'].'" data-archivo="'.$rs['creferencia'].'"><i class="far fa-file"></i><p>'.$rs['cdocumento'].'</p></a></li>';
+
+                        $icono = $this->tipoArchivo($rs['creferencia']);
+
+                        $salida .= '<li>
+                                        <a href="'.$rs['creferencia'].'" data-archivo="'.$rs['creferencia'].'" class="icono_archivo">'.$icono.'<p>'.$rs['cdocumento'].'</p></a>
+                                        <a href="'.$rs['id_regmov'].'" class="file_delete"><i class="fas fa-ban"></i></a>
+                                    </li>';
                     }
                 }
                 
@@ -3834,6 +3842,42 @@
                 echo $th->getMessage();
                 return false;
             }
+        }
+
+        public function tipoArchivo($archivo) {
+            $extension = pathinfo($archivo, PATHINFO_EXTENSION);
+
+            switch ($extension) {
+                case 'pdf':
+                    $icono = '<i class="fas fa-file-pdf"></i>';
+                    break;
+                case 'xlsx':
+                    $icono = '<i class="fas fa-file-excel"></i>';
+                    break;
+                case 'xls':
+                    $icono = '<i class="fas fa-file-excel"></i>';
+                    break;
+                case 'docx':
+                    $icono = '<i class="fas fa-file-word"></i>';
+                    break;
+                case 'doc':
+                    $icono = '<i class="fas fa-file-word"></i>';
+                    break;
+                case 'jpg':
+                    $icono = '<i class="fas fa-file-image"></i>';
+                    break;
+                case 'png':
+                    $icono = '<i class="fas fa-file-image"></i>';
+                    break;
+                case 'msg':
+                    $icono = '<i class="fas fa-envelope-open-text"></i>';
+                    break;
+                default:
+                    $icono = '<i class="far fa-file"></i>';
+                    break;
+            }
+
+            return $icono;
         }
     }
 ?>

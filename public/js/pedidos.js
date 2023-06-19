@@ -387,12 +387,6 @@ $(function(){
 
     $("#upAttach").click(function (e) { 
        e.preventDefault();
-    
-       /*if ($("#numero").val() == ""){
-            mostrarMensaje("Debe grabar el pedido","mensaje_error")
-       }else{
-            $("#archivos").fadeIn();
-       }*/
 
        try {
 
@@ -765,6 +759,24 @@ $(function(){
         );
 
         return false
+    });
+
+    //cuando presiona el icono
+
+    $(".listaArchivos").on("click",'.icono_archivo', function (e) {
+        e.preventDefault();
+
+        console.log('No hace nada');
+
+        return false;
+    });
+
+    $(".listaArchivos").on("click",'.file_delete', function (e) {
+        e.preventDefault();
+
+        $(this).parent().remove();
+
+        return false;
     });
 })
 

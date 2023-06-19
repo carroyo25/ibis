@@ -229,34 +229,7 @@
 
         }
 
-        public function verAdjuntosPedido($id){
-            try {
-                $salida = "";
-
-                $sql = $this->db->connect()->prepare("SELECT creferencia,cdocumento 
-                                                        FROM lg_regdocumento 
-                                                        WHERE nidrefer=:id
-                                                        AND cmodulo='PED'
-                                                        AND nidrefer != 0 ");
-                $sql->execute(['id'=>$id]);
-                $rowCount = $sql->rowCount();
-
-                if ($rowCount > 0) {
-                    while ($rs = $sql->fetch()) {
-                        $salida .= '<li><a href="'.$rs['creferencia'].'" data-archivo="'.$rs['creferencia'].'"><i class="far fa-file"></i><p>'.$rs['cdocumento'].'</p></a></li>';
-                    }
-                }
-                
-                $ret = array("adjuntos"=>$salida,
-                            "archivos"=>$rowCount);
-
-                return $ret;
-            } catch (PDOException $th) {
-                echo $th->getMessage();
-                return false;
-            }
-        }
-
+        
         public function modificar($datos,$detalles){
             try {
                 $salida = false;
