@@ -396,7 +396,8 @@
 
                 $sql = $this->db->connect()->prepare("UPDATE lg_ordencab 
                                                         SET  ffechaent=:entrega,ntotal=:total,ctiptransp=:transp,
-                                                             nplazo=:plazo,ncodalm=:alm,nigv =:igv,id_centi=:enti
+                                                             nplazo=:plazo,ncodalm=:alm,nigv =:igv,id_centi=:enti,
+                                                             ncodpago=:pago
                                                         WHERE id_regmov = :id");
                 $sql->execute(['entrega'=>$cabecera['fentrega'],
                                 "total"=>$cabecera['total_numero'],
@@ -405,7 +406,8 @@
                                 "alm"=>$cabecera['codigo_almacen'],
                                 "igv"=>$cabecera['radioIgv'],
                                 "id"=>$cabecera['codigo_orden'],
-                                "enti"=>$cabecera['codigo_entidad']]);
+                                "enti"=>$cabecera['codigo_entidad'],
+                                "pago"=>$cabecera['codigo_pago']]);
                 
                 $this->grabarDetalles($cabecera['codigo_verificacion'],$detalles,$cabecera['codigo_costos'],$cabecera['codigo_orden']);
                 $this->grabarComentarios($cabecera['codigo_verificacion'],$comentarios);
