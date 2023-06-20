@@ -10,40 +10,43 @@
             try {
                 $salida = "";
                 $sql = $this->db->connect()->query("SELECT
-                                                ibis.tb_pedidocab.nrodoc,
-                                                UPPER( ibis.tb_pedidocab.concepto ) AS concepto,
-                                                ibis.tb_pedidocab.idreg,
-                                                ibis.tb_pedidocab.estadodoc,
-                                                ibis.tb_pedidocab.emision,
-                                                ibis.tb_pedidocab.vence,
-                                                ibis.tb_pedidocab.idtipomov,
-                                                UPPER(
-                                                CONCAT_WS( ' ', ibis.tb_proyectos.ccodproy, ibis.tb_proyectos.cdesproy )) AS costos,
-                                                ibis.tb_pedidocab.nivelAten,
-                                                CONCAT_WS( ' ', rrhh.tabla_aquarius.apellidos, rrhh.tabla_aquarius.nombres ) AS nombres,
-                                                estados.cdescripcion AS estado,
-                                                atencion.cdescripcion AS atencion,
-                                                estados.cabrevia,
-                                                ibis.tb_pedidocab.idcostos,
-                                                ibis.tb_proyectos.ccodproy,
-                                                ibis.tb_proyectos.cdesproy 
-                                            FROM
-                                                ibis.tb_pedidocab
-                                                INNER JOIN rrhh.tabla_aquarius ON ibis.tb_pedidocab.idsolicita = rrhh.tabla_aquarius.internal
-                                                INNER JOIN ibis.tb_parametros AS estados ON ibis.tb_pedidocab.estadodoc = estados.nidreg
-                                                INNER JOIN ibis.tb_parametros AS atencion ON ibis.tb_pedidocab.nivelAten = atencion.nidreg
-                                                INNER JOIN ibis.tb_proyectos ON ibis.tb_pedidocab.idcostos = ibis.tb_proyectos.nidreg 
-                                            WHERE
-                                                ibis.tb_pedidocab.estadodoc = 54
-                                                AND ibis.tb_pedidocab.nflgactivo = 1
-                                                AND ISNULL(ibis.tb_pedidocab.asigna)
-                                            ORDER BY ibis.tb_pedidocab.emision DESC");
+                                                    ibis.tb_pedidocab.nrodoc,
+                                                    UPPER( ibis.tb_pedidocab.concepto ) AS concepto,
+                                                    ibis.tb_pedidocab.idreg,
+                                                    ibis.tb_pedidocab.estadodoc,
+                                                    ibis.tb_pedidocab.emision,
+                                                    ibis.tb_pedidocab.vence,
+                                                    ibis.tb_pedidocab.idtipomov,
+                                                    UPPER(
+                                                    CONCAT_WS( ' ', ibis.tb_proyectos.ccodproy, ibis.tb_proyectos.cdesproy )) AS costos,
+                                                    ibis.tb_pedidocab.nivelAten,
+                                                    CONCAT_WS( ' ', rrhh.tabla_aquarius.apellidos, rrhh.tabla_aquarius.nombres ) AS nombres,
+                                                    estados.cdescripcion AS estado,
+                                                    atencion.cdescripcion AS atencion,
+                                                    estados.cabrevia,
+                                                    ibis.tb_pedidocab.idcostos,
+                                                    ibis.tb_proyectos.ccodproy,
+                                                    UPPER( ibis.tb_proyectos.cdesproy ) AS cdesproy,
+                                                    UPPER(ibis.tb_user.cnameuser) as cnameuser 
+                                                FROM
+                                                    ibis.tb_pedidocab
+                                                    INNER JOIN rrhh.tabla_aquarius ON ibis.tb_pedidocab.idsolicita = rrhh.tabla_aquarius.internal
+                                                    INNER JOIN ibis.tb_parametros AS estados ON ibis.tb_pedidocab.estadodoc = estados.nidreg
+                                                    INNER JOIN ibis.tb_parametros AS atencion ON ibis.tb_pedidocab.nivelAten = atencion.nidreg
+                                                    INNER JOIN ibis.tb_proyectos ON ibis.tb_pedidocab.idcostos = ibis.tb_proyectos.nidreg
+                                                    LEFT JOIN ibis.tb_user ON ibis.tb_pedidocab.asigna = ibis.tb_user.iduser 
+                                                WHERE
+                                                    ibis.tb_pedidocab.estadodoc = 54 
+                                                    AND ibis.tb_pedidocab.nflgactivo = 1 
+                                                ORDER BY
+                                                    ibis.tb_pedidocab.emision DESC");
                 $sql->execute();
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()) {
                         $tipo = $rs['idtipomov'] == 37 ? "B":"S";
+                        $asignado = $rs['cnameuser'] == NULL ? "--" : $rs['cnameuser'];
                         $salida .='<tr class="pointer" data-indice="'.$rs['idreg'].'">
                                         <td class="textoCentro">'.str_pad($rs['nrodoc'],4,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.date("d/m/Y", strtotime($rs['emision'])).'</td>
@@ -53,6 +56,7 @@
                                         <td class="pl20px">'.$rs['nombres'].'</td>
                                         <td class="textoCentro '.$rs['cabrevia'].'">'.$rs['estado'].'</td>
                                         <td class="textoCentro '.strtolower($rs['atencion']).'">'.$rs['atencion'].'</td>
+                                        <td class="textoCentro">'.$asignado.'</td>
                                     </tr>';
                     }
                 }
@@ -168,6 +172,24 @@
                 }
 
                 return $salida;
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function modificarAsignacion($codigo) {
+            try {
+                //code...
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        private function validarItems($codigo){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT COUNT(*) FROM lg_ordendet WHERE lg_ordendet.nidpedi := pedido");
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;

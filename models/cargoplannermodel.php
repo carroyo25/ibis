@@ -233,7 +233,8 @@
                                         data-orden="'.$rs['orden'].'"
                                         data-estado="'.$rs['estadoItem'].'"
                                         data-producto="'.$rs['idprod'].'"
-                                        data-aprueba="'.$rs['cnombres'].'">
+                                        data-aprueba="'.$rs['cnombres'].'"
+                                        data-porcentaje="'.$porcentaje.'">
                                         <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro '.$estadofila.'">'.$porcentaje.'</td>
                                         <td class="textoDerecha pr15px">'.$rs['ccodproy'].'</td>

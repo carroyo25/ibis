@@ -32,6 +32,7 @@ $(function(){
                 $("#vence").val(data.cabecera[0].vence);
                 $("#estado").val(data.cabecera[0].estado);
                 $("#espec_items").val(data.cabecera[0].detalle);
+                $("#user_asigna").val(data.cabecera[0].asigna);
                 
                 $("#tablaDetalles tbody")
                     .empty()
@@ -176,6 +177,19 @@ $(function(){
             .attr("src","")
             .attr("src","public/documentos/pedidos/adjuntos/"+$(this).attr("href"));
         
+        return false;
+    });
+
+    $("#quitarAsigna").click(function(e){
+        e.preventDefault();
+
+        $.post(RUTA+"asigna/libera",{pedido:$("#codigo_pedido").val()},
+            function (data, text, requestXHR) {
+                console.log(data);
+            },
+            "json"
+        );
+
         return false;
     });
 })

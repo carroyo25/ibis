@@ -28,6 +28,10 @@
         function filtroPedidos(){
             echo $this->model->filtroAsigna($_POST);
         }
+
+        function libera(){
+            echo json_encode($this->model->modificarAsignacion($_POST['pedido']));
+        }
         
     }
 ?>

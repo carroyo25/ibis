@@ -53,7 +53,7 @@
                                                         AND d.nropedido = lg_ordendet.id_orden 
                                                     WHERE
                                                         tb_pedidodet.nflgActivo = 1
-                                                        tb_pedidodet.estadoItem != 105  
+                                                        AND tb_pedidodet.estadoItem != 105  
                                                         AND tb_pedidocab.nrodoc LIKE '%' 
                                                         AND cm_producto.ccodprod LIKE '%' 
                                                         AND lg_ordendet.id_orden LIKE '%' 
@@ -191,7 +191,8 @@
                                         data-orden="'.$rs['orden'].'"
                                         data-estado="'.$rs['estadoItem'].'"
                                         data-producto="'.$rs['idprod'].'"
-                                        data-aprueba="'.$rs['cnombres'].'">
+                                        data-aprueba="'.$rs['cnombres'].'"
+                                        data-porcentaje="'.$rs['porcentaje'].'">
                                         <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro '.$estadofila.'">'.$porcentaje.'</td>
                                         <td class="textoDerecha pr15px">'.$rs['ccodproy'].'</td>

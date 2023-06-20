@@ -1358,7 +1358,8 @@
                                                         ibis.tb_pedidocab.docPdfEmit, 
                                                         ibis.tb_pedidocab.docPdfAprob, 
                                                         ibis.tb_pedidocab.verificacion,
-                                                        ibis.tb_pedidocab.nmtto, 
+                                                        ibis.tb_pedidocab.nmtto,
+                                                        ibis.tb_pedidocab.asigna,
                                                         CONCAT( rrhh.tabla_aquarius.apellidos, ' ', rrhh.tabla_aquarius.nombres ) AS nombres, 
                                                         UPPER(
                                                         CONCAT( ibis.tb_proyectos.ccodproy, ' ', ibis.tb_proyectos.cdesproy )) AS proyecto, 

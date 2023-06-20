@@ -25,6 +25,7 @@
                     <input type="hidden" name="elabora" id="elabora">
                     <input type="hidden" name="emitido" id="emitido">
                     <input type="hidden" name="espec_items" id="espec_items">
+                    <input type="hidden" name="user_asigna" id="user_asigna">
 
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
@@ -94,6 +95,10 @@
                     </div>
                     <div class="barraOpciones">
                         <span>Detalles</span>
+
+                        <button type="button" id="quitarAsigna" title="Libera el pedido" class="boton3">
+                            <p><i class="fas fa-street-view"></i>  Liberar Pedido</p> 
+                        </button>
                     </div>
                     <div class="tablaInterna mininoTablaInterna">
                         <table class="tabla" id="tablaDetalles">
@@ -211,6 +216,7 @@
                     <th>Solicitante</th>
                     <th>Estado</th>
                     <th>Atencion</th>
+                    <th>Asignado</th>
                 </tr>
             </thead>
             <tbody>
