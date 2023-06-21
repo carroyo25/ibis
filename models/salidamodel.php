@@ -135,11 +135,11 @@
                     $item=1;
                     
                     while ($rs = $sql->fetch()){
-                        $saldo = $rs['cantidad'] - $rs['despachos'];
+                        $saldo = $rs['ingresos'] - $rs['despachos'];
                         $pendientes = $rs['cantidad'] - $rs['ingresos'];
                        
                         //if ( $rs['ingresos'] > 0 ) {
-                            //if ( $saldo > 0 ) {
+                            if ( $saldo > 0 ) {
 
                                 $series  = strlen($this->itemSeries($rs['niddeta'])) == 0 ? "" : strtoupper("N/S :".$this->itemSeries($rs['niddeta']));
 
@@ -168,8 +168,7 @@
                                         <td class="textoCentro">'.$rs['pedido'].'</td>
                                         <td class="textoCentro">'.str_pad($rs['id_orden'],6,0,STR_PAD_LEFT).'</td>
                                     </tr>';
-                            //}
-                                
+                            }    
                         //}
                     }
                 }
