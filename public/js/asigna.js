@@ -183,13 +183,24 @@ $(function(){
     $("#quitarAsigna").click(function(e){
         e.preventDefault();
 
-        $.post(RUTA+"asigna/libera",{pedido:$("#codigo_pedido").val()},
-            function (data, text, requestXHR) {
-                console.log(data);
-            },
-            "json"
-        );
+        try {
+            if ($("#user_asigna").val() == "") throw new Error("El pedido no esta asignado");
 
+            $.post(RUTA+"asigna/libera",{pedido:$("#codigo_pedido").val(),usuario:$("#id_user").val()},
+                function (data, text, requestXHR) {
+                    if (data.existe){
+                        mostrarMensaje("El pedido tiene orden","mensaje_error");
+                    }else{
+                        mostrarMensaje("Se quito la asignación","mensaje_correcto");
+                    }
+                },
+                "json"
+            );
+        } catch (error) {
+            mostrarMensaje(error,"mensaje_error");
+        }
+
+        
         return false;
     });
 })

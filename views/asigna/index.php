@@ -22,6 +22,7 @@
                     <input type="hidden" name="codigo_pedido" id="codigo_pedido">
                     <input type="hidden" name="codigo_estado" id="codigo_estado">
                     <input type="hidden" name="codigo_atencion" id="codigo_atencion">
+                    <input type="hidden" name="codigo_atencion" id="codigo_asigna">
                     <input type="hidden" name="elabora" id="elabora">
                     <input type="hidden" name="emitido" id="emitido">
                     <input type="hidden" name="espec_items" id="espec_items">

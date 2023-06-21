@@ -178,22 +178,53 @@
             }
         }
 
-        public function modificarAsignacion($codigo) {
+        public function modificarAsignacion($pedido,$usuario) {
             try {
-                //code...
+                $sw = $this->validarItems($pedido);
+
+                if (!$sw) {
+                    $sql = $this->db->connect()->prepare("UPDATE tb_pedidocab 
+                                                        SET tb_pedidocab.asigna=:asignado,
+                                                            tb_pedidocab.libera=:usuario
+                                                        WHERE tb_pedidocab.idreg =:pedido");
+                    $sql->execute(["asignado"=>NULL,
+                                    "pedido"=>$pedido,
+                                    "usuario"=>$usuario]);
+
+                    $rowCount = $sql->rowCount();
+
+                    if ($rowCount > 0){
+                        $this->liberarDetalles($pedido);
+                    }
+                }
+
+                return array("existe" => $sw);
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
             }
         }
 
-        private function validarItems($codigo){
+        private function validarItems($pedido){
             try {
-                $sql = $this->db->connect()->prepare("SELECT COUNT(*) FROM lg_ordendet WHERE lg_ordendet.nidpedi := pedido");
+                $sql = $this->db->connect()->prepare("SELECT COUNT(*) AS existe FROM lg_ordendet WHERE lg_ordendet.nidpedi=:pedido");
+                $sql->execute(["pedido" => $pedido]);
+
+                $result = $sql->fetchAll();
+
+                return $result[0]['existe'];
+
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
             }
+        }
+
+        private function liberarDetalles($pedido){
+            $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet 
+                                                        SET tb_pedidodet.idasigna = NULL
+                                                        WHERE tb_pedidodet.idpedido = :pedido");
+            $sql->execute(["pedido" => $pedido]);
         }
     }
 ?>
