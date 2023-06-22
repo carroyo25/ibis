@@ -949,6 +949,32 @@
   color: #fff;
   font-size: 0.7rem;
   height: 1.2rem;
+  position: relative;
+}
+.itemsTabla table thead th {
+  position: relative;
+}
+.itemsTabla table thead a {
+  color: #fff;
+  margin-left: 10px;
+}
+.itemsTabla table thead .filtro {
+  background: #fff;
+  color: #000;
+  border: 1px solid #ccc;
+  position: absolute;
+  text-align: left;
+  margin: 5px;
+  width: 15rem;
+  padding: 5px;
+  line-height: 1.5rem;
+  border-radius: 3px;
+  display: none;
+}
+.itemsTabla table thead .filtro input {
+  border: 1px solid #ccc;
+  width: 100%;
+  padding-left: 5px;
 }
 .itemsTabla table tbody .pointer {
   cursor: pointer;

@@ -383,7 +383,7 @@
                     <h3>Adjuntar Archivos</h3>
                     <a href="#" id="openArch" title="Adjuntar Archivos"><i class="fas fa-file-medical"></i></a>
                 </div>            
-                <ul class="listaArchivos" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);" style="pointer-events:none;">
+                <ul class="listaArchivos" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
                 </ul>
                 <div class="opcionesArchivos">
                     <button type="button" class="boton3" id="btnConfirmAtach">Aceptar</button>
@@ -506,13 +506,25 @@
         <table id="tablaPrincipal">
             <thead class="stickytop">
                     <tr>
-                    <th rowspan="2">Num.</th>  
+                    <th rowspan="2">Num. 
+                        <a href="#" class="listaFiltroTabla" data-idcol="1"><i class="fas fa-angle-down"></i></a>
+                        <div class="filtro">
+                            <input type="text" name="txtSearchFilterTable" id="txtSearchFilterTable">
+                            <ul id="lista1">
+                                <li>002081</li>
+                                <li>002080</li>
+                                <li>002079</li>
+                                <li>002078</li>
+                                <li>002077</li>
+                            </ul>
+                        </div> 
+                    </th>  
                     <th rowspan="2">Emision</th>
-                    <th rowspan="2">Descripción</th>
-                    <th rowspan="2">Centro Costos</th> 
-                    <th rowspan="2">Area</th>
-                    <th rowspan="2">Proveedor</th>
-                    <th rowspan="2">Usuario</th>
+                    <th rowspan="2">Descripción <a href="#"><i class="fas fa-angle-down"></i></a></th>
+                    <th rowspan="2" width="5%">C. Costos <a href="#"><i class="fas fa-angle-down"></i></a></th> 
+                    <th rowspan="2">Area <a href="#"><i class="fas fa-angle-down"></i></a></th>
+                    <th rowspan="2">Proveedor <a href="#"><i class="fas fa-angle-down"></i></a></th>
+                    <th rowspan="2">Usuario <a href="#"><i class="fas fa-angle-down"></i></a></th>
                     <th rowspan="2">Atencion</th>
                     <th colspan="3" width="16%">Firmas</th>
                     <th rowspan="2" width="3%">Comentarios</th>

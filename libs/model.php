@@ -2696,7 +2696,9 @@
             try {
                 $salida = "";
 
-                $sql = $this->db->connect()->prepare("SELECT creferencia,cdocumento 
+                $sql = $this->db->connect()->prepare("SELECT creferencia,
+                                                            cdocumento,
+                                                            id_regmov 
                                                         FROM lg_regdocumento 
                                                         WHERE nidrefer=:id
                                                         AND nflgactivo = 1
@@ -2706,7 +2708,13 @@
 
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()) {
-                        $salida .= '<li><a href="'.$rs['creferencia'].'" data-archivo="'.$rs['creferencia'].'"><i class="far fa-file"></i><p>'.$rs['cdocumento'].'</p></a></li>';
+
+                        $icono = $this->tipoArchivo($rs['creferencia']);
+
+                        $salida .= '<li>
+                                        <a href="'.$rs['creferencia'].'" data-archivo="'.$rs['creferencia'].'" class="icono_archivo">'.$icono.'<p>'.$rs['cdocumento'].'</p></a>
+                                        <a href="'.$rs['id_regmov'].'" class="file_delete"><i class="fas fa-ban"></i></a>
+                                    </li>';
                     }
                 }
                 
@@ -3825,6 +3833,9 @@
                 case 'xls':
                     $icono = '<i class="fas fa-file-excel"></i>';
                     break;
+                case 'xlsm':
+                        $icono = '<i class="fas fa-file-excel"></i>';
+                        break;
                 case 'docx':
                     $icono = '<i class="fas fa-file-word"></i>';
                     break;
@@ -3840,6 +3851,9 @@
                 case 'msg':
                     $icono = '<i class="fas fa-envelope-open-text"></i>';
                     break;
+                case 'zip':
+                        $icono = '<i class="fas fa-file-archive"></i>';
+                        break;
                 default:
                     $icono = '<i class="far fa-file"></i>';
                     break;

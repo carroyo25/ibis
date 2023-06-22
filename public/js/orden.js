@@ -934,6 +934,44 @@ $(function(){
 
         return false;
     });
+
+    $(".listaFiltroTabla").click(function (e) { 
+        e.preventDefault();
+        
+        //$(this).next().fadeIn();
+
+        return false;
+    });
+
+    //cuando presiona el icono
+
+    $(".listaArchivos").on("click",'.icono_archivo', function (e) {
+        e.preventDefault();
+
+        console.log('No hace nada');
+
+        return false;
+    });
+
+    $(".listaArchivos").on("click",'.file_delete', function (e) {
+        e.preventDefault();
+
+        $(this).parent().remove();
+
+        $.post(RUTA+"pedidos/borraAdjunto", {codigo:$(this).attr("href")},
+            function (data, text, requestXHR) {
+                if (data.respuesta) {
+                    mostrarMensaje("Registro Eliminado", "mensaje_correcto");
+                    $("#atach_counter").text($(".listaArchivos li").length);
+                }else {
+                    mostrarMensaje("Error al eliminar", "mensaje_error");
+                }
+            },
+            "json"
+        );
+
+        return false;
+    });
 })
 
 

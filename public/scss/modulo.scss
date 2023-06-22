@@ -677,6 +677,36 @@ $anulado:#c2c2c2;
             color:$blanco;
             font-size: .7rem;
             height: 1.2rem;
+            position:relative;
+
+            th {
+                position: relative;
+            }
+
+            a{
+                color:$blanco;
+                margin-left: 10px;
+            }
+
+            .filtro{
+                background: #fff;
+                color: #000;
+                border: 1px solid #ccc;
+                position: absolute;
+                text-align: left;
+                margin: 5px;
+                width: 15rem;
+                padding: 5px;
+                line-height: 1.5rem;
+                border-radius: 3px;
+                display: none;
+
+                input {
+                    border: 1px solid #ccc;
+                    width: 100%;
+                    padding-left: 5px;
+                }
+            }
         }
 
         tbody {

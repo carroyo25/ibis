@@ -2,10 +2,10 @@ $(function(){
 
     $("#espera").fadeOut();
 
-    $('#tablaPrincipal').excelTableFilter({
+    /*$('#tablaPrincipal').excelTableFilter({
         columnSelector: '.filter',
         captions: { a_to_z: 'A - Z', z_to_a: 'Z - A', search: 'Buscar', select_all: 'Seleccionar Todo' }
-    });
+    });*/
 
     $(".dataProceso_2, #tablaDetalles").css("pointer-events","none");
 
