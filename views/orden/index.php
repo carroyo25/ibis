@@ -54,6 +54,7 @@
                     <input type="hidden" name="user_modifica" id="user_modifica">
                     <input type="hidden" name="nro_pedido" id="nro_pedido">
                     <input type="hidden" name="total_adicional" id="total_adicional" value=0>
+                    <input type="hidden" name="total" id="total">
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
                         <div>
@@ -115,8 +116,8 @@
                                     </div>
                                 </div>
                                 <div class="column2_46">
-                                    <label for="total">Total :</label>
-                                    <input type="text" name="total" id="total" class="cerrarLista textoDerecha pr5px" readonly>
+                                    <label for="dias">Dias Entrega :</label>
+                                    <input type="text" name="dias" id="dias" class="cerrarLista textoDerecha pr5px" value="3">
                                 </div>
                             </div>
                             <div class="column4_55">
@@ -235,6 +236,19 @@
 
                             </tbody>
                         </table>
+                    </div>
+                    <div class="totales_orden">
+                        <label>Importe Neto : </label>
+                        <input type="text" name="in" id="in" readonly>
+
+                        <label>Importe I.G.V. : </label>
+                        <input type="text" name="im" id="im" readonly>
+
+                        <label>Importe Adicionales : </label>
+                        <input type="text" name="oa" id="oa" readonly>
+
+                        <label>Importe Total : </label>
+                        <input type="text" name="it" id="it" readonly>
                     </div>
                 </form>
             </div>

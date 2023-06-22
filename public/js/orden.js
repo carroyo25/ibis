@@ -70,6 +70,8 @@ $(function(){
                 $("#total_adicional").val(data.total_adicionales);
                 $("#referencia").val(data.cabecera[0].cReferencia);
 
+                
+
                if (data.cabecera[0].nigv != 0) {
                     $("#si").prop("checked", true);
                }else {
@@ -138,6 +140,9 @@ $(function(){
         $("input[type='hidden']").each(function(){
             $(this).val("");
         });
+
+        $("#cpago").val("CREDITO A 30 DIAS");
+        $("#codigo_pago").val(73);
 
         accion = 'n';
         grabado = false;
@@ -651,6 +656,7 @@ $(function(){
                 let cant = $(this).parent().parent().find("td").eq(5).children().val();
                 let precio = $(this).parent().parent().find("td").eq(6).children().val();
                 let suma = 0;
+                let igv = parseFloat($('input[name="radioIgv"]:checked').val());
                 
                 let total = precio*cant;
 
@@ -661,8 +667,22 @@ $(function(){
                 })
 
                 if(suma > 0) {
+
                     $("#total").val(numberWithCommas(suma.toFixed(2)));
                     $("#total_numero").val(suma.toFixed(2));
+                    
+                    let i = suma*igv;
+                    let a = sumarAdicionales($("#tablaAdicionales tbody >tr"),2);
+                    let t = suma+i+a;
+
+                    console.log(t);
+
+
+                    $("#in").val(numberWithCommas(suma.toFixed(2)));
+                    $("#im").val(numberWithCommas(i.toFixed(2)));
+                    $("#oa").val(a);
+                    $("#it").val(t.toFixed(2));
+
                 }
 
                 //para cambiar el foco con el enter

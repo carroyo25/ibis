@@ -2110,6 +2110,23 @@
   height: 2rem;
   outline: none;
 }
+.ventanaProceso .totales_orden {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  padding: 5px;
+  gap: 10px;
+  border-top: 1px solid #000;
+}
+.ventanaProceso .totales_orden label {
+  margin: 0 5px;
+}
+.ventanaProceso .totales_orden input {
+  outline: none;
+}
 
 .ventanaBusqueda input[type=text] {
   height: 35px;
