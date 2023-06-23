@@ -117,7 +117,7 @@
                                 </div>
                                 <div class="column2_46">
                                     <label for="dias">Dias Entrega :</label>
-                                    <input type="text" name="dias" id="dias" class="cerrarLista textoDerecha pr5px" value="3">
+                                    <input type="number" name="dias" id="dias" class="cerrarLista textoDerecha pr5px" value="3">
                                 </div>
                             </div>
                             <div class="column4_55">
@@ -187,8 +187,7 @@
                             </div>
                             <div class="column2">
                                 <label for="lentrega">Lugar Entrega:</label>
-                                <input type="text" name="lentrega" id="lentrega" class="mostrarLista busqueda" placeholder="Elija una opcion"
-                                    readonly>
+                                <input type="text" name="lentrega" id="lentrega" class="mostrarLista busqueda" placeholder="Elija una opcion">
                                 <div class="lista" id="listaAlmacen">
                                    <ul>
                                        <?php echo $this->listaAlmacenes?>

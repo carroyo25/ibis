@@ -2,6 +2,7 @@
     class Database{
         //atributos
         private $host;
+        private $host1;
         private $db;
         private $user;
         private $password;
@@ -12,6 +13,7 @@
         public function __construct()
         {
             $this->host     = constant('HOST');
+            $this->host1    = constant('HOST1');
             $this->db       = constant('DB');
             $this->db2      = constant('DB2');
             $this->user     = constant('USER');
@@ -32,7 +34,7 @@
 
         function connectrrhh(){
             try{
-                $connection = "mysql:host=".$this->host.";dbname=".$this->db.";charset=".$this->charset; 
+                $connection = "mysql:host=".$this->host1.";dbname=".$this->db.";charset=".$this->charset; 
                 $options = [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_EMULATE_PREPARES => false,];
                 $pdo = new PDO($connection,$this->user, $this->password, $options);
                 return $pdo;

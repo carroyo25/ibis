@@ -286,6 +286,7 @@ $(function(){
                 descrip     = $(this).children('td:eq(7)').text(),
                 cantidad    = $(this).data("cantidad"),
                 unidad      = $(this).data("unidad"),
+                detalle     = $(this).data("detalle"),
                 total       = 0,
                 cod_prod    = $(this).data("codprod"),
                 id_item     = $(this).data("iditem"),
@@ -328,7 +329,7 @@ $(function(){
                             <<td class="textoDerecha pr5px"></td>
                             <td class="textoCentro">${nro_parte}</td>
                             <td class="textoCentro">${nroreq}</td>
-                            <td class="pl20px"><textarea></textarea></td>
+                            <td class="pl20px"><textarea>${detalle}</textarea></td>
                         </tr>`;
 
 
@@ -496,10 +497,10 @@ $(function(){
             if ( accion == "" ) throw "Orden grabada";
             if ($("#codigo_estado").val() == 59) throw "La orden esta en firmas.";
             if (result['numero'] == "") throw "No tiene numero de orden";
-            if (result['fentrega'] == "") throw "Elija la fecha de entrega";
+            //if (result['fentrega'] == "") throw "Elija la fecha de entrega";
             if (result['codigo_moneda'] == "") throw "Elija la moneda";
             if (result['codigo_pago'] == "") throw "Elija el tipo de pago";
-            if (result['correo_entidad'] == "") throw "Elija el proveedor";
+            //if (result['correo_entidad'] == "") throw "Elija el proveedor";
             if (result['codigo_almacen'] == "") throw "Indique el lugar de entrega";
             if (result['total'] == "") throw "No se registro el total de la orden";
             if ($("#tablaDetalles tbody tr") .length <= 0) throw "No tiene items cargados"
@@ -670,19 +671,9 @@ $(function(){
 
                     $("#total").val(numberWithCommas(suma.toFixed(2)));
                     $("#total_numero").val(suma.toFixed(2));
-                    
-                    let i = suma*igv;
-                    let a = sumarAdicionales($("#tablaAdicionales tbody >tr"),2);
-                    let t = suma+i+a;
-
-                    console.log(t);
-
-
                     $("#in").val(numberWithCommas(suma.toFixed(2)));
-                    $("#im").val(numberWithCommas(i.toFixed(2)));
-                    $("#oa").val(a);
-                    $("#it").val(t.toFixed(2));
 
+                    calcularTotales();
                 }
 
                 //para cambiar el foco con el enter
@@ -934,6 +925,8 @@ $(function(){
 
         $("#total_adicional").val(sumarAdicionales($("#tablaAdicionales tbody >tr"),2));
 
+        calcularTotales();
+
         return false;
     });
 
@@ -992,6 +985,25 @@ $(function(){
 
         return false;
     });
+
+    //cuando se cambia el boton del igv
+    $('input[name="radioIgv"]').change(function (e) { 
+        e.preventDefault();
+        if ( $("#total_numero").val() > 0 )
+            calcularTotales();
+
+        return false;
+    });
+
+    //sumar dias
+    $("#dias").blur(function (e) { 
+        e.preventDefault();
+        
+        sumardias();
+
+        return false;
+    });
+
 })
 
 
@@ -1134,5 +1146,36 @@ sumarAdicionales = (TABLA,indice) =>{
     }); 
        
     return sum.toFixed(2);
+}
+
+calcularTotales = () => {
+
+    let im = 0,
+        adic = parseFloat(sumarAdicionales($("#tablaAdicionales tbody >tr"),2)),
+        np   = $("#total_numero").val();
+
+        if ($("#total_numero").val() == 0) {
+            $("#im").val("0.00");
+        }else {
+            im = parseFloat($("#total_numero").val())*parseFloat($('input[name="radioIgv"]:checked').val());
+        }
+
+    suma_total = parseFloat(np)+parseFloat(im)+parseFloat(adic);
+
+    $("#im").val(im.toFixed(2));
+    $("#oa").val(adic);
+    $("#it").val((numberWithCommas(suma_total.toFixed(2))));
+}
+
+sumardias = () => {
+    let fecha = new Date();
+    let dias = parseInt($('#dias').val()); // Número de días a agregar
+    
+    fecha.setDate(fecha.getDate() + dias);
+    fecha = fecha.getFullYear() + '-' + $.strPad((fecha.getMonth() + 1),2) + '-' +  $.strPad(fecha.getDate(),2);
+    
+    //console.log(fecha)
+
+    $("#fentrega").val(fecha);
 }
 

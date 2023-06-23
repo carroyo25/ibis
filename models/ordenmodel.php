@@ -114,13 +114,8 @@
                                                         tb_pedidodet.cant_aprob,
                                                         FORMAT(tb_pedidodet.total, 2) AS total,
                                                         tb_pedidodet.estadoItem,
-                                                        UPPER(
-                                                            CONCAT_WS(
-                                                                ' ',
-                                                                cm_producto.cdesprod,
-                                                                tb_pedidodet.observaciones
-                                                            )
-                                                        ) AS cdesprod,
+                                                        UPPER(cm_producto.cdesprod) AS cdesprod,
+                                                        UPPER(tb_pedidodet.observaciones) as detalle,
                                                         cm_producto.ccodprod,
                                                         cm_producto.id_cprod,
                                                         tb_unimed.ncodmed,
@@ -182,7 +177,8 @@
                                                        data-costos="'.$rs['idcostos'].'"
                                                        data-itord="-"
                                                        data-nropedido=""
-                                                       data-nparte="'.$rs['nroparte'].'">
+                                                       data-nparte="'.$rs['nroparte'].'"
+                                                       data-detalle="'.$rs['detalle'].'">
                                         <td class="textoCentro">'.str_pad($rs['nrodoc'],6,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.date("d/m/Y", strtotime($rs['emision'])).'</td>
                                         <td class="pl5px">'.$rs['concepto'].'</td>

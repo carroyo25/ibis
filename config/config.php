@@ -13,11 +13,9 @@
     else if ($url === "200.115.23.164")
         define('URL','http://200.115.23.164/ibis/');
     
-    //datos del servidor local
     define('HOST','localhost');
+    //define('HOST1','localhost');
     //define('HOST','192.168.1.30');
-   
-    //datos del servidor de rrhh
     define('HOST1','192.168.1.30');
     
     

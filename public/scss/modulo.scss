@@ -633,7 +633,6 @@ $anulado:#c2c2c2;
             
             button {
                 height: 20px;
-                //border-radius: 8px;
                 transition: all .5s;
                 color: #000;
 
@@ -723,6 +722,13 @@ $anulado:#c2c2c2;
                     background:rgba(255,255,43,.7);
                 }
             };
+
+            textarea{
+                width: 100%;
+                height: 100%;
+                display: block;
+                font-size: 1em;
+            }
         }
     }
 }
