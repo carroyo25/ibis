@@ -135,7 +135,8 @@
                     $item=1;
                     
                     while ($rs = $sql->fetch()){
-                        $saldo = $rs['ingresos'] - $rs['despachos'];
+                        //$saldo = $rs['ingresos'] - $rs['despachos'];
+                        $saldo = $rs['cantidad'] - $rs['despachos'];
                         $pendientes = $rs['cantidad'] - $rs['ingresos'];
                        
                         //if ( $rs['ingresos'] > 0 ) {
