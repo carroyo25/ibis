@@ -783,7 +783,8 @@
                                                     WHERE
                                                         tb_costusu.id_cuser = :usr 
                                                         AND lg_ordencab.id_regmov = :id 
-                                                        AND tb_costusu.nflgactivo = 1 
+                                                        AND tb_costusu.nflgactivo = 1
+                                                        AND lg_ordencab.ntipmov = 37 
                                                         AND lg_ordencab.nEstadoDoc BETWEEN 60 
                                                         AND 62 
                                                     ORDER BY

@@ -950,10 +950,12 @@ $(function(){
         return false;
     });
 
+    //filtros en las tablas
     $(".listaFiltroTabla").click(function (e) { 
         e.preventDefault();
         
         //$(this).next().fadeIn();
+        console.log(capturarcolumnasfiltro($("#tablaDetalles tbody >tr"),0));
 
         return false;
     });
@@ -1006,7 +1008,7 @@ $(function(){
         return false;
     });
 
-    //muestra la lista para entregras
+    //muestra la lista para entregas
     $("#btnEntrega").click(function (e) { 
         e.preventDefault();
         
@@ -1185,8 +1187,22 @@ sumardias = () => {
     fecha.setDate(fecha.getDate() + dias);
     fecha = fecha.getFullYear() + '-' + $.strPad((fecha.getMonth() + 1),2) + '-' +  $.strPad(fecha.getDate(),2);
     
-    //console.log(fecha)
 
     $("#fentrega").val(fecha);
+}
+
+capturarcolumnasfiltro = (tabla,columna) => {
+    DATA = [];
+    let TABLA = tabla;
+    
+    //
+
+    TABLA.each(function(){
+        let valor = $(this).find('td').eq(columna).text();
+
+        DATA.push(valor);
+    });
+
+    console.log(DATA);
 }
 
