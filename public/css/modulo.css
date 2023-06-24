@@ -237,6 +237,16 @@
           column-gap: 10px;
 }
 
+.tres_columnas_combo {
+  position: relative;
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 16% 10px 1fr 10px 10%;
+  grid-template-columns: 16% 1fr 10%;
+  gap: 10px;
+  padding-right: 5px;
+}
+
 .dashBoard {
   display: -ms-grid;
   display: grid;

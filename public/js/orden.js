@@ -143,6 +143,7 @@ $(function(){
 
         $("#cpago").val("CREDITO A 30 DIAS");
         $("#codigo_pago").val(73);
+        $("#codigo_almacen").val(7);
 
         accion = 'n';
         grabado = false;
@@ -187,6 +188,7 @@ $(function(){
         if (contenedor_padre == "listaAlmacen"){
             $("#codigo_almacen").val(codigo);
             $("#direccion_almacen").val($(this).data('direccion'));
+            $("#lentrega").val($(this).text());
         }else if (contenedor_padre == "listaTransporte"){
             $("#codigo_transporte").val(codigo);
         }else if (contenedor_padre == "listaMoneda"){
@@ -1000,6 +1002,15 @@ $(function(){
         e.preventDefault();
         
         sumardias();
+
+        return false;
+    });
+
+    //muestra la lista para entregras
+    $("#btnEntrega").click(function (e) { 
+        e.preventDefault();
+        
+        $(this).next().slideDown();
 
         return false;
     });

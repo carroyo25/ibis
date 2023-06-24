@@ -190,6 +190,14 @@ $anulado:#c2c2c2;
     column-gap: 10px;
 }
 
+.tres_columnas_combo {
+    position: relative;
+    display: grid;
+    grid-template-columns: 16% 1fr 10%;
+    gap: 10px;
+    padding-right: 5px;
+}
+
 
 .dashBoard{
     display: grid;

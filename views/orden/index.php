@@ -185,9 +185,10 @@
                                     <input type="text" name="referencia" id="referencia" class="cerrarLista">
                                 </div>
                             </div>
-                            <div class="column2">
+                            <div class="tres_columnas_combo">
                                 <label for="lentrega">Lugar Entrega:</label>
-                                <input type="text" name="lentrega" id="lentrega" class="mostrarLista busqueda" placeholder="Elija una opcion">
+                                <input type="text" name="lentrega" id="lentrega" class="mostrarLista busqueda">
+                                <button type="button" id="btnEntrega" class="btnCallMenu boton3">+</button>
                                 <div class="lista" id="listaAlmacen">
                                    <ul>
                                        <?php echo $this->listaAlmacenes?>
