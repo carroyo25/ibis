@@ -701,17 +701,32 @@ $anulado:#c2c2c2;
                 border: 1px solid #ccc;
                 position: absolute;
                 text-align: left;
-                margin: 5px;
                 width: 15rem;
-                padding: 5px;
                 line-height: 1.5rem;
                 border-radius: 3px;
                 display: none;
+                padding: 5px;
 
                 input {
                     border: 1px solid #ccc;
-                    width: 100%;
+                    width: 90%;
                     padding-left: 5px;
+                }
+
+                ul {
+                    display: flex;
+                    flex-direction: column;
+                    height: 20rem;
+                    overflow: auto;
+
+                    a {
+                        color: #000;
+
+                        &:hover {
+                            background: #0075B7;
+                            color: #fff;
+                        }
+                    }
                 }
             }
         }

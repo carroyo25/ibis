@@ -954,8 +954,11 @@ $(function(){
     $(".listaFiltroTabla").click(function (e) { 
         e.preventDefault();
         
-        //$(this).next().fadeIn();
-        console.log(capturarcolumnasfiltro($("#tablaDetalles tbody >tr"),0));
+        
+        $(this).next().fadeIn(function(){
+            capturarcolumnasfiltro($("#tablaPrincipal tbody >tr"),0);
+        });
+       
 
         return false;
     });
@@ -1193,16 +1196,13 @@ sumardias = () => {
 
 capturarcolumnasfiltro = (tabla,columna) => {
     DATA = [];
-    let TABLA = tabla;
-    
-    //
 
-    TABLA.each(function(){
+    tabla.each(function(){
         let valor = $(this).find('td').eq(columna).text();
 
-        DATA.push(valor);
+        $("#lista1").append(`<a href='#'>${valor}</a>`);
     });
 
-    console.log(DATA);
+    //console.log(DATA);
 }
 

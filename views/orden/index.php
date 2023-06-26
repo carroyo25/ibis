@@ -525,11 +525,7 @@
                         <div class="filtro">
                             <input type="text" name="txtSearchFilterTable" id="txtSearchFilterTable">
                             <ul id="lista1">
-                                <li>002081</li>
-                                <li>002080</li>
-                                <li>002079</li>
-                                <li>002078</li>
-                                <li>002077</li>
+                                 
                             </ul>
                         </div> 
                     </th>  
