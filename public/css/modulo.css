@@ -979,6 +979,8 @@
   border-radius: 3px;
   display: none;
   padding: 5px;
+  -webkit-box-shadow: 5px 6px 5px #c2c2c2;
+          box-shadow: 5px 6px 5px #c2c2c2;
 }
 .itemsTabla table thead .filtro input {
   border: 1px solid #ccc;
@@ -995,6 +997,10 @@
           flex-direction: column;
   height: 20rem;
   overflow: auto;
+}
+.itemsTabla table thead .filtro ul li {
+  display: block;
+  width: 100%;
 }
 .itemsTabla table thead .filtro ul a {
   color: #000;

@@ -84,5 +84,9 @@
         function marcaItem(){
             echo $this->model->marcarItemDespacho($_POST['id']);
         }
+
+        function guiaSunat() {
+            echo json_encode($this->model->enviarSunat($_POST['cabecera'],$_POST['detalles']));
+        }
     }
 ?>

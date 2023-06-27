@@ -135,11 +135,10 @@
                     $item=1;
                     
                     while ($rs = $sql->fetch()){
-                        //$saldo = $rs['ingresos'] - $rs['despachos'];
-                        $saldo = $rs['cantidad'] - $rs['despachos'];
+                        $saldo = $rs['ingresos'] - $rs['despachos'];
                         $pendientes = $rs['cantidad'] - $rs['ingresos'];
                        
-                        //if ( $rs['ingresos'] > 0 ) {
+                        if ( $rs['ingresos'] > 0 ) {
                             if ( $saldo > 0 ) {
 
                                 $series  = strlen($this->itemSeries($rs['niddeta'])) == 0 ? "" : strtoupper("N/S :".$this->itemSeries($rs['niddeta']));
@@ -170,7 +169,7 @@
                                         <td class="textoCentro">'.str_pad($rs['id_orden'],6,0,STR_PAD_LEFT).'</td>
                                     </tr>';
                             }    
-                        //}
+                        }
                     }
                 }
 
@@ -1186,5 +1185,107 @@
                 return false;
             }
         }
+
+        public function enviarSunat($cabecera,$detalles) {
+            header('Access-Control-Allow-Origin: *');
+
+            $header = json_decode($cabecera);
+            $body = json_decode($detalles);
+
+            $empresa = $header->destinatario_razon;
+            $guia    = $header->numero_guia;
+
+            $detalle = array();
+
+            $datos = json_decode($detalles);
+            $nreg = count($datos);
+
+            $detalles = [];
+
+            for ($i=0; $i < $nreg; $i++) { 
+                $detalles[$i] = $datos[$i];
+            }
+
+           ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+            $path = "public/documentos/guia_electronica/";
+
+            $nombre_archivo = $header->destinatario_ruc.'-09-'.$header->serie_guia.'-'.$header->numero_guia;
+
+            if(file_exists($path."XML/".$nombre_archivo.".xml")){
+                unlink($path."XML/".$nombre_archivo.".xml");  
+            }
+
+            $this->crearXML($path,$nombre_archivo,$header, $detalle);
+
+            return array("archivo" => $nombre_archivo);
+        }
+
+
+        private function crearXML($path,$nombre_archivo,$header, $detalle){
+            $xml = $this->desarrollo_xml($header, $detalle);
+            $archivo = fopen($path."XML/".$nombre_archivo.".xml", "w+");
+            fwrite($archivo, utf8_decode($xml));
+            fclose($archivo);
+        }
+
+
+        private function desarrollo_xml($header,$detalles){
+
+            $xml =  '<?xml version="1.0" encoding="UTF-8"?>
+                        <DespatchAdvice xmlns="urn:oasis:names:specification:ubl:schema:xsd:DespatchAdvice-2" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2">                    
+                        <ext:UBLExtensions>
+                            <ext:UBLExtension>
+                                <ext:ExtensionContent></ext:ExtensionContent>
+                            </ext:UBLExtension>
+                        </ext:UBLExtensions>
+                        <cbc:UBLVersionID>2.1</cbc:UBLVersionID>
+                        <cbc:CustomizationID>2.0</cbc:CustomizationID>
+                        <cbc:ID>'.$header->serie_guia.'-'.$header->numero_guia.'</cbc:ID>
+                        <cbc:IssueDate>'.$header->fgemision.'</cbc:IssueDate>
+                        <cbc:IssueTime>'.date("H:i:s").'</cbc:IssueTime>
+                        <cbc:DespatchAdviceTypeCode>09</cbc:DespatchAdviceTypeCode>
+                        <cac:Signature>
+                        <cbc:ID>'.$header->destinatario_ruc.'</cbc:ID>
+                        <cac:SignatoryParty>
+                            <cac:PartyIdentification>
+                            <cbc:ID>'.$header->destinatario_ruc.'</cbc:ID>
+                            </cac:PartyIdentification>
+                        </cac:SignatoryParty>
+                        <cac:DigitalSignatureAttachment>
+                            <cac:ExternalReference>
+                            <cbc:URI>'.$header->destinatario_ruc.'</cbc:URI>
+                            </cac:ExternalReference>
+                        </cac:DigitalSignatureAttachment>
+                        </cac:Signature>';
+            $xml .= '<cac:DespatchSupplierParty>
+                        <cac:Party>
+                            <cac:PartyIdentification>
+                                <cbc:ID schemeID="6" schemeName="Documento de Identidad" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">'.$header->destinatario_ruc.'</cbc:ID>
+                            </cac:PartyIdentification>
+                            <cac:PartyName>
+                                <cbc:Name><![CDATA['.$header->destinatario_razon.']]></cbc:Name>
+                            </cac:PartyName>
+                            <cac:PartyLegalEntity>
+                                <cbc:RegistrationName><![CDATA['.$header->destinatario_razon.']]></cbc:RegistrationName>
+                            </cac:PartyLegalEntity>
+                        </cac:Party>
+                    </cac:DespatchSupplierParty>';
+            $xml .= '<cac:DeliveryCustomerParty>
+                    <cac:Party>
+                        <cac:PartyIdentification>
+                            <cbc:ID schemeID="6" schemeName="Documento de Identidad" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">'.$guia['numero_documento'].'</cbc:ID>
+                        </cac:PartyIdentification>
+                        <cac:PartyLegalEntity>
+                            <cbc:RegistrationName><![CDATA['.$guia['entidad'].']]></cbc:RegistrationName>
+                        </cac:PartyLegalEntity>
+                    </cac:Party>
+                </cac:DeliveryCustomerParty>';
+                        
+            $xml.=  '</DespatchAdvice>';
+            return $xml;
+        }
+
+
     } 
 ?>

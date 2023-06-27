@@ -9,6 +9,7 @@ $(function(){
         autorizado = 0,
         costos = "",
         fp = 0;
+        datafiltro = "";
     
     $("#esperar").fadeOut();
 
@@ -954,14 +955,40 @@ $(function(){
     $(".listaFiltroTabla").click(function (e) { 
         e.preventDefault();
         
-        
         $(this).next().fadeIn(function(){
-            capturarcolumnasfiltro($("#tablaPrincipal tbody >tr"),0);
+            capturarColumnasFiltro($("#tablaPrincipal tbody >tr"),0);
         });
-       
 
         return false;
     });
+
+    $(".filtro").on('click','a', function(e) {
+        e.preventDefault();
+
+        $(this).parent().parent().parent().fadeOut(function(){
+
+            //let l =  
+
+            $("#lista1").empty();
+        });
+
+        return false;
+    });
+
+    $("#txtSearchFilterTable").keyup(function () { 
+        var value = $(this).val().toLowerCase();
+        
+        //asignar a una variable el contenido
+        let l = "#"+ $(this).next().attr("id")+ " li a"
+
+        $(l).filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+
+    });
+
+
+    //filtrar tablas por la cabecera
 
     //cuando presiona el icono
 
@@ -1077,7 +1104,7 @@ detalles = () => {
 }
 
 comentarios = () => {
-    COMENTARIOS = [];
+    let COMENTARIOS = [];
 
     let TABLA = $("#tablaComentarios tbody >tr");
 
@@ -1165,7 +1192,6 @@ sumarAdicionales = (TABLA,indice) =>{
 }
 
 calcularTotales = () => {
-
     let im = 0,
         adic = parseFloat(sumarAdicionales($("#tablaAdicionales tbody >tr"),2)),
         np   = $("#total_numero").val();
@@ -1194,15 +1220,13 @@ sumardias = () => {
     $("#fentrega").val(fecha);
 }
 
-capturarcolumnasfiltro = (tabla,columna) => {
+capturarColumnasFiltro = (tabla,columna) => {
     DATA = [];
 
     tabla.each(function(){
         let valor = $(this).find('td').eq(columna).text();
 
-        $("#lista1").append(`<a href='#'>${valor}</a>`);
+        $("#lista1").append(`<li><a href='#'>${valor}</a></li>`);
     });
-
-    //console.log(DATA);
 }
 

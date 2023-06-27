@@ -284,7 +284,6 @@ $(function() {
         e.preventDefault();
 
         accion = 'u';
-        console.log(accion);
 
         $.post(RUTA+"bienes/itemsId", {id:$(this).data("id")},
             function (data, textStatus, jqXHR) {

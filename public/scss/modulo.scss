@@ -706,6 +706,7 @@ $anulado:#c2c2c2;
                 border-radius: 3px;
                 display: none;
                 padding: 5px;
+                box-shadow: 5px 6px 5px #c2c2c2;
 
                 input {
                     border: 1px solid #ccc;
@@ -718,6 +719,11 @@ $anulado:#c2c2c2;
                     flex-direction: column;
                     height: 20rem;
                     overflow: auto;
+                    
+                    li {
+                        display: block;
+                        width: 100%;
+                    }
 
                     a {
                         color: #000;

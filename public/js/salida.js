@@ -655,6 +655,38 @@ $(function() {
             });
         }
     });
+
+    $("#guiaSunat").click(function(e){
+        e.preventDefault();
+
+
+        let result = {};
+    
+        $.each($("#guiaremision").serializeArray(),function(){
+            result[this.name] = this.value;
+        });
+        
+        let datosJSON = new FormData();
+
+        datosJSON.append("cabecera",JSON.stringify(result));
+        datosJSON.append("detalles",JSON.stringify(detalles(tipoVista)));
+
+        $.ajax({
+            type: "POST",
+            url: RUTA+"salida/guiaSunat",
+            data: datosJSON,
+            dataType: "json",
+            contentType:false,      
+            processData:false,
+            success: function (data) {
+                console.log(data);
+            }
+        });
+
+        //console.log(result);
+
+        return false;
+    });
 })
 
 
