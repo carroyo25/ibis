@@ -959,7 +959,6 @@
   color: #fff;
   font-size: 0.7rem;
   height: 1.2rem;
-  position: relative;
 }
 .itemsTabla table thead th {
   position: relative;
@@ -974,13 +973,17 @@
   border: 1px solid #ccc;
   position: absolute;
   text-align: left;
-  width: 15rem;
+  min-width: 15rem;
+  width: -webkit-max-content;
+  width: -moz-max-content;
+  width: max-content;
   line-height: 1.5rem;
   border-radius: 3px;
   display: none;
   padding: 5px;
   -webkit-box-shadow: 5px 6px 5px #c2c2c2;
           box-shadow: 5px 6px 5px #c2c2c2;
+  top: 30px;
 }
 .itemsTabla table thead .filtro input {
   border: 1px solid #ccc;
@@ -1004,6 +1007,7 @@
 }
 .itemsTabla table thead .filtro ul a {
   color: #000;
+  display: block;
 }
 .itemsTabla table thead .filtro ul a:hover {
   background: #0075B7;

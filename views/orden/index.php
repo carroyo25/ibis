@@ -519,18 +519,24 @@
     <div class="itemsTabla">
         <table id="tablaPrincipal">
             <thead class="stickytop">
-                    <tr>
-                    <th rowspan="2">Num. 
-                        <a href="#" class="listaFiltroTabla" data-idcol="1"><i class="fas fa-angle-down"></i></a>
+                <tr>
+                    <th rowspan="2" data-idcol="0">Num. 
+                        <a href="#" class="listaFiltroTabla" data-idcol="0"><i class="fas fa-angle-down"></i></a>
                         <div class="filtro">
-                            <input type="text" name="txtSearchFilterTable" id="txtSearchFilterTable">
-                            <ul id="lista1">
-                                 
+                            <input type="text" name="txtSearchFilterTable" id="txtSearchFilterTable" class="filterSearch">
+                            <ul class="ul_filtro"> 
                             </ul>
                         </div> 
                     </th>  
                     <th rowspan="2">Emision</th>
-                    <th rowspan="2">Descripción <a href="#"><i class="fas fa-angle-down"></i></a></th>
+                    <th rowspan="2" data-idcol="2">Descripción 
+                        <a href="#" class="listaFiltroTabla" data-idcol="2"><i class="fas fa-angle-down"></i></a>
+                        <div class="filtro">
+                            <input type="text" name="txtSearchFilterTable" id="txtSearchFilterTable" class="filterSearch">
+                            <ul class="ul_filtro"> 
+                            </ul>
+                        </div>
+                    </th>
                     <th rowspan="2" width="5%">C. Costos <a href="#"><i class="fas fa-angle-down"></i></a></th> 
                     <th rowspan="2">Area <a href="#"><i class="fas fa-angle-down"></i></a></th>
                     <th rowspan="2">Proveedor <a href="#"><i class="fas fa-angle-down"></i></a></th>
@@ -543,7 +549,6 @@
                         <th>Finanzas</th>
                         <th>Operaciones</th>
                     </tr>
-                    
                 </tr>
             </thead>
             <tbody>

@@ -684,7 +684,6 @@ $anulado:#c2c2c2;
             color:$blanco;
             font-size: .7rem;
             height: 1.2rem;
-            position:relative;
 
             th {
                 position: relative;
@@ -701,12 +700,14 @@ $anulado:#c2c2c2;
                 border: 1px solid #ccc;
                 position: absolute;
                 text-align: left;
-                width: 15rem;
+                min-width: 15rem;
+                width: max-content;
                 line-height: 1.5rem;
                 border-radius: 3px;
                 display: none;
                 padding: 5px;
                 box-shadow: 5px 6px 5px #c2c2c2;
+                top: 30px;
 
                 input {
                     border: 1px solid #ccc;
@@ -727,6 +728,7 @@ $anulado:#c2c2c2;
 
                     a {
                         color: #000;
+                        display: block;
 
                         &:hover {
                             background: #0075B7;

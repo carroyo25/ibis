@@ -119,8 +119,6 @@ $(function(){
         ingresos    = 0
         swcoment    = false;
 
-        console.log(accion);
-    
         return false;
     });
 
@@ -951,12 +949,14 @@ $(function(){
         return false;
     });
 
-    //filtros en las tablas
+     //filtrar tablas por la cabecera
     $(".listaFiltroTabla").click(function (e) { 
         e.preventDefault();
+
+        let idx = parseInt($(this).parent().data("idcol"));
         
-        $(this).next().fadeIn(function(){
-            capturarColumnasFiltro($("#tablaPrincipal tbody >tr"),0);
+        $(this).next().toggle(function(){
+            capturarValoresColumnas($("#tablaPrincipal tbody >tr"),idx);
         });
 
         return false;
@@ -965,21 +965,26 @@ $(function(){
     $(".filtro").on('click','a', function(e) {
         e.preventDefault();
 
-        $(this).parent().parent().parent().fadeOut(function(){
+        let padre = $(this).parent().parent().parent(),
+            value = $(this).text(),
+            columna = $(this).parent().parent().parent().parent().data('idcol');
 
-            //let l =  
+        mostrarValoresFiltrados($("#tablaPrincipal tbody tr"),columna,value);
 
-            $("#lista1").empty();
+        padre.fadeOut(function(){
+            $(".ul_filtro").empty();
         });
+
+        //console.log($(this).parent().parent().parent().parent().data('idcol'));
 
         return false;
     });
 
-    $("#txtSearchFilterTable").keyup(function () { 
-        var value = $(this).val().toLowerCase();
+    $(".filterSearch").keyup(function () { 
         
-        //asignar a una variable el contenido
-        let l = "#"+ $(this).next().attr("id")+ " li a"
+        let value = $(this).val().toLowerCase();
+
+        let l = ".ul_filtro"+ " li a"
 
         $(l).filter(function() {
             $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
@@ -987,11 +992,10 @@ $(function(){
 
     });
 
-
-    //filtrar tablas por la cabecera
+    //////////////////////////////////////////////////
+   
 
     //cuando presiona el icono
-
     $(".listaArchivos").on("click",'.icono_archivo', function (e) {
         e.preventDefault();
 
@@ -1123,9 +1127,7 @@ comentarios = () => {
             item['grabar']      = GRABAR;
 
             COMENTARIOS.push(item);
-        }
-
-        
+        }        
     });
 
     return COMENTARIOS;
@@ -1220,13 +1222,30 @@ sumardias = () => {
     $("#fentrega").val(fecha);
 }
 
-capturarColumnasFiltro = (tabla,columna) => {
+
+//filtros en tablas
+
+capturarValoresColumnas = (tabla,columna) => {
     DATA = [];
 
     tabla.each(function(){
         let valor = $(this).find('td').eq(columna).text();
 
-        $("#lista1").append(`<li><a href='#'>${valor}</a></li>`);
+        $(".ul_filtro").append(`<li><a href='#'>${valor}</a></li>`);
     });
 }
+
+mostrarValoresFiltrados = (tabla,columna,valor) => {
+    tabla.each(function(){
+        if ($(this).find('td').eq(columna).text() === valor){
+            $(this).show();
+        }else{
+            $(this).hide();
+        }
+    });
+}
+
+
+
+
 
