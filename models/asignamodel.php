@@ -109,10 +109,11 @@
                 $salida = "";
                 $mes  = date("m");
 
-                $tipo   = $parametros['tipoSearch'] == -1 ? "%" : "%".$parametros['tipoSearch']."%";
+                $tipo   = $parametros['tipoSearch'] == -1 ? "%" : $parametros['tipoSearch'];
                 $costos = $parametros['costosSearch'] == -1 ? "%" : $parametros['costosSearch'];
                 $mes    = $parametros['mesSearch'] == -1 ? "%" :  $parametros['mesSearch'];
                 $anio   = $parametros['anioSearch'];
+                
 
                 $sql = $this->db->connect()->prepare("SELECT
                                                         ibis.tb_pedidocab.nrodoc,
@@ -143,7 +144,6 @@
                                                     WHERE
                                                         ibis.tb_pedidocab.estadodoc = 54
                                                         AND ibis.tb_pedidocab.nflgactivo = 1
-                                                        AND ISNULL(ibis.tb_pedidocab.asigna)
                                                         AND ibis.tb_pedidocab.idtipomov LIKE :tipomov 
                                                         AND ibis.tb_pedidocab.idcostos LIKE :costos 
                                                         AND MONTH ( ibis.tb_pedidocab.emision ) LIKE :mes 

@@ -28,6 +28,8 @@
                     <input type="hidden" name="codigo_salida" id="codigo_salida">
                     <input type="hidden" name="id_centi" id="id_centi">
                     <input type="hidden" name="guia" id="guia">
+                    <input type="hidden" name="ubigeo_origen" id="ubigeo_origen">
+                    <input type="hidden" name="ubigeo_destino" id="ubigeo_destino">
 
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
@@ -204,6 +206,8 @@
                 <input type="hidden" name="codigo_tipo" id="codigo_tipo">
                 <input type="hidden" name="motivo_traslado" id="motivo_traslado">
                 <input type="hidden" name="id_guia" id="id_guia" value=0>
+                <input type="hidden" name="ubig_origen" id="ubig_origen">
+                <input type="hidden" name="ubig_destino" id="ubig_destino">
 
                 <div class="tituloDocumento">
                     <div>
@@ -331,6 +335,9 @@
                             <span></span>
                             <label for="licencia_conducir">N° Licencia :</label>
                             <input type="text" name="licencia_conducir" id="licencia_conducir" class="cerrarLista">
+                            <span></span>
+                            <label for="coductor_dni">DNI conductor :</label>
+                            <input type="text" name="conductor_dni" id="conductor_dni" class="cerrarLista">
                         </div>
                         <p><strong>Datos del Vehiculo</strong></p>
                         <div class="tres_columnas_interna">
@@ -339,6 +346,14 @@
                             <span></span>
                             <label for="placa">Nro. Placa :</label>
                             <input type="text" name="placa" id="placa">
+                        </div>
+                        <p><strong>Datos Adicionales</strong></p>
+                        <div class="tres_columnas_interna">
+                            <label for="marca">peso :</label>
+                            <input type="text" name="peso" id="peso">
+                            <span></span>
+                            <label for="bultos">Nro. Bultos :</label>
+                            <input type="text" name="bultos" id="bultos">
                         </div>
                     </div>
                 </div>

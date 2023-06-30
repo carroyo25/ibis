@@ -383,7 +383,7 @@
 
                 if ($rowCount > 0) {
                     while($rs = $sql->fetch()) {
-                        $existencia = $rs['ingreso']+$rs['inventario'];
+                        $existencia = $rs['ingreso'] +$rs['inventario'];
                         $enviar = $rs['cant_aprob'] - $rs['cant_orden'];
 
                         $salida .= '<tr data-iditem="'.$rs['iditem'].'" 

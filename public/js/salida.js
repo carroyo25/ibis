@@ -41,6 +41,11 @@ $(function() {
                 $("#movimiento").val(data.cabecera[0].movimiento);
                 $("#almacen_origen_direccion").val(data.cabecera[0].direccion_origen);
                 $("#almacen_destino_direccion").val(data.cabecera[0].direccion_destino);
+                $("#ubigeo_origen").val(data.cabecera[0].ubigeo_origen);
+                $("#ubigeo_destino").val(data.cabecera[0].ubigeo_destino);
+
+                $("#ubig_origen").val(data.cabecera[0].ubigeo_origen);
+                $("#ubig_destino").val(data.cabecera[0].ubigeo_destino);
 
                 //guias
 
@@ -65,6 +70,7 @@ $(function() {
                     $("#licencia_conducir").val(data.guias[0].clicencia);
                     $("#marca").val(data.guias[0].cmarca);
                     $("#placa").val(data.guias[0].cplaca);
+                    
                 }
                 
                 $("#estado")

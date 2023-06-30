@@ -115,7 +115,7 @@
                                                         tb_pedidodet.idpedido,
                                                         tb_pedidodet.nroparte,
                                                         REPLACE ( FORMAT( lg_ordendet.ncanti, 2 ), ',', '' ) AS cantidad,
-                                                        ( SELECT SUM( DISTINCT alm_recepdet.ncantidad ) FROM alm_recepdet WHERE alm_recepdet.niddetaOrd = lg_ordendet.nitemord 
+                                                        ( SELECT SUM( alm_recepdet.ncantidad ) FROM alm_recepdet WHERE alm_recepdet.niddetaOrd = lg_ordendet.nitemord 
                                                             AND alm_recepdet.nflgActivo = 1) AS ingresos,
                                                         ( SELECT SUM( alm_despachodet.ndespacho ) FROM alm_despachodet WHERE alm_despachodet.niddetaOrd = lg_ordendet.nitemord 
                                                         AND alm_despachodet.nflgActivo = 1) AS despachos 
@@ -733,7 +733,9 @@
                                                     tb_user.cnombres,
                                                     movimientos.nidreg,
                                                     movimientos.cdescripcion AS tipo_movimiento,
-                                                    estado.cdescripcion AS estado
+                                                    estado.cdescripcion AS estado,
+                                                    origen.ncubigeo AS ubigeo_origen,
+                                                    destino.ncubigeo AS ubigeo_destino
                                                 FROM
                                                     alm_despachocab
                                                 INNER JOIN tb_almacen AS origen ON alm_despachocab.ncodalm1 = origen.ncodalm
@@ -1274,14 +1276,71 @@
             $xml .= '<cac:DeliveryCustomerParty>
                     <cac:Party>
                         <cac:PartyIdentification>
-                            <cbc:ID schemeID="6" schemeName="Documento de Identidad" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">'.$guia['numero_documento'].'</cbc:ID>
+                            <cbc:ID schemeID="6" schemeName="Documento de Identidad" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">'.$header->destinatario_ruc.'</cbc:ID>
                         </cac:PartyIdentification>
                         <cac:PartyLegalEntity>
-                            <cbc:RegistrationName><![CDATA['.$guia['entidad'].']]></cbc:RegistrationName>
+                            <cbc:RegistrationName><![CDATA['.$header->destinatario_razon.']]></cbc:RegistrationName>
                         </cac:PartyLegalEntity>
                     </cac:Party>
                 </cac:DeliveryCustomerParty>';
-                        
+
+            $xml .= '<cac:Shipment>
+                        <cbc:ID>SUNAT_Envio</cbc:ID>
+                        <cbc:HandlingCode listAgencyName="PE:SUNAT" listName="Motivo de traslado" listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo20">01</cbc:HandlingCode>
+                        <cbc:GrossWeightMeasure unitCode="KGM">'.$header->peso.'</cbc:GrossWeightMeasure>
+                        <cbc:TotalTransportHandlingUnitQuantity>'.$header->bultos.'</cbc:TotalTransportHandlingUnitQuantity>';
+            
+            $xml .= '<cac:ShipmentStage>
+                    <cbc:ID>1</cbc:ID>
+                    <cbc:TransportModeCode listAgencyName="PE:SUNAT" listName="Modalidad de traslado" listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo18">0'.$header->modalidad_traslado.'</cbc:TransportModeCode>
+                    <cac:TransitPeriod>
+                        <cbc:StartDate>'.$header->ftraslado.'</cbc:StartDate>
+                    </cac:TransitPeriod>';
+
+            $xml .= '<cac:CarrierParty>
+                            <cac:PartyIdentification>
+                                <cbc:ID schemeID="6" schemeName="Documento de Identidad" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">'.$header->numero_guia.'</cbc:ID>
+                            </cac:PartyIdentification>
+                            <cac:PartyLegalEntity>
+                                <cbc:RegistrationName><![CDATA['.$header->empresa_transporte_razon.']]></cbc:RegistrationName>
+                            </cac:PartyLegalEntity>
+                        </cac:CarrierParty>';
+            
+            $xml .= '<cac:DriverPerson>
+                        <cbc:ID schemeID="1" schemeName="Documento de Identidad" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">'.$header->conductor_dni.'</cbc:ID>
+                        <cbc:FirstName>'.$header->nombre_conductor.'</cbc:FirstName>
+                        <cbc:FamilyName>'.$header->nombre_conductor.'</cbc:FamilyName>
+                        <cbc:JobTitle>Principal</cbc:JobTitle>
+                        <cac:IdentityDocumentReference>
+                            <cbc:ID>'.$header->licencia_conducir.'</cbc:ID>
+                        </cac:IdentityDocumentReference>
+                    </cac:DriverPerson>';
+            
+            $xml .= '</cac:ShipmentStage>
+                    <cac:Delivery>
+                        <cac:DeliveryAddress>
+                            <cbc:ID schemeName="Ubigeos" schemeAgencyName="PE:INEI">'.$header->ubig_destino.'</cbc:ID>
+                            <cac:AddressLine>
+                                <cbc:Line>'.$header->ubig_destino.'</cbc:Line>
+                            </cac:AddressLine>
+                        </cac:DeliveryAddress>
+                        <cac:Despatch>
+                            <cac:DespatchAddress>
+                                <cbc:ID schemeName="Ubigeos" schemeAgencyName="PE:INEI">'.$header->ubig_origen.'</cbc:ID>
+                                <cac:AddressLine>
+                                    <cbc:Line>'.$header->almacen_origen_direccion.'</cbc:Line>
+                                </cac:AddressLine>
+                            </cac:DespatchAddress>
+                        </cac:Despatch>
+                    </cac:Delivery>';
+            $xml .= '</cac:Shipment>';
+            
+            $i = 1;
+            
+            foreach ($detalles as $detalle) {
+
+            }
+            
             $xml.=  '</DespatchAdvice>';
             return $xml;
         }
