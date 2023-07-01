@@ -1197,17 +1197,6 @@
             $empresa = $header->destinatario_razon;
             $guia    = $header->numero_guia;
 
-            $detalle = array();
-
-            $datos = json_decode($detalles);
-            $nreg = count($datos);
-
-            $detalles = [];
-
-            for ($i=0; $i < $nreg; $i++) { 
-                $detalles[$i] = $datos[$i];
-            }
-
            ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
             $path = "public/documentos/guia_electronica/";
@@ -1218,14 +1207,14 @@
                 unlink($path."XML/".$nombre_archivo.".xml");  
             }
 
-            $this->crearXML($path,$nombre_archivo,$header, $detalle);
+            $this->crearXML($path,$nombre_archivo,$header, $body);
 
             return array("archivo" => $nombre_archivo);
         }
 
 
-        private function crearXML($path,$nombre_archivo,$header, $detalle){
-            $xml = $this->desarrollo_xml($header, $detalle);
+        private function crearXML($path,$nombre_archivo,$header, $body){
+            $xml = $this->desarrollo_xml($header, $body);
             $archivo = fopen($path."XML/".$nombre_archivo.".xml", "w+");
             fwrite($archivo, utf8_decode($xml));
             fclose($archivo);
@@ -1233,7 +1222,6 @@
 
 
         private function desarrollo_xml($header,$detalles){
-
             $xml =  '<?xml version="1.0" encoding="UTF-8"?>
                         <DespatchAdvice xmlns="urn:oasis:names:specification:ubl:schema:xsd:DespatchAdvice-2" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2">                    
                         <ext:UBLExtensions>
@@ -1338,7 +1326,20 @@
             $i = 1;
             
             foreach ($detalles as $detalle) {
-
+                $xml .=  '<cac:DespatchLine>
+                    <cbc:ID>'.$i.'</cbc:ID>
+                    <cbc:DeliveredQuantity unitCode="'.$detalle->unidad.'">'.$detalle->cantidad.'</cbc:DeliveredQuantity>
+                    <cac:OrderLineReference>
+                        <cbc:LineID>1</cbc:LineID>
+                    </cac:OrderLineReference>
+                    <cac:Item>
+                        <cbc:Description>'.utf8_encode($detalle->descripcion).'</cbc:Description>
+                        <cac:SellersItemIdentification>
+                        <cbc:ID>'.$detalle->codigo.'</cbc:ID>
+                        </cac:SellersItemIdentification>
+                    </cac:Item>
+                </cac:DespatchLine>';                        
+                $i++;
             }
             
             $xml.=  '</DespatchAdvice>';
