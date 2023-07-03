@@ -1207,19 +1207,30 @@
                 unlink($path."XML/".$nombre_archivo.".xml");  
             }
 
-            $this->crearXML($path,$nombre_archivo,$header, $body);
+            $token = $this->token('d12d8bf5-4b57-4c57-9569-9072b3e1bfcd', 'iLMGwQBEehJMXQ+Z/LR2KA==', '20504898173SISTEMA1', 'Lima123');
+            $this->crear_files($path,$nombre_archivo, $header, $body);
+            
+            //$archivoXML = $this->crearXML($path,$nombre_archivo,$header, $body);
+            //$envioXMl = $this->envio_xml($path,$nombre_archivo,$token);
 
-            return array("archivo" => $nombre_archivo);
+
+            return array("archivo" => $nombre_archivo,"token" => $token, "envio" => $envioXMl);
         }
 
-
-        private function crearXML($path,$nombre_archivo,$header, $body){
+        private function crear_files($path,$nombre_archivo,$header, $body){
             $xml = $this->desarrollo_xml($header, $body);
             $archivo = fopen($path."XML/".$nombre_archivo.".xml", "w+");
             fwrite($archivo, utf8_decode($xml));
             fclose($archivo);
-        }
 
+            $this->firmar_xml($nombre_archivo.".xml", "1");
+
+            $zip = new ZipArchive();
+            if($zip->open($path."FIRMA/".$nombre_archivo.".zip", ZipArchive::CREATE) === true){
+                $zip->addFile($path."FIRMA/".$nombre_archivo.".xml", $nombre_archivo.".xml");
+            }
+            return $nombre_archivo;
+        }
 
         private function desarrollo_xml($header,$detalles){
             $xml =  '<?xml version="1.0" encoding="UTF-8"?>
@@ -1346,6 +1357,81 @@
             return $xml;
         }
 
+        private function token($client_id, $client_secret, $usuario_secundario, $usuario_password){
+            $url = "https://api-seguridad.sunat.gob.pe/v1/clientessol/".$client_id."/oauth2/token/";
+            $curl = curl_init($url);
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+            curl_setopt($curl, CURLOPT_POST, true);
 
+            $datos = array(
+                    'grant_type'    =>  'password',     
+                    'scope'         =>  'https://api-cpe.sunat.gob.pe',
+                    'client_id'     =>  $client_id,
+                    'client_secret' =>  $client_secret,
+                    'username'      =>  $usuario_secundario,
+                    'password'      =>  $usuario_password
+            );
+            
+            curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($datos));
+            curl_setopt($curl, CURLOPT_COOKIEJAR, "public/documentos/cookies/cookies.txt");
+
+            $headers = array('Content-Type' => 'Application/json');
+            curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+            $result = curl_exec($curl);
+            curl_close($curl);
+
+            $response = json_decode($result);
+            return $response->access_token;
+        }
+
+        private function envio_xml($path,$nombre_file,$token_access){
+            /*$curl = curl_init();
+            $data = array(
+                        'nomArchivo'  =>  $nombre_file.".zip",
+                        'arcGreZip'   =>  base64_encode(file_get_contents($path.$nombre_file.'.zip')),
+                        'hashZip'     =>  hash_file("sha256", $path.$nombre_file.'.zip')
+                    );
+            curl_setopt_array($curl, array(
+                        CURLOPT_URL => "https://api-cpe.sunat.gob.pe/v1/contribuyente/gem/comprobantes/".$nombre_file,
+                        CURLOPT_RETURNTRANSFER => true,
+                        CURLOPT_ENCODING => '',
+                        CURLOPT_MAXREDIRS => 10,
+                        CURLOPT_TIMEOUT => 0,
+                        CURLOPT_FOLLOWLOCATION => true,
+                        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                        CURLOPT_CUSTOMREQUEST => 'POST',
+                        CURLOPT_POSTFIELDS =>json_encode(array('archivo' => $data)),
+                        CURLOPT_HTTPHEADER => array(
+                            'Authorization: Bearer '. $token_access,
+                            'Content-Type: application/json'
+                        ),
+                    ));
+                
+            $response2 = curl_exec($curl);
+            curl_close($curl);
+            return json_decode($response2);
+
+            */
+
+            $original_file =  $path."XML/".$nombre_file.'.xml';
+            $destination_file = $path."FIRMA/".$nombre_file.'.zip';
+            
+            $zip = new ZipArchive();
+            $zip->open($destination_file,ZipArchive::CREATE);
+            $zip->addFile($original_file);
+            $zip->close();
+        }
+
+        private function firmar_xml($name_file, $entorno, $baja = ''){        
+            $xmlstr = file_get_contents("public/documentos/guia_electronica/XML/".$name_file);
+        
+            $domDocument = new \DOMDocument();
+            $domDocument->loadXML($xmlstr);
+            $factura  = new Factura();
+            $xml = $factura->firmar($domDocument, '', $entorno);
+            $content = $xml->saveXML();
+            file_put_contents("public/documentos/guia_electronica/FIRMA/".$name_file, $content);
+        }
     } 
 ?>
