@@ -520,27 +520,13 @@
         <table id="tablaPrincipal">
             <thead class="stickytop">
                 <tr>
-                    <th rowspan="2" data-idcol="0">Num. 
-                        <a href="#" class="listaFiltroTabla" data-idcol="0"><i class="fas fa-angle-down"></i></a>
-                        <div class="filtro">
-                            <input type="text" name="txtSearchFilterTable" id="txtSearchFilterTable" class="filterSearch">
-                            <ul class="ul_filtro"> 
-                            </ul>
-                        </div> 
-                    </th>  
+                    <th rowspan="2" data-idcol="0" class="datafiltro">Num.</th>  
                     <th rowspan="2">Emision</th>
-                    <th rowspan="2" data-idcol="2">Descripción 
-                        <a href="#" class="listaFiltroTabla" data-idcol="2"><i class="fas fa-angle-down"></i></a>
-                        <div class="filtro">
-                            <input type="text" name="txtSearchFilterTable" id="txtSearchFilterTable" class="filterSearch">
-                            <ul class="ul_filtro"> 
-                            </ul>
-                        </div>
-                    </th>
-                    <th rowspan="2" width="5%">C. Costos <a href="#"><i class="fas fa-angle-down"></i></a></th> 
-                    <th rowspan="2">Area <a href="#"><i class="fas fa-angle-down"></i></a></th>
-                    <th rowspan="2">Proveedor <a href="#"><i class="fas fa-angle-down"></i></a></th>
-                    <th rowspan="2">Usuario <a href="#"><i class="fas fa-angle-down"></i></a></th>
+                    <th rowspan="2" data-idcol="2" class="datafiltro">Descripción</th>
+                    <th rowspan="2" width="5%" data-idcol="3" class="datafiltro">C. Costos</th> 
+                    <th rowspan="2" data-idcol="4">Area</th>
+                    <th rowspan="2" data-idcol="5" class="datafiltro">Proveedor</th>
+                    <th rowspan="2" class="datafiltro" data-idcol="6">Usuario</th>
                     <th rowspan="2">Atencion</th>
                     <th colspan="3" width="16%">Firmas</th>
                     <th rowspan="2" width="3%">Comentarios</th>

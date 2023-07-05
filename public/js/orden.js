@@ -13,6 +13,16 @@ $(function(){
     
     $("#esperar").fadeOut();
 
+    $(".datafiltro").append(`
+        <a href="#" class="listaFiltroTabla" data-idcol="0"><i class="fas fa-angle-down"></i></a>
+        <div class="filtro">
+            <input type="text" class="filterSearch">
+            <ul class="ul_filtro"> 
+            </ul>
+        </div>
+    `);
+
+
     $("#tablaPrincipal tbody").on("click","tr", function (e) {
         e.preventDefault();
 
