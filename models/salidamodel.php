@@ -1190,6 +1190,7 @@
 
         public function enviarSunat($cabecera,$detalles) {
             header('Access-Control-Allow-Origin: *');
+            require 'public/libraries/efactura.php';
 
             $header = json_decode($cabecera);
             $body = json_decode($detalles);
@@ -1207,14 +1208,15 @@
                 unlink($path."XML/".$nombre_archivo.".xml");  
             }
 
-            $token = $this->token('d12d8bf5-4b57-4c57-9569-9072b3e1bfcd', 'iLMGwQBEehJMXQ+Z/LR2KA==', '20504898173SISTEMA1', 'Lima123');
-            $this->crear_files($path,$nombre_archivo, $header, $body);
+            $token_access = $this->token('d12d8bf5-4b57-4c57-9569-9072b3e1bfcd', 'iLMGwQBEehJMXQ+Z/LR2KA==', '20504898173SISTEMA1', 'Lima123');
+            $firma = $this->crear_files($path, $nombre_archivo, $header, $body);
+            $respuesta = $this->envio_xml($path.'FIRMA/', $nombre_archivo, $token_access);
+            $numero_ticket = $respuesta->numTicket;
+
+            sleep(2);//damos tiempo para que SUNAT procese y responda.
+            $respuesta_ticket = $this->envio_ticket($path.'CDR/', $numero_ticket, $token_access, $header->destinatario_ruc, $nombre_archivo);
             
-            //$archivoXML = $this->crearXML($path,$nombre_archivo,$header, $body);
-            //$envioXMl = $this->envio_xml($path,$nombre_archivo,$token);
-
-
-            return array("archivo" => $nombre_archivo,"token" => $token, "envio" => $envioXMl);
+            return array("archivo" => $nombre_archivo,"ticket" => $respuesta_ticket);
         }
 
         private function crear_files($path,$nombre_archivo,$header, $body){
@@ -1285,13 +1287,13 @@
 
             $xml .= '<cac:Shipment>
                         <cbc:ID>SUNAT_Envio</cbc:ID>
-                        <cbc:HandlingCode listAgencyName="PE:SUNAT" listName="Motivo de traslado" listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo20">01</cbc:HandlingCode>
+                        <cbc:HandlingCode listAgencyName="PE:SUNAT" listName="Motivo de traslado" listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo20">04</cbc:HandlingCode>
                         <cbc:GrossWeightMeasure unitCode="KGM">'.$header->peso.'</cbc:GrossWeightMeasure>
                         <cbc:TotalTransportHandlingUnitQuantity>'.$header->bultos.'</cbc:TotalTransportHandlingUnitQuantity>';
             
             $xml .= '<cac:ShipmentStage>
                     <cbc:ID>1</cbc:ID>
-                    <cbc:TransportModeCode listAgencyName="PE:SUNAT" listName="Modalidad de traslado" listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo18">0'.$header->modalidad_traslado.'</cbc:TransportModeCode>
+                    <cbc:TransportModeCode listAgencyName="PE:SUNAT" listName="Modalidad de traslado" listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo18">02</cbc:TransportModeCode>
                     <cac:TransitPeriod>
                         <cbc:StartDate>'.$header->ftraslado.'</cbc:StartDate>
                     </cac:TransitPeriod>';
@@ -1386,7 +1388,7 @@
         }
 
         private function envio_xml($path,$nombre_file,$token_access){
-            /*$curl = curl_init();
+            $curl = curl_init();
             $data = array(
                         'nomArchivo'  =>  $nombre_file.".zip",
                         'arcGreZip'   =>  base64_encode(file_get_contents($path.$nombre_file.'.zip')),
@@ -1412,7 +1414,7 @@
             curl_close($curl);
             return json_decode($response2);
 
-            */
+            
 
             $original_file =  $path."XML/".$nombre_file.'.xml';
             $destination_file = $path."FIRMA/".$nombre_file.'.zip';
@@ -1432,6 +1434,82 @@
             $xml = $factura->firmar($domDocument, '', $entorno);
             $content = $xml->saveXML();
             file_put_contents("public/documentos/guia_electronica/FIRMA/".$name_file, $content);
+        }
+
+        function envio_ticket($ruta_archivo_cdr, $ticket, $token_access, $ruc, $nombre_file){
+            if(($ticket == "") || ($ticket == null)){
+                $mensaje['cdr_hash'] = '';
+                $mensaje['cdr_msj_sunat'] = 'Ticket vacio';
+                $mensaje['cdr_ResponseCode']  = null;
+                $mensaje['numerror'] = null;
+            }else{
+            
+                $mensaje['ticket'] = $ticket;
+                $curl = curl_init();
+        
+                curl_setopt_array($curl, array(
+                    CURLOPT_URL => 'https://api-cpe.sunat.gob.pe/v1/contribuyente/gem/comprobantes/envios/'.$ticket,
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_ENCODING => '',
+                    CURLOPT_MAXREDIRS => 10,
+                    CURLOPT_TIMEOUT => 0,
+                    CURLOPT_FOLLOWLOCATION => true,
+                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                    CURLOPT_CUSTOMREQUEST => 'GET',
+                    CURLOPT_HTTPHEADER => array(
+                        'numRucEnvia: '.$ruc,
+                        'numTicket: '.$ticket,
+                        'Authorization: Bearer '. $token_access,
+                    ),
+                ));
+        
+                $response_1  = curl_exec($curl);
+                $response3  = json_decode($response_1);
+                $codRespuesta = $response3->codRespuesta;
+                curl_close($curl);                    
+                //var_dump($response3);exit;
+                
+                $mensaje['ticket_rpta'] = $codRespuesta;
+                if($codRespuesta == '99'){
+                    $error = $response3->error;
+                    $mensaje['cdr_hash'] = '';
+                    $mensaje['cdr_msj_sunat'] = $error->desError;
+                    $mensaje['cdr_ResponseCode'] = '99';
+                    $mensaje['numerror'] = $error->numError;            	            
+                }else if($codRespuesta == '98'){
+                    $mensaje['cdr_hash'] = '';
+                    $mensaje['cdr_msj_sunat'] = 'Envío en proceso';
+                    $mensaje['cdr_ResponseCode']  = '98';
+                    $mensaje['numerror'] = '98';                        
+                }else if($codRespuesta == '0'){
+                    $mensaje['arcCdr'] = $response3->arcCdr;
+                    $mensaje['indCdrGenerado'] = $response3->indCdrGenerado;
+                    
+                    file_put_contents($ruta_archivo_cdr . 'R-' . $nombre_file . '.ZIP', base64_decode($response3->arcCdr));
+        
+                    $zip = new ZipArchive;
+                    if ($zip->open($ruta_archivo_cdr . 'R-' . $nombre_file . '.ZIP') === TRUE) {
+                        $zip->extractTo($ruta_archivo_cdr);
+                        $zip->close();
+                    }
+                    //unlink($ruta_archivo_cdr . 'R-' . $nombre_file . '.ZIP');
+        
+                 //=============hash CDR=================
+                    $doc_cdr = new DOMDocument();
+                    $doc_cdr->load($ruta_archivo_cdr . 'R-' . $nombre_file . '.xml');
+                    
+                    $mensaje['cdr_hash']            = $doc_cdr->getElementsByTagName('DigestValue')->item(0)->nodeValue;
+                    $mensaje['cdr_msj_sunat']       = $doc_cdr->getElementsByTagName('Description')->item(0)->nodeValue;
+                    $mensaje['cdr_ResponseCode']    = $doc_cdr->getElementsByTagName('ResponseCode')->item(0)->nodeValue;        
+                    $mensaje['numerror']            = '';
+                }else{
+                    $mensaje['cdr_hash']            = '';
+                    $mensaje['cdr_msj_sunat']       = 'SUNAT FUERA DE SERVICIO';
+                    $mensaje['cdr_ResponseCode']    = '88';            
+                    $mensaje['numerror']            = '88';
+                }
+            }
+            return $mensaje;
         }
     } 
 ?>

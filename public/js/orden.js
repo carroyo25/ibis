@@ -985,8 +985,6 @@ $(function(){
             $(".ul_filtro").empty();
         });
 
-        //console.log($(this).parent().parent().parent().parent().data('idcol'));
-
         return false;
     });
 
