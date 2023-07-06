@@ -32,7 +32,9 @@
             echo json_encode($this->model->insertarOrden($_POST['cabecera'],
                                                         $_POST['detalles'],
                                                         $_POST['comentarios'],
-                                                        $_POST['adicionales'],$_FILES));
+                                                        $_POST['adicionales'],
+                                                        $_FILES,
+                                                        $_POST['usuario'],));
         }
 
         function modificaRegistro(){
@@ -56,7 +58,7 @@
         }
 
         function comentarios(){
-            echo $this->model->grabarComentarios($_POST['codigo'],$_POST['comentarios']);
+            echo $this->model->grabarComentarios($_POST['codigo'],$_POST['comentarios'],$_POST['usuario']);
         }
 
         function envioOrden(){

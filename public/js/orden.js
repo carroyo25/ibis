@@ -33,7 +33,7 @@ $(function(){
 
                 let estado = "textoCentro " + data.cabecera[0].estado;
                 let total = parseFloat(data.cabecera[0].total_multiplicado).toFixed(2);
-                total =  formatoNumeroConComas(total,2,'.',',');
+                total_format =  formatoNumeroConComas(total,2,'.',',');
 
                 $("#codigo_costos").val(data.cabecera[0].ncodcos);
                 $("#codigo_area").val(data.cabecera[0].ncodarea);
@@ -64,7 +64,7 @@ $(function(){
                 $("#concepto").val(data.cabecera[0].concepto);
                 $("#detalle").val(data.cabecera[0].detalle);
                 $("#moneda").val(data.cabecera[0].nombre_moneda);
-                $("#total").val(total);
+                $("#total").val(total_format);
                 $("#tipo").val(data.cabecera[0].tipo);
                 $("#fentrega").val(data.cabecera[0].ffechaent);
                 $("#cpago").val(data.cabecera[0].pagos);
@@ -79,14 +79,21 @@ $(function(){
                 $("#user_modifica").val(data.cabecera[0].userModifica);
                 $("#nro_pedido").val(data.cabecera[0].nrodoc);
                 $("#total_adicional").val(data.total_adicionales);
+                $("#oa").val(formatoNumeroConComas(data.total_adicionales,2,'.',','));
                 $("#referencia").val(data.cabecera[0].cReferencia);
-
                 
+                $("#in").val(total_format);
+
+                let igv = parseFloat(data.cabecera[0].total_multiplicado)*.18;
 
                if (data.cabecera[0].nigv != 0) {
                     $("#si").prop("checked", true);
+                    let igv_format = formatoNumeroConComas(igv,2,'.',',');
+
+                    $("#im").val(igv_format);
                }else {
                     $("#no").prop("checked", true);
+                    $("#im").val('0.00');
                };
 
 
@@ -478,7 +485,9 @@ $(function(){
         $("#comentarios").fadeOut();
 
         if ($("#codigo_estado").val() == 59 && !swcoment) {
-            $.post(RUTA+"orden/comentarios", {codigo:$("#codigo_orden").val(),comentarios:JSON.stringify(comentarios())},
+            $.post(RUTA+"orden/comentarios", {codigo:$("#codigo_orden").val(),
+                                              comentarios:JSON.stringify(comentarios()),
+                                              usuario:$("#id_user").val()},
                 function (data, textStatus, jqXHR) {
                     swcoment = true;
                 },
@@ -499,6 +508,7 @@ $(function(){
         })
 
         formData = new FormData();
+        formData.append("usuario",$("#id_user").val());
         formData.append("cabecera",JSON.stringify(result));
         formData.append("detalles",JSON.stringify(detalles()));
         formData.append("comentarios",JSON.stringify(comentarios()));
@@ -547,9 +557,10 @@ $(function(){
                     }
                 });
             }else if ( accion == 'u' ){
-                $.post(RUTA+"orden/modificaRegistro", {cabecera:result,
+                $.post(RUTA+"orden/modificaRegistro", { cabecera:result,
                                                         detalles:JSON.stringify(detalles()),
-                                                        comentarios:JSON.stringify(comentarios())},
+                                                        comentarios:JSON.stringify(comentarios()),
+                                                        usuario:$("#id_user").val()},
                     function (data, textStatus, jqXHR) {
                         $("#tablaDetalles tbody tr").attr('data-grabado',1);
                         mostrarMensaje(data.mensaje,data.clase);
@@ -969,6 +980,7 @@ $(function(){
             capturarValoresColumnas($("#tablaPrincipal tbody >tr"),idx);
         });
 
+
         return false;
     });
 
@@ -1083,10 +1095,10 @@ detalles = () => {
             GRABAR      = $(this).data('grabado'),
             CANTPED     = $(this).data('cant'),
             REFPEDI     = $(this).data('refpedi'),
-            DETALLES    = $(this).find('td').eq(10).children().val();
+            DETALLES    = $(this).find('td').eq(10).children().val(),
             INDICE     = $(this).data('itord');
 
-        item= {};
+        item = {};
         
         //if (GRABAR == 0) {
             item['item']        = ITEM;
@@ -1237,15 +1249,22 @@ capturarValoresColumnas = (tabla,columna) => {
     DATA = [];
 
     tabla.each(function(){
-        let valor = $(this).find('td').eq(columna).text();
-
-        $(".ul_filtro").append(`<li><a href='#'>${valor}</a></li>`);
+        let VALOR = $(this).find('td').eq(columna).text();
+        DATA.push(VALOR);
     });
+
+
+    //elimina los duplicados
+    var unique = DATA.filter((x, i) => DATA.indexOf(x) === i);
+    for (i = 0; i < unique.length; i++) {
+        $(".ul_filtro").append(`<li><a href='#'>${unique[i]}</a></li>`);
+    }
+    
 }
 
 mostrarValoresFiltrados = (tabla,columna,valor) => {
     tabla.each(function(){
-        if ($(this).find('td').eq(columna).text() === valor){
+        if ($(this).find('td').eq(columna).text() == valor){
             $(this).show();
         }else{
             $(this).hide();

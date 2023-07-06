@@ -231,7 +231,7 @@
             return $salida;
         }
 
-        public function insertarOrden($cabecera,$detalles,$comentarios,$adicionales,$adjuntos){
+        public function insertarOrden($cabecera,$detalles,$comentarios,$adicionales,$adjuntos,$usuario){
             try {
                 $salida = false;
                 $respuesta = false;
@@ -273,7 +273,7 @@
                                 "ccostos"    =>$cab->codigo_costos,
                                 "area"       =>$cab->codigo_area,
                                 "transporte" =>$cab->codigo_transporte,
-                                "elabora"    =>$_SESSION['iduser'],
+                                "elabora"    =>$usuario,
                                 "pago"       =>$cab->codigo_pago,
                                 "pentrega"   =>$entrega,
                                 "cotizacion" =>$cab->proforma,
@@ -292,7 +292,7 @@
                 if ($rowCount > 0){
                     $indice = $this->lastInsertOrder();
                     $this->grabarDetalles($indice,$detalles,$cab->codigo_costos,$orden);
-                    $this->grabarComentarios($indice,$comentarios);
+                    $this->grabarComentarios($indice,$comentarios,$usuario);
                     $this->grabarAdicionales($indice,$adicionales);
                     $this->actualizarDetallesPedido(84,$detalles,$orden,$cab->codigo_entidad);
                     $this->actualizarCabeceraPedido(58,$cab->codigo_pedido,$orden);
@@ -406,7 +406,7 @@
                                 "pago"=>$cabecera['codigo_pago']]);
                 
                 $this->grabarDetalles($cabecera['codigo_verificacion'],$detalles,$cabecera['codigo_costos'],$cabecera['codigo_orden']);
-                $this->grabarComentarios($cabecera['codigo_verificacion'],$comentarios);
+                $this->grabarComentarios($cabecera['codigo_verificacion'],$comentarios,$usuario);
 
                 $salida = array("respuesta"=>true,
                                 "mensaje"=>"Registro modificado",

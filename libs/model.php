@@ -2398,7 +2398,7 @@
             }
         }
 
-        public function grabarComentarios($codigo,$comentarios) {
+        public function grabarComentarios($codigo,$comentarios,$usuario) {
             try {
                 $datos = json_decode($comentarios);
                 $nreg = count($datos);
@@ -2407,7 +2407,7 @@
                     $sql = $this->db->connect()->prepare("INSERT INTO lg_ordencomenta 
                                                         SET id_regmov=:id,id_cuser=:usr,ffecha=:fecha,ccomenta=:comentario");
                     $sql->execute(["id"=>$codigo,
-                                    "usr"=>$datos[$i]->usuario,
+                                    "usr"=>$usuario,
                                     "fecha"=>$datos[$i]->fecha,
                                     "comentario"=>$datos[$i]->comentario]);
                 }
