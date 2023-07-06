@@ -242,3 +242,96 @@ formatoNumeroConComas = (number,decimals,dec_point,thousands_point) =>{
 
 addComa = (x) => { return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); } 
 
+
+
+///filtro
+$(".datafiltro").append(`
+        <a href="#" class="listaFiltroTabla" data-idcol="0"><i class="fas fa-angle-down"></i></a>
+        <div class="filtro">
+            <input type="text" class="filterSearch">
+            <ul class="ul_filtro"> 
+            </ul>
+        </div>
+`);
+
+    //filtrar tablas por la cabecera
+    $(".listaFiltroTabla").click(function (e) { 
+        e.preventDefault();
+
+        let idx = parseInt($(this).parent().data("idcol")),
+            tabla = $(this).parent().parent().parent().parent().attr("id");
+
+            t = "#"+tabla+ " tbody tr";
+        
+        $(this).next().toggle(function(){
+            capturarValoresColumnas($(t),idx);
+        });
+
+        return false;
+    });
+
+    $(".filtro").on('click','a', function(e) {
+        e.preventDefault();
+
+        let padre = $(this).parent().parent().parent(),
+            value = $(this).text(),
+            columna = $(this).parent().parent().parent().parent().data('idcol'),
+            
+            tabla   = $(this).parent().parent().parent().parent().parent().parent().parent().attr("id");
+
+            t = "#"+tabla+ " tbody tr";
+
+            console.log(t);
+
+        mostrarValoresFiltrados($(t),columna,value);
+
+        padre.fadeOut(function(){
+            $(".ul_filtro").empty();
+        });
+
+        return false;
+    });
+
+    $(".filterSearch").keyup(function () { 
+        
+        let value = $(this).val().toLowerCase();
+
+        let l = ".ul_filtro"+ " li a"
+
+        $(l).filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+
+    });
+
+
+
+//filtros en tablas
+
+capturarValoresColumnas = (tabla,columna) => {
+    DATA = [];
+
+    tabla.each(function(){
+        let VALOR = $(this).find('td').eq(columna).text();
+        DATA.push(VALOR);
+    });
+
+
+    //elimina los duplicados
+    var unique = DATA.filter((x, i) => DATA.indexOf(x) === i);
+    for (i = 0; i < unique.length; i++) {
+        $(".ul_filtro").append(`<li><a href='#'>${unique[i]}</a></li>`);
+    }
+    
+}
+
+mostrarValoresFiltrados = (tabla,columna,valor) => {
+    tabla.each(function(){
+        if ($(this).find('td').eq(columna).text() == valor){
+            $(this).show();
+        }else{
+            $(this).hide();
+        }
+    });
+}
+//////////////////////////////////////////////////

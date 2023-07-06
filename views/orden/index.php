@@ -263,7 +263,6 @@
                 </div>
             </div>
             <div class="textoBusqueda">
-                <!--<input type="text" id="pedidoSearch" name="pedidoSearch" placeholder="Nro. Pedido">-->
                 <select name="itemCostos" id="itemCostos">
                     <?php echo $this->listaCostosSelect ?>
                 </select>
@@ -273,14 +272,14 @@
                 <table class="tablaWrap" id="pedidos">
                     <thead>
                         <tr class="stickytop">
-                            <th width="4%">Pedido</th>
+                            <th width="4%" data-idcol="0" class="datafiltro">Pedido</th>
                             <th width="5%">Emisión</th>
-                            <th>Concepto</th>
-                            <th width="15%">Area</th>
-                            <th>Centro Costos</th>
-                            <th width="7%">Codigo</th>
+                            <th data-idcol="2" class="datafiltro">Concepto</th>
+                            <th data-idcol="3" class="datafiltro" width="15%">Area</th>
+                            <th data-idcol="4" class="datafiltro">Centro Costos</th>
+                            <th data-idcol="5" class="datafiltro" width="7%">Codigo</th>
                             <th width="7%">Cantidad</th>
-                            <th>Descripción</th>
+                            <th data-idcol="7" class="datafiltro" >Descripción</th>
                         </tr>
                     </thead>
                     <tbody>

@@ -2163,12 +2163,19 @@
   padding: 5px;
   gap: 10px;
   border-top: 1px solid #000;
+  background: #0078D4;
+  color: #fff;
+  font-weight: bold;
 }
 .ventanaProceso .totales_orden label {
   margin: 0 5px;
 }
 .ventanaProceso .totales_orden input {
   outline: none;
+  background: transparent;
+  color: #fff;
+  font-weight: bold;
+  font-size: 100%;
 }
 
 .ventanaBusqueda input[type=text] {
@@ -2422,6 +2429,58 @@
   color: #fff;
   height: 30px;
   font-size: 0.8rem;
+}
+.tabla thead a, .tablaWrap thead a {
+  color: #fff;
+  margin-left: 10px;
+}
+.tabla thead .filtro, .tablaWrap thead .filtro {
+  background: #fff;
+  color: #000;
+  border: 1px solid #ccc;
+  position: absolute;
+  text-align: left;
+  min-width: 15rem;
+  width: -webkit-max-content;
+  width: -moz-max-content;
+  width: max-content;
+  line-height: 1.5rem;
+  border-radius: 3px;
+  display: none;
+  padding: 5px;
+  -webkit-box-shadow: 5px 6px 5px #c2c2c2;
+          box-shadow: 5px 6px 5px #c2c2c2;
+  top: 30px;
+  height: 15rem;
+  overflow: auto;
+}
+.tabla thead .filtro input, .tablaWrap thead .filtro input {
+  border: 1px solid #ccc;
+  width: 90%;
+  padding-left: 5px;
+}
+.tabla thead .filtro ul, .tablaWrap thead .filtro ul {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  height: 20rem;
+  overflow: auto;
+}
+.tabla thead .filtro ul li, .tablaWrap thead .filtro ul li {
+  display: block;
+  width: 100%;
+}
+.tabla thead .filtro ul a, .tablaWrap thead .filtro ul a {
+  color: #000;
+  display: block;
+}
+.tabla thead .filtro ul a:hover, .tablaWrap thead .filtro ul a:hover {
+  background: #0075B7;
+  color: #fff;
 }
 .tabla tbody tr td, .tablaWrap tbody tr td {
   border: 1px solid #616161;

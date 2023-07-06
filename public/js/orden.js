@@ -13,14 +13,7 @@ $(function(){
     
     $("#esperar").fadeOut();
 
-    $(".datafiltro").append(`
-        <a href="#" class="listaFiltroTabla" data-idcol="0"><i class="fas fa-angle-down"></i></a>
-        <div class="filtro">
-            <input type="text" class="filterSearch">
-            <ul class="ul_filtro"> 
-            </ul>
-        </div>
-    `);
+    
 
 
     $("#tablaPrincipal tbody").on("click","tr", function (e) {
@@ -33,7 +26,15 @@ $(function(){
 
                 let estado = "textoCentro " + data.cabecera[0].estado;
                 let total = parseFloat(data.cabecera[0].total_multiplicado).toFixed(2);
-                total_format =  formatoNumeroConComas(total,2,'.',',');
+                let total_format =  formatoNumeroConComas(total,2,'.',',');
+                
+                let adicionales = 0;
+                let adicionales_format = '0.00';
+                
+                if  ( data.total_adicionales > 0 ){
+                    adicionales = parseFloat(data.total_adicionales).toFixed(2);
+                    adicionales_format = formatoNumeroConComas(adicionales,2,'.',',');
+                }
 
                 $("#codigo_costos").val(data.cabecera[0].ncodcos);
                 $("#codigo_area").val(data.cabecera[0].ncodarea);
@@ -79,23 +80,25 @@ $(function(){
                 $("#user_modifica").val(data.cabecera[0].userModifica);
                 $("#nro_pedido").val(data.cabecera[0].nrodoc);
                 $("#total_adicional").val(data.total_adicionales);
-                $("#oa").val(formatoNumeroConComas(data.total_adicionales,2,'.',','));
+                $("#oa").val(adicionales_format);
                 $("#referencia").val(data.cabecera[0].cReferencia);
                 
                 $("#in").val(total_format);
 
                 let igv = parseFloat(data.cabecera[0].total_multiplicado)*.18;
 
-               if (data.cabecera[0].nigv != 0) {
-                    $("#si").prop("checked", true);
-                    let igv_format = formatoNumeroConComas(igv,2,'.',',');
+                if (data.cabecera[0].nigv != 0) {
+                        $("#si").prop("checked", true);
+                        $("#im").val(igv.toFixed(2));
+                }else {
+                        $("#no").prop("checked", true);
+                        $("#im").val(0);
+                };
 
-                    $("#im").val(igv_format);
-               }else {
-                    $("#no").prop("checked", true);
-                    $("#im").val('0.00');
-               };
+                let total_orden = parseFloat(total)+parseFloat(igv)+parseFloat(adicionales),
+                    total_orden_format = formatoNumeroConComas(total_orden,2,'.',',');
 
+                $("#it").val(total_orden_format);
 
                 $("#estado")
                     .removeClass()
@@ -970,51 +973,6 @@ $(function(){
         return false;
     });
 
-     //filtrar tablas por la cabecera
-    $(".listaFiltroTabla").click(function (e) { 
-        e.preventDefault();
-
-        let idx = parseInt($(this).parent().data("idcol"));
-        
-        $(this).next().toggle(function(){
-            capturarValoresColumnas($("#tablaPrincipal tbody >tr"),idx);
-        });
-
-
-        return false;
-    });
-
-    $(".filtro").on('click','a', function(e) {
-        e.preventDefault();
-
-        let padre = $(this).parent().parent().parent(),
-            value = $(this).text(),
-            columna = $(this).parent().parent().parent().parent().data('idcol');
-
-        mostrarValoresFiltrados($("#tablaPrincipal tbody tr"),columna,value);
-
-        padre.fadeOut(function(){
-            $(".ul_filtro").empty();
-        });
-
-        return false;
-    });
-
-    $(".filterSearch").keyup(function () { 
-        
-        let value = $(this).val().toLowerCase();
-
-        let l = ".ul_filtro"+ " li a"
-
-        $(l).filter(function() {
-            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-        });
-
-    });
-
-    //////////////////////////////////////////////////
-   
-
     //cuando presiona el icono
     $(".listaArchivos").on("click",'.icono_archivo', function (e) {
         e.preventDefault();
@@ -1243,34 +1201,6 @@ sumardias = () => {
 }
 
 
-//filtros en tablas
-
-capturarValoresColumnas = (tabla,columna) => {
-    DATA = [];
-
-    tabla.each(function(){
-        let VALOR = $(this).find('td').eq(columna).text();
-        DATA.push(VALOR);
-    });
-
-
-    //elimina los duplicados
-    var unique = DATA.filter((x, i) => DATA.indexOf(x) === i);
-    for (i = 0; i < unique.length; i++) {
-        $(".ul_filtro").append(`<li><a href='#'>${unique[i]}</a></li>`);
-    }
-    
-}
-
-mostrarValoresFiltrados = (tabla,columna,valor) => {
-    tabla.each(function(){
-        if ($(this).find('td').eq(columna).text() == valor){
-            $(this).show();
-        }else{
-            $(this).hide();
-        }
-    });
-}
 
 
 
