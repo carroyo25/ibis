@@ -138,13 +138,6 @@ $(function(){
     $("#requestAprob").click(function (e) { 
         e.preventDefault();
         
-        /*$.post(RUTA+"aprobacion/buscaRol", {rol:$(this).data("rol"),cc:$("#codigo_costos").val()},
-            function (data, textStatus, jqXHR) {
-                $("#listaCorreos tbody").empty().append(data);
-                $("#sendMail").fadeIn();
-            },
-            "text"
-        );*/
 
         $("#pregunta").fadeIn();
         
@@ -163,44 +156,6 @@ $(function(){
         return false;
     });
 
-    $("#btnConfirmSend").click(function (e) { 
-        e.preventDefault();
-
-        try {
-            if ($("#subject").val() =="") throw "Escriba el asunto";
-            if ($("messaje div").html() =="") throw "Escriba el mensaje";
-
-            $("#esperar").fadeIn();
-
-            let result = {};
-
-            $.each($("#formProceso").serializeArray(),function(){
-                result[this.name] = this.value;
-            });
-            
-            $.post(RUTA+"aprobacion/confirma", {pedido:$("#codigo_pedido").val(),
-                                            detalles:JSON.stringify(itemsPreview()),
-                                            correos:JSON.stringify(mailsList()),
-                                            asunto:$("#subject").val(),
-                                            mensaje:$(".messaje div").html(),
-                                            estado:54,
-                                            cabecera:result},
-                                                
-             function (data, textStatus, jqXHR) {
-                $("#sendMail,#proceso,#esperar").fadeOut();
-                $("#tablaPrincipal tbody")
-                    .empty()
-                    .append(data.pedidos);
-                mostrarMensaje(data.mensaje,data.clase);
-             },
-             "json"
-         );
-        } catch (error) {
-            mostrarMensaje(error,'mensaje_error');
-        }
-        
-        return false;
-    });
 
     $("#btnAceptarPregunta").click(function (e) { 
         e.preventDefault();

@@ -16,7 +16,7 @@
         }
         
         function comentarios(){
-            echo $this->model->grabarComentarios($_POST['codigo'],$_POST['comentarios']);
+            echo $this->model->grabarComentarios($_POST['codigo'],$_POST['comentarios'],$_POST['usuario']);
         }
 
         function autoriza(){

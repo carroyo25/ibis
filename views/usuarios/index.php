@@ -244,8 +244,8 @@
             <thead>
                 <tr>
                     <th>Item</th>
-                    <th>Usuario</th>
-                    <th>Nombres</th>
+                    <th data-idcol="1" class="datafiltro">Usuario</th>
+                    <th data-idcol="2" class="datafiltro">Nombres</th>
                     <th>Nivel</th>
                     <th>Estado</th>
                     <th>Desde</th>

@@ -184,7 +184,9 @@ $(function() {
         $("#comentarios").fadeOut();
 
         if ($("#codigo_estado").val() == 59 && !swcoment) {
-            $.post(RUTA+"firmas/comentarios", {codigo:$("#codigo_orden").val(),comentarios:JSON.stringify(comentarios())},
+            $.post(RUTA+"firmas/comentarios", {codigo:$("#codigo_orden").val(),
+                                                comentarios:JSON.stringify(comentarios()),
+                                                usuario:$("#id_user").val()},
                 function (data, textStatus, jqXHR) {
                     swcoment = true;
                 },
