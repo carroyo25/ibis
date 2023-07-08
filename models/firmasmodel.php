@@ -186,24 +186,24 @@
             }
         }
 
-        public function consultarPrecios($codigo){
+        public function consultarPrecios($codigo,$descripcion){
             try {
                 $salida = "";
                 $sql = $this->db->connect()->prepare("SELECT
                                                         cm_producto.id_cprod,
                                                         cm_producto.ccodprod,
-                                                        UPPER(cm_producto.cdesprod) AS cdesprod,
+                                                        UPPER(CONCAT_WS(' ',cm_producto.cdesprod ,tb_pedidodet.observaciones) ) AS cdesprod,
                                                         lg_ordendet.ncanti,
                                                         lg_ordendet.nunitario,
                                                         lg_ordencab.cnumero AS orden,
                                                         tb_unimed.cabrevia AS unidad,
                                                         tb_parametros.cabrevia AS moneda,
-                                                        LPAD(tb_pedidocab.nrodoc,6,0) AS pedido,
+                                                        LPAD( tb_pedidocab.nrodoc, 6, 0 ) AS pedido,
                                                         tb_proyectos.ccodproy,
-                                                        UPPER(tb_proyectos.cdesproy) AS cdesproy,
-                                                        DATE_FORMAT(lg_ordencab.ffechadoc,'%d/%m/%Y') AS fecha,
+                                                        UPPER( tb_proyectos.cdesproy ) AS cdesproy,
+                                                        DATE_FORMAT( lg_ordencab.ffechadoc, '%d/%m/%Y' ) AS fecha,
                                                     IF
-                                                        ( lg_ordencab.ncodmon != 20, FORMAT( lg_ordencab.ntcambio, 2 ), 1 ) AS tipo_cambio 
+                                                        ( lg_ordencab.ncodmon != 20, FORMAT( lg_ordencab.ntcambio, 2 ), 1 ) AS tipo_cambio
                                                     FROM
                                                         cm_producto
                                                         INNER JOIN lg_ordendet ON cm_producto.id_cprod = lg_ordendet.id_cprod
@@ -213,11 +213,13 @@
                                                         INNER JOIN tb_pedidocab ON lg_ordencab.id_refpedi = tb_pedidocab.idreg
                                                         INNER JOIN tb_proyectos ON lg_ordencab.ncodpry = tb_proyectos.nidreg
                                                         INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
+                                                        INNER JOIN tb_pedidodet ON lg_ordendet.niddeta = tb_pedidodet.iditem 
                                                     WHERE
                                                         cm_producto.id_cprod = :codigo
+                                                        AND CONCAT(cm_producto.cdesprod,' ', tb_pedidodet.observaciones) = :descripcion
                                                     ORDER BY
                                                         lg_ordencab.ffechadoc ASC");
-                $sql->execute(["codigo"=>$codigo]);
+                $sql->execute(["codigo"=>$codigo, "descripcion"=>$descripcion]);
                 $rowCount = $sql->rowcount();
 
                 if ($rowCount > 0) {

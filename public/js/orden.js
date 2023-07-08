@@ -753,7 +753,7 @@ $(function(){
     $("#tablaDetalles tbody").on('click',".consultaPrecios", function (e) {
         e.preventDefault();
 
-          $.post(RUTA+"firmas/precios", {codigo:$(this).parent().data("codprod")},
+          $.post(RUTA+"firmas/precios", {codigo:$(this).parent().data("codprod"),descripcion:""},
             function (data, text, requestXHR) {
                 $("#tablaPrecios tbody")
                     .empty()

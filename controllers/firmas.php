@@ -32,7 +32,7 @@
         }
 
         function precios(){
-            echo $this->model->consultarPrecios($_POST['codigo']);
+            echo $this->model->consultarPrecios($_POST['codigo'],$_POST['descripcion']);
         }
 
         function vistaEmitida() {

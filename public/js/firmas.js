@@ -105,14 +105,13 @@ $(function() {
     $("#tablaDetalles tbody").on("click","tr",function(e) {
         e.preventDefault();
 
-        $.post(RUTA+"firmas/precios", {codigo:$(this).data("codprod")},
+        $.post(RUTA+"firmas/precios", {codigo:$(this).data("codprod"), descripcion :$(this).find('td').eq(3).text()},
             function (data, text, requestXHR) {
                 $("#tablaPrecios tbody")
                     .empty()
                     .append(data);
 
                 $("#consultaprecios").fadeIn();
-                
             }
             ,"text"
         );
