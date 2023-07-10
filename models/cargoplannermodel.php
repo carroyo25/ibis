@@ -61,7 +61,8 @@
                                                         user_aprueba.cnombres,
                                                         alm_despachocab.cnumguia,
                                                         LPAD(alm_recepcab.nnronota,6,0) AS nota_ingreso,
-                                                        LPAD(alm_cabexist.idreg,6,0) AS nota_obra 
+                                                        LPAD(alm_cabexist.idreg,6,0) AS nota_obra,
+                                                        tb_equipmtto.cregistro 
                                                     FROM
                                                         tb_pedidodet
                                                         INNER JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
@@ -81,7 +82,8 @@
                                                         LEFT JOIN alm_recepdet ON tb_pedidodet.iditem = alm_recepdet.niddetaPed
                                                         LEFT JOIN alm_recepcab ON alm_recepdet.id_regalm = alm_recepcab.id_regalm
                                                         LEFT JOIN alm_existencia ON tb_pedidodet.iditem = alm_existencia.idpedido
-                                                        LEFT JOIN alm_cabexist ON alm_existencia.idregistro = alm_cabexist.idreg 
+                                                        LEFT JOIN alm_cabexist ON alm_existencia.idregistro = alm_cabexist.idreg
+                                                        LEFT JOIN tb_equipmtto ON tb_pedidodet.nregistro = tb_equipmtto.idreg 
                                             WHERE
                                                 tb_pedidodet.nflgActivo
                                                 AND ISNULL( lg_ordendet.nflgactivo ) 
@@ -272,7 +274,7 @@
                                         <td class="textoCentro">'.$estado_pedido.'</td>
                                         <td class="textoCentro">'.$estado_item.'</td>
                                         <td class="textoCentro">'.$rs['nroparte'].'</td>
-                                        <td class="textoCentro">'.$rs['nregistro'].'</td>
+                                        <td class="textoCentro">'.$rs['cregistro'].'</td>
                                         <td class="textoCentro">'.$rs['operador'].'</td>
                                         <td class="textoCentro">'.$transporte.'</td>
                                         <td class="pl10px">'.$rs['concepto'].'</td>
