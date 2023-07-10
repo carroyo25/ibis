@@ -212,7 +212,10 @@
             <div class="tituloVentana">
                 <span id="tituloBusqueda">Catálogo Bienes/Servicios</span>
                 <div>
-                    <a href="#"><i class="fas fa-window-close"></i></a>
+                    <a href="#">
+                        <i class="fas fa-window-close"></i>
+                        <span>Cerrar</span>
+                    </a>
                 </div>
             </div>
             <div class="textoBusqueda">

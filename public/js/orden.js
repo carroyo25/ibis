@@ -10,11 +10,8 @@ $(function(){
         costos = "",
         fp = 0;
         datafiltro = "";
-    
+
     $("#esperar").fadeOut();
-
-    
-
 
     $("#tablaPrincipal tbody").on("click","tr", function (e) {
         e.preventDefault();
@@ -73,7 +70,7 @@ $(function(){
                 $("#entidad").val(data.cabecera[0].crazonsoc);
                 $("#atencion").val(data.cabecera[0].cnombres);
                 $("#transporte").val(data.cabecera[0].transporte);
-                $("#lentrega").val(data.cabecera[0].cdesalm);
+                $("#lentrega").val(data.cabecera[0].lentrega);
                 $("#total_numero").val(data.cabecera[0].total_multiplicado);
                 $("#ncotiz").val(data.cabecera[0].cnumcot);
                 $("#tcambio").val(data.cabecera[0].ntcambio);
@@ -82,6 +79,7 @@ $(function(){
                 $("#total_adicional").val(data.total_adicionales);
                 $("#oa").val(adicionales_format);
                 $("#referencia").val(data.cabecera[0].cReferencia);
+                $("#dias").val(data.cabecera[0].nplazo);
                 
                 $("#in").val(total_format);
 
@@ -156,7 +154,7 @@ $(function(){
         $("#atach_counter").text(0);
         $(".listaArchivos").empty();
 
-        $("input[type='hidden']").each(function(){
+        $("#formProceso input[type='hidden']").each(function(){
             $(this).val("");
         });
 
@@ -319,13 +317,14 @@ $(function(){
 
             if (!checkExistTable($("#tablaDetalles tbody tr"),codigo,5)){
                 let item = $(this);
-                let row = `<tr data-grabado ="${grabado}" 
-                                data-total  ="${total}" 
-                                data-codprod="${cod_prod}" 
-                                data-itPed  ="${id_item}"
-                                data-cant   ="${cantidad}"
-                                data-refpedi="${request}"
-                                data-nro_parte="${nro_parte}">
+                let row = `<tr data-grabado     ="${grabado}" 
+                                data-total      ="${total}" 
+                                data-codprod    ="${cod_prod}" 
+                                data-itPed      ="${id_item}"
+                                data-cant       ="${cantidad}"
+                                data-refpedi    ="${request}"
+                                data-nro_parte  ="${nro_parte}"
+                                data-descrip ="${descrip}">
                             <td class="textoCentro"><a href="#"><i class="fas fa-ban"></i></a></td>
                             <td class="textoCentro">${nFilas}</td>
                             <td class="textoCentro consultaPrecios">${codigo}</td>
@@ -527,7 +526,8 @@ $(function(){
             //if (result['correo_entidad'] == "") throw "Elija el proveedor";
             if (result['codigo_almacen'] == "") throw "Indique el lugar de entrega";
             if (result['total'] == "") throw "No se registro el total de la orden";
-            if ($("#tablaDetalles tbody tr") .length <= 0) throw "No tiene items cargados"
+            if ($("#tablaDetalles tbody tr") .length <= 0) throw "No tiene items cargados";
+            if ($("#id_user").val() <= "") throw "Error General";
 
             grabado = true;
             
@@ -753,7 +753,7 @@ $(function(){
     $("#tablaDetalles tbody").on('click',".consultaPrecios", function (e) {
         e.preventDefault();
 
-          $.post(RUTA+"firmas/precios", {codigo:$(this).parent().data("codprod"),descripcion:""},
+          $.post(RUTA+"firmas/precios", {codigo:$(this).parent().data("codprod"),descripcion:$(this).parent().data("descrip")},
             function (data, text, requestXHR) {
                 $("#tablaPrecios tbody")
                     .empty()
@@ -871,6 +871,7 @@ $(function(){
             success: function (response) {
                 $("#atach_counter").text(response.adjuntos);
                 $("#archivos").fadeOut();
+                $("#fileAtachs")[0].reset();
             }
         });
 

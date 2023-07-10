@@ -509,6 +509,7 @@ $(function(){
             success: function (response) {
                 $("#atach_counter").text(response.adjuntos);
                 $("#archivos").fadeOut();
+                $("#fileAtachs")[0].reset();
             }
         });
 

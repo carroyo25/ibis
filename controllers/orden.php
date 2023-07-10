@@ -34,11 +34,11 @@
                                                         $_POST['comentarios'],
                                                         $_POST['adicionales'],
                                                         $_FILES,
-                                                        $_POST['usuario'],));
+                                                        $_POST['usuario']));
         }
 
         function modificaRegistro(){
-            echo json_encode($this->model->modificarOrden($_POST['cabecera'],$_POST['detalles'],$_POST['comentarios']));
+            echo json_encode($this->model->modificarOrden($_POST['cabecera'],$_POST['detalles'],$_POST['comentarios'],$_POST['usuario']));
         }
         
         function ordenId(){

@@ -20,6 +20,7 @@
                                                         lg_ordencab.ncodpago,
                                                         lg_ordencab.nplazo,
                                                         lg_ordencab.cdocPDF,
+                                                        FORMAT(lg_ordencab.ntotal,2) AS ntotal,
                                                         tb_proyectos.ccodproy,
                                                         UPPER( tb_pedidocab.concepto ) AS concepto,
                                                         UPPER( tb_pedidocab.detalle ) AS detalle,
@@ -33,6 +34,7 @@
                                                         tb_parametros.cdescripcion AS atencion,
                                                         UPPER(cm_entidad.crazonsoc) AS crazonsoc,
                                                         UPPER( tb_user.cnameuser ) AS cnameuser,
+                                                        monedas.cabrevia,
                                                         ( SELECT COUNT( lg_ordencomenta.id_regmov ) FROM lg_ordencomenta WHERE lg_ordencomenta.id_regmov = lg_ordencab.id_regmov ) AS comentario 
                                                     FROM
                                                         tb_costusu
@@ -42,7 +44,8 @@
                                                         INNER JOIN tb_proyectos ON lg_ordencab.ncodpry = tb_proyectos.nidreg
                                                         INNER JOIN tb_parametros ON lg_ordencab.nNivAten = tb_parametros.nidreg
                                                         INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
-                                                        INNER JOIN tb_user ON lg_ordencab.id_cuser = tb_user.iduser 
+                                                        INNER JOIN tb_user ON lg_ordencab.id_cuser = tb_user.iduser
+                                                        INNER JOIN tb_parametros AS monedas ON lg_ordencab.ncodmon = monedas.nidreg  
                                                     WHERE
                                                         tb_costusu.id_cuser = :user
                                                         AND tb_costusu.nflgactivo = 1 
@@ -85,6 +88,7 @@
                                     <td class="pl20px">'.$rs['area'].'</td>
                                     <td class="pl20px">'.$rs['crazonsoc'].'</td>
                                     <td class="pl5px">'.$rs['cnameuser'].'</td>
+                                    <td class="textoDerecha">'.$rs['cabrevia'].' '. $rs['ntotal'].'</td>
                                     <td class="textoCentro '.strtolower($rs['atencion']).'">'.$rs['atencion'].'</td>
                                     <td class="textoCentro '.$alerta_logistica.'">'.$log.'</td>
                                     <td class="textoCentro '.$alerta_finanzas.'">'.$fin.'</td>
@@ -241,7 +245,7 @@
 
                 $sql = "SELECT COUNT(lg_ordencab.id_regmov) AS numero FROM lg_ordencab WHERE lg_ordencab.ncodcos = :cod";
                 
-                $entrega = $this->calcularDias($cab->fentrega);
+                //$entrega = $this->calcularDias($cab->fentrega);
             
                 $orden = $this->generarNumeroOrden();
                 
@@ -255,7 +259,7 @@
                                                                                 ctiptransp=:transporte,id_cuser=:elabora,ncodpago=:pago,nplazo=:pentrega,cnumcot=:cotizacion,
                                                                                 cdocPDF=:adjunto,nEstadoDoc=:est,ncodalm=:almacen,nflgactivo=:flag,nNivAten=:atencion,
                                                                                 cverificacion=:verif,cObservacion=:observacion,cReferencia=:referencia,
-                                                                                nAdicional=:adicional");
+                                                                                nAdicional=:adicional,lentrega=:lugar");
 
                 $sql ->execute(["pedi"=>$cab->codigo_pedido,
                                 "anio"       =>$periodo[0],
@@ -275,7 +279,7 @@
                                 "transporte" =>$cab->codigo_transporte,
                                 "elabora"    =>$usuario,
                                 "pago"       =>$cab->codigo_pago,
-                                "pentrega"   =>$entrega,
+                                "pentrega"   =>$cab->dias,
                                 "cotizacion" =>$cab->proforma,
                                 "adjunto"    =>$cab->vista_previa,
                                 "est"        =>49,
@@ -286,7 +290,8 @@
                                 "cotizacion" =>$cab->ncotiz,
                                 "observacion"=>$cab->concepto,
                                 "referencia" =>$cab->referencia,
-                                "adicional"  =>$cab->total_adicional]);
+                                "adicional"  =>$cab->total_adicional,
+                                "lugar"      =>$cab->lentrega]);
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0){
@@ -386,14 +391,15 @@
             }
         }
 
-        public function modificarOrden($cabecera,$detalles,$comentarios){
+        public function modificarOrden($cabecera,$detalles,$comentarios,$usuario){
             try {
                 $entrega = $this->calcularDias($cabecera['fentrega']);
 
                 $sql = $this->db->connect()->prepare("UPDATE lg_ordencab 
                                                         SET  ffechaent=:entrega,ntotal=:total,ctiptransp=:transp,
                                                              nplazo=:plazo,ncodalm=:alm,nigv =:igv,id_centi=:enti,
-                                                             ncodpago=:pago
+                                                             ncodpago=:pago,cnumcot=:cotizacion,creferencia=:referencia,
+                                                             lentrega=:lugar
                                                         WHERE id_regmov = :id");
                 $sql->execute(['entrega'=>$cabecera['fentrega'],
                                 "total"=>$cabecera['total_numero'],
@@ -403,7 +409,10 @@
                                 "igv"=>$cabecera['radioIgv'],
                                 "id"=>$cabecera['codigo_orden'],
                                 "enti"=>$cabecera['codigo_entidad'],
-                                "pago"=>$cabecera['codigo_pago']]);
+                                "pago"=>$cabecera['codigo_pago'],
+                                "cotizacion"=>$cabecera['ncotiz'],
+                                "referencia"=>$cabecera['referencia'],
+                                "lugar"=>$cabecera['lentrega']]);
                 
                 $this->grabarDetalles($cabecera['codigo_verificacion'],$detalles,$cabecera['codigo_costos'],$cabecera['codigo_orden']);
                 $this->grabarComentarios($cabecera['codigo_verificacion'],$comentarios,$usuario);

@@ -344,12 +344,12 @@
         <table id="tablaPrincipal">
             <thead class="stickytop">
                 <tr>
-                    <th class="filter">Num.</th>
+                    <th data-idcol="0" class="datafiltro">Num.</th>
                     <th>Emisión</th>
                     <th>Tipo</th>
-                    <th class="filter">Descripción</th>
-                    <th class="filter">Centro Costos</th>
-                    <th class="filter">Resposable</th>
+                    <th data-idcol="3" class="datafiltro">Descripción</th>
+                    <th data-idcol="4" class="datafiltro">Centro Costos</th>
+                    <th data-idcol="5" class="datafiltro">Resposable</th>
                     <th>Estado</th>
                     <th>Atencion</th>
                 </tr>
@@ -363,6 +363,5 @@
     <script src="<?php echo constant('URL');?>public/js/funciones.js?<?php echo constant('VERSION')?>"></script>
     <script src="<?php echo constant('URL');?>public/js/segpedgen.js?<?php echo constant('VERSION')?>"></script>
     <script src="<?php echo constant('URL');?>public/js/gauge.js?<?php echo constant('VERSION')?>"></script>
-    <script src="<?php echo constant('URL');?>public/js/exceltable.js?<?php echo constant('VERSION')?>"></script>
 </body>
 </html>

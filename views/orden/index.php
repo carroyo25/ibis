@@ -25,6 +25,7 @@
                 <form action="#" id="formProceso" autocomplete="off">
                     <input type="hidden" name="codigo_costos" id="codigo_costos"> 
                     <input type="hidden" name="codigo_area" id="codigo_area">
+                    <input type="hidden" name="codigo_usuario" id="codigo_usuario">
                     <input type="hidden" name="codigo_transporte" id="codigo_transporte">
                     <input type="hidden" name="codigo_tipo" id="codigo_tipo">
                     <input type="hidden" name="codigo_almacen" id="codigo_almacen">
@@ -117,7 +118,7 @@
                                 </div>
                                 <div class="column2_46">
                                     <label for="dias">Dias Entrega :</label>
-                                    <input type="number" name="dias" id="dias" class="cerrarLista textoDerecha pr5px" value="3">
+                                    <input type="number" name="dias" id="dias" class="cerrarLista textoDerecha pr5px" value="3" onclick="this.select()">
                                 </div>
                             </div>
                             <div class="column4_55">
@@ -127,7 +128,7 @@
                                 </div>
                                 <div class="column2_46">
                                     <label for="fentrega">Fec.Entrega :</label>
-                                    <input type="date" name="fentrega" id="fentrega" class="cerrarLista" min="<?php echo date("Y-m-d")?>">
+                                    <input type="date" name="fentrega" id="fentrega" class="cerrarLista" min="<?php echo date("Y-m-d")?>" readonly>
                                 </div>
                             </div>
                             <div class="column4_55">
@@ -407,7 +408,7 @@
     </div>
     <div class="modal" id="adicionales">
         <div class="ventanaArchivos">
-            <form action="#" id="fileAtachs" enctype='multipart/form-data'>
+            <form action="#" id="ordenAdic" enctype='multipart/form-data'>
                 <div class="tituloArchivos">
                     <h3>Cargos adicionales</h3>
                     <a href="#" id="addAdic" title="Agregar Costos"><i class="far fa-plus-square"></i><p>Añadir Item</p></a>
@@ -526,6 +527,7 @@
                     <th rowspan="2" data-idcol="4">Area</th>
                     <th rowspan="2" data-idcol="5" class="datafiltro">Proveedor</th>
                     <th rowspan="2" class="datafiltro" data-idcol="6">Usuario</th>
+                    <th rowspan="2">Total</th>
                     <th rowspan="2">Atencion</th>
                     <th colspan="3" width="16%">Firmas</th>
                     <th rowspan="2" width="3%">Comentarios</th>

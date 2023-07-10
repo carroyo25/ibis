@@ -372,15 +372,15 @@
         <table id="tablaPrincipal">
             <thead class="stickytop">
                     <tr>
-                    <th rowspan="2" class="filter">Num.</th>  
+                    <th rowspan="2" data-idcol="0" class="datafiltro">Num.</th>  
                     <th rowspan="2">Emision</th>
-                    <th rowspan="2" width="25%" class="filter">Descripción</th>
-                    <th rowspan="2" class="filter">Centro Costos</th> 
-                    <th rowspan="2" class="filter">Area</th>
-                    <th rowspan="2" width="15%" class="filter">Proveedor</th>
+                    <th rowspan="2" width="25%" data-idcol="2" class="datafiltro">Descripción</th>
+                    <th rowspan="2" data-idcol="3" class="datafiltro">Centro Costos</th> 
+                    <th rowspan="2" data-idcol="4" class="datafiltro">Area</th>
+                    <th rowspan="2" width="15%" data-idcol="5" class="datafiltro">Proveedor</th>
                     <th rowspan="2" >Precio Soles</th>
                     <th rowspan="2">Precio Dólares</th>
-                    <th rowspan="2">Atencion</th>
+                    <th rowspan="2" data-idcol="8" class="datafiltro">Atencion</th>
                     <th rowspan="2">Estado</th>
                     <th colspan="3" width="16%">Firmas</th>
                     <tr>

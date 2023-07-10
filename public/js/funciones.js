@@ -150,7 +150,7 @@ fechaActual = () => {
 
 //queda pendiente el drag and drop 
 dropHandler = (ev) => {
-    console.log('Fichero(s) arrastrados');
+    
   
     // Evitar el comportamiendo por defecto (Evitar que el fichero se abra/ejecute)
     ev.preventDefault();
@@ -162,7 +162,7 @@ dropHandler = (ev) => {
         // Si los elementos arrastrados no son ficheros, rechazarlos
         if (ev.dataTransfer.items[i].kind === 'file') {
           var file = ev.dataTransfer.items[i].getAsFile();
-          //console.log('... file[' + i + '].name = ' + file.name);
+          console.log('... file[' + i + '].name = ' + file.name);
           fragment +=`<li><p><i class="far fa-file"></i></p><p>${file.name}</p></li>`;
         }
       }
@@ -172,6 +172,8 @@ dropHandler = (ev) => {
         console.log('... file[' + i + '].name = ' + ev.dataTransfer.files[i].name);
       }
     }
+
+    
   
     // Pasar el evento a removeDragData para limpiar
     removeDragData(ev)
