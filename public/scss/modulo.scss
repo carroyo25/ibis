@@ -1656,6 +1656,30 @@ $anulado:#c2c2c2;
     }
 }
 
+.opciones_modal {
+    display: flex;
+    gap: 10px;
+
+    a{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 12px;
+        border: 1px solid #fff;
+        transition: border 0.5s;
+
+        &:hover {
+            border: 1px dotted #c2c2c2;
+            font-weight: 200;
+        }
+
+        p {
+            font-size: .8rem;
+        }
+    }
+}
+
 .tabs_labels{
     display: flex;
     line-height: 1.5rem;

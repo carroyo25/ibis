@@ -7,6 +7,15 @@
     <title>Document</title>
 </head>
 <body>
+    <div class="modal" id="vistaprevia">
+        <div class="ventanaVistaPrevia">
+            <div class="tituloVista">
+                <h3>Vista Previa</h3>
+                <a href="#" id="closePreview" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
+            </div>
+            <iframe src=""></iframe>
+        </div>
+    </div>
     <div class="dashBoard">
         <div class="area1">
             <div class="titulo">
@@ -70,18 +79,16 @@
         </div>
         <div class="area3">
             <div class="titulo">
-                <p>Listado Ingresos</p>
+                <p>Listado Pedidos</p>
             </div>
             <div id="dashboard_table">
-                <table class="tabla" id="tablaPanelIngresos">
+                <table class="tabla" id="tablaPanelPedidos">
                    <thead>
                        <tr>
-                           <th>Nro</th>
+                           <th>Nro. Pedido</th>
+                           <th>Concepto</th>
                            <th>Emision</th>
-                           <th>Almacen</th>
                            <th>Centro Costos</th>
-                           <th>Orden</th>
-                           <th>Proveedor</th>
                            <th>Estado</th>
                        </tr>
                    </thead>

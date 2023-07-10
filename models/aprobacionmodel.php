@@ -68,7 +68,7 @@
         public function llamarAdjuntos($id){
             try {
                 $salida = "";
-                $sql = $this->db->connect()->prepare("SELECT creferencia,cdocumento FROM lg_regdocumento WHERE nidrefer=:id");
+                $sql = $this->db->connect()->prepare("SELECT creferencia,cdocumento FROM lg_regdocumento WHERE nidrefer=:id AND cmodulo = 'PED'" );
                 $sql->execute(['id'=>$id]);
                 $rowCount = $sql->rowCount();
 

@@ -1293,7 +1293,7 @@
             
             $xml .= '<cac:ShipmentStage>
                     <cbc:ID>1</cbc:ID>
-                    <cbc:TransportModeCode listAgencyName="PE:SUNAT" listName="Modalidad de traslado" listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo18">02</cbc:TransportModeCode>
+                    <cbc:TransportModeCode listAgencyName="PE:SUNAT" listName="Modalidad de traslado" listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo18">01</cbc:TransportModeCode>
                     <cac:TransitPeriod>
                         <cbc:StartDate>'.$header->ftraslado.'</cbc:StartDate>
                     </cac:TransitPeriod>';
@@ -1307,7 +1307,7 @@
                             </cac:PartyLegalEntity>
                         </cac:CarrierParty>';
             
-            $xml .= '<cac:DriverPerson>
+            /*$xml .= '<cac:DriverPerson>
                         <cbc:ID schemeID="1" schemeName="Documento de Identidad" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">'.$header->conductor_dni.'</cbc:ID>
                         <cbc:FirstName>'.$header->nombre_conductor.'</cbc:FirstName>
                         <cbc:FamilyName>'.$header->nombre_conductor.'</cbc:FamilyName>
@@ -1315,7 +1315,7 @@
                         <cac:IdentityDocumentReference>
                             <cbc:ID>'.$header->licencia_conducir.'</cbc:ID>
                         </cac:IdentityDocumentReference>
-                    </cac:DriverPerson>';
+                    </cac:DriverPerson>';*/
             
             $xml .= '</cac:ShipmentStage>
                     <cac:Delivery>

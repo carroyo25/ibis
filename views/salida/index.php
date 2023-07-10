@@ -215,12 +215,12 @@
                         <input type="text" name="serie_guia" id="serie_guia" class="w10por" value="T001" readonly>
                         <input type="text" name="numero_guia" id="numero_guia">    
                     </div>
-                    <div class="opciones_documento">
-                        <a href="#" id="guiaSunat" title="Guia Sunat" class="oculto"><i class="fas fa-shipping-fast"></i></a>
-                        <a href="#" id="saveDocument" title="Grabar Guia"><i class="fas fa-save"></i></a>
-                        <a href="#" id="printDocument" title="Imprimir Guia"><i class="fas fa-print"></i></a>
-                        <a href="#" id="previewDocument" title="Vista previa"><i class="fas fa-eye"></i></a>
-                        <a href="#" id="closeDocument" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
+                    <div class="opciones_modal">
+                        <a href="#" id="guiaSunat" title="Guia Sunat"><i class="fas fa-shipping-fast"></i><p>Sunat</p></a>
+                        <a href="#" id="saveDocument" title="Grabar Guia"><i class="fas fa-save"></i><p>Grabar</p></a>
+                        <a href="#" id="printDocument" title="Imprimir Guia"><i class="fas fa-print"></i><p>Imprimir</p></a>
+                        <a href="#" id="previewDocument" title="Vista previa"><i class="fas fa-eye"></i><p>Vista Previa</p></a>
+                        <a href="#" id="closeDocument" title="Cerrar Ventana"><i class="fas fa-window-close"></i><p>Cerrar</p></a>
                     </div>
                 </div>
                 <hr>

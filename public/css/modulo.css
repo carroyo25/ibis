@@ -2001,6 +2001,39 @@
   line-height: 1.5rem;
 }
 
+.opciones_modal {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  gap: 10px;
+}
+.opciones_modal a {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  padding: 12px;
+  border: 1px solid #fff;
+  -webkit-transition: border 0.5s;
+  transition: border 0.5s;
+}
+.opciones_modal a:hover {
+  border: 1px dotted #c2c2c2;
+  font-weight: 200;
+}
+.opciones_modal a p {
+  font-size: 0.8rem;
+}
+
 .tabs_labels {
   display: -webkit-box;
   display: -ms-flexbox;

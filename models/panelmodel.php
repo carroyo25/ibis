@@ -510,9 +510,11 @@
             try {
                 $ingresos = $this->ingresosAlmacen();
                 $ordenes = $this->ordenesCompraCulminadas();
+                $pedidos = $this->pedidosAprobados();
 
                 return array("ingresos"=>$ingresos,
-                             "ordenes"=>$ordenes);
+                             "ordenes"=>$ordenes,
+                            "pedidos"=>$pedidos);
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;

@@ -227,9 +227,9 @@ $(function () {
                 .empty()
                 .append(response.ordenes);
 
-                $("#tablaPanelIngresos tbody")
+                $("#tablaPanelPedidos tbody")
                   .empty()
-                  .append(response.ingresos);
+                  .append(response.pedidos);
             }
         });
     }
@@ -237,7 +237,7 @@ $(function () {
     $("#tablaPanelPedidos tbody").on("click","tr", function (e) {
         e.preventDefault();
 
-        if ($("#rol_user").val() == 68) {
+        if ($("#rol_user").val() == 68 || $("#rol_user").val() == 4) {
 
           $.post(RUTA+"panel/pdfPedido",{"pedido":$(this).data('id')},
             function (data, textStatus, jqXHR) {
