@@ -1552,11 +1552,13 @@
 .ventanaAdjuntos {
   width: 45%;
   border-radius: 8px;
-  height: 35rem;
+  height: 50rem;
 }
 .ventanaAdjuntos object, .ventanaAdjuntos iframe {
-  width: 100%;
-  height: 100%;
+  margin: 15px;
+  width: 95%;
+  height: 68%;
+  overflow: auto;
 }
 .ventanaAdjuntos .tituloAdjuntos {
   display: -webkit-box;
@@ -1573,7 +1575,6 @@
   display: flex;
   -ms-flex-wrap: wrap;
       flex-wrap: wrap;
-  height: 6rem;
   width: 95%;
   border: 1px solid #E0E0E0;
   margin-left: 1rem;
@@ -1586,9 +1587,17 @@
   height: 4rem;
 }
 .ventanaAdjuntos ul li a {
-  display: block;
-  text-align: center;
-  width: 6rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  width: 8rem;
   padding: 0.3rem;
   -webkit-transition: 0.5s;
   transition: 0.5s;
@@ -1605,9 +1614,9 @@
 }
 .ventanaAdjuntos ul li p {
   font-size: 0.6rem;
-  text-align: justify;
-  height: 1.5rem;
+  text-align: center;
   overflow: hidden;
+  width: 100%;
 }
 
 .ventanaPrecios {

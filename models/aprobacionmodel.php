@@ -74,7 +74,9 @@
 
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()) {
-                        $salida .= '<li><a href="'.$rs['creferencia'].'" data-archivo="'.$rs['creferencia'].'"><i class="far fa-file"></i><p>'.$rs['cdocumento'].'</p></a></li>';
+                        $icono = $this->tipoArchivo($rs['creferencia']);
+                        $salida .= '<li>
+                                        <a href="'.$rs['creferencia'].'" data-archivo="'.$rs['creferencia'].'">'.$icono.'<p>'.$rs['cdocumento'].'</p></a></li>';
                     }
                 }
                 

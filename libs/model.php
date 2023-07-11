@@ -3830,6 +3830,7 @@
             switch ($extension) {
                 case 'pdf':
                     $icono = '<i class="fas fa-file-pdf"></i>';
+                    $color_icono = '#FC4136';
                     break;
                 case 'xlsx':
                     $icono = '<i class="fas fa-file-excel"></i>';
@@ -3849,6 +3850,9 @@
                 case 'jpg':
                     $icono = '<i class="fas fa-file-image"></i>';
                     break;
+                case 'JPG':
+                        $icono = '<i class="fas fa-file-image"></i>';
+                        break;
                 case 'png':
                     $icono = '<i class="fas fa-file-image"></i>';
                     break;

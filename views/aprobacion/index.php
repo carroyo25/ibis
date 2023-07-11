@@ -148,7 +148,6 @@
                 <a href="#" id="closeAtach" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
             </div>
             <ul id="listaAdjuntos">
-
             </ul>
             <iframe src=""></iframe>
         </div>
