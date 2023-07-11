@@ -928,32 +928,41 @@ $anulado:#c2c2c2;
                 padding: 10px;
                 overflow: auto;
                 flex-wrap: wrap;
+                gap:5px;
+                height: 10rem;
 
-                a {
-                    font-size: 0.9rem;
-                    display:flex;
-                    display:block;
-                    text-align: center;
-                    margin: 0 10px;
-                    align-items:center;
-                    border: 1px solid #fff;
-                    transition: border .5s;
-                    padding: 5px;
+                li {
+                   width: 30%;
+                   height: 4rem;
+                   text-align: center;
+                   display: block;
 
-                    i {
-                        color: red;
-                        font-size: 1.2rem;
-                    }
+                   a {
+                        font-size: 0.9rem;
+                        margin: 0 10px;
+                        transition: border .5s;
+                        padding: 5px;
+                        width: 100%;
+                        display: block;
+                        overflow: hidden;
 
-                    p {
-                        font-size: 0.6rem;
-                        min-width: 25%;
-                    }
+                        i {
+                            color: red;
+                            font-size: 1.2rem;
+                        }
 
-                    &:hover{
-                        border: 1px solid #c3c3c3;
-                    }
+                        p {
+                            font-size: 0.6rem;
+                            min-width: 25%;
+                        }
+
+                        &:hover{
+                            border: 1px solid #c3c3c3;
+                        }
+                    } 
                 }
+
+                
 
             }
         }

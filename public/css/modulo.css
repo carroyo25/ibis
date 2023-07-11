@@ -1194,32 +1194,34 @@
   overflow: auto;
   -ms-flex-wrap: wrap;
       flex-wrap: wrap;
+  gap: 5px;
+  height: 10rem;
 }
-.ventanaDetalles .cuerpoOrdenes .seccion3 ul a {
-  font-size: 0.9rem;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  display: block;
+.ventanaDetalles .cuerpoOrdenes .seccion3 ul li {
+  width: 30%;
+  height: 4rem;
   text-align: center;
+  display: block;
+}
+.ventanaDetalles .cuerpoOrdenes .seccion3 ul li a {
+  font-size: 0.9rem;
   margin: 0 10px;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  border: 1px solid #fff;
   -webkit-transition: border 0.5s;
   transition: border 0.5s;
   padding: 5px;
+  width: 100%;
+  display: block;
+  overflow: hidden;
 }
-.ventanaDetalles .cuerpoOrdenes .seccion3 ul a i {
+.ventanaDetalles .cuerpoOrdenes .seccion3 ul li a i {
   color: red;
   font-size: 1.2rem;
 }
-.ventanaDetalles .cuerpoOrdenes .seccion3 ul a p {
+.ventanaDetalles .cuerpoOrdenes .seccion3 ul li a p {
   font-size: 0.6rem;
   min-width: 25%;
 }
-.ventanaDetalles .cuerpoOrdenes .seccion3 ul a:hover {
+.ventanaDetalles .cuerpoOrdenes .seccion3 ul li a:hover {
   border: 1px solid #c3c3c3;
 }
 .ventanaDetalles .cuerpoOrdenes .seccion4 {
