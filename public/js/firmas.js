@@ -5,6 +5,8 @@ $(function() {
 
     $("#esperar").fadeOut();
 
+    
+
     $("#tablaPrincipal tbody").on("click","tr", function (e) {
         e.preventDefault();
 
@@ -89,6 +91,8 @@ $(function() {
                 $("#listaAdjuntos")
                     .empty()
                     .append(data.adjuntos.adjuntos);
+
+                $("#listaAdjuntos .file_delete").hide();
 
                 grabado     = true;
                 ingresos    = 0
