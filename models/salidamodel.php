@@ -1202,7 +1202,7 @@
 
             $path = "public/documentos/guia_electronica/";
 
-            $nombre_archivo = $header->destinatario_ruc.'-09-'.$header->serie_guia.'-'.$header->numero_guia;
+            $nombre_archivo = $header->destinatario_ruc.'-31-'.$header->serie_guia.'-'.$header->numero_guia;
 
             if(file_exists($path."XML/".$nombre_archivo.".xml")){
                 unlink($path."XML/".$nombre_archivo.".xml");  
@@ -1356,6 +1356,7 @@
             }
             
             $xml.=  '</DespatchAdvice>';
+            
             return $xml;
         }
 
