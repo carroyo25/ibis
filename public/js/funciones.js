@@ -247,6 +247,7 @@ addComa = (x) => { return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
 
 
 ///filtro
+
 $(".datafiltro").append(`
         <a href="#" class="listaFiltroTabla" data-idcol="0"><i class="fas fa-angle-down"></i></a>
         <div class="filtro">
@@ -283,7 +284,6 @@ $(".datafiltro").append(`
 
             t = "#"+tabla+ " tbody tr";
 
-            console.log(t);
 
         mostrarValoresFiltrados($(t),columna,value);
 

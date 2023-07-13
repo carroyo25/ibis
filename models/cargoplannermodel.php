@@ -577,8 +577,16 @@
                     $objPHPExcel->getActiveSheet()->setCellValue('G'.$fila,$datos[$i]->tipo);
                     $objPHPExcel->getActiveSheet()->setCellValue('H'.$fila,$datos[$i]->anio_pedido);
                     $objPHPExcel->getActiveSheet()->setCellValue('I'.$fila,$datos[$i]->num_pedido);
-                    $objPHPExcel->getActiveSheet()->setCellValue('J'.$fila,$datos[$i]->crea_pedido);
-                    $objPHPExcel->getActiveSheet()->setCellValue('K'.$fila,$datos[$i]->apro_pedido);
+
+                    if  ($datos[$i]->crea_pedido !== "")
+                        $objPHPExcel->getActiveSheet()->setCellValue('J'.$fila,PHPExcel_Shared_Date::PHPToExcel($datos[$i]->crea_pedido));
+                        $objPHPExcel->getActiveSheet()->getStyle('J'.$fila)->getNumberFormat()->setFormatCode('dd/mm/yyyy');
+
+                    //$objPHPExcel->getActiveSheet()->setCellValue('K'.$fila,$datos[$i]->apro_pedido);
+                    if  ($datos[$i]->apro_pedido !== "")
+                        $objPHPExcel->getActiveSheet()->setCellValue('K'.$fila,PHPExcel_Shared_Date::PHPToExcel($datos[$i]->apro_pedido));
+                        $objPHPExcel->getActiveSheet()->getStyle('K'.$fila)->getNumberFormat()->setFormatCode('dd/mm/yyyy');
+
                     $objPHPExcel->getActiveSheet()->setCellValue('L'.$fila,$datos[$i]->cantidad);
                     $objPHPExcel->getActiveSheet()->setCellValue('M'.$fila,$datos[$i]->codigo);
                     $objPHPExcel->getActiveSheet()->setCellValue('N'.$fila,$datos[$i]->unidad);
@@ -586,19 +594,23 @@
                     $objPHPExcel->getActiveSheet()->setCellValue('P'.$fila,$datos[$i]->tipo_orden);
                     $objPHPExcel->getActiveSheet()->setCellValue('Q'.$fila,$datos[$i]->anio_orden);
                     $objPHPExcel->getActiveSheet()->setCellValue('R'.$fila,$datos[$i]->nro_orden);
-                    $objPHPExcel->getActiveSheet()->setCellValue('S'.$fila,$datos[$i]->fecha_orden);
+                   
+                    if  ($datos[$i]->fecha_orden !== "")
+                        $objPHPExcel->getActiveSheet()->setCellValue('S'.$fila,PHPExcel_Shared_Date::PHPToExcel($datos[$i]->fecha_orden));
+                        $objPHPExcel->getActiveSheet()->getStyle('S'.$fila)->getNumberFormat()->setFormatCode('dd/mm/yyyy');
+
                     $objPHPExcel->getActiveSheet()->setCellValue('T'.$fila,$datos[$i]->cantidad_orden);
                     $objPHPExcel->getActiveSheet()->setCellValue('U'.$fila,$datos[$i]->item_orden);
-                    $objPHPExcel->getActiveSheet()->setCellValue('V'.$fila,$datos[$i]->autoriza_orden);
+
+                    if  ($datos[$i]->autoriza_orden !== "")
+                        $objPHPExcel->getActiveSheet()->setCellValue('V'.$fila,PHPExcel_Shared_Date::PHPToExcel($datos[$i]->autoriza_orden));
+                        $objPHPExcel->getActiveSheet()->getStyle('V'.$fila)->getNumberFormat()->setFormatCode('dd/mm/yyyy');
+                    
                     $objPHPExcel->getActiveSheet()->setCellValue('W'.$fila,$datos[$i]->proveedor);
-                    $objPHPExcel->getActiveSheet()->setCellValue('X'.$fila,$datos[$i]->fecha_entrega);
 
-                    $objPHPExcel->getActiveSheet()->setCellValue('X'.$fila,$datos[$i]->fecha_entrega);
-
-                    $objPHPExcel->getActiveSheet()
-                                ->getStyle('X'.$fila,$datos[$i]->fecha_entrega)
-                                ->getNumberFormat()
-                                ->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDDSLASH);
+                    if  ($datos[$i]->fecha_entrega !== "")
+                        $objPHPExcel->getActiveSheet()->setCellValue('X'.$fila,PHPExcel_Shared_Date::PHPToExcel($datos[$i]->fecha_entrega));
+                        $objPHPExcel->getActiveSheet()->getStyle('X'.$fila)->getNumberFormat()->setFormatCode('dd/mm/yyyy');
 
                     $objPHPExcel->getActiveSheet()->setCellValue('Y'.$fila,$datos[$i]->cantidad_recibida);
                     $objPHPExcel->getActiveSheet()->setCellValue('Z'.$fila,$datos[$i]->nota_ingreso);

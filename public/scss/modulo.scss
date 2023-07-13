@@ -683,7 +683,7 @@ $anulado:#c2c2c2;
             background:$negro;
             color:$blanco;
             font-size: .7rem;
-            height: 1.2rem;
+            height: 2.5rem;
 
             th {
                 position: relative;
@@ -707,7 +707,7 @@ $anulado:#c2c2c2;
                 display: none;
                 padding: 5px;
                 box-shadow: 5px 6px 5px #c2c2c2;
-                top: 30px;
+                top: 48px;
 
                 input {
                     border: 1px solid #ccc;
@@ -780,6 +780,53 @@ $anulado:#c2c2c2;
             th{
                 padding:5px 5px;
                 color: $blanco;
+                position: relative;
+            }
+
+            .filtro{
+                background: #fff;
+                color: #000;
+                border: 1px solid #ccc;
+                position: absolute;
+                text-align: left;
+                min-width: 15rem;
+                width: max-content;
+                line-height: 1.5rem;
+                border-radius: 3px;
+                display: none;
+                padding: 5px;
+                box-shadow: 5px 6px 5px #c2c2c2;
+                top: 45px;
+                height: 15rem;
+                overflow: auto;
+    
+                input {
+                    border: 1px solid #ccc;
+                    width: 90%;
+                    padding-left: 5px;
+                }
+    
+                ul {
+                    display: flex;
+                    flex-direction: column;
+                    height: 20rem;
+                    overflow: auto;
+                    
+                    li {
+                        display: block;
+                        width: 100%;
+                    }
+    
+                    a {
+                        color: #000;
+                        display: block;
+    
+                        &:hover {
+                            background: #0075B7;
+                            color: #fff;
+                        }
+                    }
+                }
             }
         }
 
@@ -2173,7 +2220,7 @@ $anulado:#c2c2c2;
             display: none;
             padding: 5px;
             box-shadow: 5px 6px 5px #c2c2c2;
-            top: 30px;
+            top: 45px;
             height: 15rem;
             overflow: auto;
 

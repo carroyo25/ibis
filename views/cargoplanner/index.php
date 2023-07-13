@@ -213,46 +213,46 @@
             <thead>
                 <tr class="stickytop">
                     <th width="30px">Items</th>
-                    <th style="background:#40D1FB; color:#000">Estado</br>Actual</th>
+                    <th style="background:#40D1FB; color:#000; position:relative" data-idcol="1" class="datafiltro">Estado</br>Actual</th>
                     <th style="background:#40D1FB; color:#000">Codigo</br>Proyecto</th>
-                    <th style="background:#40D1FB; color:#000">Area</th>
-                    <th style="background:#40D1FB; color:#000">Partida</th>
+                    <th style="background:#40D1FB; color:#000" data-idcol="3" class="datafiltro">Area</th>
+                    <th style="background:#40D1FB; color:#000" data-idcol="4" class="datafiltro">Partida</th>
                     <th style="background:#40D1FB; color:#000">Atencion</th>
-                    <th style="background:#40D1FB; color:#000">Tipo</th>
+                    <th style="background:#40D1FB; color:#000" data-idcol="6" class="datafiltro">Tipo</th>
                     <th style="background:#FBD341; color:#000">Año</br> Pedido</th>
-                    <th style="background:#FBD341; color:#000">N°</br>Pedido</th>
+                    <th style="background:#FBD341; color:#000" data-idcol="8" class="datafiltro">N°</br>Pedido</th>
                     <th style="background:#FBD341; color:#000" width="80px">Creación</br>Pedido</th>
                     <th style="background:#FBD341; color:#000" width="80px">Aprobación</br>Pedido</th>
                     <th style="background:#FBD341; color:#000">Cantidad</br>Pedida</th>
-                    <th style="background:#A6CAF0; color:#000">Codigo del</br>Bien/Servicio</th>
+                    <th style="background:#A6CAF0; color:#000" data-idcol="12" class="datafiltro">Codigo del</br>Bien/Servicio</th>
                     <th style="background:#A6CAF0; color:#000">Unidad</br>Medida</th>
                     <th style="background:#A6CAF0; color:#000" width="10%">Descripcion del Bien/Servicio</th>
                     <th style="background:#AAFFAA; color:#000" width="40px">Tipo</br>Orden</th>
                     <th style="background:#AAFFAA; color:#000" width="50px">Año</br>Orden</th>
-                    <th style="background:#AAFFAA; color:#000">N°</br>Orden</th>
+                    <th style="background:#AAFFAA; color:#000" data-idcol="17" class="datafiltro">N°</br>Orden</th>
                     <th style="background:#AAFFAA; color:#000">Fecha</br>Orden</th>
                     <th style="background:#AAFFAA; color:#000">Cantidad</br>Orden</th>
                     <th style="background:#AAFFAA; color:#000">Item</br>Orden</th>
                     <th style="background:#AAFFAA; color:#000">Fecha</br>Autorización</th>
-                    <th style="background:#AB7FAB; color:#fff" width="10%">Descripcion Proveedor</th>
+                    <th style="background:#AB7FAB; color:#fff" width="10%" data-idcol="22" class="datafiltro">Descripcion Proveedor</th>
                     <th>Fecha Entrega</br>Proveedor</th>
                     <th width="50px">Cantidad</br>Recibida</th>
-                    <th width="50px">Nota</br>Ingreso</th>
+                    <th width="50px" data-idcol="25" class="datafiltro">Nota</br>Ingreso</th>
                     <th>Saldo por</br>Recibir</th>
                     <th width="50px">Días</br>Entrega</th>
                     <th>Días</br>Atrazo</th>
                     <th>Semaforo</th>
                     <th style="background:#25AFF3; color:#000">Cantidad</br>Enviada</th>
-                    <th style="background:#25AFF3; color:#000">Nro. Guia</th>
-                    <th style="background:#DA500B; color:#000">Registro</br>Almacen</th>
+                    <th style="background:#25AFF3; color:#000" data-idcol="31" class="datafiltro">Nro. Guia</th>
+                    <th style="background:#DA500B; color:#000" data-idcol="32" class="datafiltro">Registro</br>Almacen</th>
                     <th style="background:#DA500B; color:#000">Cantidad</br>Recibida</br>Obra</th>
                     <th>Estado</br>Pedido</th>
                     <th>Estado</br>Item</th>
-                    <th>N°</br>Parte</th>
-                    <th width="150px">Codigo</br>Activo</th>
+                    <th data-idcol="36" class="datafiltro">N°</br>Parte</th>
+                    <th width="150px" data-idcol="37" class="datafiltro">Codigo</br>Activo</th>
                     <th>Operador</br>Logístico</th>
                     <th>Tipo</br>Transporte</th>
-                    <th>Observaciones/Concepto</th>
+                    <th data-idcol="40" class="datafiltro">Observaciones/Concepto</th>
                 </tr>
             </thead>
             <tbody>

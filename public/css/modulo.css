@@ -958,7 +958,7 @@
   background: #000;
   color: #fff;
   font-size: 0.7rem;
-  height: 1.2rem;
+  height: 2.5rem;
 }
 .itemsTabla table thead th {
   position: relative;
@@ -983,7 +983,7 @@
   padding: 5px;
   -webkit-box-shadow: 5px 6px 5px #c2c2c2;
           box-shadow: 5px 6px 5px #c2c2c2;
-  top: 30px;
+  top: 48px;
 }
 .itemsTabla table thead .filtro input {
   border: 1px solid #ccc;
@@ -1049,6 +1049,55 @@
 }
 .itemsCargoPlanner table thead th, .itemsValorizado table thead th {
   padding: 5px 5px;
+  color: #fff;
+  position: relative;
+}
+.itemsCargoPlanner table thead .filtro, .itemsValorizado table thead .filtro {
+  background: #fff;
+  color: #000;
+  border: 1px solid #ccc;
+  position: absolute;
+  text-align: left;
+  min-width: 15rem;
+  width: -webkit-max-content;
+  width: -moz-max-content;
+  width: max-content;
+  line-height: 1.5rem;
+  border-radius: 3px;
+  display: none;
+  padding: 5px;
+  -webkit-box-shadow: 5px 6px 5px #c2c2c2;
+          box-shadow: 5px 6px 5px #c2c2c2;
+  top: 45px;
+  height: 15rem;
+  overflow: auto;
+}
+.itemsCargoPlanner table thead .filtro input, .itemsValorizado table thead .filtro input {
+  border: 1px solid #ccc;
+  width: 90%;
+  padding-left: 5px;
+}
+.itemsCargoPlanner table thead .filtro ul, .itemsValorizado table thead .filtro ul {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  height: 20rem;
+  overflow: auto;
+}
+.itemsCargoPlanner table thead .filtro ul li, .itemsValorizado table thead .filtro ul li {
+  display: block;
+  width: 100%;
+}
+.itemsCargoPlanner table thead .filtro ul a, .itemsValorizado table thead .filtro ul a {
+  color: #000;
+  display: block;
+}
+.itemsCargoPlanner table thead .filtro ul a:hover, .itemsValorizado table thead .filtro ul a:hover {
+  background: #0075B7;
   color: #fff;
 }
 .itemsCargoPlanner table tbody tr, .itemsCargoPlanner table tbody td, .itemsValorizado table tbody tr, .itemsValorizado table tbody td {
@@ -2494,7 +2543,7 @@
   padding: 5px;
   -webkit-box-shadow: 5px 6px 5px #c2c2c2;
           box-shadow: 5px 6px 5px #c2c2c2;
-  top: 30px;
+  top: 45px;
   height: 15rem;
   overflow: auto;
 }

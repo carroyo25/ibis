@@ -26,8 +26,11 @@ $(function() {
     $("#btnExporta").click(function (e) { 
         e.preventDefault();
 
+        $("#esperar").fadeIn();
+
         $.post(RUTA+"cargoplanner/export", {registros:JSON.stringify(detalles())},
             function (data, textStatus, jqXHR) {
+                $("#esperar").fadeOut();
                 window.location.href = data.documento;
             },
             "json"
@@ -109,7 +112,6 @@ $(function() {
 
         return false;
     });
-
 
     $("#closePreview").click(function (e) { 
         e.preventDefault();
@@ -224,7 +226,6 @@ detalles = () =>{
 }
 
 function s2ab(s) {
-
     var buf = new ArrayBuffer(s.length);
     var view = new Uint8Array(buf);
     for (var i=0; i<s.length; i++) view[i] = s.charCodeAt(i) & 0xFF;
