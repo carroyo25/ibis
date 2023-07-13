@@ -340,6 +340,7 @@
                                                         FORMAT(ibis.alm_consumo.cantdevolucion,2) AS cantdevolucion,
                                                         DATE_FORMAT(ibis.alm_consumo.fechasalida,'%d/%m/%Y') AS fechasalida,
                                                         DATE_FORMAT(ibis.alm_consumo.fechadevolucion,'%d/%m/%Y') AS fechadevolucion,
+                                                        
                                                         FORMAT(ibis.alm_consumo.nhoja,2) AS nhoja,
                                                         ibis.alm_consumo.cisometrico,
                                                         ibis.alm_consumo.cobserentrega,
@@ -398,13 +399,6 @@
                 $objPHPExcel->getActiveSheet()->getStyle('A1:Q2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
                 $objPHPExcel->getActiveSheet()->getStyle('A1:Q2')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-                /*$objPHPExcel->getActiveSheet()->getStyle('I')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
-                $objPHPExcel->getActiveSheet()->getStyle('I')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                $objPHPExcel->getActiveSheet()->getStyle('J')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
-                $objPHPExcel->getActiveSheet()->getStyle('J')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                $objPHPExcel->getActiveSheet()->getStyle('K')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
-                $objPHPExcel->getActiveSheet()->getStyle('K')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);*/
-
                 $objPHPExcel->getActiveSheet()->getRowDimension('2')->setRowHeight(60);
 
                 $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(80);
@@ -452,18 +446,23 @@
 
                 if ($rowCount > 0) {
                     while($rs = $sql->fetch()) {
-                        //$objPHPExcel->getActiveSheet()->setCellValue('A'.$fila,$item);
+
+                        $date = DateTime::createFromFormat('Y-m-d H:i', $rs['fechasalida']);
+
                         $objPHPExcel->getActiveSheet()->setCellValueExplicit('A'.$fila, $item,PHPExcel_Cell_DataType::TYPE_STRING);
-                        //$objPHPExcel->getActiveSheet()->setCellValue('B'.$fila,$rs['nrodoc']);
                         $objPHPExcel->getActiveSheet()->setCellValueExplicit('B'.$fila, $rs['nrodoc'],PHPExcel_Cell_DataType::TYPE_STRING);
                         $objPHPExcel->getActiveSheet()->setCellValue('C'.$fila,$rs['nombres']);
                         $objPHPExcel->getActiveSheet()->setCellValue('D'.$fila,$rs['cargo']);
                         $objPHPExcel->getActiveSheet()->setCellValue('E'.$fila,$rs['codigo']);
-                        //$objPHPExcel->getActiveSheet()->setCellValue('F'.$fila,$rs['descripcion']);
                         $objPHPExcel->getActiveSheet()->setCellValueExplicit('F'.$fila, $rs['descripcion'],PHPExcel_Cell_DataType::TYPE_STRING);
-                        $objPHPExcel->getActiveSheet()->setCellValue('G'.$fila,$rs['fechasalida']);
+                        
+                        $objPHPExcel->getActiveSheet()->setCellValue('G'.$fila,PHPExcel_Shared_Date::PHPToExcel($rs['fechasalida']));
+                        $objPHPExcel->getActiveSheet()->getStyle('G'.$fila)->getNumberFormat()->setFormatCode('dd/mm/yyyy');
+
                         $objPHPExcel->getActiveSheet()->setCellValue('H'.$fila,$rs['cantsalida']);
                         $objPHPExcel->getActiveSheet()->setCellValue('I'.$fila,$rs['fechadevolucion']);
+                        
+
                         $objPHPExcel->getActiveSheet()->setCellValue('J'.$fila,$rs['cantdevolucion']);
                         $objPHPExcel->getActiveSheet()->setCellValue('K'.$fila,$rs['nhoja']);
                         $objPHPExcel->getActiveSheet()->setCellValue('L'.$fila,$rs['cisometrico']);
@@ -472,11 +471,14 @@
                         $objPHPExcel->getActiveSheet()->setCellValue('O'.$fila,$rs['grupo']);
                         $objPHPExcel->getActiveSheet()->setCellValue('P'.$fila,$rs['clase']);
                         $objPHPExcel->getActiveSheet()->setCellValue('Q'.$fila,$rs['familia']);
+                        $objPHPExcel->getActiveSheet()->setCellValue('R'.$fila,$rs['fechasalida']);
 
                         $fila++;
                         $item++;
                     }
                 }
+
+                
 
 
                 $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel,'Excel2007');
