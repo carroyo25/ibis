@@ -13,6 +13,10 @@
         function datosapi(){
             echo json_encode($this->model->buscarDatosTerceros($_POST['documento'],$_POST['costos']));
         }
+
+        function productos(){
+            echo json_encode($this->model->buscarProductosTerceros($_POST['codigo']));
+        }
         
     }
 ?>

@@ -83,9 +83,10 @@ $(function(){
                 
                 $("#in").val(total_format);
 
-                let igv = parseFloat(data.cabecera[0].total_multiplicado)*.18;
+                let igv = 0;
 
                 if (data.cabecera[0].nigv != 0) {
+                        igv = parseFloat(data.cabecera[0].total_multiplicado)*.18;
                         $("#si").prop("checked", true);
                         $("#im").val(igv.toFixed(2));
                 }else {

@@ -20,7 +20,7 @@
 
         private function kardexAnterior($d,$c){
             try {
-                /*$salida = "";
+                $salida = "";
                 $sql = $this->db->connect()->prepare("SELECT
                                                         alm_consumo.idreg,
                                                         alm_consumo.reguser,
@@ -98,12 +98,51 @@
                     }
                 }
 
-                return $salida;*/
+                return $salida;
 
             }catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
             }  
+        }
+
+        public function buscarProductosTerceros($codigo){
+            try {
+                $salida = "";
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        cm_producto.id_cprod,
+                                                        cm_producto.ccodprod,
+                                                        UPPER(cm_producto.cdesprod) AS cdesprod,
+                                                        tb_unimed.cabrevia,
+                                                        NOW() AS fecha
+                                                    FROM
+                                                        cm_producto
+                                                        INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed 
+                                                    WHERE
+                                                        cm_producto.flgActivo = 1 
+                                                        AND cm_producto.ccodprod = :codigo 
+                                                        AND cm_producto.ntipo = 37");
+                $sql->execute(["codigo"=>$codigo]);
+
+                $rowCount = $sql->rowCount();
+                $result = $sql->fetchAll();
+
+                if ($rowCount > 0) {
+                    $respuesta = array("descripcion"=>$result[0]['cdesprod'],
+                                        "codigo"=>$result[0]['ccodprod'],
+                                        "unidad"=>$result[0]['cabrevia'],
+                                        "idprod"=>$result[0]['id_cprod'],
+                                        "fecha"=>$result[0]['fecha'],
+                                        "registrado"=>true);
+                }else{
+                    $respuesta = array("registrado"=>false); 
+                }
+
+                return $respuesta;
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
         }
     }
 ?>

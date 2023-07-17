@@ -245,7 +245,6 @@ $(function(){
 
                         $("#codigo_pedido").val(data.indice);
 
-                        //$("#fileAtachs").trigger("submit");
                     },
                     "json"
                 );
