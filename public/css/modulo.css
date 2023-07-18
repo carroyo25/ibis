@@ -1025,6 +1025,9 @@
 .itemsTabla table tbody .pointer:hover {
   background: rgba(255, 255, 43, 0.7);
 }
+.itemsTabla table tbody input {
+  width: 100%;
+}
 .itemsTabla table tbody textarea {
   width: 100%;
   height: 100%;

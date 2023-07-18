@@ -23,7 +23,8 @@
         <div class="ventanaProceso tamanioProceso">
             <div class="cabezaProceso">
                 <form action="#" id="formProceso" autocomplete="off">
-                    <input type="hidden" name="codigo_costos" id="codigo_costos"> 
+                    <input type="hidden" name="codigo_costos" id="codigo_costos">
+                    <input type="hidden" name="codigo_costos" id="codigo_costos_destino">  
                     <input type="hidden" name="codigo_area" id="codigo_area">
                     <input type="hidden" name="codigo_movimiento" id="codigo_movimiento">
                     <input type="hidden" name="codigo_aprueba" id="codigo_aprueba">
@@ -42,9 +43,7 @@
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
                         <div>
-                            <!--<button type="button" id="importData" title="Importar Items" class="boton3">
-                                <i class="fab fa-wpexplorer"></i> Importar Items
-                            </button>-->
+                           
                             <button type="button" id="importRequest" title="Importar Pedido" class="boton3">
                                 <i class="fab fa-wpexplorer"></i> Importar Pedido
                             </button>
@@ -71,15 +70,7 @@
                                     <input type="text" name="numero" id="numero" class="cerrarLista textoDerecha pr20px" readonly>
                                 </div>
                             </div>
-                            <div class="column2">
-                                <label for="costos">CCostos:</label>
-                                <input type="text" name="costos" id="costos" class="mostrarLista busqueda" placeholder="Elija una opcion">
-                                <div class="lista" id="listaCostos">
-                                   <ul>
-                                       <?php echo $this->listaCostos?>
-                                   </ul> 
-                                </div>
-                            </div>
+                            
                             <div class="column2">
                                 <label for="aprueba">Aprueba:</label>
                                 <input type="text" name="aprueba" id="aprueba" class="mostrarLista busqueda" placeholder="Elija opción"
@@ -91,7 +82,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="seccion_medio">
+                        <!--<div class="seccion_medio">
                             <div class="column2">
                                 <label for="almacen_origen_despacho">Almacen Origen:</label>
                                 <input type="text" name="almacen_origen_despacho" id="almacen_origen_despacho" class="mostrarLista busqueda" readonly>
@@ -110,14 +101,25 @@
                                    </ul> 
                                 </div>
                             </div>
-                            <div class="column4_55">
-                                <div class="column2">
-                                    <label for="movimiento">Mov Almacen:</label>
-                                    <input type="text" name="movimiento" id="movimiento" class="w100por" readonly>
+                            
+                        </div>-->
+                        <div class="seccion_medio">
+                            <div class="column2">
+                                <label for="costos">CCostos Origen:</label>
+                                <input type="text" name="costos" id="costos" class="mostrarLista busqueda" placeholder="Elija una opcion">
+                                <div class="lista" id="listaCostos">
+                                   <ul>
+                                       <?php echo $this->listaCostos?>
+                                   </ul> 
                                 </div>
-                                <div class="column2">
-                                    <label for="estado">Estado:</label>
-                                    <input type="text" name="estado" id="estado" class="textoCentro estado w100por procesando" readonly value="EN PROCESO">
+                            </div>
+                            <div class="column2">
+                                <label for="costos">CCostos Destino:</label>
+                                <input type="text" name="cdestino" id="cdestino" class="mostrarLista busqueda" placeholder="Elija una opcion">
+                                <div class="lista" id="listaCostos">
+                                   <ul>
+                                       <?php echo $this->listaCostos?>
+                                   </ul> 
                                 </div>
                             </div>
                         </div>
@@ -130,6 +132,16 @@
                                    <ul>
                                        <?php echo $this->listaMovimiento?>
                                    </ul> 
+                                </div>
+                            </div>
+                            <div class="column4_55">
+                                <div class="column2">
+                                    <label for="movimiento">Mov Almacen:</label>
+                                    <input type="text" name="movimiento" id="movimiento" class="w100por" readonly>
+                                </div>
+                                <div class="column2">
+                                    <label for="estado">Estado:</label>
+                                    <input type="text" name="estado" id="estado" class="textoCentro estado w100por procesando" readonly value="EN PROCESO">
                                 </div>
                             </div>
                         </div>

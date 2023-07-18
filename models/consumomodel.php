@@ -135,6 +135,10 @@
             return  $respuesta;
         }
 
+        private function correoMovimiento($nombre,$correo){
+            
+        }
+
         private function kardexAnterior($d,$c){
             try {
                 $salida = "";

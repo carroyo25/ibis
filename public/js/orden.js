@@ -521,7 +521,7 @@ $(function(){
             if ( accion == "" ) throw "Orden grabada";
             if ($("#codigo_estado").val() == 59) throw "La orden esta en firmas.";
             if (result['numero'] == "") throw "No tiene numero de orden";
-            //if (result['fentrega'] == "") throw "Elija la fecha de entrega";
+            if (result['dias'] == "") throw "ingrese el numero de dias";
             if (result['codigo_moneda'] == "") throw "Elija la moneda";
             if (result['codigo_pago'] == "") throw "Elija el tipo de pago";
             //if (result['correo_entidad'] == "") throw "Elija el proveedor";

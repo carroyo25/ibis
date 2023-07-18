@@ -125,8 +125,8 @@
                 if ($rowCount > 0) {
                     $salida="";
                     while ($rs = $sql->fetch()){
-                        $saldo = ( $rs['ingresos']+$rs['inventarios']+$rs['devuelto']+$rs['transferencias'] )-$rs['salidas'];
-                        $saldo = $saldo > -1 ? $saldo : $saldo*-1;
+                        $saldo = ( $rs['ingresos']+$rs['inventarios']+$rs['devuelto'] )-$rs['salidas'];
+                        $saldo = $saldo > -1 ? $saldo : $saldo;
                         $estado = $saldo > -1 ? "semaforoVerde":"semaforoRojo";
 
                         $alerta_minimo = ( $rs['minimo']*.7 ) > $saldo ? "semaforoRojo":"";

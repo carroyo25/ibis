@@ -110,8 +110,8 @@
             <div>
                 <img src="" id="vistafirma">
             </div> 
-            <button id="btnGrabarKardex" class="oculto boton3">Aceptar</button>
-            <button type="button" class="boton3" id="btnFirmar" onclick="StartSign()">Firmar</button>
+            <button id="btnGrabarKardex" class=" boton3">Aceptar</button>
+            <button type="button" class="oculto boton3" id="btnFirmar" onclick="StartSign()">Firmar</button>
             <div>
                 <label for="codeRead">Codigo: </label>
                 <input type="text" name="codeRead" id="codeRead" style="opacity:1;position:relative" value=""> 
@@ -126,14 +126,14 @@
                     <th>Codigo</th>
                     <th>Descripcion</th>
                     <th>UND.</th>
-                    <th>Cant.</th>
-                    <th>Fecha</br>Salida</th>
-                    <th>N° Hoja</th>
-                    <th>Isometricos</th>
+                    <th width="30px">Cant.</th>
+                    <th width="40px">Fecha</br>Salida</th>
+                    <th width="60px">N° Hoja</th>
+                    <th width="30px">Isometricos</th>
                     <th>Observaciones</th>
-                    <th>Serie</th>
+                    <th width="30px">Serie</th>
                     <th>Patrimonio</th>
-                    <th>Estado</th>
+                    <th width="30px">Estado</th>
                     <th width="20px">Firma</th>
                     <th>...</th>
                 </tr>
@@ -144,7 +144,7 @@
         </table>
     </div>
     <canvas id="cnv" name="cnv" width="500" height="100" ></canvas>
-    <canvas name="SigImg" id="SigImg" width="500" height="100" s></canvas>
+    <canvas name="SigImg" id="SigImg" width="500" height="100"></canvas>
     <form action="" name="FORM1">
         <input type="hidden" name="firmado" id="firmado">
 	</form>

@@ -2502,6 +2502,11 @@
                 $item = 1;
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()){
+
+                        $observa = $rs['cobserva'] == 'undefined' ? '' : $rs['cobserva'];
+                        $nroparte = $rs['nroparte'] == 'undefined' ? '' : $rs['nroparte'];
+
+
                         $salida.='<tr data-grabado="1" 
                                         data-total="'.$rs['ntotal'].'" 
                                         data-codprod="'.$rs['id_cprod'].'" 
@@ -2532,9 +2537,9 @@
                                         class="textoDerecha">
                                     </td>
                                     <td class="textoDerecha pr5px">'.$rs['total_real'].'</td>
-                                    <td class="textoCentro">'.$rs['nroparte'].'</td>
+                                    <td class="textoCentro">'.$nroparte.'</td>
                                     <td class="pl20px">'.$rs['nro_pedido'].'</td>
-                                    <td><textarea>'.$rs['cobserva'].'</textarea></td>
+                                    <td><textarea>'.$observa.'</textarea></td>
                                 </tr>';
                     }
                 }

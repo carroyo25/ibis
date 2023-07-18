@@ -250,6 +250,7 @@
                 $orden = $this->generarNumeroOrden();
                 
                 $periodo = explode('-',$cab->emision);
+                $dias_entrega = intval($cab->dias);
 
                 //$this->subirArchivos($orden,$adjuntos);
                 
@@ -279,7 +280,7 @@
                                 "transporte" =>$cab->codigo_transporte,
                                 "elabora"    =>$usuario,
                                 "pago"       =>$cab->codigo_pago,
-                                "pentrega"   =>$cab->dias,
+                                "pentrega"   =>$dias_entrega,
                                 "cotizacion" =>$cab->proforma,
                                 "adjunto"    =>$cab->vista_previa,
                                 "est"        =>49,
