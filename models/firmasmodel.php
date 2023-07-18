@@ -192,9 +192,10 @@
                 $sql = $this->db->connect()->prepare("SELECT
                                                         cm_producto.id_cprod,
                                                         cm_producto.ccodprod,
-                                                        UPPER(CONCAT_WS(' ',cm_producto.cdesprod ,tb_pedidodet.observaciones) ) AS cdesprod,
+                                                        UPPER(cm_producto.cdesprod) AS cdesprod,
                                                         lg_ordendet.ncanti,
                                                         lg_ordendet.nunitario,
+                                                        UPPER(lg_ordendet.cobserva) AS cobserva,
                                                         lg_ordencab.cnumero AS orden,
                                                         tb_unimed.cabrevia AS unidad,
                                                         tb_parametros.cabrevia AS moneda,
@@ -230,12 +231,13 @@
                         $salida .='<tr>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="pl10px">'.$rs['cdesprod'].'</td>
-                                        <td class="pl10px">'.$rs['cdesproy'].'</td>
+                                        <td class="pl10px">'.$rs['ccodproy'].'</td>
                                         <td class="textoCentro">'.$rs['moneda'].'</td>
                                         <td class="textoDerecha pr20px">'.$rs['nunitario'].'</td>
                                         <td class="textoDerecha pr20px">'.$rs['ncanti'].'</td>
                                         <td class="textoCentro">'.$rs['pedido'].'</td>
                                         <td class="textoCentro">'.$rs['orden'].'</td>
+                                        <td class="pl10px">'.$rs['cobserva'].'</td>
                                         <td class="textoDerecha pr20px">'.$tipo_cambio.'</td>
                                         <td class="textoCentro">'.$rs['fecha'].'</td>
                                     </tr>';

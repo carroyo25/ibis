@@ -244,6 +244,7 @@
                             <th>Cantidad</th>
                             <th>Pedido</th>
                             <th>Orden</th>
+                            <th>Observaciones</th>
                             <th>Tipo </br> Cambio</th>
                             <th>Fecha</th>
                         </tr>

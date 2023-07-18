@@ -1338,9 +1338,10 @@ $anulado:#c2c2c2;
 }
 
 .ventanaPrecios {
-    width: 45%;
+    width: 55%;
     border-radius: 8px;
-    height: 40rem;
+    overflow: auto;
+    //height: 40rem;
 
     .tituloVista{
         display: flex;
