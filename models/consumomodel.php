@@ -208,6 +208,9 @@
                 }
 
                 $mensaje.='</tbody></table>';
+                $mensaje.= '<p>Se hace constar para su informacion y conformidad</p>';
+                $mensaje.= '<p>Atte</p>';
+                $mensaje.= '<p>Almacen Sepcon</p>';
 
                 $mail->msgHTML($mensaje);
 
