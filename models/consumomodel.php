@@ -67,7 +67,7 @@
             }
         }
 
-        public function subirFirma($detalles,$correo,$nombre) {
+        public function subirFirma($detalles,$correo,$nombre,$cc) {
             if (array_key_exists('img',$_REQUEST)) {
                 // convierte la imagen recibida en base64
                 // Eliminamos los 22 primeros caracteres, que 
@@ -132,19 +132,18 @@
                 }            
             }
 
-            $this->correoMovimiento($detalles,$nombre,$correo,$kardex);
+            $this->correoMovimiento($detalles,$nombre,$correo,$kardex,$cc);
         
             return  $respuesta;
         }
 
-        private function correoMovimiento($detalles,$nombre,$correo,$kardex){
+        private function correoMovimiento($detalles,$nombre,$correo,$kardex,$cc){
             require_once("public/PHPMailer/PHPMailerAutoload.php");
 
-            $data       = json_decode($detalles);
-            $nreg       = count($data);
-            $subject    = utf8_decode('Entrega de EPPS/Materiales');
-            $title      = "Portal de Recuros Humanos";
-            $messaje    = utf8_decode($mensaje);
+            $datos      = json_decode($detalles);
+            $nreg       = count($datos);
+            $subject    = utf8_decode('Entrega de EPPS/Materiales '.' - '.$nombre.' - '.$kardex);
+            $fecha_actual = date("d-m-Y h:i:s");
             
             $origen = $_SESSION['user']."@sepcon.net";
             $nombre_envio = $_SESSION['nombres'];
@@ -172,19 +171,21 @@
             );
 
             try {
-                $mail->setFrom('almacen@sepcon.net', 'Almacen Sepcon'); 
+                $mail->setFrom('kardex@sepcon.net', 'Almacen Sepcon'); 
                 $mail->addAddress($origen,$nombre_envio);
+                $mail->addAddress($correo,utf8_decode($nombre));
+                $mail->addAddress('kardex@sepcon.net','kardex@sepcon.net');
 
                 $mail->Subject = $subject;
                 $contador = 1;
 
-                $mensaje = '<p>Estimado :'. $nombre.'</p>';
-                $mensaje .= '<p>Por la presente se le comunica el registro de kardex Nro:'. $kardex.'</p>';
-                $mensaje .= '<p>con la entrega de los siguientes materiales:</p>';
+                $mensaje = '<p>Estimado : <strong style="font-style: italic;">'. utf8_decode($nombre) .' </strong></p>';
+                $mensaje .=  utf8_decode('<p>Realizaste un retiro de almacén: '.$cc.', con el registro de kardex Nro: <strong>'. $kardex.'</strong></p>');
+                $mensaje .= '<p>Para constancia de lo entregado te enviamos los datos de tu retiro:</p>';
 
-                $mensaje.= '<table>
+                $mensaje.= '<table style="width: 80%; border:1px solid #c2c2c2; border-collapse: collapse; font-size:.9rem">
                                 <thead>
-                                    <tr>
+                                    <tr style="color:white; background:#0364B8; padding: 0 5px">
                                         <th>ITEM</th>
                                         <th>CODIGO</th>
                                         <th>DESCRIPCION</th>
@@ -193,24 +194,27 @@
                                         <th>SERIE</th>
                                         <th>CANTIDAD</th>
                                     </tr>
-                                </thead><tbody>';
+                                </thead>
+                                <tbody>';
                 
                 for ($i=0; $i < $nreg; $i++) { 
-                    $mensaje .= '<tr>
-                                    <td>'.$contador.'</td>
+                    $mensaje .= '<tr style="border:1px dotted #c2c2c2">
+                                    <td>'.$contador++.'</td>
                                     <td>'.$datos[$i]->codigo.'</td>
                                     <td>'.$datos[$i]->descripcion.'</td>
                                     <td>'.$datos[$i]->unidad.'</td>
-                                    <td>'.$datos[$i]->fecha.'</td>
+                                    <td>'.$fecha_actual.'</td>
                                     <td>'.$datos[$i]->serie.'</td>
                                     <td>'.$datos[$i]->cantidad.'</td>
                                 </tr>';
                 }
 
                 $mensaje.='</tbody></table>';
-                $mensaje.= '<p>Se hace constar para su informacion y conformidad</p>';
-                $mensaje.= '<p>Atte</p>';
-                $mensaje.= '<p>Almacen Sepcon</p>';
+                $mensaje.= '<p>Atentamente</p>';
+                $mensaje.= '<p>Almacenes Sepcon</p>';
+
+                $mensaje.= '<p style="font-size:.6rem; color:#0364B8; font-style:italic;">No responda este correo</p>';
+
 
                 $mail->msgHTML($mensaje);
 
@@ -565,9 +569,6 @@
                         $item++;
                     }
                 }
-
-                
-
 
                 $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel,'Excel2007');
                 $objWriter->save('public/documentos/reportes/consumos.xlsx');
