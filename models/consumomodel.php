@@ -67,7 +67,7 @@
             }
         }
 
-        public function subirFirma($detalles) {
+        public function subirFirma($detalles,$correo,$nombre) {
             if (array_key_exists('img',$_REQUEST)) {
                 // convierte la imagen recibida en base64
                 // Eliminamos los 22 primeros caracteres, que 
@@ -131,12 +131,93 @@
                     }
                 }            
             }
+
+            $this->correoMovimiento($detalles,$nombre,$correo,$kardex);
         
             return  $respuesta;
         }
 
-        private function correoMovimiento($nombre,$correo){
+        private function correoMovimiento($detalles,$nombre,$correo,$kardex){
+            require_once("public/PHPMailer/PHPMailerAutoload.php");
+
+            $data       = json_decode($detalles);
+            $nreg       = count($data);
+            $subject    = utf8_decode('Entrega de EPPS/Materiales');
+            $title      = "Portal de Recuros Humanos";
+            $messaje    = utf8_decode($mensaje);
             
+            $origen = $_SESSION['user']."@sepcon.net";
+            $nombre_envio = $_SESSION['nombres'];
+
+            $estadoEnvio= false;
+            $clase = "mensaje_error";
+            $salida = "";
+
+            $mail = new PHPMailer;
+            $mail->isSMTP();
+            $mail->SMTPDebug = 0;
+            $mail->Debugoutput = 'html';
+            $mail->Host = 'mail.sepcon.net';
+            $mail->SMTPAuth = true;
+            $mail->Username = 'sistema_ibis@sepcon.net';
+            $mail->Password = $_SESSION['password'];
+            $mail->Port = 465;
+            $mail->SMTPSecure = "ssl";
+            $mail->SMTPOptions = array(
+                'ssl' => array(
+                    'verify_peer' => false,
+                    'verify_peer_name' => false,
+                    'allow_self_signed' => false
+                )
+            );
+
+            try {
+                $mail->setFrom('almacen@sepcon.net', 'Almacen Sepcon'); 
+                $mail->addAddress($origen,$nombre_envio);
+
+                $mail->Subject = $subject;
+                $contador = 1;
+
+                $mensaje = '<p>Estimado :'. $nombre.'</p>';
+                $mensaje .= '<p>Por la presente se le comunica el registro de kardex Nro:'. $kardex.'</p>';
+                $mensaje .= '<p>con la entrega de los siguientes materiales:</p>';
+
+                $mensaje.= '<table>
+                                <thead>
+                                    <tr>
+                                        <th>ITEM</th>
+                                        <th>CODIGO</th>
+                                        <th>DESCRIPCION</th>
+                                        <th>UNIDAD</th>
+                                        <th>FECHA</th>
+                                        <th>SERIE</th>
+                                        <th>CANTIDAD</th>
+                                    </tr>
+                                </thead><tbody>';
+                
+                for ($i=0; $i < $nreg; $i++) { 
+                    $mensaje .= '<tr>
+                                    <td>'.$contador.'</td>
+                                    <td>'.$datos[$i]->codigo.'</td>
+                                    <td>'.$datos[$i]->descripcion.'</td>
+                                    <td>'.$datos[$i]->unidad.'</td>
+                                    <td>'.$datos[$i]->fecha.'</td>
+                                    <td>'.$datos[$i]->serie.'</td>
+                                    <td>'.$datos[$i]->cantidad.'</td>
+                                </tr>';
+                }
+
+                $mensaje.='</tbody></table>';
+
+                $mail->msgHTML($mensaje);
+
+                $mail->send();
+                $mail->ClearAddresses();
+
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            } 
         }
 
         private function kardexAnterior($d,$c){

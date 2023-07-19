@@ -19,7 +19,7 @@
         }
 
         function firma(){
-            echo $this->model->subirFirma($_POST['detalles']);
+            echo $this->model->subirFirma($_POST['detalles'],$_POST['correo'],$_POST['nombre']);
         }
 
         function consulta(){

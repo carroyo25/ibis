@@ -119,7 +119,8 @@ $(function(){
 
         $.post(RUTA+'consumo/firma', {img:canvas.toDataURL(),
                                       detalles:JSON.stringify(detalles()),
-                                    correo:$("#correo").val()},
+                                      correo:$("#correo").val(),
+                                      nombbre:$("#nombre").val()},
             function (data, textStatus, jqXHR) {
                 if (data) {
                     mostrarMensaje("Consumo registrado","mensaje_correcto");

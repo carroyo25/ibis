@@ -153,7 +153,8 @@
                                                         INNER JOIN rrhh.tabla_aquarius ON ibis.tb_pedidocab.idsolicita = rrhh.tabla_aquarius.internal
                                                         INNER JOIN ibis.alm_despachocab ON ibis.alm_despachodet.id_regalm = ibis.alm_despachocab.id_regalm
                                                     WHERE
-                                                        alm_despachodet.id_regalm = :indice");
+                                                        alm_despachodet.id_regalm = :indice
+                                                        AND alm_despachodet.nflgactivo = 1");
                 $sql->execute(["indice"=>$indice]);
                 $rowCount = $sql->rowCount();
 
