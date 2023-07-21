@@ -13,106 +13,104 @@
                 $de = $parametros['descripcionSearch'] == "" ? "%" : "%".$parametros['descripcionSearch']."%";
 
             
-                $sql = $this->db->connect()->prepare("SELECT DISTINCT
+                $sql = $this->db->connect()->prepare("SELECT
                                                         cm_producto.id_cprod,
                                                         cm_producto.ccodprod,
                                                         UPPER( cm_producto.cdesprod ) AS cdesprod,
-                                                        tb_unimed.cabrevia,
-                                                        r.ingresos,
-                                                        i.inventarios,
-                                                        i.condicion,
-                                                        c.salidas,
-                                                        d.devuelto,
-                                                        t.transferencias,
-                                                        m.minimo 
+                                                        recepcion.cantidad_obra AS ingresos,
+                                                        inventarios.condicion,
+                                                        inventarios.inventarios_cantidad AS inventarios,
+                                                        SUM( consumo.cantsalida ) AS consumos,
+                                                        SUM( consumo.cantdevolucion ) AS devoluciones,
+                                                        transferencia.cantidad_transferencias AS transferencias,
+                                                        minimo.cantidad_minima AS minimo,
+                                                        tb_unimed.cabrevia
                                                     FROM
                                                         cm_producto
                                                         LEFT JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
                                                         LEFT JOIN (
-                                                                SELECT
-                                                                    alm_existencia.codprod,
-                                                                    SUM( alm_existencia.cant_ingr ) AS ingresos,
-                                                                    alm_cabexist.idcostos 
-                                                                FROM
-                                                                    alm_existencia
-                                                                    LEFT JOIN alm_cabexist ON alm_existencia.idregistro = alm_cabexist.idreg 
-                                                                WHERE
-                                                                    alm_cabexist.idcostos = :cingreso 
-                                                                GROUP BY
-                                                                    alm_existencia.codprod 
-                                                                ) AS r ON r.codprod = cm_producto.id_cprod
-                                                    LEFT JOIN (
-                                                        SELECT DISTINCTROW
-                                                            SUM( alm_inventariodet.cant_ingr ) AS inventarios,
+                                                        SELECT
+                                                            COUNT( alm_existencia.cant_ingr ) AS ingresos_obra,
+                                                            SUM( alm_existencia.cant_ingr ) AS cantidad_obra,
+                                                            alm_existencia.codprod 
+                                                        FROM
+                                                            alm_existencia
+                                                            LEFT JOIN alm_cabexist ON alm_cabexist.idreg = alm_existencia.idregistro 
+                                                        WHERE
+                                                            alm_existencia.nflgActivo = 1 
+                                                            AND alm_cabexist.idcostos = :cingreso 
+                                                        GROUP BY
+                                                            alm_existencia.codprod 
+                                                        ) AS recepcion ON recepcion.codprod = cm_producto.id_cprod
+                                                        LEFT JOIN (
+                                                        SELECT
+                                                            COUNT( alm_inventariodet.cant_ingr ) AS inventarios_registros,
+                                                            SUM( alm_inventariodet.cant_ingr ) AS inventarios_cantidad,
+                                                            alm_inventariocab.idcostos,
                                                             alm_inventariodet.codprod,
                                                             alm_inventariodet.condicion 
                                                         FROM
                                                             alm_inventariodet
                                                             INNER JOIN alm_inventariocab ON alm_inventariodet.idregistro = alm_inventariocab.idreg 
                                                         WHERE
-                                                            alm_inventariocab.idcostos = :cinventario 
-                                                            AND alm_inventariodet.nflgActivo = 1 
+                                                            alm_inventariodet.nflgActivo = 1 
+                                                            AND alm_inventariocab.idcostos = :cinventario
                                                         GROUP BY
                                                             alm_inventariodet.codprod 
-                                                        ) AS i ON i.codprod = cm_producto.id_cprod
+                                                        ) AS inventarios ON inventarios.codprod = cm_producto.id_cprod
                                                         LEFT JOIN (
                                                         SELECT
-                                                            alm_consumo.idprod,
-                                                            SUM( alm_consumo.cantsalida ) AS salidas 
+                                                            alm_consumo.cantsalida,
+                                                            alm_consumo.cantdevolucion,
+                                                            alm_consumo.idprod 
                                                         FROM
                                                             alm_consumo 
                                                         WHERE
-                                                            alm_consumo.ncostos = :csalida 
+                                                            alm_consumo.ncostos = :csalida
                                                             AND alm_consumo.flgactivo = 1 
                                                         GROUP BY
+                                                            alm_consumo.fechasalida,
+                                                            alm_consumo.nrodoc,
                                                             alm_consumo.idprod 
-                                                        ) AS c ON c.idprod = cm_producto.id_cprod
+                                                        ) AS consumo ON consumo.idprod = cm_producto.id_cprod
                                                         LEFT JOIN (
                                                         SELECT
-                                                            alm_consumo.idprod,
-                                                            SUM( alm_consumo.cantdevolucion ) AS devuelto 
-                                                        FROM
-                                                            alm_consumo 
-                                                        WHERE
-                                                            alm_consumo.ncostos = :cdevolucion 
-                                                            AND alm_consumo.flgactivo = 1 
-                                                        GROUP BY
-                                                            alm_consumo.idprod 
-                                                        ) AS d ON d.idprod = cm_producto.id_cprod
-                                                        LEFT JOIN (
-                                                        SELECT
-                                                            alm_transferdet.idcprod,
-                                                            SUM( alm_transferdet.ncanti ) AS transferencias,
-                                                            alm_transferdet.idcostos 
+                                                            SUM( alm_transferdet.ncanti ) AS cantidad_transferencias,
+                                                            alm_transferdet.idcprod 
                                                         FROM
                                                             alm_transferdet 
                                                         WHERE
-                                                            alm_transferdet.idcostos = :ctransferencia 
-                                                            AND alm_transferdet.nflgactivo = 1 
+                                                            alm_transferdet.nflgactivo = 1 
+                                                            AND alm_transferdet.idcostos = :ctransferencia
                                                         GROUP BY
                                                             alm_transferdet.idcprod 
-                                                        ) AS t ON t.idcprod = cm_producto.id_cprod
-                                                        LEFT JOIN ( 
-                                                            SELECT alm_minimo.dfecha, 
-                                                                            alm_minimo.idprod, 
-                                                                            alm_minimo.ncantidad AS minimo
-                                                            FROM 
+                                                        ) AS transferencia ON transferencia.idcprod = cm_producto.id_cprod
+                                                        LEFT JOIN (
+                                                        SELECT
+                                                            alm_minimo.dfecha,
+                                                            alm_minimo.idprod,
+                                                            alm_minimo.ncantidad AS cantidad_minima 
+                                                        FROM
                                                             alm_minimo 
-                                                            WHERE 
+                                                        WHERE
                                                             alm_minimo.ncostos = :cminimo 
-                                                        ) AS m ON m.idprod = cm_producto.id_cprod 
+                                                        GROUP BY
+                                                            alm_minimo.idprod,
+                                                            alm_minimo.dfecha 
+                                                        ) AS minimo ON minimo.idprod = cm_producto.id_cprod 
                                                     WHERE
                                                         cm_producto.flgActivo = 1 
                                                         AND cm_producto.ntipo = 37 
-                                                        AND (NOT ISNULL( r.ingresos ) OR NOT ISNULL( i.inventarios ) OR NOT ISNULL( c.salidas ) OR NOT ISNULL( t.transferencias	) )
-                                                        AND cm_producto.ccodprod LIKE :codigo  
-                                                    AND cm_producto.cdesprod LIKE :descripcion
+                                                        AND cm_producto.ccodprod LIKE :codigo 
+                                                        AND cm_producto.cdesprod LIKE :descripcion 
+                                                        AND ( NOT ISNULL( recepcion.cantidad_obra ) OR NOT ISNULL( inventarios.inventarios_cantidad ) OR NOT ISNULL( transferencia.cantidad_transferencias ) ) 
+                                                    GROUP BY
+                                                        cm_producto.id_cprod 
                                                     ORDER BY
                                                         cm_producto.cdesprod ASC");
                 $sql->execute(["cingreso" =>$cc,
                                 "cinventario" =>$cc,
                                 "csalida" =>$cc,
-                                "cdevolucion" =>$cc,
                                 "ctransferencia" =>$cc,
                                 "cminimo" =>$cc,
                                 "codigo" =>$cp,
@@ -125,7 +123,7 @@
                 if ($rowCount > 0) {
                     $salida="";
                     while ($rs = $sql->fetch()){
-                        $saldo = ( $rs['ingresos']+$rs['inventarios']+$rs['devuelto'] )-$rs['salidas'];
+                        $saldo = ( $rs['ingresos']+$rs['inventarios']+$rs['devoluciones'] )-$rs['consumos'];
                         $saldo = $saldo > -1 ? $saldo : $saldo;
                         $estado = $saldo > -1 ? "semaforoVerde":"semaforoRojo";
 
@@ -147,8 +145,8 @@
                                             <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                             <td class="textoDerecha">'.number_format($rs['ingresos'],2).'</td>
                                             <td class="textoDerecha">'.number_format($rs['inventarios'],2).'</td>
-                                            <td class="textoDerecha">'.number_format($rs['salidas'],2).'</td>
-                                            <td class="textoDerecha">'.number_format($rs['devuelto'],2).'</td>
+                                            <td class="textoDerecha">'.number_format($rs['consumos'],2).'</td>
+                                            <td class="textoDerecha">'.number_format($rs['devoluciones'],2).'</td>
                                             <td class="textoDerecha">'.number_format($rs['transferencias'],2).'</td>
                                             <td class="textoDerecha '.$alerta_minimo.'">'.number_format($rs['minimo'],2).'</td>
                                             <td class="textoDerecha '.$estado.'"><div>'.number_format($saldo,2).'</div></td>
