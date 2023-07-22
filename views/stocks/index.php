@@ -9,98 +9,114 @@
 <body>
     <div class="modal" id="vistadocumento">
         <div class="ventanaResumen tamanioProceso">
-                <div class="tituloDocumento">
+            <div class="resumen">
+                <div class="tituloResumen">
                     <div>
                         <p class="titulo_seccion"><strong> Detalle Almacen : </strong></p>
                     </div>
                     <div>
-                        <a href="#" id="closeDocument" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
+                        <a href="#" id="closeDocument" title="Cerrar Ventana"><i class="fas fa-window-close"></i><span> Cerrar</span></a>
                     </div>
                 </div>
                 <hr>
-                <div class="cuerpoResumem">
+                <div class="cuerpoResumen">
                    <div class="area1">
                         <label>Codigo</label>
                         <label>:</label>
                         <label id="codigo_item"></label>
-                        <label>Descripción del Material</label>
+                        <label>Descripción</label>
                         <label>:</label>
                         <label id="descripcion_item"></label>
                    </div>
-                   <div class="area2">
-                        <div>
-                            <label>Pedidos Solicitados</label>
-                            <label>:</label>
-                            <label id="numero_pedidos"></label>
-                            <label>Ordenes Solicitadas</label>
-                            <label>:</label>
-                            <label id="numero_ordenes"></label>
-                        </div>
-                        <div>
-                            <label>Ingreso Inventario</label>
-                            <label>:</label>
-                            <label id="inventario"></label>
-                            <label>Ingresos Almacen</label>
-                            <label>:</label>
-                            <label id="ingresos"></label>
-                            <label>Salidas Cosumo</label>
-                            <label>:</label>
-                            <label id="consumo"></label>
-                            <label>Transferencias</label>
-                            <label>:</label>
-                            <label id="transferencia"></label>
-                            <label>Saldo Actual</label>
-                            <label>:</label>
-                            <label id="saldo"></label>
-                        </div>
-                        <div>
-                            <label>Pendiente Recibir</label>
-                            <label>:</label>
-                            <label id="pendiente_compra"></label>
-                        </div>
-                        <div>
-                            <button type="button" class="boton3" id="btnStock">Registrar Stock Minimo</button>
-                        </div>
+                   <div class="action_tab">
+                        <button type="button" class="tab_button" data-tab="tab1">Detalles</button>
+                        <button type="button" class="tab_button tab_inactivo" data-tab="tab2">Descripcion</button>
+                        <button type="button" class="tab_button tab_inactivo" data-tab="tab3">Stocks Minimos</button>
                    </div>
-                   <div class="area3">
-                        <div>
-                            <h4>Precios</h4>
-                            <table id="tabla_precios">
-                                <thead class="stickytop">
-                                    <tr class="pointer">
-                                        <th>Fecha</th>
-                                        <th>Moneda</th>
-                                        <th>T.C</th>
-                                        <th>Precio</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-
-                                </tbody>
-                            </table>
-                        </div>
-                   </div>
-                    <div class="area4">
-                            <div>
-                                <h4>Existencias Centro de costos</h4>
-                                <table id="tabla_existencias">
-                                    <thead class="stickytop">
-                                        <tr class="pointer">
-                                            <th>Centro de Costos</th>
-                                            <th>unidad</th>
-                                            <th>Ingresos</th>
-                                            <th>Salidas</th>
-                                            <th>Saldo</th>
-                                            <th>Almacen</th>
+                   <div class="body_tab">
+                        <div class="tab" id="tab1">
+                            <div class="info_tab1">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>N°</th>
+                                            <th>Cantidad</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        
+                                        <tr>
+                                            <td>Pedidos</td>
+                                            <td>0</td>
+                                            <td>0</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Ordenes</td>
+                                            <td>0</td>
+                                            <td>0</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Ingresos</td>
+                                            <td>0</td>
+                                            <td>0</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Despachos</td>
+                                            <td>0</td>
+                                            <td>0</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Registro Obra</td>
+                                            <td>0</td>
+                                            <td>0</td>
+                                        </tr>
                                     </tbody>
                                 </table>
+                            </div>
+                            <div class="info_tab1">
+                            <table>
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>N°</th>
+                                            <th>Cantidad</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Consumos</td>
+                                            <td>0</td>
+                                            <td>0</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Devoluciones</td>
+                                            <td>0</td>
+                                            <td>0</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Registro Inventario</td>
+                                            <td>0</td>
+                                            <td>0</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Transferencias</td>
+                                            <td>0</td>
+                                            <td>0</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-                    </div>
+                        <div class="tab oculto" id="tab2">
+                            <h1>Tab 2</h1>
+                        </div>
+                        <div class="tab oculto" id="tab3">
+                            <h1>Tab3</h1>
+                            <button type="Registrar Stock Minimo"></button>
+                        </div>
+                   </div>
                 </div>
+            </div>   
         </div>
     </div>
     <div class="modal" id="esperar">

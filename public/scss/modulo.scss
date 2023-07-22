@@ -1128,116 +1128,70 @@ $anulado:#c2c2c2;
         }
     }
 
-    .cuerpoResumem{
-        display: grid; 
-        grid-auto-columns: 1fr; 
-        grid-template-columns: 1.5fr 2fr 2fr; 
-        grid-template-rows: 0.2fr 1.8fr; 
-        gap: 7px 7px;
-        padding: 20px;
-        grid-template-areas: 
-            "area1 area1 area1"
-            "area2 area3 area4";
-            
-        .area1{
-            grid-area: area1;
-            padding:5px;
-            display:grid;
-            grid-template-columns: max-content 20px 1fr;
-            grid-template-rows: 1fr 1fr;
-            border:1px solid #d1d1d1;
-            line-height: 2rem;
-            column-gap:10px;
+    .resumen{
+
+        .tituloResumen {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px;
+
+            a {
+                font-size: .9rem;
+                text-align: center;
+                display: block;
+                border: 1px solid #fff;
+                padding: 5px;
+                border-radius: 8px;
+                transition: border .5s;
+
+                &:hover{
+                    border: 1px solid #a9a9a9;
+                }
+            }
         }
 
-        .area2{
-            grid-area: area2;
-            padding: 5px;
-            display:flex;
-            flex-direction: column;
-            border:1px solid #d1d1d1;
-            gap: 5px;
-            
-            div {
+        .cuerpoResumen{
+            .area1 {
                 display:grid;
                 grid-template-columns: max-content 20px 1fr;
                 grid-template-rows: 1fr 1fr;
-                gap:20px;
-                padding: 20px;
-                //border:1px solid #d1d1d1;
-            }
-        }
-
-        .area3{
-            grid-area: area3;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            border:1px solid #d1d1d1;
-            padding: 2px;
-
-            h4 {
-                margin-bottom: 20px;
-            }
-
-            div {
-                min-height: 14rem;
-                height:10rem;
-            }
-
-            table{
-                border-collapse: collapse;
-                width: 100%;
-                font-size: .8rem;
-                margin-bottom: 20px;
-
-                thead {
-                    background:#000;
-                    color: #fff;
-                }
-
-                tbody {
-                    tr,td {
-                        border-bottom: 1px dotted #c2c2c2;
-                    }
+                border:1px solid #d1d1d1;
+                line-height: 1.5rem;
+                gap:10px;
+                padding:5px 20px;
+                
+                label {
+                    font-size: 1rem;
                 }
             }
-        }
 
-        .area4{
-            grid-area: area4;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            border:1px solid #d1d1d1;
-            padding: 2px;
+            .action_tab{
+                padding-left: 10px;
+                background: hsl(206, 100%, 42%);
 
-            h4 {
-                margin-bottom: 20px;
-            }
-
-            div {
-                min-height: 14rem;
-                height:10rem;
-            }
-
-            table{
-                border-collapse: collapse;
-                width: 100%;
-                font-size: .8rem;
-                margin-bottom: 20px;
-
-                thead {
-                    background:#000;
-                    color: #fff;
-                }
-
-                tbody {
-                    tr,td {
-                        border-bottom: 1px dotted #c2c2c2;
-                    }
+                button{
+                    font-size: 1rem;
+                    padding: 10px 35px 10px;
+                    margin-top: 5px;
+                    border-top: 1px solid #0078D4;
+                    border-left: 1px solid #0078D4;
+                    border-right: 1px solid #0078D4;
+                    border-radius: 8px 8px 0 0;
+                    outline: 2px solid #fff;
+                    background: #fff;
                 }
             }
+
+            .body_tab {
+                padding: 0 20px;
+                border: 1px solid #d0d0d7;
+                height: 25rem;
+
+                .tab {
+                    overflow: auto;
+                }
+            }
+            
         }
     }
 }
@@ -2527,6 +2481,12 @@ $anulado:#c2c2c2;
 
 .atendido {
     background: $subtitulo;
+}
+
+.tab_inactivo {
+    background: #8d8c8c !important;
+    color: #5c4c4c; 
+    outline: 2px solid #0079d6 !important;
 }
 
 .resumen__wrap {

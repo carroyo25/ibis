@@ -138,6 +138,19 @@ $(() => {
 
         return false;
     });
+
+    $(".tab_button").click(function(e){
+        $("button").addClass('tab_inactivo');
+        $(this).removeClass('tab_inactivo');
+
+        $(".tab").hide();
+        
+        let actual_tab = $(this).data("tab"); 
+        let tab = '#'+$(this).data("tab");
+        let tabActive = $(this).data("tab");
+
+        $(tab).fadeIn();
+    });
 })
 
 detalles = () =>{
