@@ -1169,7 +1169,7 @@ $anulado:#c2c2c2;
                 padding-left: 10px;
                 background: hsl(206, 100%, 42%);
 
-                button{
+                .tab_button{
                     font-size: 1rem;
                     padding: 10px 35px 10px;
                     margin-top: 5px;
@@ -1189,6 +1189,27 @@ $anulado:#c2c2c2;
 
                 .tab {
                     overflow: auto;
+                }
+
+                #tab1{
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    padding: 20px;
+                    gap: 2rem;
+
+                    
+
+                    table {
+                        width: 100%;
+                        border-bottom: 1px dotted #c2c2c2;
+                        border-collapse: collapse;
+                        line-height: 3rem;
+                        
+                        thead {
+                            background: #c2c2c2;
+                            color:#fff;
+                        }
+                    }
                 }
             }
             

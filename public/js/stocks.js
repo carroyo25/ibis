@@ -38,7 +38,7 @@ $(() => {
         
         $.post(RUTA+"stocks/resumen",{codigo:$(this).data("idprod")},
             function (data, textStatus, jqXHR) {
-                $("#numero_pedidos").text(data.pedidos);
+                /*$("#numero_pedidos").text(data.pedidos);
                 $("#numero_ordenes").text(data.ordenes);
                 $("#inventario").text(data.inventario);
                 $("#ingresos").text(data.ingresos);
@@ -46,7 +46,11 @@ $(() => {
                 $("#tabla_precios tbody").empty().append(data.precios);
                 $("#tabla_existencias tbody").empty().append(data.existencias);
 
-                $("#saldo").text(data.inventario + data.ingresos);
+                $("#saldo").text(data.inventario + data.ingresos);*/
+
+                $("#tabla1_tab1 tbody").find('tr').eq(0).find('td').eq(1).text(data.pedidos.numeros);
+                $("#tabla1_tab1 tbody").find('tr').eq(0).find('td').eq(2).text(data.pedidos.cantidad);
+
             },
             "json"
         );
@@ -88,7 +92,7 @@ $(() => {
         try {
             if ( $("#costosSearch").val() == -1) throw "Por favor elija un centro de costos para la consulta";
 
-            $("#esperar").fadeIn();
+            $("#esperar").css("opacity","1").fadeIn();
         
             $.post(RUTA+"stocks/consulta",str,
                 function (data, textStatus, jqXHR) {
@@ -96,7 +100,7 @@ $(() => {
                         .empty()
                         .append(data);
 
-                        $("#esperar").fadeOut();
+                        $("#esperar").css("opacity","0").fadeOut();
                 },
                 "text"
             );
@@ -140,14 +144,23 @@ $(() => {
     });
 
     $(".tab_button").click(function(e){
-        $("button").addClass('tab_inactivo');
+        $(".tab_button").addClass('tab_inactivo');
         $(this).removeClass('tab_inactivo');
 
         $(".tab").hide();
         
-        let actual_tab = $(this).data("tab"); 
-        let tab = '#'+$(this).data("tab");
-        let tabActive = $(this).data("tab");
+        ///let actual_tab = $(this).data("tab"); 
+        let tab = '#'+$(this).data("tab"),
+            tabActive = $(this).data("tab");
+
+        /*if (tabActive = "tab1") {
+            $.post("url", data,
+                function (data, textStatus, jqXHR) {
+                    
+                },
+                "json"
+            );
+        }*/
 
         $(tab).fadeIn();
     });

@@ -32,11 +32,12 @@
                         <button type="button" class="tab_button" data-tab="tab1">Detalles</button>
                         <button type="button" class="tab_button tab_inactivo" data-tab="tab2">Descripcion</button>
                         <button type="button" class="tab_button tab_inactivo" data-tab="tab3">Stocks Minimos</button>
+                        <button type="button" class="tab_button tab_inactivo" data-tab="tab3">Detalles Stocks</button>
                    </div>
                    <div class="body_tab">
                         <div class="tab" id="tab1">
                             <div class="info_tab1">
-                                <table>
+                                <table id="tabla1_tab1">
                                     <thead>
                                         <tr>
                                             <th></th>
@@ -47,8 +48,8 @@
                                     <tbody>
                                         <tr>
                                             <td>Pedidos</td>
-                                            <td>0</td>
-                                            <td>0</td>
+                                            <td id="pedidos_numero" class="textoDerecha"></td>
+                                            <td id="pedidos_cantidad" class="textoDerecha"></td>
                                         </tr>
                                         <tr>
                                             <td>Ordenes</td>
@@ -74,7 +75,7 @@
                                 </table>
                             </div>
                             <div class="info_tab1">
-                            <table>
+                                <table id="tabla2_tab1">
                                     <thead>
                                         <tr>
                                             <th></th>
@@ -100,8 +101,12 @@
                                         </tr>
                                         <tr>
                                             <td>Transferencias</td>
-                                            <td>0</td>
-                                            <td>0</td>
+                                            <td class="textoDerecha"></td>
+                                            <td class="textoDerecha"></td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2">Saldo</td>
+                                            <td></td>
                                         </tr>
                                     </tbody>
                                 </table>

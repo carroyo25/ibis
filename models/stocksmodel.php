@@ -174,18 +174,19 @@
 
         public function obtenerResumen($codigo){
             return  array("pedidos"=>$this->numeroPedidos($codigo),
-                          "ordenes"=>$this->numeroOrdenes($codigo),
+                          /*"ordenes"=>$this->numeroOrdenes($codigo),
                           "inventario"=>$this->inventarios($codigo),
                           "ingresos"=>$this->verIngresos($codigo),
                           "pendientes"=>$this->pendientesOC($codigo),
                           "precios"=>$this->listaPrecios($codigo),
-                          "existencias"=>$this->listaExistencias($codigo));
+                        "existencias"=>$this->listaExistencias($codigo)*/);
         }
 
         private function numeroPedidos($codigo){
             try {
                 $sql=$this->db->connect()->prepare("SELECT
-                                                        COUNT( tb_pedidodet.idprod ) AS numero_pedidos 
+                                                        COUNT( tb_pedidodet.idprod ) AS numero,
+                                                        SUM(tb_pedidodet.cant_aprob) AS cantidad
                                                     FROM
                                                         tb_pedidodet 
                                                     WHERE
@@ -195,7 +196,8 @@
                 $sql->execute(["codigo"=>$codigo]);
                 $result = $sql->fetchAll();
 
-                return $result[0]['numero_pedidos'];
+                return array("numeros"=>$result[0]['numero'],
+                            "cantidad"=>$result[0]['cantidad']);
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
