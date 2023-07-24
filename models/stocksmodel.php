@@ -172,32 +172,42 @@
             }
         }
 
-        public function obtenerResumen($codigo){
-            return  array("pedidos"=>$this->numeroPedidos($codigo),
-                          /*"ordenes"=>$this->numeroOrdenes($codigo),
-                          "inventario"=>$this->inventarios($codigo),
-                          "ingresos"=>$this->verIngresos($codigo),
+        public function obtenerResumen($codigo,$cc){
+            return  array("pedidos"=>$this->numeroPedidos($codigo,$cc),
+                          "ordenes"=>$this->numeroOrdenes($codigo,$cc),
+                          "recepcion"=>$this->numeroRecepcion($codigo,$cc),
+                          "despacho"=>$this->numeroDespacho($codigo,$cc),
+                          //"inventario"=>$this->inventarios($codigo,$cc),
+                          /*"ingresos"=>$this->verIngresos($codigo),
                           "pendientes"=>$this->pendientesOC($codigo),
                           "precios"=>$this->listaPrecios($codigo),
                         "existencias"=>$this->listaExistencias($codigo)*/);
         }
 
-        private function numeroPedidos($codigo){
+        private function numeroPedidos($codigo,$cc){
             try {
                 $sql=$this->db->connect()->prepare("SELECT
-                                                        COUNT( tb_pedidodet.idprod ) AS numero,
-                                                        SUM(tb_pedidodet.cant_aprob) AS cantidad
+                                                        FORMAT(COUNT( tb_pedidodet.idprod ),2) AS numero,
+                                                        FORMAT(SUM(tb_pedidodet.cant_aprob),2) AS cantidad
                                                     FROM
                                                         tb_pedidodet 
                                                     WHERE
-                                                        tb_pedidodet.idprod = :codigo 
-                                                        AND tb_pedidodet.nflgActivo = 1 
-                                                        AND tb_pedidodet.idpedido != 0");
-                $sql->execute(["codigo"=>$codigo]);
+                                                    tb_pedidodet.idprod = :codigo AND
+                                                    tb_pedidodet.nflgActivo = 1 AND
+                                                    tb_pedidodet.idcostos = :cc");
+                $sql->execute(["codigo"=>$codigo,"cc"=>$cc]);
                 $result = $sql->fetchAll();
 
-                return array("numeros"=>$result[0]['numero'],
-                            "cantidad"=>$result[0]['cantidad']);
+                $numeros = 0;
+                $cantidad = 0;
+
+                if ($numeros >= 0){
+                    $numeros = $result[0]['numero'];
+                    $cantidad = $result[0]['cantidad'];
+                }
+               
+                return array("numeros"=>$numeros,
+                            "cantidad"=>$cantidad);
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
@@ -205,22 +215,30 @@
             }
         }
 
-        private function numeroOrdenes($codigo){
+        private function numeroOrdenes($codigo,$cc){
             try {
                 $sql=$this->db->connect()->prepare("SELECT
-                                                        COUNT( lg_ordendet.id_cprod ) AS numero_orden 
+                                                    FORMAT(SUM(lg_ordendet.ncanti),2) AS cantidad,
+                                                    FORMAT(COUNT(lg_ordendet.ncanti),2) AS numero
                                                     FROM
                                                         lg_ordendet 
                                                     WHERE
-                                                        lg_ordendet.id_cprod = :codigo
-                                                    AND lg_ordendet.id_orden != 0");
-                $sql->execute(["codigo"=>$codigo]);
+                                                        lg_ordendet.ncodcos = :cc
+                                                        AND lg_ordendet.id_cprod = :codigo
+                                                        AND lg_ordendet.nEstadoReg != 105");
+                $sql->execute(["codigo"=>$codigo,"cc"=>$cc]);
                 $result = $sql->fetchAll();
 
-                if ( empty($result[0]['numero_orden'] ) ) 
-                    return 0;
-                else
-                    return $result[0]['numero_orden'];
+                $numOrd = 0;
+                $cantOrd = 0;
+
+                if ($numOrd >= 0){
+                    $numOrd = $result[0]['numero'];
+                    $cantOrd = $result[0]['cantidad'];
+                }
+               
+                return array("numeros"=>$numOrd,
+                            "cantidad"=>$cantOrd);
                 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
@@ -228,7 +246,70 @@
             }
         }
 
-        private function verIngresos($codigo){
+        private function numeroRecepcion($codigo,$cc){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT
+                                FORMAT(SUM( alm_recepdet.ncantidad ),2) AS cantidad,
+                                FORMAT(COUNT( alm_recepdet.ncantidad ),2) AS numero 
+                            FROM
+                                alm_recepdet
+                                INNER JOIN alm_recepcab ON alm_recepdet.id_regalm = alm_recepcab.id_regalm 
+                            WHERE
+                                alm_recepdet.id_cprod = :codigo 
+                                AND alm_recepcab.ncodpry = :cc");
+
+                $sql->execute(["codigo"=>$codigo,"cc"=>$cc]);
+                $result = $sql->fetchAll();
+
+                $numeros = 0;
+                $cantidad = 0;
+
+                if ($numeros >= 0){
+                    $numeros = $result[0]['numero'];
+                    $cantidad = $result[0]['cantidad'];
+                }
+
+                return array("numeros"=>$numeros,
+                            "cantidad"=>$cantidad);
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function numeroDespacho($codigo,$cc){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        SUM(alm_despachodet.ncantidad) AS cantidad,
+                                                        COUNT(alm_despachodet.id_cprod) AS numero 
+                                                    FROM
+                                                        alm_despachodet
+                                                        INNER JOIN alm_despachocab ON alm_despachodet.id_regalm = alm_despachocab.id_regalm 
+                                                    WHERE
+                                                        alm_despachodet.nflgactivo = 1 
+                                                        AND alm_despachocab.ncodpry = :cc
+                                                        AND alm_despachodet.id_cprod = :codigo");
+
+                $sql->execute(["codigo"=>$codigo,"cc"=>$cc]);
+                $result = $sql->fetchAll();
+
+                $numeros = 0;
+                $cantidad = 0;
+
+                if ($numeros >= 0){
+                    $numeros = $result[0]['numero'];
+                    $cantidad = $result[0]['cantidad'];
+                }
+
+                return array("numeros"=>$numeros,
+                            "cantidad"=>$cantidad);
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function ingresos($codigo,$cc){
             try {
                 $sql=$this->db->connect()->prepare("SELECT
                                                     SUM( alm_existencia.cant_ingr ) AS ingresos 
@@ -247,7 +328,7 @@
             }
         }
 
-        private function pendientesOC($codigo){
+        private function pendientesOC($codigo,$cc){
             try {
                 $sql=$this->db->connect()->prepare("SELECT
                                                     SUM( lg_ordendet.ncanti ) AS cantidad_pendiente 
@@ -350,19 +431,29 @@
             }
         }
     
-        private function inventarios($codigo){
+        private function inventarios($codigo,$cc){
             try {
                 $sql=$this->db->connect()->prepare("SELECT
-                                                        SUM( alm_inventariodet.cant_ingr ) AS inventario 
+                                                        SUM( alm_inventariodet.cant_ingr ) AS cantidad,
+                                                        COUNT ( alm_inventariodet.cant_ingr ) AS numero
                                                     FROM
                                                         alm_inventariodet 
                                                     WHERE
-                                                        alm_inventariodet.codprod = :codigo");
+                                                        alm_inventariodet.codprod = :codigo
+                                                        AND alm_inventariodet.");
                 $sql->execute(["codigo"=>$codigo]);
                 $result = $sql->fetchAll();
 
-                
-                return isset( $result[0]['inventario'] ) ? $result[0]['inventario'] : 0;
+                $numeros = 0;
+                $cantidad = 0;
+
+                if ($numeros >= 0){
+                    $numeros = $result[0]['numero'];
+                    $cantidad = $result[0]['cantidad'];
+                }
+               
+                return array("numeros"=>$numeros,
+                            "cantidad"=>$cantidad);
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();

@@ -6,7 +6,6 @@ $(() => {
 
     $("#esperar").fadeOut();
 
-
     $(".tituloVentana").on("click","a", function (e) {
         e.preventDefault();
 
@@ -36,21 +35,23 @@ $(() => {
 
         idprod = $(this).data("idprod");
         
-        $.post(RUTA+"stocks/resumen",{codigo:$(this).data("idprod")},
+        $.post(RUTA+"stocks/resumen",{codigo:$(this).data("idprod"),cc:$("#costosSearch").val()},
             function (data, textStatus, jqXHR) {
-                /*$("#numero_pedidos").text(data.pedidos);
-                $("#numero_ordenes").text(data.ordenes);
-                $("#inventario").text(data.inventario);
-                $("#ingresos").text(data.ingresos);
-                $("#pendientes").text(data.pendientes);
-                $("#tabla_precios tbody").empty().append(data.precios);
-                $("#tabla_existencias tbody").empty().append(data.existencias);
-
-                $("#saldo").text(data.inventario + data.ingresos);*/
-
+                //pedidos
                 $("#tabla1_tab1 tbody").find('tr').eq(0).find('td').eq(1).text(data.pedidos.numeros);
                 $("#tabla1_tab1 tbody").find('tr').eq(0).find('td').eq(2).text(data.pedidos.cantidad);
 
+                //ordenes
+                $("#tabla1_tab1 tbody").find('tr').eq(1).find('td').eq(1).text(data.ordenes.numeros);
+                $("#tabla1_tab1 tbody").find('tr').eq(1).find('td').eq(2).text(data.ordenes.cantidad);
+
+                //recepcion
+                $("#tabla1_tab1 tbody").find('tr').eq(2).find('td').eq(1).text(data.recepcion.numeros);
+                $("#tabla1_tab1 tbody").find('tr').eq(2).find('td').eq(2).text(data.recepcion.cantidad);
+
+                //despacho
+                $("#tabla1_tab1 tbody").find('tr').eq(3).find('td').eq(1).text(data.despacho.numeros);
+                $("#tabla1_tab1 tbody").find('tr').eq(3).find('td').eq(2).text(data.despacho.cantidad);
             },
             "json"
         );

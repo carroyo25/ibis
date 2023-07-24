@@ -32,7 +32,7 @@
                         <button type="button" class="tab_button" data-tab="tab1">Detalles</button>
                         <button type="button" class="tab_button tab_inactivo" data-tab="tab2">Descripcion</button>
                         <button type="button" class="tab_button tab_inactivo" data-tab="tab3">Stocks Minimos</button>
-                        <button type="button" class="tab_button tab_inactivo" data-tab="tab3">Detalles Stocks</button>
+                        <button type="button" class="tab_button tab_inactivo" data-tab="tab3">Precios</button>
                    </div>
                    <div class="body_tab">
                         <div class="tab" id="tab1">
@@ -48,28 +48,28 @@
                                     <tbody>
                                         <tr>
                                             <td>Pedidos</td>
-                                            <td id="pedidos_numero" class="textoDerecha"></td>
-                                            <td id="pedidos_cantidad" class="textoDerecha"></td>
+                                            <td class="textoDerecha"></td>
+                                            <td class="textoDerecha"></td>
                                         </tr>
                                         <tr>
                                             <td>Ordenes</td>
-                                            <td>0</td>
-                                            <td>0</td>
+                                            <td class="textoDerecha">0</td>
+                                            <td class="textoDerecha">0</td>
                                         </tr>
                                         <tr>
                                             <td>Ingresos</td>
-                                            <td>0</td>
-                                            <td>0</td>
+                                            <td class="textoDerecha">0</td>
+                                            <td class="textoDerecha">0</td>
                                         </tr>
                                         <tr>
                                             <td>Despachos</td>
-                                            <td>0</td>
-                                            <td>0</td>
+                                            <td class="textoDerecha">0</td>
+                                            <td class="textoDerecha">0</td>
                                         </tr>
                                         <tr>
                                             <td>Registro Obra</td>
-                                            <td>0</td>
-                                            <td>0</td>
+                                            <td class="textoDerecha">0</td>
+                                            <td class="textoDerecha">0</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -86,18 +86,18 @@
                                     <tbody>
                                         <tr>
                                             <td>Consumos</td>
-                                            <td>0</td>
-                                            <td>0</td>
+                                            <td class="textoDerecha">0</td>
+                                            <td class="textoDerecha">0</td>
                                         </tr>
                                         <tr>
                                             <td>Devoluciones</td>
-                                            <td>0</td>
-                                            <td>0</td>
+                                            <td class="textoDerecha">0</td>
+                                            <td class="textoDerecha">0</td>
                                         </tr>
                                         <tr>
                                             <td>Registro Inventario</td>
-                                            <td>0</td>
-                                            <td>0</td>
+                                            <td class="textoDerecha">0</td>
+                                            <td class="textoDerecha">0</td>
                                         </tr>
                                         <tr>
                                             <td>Transferencias</td>
@@ -106,7 +106,7 @@
                                         </tr>
                                         <tr>
                                             <td colspan="2">Saldo</td>
-                                            <td></td>
+                                            <td class="textoDerecha">0.00</td>
                                         </tr>
                                     </tbody>
                                 </table>

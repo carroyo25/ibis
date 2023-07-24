@@ -791,10 +791,10 @@
                                                          AND  alm_recepdet.nflgactivo = 1) AS ingresado
                                                 FROM
                                                     alm_despachodet
-                                                    INNER JOIN cm_producto ON alm_despachodet.id_cprod = cm_producto.id_cprod
-                                                    INNER JOIN tb_pedidodet ON alm_despachodet.niddetaPed = tb_pedidodet.iditem
-                                                    INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
-                                                    INNER JOIN tb_pedidocab ON alm_despachodet.nropedido = tb_pedidocab.idreg 
+                                                    LEFT JOIN cm_producto ON alm_despachodet.id_cprod = cm_producto.id_cprod
+                                                    LEFT JOIN tb_pedidodet ON alm_despachodet.niddetaPed = tb_pedidodet.iditem
+                                                    LEFT JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                    LEFT JOIN tb_pedidocab ON alm_despachodet.nropedido = tb_pedidocab.idreg 
                                                 WHERE
                                                     alm_despachodet.id_regalm = :id
                                                     AND alm_despachodet.nflgactivo = 1");
@@ -810,8 +810,8 @@
                         
                         $pendiente = $rs['cantidad'] - $rs['ingresado'];
 
-                        if ( $rs['ndespacho'] > 0) {
-                            $salida.='<tr   data-idorden="'.$rs['niddetaOrd'].'" 
+                        if ( $rs['ndespacho'] > 0 ) {
+                            $salida.='<tr data-idorden="'.$rs['niddetaOrd'].'" 
                                         data-idpedido="'.$rs['niddetaPed'].'" 
                                         data-idingreso="'.$rs['niddetaIng'].'"
                                         data-iddespacho="'.$rs['niddeta'].'"

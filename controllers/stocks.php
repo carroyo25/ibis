@@ -23,7 +23,7 @@
         }
 
         function resumen() {
-            echo json_encode($this->model->obtenerResumen($_POST['codigo']));
+            echo json_encode($this->model->obtenerResumen($_POST['codigo'],$_POST['cc']));
         }
 
         function exporta() {
