@@ -177,11 +177,12 @@
                           "ordenes"=>$this->numeroOrdenes($codigo,$cc),
                           "recepcion"=>$this->numeroRecepcion($codigo,$cc),
                           "despacho"=>$this->numeroDespacho($codigo,$cc),
-                          //"inventario"=>$this->inventarios($codigo,$cc),
+                          "existencias"=>$this->numeroIngresosObra($codigo,$cc),
+                          "inventarios"=>$this->numeroInventarios($codigo,$cc));
                           /*"ingresos"=>$this->verIngresos($codigo),
                           "pendientes"=>$this->pendientesOC($codigo),
                           "precios"=>$this->listaPrecios($codigo),
-                        "existencias"=>$this->listaExistencias($codigo)*/);
+                        /);*/
         }
 
         private function numeroPedidos($codigo,$cc){
@@ -280,8 +281,8 @@
         private function numeroDespacho($codigo,$cc){
             try {
                 $sql = $this->db->connect()->prepare("SELECT
-                                                        SUM(alm_despachodet.ncantidad) AS cantidad,
-                                                        COUNT(alm_despachodet.id_cprod) AS numero 
+                                                        FORMAT(SUM(alm_despachodet.ncantidad),2) AS cantidad,
+                                                        FORMAT(COUNT(alm_despachodet.id_cprod),2) AS numero 
                                                     FROM
                                                         alm_despachodet
                                                         INNER JOIN alm_despachocab ON alm_despachodet.id_regalm = alm_despachocab.id_regalm 
@@ -309,139 +310,20 @@
             }
         }
 
-        private function ingresos($codigo,$cc){
+        private function numeroIngresosObra($codigo,$cc){
             try {
-                $sql=$this->db->connect()->prepare("SELECT
-                                                    SUM( alm_existencia.cant_ingr ) AS ingresos 
-                                                FROM
-                                                    alm_existencia 
-                                                WHERE
-                                                    alm_existencia.codprod = :codigo");
-                $sql->execute(["codigo"=>$codigo]);
-                $result = $sql->fetchAll();
-
-                return isset($result[0]['ingresos']) ? $result[0]['ingresos'] : 0;
-                
-            } catch (PDOException $th) {
-                echo "Error: ".$th->getMessage();
-                return false;
-            }
-        }
-
-        private function pendientesOC($codigo,$cc){
-            try {
-                $sql=$this->db->connect()->prepare("SELECT
-                                                    SUM( lg_ordendet.ncanti ) AS cantidad_pendiente 
-                                                FROM
-                                                    lg_ordendet 
-                                                WHERE
-                                                    lg_ordendet.id_cprod = :codigo 
-                                                    AND lg_ordendet.nEstadoReg = 60");
-                $sql->execute(["codigo"=>$codigo]);
-                $result = $sql->fetchAll();
-
-                return isset($result[0]['cantidad_pendiente']) ? $result[0]['cantidad_pendiente'] : 0;
-                
-            } catch (PDOException $th) {
-                echo "Error: ".$th->getMessage();
-                return false;
-            }
-        }
-
-        private function listaPrecios($codigo){
-            try {
-                $salida = "";
-                $sql=$this->db->connect()->prepare("SELECT
-                                                        lg_ordendet.nunitario,
-                                                        DATE_FORMAT( lg_ordencab.ffechadoc, '%d/%m/%Y' ) fecha,
-                                                        tb_parametros.cabrevia,
-                                                        lg_ordencab.ntcambio 
-                                                    FROM
-                                                        lg_ordendet
-                                                        INNER JOIN lg_ordencab ON lg_ordendet.id_regmov = lg_ordencab.id_regmov
-                                                        INNER JOIN tb_parametros ON lg_ordencab.ncodmon = tb_parametros.nidreg 
-                                                    WHERE
-                                                        lg_ordendet.id_cprod = :codigo 
-                                                        AND lg_ordendet.id_orden IS NOT NULL
-                                                    GROUP BY lg_ordendet.nunitario,lg_ordencab.ffechadoc,lg_ordencab.ntcambio");
-                $sql->execute(["codigo"=>$codigo]);
-                $rowCount = $sql->rowCount();
-
-                if ($rowCount > 0) {
-                    while ($rs = $sql->fetch()){
-                        $salida .='<tr class="pointer">
-                                        <td class="textoCentro">'.$rs['fecha'].'</td>
-                                        <td class="textoCentro">'.$rs['cabrevia'].'</td>
-                                        <td class="textoDerecha">'.$rs['ntcambio'].'</td>
-                                        <td class="textoDerecha">'.$rs['nunitario'].'</td>
-                                    </tr>';
-                    }
-                }else {
-                    $salida = '<tr class="textoCentro"><td colspan="4">Sin registros anteriores</td></tr>';
-                }
-
-                return $salida;
-
-            } catch (PDOException $th) {
-                echo "Error: ".$th->getMessage();
-                return false;
-            }
-        }
-
-        private function listaExistencias($codigo){
-            try {
-                $salida = "";
-                $sql=$this->db->connect()->prepare("SELECT
-                                                        FORMAT(alm_existencia.cant_ingr,2) AS cant_ingr,
-                                                        UPPER( tb_almacen.cdesalm ) AS almacen,
-                                                        tb_proyectos.ccodproy,
-                                                        tb_unimed.cabrevia 
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        FORMAT(SUM( alm_existencia.cant_ingr ),2) AS cantidad,
+                                                        FORMAT(COUNT( alm_existencia.cant_ingr ),2) AS numero 
                                                     FROM
                                                         alm_existencia
-                                                        INNER JOIN alm_cabexist ON alm_existencia.idregistro = alm_cabexist.idreg
-                                                        INNER JOIN tb_almacen ON alm_existencia.idalm = tb_almacen.ncodalm
-                                                        INNER JOIN tb_proyectos ON alm_cabexist.idcostos = tb_proyectos.nidreg
-                                                        INNER JOIN cm_producto ON alm_existencia.codprod = cm_producto.id_cprod
-                                                        INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed 
+                                                        LEFT JOIN alm_cabexist ON alm_existencia.idregistro = alm_cabexist.idreg 
                                                     WHERE
-                                                        alm_existencia.codprod = :codigo");
-                $sql->execute(["codigo"=>$codigo]);
-                $rowCount = $sql->rowCount();
+                                                        alm_existencia.nflgActivo = 1 
+                                                        AND alm_cabexist.idcostos = :cc 
+                                                        AND alm_existencia.codprod = :codigo");
 
-                if ($rowCount > 0) {
-                    while ($rs = $sql->fetch()){
-                        $salida .='<tr class="pointer">
-                                        <td class="pl20px">'.$rs['ccodproy'].'</td>
-                                        <td class="textoCentro">'.$rs['cabrevia'].'</td>
-                                        <td class="textoDerecha">'.$rs['cant_ingr'].'</td>
-                                        <td class="textoDerecha"></td>
-                                        <td class="textoDerecha">'.$rs['cant_ingr'].'</td>
-                                        <td class="textoDerecha">'.$rs['almacen'].'</td>
-                                    </tr>';
-                    }
-                }else {
-                    $salida = '<tr class="textoCentro"><td colspan="4">Sin registros anteriores</td></tr>';
-                }
-
-                return $salida;
-
-            } catch (PDOException $th) {
-                echo "Error: ".$th->getMessage();
-                return false;
-            }
-        }
-    
-        private function inventarios($codigo,$cc){
-            try {
-                $sql=$this->db->connect()->prepare("SELECT
-                                                        SUM( alm_inventariodet.cant_ingr ) AS cantidad,
-                                                        COUNT ( alm_inventariodet.cant_ingr ) AS numero
-                                                    FROM
-                                                        alm_inventariodet 
-                                                    WHERE
-                                                        alm_inventariodet.codprod = :codigo
-                                                        AND alm_inventariodet.");
-                $sql->execute(["codigo"=>$codigo]);
+                $sql->execute(["codigo"=>$codigo,"cc"=>$cc]);
                 $result = $sql->fetchAll();
 
                 $numeros = 0;
@@ -451,15 +333,70 @@
                     $numeros = $result[0]['numero'];
                     $cantidad = $result[0]['cantidad'];
                 }
-               
+
                 return array("numeros"=>$numeros,
                             "cantidad"=>$cantidad);
-
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;
             }
         }
+
+        private function numeroInventarios($codigo,$cc){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT
+                                                FORMAT( SUM( alm_inventariodet.cant_ingr ), 2 ) AS cantidad,
+                                                FORMAT( COUNT( alm_inventariodet.cant_ingr ), 2 ) AS numero 
+                                            FROM
+                                                alm_inventariodet
+                                                INNER JOIN alm_inventariocab ON alm_inventariodet.idregistro = alm_inventariocab.idreg 
+                                            WHERE
+                                                alm_inventariodet.nflgActivo = 1 
+                                                AND alm_inventariocab.idcostos = :cc 
+                                                AND alm_inventariodet.codprod = :codigo");
+
+                $sql->execute(["codigo"=>$codigo,"cc"=>$cc]);
+                $result = $sql->fetchAll();
+
+                $numeros = 0;
+                $cantidad = 0;
+
+                if ($numeros >= 0){
+                    $numeros = $result[0]['numero'];
+                    $cantidad = $result[0]['cantidad'];
+                }
+
+                return array("numeros"=>$numeros,
+                            "cantidad"=>$cantidad);
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function numeroTransferencias($codigo,$cc){
+            try {
+                $sql = $this->db->connect()->prepare("");
+
+                $sql->execute(["codigo"=>$codigo,"cc"=>$cc]);
+                $result = $sql->fetchAll();
+
+                $numeros = 0;
+                $cantidad = 0;
+
+                if ($numeros >= 0){
+                    $numeros = $result[0]['numero'];
+                    $cantidad = $result[0]['cantidad'];
+                }
+
+                return array("numeros"=>$numeros,
+                            "cantidad"=>$cantidad);
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
 
         public function exportarExcel($registros) {
             try {

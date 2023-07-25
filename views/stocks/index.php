@@ -86,18 +86,18 @@
                                     <tbody>
                                         <tr>
                                             <td>Consumos</td>
-                                            <td class="textoDerecha">0</td>
-                                            <td class="textoDerecha">0</td>
+                                            <td class="textoDerecha"></td>
+                                            <td class="textoDerecha"></td>
                                         </tr>
                                         <tr>
                                             <td>Devoluciones</td>
-                                            <td class="textoDerecha">0</td>
-                                            <td class="textoDerecha">0</td>
+                                            <td class="textoDerecha"></td>
+                                            <td class="textoDerecha"></td>
                                         </tr>
                                         <tr>
                                             <td>Registro Inventario</td>
-                                            <td class="textoDerecha">0</td>
-                                            <td class="textoDerecha">0</td>
+                                            <td class="textoDerecha"></td>
+                                            <td class="textoDerecha"></td>
                                         </tr>
                                         <tr>
                                             <td>Transferencias</td>
@@ -106,7 +106,7 @@
                                         </tr>
                                         <tr>
                                             <td colspan="2">Saldo</td>
-                                            <td class="textoDerecha">0.00</td>
+                                            <td class="textoDerecha"></td>
                                         </tr>
                                     </tbody>
                                 </table>

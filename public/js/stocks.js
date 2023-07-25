@@ -52,6 +52,14 @@ $(() => {
                 //despacho
                 $("#tabla1_tab1 tbody").find('tr').eq(3).find('td').eq(1).text(data.despacho.numeros);
                 $("#tabla1_tab1 tbody").find('tr').eq(3).find('td').eq(2).text(data.despacho.cantidad);
+
+                //ingresos Obra
+                $("#tabla1_tab1 tbody").find('tr').eq(4).find('td').eq(1).text(data.existencias.numeros);
+                $("#tabla1_tab1 tbody").find('tr').eq(4).find('td').eq(2).text(data.existencias.cantidad);
+
+                //Inventarios
+                $("#tabla2_tab1 tbody").find('tr').eq(2).find('td').eq(1).text(data.inventarios.numeros);
+                $("#tabla2_tab1 tbody").find('tr').eq(2).find('td').eq(2).text(data.inventarios.cantidad);
             },
             "json"
         );
