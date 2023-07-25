@@ -178,11 +178,10 @@
                           "recepcion"=>$this->numeroRecepcion($codigo,$cc),
                           "despacho"=>$this->numeroDespacho($codigo,$cc),
                           "existencias"=>$this->numeroIngresosObra($codigo,$cc),
-                          "inventarios"=>$this->numeroInventarios($codigo,$cc));
-                          /*"ingresos"=>$this->verIngresos($codigo),
-                          "pendientes"=>$this->pendientesOC($codigo),
-                          "precios"=>$this->listaPrecios($codigo),
-                        /);*/
+                          "inventarios"=>$this->numeroInventarios($codigo,$cc),
+                          "transferencias"=>$this->numeroTransferencias($codigo,$cc),
+                          "consumos"=>$this->numeroConsumos($codigo,$cc),
+                          "devoluciones"=>$this->numeroDevolucion($codigo,$cc));
         }
 
         private function numeroPedidos($codigo,$cc){
@@ -376,7 +375,99 @@
 
         private function numeroTransferencias($codigo,$cc){
             try {
-                $sql = $this->db->connect()->prepare("");
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        FORMAT(SUM(alm_transferdet.ncanti),2) AS cantidad,
+                                                        FORMAT(COUNT(alm_transferdet.ncanti),2) AS numero
+                                                    FROM
+                                                        alm_transferdet
+                                                    WHERE 
+                                                        alm_transferdet.nflgactivo = 1
+                                                        AND alm_transferdet.idcostos = :cc
+                                                        AND alm_transferdet.idcprod = :codigo");
+
+                $sql->execute(["codigo"=>$codigo,"cc"=>$cc]);
+                $result = $sql->fetchAll();
+
+                $numeros = 0;
+                $cantidad = 0;
+
+                if ($numeros >= 0){
+                    $numeros = $result[0]['numero'];
+                    $cantidad = $result[0]['cantidad'];
+                }
+
+                return array("numeros"=>$numeros,
+                            "cantidad"=>$cantidad);
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function numeroConsumos($codigo,$cc){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT
+                                            FORMAT(SUM( consumo.cantsalida ),2) AS cantidad,
+                                            FORMAT(COUNT( consumo.cantsalida ),2) AS numero 
+                                        FROM
+                                            (
+                                            SELECT
+                                                alm_consumo.cantsalida,
+                                                alm_consumo.cantdevolucion,
+                                                alm_consumo.idprod 
+                                            FROM
+                                                alm_consumo 
+                                            WHERE
+                                                alm_consumo.ncostos = :cc
+                                                AND alm_consumo.idprod = :codigo 
+                                                AND alm_consumo.flgactivo = 1 
+                                            GROUP BY
+                                                alm_consumo.fechasalida,
+                                                alm_consumo.nrodoc,
+                                            alm_consumo.idprod 
+                                            ) AS consumo");
+
+                $sql->execute(["codigo"=>$codigo,"cc"=>$cc]);
+                $result = $sql->fetchAll();
+
+                $numeros = 0;
+                $cantidad = 0;
+
+                if ($numeros >= 0){
+                    $numeros = $result[0]['numero'];
+                    $cantidad = $result[0]['cantidad'];
+                }
+
+                return array("numeros"=>$numeros,
+                            "cantidad"=>$cantidad);
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function numeroDevolucion($codigo,$cc){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT
+                                            FORMAT(SUM( consumo.cantdevolucion ),2) AS cantidad,
+                                            FORMAT(COUNT( consumo.cantdevolucion ),2) AS numero 
+                                        FROM
+                                            (
+                                            SELECT
+                                                alm_consumo.cantsalida,
+                                                alm_consumo.cantdevolucion,
+                                                alm_consumo.idprod 
+                                            FROM
+                                                alm_consumo 
+                                            WHERE
+                                                alm_consumo.ncostos = :cc
+                                                AND alm_consumo.idprod = :codigo 
+                                                AND alm_consumo.flgactivo = 1 
+                                            GROUP BY
+                                                alm_consumo.fechasalida,
+                                                alm_consumo.nrodoc,
+                                            alm_consumo.idprod 
+                                            ) AS consumo");
 
                 $sql->execute(["codigo"=>$codigo,"cc"=>$cc]);
                 $result = $sql->fetchAll();

@@ -33,40 +33,12 @@ $(() => {
     $("#tablaPrincipal tbody").on("click","tr", function (e) {
         e.preventDefault();
 
-        idprod = $(this).data("idprod");
-        
-        $.post(RUTA+"stocks/resumen",{codigo:$(this).data("idprod"),cc:$("#costosSearch").val()},
-            function (data, textStatus, jqXHR) {
-                //pedidos
-                $("#tabla1_tab1 tbody").find('tr').eq(0).find('td').eq(1).text(data.pedidos.numeros);
-                $("#tabla1_tab1 tbody").find('tr').eq(0).find('td').eq(2).text(data.pedidos.cantidad);
+        idprod = $(this).data("idprod"); 
 
-                //ordenes
-                $("#tabla1_tab1 tbody").find('tr').eq(1).find('td').eq(1).text(data.ordenes.numeros);
-                $("#tabla1_tab1 tbody").find('tr').eq(1).find('td').eq(2).text(data.ordenes.cantidad);
-
-                //recepcion
-                $("#tabla1_tab1 tbody").find('tr').eq(2).find('td').eq(1).text(data.recepcion.numeros);
-                $("#tabla1_tab1 tbody").find('tr').eq(2).find('td').eq(2).text(data.recepcion.cantidad);
-
-                //despacho
-                $("#tabla1_tab1 tbody").find('tr').eq(3).find('td').eq(1).text(data.despacho.numeros);
-                $("#tabla1_tab1 tbody").find('tr').eq(3).find('td').eq(2).text(data.despacho.cantidad);
-
-                //ingresos Obra
-                $("#tabla1_tab1 tbody").find('tr').eq(4).find('td').eq(1).text(data.existencias.numeros);
-                $("#tabla1_tab1 tbody").find('tr').eq(4).find('td').eq(2).text(data.existencias.cantidad);
-
-                //Inventarios
-                $("#tabla2_tab1 tbody").find('tr').eq(2).find('td').eq(1).text(data.inventarios.numeros);
-                $("#tabla2_tab1 tbody").find('tr').eq(2).find('td').eq(2).text(data.inventarios.cantidad);
-            },
-            "json"
-        );
         $("#codigo_item").text( $(this).find('td').eq(1).text() );
         $("#descripcion_item").text( $(this).find('td').eq(2).text() );
 
-        $("#vistadocumento").fadeIn();
+        resumen(idprod);
 
         return false;
     });
@@ -162,18 +134,67 @@ $(() => {
         let tab = '#'+$(this).data("tab"),
             tabActive = $(this).data("tab");
 
-        /*if (tabActive = "tab1") {
-            $.post("url", data,
-                function (data, textStatus, jqXHR) {
-                    
-                },
-                "json"
-            );
-        }*/
+        if (tabActive == "tab1") {
+            resumen(idprod);
+        }else if (tabActive == "tab2") {
+            
+        }
 
         $(tab).fadeIn();
     });
 })
+
+resumen = (codigo_producto) => {
+     $.post(RUTA+"stocks/resumen",{codigo:codigo_producto,cc:$("#costosSearch").val()},
+            function (data, textStatus, jqXHR) {
+               //pedidos
+                $("#tabla1_tab1 tbody").find('tr').eq(0).find('td').eq(1).text(esnulo(data.pedidos.numeros));
+                $("#tabla1_tab1 tbody").find('tr').eq(0).find('td').eq(2).text(esnulo(data.pedidos.cantidad));
+
+                //ordenes
+                $("#tabla1_tab1 tbody").find('tr').eq(1).find('td').eq(1).text(esnulo(data.ordenes.numeros));
+                $("#tabla1_tab1 tbody").find('tr').eq(1).find('td').eq(2).text(esnulo(data.ordenes.cantidad));
+
+                //recepcion
+                $("#tabla1_tab1 tbody").find('tr').eq(2).find('td').eq(1).text(esnulo(data.recepcion.numeros));
+                $("#tabla1_tab1 tbody").find('tr').eq(2).find('td').eq(2).text(esnulo(data.recepcion.cantidad));
+
+                //despacho
+                $("#tabla1_tab1 tbody").find('tr').eq(3).find('td').eq(1).text(esnulo(data.despacho.numeros));
+                $("#tabla1_tab1 tbody").find('tr').eq(3).find('td').eq(2).text(esnulo(data.despacho.cantidad));
+
+                //ingresos Obra
+                $("#tabla1_tab1 tbody").find('tr').eq(4).find('td').eq(1).text(esnulo(data.existencias.numeros));
+                $("#tabla1_tab1 tbody").find('tr').eq(4).find('td').eq(2).text(esnulo(data.existencias.cantidad));
+
+                //Consumos
+                $("#tabla2_tab1 tbody").find('tr').eq(0).find('td').eq(1).text(esnulo(data.consumos.numeros));
+                $("#tabla2_tab1 tbody").find('tr').eq(0).find('td').eq(2).text(esnulo(data.consumos.cantidad));
+
+                //Devoluciones
+                $("#tabla2_tab1 tbody").find('tr').eq(1).find('td').eq(1).text(esnulo(data.devoluciones.numeros));
+                $("#tabla2_tab1 tbody").find('tr').eq(1).find('td').eq(2).text(esnulo(data.devoluciones.cantidad));
+                
+                //Inventarios
+                $("#tabla2_tab1 tbody").find('tr').eq(2).find('td').eq(1).text(esnulo(data.inventarios.numeros));
+                $("#tabla2_tab1 tbody").find('tr').eq(2).find('td').eq(2).text(esnulo(data.inventarios.cantidad));
+
+                //Transferencias
+                $("#tabla2_tab1 tbody").find('tr').eq(3).find('td').eq(1).text(esnulo(data.transferencias.numeros));
+                $("#tabla2_tab1 tbody").find('tr').eq(3).find('td').eq(2).text(esnulo(data.transferencias.cantidad));
+
+                let saldo = (parseFloat(esnulo(data.existencias.cantidad))+
+                            parseFloat(esnulo(data.inventarios.cantidad))+
+                            parseFloat(esnulo(data.devoluciones.cantidad))) - parseFloat(esnulo(data.consumos.cantidad));
+
+                $("#tabla2_tab1 tbody").find('tr').eq(4).find('td').eq(1).text(saldo);
+
+
+                $("#vistadocumento").fadeIn();
+            },
+            "json"
+        );
+}
 
 detalles = () =>{
     DATA = [];
@@ -208,4 +229,8 @@ detalles = () =>{
     })
 
     return DATA;
+}
+
+esnulo = (valor) => {
+    return v = valor === null ? '0.00' : valor;
 }

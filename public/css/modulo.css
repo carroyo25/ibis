@@ -1481,15 +1481,18 @@
   padding: 20px;
   gap: 2rem;
 }
-.ventanaResumen .resumen .cuerpoResumen .body_tab #tab1 table {
+.ventanaResumen .resumen .cuerpoResumen .body_tab #tab1 table, .ventanaResumen .resumen .cuerpoResumen .body_tab #tab2 table {
   width: 100%;
   border-bottom: 1px dotted #c2c2c2;
   border-collapse: collapse;
   line-height: 3rem;
 }
-.ventanaResumen .resumen .cuerpoResumen .body_tab #tab1 table thead {
+.ventanaResumen .resumen .cuerpoResumen .body_tab #tab1 table thead, .ventanaResumen .resumen .cuerpoResumen .body_tab #tab2 table thead {
   background: #c2c2c2;
   color: #fff;
+}
+.ventanaResumen .resumen .cuerpoResumen .body_tab #tab1 table tbody tr, .ventanaResumen .resumen .cuerpoResumen .body_tab #tab2 table tbody tr {
+  border-bottom: 1px dotted #c2c2c2;
 }
 
 .ventanaProceso {

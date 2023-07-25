@@ -105,7 +105,7 @@
                                             <td class="textoDerecha"></td>
                                         </tr>
                                         <tr>
-                                            <td colspan="2">Saldo</td>
+                                            <td colspan="2"><strong>Saldo</strong></td>
                                             <td class="textoDerecha"></td>
                                         </tr>
                                     </tbody>
@@ -113,7 +113,17 @@
                             </div>
                         </div>
                         <div class="tab oculto" id="tab2">
-                            <h1>Tab 2</h1>
+                            <table id="tabla1_tab2">
+                                <thead>
+                                    <tr>
+                                        <th>Codigo</th>
+                                        <th>Detalles</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
                         </div>
                         <div class="tab oculto" id="tab3">
                             <h1>Tab3</h1>
