@@ -30,8 +30,7 @@
                    </div>
                    <div class="action_tab">
                         <button type="button" class="tab_button" data-tab="tab1">Detalles</button>
-                        <button type="button" class="tab_button tab_inactivo" data-tab="tab2">Descripcion</button>
-                        <button type="button" class="tab_button tab_inactivo" data-tab="tab3">Stocks Minimos</button>
+                        <button type="button" class="tab_button tab_inactivo" data-tab="tab2">Stocks Minimos</button>
                         <button type="button" class="tab_button tab_inactivo" data-tab="tab3">Precios</button>
                    </div>
                    <div class="body_tab">
@@ -115,9 +114,10 @@
                         <div class="tab oculto" id="tab2">
                             <table id="tabla1_tab2">
                                 <thead>
-                                    <tr>
-                                        <th>Codigo</th>
-                                        <th>Detalles</th>
+                                    <tr class="stickytop">
+                                        <th>Fecha</th>
+                                        <th>Cantidad</th>
+                                        <th>Usuario</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -126,8 +126,20 @@
                             </table>
                         </div>
                         <div class="tab oculto" id="tab3">
-                            <h1>Tab3</h1>
-                            <button type="Registrar Stock Minimo"></button>
+                            <table id="tabla1_tab3">
+                                <thead>
+                                    <tr class="stickytop">
+                                        <th>Fecha</th>
+                                        <th>Moneda</th>
+                                        <th>Tipo Cambio</th>
+                                        <th>Precio</th>
+                                        <th>Orden</th> 
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
                         </div>
                    </div>
                 </div>

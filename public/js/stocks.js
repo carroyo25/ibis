@@ -93,7 +93,7 @@ $(() => {
         return false;
     });
 
-    $("#btnStock").click(function(e){
+    $("#btnAgregarMin").click(function(e){
         e.preventDefault();
 
         $("#registroStock").fadeIn();
@@ -136,8 +136,6 @@ $(() => {
 
         if (tabActive == "tab1") {
             resumen(idprod);
-        }else if (tabActive == "tab2") {
-            
         }
 
         $(tab).fadeIn();
@@ -188,6 +186,15 @@ resumen = (codigo_producto) => {
                             parseFloat(esnulo(data.devoluciones.cantidad))) - parseFloat(esnulo(data.consumos.cantidad));
 
                 $("#tabla2_tab1 tbody").find('tr').eq(4).find('td').eq(1).text(saldo);
+
+                $("#tabla1_tab2 tbody")
+                    .empty()
+                    .append(data.minimos);
+
+                $("#tabla1_tab3 tbody")
+                    .empty()
+                    .append(data.precios);
+                
 
 
                 $("#vistadocumento").fadeIn();

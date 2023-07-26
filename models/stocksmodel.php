@@ -181,7 +181,9 @@
                           "inventarios"=>$this->numeroInventarios($codigo,$cc),
                           "transferencias"=>$this->numeroTransferencias($codigo,$cc),
                           "consumos"=>$this->numeroConsumos($codigo,$cc),
-                          "devoluciones"=>$this->numeroDevolucion($codigo,$cc));
+                          "devoluciones"=>$this->numeroDevolucion($codigo,$cc),
+                          "minimos"=>$this->registrosMinimos($codigo,$cc),
+                          "precios"=>$this->preciosProductos($codigo));
         }
 
         private function numeroPedidos($codigo,$cc){
@@ -488,6 +490,91 @@
             }
         }
 
+        private function registrosMinimos($codigo,$cc){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        alm_minimo.dfecha,
+                                                        FORMAT(alm_minimo.ncantidad,2) AS cantidad,
+                                                        UPPER(tb_user.cnombres) AS nombres,
+                                                        cm_producto.ccodprod,
+                                                        cm_producto.cdesprod,
+                                                        tb_unimed.cabrevia 
+                                                    FROM
+                                                        alm_minimo
+                                                        INNER JOIN tb_user ON alm_minimo.iduser = tb_user.iduser
+                                                        INNER JOIN cm_producto ON alm_minimo.idprod = cm_producto.id_cprod
+                                                        INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed 
+                                                    WHERE
+                                                        alm_minimo.ncostos = :cc 
+                                                        AND alm_minimo.idprod =  :codigo
+                                                    ORDER BY
+                                                        alm_minimo.dfecha DESC");
+
+                $sql->execute(["codigo"=>$codigo,"cc"=>$cc]);
+                $rowCount = $sql->rowCount();
+                $salida = "";
+
+                if ($rowCount > 0){
+                    
+                    while ($rs = $sql->fetch()){
+                        $salida .= '<tr>
+                                        <td class="textoCentro">'.$rs['dfecha'].'</td>
+                                        <td class="textoDerecha">'.$rs['cantidad'].'</td>
+                                        <td class="pl10px">'.$rs['nombres'].'</td>
+                                    </tr>';
+                    }
+                }
+
+                return $salida;
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function preciosProductos($codigo){
+            try {
+                $salida = "";
+                $sql=$this->db->connect()->prepare("SELECT
+                                                        FORMAT(lg_ordendet.nunitario,2) AS nunitario,
+                                                        DATE_FORMAT( lg_ordencab.ffechadoc, '%d/%m/%Y' ) fecha,
+                                                        tb_parametros.cabrevia,
+                                                        FORMAT(lg_ordencab.ntcambio,2) AS ntcambio,
+                                                        lg_ordencab.id_regmov
+                                                    FROM
+                                                        lg_ordendet
+                                                        INNER JOIN lg_ordencab ON lg_ordendet.id_regmov = lg_ordencab.id_regmov
+                                                        INNER JOIN tb_parametros ON lg_ordencab.ncodmon = tb_parametros.nidreg 
+                                                    WHERE
+                                                        lg_ordendet.id_cprod = :codigo 
+                                                        AND lg_ordendet.id_orden != 105
+                                                        AND lg_ordendet.id_orden != 0
+                                                    GROUP BY lg_ordendet.nunitario,lg_ordencab.ffechadoc,lg_ordencab.ntcambio
+                                                    ORDER BY lg_ordencab.ffechadoc DESC");
+                $sql->execute(["codigo"=>$codigo]);
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0) {
+                    while ($rs = $sql->fetch()){
+                        $salida .='<tr class="pointer">
+                                        <td class="textoCentro">'.$rs['fecha'].'</td>
+                                        <td class="textoCentro">'.$rs['cabrevia'].'</td>
+                                        <td class="textoDerecha">'.$rs['ntcambio'].'</td>
+                                        <td class="textoDerecha">'.$rs['nunitario'].'</td>
+                                        <td class="textoDerecha">'.$rs['id_regmov'].'</td>
+                                    </tr>';
+                    }
+                }else {
+                    $salida = '<tr class="textoCentro"><td colspan="4">Sin registros anteriores</td></tr>';
+                }
+
+                return $salida;
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
 
         public function exportarExcel($registros) {
             try {
@@ -608,5 +695,7 @@
                 return false;
             }
         }
+
+
     }
 ?>

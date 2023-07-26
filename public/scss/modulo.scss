@@ -1198,7 +1198,27 @@ $anulado:#c2c2c2;
                     gap: 2rem;  
                 }
 
-                #tab1,#tab2 {
+                #tab2,#tab3 {
+                    padding:5px;
+                    overflow:auto;
+                    height: 100%;
+                }
+
+                #tab2{
+                    button {
+                        padding: 10px 20px;
+                        margin-top: 5px;
+                        border-radius: 8px;
+                        border: none;
+                        transition: .5s;
+
+                        &:hover{
+                            box-shadow: 1px 3px 5px #000;
+                        }
+                    }
+                }
+
+                #tab1,#tab2,#tab3 {
                     table {
                         width: 100%;
                         border-bottom: 1px dotted #c2c2c2;
