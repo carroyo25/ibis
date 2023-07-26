@@ -6,7 +6,7 @@
         }
 
         function render(){
-            $this->view->listaCostos = "";
+            $this->view->listaCostosSelect = $this->model->costosPorUsuarioSelector($_SESSION['iduser']);
             $this->view->clases     = $this->model->listarClasesReporte();
             $this->view->tipos      = $this->model->listarTipos(43);
             $this->view->familias   = $this->model->tablaFamilias(43,118);
@@ -29,6 +29,10 @@
 
         function graficoLineas() {
             echo json_encode($this->model->dibujarLineas($_POST['grupo'],$_POST['clase'],$_POST['familia'],$_POST['producto']),JSON_NUMERIC_CHECK);
+        }
+
+        function consultaClases() {
+            echo json_encode($this->model->consultaClases($_POST['cc'],$_POST['anio'],$_POST['mes']),JSON_NUMERIC_CHECK);
         }
     }
 ?>

@@ -1,183 +1,62 @@
 $(function(){
+    var chart1,options;
+
     $("#espera").fadeOut();
 
-    var chart1,options;
-    var valores = [300,0,500,0,250,0,0,0,0,0,0,0];
-
-    let pd = [{
-        name: 'Combustible',
-        y: 16,
-        sliced: true,
-        selected: true}];
-
-    lineas(valores);
-    barras(valores);
-    torta(valores);
-
-    $("#clase").on('change', function(e) {
-        e.preventDefault();
-        
-        $.post(RUTA+"repoager/tipos",{id:$(this).val()},
-            function (data, text, requestXHR) {
-                $("#tipo")
-                    .empty()
-                    .append(data);
-            },
-            "text"
-        );
-
-        return false;
-    });
-
-    
-    $("#tipo").on('change', function(e) {
-        e.preventDefault();
-
-        $('#tablaClases tbody').empty();
-        $('#tablaClases tfoot').empty();
-
-        let cantidad = 0,
-            total = 0;
-
-        $.ajax({
-            url:"repoager/clases",
-            type: "POST",
-            dataType:"json",
-            data:{clase:$(this).val(),grupo:$("#clase").val()},
-            success:function(data){
-                options.series[0].data = data;
-                chart1 = new Highcharts.Chart(options);
-                
-                $.each(data, function (index, value) { 
-                    $('#tablaClases tbody').append(`<tr data-grupo="${data[index]['grupo']}" data-clase="${data[index]['clase']}" data-familia="${data[index]['familia']}">
-                                                    <td >${data[index]['name']}</td>
-                                                    <td class="textoDerecha">${data[index]['y'].toFixed(2)}</td>
-                                                    <td class="textoDerecha">${data[index]['total'].toFixed(2)}</td>
-                                                </tr>`);
-
-                    total = parseFloat(data[index]['total']) + parseFloat(total);
-                    cantidad = parseInt(data[index]['y']) + parseInt(cantidad);
-                });
-
-                cantidad = cantidad.toFixed(2);
-                total = total.toFixed(2);
-
-                $("#tablaClases tfoot").append(`<tr>
-                                                <td><strong>Total</strong></td>
-                                                <td class="textoDerecha"><strong>${addComa(cantidad)}</strong></td>
-                                                <td class="textoDerecha"><strong>${addComa(total)}</strong></td>
-                                            </tr>`);
-                
-                $("#calculado span").text("S/. " + addComa(total));
-            }
-        });
-
-        tortaDinamica();
-
-        return false;
-    });
-
-    function tortaDinamica(){
-        options = {
-            chart:{
-                renderTo: 'torta',
-                plotBackgroundColor: null,
-                plotBorderWidth: null,
-                plotShadow: false,
-                type: 'pie'
-                },
-                title: {
-                    text: 'Porcentaje de compras por familia',
-                },
-                tooltip: {
-                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-                },
-                accessibility: {
-                    point: {
-                        valueSuffix: '%'
-                    }
-                },
-                plotOptions: {
-                    pie: {
-                        allowPointSelect: true,
-                        cursor: 'pointer',
-                        dataLabels: {
-                            enabled: true,
-                            format: '<b>{point.name}</b>: {point.percentage:.1f} %'
-                        }
-                    }
-                },
-                series: [{
-                    name: 'brands',
-                    colorByPoint: true,
-                    data: []
-                }]        
-        }
-    }
-
-    $("#tablaClases").on('click','tbody tr', function(e) {
-        e.preventDefault();
-
-        $('#tablaItems tbody').empty();
-        $('#tablaItems tfoot').empty();
-
-        let cantidad = 0,
-            total = 0;
-
-        $.post(RUTA+"repoager/items",{grupo:$(this).data('grupo'),clase:$(this).data('clase'),familia:$(this).data('familia')},
-            function (data, text, requestXHR) {
-                $.each(data.datos, function (index, value) { 
-
-                    $("#tablaItems tbody").append(`<tr data-grupo="${data.datos[index]['grupo']}" 
-                                                        data-clase="${data.datos[index]['clase']}" 
-                                                        data-familia="${data.datos[index]['familia']}"
-                                                        data-producto="${data.datos[index]['producto']}">
-                                                        <td >${data.datos[index]['name']}</td>
-                                                        <td class="textoDerecha">${data.datos[index]['y']}</td>
-                                                        <td class="textoDerecha">${addComa(data.datos[index]['total'])}</td>
-                                                    </tr>`)
-                    
-                    total = parseFloat(data.datos[index]['total']) + parseFloat(total);
-                    cantidad = parseInt(data.datos[index]['y']) + parseInt(cantidad);
-                });
-
-                cantidad = cantidad.toFixed(2);
-                total = total.toFixed(2);
-
-                $("#tablaItems tfoot").append(`<tr>
-                                                <td><strong>Total</strong></td>
-                                                <td class="textoDerecha"><strong>${addComa(cantidad)}</strong></td>
-                                                <td class="textoDerecha"><strong>${addComa(total)}</strong></td>
-                                            </tr>`);
-                
-                $("#calculado span").text("S/. " + addComa(total));
-            },
-            "json"
-        );
-
-
-        return false;
-    });
-
-    $("#tablaItems tbody").on("click",'tr', function (e) {
-        e.preventDefault();
-
-        producto = $(this).find('td').eq(0).text()
-
-        $.post(RUTA+"repoager/graficoLineas",{grupo:$(this).data('grupo'),
-                                            clase:$(this).data('clase'),
-                                            familia:$(this).data('familia'),
-                                            producto:$(this).data('producto')},
-            function (data, textStatus, jqXHR) {
-                lineas(data.lineas,producto);
-                barras(data.barras,producto);
-            },
-            "json"
-        );
-
-        return false;
-    });
+    clases(0,2023,7);
+    tortaClases();
 })
+
+clases = (codigo_cc,ac,cm) => {
+   $.ajax({
+    type: "POST",
+    url: "repoager/consultaClases",
+    data: {cc:codigo_cc,anio:ac,mes:cm},
+    dataType: "json",
+    success: function (data) {
+        options.series[0].data = data.clase;
+        chart1 = new Highcharts.Chart(options);   
+    }
+   });
+}
+
+function tortaClases(){
+    options = {
+        chart:{
+            renderTo: 'torta',
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false,
+            type: 'pie'
+            },
+            title: {
+                text: 'Grafico de Porcentajes (Clases)',
+            },
+            tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+            accessibility: {
+                point: {
+                    valueSuffix: '%'
+                }
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+                    }
+                }
+            },
+            series: [{
+                name: 'brands',
+                colorByPoint: true,
+                data: []
+            }]        
+    }
+}
 
 lineas = (valores,producto) => {
     Highcharts.chart('lineas', {
@@ -261,8 +140,8 @@ torta = (valores) => {
             type: 'pie'
         },
         title: {
-            text: 'Browser market shares in May, 2020',
-            align: 'left'
+            text: 'Porcentajes (Clases)',
+            align: 'center'
         },
         tooltip: {
             pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
@@ -290,4 +169,45 @@ torta = (valores) => {
     });
     
 }
+
+torta1 = (valores) => {
+    Highcharts.chart('torta1', {
+        chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false,
+            type: 'pie'
+        },
+        title: {
+            text: 'Porcentajes (Familias)',
+            align: 'center'
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+        accessibility: {
+            point: {
+                valueSuffix: '%'
+            }
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: true,
+                    format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+                }
+            }
+        },
+        series: [{
+            name: 'Brands',
+            colorByPoint: true,
+            data: valores
+        }]
+    });
+    
+}
+
+
 

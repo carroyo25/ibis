@@ -2717,38 +2717,39 @@ $anulado:#c2c2c2;
    #repogen{
         #repogencabecera{
             display: flex;
-        }
-
-        #repogencabecera{
-            display: flex;
             position: relative;
 
             #filtros {
-                width: 80%;
                 display: grid;
-                grid-template-columns: 1fr 1fr 1fr;
-                padding: 0 85px;
+                grid-template-columns: .5fr .5fr 1fr 1fr 1fr 1fr;
                 column-gap: 10px;
 
-                select {
+                select,input {
                     line-height: 1rem;
                     border: 1px solid #c2c2c2c2;
+                    border-radius: 8px;
                     height: 3rem;
                     padding: 5px;
+                    width: 100%;
                 }
-            }
 
-            #calculado{
-                font-size: 3rem;
-                position: absolute;
-                right: 58px;
+                input{
+                    text-align: center;
+                }
+
+                #calculado{
+                    font-size: 2rem;
+                    width: 100%;
+                    text-align: right;
+                    margin-right: 20px;
+                }
             }
         }
 
         #graficos {
             margin-top: 1rem;
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr 1fr 1fr;
         }
 
         #tablas {

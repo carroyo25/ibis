@@ -7,18 +7,6 @@
     <title>Reporte Gerencial - 01</title>
 </head>
 <body>
-    <div class="modal" id="dialogo">
-        <div class="ventanaPregunta">
-            <h3>Ingrese Codigo</h3>
-            <div>
-                <input type="text" name="codigoSearch" id="codigoSearch">
-            </div>
-            <div>
-                <button type="button" id="btnAceptarDialogo">Aceptar</button>
-                <button type="button" id="btnCancelarDialogo">Cancelar</button>
-            </div>
-        </div>
-    </div>
     <div class="cabezaModulo">
         <h1>Resumen de Almacen</h1>
         <div>
@@ -31,32 +19,44 @@
                   <div id="filtros">
                         <div>
                             <p>Mes</p>
-                            <select name="mes" id="mes" class="w50por">
+                            <select name="mes" id="mes">
                                 <?php echo $this->mes ?>
                             </select>
                         </div>
                         <div>
+                            <p>Año</p>
+                            <input type="text" name="anio" id="anio" value="2023">
+                        </div>
+                        <div>
+                            <p>Centro de Costos</p>
+                            <select name="costos" id="costos" class="w75por">
+                                <?php echo $this->listaCostosSelect ?>
+                            </select>
+                        </div>
+                        <div>
                             <p>Clase</p>
-                            <select name="clase" id="clase" class="w100por">
+                            <select name="clase" id="clase">
                                 <?php echo $this->clases ?>
                             </select>
                         </div>
                         <div>
                             <p>Tipo</p>
-                            <select name="tipo" id="tipo" class="w100por">
+                            <select name="tipo" id="tipo">
                                 <?php echo $this->tipos ?>
                             </select>
                         </div>
+                        <div id="calculado">
+                            <span>S/.  </span> 
+                        </div>
                   </div>
-                  <div id="calculado">
-                    <span>S/.  </span> 
-                  </div>  
+                    
             </div>
             <div id="graficos">
                 <div id="torta">
                 </div>
+                <div id="torta1">
+                </div>
                 <div id="lineas">
-
                 </div>
             </div>
             <div id="tablas">

@@ -1000,6 +1000,39 @@
                 return false;
             }
         }
+        
+        public function costosPorUsuarioSelector($id){
+            try {
+                $salida = "<option value='-1' selected >Todos</option>";
+
+                $sql = $this->db->connect()->prepare("SELECT
+                                                    UPPER( tb_proyectos.ccodproy ) AS codigo_costos,
+                                                    UPPER( tb_proyectos.cdesproy ) AS descripcion_costos,
+                                                    tb_proyectos.veralm,
+                                                    tb_costusu.ncodproy 
+                                                FROM
+                                                    tb_costusu
+                                                    INNER JOIN tb_proyectos ON tb_costusu.ncodproy = tb_proyectos.nidreg 
+                                                WHERE
+                                                    tb_costusu.id_cuser = :id 
+                                                    AND tb_proyectos.nflgactivo = 1
+                                                    AND tb_costusu.nflgactivo = 1
+                                                    ORDER BY tb_proyectos.ccodproy");
+                $sql->execute(["id"=>$id]);
+                $rowCount = $sql->rowCount(); 
+
+                if ($rowCount > 0){
+                    while ($rs = $sql->fetch()){
+                        $salida .='<option value="'.$rs['ncodproy'].'">'.$rs['codigo_costos']." ".$rs['descripcion_costos'].'</option>';
+                    }
+
+                    return $salida;
+                }
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
 
         public function obtenerAreas(){
             try {

@@ -2999,41 +2999,40 @@
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-}
-.itemsReporte #repogen #repogencabecera {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
   position: relative;
 }
 .itemsReporte #repogen #repogencabecera #filtros {
-  width: 80%;
   display: -ms-grid;
   display: grid;
-  -ms-grid-columns: 1fr 10px 1fr 10px 1fr;
-  grid-template-columns: 1fr 1fr 1fr;
-  padding: 0 85px;
+  -ms-grid-columns: 0.5fr 10px 0.5fr 10px 1fr 10px 1fr 10px 1fr 10px 1fr;
+  grid-template-columns: 0.5fr 0.5fr 1fr 1fr 1fr 1fr;
   -webkit-column-gap: 10px;
      -moz-column-gap: 10px;
           column-gap: 10px;
 }
-.itemsReporte #repogen #repogencabecera #filtros select {
+.itemsReporte #repogen #repogencabecera #filtros select, .itemsReporte #repogen #repogencabecera #filtros input {
   line-height: 1rem;
   border: 1px solid rgba(194, 194, 194, 0.7607843137);
+  border-radius: 8px;
   height: 3rem;
   padding: 5px;
+  width: 100%;
 }
-.itemsReporte #repogen #repogencabecera #calculado {
-  font-size: 3rem;
-  position: absolute;
-  right: 58px;
+.itemsReporte #repogen #repogencabecera #filtros input {
+  text-align: center;
+}
+.itemsReporte #repogen #repogencabecera #filtros #calculado {
+  font-size: 2rem;
+  width: 100%;
+  text-align: right;
+  margin-right: 20px;
 }
 .itemsReporte #repogen #graficos {
   margin-top: 1rem;
   display: -ms-grid;
   display: grid;
-  -ms-grid-columns: 1fr 1fr;
-  grid-template-columns: 1fr 1fr;
+  -ms-grid-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
 }
 .itemsReporte #repogen #tablas {
   display: -ms-grid;
