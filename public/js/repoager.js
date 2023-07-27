@@ -1,23 +1,52 @@
 $(function(){
     $("#espera").fadeOut();
 
+    let valores = [0,0,0,0,0,0,0,0,0,0,0,0,0];
+
+    //entrada
+    lineas(valores);
+    barras(valores);
+
     clases(0,2023,7);
     familias(0,2023,7,0);
+
+    //sucesos
+    $("#costos").on('change', function(e) {
+        e.preventDefault();
+
+        let costos = $(this).val(),
+            anio = $("#anio").val(),
+            mes = $("#mes").val();
+
+        clases(costos,anio,mes);
+
+        return false;
+    });
 
 })
 
 clases = (codigo_cc,ac,cm) => {
-   $.ajax({
-    type: "POST",
-    url: "repoager/consultaClases",
-    data: {cc:codigo_cc,anio:ac,mes:cm},
-    dataType: "json",
-    success: function (data) {
-        //options.series[0].data = data.clase;
-        //chart1 = new Highcharts.Chart(options); 
-        torta(data.clase);
-    }
-   });
+
+    let option = `<option value="0">Todos</option>`;
+
+    $.ajax({
+        type: "POST",
+        url: "repoager/consultaClases",
+        data: {cc:codigo_cc,anio:ac,mes:cm},
+        dataType: "json",
+        success: function (data) {
+            //options.series[0].data = data.clase;
+            //chart1 = new Highcharts.Chart(options); 
+            torta(data.clase);
+
+            $.each(data.clase, function(i, item) {
+                option += `<option value="${item.nclase}">${item.name}</option>`;
+            });
+
+            $("#clase").empty().append(option);
+        }
+    });
+
 }
 
 familias = (costo,ac,cm,cl) => {
@@ -30,6 +59,8 @@ familias = (costo,ac,cm,cl) => {
             /*options.series[0].data = data.familia;
             chart1 = new Highcharts.Chart(options);*/
             torta1(data.familias);
+
+
         }
        });
 }

@@ -257,10 +257,11 @@
             }
         }
 
-        public function consultaClases($cc,$anio,$mes) {
+        public function consultaClases($cc,$anio,$mm) {
             try {
 
                 $costo = $cc == 0 ? '%' : $cc;
+                $mes = $mm == 0 ? '%' : $mm;
 
                 $sql = $this->db->connect()->prepare("SELECT
                                                         lg_ordendet.id_cprod,
@@ -271,7 +272,8 @@
                                                         lg_ordendet.nEstadoReg,
                                                         lg_ordendet.nflgactivo,
                                                         SUM( lg_ordendet.ncanti ) AS cantidad,
-                                                        lg_ordendet.fregsys 
+                                                        lg_ordendet.fregsys,
+                                                        cm_producto.nclase 
                                                     FROM
                                                         lg_ordendet
                                                         LEFT JOIN cm_producto ON lg_ordendet.id_cprod = cm_producto.id_cprod
@@ -282,7 +284,7 @@
                                                         lg_ordendet.id_orden <> 0 
                                                         AND lg_ordendet.ncodcos LIKE :costos 
                                                         AND YEAR ( lg_ordendet.fregsys ) = :anio 
-                                                        AND MONTH ( lg_ordendet.fregsys ) = :mes
+                                                        AND MONTH ( lg_ordendet.fregsys ) LIKE :mes
                                                     GROUP BY
                                                         tb_clase.cdescrip 
                                                     ORDER BY
