@@ -52,9 +52,9 @@
                     
             </div>
             <div id="graficos">
-                <div id="torta">
+                <div id="tortaClase">
                 </div>
-                <div id="torta1">
+                <div id="tortaFamilia">
                 </div>
                 <div id="lineas">
                 </div>

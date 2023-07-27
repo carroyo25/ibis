@@ -34,5 +34,9 @@
         function consultaClases() {
             echo json_encode($this->model->consultaClases($_POST['cc'],$_POST['anio'],$_POST['mes']),JSON_NUMERIC_CHECK);
         }
+
+        function consultaFamilias() {
+            echo json_encode($this->model->consultaFamilias($_POST['cc'],$_POST['anio'],$_POST['mes'],$_POST['clase']),JSON_NUMERIC_CHECK);
+        }
     }
 ?>

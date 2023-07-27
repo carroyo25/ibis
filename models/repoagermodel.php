@@ -303,17 +303,63 @@
                     }
                 }
 
-                return array("clase"=>$docData,
-                            "familias"=>"");
+                return array("clase"=>$docData);
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;
             }
         }
 
-        public function consultaFamilias($cc,$anio,$mes,$clase){
+        public function consultaFamilias($cc,$anio,$mes,$cl){
             try {
-                //code...
+
+                $costo = $cc == 0 ? '%' : $cc;
+                $clase = $cl == 0 ? '%' : $cl;
+
+
+                $sql = $this->db->connect()->prepare("SELECT
+                                                lg_ordendet.id_cprod,
+                                                UPPER( tb_grupo.cdescrip ) AS grupo,
+                                                UPPER( tb_clase.cdescrip ) AS clase,
+                                                UPPER( tb_familia.cdescrip ) AS name,
+                                                lg_ordendet.ncodcos,
+                                                lg_ordendet.nEstadoReg,
+                                                lg_ordendet.nflgactivo,
+                                                SUM( lg_ordendet.ncanti ) AS cantidad,
+                                                lg_ordendet.fregsys 
+                                            FROM
+                                                lg_ordendet
+                                                LEFT JOIN cm_producto ON lg_ordendet.id_cprod = cm_producto.id_cprod
+                                                LEFT JOIN tb_familia ON cm_producto.nfam = tb_familia.ncodfamilia
+                                                LEFT JOIN tb_grupo ON cm_producto.ngrupo = tb_grupo.ncodgrupo
+                                                LEFT JOIN tb_clase ON cm_producto.nclase = tb_clase.ncodclase 
+                                            WHERE
+                                                lg_ordendet.id_orden <> 0
+                                                AND cm_producto.nclase LIKE :clase
+                                                AND lg_ordendet.ncodcos LIKE :costo
+                                                AND YEAR ( lg_ordendet.fregsys ) = :anio
+                                                AND MONTH ( lg_ordendet.fregsys ) = :mes
+                                            GROUP BY
+                                                tb_familia.cdescrip 
+                                            ORDER BY
+                                                tb_familia.cdescrip ASC");
+
+                $sql->execute(["costo"=>$costo,"mes"=>$mes,"anio"=>$anio,"clase"=>$clase]);
+
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0) {
+                    $docData = array();
+                    
+                    while($row=$sql->fetch(PDO::FETCH_ASSOC)){
+                        array_push( $docData,array("name"=>$row['name'],
+                                                    "y"=>$row['cantidad'],
+                                                    "grupo"=>$row['grupo'],
+                                                    "clase"=>$row['clase']));
+                    }
+                }
+
+                return array("familias"=>$docData);
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;
