@@ -1,14 +1,14 @@
 $(function(){
     $("#espera").fadeOut();
 
-    let valores = [0,0,0,0,0,0,0,0,0,0,0,0,0];
+    let valores = [0,0,0,0,0,0,0,0,0,0,0,0];
 
     //entrada
-    lineas(valores);
     barras(valores);
 
-    clases(0,2023,7);
-    familias(0,2023,7,0);
+    qrygrupos(0,2023,7);
+    qryclases(0,0,2023,7)
+    qryfamilias(0,0,0,2023,7);
 
     //sucesos
     $("#costos").on('change', function(e) {
@@ -18,49 +18,137 @@ $(function(){
             anio = $("#anio").val(),
             mes = $("#mes").val();
 
-        clases(costos,anio,mes);
+            qrygrupos(costos,anio,mes);
+            qryclases(costos,0,anio,mes);
+            qryfamilias(costos,0,0,anio,mes);
+
+        return false;
+    });
+
+    $("#grupo").change(function (e) { 
+        e.preventDefault();
+
+        let costos = $("#costos").val(),
+            grupo = $(this).val(),
+            clase = $("#clase").val(),
+            anio = $("#anio").val(),
+            mes = $("#mes").val();
+
+            qryclases(costos,grupo,anio,mes);
+            qryfamilias(costos,grupo,clase,anio,mes);
+
+        return false;
+    });
+
+    $("#clase").change(function (e) { 
+        e.preventDefault();
+
+        let costos = $("#costos").val(),
+            grupo = $("#grupo").val(),
+            clase = $(this).val(),
+            anio = $("#anio").val(),
+            mes = $("#mes").val();
+
+            qryfamilias(costos,grupo,clase,anio,mes);
+
+        return false;
+    });
+
+    $("#tablaClases").on("click","tr", function (e) {
+        e.preventDefault();
+
+        let mes = $("#mes").val(),
+            anio = $("#anio").val(),
+            costo = $("#costos").val(),
+            grupo = $("#grupo").val(),
+            clase = $("#clase").val(),
+            familia = $(this).data("familia");
+
+            $.post("repoager/consultaGrupos", {cc:costo,fam:familia,an:anio,mm:mes},
+                function (data, textStatus, jqXHR) {
+                    
+                },
+                "json"
+            );
 
         return false;
     });
 
 })
 
-clases = (codigo_cc,ac,cm) => {
+qrygrupos = (codigo_cc,ac,cm) => {
 
-    let option = `<option value="0">Todos</option>`;
+    let option = `<option value="0">Todos</option>`,
+        body = "";
 
     $.ajax({
         type: "POST",
-        url: "repoager/consultaClases",
+        url: "repoager/consultaGrupos",
         data: {cc:codigo_cc,anio:ac,mes:cm},
         dataType: "json",
         success: function (data) {
             //options.series[0].data = data.clase;
             //chart1 = new Highcharts.Chart(options); 
-            torta(data.clase);
+            grupo(data.grupo);
+
+            $.each(data.grupo, function(i, item) {
+                option += `<option value="${item.cg}">${item.name}</option>`;
+            });
+
+            $("#grupo").empty().append(option);
+            
+        }
+    });
+}
+
+qryclases = (codigo_cc,codigo_gr,ac,cm) => {
+    let option = `<option value="0">Todos</option>`,
+        celdas = '';
+
+    $.ajax({
+        type: "POST",
+        url: "repoager/consultaClases",
+        data: {cc:codigo_cc,gr:codigo_gr,anio:ac,mes:cm},
+        dataType: "json",
+        success: function (data) {
+            clases(data.clase);
 
             $.each(data.clase, function(i, item) {
-                option += `<option value="${item.nclase}">${item.name}</option>`;
+                option += `<option value="${item.cc}">${item.name}</option>`;
+
+                let c = parseFloat(item.conteo).toFixed(2),
+                    t = parseFloat(item.total).toFixed(2);
+
+                celdas += `<tr data-familia="${item.cf}">
+                            <td>${item.name}</td>
+                            <td class="textoDerecha">${c}</td>
+                            <td class="textoDerecha">${t}</td>
+                        </tr>`;
             });
 
             $("#clase").empty().append(option);
+            $("#tablaClases tbody").empty().append(celdas);    
         }
     });
-
 }
 
-familias = (costo,ac,cm,cl) => {
+qryfamilias = (codigo_cc,codigo_gr,codigo_cl,ac,cm) => {
+    
+    let option = `<option value="0">Todos</option>`;
+
     $.ajax({
         type: "POST",
         url: "repoager/consultaFamilias",
-        data: {cc:costo,anio:ac,mes:cm,clase:cl},
+        data: {cc:codigo_cc,gr:codigo_gr,cl:codigo_cl,anio:ac,mes:cm},
         dataType: "json",
         success: function (data) {
-            /*options.series[0].data = data.familia;
-            chart1 = new Highcharts.Chart(options);*/
-            torta1(data.familias);
+            familias(data.familias);
 
+            $.each(data.familias, function(i, item) {
+                option += `<option value="${item.cf}">${item.name}</option>`;
+            });
 
+            $("#familia").empty().append(option);
         }
        });
 }
@@ -214,8 +302,47 @@ barras = (valores) => {
     });
 }
 
-torta = (valores) => {
-    Highcharts.chart('tortaClase', {
+grupo = (valores) => {
+    Highcharts.chart('grupos', {
+        chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false,
+            type: 'pie'
+        },
+        title: {
+            text: 'Porcentajes (Grupos)',
+            align: 'center'
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+        accessibility: {
+            point: {
+                valueSuffix: '%'
+            }
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: true,
+                    format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+                }
+            }
+        },
+        series: [{
+            name: 'Brands',
+            colorByPoint: true,
+            data: valores
+        }]
+    });
+    
+}
+
+clases = (valores) => {
+    Highcharts.chart('clases', {
         chart: {
             plotBackgroundColor: null,
             plotBorderWidth: null,
@@ -253,8 +380,8 @@ torta = (valores) => {
     
 }
 
-torta1 = (valores) => {
-    Highcharts.chart('tortaFamilia', {
+familias = (valores) => {
+    Highcharts.chart('familias', {
         chart: {
             plotBackgroundColor: null,
             plotBorderWidth: null,

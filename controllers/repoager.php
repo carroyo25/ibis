@@ -31,12 +31,20 @@
             echo json_encode($this->model->dibujarLineas($_POST['grupo'],$_POST['clase'],$_POST['familia'],$_POST['producto']),JSON_NUMERIC_CHECK);
         }
 
+        function consultaGrupos() {
+            echo json_encode($this->model->consultarGrupos($_POST['cc'],$_POST['anio'],$_POST['mes']),JSON_NUMERIC_CHECK);
+        }
+
         function consultaClases() {
-            echo json_encode($this->model->consultaClases($_POST['cc'],$_POST['anio'],$_POST['mes']),JSON_NUMERIC_CHECK);
+            echo json_encode($this->model->consultarClases($_POST['cc'],$_POST['gr'],$_POST['anio'],$_POST['mes']),JSON_NUMERIC_CHECK);
         }
 
         function consultaFamilias() {
-            echo json_encode($this->model->consultaFamilias($_POST['cc'],$_POST['anio'],$_POST['mes'],$_POST['clase']),JSON_NUMERIC_CHECK);
+            echo json_encode($this->model->consultarFamilias($_POST['cc'],$_POST['gr'],$_POST['cl'],$_POST['anio'],$_POST['mes']),JSON_NUMERIC_CHECK);
+        }
+
+        function consultaItems() {
+            echo json_encode($this->model->consultarItems($_POST['cc'],$_POST['fam'],$_POST['an'],$_POST['mm']),JSON_NUMERIC_CHECK);
         }
     }
 ?>

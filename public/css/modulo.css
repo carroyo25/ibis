@@ -3004,8 +3004,8 @@
 .itemsReporte #repogen #repogencabecera #filtros {
   display: -ms-grid;
   display: grid;
-  -ms-grid-columns: 0.5fr 10px 0.5fr 10px 1fr 10px 1fr 10px 1fr 10px 1fr;
-  grid-template-columns: 0.5fr 0.5fr 1fr 1fr 1fr 1fr;
+  -ms-grid-columns: 0.5fr 10px 0.5fr 10px 1fr 10px 1fr 10px 1fr 10px 1fr 10px 1fr;
+  grid-template-columns: 0.5fr 0.5fr 1fr 1fr 1fr 1fr 1fr;
   -webkit-column-gap: 10px;
      -moz-column-gap: 10px;
           column-gap: 10px;
@@ -3033,6 +3033,7 @@
   display: grid;
   -ms-grid-columns: 1fr 1fr 1fr;
   grid-template-columns: 1fr 1fr 1fr;
+  height: 25rem;
 }
 .itemsReporte #repogen #tablas {
   display: -ms-grid;
@@ -3049,6 +3050,7 @@
 }
 .itemsReporte #repogen #tablas .tablareporte {
   border-collapse: collapse;
+  font-size: 0.7rem;
 }
 .itemsReporte #repogen #tablas .tablareporte thead {
   background: white;

@@ -34,14 +34,20 @@
                             </select>
                         </div>
                         <div>
-                            <p>Clase</p>
-                            <select name="clase" id="clase">
+                            <p>Grupos</p>
+                            <select name="grupo" id="grupo">
                                 <?php echo $this->clases ?>
                             </select>
                         </div>
                         <div>
-                            <p>Tipo</p>
-                            <select name="tipo" id="tipo">
+                            <p>Clases</p>
+                            <select name="clase" id="clase">
+                                <?php echo $this->tipos ?>
+                            </select>
+                        </div>
+                        <div>
+                            <p>Familias</p>
+                            <select name="familia" id="familia">
                                 <?php echo $this->tipos ?>
                             </select>
                         </div>
@@ -52,11 +58,11 @@
                     
             </div>
             <div id="graficos">
-                <div id="tortaClase">
+                <div id="grupos">
                 </div>
-                <div id="tortaFamilia">
+                <div id="clases">
                 </div>
-                <div id="lineas">
+                <div id="familias">
                 </div>
             </div>
             <div id="tablas">
@@ -65,7 +71,7 @@
                         <thead class='stickytop'>
                             <tr >
                                 <th>Tipo</th>
-                                <th>suma<br/>Cantidad</th>
+                                <th>Suma<br/>Cantidad</th>
                                 <th>Suma<br/>Total</th>
                             </tr>
                         </thead>
@@ -75,8 +81,8 @@
                         <tfoot>
                             <tr>
                                 <td>Total</td>
-                                <td>0</td>
-                                <td>S/. 0.00</td>
+                                <td class="textoDerecha">0</td>
+                                <td class="textoDerecha">S/. 0.00</td>
                             </tr>
                         </tfoot>
                     </table>
@@ -86,7 +92,7 @@
                         <thead class='stickytop'>
                             <tr >
                                 <th>Tipo</th>
-                                <th>suma<br/>Cantidad</th>
+                                <th>Suma<br/>Cantidad</th>
                                 <th>Suma<br/>Total</th>
                             </tr>
                         </thead>
@@ -96,8 +102,8 @@
                         <tfoot>
                             <tr>
                                 <td>Total</td>
-                                <td>0</td>
-                                <td>S/. 0.00</td>
+                                <td class="textoDerecha"><strong>0</strong></td>
+                                <td class="textoDerecha"><strong>0</strong></td>
                             </tr>
                         </tfoot>
                     </table>

@@ -2721,7 +2721,7 @@ $anulado:#c2c2c2;
 
             #filtros {
                 display: grid;
-                grid-template-columns: .5fr .5fr 1fr 1fr 1fr 1fr;
+                grid-template-columns: .5fr .5fr 1fr 1fr 1fr 1fr 1fr;
                 column-gap: 10px;
 
                 select,input {
@@ -2750,6 +2750,7 @@ $anulado:#c2c2c2;
             margin-top: 1rem;
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
+            height: 25rem;
         }
 
         #tablas {
@@ -2764,7 +2765,7 @@ $anulado:#c2c2c2;
 
             .tablareporte {
                 border-collapse: collapse;
-                
+                font-size: .7rem;
 
                 thead {
                     background:white;
