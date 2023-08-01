@@ -139,51 +139,47 @@
 
         public function firmarExpress($id) {
             $fecha =  date("Y-m-d");
-
+            
             try {
-                $sql = $this->db->connect()->prepare("UPDATE lg_ordencab SET 
-                                                                nfirmaLog=:nLog,
-                                                                nfirmaOpe=:nOper,
-                                                                nfirmaFin=:nFin,
-                                                                codperLog=:usrLog,
-                                                                codperOpe=:usrOpe,
-                                                                codperFin=:usrFin,
-                                                                fechaLog=:fecLog,
-                                                                fechaOpe=:fecOpe,
-                                                                fechaFin=:fecFin,
-                                                                nNivAten=:atencion 
-                                                    WHERE id_regmov=:cod");
-                
-                $sql->execute(["nLog" =>1,
-                                "nOper"=>1,
-                                "nFin" =>1,
-                                "usrLog" => $_SESSION['iduser'],
-                                "usrOpe" => $_SESSION['iduser'],
-                                "usrFin" => $_SESSION['iduser'],
-                                "fecLog" => $fecha,
-                                "fecFin"=> $fecha,
-                                "fecOpe"=> $fecha,
-                                "atencion"=> 46,
-                                "cod"=>$id]);
+                $operador = $this->obtenerOperador();
+                $fecha =  date("Y-m-d");
 
-                $rowCount = $sql->rowcount();
-
-                if ($rowCount > 0) {
-                    return array("respuesta"=>true,
-                                "mensaje"=>"Se autorizo la orden",
-                                "clase"=>"mensaje_correcto");
-                                
-                }else {
-                    return array("respuesta"=>true,
-                                "mensaje"=>"No se pudo actualizar",
-                                "clase"=>"mensaje_error");
-                                
+                if ( $operador == "L" ) {
+                    $sql = $this->db->connect()->prepare("UPDATE lg_ordencab SET nfirmaLog=:fir,codperLog=:usr,fechaLog=:fecha,nNivAten=:atencion WHERE id_regmov=:cod");
+                }else if ($operador == "O") {
+                    $sql = $this->db->connect()->prepare("UPDATE lg_ordencab SET nfirmaOpe=:fir,codperOpe=:usr,fechaOpe=:fecha,nNivAten=:atencion WHERE id_regmov=:cod");
+                }else if ($operador == "F") {
+                    $sql = $this->db->connect()->prepare("UPDATE lg_ordencab SET nfirmaFin=:fir,codperFin=:usr,fechaFin=:fecha,nNivAten=:atencion WHERE id_regmov=:cod");
                 }
 
+                $sql->execute(["cod"=>$id,
+                                "usr"=>$_SESSION['iduser'],
+                                "fir"=>1,
+                                "fecha"=>$fecha,
+                                "atencion"=> 46]);
+                
+                $rowCount = $sql->rowCount();
+                
+                if ($rowCount > 0){
+                    return array("mensaje"=>"Se autorizo la orden",
+                                "clase"=>"mensaje_correcto",
+                                "estado"=>true,
+                                "listado"=>$this->listarOrdenesFirmas());
+                }else {
+                    return array("mensaje"=>"Ya autorizo la orden",
+                                "clase"=>"mensaje_error",
+                                "operador"=>$operador,
+                                "estado"=>false,
+                                "listado"=>$this->listarOrdenesFirmas());
+            }
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
                 return false;
             }
+        }
+
+        public function correoExpress($id) {
+
         }
 
         public function consultarPrecios($codigo,$descripcion){

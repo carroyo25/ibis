@@ -151,9 +151,6 @@
                                 <input type="text" name="lentrega" id="lentrega" class="mostrarLista busqueda" placeholder="Elija una opcion"
                                     readonly>
                                 <div class="lista" id="listaAlmacen">
-                                   <ul>
-                                       <?php echo $this->listaAlmacenes?>
-                                   </ul> 
                                 </div>
                             </div>
                         </div>

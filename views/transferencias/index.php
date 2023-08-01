@@ -23,8 +23,8 @@
         <div class="ventanaProceso tamanioProceso">
             <div class="cabezaProceso">
                 <form action="#" id="formProceso" autocomplete="off">
-                    <input type="hidden" name="codigo_costos" id="codigo_costos">
-                    <input type="hidden" name="codigo_costos" id="codigo_costos_destino">  
+                    <input type="hidden" name="codigo_costos_origen" id="codigo_costos_origen">
+                    <input type="hidden" name="codigo_costos_destino" id="codigo_costos_destino">  
                     <input type="hidden" name="codigo_area" id="codigo_area">
                     <input type="hidden" name="codigo_movimiento" id="codigo_movimiento">
                     <input type="hidden" name="codigo_aprueba" id="codigo_aprueba">
@@ -82,41 +82,21 @@
                                 </div>
                             </div>
                         </div>
-                        <!--<div class="seccion_medio">
-                            <div class="column2">
-                                <label for="almacen_origen_despacho">Almacen Origen:</label>
-                                <input type="text" name="almacen_origen_despacho" id="almacen_origen_despacho" class="mostrarLista busqueda" readonly>
-                                <div class="lista" id="listaOrigen">
-                                   <ul>
-                                       <?php echo $this->listaAlmacen?>
-                                   </ul> 
-                                </div>
-                            </div>
-                            <div class="column2">
-                                <label for="almacen_destino_despacho">Almacen Destino:</label>
-                                <input type="text" name="almacen_destino_despacho" id="almacen_destino_despacho" class="mostrarLista busqueda" readonly>
-                                <div class="lista" id="listaDestino">
-                                   <ul>
-                                       <?php echo $this->listaAlmacen?>
-                                   </ul> 
-                                </div>
-                            </div>
-                            
-                        </div>-->
+                        
                         <div class="seccion_medio">
                             <div class="column2">
-                                <label for="costos">CCostos Origen:</label>
-                                <input type="text" name="costos" id="costos" class="mostrarLista busqueda" placeholder="Elija una opcion">
-                                <div class="lista" id="listaCostos">
+                                <label for="corigen">CCostos Origen:</label>
+                                <input type="text" name="corigen" id="corigen" class="mostrarLista busqueda" placeholder="Elija una opcion">
+                                <div class="lista" id="listaCostosOrigen">
                                    <ul>
                                        <?php echo $this->listaCostos?>
                                    </ul> 
                                 </div>
                             </div>
                             <div class="column2">
-                                <label for="costos">CCostos Destino:</label>
+                                <label for="cdestino">CCostos Destino:</label>
                                 <input type="text" name="cdestino" id="cdestino" class="mostrarLista busqueda" placeholder="Elija una opcion">
-                                <div class="lista" id="listaCostos">
+                                <div class="lista" id="listaCostosDestino">
                                    <ul>
                                        <?php echo $this->listaCostos?>
                                    </ul> 

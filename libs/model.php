@@ -945,7 +945,8 @@
                                                     UPPER( tb_proyectos.ccodproy ) AS codigo_costos,
                                                     UPPER( tb_proyectos.cdesproy ) AS descripcion_costos,
                                                     tb_proyectos.veralm,
-                                                    tb_costusu.ncodproy 
+                                                    tb_costusu.ncodproy,
+                                                    tb_proyectos.nalmacen
                                                 FROM
                                                     tb_costusu
                                                     INNER JOIN tb_proyectos ON tb_costusu.ncodproy = tb_proyectos.nidreg 
@@ -958,7 +959,9 @@
 
                 if ($rowCount > 0){
                     while ($rs = $sql->fetch()){
-                        $salida .='<li><a href="'.$rs['ncodproy'].'" data-aprobacion="'.$rs['veralm'].'">'.$rs['codigo_costos']." ".$rs['descripcion_costos'].'</a></li>';
+                        $salida .='<li><a href="'.$rs['ncodproy'].'" 
+                                    data-aprobacion="'.$rs['veralm'].'"
+                                    data-almacen="'.$rs['nalmacen'].'">'.$rs['codigo_costos']." ".$rs['descripcion_costos'].'</a></li>';
                     }
 
                     return $salida;

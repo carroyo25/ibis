@@ -11,7 +11,8 @@ $(function(){
 
                 let numero = $.strPad(data.cabecera[0].idreg,6);
 
-                $("#codigo_costos").val(data.cabecera[0].idcc);
+                $("#codigo_costos_origen").val(data.cabecera[0].idcc);
+                $("#codigo_costos_destino").val(data.cabecera[0].idcc);
                 $("#numero").val(numero);
                 $("#costos").val(data.cabecera[0].proyecto);
                 $("#aprueba").val(data.cabecera[0].cnombres);
@@ -19,8 +20,6 @@ $(function(){
                 $("#almacen_destino_despacho").val(data.cabecera[0].destino);
                 $("#tipo").val(data.cabecera[0].cdescripcion);
                 $("#codigo_transferencia").val(data.cabecera[0].idreg);
-
-                
 
                 $("#tablaDetalles tbody")
                     .empty()
@@ -133,13 +132,18 @@ $(function(){
         let contenedor_padre = $(this).parent().parent().parent().attr("id");
         let id = "";
         let codigo = $(this).attr("href");
+        let almacen = $(this).data("almacen");
         
         control.slideUp()
         destino.val($(this).text());
         id = destino.attr("id");
 
-        if (contenedor_padre == "listaCostos"){
-            $("#codigo_costos").val(codigo);
+        if (contenedor_padre == "listaCostosOrigen"){
+            $("#codigo_costos_origen").val(codigo);
+            $("#codigo_almacen_origen").val(almacen);
+        }else if(contenedor_padre == "listaCostosDestino"){
+            $("#codigo_costos_destino").val(codigo);
+            $("#codigo_almacen_destino").val(almacen);
         }else if(contenedor_padre == "listaAprueba"){
             $("#codigo_aprueba").val(codigo);
         }else if(contenedor_padre == "listaAprueba"){
@@ -377,11 +381,11 @@ $(function(){
         e.preventDefault();
 
         try {
-            if ($("#codigo_costos").val() == 0) throw "Indique el centro de costos"; 
+            if ($("#codigo_costos_origen").val() == 0) throw "Indique el centro de costos"; 
 
             $("#esperar").fadeIn();
 
-            $.post(RUTA+"transferencias/pedidos", {cc:$("#codigo_costos").val(),pedido:""},
+            $.post(RUTA+"transferencias/pedidos", {cc:$("#codigo_costos_origen").val(),pedido:""},
                 function (data, textStatus, jqXHR) {
                     $("#tablaPedidos tbody")
                         .empty()
@@ -399,7 +403,7 @@ $(function(){
     });
 
     $("#tablaPedidos tbody").on("click","tr", function () {
-        $.post(RUTA+"transferencias/items", {indice:$(this).data('indice'),origen:$("#codigo_almacen_origen").val()},
+        $.post(RUTA+"transferencias/items", {indice:$(this).data('indice'),origen:$("#codigo_costos_origen").val()},
             function (data, textStatus, jqXHR) {
                 $("#tablaDetalles tbody")
                     .empty()

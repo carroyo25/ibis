@@ -367,9 +367,7 @@
                                                     tb_unimed.cabrevia,
                                                     tb_pedidocab.idreg,
                                                     tb_pedidocab.idcostos,
-                                                    LPAD(tb_pedidocab.nrodoc,6,0) AS nrodoc,
-                                                    ( SELECT SUM( alm_existencia.cant_ingr ) FROM alm_existencia WHERE alm_existencia.idalm = :ingresos AND alm_existencia.codprod = cm_producto.id_cprod ) AS ingreso,
-                                                    ( SELECT SUM( alm_inventariodet.cant_ingr ) FROM alm_inventariodet WHERE alm_inventariodet.idalm = :inventario AND alm_inventariodet.codprod = cm_producto.id_cprod ) AS inventario 
+                                                    LPAD(tb_pedidocab.nrodoc,6,0) AS nrodoc
                                                 FROM
                                                     tb_pedidodet
                                                     INNER JOIN cm_producto ON tb_pedidodet.idprod = cm_producto.id_cprod
@@ -377,13 +375,15 @@
                                                     INNER JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg 
                                                 WHERE
                                                     tb_pedidodet.idpedido = :indice
+                                                    AND tb_pedidodet.nflgActivo = 1
                                                     AND tb_pedidodet.cant_orden != tb_pedidodet.cant_aprob");
-                $sql -> execute(['indice'=>$indice,"ingresos"=>$origen,"inventario"=>$origen]);
+                $sql -> execute(['indice'=>$indice]);
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0) {
                     while($rs = $sql->fetch()) {
-                        $existencia = $rs['ingreso'] +$rs['inventario'];
+                        //$existencia = $rs['ingreso'] +$rs['inventario'];
+                        $existencia = 0;
                         $enviar = $rs['cant_aprob'] - $rs['cant_orden'];
 
                         $salida .= '<tr data-iditem="'.$rs['iditem'].'" 
@@ -427,7 +427,7 @@
                                                             ftraslado=:fecha_traslado,ntipmov=:tipo_movimiento,nestado=:estado");
                 
                 $sql->execute([
-                    "costos"=>$cabecera['codigo_costos'],
+                    "costos"=>$cabecera['codigo_costos_origen'],
                     "aprueba"=>$cabecera['codigo_aprueba'],
                     "origen"=>$cabecera['codigo_almacen_origen'],
                     "destino"=>$cabecera['codigo_almacen_destino'],
