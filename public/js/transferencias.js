@@ -14,7 +14,7 @@ $(function(){
                 $("#codigo_costos_origen").val(data.cabecera[0].idcc);
                 $("#codigo_costos_destino").val(data.cabecera[0].idcc);
                 $("#numero").val(numero);
-                $("#costos").val(data.cabecera[0].proyecto);
+                $("#corigen").val(data.cabecera[0].proyecto);
                 $("#aprueba").val(data.cabecera[0].cnombres);
                 $("#almacen_origen_despacho").val(data.cabecera[0].origen);
                 $("#almacen_destino_despacho").val(data.cabecera[0].destino);

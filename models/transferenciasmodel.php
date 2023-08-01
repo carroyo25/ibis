@@ -58,6 +58,32 @@
                 $cabecera = "";
                 $result = [];
 
+                /*SELECT
+	alm_transfercab.idreg,
+	alm_transfercab.idcc,
+	alm_transfercab.idaprueba,
+	alm_transfercab.almorigen,
+	alm_transfercab.almdestino,
+	alm_transfercab.ftraslado,
+	alm_transfercab.cnumguia,
+	tb_user.cnombres,
+	UPPER( almacenOrigen.cdesalm ) AS origen,
+	UPPER( almacenDestino.cdesalm ) AS destino,
+	UPPER( tb_proyectos.cdesproy ) AS proyecto,
+	tb_parametros.cdescripcion,
+	alm_transfercab.ntipmov,
+	(SELECT alm_transferdet.idcostos FROM alm_transferdet WHERE alm_transferdet.idtransfer = alm_transfercab.idreg LIMIT 1) AS costo_destino
+FROM
+	alm_transfercab
+	INNER JOIN tb_user ON alm_transfercab.idaprueba = tb_user.iduser COLLATE utf8_unicode_ci
+	INNER JOIN tb_almacen AS almacenOrigen ON alm_transfercab.almorigen = almacenOrigen.ncodalm
+	INNER JOIN tb_almacen AS almacenDestino ON alm_transfercab.almdestino = almacenDestino.ncodalm
+	INNER JOIN tb_proyectos ON alm_transfercab.idcc = tb_proyectos.nidreg
+	INNER JOIN tb_parametros ON alm_transfercab.ntipmov = tb_parametros.nidreg 
+WHERE
+	alm_transfercab.idreg = 96
+	AND alm_transfercab.nflgactivo = 1*/
+
                 $sql = $this->db->connect()->prepare("SELECT
                                                         alm_transfercab.idreg,
                                                         alm_transfercab.idcc,
