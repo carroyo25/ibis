@@ -1,7 +1,7 @@
 $(function(){
     $("#espera").fadeOut();
 
-    let valores = [0,0,0,0,0,0,0,0,0,0,0,0];
+    let valores =  [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0 ];
 
     //entrada
     barras(valores);
@@ -62,14 +62,63 @@ $(function(){
             costo = $("#costos").val(),
             grupo = $("#grupo").val(),
             clase = $("#clase").val(),
-            familia = $(this).data("familia");
+            familia = $(this).data("familia"),
+            cantidad = 0;
+            total = 0,
+            row = '';
 
-            $.post("repoager/consultaGrupos", {cc:costo,fam:familia,an:anio,mm:mes},
-                function (data, textStatus, jqXHR) {
-                    
-                },
-                "json"
-            );
+            $.ajax({
+                type: "POST",
+                url: "repoager/consultaItems",
+                data: {cc:costo,fam:familia,an:anio,mm:mes},
+                dataType: "json",
+                success: function (data) {
+                    //grupo(data.grupo);
+
+                    $.each(data.items, function(i, item) {
+                        let c = parseFloat(item.y).toFixed(2),
+                            t = parseFloat(item.total).toFixed(2);
+
+                        row += `<tr data-producto="${item.producto}">
+                                <td>${item.name}</td>
+                                <td class="textoDerecha">${c}</td>
+                                <td class="textoDerecha">${t}</td>
+                            </tr>`;
+                        
+                        cantidad = parseFloat(item.y)+cantidad;
+                        total   =  parseFloat(item.total)+total; 
+
+                    });
+        
+                    $("#tablaItems tbody").empty().append(row);
+
+                    $("#tablaItems tfoot").empty().append(`<tr>
+                                                <td><strong>Total</strong></td>
+                                                <td class="textoDerecha"><strong>${addComa(cantidad.toFixed(2))}</strong></td>
+                                                <td class="textoDerecha"><strong>${addComa(total.toFixed(2))}</strong></td>
+                                            </tr>`);
+                }
+            });
+
+            
+        return false;
+    });
+
+    $("#tablaItems tbody").on("click",'tr', function (e) {
+        e.preventDefault();
+
+        let producto = $(this).data("producto"),
+            anio = $("#anio").val(),
+            costos = $("#costos").val();
+
+        $.post(RUTA+"repoager/graficoLineas",{cc:costos,
+                                              an:anio,
+                                              pr:producto},
+            function (data, textStatus, jqXHR) {
+                barras(data);
+            },
+            "json"
+        );
 
         return false;
     });
@@ -78,8 +127,7 @@ $(function(){
 
 qrygrupos = (codigo_cc,ac,cm) => {
 
-    let option = `<option value="0">Todos</option>`,
-        body = "";
+    let option = `<option value="0">Todos</option>`;
 
     $.ajax({
         type: "POST",
@@ -87,23 +135,19 @@ qrygrupos = (codigo_cc,ac,cm) => {
         data: {cc:codigo_cc,anio:ac,mes:cm},
         dataType: "json",
         success: function (data) {
-            //options.series[0].data = data.clase;
-            //chart1 = new Highcharts.Chart(options); 
             grupo(data.grupo);
 
             $.each(data.grupo, function(i, item) {
                 option += `<option value="${item.cg}">${item.name}</option>`;
             });
 
-            $("#grupo").empty().append(option);
-            
+            $("#grupo").empty().append(option);   
         }
     });
 }
 
 qryclases = (codigo_cc,codigo_gr,ac,cm) => {
-    let option = `<option value="0">Todos</option>`,
-        celdas = '';
+    let option = `<option value="0">Todos</option>`;
 
     $.ajax({
         type: "POST",
@@ -114,27 +158,19 @@ qryclases = (codigo_cc,codigo_gr,ac,cm) => {
             clases(data.clase);
 
             $.each(data.clase, function(i, item) {
-                option += `<option value="${item.cc}">${item.name}</option>`;
-
-                let c = parseFloat(item.conteo).toFixed(2),
-                    t = parseFloat(item.total).toFixed(2);
-
-                celdas += `<tr data-familia="${item.cf}">
-                            <td>${item.name}</td>
-                            <td class="textoDerecha">${c}</td>
-                            <td class="textoDerecha">${t}</td>
-                        </tr>`;
+                option += `<option value="${item.cc}">${item.name}</option>`; 
             });
 
             $("#clase").empty().append(option);
-            $("#tablaClases tbody").empty().append(celdas);    
+             
         }
     });
 }
 
 qryfamilias = (codigo_cc,codigo_gr,codigo_cl,ac,cm) => {
     
-    let option = `<option value="0">Todos</option>`;
+    let option = `<option value="0">Todos</option>`,
+                 celdas = '';
 
     $.ajax({
         type: "POST",
@@ -146,9 +182,19 @@ qryfamilias = (codigo_cc,codigo_gr,codigo_cl,ac,cm) => {
 
             $.each(data.familias, function(i, item) {
                 option += `<option value="${item.cf}">${item.name}</option>`;
+
+                let c = parseFloat(item.conteo).toFixed(2),
+                    t = parseFloat(item.total).toFixed(2);
+
+                celdas += `<tr data-familia="${item.cf}">
+                            <td>${item.name}</td>
+                            <td class="textoDerecha">${c}</td>
+                            <td class="textoDerecha">${t}</td>
+                        </tr>`;
             });
 
             $("#familia").empty().append(option);
+            $("#tablaClases tbody").empty().append(celdas);  
         }
        });
 }
@@ -293,7 +339,7 @@ barras = (valores) => {
             }
         },
         title: {
-            text: 'Total Meses',
+            text: 'Total Items Soles',
         },
         series: [{
             name: "",

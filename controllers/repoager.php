@@ -28,7 +28,7 @@
         }
 
         function graficoLineas() {
-            echo json_encode($this->model->dibujarLineas($_POST['grupo'],$_POST['clase'],$_POST['familia'],$_POST['producto']),JSON_NUMERIC_CHECK);
+            echo json_encode($this->model->barrasTotales($_POST['cc'],$_POST['an'],$_POST['pr']),JSON_NUMERIC_CHECK);
         }
 
         function consultaGrupos() {

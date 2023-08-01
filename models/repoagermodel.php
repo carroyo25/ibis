@@ -176,7 +176,7 @@
             }
         }
 
-        public function dibujarLineas($grupo,$clase,$familia,$producto){
+        public function dibujarLineas($cc,$anio,$producto){
             try {
                 $sql = $this->db->connect()->prepare("SELECT
                                                         tb_meses.mes,
@@ -217,28 +217,30 @@
             }
         }
 
-        public function barrasTotales($grupo,$clase,$familia,$producto){
+        public function barrasTotales($cc,$an,$pr){
             try {
+                $costo = $cc == 0 ? '%' : $cc;
+
                 $sql = $this->db->connect()->prepare("SELECT
                                                         tb_meses.mes,
                                                         (
                                                         SELECT
-                                                        IF
-                                                            ( SUM( lg_ordendet.ntotal ) > 0, SUM( lg_ordendet.ntotal ), 0 ) 
+                                                         lg_ordendet.ntotal
+                                                        
                                                         FROM
                                                             lg_ordendet 
                                                         WHERE
-                                                            MONTH ( lg_ordendet.fregsys ) = tb_meses.idreg 
-                                                            AND lg_ordendet.id_cprod = :producto 
-                                                            AND (
-                                                                lg_ordendet.nEstadoReg != 105 
-                                                            OR ISNULL( lg_ordendet.nEstadoReg )) 
+                                                            lg_ordendet.ncodcos LIKE :costos 
+                                                            AND YEAR ( lg_ordendet.fregsys ) = :anio 
+                                                            AND MONTH ( lg_ordendet.fregsys ) = tb_meses.idreg 
+                                                            AND lg_ordendet.id_cprod = :producto
+                                                            
                                                         ) AS suma 
                                                     FROM
                                                         tb_meses");
                 
 
-                $sql->execute(["producto"=>$producto]);
+                $sql->execute(["producto"=>$pr,"anio"=>$an,"costos"=>$costo]);
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0) {
@@ -282,7 +284,8 @@
                                                     LEFT JOIN tb_grupo ON cm_producto.ngrupo = tb_grupo.ncodgrupo
                                                     LEFT JOIN tb_clase ON cm_producto.nclase = tb_clase.ncodclase 
                                                 WHERE
-                                                    lg_ordendet.id_orden <> 0 
+                                                    lg_ordendet.id_orden <> 0
+                                                    AND lg_ordendet.nEstadoReg <> 105 
                                                     AND lg_ordendet.ncodcos LIKE :costos 
                                                     AND YEAR ( lg_ordendet.fregsys ) = :anio
                                                     AND MONTH ( lg_ordendet.fregsys ) LIKE :mes
@@ -343,7 +346,8 @@
                                                         LEFT JOIN tb_grupo ON cm_producto.ngrupo = tb_grupo.ncodgrupo
                                                         LEFT JOIN tb_clase ON cm_producto.nclase = tb_clase.ncodclase 
                                                     WHERE
-                                                        lg_ordendet.id_orden <> 0 
+                                                        lg_ordendet.id_orden <> 0
+                                                        AND lg_ordendet.nEstadoReg <> 105 
                                                         AND lg_ordendet.ncodcos LIKE :costos 
                                                         AND cm_producto.ngrupo LIKE :grupo 
                                                         AND YEAR ( lg_ordendet.fregsys ) = :anio
@@ -398,6 +402,8 @@
                                                         lg_ordendet.nEstadoReg,
                                                         lg_ordendet.nflgactivo,
                                                         SUM( lg_ordendet.ncanti ) AS cantidad,
+                                                        FORMAT(SUM( lg_ordendet.nunitario ),2) as total,
+                                                        FORMAT(SUM( lg_ordendet.ncanti ),2) AS conteo,
                                                         lg_ordendet.fregsys,
                                                         cm_producto.nfam 
                                                     FROM
@@ -407,12 +413,14 @@
                                                         LEFT JOIN tb_grupo ON cm_producto.ngrupo = tb_grupo.ncodgrupo
                                                         LEFT JOIN tb_clase ON cm_producto.nclase = tb_clase.ncodclase 
                                                     WHERE
-                                                        lg_ordendet.id_orden <> 0 
+                                                        lg_ordendet.id_orden <> 0
+                                                        AND lg_ordendet.nEstadoReg <> 105 
                                                         AND lg_ordendet.ncodcos LIKE :costo 
                                                         AND cm_producto.ngrupo LIKE :grupo
                                                         AND cm_producto.nclase LIKE :clase
                                                         AND YEAR ( lg_ordendet.fregsys ) = :anio 
-                                                        AND MONTH ( lg_ordendet.fregsys ) LIKE :mes 
+                                                        AND MONTH ( lg_ordendet.fregsys ) LIKE :mes
+                                                        AND tb_familia.nflgactivo = 1 
                                                     GROUP BY
                                                         tb_familia.cdescrip
                                                     ORDER BY
@@ -430,7 +438,9 @@
                                                     "y"=>$row['cantidad'],
                                                     "grupo"=>$row['grupo'],
                                                     "clase"=>$row['clase'],
-                                                    "cf"=>$row['nfam']));
+                                                    "cf"=>$row['nfam'],
+                                                    "total"=>$row['total'],
+                                                    "conteo"=>$row['conteo']));
                     }
                 }
 
@@ -443,8 +453,7 @@
 
         public function consultarItems($cc,$fa,$anio,$mm) {
             $costo = $cc == 0 ? '%' : $cc;
-            $grupo = $gr == 0 ? '%' : $gr;
-            $clase = $cl == 0 ? '%' : $cl;
+            $familia = $fa == 0 ? '%' : $fa;
             $mes = $mm == 0 ? '%' : $mm;
 
             $sql = $this->db->connect()->prepare("SELECT
@@ -453,9 +462,9 @@
                                                     cm_producto.nfam,
                                                     cm_producto.ccodprod,
                                                     UPPER( cm_producto.cdesprod ) AS name,
-                                                    lg_ordendet.ncanti AS cantidad,
+                                                    SUM(lg_ordendet.ntotal) AS total,
+                                                    COUNT(lg_ordendet.ncanti) AS cantidad,
                                                     lg_ordendet.nunitario,
-                                                    lg_ordendet.ntotal,
                                                     lg_ordendet.ncodcos,
                                                     lg_ordendet.id_cprod,
                                                     lg_ordendet.fregsys 
@@ -466,12 +475,13 @@
                                                     lg_ordendet.ncodcos LIKE :costo 
                                                     AND lg_ordendet.nEstadoReg <> 105 
                                                     AND cm_producto.nfam LIKE :familia 
-                                                    AND YEAR ( lg_ordendet.fregsys ) = anio 
-                                                    AND MONTH ( lg_ordendet.fregsys ) LIKE mes 
+                                                    AND YEAR ( lg_ordendet.fregsys ) = :anio 
+                                                    AND MONTH ( lg_ordendet.fregsys ) LIKE :mes
+                                                GROUP BY cm_producto.ccodprod
                                                 ORDER BY
                                                     cm_producto.cdesprod ASC");
             
-            $sql->execute(["costo"=>$costo,"familia"=>$clase,"mes"=>$mes,"anio"=>$anio]);
+            $sql->execute(["costo"=>$costo,"familia"=>$familia,"mes"=>$mes,"anio"=>$anio]);
 
             $rowCount = $sql->rowCount();
 
@@ -481,7 +491,9 @@
                 while($row=$sql->fetch(PDO::FETCH_ASSOC)){
                     array_push( $docData,array("name"=>$row['name'],
                                                 "y"=>$row['cantidad'],
-                                                "cf"=>$row['nfam']));
+                                                "cf"=>$row['nfam'],
+                                                "total"=>$row['total'],
+                                                "producto"=>$row['id_cprod']));
                 }
             }
 

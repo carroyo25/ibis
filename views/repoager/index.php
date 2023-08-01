@@ -10,7 +10,8 @@
     <div class="cabezaModulo">
         <h1>Resumen de Almacen</h1>
         <div>
-            <a href="#" id="irInicio"><i class="fas fa-home"></i></a>
+            <a href="#" id="export"><i class="fas fa-file-excel"><p>Reporte</p></i></a>
+            <a href="#" id="irInicio"><i class="fas fa-home"><p>Inicio</p></i></a>
         </div>
     </div>
     <div class="itemsReporte">
@@ -92,7 +93,7 @@
                         <thead class='stickytop'>
                             <tr >
                                 <th>Tipo</th>
-                                <th>Suma<br/>Cantidad</th>
+                                <th>Total<br/>Orden</th>
                                 <th>Suma<br/>Total</th>
                             </tr>
                         </thead>
@@ -100,11 +101,7 @@
                             
                         </tbody>
                         <tfoot>
-                            <tr>
-                                <td>Total</td>
-                                <td class="textoDerecha"><strong>0</strong></td>
-                                <td class="textoDerecha"><strong>0</strong></td>
-                            </tr>
+                            
                         </tfoot>
                     </table>
                 </div>
