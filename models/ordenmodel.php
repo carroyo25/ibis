@@ -245,15 +245,11 @@
 
                 $sql = "SELECT COUNT(lg_ordencab.id_regmov) AS numero FROM lg_ordencab WHERE lg_ordencab.ncodcos = :cod";
                 
-                //$entrega = $this->calcularDias($cab->fentrega);
-            
                 $orden = $this->generarNumeroOrden();
                 
                 $periodo = explode('-',$cab->emision);
                 $dias_entrega = intval($cab->dias);
 
-                //$this->subirArchivos($orden,$adjuntos);
-                
                 $sql = $this->db->connect()->prepare("INSERT INTO lg_ordencab SET id_refpedi=:pedi,cper=:anio,cmes=:mes,ntipmov=:tipo,cnumero=:orden,
                                                                                 ffechadoc=:fecha,ffechaent=:entrega,id_centi=:entidad,ncodmon=:moneda,ntcambio=:tcambio,
                                                                                 nigv=:igv,ntotal=:total,ncodpry=:proyecto,ncodcos=:ccostos,ncodarea=:area,
@@ -608,7 +604,7 @@
                 $documento = $this->generarDocumento($cabecera,2,$detalles);
 
                 $subject    = utf8_decode("Atención de Orden de Compra");
-                $messaje    = utf8_decode("Su atención en la orden de compra adjunta");
+                $messaje    = utf8_decode("Su atencion en la orden de compra adjunta");
 
                 $origen = $_SESSION['user']."@sepcon.net";
                 $nombre_envio = $_SESSION['user'];
@@ -634,7 +630,6 @@
                 $mail->setFrom($origen,$nombre_envio);
                 //$mail->addAddress($cabecera['correo_entidad'],$cabecera['entidad']);
                 $mail->addAddress($_SESSION['correo'],$_SESSION['nombres']);
-                $mail->addAddress("Cesar Arroyo","carroyo@sepcon.net");
                 
 
                 $mail->Subject = $subject;
@@ -643,14 +638,16 @@
                     if (file_exists( 'public/documentos/ordenes/aprobadas/'.$documento)) {
                         $mail->AddAttachment('public/documentos/ordenes/aprobadas/'.$documento);
                     }
+
+                    $cambio = $cabecera['nivel_autorizacion'] == 46 ? 59:60;
         
                     if (!$mail->send()) {
                         return array("mensaje"=>"Hubo un error, en el envio",
                                     "clase"=>"mensaje_error");
                     }else {
-                        $this->actualizarCabeceraPedido(60,$cabecera['codigo_pedido'],$cabecera['codigo_orden']);
-                        $this->actualizarDetallesPedidoCorreo(60,$detalles);
-                        $this->actualizarCabeceraOrden(60,$cabecera['codigo_orden']);
+                        $this->actualizarCabeceraPedido($cambio,$cabecera['codigo_pedido'],$cabecera['codigo_orden']);
+                        $this->actualizarDetallesPedidoCorreo($cambio,$detalles);
+                        $this->actualizarCabeceraOrden($cambio,$cabecera['codigo_orden']);
                         return array("mensaje"=>"Correo enviado",
                                     "clase"=>"mensaje_correcto",
                                     "ordenes"=>$this->listarOrdenes($_SESSION['iduser']));

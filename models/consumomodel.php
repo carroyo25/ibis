@@ -132,7 +132,7 @@
                 }            
             }
 
-            $this->correoMovimiento($detalles,$nombre,$correo,$kardex,$cc);
+            //$this->correoMovimiento($detalles,$nombre,$correo,$kardex,$cc);
         
             return  $respuesta;
         }

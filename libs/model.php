@@ -2381,6 +2381,10 @@
                                                         lg_ordencab.cReferencia,
                                                         FORMAT( lg_ordencab.ntotal, 2 ) AS ctotal,
                                                         tb_pedidocab.nivelAten,
+                                                        lg_ordencab.nNivAten AS autorizado,
+                                                        lg_ordencab.nfirmaLog,
+                                                        lg_ordencab.nfirmaFin,
+                                                        lg_ordencab.nfirmaOpe,
                                                         LPAD( tb_pedidocab.nrodoc, 6, 0 ) AS nrodoc,
                                                         ( SELECT SUM( lg_ordendet.nunitario * lg_ordendet.ncanti ) FROM lg_ordendet WHERE lg_ordendet.id_orden = lg_ordencab.id_regmov ) AS total_multiplicado 
                                                     FROM
@@ -2849,7 +2853,7 @@
                             $cabecera['costos'],$cabecera['concepto'],$_SESSION['nombres'],$cabecera['entidad'],$cabecera['ruc_entidad'],
                             $cabecera['direccion_entidad'],$cabecera['telefono_entidad'],$cabecera['correo_entidad'],$cabecera['retencion'],
                             $cabecera['atencion'],$cabecera['telefono_contacto'],$cabecera['correo_contacto'],
-                            $cabecera['direccion_almacen'],$cabecera['referencia']);
+                            $cabecera['direccion_almacen'],$cabecera['referencia'],$cabecera['procura'],$cabecera['finanzas'],$cabecera['operaciones']);
 
             $pdf->AddPage();
             $pdf->AliasNbPages();
@@ -3045,7 +3049,7 @@
                             $datosOrden[0]['costos'],$datosOrden[0]['concepto'],$datosOrden[0]['cnameuser'],$datosOrden[0]['crazonsoc'],
                             $datosOrden[0]['cnumdoc'],$datosOrden[0]['cviadireccion'],$datosOrden[0]['ctelefono1'],$datosOrden[0]['cemail'],$datosOrden[0]['nagenret'],
                             $datosOrden[0]['cnombres'],$datosOrden[0]['ctelefono1'],$datosOrden[0]['mail_entidad'],
-                            $datosOrden[0]['direccion'],$datosOrden[0]['cReferencia']);
+                            $datosOrden[0]['direccion'],$datosOrden[0]['cReferencia'],null,null,null);
 
             $pdf->AddPage();
             $pdf->AliasNbPages();

@@ -48,6 +48,7 @@
                     <input type="hidden" name="proforma" id="proforma">
                     <input type="hidden" name="retencion" id="retencion">
                     <input type="hidden" name="nivel_atencion" id="nivel_atencion">
+                    <input type="hidden" name="nivel_autorizacion" id="nivel_autorizacion">
                     <input type="hidden" name="codigo_pago" id="codigo_pago">
                     <input type="hidden" name="sw" id="sw" value="0">
                     <input type="hidden" name="detalle" id="detalle">
@@ -56,6 +57,9 @@
                     <input type="hidden" name="nro_pedido" id="nro_pedido">
                     <input type="hidden" name="total_adicional" id="total_adicional" value=0>
                     <input type="hidden" name="total" id="total">
+                    <input type="hidden" name="procura" id="procura" value="0">
+                    <input type="hidden" name="finanzas" id="finanzas" value="0">
+                    <input type="hidden" name="operaciones" id="operaciones" value="0">
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
                         <div>
@@ -211,7 +215,7 @@
                             <button type="button" id="loadRequest" title="Importar Pedido" class="cerrarLista boton3">
                                 <i class="fas fa-upload"></i> Importar Items
                             </button>
-                            <button type="button" id="sendEntOrden" title="Enviar Proveedor" class="cerrarLista boton3">
+                            <button type="button" id="sendEntOrden" title="Descargar Orden" class="cerrarLista boton3">
                                 <i class="far fa-paper-plane"></i> Enviar Orden
                             </button>
                         </div>

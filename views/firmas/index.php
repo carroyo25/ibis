@@ -49,6 +49,9 @@
                     <input type="hidden" name="total_numero" id="total_numero">
                     <input type="hidden" name="estado_firmas" id="estado_firmas">
                     <input type="hidden" name="total_adicional" id="total_adicional" value="0">
+                    <input type="hidden" name="procura" id="procura" value="0">
+                    <input type="hidden" name="finanzas" id="finanzas" value="0">
+                    <input type="hidden" name="operaciones" id="operaciones" value="0">
 
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>

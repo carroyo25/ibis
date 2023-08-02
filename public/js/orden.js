@@ -8,7 +8,7 @@ $(function(){
         swcoment = false,
         autorizado = 0,
         costos = "",
-        fp = 0;
+        fp = 0,
         datafiltro = "";
 
     $("#esperar").fadeOut();
@@ -80,6 +80,10 @@ $(function(){
                 $("#oa").val(adicionales_format);
                 $("#referencia").val(data.cabecera[0].cReferencia);
                 $("#dias").val(data.cabecera[0].nplazo);
+                $("#nivel_autorizacion").val(data.cabecera[0].autorizado);
+                $("#procura").val(data.cabecera[0].nfirmaLog);
+                $("#finanzas").val(data.cabecera[0].nfirmaFin);
+                $("#operaciones").val(data.cabecera[0].nfirmaOpe);
                 
                 $("#in").val(total_format);
 
@@ -648,15 +652,13 @@ $(function(){
         e.preventDefault();
         
         try {
-            if (autorizado != 3) throw "La orden no ha sido autorizada";
+            if ( $("#nivel_autorizacion").val() == 47 ) throw "La orden no ha sido autorizada";
             
             let result = {};
     
             $.each($("#formProceso").serializeArray(),function(){
                 result[this.name] = this.value;
             })
-
-            //$("#sendMail").fadeIn();
 
             $.post(RUTA+"orden/envioOrden", {cabecera:result,
                                             detalles:JSON.stringify(detalles())},

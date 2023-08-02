@@ -7,7 +7,8 @@
                                     $lugar,$cotizacion,$fentrega,$pago,$importe,
                                     $info,$detalle,$usuario,$razon_social,
                                     $ruc,$direccion,$telefono,$correo,$retencion,
-                                    $contacto,$tel_contacto,$cor_contacto,$direccion_almacen,$referencia)
+                                    $contacto,$tel_contacto,$cor_contacto,$direccion_almacen,$referencia,
+                                    $procura,$finanzas,$operaciones)
         {
             parent::__construct();
             $this->titulo           = $titulo;
@@ -34,6 +35,9 @@
             $this->usuario          = $usuario;
             $this->direccion_almacen= $direccion_almacen;
             $this->referencia       = $referencia;
+            $this->procura          = $procura;
+            $this->finanzas         = $finanzas;
+            $this->operaciones      = $operaciones;
         }
 
         function header(){
@@ -50,6 +54,7 @@
             }
 
             $fecha = explode("-",$this->fecha);
+             
 
         	$this->SetFillColor(229, 229, 229);
         	$this->Rect(70,24,70,5,"F"); //fondo de mensaje
@@ -184,26 +189,36 @@
             $this->SetFont('Arial',"","7");
             $this->cell(30,4,"EMITIDO",1,0,"C",true);
             $this->cell(30,4,"FOLIO",1,1,"C",true);
-            $this->cell(30,4,"17/01/2021 01:39",1,0,"C");
+            $this->cell(30,4,date("d-m-Y h:i:s"),1,0,"C");
             $this->Cell(30,4,utf8_decode('Página ').$this->PageNo()." de ".'/{nb}',1,1,"C");
 
             $this->setXY(70,207);
 
+            $estado1 = chr(45);
+            $estado2 = chr(45);
+            $estado3 = chr(45);
+
             if ($this->condicion == 0){
                 $this->SetTextColor(170,218,245);
-                $estado = chr(45); //envia de parametro
+                $estado1 = chr(45);
+                $estado2 = chr(45);
+                $estado3 = chr(45); //envia de parametro
             }else if(($this->condicion == 1)){
                 $this->SetTextColor(29,162,97);
-                $estado = chr(45);
+                $estado1 = chr(45);
+                $estado2 = chr(45);
+                $estado3 = chr(45);
             }else if(($this->condicion == 2)){
                 $this->SetTextColor(29,162,97);
-                $estado = chr(51);
+                $estado1 = $this->procura == 1 ? chr(51) : chr(45);
+                $estado2 = $this->finanzas == 1 ? chr(51) : chr(45);
+                $estado3 = $this->operaciones == 1 ? chr(51) : chr(45);
             }
 
             $this->SetFont('ZapfDingbats','',24);
-            $this->cell(43,16,$estado,1,0,"C"); //envia de parametro
-            $this->cell(43,16,$estado,1,0,"C"); //envia de parametro
-            $this->cell(43,16,$estado,1,1,"C"); //envia de parametro
+            $this->cell(43,16,$estado1,1,0,"C"); //envia de parametro
+            $this->cell(43,16,$estado2,1,0,"C"); //envia de parametro
+            $this->cell(43,16,$estado3,1,1,"C"); //envia de parametro
 
             $this->SetFont('Arial',"","7");
             $this->SetTextColor(0,0,0);
