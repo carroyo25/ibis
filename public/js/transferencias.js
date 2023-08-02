@@ -11,10 +11,12 @@ $(function(){
 
                 let numero = $.strPad(data.cabecera[0].idreg,6);
 
-                $("#codigo_costos_origen").val(data.cabecera[0].idcc);
-                $("#codigo_costos_destino").val(data.cabecera[0].idcc);
+                $("#codigo_costos_origen").val(data.cabecera[0].codigo_origen);
+                $("#codigo_costos_destino").val(data.cabecera[0].codigo_destino);
                 $("#numero").val(numero);
-                $("#corigen").val(data.cabecera[0].proyecto);
+                //$("#fecha").val(ftraslado);
+                $("#corigen").val(data.cabecera[0].costo_origen);
+                $("#cdestino").val(data.cabecera[0].costo_destino);
                 $("#aprueba").val(data.cabecera[0].cnombres);
                 $("#almacen_origen_despacho").val(data.cabecera[0].origen);
                 $("#almacen_destino_despacho").val(data.cabecera[0].destino);
@@ -479,7 +481,7 @@ $(function(){
             
             $.post(RUTA+"transferencias/vistaPreviaGuiaRemisioNotas", {cabecera:result,
                                                             detalles:JSON.stringify(detalles(false)),
-                                                            proyecto: $("#costos").val()},
+                                                            proyecto: $("#corigen").val()},
                 function (data, textStatus, jqXHR) {
                         
                        if (data.archivo !== ""){
@@ -524,7 +526,7 @@ $(function(){
             
             $.post(RUTA+"transferencias/preImpresoGuiasTransf", {cabecera:result,
                                               detalles:JSON.stringify(detalles(false)),
-                                              proyecto: $("#costos").val(),
+                                              proyecto: $("#corigen").val(),
                                               nota: $("#codigo_transferencia").val(),
                                               operacion:accion},
                 function (data, textStatus, jqXHR) {

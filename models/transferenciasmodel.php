@@ -58,56 +58,36 @@
                 $cabecera = "";
                 $result = [];
 
-                /*SELECT
-	alm_transfercab.idreg,
-	alm_transfercab.idcc,
-	alm_transfercab.idaprueba,
-	alm_transfercab.almorigen,
-	alm_transfercab.almdestino,
-	alm_transfercab.ftraslado,
-	alm_transfercab.cnumguia,
-	tb_user.cnombres,
-	UPPER( almacenOrigen.cdesalm ) AS origen,
-	UPPER( almacenDestino.cdesalm ) AS destino,
-	UPPER( tb_proyectos.cdesproy ) AS proyecto,
-	tb_parametros.cdescripcion,
-	alm_transfercab.ntipmov,
-	(SELECT alm_transferdet.idcostos FROM alm_transferdet WHERE alm_transferdet.idtransfer = alm_transfercab.idreg LIMIT 1) AS costo_destino
-FROM
-	alm_transfercab
-	INNER JOIN tb_user ON alm_transfercab.idaprueba = tb_user.iduser COLLATE utf8_unicode_ci
-	INNER JOIN tb_almacen AS almacenOrigen ON alm_transfercab.almorigen = almacenOrigen.ncodalm
-	INNER JOIN tb_almacen AS almacenDestino ON alm_transfercab.almdestino = almacenDestino.ncodalm
-	INNER JOIN tb_proyectos ON alm_transfercab.idcc = tb_proyectos.nidreg
-	INNER JOIN tb_parametros ON alm_transfercab.ntipmov = tb_parametros.nidreg 
-WHERE
-	alm_transfercab.idreg = 96
-	AND alm_transfercab.nflgactivo = 1*/
+                /**/
 
                 $sql = $this->db->connect()->prepare("SELECT
-                                                        alm_transfercab.idreg,
-                                                        alm_transfercab.idcc,
-                                                        alm_transfercab.idaprueba,
-                                                        alm_transfercab.almorigen,
-                                                        alm_transfercab.almdestino,
-                                                        alm_transfercab.ftraslado,
-                                                        alm_transfercab.cnumguia,
-                                                        tb_user.cnombres,
-                                                        UPPER( almacenOrigen.cdesalm ) AS origen,
-                                                        UPPER( almacenDestino.cdesalm ) AS destino,
-                                                        UPPER( tb_proyectos.cdesproy ) AS proyecto,
-                                                        tb_parametros.cdescripcion,
-                                                        alm_transfercab.ntipmov 
-                                                    FROM
-                                                        alm_transfercab
-                                                        INNER JOIN tb_user ON alm_transfercab.idaprueba = tb_user.iduser COLLATE utf8_unicode_ci
-                                                        INNER JOIN tb_almacen AS almacenOrigen ON alm_transfercab.almorigen = almacenOrigen.ncodalm
-                                                        INNER JOIN tb_almacen AS almacenDestino ON alm_transfercab.almdestino = almacenDestino.ncodalm
-                                                        INNER JOIN tb_proyectos ON alm_transfercab.idcc = tb_proyectos.nidreg
-                                                        INNER JOIN tb_parametros ON alm_transfercab.ntipmov = tb_parametros.nidreg 
-                                                    WHERE
-                                                        alm_transfercab.idreg = :id 
-                                                        AND alm_transfercab.nflgactivo = 1");
+                                                            alm_transfercab.idreg,
+                                                            alm_transfercab.idcc,
+                                                            alm_transfercab.idaprueba,
+                                                            alm_transfercab.almorigen,
+                                                            alm_transfercab.almdestino,
+                                                            alm_transfercab.ftraslado,
+                                                            alm_transfercab.cnumguia,
+                                                            tb_user.cnombres,
+                                                            UPPER( almacenOrigen.cdesalm ) AS origen,
+                                                            UPPER( almacenDestino.cdesalm ) AS destino,
+                                                            tb_parametros.cdescripcion,
+                                                            alm_transfercab.ntipmov,
+                                                            UPPER( costos_origen.cdesproy ) AS costo_origen,
+                                                            costos_origen.nidreg AS codigo_origen, 
+                                                            UPPER( costos_destino.cdesproy ) AS costo_destino,
+                                                            costos_destino.nidreg AS codigo_destino
+                                                        FROM
+                                                            alm_transfercab
+                                                            INNER JOIN tb_user ON alm_transfercab.idaprueba = tb_user.iduser COLLATE utf8_unicode_ci
+                                                            INNER JOIN tb_almacen AS almacenOrigen ON alm_transfercab.almorigen = almacenOrigen.ncodalm
+                                                            INNER JOIN tb_almacen AS almacenDestino ON alm_transfercab.almdestino = almacenDestino.ncodalm
+                                                            INNER JOIN tb_proyectos AS costos_origen ON alm_transfercab.idcc = costos_origen.nidreg
+                                                            INNER JOIN tb_parametros ON alm_transfercab.ntipmov = tb_parametros.nidreg
+                                                            LEFT JOIN tb_proyectos AS costos_destino ON alm_transfercab.idcd = costos_destino.nidreg 
+                                                        WHERE
+                                                            alm_transfercab.idreg = :id 
+                                                            AND alm_transfercab.nflgactivo = 1");
                 
                 $sql->execute(["id"=>$id]);
                 $rowCount = $sql->rowCount();
@@ -449,11 +429,13 @@ WHERE
                 $sw = false;
 
                 $sql = $this->db->connect()->prepare("INSERT INTO alm_transfercab 
-                                                        SET idcc=:costos,idaprueba=:aprueba,almorigen=:origen,almdestino=:destino,
-                                                            ftraslado=:fecha_traslado,ntipmov=:tipo_movimiento,nestado=:estado");
+                                                        SET idcc=:corigen,idaprueba=:aprueba,almorigen=:origen,almdestino=:destino,
+                                                            ftraslado=:fecha_traslado,ntipmov=:tipo_movimiento,nestado=:estado,
+                                                            idcd=:cdestino");
                 
                 $sql->execute([
-                    "costos"=>$cabecera['codigo_costos_origen'],
+                    "corigen"=>$cabecera['codigo_costos_origen'],
+                    "cdestino"=>$cabecera['codigo_costos_destino'],
                     "aprueba"=>$cabecera['codigo_aprueba'],
                     "origen"=>$cabecera['codigo_almacen_origen'],
                     "destino"=>$cabecera['codigo_almacen_destino'],
