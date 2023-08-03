@@ -73,14 +73,13 @@
                 // Eliminamos los 22 primeros caracteres, que 
                 // contienen el substring "data:image/png;base64,"
                 $imgData = base64_decode(substr($_REQUEST['img'],22));
-            
-                // Path en donde se va a guardar la imagen
                 
                 $fechaActual = date('Y-m-d');
                 $respuesta = false;
         
                 $namefile = uniqid();
-        
+
+                // Path en donde se va a guardar la imagen
                 $file = 'public/documentos/firmas/'.$namefile.'.png';
             
                 // borrar primero la imagen si existía previamente

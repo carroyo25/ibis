@@ -459,6 +459,7 @@
                             <th>Cantidad</th>
                             <th>Pedido</th>
                             <th>Orden</th>
+                            <th>Descripcion</th>
                             <th>Tipo </br> Cambio</th>
                             <th>Fecha</th>
                         </tr>

@@ -26,12 +26,14 @@ $(function() {
     $("#btnExporta").click(function (e) { 
         e.preventDefault();
 
-        $("#esperar").fadeIn();
+        $("#esperar").css("opacity","1").fadeIn();
 
         $.post(RUTA+"cargoplanner/export", {registros:JSON.stringify(detalles())},
             function (data, textStatus, jqXHR) {
-                $("#esperar").fadeOut();
+
+                $("#esperar").css("opacity","0").fadeOut();
                 window.location.href = data.documento;
+                
             },
             "json"
         );

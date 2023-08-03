@@ -3,7 +3,6 @@ $(function(){
         registro = 0,
         sw = 0;
 
-
     $("#espera").fadeOut();
 
     let row = ``;
@@ -115,6 +114,10 @@ $(function(){
     $("#btnAceptarGrabar").click(function (e) { 
         e.preventDefault();
 
+        //para deasctivar el doble click de mouse
+        let boton = $(this);
+        boton.css("pointer-events","none");
+
         let canvas = document.getElementById("cnv");
 
         $.post(RUTA+'consumo/firma', {img:canvas.toDataURL(),
@@ -129,6 +132,8 @@ $(function(){
                     $("#tablaPrincipal tbody").empty();
                     $("#costosSearch").val(-1);
                     $(".ingreso").val("");
+
+                    boton.css("pointer-events","all");
                     
                 }else {
                     mostrarMensaje("Hubo un error al grabar","mensaje_error");
@@ -203,8 +208,6 @@ $(function(){
         e.preventDefault();
 
         filaAnula = $(this).parent();
-
-        console.log($("#tablaPrincipal tbody > tr").length);
 
         try {
 
@@ -326,13 +329,9 @@ $(function(){
                 },
                 "text"
             );
-           
-
         } catch (error) {
             mostrarMensaje(error,"mensaje_error");
         }
-        
-        
 
         return false;
     });

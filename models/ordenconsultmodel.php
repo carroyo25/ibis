@@ -76,6 +76,7 @@
                             $montoDolares =  "$ ".number_format($rs['ntotal'],2);
                         }
 
+
                         if ( $rs['nEstadoDoc'] == 49) {
                             $estado = "procesando";
                         }else if ( $rs['nEstadoDoc'] == 59 ) {
@@ -482,6 +483,12 @@
                     $logistica = $datos[$i]->logistica == 1 ? "X" : "";
                     $operaciones = $datos[$i]->logistica == 1 ? "X" : "";
                     $finanzas = $datos[$i]->logistica == 1 ? "X" : "";
+
+                    $soles = explode(" ",$datos[$i]->soles);
+                    $dolares = explode(" ",$datos[$i]->dolares);
+
+                    $s = str_replace(',','',(end($soles)));
+                    $d = str_replace(',','',(end($dolares)));
                     
                     $objPHPExcel->getActiveSheet()->setCellValue('A'.$fila,$datos[$i]->item);
                     $objPHPExcel->getActiveSheet()->setCellValue('B'.$fila,$datos[$i]->emision);
@@ -489,8 +496,10 @@
                     $objPHPExcel->getActiveSheet()->setCellValue('D'.$fila,$datos[$i]->costo);
                     $objPHPExcel->getActiveSheet()->setCellValue('E'.$fila,$datos[$i]->area);
                     $objPHPExcel->getActiveSheet()->setCellValue('F'.$fila,$datos[$i]->proveedor);
-                    $objPHPExcel->getActiveSheet()->setCellValue('G'.$fila,$datos[$i]->soles);
-                    $objPHPExcel->getActiveSheet()->setCellValue('H'.$fila,$datos[$i]->dolares);
+                    $objPHPExcel->getActiveSheet()->setCellValue('G'.$fila,$s);
+                    $objPHPExcel->getActiveSheet()->getStyle('G'.$fila)->getNumberFormat()->setFormatCode('"S/." #,##0.00');
+                    $objPHPExcel->getActiveSheet()->setCellValue('H'.$fila,$d);
+                    $objPHPExcel->getActiveSheet()->getStyle('H'.$fila)->getNumberFormat()->setFormatCode('"$" #,##0.00');
                     $objPHPExcel->getActiveSheet()->setCellValue('I'.$fila,$logistica);
                     $objPHPExcel->getActiveSheet()->setCellValue('J'.$fila,$operaciones);
                     $objPHPExcel->getActiveSheet()->setCellValue('K'.$fila,$finanzas);
