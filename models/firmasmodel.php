@@ -115,6 +115,7 @@
             }else if ($operador == "F") {
                 $sql = $this->db->connect()->prepare("UPDATE lg_ordencab SET nfirmaFin=:fir,codperFin=:usr,fechaFin=:fecha WHERE id_regmov=:cod");
             }
+            //poner una funcion para verificar las tres firmas
 
             $sql->execute(["cod"=>$id,
                             "usr"=>$_SESSION['iduser'],
@@ -161,6 +162,8 @@
                 $rowCount = $sql->rowCount();
                 
                 if ($rowCount > 0){
+                    $this->enviarCorreoAviso($id);
+
                     return array("mensaje"=>"Se autorizo la orden",
                                 "clase"=>"mensaje_correcto",
                                 "estado"=>true,
@@ -178,8 +181,57 @@
             }
         }
 
-        public function correoExpress($id) {
+        public function enviarCorreoAviso($id){
+            try {
+                require_once("public/PHPMailer/PHPMailerAutoload.php");
 
+            
+                $subject    = utf8_decode("Aprobación de orden urgente");
+                $messaje = '<p><strong style="font-style: italic;">Ing. Mauricio</strong></p>';
+                $messaje .=  utf8_decode('<p>El presente correo es para informar que se ha aprobado la orden Nro. '.$id.' en forma urgente.</p>');
+                $messaje .=  utf8_decode('<p>aprobado por : '. $_SESSION['nombres'].'</p>');
+                $messaje .=  utf8_decode('<p>Fecha : '. date("d/m/Y h:i:s") .'</p>');
+
+                $origen = "sical@sepcon.net";
+                $nombre_envio = $_SESSION['nombres'];
+                
+                $mail = new PHPMailer;
+                $mail->isSMTP();
+                $mail->SMTPDebug = 0;
+                $mail->Debugoutput = 'html';
+                $mail->Host = 'mail.sepcon.net';
+                $mail->SMTPAuth = true;
+                $mail->Username = 'sistema_ibis@sepcon.net';
+                $mail->Password = $_SESSION['password'];
+                $mail->Port = 465;
+                $mail->SMTPSecure = "ssl";
+                $mail->SMTPOptions = array(
+                    'ssl' => array(
+                        'verify_peer' => false,
+                        'verify_peer_name' => false,
+                        'allow_self_signed' => false
+                    )
+                );
+                
+                $mail->setFrom($origen,$nombre_envio);
+                $mail->addAddress('carroyo@sepcon.net','Cesar Arroyo');
+                //$mail->addAddress('mvirreira@sepcon.net','Mauricio Virreira');
+                
+                $mail->Subject = $subject;
+                    $mail->msgHTML(utf8_decode($messaje));
+   
+                    if (!$mail->send()) {
+                        return array("mensaje"=>"Hubo un error, en el envio",
+                                    "clase"=>"mensaje_error");
+                    }
+                        
+                    $mail->clearAddresses();
+
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            } 
         }
 
         public function consultarPrecios($codigo,$descripcion){
@@ -378,6 +430,15 @@
 
                 return $result[0]['rol'];
 
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        private function verificarFirmas($id) {
+            try {
+                //code...
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
                 return false;
