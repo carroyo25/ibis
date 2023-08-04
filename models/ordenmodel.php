@@ -639,8 +639,14 @@
                         $mail->AddAttachment('public/documentos/ordenes/aprobadas/'.$documento);
                     }
 
-                    $cambio = $cabecera['nivel_autorizacion'] == 46 ? 59:60;
-        
+                    $firmas = intval($cabecera['procura'])+intval($cabecera['finanzas'])+intval($cabecera['operaciones']);
+
+                    if ( $cabecera['nivel_autorizacion'] == 46 && $firmas == 3 ){
+                        $cambio = 60;
+                    }else {
+                        $cambio = 59;
+                    }
+                    
                     if (!$mail->send()) {
                         return array("mensaje"=>"Hubo un error, en el envio",
                                     "clase"=>"mensaje_error");
@@ -648,6 +654,7 @@
                         $this->actualizarCabeceraPedido($cambio,$cabecera['codigo_pedido'],$cabecera['codigo_orden']);
                         $this->actualizarDetallesPedidoCorreo($cambio,$detalles);
                         $this->actualizarCabeceraOrden($cambio,$cabecera['codigo_orden']);
+
                         return array("mensaje"=>"Correo enviado",
                                     "clase"=>"mensaje_correcto",
                                     "ordenes"=>$this->listarOrdenes($_SESSION['iduser']));

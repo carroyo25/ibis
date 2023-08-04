@@ -187,10 +187,23 @@
 
             
                 $subject    = utf8_decode("Aprobación de orden urgente");
-                $messaje = '<p><strong style="font-style: italic;">Ing. Mauricio</strong></p>';
-                $messaje .=  utf8_decode('<p>El presente correo es para informar que se ha aprobado la orden Nro. '.$id.' en forma urgente.</p>');
-                $messaje .=  utf8_decode('<p>aprobado por : '. $_SESSION['nombres'].'</p>');
-                $messaje .=  utf8_decode('<p>Fecha : '. date("d/m/Y h:i:s") .'</p>');
+                
+
+                $messaje= '<div style="width:100%;display: flex;flex-direction: column;justify-content: center;align-items: center;
+                                    font-family: Futura, Arial, sans-serif;">
+                            <div style="width: 45%;border: 1px solid #c2c2c2;background: gold">
+                                <h1 style="text-align: center;">Alerta del sistema</h1>
+                            </div>
+                            <div style="width: 45%;
+                                        border-left: 1px solid #c2c2c2;
+                                        border-right: 1px solid #c2c2c2;
+                                        border-bottom: 1px solid #c2c2c2;">
+                                <p style="padding:.5rem"><strong style="font-style: italic;">Ing. Mauricio;</strong></p>
+                                <p style="padding:.5rem;line-height: 1rem;">El presente correo es para informar que se ha aprobado la orden Nro. '.$id.' en forma urgente.</p>
+                                <p style="padding:.5rem">aprobado por : '. $_SESSION['nombres'].'</p>
+                                <p style="padding:.5rem">Fecha : '. date("d/m/Y h:i:s") .'</p>
+                            </div>
+                        </div>';
 
                 $origen = "sical@sepcon.net";
                 $nombre_envio = $_SESSION['nombres'];
@@ -430,15 +443,6 @@
 
                 return $result[0]['rol'];
 
-            } catch (PDOException $th) {
-                echo "Error: " . $th->getMessage();
-                return false;
-            }
-        }
-
-        private function verificarFirmas($id) {
-            try {
-                //code...
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
                 return false;
