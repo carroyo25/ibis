@@ -1192,6 +1192,15 @@
             header('Access-Control-Allow-Origin: *');
             require 'public/libraries/efactura.php';
 
+            $path = "public/documentos/guia_electronica/";
+
+            //$xml = $this->desarrollo_xml($header, $body);
+            $xml = $this->desarrollo_xml($cabecera, $detalles);
+            $archivo = fopen($path."XML/".$nombre_archivo.".xml", "w+");
+            fwrite($archivo, utf8_decode($xml));
+            fclose($archivo);
+
+            /*
             $header = json_decode($cabecera);
             $body = json_decode($detalles);
 
@@ -1203,6 +1212,8 @@
             $path = "public/documentos/guia_electronica/";
 
             $nombre_archivo = $header->destinatario_ruc.'-31-'.$header->serie_guia.'-'.$header->numero_guia;
+
+            //////////////////////////////
 
             if(file_exists($path."XML/".$nombre_archivo.".xml")){
                 unlink($path."XML/".$nombre_archivo.".xml");  
@@ -1216,10 +1227,11 @@
             sleep(2);//damos tiempo para que SUNAT procese y responda.
             $respuesta_ticket = $this->envio_ticket($path.'CDR/', $numero_ticket, $token_access, $header->destinatario_ruc, $nombre_archivo);
             
-            return array("archivo" => $nombre_archivo,"ticket" => $respuesta_ticket);
+            return array("archivo" => $nombre_archivo,"ticket" => $respuesta_ticket);*/
+
         }
 
-        private function crear_files($path,$nombre_archivo,$header, $body){
+        private function crear_files($path,$nombre_archivo,$header,$body){
             $xml = $this->desarrollo_xml($header, $body);
             $archivo = fopen($path."XML/".$nombre_archivo.".xml", "w+");
             fwrite($archivo, utf8_decode($xml));
@@ -1235,126 +1247,181 @@
         }
 
         private function desarrollo_xml($header,$detalles){
+
+            $guia = array("serie"=>"T001",
+                          "numero"=>"0132773",
+                          "fecha_emision_sf"=>"2023-08-07",
+                          "numero_documento"=>"0132773",
+                          "guia_entidad"=>"SERVICIOS PETROLEROS Y CONSTRUCCIONES SEPCON S.A.C",
+                          "guia_motivo_traslado_id"=>1,
+                          "fecha_traslado_sf"=>"2023-08-10",
+                          'numero_documento_transporte'=>"0001",
+                          'entidad_transporte'=>"TRANSPORTES Y SERVICIOS EL VIAJERO E.I.R.L.",
+                          'numero_mtc_transporte'=>"1",
+                          'conductor_nombres'=>'CARLOS ALBERTO',
+                          'conductor_apellidos'=>"TEJEDA VILLENA",
+                          'conductor_licencia'=>"Q09619538",
+                          'conductor_dni'=>"09619538",
+                          "llegada_ubigeo"=>"");
+            
+            $empresa = array("ruc"=>"20504898173",
+                            "empresa"=>"SERVICIOS PETROLEROS Y CONSTRUCCIONES SEPCON S.A.C",
+                            "peso_total"=>"90",
+                            "numero_bultos"=>20);
+
             $xml =  '<?xml version="1.0" encoding="UTF-8"?>
-                        <DespatchAdvice xmlns="urn:oasis:names:specification:ubl:schema:xsd:DespatchAdvice-2" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2">                    
-                        <ext:UBLExtensions>
-                            <ext:UBLExtension>
-                                <ext:ExtensionContent></ext:ExtensionContent>
-                            </ext:UBLExtension>
-                        </ext:UBLExtensions>
-                        <cbc:UBLVersionID>2.1</cbc:UBLVersionID>
-                        <cbc:CustomizationID>2.0</cbc:CustomizationID>
-                        <cbc:ID>'.$header->serie_guia.'-'.$header->numero_guia.'</cbc:ID>
-                        <cbc:IssueDate>'.$header->fgemision.'</cbc:IssueDate>
-                        <cbc:IssueTime>'.date("H:i:s").'</cbc:IssueTime>
-                        <cbc:DespatchAdviceTypeCode>09</cbc:DespatchAdviceTypeCode>
-                        <cac:Signature>
-                        <cbc:ID>'.$header->destinatario_ruc.'</cbc:ID>
-                        <cac:SignatoryParty>
-                            <cac:PartyIdentification>
-                            <cbc:ID>'.$header->destinatario_ruc.'</cbc:ID>
-                            </cac:PartyIdentification>
-                        </cac:SignatoryParty>
-                        <cac:DigitalSignatureAttachment>
-                            <cac:ExternalReference>
-                            <cbc:URI>'.$header->destinatario_ruc.'</cbc:URI>
-                            </cac:ExternalReference>
-                        </cac:DigitalSignatureAttachment>
-                        </cac:Signature>';
+                    <DespatchAdvice xmlns="urn:oasis:names:specification:ubl:schema:xsd:DespatchAdvice-2" 
+                        xmlns:ds="http://www.w3.org/2000/09/xmldsig#" 
+                        xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" 
+                        xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" 
+                        xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2">                    
+                    <ext:UBLExtensions>
+                        <ext:UBLExtension>
+                            <ext:ExtensionContent></ext:ExtensionContent>
+                        </ext:UBLExtension>
+                    </ext:UBLExtensions>
+                    <cbc:UBLVersionID>2.1</cbc:UBLVersionID>
+                    <cbc:CustomizationID>2.0</cbc:CustomizationID>
+                    <cbc:ID>'.$guia['serie'].'-'.$guia['numero'].'</cbc:ID>
+                    <cbc:IssueDate>'.$guia['fecha_emision_sf'].'</cbc:IssueDate>
+                    <cbc:IssueTime>'.date("H:i:s").'</cbc:IssueTime>
+                    <cbc:DespatchAdviceTypeCode>09</cbc:DespatchAdviceTypeCode>
+                    <cac:Signature>
+                      <cbc:ID>'.$empresa['ruc'].'</cbc:ID>
+                      <cac:SignatoryParty>
+                        <cac:PartyIdentification>
+                          <cbc:ID>'.$empresa['ruc'].'</cbc:ID>
+                        </cac:PartyIdentification>
+                      </cac:SignatoryParty>
+                      <cac:DigitalSignatureAttachment>
+                        <cac:ExternalReference>
+                          <cbc:URI>'.$empresa['ruc'].'</cbc:URI>
+                        </cac:ExternalReference>
+                      </cac:DigitalSignatureAttachment>
+                    </cac:Signature>';
             $xml .= '<cac:DespatchSupplierParty>
                         <cac:Party>
                             <cac:PartyIdentification>
-                                <cbc:ID schemeID="6" schemeName="Documento de Identidad" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">'.$header->destinatario_ruc.'</cbc:ID>
+                                <cbc:ID schemeID="6" schemeName="Documento de Identidad" 
+                                        schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">'.$empresa['ruc'].'</cbc:ID>
                             </cac:PartyIdentification>
                             <cac:PartyName>
-                                <cbc:Name><![CDATA['.$header->destinatario_razon.']]></cbc:Name>
+                                <cbc:Name><![CDATA['.$empresa['empresa'].']]></cbc:Name>
                             </cac:PartyName>
                             <cac:PartyLegalEntity>
-                                <cbc:RegistrationName><![CDATA['.$header->destinatario_razon.']]></cbc:RegistrationName>
+                                <cbc:RegistrationName><![CDATA['.$empresa['empresa'].']]></cbc:RegistrationName>
                             </cac:PartyLegalEntity>
                         </cac:Party>
                     </cac:DespatchSupplierParty>';
-            $xml .= '<cac:DeliveryCustomerParty>
-                    <cac:Party>
-                        <cac:PartyIdentification>
-                            <cbc:ID schemeID="6" schemeName="Documento de Identidad" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">'.$header->destinatario_ruc.'</cbc:ID>
-                        </cac:PartyIdentification>
-                        <cac:PartyLegalEntity>
-                            <cbc:RegistrationName><![CDATA['.$header->destinatario_razon.']]></cbc:RegistrationName>
-                        </cac:PartyLegalEntity>
-                    </cac:Party>
-                </cac:DeliveryCustomerParty>';
-
-            $xml .= '<cac:Shipment>
-                        <cbc:ID>SUNAT_Envio</cbc:ID>
-                        <cbc:HandlingCode listAgencyName="PE:SUNAT" listName="Motivo de traslado" listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo20">04</cbc:HandlingCode>
-                        <cbc:GrossWeightMeasure unitCode="KGM">'.$header->peso.'</cbc:GrossWeightMeasure>
-                        <cbc:TotalTransportHandlingUnitQuantity>'.$header->bultos.'</cbc:TotalTransportHandlingUnitQuantity>';
-            
-            $xml .= '<cac:ShipmentStage>
-                    <cbc:ID>1</cbc:ID>
-                    <cbc:TransportModeCode listAgencyName="PE:SUNAT" listName="Modalidad de traslado" listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo18">01</cbc:TransportModeCode>
-                    <cac:TransitPeriod>
-                        <cbc:StartDate>'.$header->ftraslado.'</cbc:StartDate>
-                    </cac:TransitPeriod>';
-
-            $xml .= '<cac:CarrierParty>
+    
+         $xml .=    '<cac:DeliveryCustomerParty>
+                        <cac:Party>
                             <cac:PartyIdentification>
-                                <cbc:ID schemeID="6" schemeName="Documento de Identidad" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">'.$header->numero_guia.'</cbc:ID>
+                                <cbc:ID schemeID="6" schemeName="Documento de Identidad" 
+                                schemeAgencyName="PE:SUNAT" 
+                                schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">'.$guia['numero_documento'].'</cbc:ID>
                             </cac:PartyIdentification>
                             <cac:PartyLegalEntity>
-                                <cbc:RegistrationName><![CDATA['.$header->empresa_transporte_razon.']]></cbc:RegistrationName>
+                                <cbc:RegistrationName><![CDATA['.$guia['entidad'].']]></cbc:RegistrationName>
                             </cac:PartyLegalEntity>
-                        </cac:CarrierParty>';
-            
-            /*$xml .= '<cac:DriverPerson>
-                        <cbc:ID schemeID="1" schemeName="Documento de Identidad" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">'.$header->conductor_dni.'</cbc:ID>
-                        <cbc:FirstName>'.$header->nombre_conductor.'</cbc:FirstName>
-                        <cbc:FamilyName>'.$header->nombre_conductor.'</cbc:FamilyName>
-                        <cbc:JobTitle>Principal</cbc:JobTitle>
-                        <cac:IdentityDocumentReference>
-                            <cbc:ID>'.$header->licencia_conducir.'</cbc:ID>
-                        </cac:IdentityDocumentReference>
-                    </cac:DriverPerson>';*/
-            
-            $xml .= '</cac:ShipmentStage>
-                    <cac:Delivery>
-                        <cac:DeliveryAddress>
-                            <cbc:ID schemeName="Ubigeos" schemeAgencyName="PE:INEI">'.$header->ubig_destino.'</cbc:ID>
-                            <cac:AddressLine>
-                                <cbc:Line>'.$header->ubig_destino.'</cbc:Line>
-                            </cac:AddressLine>
-                        </cac:DeliveryAddress>
-                        <cac:Despatch>
-                            <cac:DespatchAddress>
-                                <cbc:ID schemeName="Ubigeos" schemeAgencyName="PE:INEI">'.$header->ubig_origen.'</cbc:ID>
+                        </cac:Party>
+                    </cac:DeliveryCustomerParty>';
+    
+            $xml .= '<cac:Shipment>
+                        <cbc:ID>SUNAT_Envio</cbc:ID>
+                        <cbc:HandlingCode listAgencyName="PE:SUNAT" 
+                            listName="Motivo de traslado" 
+                            listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo20">01</cbc:HandlingCode>
+                        <cbc:GrossWeightMeasure unitCode="KGM">'.$guia['peso_total'].'</cbc:GrossWeightMeasure>';
+    
+                        if($guia['guia_motivo_traslado_id'] == 7){//importaciones
+            $xml .= '<cbc:TotalTransportHandlingUnitQuantity>'.$guia['numero_bultos'].'</cbc:TotalTransportHandlingUnitQuantity>';
+                        }
+    
+            $xml .= '<cac:ShipmentStage>
+                            <cbc:ID>1</cbc:ID>
+                            <cbc:TransportModeCode listAgencyName="PE:SUNAT" 
+                                listName="Modalidad de traslado" 
+                                listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo18">0'.$guia['guia_modalidad_traslado_id'].'</cbc:TransportModeCode>
+                            <cac:TransitPeriod>
+                            <cbc:StartDate>'.$guia['fecha_traslado_sf'].'</cbc:StartDate>
+                    </cac:TransitPeriod>';
+    
+                if($guia['guia_modalidad_traslado_id'] == '1'){
+                $xml .= '<cac:CarrierParty>
+                                <cac:PartyIdentification>
+                                    <cbc:ID schemeID="6" 
+                                    schemeName="Documento de Identidad" 
+                                    schemeAgencyName="PE:SUNAT" 
+                                    schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">'.$guia['numero_documento_transporte'].'</cbc:ID>
+                                </cac:PartyIdentification>
+                                <cac:PartyLegalEntity>
+                                    <cbc:RegistrationName><![CDATA['.$guia['entidad_transporte'].']]></cbc:RegistrationName>';
+                                    if($guia['numero_mtc_transporte'] != ''){
+                $xml .=                 '<cbc:CompanyID>'.$guia['numero_mtc_transporte'].'</cbc:CompanyID>';
+                                    }
+                $xml .=         '</cac:PartyLegalEntity>
+                            </cac:CarrierParty>';
+                }
+                if($guia['guia_modalidad_traslado_id'] == '2'){
+                $xml .= '<cac:DriverPerson>
+                                <cbc:ID schemeID="1" schemeName="Documento de Identidad" schemeAgencyName="PE:SUNAT" 
+                                            schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">'.$guia['conductor_dni'].'</cbc:ID>
+                                <cbc:FirstName>'.$guia['conductor_nombres'].'</cbc:FirstName>
+                                <cbc:FamilyName>'.$guia['conductor_apellidos'].'</cbc:FamilyName>
+                                <cbc:JobTitle>Principal</cbc:JobTitle>
+                                <cac:IdentityDocumentReference>
+                                    <cbc:ID>'.$guia['conductor_licencia'].'</cbc:ID>
+                                </cac:IdentityDocumentReference>
+                            </cac:DriverPerson>';                                                                        
+                }
+                $xml .= '</cac:ShipmentStage>
+                        <cac:Delivery>
+                            <cac:DeliveryAddress>
+                                <cbc:ID schemeName="Ubigeos" schemeAgencyName="PE:INEI">'.$guia['llegada_ubigeo'].'</cbc:ID>
                                 <cac:AddressLine>
-                                    <cbc:Line>'.$header->almacen_origen_direccion.'</cbc:Line>
+                                    <cbc:Line>'.$guia['llegada_direccion'].'</cbc:Line>
                                 </cac:AddressLine>
-                            </cac:DespatchAddress>
-                        </cac:Despatch>
-                    </cac:Delivery>';
-            $xml .= '</cac:Shipment>';
-            
-            $i = 1;
-            
-            foreach ($detalles as $detalle) {
-                $xml .=  '<cac:DespatchLine>
-                    <cbc:ID>'.$i.'</cbc:ID>
-                    <cbc:DeliveredQuantity unitCode="'.$detalle->unidad.'">'.$detalle->cantidad.'</cbc:DeliveredQuantity>
-                    <cac:OrderLineReference>
-                        <cbc:LineID>1</cbc:LineID>
-                    </cac:OrderLineReference>
-                    <cac:Item>
-                        <cbc:Description>'.utf8_encode($detalle->descripcion).'</cbc:Description>
-                        <cac:SellersItemIdentification>
-                        <cbc:ID>'.$detalle->codigo.'</cbc:ID>
-                        </cac:SellersItemIdentification>
-                    </cac:Item>
-                </cac:DespatchLine>';                        
-                $i++;
-            }
-            
+                            </cac:DeliveryAddress>
+                            <cac:Despatch>
+                                <cac:DespatchAddress>
+                                    <cbc:ID schemeName="Ubigeos" schemeAgencyName="PE:INEI">'.$guia['partida_ubigeo'].'</cbc:ID>
+                                    <cac:AddressLine>
+                                        <cbc:Line>'.$guia['partida_direccion'].'</cbc:Line>
+                                    </cac:AddressLine>
+                                </cac:DespatchAddress>
+                            </cac:Despatch>
+                        </cac:Delivery>';
+    
+                        if($guia['guia_modalidad_traslado_id'] == '2'){
+                $xml .= '<cac:TransportHandlingUnit>
+                            <cac:TransportEquipment>
+                                <cbc:ID>'.$guia['vehiculo_placa'].'</cbc:ID>
+                            </cac:TransportEquipment>
+                        </cac:TransportHandlingUnit>';
+                        }
+                $xml .= '</cac:Shipment>';        
+    
+                    $i = 1;                        
+                    foreach($detalles as $values){
+                        $values['producto']           = $values['descripcion'];
+                        $values['producto_codigo']    = $values['codigo']; 
+                        
+                    $xml .=  '<cac:DespatchLine>
+                            <cbc:ID>'.$i.'</cbc:ID>
+                            <cbc:DeliveredQuantity unitCode="'.$values['codigo_unidad'].'">'.$values['cantidad'].'</cbc:DeliveredQuantity>
+                            <cac:OrderLineReference>
+                                <cbc:LineID>1</cbc:LineID>
+                            </cac:OrderLineReference>
+                            <cac:Item>
+                                <cbc:Description>'.$values['producto'].'</cbc:Description>
+                                <cac:SellersItemIdentification>
+                                <cbc:ID>'.$values['producto_codigo'].'</cbc:ID>
+                                </cac:SellersItemIdentification>
+                            </cac:Item>
+                        </cac:DespatchLine>';                        
+                        $i++;                    
+                    }
             $xml.=  '</DespatchAdvice>';
             
             return $xml;
