@@ -291,11 +291,11 @@ $(function(){
         try {
             if ( $("#costosExport").val() == -1) throw "Elija un centro de costos";
 
-            $("#espera").fadeIn();
+            $("#esperar").css("opacity","1").fadeIn();
 
             $.post(RUTA+"consumo/reporte",{cc:$("#costosExport").val()},
                 function (data, textStatus, jqXHR) {
-                    $("#espera,#exporta").fadeOut();
+                    $("#esperar").css("opacity","0").fadeOut();
                     window.location.href = data.documento;
                 },
                 "json"

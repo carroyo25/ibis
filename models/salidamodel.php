@@ -1194,6 +1194,8 @@
 
             $path = "public/documentos/guia_electronica/";
 
+            $nombre_archivo = "prueba";
+
             //$xml = $this->desarrollo_xml($header, $body);
             $xml = $this->desarrollo_xml($cabecera, $detalles);
             $archivo = fopen($path."XML/".$nombre_archivo.".xml", "w+");
@@ -1252,6 +1254,7 @@
                           "numero"=>"0132773",
                           "fecha_emision_sf"=>"2023-08-07",
                           "numero_documento"=>"0132773",
+                          "entidad"=>"SERVICIOS PETROLEROS Y CONSTRUCCIONES SEPCON S.A.C",
                           "guia_entidad"=>"SERVICIOS PETROLEROS Y CONSTRUCCIONES SEPCON S.A.C",
                           "guia_motivo_traslado_id"=>1,
                           "fecha_traslado_sf"=>"2023-08-10",
@@ -1262,7 +1265,12 @@
                           'conductor_apellidos'=>"TEJEDA VILLENA",
                           'conductor_licencia'=>"Q09619538",
                           'conductor_dni'=>"09619538",
-                          "llegada_ubigeo"=>"");
+                          "llegada_ubigeo"=>"150119",
+                          "partida_ubigeo"=>"150130",
+                          'llegada_direccion'=>"SUB-PARCELAS 20E Y 20H URBANIZACION SANTA GENOVEVA - LURIN",
+                          'partida_direccion'=>"AV. SAN BORJA NORTE N° 445 - SAN BORJA-LIMA-PERU.",
+                          'peso_total'=>"12KG",
+                          "guia_modalidad_traslado_id"=>1);
             
             $empresa = array("ruc"=>"20504898173",
                             "empresa"=>"SERVICIOS PETROLEROS Y CONSTRUCCIONES SEPCON S.A.C",
@@ -1402,21 +1410,20 @@
                         }
                 $xml .= '</cac:Shipment>';        
     
+                    $detalles = json_decode($detalles);
+
                     $i = 1;                        
-                    foreach($detalles as $values){
-                        $values['producto']           = $values['descripcion'];
-                        $values['producto_codigo']    = $values['codigo']; 
-                        
+                    foreach($detalles as $detalle){
                     $xml .=  '<cac:DespatchLine>
                             <cbc:ID>'.$i.'</cbc:ID>
-                            <cbc:DeliveredQuantity unitCode="'.$values['codigo_unidad'].'">'.$values['cantidad'].'</cbc:DeliveredQuantity>
+                            <cbc:DeliveredQuantity unitCode="'.$detalle->unidad.'">'.$detalle->cantidad.'</cbc:DeliveredQuantity>
                             <cac:OrderLineReference>
                                 <cbc:LineID>1</cbc:LineID>
                             </cac:OrderLineReference>
                             <cac:Item>
-                                <cbc:Description>'.$values['producto'].'</cbc:Description>
+                                <cbc:Description>'.utf8_encode($detalle->descripcion).'</cbc:Description>
                                 <cac:SellersItemIdentification>
-                                <cbc:ID>'.$values['producto_codigo'].'</cbc:ID>
+                                <cbc:ID>'.$detalle->codigo.'</cbc:ID>
                                 </cac:SellersItemIdentification>
                             </cac:Item>
                         </cac:DespatchLine>';                        

@@ -450,7 +450,7 @@
                                                         INNER JOIN ibis.tb_grupo ON cm_producto.ngrupo = tb_grupo.ncodgrupo
                                                         INNER JOIN ibis.tb_clase ON cm_producto.nclase = tb_clase.ncodclase
                                                         INNER JOIN ibis.tb_familia ON cm_producto.nfam = tb_familia.ncodfamilia
-                                                        INNER JOIN rrhh.tabla_aquarius ON ibis.alm_consumo.nrodoc = rrhh.tabla_aquarius.dni 
+                                                        LEFT JOIN rrhh.tabla_aquarius ON ibis.alm_consumo.nrodoc = rrhh.tabla_aquarius.dni 
                                                     WHERE
                                                         alm_consumo.flgactivo = 1
                                                         AND alm_consumo.ncostos =:cc
