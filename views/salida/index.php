@@ -208,6 +208,7 @@
                 <input type="hidden" name="id_guia" id="id_guia" value=0>
                 <input type="hidden" name="ubig_origen" id="ubig_origen">
                 <input type="hidden" name="ubig_destino" id="ubig_destino">
+                <input type="hidden" name="registro_mtc" id="registro_mtc" value="1502229MRP">
 
                 <div class="tituloDocumento">
                     <div>

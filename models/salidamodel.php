@@ -1192,17 +1192,6 @@
             header('Access-Control-Allow-Origin: *');
             require 'public/libraries/efactura.php';
 
-            /*$path = "public/documentos/guia_electronica/";
-
-            $nombre_archivo = "prueba";
-
-            //$xml = $this->desarrollo_xml($header, $body);
-            $xml = $this->desarrollo_xml($cabecera, $detalles);
-            $archivo = fopen($path."XML/".$nombre_archivo.".xml", "w+");
-            fwrite($archivo, utf8_decode($xml));
-            fclose($archivo);*/
-
-            
             $header = json_decode($cabecera);
             $body = json_decode($detalles);
 
@@ -1215,22 +1204,21 @@
 
             $nombre_archivo = $header->destinatario_ruc.'-31-'.$header->serie_guia.'-'.$header->numero_guia;
 
-            //////////////////////////////
-
             if(file_exists($path."XML/".$nombre_archivo.".xml")){
                 unlink($path."XML/".$nombre_archivo.".xml");  
             }
 
-            //$token_access = $this->token('d12d8bf5-4b57-4c57-9569-9072b3e1bfcd', 'iLMGwQBEehJMXQ+Z/LR2KA==', '20504898173SISTEMA1', 'Lima123');
+            $token_access = $this->token('d12d8bf5-4b57-4c57-9569-9072b3e1bfcd', 'iLMGwQBEehJMXQ+Z/LR2KA==', '20504898173SISTEMA1', 'Lima123');
             $firma = $this->crear_files($path, $nombre_archivo, $header, $body);
-            //$respuesta = $this->envio_xml($path.'FIRMA/', $nombre_archivo, $token_access);
-            //$numero_ticket = $respuesta->numTicket;
+            $respuesta = $this->envio_xml($path.'FIRMA/', $nombre_archivo, $token_access);
+            $numero_ticket = $respuesta->numTicket;
+
+            var_dump($respuesta);
 
             //sleep(2);//damos tiempo para que SUNAT procese y responda.
             //$respuesta_ticket = $this->envio_ticket($path.'CDR/', $numero_ticket, $token_access, $header->destinatario_ruc, $nombre_archivo);
             
-            return array("archivo" => $nombre_archivo,"ticket" => $respuesta_ticket);
-
+            //return array("archivo" => $nombre_archivo,"ticket" => $respuesta_ticket);
         }
 
         private function crear_files($path,$nombre_archivo,$header,$body){
@@ -1245,11 +1233,11 @@
             if($zip->open($path."FIRMA/".$nombre_archivo.".zip", ZipArchive::CREATE) === true){
                 $zip->addFile($path."FIRMA/".$nombre_archivo.".xml", $nombre_archivo.".xml");
             }
+
             return $nombre_archivo;
         }
 
         private function desarrollo_xml($header,$detalles){
-
             $xml = '<?xml version="1.0" encoding="UTF-8"?>
                     <DespatchAdvice xmlns="urn:oasis:names:specification:ubl:schema:xsd:DespatchAdvice-2" 
                         xmlns:ds="http://www.w3.org/2000/09/xmldsig#" 
@@ -1263,26 +1251,26 @@
                         </ext:UBLExtensions>
                         <cbc:UBLVersionID>2.1</cbc:UBLVersionID>
                         <cbc:CustomizationID>2.0</cbc:CustomizationID>
-                        <cbc:ID>'.$guia['serie'].'-'.$guia['numero'].'</cbc:ID>
-                        <cbc:IssueDate>'.$guia['fecha_emision_sf'].'</cbc:IssueDate>
+                        <cbc:ID></cbc:ID>
+                        <cbc:IssueDate>'.$header->fgemision.'</cbc:IssueDate>
                         <!-- FECHA Y HORA DE EMISION -->
                         <cbc:IssueTime>'.date("H:i:s").'</cbc:IssueTime>
-                        cbc:DespatchAdviceTypeCode 
+                        <cbc:DespatchAdviceTypeCode 
                             listAgencyName="PE:SUNAT" 
                             listName="Tipo de Documento" 
                             listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo01">09
                         </cbc:DespatchAdviceTypeCode>
                         <!-- DOCUMENTOS ADICIONALES (Catalogo 41)-->
                         <cac:Signature>
-                        <cbc:ID>'.$empresa['ruc'].'</cbc:ID>
+                        <cbc:ID>'.$header->destinatario_ruc.'</cbc:ID>
                         <cac:SignatoryParty>
                             <cac:PartyIdentification>
-                            <cbc:ID>'.$empresa['ruc'].'</cbc:ID>
+                            <cbc:ID>'.$header->destinatario_ruc.'</cbc:ID>
                             </cac:PartyIdentification>
                         </cac:SignatoryParty>
                         <cac:DigitalSignatureAttachment>
                             <cac:ExternalReference>
-                            <cbc:URI>'.$empresa['ruc'].'</cbc:URI>
+                            <cbc:URI>'.$header->destinatario_ruc.'</cbc:URI>
                             </cac:ExternalReference>
                         </cac:DigitalSignatureAttachment>
                         </cac:Signature>
@@ -1293,10 +1281,10 @@
                             <cbc:ID schemeID="6" 
                                 schemeName="Documento de Identidad" 
                                 schemeAgencyName="PE:SUNAT" 
-                                schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">'.$empresa['ruc'].'</cbc:ID>
+                                schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">'.$header->destinatario_ruc.'</cbc:ID>
                             </cac:PartyIdentification>
                             <cac:PartyLegalEntity>
-                            <cbc:RegistrationName>'.$empresa['nombre'].'</cbc:RegistrationName>
+                            <cbc:RegistrationName>'.$header->destinatario_razon.'</cbc:RegistrationName>
                             </cac:PartyLegalEntity>
                             </cac:Party>
                         </cac:DespatchSupplierParty>
@@ -1307,10 +1295,10 @@
                             <cbc:ID schemeID="6" 
                                 schemeName="Documento de Identidad" 
                                 schemeAgencyName="PE:SUNAT" 
-                                schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">'.$empresa['ruc'].'</cbc:ID>
+                                schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">'.$header->destinatario_ruc.'</cbc:ID>
                             </cac:PartyIdentification>
                             <cac:PartyLegalEntity>
-                            <cbc:RegistrationName>'.$empresa['nombre'].'</cbc:RegistrationName>
+                            <cbc:RegistrationName>'.$header->destinatario_razon.'</cbc:RegistrationName>
                             </cac:PartyLegalEntity>
                             </cac:Party>
                         </cac:DeliveryCustomerParty>
@@ -1326,10 +1314,9 @@
                                 listName="Motivo de traslado" 
                                 listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogoD05">04</cbc:HandlingCode>
                             <cbc:HandlingInstructions>Traslado entre establecimientos de la misma empresa</cbc:HandlingInstructions>
-
                                 
                             <!-- PESO BRUTO TOTAL DE LA CARGA-->
-                            <cbc:GrossWeightMeasure unitCode="'.$guia['unidad_peso'].'">'.$guia['peso'].'</cbc:GrossWeightMeasure>
+                            <cbc:GrossWeightMeasure unitCode="KGM">'.$header->peso.'</cbc:GrossWeightMeasure>
                             <cac:ShipmentStage>
                                     <!-- MODALIDAD DE TRASLADO  -->
                                     <cbc:TransportModeCode 
@@ -1339,8 +1326,8 @@
                                     
                                     <!-- FECHA DE INICIO DEL TRASLADO o FECHA DE ENTREGA DE BIENES AL TRANSPORTISTA -->
                                     <cac:TransitPeriod>
-                                            <cbc:StartDate>'.$guia['inicio_traslado'].'</cbc:StartDate>
-                                            <cbc:StartDate>'.$guia['inicio_traslado'].'</cbc:StartDate>
+                                            <cbc:StartDate>'.$header->ftraslado.'</cbc:StartDate>
+                                            <cbc:StartDate>'.$header->ftraslado.'</cbc:StartDate>
                                     </cac:TransitPeriod>                                        
                                     <!-- DATOS DEL TRANSPORTISTA -->
                                         <cac:CarrierParty>
@@ -1348,14 +1335,14 @@
                                             <cbc:ID schemeID="6" 
                                                 schemeName="Documento de Identidad" 
                                                 schemeAgencyName="PE:SUNAT" 
-                                                schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">'.$empresa['ruc'].'</cbc:ID>
+                                                schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">'.$header->ruc_proveedor.'</cbc:ID>
                                         </cac:PartyIdentification>
                                         <cac:PartyLegalEntity>
                                             <!-- NOMBRE/RAZON SOCIAL DEL TRANSPORTISTA-->
-                                            <cbc:RegistrationName>'.$transportista['nombre'].'</cbc:RegistrationName>
+                                            <cbc:RegistrationName>'.$header->empresa_transporte_razon.'</cbc:RegistrationName>
                                             
                                             <!-- NUMERO DE REGISTRO DEL MTC -->
-                                            <cbc:CompanyID>'.$transportista['registro_mtc'].'</cbc:CompanyID>
+                                            <cbc:CompanyID>'.$header->registro_mtc.'</cbc:CompanyID>
                                         </cac:PartyLegalEntity>
                                         </cac:CarrierParty>
                             </cac:ShipmentStage>
@@ -1363,24 +1350,24 @@
                                 <!-- DIRECCION DEL PUNTO DE LLEGADA -->
                                     <cac:DeliveryAddress>
                                     <!-- UBIGEO DE LLEGADA -->
-                                        <cbc:ID schemeName="Ubigeos" schemeAgencyName="PE:INEI">'.$ubigeo['llegada'].'</cbc:ID>
+                                        <cbc:ID schemeName="Ubigeos" schemeAgencyName="PE:INEI">'.$header->ubig_destino.'</cbc:ID>
                                     <!-- CODIGO DE ESTABLECIMIENTO ANEXO DE LLEGADA -->
                                             <cbc:AddressTypeCode listID="20504898173" listAgencyName="PE:SUNAT" listName="Establecimientos anexos">13</cbc:AddressTypeCode>
                                     <!-- DIRECCION COMPLETA Y DETALLADA DE LLEGADA -->
                                         <cac:AddressLine>
-                                            <cbc:Line>'.$direccion['llegada'].'</cbc:Line>
+                                            <cbc:Line>'.$header->almacen_destino_direccion.'</cbc:Line>
                                         </cac:AddressLine>
                                     </cac:DeliveryAddress>
                                     <cac:Despatch>
                                         <!-- DIRECCION DEL PUNTO DE PARTIDA -->
                                         <cac:DespatchAddress>
                                             <!-- UBIGEO DE PARTIDA -->
-                                            <cbc:ID schemeName="Ubigeos" schemeAgencyName="PE:INEI">15'.$ubigeo['partida'].'0119</cbc:ID>
+                                            <cbc:ID schemeName="Ubigeos" schemeAgencyName="PE:INEI">15'.$header->ubig_origen.'0119</cbc:ID>
                                             <!-- CODIGO DE ESTABLECIMIENTO ANEXO DE PARTIDA -->
                                                 <cbc:AddressTypeCode listID="20504898173" listAgencyName="PE:SUNAT" listName="Establecimientos anexos">8</cbc:AddressTypeCode>
                                             <!-- DIRECCION COMPLETA Y DETALLADA DE PARTIDA -->
                                             <cac:AddressLine>
-                                                <cbc:Line>'.$direccion['partida'].'</cbc:Line>
+                                                <cbc:Line>'.$header->almacen_origen_direccion.'</cbc:Line>
                                             </cac:AddressLine>
                                         </cac:DespatchAddress>
 			                        </cac:Despatch>
@@ -1393,7 +1380,6 @@
                     </cac:Shipment>
                     <!-- DETALLES DE BIENES A TRASLADAR -->';
 
-                $detalles = json_decode($detalles);
                 $i = 1;
                 foreach($detalles as $detalle){
                     $xml .=  '<cac:DespatchLine>
@@ -1411,7 +1397,6 @@
                         </cac:DespatchLine>';                        
                         $i++; 
                 }
-                
 
                 $xml.='</DespatchAdvice>';
             
