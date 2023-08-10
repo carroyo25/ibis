@@ -1246,7 +1246,8 @@
                         xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2">                    
                         <ext:UBLExtensions>
                             <ext:UBLExtension>
-                                <ext:ExtensionContent></ext:ExtensionContent>
+                                <ext:ExtensionContent>
+                                </ext:ExtensionContent>
                             </ext:UBLExtension>
                         </ext:UBLExtensions>
                         <cbc:UBLVersionID>2.1</cbc:UBLVersionID>
