@@ -116,6 +116,7 @@ $(function(){
 
         //para deasctivar el doble click de mouse
         let boton = $(this);
+        
         boton.css("pointer-events","none");
 
         let canvas = document.getElementById("cnv");

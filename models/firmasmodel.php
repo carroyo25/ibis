@@ -198,10 +198,10 @@
                                         border-left: 1px solid #c2c2c2;
                                         border-right: 1px solid #c2c2c2;
                                         border-bottom: 1px solid #c2c2c2;">
-                                <p style="padding:.5rem"><strong style="font-style: italic;">Ing. Mauricio;</strong></p>
+                                <p style="padding:.5rem"><strong style="font-style: italic;">Ing:</strong></p>
                                 <p style="padding:.5rem;line-height: 1rem;">El presente correo es para informar que se ha aprobado la orden Nro. '.$id.' en forma urgente.</p>
-                                <p style="padding:.5rem">aprobado por : '. $_SESSION['nombres'].'</p>
-                                <p style="padding:.5rem">Fecha : '. date("d/m/Y h:i:s") .'</p>
+                                <p style="padding:.5rem">>Relizado por : '. $_SESSION['nombres'].'</p>
+                                <p style="padding:.5rem">Fecha de Aprobación : '. date("d/m/Y h:i:s") .'</p>
                             </div>
                         </div>';
 
@@ -228,7 +228,8 @@
                 
                 $mail->setFrom($origen,$nombre_envio);
                 $mail->addAddress('carroyo@sepcon.net','Cesar Arroyo');
-                //$mail->addAddress('mvirreira@sepcon.net','Mauricio Virreira');
+                $mail->addAddress('mvirreira@sepcon.net','Mauricio Virreira');
+                $mail->addAddress('jpaniagua@sepcon.net','Jose Paniagua');
                 
                 $mail->Subject = $subject;
                     $mail->msgHTML(utf8_decode($messaje));

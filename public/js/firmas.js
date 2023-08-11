@@ -305,10 +305,15 @@ $(function() {
     $("#btnAceptarPreguntaExpress").click(function(e){
         e.preventDefault(e);
 
+        $("#esperar").css("opacity","1").fadeIn();
+
         $.post(RUTA+"firmas/autorizaExpress", {id:$("#codigo_orden").val()},
             function (data, textStatus, jqXHR) {
                 mostrarMensaje(data.mensaje,data.clase);
+
                 $("#preguntaExpress").fadeOut();
+                $("#esperar").css("opacity","0").fadeOut();  
+                
             },
             "json"
         );
