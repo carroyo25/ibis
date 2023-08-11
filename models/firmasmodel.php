@@ -70,6 +70,8 @@
                             $resaltado = "";
                          }
 
+                         $atencion = $rs['nNivAten'] == 46 ? 'Aprobado </br> Urgente':'Normal';
+
                          $alerta_logistica = $this-> buscarUserComentario($rs['id_regmov'],'633ae7e588a52') > 0 && $flog == 0 ? "urgente":" ";  //logistica
                          $alerta_finanzas = $this-> buscarUserComentario($rs['id_regmov'],'6288328f58068')> 0 && $ffin == 0 ? "urgente":" ";  //Finanzas
                          $alerta_operaciones = $this-> buscarUserComentario($rs['id_regmov'],'62883306d1cd3') > 0 && $fope == 0? "urgente":" ";  //operaciones
@@ -86,7 +88,7 @@
                                         <td class="pl20px">'.$rs['costos'].'</td>
                                         <td class="pl20px">'.$rs['crazonsoc'].'</td>
                                         <td class="pl20px">'.$rs['area'].'</td>
-                                        <td class="textoCentro '.strtolower($rs['atencion']).'">'.$rs['atencion'].'</td>
+                                        <td class="textoCentro '.strtolower($rs['atencion']).'" style="font-size:.6rem">'.$atencion.'</td>
                                         <td class="textoDerecha pr10px">'.$rs['total_orden'].'</td>
                                         <td class="textoCentro">'.$rs['operador'].'</td>
                                         <td class="textoCentro '.$alerta_logistica.'">'.$log.'</td>
