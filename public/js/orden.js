@@ -652,7 +652,7 @@ $(function(){
         e.preventDefault();
         
         try {
-            if ( $("#nivel_autorizacion").val() == 47 ) throw "La orden no ha sido autorizada";
+            if ( $("#procura").val() != 1 || $("#finanzas").val() != 1 || $("#operaciones").val() != 1 ) throw "La orden no ha sido autorizada";
             
             let result = {};
     

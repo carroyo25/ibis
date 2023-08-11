@@ -216,9 +216,9 @@
             }
 
             $this->SetFont('ZapfDingbats','',24);
-            $this->cell(43,16,$estado1,1,0,"C"); //envia de parametro
+            $this->cell(43,16,$estado3,1,0,"C"); //envia de parametro
             $this->cell(43,16,$estado2,1,0,"C"); //envia de parametro
-            $this->cell(43,16,$estado3,1,1,"C"); //envia de parametro
+            $this->cell(43,16,$estado1,1,1,"C"); //envia de parametro
 
             $this->SetFont('Arial',"","7");
             $this->SetTextColor(0,0,0);

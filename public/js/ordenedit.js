@@ -70,6 +70,11 @@ $(function(){
                 $("#referencia").val(data.cabecera[0].cReferencia);
                 $("#total_adicional").val(data.total_adicionales);
 
+                $("#nivel_autorizacion").val(data.cabecera[0].autorizado);
+                $("#procura").val(data.cabecera[0].nfirmaLog);
+                $("#finanzas").val(data.cabecera[0].nfirmaFin);
+                $("#operaciones").val(data.cabecera[0].nfirmaOpe);
+
                 $("#estado")
                     .removeClass()
                     .addClass(estado);

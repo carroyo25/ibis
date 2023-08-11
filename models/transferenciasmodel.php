@@ -382,7 +382,8 @@
                                                 WHERE
                                                     tb_pedidodet.idpedido = :indice
                                                     AND tb_pedidodet.nflgActivo = 1
-                                                    AND tb_pedidodet.cant_orden != tb_pedidodet.cant_aprob");
+                                                    AND tb_pedidodet.cant_orden != tb_pedidodet.cant_aprob
+                                                    AND tb_pedidodet.estadoItem = 54");
                 $sql -> execute(['indice'=>$indice]);
                 $rowCount = $sql->rowCount();
 

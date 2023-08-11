@@ -631,7 +631,6 @@
                 //$mail->addAddress($cabecera['correo_entidad'],$cabecera['entidad']);
                 $mail->addAddress($_SESSION['correo'],$_SESSION['nombres']);
                 
-
                 $mail->Subject = $subject;
                     $mail->msgHTML(utf8_decode($messaje));
 
@@ -640,11 +639,16 @@
                     }
 
                     $firmas = intval($cabecera['procura'])+intval($cabecera['finanzas'])+intval($cabecera['operaciones']);
+                    $cambio = 60;
 
                     if ( $cabecera['nivel_autorizacion'] == 46 && $firmas == 3 ){
                         $cambio = 60;
                     }else {
                         $cambio = 59;
+                    }
+
+                    if ( $cabecera['nivel_autorizacion'] == 47 && $firmas == 3 ){
+                        $cambio = 60;
                     }
                     
                     if (!$mail->send()) {

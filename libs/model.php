@@ -1888,7 +1888,8 @@
                                                     LEFT JOIN tb_equipmtto ON tb_pedidodet.nregistro = tb_equipmtto.idreg 
                                                 WHERE
                                                     tb_pedidodet.idpedido = :id 
-                                                    AND tb_pedidodet.nflgActivo = 1");
+                                                    AND tb_pedidodet.nflgActivo = 1
+                                                    AND tb_pedidodet.estadoItem = 54");
                 $sql->execute(["id"=>$id]);
                 $rowCount = $sql->rowCount();
                 

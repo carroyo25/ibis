@@ -785,8 +785,7 @@
                                                         AND lg_ordencab.id_regmov = :id 
                                                         AND tb_costusu.nflgactivo = 1
                                                         AND lg_ordencab.ntipmov = 37 
-                                                        AND lg_ordencab.nEstadoDoc BETWEEN 60 
-                                                        AND 62 
+                                                        AND lg_ordencab.nEstadoDoc BETWEEN 60 AND 62 
                                                     ORDER BY
                                                         id_regmov DESC");
                 $sql->execute(["usr"=>$_SESSION['iduser'],"id"=>$id]);
