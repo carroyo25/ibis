@@ -146,12 +146,13 @@
                 if ($rowCount > 0) {
                     while ( $rs = $sql->fetch()){
                         $salida .= '<tr class="pointer"
-                                            data-grabado="" 
-                                            data-idprod="" 
+                                            data-grabado="1"
+                                            data-itempedido="'.$rs['iddetped'].'"
+                                            data-idprod="'.$rs['idcprod'].'" 
                                             data-codund="" 
-                                            data-idx="">
-                                        <td class="textoCentro"><a href="#"><i class="fas fa-eraser"></i></a></td>
-                                        <td class="textoCentro"><a href="#"><i class="fas fa-exchange-alt"></i></a></td>
+                                            data-idx="'.$rs['iditem'].'">
+                                        <td class="textoCentro"><a href="'.$rs['iddetped'].'"><i class="fas fa-eraser"></i></a></td>
+                                        <td class="textoCentro"><a href="'.$rs['iddetped'].'"><i class="fas fa-exchange-alt"></i></a></td>
                                         <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="pl20px">'.$rs['producto'].'</td>

@@ -431,7 +431,6 @@
                                                         FORMAT(ibis.alm_consumo.cantdevolucion,2) AS cantdevolucion,
                                                         DATE_FORMAT(ibis.alm_consumo.fechasalida,'%d/%m/%Y') AS fechasalida,
                                                         DATE_FORMAT(ibis.alm_consumo.fechadevolucion,'%d/%m/%Y') AS fechadevolucion,
-                                                        
                                                         FORMAT(ibis.alm_consumo.nhoja,2) AS nhoja,
                                                         ibis.alm_consumo.cisometrico,
                                                         ibis.alm_consumo.cobserentrega,
@@ -446,21 +445,31 @@
                                                         UPPER( rrhh.tabla_aquarius.dcargo ) AS cargo 
                                                     FROM
                                                         ibis.alm_consumo
-                                                        INNER JOIN ibis.cm_producto ON alm_consumo.idprod = cm_producto.id_cprod
-                                                        INNER JOIN ibis.tb_grupo ON cm_producto.ngrupo = tb_grupo.ncodgrupo
-                                                        INNER JOIN ibis.tb_clase ON cm_producto.nclase = tb_clase.ncodclase
-                                                        INNER JOIN ibis.tb_familia ON cm_producto.nfam = tb_familia.ncodfamilia
+                                                        LEFT JOIN ibis.cm_producto ON alm_consumo.idprod = cm_producto.id_cprod
+                                                        LEFT JOIN ibis.tb_grupo ON cm_producto.ngrupo = tb_grupo.ncodgrupo
+                                                        LEFT JOIN ibis.tb_clase ON cm_producto.nclase = tb_clase.ncodclase
+                                                        LEFT JOIN ibis.tb_familia ON cm_producto.nfam = tb_familia.ncodfamilia
                                                         LEFT JOIN rrhh.tabla_aquarius ON ibis.alm_consumo.nrodoc = rrhh.tabla_aquarius.dni 
                                                     WHERE
                                                         alm_consumo.flgactivo = 1
                                                         AND alm_consumo.ncostos =:cc
-                                                    GROUP BY
+                                                        GROUP BY
                                                             alm_consumo.idprod,
                                                             alm_consumo.fechasalida,
                                                             cm_producto.ccodprod,
                                                             alm_consumo.cantsalida,
                                                             alm_consumo.nhoja
+                                                    HAVING COUNT(*) >= 1
                                                     ORDER BY ibis.alm_consumo.fechasalida ASC");
+
+                                                    /*
+                                                     GROUP BY
+                                                            alm_consumo.idprod,
+                                                            alm_consumo.fechasalida,
+                                                            cm_producto.ccodprod,
+                                                            alm_consumo.cantsalida,
+                                                            alm_consumo.nhoja
+                                                    */
                 $sql->execute(["cc"=>$cc]);
                 $rowCount = $sql->rowCount();
 
