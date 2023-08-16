@@ -144,7 +144,7 @@
             $subject    = utf8_decode('Entrega de EPPS/Materiales '.' - '.$nombre.' - '.$kardex);
             $fecha_actual = date("d-m-Y h:i:s");
             
-            $origen = $_SESSION['user']."@sepcon.net";
+            $origen = $_SESSION['correo'];
             $nombre_envio = $_SESSION['nombres'];
 
             $estadoEnvio= false;
@@ -459,15 +459,6 @@
                                                             alm_consumo.idprod
                                                     HAVING COUNT(*) >= 1
                                                     ORDER BY ibis.alm_consumo.fechasalida ASC");
-
-                                                    /*
-                                                     GROUP BY
-                                                            alm_consumo.idprod,
-                                                            alm_consumo.fechasalida,
-                                                            cm_producto.ccodprod,
-                                                            alm_consumo.cantsalida,
-                                                            alm_consumo.nhoja
-                                                    */
                 $sql->execute(["cc"=>$cc]);
                 $rowCount = $sql->rowCount();
 
