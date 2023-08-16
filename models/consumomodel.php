@@ -454,11 +454,9 @@
                                                         alm_consumo.flgactivo = 1
                                                         AND alm_consumo.ncostos =:cc
                                                         GROUP BY
-                                                            alm_consumo.idprod,
                                                             alm_consumo.fechasalida,
-                                                            cm_producto.ccodprod,
-                                                            alm_consumo.cantsalida,
-                                                            alm_consumo.nhoja
+                                                            alm_consumo.nrodoc,
+                                                            alm_consumo.idprod
                                                     HAVING COUNT(*) >= 1
                                                     ORDER BY ibis.alm_consumo.fechasalida ASC");
 
