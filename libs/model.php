@@ -3839,7 +3839,7 @@
         }
 
         public function norepite() {
-            $rand = range(8, 10000);
+            $rand = range(8, 1000000);
             shuffle($rand);
             $numero = 0;
             
