@@ -72,6 +72,8 @@ $(function(){
 
         $("#tipo").val("SALIDA X OC");
         $("#codigo_movimiento").val(144);
+
+        $('#barra_notifica').removeClass('primerabarra');
         
         accion = 'n';
 
@@ -415,13 +417,10 @@ $(function(){
         );
     });
 
-
-    $("#tablaDetalles tbody").on("click","a", function (e) {
+    $("#tablaDetalles tbody").on('dblclick','tr', function(e) {
         e.preventDefault();
 
-        if ($(this).data("accion") == "delete") {
-            $(this).parent().parent().remove();
-        }
+        $(this).toggleClass('semaforoNaranja');
 
         return false;
     });

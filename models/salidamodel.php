@@ -1211,17 +1211,17 @@
             $token_access = $this->token('d12d8bf5-4b57-4c57-9569-9072b3e1bfcd', 'iLMGwQBEehJMXQ+Z/LR2KA==', '20504898173SISTEMA1', 'Lima123');
             //$token_access = $this->token('test-85e5b0ae-255c-4891-a595-0b98c65c9854', 'test-Hty/M6QshYvPgItX2P0+Kw==', '20504898173MODDATOS', 'MODDATOS');
             $firma = $this->crear_files($path, $nombre_archivo, $header, $body);
-            //$respuesta = $this->envio_xml($path.'FIRMA/', $nombre_archivo, $token_access);
+            $respuesta = $this->envio_xml($path.'FIRMA/', $nombre_archivo, $token_access);
             //$numero_ticket = $respuesta->numTicket;
 
-            //var_dump($respuesta);
+            var_dump($respuesta);
 
             /*sleep(2);//damos tiempo para que SUNAT procese y responda.
             $respuesta_ticket = $this->envio_ticket($path.'CDR/', $numero_ticket, $token_access, $header->destinatario_ruc, $nombre_archivo);
 
             var_dump($respuesta_ticket);*/
             
-            return array("archivo" => $nombre_archivo,"ticket" => $respuesta_ticket);
+            //return array("archivo" => $nombre_archivo,"ticket" => $respuesta_ticket);
         }
 
         private function crear_files($path,$nombre_archivo,$header,$body){
@@ -1230,12 +1230,12 @@
             fwrite($archivo, utf8_decode($xml));
             fclose($archivo);
 
-            /*$this->firmar_xml($nombre_archivo.".xml", "1");
+            $this->firmar_xml($nombre_archivo.".xml", "1");
 
             $zip = new ZipArchive();
             if($zip->open($path."FIRMA/".$nombre_archivo.".zip", ZipArchive::CREATE) === true){
                 $zip->addFile($path."FIRMA/".$nombre_archivo.".xml", $nombre_archivo.".xml");
-            }*/
+            }
 
             return $nombre_archivo;
         }

@@ -22,9 +22,10 @@
                                                         inventarios.inventarios_cantidad AS inventarios,
                                                         SUM( consumo.cantsalida ) AS consumos,
                                                         SUM( consumo.cantdevolucion ) AS devoluciones,
-                                                        transferencia.cantidad_transferencias AS transferencias,
+                                                        sal_trans.salida_transferencia AS salidas_transferencia,
+                                                        ing_trans.ingreso_transferencia AS ingresos_transferencias,
                                                         minimo.cantidad_minima AS minimo,
-                                                        tb_unimed.cabrevia
+                                                        tb_unimed.cabrevia 
                                                     FROM
                                                         cm_producto
                                                         LEFT JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
@@ -54,7 +55,7 @@
                                                             INNER JOIN alm_inventariocab ON alm_inventariodet.idregistro = alm_inventariocab.idreg 
                                                         WHERE
                                                             alm_inventariodet.nflgActivo = 1 
-                                                            AND alm_inventariocab.idcostos = :cinventario
+                                                            AND alm_inventariocab.idcostos = :cinventario 
                                                         GROUP BY
                                                             alm_inventariodet.codprod 
                                                         ) AS inventarios ON inventarios.codprod = cm_producto.id_cprod
@@ -66,7 +67,7 @@
                                                         FROM
                                                             alm_consumo 
                                                         WHERE
-                                                            alm_consumo.ncostos = :csalida
+                                                            alm_consumo.ncostos = :csalida 
                                                             AND alm_consumo.flgactivo = 1 
                                                         GROUP BY
                                                             alm_consumo.fechasalida,
@@ -75,16 +76,30 @@
                                                         ) AS consumo ON consumo.idprod = cm_producto.id_cprod
                                                         LEFT JOIN (
                                                         SELECT
-                                                            SUM( alm_transferdet.ncanti ) AS cantidad_transferencias,
+                                                            SUM( alm_transferdet.ncanti ) AS salida_transferencia,
                                                             alm_transferdet.idcprod 
                                                         FROM
-                                                            alm_transferdet 
+                                                            alm_transferdet
+                                                            LEFT JOIN alm_transfercab ON alm_transferdet.idtransfer = alm_transfercab.idreg 
                                                         WHERE
                                                             alm_transferdet.nflgactivo = 1 
-                                                            AND alm_transferdet.idcostos = :ctransferencia
+                                                            AND alm_transfercab.idcc = :ctransfsalida 
                                                         GROUP BY
                                                             alm_transferdet.idcprod 
-                                                        ) AS transferencia ON transferencia.idcprod = cm_producto.id_cprod
+                                                        ) AS sal_trans ON sal_trans.idcprod = cm_producto.id_cprod
+                                                        LEFT JOIN (
+                                                        SELECT
+                                                            SUM( alm_transferdet.ncanti ) AS ingreso_transferencia,
+                                                            alm_transferdet.idcprod 
+                                                        FROM
+                                                            alm_transferdet
+                                                            LEFT JOIN alm_transfercab ON alm_transferdet.idtransfer = alm_transfercab.idreg 
+                                                        WHERE
+                                                            alm_transferdet.nflgactivo = 1 
+                                                            AND alm_transfercab.idcd = :ctransfingreso 
+                                                        GROUP BY
+                                                            alm_transferdet.idcprod 
+                                                        ) AS ing_trans ON ing_trans.idcprod = cm_producto.id_cprod
                                                         LEFT JOIN (
                                                         SELECT
                                                             alm_minimo.dfecha,
@@ -103,7 +118,7 @@
                                                         AND cm_producto.ntipo = 37 
                                                         AND cm_producto.ccodprod LIKE :codigo 
                                                         AND cm_producto.cdesprod LIKE :descripcion 
-                                                        AND ( NOT ISNULL( recepcion.cantidad_obra ) OR NOT ISNULL( inventarios.inventarios_cantidad ) OR NOT ISNULL( transferencia.cantidad_transferencias ) ) 
+                                                        AND ( NOT ISNULL( recepcion.cantidad_obra ) OR NOT ISNULL( inventarios.inventarios_cantidad ) OR NOT ISNULL( sal_trans.salida_transferencia ) ) 
                                                     GROUP BY
                                                         cm_producto.id_cprod 
                                                     ORDER BY
@@ -111,7 +126,8 @@
                 $sql->execute(["cingreso" =>$cc,
                                 "cinventario" =>$cc,
                                 "csalida" =>$cc,
-                                "ctransferencia" =>$cc,
+                                "ctransfsalida" =>$cc,
+                                "ctransfingreso" =>$cc,
                                 "cminimo" =>$cc,
                                 "codigo" =>$cp,
                                 "descripcion" =>$de]);
@@ -123,7 +139,7 @@
                 if ($rowCount > 0) {
                     $salida="";
                     while ($rs = $sql->fetch()){
-                        $saldo = ( $rs['ingresos']+$rs['inventarios']+$rs['devoluciones'] )-$rs['consumos'];
+                        $saldo = ( $rs['ingresos']+$rs['inventarios']+$rs['devoluciones'] )-($rs['consumos']+$rs['salidas_transferencia']);
                         $saldo = $saldo > -1 ? $saldo : $saldo;
                         $estado = $saldo > -1 ? "semaforoVerde":"semaforoRojo";
 
@@ -147,7 +163,7 @@
                                             <td class="textoDerecha">'.number_format($rs['inventarios'],2).'</td>
                                             <td class="textoDerecha">'.number_format($rs['consumos'],2).'</td>
                                             <td class="textoDerecha">'.number_format($rs['devoluciones'],2).'</td>
-                                            <td class="textoDerecha">'.number_format($rs['transferencias'],2).'</td>
+                                            <td class="textoDerecha">'.number_format($rs['salidas_transferencia'],2).'</td>
                                             <td class="textoDerecha '.$alerta_minimo.'">'.number_format($rs['minimo'],2).'</td>
                                             <td class="textoDerecha '.$estado.'"><div>'.number_format($saldo,2).'</div></td>
                                             <td class="textoCentro">'.$c1.'</td>
@@ -616,7 +632,7 @@
                 $objPHPExcel->getActiveSheet()->setCellValue('A1','Control de Almacén');
 
                 $objPHPExcel->getActiveSheet()
-                    ->getStyle('A1:H4')
+                    ->getStyle('A1:I4')
                     ->getFill()
                     ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
                     ->getStartColor()

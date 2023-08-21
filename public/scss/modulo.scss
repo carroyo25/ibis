@@ -1768,6 +1768,14 @@ $anulado:#c2c2c2;
         width: 100%;
     }
 
+    .barraOpcionesNueva {
+        background:#1b993c;
+    }
+
+    .barraOpcionesGrabada {
+        background:$fondoBarra;
+    }
+
     .barraOpciones {
         display: flex;
         justify-content:space-between;
