@@ -114,6 +114,7 @@
                                                         REPLACE(FORMAT(tb_pedidodet.cant_resto, 2),',','') AS saldo,
                                                         FORMAT(tb_pedidodet.precio, 2) AS precio,
                                                         REPLACE(FORMAT(tb_pedidodet.cant_pedida,2),',','') AS cantidad_pedida,
+                                                        REPLACE(FORMAT(tb_pedidodet.cant_atend,2),',','') AS cantidad_almacen,
                                                         tb_pedidodet.igv,
                                                         tb_pedidodet.cant_aprob,
                                                         FORMAT(tb_pedidodet.total, 2) AS total,
@@ -154,7 +155,7 @@
                                                     AND tb_costusu.id_cuser = :user
                                                     AND tb_pedidodet.idasigna = :user_asigna
                                                     AND tb_pedidodet.cant_aprob <> tb_pedidodet.cant_orden
-                                                    AND tb_pedidodet.estadoItem = 54
+                                                    AND ( tb_pedidodet.estadoItem = 54 OR tb_pedidodet.estadoItem = 52 )
                                                     AND tb_pedidodet.nflgActivo = 1");
                 
                 //AND ISNULL(tb_pedidodet.idorden)
@@ -168,13 +169,17 @@
                     while ($rs = $sql->fetch()) {
 
                         //hace los cálculos de los saldos 
-                        $cantidad = $this->obtenerCantidades($rs['idpedido'],$rs['iditem']);
-                        $cant = $cantidad == null  ? $rs['cantidad_pedida'] : $rs['cantidad_pedida']-$cantidad;
+                        //$cantidad = $this->obtenerCantidades($rs['idpedido'],$rs['iditem']); 
+                        //$cant = $cantidad == null  ? $rs['cantidad_pedida'] : $rs['cantidad_pedida']-$cantidad;
+
+                        $cant = $rs['estadoItem'] == 54  ? $rs['cantidad_pedida'] : $rs['cantidad_almacen'];
+
+                        //validar para las compras parciales
                        
                         $salida .='<tr class="pointer" data-pedido="'.$rs['idpedido'].'"
                                                        data-entidad="'.$rs['entidad'].'"
                                                        data-unidad="'.$rs['unidad'].'"
-                                                       data-cantidad ="'.$rs['cant_aprob'].'"
+                                                       data-cantidad ="'.$cant.'"
                                                        data-total="'.$rs['total_numero'].'"
                                                        data-codprod="'.$rs['id_cprod'].'"
                                                        data-iditem="'.$rs['iditem'].'"
@@ -182,14 +187,15 @@
                                                        data-itord="-"
                                                        data-nropedido=""
                                                        data-nparte="'.$rs['nroparte'].'"
-                                                       data-detalle="'.$rs['detalle'].'">
+                                                       data-detalle="'.$rs['detalle'].'"
+                                                       data-estado="'.$rs['estadoItem'].'">
                                         <td class="textoCentro">'.str_pad($rs['nrodoc'],6,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.date("d/m/Y", strtotime($rs['emision'])).'</td>
                                         <td class="pl5px">'.$rs['concepto'].'</td>
                                         <td class="pl5px">'.$rs['area'].'</td>
                                         <td class="textoCentro">'.$rs['ccodproy'].'</td>
                                         <td class="textoCentro" data-codigo="'.$rs['id_cprod'].'">'.$rs['ccodprod'].'</td>
-                                        <td class="textoDerecha">'.$rs['cantidad'].'</td>
+                                        <td class="textoDerecha">'.$cant.'</td>
                                         <td class="pl5px">'.$rs['cdesprod'].'</td>
                                     </tr>';
                     }

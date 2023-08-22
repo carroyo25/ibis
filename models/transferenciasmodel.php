@@ -401,7 +401,8 @@
                                         data-costos="'.$rs['idcostos'].'"
                                         data-orden="'.$rs['cant_orden'].'"
                                         data-almacen="'.$rs['cant_atend'].'"
-                                        data-grabado="0">
+                                        data-grabado="0"
+                                        data-separado="0">
                                         <td class="textoCentro"><a href="'.$rs['iditem'].'" title="Eliminar" data-accion="delete"><i class="fas fa-eraser"></i></a></td>
                                         <td class="textoCentro"><a href="'.$rs['iditem'].'" title="Cambiar" data-accion="change"><i class="fas fa-exchange-alt"></i></a></td>
                                         <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
@@ -410,7 +411,10 @@
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                         <td class="textoDerecha">'.$rs['cant_aprob'].'</td>
                                         <td class="textoDerecha">'.$rs['cant_orden'].'</td>
-                                        <td><input type="number" value = "'.$enviar.'"></td>
+                                        <td><input type="number" step="any" placeholder="0.00" 
+                                                            onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)" 
+                                                            onclick="this.select()">
+                                        </td>
                                         <td class="textoDerecha">'.number_format($existencia,2).'</td>
                                         <td><input type="text"></td>
                                         <td  class="textoCentro">'.$rs['nrodoc'].'</td>
@@ -494,7 +498,7 @@
                         "pedido"=>$datos[$i]->pedido,
                         "costos"=>$datos[$i]->costos]);
 
-                    if ( $datos[$i]->aprobado == ( $datos[$i]->comprado + $datos[$i]->cantidad ) ){
+                    if ( $datos[$i]->aprobado >= $datos[$i]->cantidad ){
                         $this->actualizarDetallesPedido($datos[$i]->iditem,$datos[$i]->cantidad);
                     }
                 } catch (PDOException $th) {
@@ -629,6 +633,14 @@
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
                 return false;
+            }
+        }
+
+        private function verificarTotalAtendido($pedido) {
+            try {
+                $sql = $this->db->connect()->prepare("");
+            } catch (\Throwable $th) {
+                //throw $th;
             }
         }
 

@@ -209,15 +209,15 @@
         <table id="tablaPrincipal">
             <thead class="stickytop">
                 <tr>
-                    <th>Num.</th>
+                    <th data-idcol="0" class="datafiltro">Num.</th>
                     <th>Emision</th>
                     <th>Tipo</th>
                     <th>Descripción</th>
-                    <th>Centro Costos</th>
-                    <th>Solicitante</th>
+                    <th data-idcol="4" class="datafiltro">Centro Costos</th>
+                    <th data-idcol="5" class="datafiltro">Solicitante</th>
                     <th>Estado</th>
                     <th>Atencion</th>
-                    <th>Asignado</th>
+                    <th data-idcol="8" class="datafiltro">Asignado</th>
                 </tr>
             </thead>
             <tbody>

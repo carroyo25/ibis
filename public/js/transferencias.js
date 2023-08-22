@@ -196,41 +196,6 @@ $(function(){
         return false;
     });
 
-    $("#tablaModulos tbody").on("click","tr", function (e) {
-        e.preventDefault();
-
-        let nFilas = $.strPad($("#tablaDetalles tr").length,3);
-        let idprod = $(this).data("idprod");
-        let nunid = $(this).data("ncomed");
-        let aprobado = $(this).data("aprobado");
-        let codigo = $(this).children('td:eq(1)').text();
-        let descrip = $(this).children('td:eq(2)').text();
-        let unidad = $(this).children('td:eq(3)').text();
-        let saldo = $(this).children('td:eq(4)').text();
-        let grabado = 0;
-
-        let row = `<tr data-grabado="${grabado}" 
-                        data-idprod="${idprod}" 
-                        data-codund="${nunid}" 
-                        data-idx="-">
-                    <td class="textoCentro"><a href="#"><i class="fas fa-eraser"></i></a></td>
-                    <td class="textoCentro"><a href="#"><i class="fas fa-exchange-alt"></i></a></td>
-                    <td class="textoCentro">${nFilas}</td>
-                    <td class="textoCentro">${codigo}</td>
-                    <td class="pl20px">${descrip}</td>
-                    <td class="textoCentro">${unidad}</td>
-                    <td class="textoDerecha">${aprobado}</td>
-                    <td><input type="number" step="any" placeholder="0.00" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"></td>
-                    <td class="textoDerecha">${saldo}</td>
-                    <td><textarea></textarea></td>
-                    <td></td>
-                </tr>`;
-
-        $("#tablaDetalles tbody").append(row);
-
-        return false;
-    });
-
     $("#guiaRemision").click(function (e) { 
         e.preventDefault();
         
@@ -394,8 +359,11 @@ $(function(){
                     $("#tablaPedidos tbody")
                         .empty()
                         .append(data);
+
                         $("#pedidos").fadeIn();
                         $("#esperar").fadeOut();
+
+                       
                 },
                 "text"
             );
@@ -409,9 +377,13 @@ $(function(){
     $("#tablaPedidos tbody").on("click","tr", function () {
         $.post(RUTA+"transferencias/items", {indice:$(this).data('indice'),origen:$("#codigo_costos_origen").val()},
             function (data, textStatus, jqXHR) {
+                
+
                 $("#tablaDetalles tbody")
                     .empty()
                     .append(data);
+
+                    
             },
             "text"
         );
@@ -607,3 +579,4 @@ detalles = (flag) =>{
 
     return DETALLES; 
 }
+

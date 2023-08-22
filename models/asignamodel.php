@@ -95,7 +95,7 @@
                     $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet 
                                                         SET tb_pedidodet.idasigna=:asignado
                                                         WHERE tb_pedidodet.iditem =:item
-                                                            tb_pedidodet.estadoItem = 54");
+                                                            AND (tb_pedidodet.estadoItem = 54 OR tb_pedidodet.estadoItem = 52)");
                 $sql->execute(["asignado"=>$asignado,
                                 "item"=>$datos[$i]->itempedido]);
                 } catch (PDOException $th) {

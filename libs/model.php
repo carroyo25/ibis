@@ -1890,7 +1890,7 @@
                                                 WHERE
                                                     tb_pedidodet.idpedido = :id 
                                                     AND tb_pedidodet.nflgActivo = 1
-                                                    AND tb_pedidodet.estadoItem = 54");
+                                                    AND (tb_pedidodet.estadoItem = 54 OR tb_pedidodet.estadoItem = 52)");
                 $sql->execute(["id"=>$id]);
                 $rowCount = $sql->rowCount();
                 
@@ -2782,8 +2782,7 @@
         public function itemMarcado($id,$estado,$io){
             try {
                 $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet 
-                                                        SET nflgOrden =:estado,
-                                                            estadoItem = 54,
+                                                        SET nflgOrden =:estado
                                                             idorden = NULL
                                                         WHERE iditem =:id");
                 $sql->execute(["id" => $id,"estado" => $estado]);

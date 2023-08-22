@@ -39,6 +39,7 @@
                     <input type="hidden" name="codigo_transferencia" id="codigo_transferencia">
                     <input type="hidden" name="id_centi" id="id_centi">
                     <input type="hidden" name="guia" id="guia">
+                    <input type="hidden" name="total_items" id="total_items">
 
                     <div class="barraOpciones primeraBarra" id="barra_notifica">
                         <span>Datos Generales</span>
