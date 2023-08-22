@@ -2847,9 +2847,9 @@
             $titulo = $titulo . " " .$anio[0]. " - " . $orden;
             
             $file = $cabecera['entidad']."_".$prefix.$noc.".pdf";
-            $entrega = $this->calcularDias($cabecera['fentrega']);
+            //$entrega = $this->calcularDias($cabecera['fentrega']);
 
-            $pdf = new PDF($titulo,$condicion,$cabecera['emision'],$cabecera['moneda'],$entrega,
+            $pdf = new PDF($titulo,$condicion,$cabecera['emision'],$cabecera['moneda'],$cabecera['dias'] ." dias",
                             $cabecera['lentrega'],$cabecera['ncotiz'],$cabecera['fentrega'],$cabecera['cpago'],$cabecera['total'],
                             $cabecera['costos'],$cabecera['concepto'],$_SESSION['nombres'],$cabecera['entidad'],$cabecera['ruc_entidad'],
                             $cabecera['direccion_entidad'],$cabecera['telefono_entidad'],$cabecera['correo_entidad'],$cabecera['retencion'],

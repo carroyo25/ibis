@@ -1008,6 +1008,7 @@
                                         <td class="textoCentro">'.$rs['ccodproy'].'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="textoDerecha">'.$rs['cantidad'].'</td>
+                                        <td class="textoDerecha"></td>
                                         <td class="pl5px">'.$rs['cdesprod'].'</td>
                                     </tr>';
                     }

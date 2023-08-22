@@ -390,7 +390,7 @@
 
                 if ($rowCount > 0) {
                     while($rs = $sql->fetch()) {
-                        //$existencia = $rs['ingreso'] +$rs['inventario'];
+                        
                         $existencia = 0;
                         $enviar = $rs['cant_aprob'] - $rs['cant_orden'];
 
@@ -422,7 +422,9 @@
                     }
                 }
 
-                return $salida;
+                return array("items"=>$salida);
+
+
             }catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
@@ -499,7 +501,7 @@
                         "costos"=>$datos[$i]->costos]);
 
                     if ( $datos[$i]->aprobado >= $datos[$i]->cantidad ){
-                        $this->actualizarDetallesPedido($datos[$i]->iditem,$datos[$i]->cantidad);
+                        $this->actualizarDetallesPedido($datos[$i]->iditem,$datos[$i]->cantidad,$datos[$i]->aprobado);
                     }
                 } catch (PDOException $th) {
                     echo $th->getMessage();
@@ -508,14 +510,18 @@
             }
         }
 
-        private function actualizarDetallesPedido($item,$cantidad){
+        private function actualizarDetallesPedido($item,$cantidad,$aprobado){
             try {
+
+                $estado = $cantidad == $aprobado ? 52 : 230;
+
                 $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet 
                                                         SET tb_pedidodet.estadoItem = 52,
                                                             tb_pedidodet.cant_atend = :cantidad
                                                         WHERE tb_pedidodet.iditem =:item");
                 $sql->execute(["item"=>$item,
-                                "cantidad"=>$cantidad]);
+                                "cantidad"=>$cantidad,
+                                "estado"=>$estado]);
 
             } catch (PDOException $th) {
                 echo $th->getMessage();
@@ -539,6 +545,14 @@
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
+            }
+        }
+
+        private function verificarTotalAtendido($pedido) {
+            try {
+                $sql = $this->db->connect()->prepare("");
+            } catch (\Throwable $th) {
+                //throw $th;
             }
         }
 
@@ -636,14 +650,7 @@
             }
         }
 
-        private function verificarTotalAtendido($pedido) {
-            try {
-                $sql = $this->db->connect()->prepare("");
-            } catch (\Throwable $th) {
-                //throw $th;
-            }
-        }
-
+    
         public function generarVistaPreviaGuiaNota($cabecera,$detalles,$proyecto){
             try {
                 require_once("public/formatos/guiaremision.php");
@@ -826,6 +833,19 @@
                     
                     return array("archivo"=>$archivo);
 
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function cantidadItemsPedido($pedido){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT SUM(tb_pedidodet.cant_aprob) 
+                                                        FROM tb_pedidodet 
+                                                        WHERE tb_pedidodet.nflgactivo = 1
+                                                            AND tb_pedidodet.idpedido =:pedido");
+                                                            
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;

@@ -281,9 +281,10 @@
                             <th width="5%">Emisión</th>
                             <th data-idcol="2" class="datafiltro">Concepto</th>
                             <th data-idcol="3" class="datafiltro" width="15%">Area</th>
-                            <th data-idcol="4" class="datafiltro">Centro Costos</th>
+                            <th data-idcol="4" class="datafiltro">Centro </br>Costos</th>
                             <th data-idcol="5" class="datafiltro" width="7%">Codigo</th>
-                            <th width="7%">Cantidad</th>
+                            <th width="7%">Cantidad </br> Aprobada </th>
+                            <th width="7%">Cantidad </br> Atendida</th>
                             <th data-idcol="7" class="datafiltro" >Descripción</th>
                         </tr>
                     </thead>

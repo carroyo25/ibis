@@ -167,7 +167,7 @@ $(function(){
         e.preventDefault();
 
         try {
-            if ($("#codigo_costos").val() == 0) throw "Indique el centro de costos"; 
+            //if ($("#codigo_costos").val() == 0) throw "Indique el centro de costos"; 
 
             $("#esperar").fadeIn();
 
@@ -362,8 +362,6 @@ $(function(){
 
                         $("#pedidos").fadeIn();
                         $("#esperar").fadeOut();
-
-                       
                 },
                 "text"
             );
@@ -377,15 +375,11 @@ $(function(){
     $("#tablaPedidos tbody").on("click","tr", function () {
         $.post(RUTA+"transferencias/items", {indice:$(this).data('indice'),origen:$("#codigo_costos_origen").val()},
             function (data, textStatus, jqXHR) {
-                
-
                 $("#tablaDetalles tbody")
                     .empty()
-                    .append(data);
-
-                    
+                    .append(data.items);
             },
-            "text"
+            "json"
         );
     });
 
@@ -393,6 +387,12 @@ $(function(){
         e.preventDefault();
 
         $(this).toggleClass('semaforoNaranja');
+
+        if ($(this).hasClass('semaforoNaranja')){
+            $(this).attr('data-separado',1);
+        }else {
+            $(this).attr('data-separado',0);
+        }
 
         return false;
     });
@@ -552,11 +552,13 @@ detalles = (flag) =>{
             IDITEM          = $(this).data("iditem"),
             APROBADO        = $(this).data("aprobado"),
             COMPRADO        = $(this).find('td').eq(7).text(),
-            NROPEDIDO       = $(this).find('td').eq(11).text()
+            NROPEDIDO       = $(this).find('td').eq(11).text(),
+            SEPARADO        = $(this).data("separado");
+
     
         item = {};
 
-        if (GRABADO == flag) {
+        if (GRABADO) {
             item['item']         = ITEM;
             item['idprod']       = IDPROD;
             item['origen']       = ORIGEN;
@@ -572,6 +574,7 @@ detalles = (flag) =>{
             item['comprado']     = COMPRADO;
             item['costos']       = COSTOS;
             item['nropedido']    = NROPEDIDO;
+            item['separado']     = SEPARADO;
                 
             DETALLES.push(item);
         }     

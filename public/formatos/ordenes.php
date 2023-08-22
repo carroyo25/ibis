@@ -54,7 +54,6 @@
             }
 
             $fecha = explode("-",$this->fecha);
-             
 
         	$this->SetFillColor(229, 229, 229);
         	$this->Rect(70,24,70,5,"F"); //fondo de mensaje

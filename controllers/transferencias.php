@@ -28,7 +28,7 @@
         }
 
         function items(){
-            echo $this->model->consultarPedidos($_POST['indice'],$_POST['origen']);
+            echo json_encode($this->model->consultarPedidos($_POST['indice'],$_POST['origen']));
         }
 
         function registro() {
