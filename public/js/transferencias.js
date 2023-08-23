@@ -163,11 +163,11 @@ $(function(){
         return false;
     });
 
-    $("#importData").click(function (e) { 
+    /*$("#importData").click(function (e) { 
         e.preventDefault();
 
         try {
-            //if ($("#codigo_costos").val() == 0) throw "Indique el centro de costos"; 
+            if ($("#codigo_costos").val() == 0) throw "Indique el centro de costos"; 
 
             $("#esperar").fadeIn();
 
@@ -186,7 +186,7 @@ $(function(){
         }
         
         return false
-    });
+    });*/
 
     $(".tituloVentana").on("click","a", function (e) {
         e.preventDefault();
@@ -257,7 +257,8 @@ $(function(){
             if (accion == "n") {
                 $.post(RUTA+"transferencias/registro",{cabecera:result,
                                                     detalles:JSON.stringify(detalles(false)),
-                                                    idpedido:pedido},
+                                                    idpedido:pedido,
+                                                    atendidos:suma_atendidos()},
                     function (data, textStatus, jqXHR) {
                         if(data.estado){
                             mostrarMensaje(data.mensaje,"mensaje_correcto");
@@ -350,11 +351,12 @@ $(function(){
         e.preventDefault();
 
         try {
+            if ($("#codigo_aprueba").val() == 0) throw "Elija la persona que aprueba";
             if ($("#codigo_costos_origen").val() == 0) throw "Indique el centro de costos"; 
 
             $("#esperar").fadeIn();
 
-            $.post(RUTA+"transferencias/pedidos", {cc:$("#codigo_costos_origen").val(),pedido:""},
+            $.post(RUTA+"transferencias/pedidos", {cc:$("#codigo_costos_destino").val(),pedido:""},
                 function (data, textStatus, jqXHR) {
                     $("#tablaPedidos tbody")
                         .empty()
@@ -378,6 +380,8 @@ $(function(){
                 $("#tablaDetalles tbody")
                     .empty()
                     .append(data.items);
+
+                $("#total_items").val(data.total_items);
             },
             "json"
         );
@@ -401,7 +405,7 @@ $(function(){
         if(e.which == 13) {
             $("#esperar").fadeIn();
             
-            $.post(RUTA+"transferencias/pedidos", {cc:"%",pedido:$(this).val()},
+            $.post(RUTA+"transferencias/pedidos", {cc:$("#codigo_costos_destino").val(),pedido:$(this).val()},
                 function (data, textStatus, jqXHR) {
                     $("#tablaPedidos tbody")
                         .empty()
@@ -531,6 +535,20 @@ $(function(){
     });
 })
 
+suma_atendidos = () => {
+    let TABLA = $("#tablaDetalles tbody >tr"),
+        suma = 0;
+
+    TABLA.each(function(){
+        cantidad = $(this).find('td').eq(8).children().val();
+
+        if (cantidad != '')
+            suma = parseFloat(cantidad) + suma;
+    });
+
+    return suma;
+}
+
 detalles = (flag) =>{
     DETALLES = [];
 
@@ -558,7 +576,7 @@ detalles = (flag) =>{
     
         item = {};
 
-        if (GRABADO) {
+        if (!GRABADO) {
             item['item']         = ITEM;
             item['idprod']       = IDPROD;
             item['origen']       = ORIGEN;

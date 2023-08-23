@@ -40,6 +40,7 @@
                     <input type="hidden" name="id_centi" id="id_centi">
                     <input type="hidden" name="guia" id="guia">
                     <input type="hidden" name="total_items" id="total_items">
+                    <input type="hidden" name="items_atendidos" id="items_atendidos">
 
                     <div class="barraOpciones primeraBarra" id="barra_notifica">
                         <span>Datos Generales</span>

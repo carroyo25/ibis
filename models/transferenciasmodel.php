@@ -324,14 +324,15 @@
                                                         ( ibis.tb_pedidocab.estadodoc = 54 
                                                             OR ibis.tb_pedidocab.estadodoc = 59 
                                                             OR ibis.tb_pedidocab.estadodoc = 60
-                                                            OR ibis.tb_pedidocab.estadodoc = 62) 
+                                                            OR ibis.tb_pedidocab.estadodoc = 62
+                                                            OR ibis.tb_pedidocab.estadodoc = 230) 
                                                         AND ibis.tb_pedidocab.nflgactivo = 1 
                                                         AND ibis.tb_pedidocab.idtipomov = 37 
-                                                        AND tb_pedidocab.nrodoc LIKE :pedido 
+                                                        AND tb_pedidocab.nrodoc LIKE :pedido
+                                                        AND tb_pedidocab.idcostos = :cc
                                                     ORDER BY
-                                                        ibis.tb_pedidocab.emision 
-                                                        AND ibis.tb_proyectos.ccodproy DESC");
-                $sql->execute(["pedido"=>$p]);
+                                                        ibis.tb_pedidocab.emision DESC");
+                $sql->execute(["pedido"=>$p,"cc"=>$cc]);
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0) {
@@ -393,6 +394,7 @@
                         
                         $existencia = 0;
                         $enviar = $rs['cant_aprob'] - $rs['cant_orden'];
+                        $pedido = $rs['idpedido'];
 
                         $salida .= '<tr data-iditem="'.$rs['iditem'].'" 
                                         data-aprobado="'.$rs['cant_aprob'].'" 
@@ -422,7 +424,8 @@
                     }
                 }
 
-                return array("items"=>$salida);
+                return array("items"=>$salida,
+                            "total_items"=>$this->cantidadItemsPedido($pedido));
 
 
             }catch (PDOException $th) {
@@ -431,7 +434,7 @@
             }
         }
 
-        public function insertarTransferencia($cabecera,$detalles,$pedido){
+        public function insertarTransferencia($cabecera,$detalles,$pedido,$atendidos){
             try {
                 $mensaje = "Error al grabar el registro";
                 $sw = false;
@@ -459,11 +462,12 @@
                     $sw = true;
 
                     $indice = $this->lastInsertId("SELECT MAX(idreg) AS id FROM alm_transfercab");
+                    
                     $this->insertarDetalles($indice,$detalles);
 
-                    if ( $this->verificarAtendidos($pedido) == 0 ){
-                       $this->actualizarCabeceraPedido($pedido);
-                    }
+                    $estado = $atendidos == $cabecera['total_items'] ? 52:230;
+
+                    $this->actualizarCabeceraPedido($pedido,$estado);
                 }
 
                 return array("mensaje"=>$mensaje,
@@ -500,7 +504,7 @@
                         "pedido"=>$datos[$i]->pedido,
                         "costos"=>$datos[$i]->costos]);
 
-                    if ( $datos[$i]->aprobado >= $datos[$i]->cantidad ){
+                    if ( $datos[$i]->cantidad != 0 ){
                         $this->actualizarDetallesPedido($datos[$i]->iditem,$datos[$i]->cantidad,$datos[$i]->aprobado);
                     }
                 } catch (PDOException $th) {
@@ -516,7 +520,7 @@
                 $estado = $cantidad == $aprobado ? 52 : 230;
 
                 $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet 
-                                                        SET tb_pedidodet.estadoItem = 52,
+                                                        SET tb_pedidodet.estadoItem = :estado,
                                                             tb_pedidodet.cant_atend = :cantidad
                                                         WHERE tb_pedidodet.iditem =:item");
                 $sql->execute(["item"=>$item,
@@ -548,20 +552,13 @@
             }
         }
 
-        private function verificarTotalAtendido($pedido) {
-            try {
-                $sql = $this->db->connect()->prepare("");
-            } catch (\Throwable $th) {
-                //throw $th;
-            }
-        }
-
-        private function actualizarCabeceraPedido($pedido){
+        private function actualizarCabeceraPedido($pedido,$estado){
             try {
                 $sql = $this->db->connect()->prepare("UPDATE tb_pedidocab 
-                                                        SET tb_pedidocab.estadodoc = 52
+                                                        SET tb_pedidocab.estadodoc = :estado
                                                         WHERE tb_pedidocab.idreg=:pedido");
-                $sql->execute(["pedido"=>$pedido]);
+
+                $sql->execute(["pedido"=>$pedido,"estado"=>$estado]);
 
             } catch (PDOException $th) {
                 echo $th->getMessage();
@@ -649,7 +646,6 @@
                 return false;
             }
         }
-
     
         public function generarVistaPreviaGuiaNota($cabecera,$detalles,$proyecto){
             try {
@@ -841,10 +837,16 @@
 
         private function cantidadItemsPedido($pedido){
             try {
-                $sql = $this->db->connect()->prepare("SELECT SUM(tb_pedidodet.cant_aprob) 
+                $sql = $this->db->connect()->prepare("SELECT SUM(tb_pedidodet.cant_aprob) AS total_items
                                                         FROM tb_pedidodet 
                                                         WHERE tb_pedidodet.nflgactivo = 1
                                                             AND tb_pedidodet.idpedido =:pedido");
+                                                        
+                $sql->execute(["pedido"=>$pedido]);
+
+                $result = $sql->fetchAll();
+
+                return $result[0]['total_items'];
                                                             
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
