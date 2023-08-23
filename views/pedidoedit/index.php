@@ -135,6 +135,7 @@
                                     <th width="20%">Especificaciones</th>
                                     <th>Nro. Parte</th>
                                     <th>Bien/Activo</th>
+                                    <th width="6%">Atendido</br>Almacen</th>
                                     <th>...</th>
                                     <th>...</th>
                                     <th>...</th>

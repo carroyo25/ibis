@@ -1890,7 +1890,7 @@
                                                 WHERE
                                                     tb_pedidodet.idpedido = :id 
                                                     AND tb_pedidodet.nflgActivo = 1
-                                                    AND (tb_pedidodet.estadoItem = 54 OR tb_pedidodet.estadoItem = 52)");
+                                                    AND (tb_pedidodet.estadoItem = 54 OR tb_pedidodet.estadoItem = 230)");
                 $sql->execute(["id"=>$id]);
                 $rowCount = $sql->rowCount();
                 

@@ -156,6 +156,7 @@
                 $sql=$this->db->connect()->prepare("SELECT
                                                         tb_pedidodet.iditem,
                                                         tb_pedidodet.idpedido,
+                                                        tb_pedidodet.cant_atend,
                                                         tb_pedidodet.idprod,
                                                         tb_pedidodet.idtipo,
                                                         tb_pedidodet.estadoItem,
@@ -208,6 +209,14 @@
                                         <td class="pl20px"><textarea>'.$rs['observaciones'].'</textarea></td>
                                         <td class="textoCentro">'.$rs['nroparte'].'</td>
                                         <td class="textoCentro">'.$rs['cregistro'].'</td>
+                                        <td>
+                                            <input type="number" 
+                                                        step="any" 
+                                                        placeholder="0.00" 
+                                                        onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"
+                                                        onclick="this.select()" 
+                                                        value="'.$rs['cant_atend'].'">
+                                        </td>
                                         <td class="textoCentro"><a href="'.$rs['iditem'].'" title="Cambiar Item" data-accion="cambiar"><i class="fas fa-exchange-alt"></i></a></td>
                                         <td class="textoCentro"><a href="'.$rs['iditem'].'" title="Liberar Item" data-accion="liberar"><i class="fas fa-wrench"></i></a></td>
                                         <td class="textoCentro"><a href="'.$rs['iditem'].'" title="Agregar Item debajo" data-accion="agregar"><i class="far fa-calendar-plus"></i></a></td>
@@ -408,6 +417,7 @@
                                                                          idtipo=:tipo,
                                                                          unid=:und,
                                                                          cant_pedida=:cant,
+                                                                         cant_atend=:atendido,
                                                                          estadoItem=:est,
                                                                          tipoAten=:aten,
                                                                          verificacion=:ver,
@@ -423,6 +433,7 @@
                             "tipo"=>$tipo,
                             "und"=>$details[$i]->unidad,
                             "cant"=>$details[$i]->cantidad,
+                            "atendido"=>$details[$i]->atendida,
                             "est"=>$estado,
                             "aten"=>$atencion,
                             "ver"=>$codigo,
@@ -441,16 +452,18 @@
                 }else{
                     try {
                         $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet SET 
-                                                                        cant_pedida = :cant, 
-                                                                        nflgqaqc = :qaqc,
-                                                                        tipoAten = :aten,
-                                                                        observaciones=:espec,
-                                                                        nroparte=:parte,
-                                                                        nregistro=:nreg,
-                                                                        idprod=:prod
+                                                                        cant_pedida     =:cant,
+                                                                        cant_atend      =:atendido, 
+                                                                        nflgqaqc        = :qaqc,
+                                                                        tipoAten        = :aten,
+                                                                        observaciones   =:espec,
+                                                                        nroparte        =:parte,
+                                                                        nregistro       =:nreg,
+                                                                        idprod          =:prod
                                                                 WHERE iditem = :id");
                         
                         $sql->execute(["cant"=>$details[$i]->cantidad,
+                                        "atendido"=>$details[$i]->atendida,
                                         "qaqc"=>$details[$i]->calidad,
                                         "aten"=>$atencion,
                                         "espec"=>$details[$i]->especifica,
@@ -485,8 +498,5 @@
                 return false;
             }
         }
-
-        
-
     }    
 ?>

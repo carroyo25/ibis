@@ -163,31 +163,6 @@ $(function(){
         return false;
     });
 
-    /*$("#importData").click(function (e) { 
-        e.preventDefault();
-
-        try {
-            if ($("#codigo_costos").val() == 0) throw "Indique el centro de costos"; 
-
-            $("#esperar").fadeIn();
-
-            $.post(RUTA+"transferencias/existencias", {cc:$("#codigo_costos").val(),codigo:'',descripcion:''},
-                function (data, textStatus, jqXHR) {
-                    $("#tablaModulos tbody")
-                        .empty()
-                        .append(data);
-                        $("#busqueda").fadeIn();
-                        $("#esperar").fadeOut();
-                },
-                "text"
-            );
-        } catch (error) {
-            mostrarMensaje(error,"mensaje_error");
-        }
-        
-        return false
-    });*/
-
     $(".tituloVentana").on("click","a", function (e) {
         e.preventDefault();
 

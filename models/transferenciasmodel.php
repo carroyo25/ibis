@@ -385,7 +385,7 @@
                                                     tb_pedidodet.idpedido = :indice
                                                     AND tb_pedidodet.nflgActivo = 1
                                                     AND tb_pedidodet.cant_orden != tb_pedidodet.cant_aprob
-                                                    AND tb_pedidodet.estadoItem = 54");
+                                                    AND ( tb_pedidodet.estadoItem = 54 OR tb_pedidodet.estadoItem = 230 ");
                 $sql -> execute(['indice'=>$indice]);
                 $rowCount = $sql->rowCount();
 
@@ -465,7 +465,7 @@
                     
                     $this->insertarDetalles($indice,$detalles);
 
-                    $estado = $atendidos == $cabecera['total_items'] ? 52:230;
+                    $estado = $atendidos == $cabecera['total_items'] ? 52:54;
 
                     $this->actualizarCabeceraPedido($pedido,$estado);
                 }

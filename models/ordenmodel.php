@@ -110,67 +110,63 @@
                 $salida = "";
                 $sql = $this->db->connect()->prepare("SELECT
                                                         tb_pedidodet.idpedido,
-                                                        REPLACE(FORMAT(tb_pedidodet.cant_aprob, 2),',','') AS cantidad,
-                                                        REPLACE(FORMAT(tb_pedidodet.cant_resto, 2),',','') AS saldo,
-                                                        FORMAT(tb_pedidodet.precio, 2) AS precio,
-                                                        REPLACE(FORMAT(tb_pedidodet.cant_pedida,2),',','') AS cantidad_pedida,
-                                                        REPLACE(FORMAT(tb_pedidodet.cant_atend,2),',','') AS cantidad_almacen,
+                                                        tb_pedidodet.iditem,
+                                                        LPAD( tb_pedidocab.nrodoc, 6, 0 ) AS nrodoc,
+                                                        REPLACE ( FORMAT( tb_pedidodet.cant_aprob, 2 ), ',', '' ) AS cantidad,
+                                                        REPLACE ( FORMAT( tb_pedidodet.cant_resto, 2 ), ',', '' ) AS saldo,
+                                                        FORMAT( tb_pedidodet.precio, 2 ) AS precio,
+                                                        REPLACE ( FORMAT( tb_pedidodet.cant_pedida, 2 ), ',', '' ) AS cantidad_pedida,
+                                                        IF (ISNULL(SUM( alm_transferdet.ncanti)),0,SUM( alm_transferdet.ncanti)) AS atendido_almacen,
                                                         tb_pedidodet.igv,
+                                                        tb_proyectos.ccodproy,
                                                         tb_pedidodet.cant_aprob,
-                                                        FORMAT(tb_pedidodet.total, 2) AS total,
+                                                        FORMAT( tb_pedidodet.total, 2 ) AS total,
                                                         tb_pedidodet.estadoItem,
-                                                        UPPER(cm_producto.cdesprod) AS cdesprod,
-                                                        UPPER(tb_pedidodet.observaciones) as detalle,
+                                                        UPPER( cm_producto.cdesprod ) AS cdesprod,
+                                                        UPPER( tb_pedidodet.observaciones ) AS detalle,
                                                         cm_producto.ccodprod,
                                                         cm_producto.id_cprod,
                                                         tb_unimed.ncodmed,
                                                         tb_unimed.cabrevia AS unidad,
-                                                        UPPER(tb_proyectos.cdesproy) AS costos,
-                                                        tb_proyectos.ccodproy,
+                                                        UPPER( tb_proyectos.cdesproy ) AS costos,
                                                         tb_area.ncodarea,
-                                                        UPPER(tb_area.cdesarea) AS area,
-                                                        tb_pedidodet.iditem,
+                                                        UPPER( tb_area.cdesarea ) AS area,
                                                         tb_pedidodet.idcostos,
                                                         tb_pedidodet.nroparte,
                                                         tb_pedidodet.nregistro,
                                                         tb_pedidodet.idarea,
                                                         tb_pedidocab.idreg,
-                                                        LPAD(tb_pedidocab.nrodoc,6,0) AS nrodoc,
                                                         tb_pedidocab.emision,
-                                                        UPPER(tb_pedidocab.concepto) AS concepto,
+                                                        UPPER( tb_pedidocab.concepto ) AS concepto,
                                                         tb_pedidodet.entidad,
                                                         tb_pedidodet.total AS total_numero,
                                                         tb_equipmtto.cregistro 
                                                     FROM
-                                                        tb_costusu
-                                                    INNER JOIN tb_pedidodet ON tb_costusu.ncodproy = tb_pedidodet.idcostos
-                                                    INNER JOIN cm_producto ON tb_pedidodet.idprod = cm_producto.id_cprod
-                                                    INNER JOIN tb_unimed ON tb_pedidodet.unid = tb_unimed.ncodmed
-                                                    INNER JOIN tb_proyectos ON tb_pedidodet.idcostos = tb_proyectos.nidreg
-                                                    INNER JOIN tb_area ON tb_pedidodet.idarea = tb_area.ncodarea
-                                                    INNER JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
-                                                    LEFT JOIN tb_equipmtto ON tb_pedidodet.nregistro = tb_equipmtto.idreg 
+                                                        tb_pedidodet
+                                                        INNER JOIN cm_producto ON tb_pedidodet.idprod = cm_producto.id_cprod
+                                                        INNER JOIN tb_unimed ON tb_pedidodet.unid = tb_unimed.ncodmed
+                                                        INNER JOIN tb_proyectos ON tb_pedidodet.idcostos = tb_proyectos.nidreg
+                                                        INNER JOIN tb_area ON tb_pedidodet.idarea = tb_area.ncodarea
+                                                        INNER JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
+                                                        LEFT JOIN tb_equipmtto ON tb_pedidodet.nregistro = tb_equipmtto.idreg
+                                                        LEFT JOIN alm_transferdet ON tb_pedidodet.iditem = alm_transferdet.iddetped 
                                                     WHERE
-                                                        tb_costusu.nflgactivo = 1
-                                                    AND tb_costusu.id_cuser = :user
-                                                    AND tb_pedidodet.idasigna = :user_asigna
-                                                    AND tb_pedidodet.cant_aprob <> tb_pedidodet.cant_orden
-                                                    AND ( tb_pedidodet.estadoItem = 54 OR tb_pedidodet.estadoItem = 52 )
-                                                    AND tb_pedidodet.nflgActivo = 1");
+                                                        tb_pedidodet.nflgActivo = 1 
+                                                        AND tb_pedidodet.idasigna = :user_asigna 
+                                                        AND tb_pedidodet.cant_aprob <> tb_pedidodet.cant_orden 
+                                                        AND tb_pedidodet.estadoItem = 54 
+                                                        AND tb_pedidodet.nflgActivo = 1 
+                                                    GROUP BY
+                                                        tb_pedidodet.iditem");
                 
                 //AND ISNULL(tb_pedidodet.idorden)
                 //se cambia el 58 para llama los items directo con aprobacion
                 
-                $sql->execute(["user"=>$_SESSION['iduser'],
-                                "user_asigna"=>$_SESSION['iduser']]);
+                $sql->execute(["user_asigna"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()) {
-
-                        //hace los cálculos de los saldos 
-                        //$cantidad = $this->obtenerCantidades($rs['idpedido'],$rs['iditem']); 
-                        //$cant = $cantidad == null  ? $rs['cantidad_pedida'] : $rs['cantidad_pedida']-$cantidad;
 
                         $cant = $rs['estadoItem'] == 54  ? $rs['cantidad_pedida'] : $rs['cantidad_almacen'];
 
@@ -196,6 +192,7 @@
                                         <td class="textoCentro">'.$rs['ccodproy'].'</td>
                                         <td class="textoCentro" data-codigo="'.$rs['id_cprod'].'">'.$rs['ccodprod'].'</td>
                                         <td class="textoDerecha">'.$cant.'</td>
+                                        <td class="textoDerecha">'.$rs['atendido_almacen'].'</td>
                                         <td class="pl5px">'.$rs['cdesprod'].'</td>
                                     </tr>';
                     }

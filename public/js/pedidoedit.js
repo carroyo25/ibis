@@ -276,6 +276,8 @@ $(function(){
 
     $("#save").click(function (e) { 
         e.preventDefault();
+
+        //console.log(itemsSave())
         
         let result = {};
 
@@ -389,13 +391,15 @@ itemsSave = () =>{
             ESPECIFICA  = $(this).find('td').eq(6).children().val(),
             NROPARTE    = $(this).find('td').eq(7).text(),
             REGISTRO    = $(this).data('registro'),
-            REGISTEXT   = $(this).find('td').eq(8).text();
+            REGISTEXT   = $(this).find('td').eq(8).text(),
+            ATENDIDA    = $(this).find('td').eq(9).children().val();
 
         item= {};
        
         item['idprod']      = IDPROD;
         item['unidad']      = UNIDAD;
         item['cantidad']    = CANTIDAD;
+        item['atendida']    = ATENDIDA;
         item['nroparte']    = NROPARTE;
         item['itempedido']  = IDX;
         item['calidad']     = CALIDAD;
@@ -403,7 +407,6 @@ itemsSave = () =>{
         item['estado']      = ESTADO;
         item['registro']    = REGISTRO;
         item['registext']   = REGISTEXT;
-        item['atendida']    = 0;
         item['observac']    = "";
 
         DATA.push(item);
