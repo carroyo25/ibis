@@ -123,7 +123,7 @@
                                                     alm_transferdet.cobserva,
                                                     alm_transferdet.idPedido,
                                                     cm_producto.ccodprod,
-                                                    UPPER(cm_producto.cdesprod) AS producto,
+                                                    UPPER(CONCAT_WS(' ',cm_producto.cdesprod,tb_pedidodet.observaciones)) AS producto,
                                                     tb_pedidodet.cant_aprob,
                                                     tb_pedidodet.cant_orden,
                                                     alm_transferdet.nflgactivo,
@@ -363,29 +363,34 @@
                 $item = 1;
 
                 $sql = $this->db->connect()->prepare("SELECT
-                                                    tb_pedidodet.iditem,
-                                                    tb_pedidodet.idpedido,
-                                                    tb_pedidodet.idprod,
-                                                    tb_pedidodet.cant_pedida,
-                                                    tb_pedidodet.cant_orden,
-                                                    tb_pedidodet.cant_aprob,
-                                                    tb_pedidodet.cant_atend,
-                                                    cm_producto.ccodprod,
-                                                    UPPER(cm_producto.cdesprod) AS cdesprod,
-                                                    tb_unimed.cabrevia,
-                                                    tb_pedidocab.idreg,
-                                                    tb_pedidocab.idcostos,
-                                                    LPAD(tb_pedidocab.nrodoc,6,0) AS nrodoc
-                                                FROM
-                                                    tb_pedidodet
-                                                    INNER JOIN cm_producto ON tb_pedidodet.idprod = cm_producto.id_cprod
-                                                    INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
-                                                    INNER JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg 
-                                                WHERE
-                                                    tb_pedidodet.idpedido = :indice
-                                                    AND tb_pedidodet.nflgActivo = 1
-                                                    AND tb_pedidodet.cant_orden != tb_pedidodet.cant_aprob
-                                                    AND ( tb_pedidodet.estadoItem = 54 OR tb_pedidodet.estadoItem = 230 ");
+                                                        tb_pedidodet.iditem,
+                                                        tb_pedidodet.idpedido,
+                                                        tb_pedidodet.idprod,
+                                                        tb_pedidodet.cant_pedida,
+                                                        tb_pedidodet.cant_orden,
+                                                        tb_pedidodet.cant_aprob,
+                                                        tb_pedidodet.cant_atend,
+                                                        cm_producto.ccodprod,
+                                                        UPPER(CONCAT_WS(' ',cm_producto.cdesprod,tb_pedidodet.observaciones)) AS cdesprod,
+                                                        tb_unimed.cabrevia,
+                                                        tb_pedidocab.idreg,
+                                                        tb_pedidocab.idcostos,
+                                                        LPAD( tb_pedidocab.nrodoc, 6, 0 ) AS nrodoc,
+                                                        SUM( alm_transferdet.ncanti ) AS total_atendido,
+                                                        tb_pedidodet.estadoItem 
+                                                    FROM
+                                                        tb_pedidodet
+                                                        INNER JOIN cm_producto ON tb_pedidodet.idprod = cm_producto.id_cprod
+                                                        INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                        INNER JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
+                                                        LEFT JOIN alm_transferdet ON tb_pedidodet.iditem = alm_transferdet.iddetped 
+                                                    WHERE
+                                                        tb_pedidodet.idpedido = :indice 
+                                                        AND tb_pedidodet.nflgActivo = 1 
+                                                        AND tb_pedidodet.cant_orden <> tb_pedidodet.cant_aprob 
+                                                        AND ( tb_pedidodet.estadoItem = 54 OR tb_pedidodet.estadoItem = 230 ) 
+                                                    GROUP BY
+                                                        tb_pedidodet.iditem");
                 $sql -> execute(['indice'=>$indice]);
                 $rowCount = $sql->rowCount();
 
@@ -412,7 +417,7 @@
                                         <td class="pl20px">'.$rs['cdesprod'].'</td>
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                         <td class="textoDerecha">'.$rs['cant_aprob'].'</td>
-                                        <td class="textoDerecha">'.$rs['cant_orden'].'</td>
+                                        <td class="textoDerecha">'.$rs['total_atendido'].'</td>
                                         <td><input type="number" step="any" placeholder="0.00" 
                                                             onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)" 
                                                             onclick="this.select()">
@@ -505,7 +510,7 @@
                         "costos"=>$datos[$i]->costos]);
 
                     if ( $datos[$i]->cantidad != 0 ){
-                        $this->actualizarDetallesPedido($datos[$i]->iditem,$datos[$i]->cantidad,$datos[$i]->aprobado);
+                        $this->actualizarDetallesPedido($datos[$i]->iditem,$datos[$i]->cantidad,$datos[$i]->aprobado,$datos[$i]->atendido);
                     }
                 } catch (PDOException $th) {
                     echo $th->getMessage();
@@ -514,10 +519,10 @@
             }
         }
 
-        private function actualizarDetallesPedido($item,$cantidad,$aprobado){
+        private function actualizarDetallesPedido($item,$cantidad,$aprobado,$atendido){
             try {
-
-                $estado = $cantidad == $aprobado ? 52 : 230;
+                $total_atendido_almacenes = $cantidad + $atendido;
+                $estado = $total_atendido_almacenes == $aprobado ? 52 : 230;
 
                 $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet 
                                                         SET tb_pedidodet.estadoItem = :estado,

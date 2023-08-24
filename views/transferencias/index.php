@@ -143,13 +143,13 @@
                                     <th width="4%">...</th>
                                     <th class="">Item</th>
                                     <th class="">Codigo</th>
-                                    <th class="">Descripcion</th>
+                                    <th width="45%">Descripcion</th>
                                     <th class="">Unidad</th>
-                                    <th class="">Cantidad</br>Aprobada</th>
-                                    <th class="">Cantidad</br>Comprada</th>
+                                    <th width="7%" class="">Cantidad</br>Aprobada</th>
+                                    <th width="7%">Cantidad</br>Atendida</th>
                                     <th width="7%">Cantidad por</br>Atender</th>
                                     <th width="7%">Stock</th>
-                                    <th class="">Observaciones</th>
+                                    <th width="20%" class="">Observaciones</th>
                                     <th class="">Pedido</th>
                                 </tr>
                             </thead>

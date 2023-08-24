@@ -188,11 +188,13 @@ $(function(){
 
     $("#tablaDetalles tbody").on('blur','input', function (e) {
             try {
-                let ingreso = parseInt($(this).parent().parent().find("td").eq(7).children().val());
-                let stock = parseInt($(this).parent().parent().find("td").eq(8).text());
+                let ingreso     = parseInt($(this).parent().parent().find("td").eq(8).children().val()),
+                    stock       = parseInt($(this).parent().parent().find("td").eq(9).text()),
+                    atendida    = parseInt($(this).parent().parent().find("td").eq(7).text()),
+                    aprobado    = parseInt($(this).parent().parent().find("td").eq(6).text());
 
-                if(ingreso > stock) {
-                    mostrarMensaje('La cantidad ingresada, es mayor al stock','mensaje_error')
+                if( (ingreso + atendida) > aprobado ) {
+                    mostrarMensaje('La cantidad ingresada, es mayor a lo aprobado','mensaje_error')
                     return false;
                 }
 
@@ -205,6 +207,12 @@ $(function(){
         if (e.which == 13) {
             $('#tablaDetalles tbody tr:last').find('td').eq(5).children().focus();
         }
+    });
+
+    $("#tablaDetalles tbody").on('click','a', function (e) {
+        e.preventDefault();
+
+        return false;
     });
 
     $(".tituloDocumento").on("click","#closeDocument", function (e) {
@@ -462,7 +470,7 @@ $(function(){
 
     $("#printDocument").click(function (e) { 
         e.preventDefault();
-        
+
         try {
             let result = {};
 
@@ -544,9 +552,10 @@ detalles = (flag) =>{
             PEDIDO          = $(this).data("pedido"),
             IDITEM          = $(this).data("iditem"),
             APROBADO        = $(this).data("aprobado"),
-            COMPRADO        = $(this).find('td').eq(7).text(),
+            COMPRADO        = 0,
             NROPEDIDO       = $(this).find('td').eq(11).text(),
-            SEPARADO        = $(this).data("separado");
+            SEPARADO        = $(this).data("separado"),
+            ATENDIDO        = $(this).find('td').eq(7).text();
 
     
         item = {};
@@ -568,6 +577,7 @@ detalles = (flag) =>{
             item['costos']       = COSTOS;
             item['nropedido']    = NROPEDIDO;
             item['separado']     = SEPARADO;
+            item['atendido']     = ATENDIDO;
                 
             DETALLES.push(item);
         }     
