@@ -453,9 +453,10 @@
                     try {
                         $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet SET 
                                                                         cant_pedida     =:cant,
+                                                                        cant_aprob      =:aprob,
                                                                         cant_atend      =:atendido, 
-                                                                        nflgqaqc        = :qaqc,
-                                                                        tipoAten        = :aten,
+                                                                        nflgqaqc        =:qaqc,
+                                                                        tipoAten        =:aten,
                                                                         observaciones   =:espec,
                                                                         nroparte        =:parte,
                                                                         nregistro       =:nreg,
@@ -470,7 +471,8 @@
                                         "parte"=>$details[$i]->nroparte,
                                         "nreg"=>$details[$i]->registro,
                                         "prod"=>$details[$i]->idprod,
-                                        "id"=>$details[$i]->itempedido]);
+                                        "id"=>$details[$i]->itempedido,
+                                        "aprob"=>$details[$i]->cantidad]);
                         $rowCount = $sql->rowCount();
                     } catch (PDOException $th) {
                         echo $th->getMessage();

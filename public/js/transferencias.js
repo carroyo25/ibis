@@ -187,20 +187,20 @@ $(function(){
     });
 
     $("#tablaDetalles tbody").on('blur','input', function (e) {
-            try {
-                let ingreso     = parseInt($(this).parent().parent().find("td").eq(8).children().val()),
-                    stock       = parseInt($(this).parent().parent().find("td").eq(9).text()),
-                    atendida    = parseInt($(this).parent().parent().find("td").eq(7).text()),
-                    aprobado    = parseInt($(this).parent().parent().find("td").eq(6).text());
+        let ingreso     = parseInt($(this).parent().parent().find("td").eq(8).children().val()),
+            atendida    = parseInt($(this).parent().parent().find("td").eq(7).text()),
+            aprobado    = parseInt($(this).parent().parent().find("td").eq(6).text()),
+            
+            registrado = ingreso+atendida;
 
-                if( (ingreso + atendida) > aprobado ) {
-                    mostrarMensaje('La cantidad ingresada, es mayor a lo aprobado','mensaje_error')
-                    return false;
-                }
+    
 
-            } catch (error) {
-                
-            }
+        if (registrado > aprobado ) {
+            mostrarMensaje('La cantidad ingresada, es mayor a lo aprobado','mensaje_error')
+            return false;
+        }
+
+        console.log(registrado)
     });
 
     $("#tablaDetalles tbody").on('keypress','input', function (e) {
@@ -238,6 +238,9 @@ $(function(){
             if  ( checkCantTables($("#tablaDetalles tbody > tr"),6) ) throw "Revise las cantidades ingresadas";
 
             if (accion == "n") {
+                
+                $("#esperar").css("opacity","1").fadeIn();
+
                 $.post(RUTA+"transferencias/registro",{cabecera:result,
                                                     detalles:JSON.stringify(detalles(false)),
                                                     idpedido:pedido,
@@ -250,6 +253,10 @@ $(function(){
                         }else{
                             mostrarMensaje(data.mensaje,"mensaje_error");
                         }
+
+                        $("#esperar").css("opacity","0").fadeOut();
+
+                        accion = "d";
                     },
                     "json"
                 );

@@ -307,7 +307,7 @@ $(function(){
                 codigo      = $(this).children('td:eq(5)').text(),
                 request     = $(this).data("pedido"),
                 nroreq      = $(this).children('td:eq(0)').text(),
-                descrip     = $(this).children('td:eq(7)').text(),
+                descrip     = $(this).children('td:eq(8)').text(),
                 cantidad    = $(this).data("cantidad"),
                 unidad      = $(this).data("unidad"),
                 detalle     = $(this).data("detalle"),
@@ -329,7 +329,7 @@ $(function(){
                                 data-cant       ="${cantidad}"
                                 data-refpedi    ="${request}"
                                 data-nro_parte  ="${nro_parte}"
-                                data-descrip ="${descrip}">
+                                data-descrip    ="${descrip}">
                             <td class="textoCentro"><a href="#"><i class="fas fa-ban"></i></a></td>
                             <td class="textoCentro">${nFilas}</td>
                             <td class="textoCentro consultaPrecios">${codigo}</td>

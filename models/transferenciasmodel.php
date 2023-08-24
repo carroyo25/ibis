@@ -369,14 +369,14 @@
                                                         tb_pedidodet.cant_pedida,
                                                         tb_pedidodet.cant_orden,
                                                         tb_pedidodet.cant_aprob,
-                                                        tb_pedidodet.cant_atend,
+                                                        IF(ISNULL(tb_pedidodet.cant_atend),0,tb_pedidodet.cant_atend) AS cant_atend,
                                                         cm_producto.ccodprod,
                                                         UPPER(CONCAT_WS(' ',cm_producto.cdesprod,tb_pedidodet.observaciones)) AS cdesprod,
                                                         tb_unimed.cabrevia,
                                                         tb_pedidocab.idreg,
                                                         tb_pedidocab.idcostos,
                                                         LPAD( tb_pedidocab.nrodoc, 6, 0 ) AS nrodoc,
-                                                        SUM( alm_transferdet.ncanti ) AS total_atendido,
+                                                        IF(ISNULL( SUM( alm_transferdet.ncanti ) ),0,SUM( alm_transferdet.ncanti )) AS total_atendido,
                                                         tb_pedidodet.estadoItem 
                                                     FROM
                                                         tb_pedidodet
@@ -430,7 +430,7 @@
                 }
 
                 return array("items"=>$salida,
-                            "total_items"=>$this->cantidadItemsPedido($pedido));
+                            "total_items"=>$this->cantidadItemsPedido($indice));
 
 
             }catch (PDOException $th) {

@@ -154,7 +154,7 @@
                                                         tb_pedidodet.nflgActivo = 1 
                                                         AND tb_pedidodet.idasigna = :user_asigna 
                                                         AND tb_pedidodet.cant_aprob <> tb_pedidodet.cant_orden 
-                                                        AND tb_pedidodet.estadoItem = 54 
+                                                        AND ( tb_pedidodet.estadoItem = 230 OR tb_pedidodet.estadoItem = 54)
                                                         AND tb_pedidodet.nflgActivo = 1 
                                                     GROUP BY
                                                         tb_pedidodet.iditem");
@@ -168,7 +168,7 @@
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()) {
 
-                        $cant = $rs['estadoItem'] == 54  ? $rs['cantidad_pedida'] : $rs['cantidad_almacen'];
+                        $cant = $rs['cantidad'] -  $rs['atendido_almacen'];
 
                         //validar para las compras parciales
                        
@@ -191,7 +191,7 @@
                                         <td class="pl5px">'.$rs['area'].'</td>
                                         <td class="textoCentro">'.$rs['ccodproy'].'</td>
                                         <td class="textoCentro" data-codigo="'.$rs['id_cprod'].'">'.$rs['ccodprod'].'</td>
-                                        <td class="textoDerecha">'.$cant.'</td>
+                                        <td class="textoDerecha">'.$rs['cantidad'].'</td>
                                         <td class="textoDerecha">'.$rs['atendido_almacen'].'</td>
                                         <td class="pl5px">'.$rs['cdesprod'].'</td>
                                     </tr>';
@@ -970,7 +970,7 @@
                                                     AND tb_pedidodet.idasigna = :user_asigna
                                                     AND tb_pedidodet.cant_aprob <> tb_pedidodet.cant_orden
                                                     AND tb_pedidodet.idcostos LIKE :cc
-                                                    AND tb_pedidodet.estadoItem = 54");
+                                                    AND (tb_pedidodet.estadoItem = 54 OR tb_pedidodet.estadoItem = 230)");
                 
                 //AND ISNULL(tb_pedidodet.idorden)
                 //se cambia el 58 para llama los items directo con aprobacion
