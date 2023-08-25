@@ -232,16 +232,17 @@
                 $mail->addAddress('carroyo@sepcon.net','Cesar Arroyo');
                 $mail->addAddress('mvirreira@sepcon.net','Mauricio Virreira');
                 $mail->addAddress('jpaniagua@sepcon.net','Jose Paniagua');
+                $mail->addAddress('asolari@sepcon.net','Alberto Solari');
                 
                 $mail->Subject = $subject;
-                    $mail->msgHTML(utf8_decode($messaje));
+                $mail->msgHTML(utf8_decode($messaje));
    
-                    if (!$mail->send()) {
-                        return array("mensaje"=>"Hubo un error, en el envio",
-                                    "clase"=>"mensaje_error");
-                    }
+                if (!$mail->send()) {
+                    return array("mensaje"=>"Hubo un error, en el envio",
+                                "clase"=>"mensaje_error");
+                }
                         
-                    $mail->clearAddresses();
+                $mail->clearAddresses();
 
 
             } catch (PDOException $th) {

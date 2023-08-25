@@ -132,7 +132,7 @@
                                 </div>
                                 <div class="column2_46">
                                     <label for="fentrega">Fec.Entrega :</label>
-                                    <input type="date" name="fentrega" id="fentrega" class="cerrarLista" min="<?php echo date("Y-m-d")?>" readonly>
+                                    <input type="date" name="fentrega" id="fentrega" class="cerrarLista" min="<?php echo date("Y-m-d")?>" value="<?php echo $this->fechaOrden?>" readonly>
                                 </div>
                             </div>
                             <div class="column4_55">
@@ -231,7 +231,7 @@
                                     <th>Und.</th>
                                     <th width="7%">Cant.</th>
                                     <th width="10%">Precio</th>
-                                    <th width="10%">Total</th>
+                                    <th width="7%">Total</th>
                                     <th>Nro.</br>Parte</th>
                                     <th width="7%">Pedido</th>
                                     <th width="25%">Detalle Item</th>
@@ -533,9 +533,9 @@
                     <th rowspan="2" data-idcol="4">Area</th>
                     <th rowspan="2" data-idcol="5" class="datafiltro">Proveedor</th>
                     <th rowspan="2" class="datafiltro" data-idcol="6">Usuario</th>
-                    <th rowspan="2">Total</th>
+                    <th width="5%" rowspan="2">Total</th>
                     <th rowspan="2">Atencion</th>
-                    <th colspan="3" width="16%">Firmas</th>
+                    <th width="10%" colspan="3" width="16%">Firmas</th>
                     <th rowspan="2" width="3%">Comentarios</th>
                     <tr>
                         <th>Procura</th>

@@ -393,13 +393,13 @@
 
         public function modificarOrden($cabecera,$detalles,$comentarios,$usuario){
             try {
-                $entrega = $this->calcularDias($cabecera['fentrega']);
+                $entrega = $cabecera['dias'];
 
                 $sql = $this->db->connect()->prepare("UPDATE lg_ordencab 
                                                         SET  ffechaent=:entrega,ntotal=:total,ctiptransp=:transp,
                                                              nplazo=:plazo,ncodalm=:alm,nigv =:igv,id_centi=:enti,
                                                              ncodpago=:pago,cnumcot=:cotizacion,creferencia=:referencia,
-                                                             lentrega=:lugar
+                                                             lentrega=:lugar,ncodmon=:moneda
                                                         WHERE id_regmov = :id");
                 $sql->execute(['entrega'=>$cabecera['fentrega'],
                                 "total"=>$cabecera['total_numero'],
@@ -412,7 +412,8 @@
                                 "pago"=>$cabecera['codigo_pago'],
                                 "cotizacion"=>$cabecera['ncotiz'],
                                 "referencia"=>$cabecera['referencia'],
-                                "lugar"=>$cabecera['lentrega']]);
+                                "lugar"=>$cabecera['lentrega'],
+                                "moneda"=>$cabecera['codigo_moneda']]);
                 
                 $this->grabarDetalles($cabecera['codigo_verificacion'],$detalles,$cabecera['codigo_costos'],$cabecera['codigo_orden']);
                 $this->grabarComentarios($cabecera['codigo_verificacion'],$comentarios,$usuario);
@@ -532,7 +533,25 @@
                 $data       = json_decode($correos);
                 $nreg       = count($data);
                 $subject    = utf8_decode($asunto);
-                $messaje    = utf8_decode($mensaje);
+
+                $messaje    = '<div style="width:100%;display: flex;flex-direction: column;justify-content: center;align-items: center;
+                                    font-family: Futura, Arial, sans-serif;">
+                            <div style="width: 45%;border: 1px solid #c2c2c2;background: #0078D4; padding:1rem">
+                                <h1 style="text-align: center;">Aprobación</h1>
+                            </div>
+                            <div style="width: 45%;
+                                        border-left: 1px solid #c2c2c2;
+                                        border-right: 1px solid #c2c2c2;
+                                        border-bottom: 1px solid #c2c2c2;
+                                        padding:1rem">
+                                <p style="padding:.5rem"><strong style="font-style: italic;">Ing:</strong></p>
+                                <p style="padding:.5rem;line-height: 1rem;">  '.$mensaje.'</p>
+                                <p style="padding:.5rem;line-height: 1rem;">   Moneda   : '.$cabecera['moneda'].'</p>
+                                <p style="padding:.5rem;line-height: 1rem;">   Proveedor: '.$cabecera['entidad'].'</p>
+                                <p style="padding:.5rem">Fecha de Emisión : '. date("d/m/Y h:i:s") .'</p>
+                            </div>
+                        </div>';
+
                 $estadoEnvio= false;
                 $clase = "mensaje_error";
                 $salida = "";
@@ -608,6 +627,8 @@
 
                 $subject    = utf8_decode("Atención de Orden de Compra");
                 $messaje    = utf8_decode("Su atencion en la orden de compra adjunta");
+
+                
 
                 $origen = $_SESSION['user']."@sepcon.net";
                 $nombre_envio = $_SESSION['user'];

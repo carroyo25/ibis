@@ -1301,11 +1301,10 @@
                 $sql = $this->db->connect()->prepare("SELECT
                                                         ibis.tb_user.ccorreo AS correo,
                                                         ibis.tb_user.nrol,
-                                                        rrhh.tabla_aquarius.nombres, 
-                                                        rrhh.tabla_aquarius.apellidos 
+                                                        ibis.tb_user.cnombres,
+                                                        ibis.tb_user.ccargo 
                                                     FROM
                                                         ibis.tb_user
-                                                        INNER JOIN rrhh.tabla_aquarius ON ibis.tb_user.ncodper = rrhh.tabla_aquarius.internal 
                                                     WHERE
                                                         tb_user.nrol =:rol");
                     $sql->execute(["rol"=>$rol]);
@@ -1314,12 +1313,12 @@
 
                 if ($rowCount > 0) {
                     while($rs = $sql->fetch()){
-                    $nom = $this->primerosNombres($rs['nombres'],$rs['apellidos']);
+                        $activo = $rs['ccargo'] == 1 ? "checked":"";
 
                         $salida .='<tr>
-                                    <td class="pl10px">'.$nom.'</td>
-                                    <td class="pl10px">'.$rs['correo'].'</td>
-                                    <td class="textoCentro"><input type="checkbox"></td>
+                                    <td class="pl10px">'.$rs['cnombres'].'</td>
+                                    <td class="pl10px">'.strtolower($rs['correo']).'</td>
+                                    <td class="textoCentro"><input type="checkbox" '.$activo.'></td>
                                 </tr>';
                     }
                      
@@ -3215,6 +3214,14 @@
             $diff = $date1->diff($date2);
             // will output 2 days
             return $diff->days . ' dias ';
+        }
+
+        public function fechaOrden(){
+            $date = date("Y-m-d");
+            //Incrementando 2 dias
+            $mod_date = strtotime($date."+ 3 days");
+
+            return date("Y-m-d",$mod_date);
         }
 
         private function cabeceraOrden($id){

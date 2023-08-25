@@ -13,6 +13,7 @@
             $this->view->listaOrdenes = $this->model->listarOrdenes($_SESSION['iduser']);
             $this->view->listaEntidades = $this->model->listarEntidades();
             $this->view->listaCostosSelect = $this->model->costosPorUsuarioSelect($_SESSION['iduser']);
+            $this->view->fechaOrden = $this->model->fechaOrden();
             $this->view->render('orden/index');
         }
 

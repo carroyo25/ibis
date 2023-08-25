@@ -528,7 +528,6 @@ $(function(){
             if (result['dias'] == "") throw "ingrese el numero de dias";
             if (result['codigo_moneda'] == "") throw "Elija la moneda";
             if (result['codigo_pago'] == "") throw "Elija el tipo de pago";
-            //if (result['correo_entidad'] == "") throw "Elija el proveedor";
             if (result['codigo_almacen'] == "") throw "Indique el lugar de entrega";
             if (result['total'] == "") throw "No se registro el total de la orden";
             if ($("#tablaDetalles tbody tr") .length <= 0) throw "No tiene items cargados";
@@ -591,6 +590,8 @@ $(function(){
             if ($("#codigo_estado").val() == 59) throw "La orden esta en firmas.";
             if (!grabado) throw "Por favor grabar la orden";
 
+            $("#subject").val($("#entidad").val() + ' - ' + $("#numero").val());
+
             $.post(RUTA+"orden/buscaRol", {rol:$(this).data("rol")},
                 function (data, textStatus, jqXHR) {
                     $("#listaCorreos tbody").empty().append(data);
@@ -629,6 +630,8 @@ $(function(){
                 result[this.name] = this.value;
             })
 
+            $("#esperar").css("opacity","1").fadeIn();
+
             $.post(RUTA+"orden/correo", {cabecera:result,
                                         detalles:JSON.stringify(detalles()),
                                         correos:JSON.stringify(mailsList()),
@@ -638,6 +641,7 @@ $(function(){
             function (data, textStatus, jqXHR) {
                 mostrarMensaje(data.mensaje,data.clase);
                 $("#sendMail").fadeOut();
+                $("#esperar").css("opacity","0").fadeOut();
             },
             "json"
         );
