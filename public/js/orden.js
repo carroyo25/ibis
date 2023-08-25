@@ -654,11 +654,13 @@ $(function(){
 
     $("#sendEntOrden").click(function (e) { 
         e.preventDefault();
-        
+
         try {
             if ( $("#procura").val() != 1 || $("#finanzas").val() != 1 || $("#operaciones").val() != 1 ) throw "La orden no ha sido autorizada";
-            
+
             let result = {};
+
+            $("#fentrega").val(sumarDias( parseInt( $("#dias").val() ) ) );
     
             $.each($("#formProceso").serializeArray(),function(){
                 result[this.name] = this.value;

@@ -604,7 +604,7 @@
                     $clase = "mensaje_correcto";
                     $this->actualizarCabeceraPedido(59,$cabecera['codigo_pedido'],$cabecera['codigo_orden']);
                     $this->actualizarDetallesPedido(59,$detalles,$cabecera['codigo_orden'],$cabecera['codigo_entidad']);
-                    $this->actualizarCabeceraOrden(59,$cabecera['codigo_orden']);
+                    $this->actualizarCabeceraOrden(59,$cabecera['codigo_orden'],$cabecera['fentrega']);
                 }
 
                 $salida= array("estado"=>$estadoEnvio,
@@ -628,8 +628,6 @@
                 $subject    = utf8_decode("Atención de Orden de Compra");
                 $messaje    = utf8_decode("Su atencion en la orden de compra adjunta");
 
-                
-
                 $origen = $_SESSION['user']."@sepcon.net";
                 $nombre_envio = $_SESSION['user'];
                 
@@ -652,7 +650,6 @@
                 );
                 
                 $mail->setFrom($origen,$nombre_envio);
-                //$mail->addAddress($cabecera['correo_entidad'],$cabecera['entidad']);
                 $mail->addAddress($_SESSION['correo'],$_SESSION['nombres']);
                 
                 $mail->Subject = $subject;
@@ -681,7 +678,7 @@
                     }else {
                         $this->actualizarCabeceraPedido($cambio,$cabecera['codigo_pedido'],$cabecera['codigo_orden']);
                         $this->actualizarDetallesPedidoCorreo($cambio,$detalles);
-                        $this->actualizarCabeceraOrden($cambio,$cabecera['codigo_orden']);
+                        $this->actualizarCabeceraOrden($cambio,$cabecera['codigo_orden'],$cabecera['fentrega']);
 
                         return array("mensaje"=>"Correo enviado",
                                     "clase"=>"mensaje_correcto",
@@ -694,7 +691,7 @@
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;
-            } 
+            }
         }
 
         private function datosPedido($pedido){
@@ -805,11 +802,15 @@
             }
         }
 
-        private function actualizarCabeceraOrden($estado,$orden){
+        private function actualizarCabeceraOrden($estado,$orden,$fecha){
             try {
-                $sql = $this->db->connect()->prepare("UPDATE lg_ordencab SET nEstadoDoc=:est WHERE id_regmov=:id");
+                $sql = $this->db->connect()->prepare("UPDATE lg_ordencab 
+                                                        SET lg_ordencab.nEstadoDoc=:est,
+                                                            lg_ordencab.ffechades=:descarga  
+                                                        WHERE id_regmov=:id");
                 $sql->execute(["est"=>$estado,
-                                "id"=>$orden]);
+                                "id"=>$orden,
+                                "descarga"=>$fecha]);
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
