@@ -23,12 +23,13 @@
                                                     FORMAT( lg_ordencab.ntotal, 2 ) AS ntotal,
                                                     UPPER( tb_pedidocab.concepto ) AS concepto,
                                                     lg_ordencab.cdocPDF,
-                                                    cm_entidad.crazonsoc,
+                                                    UPPER(cm_entidad.crazonsoc) AS crazonsoc,
                                                     tb_proyectos.ccodproy,
                                                     UPPER( CONCAT_WS( ' ', tb_area.ccodarea, tb_area.cdesarea ) ) AS area,
                                                     UPPER( CONCAT_WS( ' ', tb_proyectos.ccodproy, tb_proyectos.cdesproy ) ) AS costos,
                                                     tb_proyectos.nidreg,
                                                     tb_parametros.cdescripcion AS atencion,
+                                                    monedas.cabrevia,
                                                     ( lg_ordencab.nfirmaLog + lg_ordencab.nfirmaFin + lg_ordencab.nfirmaOpe ) AS estado_firmas,
                                                     ( SELECT FORMAT( SUM( lg_ordendet.nunitario * lg_ordendet.ncanti ), 2 ) FROM lg_ordendet WHERE lg_ordendet.id_orden = lg_ordencab.id_regmov ) AS total_orden,
                                                     UPPER (tb_user.cnameuser) AS operador  
@@ -41,6 +42,7 @@
                                                     INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
                                                     INNER JOIN lg_ordendet ON lg_ordencab.id_regmov = lg_ordendet.id_orden
                                                     INNER JOIN tb_user ON lg_ordencab.id_cuser = tb_user.iduser
+                                                    INNER JOIN tb_parametros AS monedas ON lg_ordencab.ncodmon = monedas.nidreg
                                                 WHERE
                                                     lg_ordencab.nEstadoDoc = 59 
                                                     AND ( lg_ordencab.nfirmaLog IS NULL OR lg_ordencab.nfirmaOpe IS NULL OR lg_ordencab.nfirmaFin IS NULL ) 
@@ -76,25 +78,25 @@
                          $alerta_finanzas = "";
                          $alerta_operaciones = "";
                          
-                         $comentarios = $this->detallesComentarios($rs['id_regmov']);
+                         $totalComentario = $this->contarComentarios($rs['id_regmov']);
 
-                         if ( $comentarios['numero'] > 0 ) {
+                         if ( $totalComentario['numero'] > 0 ) {
+                                $detalleComentarios = $this->detallesComentarios($rs['id_regmov']);
 
                                 $gerencia = $this->creaComentario($rs['id_regmov']);
 
-                                if ( $gerencia['rol'] == 'L' ){
-                                    $alerta_logistica = $comentarios['rol'] == 'L' ?"urgente" : "normal";
+                                if ( $gerencia['rol'] == 'L' && $flog == 0 ){
+                                    $alerta_logistica = $detalleComentarios['rol'] == 'L' ? "urgente" : "semaforoVerde";
                                 }
                                 
-                                if ( $gerencia['rol'] == 'O' ){
-                                    $alerta_operaciones = $comentarios['rol'] == 'O' ?"urgente":"normal";
+                                if ( $gerencia['rol'] == 'O' && $fope == 0 ){
+                                    $alerta_operaciones = $detalleComentarios['rol'] == 'O' ? "urgente":"semaforoVerde";
                                 }
 
-                                if ( $gerencia['rol'] == 'F' ){
-                                    $alerta_finanzas = $comentarios['rol'] == 'F' ?"urgente":"normal";
+                                if ( $gerencia['rol'] == 'F' && $ffin == 0 ){
+                                    $alerta_finanzas = $detalleComentarios['rol'] == 'F' ? "urgente":"semaforoVerde";
                                 }
                          } 
-                         
  
                          $salida .='<tr class="pointer '.$resaltado.'" data-indice="'.$rs['id_regmov'].'" 
                                                          data-estado="'.$rs['nEstadoDoc'].'"
@@ -109,7 +111,7 @@
                                         <td class="pl20px">'.$rs['crazonsoc'].'</td>
                                         <td class="pl20px">'.$rs['area'].'</td>
                                         <td class="textoCentro '.strtolower($rs['atencion']).'" style="font-size:.6rem">'.$atencion.'</td>
-                                        <td class="textoDerecha pr10px">'.$rs['total_orden'].'</td>
+                                        <td class="textoDerecha pr10px">'.$rs['cabrevia'].' '.$rs['total_orden'].'</td>
                                         <td class="textoCentro">'.$rs['operador'].'</td>
                                         <td class="textoCentro '.$alerta_logistica.'">'.$log.'</td>
                                         <td class="textoCentro '.$alerta_finanzas.'">'.$fin.'</td>

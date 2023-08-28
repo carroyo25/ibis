@@ -48,7 +48,8 @@
                                                         alm_consumo.calmacen,
                                                         alm_consumo.ncostos,
                                                         UPPER(cm_producto.cdesprod) AS cdesprod,
-                                                        tb_unimed.cabrevia,COUNT(*),
+                                                        tb_unimed.cabrevia,
+                                                        COUNT(*),
                                                         tb_proyectos.ccodproy,
 	                                                    tb_proyectos.cdesproy 
                                                     FROM
@@ -149,7 +150,6 @@
                                                     GROUP BY alm_consumo.ncostos");
                 $sql->execute(["documento"=>$d]);
                 $rowCount = $sql->rowCount();
-                //$salida ='';
 
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()){

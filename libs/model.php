@@ -2483,8 +2483,7 @@
         public function detallesComentarios($orden){
             try {
                 $sql= $this->db->connect()->prepare("SELECT
-                                                        IF( ISNULL( tb_user.rol ), '-', tb_user.rol ) AS rol, 
-                                                        COUNT( lg_ordencomenta.id_regmov ) AS nro_comentarios
+                                                        IF( ISNULL( tb_user.rol ), '-', tb_user.rol ) AS rol
                                                     FROM
                                                         lg_ordencomenta
                                                         LEFT JOIN
@@ -2492,13 +2491,13 @@
                                                         ON lg_ordencomenta.id_cuser = tb_user.iduser
                                                     WHERE
                                                         lg_ordencomenta.id_regmov = :orden
-                                                    ORDER BY lg_ordencomenta.fregsys
+                                                    ORDER BY lg_ordencomenta.fregsys DESC
                                                     LIMIT 1");
                 $sql->execute(["orden"=>$orden]);
 
                 $result = $sql->fetchAll();
 
-                return array("numero"=>$result[0]['nro_comentarios'],"rol"=>$result[0]['rol']);
+                return array("rol"=>$result[0]['rol']);
             }catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;
@@ -2521,6 +2520,25 @@
                 $result = $sql->fetchAll();
 
                 return array("rol"=>$result[0]['rol']);
+            }catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        public function contarComentarios($orden) {
+            try {
+                $sql= $this->db->connect()->prepare("SELECT
+                                                        COUNT( lg_ordencomenta.id_regmov ) AS numero
+                                                    FROM
+                                                        lg_ordencomenta
+                                                    WHERE
+                                                        lg_ordencomenta.id_regmov = :orden");
+                $sql->execute(["orden"=>$orden]);
+
+                $result = $sql->fetchAll();
+
+                return array("numero"=>$result[0]['numero']);
             }catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;
@@ -2672,6 +2690,7 @@
                 return false;
             }
         }
+
 
         private function consultarAdicionales($id){
             try {

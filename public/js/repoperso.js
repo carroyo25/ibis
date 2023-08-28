@@ -5,8 +5,6 @@ $(function(){
 
     $("#docident").focus;
 
-    $("#docident").focus;
-
     $("#docident").keypress(function (e) { 
         if(e.which == 13) { 
             $.post(RUTA+"repoperso/datosapi",{documento:$(this).val(),

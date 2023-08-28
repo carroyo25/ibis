@@ -109,8 +109,8 @@
             <div>
                 <img src="" id="vistafirma">
             </div> 
-            <button id="btnGrabarKardex" class="boton3">Aceptar</button>
-            <button type="button" class="boton3 oculto" id="btnFirmar" onclick="StartSign()">Firmar</button>
+            <button id="btnGrabarKardex" class="boton3 oculto">Aceptar</button>
+            <button type="button" class="boton3" id="btnFirmar" onclick="StartSign()">Firmar</button>
             <div>
                 <label for="codeRead">Codigo: </label>
                 <input type="text" name="codeRead" id="codeRead" style="opacity:1;position:relative" value=""> 
@@ -147,7 +147,6 @@
     <form action="" name="FORM1">
         <input type="hidden" name="firmado" id="firmado">
 	</form>
-
     
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
     <script src="<?php echo constant('URL');?>public/js/regfirma.js"></script>

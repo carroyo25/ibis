@@ -57,6 +57,7 @@ $(function() {
                 $("#lentrega").val(data.cabecera[0].cdesalm);
                 $("#nro_pedido").val(data.cabecera[0].nrodoc);
                 $("#referencia").val(data.cabecera[0].cReferencia);
+                $("#dias").val(data.cabecera[0].nplazo);
 
                 $("#direccion_almacen").val(data.cabecera[0].direccion);
                 $("#ncotiz").val(data.cabecera[0].cnumcot);
