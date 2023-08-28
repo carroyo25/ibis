@@ -72,9 +72,29 @@
 
                          $atencion = $rs['nNivAten'] == 46 ? 'Aprobado </br> Urgente':'Normal';
 
-                         $alerta_logistica      = $this-> buscarUserComentario($rs['id_regmov'],'633ae7e588a52') > 0 && $flog == 0 ? "urgente":" ";  //logistica
-                         $alerta_finanzas       = $this-> buscarUserComentario($rs['id_regmov'],'6288328f58068')> 0 && $ffin == 0 ? "urgente":" ";  //Finanzas
-                         $alerta_operaciones    = $this-> buscarUserComentario($rs['id_regmov'],'62883306d1cd3') > 0 && $fope == 0? "urgente":" ";  //operaciones
+                         $alerta_logistica = "";
+                         $alerta_finanzas = "";
+                         $alerta_operaciones = "";
+                         
+                         $comentarios = $this->detallesComentarios($rs['id_regmov']);
+
+                         if ( $comentarios['numero'] > 0 ) {
+
+                                $gerencia = $this->creaComentario($rs['id_regmov']);
+
+                                if ( $gerencia['rol'] == 'L' ){
+                                    $alerta_logistica = $comentarios['rol'] == 'L' ?"urgente" : "normal";
+                                }
+                                
+                                if ( $gerencia['rol'] == 'O' ){
+                                    $alerta_operaciones = $comentarios['rol'] == 'O' ?"urgente":"normal";
+                                }
+
+                                if ( $gerencia['rol'] == 'F' ){
+                                    $alerta_finanzas = $comentarios['rol'] == 'F' ?"urgente":"normal";
+                                }
+                         } 
+                         
  
                          $salida .='<tr class="pointer '.$resaltado.'" data-indice="'.$rs['id_regmov'].'" 
                                                          data-estado="'.$rs['nEstadoDoc'].'"

@@ -2480,6 +2480,53 @@
             }
         }
 
+        public function detallesComentarios($orden){
+            try {
+                $sql= $this->db->connect()->prepare("SELECT
+                                                        IF( ISNULL( tb_user.rol ), '-', tb_user.rol ) AS rol, 
+                                                        COUNT( lg_ordencomenta.id_regmov ) AS nro_comentarios
+                                                    FROM
+                                                        lg_ordencomenta
+                                                        LEFT JOIN
+                                                        tb_user
+                                                        ON lg_ordencomenta.id_cuser = tb_user.iduser
+                                                    WHERE
+                                                        lg_ordencomenta.id_regmov = :orden
+                                                    ORDER BY lg_ordencomenta.fregsys
+                                                    LIMIT 1");
+                $sql->execute(["orden"=>$orden]);
+
+                $result = $sql->fetchAll();
+
+                return array("numero"=>$result[0]['nro_comentarios'],"rol"=>$result[0]['rol']);
+            }catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        public function creaComentario($orden){
+            try {
+                $sql= $this->db->connect()->prepare("SELECT
+                                            tb_user.rol 
+                                        FROM
+                                            lg_ordencomenta
+                                            INNER JOIN tb_user ON lg_ordencomenta.id_cuser = tb_user.iduser 
+                                        WHERE
+                                            lg_ordencomenta.id_regmov =:orden 
+                                            AND NOT ISNULL(tb_user.rol)");
+                
+                $sql->execute(["orden"=>$orden]);
+
+                $result = $sql->fetchAll();
+
+                return array("rol"=>$result[0]['rol']);
+            }catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
         private function calcularTotalOrden($id) {
             try {
                 $sql= $this->db->connect()->prepare("SELECT
