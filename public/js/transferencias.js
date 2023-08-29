@@ -193,14 +193,11 @@ $(function(){
             
             registrado = ingreso+atendida;
 
-    
-
         if (registrado > aprobado ) {
             mostrarMensaje('La cantidad ingresada, es mayor a lo aprobado','mensaje_error')
             return false;
         }
 
-        console.log(registrado)
     });
 
     $("#tablaDetalles tbody").on('keypress','input', function (e) {

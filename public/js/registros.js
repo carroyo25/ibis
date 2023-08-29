@@ -2,6 +2,8 @@ $(function(){
     let accion = "";
     let tipoMovimiento = 0;  //guia remision  = 1, transferencias = 2
 
+    $("#esperar").fadeOut();
+
     $("#nuevoRegistro").click(function (e) { 
         e.preventDefault();
 
@@ -16,8 +18,6 @@ $(function(){
 
         return false;
     });
-
-    $("#esperar").fadeOut();
 
     $("#tablaPrincipal tbody").on("click","tr", function (e) {
         e.preventDefault();

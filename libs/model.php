@@ -953,7 +953,8 @@
                                                 WHERE
                                                     tb_costusu.id_cuser = :id 
                                                     AND tb_proyectos.nflgactivo = 1
-                                                    AND tb_costusu.nflgactivo = 1");
+                                                    AND tb_costusu.nflgactivo = 1
+                                                ORDER BY tb_proyectos.ccodproy");
                 $sql->execute(["id"=>$id]);
                 $rowCount = $sql->rowCount(); 
 
