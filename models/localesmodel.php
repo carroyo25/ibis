@@ -228,25 +228,23 @@
             }
         }
 
-        function registro() {
-            echo json_encode($this->model->insertarCompra($_POST['cabecera'],
-                                                    $_POST['detalles'],
-                                                    $_POST['idpedido']));
-        }
-
         public function insertarCompra($cabecera,$detalles,$pedido,$atendidos){
-            try {
+
+            var_dump($cabecera);
+            /*try {
                 $mensaje = "Error al grabar el registro";
                 $sw = false;
+                $tipomov = 230;
 
-                $sql = $this->db->connect()->prepare("");
+                $sql = $this->db->connect()->prepare("INSERT INTO alm_cabexist SET idcostos=:costos,
+                                                                                   ffechadoc=:fecha,
+                                                                                   idautoriza=:aprueba,
+                                                                                   ntipomov=:tipo_movimiento,
+                                                                                   flgActivo:=estado");
                 
                 $sql->execute([
-                    "corigen"=>$cabecera['codigo_costos_origen'],
-                    "cdestino"=>$cabecera['codigo_costos_destino'],
+                    "costos"=>$cabecera['codigo_costos'],
                     "aprueba"=>$cabecera['codigo_aprueba'],
-                    "origen"=>$cabecera['codigo_almacen_origen'],
-                    "destino"=>$cabecera['codigo_almacen_destino'],
                     "fecha_traslado"=>$cabecera['fecha'],
                     "tipo_movimiento"=>$cabecera['codigo_movimiento'],
                     "estado"=>1,
@@ -275,7 +273,7 @@
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
-            }
+            }*/
         }
 
         private function insertarDetalles($indice,$detalles){

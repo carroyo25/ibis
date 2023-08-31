@@ -1455,7 +1455,6 @@
                 }else if ($proceso == 57) {
                     $detalles = $this->consultarDetallesConformidad($id);
                 }
-                    
 
                 return array("cabecera"=>$docData,
                             "detalles"=>$detalles,
@@ -1733,7 +1732,8 @@
                 $sql=$this->db->connect()->prepare("SELECT
                                                     tb_pedidodet.iditem, 
                                                     tb_pedidodet.idpedido, 
-                                                    tb_pedidodet.idprod, 
+                                                    tb_pedidodet.idprod,
+                                                    tb_pedidodet.resto, 
                                                     tb_pedidodet.idtipo, 
                                                     tb_pedidodet.nroparte, 
                                                     tb_pedidodet.unid, 
@@ -1828,28 +1828,30 @@
                 if ($rowCount > 0){
                     $filas = 1;
                     while ($rs = $sql->fetch()) {
-                        
-                        $salida .='<tr data-grabado="1" data-idprod="'.$rs['idprod'].'" data-codund="'.$rs['unid'].'" data-idx="'.$rs['iditem'].'">
-                                        <td class="textoCentro">'.str_pad($filas++,3,0,STR_PAD_LEFT).'</td>
-                                        <td class="textoCentro">'.$rs['ccodprod'].'</td>
-                                        <td class="pl20px">'.strtoupper($rs['cdesprod']).'</td>
-                                        <td class="textoCentro">'.$rs['cabrevia'].'</td>
-                                        <td class="textoCentro">'.$rs['cant_pedida'].'</td>
-                                        <td class="textoCentro">'.$rs['cant_atendida'].'</td>
-                                        <td>
-                                            <input type="number" 
-                                                        step="any" 
-                                                        placeholder="0.00" 
-                                                        onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"
-                                                        onclick="this.select()" 
-                                                        value="'.$rs['cant_pedida'].'"
-                                                        class="valorAtendido">
-                                        </td>
-                                        <td class="textoCentro">'.$rs['nroparte'].'</td>
-                                        <td class="textoCentro"><input type="text"></td>
-                                        <td class="textoCentro">'.$rs['registro'].'</td>
-                                        <td class="textoCentro"><input type="checkbox" checked></td>
-                                    </tr>';
+
+                        if ( $rs['estadoItem'] ==  53   ) {
+                            $salida .='<tr data-grabado="1" data-idprod="'.$rs['idprod'].'" data-codund="'.$rs['unid'].'" data-idx="'.$rs['iditem'].'">
+                                            <td class="textoCentro">'.str_pad($filas++,3,0,STR_PAD_LEFT).'</td>
+                                            <td class="textoCentro">'.$rs['ccodprod'].'</td>
+                                            <td class="pl20px">'.strtoupper($rs['cdesprod']).'</td>
+                                            <td class="textoCentro">'.$rs['cabrevia'].'</td>
+                                            <td class="textoCentro">'.$rs['cant_pedida'].'</td>
+                                            <td class="textoCentro">'.$rs['cant_atendida'].'</td>
+                                            <td>
+                                                <input type="number" 
+                                                            step="any" 
+                                                            placeholder="0.00" 
+                                                            onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"
+                                                            onclick="this.select()" 
+                                                            value="'.$rs['cant_pendiente'].'"
+                                                            class="valorAtendido">
+                                            </td>
+                                            <td class="textoCentro">'.$rs['nroparte'].'</td>
+                                            <td class="textoCentro"><input type="text"></td>
+                                            <td class="textoCentro">'.$rs['registro'].'</td>
+                                            <td class="textoCentro"><input type="checkbox" checked></td>
+                                        </tr>';
+                        }
                     }
                 }
                 

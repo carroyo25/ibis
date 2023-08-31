@@ -19,13 +19,14 @@
                     <input type="hidden" name="codigo_despacho" id="codigo_despacho">
                     <input type="hidden" name="codigo_autoriza" id="codigo_autoriza">
                     <input type="hidden" name="codigo_ingreso" id="codigo_ingreso">
+                    <input type="hidden" name="codigo_comprobante" id="codigo_comprobante">
                     <input type="hidden" name="codigo_movimiento" id="codigo_movimiento" value="230">
                     <input type="hidden" name="codigo_recepcion" id="codigo_recepcion" value="<?php echo $_SESSION['iduser']?>">
                     <input type="hidden" name="codigo_registra" id="codigo_registra">
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
                         <div>
-                            <button type="button" id="updateDocument" title="Cerrar Salida" class="boton3">
+                            <button type="button" id="saveRegister" title="Cerrar Salida" class="boton3">
                                 <i class="far fa-save"></i> Grabar Compra
                             </button>
                             <button type="button" id="closeProcess" title="Cerrar" class="boton3">
@@ -78,7 +79,12 @@
                             <div class="column4_55">
                                 <div class="column2_3957">
                                     <label for="documento">Documento :</label>
-                                    <input type="text" name="documento" id="documento">
+                                    <input type="text" name="documento" id="documento" class="mostrarLista busqueda" placeholder="Elija opción" readonly>
+                                    <div class="lista" id="listaComprobantes">
+                                        <ul>
+                                            <?php echo $this->listaComprobantes?>
+                                        </ul> 
+                                    </div>
                                 </div>
                                 <div class="column2_46">
                                     <label for="nrdoc">Nro :</label>

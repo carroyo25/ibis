@@ -72,6 +72,8 @@ $(function(){
             $("#codigo_autoriza").val(codigo);
         }else if (contenedor_padre == "listaCostos"){
             $("#codigo_costos").val(codigo);
+        }else if (contenedor_padre == "listaComprobantes"){
+            $("#codigo_comprobante").val(codigo);
         }
 
         return false;
@@ -199,21 +201,21 @@ detalles = () =>{
         if (!GRABADO) {
             item['item']         = ITEM;
             item['idprod']       = IDPROD;
-            item['origen']       = ORIGEN;
+            //item['origen']       = ORIGEN;
             item['cantidad']     = CANTIDAD;
             item['obser']        = OBSER;
             item['codigo']       = CODIGO;
             item['descripcion']  = DESCRIPCION;
             item['unidad']       = UNIDAD;
-            item['destino']      = DESTINO;
+            //item['destino']      = DESTINO;
             item['iditem']       = IDITEM;
             item['pedido']       = PEDIDO;
             item['aprobado']     = APROBADO;
-            item['comprado']     = COMPRADO;
+            //item['comprado']     = COMPRADO;
             item['costos']       = COSTOS;
             item['nropedido']    = NROPEDIDO;
-            item['separado']     = SEPARADO;
-            item['atendido']     = ATENDIDO;
+            //item['separado']     = SEPARADO;
+            //item['atendido']     = ATENDIDO;
                 
             DETALLES.push(item);
         }     
