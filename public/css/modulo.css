@@ -2063,6 +2063,12 @@
 .ventanaProceso .seccion_izquierda {
   width: 100%;
 }
+.ventanaProceso .barraOpcionesNueva {
+  background: #1b993c;
+}
+.ventanaProceso .barraOpcionesGrabada {
+  background: #0078D4;
+}
 .ventanaProceso .barraOpciones {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -2707,6 +2713,10 @@
 
 .aprobacion {
   background: #C9E2F4;
+}
+
+.comprado {
+  background: #B461A3;
 }
 
 .aprobado {

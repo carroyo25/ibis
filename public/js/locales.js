@@ -3,6 +3,40 @@ $(function(){
     let accion = "",
         tipoMovimiento = 0;  //guia remision  = 1, transferencias = 2
 
+    $("#tablaPrincipal tbody").on('click','tr', function(e) {
+        e.preventDefault();
+
+        $("#proceso").fadeIn();
+        
+        accion = "";
+
+        $.post(RUTA+"locales/compraid", {indice:$(this).data("indice")},
+            function (data, text, requestXHR) {
+                $("#codigo_costos").val(data.cabecera[0].idcostos);
+                $("#codigo_autoriza").val(data.cabecera[0].idautoriza);
+                $("#codigo_comprobante").val(data.cabecera[0].ntipodoc);
+                $("#codigo_movimiento").val(data.cabecera[0].ntipomov);
+
+                $("#fecha").val(data.cabecera[0].ffechadoc);
+                $("#numero").val(data.cabecera[0].idreg);
+                $("#costos").val(data.cabecera[0].costos);
+                $("#registrado").val(data.cabecera[0].recepciona);
+                $("#movimiento").val(data.cabecera[0].tipoMov);
+                $("#autoriza").val(data.cabecera[0].autoriza);
+                $("#documento").val(data.cabecera[0].comprobante);
+                $("#nrodoc").val(data.cabecera[0].cnrodoc);
+
+                $("#tablaDetalles tbody")
+                    .empty()
+                    .append(data.detalles)
+                
+            },    
+            "json"
+        );
+
+        return false
+    });
+
     $("#nuevoRegistro").click(function (e) { 
             e.preventDefault();
     
@@ -26,7 +60,7 @@ $(function(){
 
         $("#proceso").fadeOut();
 
-        /*$.post(RUTA+"registros/actualizarRegistros",
+        /*$.post(RUTA+"locales/actualizarPrincipal",
             function (data, textStatus, jqXHR) {
                 $("#tablaPrincipal tbody")
                     .empty()

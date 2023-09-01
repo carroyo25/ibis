@@ -63,7 +63,7 @@
                             </div>
                             <div class="column2">
                                 <label for="registra">Movimiento:</label>
-                                <input type="text" name="registrado" id="registrado"  value="COMPRA LOCAL" readonly>
+                                <input type="text" name="movimiento" id="movimiento"  value="COMPRA LOCAL" readonly>
                             </div>
                         </div>
                         <div class="seccion_derecha">

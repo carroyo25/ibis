@@ -15,7 +15,6 @@
                 $mes  = "%";
 
                 if ($parametros != "" ) {
-                    $guia = $parametros['guiaSearch'] == "" ? "%" : "%".$parametros['guiaSearch']."%";
                     $cc = $parametros['costosSearch'] == -1 ? "%" : "%".$parametros['costosSearch']."%";
                 }
 
@@ -232,7 +231,7 @@
             try {
                 $mensaje = "Error al grabar el registro";
                 $sw = false;
-                $tipomov = 230;
+                $tipomov = 236;
 
                 $sql = $this->db->connect()->prepare("INSERT INTO alm_cabexist SET idcostos=:costos,
                                                                                    ffechadoc=:fecha,
@@ -241,7 +240,7 @@
                                                                                    flgActivo=:estado,
                                                                                    ntipodoc=:comprobante,
                                                                                    cnrodoc=:nro_comp,
-                                                                                   idped=:pedido
+                                                                                   idped=:pedido,
                                                                                    idrecepciona=:registra");
                 
                 $sql->execute([
@@ -318,7 +317,7 @@
 
         private function actualizarDetallesPedido($item,$cantidad){
             try {
-                $estado = 230;
+                $estado = 236;
 
                 $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet 
                                                         SET tb_pedidodet.estadoItem =:estado,
@@ -335,17 +334,121 @@
         }
 
         private function actualizarCabeceraPedido($pedido,$estado){
-                try {
-                    $sql = $this->db->connect()->prepare("UPDATE tb_pedidocab 
+            try {
+                $sql = $this->db->connect()->prepare("UPDATE tb_pedidocab 
                                                             SET tb_pedidocab.estadodoc = :estado
                                                             WHERE tb_pedidocab.idreg=:pedido");
 
-                    $sql->execute(["pedido"=>$pedido,"estado"=>$estado]);
+                $sql->execute(["pedido"=>$pedido,"estado"=>$estado]);
 
-                } catch (PDOException $th) {
-                    echo $th->getMessage();
-                    return false;
-                }
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
             }
         }
+
+        public function consultarCompra($id){
+            try {
+                $result = [];
+
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        alm_cabexist.idreg,
+                                                        alm_cabexist.idautoriza,
+                                                        alm_cabexist.idrecepciona,
+                                                        alm_cabexist.ntipodoc,
+                                                        alm_cabexist.cnrodoc,
+                                                        alm_cabexist.ffechadoc,
+                                                        autorizacion.cnombres AS autoriza,
+                                                        registro.cnombres AS recepciona,
+                                                        documentos.cdescripcion AS comprobante,
+                                                        tb_proyectos.cdesproy AS costos,
+                                                        movimientos.cdescripcion AS tipoMov
+                                                    FROM
+                                                        alm_cabexist
+                                                        INNER JOIN tb_user AS autorizacion ON alm_cabexist.idautoriza = autorizacion.iduser
+                                                        INNER JOIN tb_user AS registro ON alm_cabexist.idrecepciona = registro.iduser
+                                                        INNER JOIN tb_parametros AS documentos ON alm_cabexist.ntipodoc = documentos.nidreg
+                                                        INNER JOIN tb_proyectos ON alm_cabexist.idcostos = tb_proyectos.nidreg
+                                                        INNER JOIN tb_parametros AS movimientos ON alm_cabexist.ntipomov = movimientos.nidreg 
+                                                    WHERE
+                                                        alm_cabexist.idreg = :compra");
+
+                $sql->execute(["compra"=>$id]);
+
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0) {
+                    $docData = array();
+                    while($row=$sql->fetch(PDO::FETCH_ASSOC)){
+                        $docData[] = $row;
+                    }
+                }
+
+                return array("cabecera"=>$docData,
+                            "detalles"=>$this->detallesCompra($id));
+
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        private function detallesCompra($id){
+            try {
+                $salida = "";
+
+                $sql = $this->db->connect()->prepare("SELECT
+                                                            alm_existencia.idreg,
+                                                            alm_existencia.idalm,
+                                                            alm_existencia.idpedido,
+                                                            FORMAT(alm_existencia.cant_ingr,2) AS cant_ingr,
+                                                            UPPER( alm_existencia.observaciones ) AS observaciones,
+                                                            alm_existencia.nropedido,
+                                                            alm_existencia.nroorden,
+                                                            alm_existencia.codprod,
+                                                            cm_producto.ccodprod,
+                                                            UPPER( cm_producto.cdesprod ) AS descripcion,
+                                                            LPAD(tb_pedidocab.nrodoc,3,0) AS nrodoc,
+                                                            tb_unimed.cabrevia 
+                                                        FROM
+                                                            alm_existencia
+                                                            INNER JOIN cm_producto ON alm_existencia.codprod = cm_producto.id_cprod
+                                                            INNER JOIN tb_pedidocab ON alm_existencia.nropedido = tb_pedidocab.idreg
+                                                            INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed 
+                                                        WHERE
+                                                            alm_existencia.idregistro = :id 
+                                                            AND alm_existencia.nflgActivo = 1");
+                $sql->execute(["id"=>$id]);
+
+                $rowCount = $sql->rowCount();
+                $item = 1;
+
+                if ($rowCount > 0) {
+                    while ( $rs = $sql->fetch()){
+                        $salida .= '<tr class="pointer"
+                                            data-grabado="1"
+                                            data-itempedido="'.$rs['idpedido'].'"
+                                            data-idprod="'.$rs['ccodprod'].'" 
+                                            data-codund="" 
+                                            data-idx="'.$rs['idreg'].'">
+                                        <td class="textoCentro"><a href="'.$rs['idreg'].'"><i class="fas fa-eraser"></i></a></td>
+                                        <td class="textoCentro"><a href="'.$rs['idreg'].'"><i class="fas fa-exchange-alt"></i></a></td>
+                                        <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
+                                        <td class="textoCentro">'.$rs['ccodprod'].'</td>
+                                        <td class="pl20px">'.$rs['descripcion'].'</td>
+                                        <td class="textoCentro">'.$rs['cabrevia'].'</td>
+                                        <td class="textoDerecha">'.$rs['cant_ingr'].'</td>
+                                        <td>'.$rs['observaciones'].'</td>
+                                        <td class="textoCentro">'.$rs['nrodoc'].'</td>
+                                    </tr>';
+                    }
+                }
+
+                return $salida;
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+    }
 ?>

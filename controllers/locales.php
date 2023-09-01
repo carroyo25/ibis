@@ -18,6 +18,10 @@
             echo $this->model->listarPedidosComprasLocales($_POST['cc'],$_POST['pedido']);
         }
 
+        function compraid(){
+            echo json_encode($this->model->consultarCompra($_POST['indice']));
+        }
+
         function items(){
             echo json_encode($this->model->itemsCompra($_POST['indice'],$_POST['origen']));
         }
@@ -27,6 +31,10 @@
                                                     $_POST['detalles'],
                                                     $_POST['idpedido'],
                                                     NULL));
+        }
+
+        function actualizarPrincipal(){
+            echo $this->model->listarCompras("");
         }
         
     }
