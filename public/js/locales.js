@@ -194,6 +194,7 @@ detalles = () =>{
             IDITEM          = $(this).data("iditem"),
             APROBADO        = $(this).data("aprobado"),
             NROPEDIDO       = $(this).find('td').eq(8).text(),
+            ATENDIDO        = $(this).data("aprobado");
 
     
         item = {};
@@ -201,21 +202,17 @@ detalles = () =>{
         if (!GRABADO) {
             item['item']         = ITEM;
             item['idprod']       = IDPROD;
-            //item['origen']       = ORIGEN;
             item['cantidad']     = CANTIDAD;
             item['obser']        = OBSER;
             item['codigo']       = CODIGO;
             item['descripcion']  = DESCRIPCION;
             item['unidad']       = UNIDAD;
-            //item['destino']      = DESTINO;
             item['iditem']       = IDITEM;
             item['pedido']       = PEDIDO;
             item['aprobado']     = APROBADO;
-            //item['comprado']     = COMPRADO;
             item['costos']       = COSTOS;
             item['nropedido']    = NROPEDIDO;
-            //item['separado']     = SEPARADO;
-            //item['atendido']     = ATENDIDO;
+            item['atendido']     = ATENDIDO;
                 
             DETALLES.push(item);
         }     

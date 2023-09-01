@@ -20,31 +20,32 @@
                 }
 
                 $sql = $this->db->connect()->prepare("SELECT
-                                                        alm_cabexist.idreg,
-                                                        alm_cabexist.idcostos,
-                                                        alm_cabexist.iddespacho,
-                                                        DATE_FORMAT(alm_cabexist.ffechadoc,'%d/%m/%Y') AS ffechadoc,
-                                                        alm_cabexist.idautoriza,
-                                                        alm_cabexist.idrecepciona,
-                                                        alm_cabexist.numguia,
-                                                        alm_cabexist.nreferido,
-                                                        alm_cabexist.ncodalm1,
-                                                        alm_cabexist.ncodalm2,
-                                                        UPPER( origen.cdesalm ) AS origen,
-                                                        UPPER( destino.cdesalm ) AS destino,
-                                                        UPPER(CONCAT_WS(' ',tb_proyectos.ccodproy,tb_proyectos.cdesproy)) AS costos
-                                                    FROM
-                                                        tb_costusu
-                                                        INNER JOIN alm_cabexist ON tb_costusu.ncodproy = alm_cabexist.idcostos
-                                                        INNER JOIN tb_almacen AS origen ON alm_cabexist.ncodalm1 = origen.ncodalm
-                                                        INNER JOIN tb_almacen AS destino ON alm_cabexist.ncodalm2 = destino.ncodalm
-                                                        INNER JOIN tb_proyectos ON alm_cabexist.idcostos = tb_proyectos.nidreg 
-                                                    WHERE
-                                                        tb_costusu.id_cuser = :usr 
-                                                        AND tb_costusu.nflgactivo = 1
-                                                        AND alm_cabexist.ntipomov = 230
-                                                        AND alm_cabexist.idcostos LIKE :cc
-                                                    ORDER BY  alm_cabexist.idreg DESC");
+                                                    alm_cabexist.idreg,
+                                                    alm_cabexist.idcostos,
+                                                    alm_cabexist.iddespacho,
+                                                    DATE_FORMAT( alm_cabexist.ffechadoc, '%d/%m/%Y' ) AS ffechadoc,
+                                                    alm_cabexist.idautoriza,
+                                                    alm_cabexist.idrecepciona,
+                                                    UPPER(
+                                                    CONCAT_WS( ' ', tb_proyectos.ccodproy, tb_proyectos.cdesproy )) AS costos,
+                                                    alm_cabexist.cnrodoc,
+                                                    tb_parametros.cdescripcion,
+                                                    tb_pedidocab.nrodoc 
+                                                FROM
+                                                    tb_costusu
+                                                    INNER JOIN alm_cabexist ON tb_costusu.ncodproy = alm_cabexist.idcostos
+                                                    LEFT JOIN tb_almacen AS origen ON alm_cabexist.ncodalm1 = origen.ncodalm
+                                                    LEFT JOIN tb_almacen AS destino ON alm_cabexist.ncodalm2 = destino.ncodalm
+                                                    INNER JOIN tb_proyectos ON alm_cabexist.idcostos = tb_proyectos.nidreg
+                                                    INNER JOIN tb_parametros ON alm_cabexist.ntipodoc = tb_parametros.nidreg
+                                                    LEFT JOIN tb_pedidocab ON alm_cabexist.idped = tb_pedidocab.idreg 
+                                                WHERE
+                                                    tb_costusu.id_cuser = :usr 
+                                                    AND tb_costusu.nflgactivo = 1 
+                                                    AND alm_cabexist.ntipomov = 230 
+                                                    AND alm_cabexist.idcostos LIKE :cc 
+                                                ORDER BY
+                                                    alm_cabexist.idreg DESC");
 
                 $sql->execute(["usr"=>$_SESSION["iduser"],"cc"=>$cc]);
                 $rowCount = $sql->rowCount();
@@ -54,11 +55,9 @@
                         $salida.='<tr class="pointer" data-indice="'.$rs['idreg'].'">
                                     <td class="textoCentro">'.str_pad($rs['idreg'],6,0,STR_PAD_LEFT).'</td>
                                     <td class="textoCentro">'.$rs['ffechadoc'].'</td>
-                                    <td class="pl20px">'.$rs['origen'].'</td>
-                                    <td class="pl20px">'.$rs['destino'].'</td>
                                     <td class="pl20px">'.$rs['costos'].'</td>
-                                    <td class="textoCentro">'.$rs['numguia'].'</td>
-                                    <td class="textoCentro">'.$rs['nreferido'].'</td>
+                                    <td class="textoCentro">'.$rs['nrodoc'].'</td>
+                                    <td class="pl20px">'.$rs['cnrodoc'].'</td>
                                 </tr>';
                     }
 
@@ -230,8 +229,7 @@
 
         public function insertarCompra($cabecera,$detalles,$pedido,$atendidos){
 
-            var_dump($cabecera);
-            /*try {
+            try {
                 $mensaje = "Error al grabar el registro";
                 $sw = false;
                 $tipomov = 230;
@@ -239,16 +237,23 @@
                 $sql = $this->db->connect()->prepare("INSERT INTO alm_cabexist SET idcostos=:costos,
                                                                                    ffechadoc=:fecha,
                                                                                    idautoriza=:aprueba,
-                                                                                   ntipomov=:tipo_movimiento,
-                                                                                   flgActivo:=estado");
+                                                                                   ntipomov=:tipo,
+                                                                                   flgActivo=:estado,
+                                                                                   ntipodoc=:comprobante,
+                                                                                   cnrodoc=:nro_comp,
+                                                                                   idped=:pedido
+                                                                                   idrecepciona=:registra");
                 
                 $sql->execute([
                     "costos"=>$cabecera['codigo_costos'],
-                    "aprueba"=>$cabecera['codigo_aprueba'],
-                    "fecha_traslado"=>$cabecera['fecha'],
-                    "tipo_movimiento"=>$cabecera['codigo_movimiento'],
+                    "aprueba"=>$cabecera['codigo_autoriza'],
+                    "fecha"=>$cabecera['fecha'],
+                    "tipo"=>$cabecera['codigo_movimiento'],
                     "estado"=>1,
-                ]);
+                    "comprobante"=>$cabecera['codigo_comprobante'],
+                    "nro_comp"=>$cabecera['nrodoc'],
+                    "pedido"=>$pedido,
+                    "registra"=>$cabecera['codigo_registra']]);
 
                 $rowCount = $sql->rowCount();
 
@@ -256,7 +261,7 @@
                     $mensaje = "Registro insertado";
                     $sw = true;
 
-                    $indice = $this->lastInsertId("SELECT MAX(idreg) AS id FROM alm_transfercab");
+                    $indice = $this->lastInsertId("SELECT MAX(idreg) AS id FROM alm_cabexist");
                     
                     $this->insertarDetalles($indice,$detalles);
 
@@ -273,7 +278,7 @@
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
-            }*/
+            }
         }
 
         private function insertarDetalles($indice,$detalles){
@@ -283,20 +288,26 @@
             for ($i=0; $i < $nreg; $i++) { 
                try {
 
-                    $sql = $this->db->connect()->prepare("");
+                    $sql = $this->db->connect()->prepare("INSERT INTO alm_existencia SET idregistro=:compra,
+                                                                                        idpedido=:iditem,
+                                                                                        tipo=:estado,
+                                                                                        codprod=:producto,
+                                                                                        cant_ingr=:cantidad,
+                                                                                        observaciones=:observa,
+                                                                                        nflgActivo=:activo,
+                                                                                        nropedido=:pedido");
                     
-                    $sql->execute(["transferencia"=>$indice,
+                    $sql->execute(["compra"=>$indice,
                         "iditem"=>$datos[$i]->iditem,
                         "producto"=>$datos[$i]->idprod,
                         "cantidad"=>$datos[$i]->cantidad,
                         "activo"=>1,
-                        "estado"=>52,
+                        "estado"=>3,
                         "observa"=>$datos[$i]->obser,
-                        "pedido"=>$datos[$i]->pedido,
-                        "costos"=>$datos[$i]->costos]);
+                        "pedido"=>$datos[$i]->pedido]);
 
                     if ( $datos[$i]->cantidad != 0 ){
-                        $this->actualizarDetallesPedido($datos[$i]->iditem,$datos[$i]->cantidad,$datos[$i]->aprobado,$datos[$i]->atendido);
+                        $this->actualizarDetallesPedido($datos[$i]->iditem,$datos[$i]->cantidad);
                     }
                 } catch (PDOException $th) {
                     echo $th->getMessage();
@@ -305,12 +316,13 @@
             }
         }
 
-        private function actualizarDetallesPedido($item,$cantidad,$aprobado,$atendido){
+        private function actualizarDetallesPedido($item,$cantidad){
             try {
                 $estado = 230;
 
                 $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet 
-                                                        SET tb_pedidodet.estadoItem = :estado,
+                                                        SET tb_pedidodet.estadoItem =:estado,
+                                                            tb_pedidodet.cant_atend =:cantidad
                                                         WHERE tb_pedidodet.iditem =:item");
                 $sql->execute(["item"=>$item,
                                 "cantidad"=>$cantidad,

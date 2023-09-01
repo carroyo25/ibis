@@ -11,7 +11,7 @@
         <div class="ventanaProceso tamanioProceso">
             <div class="cabezaProceso">
                 <form action="#" id="formProceso" autocomplete="off">
-                    <input type="hidden" name="codigo_costos" id="codigo_costos"> 
+                    <input type="hidden" name="codigo_costos" id="codigo_costos">
                     <input type="hidden" name="codigo_area" id="codigo_area">
                     <input type="hidden" name="codigo_almacen_origen" id="codigo_almacen_origen">
                     <input type="hidden" name="codigo_almacen_destino" id="codigo_almacen_destino">
@@ -88,7 +88,7 @@
                                 </div>
                                 <div class="column2_46">
                                     <label for="nrdoc">Nro :</label>
-                                    <input type="text" name="nrdoc" id="nrdoc">
+                                    <input type="text" name="nrodoc" id="nrodoc">
                                 </div>
                             </div>
                         </div>
