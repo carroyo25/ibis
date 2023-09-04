@@ -360,16 +360,19 @@
                 if (!$mail->send()) {
                     $estadoEnvio = false; 
                 }else {
+                    $this->actualizarDetalles("tb_pedidodet",$estado,$detalles);
+                    $this->actualizarCabecera("tb_pedidocab",$estado,$pedido,$emitido,null);
+                    
+
                     $mensaje = "Mensaje de correo enviado";
                     $estadoEnvio = true; 
                     $clase = "mensaje_correcto";
-                    $this->actualizarCabecera("tb_pedidocab",$estado,$pedido,$emitido,null);
-                    $this->actualizarDetalles("tb_pedidodet",$estado,$detalles);
                 }
 
                 $salida= array("estado"=>$estadoEnvio,
                                 "mensaje"=>$mensaje,
                                 "clase"=>$clase,
+                                "proceso"=>$estado,
                                 "pedidos"=>$this->listarPedidosUsuario());
 
                 return $salida;
@@ -431,12 +434,11 @@
 
             for ($i=0; $i < $nreg; $i++) { 
                 try {
-                        //$existe = $this->vericaExiste($datos[$i]->idprod,$datos[$i]->cantidad,$datos[$i]->especifica);
 
                         //if ( $existe == 0) {
                             $sql = $this->db->connect()->prepare("INSERT INTO tb_pedidodet 
                                                                     SET idpedido=:ped,idprod=:prod,idtipo=:tipo,unid=:und,
-                                                                        cant_pedida=:cant,estadoItem=:est,tipoAten=:aten,
+                                                                        cant_pedida=:cant,cant_aprob=:aprob,estadoItem=:est,tipoAten=:aten,
                                                                         verificacion=:ver,nflgqaqc=:qaqc,idcostos=:costos,idarea=:area,
                                                                         observaciones=:espec,item=:nropos");
                             $sql ->execute([
@@ -452,7 +454,8 @@
                                 "costos"=>$costos,
                                 "area"=>$area,
                                 "espec"=>$datos[$i]->especifica,
-                                "nropos"=>$datos[$i]->item]);
+                                "nropos"=>$datos[$i]->item,
+                                "aprob"=>$datos[$i]->cantidad]);
                         //}
                        
                    

@@ -244,6 +244,8 @@ $(function(){
                         $("#tablaDetalles tbody > tr").attr("data-grabado",1);
 
                         $("#codigo_pedido").val(data.indice);
+                        
+                        //$("#proceso").fadeOut();
 
                     },
                     "json"
@@ -779,23 +781,25 @@ itemsPreview = () =>{
             DESCRIPCION = $(this).find('td').eq(3).text(),
             UNIDAD      = $(this).find('td').eq(4).text(),
             CANTIDAD    = $(this).find('td').eq(5).children().val(),
-            ESPECIFICA  = $(this).find('td').eq(6).children().val();
+            ESPECIFICA  = $(this).find('td').eq(6).children().val(),
             ITEMPEDIDO  = $(this).data('idx'),
             OBSERVAC    = "",
             NROPARTE    = $(this).find('td').eq(7).text(),
+            ESTADOITEM  = $("#codigo_estado").val();
 
         item = {};
         
-        item['item']        = ITEM;
-        item['codigo']      = CODIGO;
-        item['descripcion'] = DESCRIPCION;
-        item['unidad']      = UNIDAD;
-        item['cantidad']    = CANTIDAD;
-        item['especifica']  = ESPECIFICA;
-        item['itempedido']  = ITEMPEDIDO;
-        item['observac']    = OBSERVAC;
-        item['atendida']    = 0;
-        item['nroparte']    = NROPARTE;
+        item['item']         = ITEM;
+        item['codigo']       = CODIGO;
+        item['descripcion']  = DESCRIPCION;
+        item['unidad']       = UNIDAD;
+        item['cantidad']     = CANTIDAD;
+        item['especifica']   = ESPECIFICA;
+        item['itempedido']   = ITEMPEDIDO;
+        item['observac']     = OBSERVAC;
+        item['atendida']     = 0;
+        item['nroparte']     = NROPARTE;
+        item['estadoitem']   = ESTADOITEM;
 
         DATA.push(item);
     })

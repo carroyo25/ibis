@@ -114,6 +114,7 @@
                                                         LPAD( tb_pedidocab.nrodoc, 6, 0 ) AS nrodoc,
                                                         REPLACE ( FORMAT( tb_pedidodet.cant_aprob, 2 ), ',', '' ) AS cantidad,
                                                         REPLACE ( FORMAT( tb_pedidodet.cant_resto, 2 ), ',', '' ) AS saldo,
+                                                        REPLACE ( FORMAT( tb_pedidodet.cant_atend, 2 ), ',', '' ) AS atendida,
                                                         FORMAT( tb_pedidodet.precio, 2 ) AS precio,
                                                         REPLACE ( FORMAT( tb_pedidodet.cant_pedida, 2 ), ',', '' ) AS cantidad_pedida,
                                                         IF (ISNULL(SUM( alm_transferdet.ncanti)),0,SUM( alm_transferdet.ncanti)) AS atendido_almacen,
@@ -192,7 +193,7 @@
                                         <td class="textoCentro">'.$rs['ccodproy'].'</td>
                                         <td class="textoCentro" data-codigo="'.$rs['id_cprod'].'">'.$rs['ccodprod'].'</td>
                                         <td class="textoDerecha">'.$rs['cantidad'].'</td>
-                                        <td class="textoDerecha">'.$rs['atendido_almacen'].'</td>
+                                        <td class="textoDerecha">'.$rs['atendida'].'</td>
                                         <td class="pl5px">'.$rs['cdesprod'].'</td>
                                     </tr>';
                     }

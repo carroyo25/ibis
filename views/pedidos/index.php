@@ -53,7 +53,7 @@
                             <button type="button" id="preview" title="Vista Previa" class="boton3">
                                 <i class="fab fa-wpexplorer"></i> Vista Previa
                             </button>
-                            <button type="button" id="sendItem" data-rol="109" data-estado="51" title="Enviar Pedido" class="boton3 desactivado">
+                            <button type="button" id="sendItem" data-rol="4" data-estado="51" title="Enviar Pedido" class="boton3 desactivado">
                                 <i class="far fa-paper-plane"></i> Enviar Almacen
                             </button>
                             <button type="button" id="requestAprob" data-rol="3" data-estado="53" title="Solicitar Aprobacion" class="boton3 desactivado">
