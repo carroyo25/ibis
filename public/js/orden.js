@@ -491,7 +491,7 @@ $(function(){
         
         $("#comentarios").fadeOut();
 
-        if ($("#codigo_estado").val() == 59 && !swcoment) {
+        if ( !swcoment) {
             $.post(RUTA+"orden/comentarios", {codigo:$("#codigo_orden").val(),
                                               comentarios:JSON.stringify(comentarios()),
                                               usuario:$("#id_user").val()},

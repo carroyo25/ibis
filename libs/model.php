@@ -542,30 +542,28 @@
                 for ($i=0; $i < $nreg; $i++) { 
 
                     if ( $valor == 53 ){
-                       $sql = $this->db->connect()->prepare("UPDATE $tabla SET estadoItem=:est,
+                        $sql = $this->db->connect()->prepare("UPDATE $tabla SET estadoItem=:est,
                                                                                 observAlmacen=:obs
                                                                             WHERE iditem=:id");
                         $sql->execute(["est"=>$datos[$i]->estadoitem,
                                         "id"=>$datos[$i]->itempedido,
                                         "obs"=>$datos[$i]->observac]);
                     }else{
-                          //esta linea es para cambiar los items 52 -- atendido en su totalidad por almacen
-                          $estado = floatval($datos[$i]->cantidad) - floatval($datos[$i]->atendida) == 0 ? 52: $valor;
-                          $resto = floatval($datos[$i]->cantidad) - floatval($datos[$i]->atendida);
+                        //esta linea es para cambiar los items 52 -- atendido en su totalidad por almacen
+                        $estado = floatval($datos[$i]->cantidad) - floatval($datos[$i]->atendida) == 0 ? 52: $valor;
+                        $resto = floatval($datos[$i]->cantidad) - floatval($datos[$i]->atendida);
   
-                          $sql = $this->db->connect()->prepare("UPDATE $tabla SET estadoItem=:est,
+                        $sql = $this->db->connect()->prepare("UPDATE $tabla SET estadoItem=:est,
                                                                                   observAlmacen=:obs, 
                                                                                   cant_atend=:aten,
                                                                                   cant_resto=:resto
                                                                               WHERE iditem=:id");
-                          $sql->execute(["est"=>$estado,
+                        $sql->execute(["est"=>$estado,
                                           "id"=>$datos[$i]->itempedido,
                                           "obs"=>$datos[$i]->observac,
                                           "aten"=>$datos[$i]->atendida,
                                           "resto"=>$resto]);
                     }
-
-                   
                 }
                 
             } catch (PDOException $th) {
