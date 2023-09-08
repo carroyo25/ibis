@@ -98,6 +98,20 @@ $(function(){
         return false;
     });
 
+    $("#tablaDetalles tbody").on('keypress','input', function (e) {
+        if (e.which == 13) {
+            //para cambiar el foco con el enter
+
+            cb = parseInt($(this).attr('tabindex'));
+
+            if ($(':input[tabindex=\'' + (cb + 1) + '\']') != null) {
+                $(':input[tabindex=\'' + (cb + 1) + '\']').focus();
+                $(':input[tabindex=\'' + (cb + 1) + '\']').select();
+            }
+        }
+    });
+
+
     $("#tablaDetalles tbody").on("focusout",".valorAtendido", function (e) {
         e.preventDefault();
 
@@ -144,6 +158,7 @@ $(function(){
 
         $.post(RUTA+"atencion/buscaRol", {rol:3,cc:$("#codigo_costos").val()},
             function (data, textStatus, jqXHR) {
+                $("#subject").val("Pedido : "+$("#numero").val()+ " - " + $("#costos").val());
                 $("#listaCorreos tbody").empty().append(data);
                 $("#sendMail").fadeIn();
             },

@@ -545,24 +545,40 @@
                         $sql = $this->db->connect()->prepare("UPDATE $tabla SET estadoItem=:est,
                                                                                 observAlmacen=:obs
                                                                             WHERE iditem=:id");
-                        $sql->execute(["est"=>$datos[$i]->estadoitem,
+                        $sql->execute(["est"=>$valor,
                                         "id"=>$datos[$i]->itempedido,
                                         "obs"=>$datos[$i]->observac]);
-                    }else{
-                        //esta linea es para cambiar los items 52 -- atendido en su totalidad por almacen
-                        $estado = floatval($datos[$i]->cantidad) - floatval($datos[$i]->atendida) == 0 ? 52: $valor;
-                        $resto = floatval($datos[$i]->cantidad) - floatval($datos[$i]->atendida);
-  
-                        $sql = $this->db->connect()->prepare("UPDATE $tabla SET estadoItem=:est,
-                                                                                  observAlmacen=:obs, 
-                                                                                  cant_atend=:aten,
-                                                                                  cant_resto=:resto
-                                                                              WHERE iditem=:id");
-                        $sql->execute(["est"=>$estado,
-                                          "id"=>$datos[$i]->itempedido,
-                                          "obs"=>$datos[$i]->observac,
-                                          "aten"=>$datos[$i]->atendida,
-                                          "resto"=>$resto]);
+                    }
+                }
+                
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function actualizarAtenciones($tabla,$valor,$detalles){
+            $datos = json_decode($detalles);
+            $nreg =  count($datos);
+
+            try {
+                for ($i=0; $i < $nreg; $i++) { 
+
+                    if ( $valor == 53 ){
+                       //esta linea es para cambiar los items 52 -- atendido en su totalidad por almacen
+                       $estado = floatval($datos[$i]->cantidad) - floatval($datos[$i]->atendida) == 0 ? 52: $valor;
+                       $resto = floatval($datos[$i]->cantidad) - floatval($datos[$i]->atendida);
+ 
+                       $sql = $this->db->connect()->prepare("UPDATE $tabla SET estadoItem=:est,
+                                                                                 observAlmacen=:obs, 
+                                                                                 cant_atend=:aten,
+                                                                                 cant_resto=:resto
+                                                                             WHERE iditem=:id");
+                       $sql->execute(["est"=>$estado,
+                                         "id"=>$datos[$i]->itempedido,
+                                         "obs"=>$datos[$i]->observac,
+                                         "aten"=>$datos[$i]->atendida,
+                                         "resto"=>$resto]);
                     }
                 }
                 
@@ -1787,7 +1803,8 @@
                                                         onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"
                                                         onclick="this.select()" 
                                                         value=""
-                                                        class="valorAtendido">
+                                                        class="valorAtendido"
+                                                        tabIndex='.$filas.'>
                                         </td>
                                         <td></td>
                                         <td class="textoCentro"><input type="text"></td>
@@ -1839,21 +1856,27 @@
                     $filas = 1;
                     while ($rs = $sql->fetch()) {
 
-                        if ( $rs['estadoItem'] ==  53   ) {
-                            $salida .='<tr data-grabado="1" data-idprod="'.$rs['idprod'].'" data-codund="'.$rs['unid'].'" data-idx="'.$rs['iditem'].'">
+                        if ( $rs['estadoItem'] ==  53 || $rs['estadoItem'] ==  52) {
+
+                            $atendida = $rs['cant_atendida'] == NULL ? 0 : $rs['cant_atendida'];
+                            $aprobar =  $rs['cant_pedida'] - $rs['cant_atendida'];
+
+                            $estado_aprobar = $aprobar == 0 ? "desactivado" : "";
+
+                            $salida .='<tr data-grabado="1" data-idprod="'.$rs['idprod'].'" data-codund="'.$rs['unid'].'" data-idx="'.$rs['iditem'].'" class="'.$estado_aprobar.'">
                                             <td class="textoCentro">'.str_pad($filas++,3,0,STR_PAD_LEFT).'</td>
                                             <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                             <td class="pl20px">'.strtoupper($rs['cdesprod']).'</td>
                                             <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                             <td class="textoCentro">'.$rs['cant_pedida'].'</td>
-                                            <td class="textoCentro">'.$rs['cant_atendida'].'</td>
+                                            <td class="textoCentro">'.number_format($atendida,2).'</td>
                                             <td>
                                                 <input type="number" 
                                                             step="any" 
                                                             placeholder="0.00" 
                                                             onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"
                                                             onclick="this.select()" 
-                                                            value="'.$rs['cant_pendiente'].'"
+                                                            value="'.number_format($aprobar,2).'"
                                                             class="valorAtendido">
                                             </td>
                                             <td class="textoCentro">'.$rs['nroparte'].'</td>
@@ -1909,8 +1932,13 @@
                 if ($rowCount > 0){
                     $filas = 1;
                     while ($rs = $sql->fetch()) {
+
+                        $atendida = $rs['cant_atendida'] == NULL ? 0 : $rs['cant_atendida'];
+                        $aprobar =  $rs['cant_pedida'] - $rs['cant_atendida'];
+
+                        $estado_aprobar = $aprobar == 0 ? "desactivado" : "";
                         
-                        $salida .='<tr data-grabado="1" data-idprod="'.$rs['idprod'].'" data-codund="'.$rs['unid'].'" data-idx="'.$rs['iditem'].'">
+                        $salida .='<tr data-grabado="1" data-idprod="'.$rs['idprod'].'" data-codund="'.$rs['unid'].'" data-idx="'.$rs['iditem'].'" class="'.$estado_aprobar.'">
                                         <td class="textoCentro">'.str_pad($filas++,3,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="pl20px">'.$rs['cdesprod'].'</td>
@@ -2860,8 +2888,9 @@
         public function itemMarcado($id,$estado,$io){
             try {
                 $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet 
-                                                        SET nflgOrden =:estado
-                                                            idorden = NULL
+                                                        SET nflgOrden =:estado,
+                                                            idorden = NULL,
+                                                            cant_orden = 0
                                                         WHERE iditem =:id");
                 $sql->execute(["id" => $id,"estado" => $estado]);
 

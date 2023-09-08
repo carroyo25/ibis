@@ -65,7 +65,7 @@
             require_once('public/formatos/pedidos.php');
             
             $details = json_decode($detalles);
-            $filename =  uniqid().".pdf";
+            $filename =  $datos['numero'].$datos['costos'].".pdf";
 
             $num = $datos['numero'];
             $fec = $datos['emision'];
@@ -186,11 +186,11 @@
                     $indice = 0;
                 }
 
-                $salida = array("respuesta"=>$respuesta,
-                                "mensaje"=>$mensaje,
-                                "clase"=>$clase,
-                                "indice"=>$indice);
-
+                $salida = array("respuesta" =>$respuesta,
+                                "mensaje"   =>$mensaje,
+                                "clase"     =>$clase,
+                                "indice"    =>$indice,
+                                "items"     =>$this->consultarReqId($indice,49,50,49,null));
                 
                 return $salida;
                 
@@ -287,7 +287,8 @@
 
                 $salida = array("respuesta"=>$respuesta,
                                 "mensaje"=>$mensaje,
-                                "clase"=>$clase);
+                                "clase"=>$clase,
+                                "items"=>$this->consultarReqId($datos['codigo_pedido'],49,50,49,null));
 
                 
                 return $salida;
@@ -362,7 +363,6 @@
                 }else {
                     $this->actualizarDetalles("tb_pedidodet",$estado,$detalles);
                     $this->actualizarCabecera("tb_pedidocab",$estado,$pedido,$emitido,null);
-                    
 
                     $mensaje = "Mensaje de correo enviado";
                     $estadoEnvio = true; 

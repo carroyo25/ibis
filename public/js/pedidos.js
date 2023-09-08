@@ -12,8 +12,8 @@ $(function(){
             if ( $("#id_user").val() == "" ) throw new Error("General -- reinicie el sistema");
 
                 $("#estado")
-                .removeClass()
-                .addClass("textoCentro w35por estado procesando");
+                    .removeClass()
+                    .addClass("textoCentro w35por estado procesando");
                 $("#proceso").fadeIn();
                 
                 accion = 'n';
@@ -30,6 +30,8 @@ $(function(){
 
     $("#addItem").click(function (e) { 
         e.preventDefault();
+
+        grabado = false;
         
         if ( $("#codigo_tipo").val() === ""){
             mostrarMensaje("Selecione el tipo de pedido","mensaje_error");
@@ -232,6 +234,7 @@ $(function(){
             if ($("#tablaDetalles tbody tr").length <= 0) throw "El pedido no tienes items";
             if (checkCantTables($("#tablaDetalles tbody > tr"),5)) throw "No ingreso cantidad en un item";
             
+            $("#esperar").css("opacity","1").fadeIn();
 
             if ( accion == 'n' ){
                 $.post(RUTA+"pedidos/nuevoPedido", {cabecera:result,detalles:JSON.stringify(itemsSave())},
@@ -241,11 +244,11 @@ $(function(){
                         grabado = true;
                         accion = "u";
                         
-                        $("#tablaDetalles tbody > tr").attr("data-grabado",1);
-
+                        $("#tablaDetalles tbody")
+                            .empty()
+                            .append(data.items.detalles);
                         $("#codigo_pedido").val(data.indice);
-                        
-                        //$("#proceso").fadeOut();
+                        $("#esperar").css("opacity","0").fadeOut();
 
                     },
                     "json"
@@ -255,6 +258,11 @@ $(function(){
                     function (data, textStatus, jqXHR) {
                         mostrarMensaje(data.mensaje,data.clase);
                         accion = "u";
+                        grabado = true;
+                        $("#tablaDetalles tbody")
+                            .empty()
+                            .append(data.items.detalles);
+                        $("#esperar").css("opacity","0").fadeOut();
                     },
                     "json");
             }
@@ -525,7 +533,7 @@ $(function(){
         $(".listaArchivos").empty();
     });
 
-    $("#sendItem,#requestAprob").click(function (e) { 
+    $(".accion").click(function (e) { 
         e.preventDefault();
                 
         if (grabado){
@@ -540,6 +548,7 @@ $(function(){
                 },
                 "text"
             );
+            
         }else{
             mostrarMensaje("Por favor grabar el pedido","mensaje_error");
         }
@@ -640,7 +649,7 @@ $(function(){
                 parametros.append("correos", JSON.stringify(mailsList()));
                 parametros.append("mensaje",$(".messaje div").html());
                 parametros.append("pedido",$("#codigo_pedido").val());
-                parametros.append("detalles",JSON.stringify(itemsPreview()));
+                parametros.append("detalles",JSON.stringify(itemsModify()));
                 parametros.append("emitido",$("#vista_previa").val());
                 
             $.ajax({
@@ -660,12 +669,12 @@ $(function(){
                     success: function(response)
                     {   
                         mostrarMensaje(response.mensaje,response.clase);
-                        $("#proceso, #sendMail,#esperar").fadeOut();
+                        $("#proceso,#sendMail,#esperar").fadeOut();
                         $("#tablaPrincipal tbody")
                             .empty()
                             .append(response.pedidos);
                     }
-                });
+            });
 
         return false;
     });
@@ -824,7 +833,7 @@ itemsSave = () =>{
 
         item= {};
         
-        if (ESTADO == 0) {
+        if ( ESTADO == 0 ) {
             item['idprod']      = IDPROD;
             item['unidad']      = UNIDAD;
             item['cantidad']    = CANTIDAD;
@@ -834,6 +843,48 @@ itemsSave = () =>{
             item['especifica']  = ESPECIFICA;
             item['estado']      = ESTADO;
             item['item']        = ITEM;
+
+            $(this).attr('data-grabado',1);
+
+            DATA.push(item);
+        } 
+    })
+
+    return DATA;
+}
+
+itemsModify = () =>{
+    DATA = [];
+    let TABLA = $("#tablaDetalles tbody >tr");
+
+    TABLA.each(function(){
+        let IDPROD      = $(this).data('idprod'),
+            UNIDAD      = $(this).data('codund'),
+            CANTIDAD    = $(this).find('td').eq(5).children().val(),
+            NROPARTE    = $(this).find('td').eq(7).text(),
+            ITEM        = $(this).find('td').eq(1).text(),
+            IDX         = $(this).data('idx'),
+            CALIDAD     = 0,
+            ESTADO      = $(this).attr('data-grabado'),
+            ESPECIFICA  = $(this).find('td').eq(6).children().val(),
+            OBSERVAC    = "";
+            
+
+        item= {};
+        
+        if ( ESTADO == 1 ) {
+            item['idprod']      = IDPROD;
+            item['unidad']      = UNIDAD;
+            item['cantidad']    = CANTIDAD;
+            item['nroparte']    = NROPARTE;
+            item['itempedido']  = IDX;
+            item['calidad']     = CALIDAD;
+            item['especifica']  = ESPECIFICA;
+            item['estado']      = ESTADO;
+            item['item']        = ITEM;
+            item['observac']    = OBSERVAC;
+            item['atendida']    = 0;
+            
 
             $(this).attr('data-grabado',1);
 
