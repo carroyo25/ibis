@@ -20,6 +20,7 @@ $(function() {
 
             "text"
         });
+
         return false;
     });
 
@@ -122,6 +123,29 @@ $(function() {
             .attr("src","");
 
         $("#vistaprevia").fadeOut();
+
+        return false;
+    });
+
+    $(".procesos a").on('click', function(e) {
+        e.preventDefault();
+
+        $("#estado_item").val($(this).attr("href"));
+
+        let str = $("#formConsulta").serialize();
+
+        $("#esperar").css({"display":"block","opacity":"1"});
+
+        $.post(RUTA+"cargoplanner/filtroCargoPlan",str,
+            function (data, text, requestXHR) {
+                $(".itemsCargoPlanner table tbody")
+                    .empty()
+                    .append(data);
+
+                    $("#esperar").fadeOut();
+
+            "text"
+        });
 
         return false;
     });

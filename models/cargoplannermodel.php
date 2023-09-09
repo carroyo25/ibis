@@ -14,6 +14,7 @@
                 $orden      = $parametros['ordenSearch'] == "" ? "%" : $parametros['ordenSearch'];
                 $pedido     = $parametros['pedidoSearch'] == "" ? "%" : $parametros['pedidoSearch'];
                 $concepto   = $parametros['conceptoSearch'] == "" ? "%" : "%".$parametros['conceptoSearch']."%";
+                $estadoItem = $parametros['estado_item'] == "" ? "%" : $parametros['estado_item'];
                 
                 $salida = "No hay registros";
                 $item = 1;
@@ -25,6 +26,7 @@
                                                         tb_pedidodet.nroparte,
                                                         tb_pedidodet.nregistro,
                                                         tb_pedidodet.cant_pedida AS cantidad_pedido,
+                                                        tb_pedidodet.cant_atend AS cantidad_atendida,
                                                         LPAD(tb_pedidocab.nrodoc,6,0) AS pedido,
                                                         lg_ordendet.id_orden AS orden,
                                                         lg_ordendet.item AS item_orden,
@@ -93,15 +95,17 @@
                                                 AND tb_pedidocab.idtipomov LIKE :tipo
                                                 AND cm_producto.ccodprod LIKE :codigo
                                                 AND tb_pedidocab.concepto LIKE :concepto
+                                                AND tb_pedidodet.estadoItem LIKE :estado
                                             GROUP BY
                                                 tb_pedidodet.iditem");
                                                                                                     
-                $sql->execute(["orden"=>$orden,
-                               "pedido"=>$pedido,
-                               "costo"=>$costo,
-                                "codigo"=>$codigo,
-                                "concepto"=>$concepto,
-                                "tipo"=>$tipo]);
+                $sql->execute(["orden"      =>$orden,
+                               "pedido"     =>$pedido,
+                               "costo"      =>$costo,
+                               "codigo"     =>$codigo,
+                               "concepto"   =>$concepto,
+                               "tipo"       =>$tipo,
+                               "estado"     =>$estadoItem]);
                 
                 $rowCount = $sql->rowCount();
 
@@ -142,7 +146,6 @@
                             $clase_operacion = $rs['idtipomov'] == 37 ? 'bienes' : 'servicios';
                             $saldoRecibir = $rs['cantidad_orden'] - $rs['ingreso'] > 0 ? $rs['cantidad_orden'] - $rs['ingreso'] : "-";
                             $dias_atraso  =  $saldoRecibir > 0 ? $rs['dias_atraso'] : "-" ;
-                            
 
                             $estado_pedido =  $rs['estadoItem'] >= 54 ? "Atendido":"Pendiente";
                             $estado_item   =  $rs['estadoItem'] >= 54 ? "Atendido":"Pendiente";
@@ -177,6 +180,11 @@
                                 $estadofila = "stock";
                                 $estado_item = "item_stock";
                                 $estado_pedido = "stock";
+                            }else if( $rs['estadoItem'] == 230 ) {
+                                $porcentaje = "100%";
+                                $estadofila = "comprado";
+                                $estado_item = "Compra Local";
+                                $estado_pedido = "Compra Local";
                             }else if( $rs['estadoItem'] == 52  && $rs['ingreso_obra'] == $rs['cantidad_pedido']) {
                                 $porcentaje = "100%";
                                 $estadofila = "entregado";
@@ -259,6 +267,7 @@
                                         <td class="textoDerecha pr15px" style="background:#e8e8e8;font-weight: bold">'.$rs['cantidad_orden'].'</td>
                                         <td class="pl10px">'.$rs['item_orden'].'</td>
                                         <td class="pl10px">'.$rs['fecha_autorizacion_orden'].'</td>
+                                        <td class="textoDerecha pr15px">'.number_format($rs['cantidad_atendida'],2).'</td>
                                         <td class="pl10px">'.$rs['proveedor'].'</td>
                                         <td class="textoCentro">'.$rs['fecha_entrega'].'</td>
                                         <td class="textoDerecha pr15px">'.$rs['ingreso'].'</td>
@@ -474,25 +483,26 @@
                 $objPHPExcel->getActiveSheet()->setCellValue('T2','Cantidad Orden'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('U2','Item Orden'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('V2','Fecha Autorizacion'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('W2','Descripcion del proveedor'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('X2','Fecha Entrega'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('Y2','Cant. Recibida'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('Z2','Nota de Ingreso'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AA2','Saldo por Recibir'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AB2','Dias Entrega'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AC2','Días Atrazo'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AD2','Semáforo'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AE2','Cantidad Despachada'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AF2','Nro. Guia'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AG2','Registro Almacen'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AH2','Cantidad en Obra'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AI2','Estado Pedido'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AJ2','Estado Item'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AK2','N° Parte'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AL2','Codigo Activo'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AM2','Operador Logístico'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AN2','Tipo Transporte'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AO2','Observaciones/Concepto'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('w2','Atencion Almacen'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('X2','Descripcion del proveedor'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('Y2','Fecha Entrega'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('Z2','Cant. Recibida'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AA2','Nota de Ingreso'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AB2','Saldo por Recibir'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AC2','Dias Entrega'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AD2','Días Atrazo'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AE2','Semáforo'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AF2','Cantidad Despachada'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AG2','Nro. Guia'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AH2','Registro Almacen'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AI2','Cantidad en Obra'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AJ2','Estado Pedido'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AK2','Estado Item'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AL2','N° Parte'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AM2','Codigo Activo'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AN2','Operador Logístico'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AO2','Tipo Transporte'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AP2','Observaciones/Concepto'); // esto cambia
                
                 $fila = 3;
                 $datos = json_decode($registros);

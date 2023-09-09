@@ -152,6 +152,7 @@
     </div>
     <div class="barraTrabajo">
         <form action="#" id="formConsulta">
+            <input type="hidden" name="estado_item" id="estado_item">
             <div class="variasConsultasColumna">
                 <div class="datosConsultaCargoPlan">
                         <div class="w5por">
@@ -186,15 +187,15 @@
                             <input type="text" name="conceptoSearch" id="conceptoSearch">
                         </div>
                         <div class="procesos">
-                            <div class="item_anulado"><a href="#" title="Anulado">0%<p>Anulado</p></a></div>
-                            <div class="pedidoCreado"><a href="#" title="Pedido Creado">10%<p>Creado</p></a></div>
-                            <div class="item_aprobado"><a href="#" title="Pedido Aprobado">15%<p>Aprob.</p></div>
-                            <div class="stock"><a href="#" title="Atencion x Stock">20%<p>Stock</p></a></div>
+                            <div class="item_anulado"><a href="105" title="Anulado">0%<p>Anulado</p></a></div>
+                            <div class="pedidoCreado"><a href="49" title="Pedido Creado">10%<p>Creado</p></a></div>
+                            <div class="item_aprobado"><a href="54" title="Pedido Aprobado">15%<p>Aprob.</p></div>
+                            <div class="stock"><a href="52" title="Atencion x Stock">20%<p>Stock</p></a></div>
                             <div class="item_orden"><a href="#" title="con OC/OS">25%<p>OC/OS</p></a></div>
                             <div class="item_parcial"><a href="#" title="Enviado Proveedor">30%<p>Enviado</p></a></div>
                             <div class="item_ingreso_parcial" title="Atencion Parcial"><a href="#">40%<p>Ing.Parcial</p></a></div>
                             <div class="item_ingreso_total" title="Atención Total"><a href="#">50%<p>At.Total</p></a></div>
-                            <div class="item_registro_salida" title="Atencion cx compras locales"><a href="#">60%<p>Com.Local</p></a></div>
+                            <div class="item_registro_salida" title="Atencion cx compras locales"><a href="230">60%<p>Com.Local</p></a></div>
                             <div class="item_registro_gerencia" title="Pedido Gerencia"><a href="#">70%<p>P.Gerencia</p></a></div>
                             <div class="item_transito" title="En transito"><a href="#">75%<p>Transito</p></a></div>
                             <div class="item_ingreso_parcial" title="Parcial Obra"><a href="#">85%<p>Rec.Parcial</p></a></div>
@@ -234,6 +235,7 @@
                     <th style="background:#AAFFAA; color:#000">Cantidad</br>Orden</th>
                     <th style="background:#AAFFAA; color:#000">Item</br>Orden</th>
                     <th style="background:#AAFFAA; color:#000">Fecha</br>Autorización</th>
+                    <th>Atencion</br>Almacen</th>
                     <th style="background:#AB7FAB; color:#fff" width="10%" data-idcol="22" class="datafiltro">Descripcion Proveedor</th>
                     <th>Fecha Entrega</br>Proveedor</th>
                     <th width="50px">Cantidad</br>Recibida</th>
