@@ -117,7 +117,7 @@
                                                         REPLACE ( FORMAT( tb_pedidodet.cant_atend, 2 ), ',', '' ) AS atendida,
                                                         FORMAT( tb_pedidodet.precio, 2 ) AS precio,
                                                         REPLACE ( FORMAT( tb_pedidodet.cant_pedida, 2 ), ',', '' ) AS cantidad_pedida,
-                                                        IF (ISNULL(SUM( alm_transferdet.ncanti)),0,SUM( alm_transferdet.ncanti)) AS atendido_almacen,
+                                                        /*IF (ISNULL(SUM( alm_transferdet.ncanti)),0,SUM( alm_transferdet.ncanti)) AS atendido_almacen,*/
                                                         tb_pedidodet.igv,
                                                         tb_proyectos.ccodproy,
                                                         tb_pedidodet.cant_aprob,
@@ -154,8 +154,8 @@
                                                     WHERE
                                                         tb_pedidodet.nflgActivo = 1 
                                                         AND tb_pedidodet.idasigna = :user_asigna 
-                                                        AND tb_pedidodet.cant_aprob <> tb_pedidodet.cant_orden 
-                                                        AND ( tb_pedidodet.estadoItem = 230 OR tb_pedidodet.estadoItem = 54)
+                                                        AND tb_pedidodet.cant_aprob <> tb_pedidodet.cant_orden
+                                                        AND ( tb_pedidodet.estadoItem = 230 OR tb_pedidodet.estadoItem = 54 )
                                                         AND tb_pedidodet.nflgActivo = 1 
                                                     GROUP BY
                                                         tb_pedidodet.iditem");
@@ -169,14 +169,14 @@
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()) {
 
-                        $cant = $rs['cantidad'] -  $rs['atendido_almacen'];
+                        $cant = $rs['cantidad'] -  $rs['atendida'];
 
                         //validar para las compras parciales
                        
                         $salida .='<tr class="pointer" data-pedido="'.$rs['idpedido'].'"
                                                        data-entidad="'.$rs['entidad'].'"
                                                        data-unidad="'.$rs['unidad'].'"
-                                                       data-cantidad ="'.$cant.'"
+                                                       data-cantidad ="'.$rs['cantidad'].'"
                                                        data-total="'.$rs['total_numero'].'"
                                                        data-codprod="'.$rs['id_cprod'].'"
                                                        data-iditem="'.$rs['iditem'].'"
@@ -185,7 +185,8 @@
                                                        data-nropedido=""
                                                        data-nparte="'.$rs['nroparte'].'"
                                                        data-detalle="'.$rs['detalle'].'"
-                                                       data-estado="'.$rs['estadoItem'].'">
+                                                       data-estado="'.$rs['estadoItem'].'"
+                                                       data-compra="'.$rs['cantidad'].'">
                                         <td class="textoCentro">'.str_pad($rs['nrodoc'],6,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.date("d/m/Y", strtotime($rs['emision'])).'</td>
                                         <td class="pl5px">'.$rs['concepto'].'</td>

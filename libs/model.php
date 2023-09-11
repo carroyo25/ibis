@@ -1951,7 +1951,7 @@
                                                         placeholder="0.00" 
                                                         onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"
                                                         onclick="this.select()" 
-                                                        value="'.$rs['cant_aprob'].'"
+                                                        value="'.number_format($aprobar,2).'"
                                                         class="valorAtendido">
                                         </td>
                                         <td class="textoCentro">'.$rs['nroparte'].'</td>
@@ -2561,6 +2561,30 @@
                 $result = $sql->fetchAll();
 
                 return array("rol"=>$result[0]['rol']);
+            }catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        public function verificarComentario($orden){
+            try {
+                $sql= $this->db->connect()->prepare("SELECT
+                                                            tb_user.nrol 
+                                                        FROM
+                                                            lg_ordencomenta
+                                                            INNER JOIN tb_user ON lg_ordencomenta.id_cuser = tb_user.iduser 
+                                                        WHERE
+                                                            lg_ordencomenta.id_regmov = :orden 
+                                                        ORDER BY
+                                                            lg_ordencomenta.fregsys ASC 
+                                                        LIMIT 1");
+                
+                $sql->execute(["orden"=>$orden]);
+
+                $result = $sql->fetchAll();
+
+                return array("nrol"=>$result[0]['nrol']);
             }catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;

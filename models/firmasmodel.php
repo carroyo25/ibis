@@ -77,24 +77,34 @@
                          $alerta_logistica = "";
                          $alerta_finanzas = "";
                          $alerta_operaciones = "";
+                         $titulo_logistica  = "";
+                         $titulo_operaciones = "";
+                         $titulo_finanzas = "";
                          
                          $totalComentario = $this->contarComentarios($rs['id_regmov']);
 
-                         if ( $totalComentario['numero'] > 0 ) {
+                         if ( $totalComentario['numero'] != 0 ) {
+
                                 $detalleComentarios = $this->detallesComentarios($rs['id_regmov']);
+                                $verificarComentarios = $this->verificarComentario($rs['id_regmov']);
 
-                                $gerencia = $this->creaComentario($rs['id_regmov']);
+                                if ( $verificarComentarios['nrol'] == 5) {
+                                    $gerencia = $this->creaComentario( $rs['id_regmov'] );
 
-                                if ( $gerencia['rol'] == 'L' && $flog == 0 ){
-                                    $alerta_logistica = $detalleComentarios['rol'] == 'L' ? "urgente" : "semaforoVerde";
-                                }
-                                
-                                if ( $gerencia['rol'] == 'O' && $fope == 0 ){
-                                    $alerta_operaciones = $detalleComentarios['rol'] == 'O' ? "urgente":"semaforoVerde";
-                                }
+                                    if ( $gerencia['rol'] == 'L' && $flog == 0 ){
+                                        $alerta_logistica = $detalleComentarios['rol'] == 'L' ? "urgente" : "semaforoVerde";
+                                        $titulo_logistica = $detalleComentarios['rol'] == 'L' ? "Observado" : "Respondido";
+                                    }
+                                    
+                                    if ( $gerencia['rol'] == 'O' && $fope == 0 ){
+                                        $alerta_operaciones = $detalleComentarios['rol'] == 'O' ? "urgente":"semaforoVerde";
+                                        $titulo_operaciones = $detalleComentarios['rol'] == 'O' ? "Observado":"Respondido";
+                                    }
 
-                                if ( $gerencia['rol'] == 'F' && $ffin == 0 ){
-                                    $alerta_finanzas = $detalleComentarios['rol'] == 'F' ? "urgente":"semaforoVerde";
+                                    if ( $gerencia['rol'] == 'F' && $ffin == 0 ){
+                                        $alerta_finanzas = $detalleComentarios['rol'] == 'F' ? "urgente":"semaforoVerde";
+                                        $titulo_finanzas = $detalleComentarios['rol'] == 'F' ? "Observado":"Respondido";
+                                    }
                                 }
                          } 
  
@@ -113,9 +123,9 @@
                                         <td class="textoCentro '.strtolower($rs['atencion']).'" style="font-size:.6rem">'.$atencion.'</td>
                                         <td class="textoDerecha pr10px">'.$rs['cabrevia'].' '.$rs['total_orden'].'</td>
                                         <td class="textoCentro">'.$rs['operador'].'</td>
-                                        <td class="textoCentro '.$alerta_logistica.'">'.$log.'</td>
-                                        <td class="textoCentro '.$alerta_finanzas.'">'.$fin.'</td>
-                                        <td class="textoCentro '.$alerta_operaciones.'">'.$ope.'</td>
+                                        <td class="textoCentro '.$alerta_logistica.'" title="'.$titulo_logistica.'">'.$log.'</td>
+                                        <td class="textoCentro '.$alerta_finanzas.'" title="'.$titulo_finanzas.'">'.$fin.'</td>
+                                        <td class="textoCentro '.$alerta_operaciones.'" title="'.$titulo_operaciones.'">'.$ope.'</td>
                                         
                                     </tr>';
                      }

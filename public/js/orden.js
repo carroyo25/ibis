@@ -315,7 +315,8 @@ $(function(){
                 cod_prod    = $(this).data("codprod"),
                 id_item     = $(this).data("iditem"),
                 nro_parte   = $(this).data("nparte"),
-                grabado     = 0;
+                grabado     = 0,
+                compra      = $(this).data("compra"),
                 tabPos      = $("#tablaDetalles tr").length;
 
             $("#nro_pedido").val(nroreq);
@@ -341,7 +342,7 @@ $(function(){
                                     placeholder="0.00" 
                                     onchange="(function(el){el.value=parseFloat(el.value).toFixed(4);})(this)"
                                     onclick="this.select()"
-                                    value=${cantidad}>
+                                    value=${compra}>
                             </td>
                             <td class="textoDerecha pr5px precio">
                                 <input type="number" class="focusNext"
