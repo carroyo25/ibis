@@ -231,7 +231,7 @@
             try {
                 $mensaje = "Error al grabar el registro";
                 $sw = false;
-                $tipomov = 236;
+                $tipomov = 230;
 
                 $sql = $this->db->connect()->prepare("INSERT INTO alm_cabexist SET idcostos=:costos,
                                                                                    ffechadoc=:fecha,
@@ -317,7 +317,7 @@
 
         private function actualizarDetallesPedido($item,$cantidad){
             try {
-                $estado = 236;
+                $estado = 230;
 
                 $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet 
                                                         SET tb_pedidodet.estadoItem =:estado,
