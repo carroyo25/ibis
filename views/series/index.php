@@ -50,7 +50,7 @@
             </div>
             <div>
                 <label for="serie">N°. Serie </label>
-                <input type="text" id="serie" name="serie" class="ingreso">
+                <input type="text" id="series" name="series" class="ingreso">
             </div>
             <div>
                 <label for="descripcion">Descripción </label>
@@ -63,6 +63,8 @@
             <thead class="stickytop">
                 <tr>
                     <th>Item</th>
+                    <th>DNI</th>
+                    <th>Nombre</th>
                     <th>CCs</th>
                     <th>Codigo</th>
                     <th width="30%">Descripcion</th>

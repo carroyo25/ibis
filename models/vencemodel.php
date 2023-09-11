@@ -11,27 +11,27 @@
             $salida = "";
 
             $sql = $this->db->connect()->prepare("SELECT
-                                                alm_existencia.codprod,
-                                                DATE_FORMAT(date_add(alm_existencia.vence, interval 190 day),'%d/%m/%Y') AS vence,
-                                                UPPER( cm_producto.cdesprod ) AS descripcion,
-                                                cm_producto.ccodprod,
-                                                lg_ordencab.cmes,
-                                                lg_ordencab.cnumero,
-                                                lg_ordencab.ffechadoc,
-                                                lg_ordencab.ncodcos,
-                                                tb_unimed.cabrevia,
-                                                alm_existencia.cant_ingr  
-                                            FROM
-                                                alm_existencia
-                                                INNER JOIN cm_producto ON alm_existencia.codprod = cm_producto.id_cprod
-                                                INNER JOIN lg_ordencab ON alm_existencia.nropedido = lg_ordencab.id_regmov
-                                                INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed  
-                                            WHERE
-                                                alm_existencia.vence <> '' 
-                                                AND lg_ordencab.ncodcos =:costo
-                                                AND cm_producto.ccodprod LIKE :codigo
-                                            ORDER BY
-                                                alm_existencia.vence ASC");
+                                                    alm_existencia.codprod,
+                                                    DATE_FORMAT(date_add(alm_existencia.vence, interval 190 day),'%d/%m/%Y') AS vence,
+                                                    UPPER( cm_producto.cdesprod ) AS descripcion,
+                                                    cm_producto.ccodprod,
+                                                    lg_ordencab.cmes,
+                                                    lg_ordencab.cnumero,
+                                                    lg_ordencab.ffechadoc,
+                                                    lg_ordencab.ncodcos,
+                                                    tb_unimed.cabrevia,
+                                                    alm_existencia.cant_ingr  
+                                                FROM
+                                                    alm_existencia
+                                                    INNER JOIN cm_producto ON alm_existencia.codprod = cm_producto.id_cprod
+                                                    INNER JOIN lg_ordencab ON alm_existencia.nropedido = lg_ordencab.id_regmov
+                                                    INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed  
+                                                WHERE
+                                                    alm_existencia.vence <> '' 
+                                                    AND lg_ordencab.ncodcos =:costo
+                                                    AND cm_producto.ccodprod LIKE :codigo
+                                                ORDER BY
+                                                    alm_existencia.vence ASC");
             $sql->execute(['costo'=>$cc,'codigo'=>$codigo]);
             $rowcount = $sql->rowcount();
             $item = 1;
@@ -55,6 +55,11 @@
 
             return $salida;
 
+        }
+
+        public function listarVencimientos($costo,$codigo) {
+            $cc = $costo == "" ? "%" : "%".$costo."%";
+            $cod = $codigo == "" ? "%" : "%".$codigo."%";
         }
     }
 ?>

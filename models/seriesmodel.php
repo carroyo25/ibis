@@ -8,19 +8,21 @@
 
         public function grupoProyectosSerie($costos,$serie,$descripcion){
             $s = $serie == "" ? "" : "%".$serie."%";
-            $d = $descripcion == "" ? "" : "%".$descripcion."%";
-            $c = $costos == "-1" ? "" : "%".$cost."%";
+            $d = $descripcion == "" ? "%" : "%".$descripcion."%";
+            $c = $costos == "-1" ? "%" : "%".$cost."%";
 
             $salida = '<thead class="stickytop">
                             <tr>
                                 <th>Item</th>
+                                <th>DNI</th>
+                                <th>Nombre</th>
                                 <th>CCs</th>
                                 <th>Codigo</th>
                                 <th width="30%">Descripcion</th>
                                 <th>UND.</th>
                                 <th>Cant.</th>
                                 <th>Fecha</br>Salida</th>
-                                <th>Fecha</br>Salida</th>  
+                                <th>Fecha</br>Devolucion</th>  
                                 <th>N° Hoja</th>
                                 <th>Isometricos</th>
                                 <th>Observaciones</th>
@@ -51,7 +53,7 @@
                     while ($rs = $sql->fetch()){
                         $salida .= '<tbody class="cc">
                                         <tr class="separatortr">
-                                            <th class="pl5px" colspan="15">'.$rs['proyecto'].'</th>
+                                            <th class="pl5px" colspan="17">'.$rs['proyecto'].'</th>
                                         </tr>';
                         $salida .= '<tbody class="items">'.$this->itemsSeries($rs['ncostos'],$serie,$descripcion).'</tbody>';
                         
@@ -74,7 +76,7 @@
             $d = $descripcion == "" ? "%" :"%".$descripcion."%";
 
             $salida = '<tr>
-                            <td colspan="15">'.$s.'</td>
+                            <td colspan="17">'.$s.'</td>
                         </tr>';
 
         
@@ -82,6 +84,7 @@
                 $sql = $this->db->connect()->prepare("SELECT
                                                         alm_consumo.idreg,
                                                         alm_consumo.reguser,
+                                                        alm_consumo.nrodoc,
                                                         alm_consumo.idprod,
                                                         alm_consumo.cantsalida,
                                                         DATE_FORMAT( alm_consumo.fechasalida, '%d/%m/%Y' ) AS fechasalida,
@@ -102,18 +105,20 @@
                                                         tb_unimed.cabrevia,
                                                         COUNT(*),
                                                         tb_proyectos.ccodproy,
-                                                        tb_proyectos.cdesproy 
+                                                        tb_proyectos.cdesproy,
+                                                        CONCAT_WS('',rrhh.tabla_aquarius.apellidos,rrhh.tabla_aquarius.nombres ) AS usuario 
                                                     FROM
                                                         alm_consumo
                                                         LEFT JOIN cm_producto ON alm_consumo.idprod = cm_producto.id_cprod
                                                         LEFT JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
-                                                        LEFT JOIN tb_proyectos ON alm_consumo.ncostos = tb_proyectos.nidreg 
+                                                        LEFT JOIN tb_proyectos ON alm_consumo.ncostos = tb_proyectos.nidreg
+                                                        LEFT JOIN rrhh.tabla_aquarius ON ibis.alm_consumo.nrodoc = rrhh.tabla_aquarius.dni 
                                                     WHERE
                                                         cm_producto.cdesprod LIKE :descripcion 
                                                         AND alm_consumo.cserie LIKE :serie 
                                                         AND NOT ISNULL( alm_consumo.cserie ) 
                                                         AND alm_consumo.cserie <> '' 
-                                                        AND alm_consumo.ncostos  LIKE :costos 
+                                                        AND alm_consumo.ncostos LIKE :costos 
                                                     GROUP BY
                                                         alm_consumo.idprod,
                                                         alm_consumo.fechasalida,
@@ -144,6 +149,8 @@
                                                         data-devolucion = "'.$rs['fechadevolucion'].'"
                                                         data-firmadevolucion ="'.$rs['calmacen'].'">
                                         <td class="textoDerecha">'.$rowCount--.'</td>
+                                        <td class="textoCentro">'.$rs['nrodoc'].'</td>
+                                        <td class="pl5px">'.$rs['usuario'].'</td>
                                         <td class="pl5px">'.$rs['ccodproy'].'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="pl5px">'.$rs['cdesprod'].'</td>

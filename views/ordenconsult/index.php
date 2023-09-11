@@ -50,6 +50,7 @@
                     <input type="hidden" name="codigo_pago" id="codigo_pago">
                     <input type="hidden" name="sw" id="sw" value="0">
                     <input type="hidden" name="detalle" id="detalle">
+                    <input type="hidden" name="dias" id="dias">
                     <input type="hidden" name="total_numero" id="total_numero">
                     <input type="hidden" name="total_adicional" id="total_adicional" value="0">
                     <input type="hidden" name="nro_pedido" id="nro_pedido">
