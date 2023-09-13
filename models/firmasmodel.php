@@ -81,34 +81,24 @@
                          $titulo_operaciones = "";
                          $titulo_finanzas = "";
                          
-                         $totalComentario = $this->contarComentarios($rs['id_regmov']);
+                        $totalComentario = $this->contarComentarios($rs['id_regmov']);
 
-                         if ( $totalComentario['numero'] != 0 ) {
 
-                                $detalleComentarios = $this->detallesComentarios($rs['id_regmov']);
-                                $verificarComentarios = $this->verificarComentario($rs['id_regmov']);
+                        $comentarios = $this->contarComentarios($rs['id_regmov']);
 
-                                if ( $verificarComentarios['nrol'] == 5) {
-                                    $gerencia = $this->creaComentario( $rs['id_regmov'] );
+                        $nro        = "";
+                        $obs_alerta = "";
 
-                                    if ( $gerencia['rol'] == 'L' && $flog == 0 ){
-                                        $alerta_logistica = $detalleComentarios['rol'] == 'L' ? "urgente" : "semaforoVerde";
-                                        $titulo_logistica = $detalleComentarios['rol'] == 'L' ? "Observado" : "Respondido";
-                                    }
-                                    
-                                    if ( $gerencia['rol'] == 'O' && $fope == 0 ){
-                                        $alerta_operaciones = $detalleComentarios['rol'] == 'O' ? "urgente":"semaforoVerde";
-                                        $titulo_operaciones = $detalleComentarios['rol'] == 'O' ? "Observado":"Respondido";
-                                    }
+                        if ( $comentarios['numero'] > 0 ) {
+                            $nro = $comentarios['numero'] != 0 ?  $comentarios['numero'] :  "";
+                            $obs_alerta = $comentarios['numero'] % 2 != 0 ?  "semaforoNaranja" :  "semaforoVerde";
 
-                                    if ( $gerencia['rol'] == 'F' && $ffin == 0 ){
-                                        $alerta_finanzas = $detalleComentarios['rol'] == 'F' ? "urgente":"semaforoVerde";
-                                        $titulo_finanzas = $detalleComentarios['rol'] == 'F' ? "Observado":"Respondido";
-                                    }
-                                }
-                         } 
+                            $alerta_logistica   = $this-> buscarUserComentario($rs['id_regmov'],'633ae7e588a52') > 0 && $flog == 0 ? "urgente":"";  //logistica
+                            $alerta_finanzas    = $this-> buscarUserComentario($rs['id_regmov'],'6288328f58068') > 0 && $ffin == 0 ? "urgente":"";  //Finanzas
+                            $alerta_operaciones = $this-> buscarUserComentario($rs['id_regmov'],'62883306d1cd3') > 0 && $fope == 0 ? "urgente":"";  //operaciones
+                        }
  
-                         $salida .='<tr class="pointer '.$resaltado.'" data-indice="'.$rs['id_regmov'].'" 
+                        $salida .='<tr class="pointer '.$resaltado.'" data-indice="'.$rs['id_regmov'].'" 
                                                          data-estado="'.$rs['nEstadoDoc'].'"
                                                          data-finanzas="'.$ffin.'"
                                                          data-logistica="'.$flog.'"
@@ -126,7 +116,7 @@
                                         <td class="textoCentro '.$alerta_logistica.'" title="'.$titulo_logistica.'">'.$log.'</td>
                                         <td class="textoCentro '.$alerta_finanzas.'" title="'.$titulo_finanzas.'">'.$fin.'</td>
                                         <td class="textoCentro '.$alerta_operaciones.'" title="'.$titulo_operaciones.'">'.$ope.'</td>
-                                        
+                                        <td class="textoCentro '.$obs_alerta.'" ><span>'.$nro.'</span></td>
                                     </tr>';
                      }
                  }

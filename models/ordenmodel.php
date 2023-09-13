@@ -68,7 +68,7 @@
 
                         $resaltado = $rs['nEstadoDoc'] == 59 ? "resaltado_firma" :  "";
                         $observado = $rs['comentario'] != 0 ?  $rs['comentario'] :  "";
-                        $obs_alerta = $rs['comentario'] != 0 ?  "semaforoNaranja" :  "";
+                        $obs_alerta = $rs['comentario']%2 != 0 ?  "semaforoNaranja" :  "";
 
                         //cambiar cóodigo con la base de datos
                         $alerta_logistica = $this-> buscarUserComentario($rs['id_regmov'],'633ae7e588a52') > 0 && $flog == 0 ? "urgente":" ";  //logistica

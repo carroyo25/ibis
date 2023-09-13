@@ -350,10 +350,11 @@
                     <th rowspan="2" width="80px">Total</th>
                     <th rowspan="2" width="5%">Operador</th>
                     <th colspan="3" width="15%">Firmas</th>
+                    <th rowspan="2" width="4%">Comentarios</th>
                     <tr>
-                        <th>Procura</th>
-                        <th>Finanzas</th>
-                        <th>Operaciones</th>
+                        <th width="3%">Procura</th>
+                        <th width="3%">Finanzas</th>
+                        <th width="3%">Operaciones</th>
                     </tr>
                     
                 </tr>
