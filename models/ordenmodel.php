@@ -67,14 +67,21 @@
                         $ffin = is_null($rs['nfirmaFin']) ? 0 : 1;
 
                         $resaltado = $rs['nEstadoDoc'] == 59 ? "resaltado_firma" :  "";
-                        $observado = $rs['comentario'] != 0 ?  $rs['comentario'] :  "";
-                        $obs_alerta = $rs['comentario']%2 != 0 ?  "semaforoNaranja" :  "";
+                        $observado = "";
+                        $obs_alerta = "";
+                        $alerta_logistica   = "";  //logistica
+                        $alerta_finanzas    = "";  //Finanzas
+                        $alerta_operaciones = "";  //operaciones
 
-                        //cambiar cóodigo con la base de datos
-                        $alerta_logistica = $this-> buscarUserComentario($rs['id_regmov'],'633ae7e588a52') > 0 && $flog == 0 ? "urgente":" ";  //logistica
-                        $alerta_finanzas = $this-> buscarUserComentario($rs['id_regmov'],'6288328f58068') > 0 && $ffin == 0 ? "urgente":" ";  //Finanzas
-                        $alerta_operaciones = $this-> buscarUserComentario($rs['id_regmov'],'62883306d1cd3') > 0 && $fope == 0? "urgente":" ";  //operaciones
-                        /*por ahora queda asi*/
+                        if ( $rs['comentario'] > 0 ) {
+                            $observado = $rs['comentario'] != 0 ?  $rs['comentario'] :  "";
+                            $obs_alerta = $rs['comentario'] % 2 > 0 ?  "semaforoNaranja" :  "semaforoVerde";
+
+                            $alerta_logistica   = $this-> buscarUserComentario($rs['id_regmov'],'633ae7e588a52') > 0 && $flog == 0 ? "urgente":"";  //logistica
+                            $alerta_finanzas    = $this-> buscarUserComentario($rs['id_regmov'],'6288328f58068') > 0 && $ffin == 0 ? "urgente":"";  //Finanzas
+                            $alerta_operaciones = $this-> buscarUserComentario($rs['id_regmov'],'62883306d1cd3') > 0 && $fope == 0 ? "urgente":"";  //operaciones
+                        }
+
 
                         $salida .='<tr class="pointer '.$resaltado.'" data-indice="'.$rs['id_regmov'].'" 
                                                         data-estado="'.$rs['nEstadoDoc'].'"

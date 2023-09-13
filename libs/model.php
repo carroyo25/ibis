@@ -2906,7 +2906,9 @@
             }
         }
 
-        
+        public function verificarConversacion($orden,$area){
+            
+        }
 
         //marcar items para no ser consultados
         public function itemMarcado($id,$estado,$io){

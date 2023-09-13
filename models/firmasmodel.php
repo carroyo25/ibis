@@ -81,9 +81,6 @@
                          $titulo_operaciones = "";
                          $titulo_finanzas = "";
                          
-                        $totalComentario = $this->contarComentarios($rs['id_regmov']);
-
-
                         $comentarios = $this->contarComentarios($rs['id_regmov']);
 
                         $nro        = "";
