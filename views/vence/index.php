@@ -60,19 +60,21 @@
             <thead class="stickytop">
                 <tr>
                     <th rowspan="2">Item</th>
+                    <th rowspan="2">Centro</br>Costos </th>
                     <th rowspan="2">Codigo</th>
                     <th rowspan="2" width="50%">Descripcion</th>
                     <th rowspan="2">Unidad</th>
-                    <th rowspan="2">Cantidad<br>Ingreso</th>
+                    <th rowspan="2">Cantidad</br>Ingreso</th>
                     <th rowspan="2">OC</th>
                     <th rowspan="2">Guia</th>
                     <th rowspan="2">Fecha Vencimiento</th>
                     <th rowspan="2">Stock</th>
                     <th rowspan="2">Saldo</th>
+                    <th rowspan="2">Pedido</th>
                 </tr>
             </thead>
             <tbody>
-                
+                <?php echo $this->listaVencimientos; ?>
             </tbody>
         </table>
     </div>

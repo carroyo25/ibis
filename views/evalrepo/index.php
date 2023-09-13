@@ -57,41 +57,79 @@
         <table id="cargoPlanDescrip">
             <thead class="stickytop">
                 <tr>
-                    <th rowspan="2" class="filter">Orden</th>  
-                    <th rowspan="2">Emision</th>
-                    <th rowspan="2" width="15%" class="filter">Descripción</th>
-                    <th rowspan="2" class="filter">Centro Costos</th> 
-                    <th rowspan="2" width="15%" class="filter">Proveedor</th>
-                    <th colspan="5">Almacén</th>
-                    <th colspan="11">Compras</th>
-                    <th colspan="2">QAQC</th>
-                    <th rowspan="2" class="filter">Total</th>
+                    <th rowspan="3" class="filter">Orden</th>  
+                    <th rowspan="3">Emision</th>
+                    <th rowspan="3" width="15%" class="filter">Descripción</th>
+                    <th rowspan="3" class="filter">Centro Costos</th> 
+                    <th rowspan="3" width="15%" class="filter">Proveedor</th>
+                    <th colspan="25" class="filter">Bienes</th>
+                    <th colspan="18" class="filter">Servicios</th>
+                    <th rowspan="3" class="filter">Total</th>
                 </tr>
                 <tr>
-                    <th>Fecha</br>de entrega</th>
-                    <th>Condiciones</br>de Llegada</th>
-                    <th>Embalaje </br>de Proveedor</th>
-                    <th>Cantidad</br>Entregada</th>
+                    <th colspan="5">ALMACÉN RECEPCIÓN</th>
+                    <th colspan="7">QA/QC</th> 
+                    <th colspan="5">ALMACEN OBRA</th>
+                    <th colspan="8">COMPRAS</th> 
+
+                    <th colspan="3">USUARIO / GERENTE DE PROYECTO</th>
+                    <th colspan="8">QA/QC</th>
+                    <th colspan="7">COMPRAS</th> 
+                </tr>
+                <tr>
+                    <th>Fecha de Entrega</th>
+                    <th>Condiciones de Llegada</th>
+                    <th>Embalaje de Proveedor</th>
+                    <th>Cantidad Entregada</th>
                     <th>Documentación</th>
 
-                    <th>Precio </br>Competitivo</th>
-                    <th>Descuento</th>
-                    <th>Aceptación de</br> Reclamos</th>
-                    <th>Forma de</br> Pago</th>
-                    <th>Comunicación</th>
-                    <th>Capacitación</th>
-                    <th>ISO 9001</th>
-                    <th>ISO 14001</th>
-                    <th>ISO 45001</th>
-                    <th>Estabilidad</br>Financiera</th>
-                    <th>Experiencia y</br>Reputación</th>
-                    
-                    <th>Cumplmiento</br>Técnico</th>
+                    <th>Cumplimiento Técnico</th>
                     <th>Documentación</th>
+                    <th>Inspeccion Visual</th>
+                    <th>Trazabilidad</th>
+                    <th>Comunicación</th>
+                    <th>Aceptación de Reclamos</th>
+                    <th>Aceptación de Reclamos</th>
+
+                    <th>Cantidad Entregada</th>
+                    <th>Condiciones de Llegada</th>
+                    <th>Embalaje</th>
+                    <th>Garantía del Material</th>
+                    <th>Documentación</th>
+
+                    <th>Precio Competitivo</th>
+                    <th>Descuento</th>
+                    <th>Delivery</th>
+                    <th>Aceptación de Reclamos</th>
+                    <th>Forma de Pago</th>
+                    <th>Comunicación</th>
+                    <th>Responsabilidad</th>
+                    <th>Capacitación</th>
+
+                    <th>Fecha de Atención</th>
+                    <th>Calidad</th>
+                    <th>Cantidad de Procesos</th>
+
+                    <th>Documentacion</th>
+                    <th>Documentacion</th>
+                    <th>Documentacion</th>
+                    <th>Requisitos</th>
+                    <th>Aceptación de Reclamos</th>
+                    <th>Comunicación</th>
+                    <th>Documentacion</th>
+                    <th>Comunicación</th>
+
+                    <th>Precio</th>
+                    <th>Descuento</th>
+                    <th>Notificaciones</th>
+                    <th>Aceptación de Reclamos</th>
+                    <th>Forma de Pago</th>
+                    <th>Responsabilidad</th>
+                    <th>Comunicación</th>
                 </tr>
             </thead>
             <tbody>
-                <?php echo $this->listarOrdenes;?>
+                <?php echo $this->listarOrdenes?>
             </tbody>
         </table>
     </div>

@@ -70,7 +70,8 @@
                                                             INNER JOIN tb_proyectos ON lg_ordencab.ncodcos = tb_proyectos.nidreg
                                                             INNER JOIN tb_pedidocab ON lg_ordencab.id_refpedi = tb_pedidocab.idreg 
                                                         ORDER BY
-                                                            lg_ordencab.id_regmov DESC");
+                                                            lg_ordencab.id_regmov DESC
+                                                        LIMIT 10");
                  $sql->execute();
                  $rowCount = $sql->rowCount();
  
@@ -92,15 +93,40 @@
                                         <td class="textoCentro">4</td>
                                         <td class="textoCentro">4</td>
                                         <td class="textoCentro">4</td>
-                                        <td class="textoCentro">'.$rs['criterio13'].'</td>
-                                        <td class="textoCentro">'.$rs['criterio14'].'</td>
-                                        <td class="textoCentro">'.$rs['criterio15'].'</td>
-                                        <td class="textoCentro">'.$rs['criterio16'].'</td>
-                                        <td class="textoCentro">'.$rs['criterio17'].'</td>
-                                        <td class="textoCentro">'.$rs['criterio18'].'</td>
-                                        <td class="textoCentro">'.$rs['criterio19'].'</td>
-                                        <td class="textoCentro">'.$rs['criterio20'].'</td>
-                                        <td class="textoCentro">'.$rs['criterio21'].'</td>
+                                        <td class="textoCentro">4</td>
+                                        <td class="textoCentro">4</td>
+                                        <td class="textoCentro">4</td>
+                                        <td class="textoCentro">4</td>
+                                        <td class="textoCentro">4</td>
+                                        <td class="textoCentro">4</td>
+                                        <td class="textoCentro">4</td>
+                                        <td class="textoCentro">4</td>
+                                        <td class="textoCentro">4</td>
+                                        <td class="textoCentro">4</td>
+                                        <td class="textoCentro">4</td>
+                                        <td class="textoCentro">4</td>
+                                        <td class="textoCentro">4</td>
+                                        <td class="textoCentro">4</td>
+                                        <td class="textoCentro">4</td>
+                                        <td class="textoCentro">4</td>
+                                        <td class="textoCentro"></td>
+                                        <td class="textoCentro"></td>
+                                        <td class="textoCentro"></td>
+                                        <td class="textoCentro"></td>
+                                        <td class="textoCentro"></td>
+                                        <td class="textoCentro"></td>
+                                        <td class="textoCentro"></td>
+                                        <td class="textoCentro"></td>
+                                        <td class="textoCentro"></td>
+                                        <td class="textoCentro"></td>
+                                        <td class="textoCentro"></td>
+                                        <td class="textoCentro"></td>
+                                        <td class="textoCentro"></td>
+                                        <td class="textoCentro"></td>
+                                        <td class="textoCentro"></td>
+                                        <td class="textoCentro"></td>
+                                        <td class="textoCentro"></td>
+                                        <td class="textoCentro"></td>
                                         <td class="textoCentro"><strong></strong></td>
                                      </tr>';
                      }

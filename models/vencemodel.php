@@ -57,9 +57,62 @@
 
         }
 
-        public function listarVencimientos($costo,$codigo) {
+        public function listarVencimientos($costo,$codigo,$descripcion) {
             $cc = $costo == "" ? "%" : "%".$costo."%";
             $cod = $codigo == "" ? "%" : "%".$codigo."%";
+            $descrip = $descripcion == "" ? "%" : "%".$descripcion."%";
+
+            $sql = $this->db->connect()->prepare("SELECT
+                                                    alm_existencia.idpedido,
+                                                    alm_existencia.freg,
+                                                    DATE_FORMAT(alm_existencia.vence,'%d/%m/%Y') AS vence,
+                                                    alm_existencia.codprod,
+                                                    cm_producto.ccodprod,
+                                                    UPPER( cm_producto.cdesprod ) AS producto,
+                                                    tb_proyectos.ccodproy,
+                                                    tb_unimed.cabrevia,
+                                                    tb_pedidocab.nrodoc
+                                                FROM
+                                                    alm_existencia
+                                                    LEFT JOIN cm_producto ON alm_existencia.codprod = cm_producto.id_cprod
+                                                    INNER JOIN alm_cabexist ON alm_existencia.idregistro = alm_cabexist.idreg
+                                                    INNER JOIN tb_proyectos ON alm_cabexist.idcostos = tb_proyectos.nidreg
+                                                    INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                    LEFT JOIN tb_pedidocab ON alm_existencia.idpedido = tb_pedidocab.idreg
+                                                WHERE
+                                                    alm_existencia.vence <> '' 
+                                                    AND tb_proyectos.nidreg LIKE :cc 
+                                                    AND cm_producto.cdesprod LIKE :descripcion 
+                                                    AND cm_producto.ccodprod LIKE :codigo 
+                                                ORDER BY
+                                                    alm_existencia.freg DESC");
+
+            $sql->execute(["cc" => $cc,"codigo"=>$cod,"descripcion"=>$descrip]);
+
+            $rowcount = $sql->rowcount();
+            $item = 1;
+            $salida = "";
+
+            if ($rowcount > 0) {
+                while ($rs = $sql->fetch()) {
+                    $salida .='<tr class="pointer">
+                                    <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
+                                    <td class="textoCentro">'.$rs['ccodproy'].'</td>
+                                    <td class="textoCentro">'.$rs['ccodprod'].'</td>
+                                    <td class="pl20px">'.$rs['producto'].'</td>
+                                    <td class="textoCentro">'.$rs['cabrevia'].'</td>
+                                    <td class="textoDerecha"></td>
+                                    <td class="textoCentro"></td>
+                                    <td></td>
+                                    <td class="textoCentro">'.$rs['vence'].'</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td class="textoCentro">'.str_pad($rs['nrodoc'],6,0,STR_PAD_LEFT).'</td>
+                                </tr>';
+                }
+            }
+
+            return $salida;
         }
     }
 ?>

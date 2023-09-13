@@ -657,6 +657,7 @@ $(function(){
         e.preventDefault();
 
         try {
+            ///ojo con la orden urgente
             if ( $("#procura").val() != 1 || $("#finanzas").val() != 1 || $("#operaciones").val() != 1 ) throw "La orden no ha sido autorizada";
 
             let result = {};

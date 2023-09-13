@@ -145,7 +145,6 @@
             }
         }
 
-
         private function evaluar($rol,$tipo){
             try {
                 $salida = "";
