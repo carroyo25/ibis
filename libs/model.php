@@ -906,7 +906,8 @@
                                                         UPPER( ctipovia ) AS direccion,
                                                         distritos.cdubigeo AS dist,
                                                         provincias.cdubigeo AS prov,
-                                                        dptos.cdubigeo AS dpto 
+                                                        dptos.cdubigeo AS dpto,
+                                                        csunatalm 
                                                     FROM
                                                         tb_almacen
                                                         LEFT JOIN tb_ubigeo AS distritos ON tb_almacen.ncubigeo = distritos.ccubigeo
@@ -921,6 +922,7 @@
                     while ($rs = $sql->fetch()){
                         $salida .='<li><a href="'.$rs['ncodalm'].'" 
                                         data-direccion="'.$rs['direccion'].'"
+                                        data-sunat="'.$rs['csunatalm'].'"
                                         data-dpto="'.$rs['dpto'].'"
                                         data-prov="'.$rs['prov'].'"
                                         data-dist="'.$rs['dist'].'">'.$rs['almacen'].'</a></li>';

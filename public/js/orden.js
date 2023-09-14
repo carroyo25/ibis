@@ -308,7 +308,7 @@ $(function(){
                 request     = $(this).data("pedido"),
                 nroreq      = $(this).children('td:eq(0)').text(),
                 descrip     = $(this).children('td:eq(8)').text(),
-                cantidad    = $(this).data("cantidad"),
+                cantidad    = $(this).children('td:eq(6)').text(),
                 unidad      = $(this).data("unidad"),
                 detalle     = $(this).data("detalle"),
                 total       = 0,
@@ -658,7 +658,7 @@ $(function(){
 
         try {
             ///ojo con la orden urgente
-            if ( $("#procura").val() != 1 || $("#finanzas").val() != 1 || $("#operaciones").val() != 1 ) throw "La orden no ha sido autorizada";
+            //if ( $("#procura").val() != 1 || $("#finanzas").val() != 1 || $("#operaciones").val() != 1 ) throw "La orden no ha sido autorizada";
 
             let result = {};
 

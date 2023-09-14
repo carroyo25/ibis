@@ -43,6 +43,8 @@ $(function() {
                 $("#almacen_destino_direccion").val(data.cabecera[0].direccion_destino);
                 $("#ubigeo_origen").val(data.cabecera[0].ubigeo_origen);
                 $("#ubigeo_destino").val(data.cabecera[0].ubigeo_destino);
+                $("#codigo_origen_sunat").val(data.cabecera[0].sunat_origen);
+                $("#codigo_destino_sunat").val(data.cabecera[0].sunat_destino);
 
                 $("#ubig_origen").val(data.cabecera[0].ubigeo_origen);
                 $("#ubig_destino").val(data.cabecera[0].ubigeo_destino);
@@ -70,6 +72,8 @@ $(function() {
                     $("#licencia_conducir").val(data.guias[0].clicencia);
                     $("#marca").val(data.guias[0].cmarca);
                     $("#placa").val(data.guias[0].cplaca);
+                    $("#cso").val(data.cabecera[0].sunat_origen);
+                    $("#csd").val(data.cabecera[0].sunat_destino);
                     
                 }
                 
@@ -224,10 +228,12 @@ $(function() {
             $("#codigo_origen").val(codigo);
             $("#almacen_origen").val($(this).text());
             $("#almacen_origen_direccion").val($(this).data('direccion'));
+            $("#codigo_origen_sunat").val($(this).data('sunat'));
         }else if(contenedor_padre == "listaDestino"){
             $("#codigo_almacen_destino").val(codigo);
             $("#almacen_destino").val($(this).text());
             $("#almacen_destino_direccion").val($(this).data('direccion'));
+            $("#codigo_destino_sunat").val($(this).data('sunat'));
         }else if(contenedor_padre == "listaAutoriza"){
             $("#autoriza").val($(this).text());
             $("#codigo_autoriza").val(codigo);

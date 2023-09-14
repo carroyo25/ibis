@@ -735,7 +735,9 @@
                                                     movimientos.cdescripcion AS tipo_movimiento,
                                                     estado.cdescripcion AS estado,
                                                     origen.ncubigeo AS ubigeo_origen,
-                                                    destino.ncubigeo AS ubigeo_destino
+                                                    destino.ncubigeo AS ubigeo_destino,
+                                                    origen.csunatalm AS sunat_origen,
+	                                                destino.csunatalm AS sunat_destino
                                                 FROM
                                                     alm_despachocab
                                                 INNER JOIN tb_almacen AS origen ON alm_despachocab.ncodalm1 = origen.ncodalm
@@ -1202,7 +1204,7 @@
 
             $path = "public/documentos/guia_electronica/";
 
-            $nombre_archivo = $header->destinatario_ruc.'-31-'.$header->serie_guia.'-'.$header->numero_guia;
+            $nombre_archivo = $header->destinatario_ruc.'-09-'.$header->serie_guia.'-'.$header->numero_guia;
 
             if(file_exists($path."XML/".$nombre_archivo.".xml")){
                 unlink($path."XML/".$nombre_archivo.".xml");  
@@ -1212,16 +1214,16 @@
             //$token_access = $this->token('test-85e5b0ae-255c-4891-a595-0b98c65c9854', 'test-Hty/M6QshYvPgItX2P0+Kw==', '20504898173MODDATOS', 'MODDATOS');
             $firma = $this->crear_files($path, $nombre_archivo, $header, $body);
             $respuesta = $this->envio_xml($path.'FIRMA/', $nombre_archivo, $token_access);
-            //$numero_ticket = $respuesta->numTicket;
+            $numero_ticket = $respuesta->numTicket;
 
-            var_dump($respuesta);
+            //var_dump($respuesta);
 
-            /*sleep(2);//damos tiempo para que SUNAT procese y responda.
+            sleep(2);//damos tiempo para que SUNAT procese y responda.
             $respuesta_ticket = $this->envio_ticket($path.'CDR/', $numero_ticket, $token_access, $header->destinatario_ruc, $nombre_archivo);
 
-            var_dump($respuesta_ticket);*/
+            /*var_dump($respuesta_ticket);*/
             
-            //return array("archivo" => $nombre_archivo,"ticket" => $respuesta_ticket);
+            return array("archivo" => $nombre_archivo,"ticket" => $respuesta_ticket);
         }
 
         private function crear_files($path,$nombre_archivo,$header,$body){
@@ -1331,6 +1333,7 @@
                             <cac:Delivery>
                                 <cac:DeliveryAddress>
                                     <cbc:ID schemeName="Ubigeos" schemeAgencyName="PE:INEI">'.$header->ubig_destino.'</cbc:ID>
+                                    <cbc:AddressTypeCode listID="'.$header->destinatario_ruc.'" listAgencyName="PE:SUNAT" listName="Establecimientos anexos">'.$header->csd.'</cbc:AddressTypeCode>
                                     <cac:AddressLine>
                                         <cbc:Line>'.utf8_encode($header->almacen_destino_direccion).'</cbc:Line>
                                     </cac:AddressLine>
@@ -1338,6 +1341,7 @@
                                 <cac:Despatch>
                                     <cac:DespatchAddress>
                                         <cbc:ID schemeName="Ubigeos" schemeAgencyName="PE:INEI">'.$header->ubig_origen.'</cbc:ID>
+                                        <cbc:AddressTypeCode listID="'.$header->destinatario_ruc.'" listAgencyName="PE:SUNAT" listName="Establecimientos anexos">'.$header->cso.'</cbc:AddressTypeCode>
                                         <cac:AddressLine>
                                             <cbc:Line>'.utf8_encode($header->almacen_origen_direccion).'</cbc:Line>
                                         </cac:AddressLine>
@@ -1350,7 +1354,7 @@
             foreach($detalles as $detalle){
                 $xml .=  '<cac:DespatchLine>
                             <cbc:ID>'.$i.'</cbc:ID>
-                            <cbc:DeliveredQuantity unitCode="'.$detalle->codigo.'">'.$detalle->cantidad.'</cbc:DeliveredQuantity>
+                            <cbc:DeliveredQuantity unitCode="BJ" unitCodeListID="UN/ECE rec 20" unitCodeListAgencyName="United Nations Economic Commission for Europe">'.$detalle->cantidad.'</cbc:DeliveredQuantity>
                             <cac:OrderLineReference>
                                 <cbc:LineID>1</cbc:LineID>
                             </cac:OrderLineReference>

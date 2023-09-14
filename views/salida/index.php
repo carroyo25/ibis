@@ -30,6 +30,8 @@
                     <input type="hidden" name="guia" id="guia">
                     <input type="hidden" name="ubigeo_origen" id="ubigeo_origen">
                     <input type="hidden" name="ubigeo_destino" id="ubigeo_destino">
+                    <input type="hidden" name="codigo_origen_sunat" id="codigo_origen_sunat">
+                    <input type="hidden" name="codigo_destino_sunat" id="codigo_destino_sunat">
 
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
@@ -209,6 +211,9 @@
                 <input type="hidden" name="ubig_origen" id="ubig_origen">
                 <input type="hidden" name="ubig_destino" id="ubig_destino">
                 <input type="hidden" name="registro_mtc" id="registro_mtc" value="1502229MRP">
+                <input type="hidden" name="cso" id="cso">
+                <input type="hidden" name="csd" id="csd">
+                
 
                 <div class="tituloDocumento">
                     <div>
