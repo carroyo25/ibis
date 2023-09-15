@@ -34,7 +34,7 @@
     <div class="cabezaModulo">
         <h1>Reporte de Consumos - Personal</h1>
         <div>
-            <a href="#" id="btnKardex"><i class="fas fa-file-pdf"></i><p>Kardex</p></a>
+            <a href="#" id="excelFile"><i class="fas fa-file-excel"></i><p>Reporte</p></a>
             <a href="#" id="btnBuscar"><i class="fas fa-search-location"></i><p>Buscar</p></a>
             <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
         </div>

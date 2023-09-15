@@ -73,4 +73,12 @@ $(function(){
         
         return false;
     });
+
+    $("#excelFile").click(function(e){
+        e.preventDefault();
+
+        console.log(itemsKardex());
+
+        return false;
+    });
 })
