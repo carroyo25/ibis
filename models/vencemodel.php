@@ -63,6 +63,8 @@
             $descrip = $descripcion == "" ? "%" : "%".$descripcion."%";
 
             $sql = $this->db->connect()->prepare("SELECT
+                                                    alm_existencia.idreg,
+                                                    cm_producto.id_cprod,
                                                     alm_existencia.idpedido,
                                                     alm_existencia.freg,
                                                     DATE_FORMAT(alm_existencia.vence,'%d/%m/%Y') AS vence,
@@ -71,7 +73,9 @@
                                                     UPPER( cm_producto.cdesprod ) AS producto,
                                                     tb_proyectos.ccodproy,
                                                     tb_unimed.cabrevia,
-                                                    tb_pedidocab.nrodoc
+                                                    tb_pedidocab.nrodoc,
+                                                    tb_pedidocab.idorden,
+                                                    DATEDIFF(NOW(),alm_existencia.vence) AS dias_pasados
                                                 FROM
                                                     alm_existencia
                                                     LEFT JOIN cm_producto ON alm_existencia.codprod = cm_producto.id_cprod
@@ -83,31 +87,45 @@
                                                     alm_existencia.vence <> '' 
                                                     AND tb_proyectos.nidreg LIKE :cc 
                                                     AND cm_producto.cdesprod LIKE :descripcion 
-                                                    AND cm_producto.ccodprod LIKE :codigo 
+                                                    AND cm_producto.ccodprod LIKE :codigo
+                                                    AND alm_existencia.nflgActivo = 1 
                                                 ORDER BY
-                                                    alm_existencia.freg DESC");
+                                                    alm_existencia.idreg DESC");
 
             $sql->execute(["cc" => $cc,"codigo"=>$cod,"descripcion"=>$descrip]);
 
             $rowcount = $sql->rowcount();
             $item = 1;
             $salida = "";
+            $estado = "";
 
             if ($rowcount > 0) {
                 while ($rs = $sql->fetch()) {
-                    $salida .='<tr class="pointer">
+
+                    $estado = intval($rs['dias_pasados']);
+
+                    if ($estado > 7) {
+                        $alerta ="semaforoRojo";
+                    }elseif ($estado == 7) {
+                        $alerta ="semaforNaranja";
+                    }elseif($estado < 7) {
+                        $alerta ="semaforoVerde";
+                    }
+
+                    $salida .='<tr class="pointer" data-idexiste="'.$rs['idreg'].'" data-idproducto="'.$rs['id_cprod'].'">
                                     <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
                                     <td class="textoCentro">'.$rs['ccodproy'].'</td>
                                     <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                     <td class="pl20px">'.$rs['producto'].'</td>
                                     <td class="textoCentro">'.$rs['cabrevia'].'</td>
-                                    <td class="textoDerecha"></td>
                                     <td class="textoCentro"></td>
+                                    <td class="textoDerecha">'.str_pad($rs['idorden'],6,0,STR_PAD_LEFT).'</td>
                                     <td></td>
-                                    <td class="textoCentro">'.$rs['vence'].'</td>
+                                    <td class="textoCentro '.$alerta.'">'.$rs['vence'].'</td>
                                     <td></td>
                                     <td></td>
                                     <td class="textoCentro">'.str_pad($rs['nrodoc'],6,0,STR_PAD_LEFT).'</td>
+                                    <td class="textoDerecha">'.$rs['dias_pasados'].'</td>
                                 </tr>';
                 }
             }

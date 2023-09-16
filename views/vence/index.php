@@ -71,6 +71,7 @@
                     <th rowspan="2">Stock</th>
                     <th rowspan="2">Saldo</th>
                     <th rowspan="2">Pedido</th>
+                    <th rowspan="2">Vencido</th>
                 </tr>
             </thead>
             <tbody>
