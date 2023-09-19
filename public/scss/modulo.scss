@@ -34,6 +34,7 @@ $orden:#5F9EA0;
 $culminado:#55A5E2;
 $anulado:#c2c2c2;
 $comprado:#B461A3;
+$emitido:#F8CAAD;
 
 
 .bienes {
@@ -670,13 +671,26 @@ $comprado:#B461A3;
     background:$tituloModulo;
 }
 
+
 .itemsTabla{
-    width: 100%;
     height: 65vh;
-    margin-top: 5px;
     overflow-x: auto;
     overflow-y: auto;
+}
 
+.itemsTablaVertical{
+    overflow: hidden;
+
+    > div {
+        height: 35vh;
+        overflow: auto;
+    }
+}  
+
+.itemsTabla,.itemsTablaVertical{
+    width: 100%;
+    margin-top: 5px;
+    
     table {
         width: 100%;
         border-collapse: collapse;
@@ -2542,6 +2556,10 @@ $comprado:#B461A3;
 
 .atendido {
     background: $subtitulo;
+}
+
+.emitido {
+    background:$emitido;
 }
 
 .tab_inactivo {

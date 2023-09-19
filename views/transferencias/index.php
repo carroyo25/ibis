@@ -441,23 +441,52 @@
             </div>
         </form>
     </div>
-    <div class="itemsTabla">
-        <table id="tablaPrincipal">
-            <thead class="stickytop">
-                <tr>
-                    <th>Nro. Nota</th>
-                    <th>F.Emisión</th>
-                    <th>Almacen Origen</th>
-                    <th>Almacen Destino</th>
-                    <th>Centro de Costos</th>
-                    <th>Nro. Guia</th>
-                </tr>
-            </thead>
-            <tbody>
-               <?php echo $this->listaAtencion;?>
-            </tbody>
-        </table>
+    <div>
+        <div class="itemsTablaVertical">
+            <h3>Transferencias</h3>
+            <div>
+                <table id="tablaPrincipal">
+                    <thead class="stickytop">
+                        <tr>
+                            <th>Nro. Nota</th>
+                            <th>F.Emisión</th>
+                            <th>Almacen Origen</th>
+                            <th>Almacen Destino</th>
+                            <th>Centro de Costos</th>
+                            <th>Nro. Guia</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php echo $this->listaAtencion;?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="itemsTablaVertical">
+            <h3>Pedidos por atender</h3>
+            <div>
+                <table id="tablaPrincipalPedidos">
+                    <thead class="stickytop">
+                        <tr>
+                            <th>Num.</th>
+                            <th>Emision</th>
+                            <th>Tipo</th>
+                            <th>Descripción</th>
+                            <th>Centro Costos</th>
+                            <th>Responsable</th>
+                            <th>Estado</th>
+                            <th>Atencion</th>
+                            <th>...</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php echo $this->listaPedidos;?>
+                    </tbody>
+                </table>
+            </div>
+        </div> 
     </div>
+   
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
     <script src="<?php echo constant('URL');?>public/js/funciones.js?<?php echo constant('VERSION')?>"></script>
     <script src="<?php echo constant('URL');?>public/js/transferencias.js?<?php echo constant('VERSION')?>"></script>

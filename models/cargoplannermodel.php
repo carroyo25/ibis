@@ -8,7 +8,10 @@
 
         public function listarCargoPlan($parametros){
             try {
-                $tipo       = $parametros['tipoSearch'] == -1 ? "%" : $parametros['tipoSearch'];
+
+                $salida = "Buscar el pedido";
+
+                $tipo     = $parametros['tipoSearch'] == -1 ? "%" : $parametros['tipoSearch'];
                 $costo      = $parametros['costosSearch'] == -1 ? "%" : $parametros['costosSearch'];
                 $codigo     = $parametros['codigoSearch'] == "" ? "%" : "%".$parametros['codigoSearch']."%";
                 $orden      = $parametros['ordenSearch'] == "" ? "%" : $parametros['ordenSearch'];
@@ -129,7 +132,7 @@
                     while ($rs = $sql->fetch()){
 
                             
-                        /*aca va el numero de item*/
+                       
 
                             if ($rs['orden'] ){
                                 if ( $nro_orden == $rs['orden'] ) {
@@ -140,7 +143,7 @@
                             }else {
                                 $itemOrden = "";
                             }
-                        /*fin de control de item*/    
+                        
                             
                             $tipo_orden = $rs['idtipomov'] == 37 ? 'BIENES' : 'SERVICIO';
                             $clase_operacion = $rs['idtipomov'] == 37 ? 'bienes' : 'servicios';
@@ -180,6 +183,11 @@
                                 $estadofila = "stock";
                                 $estado_item = "item_stock";
                                 $estado_pedido = "stock";
+                            }else if( $rs['estadoItem'] == 53 ) {
+                                $porcentaje = "10%";
+                                $estadofila = "emitido";
+                                $estado_item = "Emitido";
+                                $estado_pedido = "Pedido Emitido";
                             }else if( $rs['estadoItem'] == 230 ) {
                                 $porcentaje = "100%";
                                 $estadofila = "comprado";

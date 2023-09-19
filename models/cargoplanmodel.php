@@ -8,7 +8,10 @@
 
         public function listarCargoPlan($parametros){
             try {
-                $tipo       = $parametros['tipoSearch'] == -1 ? "%" : $parametros['tipoSearch'];
+
+                $salida = "No hay registros";
+
+                /*$tipo     = $parametros['tipoSearch'] == -1 ? "%" : $parametros['tipoSearch'];
                 $costo      = $parametros['costosSearch'] == -1 ? "%" : $parametros['costosSearch'];
                 $codigo     = $parametros['codigoSearch'] == "" ? "%" : "%".$parametros['codigoSearch']."%";
                 $orden      = $parametros['ordenSearch'] == "" ? "%" : $parametros['ordenSearch'];
@@ -240,7 +243,7 @@
                     }
                 }else {
                     $salida = "Buscar el pedido";
-                }
+                }*/
                 return $salida;
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();

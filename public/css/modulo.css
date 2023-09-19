@@ -945,30 +945,41 @@
 }
 
 .itemsTabla {
-  width: 100%;
   height: 65vh;
-  margin-top: 5px;
   overflow-x: auto;
   overflow-y: auto;
 }
-.itemsTabla table {
+
+.itemsTablaVertical {
+  overflow: hidden;
+}
+.itemsTablaVertical > div {
+  height: 35vh;
+  overflow: auto;
+}
+
+.itemsTabla, .itemsTablaVertical {
+  width: 100%;
+  margin-top: 5px;
+}
+.itemsTabla table, .itemsTablaVertical table {
   width: 100%;
   border-collapse: collapse;
 }
-.itemsTabla table thead {
+.itemsTabla table thead, .itemsTablaVertical table thead {
   background: #000;
   color: #fff;
   font-size: 0.7rem;
   height: 2.5rem;
 }
-.itemsTabla table thead th {
+.itemsTabla table thead th, .itemsTablaVertical table thead th {
   position: relative;
 }
-.itemsTabla table thead a {
+.itemsTabla table thead a, .itemsTablaVertical table thead a {
   color: #fff;
   margin-left: 10px;
 }
-.itemsTabla table thead .filtro {
+.itemsTabla table thead .filtro, .itemsTablaVertical table thead .filtro {
   background: #fff;
   color: #000;
   border: 1px solid #ccc;
@@ -986,12 +997,12 @@
           box-shadow: 5px 6px 5px #c2c2c2;
   top: 48px;
 }
-.itemsTabla table thead .filtro input {
+.itemsTabla table thead .filtro input, .itemsTablaVertical table thead .filtro input {
   border: 1px solid #ccc;
   width: 90%;
   padding-left: 5px;
 }
-.itemsTabla table thead .filtro ul {
+.itemsTabla table thead .filtro ul, .itemsTablaVertical table thead .filtro ul {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -1002,34 +1013,34 @@
   height: 20rem;
   overflow: auto;
 }
-.itemsTabla table thead .filtro ul li {
+.itemsTabla table thead .filtro ul li, .itemsTablaVertical table thead .filtro ul li {
   display: block;
   width: 100%;
 }
-.itemsTabla table thead .filtro ul a {
+.itemsTabla table thead .filtro ul a, .itemsTablaVertical table thead .filtro ul a {
   color: #000;
   display: block;
 }
-.itemsTabla table thead .filtro ul a:hover {
+.itemsTabla table thead .filtro ul a:hover, .itemsTablaVertical table thead .filtro ul a:hover {
   background: #0075B7;
   color: #fff;
 }
-.itemsTabla table tbody .pointer {
+.itemsTabla table tbody .pointer, .itemsTablaVertical table tbody .pointer {
   cursor: pointer;
   height: 25px;
 }
-.itemsTabla table tbody .pointer td {
+.itemsTabla table tbody .pointer td, .itemsTablaVertical table tbody .pointer td {
   border: 1px dotted #c2c2c2;
   line-height: 1rem;
   font-size: 0.7rem;
 }
-.itemsTabla table tbody .pointer:hover {
+.itemsTabla table tbody .pointer:hover, .itemsTablaVertical table tbody .pointer:hover {
   background: rgba(255, 255, 43, 0.7);
 }
-.itemsTabla table tbody input {
+.itemsTabla table tbody input, .itemsTablaVertical table tbody input {
   width: 100%;
 }
-.itemsTabla table tbody textarea {
+.itemsTabla table tbody textarea, .itemsTablaVertical table tbody textarea {
   width: 100%;
   height: 100%;
   display: block;
@@ -2770,6 +2781,10 @@
 
 .atendido {
   background: #33B71F;
+}
+
+.emitido {
+  background: #F8CAAD;
 }
 
 .tab_inactivo {

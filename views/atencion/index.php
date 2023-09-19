@@ -242,7 +242,7 @@
                     <th>Vencimiento</th>
                     <th>Descripción</th>
                     <th>Centro Costos</th>
-                    <th>Resposable</th>
+                    <th>Responsable</th>
                     <th>Estado</th>
                     <th>Atencion</th>
                     <th>...</th>
