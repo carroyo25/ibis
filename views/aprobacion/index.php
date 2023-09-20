@@ -115,7 +115,7 @@
                                     <th>Descripcion</th>
                                     <th>Und.</th>
                                     <th width="7%">Cant.Ped.</th>
-                                    <th width="7%">Cant.Aten.</th>
+                                    <th width="7%">Cant.Aten.</br>Almacen</th>
                                     <th width="7%">Cant.</br>Aprobada</th>
                                     <th>Nro.</br>Parte</th>
                                     <th width="15%">Observaciones</th>

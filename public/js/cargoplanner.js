@@ -153,9 +153,13 @@ $(function() {
     $("#excelFile").click(function (e) { 
         e.preventDefault();
 
+        $("#esperarCargo").css("opacity","1").fadeIn();
+
         $.post(RUTA+"cargoplanner/dataExcelTotalCargoPlan",
             function (data, textStatus, jqXHR) {
-                console.log(data);
+                
+                $("#esperarCargo").css("opacity","0").fadeOut();
+                window.location.href = data.documento;
             },
             "json"
         );

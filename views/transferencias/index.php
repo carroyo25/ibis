@@ -443,26 +443,6 @@
     </div>
     <div>
         <div class="itemsTablaVertical">
-            <h3>Transferencias</h3>
-            <div>
-                <table id="tablaPrincipal">
-                    <thead class="stickytop">
-                        <tr>
-                            <th>Nro. Nota</th>
-                            <th>F.Emisión</th>
-                            <th>Almacen Origen</th>
-                            <th>Almacen Destino</th>
-                            <th>Centro de Costos</th>
-                            <th>Nro. Guia</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php echo $this->listaAtencion;?>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <div class="itemsTablaVertical">
             <h3>Pedidos por atender</h3>
             <div>
                 <table id="tablaPrincipalPedidos">
@@ -484,7 +464,27 @@
                     </tbody>
                 </table>
             </div>
-        </div> 
+        </div>
+        <div class="itemsTablaVertical">
+            <h3>Transferencias</h3>
+            <div>
+                <table id="tablaPrincipal">
+                    <thead class="stickytop">
+                        <tr>
+                            <th>Nro. Nota</th>
+                            <th>F.Emisión</th>
+                            <th>Almacen Origen</th>
+                            <th>Almacen Destino</th>
+                            <th>Centro de Costos</th>
+                            <th>Nro. Guia</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php echo $this->listaAtencion;?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
    
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>

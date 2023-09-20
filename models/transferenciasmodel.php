@@ -888,7 +888,7 @@
                                                         INNER JOIN ibis.tb_parametros AS atencion ON ibis.tb_pedidocab.nivelAten = atencion.nidreg 
                                                     WHERE
                                                         tb_costusu.id_cuser = :user 
-                                                        AND tb_pedidocab.estadodoc = 54
+                                                        AND (tb_pedidocab.estadodoc = 54 OR tb_pedidocab.estadodoc = 53) 
                                                         AND tb_pedidocab.idtipomov = 37
                                                         AND tb_costusu.nflgactivo = 1
                                                     ORDER BY tb_pedidocab.emision DESC");

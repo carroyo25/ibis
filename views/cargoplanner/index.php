@@ -8,7 +8,7 @@
     <title>Document</title>
 </head>
 <body>
-    <div class="modal" id="esperar">
+    <div class="modal" id="esperarCargo">
         <div class="loadingio-spinner-spinner-5ulcsi06hlf">
             <div class="ldio-fifgg00y5y">
                 <div></div>
@@ -24,6 +24,7 @@
                 <div></div>
                 <div></div>
             </div>
+            <h1>Espere... Este proceso demora unos minutos</h1>
         </div>
     </div>
     <div class="modal" id="vistadocumento">
