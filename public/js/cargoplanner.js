@@ -149,6 +149,20 @@ $(function() {
 
         return false;
     });
+
+    $("#excelFile").click(function (e) { 
+        e.preventDefault();
+
+        $.post(RUTA+"cargoplanner/dataExcelTotalCargoPlan",
+            function (data, textStatus, jqXHR) {
+                console.log(data);
+            },
+            "json"
+        );
+
+        return false;
+        
+    });
     
 })
 

@@ -21,5 +21,9 @@
         function resumen() {
             echo json_encode($this->model->consultaResumen($_POST['orden'],$_POST['refpedido']));
         }
+
+        function dataExcelTotalCargoPlan(){
+            echo json_encode($this->model->exportarTotal());
+        }
     }
 ?>
