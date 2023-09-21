@@ -30,6 +30,7 @@
                                                         tb_pedidodet.nregistro,
                                                         tb_pedidodet.cant_pedida AS cantidad_pedido,
                                                         tb_pedidodet.cant_atend AS cantidad_atendida,
+                                                        tb_pedidodet.cant_aprob AS cantidad_aprobada,
                                                         LPAD(tb_pedidocab.nrodoc,6,0) AS pedido,
                                                         lg_ordendet.id_orden AS orden,
                                                         lg_ordendet.item AS item_orden,
@@ -54,10 +55,11 @@
                                                         DATE_FORMAT( lg_ordencab.ffechaent, '%d/%m/%Y' ) AS fecha_entrega,
                                                         DATE_FORMAT( lg_ordencab.fechafin, '%d/%m/%Y' ) AS fecha_autorizacion_orden,
                                                         UPPER( cm_entidad.crazonsoc ) AS proveedor,
-                                                        lg_ordendet.ncanti AS cantidad_orden,
-                                                        ( SELECT SUM( alm_recepdet.ncantidad ) FROM alm_recepdet WHERE alm_recepdet.niddetaOrd = lg_ordendet.nitemord AND alm_recepdet.nflgactivo = 1 ) AS ingreso,
+                                                        ( SELECT SUM(lg_ordendet.ncanti) FROM lg_ordendet WHERE lg_ordendet.niddeta = tb_pedidodet.iditem AND lg_ordendet.id_orden != 0) AS cantidad_orden,
+                                                        ( SELECT SUM( alm_recepdet.ncantidad ) FROM alm_recepdet WHERE alm_recepdet.niddetaPed = tb_pedidodet.iditem AND alm_recepdet.nflgactivo = 1 ) AS ingreso,
                                                         ( SELECT SUM( alm_despachodet.ndespacho ) FROM alm_despachodet WHERE alm_despachodet.niddetaPed = lg_ordendet.niddeta AND alm_despachodet.nflgactivo = 1 ) AS despachos,
-                                                        ( SELECT SUM( alm_existencia.cant_ingr ) FROM alm_existencia WHERE alm_existencia.idpedido = tb_pedidodet.iditem ) AS ingreso_obra,
+                                                        ( SELECT SUM( alm_existencia.cant_ingr ) FROM alm_existencia WHERE alm_existencia.idpedido = tb_pedidodet.iditem AND alm_existencia.nflgActivo = 1) AS ingreso_obra,
+                                                        ( SELECT SUM( alm_existencia.cant_ingr ) FROM alm_existencia WHERE alm_existencia.idpedido = tb_pedidodet.iditem AND alm_existencia.nflgActivo = 1 AND alm_existencia.tipo = 2) AS atencion_almacen,
                                                         UPPER( tb_user.cnameuser ) AS operador,
                                                         UPPER( tb_pedidocab.concepto ) AS concepto,
                                                         DATEDIFF( NOW(), lg_ordencab.ffechaent ) AS dias_atraso,
@@ -130,6 +132,9 @@
 
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()){
+
+                        $porcentaje = "100%";
+
                             if ($rs['orden'] ){
                                 if ( $nro_orden == $rs['orden'] ) {
                                     $itemOrden++;
@@ -188,7 +193,7 @@
                                 $estadofila = "comprado";
                                 $estado_item = "Compra Local";
                                 $estado_pedido = "Compra Local";
-                            }else if( $rs['estadoItem'] == 52  && $rs['ingreso_obra'] == $rs['cantidad_pedido']) {
+                            }else if( $rs['estadoItem'] == 52  && $rs['ingreso_obra'] == $rs['cantidad_aprobada']) {
                                 $porcentaje = "100%";
                                 $estadofila = "entregado";
                                 $estado_item = "atendido";
@@ -270,7 +275,7 @@
                                         <td class="textoDerecha pr15px" style="background:#e8e8e8;font-weight: bold">'.$rs['cantidad_orden'].'</td>
                                         <td class="pl10px">'.$rs['item_orden'].'</td>
                                         <td class="pl10px">'.$rs['fecha_autorizacion_orden'].'</td>
-                                        <td class="textoDerecha pr15px">'.number_format($rs['cantidad_atendida'],2).'</td>
+                                        <td class="textoDerecha pr15px">'.number_format($rs['atencion_almacen'],2).'</td>
                                         <td class="pl10px">'.$rs['proveedor'].'</td>
                                         <td class="textoCentro">'.$rs['fecha_entrega'].'</td>
                                         <td class="textoDerecha pr15px">'.$rs['ingreso'].'</td>
@@ -840,10 +845,11 @@
                                                     DATE_FORMAT( lg_ordencab.ffechaent, '%d/%m/%Y' ) AS fecha_entrega,
                                                     DATE_FORMAT( lg_ordencab.fechafin, '%d/%m/%Y' ) AS fecha_autorizacion_orden,
                                                     UPPER( cm_entidad.crazonsoc ) AS proveedor,
-                                                    lg_ordendet.ncanti AS cantidad_orden,
-                                                    ( SELECT SUM( alm_recepdet.ncantidad ) FROM alm_recepdet WHERE alm_recepdet.niddetaOrd = lg_ordendet.nitemord AND alm_recepdet.nflgactivo = 1 ) AS ingreso,
+                                                    ( SELECT SUM(lg_ordendet.ncanti) FROM lg_ordendet WHERE lg_ordendet.niddeta = tb_pedidodet.iditem AND lg_ordendet.id_orden != 0) AS cantidad_orden,
+                                                    ( SELECT SUM( alm_recepdet.ncantidad ) FROM alm_recepdet WHERE alm_recepdet.niddetaPed = tb_pedidodet.iditem AND alm_recepdet.nflgactivo = 1 ) AS ingreso,
                                                     ( SELECT SUM( alm_despachodet.ndespacho ) FROM alm_despachodet WHERE alm_despachodet.niddetaPed = lg_ordendet.niddeta AND alm_despachodet.nflgactivo = 1 ) AS despachos,
                                                     ( SELECT SUM( alm_existencia.cant_ingr ) FROM alm_existencia WHERE alm_existencia.idpedido = tb_pedidodet.iditem ) AS ingreso_obra,
+                                                    ( SELECT SUM( alm_existencia.cant_ingr ) FROM alm_existencia WHERE alm_existencia.idpedido = tb_pedidodet.iditem AND alm_existencia.nflgActivo = 1 AND alm_existencia.tipo = 2) AS atencion_almacen,
                                                     UPPER( tb_user.cnameuser ) AS operador,
                                                     UPPER( tb_pedidocab.concepto ) AS concepto,
                                                     DATEDIFF( NOW(), lg_ordencab.ffechaent ) AS dias_atraso,
@@ -1226,6 +1232,7 @@
                             $objPHPExcel->getActiveSheet()->setCellValue('V'.$fila,PHPExcel_Shared_Date::PHPToExcel($rs['fecha_autorizacion_orden']));
                             $objPHPExcel->getActiveSheet()->getStyle('V'.$fila)->getNumberFormat()->setFormatCode('dd/mm/yyyy');
                         
+                        $objPHPExcel->getActiveSheet()->setCellValue('W'.$fila,$rs['atencion_almacen']);
                         $objPHPExcel->getActiveSheet()->setCellValue('X'.$fila,$rs['proveedor']);
 
                         if  ($rs['fecha_entrega'] !== "")
