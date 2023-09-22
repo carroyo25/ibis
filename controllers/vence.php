@@ -13,7 +13,11 @@
         
 
         function consulta(){
-            echo $this->model->mostrarvencimento($_POST['cc'],$_POST['codigo']);
+            echo $this->model->listarVencimientos($_POST['cc'],$_POST['codigo'],$_POST['descripcion']);
+        }
+
+        function consultaItem(){
+            echo json_encode($this->model->detallarItem($_POST['item']));
         }
     }
 ?>

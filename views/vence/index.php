@@ -25,6 +25,50 @@
             </div>
         </div>
     </div>
+    <div class="modal" id="vistadocumento">
+        <div class="ventanaResumen tamanioProceso50">
+            <div class="resumen">
+                <div class="tituloResumen">
+                    <div>
+                        <p class="titulo_seccion"><strong> Detalle del Reporte : </strong></p>
+                    </div>
+                    <div>
+                        <a href="#" id="closeDocument" title="Cerrar Ventana"><i class="fas fa-window-close"></i><span> Cerrar</span></a>
+                    </div>
+                </div>
+                <hr>
+                <div class="cuerpoResumen">
+                   <div class="area1">
+                        <label>Codigo</label>
+                        <label>:</label>
+                        <label id="codigo_item"></label>
+                        <label>Descripción</label>
+                        <label>:</label>
+                        <label id="nombre_item"></label>
+                        <label>Detalle Pedido</label>
+                        <label>:</label>
+                        <label id="detalle_item"></label>
+                        <hr>
+                        
+                   </div>
+                   <div>
+                        <table id="listaVencimientos" class="tabla">
+                            <thead>
+                                <td>Fecha Compra</td>
+                                <td>Nro. Orden</td>
+                                <td>Fecha Vencimiento</td>
+                                <td>Cant. Compra</td>
+                                <td>Existencias</td>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                   </div>
+                </div>
+            </div>   
+        </div>
+    </div>
     <div class="cabezaModulo">
         <h1>Reporte de Vencimiento</h1>
         <div>

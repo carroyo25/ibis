@@ -4,7 +4,7 @@ $(() => {
     $("#btnConsulta").click(function(e){
         e.preventDefault();
 
-        $.post(RUTA+"vence/consulta",{cc:$("#costosSearch").val(),codigo:$("#codigoBusqueda").val()},
+        $.post(RUTA+"vence/consulta",{cc:$("#costosSearch").val(),codigo:$("#codigoBusqueda").val(),descripcion:$("#descripcionSearch").val()},
             function (data, text, requestXHR) {
                 $("#tablaPrincipal tbody")
                     .empty()
@@ -12,6 +12,33 @@ $(() => {
             },
             "text"
         );
+
+        return false;
+    });
+
+    $("#tablaPrincipal tbody").on("click","tr", function (e) {
+        e.preventDefault();
+
+        let TABLA = $("#tablaPrincipal tbody >tr");
+
+        $.post(RUTA+"vence/consultaItem",{item:TABLA.data('idexiste')},
+            function (data, text, requestXHR) {
+                $("#codigo_item").text(TABLA.find('td').eq(2).text());
+                $("#nombre_item").text(TABLA.find('td').eq(3).text());
+                $("#detalle_item").text();
+
+                $("#vistadocumento").fadeIn();
+            },
+            "json"
+        );
+
+        return false;
+    });
+
+    $("#closeDocument").click(function (e) { 
+        e.preventDefault();
+        
+        $("#vistadocumento").fadeOut();
 
         return false;
     });

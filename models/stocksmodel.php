@@ -18,11 +18,13 @@
                                                         cm_producto.ccodprod,
                                                         UPPER( cm_producto.cdesprod ) AS cdesprod,
                                                         recepcion.cantidad_obra AS ingresos,
+                                                        recepcion.idreg,
                                                         inventarios.condicion,
                                                         inventarios.inventarios_cantidad AS inventarios,
                                                         SUM( consumo.cantsalida ) AS consumos,
                                                         SUM( consumo.cantdevolucion ) AS devoluciones,
                                                         sal_trans.salida_transferencia AS salidas_transferencia,
+                                                        sal_trans.iditem,
                                                         ing_trans.ingreso_transferencia AS ingresos_transferencias,
                                                         minimo.cantidad_minima AS minimo,
                                                         tb_unimed.cabrevia 
@@ -33,7 +35,8 @@
                                                         SELECT
                                                             COUNT( alm_existencia.cant_ingr ) AS ingresos_obra,
                                                             SUM( alm_existencia.cant_ingr ) AS cantidad_obra,
-                                                            alm_existencia.codprod 
+                                                            alm_existencia.codprod,
+                                                            alm_existencia.idreg 
                                                         FROM
                                                             alm_existencia
                                                             LEFT JOIN alm_cabexist ON alm_cabexist.idreg = alm_existencia.idregistro 
@@ -77,7 +80,8 @@
                                                         LEFT JOIN (
                                                         SELECT
                                                             SUM( alm_transferdet.ncanti ) AS salida_transferencia,
-                                                            alm_transferdet.idcprod 
+                                                            alm_transferdet.idcprod,
+                                                            alm_transferdet.iditem
                                                         FROM
                                                             alm_transferdet
                                                             LEFT JOIN alm_transfercab ON alm_transferdet.idtransfer = alm_transfercab.idreg 
@@ -154,7 +158,10 @@
                         $c7 = ($rs['condicion'] == '3C' || $rs['condicion'] == '3.C.' || $rs['condicion'] == '3.C') ? number_format($rs['inventarios']) : "";
 
                         //if ( $saldo ){
-                            $salida.='<tr class="pointer" data-idprod="'.$rs['id_cprod'].'" data-costos="'.$rs['ingresos'].'">
+                            $salida.='<tr class="pointer" data-idprod="'.$rs['id_cprod'].'" 
+                                                        data-costos="'.$rs['ingresos'].'" 
+                                                        data-existencia="'.$rs['idreg'].'"
+                                                        data-transferencia="'.$rs['iditem'].'">
                                             <td class="textoCentro">'.str_pad($item++,4,0,STR_PAD_LEFT).'</td>
                                             <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                             <td class="pl20px">'.$rs['cdesprod'].'</td>
