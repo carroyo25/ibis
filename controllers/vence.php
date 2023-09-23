@@ -17,7 +17,7 @@
         }
 
         function consultaItem(){
-            echo json_encode($this->model->detallarItem($_POST['item']));
+            echo $this->model->detallarItem($_POST['item'],$_POST['costos']);
         }
     }
 ?>

@@ -73,10 +73,12 @@
                                                             cm_producto.ccodprod,
                                                             UPPER( cm_producto.cdesprod ) AS producto,
                                                             tb_proyectos.ccodproy,
+                                                            tb_proyectos.nidreg,
                                                             tb_unimed.cabrevia,
                                                             tb_pedidocab.nrodoc,
                                                             tb_pedidocab.idorden,
-                                                            DATEDIFF(NOW(),alm_existencia.vence) AS dias_pasados
+                                                            DATEDIFF(NOW(),alm_existencia.vence) AS dias_pasados,
+                                                            tb_pedidodet.observaciones 
                                                         FROM
                                                             alm_existencia
                                                             LEFT JOIN cm_producto ON alm_existencia.codprod = cm_producto.id_cprod
@@ -84,6 +86,7 @@
                                                             INNER JOIN tb_proyectos ON alm_cabexist.idcostos = tb_proyectos.nidreg
                                                             INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
                                                             LEFT JOIN tb_pedidocab ON alm_existencia.idpedido = tb_pedidocab.idreg
+                                                            INNER JOIN tb_pedidodet ON alm_existencia.idpedido = tb_pedidodet.iditem 
                                                         WHERE
                                                             alm_existencia.vence <> '' 
                                                             AND tb_proyectos.nidreg LIKE :cc 
@@ -112,7 +115,10 @@
                              $alerta ="semaforoVerde";
                          }
 
-                         $salida .='<tr class="pointer" data-idexiste="'.$rs['idreg'].'" data-idproducto="'.$rs['id_cprod'].'">
+                         $salida .='<tr class="pointer" data-idexiste="'.$rs['idreg'].'" 
+                                                        data-idproducto="'.$rs['id_cprod'].'"
+                                                        data-costos="'.$rs['nidreg'].'"
+                                                        data-observaciones="'.$rs['observaciones'].'">
                                          <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
                                          <td class="textoCentro">'.$rs['ccodproy'].'</td>
                                          <td class="textoCentro">'.$rs['ccodprod'].'</td>
@@ -137,28 +143,45 @@
             }
         }
         
-        public function detallarItem($item){
+        public function detallarItem($item,$costos){
+            $salida = "";
+
             try {
                 $sql=$this->db->connect()->prepare("SELECT
-                                                    alm_existencia.vence,
-                                                    alm_cabexist.idcostos,
-                                                    tb_proyectos.ccodproy,
-                                                    tb_proyectos.cdesproy,
-                                                    tb_pedidodet.observaciones,
-                                                    tb_pedidodet.idorden,
-                                                    tb_pedidodet.cant_orden
-                                                FROM
-                                                    alm_existencia
-                                                    INNER JOIN alm_cabexist ON alm_existencia.idalm = alm_cabexist.idreg
-                                                    INNER JOIN tb_proyectos ON alm_cabexist.idcostos = tb_proyectos.nidreg
-                                                    INNER JOIN tb_pedidodet ON alm_existencia.idpedido = tb_pedidodet.iditem 
-                                                WHERE
-                                                    alm_existencia.codprod = :id");
+                                                        DATE_FORMAT( alm_existencia.vence, '%d/%m/%Y' ) AS fecha_vencimiento,
+                                                        alm_cabexist.idcostos,
+                                                        alm_cabexist.idreg,
+                                                        tb_pedidodet.observaciones,
+                                                        tb_pedidodet.idorden,
+                                                        tb_pedidodet.cant_orden,
+                                                        ( SELECT SUM( alm_consumo.cantsalida ) FROM alm_consumo WHERE alm_consumo.idprod = alm_existencia.codprod AND alm_consumo.ncostos = alm_cabexist.idcostos ) AS consumos,
+                                                        DATE_FORMAT( alm_existencia.freg, '%d/%m/%Y' ) AS fecha_ingreso 
+                                                    FROM
+                                                        alm_existencia
+                                                        INNER JOIN alm_cabexist ON alm_existencia.idregistro = alm_cabexist.idreg
+                                                        INNER JOIN tb_proyectos ON alm_cabexist.idcostos = tb_proyectos.nidreg
+                                                        INNER JOIN tb_pedidodet ON alm_existencia.idpedido = tb_pedidodet.iditem 
+                                                    WHERE
+                                                        alm_existencia.idreg = :id");
                 $sql->execute(["id"=>$item]);
 
-                $result = $sql->fetchAll();
+                //$result = $sql->fetchAll();
+                $rowcount = $sql->rowCount();
+
+                if ($rowcount>0) {
+                    while ($rs = $sql->fetch()) {
+                        $salida .='<tr>
+                                        <td class="textoCentro">'.$rs['fecha_ingreso'].'</td>
+                                        <td class="textoCentro">'.$rs['idorden'].'</td>
+                                        <td class="textoCentro">'.$rs['fecha_vencimiento'].'</td>
+                                        <td class="textoDerecha">'.$rs['cant_orden'].'</td>
+                                        <td class="textoDerecha">'.$rs['consumos'].'</td>
+                                    </tr>';
+                    }
+                }
+
                 
-                return array("detalles"=>$result); 
+                return $salida; 
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;

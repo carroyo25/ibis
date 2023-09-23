@@ -54,11 +54,11 @@
                    <div>
                         <table id="listaVencimientos" class="tabla">
                             <thead>
-                                <td>Fecha Compra</td>
-                                <td>Nro. Orden</td>
-                                <td>Fecha Vencimiento</td>
-                                <td>Cant. Compra</td>
-                                <td>Existencias</td>
+                                <th>Fecha Compra</th>
+                                <th>Nro. Orden</th>
+                                <th>Fecha Vencimiento</th>
+                                <th>Cant. Compra</th>
+                                <th>Existencias</th>
                             </thead>
                             <tbody>
 

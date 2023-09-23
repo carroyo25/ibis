@@ -18,18 +18,22 @@ $(() => {
 
     $("#tablaPrincipal tbody").on("click","tr", function (e) {
         e.preventDefault();
+        
+        $("#codigo_item").text($(this).find('td').eq(2).text());
+        $("#nombre_item").text($(this).find('td').eq(3).text());
+        $("#detalle_item").text($(this).data("observaciones"));
+        
 
-        let TABLA = $("#tablaPrincipal tbody >tr");
-
-        $.post(RUTA+"vence/consultaItem",{item:TABLA.data('idexiste')},
+        $.post(RUTA+"vence/consultaItem",{item:$(this).data('idexiste'),costos:$(this).data('idexiste')},
             function (data, text, requestXHR) {
-                $("#codigo_item").text(TABLA.find('td').eq(2).text());
-                $("#nombre_item").text(TABLA.find('td').eq(3).text());
-                $("#detalle_item").text();
 
+                $("#listaVencimientos tbody")
+                    .empty()
+                    .append(data);
+                
                 $("#vistadocumento").fadeIn();
             },
-            "json"
+            "text"
         );
 
         return false;

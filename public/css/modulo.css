@@ -2475,6 +2475,15 @@
   width: 150px !important;
 }
 
+.tablaInfo {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1rem;
+}
+.tablaInfo tr {
+  height: 1rem;
+}
+
 .tabla, .tablaWrap {
   width: 100%;
   border-collapse: collapse;
