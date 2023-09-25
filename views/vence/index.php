@@ -45,20 +45,16 @@
                         <label>Descripción</label>
                         <label>:</label>
                         <label id="nombre_item"></label>
-                        <label>Detalle Pedido</label>
-                        <label>:</label>
-                        <label id="detalle_item"></label>
                         <hr>
-                        
                    </div>
                    <div>
-                        <table id="listaVencimientos" class="tabla">
+                        <table id="listaVencimientos" class="tablaInfo">
                             <thead>
-                                <th>Fecha Compra</th>
-                                <th>Nro. Orden</th>
-                                <th>Fecha Vencimiento</th>
-                                <th>Cant. Compra</th>
-                                <th>Existencias</th>
+                                <th width="45%">Observaciones</th>
+                                <th>Fecha</br>Compra</th>
+                                <th>Numero</br>Orden</th>
+                                <th>Fecha</br>Vencimiento</th>
+                                <th>Cant.</br>Compra</th>
                             </thead>
                             <tbody>
 
@@ -108,14 +104,9 @@
                     <th rowspan="2">Codigo</th>
                     <th rowspan="2" width="50%">Descripcion</th>
                     <th rowspan="2">Unidad</th>
-                    <th rowspan="2">Cantidad</br>Ingreso</th>
-                    <th rowspan="2">OC</th>
-                    <th rowspan="2">Guia</th>
-                    <th rowspan="2">Fecha Vencimiento</th>
-                    <th rowspan="2">Stock</th>
-                    <th rowspan="2">Saldo</th>
-                    <th rowspan="2">Pedido</th>
-                    <th rowspan="2">Vencido</th>
+                    <th>Fecha de </br> Vencimiento</th>
+                    <th rowspan="2">Dias</br>Vencido</th>
+                    
                 </tr>
             </thead>
             <tbody>

@@ -2478,10 +2478,21 @@
 .tablaInfo {
   width: 100%;
   border-collapse: collapse;
-  font-size: 1rem;
 }
-.tablaInfo tr {
-  height: 1rem;
+.tablaInfo thead {
+  background: #000;
+  color: #fff;
+  height: 30px;
+  font-size: 0.8rem;
+}
+.tablaInfo tbody tr {
+  height: 1.5rem;
+  cursor: pointer;
+}
+.tablaInfo tbody td {
+  border: 1px dotted #c2c2c2;
+  line-height: 1rem;
+  font-size: 0.8rem;
 }
 
 .tabla, .tablaWrap {

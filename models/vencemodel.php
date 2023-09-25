@@ -6,56 +6,6 @@
             parent::__construct();
         }
 
-        public function mostrarvencimento($cc,$codigo) {
-            $codigo = '%';
-            $salida = "";
-
-            $sql = $this->db->connect()->prepare("SELECT
-                                                    alm_existencia.codprod,
-                                                    DATE_FORMAT(date_add(alm_existencia.vence, interval 190 day),'%d/%m/%Y') AS vence,
-                                                    UPPER( cm_producto.cdesprod ) AS descripcion,
-                                                    cm_producto.ccodprod,
-                                                    lg_ordencab.cmes,
-                                                    lg_ordencab.cnumero,
-                                                    lg_ordencab.ffechadoc,
-                                                    lg_ordencab.ncodcos,
-                                                    tb_unimed.cabrevia,
-                                                    alm_existencia.cant_ingr  
-                                                FROM
-                                                    alm_existencia
-                                                    INNER JOIN cm_producto ON alm_existencia.codprod = cm_producto.id_cprod
-                                                    INNER JOIN lg_ordencab ON alm_existencia.nropedido = lg_ordencab.id_regmov
-                                                    INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed  
-                                                WHERE
-                                                    alm_existencia.vence <> '' 
-                                                    AND lg_ordencab.ncodcos =:costo
-                                                    AND cm_producto.ccodprod LIKE :codigo
-                                                ORDER BY
-                                                    alm_existencia.vence ASC");
-            $sql->execute(['costo'=>$cc,'codigo'=>$codigo]);
-            $rowcount = $sql->rowcount();
-            $item = 1;
-
-            if ($rowcount > 0) {
-                while ($rs = $sql->fetch()) {
-                    $salida .='<tr class="pointer">
-                                    <td>'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
-                                    <td class="textocentro">'.$rs['ccodprod'].'</td>
-                                    <td class="pl20px">'.$rs['descripcion'].'</td>
-                                    <td class="textoCentro">'.$rs['cabrevia'].'</td>
-                                    <td class="textoDerecha">'.$rs['cant_ingr'].'</td>
-                                    <td class="textoCentro">'.str_pad($rs['cnumero'],6,0,STR_PAD_LEFT).'</td>
-                                    <td></td>
-                                    <td class="textoCentro">'.$rs['vence'].'</td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>';
-                }
-            }
-
-            return $salida;
-
-        }
 
         public function listarVencimientos($costo,$codigo,$descripcion) {
             $cc = $costo == "" ? "%" : "%".$costo."%";
@@ -124,13 +74,7 @@
                                          <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                          <td class="pl20px">'.$rs['producto'].'</td>
                                          <td class="textoCentro">'.$rs['cabrevia'].'</td>
-                                         <td class="textoCentro"></td>
-                                         <td class="textoDerecha">'.str_pad($rs['idorden'],6,0,STR_PAD_LEFT).'</td>
-                                         <td></td>
                                          <td class="textoCentro '.$alerta.'">'.$rs['vence'].'</td>
-                                         <td></td>
-                                         <td></td>
-                                         <td class="textoCentro">'.str_pad($rs['nrodoc'],6,0,STR_PAD_LEFT).'</td>
                                          <td class="textoDerecha">'.$rs['dias_pasados'].'</td>
                                      </tr>';
                      }
@@ -143,39 +87,39 @@
             }
         }
         
-        public function detallarItem($item,$costos){
+        public function detallarItem($producto,$costos){
             $salida = "";
 
             try {
                 $sql=$this->db->connect()->prepare("SELECT
-                                                        DATE_FORMAT( alm_existencia.vence, '%d/%m/%Y' ) AS fecha_vencimiento,
-                                                        alm_cabexist.idcostos,
-                                                        alm_cabexist.idreg,
-                                                        tb_pedidodet.observaciones,
-                                                        tb_pedidodet.idorden,
-                                                        tb_pedidodet.cant_orden,
-                                                        ( SELECT SUM( alm_consumo.cantsalida ) FROM alm_consumo WHERE alm_consumo.idprod = alm_existencia.codprod AND alm_consumo.ncostos = alm_cabexist.idcostos ) AS consumos,
-                                                        DATE_FORMAT( alm_existencia.freg, '%d/%m/%Y' ) AS fecha_ingreso 
-                                                    FROM
-                                                        alm_existencia
-                                                        INNER JOIN alm_cabexist ON alm_existencia.idregistro = alm_cabexist.idreg
-                                                        INNER JOIN tb_proyectos ON alm_cabexist.idcostos = tb_proyectos.nidreg
-                                                        INNER JOIN tb_pedidodet ON alm_existencia.idpedido = tb_pedidodet.iditem 
-                                                    WHERE
-                                                        alm_existencia.idreg = :id");
-                $sql->execute(["id"=>$item]);
+                                                            DATE_FORMAT( alm_existencia.vence, '%d/%m/%Y' ) AS fecha_vencimiento,
+                                                            alm_cabexist.idcostos,
+                                                            alm_cabexist.idreg,
+                                                            tb_pedidodet.observaciones,
+                                                            tb_pedidodet.idorden,
+                                                            FORMAT( tb_pedidodet.cant_orden, 2 ) AS cant_orden,
+                                                            DATE_FORMAT( alm_existencia.freg, '%d/%m/%Y' ) AS fecha_ingreso 
+                                                        FROM
+                                                            alm_existencia
+                                                            INNER JOIN alm_cabexist ON alm_existencia.idregistro = alm_cabexist.idreg
+                                                            INNER JOIN tb_proyectos ON alm_cabexist.idcostos = tb_proyectos.nidreg
+                                                            INNER JOIN tb_pedidodet ON alm_existencia.idpedido = tb_pedidodet.iditem 
+                                                        WHERE
+                                                            alm_existencia.codprod = :id 
+                                                            AND alm_existencia.vence != ''
+                                                            AND alm_cabexist.idcostos = :cc");
+                $sql->execute(["id"=>$producto,"cc"=>$costos]);
 
-                //$result = $sql->fetchAll();
                 $rowcount = $sql->rowCount();
 
                 if ($rowcount>0) {
                     while ($rs = $sql->fetch()) {
-                        $salida .='<tr>
+                        $salida .='<tr class="pointer"> 
+                                        <td class="pl20px">'.$rs['observaciones'].'</td>
                                         <td class="textoCentro">'.$rs['fecha_ingreso'].'</td>
                                         <td class="textoCentro">'.$rs['idorden'].'</td>
                                         <td class="textoCentro">'.$rs['fecha_vencimiento'].'</td>
                                         <td class="textoDerecha">'.$rs['cant_orden'].'</td>
-                                        <td class="textoDerecha">'.$rs['consumos'].'</td>
                                     </tr>';
                     }
                 }
@@ -184,6 +128,88 @@
                 return $salida; 
             } catch (PDOException $th) {
                 echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function exportExcel($detalles){
+            require_once('public/PHPExcel/PHPExcel.php');
+            try {
+                $objPHPExcel = new PHPExcel();
+                $objPHPExcel->getProperties()
+                    ->setCreator("Sical")
+                    ->setLastModifiedBy("Sical")
+                    ->setTitle("Cargo Plan")
+                    ->setSubject("Template excel")
+                    ->setDescription("Reporte Vencimientos")
+                    ->setKeywords("Template excel");
+
+                    $objWorkSheet = $objPHPExcel->createSheet(1);
+
+                    $objPHPExcel->setActiveSheetIndex(0);
+                    $objPHPExcel->getActiveSheet()->setTitle("Cargo Plan");
+    
+    
+                    $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel,'Excel2007');
+                    $objPHPExcel->getActiveSheet()->mergeCells('A1:AP1');
+                    $objPHPExcel->getActiveSheet()->setCellValue('A1','CARGO PLAN');
+    
+                    $objPHPExcel->getActiveSheet()->getStyle('A1:AP2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                    $objPHPExcel->getActiveSheet()->getStyle('A1:AP2')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+    
+                    $objPHPExcel->getActiveSheet()->getRowDimension('2')->setRowHeight(60);
+
+                    $objPHPExcel->getActiveSheet()->getColumnDimension("A")->setAutoSize(true);
+                    $objPHPExcel->getActiveSheet()->getColumnDimension("B")->setAutoSize(true);
+                    $objPHPExcel->getActiveSheet()->getColumnDimension("C")->setAutoSize(true);
+                    $objPHPExcel->getActiveSheet()->getColumnDimension("D")->setAutoSize(true);
+                    $objPHPExcel->getActiveSheet()->getColumnDimension("E")->setAutoSize(true);
+                    $objPHPExcel->getActiveSheet()->getColumnDimension("F")->setAutoSize(true);
+
+                    $objPHPExcel->getActiveSheet()->setCellValue('A2','Items'); // esto cambia
+                    $objPHPExcel->getActiveSheet()->setCellValue('B2','Centro de Costos'); // esto cambia
+                    $objPHPExcel->getActiveSheet()->setCellValue('C2','Codigo'); // esto cambia
+                    $objPHPExcel->getActiveSheet()->setCellValue('D2','Descripción'); // esto cambia
+                    $objPHPExcel->getActiveSheet()->setCellValue('E2','Unidad'); // esto cambia
+                    $objPHPExcel->getActiveSheet()->setCellValue('F2','Fecha Vencimiento'); // esto cambia
+                    $objPHPExcel->getActiveSheet()->setCellValue('G2','Dias'); // esto cambia
+
+                    $objPHPExcel->getActiveSheet()
+                            ->getStyle('A2:G2')
+                            ->getFill()
+                            ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
+                            ->getStartColor()
+                            ->setRGB('BFCDDB');
+
+                    $fila = 3;
+                    $datos = json_decode($detalles);
+                    $nreg = count($datos);
+    
+                    for ($i=0; $i < $nreg ; $i++) {
+                        $objPHPExcel->getActiveSheet()->setCellValue('A'.$fila,$datos[$i]->item++);
+                        $objPHPExcel->getActiveSheet()->setCellValue('B'.$fila,$datos[$i]->costos);
+                        $objPHPExcel->getActiveSheet()->setCellValue('D'.$fila,$datos[$i]->codigo);
+                        $objPHPExcel->getActiveSheet()->setCellValue('C'.$fila,$datos[$i]->descripcion);
+                        $objPHPExcel->getActiveSheet()->setCellValue('E'.$fila,$datos[$i]->unidad);
+                        $objPHPExcel->getActiveSheet()->setCellValue('F'.$fila,$datos[$i]->vence);
+                        $objPHPExcel->getActiveSheet()->setCellValue('G'.$fila,$datos[$i]->dias);
+
+                        $fila++;
+                    }
+
+
+                    $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel,'Excel2007');
+                    $objWriter->save('public/documentos/reportes/vencimiento.xlsx');
+    
+                    return array("documento"=>'public/documentos/reportes/vencimiento.xlsx');
+    
+                    exit();
+    
+                    return $salida;
+
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
                 return false;
             }
         }

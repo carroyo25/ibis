@@ -2219,11 +2219,29 @@ $emitido:#F8CAAD;
 .tablaInfo {
     width: 100%;
     border-collapse: collapse;
-    font-size: 1rem;
 
-    tr{
-        height: 1rem;
+    thead {
+        background:$negro;
+        color:$blanco;
+        height: 30px;
+        font-size: .8rem;
     }
+
+
+    tbody {
+        tr{
+            height: 1.5rem;
+            cursor:pointer;
+        }
+
+        td {
+            border: 1px dotted  #c2c2c2;
+            line-height:1rem;
+            font-size: .8rem;
+        }
+        
+    }
+    
 }
 
 .tabla,.tablaWrap{

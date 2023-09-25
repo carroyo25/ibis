@@ -19,5 +19,9 @@
         function consultaItem(){
             echo $this->model->detallarItem($_POST['item'],$_POST['costos']);
         }
+
+        function exportaExcel(){
+            echo json_encode($this->model->exportExcel($_POST['registros']));
+        }
     }
 ?>

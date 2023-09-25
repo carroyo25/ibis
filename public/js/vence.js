@@ -21,10 +21,9 @@ $(() => {
         
         $("#codigo_item").text($(this).find('td').eq(2).text());
         $("#nombre_item").text($(this).find('td').eq(3).text());
-        $("#detalle_item").text($(this).data("observaciones"));
         
 
-        $.post(RUTA+"vence/consultaItem",{item:$(this).data('idexiste'),costos:$(this).data('idexiste')},
+        $.post(RUTA+"vence/consultaItem",{item:$(this).data('idproducto'),costos:$(this).data('costos')},
             function (data, text, requestXHR) {
 
                 $("#listaVencimientos tbody")
@@ -46,6 +45,22 @@ $(() => {
 
         return false;
     });
+
+    $("#excelFile").click(function (e) { 
+        e.preventDefault();
+
+        $("#esperar").css("opacity","1").fadeIn();
+
+        $.post(RUTA+"vence/exportaExcel",{registros:JSON.stringify(detalles())},
+            function (data, textStatus, jqXHR) {
+                $("#esperar").css("opacity","0").fadeOut();
+                window.location.href = data.documento;
+            },
+            "json"
+        );
+
+        return false;
+    });
 })
 
 detalles = () =>{
@@ -54,28 +69,22 @@ detalles = () =>{
 
     TABLA.each(function(){
         let ITEM            = $(this).find('td').eq(0).text(),
-            CODIGO          = $(this).find('td').eq(1).text(),
-            DESCRIPCION     = $(this).find('td').eq(2).text(),
-            UNIDAD          = $(this).find('td').eq(3).text(),
-            INGRESO         = $(this).find('td').eq(4).text(),
-            INVENTARIO      = $(this).find('td').eq(5).text(),
-            SALIDA          = $(this).find('td').eq(6).text(),
-            DEVUELTO        = $(this).find('td').eq(7).text(),
-            TRANSFERENCIA   = $(this).find('td').eq(8).text(),
-            SALDO           = $(this).find('td').eq(10).text();
+            COSTOS          = $(this).find('td').eq(1).text(),
+            CODIGO          = $(this).find('td').eq(2).text(),
+            DESCRIPCION     = $(this).find('td').eq(3).text(),
+            UNIDAD          = $(this).find('td').eq(4).text(),
+            VENCE           = $(this).find('td').eq(5).text(),
+            DIAS          = $(this).find('td').eq(6).text();
            
         item= {};
         
         item['item']            = ITEM;
+        item['costos']          = COSTOS;
         item['codigo']          = CODIGO;
         item['descripcion']     = DESCRIPCION;
         item['unidad']          = UNIDAD;
-        item['ingreso']         = INGRESO;
-        item['inventario']      = INVENTARIO;
-        item['salida']          = SALIDA;
-        item['devuelto']        = DEVUELTO;
-        item['transferencias']  = TRANSFERENCIA;
-        item['saldo']           = SALDO;
+        item['vence']           = VENCE;
+        item['dias']            = DIAS;
             
         DATA.push(item);
     })
