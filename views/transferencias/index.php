@@ -139,8 +139,6 @@
                         <table class="tabla" id="tablaDetalles">
                             <thead>
                                 <tr class="stickytop">
-                                    <th width="4%">...</th>
-                                    <th width="4%">...</th>
                                     <th class="">Item</th>
                                     <th class="">Codigo</th>
                                     <th width="45%">Descripcion</th>
@@ -148,9 +146,126 @@
                                     <th width="7%" class="">Cantidad</br>Aprobada</th>
                                     <th width="7%">Cantidad</br>Atendida</th>
                                     <th width="7%">Cantidad por</br>Atender</th>
+                                    <th width="7%">Fecha</br>Vencimiento</th>
+                                    <th width="7%">Condicion</th>
                                     <th width="7%">Stock</th>
                                     <th width="20%" class="">Observaciones</th>
                                     <th class="">Pedido</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="vistaPedido">
+        <div class="ventanaProceso tamanioProceso">
+            <div class="cabezaProceso">
+                <form action="#" id="formProceso" autocomplete="off">
+                    <input type="hidden" name="codigo_costos" id="codigo_costos"> 
+                    <input type="hidden" name="codigo_area" id="codigo_area">
+                    <input type="hidden" name="codigo_transporte" id="codigo_transporte" value="39">
+                    <input type="hidden" name="codigo_solicitante" id="codigo_solicitante">
+                    <input type="hidden" name="codigo_tipo" id="codigo_tipo">
+                    <input type="hidden" name="codigo_partida" id="codigo_partida">
+                    <input type="hidden" name="codigo_pedido" id="codigo_pedido">
+                    <input type="hidden" name="codigo_estado" id="codigo_estado" value="49">
+                    <input type="hidden" name="codigo_verificacion" id="codigo_verificacion">
+                    <input type="hidden" name="dias_atencion" id="dias_atencion" value="10">
+                    <input type="hidden" name="codigo_atencion" id="codigo_atencion" value="47">
+                    <input type="hidden" name="vista_previa" id="vista_previa">
+                    <input type="hidden" name="emitido" id="emitido">
+                    <input type="hidden" name="codigo_usuario" id="codigo_usuario">
+
+                    <div class="barraOpciones primeraBarra">
+                        <span>Datos Generales</span>
+                        <div>
+                            <button type="button" id="closeProcessRequest" title="Cerrar" class="boton3">
+                                <i class="fas fa-window-close"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="dataProceso_2">
+                        <div class="seccion_izquierda">
+                            <div class="column4_55">
+                                <div class="column2_3457">
+                                    <label for="numero">Número:</label>
+                                    <input type="text" name="numero_pedido" id="numero_pedido" class="cerrarLista" readonly>
+                                </div>
+                                <div class="column2_46">
+                                    <label for="emision">Emisión:</label>
+                                    <input type="date" name="emision" id="emision" class="cerrarLista" value="<?php echo date("Y-m-d");?>">
+                                </div>
+                            </div>
+                            <div class="column2">
+                                <label for="costos">CCostos:</label>
+                                <input type="text" name="costos" id="costos" class="mostrarLista busqueda" placeholder="Elija una opcion">
+                            </div>
+                            <div class="column2">
+                                <label for="area">Partida:</label>
+                                <input type="text" name="partida" id="partida" class="mostrarLista busqueda" placeholder="Elija una opcion">
+                            </div>
+                        </div>
+                        <div class="seccion_medio">
+                            <div class="column2">
+                                <label for="area">Area:</label>
+                                <input type="text" name="area" id="area" class="mostrarLista busqueda" placeholder="Elija una opcion">
+                            </div>
+                            <div class="column2">
+                                <label for="concepto">Concepto:</label>
+                                <input type="text" name="concepto" id="concepto" class="cerrarLista mayusculas">
+                            </div>
+                            <div class="column2">
+                                <label for="solicitante">Solicitante:</label>
+                                <input type="text" name="solicitante" id="solicitante" class="mostrarLista busqueda" placeholder="Elija una opcion">
+                            </div>
+                        </div>
+                        <div class="seccion_derecha">
+                            <div class="column4_55">
+                                <div class="column2_3957">
+                                    <label for="tipo">Tipo :</label>
+                                    <input type="text" name="tipo_pedido" id="tipo_pedido" class="mostrarLista" placeholder="Elija una opcion">
+                                </div>
+                                <div class="column2_46">
+                                    <label for="vence">Vence :</label>
+                                    <input type="date" name="vence" id="vence" class="cerrarLista" value="<?php echo date("Y-m-d");?>">
+                                </div>
+                            </div>
+                            <div class="column4_55">
+                                <div class="column2_3957">
+                                    <label for="pedidommto">Ped. MMTO:</label>
+                                    <input type="text" name="pedidommto" id="pedidommto">
+                                </div>
+                                <div class="column2_46">
+                                    <label for="transporte">Transporte:</label>
+                                    <input type="text" name="transporte" id="transporte" class="mostrarLista" placeholder="Elija una opcion">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="textAreaEnter oculto">
+                        <textarea name="espec_items" id="espec_items" rows="2" class="w100p" readonly></textarea>
+                    </div>
+                    <div class="barraOpciones">
+                        <span>Detalles</span>
+                    </div>
+                    <div class="tablaInterna mininoTablaInterna">
+                        <table class="tabla" id="tablaDetallesPedido">
+                            <thead class="stickytop">
+                                <tr>
+                                    <th width="3%">...</th>
+                                    <th width="5%">Item</th>
+                                    <th width="8%">Codigo</th>
+                                    <th>Descripcion</th>
+                                    <th width="5%">Und.</th>
+                                    <th width="6%">Cant.</th>
+                                    <th width="30%">Especificaciones</th>
+                                    <th>Nro. Parte</th>
+                                    <th>Bien/Activo</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -448,12 +563,12 @@
                 <table id="tablaPrincipalPedidos">
                     <thead class="stickytop">
                         <tr>
-                            <th>Num.</th>
+                            <th data-idcol="0" class="datafiltro">Num.</th>
                             <th>Emision</th>
                             <th>Tipo</th>
-                            <th>Descripción</th>
-                            <th>Centro Costos</th>
-                            <th>Responsable</th>
+                            <th data-idcol="3" class="datafiltro">Descripción</th>
+                            <th data-idcol="4" class="datafiltro">Centro Costos</th>
+                            <th data-idcol="6">Responsable</th>
                             <th>Estado</th>
                             <th>Atencion</th>
                             <th>...</th>
@@ -471,12 +586,11 @@
                 <table id="tablaPrincipal">
                     <thead class="stickytop">
                         <tr>
-                            <th>Nro. Nota</th>
+                            <th data-idcol="0">Nro. Nota</th>
                             <th>F.Emisión</th>
-                            <th>Almacen Origen</th>
-                            <th>Almacen Destino</th>
-                            <th>Centro de Costos</th>
-                            <th>Nro. Guia</th>
+                            <th data-idcol="4">Centro de Costos Origen</th>
+                            <th data-idcol="4">Centro de Costos Destino</th>
+                            <th data-idcol="5">Nro. Guia</th>
                         </tr>
                     </thead>
                     <tbody>

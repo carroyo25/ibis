@@ -113,6 +113,7 @@
                                         <th class="">Observaciones</th>
                                         <th class="">Area</th>
                                         <th class="">Fecha </br> Vencimiento</th>
+                                        <th class="">Condicion</th>
                                         <th class="">Ubicación</th>
                                         <th class="">Pedido</th>
                                         <th class="">Orden</th>

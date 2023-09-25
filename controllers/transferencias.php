@@ -56,6 +56,10 @@
         function preImpresoGuiasTransf(){
             echo json_encode($this->model->imprimirFormatoGuiaTransf($_POST['cabecera'],$_POST['detalles'],$_POST['proyecto'],$_POST['nota'],$_POST['operacion']));
         }
+
+        function consultaId(){
+            echo json_encode($this->model->consultarReqId($_POST['id'],51,54,49,null));
+        }
         
     }
 ?>

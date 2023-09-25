@@ -10,26 +10,27 @@
             try {
                 $salida = "";
                 $sql = $this->db->connect()->prepare("SELECT
-                                                    tb_costusu.id_cuser,
-                                                    alm_transfercab.almorigen,
-                                                    alm_transfercab.almdestino,
-                                                    alm_transfercab.idreg,
-                                                    UPPER( origen.cdesalm ) AS almacenorigen,
-                                                    UPPER( destino.cdesalm ) AS almacendestino,
-                                                    UPPER( tb_proyectos.cdesproy ) AS proyecto,
-                                                    alm_transfercab.ftraslado,
-                                                    alm_transfercab.cnumguia
-                                                FROM
-                                                    tb_costusu
-                                                    INNER JOIN alm_transfercab ON tb_costusu.ncodproy = alm_transfercab.idcc
-                                                    INNER JOIN tb_almacen AS origen ON alm_transfercab.almorigen = origen.ncodalm
-                                                    INNER JOIN tb_almacen AS destino ON alm_transfercab.almdestino = destino.ncodalm
-                                                    INNER JOIN tb_proyectos ON tb_costusu.ncodproy = tb_proyectos.nidreg 
-                                                WHERE
-                                                    tb_costusu.nflgactivo = 1 
-                                                    AND alm_transfercab.nflgactivo = 1
-                                                    AND tb_costusu.id_cuser = :user 
-                                                    ORDER BY  alm_transfercab.idreg DESC  ");
+                                                        tb_costusu.id_cuser,
+                                                        alm_transfercab.almorigen,
+                                                        alm_transfercab.almdestino,
+                                                        alm_transfercab.idreg,
+                                                        alm_transfercab.ftraslado,
+                                                        alm_transfercab.cnumguia,
+                                                        UPPER( c_origen.cdesproy ) AS origen_cc,
+                                                        UPPER( c_destino.cdesproy ) AS destino_cc 
+                                                    FROM
+                                                        tb_costusu
+                                                        INNER JOIN alm_transfercab ON tb_costusu.ncodproy = alm_transfercab.idcc
+                                                        INNER JOIN tb_almacen AS origen ON alm_transfercab.almorigen = origen.ncodalm
+                                                        INNER JOIN tb_almacen AS destino ON alm_transfercab.almdestino = destino.ncodalm
+                                                        INNER JOIN tb_proyectos AS c_origen ON alm_transfercab.idcc = c_origen.nidreg
+                                                        INNER JOIN tb_proyectos AS c_destino ON alm_transfercab.idcd = c_destino.nidreg 
+                                                    WHERE
+                                                        tb_costusu.nflgactivo = 1 
+                                                        AND alm_transfercab.nflgactivo = 1 
+                                                        AND tb_costusu.id_cuser = :user 
+            ORDER BY
+                alm_transfercab.idreg DESC  ");
                 $sql->execute(["user"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowCount();
 
@@ -38,9 +39,8 @@
                         $salida .='<tr class="pointer" data-indice="'.$rs['idreg'].'">
                                         <td class="textoCentro">'.str_pad($rs['idreg'],4,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.date("d/m/Y", strtotime($rs['ftraslado'])).'</td>
-                                        <td class="pl20px">'.$rs['almacenorigen'].'</td>
-                                        <td class="pl20px">'.$rs['almacendestino'].'</td>
-                                        <td class="pl20px">'.$rs['proyecto'].'</td>
+                                        <td class="pl20px">'.$rs['origen_cc'].'</td>
+                                        <td class="pl20px">'.$rs['destino_cc'].'</td>
                                         <td class="pl20px">'.$rs['cnumguia'].'</td>
                                     </tr>';
                     }
@@ -151,8 +151,6 @@
                                             data-idprod="'.$rs['idcprod'].'" 
                                             data-codund="" 
                                             data-idx="'.$rs['iditem'].'">
-                                        <td class="textoCentro"><a href="'.$rs['iddetped'].'"><i class="fas fa-eraser"></i></a></td>
-                                        <td class="textoCentro"><a href="'.$rs['iddetped'].'"><i class="fas fa-exchange-alt"></i></a></td>
                                         <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="pl20px">'.$rs['producto'].'</td>
@@ -160,6 +158,8 @@
                                         <td class="textoDerecha">'.$rs['cant_aprob'].'</td>
                                         <td class="textoDerecha">'.$rs['cant_orden'].'</td>
                                         <td class="textoDerecha"><input type="text" value="'.$rs['ncanti'].'" readonly></td>
+                                        <td></td>
+                                        <td></td>
                                         <td></td>
                                         <td><textarea readonly></textarea>'.$rs['cobserva'].'</textarea></td>
                                         <td class="textoCentro">'.$rs['pedido'].'</td>
@@ -410,8 +410,6 @@
                                         data-almacen="'.$rs['cant_atend'].'"
                                         data-grabado="0"
                                         data-separado="0">
-                                        <td class="textoCentro"><a href="'.$rs['iditem'].'" title="Eliminar" data-accion="delete"><i class="fas fa-eraser"></i></a></td>
-                                        <td class="textoCentro"><a href="'.$rs['iditem'].'" title="Cambiar" data-accion="change"><i class="fas fa-exchange-alt"></i></a></td>
                                         <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="pl20px">'.$rs['cdesprod'].'</td>
@@ -422,6 +420,8 @@
                                                             onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)" 
                                                             onclick="this.select()">
                                         </td>
+                                        <td><input type="date"></td>
+                                        <td><input type="text"></td>
                                         <td class="textoDerecha">'.number_format($existencia,2).'</td>
                                         <td><input type="text"></td>
                                         <td  class="textoCentro">'.$rs['nrodoc'].'</td>
@@ -440,7 +440,8 @@
         }
 
         public function insertarTransferencia($cabecera,$detalles,$pedido,$atendidos){
-            try {
+            var_dump($detalles);
+            /*try {
                 $mensaje = "Error al grabar el registro";
                 $sw = false;
 
@@ -483,7 +484,7 @@
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
-            }
+            }*/
         }
 
         private function insertarDetalles($indice,$detalles){
@@ -888,7 +889,7 @@
                                                         INNER JOIN ibis.tb_parametros AS atencion ON ibis.tb_pedidocab.nivelAten = atencion.nidreg 
                                                     WHERE
                                                         tb_costusu.id_cuser = :user 
-                                                        AND (tb_pedidocab.estadodoc = 54 OR tb_pedidocab.estadodoc = 53) 
+                                                        AND (tb_pedidocab.estadodoc = 54 OR tb_pedidocab.estadodoc = 51) 
                                                         AND tb_pedidocab.idtipomov = 37
                                                         AND tb_costusu.nflgactivo = 1
                                                     ORDER BY tb_pedidocab.emision DESC");

@@ -175,6 +175,7 @@
                                         <td class="pl20px">'.$rs['cdesarea'].'</td>
                                         <td><input type="date"></td>
                                         <td><input type="text"></td>
+                                        <td><input type="text"></td>
                                         <td class="textoCentro">'.$rs['pedido'].'</td>
                                         <td class="textoCentro">'.$rs['orden'].'</td>
                                         <td class="textoCentro">'.$rs['cnumguia'].'</td>
@@ -579,6 +580,7 @@
                                         <td><input type="text">'.$rs['cobserva'].'</td>
                                         <td class="pl20px">'.$rs['cdesarea'].'</td>
                                         <td><input type="date"></td>
+                                        <td><input type="text"></td>
                                         <td><input type="text"></td>
                                         <td class="textoCentro">'.$rs['nrodoc'].'</td>
                                         <td class="textoCentro"></td>

@@ -520,6 +520,51 @@ $(function(){
 
         return false;
     });
+
+    $("#tablaPrincipalPedidos").on('click','tr', function(e) {
+        e.preventDefault();
+
+        $.post(RUTA+"transferencias/consultaId", {id:$(this).data("indice")},
+            function (data, textStatus, jqXHR) {
+                
+                
+                $("#numero_pedido").val($.strPad(data.cabecera[0].nrodoc,6));
+                $("#vista_previa").val(data.cabecera[0].docfPdfPrev);
+                $("#emision").val(data.cabecera[0].emision);
+                $("#costos").val(data.cabecera[0].proyecto);
+                $("#area").val(data.cabecera[0].area);
+                $("#transporte").val(data.cabecera[0].transporte);
+                $("#concepto").val(data.cabecera[0].concepto);
+                $("#solicitante").val(data.cabecera[0].nombres);
+                $("#tipo_pedido").val(data.cabecera[0].tipo);
+                //$("#vence").val(data.cabecera[0].vence);
+                $("#estado").val(data.cabecera[0].estado);
+                $("#espec_items").val(data.cabecera[0].detalle);
+                $("#partida").val(data.cabecera[0].cdescripcion);
+               
+               
+
+                $("#tablaDetallesPedido tbody")
+                    .empty()
+                    .append(data.detalles);
+                
+                $("#vistaPedido").fadeIn();
+            },
+            "json"
+        );
+
+        return false;
+    });
+
+    $("#closeProcessRequest").click(function (e) { 
+        e.preventDefault();
+
+        $("#vistaPedido").fadeOut();
+        
+        return false;
+    });
+
+
 })
 
 suma_atendidos = () => {
@@ -542,24 +587,26 @@ detalles = (flag) =>{
     let TABLA = $("#tablaDetalles tbody >tr");
     
     TABLA.each(function(){
-        let ITEM            = $(this).find('td').eq(2).text(),
+        let ITEM            = $(this).find('td').eq(0).text(),
             IDPROD          = $(this).data("idprod"),
             GRABADO         = $(this).data("grabado"),
             COSTOS          = $(this).data("costos"),
             ORIGEN          = $("#codigo_almacen_origen").val(),
-            CANTIDAD        = $(this).find('td').eq(8).children().val(),// cantidad
+            CANTIDAD        = $(this).find('td').eq(6).children().val(),// cantidad
             OBSER           = $(this).find('td').eq(10).children().val(),
-            CODIGO          = $(this).find('td').eq(3).text(),//codigo
-            UNIDAD          = $(this).find('td').eq(5).text(),//unidad
+            CODIGO          = $(this).find('td').eq(1).text(),//codigo
+            UNIDAD          = $(this).find('td').eq(3).text(),//unidad
             DESTINO         = $("#codigo_almacen_destino").val(),
-            DESCRIPCION     = $(this).find('td').eq(4).text(),//unidad
+            DESCRIPCION     = $(this).find('td').eq(2).text(),//unidad
             PEDIDO          = $(this).data("pedido"),
             IDITEM          = $(this).data("iditem"),
             APROBADO        = $(this).data("aprobado"),
             COMPRADO        = 0,
             NROPEDIDO       = $(this).find('td').eq(11).text(),
             SEPARADO        = $(this).data("separado"),
-            ATENDIDO        = $(this).find('td').eq(7).text();
+            VENCE           = $(this).find('td').eq(7).val(),
+            CONDICION       = $(this).find('td').eq(8).val(),
+            ATENDIDO        = null;
 
     
         item = {};
@@ -582,6 +629,8 @@ detalles = (flag) =>{
             item['nropedido']    = NROPEDIDO;
             item['separado']     = SEPARADO;
             item['atendido']     = ATENDIDO;
+            item['vence']        = VENCE;
+            item['condicion']    = CONDICION;
                 
             DETALLES.push(item);
         }     

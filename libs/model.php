@@ -1948,13 +1948,13 @@
                                         <td class="textoCentro">'.$rs['cant_pedida'].'</td>
                                         <td class="textoCentro">'.$rs['cant_atendida'].'</td>
                                         <td>
-                                            <input type="number" 
+                                            <input type="text" 
                                                         step="any" 
                                                         placeholder="0.00" 
                                                         onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"
                                                         onclick="this.select()" 
                                                         value="'.number_format($aprobar,2).'"
-                                                        class="valorAtendido">
+                                                        class="textoDerecha">
                                         </td>
                                         <td class="textoCentro">'.$rs['nroparte'].'</td>
                                         <td class="textoCentro"><input type="text"></td>
