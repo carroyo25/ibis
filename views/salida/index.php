@@ -222,7 +222,7 @@
                         <input type="text" name="numero_guia" id="numero_guia">    
                     </div>
                     <div class="opciones_modal">
-                        <!--<a href="#" id="guiaSunat" title="Guia Sunat" ><i class="fas fa-shipping-fast"></i><p>Sunat</p></a>-->
+                        <a href="#" id="guiaSunat" title="Guia Sunat" ><i class="fas fa-shipping-fast"></i><p>Sunat</p></a>
                         <a href="#" id="saveDocument" title="Grabar Guia"><i class="fas fa-save"></i><p>Grabar</p></a>
                         <a href="#" id="printDocument" title="Imprimir Guia"><i class="fas fa-print"></i><p>Imprimir</p></a>
                         <a href="#" id="previewDocument" title="Vista previa"><i class="fas fa-eye"></i><p>Vista Previa</p></a>

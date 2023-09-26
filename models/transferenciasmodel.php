@@ -440,8 +440,7 @@
         }
 
         public function insertarTransferencia($cabecera,$detalles,$pedido,$atendidos){
-            var_dump($detalles);
-            /*try {
+            try {
                 $mensaje = "Error al grabar el registro";
                 $sw = false;
 
@@ -484,7 +483,7 @@
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
-            }*/
+            }
         }
 
         private function insertarDetalles($indice,$detalles){
@@ -498,17 +497,20 @@
                                                                 SET idtransfer=:transferencia,iddetped=:iditem,
                                                                     idcprod=:producto,ncanti=:cantidad,nflgactivo=:activo,
                                                                     nEstadoReg=:estado,cobserva=:observa,
-                                                                    idPedido=:pedido,idcostos=:costos");
+                                                                    idPedido=:pedido,idcostos=:costos,
+                                                                    fvence=:vence,ccondicion=:condicion");
                     
                     $sql->execute(["transferencia"=>$indice,
-                        "iditem"=>$datos[$i]->iditem,
-                        "producto"=>$datos[$i]->idprod,
-                        "cantidad"=>$datos[$i]->cantidad,
-                        "activo"=>1,
-                        "estado"=>52,
-                        "observa"=>$datos[$i]->obser,
-                        "pedido"=>$datos[$i]->pedido,
-                        "costos"=>$datos[$i]->costos]);
+                        "iditem"    =>$datos[$i]->iditem,
+                        "producto"  =>$datos[$i]->idprod,
+                        "cantidad"  =>$datos[$i]->cantidad,
+                        "activo"    =>1,
+                        "estado"    =>52,
+                        "observa"   =>$datos[$i]->obser,
+                        "pedido"    =>$datos[$i]->pedido,
+                        "costos"    =>$datos[$i]->costos,
+                        "vence"     =>$datos[$i]->vence,
+                        "condicion" =>$datos[$i]->condicion]);
 
                     if ( $datos[$i]->cantidad != 0 ){
                         $this->actualizarDetallesPedido($datos[$i]->iditem,$datos[$i]->cantidad,$datos[$i]->aprobado,$datos[$i]->atendido);
