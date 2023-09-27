@@ -162,7 +162,7 @@
                                                         tb_pedidodet.nflgActivo = 1 
                                                         AND tb_pedidodet.idasigna = :user_asigna 
                                                         AND tb_pedidodet.cant_aprob <> tb_pedidodet.cant_orden
-                                                        AND ( tb_pedidodet.estadoItem = 230 OR tb_pedidodet.estadoItem = 54 )
+                                                        AND tb_pedidodet.estadoItem = 54
                                                         AND tb_pedidodet.nflgActivo = 1 
                                                     GROUP BY
                                                         tb_pedidodet.iditem");
@@ -176,7 +176,7 @@
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()) {
 
-                        $cant = $rs['cantidad'] -  $rs['atendida'];
+                        $cant = floatval($rs['cantidad']) -  floatval($rs['atendida']);
 
                         //validar para las compras parciales
                        
@@ -193,7 +193,7 @@
                                                        data-nparte="'.$rs['nroparte'].'"
                                                        data-detalle="'.$rs['detalle'].'"
                                                        data-estado="'.$rs['estadoItem'].'"
-                                                       data-compra="'.$rs['cantidad'].'">
+                                                       data-compra="'.$cant.'">
                                         <td class="textoCentro">'.str_pad($rs['nrodoc'],6,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.date("d/m/Y", strtotime($rs['emision'])).'</td>
                                         <td class="pl5px">'.$rs['concepto'].'</td>
