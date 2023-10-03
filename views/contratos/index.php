@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guias Madre</title>
+    <title>Contratos</title>
 </head>
 <body>
     <div class="modal" id="proceso">
@@ -223,7 +223,7 @@
         </div>
     </div>
     <div class="cabezaModulo">
-        <h1>Guias Madre</h1>
+        <h1>Contratos</h1>
         <div>
             <a href="#" id="nuevoRegistro"><i class="far fa-file"></i><p>Nuevo</p></a>
             <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
@@ -287,6 +287,6 @@
     </div>
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
     <script src="<?php echo constant('URL');?>public/js/funciones.js?<?php echo constant('VERSION')?>"></script>
-    <script src="<?php echo constant('URL');?>public/js/madres.js?<?php echo constant('VERSION')?>"></script>
+    <script src="<?php echo constant('URL');?>public/js/contratos.js?<?php echo constant('VERSION')?>"></script>
 </body>
 </html>

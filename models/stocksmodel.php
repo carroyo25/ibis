@@ -449,7 +449,7 @@
                                             GROUP BY
                                                 alm_consumo.fechasalida,
                                                 alm_consumo.nrodoc,
-                                            alm_consumo.idprod 
+                                                alm_consumo.idprod 
                                             ) AS consumo");
 
                 $sql->execute(["codigo"=>$codigo,"cc"=>$cc]);

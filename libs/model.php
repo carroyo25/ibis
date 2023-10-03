@@ -1832,6 +1832,7 @@
                                                     tb_pedidodet.idtipo,
                                                     tb_pedidodet.nroparte,
                                                     tb_pedidodet.unid,
+                                                    tb_pedidodet.obsAprueba,
                                                     REPLACE ( FORMAT( tb_pedidodet.cant_pedida, 2 ), ',', '' ) AS cant_pedida,
                                                     REPLACE ( FORMAT( tb_pedidodet.cant_resto, 2 ), ',', '' ) AS cant_pendiente,
                                                     REPLACE ( FORMAT( tb_pedidodet.cant_atend, 2 ), ',', '' ) AS cant_atendida,
@@ -1882,7 +1883,7 @@
                                                             class="valorAtendido">
                                             </td>
                                             <td class="textoCentro">'.$rs['nroparte'].'</td>
-                                            <td class="textoCentro"><input type="text"></td>
+                                            <td class="textoCentro"><input type="text" value="'.$rs['obsaprueba'].'"></td>
                                             <td class="textoCentro">'.$rs['registro'].'</td>
                                             <td class="textoCentro"><input type="checkbox" checked></td>
                                         </tr>';
@@ -1908,6 +1909,7 @@
                                                     tb_pedidodet.idtipo,
                                                     tb_pedidodet.nroparte,
                                                     tb_pedidodet.unid,
+                                                    UPPER(tb_pedidodet.obsAprueba) AS observaAprueba,
                                                     REPLACE ( FORMAT( tb_pedidodet.cant_pedida, 2 ), ',', '' ) AS cant_pedida,
                                                     REPLACE ( FORMAT( tb_pedidodet.cant_resto, 2 ), ',', '' ) AS cant_pendiente,
                                                     REPLACE ( FORMAT( tb_pedidodet.cant_atend, 2 ), ',', '' ) AS cant_atendida,
@@ -1935,8 +1937,8 @@
                     $filas = 1;
                     while ($rs = $sql->fetch()) {
 
-                        $atendida = $rs['cant_atendida'] == NULL ? 0 : $rs['cant_atendida'];
-                        $aprobar =  $rs['cant_pedida'] - $rs['cant_atendida'];
+                        $atendida = $rs['cant_atendida'] == NULL || $rs['cant_atendida'] == '' ? 0 : $rs['cant_atendida'];
+                        $aprobar =  $rs['cant_aprob'] - $rs['cant_atendida'];
 
                         $estado_aprobar = $aprobar == 0 ? "desactivado" : "";
                         
@@ -1957,7 +1959,7 @@
                                                         class="textoDerecha">
                                         </td>
                                         <td class="textoCentro">'.$rs['nroparte'].'</td>
-                                        <td class="textoCentro"><input type="text"></td>
+                                        <td class="pl20px">'.$rs['observaAprueba'].'</td>
                                         <td class="textoCentro">'.$rs['registro'].'</td>
                                         <td class="textoCentro"><input type="checkbox" checked></td>
                                     </tr>';
