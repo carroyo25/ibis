@@ -16,6 +16,10 @@
             $this->view->fechaOrden = $this->model->fechaOrden();
             $this->view->render('contratos/index');
         }
+
+        function vistaPreliminar(){
+            echo $this->model->generarContrato($_POST['cabecera'],$_POST['condicion'],$_POST['detalles']);
+        }
         
     }
 ?>

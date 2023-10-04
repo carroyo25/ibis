@@ -295,7 +295,7 @@ $(() =>{
                 }
 
             } catch (error) {
-                
+                console.error(error);
             }
         }
     });
@@ -326,4 +326,119 @@ $(() =>{
 
         return false;
     });
+
+    $("#preview").click(function (e) { 
+        e.preventDefault();
+        
+        try {
+            let result = {};
+    
+            $.each($("#formProceso").serializeArray(),function(){
+                result[this.name] = this.value;
+            })
+    
+            if (result['numero'] == "") throw "No tiene numero de orden";
+            if (result['fentrega'] == "") throw "Elija la fecha de entrega";
+            //if (result['codigo_transporte'] == "") throw "Elija la forma de transporte";
+            if (result['codigo_almacen'] == "") throw "Indique el lugar de entrega";
+
+            $.post(RUTA+"contratos/vistaPreliminar", {cabecera:result,condicion:0,detalles:JSON.stringify(detalles())},
+                function (data, textStatus, jqXHR) {
+                    $(".ventanaVistaPrevia iframe")
+                        .attr("src","")
+                        .attr("src","public/documentos/ordenes/vistaprevia/"+data);
+                    
+                    $("#vista_previa").val(data);    
+                    $("#vistaprevia").fadeIn();
+                },
+                "text"
+            );
+            
+        } catch (error) {
+            mostrarMensaje(error,'mensaje_error');
+        }
+
+        return false;
+    });
+
+    $("#closePreview").click(function (e) { 
+        e.preventDefault();
+
+        $(".ventanaVistaPrevia iframe").attr("src","");
+        $("#vistaprevia").fadeOut();
+
+        return false;
+    });
+
 })
+
+calcularTotales = () => {
+    let im = 0,
+        //adic = parseFloat(sumarAdicionales($("#tablaAdicionales tbody >tr"),2)),
+        np   = $("#total_numero").val();
+
+        if ($("#total_numero").val() == 0) {
+            $("#im").val("0.00");
+        }else {
+            im = parseFloat($("#total_numero").val())*parseFloat($('input[name="radioIgv"]:checked').val());
+        }
+
+    suma_total = parseFloat(np)+parseFloat(im);
+
+    $("#im").val(im.toFixed(2));
+    //$("#oa").val(adic);
+    $("#it").val((numberWithCommas(suma_total.toFixed(2))));
+}
+
+detalles = () => {
+    DATA = [];
+    let TABLA = $("#tablaDetalles tbody >tr");
+
+    TABLA.each(function(){
+        let ITEM        = $(this).find('td').eq(1).text(),
+            CODIGO      = $(this).find('td').eq(2).text(),
+            DESCRIPCION = $(this).find('td').eq(3).text(),
+            UNIDAD      = $(this).find('td').eq(4).text(),
+            CANTIDAD    = $(this).find('td').eq(5).children().val(),
+            PRECIO      = $(this).find('td').eq(6).children().val(),
+            IGV         = 0,
+            TOTAL       = $(this).find('td').eq(7).text(),
+            NROPARTE    = $(this).find('td').eq(8).text(),
+            PEDIDO      = $(this).find('td').eq(9).text(),
+            CODPROD     = $(this).data('codprod'),
+            MONEDA      = $("#codigo_moneda").val(),
+            ITEMPEDIDO  = $(this).data('itped'),
+            GRABAR      = $(this).data('grabado'),
+            CANTPED     = $(this).data('cant'),
+            REFPEDI     = $(this).data('refpedi'),
+            DETALLES    = $(this).find('td').eq(10).children().val(),
+            INDICE     = $(this).data('itord');
+
+        item = {};
+        
+        //if (GRABAR == 0) {
+            item['item']        = ITEM;
+            item['codigo']      = CODIGO;
+            item['descripcion'] = DESCRIPCION;
+            item['unidad']      = UNIDAD;
+            item['cantidad']    = CANTIDAD;
+            item['precio']      = PRECIO;
+            item['igv']         = IGV;
+            item['total']       = TOTAL;
+            item['nroparte']    = NROPARTE;
+            item['pedido']      = PEDIDO;
+            item['codprod']     = CODPROD;
+            item['moneda']      = MONEDA;
+            item['itped']       = ITEMPEDIDO;
+            item['grabado']     = GRABAR;
+            item['cantped']     = CANTPED;
+            item['refpedi']     = REFPEDI;
+            item['detalles']    = DETALLES;
+            item['indice']      = INDICE;
+
+            DATA.push(item);
+        //}
+    });
+
+    return DATA;
+}
