@@ -290,6 +290,15 @@
             <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
         </div>
     </div>
+    <div class="modal" id="vistaprevia">
+        <div class="ventanaVistaPrevia">
+            <div class="tituloVista">
+                <h3>Vista Previa</h3>
+                <a href="#" id="closePreview" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
+            </div>
+            <iframe src=""></iframe>
+        </div>
+    </div>
     <div class="barraTrabajo">
         <form action="#" id="formConsulta">
             <div class="variasConsultas">

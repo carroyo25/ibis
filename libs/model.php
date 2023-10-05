@@ -3311,12 +3311,12 @@
          //genera la vista de la orden
          public function generarContrato($cabecera,$condicion,$detalles){
             //genera vista previa
-            require_once("public/formatos/ordenes.php");
+            require_once("public/formatos/contratos.php");
 
             $bancos = $this->bancosProveedor($cabecera['codigo_entidad']);
 
             //verificar para el numero de orden
-            $sql = "SELECT COUNT(lg_ordencab.id_regmov) AS numero FROM lg_ordencab WHERE lg_ordencab.ncodcos =:cod";
+            //$sql = "SELECT COUNT(lg_ordencab.id_regmov) AS numero FROM lg_ordencab WHERE lg_ordencab.ncodcos =:cod";
 
             $noc = $cabecera['numero'];
             
@@ -3357,7 +3357,7 @@
 
             $pdf->AddPage();
             $pdf->AliasNbPages();
-            $pdf->SetWidths(array(10,15,15,10,95,17,13,15));
+            $pdf->SetWidths(array(10,15,15,15,10,80,17,13,15));
             $pdf->SetFont('Arial','',5);
             
             $lc = 0;
@@ -3372,9 +3372,10 @@
                
                 $nparte = $datos[$i]->nroparte != "" ? "NP:". $datos[$i]->nroparte : "";
 
-                $pdf->SetAligns(array("C","C","R","C","L","C","R","R"));
+                $pdf->SetAligns(array("C","C","C","R","C","L","C","R","R"));
                 $pdf->Row(array($datos[$i]->item,
                                 $datos[$i]->codigo,
+                                "LUMP SUM",
                                 $datos[$i]->cantidad,
                                 $datos[$i]->unidad,
                                 TRIM(utf8_decode(strtoupper($datos[$i]->descripcion .' '. $datos[$i]->detalles .' '. $nparte))),
@@ -3391,98 +3392,52 @@
             }
             
             
-           
+
             $pdf->Ln(2);
 
             $pdf->SetFillColor(229, 229, 229);
-            $pdf->SetFont('Arial','B',10);
-            $pdf->Cell(20,6,"TOTAL :","LTB",0,"C",true);
             
-            $pdf->SetFont('Arial','B',10);
+            $pdf->SetFont('Arial','B',6);
+            $pdf->Cell(15,6,"TOTAL :","LTB",0,"L",true);
 
             $total_adicional = $cabecera['total_adicional'] == ""  ? 0 :  $cabecera['total_adicional']; 
 
             if ($cabecera['radioIgv'] == 0){
-                $pdf->Cell(140,6,$this->convertir($cabecera['total_numero']+$total_adicional)." ".$cabecera['moneda'],"TBR",0,"L",true); 
-                $pdf->Cell(30,6,number_format($cabecera['total_numero']+$total_adicional,2),"1",1,"R",true);
+                $pdf->Cell(135,6,$this->convertir($cabecera['total_numero']+$total_adicional)." ".$cabecera['moneda'],"TBR",0,"L",true); 
+                $pdf->Cell(40,6,number_format($cabecera['total_numero']+$total_adicional,2),"1",1,"R",true);
             }
             else {
-                $pdf->Cell(140,6,$this->convertir(($cabecera['total_numero']*1.18)+$total_adicional)." ".$cabecera['moneda'],"TBR",0,"L",true);
-                $pdf->Cell(30,6,number_format(($cabecera['total_numero']*1.18)+$total_adicional,2),"1",1,"R",true);
+                $pdf->Cell(135,6,$this->convertir(($cabecera['total_numero']*1.18)+$total_adicional)." ".$cabecera['moneda'],"TBR",0,"L",true);
+                $pdf->Cell(40,6,number_format(($cabecera['total_numero']*1.18)+$total_adicional,2),"1",1,"R",true);
             }
 
             $pdf->Ln(1);
-            $pdf->SetFont('Arial',"","7");
+            $pdf->SetFont('Arial',"",7);
             $pdf->Cell(40,6,"Pedidos Asociados",1,0,"C",true);
             $pdf->Cell(5,6,"",0,0);
-            $pdf->Cell(80,6,utf8_decode("Información Bancaria del Proveedor"),1,0,"C",true);
-            $pdf->Cell(10,6,"",0,0);
-
-            $pdf->SetX(146);
-
-            $pdf->Cell(33,6,"Valor Venta",0,0);
-            $pdf->Cell(20,6,number_format($cabecera['total_numero'],2),0,1,"R");
+            $pdf->Cell(80,6,utf8_decode("Información Bancaria del Proveedor"),1,1,"C",true);
             
 
-            $pdf->Cell(10,6,utf8_decode("Año"),1,0);   
-            $pdf->Cell(10,6,"Tipo",1,0);
-            $pdf->Cell(10,6,"Pedido",1,0);
-            $pdf->Cell(10,6,"Mantto",1,0);
+            $pdf->Cell(10,6,utf8_decode("Año"),"LRB",0);   
+            $pdf->Cell(10,6,"Tipo","RB",0);
+            $pdf->Cell(10,6,"Pedido","RB",0);
+            $pdf->Cell(10,6,"Mantto","RB",0);
             $pdf->Cell(5,6,"",0,0);
             $pdf->Cell(35,6,"Detalle del Banco",1,0);
             $pdf->Cell(15,6,"Moneda",1,0);
-            $pdf->Cell(30,6,"Nro. Cuenta Bancaria",1,0);
+            $pdf->Cell(30,6,"Nro. Cuenta Bancaria",1,1);
 
-            $pdf->SetX(146);
-
-            if($cabecera['radioIgv'] ==  0) {
-                $pdf->SetX(146);
-                $pdf->Cell(8,3,"",0,0);
-                $pdf->Cell(20,3,"",0,0);
-                $pdf->SetX(185);
-                $pdf->Cell(20,3,"",0,1); 
-            }else{
-                $igv = round((floatval($cabecera['total_numero'])*0.18),2);
-                $pdf->SetX(146);
-                $pdf->Cell(13,3,"IGV",0,0);
-                $pdf->Cell(20,3,"(18%)",0,0);
-                $pdf->Cell(20,3,number_format($igv,2),0,1,"R");
-            }
-
-            $pdf->SetX(146);
-
-            if ( $cabecera['total_adicional'] ) {
-                $pdf->Cell(33,6,"CARGO(0)",0,0);
-                $pdf->Cell(20,6,number_format($cabecera['total_adicional'],2),0,1,"R");
-            }else {
-                $pdf->Cell(43,6,"",0,0);
-                $pdf->Cell(30,6,"",0,1);
-            }
-            
-            $pdf->SetX(146);
-            $pdf->SetFont('Arial',"B","8");
-            $pdf->Cell(20,4,"TOTAL",1,0,"L",true);
-            $pdf->Cell(15,4,$cabecera['moneda'],1,0,"C",true);
-
-
-            if ( $cabecera['radioIgv'] == 0 ){
-                $pdf->Cell(20,4,number_format($cabecera['total_numero'] +  $total_adicional ,2),1,1,"R",true);
-            }        
-            else {
-                $pdf->Cell(20,4,number_format((($cabecera['total_numero']*1.18)+ $total_adicional ),2),1,1,"R",true);
-            }
+            $pdf->SetFont('Arial',"","7");
+            $pdf->Cell(10,6,$anio[0],"LRB",0);
+            $pdf->Cell(10,6,$tipo,"RB",0,"C");
+            $pdf->Cell(10,6,str_pad($cabecera['nro_pedido'],6,0,STR_PAD_LEFT),"RB",0);
+            $pdf->Cell(10,6,"","RB",0);
            
             $nreg = count($bancos);
 
             $x = $pdf->GetX();
             $y = $pdf->GetY();
 
-            $pdf->SetXY(10,$y-7);
-            $pdf->SetFont('Arial',"","7");
-            $pdf->Cell(10,6,$anio[0],1,0);
-            $pdf->Cell(10,6,$tipo,1,0,"C");
-            $pdf->Cell(10,6,str_pad($cabecera['nro_pedido'],6,0,STR_PAD_LEFT),1,0);
-            $pdf->Cell(10,6,"",1,0);
             
             $pdf->SetXY(55,$y-7);
             $pdf->SetFont('Arial',"","6");
