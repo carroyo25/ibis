@@ -88,7 +88,7 @@ $(() =>{
                 id_item     = $(this).data("iditem"),
                 nro_parte   = $(this).data("nparte"),
                 grabado     = 0,
-                compra      = $(this).data("compra"),
+                compra      = parseFloat($(this).data("compra")),
                 tabPos      = $("#tablaDetalles tr").length;
 
             $("#nro_pedido").val(nroreq);
@@ -128,6 +128,7 @@ $(() =>{
                             <td class="textoCentro">${nro_parte}</td>
                             <td class="textoCentro">${nroreq}</td>
                             <td class="pl20px"><textarea>${detalle}</textarea></td>
+                            <td class="pl20px"><input type="text"></td>
                         </tr>`;
 
 
@@ -405,6 +406,7 @@ detalles = () => {
             TOTAL       = $(this).find('td').eq(7).text(),
             NROPARTE    = $(this).find('td').eq(8).text(),
             PEDIDO      = $(this).find('td').eq(9).text(),
+            PAYMENT     = $(this).find('td').eq(11).children().val(),
             CODPROD     = $(this).data('codprod'),
             MONEDA      = $("#codigo_moneda").val(),
             ITEMPEDIDO  = $(this).data('itped'),
@@ -412,7 +414,7 @@ detalles = () => {
             CANTPED     = $(this).data('cant'),
             REFPEDI     = $(this).data('refpedi'),
             DETALLES    = $(this).find('td').eq(10).children().val(),
-            INDICE     = $(this).data('itord');
+            INDICE      = $(this).data('itord');
 
         item = {};
         
@@ -435,6 +437,7 @@ detalles = () => {
             item['refpedi']     = REFPEDI;
             item['detalles']    = DETALLES;
             item['indice']      = INDICE;
+            item['payment']     = PAYMENT;
 
             DATA.push(item);
         //}

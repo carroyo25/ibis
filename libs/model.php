@@ -3375,7 +3375,7 @@
                 $pdf->SetAligns(array("C","C","C","R","C","L","C","R","R"));
                 $pdf->Row(array($datos[$i]->item,
                                 $datos[$i]->codigo,
-                                "LUMP SUM",
+                                $datos[$i]->payment,
                                 $datos[$i]->cantidad,
                                 $datos[$i]->unidad,
                                 TRIM(utf8_decode(strtoupper($datos[$i]->descripcion .' '. $datos[$i]->detalles .' '. $nparte))),

@@ -135,13 +135,7 @@
         function footer(){
             $this->setXY(10,207);
             //$this->Ln(3);
-            $this->MultiCell(190,3,utf8_decode('NOTA INFORMATIVA :
-1. Se adjunta a la presente Orden los términos y condiciones de compra.
-2. Todo material recibido fuera de tiempo, SEPCON; se reserva los derechos de recepción y/o penalización sin               conocimiento previo del proveedor.
-3. Al momento de hacer entrega de los materiales, el proveedor deberá adjuntar cuando corresponda:                            Certificado de calidad, Hojas SDS, manuales de operación y mantenimiento, certificado de calibración,                        instrucciones de conservación, etc.
-4. Al momento de hacer la entrega de los materiales, el proveedor debe solicitar al almacén "La Nota de                          Ingreso" debidamente sellada. 
-5. Sirva adjuntar la Nota de Ingreso, Guia de Remisión y Factura, referente a una sola Orden de                                      Compra o Servicio
-6. Consignar el número de la Orden de Compra en la Guia de Remisión y Factura. Presentar Factura                              original, con copia Sunat.'),1);
+            $this->MultiCell(190,3,utf8_decode(''),1);
 
 		    /*$this->SetFillColor(229, 229, 229);
             $this->SetY(-90);

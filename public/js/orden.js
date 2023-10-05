@@ -316,7 +316,7 @@ $(function(){
                 id_item     = $(this).data("iditem"),
                 nro_parte   = $(this).data("nparte"),
                 grabado     = 0,
-                compra      = $(this).data("compra"),
+                compra      = parseFloat($(this).data("compra"),2),
                 tabPos      = $("#tablaDetalles tr").length;
 
             $("#nro_pedido").val(nroreq);

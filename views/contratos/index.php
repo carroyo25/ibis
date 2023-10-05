@@ -223,6 +223,7 @@
                                     <th>Nro.</br>Parte</th>
                                     <th width="7%">Pedido</th>
                                     <th width="25%">Detalle Item</th>
+                                    <th>Payment</br>Basis</th>
                                 </tr>
                             </thead>
                             <tbody>
