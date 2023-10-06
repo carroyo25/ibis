@@ -133,7 +133,8 @@
                                         <th>Moneda</th>
                                         <th>Tipo Cambio</th>
                                         <th>Precio</th>
-                                        <th>Orden</th> 
+                                        <th>Orden</th>
+                                        <th>CC</th>
                                     </tr>
                                 </thead>
                                 <tbody>

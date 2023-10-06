@@ -135,7 +135,11 @@
         function footer(){
             $this->setXY(10,207);
             //$this->Ln(3);
-            $this->MultiCell(190,3,utf8_decode(''),1);
+            $this->MultiCell(190,2.5,utf8_decode('La presente orden (LA ORDEN) es una (1) de un total de tres (3) órdenes mediante las cuales SEPCON encarga a ENERFLEX Services Inc. y/o sus subsidiarias (ENERFLEX) la provisión integral de todos los bienes y servicios comprendidos en el alcance de la propuesta elaborada por ENERFLEX, y consignados como de su responsabilidad en el marco de la Matriz de Responsabilidades adjunta como Anexo 2.
+
+LA ORDEN se rige, para todo efecto, y por encima de cualquier otro documento anexo, por:
+
+Anexo 1: Los términos y condiciones del documento “Term Sheet Summary Mipaya PO” (LOS T&C).'),1);
 
 		    /*$this->SetFillColor(229, 229, 229);
             $this->SetY(-90);

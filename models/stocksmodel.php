@@ -559,21 +559,27 @@
             try {
                 $salida = "";
                 $sql=$this->db->connect()->prepare("SELECT
-                                                        FORMAT(lg_ordendet.nunitario,2) AS nunitario,
-                                                        DATE_FORMAT( lg_ordencab.ffechadoc, '%d/%m/%Y' ) fecha,
+                                                        FORMAT( lg_ordendet.nunitario, 2 ) AS nunitario,
+                                                        DATE_FORMAT( lg_ordencab.ffechadoc, '%d/%m/%Y' ) AS fecha,
                                                         tb_parametros.cabrevia,
-                                                        FORMAT(lg_ordencab.ntcambio,2) AS ntcambio,
-                                                        lg_ordencab.id_regmov
+                                                        FORMAT( lg_ordencab.ntcambio, 2 ) AS ntcambio,
+                                                        lg_ordencab.id_regmov,
+                                                        tb_proyectos.ccodproy 
                                                     FROM
                                                         lg_ordendet
                                                         INNER JOIN lg_ordencab ON lg_ordendet.id_regmov = lg_ordencab.id_regmov
-                                                        INNER JOIN tb_parametros ON lg_ordencab.ncodmon = tb_parametros.nidreg 
+                                                        INNER JOIN tb_parametros ON lg_ordencab.ncodmon = tb_parametros.nidreg
+                                                        INNER JOIN tb_proyectos ON lg_ordendet.ncodcos = tb_proyectos.nidreg 
                                                     WHERE
-                                                        lg_ordendet.id_cprod = :codigo 
-                                                        AND lg_ordendet.id_orden != 105
-                                                        AND lg_ordendet.id_orden != 0
-                                                    GROUP BY lg_ordendet.nunitario,lg_ordencab.ffechadoc,lg_ordencab.ntcambio
-                                                    ORDER BY lg_ordencab.ffechadoc DESC");
+                                                        lg_ordendet.id_cprod = :codigo
+                                                        AND lg_ordendet.id_orden <> 105 
+                                                        AND lg_ordendet.id_orden <> 0 
+                                                    GROUP BY
+                                                        lg_ordendet.nunitario,
+                                                        lg_ordencab.ffechadoc,
+                                                        lg_ordencab.ntcambio 
+                                                    ORDER BY
+                                                        lg_ordencab.ffechadoc DESC");
                 $sql->execute(["codigo"=>$codigo]);
                 $rowCount = $sql->rowCount();
 
@@ -585,6 +591,7 @@
                                         <td class="textoDerecha">'.$rs['ntcambio'].'</td>
                                         <td class="textoDerecha">'.$rs['nunitario'].'</td>
                                         <td class="textoDerecha">'.$rs['id_regmov'].'</td>
+                                        <td class="textoDerecha">'.$rs['ccodproy'].'</td>
                                     </tr>';
                     }
                 }else {

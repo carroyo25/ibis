@@ -49,6 +49,7 @@
                                                     tb_costusu.nflgactivo = 1 
                                                     AND tb_costusu.id_cuser = :usr
                                                     AND alm_despachocab.cper = YEAR(NOW())
+                                                    AND alm_despachocab.cmes BETWEEN MONTH(NOW())-1 AND MONTH(NOW())
                                                     AND alm_despachocab.nEstadoDoc = 62
                                                 GROUP BY alm_despachocab.id_regalm
                                                     ORDER BY alm_despachocab.ffecdoc DESC");
