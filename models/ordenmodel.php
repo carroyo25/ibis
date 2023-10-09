@@ -125,6 +125,7 @@
                                                         FORMAT( tb_pedidodet.precio, 2 ) AS precio,
                                                         REPLACE ( FORMAT( tb_pedidodet.cant_pedida, 2 ), ',', '' ) AS cantidad_pedida,
                                                         /*IF (ISNULL(SUM( alm_transferdet.ncanti)),0,SUM( alm_transferdet.ncanti)) AS atendido_almacen,*/
+                                                        tb_pedidodet.cant_atend AS stock_almacen,
                                                         tb_pedidodet.igv,
                                                         tb_proyectos.ccodproy,
                                                         tb_pedidodet.cant_aprob,
@@ -176,7 +177,8 @@
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()) {
 
-                        $cant = floatval($rs['cantidad']) -  floatval($rs['atendida']);
+                        $cant = floatval($rs['cantidad']) -  floatval($rs['stock_almacen']);
+                        $aten   = $rs['stock_almacen'] == NULL ? 0 : $rs['stock_almacen'];
 
                         //validar para las compras parciales
                        
@@ -193,7 +195,8 @@
                                                        data-nparte="'.$rs['nroparte'].'"
                                                        data-detalle="'.$rs['detalle'].'"
                                                        data-estado="'.$rs['estadoItem'].'"
-                                                       data-compra="'.$cant.'">
+                                                       data-compra="'.$cant.'"
+                                                       data-atendida="'.$aten.'">
                                         <td class="textoCentro">'.str_pad($rs['nrodoc'],6,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.date("d/m/Y", strtotime($rs['emision'])).'</td>
                                         <td class="pl5px">'.$rs['concepto'].'</td>
@@ -201,7 +204,7 @@
                                         <td class="textoCentro">'.$rs['ccodproy'].'</td>
                                         <td class="textoCentro" data-codigo="'.$rs['id_cprod'].'">'.$rs['ccodprod'].'</td>
                                         <td class="textoDerecha">'.$rs['cantidad'].'</td>
-                                        <td class="textoDerecha">'.$rs['atendida'].'</td>
+                                        <td class="textoDerecha">'.$aten.'</td>
                                         <td class="pl5px">'.$rs['cdesprod'].'</td>
                                     </tr>';
                     }

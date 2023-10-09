@@ -317,7 +317,10 @@ $(function(){
                 nro_parte   = $(this).data("nparte"),
                 grabado     = 0,
                 compra      = parseFloat($(this).data("compra"),2),
+                atendida    = parseFloat($(this).data("atendida"),2),
                 tabPos      = $("#tablaDetalles tr").length;
+
+                cantidad_final = compra - atendida;
 
             $("#nro_pedido").val(nroreq);
 
@@ -330,7 +333,8 @@ $(function(){
                                 data-cant       ="${cantidad}"
                                 data-refpedi    ="${request}"
                                 data-nro_parte  ="${nro_parte}"
-                                data-descrip    ="${descrip}">
+                                data-descrip    ="${descrip}"
+                                data-atendido   ="${atendida}">
                             <td class="textoCentro"><a href="#"><i class="fas fa-ban"></i></a></td>
                             <td class="textoCentro">${nFilas}</td>
                             <td class="textoCentro consultaPrecios">${codigo}</td>
@@ -342,7 +346,7 @@ $(function(){
                                     placeholder="0.00" 
                                     onchange="(function(el){el.value=parseFloat(el.value).toFixed(4);})(this)"
                                     onclick="this.select()"
-                                    value="${compra}">
+                                    value="${cantidad_final}">
                             </td>
                             <td class="textoDerecha pr5px precio">
                                 <input type="number" class="focusNext"

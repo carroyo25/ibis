@@ -42,7 +42,7 @@ $(function() {
         return false;
     });
 
-    $("#cargoPlanDescrip tbody").on('click','tr', function(e) {
+    $("#cargoPlanDescrip tbody").on('dblclick','tr', function(e) {
         e.preventDefault();
 
         $("#vistadocumento").fadeIn();
@@ -166,6 +166,14 @@ $(function() {
 
         return false;
         
+    });
+
+    $("#cargoPlanDescrip tbody").on('click','tr', function(e) {
+        e.preventDefault();
+
+        $(this).toggleClass('semaforoNaranja');
+
+        return false;
     });
     
 })

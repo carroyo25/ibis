@@ -1101,11 +1101,11 @@
                             $estado_pedido = "Pedido Emitido";
                             $color_mostrar = 'F8CAAD';
                         }else if( $rs['estadoItem'] === 54 ) {
-                            $porcentaje = "15%";
-                            $estadofila = "emitido";
-                            $estado_item = "Emitido";
-                            $estado_pedido = "Pedido Emitido";
-                            $color_mostrar = 'FF0000';
+                            $porcentaje = "30%";
+                            $estadofila = "aprobado";
+                            $estado_item = "aprobado";
+                            $estado_pedido = "Pedido aprobado";
+                            $color_mostrar = 'C0DCC0';
                         }else if( $rs['estadoItem'] === 230 ) {
                             $porcentaje = "100%";
                             $estadofila = "comprado";

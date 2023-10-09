@@ -400,6 +400,7 @@
                                                         UPPER( tb_area.cdesarea ) AS area_solicita,
                                                         alm_existencia.observaciones,
                                                         alm_existencia.ubicacion,
+                                                        alm_existencia.condicion,
                                                         alm_existencia.vence,
                                                         alm_existencia.idreg 
                                                     FROM
@@ -426,6 +427,7 @@
                                         <td class="pl20px">'.$rs['observaciones'].'</td>
                                         <td class="pl20px">'.$rs['area_solicita'].'</td>
                                         <td class="textoCentro">'.$rs['vence'].'</td>
+                                        <td class="textoCentro">'.$rs['condicion'].'</td>
                                         <td class="pl20px">'.$rs['ubicacion'].'</td>
                                         <td class="textoCentro">'.$rs['pedido'].'</td>
                                         <td class="textoCentro">'.$rs['orden'].'</td>
