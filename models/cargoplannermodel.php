@@ -184,7 +184,7 @@
                                 $estado_item = "item_stock";
                                 $estado_pedido = "stock";
                             }else if( $rs['estadoItem'] == 53 ) {
-                                $porcentaje = "10%";
+                                $porcentaje = "15%";
                                 $estadofila = "emitido";
                                 $estado_item = "Emitido";
                                 $estado_pedido = "Pedido Emitido";
@@ -1095,11 +1095,11 @@
                             $estado_pedido = "procesando";
                             $color_mostrar = 'F8CAAD';
                         }else if( $rs['estadoItem'] === 53 ) {
-                            $porcentaje = "10%";
+                            $porcentaje = "15%";
                             $estadofila = "emitido";
                             $estado_item = "Emitido";
                             $estado_pedido = "Pedido Emitido";
-                            $color_mostrar = 'F8CAAD';
+                            $color_mostrar = 'FF0000';
                         }else if( $rs['estadoItem'] === 54 ) {
                             $porcentaje = "30%";
                             $estadofila = "aprobado";
