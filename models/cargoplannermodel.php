@@ -58,7 +58,7 @@
                                                         ( SELECT SUM(lg_ordendet.ncanti) FROM lg_ordendet WHERE lg_ordendet.niddeta = tb_pedidodet.iditem AND lg_ordendet.id_orden != 0 ) AS cantidad_orden,
                                                         ( SELECT SUM( alm_recepdet.ncantidad ) FROM alm_recepdet WHERE alm_recepdet.niddetaPed = tb_pedidodet.iditem AND alm_recepdet.nflgactivo = 1 ) AS ingreso,
                                                         ( SELECT SUM( alm_despachodet.ndespacho ) FROM alm_despachodet WHERE alm_despachodet.niddetaPed = lg_ordendet.niddeta AND alm_despachodet.nflgactivo = 1 ) AS despachos,
-                                                        ( SELECT SUM( alm_existencia.cant_ingr ) FROM alm_existencia WHERE alm_existencia.idpedido = tb_pedidodet.iditem AND alm_existencia.nflgActivo = 1) AS ingreso_obra,
+                                                        ( SELECT SUM( alm_existencia.cant_ingr ) FROM alm_existencia WHERE alm_existencia.idpedido = tb_pedidodet.iditem AND alm_existencia.nflgActivo = 1 AND alm_existencia.tipo = 1) AS ingreso_obra,
                                                         ( SELECT SUM( alm_existencia.cant_ingr ) FROM alm_existencia WHERE alm_existencia.idpedido = tb_pedidodet.iditem AND alm_existencia.nflgActivo = 1 AND alm_existencia.tipo = 2) AS atencion_almacen,
                                                         UPPER( tb_user.cnameuser ) AS operador,
                                                         UPPER( tb_pedidocab.concepto ) AS concepto,
@@ -149,6 +149,7 @@
                             $clase_operacion = $rs['idtipomov'] == 37 ? 'bienes' : 'servicios';
                             $saldoRecibir = $rs['cantidad_orden'] - $rs['ingreso'] > 0 ? $rs['cantidad_orden'] - $rs['ingreso'] : "-";
                             $dias_atraso  =  $saldoRecibir > 0 ? $rs['dias_atraso'] : "-" ;
+                            $suma_atendido = number_format($rs['cantidad_orden'] + $rs['atencion_almacen'],2);
 
                             $estado_pedido =  $rs['estadoItem'] >= 54 ? "Atendido":"Pendiente";
                             $estado_item   =  $rs['estadoItem'] >= 54 ? "Atendido":"Pendiente";
@@ -238,6 +239,12 @@
                                 $estadofila = "item_ingreso_parcial";
                                 $estado_item = "atendido";
                                 $estado_pedido = "atendido";
+                            }else if ( $rs['ingreso_obra'] && $suma_atendido == $rs['cantidad_aprobada']) {
+                                $porcentaje = "100%";
+                                $estadofila = "entregado";
+                                $estado_item = "atendido";
+                                $estado_pedido = "atendido";
+                                $semaforo = "Entregado";
                             }else if ( $rs['ingreso_obra'] && $rs['ingreso_obra'] == $rs['cantidad_orden']) {
                                 $porcentaje = "100%";
                                 $estadofila = "entregado";
@@ -264,7 +271,7 @@
                                         <td class="textoCentro">'.$rs['pedido'].'</td>
                                         <td class="textoCentro">'.$rs['crea_pedido'].'</td>
                                         <td class="textoCentro">'.$rs['aprobacion_pedido'].'</td>
-                                        <td class="textoDerecha">'.number_format($rs['cantidad_pedido'],2).'</td>
+                                        <td class="textoDerecha">'.number_format($rs['cantidad_aprobada'],2).'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="textoCentro">'.$rs['unidad'].'</td>
                                         <td class="pl10px">'.$rs['descripcion'].'</td>
@@ -848,8 +855,8 @@
                                                     ( SELECT SUM(lg_ordendet.ncanti) FROM lg_ordendet WHERE lg_ordendet.niddeta = tb_pedidodet.iditem AND lg_ordendet.id_orden != 0) AS cantidad_orden,
                                                     ( SELECT SUM( alm_recepdet.ncantidad ) FROM alm_recepdet WHERE alm_recepdet.niddetaPed = tb_pedidodet.iditem AND alm_recepdet.nflgactivo = 1 ) AS ingreso,
                                                     ( SELECT SUM( alm_despachodet.ndespacho ) FROM alm_despachodet WHERE alm_despachodet.niddetaPed = lg_ordendet.niddeta AND alm_despachodet.nflgactivo = 1 ) AS despachos,
-                                                    ( SELECT SUM( alm_existencia.cant_ingr ) FROM alm_existencia WHERE alm_existencia.idpedido = tb_pedidodet.iditem ) AS ingreso_obra,
-                                                    ( SELECT SUM( alm_existencia.cant_ingr ) FROM alm_existencia WHERE alm_existencia.idpedido = tb_pedidodet.iditem AND alm_existencia.nflgActivo = 1 AND alm_existencia.tipo = 2) AS atencion_almacen,
+                                                    ( SELECT SUM( alm_existencia.cant_ingr ) FROM alm_existencia WHERE alm_existencia.idpedido = tb_pedidodet.iditem AND alm_existencia.nflgActivo = 1 AND alm_existencia.tipo = 1 ) AS ingreso_obra,
+                                                    ( SELECT SUM( alm_existencia.cant_ingr ) FROM alm_existencia WHERE alm_existencia.idpedido = tb_pedidodet.iditem AND alm_existencia.nflgActivo = 1 AND alm_existencia.tipo = 2 ) AS atencion_almacen,
                                                     UPPER( tb_user.cnameuser ) AS operador,
                                                     UPPER( tb_pedidocab.concepto ) AS concepto,
                                                     DATEDIFF( NOW(), lg_ordencab.ffechaent ) AS dias_atraso,
@@ -1052,6 +1059,7 @@
                         $clase_operacion = $rs['idtipomov'] == 37 ? 'bienes' : 'servicios';
                         $saldoRecibir = $rs['cantidad_orden'] - $rs['ingreso'] > 0 ? $rs['cantidad_orden'] - $rs['ingreso'] : "-";
                         $dias_atraso  =  $saldoRecibir > 0 ? $rs['dias_atraso'] : "-" ;
+                        $suma_atendido = number_format($rs['cantidad_orden'] + $rs['atencion_almacen'],2);
 
                         $estado_pedido =  $rs['estadoItem'] >= 54 ? "Atendido":"Pendiente";
                         $estado_item   =  $rs['estadoItem'] >= 54 ? "Atendido":"Pendiente";
@@ -1160,6 +1168,13 @@
                             $estado_item = "Entrega Parcial";
                             $estado_pedido = "Entrega Parcial";
                             $color_mostrar = 'FFFFE1';
+                        }else if ( $rs['ingreso_obra'] && $suma_atendido == $rs['cantidad_aprobada']) {
+                            $porcentaje = "100%";
+                            $estadofila = "entregado";
+                            $estado_item = "atendido";
+                            $estado_pedido = "atendido";
+                            $semaforo = "Entregado";
+                            $color_mostrar = '00FF00';
                         }else if ( $rs['ingreso_obra'] && $rs['ingreso_obra'] == $rs['cantidad_orden'] ) {
                             $porcentaje = "100%";
                             $estadofila = "entregado";

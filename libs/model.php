@@ -1883,7 +1883,7 @@
                                                             class="valorAtendido">
                                             </td>
                                             <td class="textoCentro">'.$rs['nroparte'].'</td>
-                                            <td class="textoCentro"><input type="text" value="'.$rs['obsaprueba'].'"></td>
+                                            <td class="textoCentro"><input type="text" value="'.$rs['obsAprueba'].'"></td>
                                             <td class="textoCentro">'.$rs['registro'].'</td>
                                             <td class="textoCentro"><input type="checkbox" checked></td>
                                         </tr>';

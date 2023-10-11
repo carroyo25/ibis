@@ -255,8 +255,9 @@
                                                         LEFT JOIN cm_producto ON alm_consumo.idprod = cm_producto.id_cprod
                                                         LEFT JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed 
                                                     WHERE
-                                                            nrodoc = :documento 
+                                                        alm_consumo.nrodoc = :documento 
                                                         AND ncostos = :cc
+                                                        AND alm_consumo.flgactivo = 1
                                                     GROUP BY
                                                             alm_consumo.idprod,
                                                             alm_consumo.fechasalida,
@@ -337,15 +338,15 @@
                                                         alm_consumo.nkardex,
                                                         UPPER(cm_producto.cdesprod) AS cdesprod,
                                                         tb_unimed.cabrevia,
-                                                        DATEDIFF(alm_consumo.fechasalida,NOW()) AS  dias_ultima_entrega
+                                                        DATEDIFF(alm_consumo.fechasalida,NOW()) AS dias_ultima_entrega
                                                     FROM
                                                         alm_consumo
                                                         INNER JOIN cm_producto ON alm_consumo.idprod = cm_producto.id_cprod
                                                         INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed 
                                                     WHERE
-                                                        nrodoc = :documento 
+                                                        alm_consumo.nrodoc = :documento 
                                                         AND ncostos = :cc
-                                                        AND cm_producto.ccodprod =:codigo
+                                                        AND cm_producto.ccodprod = :codigo
                                                         AND alm_consumo.flgactivo = 1
                                                         GROUP BY
                                                             alm_consumo.idprod,
