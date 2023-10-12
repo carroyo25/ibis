@@ -277,36 +277,6 @@
             </div>
         </div>
     </div>
-    <div class="modal" id="busqueda">
-        <div class="ventanaBusqueda w50por">
-            <div class="tituloVentana">
-                <span id="tituloBusqueda">Catálogo Bienes/Servicios</span>
-                <div>
-                    <a href="#"><i class="fas fa-window-close"></i></a>
-                </div>
-            </div>
-            <div class="textoBusqueda">
-                <input type="text" name="txtBuscarCodigo" id="txtBuscarCodigo" placeholder="Buscar Codigo">
-                <input type="text" name="txtBuscarDescrip" id="txtBuscarDescrip" placeholder="Buscar Descripción">
-            </div>
-            <div class="tablaBusqueda">
-                <table class="tabla " id="tablaModulos">
-                    <thead >
-                        <tr class="stickytop">
-                            <th width="10%">Item</th>
-                            <th width="10%">Codigo</th>
-                            <th>Descripcion</th>
-                            <th>Und.</th>
-                            <th>Stock Almacen</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
     <div class="modal" id="pedidos">
         <div class="ventanaBusqueda w50por">
             <div class="tituloVentana">

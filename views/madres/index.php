@@ -11,16 +11,33 @@
         <div class="ventanaProceso tamanioProceso">
             <div class="cabezaProceso">
                 <form action="#" id="formProceso" autocomplete="off">
-                    <input type="hidden" name="codigo_orden" id="codigo_orden">
+                    <input type="hidden" name="codigo_costos_origen" id="codigo_costos_origen">
+                    <input type="hidden" name="codigo_costos_destino" id="codigo_costos_destino">  
+                    <input type="hidden" name="codigo_area" id="codigo_area">
+                    <input type="hidden" name="codigo_movimiento" id="codigo_movimiento">
+                    <input type="hidden" name="codigo_aprueba" id="codigo_aprueba">
+                    <input type="hidden" name="codigo_almacen_origen" id="codigo_almacen_origen">
+                    <input type="hidden" name="codigo_almacen_destino" id="codigo_almacen_destino">
                     <input type="hidden" name="codigo_pedido" id="codigo_pedido">
+                    <input type="hidden" name="codigo_orden" id="codigo_orden">
+                    <input type="hidden" name="codigo_estado" id="codigo_estado">
+                    <input type="hidden" name="codigo_moneda" id="codigo_moneda">
+                    <input type="hidden" name="codigo_ingreso" id="codigo_ingreso">
+                    <input type="hidden" name="codigo_salida" id="codigo_salida">
+                    <input type="hidden" name="codigo_transferencia" id="codigo_transferencia">
+                    <input type="hidden" name="id_centi" id="id_centi">
+                    <input type="hidden" name="guia" id="guia">
+                    <input type="hidden" name="total_items" id="total_items">
+                    <input type="hidden" name="items_atendidos" id="items_atendidos">
+
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
                         <div>
+                            <button type="button" id="importData" title="Importar Ingresos" class="boton3">
+                                <i class="fab fa-wpexplorer"></i> Importar Guias
+                            </button>
                             <button type="button" id="preview" title="Vista Previa" class="boton3">
                                 <i class="far fa-file-pdf"></i> Vista Previa
-                            </button>
-                            <button type="button" id="verDetalles" title="Ver pedido" class="boton3">
-                                <i class="far fa-file-pdf"></i> Ver Detalles
                             </button>
                             <button type="button" id="closeProcess" title="Cerrar" class="boton3">
                                 <i class="fas fa-window-close"></i>
@@ -31,99 +48,95 @@
                         <div class="seccion_izquierda">
                             <div class="column4_55">
                                 <div class="column2_3957">
-                                    <label for="numero">Orden Nro:</label>
-                                    <input type="text" name="numero" id="numero" class="cerrarLista" readonly>
+                                    <label for="Fecha Emite">Fecha :</label>
+                                    <input type="date" name="fecha" id="fecha" class="cerrarLista" value="<?php echo date("Y-m-d");?>" readonly>
                                 </div>
                                 <div class="column2_46">
-                                    <label for="emision">Emisión:</label>
-                                    <input type="date" name="emision" id="emision" class="cerrarLista" value="<?php echo date("Y-m-d");?>">
+                                    <label for="numero">Numero :</label>
+                                    <input type="text" name="numero" id="numero" class="cerrarLista textoDerecha pr20px" readonly>
                                 </div>
                             </div>
                             <div class="column2">
-                                <label for="costos">CCostos:</label>
-                                <input type="text" name="costos" id="costos" readonly>
-                            </div>
-                            <div class="column2">
-                                <label for="area">Area:</label>
-                                <input type="text" name="area" id="area" readonly>
-                            </div>
-                            <div class="column2">
-                                <label for="concepto">Concepto:</label>
-                                <input type="text" name="concepto" id="concepto" class="cerrarLista" readonly>
+                                <label for="corigen">CCostos Origen:</label>
+                                <input type="text" name="corigen" id="corigen" class="mostrarLista busqueda" placeholder="Elija una opcion">
+                                <div class="lista" id="listaCostosDestino">
+                                   <ul>
+                                       <?php echo $this->listaCostos?>
+                                   </ul> 
+                                </div>
                             </div>
                         </div>
                         <div class="seccion_medio">
-                            <div class="column4_55">
-                                <div class="column2_3957">
-                                    <label for="moneda">Moneda :</label>
-                                    <input type="text" name="moneda" id="moneda" class="cerrarLista" readonly>
-                                </div>
-                                <div class="column2_46">
-                                    <label for="total">Total :</label>
-                                    <input type="text" name="total" id="total" class="cerrarLista textoDerecha pr5px" readonly>
-                                </div>
-                            </div>
-                            <div class="column4_55">
-                                <div class="column2_3957">
-                                    <label for="tipo">Tipo :</label>
-                                    <input type="text" name="tipo" id="tipo" class="cerrarLista" readonly>
-                                </div>
-                                <div class="column2_46">
-                                    <label for="fentrega">Fec.Entrega :</label>
-                                    <input type="date" name="fentrega" id="fentrega" class="cerrarLista">
+                            <div class="column2">
+                                <label for="almacen_origen_despacho">Almacen Origen:</label>
+                                <input type="text" name="almacen_origen_despacho" id="almacen_origen_despacho" class="mostrarLista busqueda" readonly>
+                                <div class="lista" id="listaOrigen">
+                                   <ul>
+                                       <?php echo $this->listaAlmacen?>
+                                   </ul> 
                                 </div>
                             </div>
-                            <div class="column4_55">
-                                <div class="column2_3957">
-                                    <label for="cpago">Cond.Pago :</label>
-                                    <input type="text" name="cpago" id="cpago" class="cerrarLista" readonly>
-                                </div>
-                                <div class="column2_46">
-                                    <label for="estado">Estado:</label>
-                                    <input type="text" name="estado" id="estado" class="textoCentro estado procesando" readonly value="EN PROCESO">
-                                </div>
-                            </div>
-                            <div class="column4_55">
-                                <div class="column2_3957">
-                                    <label for="referencia">Referencia :</label>
-                                    <input type="text" name="referencia" id="referencia" class="cerrarLista" readonly>
+                            <div class="column2">
+                                <label for="almacen_destino_despacho">Almacen Destino:</label>
+                                <input type="text" name="almacen_destino_despacho" id="almacen_destino_despacho" class="mostrarLista busqueda" readonly>
+                                <div class="lista" id="listaDestino">
+                                   <ul>
+                                       <?php echo $this->listaAlmacen?>
+                                   </ul> 
                                 </div>
                             </div>
                         </div>
                         <div class="seccion_derecha">
                             <div class="column2">
-                                <label for="entidad">Entidad:</label>
-                                <input type="text" name="entidad" id="entidad" readonly>
-                            </div>
-                            <div class="column2">
-                                <label for="atencion">Atención:</label>
-                                <input type="text" name="atencion" id="atencion" readonly>
-                            </div>
-                            <div class="column2">
-                                <label for="lentrega">Lugar Entrega:</label>
-                                <input type="text" name="lentrega" id="lentrega" class="mostrarLista busqueda" placeholder="Elija una opcion"
+                                <label for="tipo">Tipo Mov.:</label>
+                                <input type="text" name="tipo" id="tipo" class="mostrarLista busqueda" placeholder="Elija opción"
                                     readonly>
+                                <div class="lista" id="listaMovimiento">
+                                   <ul>
+                                       <?php echo $this->listaMovimiento?>
+                                   </ul> 
+                                </div>
+                            </div>
+                            <div class="column2">
+                                <label for="aprueba">Aprueba:</label>
+                                <input type="text" name="aprueba" id="aprueba" class="mostrarLista busqueda" placeholder="Elija opción"
+                                        readonly>
+                                <div class="lista" id="listaAprueba">
+                                    <ul>
+                                        <?php echo $this->listaAprueba?>
+                                    </ul> 
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="barraOpciones">
                         <span>Detalles</span>
+                        <div>
+                            <button type="button" id="atachDocs" title="Documentos Adjuntos" class="cerrarLista boton3">
+                                <i class="fas fa-paperclip"></i> Documentos Adjuntos
+                            </button>
+                            <button type="button" id="guiaRemision" title="Guia de Remision" class="cerrarLista boton3">
+                                <i class="fas fa-upload"></i> Guia de Remision
+                            </button>
+                        </div>
                     </div>
                     <div class="tablaInterna mininoTablaInterna">
                         <table class="tabla" id="tablaDetalles">
                             <thead>
                                 <tr class="stickytop">
-                                    <th width="5%">...</th>
-                                    <th>Item</th>
-                                    <th width="7%">Codigo</th>
-                                    <th>Descripcion</th>
-                                    <th>Und.</th>
-                                    <th width="7%">Cant.</th>
-                                    <th width="7%">Precio</th>
-                                    <th width="7%">Total</th>
-                                    <th>Nro.</br>Parte</th>
-                                    <th width="7%">Pedido</th>
-                                    <th width="15%">Detalles</th>
+                                    <th width="4%">...</th>
+                                    <th width="4%">...</th>
+                                    <th class="">Item</th>
+                                    <th class="">Codigo</th>
+                                    <th class="">Descripcion</th>
+                                    <th class="">Unidad</th>
+                                    <th width="7%">Cantidad</br>Orden</th>
+                                    <th width="7%">Cantidad</br>Ingresada</th>
+                                    <th width="7%">Cantidad</br>Despacho</th>
+                                    <th width="7%">Pendiente</br>Entrega</th>
+                                    <th class="">Observaciones</th>
+                                    <th width="4%">Pedido</th>
+                                    <th width="4%">Orden</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -135,82 +148,33 @@
             </div>
         </div>
     </div>
-    <div class="modal" id="detalles">
-        <div class="ventanaDetalles">
-            <form method="post" id="cargoplan">
-                <div class="tituloDocumento">
-                    <div>
-                        <p class="titulo_seccion"><strong> Resumen Orden : </strong></p>
-                    </div>
-                    <div>
-                        <a href="#" id="closeDocument" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
-                    </div>
+    <div class="modal" id="guias">
+        <div class="ventanaBusqueda w50por">
+            <div class="tituloVentana">
+                <span id="tituloBusqueda">Pedidos</span>
+                <div>
+                    <a href="#"><i class="fas fa-window-close"></i></a>
                 </div>
-                <hr>
-                <div class="cuerpoOrdenes">
-                    <section class="seccion1">
-                        <h4>Detalles orden</h4>
-                        <div class="infoOrden">
-                            <div>
-                                <label>Fecha Elaboración</label>
-                                <label>:</label>
-                                <label id="emitido"></label>
-                            </div>
-                            <div>
-                                <label>Fecha Envio </label>
-                                <label>:</label>
-                                <label id="envio"></label>
-                            </div>
-                            <div>
-                                <label>Elaborado Por</label>
-                                <label>:</label>
-                                <label id="elaborado"></label>
-                            </div>
-                            <div>
-                                <label>Firma Lógistica</label>
-                                <label>:</label>
-                                <label id="firma_logistica"></label>
-                            </div>
-                            <div>
-                                <label>Firma Operaciones</label>
-                                <label>:</label>
-                                <label id="firma_operaciones"></label>
-                            </div>
-                            <div>
-                                <label>Firma Finanzas:</label>
-                                <label>:</label>
-                                <label id="firma_finanzas"></label>
-                            </div>
-                        </div>
-                    </section>
-                    <section class="seccion2">
-                        <h4>Pedidos</h4>
-                        <table id="lista_pedidos">
-                            <thead class="stickytop">
-                                <tr>
-                                    <th>Pedido</th>
-                                    <th>Emitido</th>
-                                    <th>Aprobado</th>
-                                    <th>Aprobado por</th>
-                                    <th>Documento</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                               
-                            </tbody>
-                        </table>
-                    </section>
-                    <section class="seccion3">
-                        <h4>Documentos Adjuntos</h4>
-                        <ul id="documentos_adjuntos">
-
-                        </ul>
-                    </section>
-                    <section class="seccion4">
-                        <iframe src=""></iframe>
-                    </section>
-                </div>
-            </form>
+            </div>
+            <div class="textoBusqueda">
+                <input type="text" name="txtBuscarPedido" id="txtBuscarPedido" placeholder="Ingrese Nro. Guia">
+            </div>
+            <div class="tablaBusqueda">
+                <table class="tabla " id="tablaGuias">
+                    <thead >
+                        <tr class="stickytop">
+                            <th width="10%">Nro. Guia</th>
+                            <th width="10%">Orden</th>
+                            <th width="10%">Fecha</th>
+                            <th>Centro </br>de Costos</th>
+                            <th>Descripcion</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
     <div class="modal" id="vistaprevia">

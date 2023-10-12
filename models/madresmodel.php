@@ -5,5 +5,17 @@
         {
             parent::__construct();
         }
+
+        public function importarGuias($cc,$guia){
+            try {
+                $salida = "";
+
+                return $salida;
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+
+        }
     }
 ?>
