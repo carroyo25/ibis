@@ -20,7 +20,7 @@
                                                         lg_ordencab.ncodpago,
                                                         lg_ordencab.nplazo,
                                                         lg_ordencab.cdocPDF,
-                                                        UPPER( tb_pedidocab.concepto ) AS concepto,
+                                                        UPPER( lg_ordencab.cObservacion ) AS concepto,
                                                         UPPER( tb_pedidocab.detalle ) AS detalle,
                                                         UPPER(
                                                         CONCAT_WS( tb_area.ccodarea, tb_area.cdesarea )) AS area,

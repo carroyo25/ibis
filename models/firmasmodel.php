@@ -21,7 +21,7 @@
                                                     lg_ordencab.nfirmaFin,
                                                     lg_ordencab.nfirmaOpe,
                                                     FORMAT( lg_ordencab.ntotal, 2 ) AS ntotal,
-                                                    UPPER( tb_pedidocab.concepto ) AS concepto,
+                                                    UPPER( lg_ordencab.cObservacion ) AS concepto,
                                                     lg_ordencab.cdocPDF,
                                                     UPPER(cm_entidad.crazonsoc) AS crazonsoc,
                                                     tb_proyectos.ccodproy,
@@ -360,7 +360,7 @@
                                                             lg_ordencab.nfirmaFin,
                                                             lg_ordencab.nfirmaOpe,
                                                             FORMAT(lg_ordencab.ntotal,2) as ntotal,
-                                                            UPPER(tb_pedidocab.concepto) AS concepto,
+                                                            UPPER(lg_ordencab.cObservacion) AS concepto,
                                                             lg_ordencab.cdocPDF,
                                                             UPPER(
                                                                     CONCAT_WS(

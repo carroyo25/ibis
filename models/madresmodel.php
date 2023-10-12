@@ -8,6 +8,7 @@
 
         public function importarGuias($cc,$guia){
             try {
+                $this->db->connect()->prepare("");
                 $salida = "";
 
                 return $salida;

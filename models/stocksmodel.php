@@ -87,7 +87,7 @@
                                                             LEFT JOIN alm_transfercab ON alm_transferdet.idtransfer = alm_transfercab.idreg 
                                                         WHERE
                                                             alm_transferdet.nflgactivo = 1 
-                                                            AND alm_transfercab.idcc = :ctransfsalida 
+                                                            AND alm_transfercab.idcd = :ctransfsalida 
                                                         GROUP BY
                                                             alm_transferdet.idcprod 
                                                         ) AS sal_trans ON sal_trans.idcprod = cm_producto.id_cprod
@@ -100,7 +100,7 @@
                                                             LEFT JOIN alm_transfercab ON alm_transferdet.idtransfer = alm_transfercab.idreg 
                                                         WHERE
                                                             alm_transferdet.nflgactivo = 1 
-                                                            AND alm_transfercab.idcd = :ctransfingreso 
+                                                            AND alm_transfercab.idcc = :ctransfingreso 
                                                         GROUP BY
                                                             alm_transferdet.idcprod 
                                                         ) AS ing_trans ON ing_trans.idcprod = cm_producto.id_cprod
@@ -143,7 +143,7 @@
                 if ($rowCount > 0) {
                     $salida="";
                     while ($rs = $sql->fetch()){
-                        $saldo = ( $rs['ingresos']+$rs['inventarios']+$rs['devoluciones'] )-($rs['consumos']+$rs['salidas_transferencia']);
+                        $saldo = ( $rs['ingresos']+$rs['inventarios']+$rs['devoluciones']+$rs['ingresos_transferencias'] )-($rs['consumos']+$rs['salidas_transferencia']);
                         $saldo = $saldo > -1 ? $saldo : $saldo;
                         $estado = $saldo > -1 ? "semaforoVerde":"semaforoRojo";
 

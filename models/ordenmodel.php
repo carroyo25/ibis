@@ -22,7 +22,7 @@
                                                         lg_ordencab.cdocPDF,
                                                         FORMAT(lg_ordencab.ntotal,2) AS ntotal,
                                                         tb_proyectos.ccodproy,
-                                                        UPPER( tb_pedidocab.concepto ) AS concepto,
+                                                        UPPER( lg_ordencab.cObservacion ) AS concepto,
                                                         UPPER( tb_pedidocab.detalle ) AS detalle,
                                                         UPPER(
                                                         CONCAT_WS( tb_area.ccodarea, tb_area.cdesarea )) AS area,
@@ -411,7 +411,7 @@
                                                         SET  ffechaent=:entrega,ntotal=:total,ctiptransp=:transp,
                                                              nplazo=:plazo,ncodalm=:alm,nigv =:igv,id_centi=:enti,
                                                              ncodpago=:pago,cnumcot=:cotizacion,creferencia=:referencia,
-                                                             lentrega=:lugar,ncodmon=:moneda
+                                                             lentrega=:lugar,ncodmon=:moneda,cObservacion=:observacion
                                                         WHERE id_regmov = :id");
                 $sql->execute(['entrega'=>$cabecera['fentrega'],
                                 "total"=>$cabecera['total_numero'],
@@ -425,7 +425,8 @@
                                 "cotizacion"=>$cabecera['ncotiz'],
                                 "referencia"=>$cabecera['referencia'],
                                 "lugar"=>$cabecera['lentrega'],
-                                "moneda"=>$cabecera['codigo_moneda']]);
+                                "moneda"=>$cabecera['codigo_moneda'],
+                                "observacion"=>$cabecera['concepto']]);
                 
                 $this->grabarDetalles($cabecera['codigo_verificacion'],$detalles,$cabecera['codigo_costos'],$cabecera['codigo_orden']);
                 $this->grabarComentarios($cabecera['codigo_verificacion'],$comentarios,$usuario);
@@ -866,7 +867,7 @@
                                                         lg_ordencab.nplazo,
                                                         lg_ordencab.cdocPDF,
                                                         tb_proyectos.ccodproy,
-                                                        UPPER( tb_pedidocab.concepto ) AS concepto,
+                                                        UPPER(lg_ordencab.cObservacion ) AS concepto,
                                                         UPPER( tb_pedidocab.detalle ) AS detalle,
                                                         UPPER(
                                                         CONCAT_WS( tb_area.ccodarea, tb_area.cdesarea )) AS area,

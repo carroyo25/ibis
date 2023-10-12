@@ -2391,7 +2391,7 @@
                                                         lg_ordencab.ntcambio,
                                                         lg_ordencab.cnumcot,
                                                         lg_ordencab.userModifica,
-                                                        UPPER( tb_pedidocab.concepto ) AS concepto,
+                                                        UPPER( lg_ordencab.cObservacion ) AS concepto,
                                                         UPPER( tb_pedidocab.detalle ) AS detalle,
                                                         tb_pedidocab.docPdfAprob,
                                                         UPPER(

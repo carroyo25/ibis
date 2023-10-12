@@ -1274,7 +1274,6 @@
                         $objPHPExcel->getActiveSheet()->setCellValue('AN'.$fila,$rs['operador']);
                         $objPHPExcel->getActiveSheet()->setCellValue('AO'.$fila,$transporte);
                         $objPHPExcel->getActiveSheet()->setCellValue('AP'.$fila,$rs['concepto']);
-
                         $fila++;
                     }
                 }
