@@ -106,7 +106,6 @@ $(function() {
             .addClass("textoCentro estado w100por procesando");
         $("#tablaDetalles tbody").empty();
         $("#proceso").fadeIn();
-       
 
         document.getElementById("formProceso").reset();
         document.getElementById("guiaremision").reset();
@@ -218,7 +217,6 @@ $(function() {
         id = destino.attr("id");
 
         if(contenedor_padre == "listaMovimiento"){
-            
             $("#codigo_movimiento").val(codigo);
         }else if(contenedor_padre == "listaAprueba"){
             $("#codigo_aprueba").val(codigo);
@@ -670,7 +668,6 @@ $(function() {
 
     $("#guiaSunat").click(function(e){
         e.preventDefault();
-
 
         let result = {};
     
