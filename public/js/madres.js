@@ -12,6 +12,7 @@ $(() =>{
 
         document.getElementById("formProceso").reset();
         document.getElementById("guiaremision").reset();
+        $("#tablaDetalles tbody").empty();
 
         return false;
     });
@@ -59,7 +60,7 @@ $(() =>{
         id = destino.attr("id");
 
         if(contenedor_padre == "listaCostosDestino"){
-            $("#codigo_costos_destino").val(codigo);
+            $("#codigo_costos_origen").val(codigo);
             $("#codigo_almacen_destino").val(almacen);
         }else if(contenedor_padre == "listaAprueba"){
             $("#codigo_aprueba").val(codigo);
@@ -101,11 +102,11 @@ $(() =>{
 
         try {
             if ($("#codigo_aprueba").val() == 0) throw "Elija la persona que aprueba";
-            if ($("#codigo_costos_destino").val() == 0) throw "Indique el centro de costos"; 
+            if ($("#codigo_costos_origen").val() == 0) throw "Indique el centro de costos"; 
 
             $("#esperar").fadeIn();
 
-            $.post(RUTA+"madres/guias", {cc:$("#codigo_costos_destino").val(),guia:""},
+            $.post(RUTA+"madres/guias", {cc:$("#codigo_costos_origen").val(),guia:""},
                 function (data, textStatus, jqXHR) {
                     $("#tablaGuias tbody")
                         .empty()
@@ -265,6 +266,40 @@ $(() =>{
 
         return false;
     });
+
+    $("#saveDocument").click(function(e){
+        e.preventDefault();
+
+
+        $.post(RUTA+"madres/grabaGuiaMadre", {detalles:JSON.stringify(detalles()),
+                                                proyecto: $("#corigen").val(),
+                                                guia:$("#numero_guia").val(),
+                                                costos:$("#codigo_costos_origen").val(),
+                                                aprueba:$("#codigo_autoriza").val(),
+                                                alm_origen:$("#codigo_almacen_origen").val(),
+                                                alm_destino:$("#codigo_almacen_destino").val(),
+                                                modalidad:$("#codigo_modalidad").val(),
+                                                tipo:$("#codigo_tipo").val(),
+                                                transportista:$("#codigo_entidad_transporte").val(),
+                                                conductor:$("#conductor_dni").val(),
+                                                licencia:$("#licencia_conducir").val(),
+                                                dni:$("#codigo_tipo").val(),
+                                                marca:$("#marca").val(),
+                                                placa:$("#placa").val(),
+                                                peso:$("#peso").val(),
+                                                bultos:$("#bultos").val(),
+                                                emision:$("#fgemision").val(),
+                                                traslado:$("#ftraslado").val()},
+
+                function (data, textStatus, jqXHR) {
+                    mostrarMensaje(data.mensaje,"mensaje_correcto");
+                    $("#numero").val(data.guia);
+                },
+                "json"
+            );
+
+        return false;
+    });
 })
 
 detalles = () =>{
@@ -277,7 +312,8 @@ detalles = () =>{
             IDDETORDEN  = "",
             IDDETPED    = "",
             IDPROD      = "",
-            IDDESPACHO  = "",
+            IDDESPACHO  = $(this).data('itemdespacho'),
+            DESPACHO    = $(this).data('despacho')
             PEDIDO      = "",
             ORDEN       = "",
             INGRESO     = "",
@@ -305,11 +341,13 @@ detalles = () =>{
             item['cantdesp']     = CANTDESP;
             item['obser']        = OBSER;
             item['iddespacho']   = IDDESPACHO;
+            item['despacho']     = DESPACHO;
 
             item['codigo']       = CODIGO;
             item['descripcion']  = DESCRIPCION;
             item['unidad']       = UNIDAD;
             item['destino']      = DESTINO;
+
             
             DETALLES.push(item);
         //}

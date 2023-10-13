@@ -58,8 +58,8 @@
                                                         ( SELECT SUM(lg_ordendet.ncanti) FROM lg_ordendet WHERE lg_ordendet.niddeta = tb_pedidodet.iditem AND lg_ordendet.id_orden != 0 ) AS cantidad_orden,
                                                         ( SELECT SUM( alm_recepdet.ncantidad ) FROM alm_recepdet WHERE alm_recepdet.niddetaPed = tb_pedidodet.iditem AND alm_recepdet.nflgactivo = 1 ) AS ingreso,
                                                         ( SELECT SUM( alm_despachodet.ndespacho ) FROM alm_despachodet WHERE alm_despachodet.niddetaPed = lg_ordendet.niddeta AND alm_despachodet.nflgactivo = 1 ) AS despachos,
-                                                        ( SELECT SUM( alm_existencia.cant_ingr ) FROM alm_existencia WHERE alm_existencia.idpedido = tb_pedidodet.iditem AND alm_existencia.nflgActivo = 1 AND alm_existencia.tipo = 1) AS ingreso_obra,
-                                                        ( SELECT SUM( alm_existencia.cant_ingr ) FROM alm_existencia WHERE alm_existencia.idpedido = tb_pedidodet.iditem AND alm_existencia.nflgActivo = 1 AND alm_existencia.tipo = 2) AS atencion_almacen,
+                                                        ( SELECT SUM( alm_existencia.cant_ingr ) FROM alm_existencia WHERE alm_existencia.idpedido = tb_pedidodet.iditem AND alm_existencia.nflgActivo = 1) AS ingreso_obra,
+                                                        ( SELECT SUM( alm_existencia.cant_ingr ) FROM alm_existencia WHERE alm_existencia.idpedido = tb_pedidodet.iditem AND alm_existencia.nflgActivo = 1 ) AS atencion_almacen,
                                                         UPPER( tb_user.cnameuser ) AS operador,
                                                         UPPER( tb_pedidocab.concepto ) AS concepto,
                                                         DATEDIFF( NOW(), lg_ordencab.ffechaent ) AS dias_atraso,
@@ -855,8 +855,8 @@
                                                     ( SELECT SUM(lg_ordendet.ncanti) FROM lg_ordendet WHERE lg_ordendet.niddeta = tb_pedidodet.iditem AND lg_ordendet.id_orden != 0) AS cantidad_orden,
                                                     ( SELECT SUM( alm_recepdet.ncantidad ) FROM alm_recepdet WHERE alm_recepdet.niddetaPed = tb_pedidodet.iditem AND alm_recepdet.nflgactivo = 1 ) AS ingreso,
                                                     ( SELECT SUM( alm_despachodet.ndespacho ) FROM alm_despachodet WHERE alm_despachodet.niddetaPed = lg_ordendet.niddeta AND alm_despachodet.nflgactivo = 1 ) AS despachos,
-                                                    ( SELECT SUM( alm_existencia.cant_ingr ) FROM alm_existencia WHERE alm_existencia.idpedido = tb_pedidodet.iditem AND alm_existencia.nflgActivo = 1 AND alm_existencia.tipo = 1 ) AS ingreso_obra,
-                                                    ( SELECT SUM( alm_existencia.cant_ingr ) FROM alm_existencia WHERE alm_existencia.idpedido = tb_pedidodet.iditem AND alm_existencia.nflgActivo = 1 AND alm_existencia.tipo = 2 ) AS atencion_almacen,
+                                                    ( SELECT SUM( alm_existencia.cant_ingr ) FROM alm_existencia WHERE alm_existencia.idpedido = tb_pedidodet.iditem AND alm_existencia.nflgActivo = 1 ) AS ingreso_obra,
+                                                    ( SELECT SUM( alm_existencia.cant_ingr ) FROM alm_existencia WHERE alm_existencia.idpedido = tb_pedidodet.iditem AND alm_existencia.nflgActivo = 1 ) AS atencion_almacen,
                                                     UPPER( tb_user.cnameuser ) AS operador,
                                                     UPPER( tb_pedidocab.concepto ) AS concepto,
                                                     DATEDIFF( NOW(), lg_ordencab.ffechaent ) AS dias_atraso,
@@ -1103,23 +1103,23 @@
                             $estado_pedido = "procesando";
                             $color_mostrar = 'F8CAAD';
                         }else if( $rs['estadoItem'] === 53 ) {
-                            $porcentaje = "15%";
+                            $porcentaje = "10%";
                             $estadofila = "emitido";
                             $estado_item = "Emitido";
                             $estado_pedido = "Pedido Emitido";
                             $color_mostrar = 'FF0000';
                         }else if( $rs['estadoItem'] === 54 ) {
-                            $porcentaje = "30%";
+                            $porcentaje = "15%";
                             $estadofila = "aprobado";
                             $estado_item = "aprobado";
                             $estado_pedido = "Pedido aprobado";
-                            $color_mostrar = 'C0DCC0';
+                            $color_mostrar = 'FF0000';
                         }else if( $rs['estadoItem'] === 230 ) {
                             $porcentaje = "100%";
                             $estadofila = "comprado";
                             $estado_item = "Compra Local";
                             $estado_pedido = "Compra Local";
-                            $color_mostrar = 'FF00FF';
+                            $color_mostrar = 'FF0000';
                         }else if( $rs['estadoItem'] === 52  && $rs['ingreso_obra'] == $rs['cantidad_aprobada']) {
                             $porcentaje = "100%";
                             $estadofila = "entregado";

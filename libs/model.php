@@ -3009,6 +3009,7 @@
             for ($i=0; $i < $nreg; $i++) { 
                
                 $nparte = $datos[$i]->nroparte != "" ? "NP:". $datos[$i]->nroparte : "";
+                
 
                 $pdf->SetAligns(array("C","C","R","C","L","C","R","R"));
                 $pdf->Row(array($datos[$i]->item,

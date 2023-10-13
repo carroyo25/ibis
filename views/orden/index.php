@@ -285,7 +285,7 @@
                             <th data-idcol="5" class="datafiltro" width="7%">Codigo</th>
                             <th width="7%">Cantidad </br> Aprobada </th>
                             <th width="7%">Cantidad </br> Atendida</th>
-                            <th data-idcol="7" class="datafiltro" >Descripción</th>
+                            <th data-idcol="8" class="datafiltro" >Descripción</th>
                         </tr>
                     </thead>
                     <tbody>

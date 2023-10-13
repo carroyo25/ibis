@@ -36,9 +36,6 @@
                             <button type="button" id="importData" title="Importar Ingresos" class="boton3">
                                 <i class="fab fa-wpexplorer"></i> Importar Guias
                             </button>
-                            <button type="button" id="preview" title="Vista Previa" class="boton3">
-                                <i class="far fa-file-pdf"></i> Vista Previa
-                            </button>
                             <button type="button" id="closeProcess" title="Cerrar" class="boton3">
                                 <i class="fas fa-window-close"></i>
                             </button>
@@ -397,17 +394,22 @@
     <div class="itemsTabla">
         <table id="tablaPrincipal">
             <thead class="stickytop">
-                    <tr>
+                <tr>
                     <th>Num.</th>  
                     <th>Emision</th>
-                    <th>Descripción</th>
-                    <th>Proyecto</th> 
-                    <th>Area</th>
+                    <th>Fecha Traslado</th> 
+                    <th>Centro Costos</th>
                     <th>Estado</th>
                 </tr>
             </thead>
             <tbody>
-                <?php //echo $this->listaOrdenes;?>
+                <tr class="pointer">
+                    <td class="textoCentro">131-262626</td>  
+                    <td class="textoCentro">13/10/2023</td>
+                    <td class="textoCentro">15/10/2023</td>
+                    <td class="pl20px">3200</td>
+                    <td class="textoCentro" style="background:red; color:white"><span >Pendiente</span></td>
+                </tr>
             </tbody>
         </table>
     </div>

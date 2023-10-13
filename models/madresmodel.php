@@ -93,5 +93,44 @@
                 return false;
             }
         }
+
+        public function grabarGuia($datos){
+            //echo $datos['costos'];
+
+            $sql = $this->db->connect()->prepare("INSERT INTO lg_guiamadre SET ffecdoc =:fecha,
+                                                                                ffectraslado = :ftraslado,
+                                                                                cnroguia = :guia;
+                                                                                ncostos =:costos,
+                                                                                nlamorigen =:origen,
+                                                                                nalmdestino = :destino,
+                                                                                nentitransp = :transporte,
+                                                                                nmottranp = :motivo,
+                                                                                ntipmov = :tipo,
+                                                                                clincencia =:licencia,
+                                                                                ndni =:dni,
+                                                                                cmarca =:marca,
+                                                                                cplaca =:placa,
+                                                                                npeso =:peso,
+                                                                                nbultos =:bultos,
+                                                                                nflagsunat = 0");
+            
+
+
+            return array(["fecha"=>$datos['fechadoc'],
+                            "ftraslado"=>$datos['ftraslado'],
+                            "guia"=>$datos['guia'],
+                            "costos"=>$datos['costos'],
+                            "origen"=>$datos['alm_origen'],
+                            "destino"=>$datos['alm_destino'],
+                            "transporte"=>$datos['transportista'],
+                            "motivo"=>$datos['modalidad'],
+                            "tipo"=>$datos['tipo'],
+                            "licencia"=>$datos['licencia'],
+                            "dni"=>$datos['dni'],
+                            "marca"=>$datos['marca'],
+                            "placa"=>$datos['placa'],
+                            "peso"=>$datos['peso'],
+                            "bultos"=>$datos['bultos']]);
+        }
     }
 ?>

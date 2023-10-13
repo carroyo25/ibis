@@ -25,6 +25,11 @@
         function itemsDespacho(){
             echo $this->model->importarItemsDespacho($_POST['idx']);
         }
+
+        function grabaGuiaMadre(){
+            echo json_encode ($this->model->grabarGuia($_POST));
+        }
+
         
     }
 ?>

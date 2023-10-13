@@ -346,7 +346,7 @@ $(function(){
                                     placeholder="0.00" 
                                     onchange="(function(el){el.value=parseFloat(el.value).toFixed(4);})(this)"
                                     onclick="this.select()"
-                                    value="${cantidad_final}">
+                                    value="${cantidad}">
                             </td>
                             <td class="textoDerecha pr5px precio">
                                 <input type="number" class="focusNext"
