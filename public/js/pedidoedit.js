@@ -1,8 +1,70 @@
 $(function(){
-    let iditempedido = "",
-        fila=0,
-        estadoItem=0,
-        accion = "";
+    const body = document.querySelector("#tablaPrincipal tbody");
+
+    let listItemFinal = null,estoyPidiendo = false,iditempedido = "",fila=0,estadoItem=0,accion = "";
+
+    //LISTA PARA EL SCROLL
+
+    const observandoListItem = listItem => {
+        if ( listItem[0].isIntersecting ) {
+            query();
+        }
+    }
+
+    const settings = {
+        threshold: 1
+    }
+
+    let observador = new IntersectionObserver(
+        observandoListItem,
+        settings
+    );
+
+    const query = async () => {
+        if (estoyPidiendo) return;
+        estoyPidiendo = true;
+        let pagina = parseInt(body.dataset.p) || 1;
+        const FD = new FormData();
+        FD.append('pagina',pagina);
+
+        const r = await fetch(RUTA+'pedidoedit/listaScroll',{
+            method: 'POST',
+            body:FD
+        });
+
+        const j  = await r.json();
+        j[0].pedidos.forEach(i => {
+            const tr = document.createElement('tr');
+            
+            tr.innerHTML = `<td class="textoCentro">${i.nrodoc}</td>
+                            <td class="textoCentro">${i.idreg}</td>
+                            <td class="textoCentro">${i.emision}</td>
+                            <td class="textoCentro">${i.idtipomov}</td>
+                            <td class="pl20px">${i.concepto}</td>
+                            <td class="pl20px">${i.costos}</td>
+                            <td class="pl20px">${i.nombres}</td>
+                            <td class="textoCentro ${i.cabrevia.toLowerCase()}">${i.cabrevia}</td>
+                            <td class="textoCentro ${i.atencion.toLowerCase()}">${i.atencion}</td>`;
+            tr.classList.add("pointer");
+            tr.dataset.indice = i.idreg;
+            body.appendChild(tr);
+        })
+
+        if (listItemFinal){
+            observador.unobserve(listItemFinal);
+        }
+
+        if (j[0].quedan) { //devuelve falso si ya no quedan mas registros
+            listItemFinal = body.lastElementChild.previousElementSibling;
+            observador.observe( listItemFinal);
+            estoyPidiendo = false;
+            body.dataset.p = ++pagina;
+        }
+    }
+
+    query();
+
+    ///FIN DEL SCROLL
 
     $("#tablaPrincipal tbody").on("click","tr", function (e) {
         e.preventDefault();
@@ -36,7 +98,9 @@ $(function(){
                 $("#estado").val(data.cabecera[0].estado);
                 $("#espec_items").val(data.cabecera[0].detalle);
                 $("#partida").val(data.cabecera[0].cdescripcion);
-               
+                $("#asigna").val(data.cabecera[0].asigna);
+                $("#aprueba").val(data.cabecera[0].aprueba);
+                $("#fecha_aprobacion").val(data.cabecera[0].faprueba);
 
                 $("#tablaDetalles tbody")
                     .empty()
@@ -60,22 +124,7 @@ $(function(){
         e.preventDefault();
 
         $("#proceso").fadeOut();
-
-        /*$.post(RUTA+"pedidoedit/actualizaListado",
-            function (data, textStatus, jqXHR) {
-                $(".itemsTabla table tbody")
-                    .empty()
-                    .append(data);
-
-                $("#proceso").fadeOut(function(){
-                    grabado = false;
-                    $("form")[1].reset();
-                    $("#tablaDetalles tbody,.listaArchivos").empty();
-                    $(".lista").fadeOut();
-                });
-            },
-            "text"
-        );*/
+        query();
         
         return false;
     });
@@ -194,7 +243,7 @@ $(function(){
         if ( iditempedido == '-') {
             fila.remove();
         }else{
-            $.post(RUTA+"pedidoedit/accionItem",{id:iditempedido,valor:1,estado:105},
+            $.post(RUTA+"pedidoedit/accionItem",{id:iditempedido,valor:0,estado:105},
                 function (data, textStatus, jqXHR) {
                     fila.remove();
                     $("#preguntaItemBorra").fadeOut();
@@ -247,6 +296,7 @@ $(function(){
                     <td><textarea></textarea></td>
                     <td class="textoCentro"><input type="text"></td>
                     <td class="textoCentro"><input type="text"></td>
+                    <td><input type="text"></td>
                     <td class="textoCentro"><a href="-" title="Cambiar Item" data-accion="cambiar"><i class="fas fa-exchange-alt"></i></a></td>
                     <td class="textoCentro"><a href="-" title="Liberar Item" data-accion="liberar"><i class="fas fa-wrench"></i></a></td>
                     <td class="textoCentro"><a href="-" title="Agregar Item debajo" data-accion="agregar"><i class="far fa-calendar-plus"></i></a></td>
@@ -276,8 +326,6 @@ $(function(){
 
     $("#save").click(function (e) { 
         e.preventDefault();
-
-        //console.log(itemsSave())
         
         let result = {};
 
@@ -297,7 +345,8 @@ $(function(){
 
             $.post(RUTA+"pedidoedit/grabaPedidoAdmin",{cabecera:result,detalles:JSON.stringify(itemsSave())},
                 function (data, textStatus, jqXHR) {
-                    mostrarMensaje(data.mensaje,data.clase)
+                    mostrarMensaje(data.mensaje,data.clase);
+                    
                 },
                 "json"
             );
@@ -375,6 +424,7 @@ $(function(){
                 );
         }
     });
+    
 })
 
 itemsSave = () =>{
@@ -385,6 +435,7 @@ itemsSave = () =>{
         let IDPROD      = $(this).data('idprod'),
             UNIDAD      = $(this).data('codund'),
             CANTIDAD    = $(this).find('td').eq(5).children().val(),
+            CANTAPRO    = $(this).find('td').eq(5).children().val(),
             IDX         = $(this).data('idx'),
             CALIDAD     = 0,
             ESTADO      = $(this).attr('data-grabado'),
@@ -392,7 +443,10 @@ itemsSave = () =>{
             NROPARTE    = $(this).find('td').eq(7).text(),
             REGISTRO    = $(this).data('registro'),
             REGISTEXT   = $(this).find('td').eq(8).text(),
-            ATENDIDA    = $(this).find('td').eq(9).children().val();
+            ATENDIDA    = $(this).find('td').eq(9).children().val(),
+            ASIGNA      = $("#asigna").val(),
+            APRUEBA     = $("#aprueba").val(),
+            FAPROBA     = $("#fecha_aprobacion").val();
 
         item= {};
        
@@ -408,6 +462,11 @@ itemsSave = () =>{
         item['registro']    = REGISTRO;
         item['registext']   = REGISTEXT;
         item['observac']    = "";
+        item['asigna']      = ASIGNA;
+        item['aprueba']     = APRUEBA;
+        item['faproba']     = FAPROBA;
+        item['cantapro']    = CANTAPRO;
+
 
         DATA.push(item);
 

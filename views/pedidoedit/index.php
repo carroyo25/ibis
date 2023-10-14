@@ -25,6 +25,10 @@
                     <input type="hidden" name="vista_previa" id="vista_previa">
                     <input type="hidden" name="emitido" id="emitido">
                     <input type="hidden" name="transporte" id="transporte" value="">
+                    <input type="hidden" name="asigna" id="asigna" value="">
+                    <input type="hidden" name="aprueba" id="aprueba" value="">
+                    <input type="hidden" name="fecha_aprobacion" id="fecha_aprobacion" value="">
+
 
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
@@ -286,7 +290,7 @@
                 </tr>
             </thead>
             <tbody>
-                <?php echo $this->listaPedidos;?>
+               
             </tbody>
         </table>
     </div>

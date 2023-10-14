@@ -18,35 +18,34 @@
             try {
                 $salida = "";
                 $sql = $this->db->connect()->prepare("SELECT
-                                                    ibis.tb_pedidocab.idreg,
-                                                    ibis.tb_pedidocab.idcostos,
-                                                    ibis.tb_pedidocab.idarea,
-                                                    ibis.tb_pedidocab.emision,
-                                                    ibis.tb_pedidocab.vence,
-                                                    ibis.tb_pedidocab.estadodoc,
-                                                    ibis.tb_pedidocab.nrodoc,
-                                                    ibis.tb_pedidocab.idtipomov,
-                                                    UPPER(ibis.tb_pedidocab.concepto) AS concepto,
-                                                    CONCAT(rrhh.tabla_aquarius.nombres,' ',rrhh.tabla_aquarius.apellidos) AS nombres,
-                                                    UPPER(CONCAT(ibis.tb_proyectos.ccodproy,' ',ibis.tb_proyectos.cdesproy)) AS costos,
-                                                    ibis.tb_pedidocab.nivelAten,
-                                                    atenciones.cdescripcion AS atencion,
-                                                    estados.cdescripcion AS estado,
-                                                    estados.cabrevia 
-                                                FROM
-                                                    ibis.tb_pedidocab
-                                                    LEFT JOIN rrhh.tabla_aquarius ON ibis.tb_pedidocab.idsolicita = rrhh.tabla_aquarius.internal
-                                                    INNER JOIN ibis.tb_proyectos ON ibis.tb_pedidocab.idcostos = ibis.tb_proyectos.nidreg
-                                                    INNER JOIN ibis.tb_parametros AS atenciones ON ibis.tb_pedidocab.nivelAten = atenciones.nidreg
-                                                    INNER JOIN ibis.tb_parametros AS estados ON ibis.tb_pedidocab.estadodoc = estados.nidreg
-                                                WHERE 
-                                                    YEAR(ibis.tb_pedidocab.emision) = :anio
-                                                    AND ibis.tb_pedidocab.idcostos LIKE :cc
-                                                    AND ibis.tb_pedidocab.nrodoc LIKE :num
-                                                ORDER BY  ibis.tb_pedidocab.nrodoc DESC");
-                $sql->execute(["anio"=>$anio,
-                                "cc"=>$c,
-                                "num"=>$n]);
+                                                        ibis.tb_pedidocab.idreg,
+                                                        ibis.tb_pedidocab.idcostos,
+                                                        ibis.tb_pedidocab.idarea,
+                                                        ibis.tb_pedidocab.emision,
+                                                        ibis.tb_pedidocab.vence,
+                                                        ibis.tb_pedidocab.estadodoc,
+                                                        LPAD(ibis.tb_pedidocab.nrodoc,6,0) AS nrodoc,
+                                                        ibis.tb_pedidocab.idtipomov,
+                                                        UPPER(ibis.tb_pedidocab.concepto) AS concepto,
+                                                        CONCAT(rrhh.tabla_aquarius.nombres,' ',rrhh.tabla_aquarius.apellidos) AS nombres,
+                                                        UPPER(CONCAT(ibis.tb_proyectos.ccodproy,' ',ibis.tb_proyectos.cdesproy)) AS costos,
+                                                        ibis.tb_pedidocab.nivelAten,
+                                                        atenciones.cdescripcion AS atencion,
+                                                        estados.cdescripcion AS estado,
+                                                        estados.cabrevia 
+                                                    FROM
+                                                        ibis.tb_pedidocab
+                                                        LEFT JOIN rrhh.tabla_aquarius ON ibis.tb_pedidocab.idsolicita = rrhh.tabla_aquarius.internal
+                                                        INNER JOIN ibis.tb_proyectos ON ibis.tb_pedidocab.idcostos = ibis.tb_proyectos.nidreg
+                                                        INNER JOIN ibis.tb_parametros AS atenciones ON ibis.tb_pedidocab.nivelAten = atenciones.nidreg
+                                                        INNER JOIN ibis.tb_parametros AS estados ON ibis.tb_pedidocab.estadodoc = estados.nidreg
+                                                    WHERE 
+                                                        YEAR(ibis.tb_pedidocab.emision) = :anio
+                                                        AND ibis.tb_pedidocab.idcostos LIKE :cc
+                                                        AND ibis.tb_pedidocab.nrodoc LIKE :num
+                                                    ORDER BY  ibis.tb_pedidocab.nrodoc DESC");
+                
+                $sql->execute(["anio"=>$anio,"cc"=>$c,"num"=>$n]);
 
                 $rowCount = $sql->rowCount();
 
@@ -74,6 +73,69 @@
             }
         }
     
+        public function listarPedidosScroll($pagina,$cantidad){
+            try {
+                $inicio = ($pagina - 1) * $cantidad;
+                $limite = $this->contarItems();
+
+                $sql = $this->db->connect()->prepare("SELECT
+                                                    ibis.tb_pedidocab.idreg,
+                                                    ibis.tb_pedidocab.idcostos,
+                                                    ibis.tb_pedidocab.idarea,
+                                                    DATE_FORMAT(ibis.tb_pedidocab.emision,'%d/%m/%Y') AS emision,
+                                                    ibis.tb_pedidocab.vence,
+                                                    ibis.tb_pedidocab.estadodoc,
+                                                    LPAD(ibis.tb_pedidocab.nrodoc,6,0) AS nrodoc,
+                                                    IF(ibis.tb_pedidocab.idtipomov = 37,'B','S') AS idtipomov,
+                                                    UPPER(ibis.tb_pedidocab.concepto) AS concepto,
+                                                    CONCAT(rrhh.tabla_aquarius.nombres,' ',rrhh.tabla_aquarius.apellidos) AS nombres,
+                                                    UPPER(CONCAT(ibis.tb_proyectos.ccodproy,' ',ibis.tb_proyectos.cdesproy)) AS costos,
+                                                    ibis.tb_pedidocab.nivelAten,
+                                                    atenciones.cdescripcion AS atencion,
+                                                    estados.cdescripcion AS estado,
+                                                    UPPER(estados.cabrevia) AS cabrevia 
+                                                FROM
+                                                    ibis.tb_pedidocab
+                                                    LEFT JOIN rrhh.tabla_aquarius ON ibis.tb_pedidocab.idsolicita = rrhh.tabla_aquarius.internal
+                                                    INNER JOIN ibis.tb_proyectos ON ibis.tb_pedidocab.idcostos = ibis.tb_proyectos.nidreg
+                                                    INNER JOIN ibis.tb_parametros AS atenciones ON ibis.tb_pedidocab.nivelAten = atenciones.nidreg
+                                                    INNER JOIN ibis.tb_parametros AS estados ON ibis.tb_pedidocab.estadodoc = estados.nidreg
+                                                ORDER BY  ibis.tb_pedidocab.nrodoc DESC
+                                                LIMIT $inicio,$cantidad");
+                
+                $sql->execute();
+
+                $rc = $sql->rowcount();
+                $item = 1;
+
+                if ($rc > 0){
+                    while( $rs = $sql->fetch()) {
+                        $pedidos[] = $rs;
+                    }
+                }
+
+                return array("pedidos"=>$pedidos,
+                            'quedan'=>($inicio + $cantidad) < $limite);
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function contarItems(){
+            try {
+                $sql = $this->db->connect()->query("SELECT COUNT(*) AS regs FROM tb_pedidocab WHERE nflgActivo = 1");
+                $sql->execute();
+                $filas = $sql->fetch();
+
+                return $filas['regs'];
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
         public function consultarReqIdAdmin($id,$min,$max,$proceso){
             try {
                 $sql = $this->db->connect()->prepare("SELECT
@@ -88,13 +150,16 @@
                                                         ibis.tb_pedidocab.estadodoc, 
                                                         ibis.tb_pedidocab.nrodoc, 
                                                         ibis.tb_pedidocab.usuario, 
-                                                        ibis.tb_pedidocab.concepto, 
+                                                        UPPER(ibis.tb_pedidocab.concepto) AS concepto, 
                                                         ibis.tb_pedidocab.detalle, 
                                                         ibis.tb_pedidocab.nivelAten, 
                                                         ibis.tb_pedidocab.docfPdfPrev, 
                                                         ibis.tb_pedidocab.docPdfEmit, 
                                                         ibis.tb_pedidocab.docPdfAprob, 
                                                         ibis.tb_pedidocab.verificacion,
+                                                        ibis.tb_pedidocab.aprueba,
+                                                        ibis.tb_pedidocab.asigna,
+                                                        ibis.tb_pedidocab.faprueba,
                                                         ibis.tb_pedidocab.nmtto, 
                                                         CONCAT( rrhh.tabla_aquarius.apellidos, ' ', rrhh.tabla_aquarius.nombres ) AS nombres, 
                                                         UPPER(
@@ -381,13 +446,16 @@
             $rowCount = $sql->rowCount();
             
             $rowDetails = $this->actualizarDetallesAdmin($cabecera['codigo_verificacion'],
-                                            $cabecera['codigo_estado'],
+                                            54,
                                             $cabecera['codigo_atencion'],
                                             $cabecera['codigo_tipo'],
                                             $cabecera['codigo_costos'],
                                             $cabecera['codigo_area'],
                                             $cabecera['codigo_pedido'],
-                                            $detalles);
+                                            $detalles,
+                                            $cabecera['asigna'],
+                                            $cabecera['aprueba'],
+                                            $cabecera['fecha_aprobacion'],);
 
             if ($rowCount > 0 || $rowDetails > 0){
                 $respuesta = true;
@@ -403,7 +471,7 @@
             return $salida;
         }
 
-        private function actualizarDetallesAdmin($codigo,$estado,$atencion,$tipo,$costos,$area,$idpedido,$detalles){
+        private function actualizarDetallesAdmin($codigo,$estado,$atencion,$tipo,$costos,$area,$idpedido,$detalles,$asigna,$aprueba,$fecha){
             $details = json_decode($detalles);
             $nreg = count($details);
             $rowCount = 0;
@@ -426,23 +494,31 @@
                                                                          idarea=:area,
                                                                          observaciones=:espec,
                                                                          nregistro=:registro,
-                                                                         nroparte=:parte");
+                                                                         nroparte=:parte,
+                                                                         idasigna=:asigna,
+                                                                         idaprueba=:aprueba,
+                                                                         faprobado=:aprobacion,
+                                                                         cant_aprob=:cantapro");
 
                         $sql->execute(["pedido"=>$idpedido,
-                            "prod"=>$details[$i]->idprod,
-                            "tipo"=>$tipo,
-                            "und"=>$details[$i]->unidad,
-                            "cant"=>$details[$i]->cantidad,
-                            "atendido"=>$details[$i]->atendida,
-                            "est"=>$estado,
-                            "aten"=>$atencion,
-                            "ver"=>$codigo,
-                            "qaqc"=>$details[$i]->calidad,
-                            "costos"=>$costos,
-                            "area"=>$area,
-                            "espec"=>$details[$i]->especifica,
-                            "registro"=>$details[$i]->registro,
-                            "parte"=>$details[$i]->nroparte]);
+                                        "prod"=>$details[$i]->idprod,
+                                        "tipo"=>$tipo,
+                                        "und"=>$details[$i]->unidad,
+                                        "cant"=>$details[$i]->cantidad,
+                                        "atendido"=>$details[$i]->atendida,
+                                        "est"=>$estado,
+                                        "aten"=>$atencion,
+                                        "ver"=>$codigo,
+                                        "qaqc"=>$details[$i]->calidad,
+                                        "costos"=>$costos,
+                                        "area"=>$area,
+                                        "espec"=>$details[$i]->especifica,
+                                        "registro"=>$details[$i]->registro,
+                                        "parte"=>$details[$i]->nroparte,
+                                        "asigna"=>$asigna,
+                                        "aprueba"=>$aprueba,
+                                        "aprobacion"=>$fecha,
+                                        "cantapro"=>$details[$i]->cantapro]);
                         
                         $rowCount = $sql->rowCount();
                     }catch (PDOException $th) {

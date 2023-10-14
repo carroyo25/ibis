@@ -12,7 +12,6 @@
             $this->view->listaTipos = $this->model->listarParametros("07");
             $this->view->listaTransportes = $this->model->listarParametros("08");
             $this->view->listaAquarius  = $this->model->listarAquarius();
-            $this->view->listaPedidos = $this->model->listarPedidosUsuario("");
 
             $this->view->render('pedidoedit/index');
         }
@@ -51,5 +50,12 @@
 
         function filtro() {
             echo $this->model->listarPedidosUsuario($_POST);
+        }
+
+        function listaScroll(){
+            $pagina = $_POST['pagina'] ?? 1;
+	        $cantidad = 30;
+
+            echo json_encode([$this->model->listarPedidosScroll($pagina,$cantidad)]);
         }
     }
