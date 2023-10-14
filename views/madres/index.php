@@ -110,7 +110,7 @@
                         <span>Detalles</span>
                         <div>
                             <button type="button" id="guiaRemision" title="Guia de Remision" class="cerrarLista boton3">
-                                <i class="fas fa-upload"></i> Guia de Remision
+                                <i class="fas fa-upload"></i> Guia de Remisión
                             </button>
                         </div>
                     </div>
@@ -123,6 +123,7 @@
                                     <th class="">Descripcion</th>
                                     <th class="">Unidad</th>
                                     <th width="7%">Cantidad</th>
+                                    <th width="7%">Nro.Guia</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -186,7 +187,7 @@
 
                 <div class="tituloDocumento">
                     <div>
-                        <p class="titulo_seccion"><strong> Guia de Madre : </strong></p>
+                        <p class="titulo_seccion"><strong> Guia de Remisión : </strong></p>
                         <input type="text" name="serie_guia" id="serie_guia" class="w10por" value="T001" readonly>
                         <input type="text" name="numero_guia" id="numero_guia">    
                     </div>
@@ -346,7 +347,7 @@
         </div>
     </div>
     <div class="cabezaModulo">
-        <h1>Guias Madre</h1>
+        <h1>Guias de Remision SUNAT</h1>
         <div>
             <a href="#" id="nuevoRegistro"><i class="far fa-file"></i><p>Nuevo</p></a>
             <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
@@ -398,18 +399,13 @@
                     <th>Num.</th>  
                     <th>Emision</th>
                     <th>Fecha Traslado</th> 
-                    <th>Centro Costos</th>
-                    <th>Estado</th>
+                    <th>Almacen Origen</th>
+                    <th>Almacen Destino</th>
+                    <th>Estado Envio</th>
                 </tr>
             </thead>
             <tbody>
-                <tr class="pointer">
-                    <td class="textoCentro">131-262626</td>  
-                    <td class="textoCentro">13/10/2023</td>
-                    <td class="textoCentro">15/10/2023</td>
-                    <td class="pl20px">3200</td>
-                    <td class="textoCentro" style="background:red; color:white"><span >Pendiente</span></td>
-                </tr>
+                
             </tbody>
         </table>
     </div>

@@ -355,7 +355,7 @@
                 </tr>
             </thead>
             <tbody>
-                <?php echo $this->listaPedidos;?>
+                
             </tbody>
         </table>
     </div>

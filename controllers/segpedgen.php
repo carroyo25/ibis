@@ -8,7 +8,6 @@
         function render(){
             $this->view->listaCostos = $this->model->costosPorUsuario($_SESSION['iduser']);
             $this->view->listaCostosSelect = $this->model->costosPorUsuarioSelect($_SESSION['iduser']);
-            $this->view->listaPedidos = $this->model->listarPedidosUsuario();
             $this->view->render('segpedgen/index');
         }
 
@@ -26,6 +25,13 @@
 
         function filtroPedidosAdmin(){
             echo $this->model->listarPedidosFiltrados($_POST);
+        }
+
+        function listaScroll(){
+            $pagina = $_POST['pagina'] ?? 1;
+	        $cantidad = 30;
+
+            echo json_encode([$this->model->listarPedidosConsultaScroll($pagina,$cantidad)]);
         }
         
     }

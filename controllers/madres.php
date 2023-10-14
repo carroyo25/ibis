@@ -30,6 +30,13 @@
             echo json_encode ($this->model->grabarGuia($_POST));
         }
 
+        function listaScroll(){
+            $pagina = $_POST['pagina'] ?? 1;
+	        $cantidad = 30;
+
+            echo json_encode([$this->model->listarGuiasScroll($pagina,$cantidad)]);
+        }
+
         
     }
 ?>

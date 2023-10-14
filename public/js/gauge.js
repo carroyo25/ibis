@@ -1,5 +1,5 @@
-let valor_avance = document.getElementById("codigo_estado");
-let avance = parseInt(valor_avance);
+//let valor_avance = document.getElementById("codigo_estado");
+//let avance = parseInt(valor_avance);
 
 var gaugeOptions = {
 

@@ -1,5 +1,68 @@
 $(() =>{
-    let accion = "";
+    const body = document.querySelector("#tablaPrincipal tbody");
+
+    let listItemFinal = null,estoyPidiendo = false,iditempedido = "",fila=0,estadoItem=0,accion = "";
+
+    //LISTA PARA EL SCROLL
+
+    const observandoListItem = listItem => {
+        if ( listItem[0].isIntersecting ) {
+            query();
+        }
+    }
+
+    const settings = {
+        threshold: 1
+    }
+
+    let observador = new IntersectionObserver(
+        observandoListItem,
+        settings
+    );
+
+    const query = async () => {
+        if (estoyPidiendo) return;
+        estoyPidiendo = true;
+        let pagina = parseInt(body.dataset.p) || 1;
+        const FD = new FormData();
+        FD.append('pagina',pagina);
+
+        const r = await fetch(RUTA+'madres/listaScroll',{
+            method: 'POST',
+            body:FD
+        });
+
+        const j  = await r.json();
+        j[0].guias.forEach(i => {
+            const tr = document.createElement('tr');
+            
+            tr.innerHTML = `<td class="textoCentro">${i.cnroguia}</td>
+                            <td class="textoCentro">${i.emision}</td>
+                            <td class="textoCentro">${i.traslado}</td>
+                            <td class="textoCentro">${i.almacen_origen}</td>
+                            <td class="pl20px">${i.almacen_destino}</td>
+                            <td class="pl20px">${i.nflgSunat}</td>`;
+            tr.classList.add("pointer");
+            tr.dataset.indice = i.idreg;
+            body.appendChild(tr);
+        })
+
+        if (listItemFinal){
+            observador.unobserve(listItemFinal);
+        }
+
+        if (j[0].quedan) { //devuelve falso si ya no quedan mas registros
+            listItemFinal = body.lastElementChild.previousElementSibling;
+            observador.observe( listItemFinal);
+            estoyPidiendo = false;
+            body.dataset.p = ++pagina;
+        }
+    }
+
+    query();
+
+    ///FIN DEL SCROLL
+
 
     $("#esperar").fadeOut();
 
@@ -270,7 +333,6 @@ $(() =>{
     $("#saveDocument").click(function(e){
         e.preventDefault();
 
-
         $.post(RUTA+"madres/grabaGuiaMadre", {detalles:JSON.stringify(detalles()),
                                                 proyecto: $("#corigen").val(),
                                                 guia:$("#numero_guia").val(),
@@ -289,10 +351,11 @@ $(() =>{
                                                 peso:$("#peso").val(),
                                                 bultos:$("#bultos").val(),
                                                 emision:$("#fgemision").val(),
-                                                traslado:$("#ftraslado").val()},
+                                                traslado:$("#ftraslado").val(),
+                                                useremit:$("#id_user").val()},
 
                 function (data, textStatus, jqXHR) {
-                    mostrarMensaje(data.mensaje,"mensaje_correcto");
+                    mostrarMensaje(data.mensaje,data.clase);
                     $("#numero").val(data.guia);
                 },
                 "json"

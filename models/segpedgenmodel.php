@@ -60,6 +60,71 @@
             }
         }
 
+        public function listarPedidosConsultaScroll($pagina,$cantidad){
+            try {
+                $inicio = ($pagina - 1) * $cantidad;
+                $limite = $this->contarItems();
+
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        ibis.tb_pedidocab.idreg,
+                                                        ibis.tb_pedidocab.idcostos,
+                                                        ibis.tb_pedidocab.idarea,
+                                                        DATE_FORMAT(ibis.tb_pedidocab.emision,'%d/%m/%Y') AS emision,
+                                                        ibis.tb_pedidocab.vence,
+                                                        ibis.tb_pedidocab.estadodoc,
+                                                        LPAD(ibis.tb_pedidocab.nrodoc,6,0) AS nrodoc,
+                                                        ibis.tb_pedidocab.idtipomov,
+                                                        UPPER(ibis.tb_pedidocab.concepto) AS concepto,
+                                                        CONCAT(rrhh.tabla_aquarius.nombres,' ',rrhh.tabla_aquarius.apellidos) AS nombres,
+                                                        UPPER(CONCAT(ibis.tb_proyectos.ccodproy,' ',ibis.tb_proyectos.cdesproy)) AS costos,
+                                                        ibis.tb_pedidocab.nivelAten,
+                                                        atenciones.cdescripcion AS atencion,
+                                                        estados.cdescripcion AS estado,
+                                                        estados.cabrevia 
+                                                    FROM
+                                                        ibis.tb_pedidocab
+                                                        INNER JOIN rrhh.tabla_aquarius ON ibis.tb_pedidocab.idsolicita = rrhh.tabla_aquarius.internal
+                                                        INNER JOIN ibis.tb_proyectos ON ibis.tb_pedidocab.idcostos = ibis.tb_proyectos.nidreg
+                                                        INNER JOIN ibis.tb_parametros AS atenciones ON ibis.tb_pedidocab.nivelAten = atenciones.nidreg
+                                                        INNER JOIN ibis.tb_parametros AS estados ON ibis.tb_pedidocab.estadodoc = estados.nidreg
+                                                    WHERE YEAR(ibis.tb_pedidocab.emision) = YEAR(NOW())
+                                                        AND ibis.tb_pedidocab.estadodoc != 105
+                                                    ORDER BY ibis.tb_pedidocab.emision DESC
+                                                    LIMIT $inicio,$cantidad");
+                
+                $sql->execute();
+
+                $rc = $sql->rowcount();
+                $item = 1;
+
+                if ($rc > 0){
+                    while( $rs = $sql->fetch()) {
+                        $pedidos[] = $rs;
+                    }
+                }
+
+                return array("pedidos"=>$pedidos,
+                            'quedan'=>($inicio + $cantidad) < $limite);
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function contarItems(){
+            try {
+                $sql = $this->db->connect()->query("SELECT COUNT(*) AS regs FROM tb_pedidocab WHERE nflgActivo = 1 AND ibis.tb_pedidocab.estadodoc != 105");
+                $sql->execute();
+                $filas = $sql->fetch();
+
+                return $filas['regs'];
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
         public function consultarInfo($id){
             try {
                 $sql=$this->db->connect()->prepare("SELECT

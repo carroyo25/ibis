@@ -124,6 +124,8 @@ $(function(){
         e.preventDefault();
 
         $("#proceso").fadeOut();
+        
+        //llama la funcion para recargar la tabla
         query();
         
         return false;
