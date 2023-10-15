@@ -1,17 +1,88 @@
 $(function(){
-    let accion   = "",
-        grabado  = false,
-        entidad  = "",
+    let entidad  = "",
         pedido   = 0,
         proforma = "",
         moneda   = "",
-        cmoneda  = "",
-        pago     = "",
         ingresos = 0,
         swcoment = false,
         autorizado = 0,
-        fila = 0;
         fp = 0;
+    
+    const body = document.querySelector("#tablaPrincipal tbody");
+
+    let listItemFinal = null,estoyPidiendo = false;
+
+    const observandoListItem = listItem => {
+        if ( listItem[0].isIntersecting ) {
+            query();
+        }
+    }
+
+    const settings = {
+        threshold: 1
+    }
+
+    let observador = new IntersectionObserver(
+        observandoListItem,
+        settings
+    );
+
+    const query = async () => {
+        if (estoyPidiendo) return;
+        estoyPidiendo = true;
+        let pagina = parseInt(body.dataset.p) || 1;
+        const FD = new FormData();
+        FD.append('pagina',pagina);
+
+        const r = await fetch(RUTA+'ordenedit/listaScroll',{
+            method: 'POST',
+            body:FD
+        });
+
+        let item = 0;
+
+        const j  = await r.json();
+        j[0].filas.forEach(i => {
+            const tr = document.createElement('tr');
+
+            let logistica = i.logistica == 0 ? '<i class="far fa-square"></i>' : '<i class="far fa-check-square"></i>',
+                finanzas  = i.finanzas  == 0 ? '<i class="far fa-square"></i>' : '<i class="far fa-check-square"></i>',
+                operaciones = i.operaciones == 0 ? '<i class="far fa-square"></i>' : '<i class="far fa-check-square"></i>';
+            
+            tr.innerHTML = `<td class="textoCentro">${i.cnumero}</td>
+                            <td class="textoCentro">${i.emision}</td>
+                            <td class="pl20px">${i.concepto}</td>
+                            <td class="pl20px">${i.ccodproy}</td>
+                            <td class="pl20px">${i.area}</td>
+                            <td class="pl20px">${i.proveedor}</td>
+                            <td class="textoCentro ${i.atencion.toLowerCase()}">${i.atencion}</td>
+                            <td class="textoCentro">${logistica}</td>
+                            <td class="textoCentro">${finanzas}</td>
+                            <td class="textoCentro">${operaciones}</td>`;
+            tr.classList.add("pointer");
+            tr.classList.add(i.resaltado);
+            tr.dataset.indice = i.id_regmov;
+            tr.dataset.estado = i.nEstadoDoc;
+            tr.dataset.finanzas = i.finanzas;
+            tr.dataset.logistica = i.logistica;
+            tr.dataset.operaciones = i.operaciones;
+
+            body.appendChild(tr);
+        })
+
+        if (listItemFinal){
+            observador.unobserve(listItemFinal);
+        }
+
+        if (j[0].quedan) { //devuelve falso si ya no quedan mas registros
+            listItemFinal = body.lastElementChild.previousElementSibling;
+            observador.observe( listItemFinal);
+            estoyPidiendo = false;
+            body.dataset.p = ++pagina;
+        }
+    }
+
+    query();
     
     $("#esperar").fadeOut();
 
@@ -214,21 +285,16 @@ $(function(){
     $("#closeProcess").click(function (e) { 
         e.preventDefault();
 
-        $.post(RUTA+"ordenedit/actualizaListado",
-            function (data, textStatus, jqXHR) {
-                $(".itemsTabla table tbody")
-                    .empty()
-                    .append(data);
-
-                $("#proceso").fadeOut(function(){
-                    grabado = false;
-                    $("form")[0].reset();
-                    $("form")[1].reset();
-                    $("#tablaDetalles tbody").empty();
-                });
-            },
-            "text"
-        );
+        $("#proceso").fadeOut(function(){
+            grabado = false;
+            $("form")[0].reset();
+            $("form")[1].reset();
+            $("#tablaDetalles tbody").empty();
+        });
+logistica
+finanzas
+operaciones
+        query();
 
         return false;
     });

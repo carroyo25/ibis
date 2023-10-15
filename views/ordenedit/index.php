@@ -458,7 +458,7 @@
                 </tr>
             </thead>
             <tbody>
-                <?php echo $this->listaOrdenes;?>
+                <?php //echo $this->listaOrdenes;?>
             </tbody>
         </table>
     </div>

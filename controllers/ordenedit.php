@@ -79,5 +79,12 @@
         function anula(){
             echo json_encode($this->model->anularOrden($_POST['id']));
         }
+
+        function listaScroll(){
+            $pagina = $_POST['pagina'] ?? 1;
+            $cantidad = 30;
+        
+            echo json_encode([$this->model->listarOrdenScroll($pagina,$cantidad)]);
+        }
     }
 ?>

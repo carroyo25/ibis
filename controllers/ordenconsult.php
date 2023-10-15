@@ -39,5 +39,12 @@
         function exporta() {
             echo json_encode($this->model->exportar($_POST['detalles']));
         }
+
+        function listaScroll(){
+            $pagina = $_POST['pagina'] ?? 1;
+            $cantidad = 30;
+        
+            echo json_encode([$this->model->listarOrdenConsultScroll($pagina,$cantidad)]);
+        }
     }
 ?>
