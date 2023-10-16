@@ -5,7 +5,7 @@
     if ($url === "localhost")
         define('URL','http://localhost/ibis/');
     else if ($url === "192.168.110.16")
-        define('URL','//192.168.110.16/ibis/');
+        define('URL','http://192.168.110.16/ibis/');
     else if ($url === "200.41.86.58")
         define('URL','http://200.41.86.58/ibis/');
     else if ($url === "sicalsepcon.net")

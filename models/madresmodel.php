@@ -144,7 +144,7 @@
 
                 if ($rowCount > 0) {
                     $indice = $this->generarNumeroSunat();
-                    $this->grabarDetallesGuia($indice,$detalles);
+                    $this->grabarDetallesGuia($indice,$detalles,$datos['guia']);
                     $mensaje = "Guia grabada correctamente";
                     $clase = "mensaje_correcto";
                 }
@@ -156,7 +156,7 @@
             }
         }
 
-        private function grabarDetallesGuia($indice,$detalles){
+        private function grabarDetallesGuia($indice,$detalles,$guiaMadre){
             $nreg = count($detalles);
 
             for ($i=0; $i < $nreg; $i++) { 
@@ -166,6 +166,12 @@
                                                                                           idguiasunat=:indice");
                     
                     $sql->execute(["indice"=>$indice,"item"=>$detalles[$i]->iddespacho,"despacho"=>$detalles[$i]->despacho]);
+
+                    $rowCount = $sql->rowCount();
+
+                    if ($rowCount > 0) {
+                        $this->actualizaEstadoGuia($detalles[$i]->despacho,$guiaMadre);
+                    }
                 } catch (PDOException $th) {
                     echo $th->getMessage();
                     return false;
@@ -202,9 +208,10 @@
                                                             UPPER( destino.cdesalm ) AS almacen_destino 
                                                         FROM
                                                             lg_guiamadre
-                                                            INNER JOIN tb_almacen AS origen ON lg_guiamadre.nlamorigen = origen.ncodalm
-                                                            INNER JOIN tb_almacen AS destino ON lg_guiamadre.nalmdestino = destino.ncodalm
-                                                        WHERE lg_guiamadre.nflgActivo = 1");
+                                                            LEFT JOIN tb_almacen AS origen ON lg_guiamadre.nlamorigen = origen.ncodalm
+                                                            LEFT JOIN tb_almacen AS destino ON lg_guiamadre.nalmdestino = destino.ncodalm
+                                                        WHERE lg_guiamadre.nflgActivo = 1
+                                                        LIMIT $inicio,5");
                 
                 $sql->execute();
 
@@ -228,13 +235,23 @@
 
         private function contarItems(){
             try {
-                $sql = $this->db->connect()->query("SELECT COUNT(*) AS regs FROM tb_pedidocab WHERE nflgActivo = 1");
+                $sql = $this->db->connect()->query("SELECT COUNT(*) AS regs FROM lg_guiamadre WHERE nflgActivo = 1");
                 $sql->execute();
                 $filas = $sql->fetch();
 
                 return $filas['regs'];
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function actualizaEstadoGuia($despacho,$guiaMadre){
+            try {
+                $sql = $this->db->connect()->prepare("UPDATE lg_guias SET lg_guias.flgmadre = 1,lg_guias.cnumadre=:guia WHERE id_regalm =:despacho");
+                $sql->execute(["guia"=>$guiaMadre,"despacho"=>$despacho]);
+            } catch (PDOException $th) {
+                echo $th->getMessage();
                 return false;
             }
         }

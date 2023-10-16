@@ -232,7 +232,7 @@ $(function(){
 
         try {
 
-            if  ( checkCantTables($("#tablaDetalles tbody > tr"),6) ) throw "Revise las cantidades ingresadas";
+            //if  ( checkCantTables($("#tablaDetalles tbody > tr"),6) ) throw "Revise las cantidades ingresadas";
 
             if (accion == "n") {
                 

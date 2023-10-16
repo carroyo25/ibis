@@ -282,7 +282,7 @@
                                         <td class="textoDerecha pr15px" style="background:#e8e8e8;font-weight: bold">'.$rs['cantidad_orden'].'</td>
                                         <td class="pl10px">'.$rs['item_orden'].'</td>
                                         <td class="pl10px">'.$rs['fecha_autorizacion_orden'].'</td>
-                                        <td class="textoDerecha pr15px">'.number_format($rs['atencion_almacen'],2).'</td>
+                                        <td class="textoDerecha pr15px">'.number_format($rs['cantidad_atendida'],2).'</td>
                                         <td class="pl10px">'.$rs['proveedor'].'</td>
                                         <td class="textoCentro">'.$rs['fecha_entrega'].'</td>
                                         <td class="textoDerecha pr15px">'.$rs['ingreso'].'</td>
@@ -1247,7 +1247,7 @@
                             $objPHPExcel->getActiveSheet()->setCellValue('V'.$fila,PHPExcel_Shared_Date::PHPToExcel($rs['fecha_autorizacion_orden']));
                             $objPHPExcel->getActiveSheet()->getStyle('V'.$fila)->getNumberFormat()->setFormatCode('dd/mm/yyyy');
                         
-                        $objPHPExcel->getActiveSheet()->setCellValue('W'.$fila,$rs['atencion_almacen']);
+                        $objPHPExcel->getActiveSheet()->setCellValue('W'.$fila,$rs['cantidad_atendida']);
                         $objPHPExcel->getActiveSheet()->setCellValue('X'.$fila,$rs['proveedor']);
 
                         if  ($rs['fecha_entrega'] !== "")
