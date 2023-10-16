@@ -829,7 +829,7 @@
                                                     WHERE
                                                         tb_costusu.id_cuser = :user 
                                                         AND tb_costusu.nflgactivo = 1
-                                                    ORDER BY lg_ordencab.ffechadoc DESC
+                                                    ORDER BY lg_ordencab.id_regmov DESC
                                                     LIMIT $inicio,$cantidad");
                 
                 $sql->execute(["user"=>$_SESSION['iduser']]);
