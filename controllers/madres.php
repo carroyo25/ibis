@@ -37,6 +37,8 @@
             echo json_encode([$this->model->listarGuiasScroll($pagina,$cantidad)]);
         }
 
-        
+        function guiasRemision(){
+            echo json_encode($this->llamarDatosGuia($_POST['id']));
+        } 
     }
 ?>

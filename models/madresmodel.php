@@ -121,7 +121,8 @@
                                                                             cplaca =:placa,
                                                                             npeso =:peso,
                                                                             nbultos =:bultos,
-                                                                            useremit =:user");
+                                                                            useremit =:user,
+                                                                            idaprueba =:aprueba");
             
                 $sql->execute(["emision"=>$datos['emision'],
                                 "traslado"=>$datos['traslado'],
@@ -138,7 +139,8 @@
                                 "placa"=>$datos['placa'],
                                 "peso"=>$datos['peso'],
                                 "bultos"=>$datos['bultos'],
-                                "user"=>$datos['useremit']]);
+                                "user"=>$datos['useremit'],
+                                "aprueba"=>$datos['aprueba']]);
 
                 $rowCount = $sql->rowCount();
 
@@ -198,6 +200,10 @@
                 $inicio = ($pagina - 1) * $cantidad;
                 $limite = $this->contarItems();
 
+                if ($limite < 30) {
+                    $cantidad = $limite;
+                }
+
                 $sql = $this->db->connect()->prepare("SELECT
                                                             lg_guiamadre.idreg,
                                                             lg_guiamadre.cnroguia,
@@ -211,12 +217,11 @@
                                                             LEFT JOIN tb_almacen AS origen ON lg_guiamadre.nlamorigen = origen.ncodalm
                                                             LEFT JOIN tb_almacen AS destino ON lg_guiamadre.nalmdestino = destino.ncodalm
                                                         WHERE lg_guiamadre.nflgActivo = 1
-                                                        LIMIT $inicio,5");
+                                                        LIMIT $inicio,$cantidad");
                 
                 $sql->execute();
 
                 $rc = $sql->rowcount();
-                $item = 1;
 
                 if ($rc > 0){
                     while( $rs = $sql->fetch()) {
@@ -224,8 +229,18 @@
                     }
                 }
 
+                if ($limite  > 30) {
+                    if ( ($inicio + $cantidad) < $limite ){
+                        $quedan = true;
+                    }
+                }else {
+                    $quedan = false;
+                }
+
+                
+
                 return array("guias"=>$guias,
-                            'quedan'=>($inicio + $cantidad) < $limite);
+                            'quedan'=> $quedan);
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
@@ -254,6 +269,35 @@
                 echo $th->getMessage();
                 return false;
             }
+        }
+
+        public function guiaMadreID($id) {
+            try {
+                $sql= $this->db->connect()->prepare("SELECT
+                                                    lg_guiamadre.idreg,
+                                                    tb_user.cnombres,
+                                                    lg_guiamadre.ffecdoc,
+                                                    lg_guiamadre.ffectraslado,
+                                                    UPPER( origen.cdesalm ) AS origen,
+                                                    UPPER( destino.cdesalm ) AS destino,
+                                                    lg_guiamadre.nflgSunat 
+                                                FROM
+                                                    lg_guiamadre
+                                                    LEFT JOIN tb_user ON lg_guiamadre.idaprueba = tb_user.iduser
+                                                    INNER JOIN tb_almacen AS origen ON lg_guiamadre.nlamorigen = origen.ncodalm
+                                                    INNER JOIN tb_almacen AS destino ON lg_guiamadre.nlamorigen = destino.ncodalm 
+                                                WHERE
+                                                    lg_guiamadre.nflgActivo = 1
+                                                    AND lg_guiamadre.idreg = 1");
+                
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        private function datosGuia($id){
+
         }
     }
 ?>

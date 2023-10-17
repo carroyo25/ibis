@@ -7,6 +7,11 @@
     <title>Guias Madre</title>
 </head>
 <body>
+   <!--  <div class="progress">
+		<p>PHP</p>
+		<progress id="php" max="100" value="72"></progress>
+		<span></span>
+	</div> -->
     <div class="modal" id="proceso">
         <div class="ventanaProceso tamanioProceso">
             <div class="cabezaProceso">
