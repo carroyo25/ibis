@@ -143,7 +143,7 @@
                 if ($rowCount > 0) {
                     $salida="";
                     while ($rs = $sql->fetch()){
-                        $saldo = ( $rs['ingresos']+$rs['inventarios']+$rs['devoluciones']+$rs['ingresos_transferencias'] )-($rs['consumos']+$rs['salidas_transferencia']);
+                        $saldo = ( $rs['ingresos']+$rs['inventarios']+$rs['devoluciones'] )-($rs['consumos']+$rs['salidas_transferencia']);
                         $saldo = $saldo > -1 ? $saldo : $saldo;
                         $estado = $saldo > -1 ? "semaforoVerde":"semaforoRojo";
 
