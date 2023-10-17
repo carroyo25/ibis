@@ -164,6 +164,9 @@ $(() =>{
         }else if(contenedor_padre == "listaDestinatario"){
             $("#destinatario").val($(this).text());
             $("#codigo_destinatario").val(codigo);
+        }else if(contenedor_padre == "listaMovimiento"){
+            $("#codigo_movimiento").val(codigo);
+            $("#tipo_envio").val($(this).text());
         }
 
         return false;
@@ -354,11 +357,11 @@ $(() =>{
                                                 alm_origen:$("#codigo_almacen_origen").val(),
                                                 alm_destino:$("#codigo_almacen_destino").val(),
                                                 modalidad:$("#codigo_modalidad").val(),
-                                                tipo:$("#codigo_tipo").val(),
+                                                tipo:$("#codigo_movimiento").val(),
                                                 transportista:$("#codigo_entidad_transporte").val(),
-                                                conductor:$("#conductor_dni").val(),
+                                                conductor:$("#nombre_conductor").val(),
                                                 licencia:$("#licencia_conducir").val(),
-                                                dni:$("#codigo_tipo").val(),
+                                                dni:$("#conductor_dni").val(),
                                                 marca:$("#marca").val(),
                                                 placa:$("#placa").val(),
                                                 peso:$("#peso").val(),
@@ -380,7 +383,44 @@ $(() =>{
     $("#tablaPrincipal tbody").on("click","tr", function (e) {
         e.preventDefault();
 
-        $("#proceso").fadeIn();
+        $.post(RUTA+"madres/guiasRemision", {id:$(this).data("indice")},
+            function (data, text, requestXHR) {
+
+                $("#fecha").val(data.cabecera[0].ffecdoc);
+                $("#numero").val(data.cabecera[0].idreg);
+
+                $("#aprueba").val(data.cabecera[0].cnombres);
+                $("#almacen_origen_despacho").val(data.cabecera[0].origen);
+                $("#almacen_destino_despacho").val(data.cabecera[0].destino);
+                $("#tipo").val(data.cabecera[0].movimiento);
+
+                /*numero_guia
+                almacen_origen
+                almacen_origen_direccion
+                almacen_destino
+                almacen_destino_direccion
+                empresa_transporte_razon
+                direccion_proveedor
+                ruc_proveedor
+                modalidad_traslado
+                tipo_envio
+                autoriza
+                destinatario
+                observaciones
+                nombre_conductor
+                licencia_conducir
+                conductor_dni
+                marca
+                placa
+                peso
+                bultos*/
+
+                $("#tablaDetalles tbody").empty().append(data.detalles);
+
+                $("#proceso").fadeIn();
+            },
+            "json"
+        );
 
         return false;
     });

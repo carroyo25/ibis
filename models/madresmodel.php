@@ -273,22 +273,37 @@
 
         public function guiaMadreID($id) {
             try {
+                $salida = "";
                 $sql= $this->db->connect()->prepare("SELECT
-                                                    lg_guiamadre.idreg,
-                                                    tb_user.cnombres,
-                                                    lg_guiamadre.ffecdoc,
-                                                    lg_guiamadre.ffectraslado,
-                                                    UPPER( origen.cdesalm ) AS origen,
-                                                    UPPER( destino.cdesalm ) AS destino,
-                                                    lg_guiamadre.nflgSunat 
-                                                FROM
-                                                    lg_guiamadre
-                                                    LEFT JOIN tb_user ON lg_guiamadre.idaprueba = tb_user.iduser
-                                                    INNER JOIN tb_almacen AS origen ON lg_guiamadre.nlamorigen = origen.ncodalm
-                                                    INNER JOIN tb_almacen AS destino ON lg_guiamadre.nlamorigen = destino.ncodalm 
-                                                WHERE
-                                                    lg_guiamadre.nflgActivo = 1
-                                                    AND lg_guiamadre.idreg = 1");
+                                                        lg_guiamadre.idreg,
+                                                        tb_user.cnombres,
+                                                        lg_guiamadre.ffecdoc,
+                                                        lg_guiamadre.ffectraslado,
+                                                        UPPER( origen.cdesalm ) AS origen,
+                                                        UPPER( destino.cdesalm ) AS destino,
+                                                        lg_guiamadre.nflgSunat,
+                                                        movimientos.cdescripcion AS movimiento 
+                                                    FROM
+                                                        lg_guiamadre
+                                                        LEFT JOIN tb_user ON lg_guiamadre.idaprueba = tb_user.iduser
+                                                        INNER JOIN tb_almacen AS origen ON lg_guiamadre.nlamorigen = origen.ncodalm
+                                                        INNER JOIN tb_almacen AS destino ON lg_guiamadre.nalmdestino = destino.ncodalm
+                                                        INNER JOIN tb_parametros AS movimientos ON lg_guiamadre.ntipmov = movimientos.nidreg 
+                                                    WHERE
+                                                        lg_guiamadre.nflgActivo = 1
+                                                        AND lg_guiamadre.idreg = :id");
+
+                $sql->execute(["id"=>$id]);
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0) {
+                    while( $rs = $sql->fetch()) {
+                        $guias[] = $rs;
+                    }
+                }
+
+                return array("cabecera"=>$guias,
+                             "detalles"=>$this->datosGuia($id));
                 
             } catch (PDOException $th) {
                 echo $th->getMessage();
@@ -297,7 +312,51 @@
         }
 
         private function datosGuia($id){
+            $salida = "";
 
+            try {
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        lg_detallemadres.idreg,
+                                                        alm_despachodet.id_cprod,
+                                                        FORMAT(alm_despachodet.ncantidad,2) AS ncantidad,
+                                                        cm_producto.ccodprod,
+                                                        UPPER( cm_producto.cdesprod ) AS cdesprod,
+                                                        tb_unimed.cabrevia,
+                                                        alm_despachocab.cnumguia 
+                                                    FROM
+                                                        lg_detallemadres
+                                                        INNER JOIN alm_despachodet ON lg_detallemadres.itemdespacho = alm_despachodet.niddeta
+                                                        INNER JOIN cm_producto ON alm_despachodet.id_cprod = cm_producto.id_cprod
+                                                        INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                        INNER JOIN alm_despachocab ON alm_despachodet.id_regalm = alm_despachocab.id_regalm 
+                                                    WHERE
+                                                        lg_detallemadres.idguiasunat = :id 
+                                                        AND lg_detallemadres.nfgActivo = 1");
+                $sql->execute(["id"=>$id]);
+
+                $rowCount = $sql->rowCount();
+                $item = 1;
+
+                if ($rowCount > 0) {
+                    while ($rs = $sql->fetch()) {
+                        $salida.= '<tr>
+                                    <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
+                                    <td class="textoCentro">'.$rs['ccodprod'].'</td>
+                                    <td class="pl20px">'.$rs['cdesprod'].'</td>
+                                    <td class="textoCentro">'.$rs['cabrevia'].'</td>
+                                    <td class="textoDerecha">'.$rs['ncantidad'].'</td>
+                                    <td class="textoCentro">'.$rs['cnumguia'].'</td>
+                                </tr>';
+                    }
+                }
+
+                return $salida;
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+
+            return $salida;
         }
     }
 ?>

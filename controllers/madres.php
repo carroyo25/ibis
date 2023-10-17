@@ -38,7 +38,7 @@
         }
 
         function guiasRemision(){
-            echo json_encode($this->llamarDatosGuia($_POST['id']));
+            echo json_encode($this->model->guiaMadreID($_POST['id']));
         } 
     }
 ?>

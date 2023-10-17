@@ -188,7 +188,6 @@
                 <input type="hidden" name="registro_mtc" id="registro_mtc" value="1502229MRP">
                 <input type="hidden" name="cso" id="cso">
                 <input type="hidden" name="csd" id="csd">
-                
 
                 <div class="tituloDocumento">
                     <div>

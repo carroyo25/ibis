@@ -11,7 +11,7 @@
 
                 $salida = "Buscar el pedido";
 
-                $tipo     = $parametros['tipoSearch'] == -1 ? "%" : $parametros['tipoSearch'];
+                $tipo       = $parametros['tipoSearch'] == -1 ? "%" : $parametros['tipoSearch'];
                 $costo      = $parametros['costosSearch'] == -1 ? "%" : $parametros['costosSearch'];
                 $codigo     = $parametros['codigoSearch'] == "" ? "%" : "%".$parametros['codigoSearch']."%";
                 $orden      = $parametros['ordenSearch'] == "" ? "%" : $parametros['ordenSearch'];
