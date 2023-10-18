@@ -39,6 +39,11 @@
 
         function guiasRemision(){
             echo json_encode($this->model->guiaMadreID($_POST['id']));
-        } 
+        }
+
+
+        function envioSunat(){
+            echo json_encode($this->model->enviarSunat($_POST));
+        }
     }
 ?>

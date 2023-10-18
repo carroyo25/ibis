@@ -393,12 +393,12 @@ $(() =>{
                 $("#fecha").val(data.cabecera[0].ffecdoc);
                 $("#numero").val(data.cabecera[0].idreg);
 
-                $("#aprueba").val(data.cabecera[0].cnombres);
+                $("#aprueba").val(data.cabecera[0].autoriza);
                 $("#almacen_origen_despacho").val(data.cabecera[0].origen);
                 $("#almacen_destino_despacho").val(data.cabecera[0].destino);
                 $("#tipo").val(data.cabecera[0].movimiento);
 
-                $("#numero_guia").val(data.cabecera[0].idreg);
+                $("#numero_guia").val(data.cabecera[0].cnroguia);
                 $("#fgemision").val(data.cabecera[0].ffecdoc);
                 $("#ftraslado").val(data.cabecera[0].ffectraslado);
                 $("#almacen_origen").val(data.cabecera[0].origen);
@@ -406,25 +406,53 @@ $(() =>{
                 $("#almacen_destino").val(data.cabecera[0].destino);
                 $("#almacen_destino_direccion").val(data.cabecera[0].destino_direccion);
                 $("#empresa_transporte_razon").val(data.cabecera[0].nombre_proveedor);
-                $("#direccion_proveedor").val(data.cabecera[0].ruc_proveedor);
-                $("#ruc_proveedor").val(data.cabecera[0].direccion_proveedor);
+                $("#direccion_proveedor").val(data.cabecera[0].direccion_proveedor);
+                $("#ruc_proveedor").val(data.cabecera[0].ruc_proveedor);
                 $("#modalidad_traslado").val(data.cabecera[0].movimiento);
-                $("#tipo_envio").val(data.cabecera[0].nTipoEnvio);
+                $("#tipo_envio").val(data.cabecera[0].tipo_envio);
                 $("#autoriza").val(data.cabecera[0].autoriza);
                 $("#destinatario").val(data.cabecera[0].recibe);
                 $("#observaciones").val(data.cabecera[0].cobserva);
                 $("#nombre_conductor").val(data.cabecera[0].cConductor);
-                $("#licencia_conducir").val(data.cabecera[0].licencia);
-                $("#conductor_dni").val(data.cabecera[0].dni);
-                $("#marca").val(data.cabecera[0].marca);
-                $("#placa").val(data.cabecera[0].placa);
-                $("#peso").val(data.cabecera[0].peso);
-                $("#bultos").val(data.cabecera[0].bultos);
+                $("#licencia_conducir").val(data.cabecera[0].clincencia);
+                $("#conductor_dni").val(data.cabecera[0].ndni);
+                $("#marca").val(data.cabecera[0].cmarca);
+                $("#placa").val(data.cabecera[0].cplaca);
+                $("#peso").val(data.cabecera[0].npeso);
+                $("#bultos").val(data.cabecera[0].nbultos);
                 $("#observaciones").val(data.cabecera[0].cObserva);
+
+                $("#codigo_modalidad").val(data.cabecera[0].ntipmov);
+                $("#codigo_tipo").val(data.cabecera[0].nmottranp);
 
                 $("#tablaDetalles tbody").empty().append(data.detalles);
 
                 $("#proceso").fadeIn();
+            },
+            "json"
+        );
+
+        return false;
+    });
+
+    $("#guiaSunat").click(function(e){
+        e.preventDefault();
+
+        let datosGuia = {},datosFormulario = {};
+    
+        $.each($("#guiaremision").serializeArray(),function(){
+            datosGuia[this.name] = this.value;
+        })
+
+        $.each($("#formProceso").serializeArray(),function(){
+            datosFormulario[this.name] = this.value;
+        })
+
+        $.post(RUTA+"madres/envioSunat", {datosGuia:JSON.stringify(datosGuia),
+                                          datosFormulario:JSON.stringify(datosFormulario),
+                                          detalles:JSON.stringify(detalles())},
+            function (data, text, requestXHR) {
+                console.log(data);
             },
             "json"
         );
@@ -444,7 +472,7 @@ detalles = () =>{
             IDDETPED    = "",
             IDPROD      = "",
             IDDESPACHO  = $(this).data('itemdespacho'),
-            DESPACHO    = $(this).data('despacho')
+            DESPACHO    = $(this).data('despacho'),
             PEDIDO      = "",
             ORDEN       = "",
             INGRESO     = "",
