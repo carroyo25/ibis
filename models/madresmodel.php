@@ -122,7 +122,11 @@
                                                                             npeso =:peso,
                                                                             nbultos =:bultos,
                                                                             useremit =:user,
-                                                                            idaprueba =:aprueba");
+                                                                            idaprueba =:aprueba,
+                                                                            iddestino =:recibe,
+                                                                            nTipoEnvio =:envio,
+                                                                            ccOnductor =:conductor,
+                                                                            cObserva=:observaciones");
             
                 $sql->execute(["emision"=>$datos['emision'],
                                 "traslado"=>$datos['traslado'],
@@ -140,7 +144,11 @@
                                 "peso"=>$datos['peso'],
                                 "bultos"=>$datos['bultos'],
                                 "user"=>$datos['useremit'],
-                                "aprueba"=>$datos['aprueba']]);
+                                "aprueba"=>$datos['aprueba'],
+                                "recibe"=>$datos['recibe'],
+                                "envio"=>$datos['envio'],
+                                "conductor"=>$datos['conductor'],
+                                "observaciones"=>$datos['observaciones']]);
 
                 $rowCount = $sql->rowCount();
 
@@ -276,21 +284,29 @@
                 $salida = "";
                 $sql= $this->db->connect()->prepare("SELECT
                                                         lg_guiamadre.idreg,
-                                                        tb_user.cnombres,
+                                                        tb_user.cnombres AS autoriza,
                                                         lg_guiamadre.ffecdoc,
                                                         lg_guiamadre.ffectraslado,
                                                         UPPER( origen.cdesalm ) AS origen,
                                                         UPPER( destino.cdesalm ) AS destino,
                                                         lg_guiamadre.nflgSunat,
-                                                        movimientos.cdescripcion AS movimiento 
+                                                        movimientos.cdescripcion AS movimiento,
+                                                        UPPER( origen.ctipovia ) AS origen_direccion,
+                                                        UPPER( destino.ctipovia ) AS destino_direccion,
+                                                        cm_entidad.cnumdoc AS nombre_proveedor,
+                                                        cm_entidad.crazonsoc AS ruc_proveedor,
+                                                        UPPER( cm_entidad.cviadireccion ) AS direccion_proveedor,
+                                                        UPPER(destinatarios.cnombres) AS recibe 
                                                     FROM
                                                         lg_guiamadre
                                                         LEFT JOIN tb_user ON lg_guiamadre.idaprueba = tb_user.iduser
-                                                        INNER JOIN tb_almacen AS origen ON lg_guiamadre.nlamorigen = origen.ncodalm
-                                                        INNER JOIN tb_almacen AS destino ON lg_guiamadre.nalmdestino = destino.ncodalm
-                                                        INNER JOIN tb_parametros AS movimientos ON lg_guiamadre.ntipmov = movimientos.nidreg 
+                                                        LEFT JOIN tb_almacen AS origen ON lg_guiamadre.nlamorigen = origen.ncodalm
+                                                        LEFT JOIN tb_almacen AS destino ON lg_guiamadre.nalmdestino = destino.ncodalm
+                                                        LEFT JOIN tb_parametros AS movimientos ON lg_guiamadre.ntipmov = movimientos.nidreg
+                                                        LEFT JOIN cm_entidad ON lg_guiamadre.nentitrans = cm_entidad.id_centi
+                                                        LEFT JOIN tb_user AS destinatarios ON lg_guiamadre.iddestino = destinatarios.iduser 
                                                     WHERE
-                                                        lg_guiamadre.nflgActivo = 1
+                                                        lg_guiamadre.nflgActivo = 1 
                                                         AND lg_guiamadre.idreg = :id");
 
                 $sql->execute(["id"=>$id]);
@@ -325,13 +341,13 @@
                                                         alm_despachocab.cnumguia 
                                                     FROM
                                                         lg_detallemadres
-                                                        INNER JOIN alm_despachodet ON lg_detallemadres.itemdespacho = alm_despachodet.niddeta
-                                                        INNER JOIN cm_producto ON alm_despachodet.id_cprod = cm_producto.id_cprod
-                                                        INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
-                                                        INNER JOIN alm_despachocab ON alm_despachodet.id_regalm = alm_despachocab.id_regalm 
+                                                        LEFT JOIN alm_despachodet ON lg_detallemadres.itemdespacho = alm_despachodet.niddeta
+                                                        LEFT JOIN cm_producto ON alm_despachodet.id_cprod = cm_producto.id_cprod
+                                                        LEFT JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                        LEFT JOIN alm_despachocab ON alm_despachodet.id_regalm = alm_despachocab.id_regalm 
                                                     WHERE
                                                         lg_detallemadres.idguiasunat = :id 
-                                                        AND lg_detallemadres.nfgActivo = 1");
+                                                        AND lg_detallemadres.nflgActivo = 1");
                 $sql->execute(["id"=>$id]);
 
                 $rowCount = $sql->rowCount();

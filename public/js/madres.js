@@ -133,7 +133,7 @@ $(() =>{
 
         if(contenedor_padre == "listaCostosDestino"){
             $("#codigo_costos_origen").val(codigo);
-            $("#codigo_almacen_destino").val(almacen);
+            //$("#codigo_almacen_destino").val(almacen);
         }else if(contenedor_padre == "listaAprueba"){
             $("#codigo_aprueba").val(codigo);
         }else if(contenedor_padre == "listaOrigen"){
@@ -354,10 +354,12 @@ $(() =>{
                                                 guia:$("#numero_guia").val(),
                                                 costos:$("#codigo_costos_origen").val(),
                                                 aprueba:$("#codigo_autoriza").val(),
+                                                recibe:$("#codigo_destinatario").val(),
                                                 alm_origen:$("#codigo_almacen_origen").val(),
                                                 alm_destino:$("#codigo_almacen_destino").val(),
                                                 modalidad:$("#codigo_modalidad").val(),
-                                                tipo:$("#codigo_movimiento").val(),
+                                                tipo:$("#codigo_tipo").val(),
+                                                envio:$("#codigo_movimiento").val(),
                                                 transportista:$("#codigo_entidad_transporte").val(),
                                                 conductor:$("#nombre_conductor").val(),
                                                 licencia:$("#licencia_conducir").val(),
@@ -368,7 +370,9 @@ $(() =>{
                                                 bultos:$("#bultos").val(),
                                                 emision:$("#fgemision").val(),
                                                 traslado:$("#ftraslado").val(),
-                                                useremit:$("#id_user").val()},
+                                                useremit:$("#id_user").val(),
+                                                observaciones:$("#observaciones").val(),
+                                                conductor:$("#nombre_conductor").val()},
 
                 function (data, textStatus, jqXHR) {
                     mostrarMensaje(data.mensaje,data.clase);
@@ -394,26 +398,29 @@ $(() =>{
                 $("#almacen_destino_despacho").val(data.cabecera[0].destino);
                 $("#tipo").val(data.cabecera[0].movimiento);
 
-                /*numero_guia
-                almacen_origen
-                almacen_origen_direccion
-                almacen_destino
-                almacen_destino_direccion
-                empresa_transporte_razon
-                direccion_proveedor
-                ruc_proveedor
-                modalidad_traslado
-                tipo_envio
-                autoriza
-                destinatario
-                observaciones
-                nombre_conductor
-                licencia_conducir
-                conductor_dni
-                marca
-                placa
-                peso
-                bultos*/
+                $("#numero_guia").val(data.cabecera[0].idreg);
+                $("#fgemision").val(data.cabecera[0].ffecdoc);
+                $("#ftraslado").val(data.cabecera[0].ffectraslado);
+                $("#almacen_origen").val(data.cabecera[0].origen);
+                $("#almacen_origen_direccion").val(data.cabecera[0].origen_direccion);
+                $("#almacen_destino").val(data.cabecera[0].destino);
+                $("#almacen_destino_direccion").val(data.cabecera[0].destino_direccion);
+                $("#empresa_transporte_razon").val(data.cabecera[0].nombre_proveedor);
+                $("#direccion_proveedor").val(data.cabecera[0].ruc_proveedor);
+                $("#ruc_proveedor").val(data.cabecera[0].direccion_proveedor);
+                $("#modalidad_traslado").val(data.cabecera[0].movimiento);
+                $("#tipo_envio").val(data.cabecera[0].nTipoEnvio);
+                $("#autoriza").val(data.cabecera[0].autoriza);
+                $("#destinatario").val(data.cabecera[0].recibe);
+                $("#observaciones").val(data.cabecera[0].cobserva);
+                $("#nombre_conductor").val(data.cabecera[0].cConductor);
+                $("#licencia_conducir").val(data.cabecera[0].licencia);
+                $("#conductor_dni").val(data.cabecera[0].dni);
+                $("#marca").val(data.cabecera[0].marca);
+                $("#placa").val(data.cabecera[0].placa);
+                $("#peso").val(data.cabecera[0].peso);
+                $("#bultos").val(data.cabecera[0].bultos);
+                $("#observaciones").val(data.cabecera[0].cObserva);
 
                 $("#tablaDetalles tbody").empty().append(data.detalles);
 
