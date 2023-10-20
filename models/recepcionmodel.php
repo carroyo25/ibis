@@ -47,7 +47,8 @@
                                                         INNER JOIN tb_pedidocab ON alm_recepcab.idref_pedi = tb_pedidocab.idreg
                                                         INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi 
                                                     WHERE
-                                                        tb_costusu.id_cuser = :usr 
+                                                        tb_costusu.id_cuser = :usr
+                                                        AND alm_recepcab.nflgactivo = 1 
                                                         AND tb_costusu.nflgactivo = 1
                                                         AND alm_recepcab.nEstadoDoc = 60
                                                         AND alm_recepcab.cper = YEAR(NOW())
@@ -659,6 +660,7 @@
                                                         INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
                                                     WHERE
                                                         tb_costusu.id_cuser = :usr 
+                                                        AND alm_recepcab.nflgactivo = 1
                                                         AND tb_costusu.nflgactivo = 1
                                                         AND alm_recepcab.nEstadoDoc BETWEEN  60 AND 62
                                                         AND alm_recepcab.ncodpry LIKE :costos 

@@ -422,6 +422,12 @@ $(() =>{
                 $("#bultos").val(data.cabecera[0].nbultos);
                 $("#observaciones").val(data.cabecera[0].cObserva);
 
+                $("#ubig_origen").val(data.cabecera[0].ubigeo_origen);
+                $("#ubig_destino").val(data.cabecera[0].ubigeo_destino);
+
+                $("#cso").val(data.cabecera[0].codigo_sunat_origen);
+                $("#csd").val(data.cabecera[0].codigo_sunat_destino);
+
                 $("#codigo_modalidad").val(data.cabecera[0].ntipmov);
                 $("#codigo_tipo").val(data.cabecera[0].nmottranp);
 
@@ -452,7 +458,7 @@ $(() =>{
                                           datosFormulario:JSON.stringify(datosFormulario),
                                           detalles:JSON.stringify(detalles())},
             function (data, text, requestXHR) {
-                console.log(data);
+                //console.log(data);
             },
             "json"
         );

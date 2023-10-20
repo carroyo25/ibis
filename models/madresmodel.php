@@ -283,45 +283,49 @@
             try {
                 $salida = "";
                 $sql= $this->db->connect()->prepare("SELECT
-                                                        lg_guiamadre.idreg,
-                                                        lg_guiamadre.cnroguia,
-                                                        tb_user.cnombres AS autoriza,
-                                                        lg_guiamadre.ffecdoc,
-                                                        lg_guiamadre.ffectraslado,
-                                                        UPPER( origen.cdesalm ) AS origen,
-                                                        UPPER( destino.cdesalm ) AS destino,
-                                                        lg_guiamadre.nflgSunat,
-                                                        movimientos.cdescripcion AS movimiento,
-                                                        UPPER( origen.ctipovia ) AS origen_direccion,
-                                                        UPPER( destino.ctipovia ) AS destino_direccion,
-                                                        cm_entidad.cnumdoc AS ruc_proveedor,
-                                                        cm_entidad.crazonsoc AS nombre_proveedor,
-                                                        UPPER( cm_entidad.cviadireccion ) AS direccion_proveedor,
-                                                        UPPER( destinatarios.cnombres ) AS recibe,
-                                                        lg_guiamadre.nTipoEnvio,
-                                                        lg_guiamadre.clincencia,
-                                                        lg_guiamadre.ndni,
-                                                        lg_guiamadre.cmarca,
-                                                        lg_guiamadre.cplaca,
-                                                        lg_guiamadre.npeso,
-                                                        lg_guiamadre.nbultos,
-                                                        lg_guiamadre.cConductor,
-                                                        lg_guiamadre.cObserva,
-                                                        tb_parametros.cdescripcion AS tipo_envio,
-                                                        lg_guiamadre.nmottranp,
-	                                                    lg_guiamadre.ntipmov 
-                                                    FROM
-                                                        lg_guiamadre
-                                                        LEFT JOIN tb_user ON lg_guiamadre.idaprueba = tb_user.iduser
-                                                        LEFT JOIN tb_almacen AS origen ON lg_guiamadre.nlamorigen = origen.ncodalm
-                                                        LEFT JOIN tb_almacen AS destino ON lg_guiamadre.nalmdestino = destino.ncodalm
-                                                        LEFT JOIN tb_parametros AS movimientos ON lg_guiamadre.ntipmov = movimientos.nidreg
-                                                        LEFT JOIN cm_entidad ON lg_guiamadre.nentitrans = cm_entidad.id_centi
-                                                        LEFT JOIN tb_user AS destinatarios ON lg_guiamadre.iddestino = destinatarios.iduser
-                                                        LEFT JOIN tb_parametros ON lg_guiamadre.nmottranp = tb_parametros.nidreg 
-                                                    WHERE
-                                                        lg_guiamadre.nflgActivo = :id 
-                                                        AND lg_guiamadre.idreg = 1");
+                                                            lg_guiamadre.idreg,
+                                                            lg_guiamadre.cnroguia,
+                                                            tb_user.cnombres AS autoriza,
+                                                            lg_guiamadre.ffecdoc,
+                                                            lg_guiamadre.ffectraslado,
+                                                            UPPER( origen.cdesalm ) AS origen,
+                                                            UPPER( destino.cdesalm ) AS destino,
+                                                            lg_guiamadre.nflgSunat,
+                                                            movimientos.cdescripcion AS movimiento,
+                                                            UPPER( origen.ctipovia ) AS origen_direccion,
+                                                            UPPER( destino.ctipovia ) AS destino_direccion,
+                                                            cm_entidad.cnumdoc AS ruc_proveedor,
+                                                            cm_entidad.crazonsoc AS nombre_proveedor,
+                                                            UPPER( cm_entidad.cviadireccion ) AS direccion_proveedor,
+                                                            UPPER( destinatarios.cnombres ) AS recibe,
+                                                            lg_guiamadre.nTipoEnvio,
+                                                            lg_guiamadre.clincencia,
+                                                            lg_guiamadre.ndni,
+                                                            lg_guiamadre.cmarca,
+                                                            lg_guiamadre.cplaca,
+                                                            lg_guiamadre.npeso,
+                                                            lg_guiamadre.nbultos,
+                                                            lg_guiamadre.cConductor,
+                                                            lg_guiamadre.cObserva,
+                                                            tb_parametros.cdescripcion AS tipo_envio,
+                                                            lg_guiamadre.nmottranp,
+                                                            lg_guiamadre.ntipmov,
+                                                            origen.ncubigeo AS ubigeo_origen,
+                                                            destino.ncubigeo AS ubigeo_destino,
+                                                            origen.csunatalm AS codigo_sunat_origen,
+                                                            destino.csunatalm AS codigo_sunat_destino 
+                                                        FROM
+                                                            lg_guiamadre
+                                                            LEFT JOIN tb_user ON lg_guiamadre.idaprueba = tb_user.iduser
+                                                            LEFT JOIN tb_almacen AS origen ON lg_guiamadre.nlamorigen = origen.ncodalm
+                                                            LEFT JOIN tb_almacen AS destino ON lg_guiamadre.nalmdestino = destino.ncodalm
+                                                            LEFT JOIN tb_parametros AS movimientos ON lg_guiamadre.ntipmov = movimientos.nidreg
+                                                            LEFT JOIN cm_entidad ON lg_guiamadre.nentitrans = cm_entidad.id_centi
+                                                            LEFT JOIN tb_user AS destinatarios ON lg_guiamadre.iddestino = destinatarios.iduser
+                                                            LEFT JOIN tb_parametros ON lg_guiamadre.nmottranp = tb_parametros.nidreg 
+                                                        WHERE
+                                                            lg_guiamadre.nflgActivo = 1 
+                                                            AND lg_guiamadre.idreg = :id");
 
                 $sql->execute(["id"=>$id]);
                 $rowCount = $sql->rowCount();
@@ -417,19 +421,21 @@
                 unlink($path."XML/".$nombre_archivo.".xml");  
             }
 
-            if ( $header->codigo_modalidad == 93) {
-                $this->desarrollo_xml_externos($header,$body);
-            }else if ($header->codigo_modalidad == 94){
-                $this->desarrollo_xml_sepcon($header,$body);
-            }else{
-                $tipo_envio_sunat = 'Error en el tipo de envio';
-            }
-
             //$token_access = $this->token('d12d8bf5-4b57-4c57-9569-9072b3e1bfcd', 'iLMGwQBEehJMXQ+Z/LR2KA==', '20504898173SISTEMA1', 'Lima123');
             $token_access = $this->token('test-85e5b0ae-255c-4891-a595-0b98c65c9854', 'test-Hty/M6QshYvPgItX2P0+Kw==', '20504898173MODDATOS', 'MODDATOS');
+            $firma = $this->crear_files($header->codigo_modalidad,$path, $nombre_archivo, $header, $body);
+            $respuesta = $this->envio_xml($path.'FIRMA/', $nombre_archivo, $token_access);
+            $numero_ticket = $respuesta->numTicket;
 
-            return array("archivo"=>$nombre_archivo,
-                         "token"=>$token_access);
+            var_dump($respuesta);
+
+            //sleep(2);//damos tiempo para que SUNAT procese y responda.
+            //$respuesta_ticket = $this->envio_ticket($path.'CDR/', $numero_ticket, $token_access, $header->destinatario_ruc, $nombre_archivo);
+
+            /*var_dump($respuesta_ticket);*/
+
+        
+            //return array("archivo"=>$nombre_archivo,"token"=>$token_access);
         }
 
         private function token($client_id, $client_secret, $usuario_secundario, $usuario_password){
@@ -462,6 +468,154 @@
             $response = json_decode($result);
 
             return $response->access_token;
+        }
+
+        private function crear_files($movimiento,$path,$nombre_archivo,$header,$body){
+            if ( $movimiento == 93) {
+                $xml = $this->desarrollo_xml_externos($header,$body);
+            }else if ($movimiento == 94){
+                $xml = $this->desarrollo_xml_sepcon($header,$body);
+            }else{
+                $tipo_envio_sunat = 'Error en el tipo de envio';
+            }
+
+            $archivo = fopen($path."XML/".$nombre_archivo.".xml", "w+");
+            fwrite($archivo, utf8_decode($xml));
+            fclose($archivo);
+
+            $this->firmar_xml($nombre_archivo.".xml", "1");
+
+            $zip = new ZipArchive();
+            if($zip->open($path."FIRMA/".$nombre_archivo.".zip", ZipArchive::CREATE) === true){
+                $zip->addFile($path."FIRMA/".$nombre_archivo.".xml", $nombre_archivo.".xml");
+            }
+
+            return $nombre_archivo;
+        }
+        
+        private function firmar_xml($name_file, $entorno, $baja = ''){        
+            $xmlstr = file_get_contents("public/documentos/guia_electronica/XML/".$name_file);
+        
+            $domDocument = new \DOMDocument();
+            $domDocument->loadXML($xmlstr);
+            $factura  = new Factura();
+            $xml = $factura->firmar($domDocument, '', $entorno);
+            $content = $xml->saveXML();
+            file_put_contents("public/documentos/guia_electronica/FIRMA/".$name_file, $content);
+        }
+
+        private function envio_ticket($ruta_archivo_cdr, $ticket, $token_access, $ruc, $nombre_file){
+            if(($ticket == "") || ($ticket == null)){
+                $mensaje['cdr_hash'] = '';
+                $mensaje['cdr_msj_sunat'] = 'Ticket vacio';
+                $mensaje['cdr_ResponseCode']  = null;
+                $mensaje['numerror'] = null;
+            }else{
+            
+                $mensaje['ticket'] = $ticket;
+                $curl = curl_init();
+        
+                curl_setopt_array($curl, array(
+                    CURLOPT_URL => 'https://api-cpe.sunat.gob.pe/v1/contribuyente/gem/comprobantes/envios/'.$ticket,
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_ENCODING => '',
+                    CURLOPT_MAXREDIRS => 10,
+                    CURLOPT_TIMEOUT => 0,
+                    CURLOPT_FOLLOWLOCATION => true,
+                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                    CURLOPT_CUSTOMREQUEST => 'GET',
+                    CURLOPT_HTTPHEADER => array(
+                        'numRucEnvia: '.$ruc,
+                        'numTicket: '.$ticket,
+                        'Authorization: Bearer '. $token_access,
+                    ),
+                ));
+        
+                $response_1  = curl_exec($curl);
+                $response3  = json_decode($response_1);
+                $codRespuesta = $response3->codRespuesta;
+                curl_close($curl);                    
+                //var_dump($response3);exit;
+                
+                $mensaje['ticket_rpta'] = $codRespuesta;
+                if($codRespuesta == '99'){
+                    $error = $response3->error;
+                    $mensaje['cdr_hash'] = '';
+                    $mensaje['cdr_msj_sunat'] = $error->desError;
+                    $mensaje['cdr_ResponseCode'] = '99';
+                    $mensaje['numerror'] = $error->numError;            	            
+                }else if($codRespuesta == '98'){
+                    $mensaje['cdr_hash'] = '';
+                    $mensaje['cdr_msj_sunat'] = 'Envío en proceso';
+                    $mensaje['cdr_ResponseCode']  = '98';
+                    $mensaje['numerror'] = '98';                        
+                }else if($codRespuesta == '0'){
+                    $mensaje['arcCdr'] = $response3->arcCdr;
+                    $mensaje['indCdrGenerado'] = $response3->indCdrGenerado;
+                    
+                    file_put_contents($ruta_archivo_cdr . 'R-' . $nombre_file . '.ZIP', base64_decode($response3->arcCdr));
+        
+                    $zip = new ZipArchive;
+                    if ($zip->open($ruta_archivo_cdr . 'R-' . $nombre_file . '.ZIP') === TRUE) {
+                        $zip->extractTo($ruta_archivo_cdr);
+                        $zip->close();
+                    }
+                    //unlink($ruta_archivo_cdr . 'R-' . $nombre_file . '.ZIP');
+        
+                 //=============hash CDR=================
+                    $doc_cdr = new DOMDocument();
+                    $doc_cdr->load($ruta_archivo_cdr . 'R-' . $nombre_file . '.xml');
+                    
+                    $mensaje['cdr_hash']            = $doc_cdr->getElementsByTagName('DigestValue')->item(0)->nodeValue;
+                    $mensaje['cdr_msj_sunat']       = $doc_cdr->getElementsByTagName('Description')->item(0)->nodeValue;
+                    $mensaje['cdr_ResponseCode']    = $doc_cdr->getElementsByTagName('ResponseCode')->item(0)->nodeValue;        
+                    $mensaje['numerror']            = '';
+                }else{
+                    $mensaje['cdr_hash']            = '';
+                    $mensaje['cdr_msj_sunat']       = 'SUNAT FUERA DE SERVICIO';
+                    $mensaje['cdr_ResponseCode']    = '88';            
+                    $mensaje['numerror']            = '88';
+                }
+            }
+            return $mensaje;
+        }
+
+        private function envio_xml($path,$nombre_file,$token_access){
+            $curl = curl_init();
+            $data = array(
+                        'nomArchivo'  =>  $nombre_file.".zip",
+                        'arcGreZip'   =>  base64_encode(file_get_contents($path.$nombre_file.'.zip')),
+                        'hashZip'     =>  hash_file("sha256", $path.$nombre_file.'.zip')
+                    );
+            curl_setopt_array($curl, array(
+                        CURLOPT_URL => "https://api-cpe.sunat.gob.pe/v1/contribuyente/gem/comprobantes/".$nombre_file,
+                        CURLOPT_RETURNTRANSFER => true,
+                        CURLOPT_ENCODING => '',
+                        CURLOPT_MAXREDIRS => 10,
+                        CURLOPT_TIMEOUT => 0,
+                        CURLOPT_FOLLOWLOCATION => true,
+                        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                        CURLOPT_CUSTOMREQUEST => 'POST',
+                        CURLOPT_POSTFIELDS =>json_encode(array('archivo' => $data)),
+                        CURLOPT_HTTPHEADER => array(
+                            'Authorization: Bearer '. $token_access,
+                            'Content-Type: application/json'
+                        ),
+                    ));
+                
+            $response2 = curl_exec($curl);
+            curl_close($curl);
+            return json_decode($response2);
+
+            
+
+            $original_file =  $path."XML/".$nombre_file.'.xml';
+            $destination_file = $path."FIRMA/".$nombre_file.'.zip';
+            
+            $zip = new ZipArchive();
+            $zip->open($destination_file,ZipArchive::CREATE);
+            $zip->addFile($original_file);
+            $zip->close();
         }
 
         private function desarrollo_xml_sepcon($header,$detalles){
@@ -635,7 +789,7 @@
                                 <cbc:Name><![CDATA['.$header->destinatario_razon.']]></cbc:Name>
                             </cac:PartyName>
                             <cac:PartyLegalEntity>
-                                <cbc:RegistrationName><![CDATA['.$header->destinatario_razon.']]></cbc:RegistrationName>
+                                <cbc:RegistrationName><![CDATA['.utf8_encode($header->destinatario_razon).']]></cbc:RegistrationName>
                             </cac:PartyLegalEntity>
                         </cac:Party>
                     </cac:DespatchSupplierParty>';
@@ -643,51 +797,51 @@
          $xml .=    '<cac:DeliveryCustomerParty>
                         <cac:Party>
                             <cac:PartyIdentification>
-                                <cbc:ID schemeID="6" schemeName="Documento de Identidad" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">'.$header->numero_guia.'</cbc:ID>
+                                <cbc:ID schemeID="6" schemeName="Documento de Identidad" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">'.$header->destinatario_ruc.'</cbc:ID>
                             </cac:PartyIdentification>
                             <cac:PartyLegalEntity>
-                                <cbc:RegistrationName><![CDATA['.$guia['entidad'].']]></cbc:RegistrationName>
+                                <cbc:RegistrationName><![CDATA['.$header->destinatario_razon.']]></cbc:RegistrationName>
                             </cac:PartyLegalEntity>
                         </cac:Party>
                     </cac:DeliveryCustomerParty>';
                     
             $xml .= '<cac:Shipment>
                         <cbc:ID>SUNAT_Envio</cbc:ID>
-                        <cbc:HandlingCode listAgencyName="PE:SUNAT" listName="Motivo de traslado" listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo20">01</cbc:HandlingCode>
-                        <cbc:GrossWeightMeasure unitCode="KGM">'.$guia['peso_total'].'</cbc:GrossWeightMeasure>';
+                        <cbc:HandlingCode listAgencyName="PE:SUNAT" listName="Motivo de traslado" listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo20">17</cbc:HandlingCode>
+                        <cbc:GrossWeightMeasure unitCode="KGM">'.$header->peso.'</cbc:GrossWeightMeasure>';
                         
-                        if($guia['guia_motivo_traslado_id'] == 7){//importaciones
-                $xml .= '<cbc:TotalTransportHandlingUnitQuantity>'.$guia['numero_bultos'].'</cbc:TotalTransportHandlingUnitQuantity>';
-                        }
+                        /*if($guia['guia_motivo_traslado_id'] == 7){//importaciones
+                            $xml .= '<cbc:TotalTransportHandlingUnitQuantity>'.$header->bultos.'</cbc:TotalTransportHandlingUnitQuantity>';
+                        }*/
                         
-                $xml .= '<cac:ShipmentStage>
-                            <cbc:ID>1</cbc:ID>
-                            <cbc:TransportModeCode listAgencyName="PE:SUNAT" listName="Modalidad de traslado" listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo18">0'.$guia['guia_modalidad_traslado_id'].'</cbc:TransportModeCode>
-                            <cac:TransitPeriod>
-                                <cbc:StartDate>'.$guia['fecha_traslado_sf'].'</cbc:StartDate>
-                            </cac:TransitPeriod>';
+            $xml .= '<cac:ShipmentStage>
+                        <cbc:ID>1</cbc:ID>
+                        <cbc:TransportModeCode listAgencyName="PE:SUNAT" listName="Modalidad de traslado" listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo18">01</cbc:TransportModeCode>
+                        <cac:TransitPeriod>
+                                <cbc:StartDate>'.$header->ftraslado.'</cbc:StartDate>
+                        </cac:TransitPeriod>';
                 
-                if($guia['guia_modalidad_traslado_id'] == '1'){
+                if($header->tipoTrasladoSunat == '1'){
                 $xml .= '<cac:CarrierParty>
                                 <cac:PartyIdentification>
-                                    <cbc:ID schemeID="6" schemeName="Documento de Identidad" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">'.$guia['numero_documento_transporte'].'</cbc:ID>
+                                    <cbc:ID schemeID="6" schemeName="Documento de Identidad" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">'.$header->ruc_proveedor.'</cbc:ID>
                                 </cac:PartyIdentification>
                                 <cac:PartyLegalEntity>
-                                    <cbc:RegistrationName><![CDATA['.$guia['entidad_transporte'].']]></cbc:RegistrationName>';
-                                    if($guia['numero_mtc_transporte'] != ''){
-                $xml .=                 '<cbc:CompanyID>'.$guia['numero_mtc_transporte'].'</cbc:CompanyID>';
-                                    }
+                                    <cbc:RegistrationName><![CDATA['.$header->empresa_transporte_razon.']]></cbc:RegistrationName>';
+                                if($header->registro_mtc != ''){
+                $xml .=                 '<cbc:CompanyID>'.$header->registro_mtc.'</cbc:CompanyID>';
+                                }
                 $xml .=         '</cac:PartyLegalEntity>
                             </cac:CarrierParty>';
                 }
-                if($guia['guia_modalidad_traslado_id'] == '2'){
+                if($header->tipoTrasladoSunat == '2'){
                 $xml .= '<cac:DriverPerson>
-                                <cbc:ID schemeID="1" schemeName="Documento de Identidad" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">'.$guia['conductor_dni'].'</cbc:ID>
-                                <cbc:FirstName>'.$guia['conductor_nombres'].'</cbc:FirstName>
-                                <cbc:FamilyName>'.$guia['conductor_apellidos'].'</cbc:FamilyName>
+                                <cbc:ID schemeID="1" schemeName="Documento de Identidad" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">'.$header->conductor_dni.'</cbc:ID>
+                                <cbc:FirstName>'.$header->nombre_conductor.'</cbc:FirstName>
+                                <cbc:FamilyName>'.$header->nombre_conductor.'</cbc:FamilyName>
                                 <cbc:JobTitle>Principal</cbc:JobTitle>
                                 <cac:IdentityDocumentReference>
-                                    <cbc:ID>'.$guia['conductor_licencia'].'</cbc:ID>
+                                    <cbc:ID>'.$header->licencia_conducir.'</cbc:ID>
                                 </cac:IdentityDocumentReference>
                             </cac:DriverPerson>';                                                                        
                 }
@@ -695,48 +849,50 @@
                 $xml .= '</cac:ShipmentStage>
                         <cac:Delivery>
                             <cac:DeliveryAddress>
-                                <cbc:ID schemeName="Ubigeos" schemeAgencyName="PE:INEI">'.$guia['llegada_ubigeo'].'</cbc:ID>
+                                <cbc:ID schemeName="Ubigeos" schemeAgencyName="PE:INEI">'.$header->ubig_origen.'</cbc:ID>
                                 <cac:AddressLine>
-                                    <cbc:Line>'.$guia['llegada_direccion'].'</cbc:Line>
+                                    <cbc:Line>'.utf8_encode($header->almacen_origen_direccion).'</cbc:Line>
                                 </cac:AddressLine>
                             </cac:DeliveryAddress>
                             <cac:Despatch>
                                 <cac:DespatchAddress>
-                                    <cbc:ID schemeName="Ubigeos" schemeAgencyName="PE:INEI">'.$guia['partida_ubigeo'].'</cbc:ID>
+                                    <cbc:ID schemeName="Ubigeos" schemeAgencyName="PE:INEI">'.$header->ubig_destino.'</cbc:ID>
                                     <cac:AddressLine>
-                                        <cbc:Line>'.$guia['partida_direccion'].'</cbc:Line>
+                                        <cbc:Line>'.utf8_encode($header->almacen_destino_direccion).'</cbc:Line>
                                     </cac:AddressLine>
                                 </cac:DespatchAddress>
                             </cac:Despatch>
                         </cac:Delivery>';
                         
-                        if($guia['guia_modalidad_traslado_id'] == '2'){
+                        if($header->tipoTrasladoSunat == '2'){
                 $xml .= '<cac:TransportHandlingUnit>
                             <cac:TransportEquipment>
-                                <cbc:ID>'.$guia['vehiculo_placa'].'</cbc:ID>
+                                <cbc:ID>'.$header->placa.'</cbc:ID>
                             </cac:TransportEquipment>
                         </cac:TransportHandlingUnit>';
                         }
                 $xml .= '</cac:Shipment>';        
                     
                     $i = 1;                        
-                    foreach($detalles as $values){                    
-                    $xml .=  '<cac:DespatchLine>
-                        <cbc:ID>'.$i.'</cbc:ID>
-                        <cbc:DeliveredQuantity unitCode="'.$values['codigo_unidad'].'">'.$values['cantidad'].'</cbc:DeliveredQuantity>
-                        <cac:OrderLineReference>
-                            <cbc:LineID>1</cbc:LineID>
-                        </cac:OrderLineReference>
-                        <cac:Item>
-                            <cbc:Description>'.$values['producto'].'</cbc:Description>
-                            <cac:SellersItemIdentification>
-                            <cbc:ID>'.$values['producto_codigo'].'</cbc:ID>
-                            </cac:SellersItemIdentification>
-                        </cac:Item>
-                    </cac:DespatchLine>';                        
-                    $i++;                    
+                    foreach($detalles as $detalle){                    
+                        $xml .=  '<cac:DespatchLine>
+                            <cbc:ID>'.$i.'</cbc:ID>
+                            <cbc:DeliveredQuantity unitCode="'.$detalle->codigo.'">'.$detalle->cantdesp.'</cbc:DeliveredQuantity>
+                            <cac:OrderLineReference>
+                                <cbc:LineID>1</cbc:LineID>
+                            </cac:OrderLineReference>
+                            <cac:Item>
+                                <cbc:Description>'.$detalle->descripcion.'</cbc:Description>
+                                <cac:SellersItemIdentification>
+                                <cbc:ID>'.$detalle->codigo.'</cbc:ID>
+                                </cac:SellersItemIdentification>
+                            </cac:Item>
+                        </cac:DespatchLine>';                        
+                        $i++;                    
                     }
             $xml.=  '</DespatchAdvice>';
+
+            return $xml;
         }
     }
 ?>
