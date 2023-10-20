@@ -421,27 +421,26 @@
                 unlink($path."XML/".$nombre_archivo.".xml");  
             }
 
-            //$token_access = $this->token('d12d8bf5-4b57-4c57-9569-9072b3e1bfcd', 'iLMGwQBEehJMXQ+Z/LR2KA==', '20504898173SISTEMA1', 'Lima123');
-            $token_access = $this->token('test-85e5b0ae-255c-4891-a595-0b98c65c9854', 'test-Hty/M6QshYvPgItX2P0+Kw==', '20504898173MODDATOS', 'MODDATOS');
+            $token_access = $this->token('d12d8bf5-4b57-4c57-9569-9072b3e1bfcd', 'iLMGwQBEehJMXQ+Z/LR2KA==', '20504898173SISTEMA1', 'Lima123');
+            //$token_access = $this->token('test-85e5b0ae-255c-4891-a595-0b98c65c9854', 'test-Hty/M6QshYvPgItX2P0+Kw==', '20504898173MODDATOS', 'MODDATOS');
             $firma = $this->crear_files($header->codigo_modalidad,$path, $nombre_archivo, $header, $body);
             $respuesta = $this->envio_xml($path.'FIRMA/', $nombre_archivo, $token_access);
             $numero_ticket = $respuesta->numTicket;
 
-            var_dump($respuesta);
+            //var_dump($respuesta);
 
-            //sleep(2);//damos tiempo para que SUNAT procese y responda.
-            //$respuesta_ticket = $this->envio_ticket($path.'CDR/', $numero_ticket, $token_access, $header->destinatario_ruc, $nombre_archivo);
+            sleep(2);//damos tiempo para que SUNAT procese y responda.
+            $respuesta_ticket = $this->envio_ticket($path.'CDR/', $numero_ticket, $token_access, $header->destinatario_ruc, $nombre_archivo);
 
-            /*var_dump($respuesta_ticket);*/
-
+            var_dump($respuesta_ticket);
         
-            //return array("archivo"=>$nombre_archivo,"token"=>$token_access);
+            return array("archivo"=>$nombre_archivo,"token"=>$token_access);
         }
 
         private function token($client_id, $client_secret, $usuario_secundario, $usuario_password){
-            //$url = "https://api-seguridad.sunat.gob.pe/v1/clientessol/".$client_id."/oauth2/token/";
+            $url = "https://api-seguridad.sunat.gob.pe/v1/clientessol/".$client_id."/oauth2/token/";
 
-            $url = "https://gre-test.nubefact.com/v1/clientessol/".$client_id."/oauth2/token/";
+            //$url = "https://gre-test.nubefact.com/v1/clientessol/".$client_id."/oauth2/token/";
 
             $curl = curl_init($url);
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -606,8 +605,6 @@
             $response2 = curl_exec($curl);
             curl_close($curl);
             return json_decode($response2);
-
-            
 
             $original_file =  $path."XML/".$nombre_file.'.xml';
             $destination_file = $path."FIRMA/".$nombre_file.'.zip';
