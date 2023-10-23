@@ -429,7 +429,7 @@
                                 "moneda"=>$cabecera['codigo_moneda'],
                                 "observacion"=>$cabecera['concepto']]);
                 
-                $this->grabarDetalles($cabecera['codigo_verificacion'],$detalles,$cabecera['codigo_costos'],$cabecera['codigo_orden']);
+                $this->grabarDetalles($cabecera['codigo_orden'],$detalles,$cabecera['codigo_costos'],$cabecera['codigo_orden']);
                 $this->grabarComentarios($cabecera['codigo_verificacion'],$comentarios,$usuario);
 
                 $salida = array("respuesta"=>true,
