@@ -1862,7 +1862,7 @@
                         if ( $rs['estadoItem'] ==  53 || $rs['estadoItem'] ==  52) {
 
                             $atendida = $rs['cant_atendida'] == NULL ? 0 : $rs['cant_atendida'];
-                            $aprobar =  $rs['cant_pedida'] - $rs['cant_atendida'];
+                            $aprobar =  number_format($rs['cant_pedida'] - $rs['cant_atendida'],2,'.','');
 
                             $estado_aprobar = $aprobar == 0 ? "desactivado" : "";
 
@@ -1871,7 +1871,7 @@
                                             <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                             <td class="pl20px">'.strtoupper($rs['cdesprod']).'</td>
                                             <td class="textoCentro">'.$rs['cabrevia'].'</td>
-                                            <td class="textoCentro">'.$rs['cant_pedida'].'</td>
+                                            <td class="textoDerecha">'.$rs['cant_pedida'].'</td>
                                             <td class="textoCentro">'.number_format($atendida,2).'</td>
                                             <td>
                                                 <input type="number" 
@@ -1879,7 +1879,7 @@
                                                             placeholder="0.00" 
                                                             onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"
                                                             onclick="this.select()" 
-                                                            value="'.number_format($aprobar,2).'"
+                                                            value="'.$aprobar.'"
                                                             class="valorAtendido">
                                             </td>
                                             <td class="textoCentro">'.$rs['nroparte'].'</td>
@@ -2995,8 +2995,8 @@
 
             $pdf->AddPage();
             $pdf->AliasNbPages();
-            $pdf->SetWidths(array(10,15,15,10,95,17,13,15));
-            $pdf->SetFont('Arial','',5);
+            $pdf->SetWidths(array(10,15,15,10,93,17,15,15));
+            $pdf->SetFont('Arial','',4.8);
             
             $lc = 0;
             $rc = 0;
@@ -3034,10 +3034,10 @@
             $pdf->Ln(2);
 
             $pdf->SetFillColor(229, 229, 229);
-            $pdf->SetFont('Arial','B',10);
+            $pdf->SetFont('Arial','B',8);
             $pdf->Cell(20,6,"TOTAL :","LTB",0,"C",true);
             
-            $pdf->SetFont('Arial','B',10);
+            $pdf->SetFont('Arial','B',8);
 
             $total_adicional = $cabecera['total_adicional'] == ""  ? 0 :  $cabecera['total_adicional']; 
 
@@ -3799,7 +3799,7 @@
                                                     alm_recepdet.id_regalm,
                                                     alm_recepdet.ncodalm1,
                                                     alm_recepdet.id_cprod,
-                                                    FORMAT(alm_recepdet.ncantidad, 2) AS ncantidad,
+                                                    alm_recepdet.ncantidad AS ncantidad,
                                                     alm_recepdet.niddetaPed,
                                                     alm_recepdet.niddetaOrd,
                                                     alm_recepdet.nestadoreg,
@@ -3812,7 +3812,7 @@
                                                             tb_pedidodet.docEspec
                                                         )
                                                     ) AS cdesprod,
-                                                    FORMAT(lg_ordendet.ncanti, 2) AS cantidad_orden,
+                                                    lg_ordendet.ncanti AS cantidad_orden,
                                                     tb_unimed.cabrevia,
                                                     alm_recepdet.cobserva,
                                                     alm_recepdet.fvence,

@@ -230,7 +230,7 @@
                     <th style="background:#FBD341; color:#000">Cantidad</br>Pedida</th>
                     <th style="background:#A6CAF0; color:#000" data-idcol="12" class="datafiltro">Codigo del</br>Bien/Servicio</th>
                     <th style="background:#A6CAF0; color:#000">Unidad</br>Medida</th>
-                    <th style="background:#A6CAF0; color:#000" width="10%">Descripcion del Bien/Servicio</th>
+                    <th style="background:#A6CAF0; color:#000" width="10%" data-idcol="14" class="datafiltro">Descripcion del Bien/Servicio</th>
                     <th style="background:#AAFFAA; color:#000" width="40px">Tipo</br>Orden</th>
                     <th style="background:#AAFFAA; color:#000" width="50px">Año</br>Orden</th>
                     <th style="background:#AAFFAA; color:#000" data-idcol="17" class="datafiltro">N°</br>Orden</th>

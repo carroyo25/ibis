@@ -169,7 +169,7 @@
 	        // Salto de línea
     		$this->Ln(3);
             $this->Rect(10,73,190,7,"F"); //fondo de mensaje
-    		$this->SetWidths(array(10,15,15,10,95,17,13,15));
+    		$this->SetWidths(array(10,15,15,10,93,17,15,15));
     		$this->SetAligns(array("C","C","C","C","C","C","C","C"));
     		$this->Row(array('Item',utf8_decode('Código'),'Cant.','Und.',utf8_decode('Descripción'),'Nro.Pedido','Precio Unitario','Valor Total'));
                     

@@ -24,8 +24,8 @@
                 <div></div>
             </div>
         </div>
+        <div class="modal" id="vistadocumento">
     </div>
-    <div class="modal" id="vistadocumento">
         <div class="ventanaResumen tamanioProceso50">
             <div class="resumen">
                 <div class="tituloResumen">
@@ -104,9 +104,13 @@
                     <th rowspan="2">Codigo</th>
                     <th rowspan="2" width="50%">Descripcion</th>
                     <th rowspan="2">Unidad</th>
+                    <th rowspan="2">N° Orden</th>
+                    <th rowspan="2">Origen</th>
                     <th>Fecha de </br> Vencimiento</th>
                     <th rowspan="2">Dias</br>Vencido</th>
-                    
+                    <th>Cantidad</br> Ingresada</th>
+                    <th>Cantidad</br> Consumida</th>
+                    <th>Saldo</th>
                 </tr>
             </thead>
             <tbody>
