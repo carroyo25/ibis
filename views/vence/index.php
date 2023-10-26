@@ -69,6 +69,7 @@
         <h1>Reporte de Vencimiento</h1>
         <div>
             <a href="#" id="excelFile"><i class="fas fa-file-excel"></i><p>Exportar</p></a>
+            <a href="#" id="sendNotificacion"><i class="fas fa-mail-bulk"></i><p>Notificar</p></a>
             <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
         </div>
     </div>
@@ -104,8 +105,6 @@
                     <th rowspan="2">Codigo</th>
                     <th rowspan="2" width="50%">Descripcion</th>
                     <th rowspan="2">Unidad</th>
-                    <th rowspan="2">N° Orden</th>
-                    <th rowspan="2">Origen</th>
                     <th>Fecha de </br> Vencimiento</th>
                     <th rowspan="2">Dias</br>Vencido</th>
                     <th>Cantidad</br> Ingresada</th>

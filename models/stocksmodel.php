@@ -162,7 +162,7 @@
                                                         data-costos="'.$rs['ingresos'].'" 
                                                         data-existencia="'.$rs['idreg'].'"
                                                         data-transferencia="'.$rs['iditem'].'">
-                                            <td class="textoCentro">'.str_pad($item++,4,0,STR_PAD_LEFT).'</td>
+                                            <td class="textoCentro"><a href="'.$rs['id_cprod'].'">'.str_pad($item++,4,0,STR_PAD_LEFT).'</a></td>
                                             <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                             <td class="pl20px">'.$rs['cdesprod'].'</td>
                                             <td class="textoCentro">'.$rs['cabrevia'].'</td>

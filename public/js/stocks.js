@@ -30,7 +30,7 @@ $(() => {
         return false;
     });
 
-    $("#tablaPrincipal tbody").on("click","tr", function (e) {
+    $("#tablaPrincipal tbody").on("dblclick","tr", function (e) {
         e.preventDefault();
 
         idprod = $(this).data("idprod"); 
@@ -39,6 +39,22 @@ $(() => {
         $("#descripcion_item").text( $(this).find('td').eq(2).text() );
 
         resumen(idprod);
+
+        return false;
+    });
+
+    $("#tablaPrincipal tbody").on('click','tr', function(e) {
+        e.preventDefault();
+
+        $(this).toggleClass('semaforoNaranja');
+
+        return false;
+    });
+
+    $("#tablaPrincipal tbody").on("click","a", function(e) {
+        e.preventDefault();
+
+        $(this).parent().parent().toggleClass('semaforoNaranja');
 
         return false;
     });

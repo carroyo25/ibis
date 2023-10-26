@@ -14,45 +14,45 @@
 
             try {
                 $sql = $this->db->connect()->prepare("SELECT
-                alm_existencia.idreg,
-                alm_existencia.codprod,
-                alm_existencia.freg,
-                DATE_FORMAT( alm_existencia.vence, '%d/%m/%Y' ) AS vence,
-                cm_producto.ccodprod,
-                UPPER( cm_producto.cdesprod ) AS producto,
-                DATEDIFF( NOW(), alm_existencia.vence ) AS pasados,
-                alm_existencia.nguia,
-                alm_cabexist.idcostos,
-                tb_proyectos.ccodproy,
-                tb_unimed.cabrevia,
-            IF
-                ( alm_existencia.nropedido != 0, alm_existencia.nropedido, '-' ) AS orden,
-            IF
-                ( alm_existencia.tipo = 1, 'COMPRA', 'INVENTARIO' ) AS origen,
-                alm_existencia.nroorden AS pedido,
-                alm_existencia.cant_ingr,
-                alm_existencia.cant_ord,
-                s.consumo
-            FROM
-                alm_existencia
-                LEFT JOIN cm_producto ON alm_existencia.codprod = cm_producto.id_cprod
-                LEFT JOIN alm_cabexist ON alm_existencia.idregistro = alm_cabexist.idreg
-                INNER JOIN tb_proyectos ON alm_cabexist.idcostos = tb_proyectos.nidreg
-                INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
-                LEFT JOIN ( 
-                    SELECT SUM( alm_consumo.cantsalida ) AS consumo, 
-                                alm_consumo.idprod,alm_consumo.ncostos FROM alm_consumo 
-                                WHERE alm_consumo.flgactivo = 1 AND alm_consumo.ncostos = 42
-                                GROUP BY alm_consumo.idprod) AS s ON s.idprod = alm_existencia.codprod 
-            WHERE
-                alm_existencia.vence <> '' 
-                AND DATEDIFF( NOW(), alm_existencia.vence ) > 1 
-                AND alm_existencia.nflgActivo = 1 
-                AND tb_proyectos.nidreg LIKE :cc
-                AND cm_producto.cdesprod LIKE :descripcion 
-                AND cm_producto.ccodprod LIKE :codigo 
-            ORDER BY
-                cm_producto.cdesprod ASC");
+                                                        alm_existencia.idreg,
+                                                        alm_existencia.codprod,
+                                                        alm_existencia.freg,
+                                                        DATE_FORMAT( alm_existencia.vence, '%d/%m/%Y' ) AS vence,
+                                                        cm_producto.ccodprod,
+                                                        UPPER( cm_producto.cdesprod ) AS producto,
+                                                        DATEDIFF( NOW(), alm_existencia.vence ) AS pasados,
+                                                        alm_existencia.nguia,
+                                                        alm_cabexist.idcostos,
+                                                        tb_proyectos.ccodproy,
+                                                        tb_unimed.cabrevia,
+                                                    IF
+                                                        ( alm_existencia.nropedido != 0, alm_existencia.nropedido, '-' ) AS orden,
+                                                    IF
+                                                        ( alm_existencia.tipo = 1, 'COMPRA', 'INVENTARIO' ) AS origen,
+                                                        alm_existencia.nroorden AS pedido,
+                                                        alm_existencia.cant_ingr,
+                                                        alm_existencia.cant_ord,
+                                                        s.consumo
+                                                    FROM
+                                                        alm_existencia
+                                                        LEFT JOIN cm_producto ON alm_existencia.codprod = cm_producto.id_cprod
+                                                        LEFT JOIN alm_cabexist ON alm_existencia.idregistro = alm_cabexist.idreg
+                                                        INNER JOIN tb_proyectos ON alm_cabexist.idcostos = tb_proyectos.nidreg
+                                                        INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                        LEFT JOIN ( 
+                                                            SELECT SUM( alm_consumo.cantsalida ) AS consumo, 
+                                                                        alm_consumo.idprod,alm_consumo.ncostos FROM alm_consumo 
+                                                                        WHERE alm_consumo.flgactivo = 1 AND alm_consumo.ncostos = 42
+                                                                        GROUP BY alm_consumo.idprod) AS s ON s.idprod = alm_existencia.codprod 
+                                                    WHERE
+                                                        alm_existencia.vence <> '' 
+                                                        AND DATEDIFF( NOW(), alm_existencia.vence ) > 1 
+                                                        AND alm_existencia.nflgActivo = 1 
+                                                        AND tb_proyectos.nidreg LIKE :cc
+                                                        AND cm_producto.cdesprod LIKE :descripcion 
+                                                        AND cm_producto.ccodprod LIKE :codigo 
+                                                    ORDER BY
+                                                        cm_producto.cdesprod ASC");
                  $sql->execute(["cc" => $cc,"codigo"=>$cod,"descripcion"=>$descrip]);
 
                  $rowcount = $sql->rowcount();
@@ -63,7 +63,7 @@
                  if ($rowcount > 0) {
                      while ($rs = $sql->fetch()) {
 
-                         $estado = intval($rs['pasados']);
+                         $estado = intval( $rs['pasados'] );
 
                          if ($estado > 7) {
                              $alerta ="semaforoRojo";
@@ -73,7 +73,8 @@
                              $alerta ="semaforoVerde";
                          }
 
-                         $salida .='<tr class="pointer" data-idexiste  ="'.$rs['idreg'].'" 
+                         if (  $rs['consumo'] <= $rs['cant_ingr']) {
+                            $salida .='<tr class="pointer" data-idexiste  ="'.$rs['idreg'].'" 
                                                         data-idproducto="'.$rs['codprod'].'"
                                                         data-idcostos  ="'.$rs['idcostos'].'">
                                          <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
@@ -81,14 +82,13 @@
                                          <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                          <td class="pl20px">'.$rs['producto'].'</td>
                                          <td class="textoCentro">'.$rs['cabrevia'].'</td>
-                                         <td class="textoCentro">'.$rs['orden'].'</td>
-                                         <td class="textoCentro">'.$rs['origen'].'</td>
                                          <td class="textoCentro '.$alerta.'" style="color:#fff">'.$rs['vence'].'</td>
                                          <td class="textoDerecha">'.$rs['pasados'].'</td>
-                                         <td class="textoDerecha">'.$rs['cant_ingr'].'</td>
-                                         <td class="textoDerecha">'.$rs['consumo'].'</td>
+                                         <td class="textoDerecha">'.number_format($rs['cant_ingr'],2,'.','').'</td>
+                                         <td class="textoDerecha">'.number_format($rs['consumo'],2,'.','').'</td>
                                          <td class="textoDerecha"></td>
                                      </tr>';
+                         }
                      }
                  }
 
