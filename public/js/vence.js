@@ -16,14 +16,14 @@ $(() => {
         return false;
     });
 
-    $("#tablaPrincipal tbody").on("click","tr", function (e) {
+    $("#tablaPrincipal tbody").on("dblclick","tr", function (e) {
         e.preventDefault();
         
         $("#codigo_item").text($(this).find('td').eq(2).text());
         $("#nombre_item").text($(this).find('td').eq(3).text());
         
 
-        $.post(RUTA+"vence/consultaItem",{item:$(this).data('idproducto'),costos:$(this).data('costos')},
+        $.post(RUTA+"vence/consultaItem",{item:$(this).data('idproducto'),costos:$(this).data('idcostos')},
             function (data, text, requestXHR) {
 
                 $("#listaVencimientos tbody")
@@ -49,7 +49,7 @@ $(() => {
     $("#excelFile").click(function (e) { 
         e.preventDefault();
 
-        $("#esperar").css("opacity","1").fadeIn();
+        /*$("#esperar").css("opacity","1").fadeIn();
 
         $.post(RUTA+"vence/exportaExcel",{registros:JSON.stringify(detalles())},
             function (data, textStatus, jqXHR) {
@@ -57,6 +57,43 @@ $(() => {
                 window.location.href = data.documento;
             },
             "json"
+        );*/
+
+        return false;
+    });
+    
+
+    $("#sendNotificacion").click(function (e) { 
+        e.preventDefault();
+
+        /*$.post(RUTA+"vence/enviaNotificacion",{costos:$("#costosSearch").val(),codigo:$("#codigoBusqueda").val(),descripcion:$("#costosSearch").val()},
+            function (data, text, requestXHR) {
+
+                $("#listaVencimientos tbody")
+                    .empty()
+                    .append(data);
+                
+                $("#vistadocumento").fadeIn();
+            },
+            "text"
+        );*/
+
+        return false;
+    });
+
+    $("#excelFile").click(function (e) { 
+        e.preventDefault();
+
+        $.post(RUTA+"vence/Exportar",{costos:$("#costosSearch").val(),},
+            function (data, text, requestXHR) {
+
+                $("#listaVencimientos tbody")
+                    .empty()
+                    .append(data);
+                
+                $("#vistadocumento").fadeIn();
+            },
+            "text"
         );
 
         return false;

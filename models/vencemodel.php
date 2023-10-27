@@ -6,9 +6,9 @@
             parent::__construct();
         }
 
-
         public function listarVencimientos($costo,$codigo,$descripcion) {
-            $cc = $costo == "" ? "%" : "%".$costo."%";
+            
+            $cc = $costo == "-1" ? "%" : "%".$costo."%";
             $cod = $codigo == "" ? "%" : "%".$codigo."%";
             $descrip = $descripcion == "" ? "%" : "%".$descripcion."%";
 
@@ -30,7 +30,7 @@
                                                     IF
                                                         ( alm_existencia.tipo = 1, 'COMPRA', 'INVENTARIO' ) AS origen,
                                                         alm_existencia.nroorden AS pedido,
-                                                        alm_existencia.cant_ingr,
+                                                        SUM(alm_existencia.cant_ingr) AS cant_ingr,
                                                         alm_existencia.cant_ord,
                                                         s.consumo
                                                     FROM
@@ -42,7 +42,7 @@
                                                         LEFT JOIN ( 
                                                             SELECT SUM( alm_consumo.cantsalida ) AS consumo, 
                                                                         alm_consumo.idprod,alm_consumo.ncostos FROM alm_consumo 
-                                                                        WHERE alm_consumo.flgactivo = 1 AND alm_consumo.ncostos = 42
+                                                                        WHERE alm_consumo.flgactivo = 1 
                                                                         GROUP BY alm_consumo.idprod) AS s ON s.idprod = alm_existencia.codprod 
                                                     WHERE
                                                         alm_existencia.vence <> '' 
@@ -50,7 +50,8 @@
                                                         AND alm_existencia.nflgActivo = 1 
                                                         AND tb_proyectos.nidreg LIKE :cc
                                                         AND cm_producto.cdesprod LIKE :descripcion 
-                                                        AND cm_producto.ccodprod LIKE :codigo 
+                                                        AND cm_producto.ccodprod LIKE :codigo
+                                                    GROUP BY alm_existencia.codprod    
                                                     ORDER BY
                                                         cm_producto.cdesprod ASC");
                  $sql->execute(["cc" => $cc,"codigo"=>$cod,"descripcion"=>$descrip]);
@@ -73,7 +74,7 @@
                              $alerta ="semaforoVerde";
                          }
 
-                         if (  $rs['consumo'] <= $rs['cant_ingr']) {
+                         if (  $rs['consumo'] <= $rs['cant_ingr'] ) {
                             $salida .='<tr class="pointer" data-idexiste  ="'.$rs['idreg'].'" 
                                                         data-idproducto="'.$rs['codprod'].'"
                                                         data-idcostos  ="'.$rs['idcostos'].'">
@@ -164,7 +165,7 @@
     
                     $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel,'Excel2007');
                     $objPHPExcel->getActiveSheet()->mergeCells('A1:AP1');
-                    $objPHPExcel->getActiveSheet()->setCellValue('A1','CARGO PLAN');
+                    $objPHPExcel->getActiveSheet()->setCellValue('A1','VENCIMIENTOS DE PRODUCTOS');
     
                     $objPHPExcel->getActiveSheet()->getStyle('A1:AP2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
                     $objPHPExcel->getActiveSheet()->getStyle('A1:AP2')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
@@ -180,8 +181,8 @@
 
                     $objPHPExcel->getActiveSheet()->setCellValue('A2','Items'); // esto cambia
                     $objPHPExcel->getActiveSheet()->setCellValue('B2','Centro de Costos'); // esto cambia
-                    $objPHPExcel->getActiveSheet()->setCellValue('C2','Codigo'); // esto cambia
-                    $objPHPExcel->getActiveSheet()->setCellValue('D2','Descripción'); // esto cambia
+                    $objPHPExcel->getActiveSheet()->setCellValue('C2','Descripcion'); // esto cambia
+                    $objPHPExcel->getActiveSheet()->setCellValue('D2','Codigo'); // esto cambia
                     $objPHPExcel->getActiveSheet()->setCellValue('E2','Unidad'); // esto cambia
                     $objPHPExcel->getActiveSheet()->setCellValue('F2','Fecha Vencimiento'); // esto cambia
                     $objPHPExcel->getActiveSheet()->setCellValue('G2','Dias'); // esto cambia

@@ -24,8 +24,8 @@
                 <div></div>
             </div>
         </div>
-        <div class="modal" id="vistadocumento">
     </div>
+    <div class="modal" id="vistadocumento">
         <div class="ventanaResumen tamanioProceso50">
             <div class="resumen">
                 <div class="tituloResumen">
@@ -63,6 +63,24 @@
                    </div>
                 </div>
             </div>   
+        </div>
+    </div>
+    <div class="modal" id="exportar">
+        <div class="ventanaPregunta">
+            <h3>Seleccione lo que desea exportar..</h3>
+            <div>
+                <button type="button" id="btnAceptarExportar">Aceptar</button>
+                <button type="button" id="btnCancelarExportar">Cancelar</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="notificar">
+        <div class="ventanaPregunta">
+            <h3>Seleccione lo que desea enviar..</h3>
+            <div>
+                <button type="button" id="btnAceptarNotificar">Aceptar</button>
+                <button type="button" id="btnCancelarNotificar">Cancelar</button>
+            </div>
         </div>
     </div>
     <div class="cabezaModulo">
