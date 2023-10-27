@@ -49,7 +49,7 @@ $(() => {
     $("#excelFile").click(function (e) { 
         e.preventDefault();
 
-        /*$("#esperar").css("opacity","1").fadeIn();
+        $("#esperar").css("opacity","1").fadeIn();
 
         $.post(RUTA+"vence/exportaExcel",{registros:JSON.stringify(detalles())},
             function (data, textStatus, jqXHR) {
@@ -57,7 +57,7 @@ $(() => {
                 window.location.href = data.documento;
             },
             "json"
-        );*/
+        );
 
         return false;
     });
@@ -66,17 +66,15 @@ $(() => {
     $("#sendNotificacion").click(function (e) { 
         e.preventDefault();
 
-        /*$.post(RUTA+"vence/enviaNotificacion",{costos:$("#costosSearch").val(),codigo:$("#codigoBusqueda").val(),descripcion:$("#costosSearch").val()},
+        $.post(RUTA+"vence/enviaNotificacion",{costos:$("#costosSearch").val(),codigo:$("#codigoBusqueda").val(),descripcion:$("#descripcionSearch").val()},
             function (data, text, requestXHR) {
 
                 $("#listaVencimientos tbody")
                     .empty()
                     .append(data);
-                
-                $("#vistadocumento").fadeIn();
             },
-            "text"
-        );*/
+            "json"
+        );
 
         return false;
     });

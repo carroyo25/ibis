@@ -226,5 +226,140 @@
                 return false;
             }
         }
+
+        public function notificarVencimientos($costo,$codigo,$descripcion){
+            require_once("public/PHPMailer/PHPMailerAutoload.php");
+
+            $mail = new PHPMailer;
+            $mail->isSMTP();
+            $mail->SMTPDebug = 0;
+            $mail->Debugoutput = 'html';
+            $mail->Host = 'mail.sepcon.net';
+            $mail->SMTPAuth = true;
+            $mail->Username = 'sistema_ibis@sepcon.net';
+            $mail->Password = $_SESSION['password'];
+            $mail->Port = 465;
+            $mail->SMTPSecure = "ssl";
+            $mail->SMTPOptions = array(
+                'ssl' => array(
+                    'verify_peer' => false,
+                    'verify_peer_name' => false,
+                    'allow_self_signed' => false
+                )
+            );
+
+            $cc         = $costo == "-1" ? "%" : "%".$costo."%";
+            $cod        = $codigo == "" ? "%" : "%".$codigo."%";
+            $descrip    = $descripcion == "" ? "%" : "%".$descripcion."%";
+
+            $mensaje = "No se envio el mensaje";
+            $estadoEnvio = false; 
+            $clase = "mensaje_error";
+
+            try {
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        alm_existencia.idreg,
+                                                        alm_existencia.codprod,
+                                                        alm_existencia.freg,
+                                                        DATE_FORMAT( alm_existencia.vence, '%d/%m/%Y' ) AS vence,
+                                                        cm_producto.ccodprod,
+                                                        UPPER( cm_producto.cdesprod ) AS producto,
+                                                        DATEDIFF( NOW(), alm_existencia.vence ) AS pasados,
+                                                        alm_existencia.nguia,
+                                                        alm_cabexist.idcostos,
+                                                        tb_proyectos.ccodproy,
+                                                        tb_unimed.cabrevia,
+                                                    IF
+                                                        ( alm_existencia.nropedido != 0, alm_existencia.nropedido, '-' ) AS orden,
+                                                    IF
+                                                        ( alm_existencia.tipo = 1, 'COMPRA', 'INVENTARIO' ) AS origen,
+                                                        alm_existencia.nroorden AS pedido,
+                                                        SUM(alm_existencia.cant_ingr) AS cant_ingr,
+                                                        alm_existencia.cant_ord,
+                                                        s.consumo
+                                                    FROM
+                                                        alm_existencia
+                                                        LEFT JOIN cm_producto ON alm_existencia.codprod = cm_producto.id_cprod
+                                                        LEFT JOIN alm_cabexist ON alm_existencia.idregistro = alm_cabexist.idreg
+                                                        INNER JOIN tb_proyectos ON alm_cabexist.idcostos = tb_proyectos.nidreg
+                                                        INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                        LEFT JOIN ( 
+                                                            SELECT SUM( alm_consumo.cantsalida ) AS consumo, 
+                                                                        alm_consumo.idprod,alm_consumo.ncostos FROM alm_consumo 
+                                                                        WHERE alm_consumo.flgactivo = 1 
+                                                                        GROUP BY alm_consumo.idprod) AS s ON s.idprod = alm_existencia.codprod 
+                                                    WHERE
+                                                        alm_existencia.vence <> '' 
+                                                        AND DATEDIFF( NOW(), alm_existencia.vence ) > 1 
+                                                        AND alm_existencia.nflgActivo = 1 
+                                                        AND tb_proyectos.nidreg LIKE :cc
+                                                        AND cm_producto.cdesprod LIKE :descripcion 
+                                                        AND cm_producto.ccodprod LIKE :codigo
+                                                    GROUP BY alm_existencia.codprod    
+                                                    ORDER BY
+                                                        cm_producto.cdesprod ASC");
+                $sql->execute(["cc" => $cc,"codigo"=>$cod,"descripcion"=>$descrip]);
+
+                $rowcount = $sql->rowcount();
+                $item = 1;
+                $salida = "";
+                $estado = "";
+                $filas = [];
+                $fila = [];
+
+                if ($rowcount > 0){
+                    while( $rs = $sql->fetch()) {
+                        $fila['costos']         = $rs['ccodproy'];
+                        $fila['codigo']         = $rs['ccodprod'];
+                        $fila['descripcion']    = $rs['producto'];
+                        $fila['unidad']         = $rs['ccodproy'];
+                        $fila['vence']          = $rs['vence'];
+                        $fila['dias']           = $rs['pasados'];
+                        $fila['item']           = $item++;
+
+                        array_push($filas,$fila);
+                    }
+                }
+
+                $detalles = json_encode($filas);
+
+                $archivo = $this->exportExcel($detalles);
+
+                $mail->setFrom("sistema_ibis@sepcon.net","Sistema");
+                //$mail->addAddress("carroyo@sepcon.net","carroyo@sepcon.net");
+                $mail->addAddress($_SESSION['correo'],$_SESSION['nombres']);
+
+                $mensaje = "Mensaje de correo no enviado";
+
+                $messaje = '<h1>Reporte de vencimiento</h1>';
+
+                $mail->Subject = "Reporte de Vencimiento de Productos";
+                $mail->msgHTML(utf8_decode($messaje));
+                    
+                $mail->AddAttachment("public/documentos/reportes/vencimiento.xlsx");
+
+               
+
+                if (!$mail->send()) {
+                    $estadoEnvio = false; 
+                }else {
+                    $mensaje = "Mensaje de correo enviado";
+                    $estadoEnvio = true; 
+                    $clase = "mensaje_correcto";
+                }
+
+
+                $salida= array("estado"=>$estadoEnvio,
+                                        "mensaje"=>$mensaje,
+                                        "clase"=>$clase,
+                                        "proceso"=>$estado);
+
+                return $salida;
+
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
     }
 ?>
