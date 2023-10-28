@@ -13,6 +13,7 @@
 
                 $tipo       = $parametros['tipoSearch'] == -1 ? "%" : $parametros['tipoSearch'];
                 $costo      = $parametros['costosSearch'] == -1 ? "%" : $parametros['costosSearch'];
+                $descrip    = $parametros['descripSearch'] == "" ? "%" : "%".$parametros['descripSearch']."%";
                 $codigo     = $parametros['codigoSearch'] == "" ? "%" : "%".$parametros['codigoSearch']."%";
                 $orden      = $parametros['ordenSearch'] == "" ? "%" : $parametros['ordenSearch'];
                 $pedido     = $parametros['pedidoSearch'] == "" ? "%" : $parametros['pedidoSearch'];
@@ -101,16 +102,18 @@
                                                 AND cm_producto.ccodprod LIKE :codigo
                                                 AND tb_pedidocab.concepto LIKE :concepto
                                                 AND tb_pedidodet.estadoItem LIKE :estado
+                                                AND CONCAT_WS( ' ', cm_producto.cdesprod, tb_pedidodet.observaciones ) LIKE :descripcion
                                             GROUP BY
                                                 tb_pedidodet.iditem");
                                                                                                     
-                $sql->execute(["orden"      =>$orden,
-                               "pedido"     =>$pedido,
-                               "costo"      =>$costo,
-                               "codigo"     =>$codigo,
-                               "concepto"   =>$concepto,
-                               "tipo"       =>$tipo,
-                               "estado"     =>$estadoItem]);
+                $sql->execute(["orden"          =>$orden,
+                               "pedido"         =>$pedido,
+                               "costo"          =>$costo,
+                               "codigo"         =>$codigo,
+                               "concepto"       =>$concepto,
+                               "tipo"           =>$tipo,
+                               "estado"         =>$estadoItem,
+                                "descripcion"   =>$descrip]);
                 
                 $rowCount = $sql->rowCount();
 
@@ -896,6 +899,16 @@
                                             tb_pedidodet.iditem");
                 $sql->execute();
                 $rowCount = $sql->rowCount();
+
+                
+                /* Cambiar este comentario dependiendo de la prueba a realizar: */
+                /*$cacheMethod = PHPExcel_CachedObjectStorageFactory::cache_to_phpTemp;
+                $cacheSettings = array( 
+                    'cacheTime' => 900,
+                    'memoryCacheSize' => '2096MB'
+                );
+
+                PHPExcel_Settings::setCacheStorageMethod($cacheMethod);*/
 
                 $objPHPExcel = new PHPExcel();
                 $objPHPExcel->getProperties()
