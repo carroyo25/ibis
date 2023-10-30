@@ -18,36 +18,45 @@
         </div>
     </div>
     <div class="barraTrabajo">
-        <div class="variasConsultas5campos">
-            <input type="hidden" name="cut" id="cut">
-            <input type="hidden" name="correo" id="correo">
-            <div>
-                <label for="costosSearch">Centro de Costos: </label>
-                <select name="costosSearch" id="costosSearch" class="item4">
-                    <?php echo $this->listaCostosSelect ?>
-                </select>
+        <form action="#" id="formConsulta">
+            <div class="variasConsultas4campos">
+                    <div>
+                        <label for="costosSearch">Centro Costos: </label>
+                        <select name="costosSearch" id="costosSearch">
+                            <?php echo $this->listaCostosSelect ?>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="codigoBusqueda">Codigo : </label>
+                        <input type="text" name="codigoBusqueda" id="codigoBusqueda">
+                    </div>
+                    <div>
+                        <label for="descripcionSearch">Descripcion: </label>
+                        <input type="text" name="descripcionSearch" id="descripcionSearch">
+                    </div>
+                    <div>
+                    </div>
+                    <button type="button" id="btnConsulta" class="boton3">Consultar</button> 
             </div>
-            <div>
-                <label for="codSearch">Codigo : </label>
-                <input type="text" id="codSearch" name="codSearch" class="ingreso">
-            </div>
-            <div>
-                <label for="nameSearch">Nombre</label>
-                <input type="text" id="nameSearch" name="nameSearch" class="ingreso">
-            </div>
-        </div>
+        </form>
     </div>
     <div class="itemsTabla">
         <table id="tablaPrincipal">
             <thead class="stickytop">
                 <tr>
                     <th width="7%">Item</th>
-                    <th width="15%">Codigo</th>
-                    <th width="30%">Descripcion</th>
+                    <th width="5%">Costos</th>
+                    <th>Codigo</th>
+                    <th>Descripcion</th>
                     <th>UND.</th>
-                    <th width="15%">Total Existencias</th>
+                    <th width="5%">N° Documento</th>
+                    <th >Nombre</th>
+                    <th width="15%">Total Salida</th>   
                 </tr>
             </thead>
+            <tbody>
+
+            </tbody>
         </table>
     </div>
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
