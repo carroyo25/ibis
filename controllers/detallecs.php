@@ -19,7 +19,7 @@
         }
 
         function exportaExcel(){
-            echo json_encode($this->model->exportExcel($_POST['registros']));
+            echo json_encode($this->model->exportExcelDetalleConsumo($_POST['registros']));
         }
 
         function enviaNotificacion() {
