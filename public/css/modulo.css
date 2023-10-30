@@ -1530,6 +1530,9 @@
 .ventanaResumen .resumen .cuerpoResumen .body_tab #tab1 table tbody tr, .ventanaResumen .resumen .cuerpoResumen .body_tab #tab2 table tbody tr, .ventanaResumen .resumen .cuerpoResumen .body_tab #tab3 table tbody tr {
   border-bottom: 1px dotted #c2c2c2;
 }
+.ventanaResumen .detalleTablaResumen {
+  padding: 1rem;
+}
 
 .ventanaProceso {
   border-radius: 8px;
@@ -2487,7 +2490,7 @@
   border-collapse: collapse;
 }
 .tablaInfo thead {
-  background: #000;
+  background: #c2c2c2;
   color: #fff;
   height: 30px;
   font-size: 0.8rem;

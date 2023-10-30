@@ -1263,6 +1263,10 @@ $emitido:#F8CAAD;
             
         }
     }
+
+    .detalleTablaResumen {
+        padding: 1rem;
+    }
 }
 
 .ventanaProceso {
@@ -2227,7 +2231,7 @@ $emitido:#F8CAAD;
     border-collapse: collapse;
 
     thead {
-        background:$negro;
+        background:#c2c2c2;
         color:$blanco;
         height: 30px;
         font-size: .8rem;

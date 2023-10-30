@@ -47,7 +47,7 @@
                         <label id="nombre_item"></label>
                         <hr>
                    </div>
-                   <div>
+                   <div class="detalleTablaResumen">
                         <table id="listaVencimientos" class="tablaInfo">
                             <thead>
                                 <th width="45%">Observaciones</th>

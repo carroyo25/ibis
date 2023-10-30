@@ -64,7 +64,8 @@
                  if ($rowcount > 0) {
                      while ($rs = $sql->fetch()) {
 
-                         $estado = intval( $rs['pasados'] );
+                         $estado    = intval( $rs['pasados'] );
+                         $saldo     = $rs['cant_ingr'] - $rs['consumo'];
 
                          if ($estado > 7) {
                              $alerta ="semaforoRojo";
@@ -74,7 +75,7 @@
                              $alerta ="semaforoVerde";
                          }
 
-                         if (  $rs['consumo'] <= $rs['cant_ingr'] ) {
+                         if (  $rs['consumo'] < $rs['cant_ingr'] ) {
                             $salida .='<tr class="pointer" data-idexiste  ="'.$rs['idreg'].'" 
                                                         data-idproducto="'.$rs['codprod'].'"
                                                         data-idcostos  ="'.$rs['idcostos'].'">
@@ -87,7 +88,7 @@
                                          <td class="textoDerecha">'.$rs['pasados'].'</td>
                                          <td class="textoDerecha">'.number_format($rs['cant_ingr'],2,'.','').'</td>
                                          <td class="textoDerecha">'.number_format($rs['consumo'],2,'.','').'</td>
-                                         <td class="textoDerecha"></td>
+                                         <td class="textoDerecha">'.number_format($saldo,2,'.','').'</td>
                                      </tr>';
                          }
                      }

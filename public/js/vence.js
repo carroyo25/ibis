@@ -78,24 +78,6 @@ $(() => {
 
         return false;
     });
-
-    $("#excelFile").click(function (e) { 
-        e.preventDefault();
-
-        $.post(RUTA+"vence/Exportar",{costos:$("#costosSearch").val(),},
-            function (data, text, requestXHR) {
-
-                $("#listaVencimientos tbody")
-                    .empty()
-                    .append(data);
-                
-                $("#vistadocumento").fadeIn();
-            },
-            "text"
-        );
-
-        return false;
-    });
 })
 
 detalles = () =>{
