@@ -17,13 +17,13 @@ $(function(){
                 $("#proceso").fadeIn();
                 
                 accion = 'n';
+                grabado = false;
 
                 $("#codigo_usuario").val($("#id_user").val());
 
         } catch (error) {
             mostrarMensaje(error,"mensaje_error");
         }
-
        
         return false;
     });
@@ -571,12 +571,12 @@ $(function(){
     //proceso con el correo
     //para cambiar el tipo de letra en el mensaje
     $(".js-boton").mousedown(function(event) {
-            event.preventDefault(); // Esto no es necesario, es por vicio xD
+        event.preventDefault(); // Esto no es necesario, es por vicio xD
                 
-            var comando = $(this).attr('data-type');
-            document.execCommand(comando, false, null);
+        var comando = $(this).attr('data-type');
+        document.execCommand(comando, false, null);
 
-            return false
+        return false
     });
 
     $("#btnAtach").click(function (e) { 

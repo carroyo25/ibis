@@ -1938,7 +1938,8 @@
                     while ($rs = $sql->fetch()) {
 
                         $atendida = $rs['cant_atendida'] == NULL || $rs['cant_atendida'] == '' ? 0 : $rs['cant_atendida'];
-                        $aprobar =  $rs['cant_aprob'] - $rs['cant_atendida'];
+                        //$aprobar =  $rs['cant_pedida'] - $rs['cant_atendida'];
+                        $aprobar = $rs['cant_aprob'];
 
                         $estado_aprobar = $aprobar == 0 ? "desactivado" : "";
                         
