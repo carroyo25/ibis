@@ -78,7 +78,7 @@
 		$mail->Host = 'mail.sepcon.net'; // not ssl://smtp.gmail.com
 		$mail->SMTPAuth= true;
 		$mail->Username='sistema_ibis@sepcon.net';
-		$mail->Password='aK8izG1WEQwwB1X';
+		$mail->Password='';
 		$mail->Port = 587; // not 587 for ssl 
 		$mail->SMTPDebug = 0; 
 		$mail->SMTPSecure = 'tsl';
