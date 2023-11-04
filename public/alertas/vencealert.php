@@ -6,15 +6,17 @@
 	require_once("c:/xampp/htdocs/ibis/public/PHPExcel/PHPExcel.php");
 
 	$proyectos = verProyectos($pdo);
+	$token = "aK8izG1WEQwwB1X";
 
 	foreach ($proyectos as $proyecto) {
 		$vencimiento = intval(listarTieneVencimientos($pdo,$proyecto['cubica']));
 		
 		if ( $vencimiento > 0 ) {
-			crearArchivos($pdo,$proyecto['cubica']);
+			crearArchivos($pdo,$proyecto['cubica'],$proyecto['cabrevia']);
 		}
 	}
 
+	enviarCorreos($pdo,$token);
 
 	//funciones para seleccionar el ubigeo por proyecto
 	function verProyectos($pdo){
@@ -68,11 +70,71 @@
         }
 	}
 
-	function listarCorreos($proyecto,$rol){
-		
+	function listarCorreos($pdo){
+		try {
+            $sql = "SELECT
+						tb_user.iduser,
+						tb_user.cnameuser,
+						tb_user.ccorreo,
+						tb_proyectos.cubica,
+						tb_proyectos.ccodproy,
+						tb_costusu.ncodproy 
+					FROM
+						tb_user
+						INNER JOIN tb_proyectos
+						INNER JOIN tb_costusu ON tb_user.iduser = tb_costusu.id_cuser 
+						AND tb_proyectos.nidreg = tb_costusu.ncodproy 
+					WHERE
+						tb_user.nflgactivo = 1 
+						AND tb_costusu.nflgactivo = 1 
+						AND tb_user.nflgvence = 1  
+					GROUP BY
+						tb_user.iduser";
+
+            $statement 	= $pdo->query($sql);
+            $statement 	-> execute();
+            $result 	= $statement->fetchAll();
+			            
+            return $result;
+
+        } catch (PDOException $th) {
+            echo $th->getMessage();
+            return false;
+        }
 	}
 
-	function crearArchivos($pdo,$proyecto){
+	function verificarAdjuntos($pdo,$user){
+		try {
+            $sql = "SELECT
+						tb_costusu.id_cuser,
+						tb_proyectos.cubica,
+						tb_proyectos.cabrevia
+					FROM
+						tb_costusu
+						INNER JOIN tb_proyectos ON tb_costusu.ncodproy = tb_proyectos.nidreg
+						INNER JOIN tb_user ON tb_costusu.id_cuser = tb_user.iduser 
+					WHERE
+						tb_costusu.nflgactivo = 1 
+						AND tb_costusu.id_cuser = ?
+						AND tb_proyectos.cubica <> '' 
+					GROUP BY
+						tb_proyectos.cubica 
+					ORDER BY
+						tb_user.cnameuser ASC";
+
+            $statement 	= $pdo->prepare($sql);
+            $statement 	-> execute(array($user));
+            $result 	= $statement->fetchAll();
+			            
+            return $result;
+
+        } catch (PDOException $th) {
+            echo $th->getMessage();
+            return false;
+        }
+	}
+
+	function crearArchivos($pdo,$proyecto,$sede){
 		try {
 			$sql = "SELECT
 							alm_existencia.idreg,
@@ -193,11 +255,10 @@
 						}
 					}
 
-
                     $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel,'Excel2007');
-                    $objWriter->save('c:/xampp/htdocs/ibis/public/documentos/reportes/auto'.$proyecto.'.xlsx');
+                    $objWriter->save('c:/xampp/htdocs/ibis/public/documentos/reportes/'.$proyecto."-".$sede.'.xlsx');
     
-                    return array("documento"=>'c:/xampp/htdocs/ibis/public/documentos/reportes/auto'.$proyecto.'.xlsx');
+                    return array("documento"=>'c:/xampp/htdocs/ibis/public/documentos/reportes/'.$proyecto."-".$sede.'.xlsx');
     
                     exit();
     
@@ -208,32 +269,74 @@
         }
 	}
 
-	function enviarCorreos($listaCorreos,$Adjunto){
-		$mail = new PHPMailer();
-		$mail->IsSMTP(true);
-		$mail->Host = 'mail.sepcon.net'; // not ssl://smtp.gmail.com
-		$mail->SMTPAuth= true;
-		$mail->Username='sistema_ibis@sepcon.net';
-		$mail->Password='';
-		$mail->Port = 587; // not 587 for ssl 
-		$mail->SMTPDebug = 0; 
-		$mail->SMTPSecure = 'tsl';
-		$mail->SetFrom('carroyo@sepcon.net', 'Cesar');
-		$mail->AddAddress('carroyo@sepcon.net', 'Cesar');
-    	//$mail->AddAddress('acruz@sepcon.net', 'Cesar');
-		$mail->Subject = 'Subject';
-		$mail->Subject = "Correo de prueba automatica";
-		$mail->Body    = "Este es un mensaje de envio automatico <b>".date("H:i:s")."</b>";
+	function enviarCorreos($pdo,$token){
+		$mail = new PHPMailer;
+        $mail->isSMTP();
+        $mail->SMTPDebug = 0;
+        $mail->Debugoutput = 'html';
+        $mail->Host = 'mail.sepcon.net';
+        $mail->SMTPAuth = true;
+        $mail->Username = 'sistema_ibis@sepcon.net';
+        $mail->Password = $token;
+        $mail->Port = 465;
+        $mail->SMTPSecure = "ssl";
+        $mail->SMTPOptions = array(
+            'ssl' => array(
+                'verify_peer' => false,
+                'verify_peer_name' => false,
+                'allow_self_signed' => false
+            )
+        );
+
+		$mail->SetFrom('sistema_ibis@sepcon.net','Sical');
+
+		$mail->Subject = "Reporte de vencimientos";
 		$mail->AltBody = "Este texto es para los clientes que no tienen HTML";
-	
-		if(!$mail->Send()) {
-			echo 'Error : ' . $mail->ErrorInfo;
-		} else {
-			echo 'Ok!!';
+
+		$subject    = utf8_decode("Reporte de vencimiento");
+                
+
+        $messaje= '<div style="width:100%;display: flex;flex-direction: column;justify-content: center;align-items: center;
+                            font-family: Futura, Arial, sans-serif;">
+                    <div style="width: 45%;border: 1px solid #c2c2c2;background: green">
+                        <h1 style="text-align: center;color:#fff">Informe del Sistema</h1>
+                    </div>
+                    <div style="width: 45%;
+                                border-left: 1px solid #c2c2c2;
+                                border-right: 1px solid #c2c2c2;
+                                border-bottom: 1px solid #c2c2c2;">
+                        <p style="padding:.5rem"><strong style="font-style: italic;">Estimados:</strong></p>
+                        <p style="padding:.5rem;line-height: 1rem;">El presente correo es para informar, el envio del los adjuntos de vencimientos de items.</p>
+                        <p style="padding:.5rem">Fecha de Emision : '. date("d/m/Y h:i:s") .'</p>
+                    </div>
+                </div>';
+		
+		$mail->msgHTML(utf8_decode($messaje));
+
+		$correos = listarCorreos($pdo);
+
+		foreach ($correos as $correo) {
+			$mail->AddAddress($correo['ccorreo'], $correo['cnameuser']);
+
+			$ubigeos = verificarAdjuntos($pdo,$correo['iduser']);
+
+			foreach ($ubigeos as $ubigeo) {
+				
+				$ruta 		= 'c:/xampp/htdocs/ibis/public/documentos/reportes/';
+				$adjunto  	= $ubigeo['cubica']."-".$ubigeo['cabrevia'].'.xlsx';
+
+				if ( file_exists($ruta.$adjunto))
+					$mail->AddAttachment($ruta.$adjunto);
+			}
+
+			if(!$mail->Send()) {
+				echo 'Error : ' . $mail->ErrorInfo;
+			} else {
+				echo 'Ok!!';
+			}
+
+			$mail->clearAddresses();
+			$mail->clearAttachments();
 		}
-	}
-
-	
-
-    
+	}  
 ?>

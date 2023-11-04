@@ -28,7 +28,7 @@
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
                         <div>
-                            <button type="button" id="closeReq" title="Atender todos el pedido por almacen" class="boton3">
+                            <button type="button" id="closeReq" title="Atender todos el pedido por almacen" class="boton3 oculto">
                                 <p><i class="far fa-save"></i> Culminar Pedido</p> 
                             </button>
                             <button type="button" id="preview" title="Vista Previa" class="boton3">
