@@ -140,9 +140,17 @@
                 $item = 1;
                 $salida = '<tr><td colspan="9">No hay registros para mostrar</td></tr>';
 
+                $_SESSION['progreso'] = 0;
+                session_write_close();
+
                 if ($rowCount > 0) {
                     $salida="";
                     while ($rs = $sql->fetch()){
+
+                        $_SESSION['progreso']+=1;
+                        session_write_close();
+                        //sleep(1);
+
                         $saldo = ( $rs['ingresos']+$rs['inventarios']+$rs['devoluciones'] )-($rs['consumos']+$rs['salidas_transferencia']);
                         $saldo = $saldo > -1 ? $saldo : $saldo;
                         $estado = $saldo > -1 ? "semaforoVerde":"semaforoRojo";
@@ -186,6 +194,9 @@
                 }else {
                     $salida = '<tr colspan="8">No hay registros</tr>';
                 }
+
+                $_SESSION['progreso'] = 0;
+                session_write_close();
 
                 return $salida;
 
@@ -726,6 +737,29 @@
             }
         }
 
+        public function contarRegistros(){
+            return $_SESSION['progreso']++;
+	        session_write_close();
+        }
 
+        public function nroVueltas($parametros){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT
+                                                COUNT(*) AS registros
+                                            FROM
+                                                cm_producto 
+                                            WHERE
+                                                cm_producto.flgActivo = 1 
+                                                AND cm_producto.ntipo = 37");
+                $sql->execute();
+                $result = $sql->fetchAll();
+
+                return $result[0]['registros'];
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
     }
 ?>

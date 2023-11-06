@@ -85,11 +85,15 @@ $(() => {
         e.preventDefault();
 
         let str = $("#formConsulta").serialize();
+        
+        let registros = vueltas(str);
 
         try {
             if ( $("#costosSearch").val() == -1) throw "Por favor elija un centro de costos para la consulta";
 
             $("#esperar").css("opacity","1").fadeIn();
+            
+            const progreso_accion = setInterval(progreso,1000);
         
             $.post(RUTA+"stocks/consulta",str,
                 function (data, textStatus, jqXHR) {
@@ -98,6 +102,7 @@ $(() => {
                         .append(data);
 
                         $("#esperar").css("opacity","0").fadeOut();
+                        clearInterval(progreso_accion);
                 },
                 "text"
             );
@@ -256,4 +261,22 @@ detalles = () =>{
 
 esnulo = (valor) => {
     return v = valor === null ? '0.00' : valor;
+}
+
+progreso = () => {
+    $.post(RUTA+"stocks/conteo",
+        function (data, textStatus, jqXHR) {
+            console.log(data);
+        },
+        "text"
+    );
+}
+
+vueltas = (str) => {
+    $.post(RUTA+"stocks/vueltas",str,
+        function (data, textStatus, jqXHR) {
+            console.log(data);
+        },
+        "text"
+    );
 }

@@ -37,6 +37,14 @@
         function minimo(){
             echo json_encode($this->model->registrarMinimo($_POST));
         }
+
+        function conteo(){
+            echo $this->model->contarRegistros();
+        }
+
+        function vueltas() {
+            echo $this->model->nrovueltas($_POST);
+        }
         
     }
 ?>
