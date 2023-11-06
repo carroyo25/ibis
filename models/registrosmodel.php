@@ -12,11 +12,12 @@
             $nguia = $guia == "" ? "%":$guia;
             
             try {
-                $sql = $this->db->connect()->prepare("SELECT  alm_despachocab.id_regalm,
-                                                        YEAR(ffecdoc) AS anio,
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        alm_despachocab.id_regalm,
+                                                        YEAR ( alm_despachocab.ffecdoc ) AS anio,
+                                                        DATE_FORMAT( alm_despachocab.ffecdoc, '%d/%m/%Y' ) AS ffecdoc,
                                                         alm_despachocab.nnronota,
                                                         alm_despachocab.nReferido,
-                                                        DATE_FORMAT( alm_despachocab.ffecdoc, '%d/%m/%Y' ) AS ffecdoc,
                                                         UPPER( origen.cdesalm ) AS origen,
                                                         UPPER( destino.cdesalm ) AS destino,
                                                         UPPER( CONCAT_WS( ' ', tb_proyectos.ccodproy, tb_proyectos.cdesproy ) ) AS costos,
@@ -24,19 +25,23 @@
                                                         tb_parametros.cabrevia,
                                                         alm_despachocab.nEstadoDoc,
                                                         alm_despachocab.cnumguia,
-                                                        ( SELECT SUM( alm_despachodet.ndespacho ) FROM alm_despachodet WHERE alm_despachodet.id_regalm = alm_despachocab.id_regalm ) AS despachos,
-	                                                    ( SELECT SUM( alm_existencia.cant_ingr ) FROM alm_existencia WHERE alm_existencia.iddespacho = alm_despachocab.id_regalm ) AS ingresos  
+                                                        tb_costusu.id_cuser,
+                                                        d.despachos,
+                                                        i.ingresos 
                                                     FROM
-                                                        tb_costusu
-                                                        INNER JOIN alm_despachocab ON tb_costusu.ncodproy = alm_despachocab.ncodpry
+                                                        alm_despachocab
                                                         INNER JOIN tb_almacen AS origen ON alm_despachocab.ncodalm1 = origen.ncodalm
                                                         INNER JOIN tb_almacen AS destino ON alm_despachocab.ncodalm2 = destino.ncodalm
                                                         INNER JOIN tb_proyectos ON alm_despachocab.ncodpry = tb_proyectos.nidreg
-                                                        INNER JOIN tb_parametros ON alm_despachocab.nEstadoDoc = tb_parametros.nidreg 
+                                                        INNER JOIN tb_parametros ON alm_despachocab.nEstadoDoc = tb_parametros.nidreg
+                                                        INNER JOIN tb_costusu ON alm_despachocab.ncodpry = tb_costusu.ncodproy
+                                                        LEFT JOIN ( SELECT SUM( alm_despachodet.ndespacho ) AS despachos, alm_despachodet.id_regalm FROM alm_despachodet GROUP BY alm_despachodet.id_regalm ) AS d ON alm_despachocab.id_regalm = d.id_regalm
+                                                        LEFT JOIN ( SELECT SUM( alm_existencia.cant_ingr ) AS ingresos, alm_existencia.iddespacho FROM alm_existencia GROUP BY alm_existencia.iddespacho ) AS i ON alm_despachocab.id_regalm = i.iddespacho 
                                                     WHERE
-                                                        tb_costusu.id_cuser = :usr
+                                                        alm_despachocab.nflgactivo = 1 
                                                         AND tb_costusu.nflgactivo = 1 
-                                                        AND alm_despachocab.nEstadoDoc = 62
+                                                        AND tb_costusu.id_cuser = :usr
+                                                        AND alm_despachocab.nEstadoDoc = 62 
                                                         AND alm_despachocab.cnumguia LIKE :guia 
                                                     ORDER BY
                                                         alm_despachocab.ffecdoc DESC");
@@ -179,6 +184,7 @@
                                         <td class="textoCentro">'.$rs['pedido'].'</td>
                                         <td class="textoCentro">'.$rs['orden'].'</td>
                                         <td class="textoCentro">'.$rs['cnumguia'].'</td>
+                                        <td class="textoCentro"><a href="'.$rs['niddetaPed'].'" ><i class="fas fa-paperclip"></i></a></td>
                                     </tr>';
                     } 
                 }
@@ -341,6 +347,8 @@
             }
         }
 
+        /*consulta de la tabla principal */
+
         public function consultarID($indice){
             try {
                $sql = $this->db->connect()->prepare("SELECT
@@ -402,7 +410,8 @@
                                                         alm_existencia.ubicacion,
                                                         alm_existencia.condicion,
                                                         alm_existencia.vence,
-                                                        alm_existencia.idreg 
+                                                        alm_existencia.idreg,
+                                                        tb_pedidodet.docEspec
                                                     FROM
                                                         alm_existencia
                                                         INNER JOIN cm_producto ON alm_existencia.codprod = cm_producto.id_cprod
@@ -417,6 +426,10 @@
 
                 if ($rowCount > 0){
                     while ($rs = $sql->fetch()){
+
+                        $adjunto    = $rs['docEspec'] == NULL ? '#' : $rs['docEspec'];
+                        $icono      = $rs['docEspec'] == NULL ? '<i class="fas fa-paperclip"></i>' : '<i class="far fa-file"></i>';
+
                         $salida .= '<tr>
                                         <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
@@ -432,6 +445,7 @@
                                         <td class="textoCentro">'.$rs['pedido'].'</td>
                                         <td class="textoCentro">'.$rs['orden'].'</td>
                                         <td class="textoCentro"></td>
+                                        <td class="textoCentro"><a href="'.$rs['docEspec'].'">'.$icono.'</a></td>
                                     </tr>';
                     }
                 }
@@ -442,6 +456,8 @@
                  return false;
              }
         }
+
+        /*----*/
 
         public function listarTransferencias($nt){
             try {
@@ -568,6 +584,9 @@
                 if ($rowCount > 0){
                     while ($rs= $sql->fetch()){
                         if ( $rs['ncanti'] > 0) {
+
+                            //<i class="far fa-file-pdf"></i> 
+
                             $salida .='<tr class="pointer" data-idpet="'.$rs['iddetped'].'"
                                                         data-area="'.$rs['ncodarea'].'"
                                                         data-almacen = "'.$destino.'"
@@ -587,6 +606,7 @@
                                         <td class="textoCentro">'.$rs['nrodoc'].'</td>
                                         <td class="textoCentro"></td>
                                         <td class="textoCentro">'.$rs['idtransfer'].'</td>
+                                        <td class="textoCentro"><a href="'.$rs['niddetaPed'].'" ><i class="fas fa-paperclip"></i></a></td>
                                     </tr>';
                         }
                     } 
@@ -597,6 +617,44 @@
                  echo "Error: ".$th->getMessage();
                  return false;
              }
+        }
+
+        public function subirAdjuntos($codigo,$adjuntos){
+            $countfiles = count( $adjuntos );
+
+            for($i=0;$i<$countfiles;$i++){
+                try {
+                    $file = "file-".$i;
+                    $ext = explode('.',$adjuntos[$file]['name']);
+                    $filename = uniqid().".".end($ext);
+                    // Upload file
+                    if (move_uploaded_file($adjuntos[$file]['tmp_name'],'public/documentos/certificados/'.$filename)){
+                        $sql= $this->db->connect()->prepare("INSERT INTO lg_regdocumento 
+                                                                    SET nidrefer=:cod,cmodulo=:mod,cdocumento=:doc,
+                                                                        creferencia=:ref,nflgactivo=:est");
+                        $sql->execute(["cod"=>$codigo,
+                                        "mod"=>"CER",
+                                        "ref"=>$filename,
+                                        "doc"=>$adjuntos[$file]['name'],
+                                        "est"=>1]);
+                    }
+                } catch (PDOException $th) {
+                    echo "Error: ".$th->getMessage();
+                    return false;
+                }
+            }
+
+            $this->actualizarDetallePedido($codigo,$filename);
+        }
+
+        private function actualizarDetallePedido($codigo,$filename){
+            try {
+                $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet SET tb_pedidodet.docEspec = :archivo WHERE iditem = :item");
+                $sql->execute(["archivo"=>$filename,"item"=>$codigo]);
+            }catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
         }
     }
 ?>
