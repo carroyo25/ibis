@@ -387,7 +387,7 @@
                                                     WHERE
                                                         tb_pedidodet.idpedido = :indice 
                                                         AND tb_pedidodet.nflgActivo = 1 
-                                                        AND tb_pedidodet.cant_orden <> tb_pedidodet.cant_aprob 
+                                                        AND tb_pedidodet.cant_atend > 0
                                                         AND ( tb_pedidodet.estadoItem = 54 OR tb_pedidodet.estadoItem = 230 ) 
                                                     GROUP BY
                                                         tb_pedidodet.iditem");
@@ -414,7 +414,7 @@
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="pl20px">'.$rs['cdesprod'].'</td>
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
-                                        <td class="textoDerecha">'.$rs['cant_aprob'].'</td>
+                                        <td class="textoDerecha">'.number_format($rs['cant_atend'],2).'</td>
                                         <td class="textoDerecha">'.$rs['total_atendido'].'</td>
                                         <td><input type="number" step="any" placeholder="0.00" 
                                                             onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)" 

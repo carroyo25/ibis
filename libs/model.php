@@ -2918,12 +2918,15 @@
         //marcar items para no ser consultados
         public function itemMarcado($id,$estado,$io){
             try {
+
+                $estado_modificado = 54;
+
                 $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet 
                                                         SET nflgOrden =:estado,
                                                             idorden = NULL,
                                                             cant_orden = 0
                                                         WHERE iditem =:id");
-                $sql->execute(["id" => $id,"estado" => $estado]);
+                $sql->execute(["id" => $id,"estado" => $estado_modificado]);
 
                 if ($io != '-') {
                     $this->quitarItemOrden($io);
@@ -2938,7 +2941,8 @@
             try {
                 $sql = $this->db->connect()->prepare("UPDATE lg_ordendet 
                                                         SET nflgactivo = 1,
-                                                            id_orden = NULL
+                                                            id_orden = NULL,
+                                                            nEstadoReg = 105
                                                         WHERE nitemord =:id");
                 $sql->execute(["id" => $io]);
             } catch (PDOException $th) {

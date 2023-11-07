@@ -143,7 +143,7 @@
                                     <th class="">Codigo</th>
                                     <th width="45%">Descripcion</th>
                                     <th class="">Unidad</th>
-                                    <th width="7%" class="">Cantidad</br>Aprobada</th>
+                                    <th width="7%" class="">Cantidad</br>Referida<br>Almacen</th>
                                     <th width="7%">Cantidad</br>Atendida</th>
                                     <th width="7%">Cantidad por</br>Atender</th>
                                     <th width="7%">Fecha</br>Vencimiento</th>
