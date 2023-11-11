@@ -264,7 +264,7 @@ addComa = (x) => { return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
 $(".datafiltro").append(`
         <a href="#" class="listaFiltroTabla" data-idcol="0"><i class="fas fa-angle-down"></i></a>
         <div class="filtro">
-            <div class="">
+            <div class="oculto">
                 <ul class="filtro_cantidad">
                     <li><a>Ordenar ascedentemente</a></li>
                     <li><a>Ordenar Descendentemente</a></li>
