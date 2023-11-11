@@ -66,7 +66,7 @@
 
                          $estado    = intval( $rs['pasados'] );
                          $saldo     = $rs['cant_ingr'] - $rs['consumo'];
-
+                         
                          if ($estado > 7) {
                              $alerta ="semaforoRojo";
                          }elseif ($estado == 7) {
@@ -106,34 +106,41 @@
 
             try {
                 $sql=$this->db->connect()->prepare("SELECT
-                                                            DATE_FORMAT( alm_existencia.vence, '%d/%m/%Y' ) AS fecha_vencimiento,
-                                                            alm_cabexist.idcostos,
-                                                            alm_cabexist.idreg,
-                                                            tb_pedidodet.observaciones,
-                                                            tb_pedidodet.idorden,
-                                                            FORMAT( tb_pedidodet.cant_orden, 2 ) AS cant_orden,
-                                                            DATE_FORMAT( alm_existencia.freg, '%d/%m/%Y' ) AS fecha_ingreso 
-                                                        FROM
-                                                            alm_existencia
-                                                            INNER JOIN alm_cabexist ON alm_existencia.idregistro = alm_cabexist.idreg
-                                                            INNER JOIN tb_proyectos ON alm_cabexist.idcostos = tb_proyectos.nidreg
-                                                            INNER JOIN tb_pedidodet ON alm_existencia.idpedido = tb_pedidodet.iditem 
-                                                        WHERE
-                                                            alm_existencia.codprod = :id 
-                                                            AND alm_existencia.vence != ''
-                                                            AND alm_cabexist.idcostos = :cc");
+                                                    DATE_FORMAT( alm_existencia.vence, '%d/%m/%Y' ) AS fecha_vencimiento,
+                                                    alm_cabexist.idcostos,
+                                                    alm_cabexist.idreg,
+                                                    UPPER( tb_pedidodet.observaciones ) AS observaciones,
+                                                    tb_pedidodet.idorden,
+                                                    FORMAT( tb_pedidodet.cant_orden, 2 ) AS cant_orden,
+                                                    DATE_FORMAT( alm_existencia.freg, '%d/%m/%Y' ) AS fecha_ingreso,
+                                                    alm_consumo.cantsalida
+                                                FROM
+                                                    alm_existencia
+                                                    INNER JOIN alm_cabexist ON alm_existencia.idregistro = alm_cabexist.idreg
+                                                    INNER JOIN tb_proyectos ON alm_cabexist.idcostos = tb_proyectos.nidreg
+                                                    INNER JOIN tb_pedidodet ON alm_existencia.idpedido = tb_pedidodet.iditem
+                                                    INNER JOIN alm_consumo ON alm_existencia.codprod = alm_consumo.idprod 
+                                                WHERE
+                                                    alm_existencia.codprod = :id
+                                                    AND alm_cabexist.idcostos = :cc
+                                                    AND alm_existencia.vence <> ''
+                                                GROUP BY alm_existencia.codprod");
                 $sql->execute(["id"=>$producto,"cc"=>$costos]);
 
                 $rowcount = $sql->rowCount();
 
                 if ($rowcount>0) {
                     while ($rs = $sql->fetch()) {
+
+                        $avance = ($rs['cantsalida'] * 100) / $rs['cant_orden'];
+
                         $salida .='<tr class="pointer"> 
                                         <td class="pl20px">'.$rs['observaciones'].'</td>
                                         <td class="textoCentro">'.$rs['fecha_ingreso'].'</td>
                                         <td class="textoCentro">'.$rs['idorden'].'</td>
                                         <td class="textoCentro">'.$rs['fecha_vencimiento'].'</td>
                                         <td class="textoDerecha">'.$rs['cant_orden'].'</td>
+                                        <td style="background-image:linear-gradient(90deg, #46a136   '.$avance.'%, transparent 50%)"><p class="textoCentro">'.$avance.'%</p></td>
                                     </tr>';
                     }
                 }

@@ -2919,14 +2919,17 @@
         public function itemMarcado($id,$estado,$io){
             try {
 
-                $estado_modificado = 54;
+                $estado_registro = 54;
+                $estado_orden = 0;
 
                 $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet 
                                                         SET nflgOrden =:estado,
                                                             idorden = NULL,
-                                                            cant_orden = 0
+                                                            cant_orden = 0,
+                                                            estadoItem = :estadoItem
                                                         WHERE iditem =:id");
-                $sql->execute(["id" => $id,"estado" => $estado_modificado]);
+                                                        
+                $sql->execute(["id" => $id,"estado" => $estado_orden, "estadoItem" => $estado_registro]);
 
                 if ($io != '-') {
                     $this->quitarItemOrden($io);

@@ -264,15 +264,24 @@ addComa = (x) => { return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
 $(".datafiltro").append(`
         <a href="#" class="listaFiltroTabla" data-idcol="0"><i class="fas fa-angle-down"></i></a>
         <div class="filtro">
-            <input type="text" class="filterSearch">
+            <div class="">
+                <ul class="filtro_cantidad">
+                    <li><a>Ordenar ascedentemente</a></li>
+                    <li><a>Ordenar Descendentemente</a></li>
+                </ul>
+            </div>
+            <hr>
+            <input type="text" class="filterSearch" placeholder="Buscar Elementos...">
             <ul class="ul_filtro"> 
             </ul>
-        </div>
-`);
+        </div>`);
 
-    //filtrar tablas por la cabecera
-    $(".listaFiltroTabla").click(function (e) { 
+//filtrar tablas por la cabecera
+$(".listaFiltroTabla").click(function (e) { 
         e.preventDefault();
+
+        $(".ul_filtro").empty();
+        $(".filtro").fadeOut();
 
         let idx = parseInt($(this).parent().data("idcol")),
             tabla = $(this).parent().parent().parent().parent().attr("id");
@@ -284,10 +293,10 @@ $(".datafiltro").append(`
         });
 
         return false;
-    });
+});
 
-    $(".filtro").on('click','a', function(e) {
-        e.preventDefault();
+$(".ul_filtro").on('click','a', function(e) {
+        e.preventDefault();;
 
         let padre = $(this).parent().parent().parent(),
             value = $(this).text(),
@@ -305,9 +314,28 @@ $(".datafiltro").append(`
         });
 
         return false;
-    });
+});
 
-    $(".filterSearch").keyup(function () { 
+$(".filtro_cantidad").on('click','a', function(e) {
+    e.preventDefault();;
+
+    let padre = $(this).parent().parent().parent().parent(),
+        value = $(this).text(),
+        columna = $(this).parent().parent().parent().parent().data('idcol'),
+        
+        tabla   = $(this).parent().parent().parent().parent().parent().parent().parent().parent().attr("id");
+
+        t = "#"+tabla+ " tbody tr";
+
+
+    ordernarAscende(tabla,columna,value);
+
+    padre.fadeOut();
+
+    return false;
+});
+
+$(".filterSearch").keyup(function () { 
         
         let value = $(this).val().toLowerCase();
 
@@ -317,7 +345,7 @@ $(".datafiltro").append(`
             $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
         });
 
-    });
+});
 
 
 
@@ -349,4 +377,56 @@ mostrarValoresFiltrados = (tabla,columna,valor) => {
         }
     });
 }
+
+ordernarAscende = (tabla,columna,valor) => {
+    let tablaProceso = document.getElementById(tabla);
+    let tbody = tablaProceso.querySelector('tbody');
+    let trs = tbody.querySelectorAll('tr');
+
+    if(trs.length == 0) {
+        // Nada que hacer con esta tabla
+        return;
+    }
+
+    let order, lastColumn;
+
+    trs.forEach((tr, trNum) => tr.dataset.num = trNum);
+    let ths = tablaProceso.querySelectorAll('thead th');
+
+    ths.forEach((th, column) => th.addEventListener('click', () => {
+        let values = [];
+          trs.forEach(tr => {
+              values.push({
+                  trData: tr.dataset.num,
+                  value: tr.querySelectorAll('td')[column].innerText
+              });
+              tr.querySelectorAll('td')[column].classList.add('red'); 
+          });
+          // Ordenar valores
+          values.sort((a,b) => a.value.localeCompare(b.value));
+          // Definir el orden en que se va a mostrar
+          if(lastColumn !== column) {
+              // Si el clic no es en la misma columna que el anterior
+              // Restablecer orden
+              order = null;
+          }
+          lastColumn = column;
+          // Definir el orden de salida
+          if(!order || order == 'DESC') {
+              // En el primer clic en la misma columna, order es nulo
+              order = 'ASC'
+          } else {
+              order = 'DESC';
+          }
+          if(order == 'DESC') {
+              values.reverse();
+          }
+          // Ordenar tabla
+          values.forEach(data => {
+              let trMove = tablaProceso.querySelector(`[data-num="${data.trData}"]`);
+              tbody.appendChild(trMove);
+          });
+    }));
+}
+
 //////////////////////////////////////////////////

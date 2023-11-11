@@ -20,7 +20,7 @@
                                                         tb_costusu.id_cuser,
                                                         lg_ordencab.id_regmov,
                                                         lg_ordencab.cnumero,
-                                                        lg_ordencab.ffechadoc,
+                                                        DATE_FORMAT(lg_ordencab.ffechadoc,'%d/%m/%Y') AS emision,
                                                         lg_ordencab.nNivAten,
                                                         lg_ordencab.nEstadoDoc,
                                                         lg_ordencab.ncodpago,
@@ -56,7 +56,8 @@
                                                         AND lg_ordencab.id_regmov LIKE :orden
                                                         AND tb_costusu.ncodproy LIKE :costos
                                                         AND lg_ordencab.cmes LIKE :mes
-                                                    ORDER BY lg_ordencab.id_regmov DESC");
+                                                    ORDER BY lg_ordencab.id_regmov DESC
+                                                    LIMIT 1,30");
 
                 $sql->execute(["user"=>$_SESSION['iduser'],
                                 "anio"=>$a,
@@ -71,7 +72,7 @@
  
                          $salida .='<tr class="pointer" data-indice="'.$rs['id_regmov'].'" data-tipo="'.$rs['ntipmov'].'" data-rol="'.$rs['nrol'].'">
                                      <td class="textoCentro">'.str_pad($rs['cnumero'],4,0,STR_PAD_LEFT).'</td>
-                                     <td class="textoCentro">'.date("d/m/Y", strtotime($rs['ffechadoc'])).'</td>
+                                     <td class="textoCentro">'.date("d/m/Y", strtotime($rs['emision'])).'</td>
                                      <td class="pl20px">'.$rs['cObservacion'].'</td>
                                      <td class="pl20px">'.utf8_decode($rs['ccodproy']).'</td>
                                      <td class="pl20px">'.$rs['area'].'</td>
@@ -303,6 +304,75 @@
 
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        public function listarOrdenScrollEvaluacion($pagina,$cantidad){
+            try {
+                $inicio = ($pagina - 1) * $cantidad;
+                $limite = $this->contarItems();
+
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        lg_ordencab.id_regmov,
+                                                        lg_ordencab.cnumero,
+                                                        DATE_FORMAT( lg_ordencab.ffechadoc, '%d/%m/%Y' ) AS emision,
+                                                        lg_ordencab.nNivAten,
+                                                        lg_ordencab.nEstadoDoc,
+                                                        lg_ordencab.ncodpago,
+                                                        lg_ordencab.ntipmov,
+                                                        UPPER(lg_ordencab.cObservacion) AS concepto,
+                                                        tb_proyectos.ccodproy,
+                                                        UPPER(
+                                                        CONCAT_WS( tb_area.ccodarea, tb_area.cdesarea )) AS area,
+                                                        lg_ordencab.id_centi,
+                                                        cm_entidad.cnumdoc,
+                                                        UPPER( cm_entidad.crazonsoc ) AS proveedor,
+                                                        tb_costusu.id_cuser,
+                                                        tb_user.nrol 
+                                                    FROM
+                                                        lg_ordencab
+                                                        INNER JOIN tb_proyectos ON lg_ordencab.ncodpry = tb_proyectos.nidreg
+                                                        INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
+                                                        INNER JOIN tb_area ON lg_ordencab.ncodarea = tb_area.ncodarea
+                                                        INNER JOIN tb_costusu ON lg_ordencab.ncodpry = tb_costusu.ncodproy
+                                                        INNER JOIN tb_user ON tb_costusu.id_cuser = tb_user.iduser
+                                                    WHERE
+                                                        tb_costusu.id_cuser = :user
+                                                        AND lg_ordencab.nEstadoDoc != 105
+                                                        AND tb_costusu.nflgactivo = 1 
+                                                    ORDER BY lg_ordencab.id_regmov DESC
+                                                    LIMIT $inicio,$cantidad");
+                
+                $sql->execute(["user"=>$_SESSION['iduser']]);
+
+                $rc = $sql->rowcount();
+                $item = 1;
+
+                if ($rc > 0){
+                    while( $rs = $sql->fetch()) {
+                        $datos[] = $rs;
+                    }
+                }
+
+                return array("filas"=>$datos,
+                            'quedan'=>($inicio + $cantidad) < $limite);
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function contarItems(){
+            try {
+                $sql = $this->db->connect()->query("SELECT COUNT(id_regmov) AS regs FROM lg_ordencab WHERE nflgactivo = 1");
+                $sql->execute();
+                $filas = $sql->fetch();
+
+                return $filas['regs'];
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
                 return false;
             }
         }

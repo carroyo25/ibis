@@ -55,6 +55,7 @@
                                 <th>Numero</br>Orden</th>
                                 <th>Fecha</br>Vencimiento</th>
                                 <th>Cant.</br>Compra</th>
+                                <th>Avance</br>Consumo</th>
                             </thead>
                             <tbody>
 

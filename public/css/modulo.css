@@ -1006,7 +1006,7 @@
 }
 .itemsTabla table thead .filtro input, .itemsTablaVertical table thead .filtro input {
   border: 1px solid #ccc;
-  width: 90%;
+  width: 100%;
   padding-left: 5px;
 }
 .itemsTabla table thead .filtro ul, .itemsTablaVertical table thead .filtro ul {
@@ -1017,8 +1017,9 @@
   -webkit-box-direction: normal;
       -ms-flex-direction: column;
           flex-direction: column;
-  height: 20rem;
+  max-height: 20rem;
   overflow: auto;
+  border: 1px solid #a2a2a2;
 }
 .itemsTabla table thead .filtro ul li, .itemsTablaVertical table thead .filtro ul li {
   display: block;

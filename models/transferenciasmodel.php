@@ -525,7 +525,7 @@
         private function actualizarDetallesPedido($item,$cantidad,$aprobado,$atendido){
             try {
                 $total_atendido_almacenes = $cantidad + $atendido;
-                $estado = $total_atendido_almacenes == $aprobado ? 52 : 230;
+                $estado = 52;
 
                 $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet 
                                                         SET tb_pedidodet.estadoItem = :estado,

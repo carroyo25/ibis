@@ -606,7 +606,7 @@
                                         <td class="textoCentro">'.$rs['nrodoc'].'</td>
                                         <td class="textoCentro"></td>
                                         <td class="textoCentro">'.$rs['idtransfer'].'</td>
-                                        <td class="textoCentro"><a href="'.$rs['niddetaPed'].'" ><i class="fas fa-paperclip"></i></a></td>
+                                        <td class="textoCentro"><a href="'.$rs['iddetped'].'" ><i class="fas fa-paperclip"></i></a></td>
                                     </tr>';
                         }
                     } 

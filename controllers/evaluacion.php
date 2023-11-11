@@ -6,7 +6,8 @@
         }
 
         function render(){
-            $this->view->listaOrdenes = $this->model->listarOrdenesEval($nroSearch="",$costosSearch = -1,$mesSearch = -1,$anioSearch=2023);
+            //$this->view->listaOrdenes = $this->model->listarOrdenesEval($nroSearch="",$costosSearch = -1,$mesSearch = -1,$anioSearch=2023);
+            $this->view->listaOrdenes = "";
             $this->view->listaCostosSelect = $this->model->costosPorUsuarioSelect($_SESSION['iduser']);
             $this->view->render('evaluacion/index');
         }
@@ -25,6 +26,13 @@
 
         function listaFiltrada(){
             echo $this->model->listarOrdenesEval($_POST['nroSearch'],$_POST['costosSearch'],$_POST['mesSearch'],$_POST['anioSearch']);
+        }
+
+        function listaScroll(){
+            $pagina = $_POST['pagina'] ?? 1;
+            $cantidad = 30;
+        
+            echo json_encode([$this->model->listarOrdenScrollEvaluacion($pagina,$cantidad)]);
         }
     }
 ?>
