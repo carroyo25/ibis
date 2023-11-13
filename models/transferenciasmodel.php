@@ -313,13 +313,15 @@
                                                         estados.cabrevia,
                                                         ibis.tb_pedidocab.idcostos,
                                                         ibis.tb_proyectos.ccodproy,
-                                                        ibis.tb_proyectos.cdesproy 
+                                                        ibis.tb_proyectos.cdesproy,
+                                                        COUNT(ibis.tb_pedidodet.cant_atend) AS atendido 
                                                     FROM
                                                         ibis.tb_pedidocab
                                                         LEFT JOIN rrhh.tabla_aquarius ON ibis.tb_pedidocab.idsolicita = rrhh.tabla_aquarius.internal
                                                         LEFT JOIN ibis.tb_parametros AS estados ON ibis.tb_pedidocab.estadodoc = estados.nidreg
                                                         LEFT JOIN ibis.tb_parametros AS atencion ON ibis.tb_pedidocab.nivelAten = atencion.nidreg
-                                                        LEFT JOIN ibis.tb_proyectos ON ibis.tb_pedidocab.idcostos = ibis.tb_proyectos.nidreg 
+                                                        LEFT JOIN ibis.tb_proyectos ON ibis.tb_pedidocab.idcostos = ibis.tb_proyectos.nidreg
+                                                        LEFT JOIN ibis.tb_pedidodet ON ibis.tb_pedidocab.idreg = ibis.tb_pedidodet.idpedido 
                                                     WHERE
                                                         ( ibis.tb_pedidocab.estadodoc = 54 
                                                             OR ibis.tb_pedidocab.estadodoc = 59 
@@ -330,6 +332,7 @@
                                                         AND ibis.tb_pedidocab.idtipomov = 37 
                                                         AND tb_pedidocab.nrodoc LIKE :pedido
                                                         AND tb_pedidocab.idcostos = :cc
+                                                    GROUP BY ibis.tb_pedidocab.idreg
                                                     ORDER BY
                                                         ibis.tb_pedidocab.emision DESC");
                 $sql->execute(["pedido"=>$p,"cc"=>$cc]);
@@ -429,12 +432,34 @@
                     }
                 }
 
+                $respuesta = $salida == "" ? false:true;
+
                 return array("items"=>$salida,
-                            "total_items"=>$this->cantidadItemsPedido($indice));
+                            "total_items"=>$this->cantidadItemsPedido($indice),
+                            "respuesta"=>$respuesta);
 
 
             }catch (PDOException $th) {
                 echo $th->getMessage();
+                return false;
+            }
+        }
+
+        private function cantidadItemsAtencionPedido($pedido){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT SUM(tb_pedidodet.cant_aprob) AS total_items
+                                                        FROM tb_pedidodet 
+                                                        WHERE tb_pedidodet.nflgactivo = 1
+                                                        AND tb_pedidodet.idpedido =:pedido");
+                                                        
+                $sql->execute(["pedido"=>$pedido]);
+
+                $result = $sql->fetchAll();
+
+                return $result[0]['total_items'];
+                                                            
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
                 return false;
             }
         }
@@ -843,24 +868,7 @@
             }
         }
 
-        private function cantidadItemsPedido($pedido){
-            try {
-                $sql = $this->db->connect()->prepare("SELECT SUM(tb_pedidodet.cant_aprob) AS total_items
-                                                        FROM tb_pedidodet 
-                                                        WHERE tb_pedidodet.nflgactivo = 1
-                                                            AND tb_pedidodet.idpedido =:pedido");
-                                                        
-                $sql->execute(["pedido"=>$pedido]);
-
-                $result = $sql->fetchAll();
-
-                return $result[0]['total_items'];
-                                                            
-            } catch (PDOException $th) {
-                echo "Error: ".$th->getMessage();
-                return false;
-            }
-        }
+        
 
         public function listarPedidos(){
             try {

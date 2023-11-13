@@ -471,6 +471,15 @@
             <iframe src="" id="pdfPreview"></iframe>
         </div>
     </div>
+    <div class="modal" id="vistaTransferencia">
+        <div class="ventanaVistaPrevia">
+            <div class="tituloVista">
+                <h3>Vista Previa</h3>
+                <a href="#" id="closePreviewNota" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
+            </div>
+            <iframe src="" id="pdfPreview"></iframe>
+        </div>
+    </div>
     <div class="modal" id="imprimir">
         <div class="ventanaVistaPrevia">
             <div class="tituloVista">

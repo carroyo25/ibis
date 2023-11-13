@@ -368,7 +368,11 @@ $(function(){
                     .empty()
                     .append(data.items);
 
-                $("#total_items").val(data.total_items);
+                if (data.respuesta){
+                    $("#total_items").val(data.total_items);
+                }else{
+                    mostrarMensaje("No hay items marcados para atencion","mensaje_error");
+                }
             },
             "json"
         );
@@ -564,7 +568,13 @@ $(function(){
         return false;
     });
 
+    $("#preview").click(function(e){
+        e.preventDefault();
 
+        $("#vistaTransferencia").fadeIn();
+
+        return false;
+    });
 })
 
 suma_atendidos = () => {
