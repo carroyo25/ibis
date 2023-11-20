@@ -188,7 +188,7 @@
                                 $estado_item = "item_stock";
                                 $estado_pedido = "stock";
                             }else if( $rs['estadoItem'] == 53 ) {
-                                $porcentaje = "15%";
+                                $porcentaje = "10%";
                                 $estadofila = "emitido";
                                 $estado_item = "Emitido";
                                 $estado_pedido = "Pedido Emitido";
