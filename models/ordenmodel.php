@@ -164,7 +164,6 @@
                                                         AND tb_pedidodet.idasigna = :user_asigna 
                                                         AND tb_pedidodet.cant_aprob <> tb_pedidodet.cant_orden
                                                         AND tb_pedidodet.estadoItem = 54
-                                                        AND tb_pedidodet.nflgActivo = 1 
                                                     GROUP BY
                                                         tb_pedidodet.iditem");
                 

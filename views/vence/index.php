@@ -53,6 +53,7 @@
                                 <th width="45%">Observaciones</th>
                                 <th>Fecha</br>Compra</th>
                                 <th>Numero</br>Orden</th>
+                                <th>Centro de</br>Costos</th>
                                 <th>Fecha</br>Vencimiento</th>
                                 <th>Cant.</br>Compra</th>
                                 <th>Avance</br>Consumo</th>

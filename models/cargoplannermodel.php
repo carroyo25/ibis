@@ -902,16 +902,6 @@
                 $sql->execute();
                 $rowCount = $sql->rowCount();
 
-                
-                /* Cambiar este comentario dependiendo de la prueba a realizar: */
-                /*$cacheMethod = PHPExcel_CachedObjectStorageFactory::cache_to_phpTemp;
-                $cacheSettings = array( 
-                    'cacheTime' => 900,
-                    'memoryCacheSize' => '2096MB'
-                );
-
-                PHPExcel_Settings::setCacheStorageMethod($cacheMethod);*/
-
                 $objPHPExcel = new PHPExcel();
                 $objPHPExcel->getProperties()
                     ->setCreator("Sical")

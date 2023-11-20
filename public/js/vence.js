@@ -23,7 +23,7 @@ $(() => {
         $("#nombre_item").text($(this).find('td').eq(3).text());
         
 
-        $.post(RUTA+"vence/consultaItem",{item:$(this).data('idproducto'),costos:$(this).data('idcostos')},
+        $.post(RUTA+"vence/consultaItem",{item:$(this).data('idproducto'),costos:$("#costosSearch").val()},
             function (data, text, requestXHR) {
 
                 $("#listaVencimientos tbody")

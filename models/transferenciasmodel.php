@@ -435,7 +435,7 @@
                 $respuesta = $salida == "" ? false:true;
 
                 return array("items"=>$salida,
-                            "total_items"=>$this->cantidadItemsPedido($indice),
+                            "total_items"=>$this->cantidadItemsAtencionPedido($indice),
                             "respuesta"=>$respuesta);
 
 
@@ -868,8 +868,7 @@
             }
         }
 
-        
-
+    
         public function listarPedidos(){
             try {
                 $salida = "";
