@@ -12,6 +12,8 @@ if (HOST ==  "localhost") {
     var RUTA = "http://sicalsepcon.net/ibis/";
 }else if (HOST ==  "200.115.23.164"){
     var RUTA = "http://200.115.23.164/ibis/";
+}else if (HOST ==  "127.0.0.1"){
+    var RUTA = "http://127.0.0.1/ibis/";
 }
 
 var emailreg = /^[a-zA-Z0-9_\.\-]+@[a-zA-Z0-9\-]+\.[a-zA-Z0-9\-\.]+$/;
@@ -65,7 +67,7 @@ checkExistTable = (table,item,indice) => {
     table.each(function(){
         let itemTable = $(this).find('td').eq(indice).text();
 
-        if (itemTable == item) {
+        if ( itemTable === item ) {
             itenExist = true;
             return false;
         }

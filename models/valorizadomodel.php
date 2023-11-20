@@ -102,6 +102,7 @@
                                                     UPPER( tb_proyectos.cdesproy ) AS proyecto,
                                                     UPPER( tb_area.cdesarea ) AS area,
                                                     lg_ordencab.ntcambio,
+                                                    UPPER(lg_ordencab.cobservacion) AS observacion,
                                                     lg_ordencab.cper,
                                                     lg_ordencab.ntipmov,
                                                     DATE_FORMAT(lg_ordencab.ffechadoc,'%d/%m/%Y') AS fecha_registro,
@@ -198,6 +199,7 @@
                                         <td class="pl20px">'.$rs['nroparte'].'</td>
                                         <td class="pl20px">'.$rs['nregistro'].'</td>
                                         <td class="textoCentro">'.$estado.'</td>
+                                        <td class="pl20px">'.$rs['observacion'].'</td>
                                     </tr>';
                     }
                 }
@@ -269,7 +271,7 @@
                             ->setRGB('00FFFF');
 
                 $objPHPExcel->getActiveSheet()
-                            ->getStyle('AE2:AG2')
+                            ->getStyle('AE2:AH2')
                             ->getFill()
                             ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
                             ->getStartColor()
@@ -311,6 +313,7 @@
                 $objPHPExcel->getActiveSheet()->setCellValue('AE2','N° Parte'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('AF2','Código Maq.Equipo'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('AG2','Estado'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AH2','Observacion'); // esto cambia
                
                 $fila = 3;
                 $datos = json_decode($detalles);
@@ -341,15 +344,16 @@
                     $objPHPExcel->getActiveSheet()->setCellValue('V'.$fila,$datos[$i]->aprobacion);
                     $objPHPExcel->getActiveSheet()->setCellValue('W'.$fila,$datos[$i]->grupo);
                     $objPHPExcel->getActiveSheet()->setCellValue('X'.$fila,$datos[$i]->clase);
-                    $objPHPExcel->getActiveSheet()->setCellValue('Y'.$fila,$datos[$i]->pago);
-                    $objPHPExcel->getActiveSheet()->setCellValue('Z'.$fila,$datos[$i]->entrega);
-                    $objPHPExcel->getActiveSheet()->setCellValue('AA'.$fila,$datos[$i]->dias);
-                    $objPHPExcel->getActiveSheet()->setCellValue('AB'.$fila,$datos[$i]->ruc);
+                    $objPHPExcel->getActiveSheet()->setCellValue('Y'.$fila,$datos[$i]->direccion);
+                    $objPHPExcel->getActiveSheet()->setCellValue('Z'.$fila,$datos[$i]->pago);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AA'.$fila,$datos[$i]->entrega);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AB'.$fila,$datos[$i]->dias);
                     $objPHPExcel->getActiveSheet()->setCellValue('AC'.$fila,$datos[$i]->ruc);
                     $objPHPExcel->getActiveSheet()->setCellValue('AD'.$fila,$datos[$i]->cotizacion);
                     $objPHPExcel->getActiveSheet()->setCellValue('AE'.$fila,$datos[$i]->parte);
                     $objPHPExcel->getActiveSheet()->setCellValue('AF'.$fila,$datos[$i]->equipo);
                     $objPHPExcel->getActiveSheet()->setCellValue('AG'.$fila,$datos[$i]->estado);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AH'.$fila,$datos[$i]->descripcion);
                    
 
                     $fila++;
