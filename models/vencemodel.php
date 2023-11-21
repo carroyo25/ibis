@@ -163,7 +163,7 @@
 
                         $avance = ($rs['consumo'] * 100) / $rs['cant_ingr'];
 
-                        
+                        $porcentaje = $avance >= 100 ? 100 : $avance;
 
                         $salida .='<tr class="pointer" data-consumo="'.$rs['consumo'].'"> 
                                         <td class="pl20px">'.$rs['observaciones'].'</td>
@@ -176,7 +176,7 @@
                                             <div class="textoCentro" 
                                                 style="background-image: linear-gradient( 91deg,  rgba(72,154,78,1) 5.2%, rgba(251,206,70,1) 95.9% ); 
                                                         margin-top:10px;
-                                                        width:'.$avance.'%">'.$avance.'%
+                                                        width:'.$porcentaje.'%">'.$porcentaje.'%
                                             </div>
                                         </td>
                                     </tr>';
