@@ -87,7 +87,7 @@
                                                             LEFT JOIN alm_transfercab ON alm_transferdet.idtransfer = alm_transfercab.idreg 
                                                         WHERE
                                                             alm_transferdet.nflgactivo = 1 
-                                                            AND alm_transfercab.idcd = :ctransfsalida 
+                                                            AND alm_transfercab.idcc = :ctransfsalida 
                                                         GROUP BY
                                                             alm_transferdet.idcprod 
                                                         ) AS sal_trans ON sal_trans.idcprod = cm_producto.id_cprod
@@ -100,7 +100,7 @@
                                                             LEFT JOIN alm_transfercab ON alm_transferdet.idtransfer = alm_transfercab.idreg 
                                                         WHERE
                                                             alm_transferdet.nflgactivo = 1 
-                                                            AND alm_transfercab.idcc = :ctransfingreso 
+                                                            AND alm_transfercab.idcd = :ctransfingreso 
                                                         GROUP BY
                                                             alm_transferdet.idcprod 
                                                         ) AS ing_trans ON ing_trans.idcprod = cm_producto.id_cprod

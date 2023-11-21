@@ -46,5 +46,9 @@
         function transferenciasId() {
             echo json_encode($this->model->consultarTransferenciaID($_POST['id']));
         }
+
+        function adjuntos(){
+            echo json_encode($this->model->subirAdjuntos($_POST['codigo'],$_FILES));
+        }
     }
 ?>

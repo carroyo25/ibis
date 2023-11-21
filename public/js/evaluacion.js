@@ -3,6 +3,72 @@ $(function(){
 
     $("#esperar").fadeOut();
 
+    const body = document.querySelector("#tablaPrincipal tbody");
+
+    let listItemFinal = null,estoyPidiendo = false;
+
+    const observandoListItem = listItem => {
+        if ( listItem[0].isIntersecting ) {
+            query();
+        }
+    }
+
+    const settings = {
+        threshold: 1
+    }
+
+    let observador = new IntersectionObserver(
+        observandoListItem,
+        settings
+    );
+
+    const query = async () => {
+        if (estoyPidiendo) return;
+        estoyPidiendo = true;
+        let pagina = parseInt(body.dataset.p) || 1;
+        const FD = new FormData();
+        FD.append('pagina',pagina);
+
+        const r = await fetch(RUTA+'evaluacion/listaScroll',{
+            method: 'POST',
+            body:FD
+        });
+
+        let item = 0;
+
+        const j  = await r.json();
+        j[0].filas.forEach(i => {
+            const tr = document.createElement('tr');
+            
+            tr.innerHTML = `<td class="textoCentro">${i.cnumero}</td>
+                            <td class="textoCentro">${i.emision}</td>
+                            <td class="pl20px">${i.concepto}</td>
+                            <td class="pl20px">${i.ccodproy}</td>
+                            <td class="pl20px">${i.area}</td>
+                            <td class="pl20px">${i.proveedor}</td>`;
+
+            tr.classList.add("pointer");
+            tr.dataset.indice = i.id_regmov;
+            tr.dataset.tipo = i.ntipmov;
+            tr.dataset.rol = i.nrol;
+
+            body.appendChild(tr);
+        })
+
+        if (listItemFinal){
+            observador.unobserve(listItemFinal);
+        }
+
+        if (j[0].quedan) { //devuelve falso si ya no quedan mas registros
+            listItemFinal = body.lastElementChild.previousElementSibling;
+            observador.observe( listItemFinal);
+            estoyPidiendo = false;
+            body.dataset.p = ++pagina;
+        }
+    }
+
+    query();
+
     $("#tablaPrincipal tbody").on("click","tr", function (e) {
         e.preventDefault();
 
@@ -29,6 +95,8 @@ $(function(){
             $("#puntaje").val(totalOrden.toFixed(0));    
 
             $("#proceso").fadeIn();
+
+            $(".filtro").hide();
         },
         "json"
        );
@@ -60,17 +128,8 @@ $(function(){
 
     $("#cerrarVentana").click(function (e) { 
         e.preventDefault();
-
-        /*$.post(RUTA+"evaluacion/actualizaTabla",
-            function (data, textStatus, jqXHR) {
-                $("#tablaPrincipal tbody")
-                    .empty()
-                    .append(data);
-                $("#tablaDetalles tbody").empty();
-            },
-            "text"
-        );*/
         
+        $(".filtro").hide();
         $("#proceso").fadeOut();
         
         return false;
@@ -98,6 +157,10 @@ $(function(){
             mostrarMensaje("Valor de calificacion incorrecto...","mensaje_error");
             $(this).val(5);
         }
+    });
+
+    $(".cabezaModulo,.barraTrabajo").on('click','*', function() {
+        $(".filtro").fadeOut();
     });
 })
 

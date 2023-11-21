@@ -11,7 +11,6 @@
             $this->view->render('vence/index');
         }
         
-
         function consulta(){
             echo $this->model->listarVencimientos($_POST['cc'],$_POST['codigo'],$_POST['descripcion']);
         }

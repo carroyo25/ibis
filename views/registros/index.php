@@ -118,6 +118,7 @@
                                         <th class="">Pedido</th>
                                         <th class="">Orden</th>
                                         <th class="">G. Remision<br/>Nr.Trans.</th>
+                                        <th class="">Adjunto</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -193,6 +194,33 @@
                     </tbody>
                 </table>
             </div>
+        </div>
+    </div>
+    <div class="modal" id="archivos">
+        <div class="ventanaArchivos">
+            <form action="#" id="fileAtachs" enctype='multipart/form-data'>
+                <input type="hidden" name="certificadoAtach" id="certificadoAtach">
+                <input type="hidden" name="uploadAtach" id="uploadAtach" multiple class="oculto">
+                <div class="tituloArchivos">
+                    <h3>Adjuntar Archivos</h3>
+                    <a href="#" id="openArch" title="Adjuntar Archivos"><i class="fas fa-file-medical"></i><p>Añadir</p></a>
+                </div>            
+                <ul class="listaArchivos" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
+                </ul>
+                <div class="opcionesArchivos">
+                    <button type="button" class="boton3" id="btnConfirmAtach">Aceptar</button>
+                    <button type="button" class="boton3" id="btnCancelAtach">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="modal" id="vistaCertificado">
+        <div class="ventanaVistaPrevia">
+            <div class="tituloVista">
+                <h3>Vista Previa</h3>
+                <a href="#" id="closePreview" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
+            </div>
+            <iframe src=""></iframe>
         </div>
     </div>
     <div class="cabezaModulo">

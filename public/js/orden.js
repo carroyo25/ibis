@@ -133,6 +133,8 @@ $(function(){
                 }
 
                 $("#proceso").fadeIn();
+
+                $(".filtro").fadeOut();
             },
             "json"
         );
@@ -1043,6 +1045,10 @@ $(function(){
         $(this).next().slideDown();
 
         return false;
+    });
+
+    $(".cabezaModulo,.barraTrabajo").on('click','*', function() {
+        $(".filtro").fadeOut();
     });
 
 })

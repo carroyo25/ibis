@@ -95,6 +95,7 @@
                     <th data-titulo="parte" style="background:#25AFF3; color:#000">N° de Parte<br>Maq. Edquipo</th>
                     <th data-titulo="equipo" style="background:#DA500B; color:#000">Código<br>Maq. Equipo</th>
                     <th data-titulo="estado" style="background:#DA500B; color:#000">Estado</th>
+                    <th data-titulo="descripcion" style="background:#DA500B; color:#000">Descripcion</th>
                 </tr>
             </thead>
             <tbody>

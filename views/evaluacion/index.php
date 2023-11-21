@@ -171,12 +171,12 @@
         <table id="tablaPrincipal">
             <thead class="stickytop">
                     <tr>
-                        <th >Num.</th>  
-                        <th >Emision</th>
-                        <th >Descripción</th>
-                        <th >Centro Costos</th> 
-                        <th >Area</th>
-                        <th >Proveedor</th>
+                        <th width="3%">Num.</th>  
+                        <th width="3%"  data-idcol="1" class="datafiltro">Emision</th>
+                        <th width="25%" data-idcol="2" class="datafiltro">Descripción</th>
+                        <th width="5%"  data-idcol="3" class="datafiltro">Centro Costos</th> 
+                        <th width="15%" data-idcol="4" class="datafiltro">Area</th>
+                        <th width="15%" data-idcol="5" class="datafiltro">Proveedor</th>
                     </tr>
             </thead>
             <tbody>

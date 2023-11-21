@@ -188,7 +188,7 @@
                                 $estado_item = "item_stock";
                                 $estado_pedido = "stock";
                             }else if( $rs['estadoItem'] == 53 ) {
-                                $porcentaje = "15%";
+                                $porcentaje = "10%";
                                 $estadofila = "emitido";
                                 $estado_item = "Emitido";
                                 $estado_pedido = "Pedido Emitido";
@@ -254,6 +254,8 @@
                                 $estado_item = "atendido";
                                 $estado_pedido = "atendido";
                             }
+
+                            $cantidad = $rs['cantidad_aprobada'] == 0 ? $rs['cantidad_pedido'] : $rs['cantidad_aprobada'];
     
                             $salida.='<tr class="pointer" 
                                         data-itempedido="'.$rs['iditem'].'" 
@@ -274,7 +276,7 @@
                                         <td class="textoCentro">'.$rs['pedido'].'</td>
                                         <td class="textoCentro">'.$rs['crea_pedido'].'</td>
                                         <td class="textoCentro">'.$rs['aprobacion_pedido'].'</td>
-                                        <td class="textoDerecha">'.number_format($rs['cantidad_aprobada'],2).'</td>
+                                        <td class="textoDerecha">'.number_format($cantidad,2).'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="textoCentro">'.$rs['unidad'].'</td>
                                         <td class="pl10px">'.$rs['descripcion'].'</td>
@@ -900,16 +902,6 @@
                 $sql->execute();
                 $rowCount = $sql->rowCount();
 
-                
-                /* Cambiar este comentario dependiendo de la prueba a realizar: */
-                /*$cacheMethod = PHPExcel_CachedObjectStorageFactory::cache_to_phpTemp;
-                $cacheSettings = array( 
-                    'cacheTime' => 900,
-                    'memoryCacheSize' => '2096MB'
-                );
-
-                PHPExcel_Settings::setCacheStorageMethod($cacheMethod);*/
-
                 $objPHPExcel = new PHPExcel();
                 $objPHPExcel->getProperties()
                     ->setCreator("Sical")
@@ -1073,6 +1065,8 @@
                         $saldoRecibir = $rs['cantidad_orden'] - $rs['ingreso'] > 0 ? $rs['cantidad_orden'] - $rs['ingreso'] : "-";
                         $dias_atraso  =  $saldoRecibir > 0 ? $rs['dias_atraso'] : "-" ;
                         $suma_atendido = number_format($rs['cantidad_orden'] + $rs['atencion_almacen'],2);
+
+                        $cantidad = $rs['cantidad_aprobada'] == 0 ? $rs['cantidad_pedido'] : $rs['cantidad_aprobada'];
 
                         $estado_pedido =  $rs['estadoItem'] >= 54 ? "Atendido":"Pendiente";
                         $estado_item   =  $rs['estadoItem'] >= 54 ? "Atendido":"Pendiente";
@@ -1241,7 +1235,7 @@
                         else
                             $objPHPExcel->getActiveSheet()->setCellValue('K'.$fila,'');
 
-                        $objPHPExcel->getActiveSheet()->setCellValue('L'.$fila,number_format($rs['cantidad_pedido'],2));
+                        $objPHPExcel->getActiveSheet()->setCellValue('L'.$fila,number_format($cantidad,2));
                         $objPHPExcel->getActiveSheet()->setCellValue('M'.$fila,$rs['ccodprod']);
                         $objPHPExcel->getActiveSheet()->setCellValue('N'.$fila,$rs['unidad']);
                         $objPHPExcel->getActiveSheet()->setCellValue('O'.$fila,$rs['descripcion']);

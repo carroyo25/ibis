@@ -146,11 +146,12 @@ $(function(){
     $("#itemsImport").click(function (e) { 
         e.preventDefault();
 
-
         tipoMovimiento = 1;
 
         try {
             if (guias()) throw "La guia ya esta registrada";
+
+            $("#txtBuscar").val('');
 
             $.post(RUTA+"registros/despachos",{guia:$("#txtBuscar").val()},
                 function (data, textStatus, jqXHR) {
@@ -301,6 +302,104 @@ $(function(){
             },
             "json"
         );
+        return false;
+    });
+
+    $("#tablaDetalles tbody").on('click','a', function(e) {
+        e.preventDefault();
+
+        if ($(this).children().attr('class') == 'fas fa-paperclip' ) {
+            $("#certificadoAtach").val($(this).attr('href'));
+            $("#archivos").fadeIn();
+        }else {
+            $(".ventanaVistaPrevia iframe")
+                        .attr("src","")
+                        .attr("src","public/documentos/certificados/"+$(this).attr('href'));
+                    
+            $("#vistaCertificado").fadeIn();
+           
+        }
+
+        return false;
+    });
+
+    $("#openArch").click(function (e) { 
+        e.preventDefault();
+ 
+        $("#uploadAtach").trigger("click");
+ 
+        return false;
+    });
+
+    $("#uploadAtach").on("change", function (e) {
+        e.preventDefault();
+ 
+        let fp = $(this);
+        let lg = fp[0].files.length;
+        let items = fp[0].files;
+        let fragment = "";
+ 
+        if (lg > 0) {
+             for (var i = 0; i < lg; i++) {
+                 var fileName = items[i].name; // get file name
+ 
+                 // append li to UL tag to display File info
+                 fragment +=`<li>
+                                 <a class="icono_archivo"><i class="far fa-file"></i>
+                                     <p>${fileName}</p>
+                                 </a>
+                             </li>`;
+             }
+ 
+             $(".listaArchivos").append(fragment);
+         }
+ 
+        return false;
+    });
+ 
+    $("#btnConfirmAtach").on("click", function (e) {
+         e.preventDefault();
+ 
+         let formData = new FormData();
+ 
+         formData.append('codigo',$("#certificadoAtach").val());
+ 
+         $.each($('#uploadAtach')[0].files, function(i, file) {
+             formData.append('file-'+i, file);
+         });
+ 
+         $.ajax({
+             type: "POST",
+             url: RUTA+"registros/adjuntos",
+             data: formData,
+             data: formData,
+             contentType:false,      
+             processData:false,
+             dataType: "json",
+             success: function (response) {
+                 //$("#atach_counter").text(response.adjuntos);
+                 $("#archivos").fadeOut();
+                 $("#fileAtachs")[0].reset();
+             }
+         });
+ 
+         return false;
+    });
+ 
+    $("#btnCancelAtach").on("click", function (e) {
+         e.preventDefault();
+ 
+         $("#archivos").fadeOut();
+         $("#fileAtachs")[0].reset();
+         $(".listaArchivos").empty();
+    });
+
+    $("#closePreview").click(function (e) { 
+        e.preventDefault();
+
+        $(".ventanaVistaPrevia iframe").attr("src","");
+        $("#vistaCertificado").fadeOut();
+
         return false;
     });
 

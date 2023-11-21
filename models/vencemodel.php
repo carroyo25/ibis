@@ -14,46 +14,58 @@
 
             try {
                 $sql = $this->db->connect()->prepare("SELECT
-                                                        alm_existencia.idreg,
-                                                        alm_existencia.codprod,
-                                                        alm_existencia.freg,
-                                                        DATE_FORMAT( alm_existencia.vence, '%d/%m/%Y' ) AS vence,
-                                                        cm_producto.ccodprod,
-                                                        UPPER( cm_producto.cdesprod ) AS producto,
-                                                        DATEDIFF( NOW(), alm_existencia.vence ) AS pasados,
-                                                        alm_existencia.nguia,
-                                                        alm_cabexist.idcostos,
-                                                        tb_proyectos.ccodproy,
-                                                        tb_unimed.cabrevia,
-                                                    IF
-                                                        ( alm_existencia.nropedido != 0, alm_existencia.nropedido, '-' ) AS orden,
-                                                    IF
-                                                        ( alm_existencia.tipo = 1, 'COMPRA', 'INVENTARIO' ) AS origen,
-                                                        alm_existencia.nroorden AS pedido,
-                                                        SUM(alm_existencia.cant_ingr) AS cant_ingr,
-                                                        alm_existencia.cant_ord,
-                                                        s.consumo
+                                                alm_existencia.idreg,
+                                                alm_existencia.codprod,
+                                                alm_existencia.freg,
+                                                DATE_FORMAT( alm_existencia.vence, '%d/%m/%Y' ) AS vence,
+                                                alm_existencia.nguia,
+                                                DATEDIFF( NOW(), alm_existencia.vence ) AS pasados,
+                                                cm_producto.ccodprod,
+                                                UPPER( cm_producto.cdesprod ) AS producto,
+                                                alm_cabexist.idcostos,
+                                                tb_proyectos.ccodproy,
+                                                tb_unimed.cabrevia,
+                                                i.ingresos,
+                                                s.consumo 
+                                            FROM
+                                                alm_existencia
+                                                LEFT JOIN cm_producto ON alm_existencia.codprod = cm_producto.id_cprod
+                                                LEFT JOIN alm_cabexist ON alm_existencia.idregistro = alm_cabexist.idreg
+                                                LEFT JOIN tb_proyectos ON alm_cabexist.idcostos = tb_proyectos.nidreg
+                                                INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                LEFT JOIN (
+                                                    SELECT
+                                                        SUM( alm_consumo.cantsalida ) AS consumo,
+                                                        alm_consumo.idprod,
+                                                        alm_consumo.ncostos 
                                                     FROM
-                                                        alm_existencia
-                                                        LEFT JOIN cm_producto ON alm_existencia.codprod = cm_producto.id_cprod
-                                                        LEFT JOIN alm_cabexist ON alm_existencia.idregistro = alm_cabexist.idreg
-                                                        INNER JOIN tb_proyectos ON alm_cabexist.idcostos = tb_proyectos.nidreg
-                                                        INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
-                                                        LEFT JOIN ( 
-                                                            SELECT SUM( alm_consumo.cantsalida ) AS consumo, 
-                                                                        alm_consumo.idprod,alm_consumo.ncostos FROM alm_consumo 
-                                                                        WHERE alm_consumo.flgactivo = 1 
-                                                                        GROUP BY alm_consumo.idprod) AS s ON s.idprod = alm_existencia.codprod 
+                                                        alm_consumo 
                                                     WHERE
-                                                        alm_existencia.vence <> '' 
-                                                        AND DATEDIFF( NOW(), alm_existencia.vence ) > 1 
-                                                        AND alm_existencia.nflgActivo = 1 
-                                                        AND tb_proyectos.nidreg LIKE :cc
-                                                        AND cm_producto.cdesprod LIKE :descripcion 
-                                                        AND cm_producto.ccodprod LIKE :codigo
-                                                    GROUP BY alm_existencia.codprod    
-                                                    ORDER BY
-                                                        cm_producto.cdesprod ASC");
+                                                        alm_consumo.flgactivo = 1 
+                                                    GROUP BY
+                                                        alm_consumo.idprod
+                                                    ) AS s ON s.idprod = alm_existencia.codprod
+                                                LEFT JOIN ( 
+                                                        SELECT SUM( alm_existencia.cant_ingr ) AS ingresos, 
+                                                            alm_existencia.codprod 
+                                                        FROM 
+                                                            alm_existencia
+                                                        WHERE 
+                                                            alm_existencia.nflgActivo = 1
+                                                        GROUP BY 
+                                                            alm_existencia.codprod 
+                                                    ) AS i ON i.codprod = alm_existencia.codprod 
+                                                WHERE
+                                                        alm_cabexist.idcostos LIKE :cc 
+                                                    AND cm_producto.ccodprod LIKE :codigo
+                                                    AND cm_producto.cdesprod LIKE :descripcion
+                                                    AND alm_existencia.vence != '' 
+                                                GROUP BY
+                                                    alm_existencia.codprod 
+                                                ORDER BY
+                                                    cm_producto.cdesprod ASC");
+
+
                  $sql->execute(["cc" => $cc,"codigo"=>$cod,"descripcion"=>$descrip]);
 
                  $rowcount = $sql->rowcount();
@@ -65,8 +77,8 @@
                      while ($rs = $sql->fetch()) {
 
                          $estado    = intval( $rs['pasados'] );
-                         $saldo     = $rs['cant_ingr'] - $rs['consumo'];
-
+                         $saldo     = $rs['ingresos'] - $rs['consumo'];
+                         
                          if ($estado > 7) {
                              $alerta ="semaforoRojo";
                          }elseif ($estado == 7) {
@@ -75,7 +87,7 @@
                              $alerta ="semaforoVerde";
                          }
 
-                         if (  $rs['consumo'] < $rs['cant_ingr'] ) {
+                        if ( $rs['ingresos'] > $rs['consumo'] ) {
                             $salida .='<tr class="pointer" data-idexiste  ="'.$rs['idreg'].'" 
                                                         data-idproducto="'.$rs['codprod'].'"
                                                         data-idcostos  ="'.$rs['idcostos'].'">
@@ -86,11 +98,12 @@
                                          <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                          <td class="textoCentro '.$alerta.'" style="color:#fff">'.$rs['vence'].'</td>
                                          <td class="textoDerecha">'.$rs['pasados'].'</td>
-                                         <td class="textoDerecha">'.number_format($rs['cant_ingr'],2,'.','').'</td>
+                                         <td class="textoDerecha">'.number_format($rs['ingresos'],2,'.','').'</td>
                                          <td class="textoDerecha">'.number_format($rs['consumo'],2,'.','').'</td>
                                          <td class="textoDerecha">'.number_format($saldo,2,'.','').'</td>
-                                     </tr>';
-                         }
+                                    </tr>';
+                        }
+                        
                      }
                  }
 
@@ -104,39 +117,71 @@
         public function detallarItem($producto,$costos){
             $salida = "";
 
+            $cc = $costos == -1 ? "%" : $costos;
+
             try {
                 $sql=$this->db->connect()->prepare("SELECT
-                                                            DATE_FORMAT( alm_existencia.vence, '%d/%m/%Y' ) AS fecha_vencimiento,
-                                                            alm_cabexist.idcostos,
-                                                            alm_cabexist.idreg,
-                                                            tb_pedidodet.observaciones,
-                                                            tb_pedidodet.idorden,
-                                                            FORMAT( tb_pedidodet.cant_orden, 2 ) AS cant_orden,
-                                                            DATE_FORMAT( alm_existencia.freg, '%d/%m/%Y' ) AS fecha_ingreso 
+                                                        alm_existencia.cant_ingr,
+                                                        alm_existencia.nropedido AS idorden,
+                                                        DATE_FORMAT( alm_existencia.freg, '%d/%m/%Y' ) AS fecha_ingreso,
+                                                        DATE_FORMAT( alm_existencia.vence, '%d/%m/%Y' ) AS fecha_vencimiento,
+                                                        UPPER( tb_pedidodet.observaciones ) AS observaciones,
+                                                        alm_cabexist.idcostos,
+                                                        tb_proyectos.ccodproy,
+                                                        s.consumo 
+                                                    FROM
+                                                        alm_existencia
+                                                        LEFT JOIN lg_ordencab ON alm_existencia.nropedido = lg_ordencab.id_regmov
+                                                        LEFT JOIN alm_cabexist ON alm_existencia.idregistro = alm_cabexist.idreg
+                                                        INNER JOIN tb_proyectos ON alm_cabexist.idcostos = tb_proyectos.nidreg
+                                                        INNER JOIN tb_pedidodet ON alm_existencia.idpedido = tb_pedidodet.iditem
+                                                        LEFT JOIN (
+                                                        SELECT
+                                                            SUM( alm_consumo.cantsalida ) AS consumo,
+                                                            alm_consumo.idprod,
+                                                            alm_consumo.ncostos 
                                                         FROM
-                                                            alm_existencia
-                                                            INNER JOIN alm_cabexist ON alm_existencia.idregistro = alm_cabexist.idreg
-                                                            INNER JOIN tb_proyectos ON alm_cabexist.idcostos = tb_proyectos.nidreg
-                                                            INNER JOIN tb_pedidodet ON alm_existencia.idpedido = tb_pedidodet.iditem 
+                                                            alm_consumo 
                                                         WHERE
-                                                            alm_existencia.codprod = :id 
-                                                            AND alm_existencia.vence != ''
-                                                            AND alm_cabexist.idcostos = :cc");
-                $sql->execute(["id"=>$producto,"cc"=>$costos]);
+                                                            alm_consumo.flgactivo = 1 
+                                                        GROUP BY
+                                                            alm_consumo.idprod,
+                                                            alm_consumo.ncostos 
+                                                        ) AS s ON s.ncostos = alm_cabexist.idcostos 
+                                                        AND s.idprod = alm_existencia.codprod 
+                                                    WHERE
+                                                        alm_existencia.codprod LIKE :id 
+                                                        AND alm_existencia.nflgActivo = 1 
+                                                        AND alm_cabexist.idcostos LIKE :cc");
+
+                $sql->execute(["id"=>$producto,"cc"=>$cc]);
 
                 $rowcount = $sql->rowCount();
 
-                if ($rowcount>0) {
+                //if ($rowcount>0) {
                     while ($rs = $sql->fetch()) {
-                        $salida .='<tr class="pointer"> 
+
+                        $avance = ($rs['consumo'] * 100) / $rs['cant_ingr'];
+
+                        
+
+                        $salida .='<tr class="pointer" data-consumo="'.$rs['consumo'].'"> 
                                         <td class="pl20px">'.$rs['observaciones'].'</td>
                                         <td class="textoCentro">'.$rs['fecha_ingreso'].'</td>
-                                        <td class="textoCentro">'.$rs['idorden'].'</td>
                                         <td class="textoCentro">'.$rs['fecha_vencimiento'].'</td>
-                                        <td class="textoDerecha">'.$rs['cant_orden'].'</td>
+                                        <td class="textoCentro">'.$rs['idorden'].'</td>
+                                        <td class="textoCentro">'.$rs['ccodproy'].'</td>
+                                        <td class="textoDerecha">'.$rs['cant_ingr'].'</td>
+                                        <td>
+                                            <div class="textoCentro" 
+                                                style="background-image: linear-gradient( 91deg,  rgba(72,154,78,1) 5.2%, rgba(251,206,70,1) 95.9% ); 
+                                                        margin-top:10px;
+                                                        width:'.$avance.'%">'.$avance.'%
+                                            </div>
+                                        </td>
                                     </tr>';
                     }
-                }
+                //}
 
                 
                 return $salida; 
