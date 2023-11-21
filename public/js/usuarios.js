@@ -365,7 +365,7 @@ $(function(){
         parent.remove();
 
         if (parent.data("grabado") == 1){
-            $.post(RUTA+"usuarios/desactivaItem", {id:$(this).attr("href"),modulo:2},
+            $.post(RUTA+"usuarios/desactivaItem", {id:$(this).attr("href"),modulo:2,user:$("#cod_user").val()},
                 function (data, textStatus, jqXHR) {
                     fillTables($("#costos tbody > tr"),1);
                 },
@@ -383,7 +383,7 @@ $(function(){
         parent.remove();
 
         if (parent.data("grabado") == 1){
-            $.post(RUTA+"usuarios/desactivaItem", {id:$(this).attr("href"),modulo:3},
+            $.post(RUTA+"usuarios/desactivaItem", {id:$(this).attr("href"),modulo:3,user:$("#cod_user").val()},
                 function (data, textStatus, jqXHR) {
                     fillTables($("#almacenes tbody > tr"),1);
                 },

@@ -63,8 +63,8 @@
         }
 
         function desactivaItem(){
-            $id     = $_POST['id'];
-            $modulo = $_POST['modulo'];
+            $id      = $_POST['id'];
+            $modulo  = $_POST['modulo'];
             $usuario = $_POST['user'];
 
             echo $this->model->quitarItem($id,$modulo,$usuario);

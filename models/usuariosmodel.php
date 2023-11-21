@@ -311,9 +311,9 @@
                 if ($modulo == 1){
                     $query = "UPDATE tb_usermod SET flgactivo  = 0 WHERE idreg =:id AND iduser=:usr";
                 }else if ($modulo == 2){
-                    $query = "UPDATE tb_costusu SET nflgactivo = 0 WHERE ncodcos =:id AND iduser=:usr";
+                    $query = "UPDATE tb_costusu SET nflgactivo = 0 WHERE ncodcos =:id AND id_cuser=:usr";
                 }else if ($modulo == 3){
-                    $query = "UPDATE tb_almausu SET nflgactivo = 0 WHERE ncodalm =:id AND iduser=:usr";
+                    $query = "UPDATE tb_almausu SET nflgactivo = 0 WHERE ncodalm =:id AND id_cuser=:usr";
                 }
                 $sql = $this->db->connect()->prepare($query);
                 $sql->execute(["id"=>$id,"usr"=>$usuario]);
@@ -383,7 +383,7 @@
             try {
                 for ($i=0; $i < count($data); $i++) { 
                     
-                    $select = "SELECT COUNT( ncodcos ) AS contador FROM tb_costusu WHERE ncodproy = :id AND id_cuser = :usr AND nflgactivo = 1";
+                    $select = "SELECT COUNT( * ) AS contador FROM tb_costusu WHERE ncodproy = :id AND id_cuser = :usr AND nflgactivo = 1";
                     $sw = $this->verificaExisteItem($data[$i]->codpr,$data[$i]->iduser,$select);
                     
                     if ($sw == 0){
@@ -554,7 +554,7 @@
             try {
                 $sql = $this->db->connect()->prepare($query);
                 $sql->execute(["id"=>$id,"usr"=>$user]);
-                $result = $sql->fetch();
+                $result = $sql->fetchAll();
 
                 return $result[0]['contador'];
 

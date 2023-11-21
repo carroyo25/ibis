@@ -664,7 +664,8 @@ $(function(){
 
         try {
             ///ojo con la orden urgente
-            //if ( $("#procura").val() != 1 || $("#finanzas").val() != 1 || $("#operaciones").val() != 1 ) throw "La orden no ha sido autorizada";
+
+            if ( ($("#procura").val() != 1 || $("#finanzas").val() != 1 || $("#operaciones").val() != 1 ) && $("#nivel_autorizacion").val() === "47" ) throw "La orden no ha sido autorizada";
 
             let result = {};
 
@@ -672,7 +673,7 @@ $(function(){
     
             $.each($("#formProceso").serializeArray(),function(){
                 result[this.name] = this.value;
-            })
+            });
 
             $.post(RUTA+"orden/envioOrden", {cabecera:result,
                                             detalles:JSON.stringify(detalles())},
