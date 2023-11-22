@@ -66,7 +66,7 @@ $(function(){
             function (data, textStatus, jqXHR) {
                 data.adjuntos.forEach(adjunto => {
                     row +=` <li>
-                                <a href="${adjunto.creferencia}" title="${adjunto.mensaje}">
+                                <a href="public/documentos/ordenes/adjuntos/${adjunto.creferencia}" title="${adjunto.mensaje}" target="_blank" rel="noopener noreferrer" >
                                     <i class="fas fa-file"></i>
                                     <p>Orden N°: ${adjunto.orden}</p>
                                     <p>${adjunto.documento}</p>
@@ -98,9 +98,11 @@ $(function(){
         return false;
     });
 
-    $(".listaAdjuntos").on("click","a", function (e) {
+    /*$(".listaAdjuntos").on("click","a", function (e) {
         e.preventDefault();
 
+
+
         return false;
-    });
+    });*/
 })

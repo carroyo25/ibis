@@ -51,6 +51,8 @@
                 $condicion = "EMITIDO";
             }else if($this->condicion == 2){
                 $condicion = "APROBADO";
+            }else if($this->condicion == 3){
+                $condicion = "APROBADO";
             }
 
             $fecha = explode("-",$this->fecha);
@@ -212,6 +214,11 @@
                 $estado1 = $this->procura == 1 ? chr(51) : chr(45);
                 $estado2 = $this->finanzas == 1 ? chr(51) : chr(45);
                 $estado3 = $this->operaciones == 1 ? chr(51) : chr(45);
+            }else if(($this->condicion == 3)){
+                $this->SetTextColor(29,162,97);
+                $estado1 = chr(51);
+                $estado2 = chr(51);
+                $estado3 = chr(51); //envia de parametro
             }
 
             $this->SetFont('ZapfDingbats','',24);

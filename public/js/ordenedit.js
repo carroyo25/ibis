@@ -142,6 +142,7 @@ $(function(){
                 $("#dias").val(data.cabecera[0].nplazo);
 
                 $("#total_adicional").val(data.total_adicionales);
+                $("#user_modifica").val(data.cabecera[0].userModifica);
 
                 $("#nivel_autorizacion").val(data.cabecera[0].autorizado);
                 $("#procura").val(data.cabecera[0].nfirmaLog);
@@ -291,9 +292,8 @@ $(function(){
             $("form")[1].reset();
             $("#tablaDetalles tbody").empty();
         });
-logistica
-finanzas
-operaciones
+
+
         query();
 
         return false;
@@ -457,7 +457,7 @@ operaciones
             if (result['codigo_transporte'] == "") throw "Elija la forma de transporte";
             if (result['codigo_almacen'] == "") throw "Indique el lugar de entrega";
 
-            $.post(RUTA+"ordenedit/vistaPreliminar", {cabecera:result,condicion:2,detalles:JSON.stringify(detalles())},
+            $.post(RUTA+"ordenedit/vistaPreliminar", {cabecera:result,condicion:3,detalles:JSON.stringify(detalles())},
                 function (data, textStatus, jqXHR) {
                     $(".ventanaVistaPrevia iframe")
                         .attr("src","")
@@ -740,13 +740,6 @@ operaciones
         return false;
      });
  
-    /*$("#btnConfirmAtach").on("click", function (e) {
-         e.preventDefault();
-
-        $("#archivos").fadeOut();
- 
-         return false;
-    });*/
 
     $("#btnConfirmAtach").on("click", function (e) {
         e.preventDefault();
@@ -776,14 +769,14 @@ operaciones
        return false;
     });
  
-     $("#btnCancelAtach").on("click", function (e) {
+    $("#btnCancelAtach").on("click", function (e) {
          e.preventDefault();
  
          $("#archivos").fadeOut();
          $("#fileAtachs")[0].reset();
          $(".listaArchivos").empty();
  
-     });
+    });
 
 
      $("#updateItems").click(function (e) { 

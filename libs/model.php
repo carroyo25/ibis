@@ -2969,7 +2969,7 @@
             if ($cabecera['codigo_tipo'] == "37") {
                 $titulo = "ORDEN DE COMPRA" ;
 
-                if ( $cabecera['user_modifica'] != null) {
+                if ( $cabecera['user_modifica'] != "" ) {
                     $titulo = "ORDEN DE COMPRA - R1" ;
                 }
 
@@ -2978,7 +2978,7 @@
             }else{
                 $titulo = "ORDEN DE SERVICIO";
 
-                if ( $cabecera['user_modifica'] != null) {
+                if ( $cabecera['user_modifica'] != "" ) {
                     $titulo = "ORDEN DE SERVICIO - R1" ;
                 }
 
@@ -3147,6 +3147,8 @@
                 $filename = "public/documentos/ordenes/emitidas/".$file;
             }else if ($condicion == 2){
                 $filename = "public/documentos/ordenes/aprobadas/".$file;
+            }else if ($condicion == 3){
+                $filename = "public/documentos/ordenes/descargadas/".$file;
             }
 
             $pdf->Output($filename,'F');
@@ -3154,7 +3156,7 @@
             return $file;
         }
 
-        /*para generar la vista de los previos*/
+        /*para generar la vista de los previas*/
         public function generarVistaOrden($id){
             require_once("public/formatos/ordenes.php");
 

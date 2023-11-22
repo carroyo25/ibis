@@ -10,15 +10,6 @@
     <div class="mensaje">
         <p></p>
     </div>
-    <div class="modal" id="pregunta">
-        <div class="ventanaPregunta">
-            <h3>Eliminar el registro?</h3>
-            <div>
-                <button type="button" id="btnAceptarPregunta">Aceptar</button>
-                <button type="button" id="btnCancelarPregunta">Cancelar</button>
-            </div>
-        </div>
-    </div>  
     <div class="modal" id="proceso">
         <div class="ventanaProceso tamanioProceso">
             <div class="cabezaProceso">
@@ -53,31 +44,18 @@
                     <input type="hidden" name="total_numero" id="total_numero">
                     <input type="hidden" name="total_adicional" id="total_adicional" value="0">
                     <input type="hidden" name="nro_pedido" id="nro_pedido">
-                    <input type="hidden" name="user_modifica" id="user_modifica" value="<?php echo $_SESSION["iduser"]?>">
+                    <input type="hidden" name="user_modifica" id="user_modifica" value="">
                     <input type="hidden" name="dias" id="dias">
-                    
+
                     <input type="hidden" name="procura" id="procura" value="1">
                     <input type="hidden" name="finanzas" id="finanzas" value="1">
                     <input type="hidden" name="operaciones" id="operaciones" value="1">
-
+                    
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
                         <div>
-                            <button type="button" id="saveOrden" title="Grabar Orden" class="boton3">
-                                <p><i class="far fa-save"></i> Grabar </p> 
-                            </button>
-                            <button type="button" id="cancelOrder" title="Cancelar Orden" class="boton3">
-                                <i class="fab fa-wpexplorer"></i> Cancelar
-                            </button>
-                             <button type="button" id="addMessage" title="Comentarios" class="boton3">
-                                <i class="far fa-comments"></i> Agregar comentarios
-                                <span class="button__comment">0</span>
-                            </button>
                             <button type="button" id="preview" title="Vista Previa" class="boton3">
                                 <i class="far fa-file-pdf"></i> Vista Previa
-                            </button>
-                            <button type="button" id="requestAprob"  title="Solicitar Aprobacion" class="boton3" data-rol="5">
-                                <i class="fas fa-signature"></i> Solicitar Aprobacion
                             </button>
                             <button type="button" id="closeProcess" title="Cerrar" class="boton3">
                                 <i class="fas fa-window-close"></i>
@@ -208,16 +186,8 @@
                         <div>
                             <button type="button" id="uploadCotiz" title="Adjuntar Coizacion" class="cerrarLista boton3">
                                 <i class="far fa-file-pdf"></i> Adjuntar archivos
+                                <span class="button__atach cookie_info" id="atach_counter"></span>
                             </button> 
-                            <button type="button" id="loadRequest" title="Importar Pedido" class="cerrarLista boton3">
-                                <i class="fas fa-upload"></i> Importar Items
-                            </button>
-                            <button type="button" id="banOrder" title="Anular Orden" class="cerrarLista boton4">
-                                <i class="fas fa-ban"></i> Anular Orden
-                            </button>
-                            <button type="button" id="sendEntOrden" title="Enviar Proveedor" class="cerrarLista boton3">
-                                <i class="far fa-paper-plane"></i> Enviar Orden
-                            </button>
                         </div>
                     </div>
                     <div class="tablaInterna mininoTablaInterna">
@@ -246,65 +216,6 @@
             </div>
         </div>
     </div>
-    <div class="modal" id="busqueda">
-        <div class="ventanaBusqueda w75por">
-            <div class="tituloVentana">
-                <span id="tituloBusqueda">Pedidos</span>
-                <div>
-                    <a href="#" id="closeSearch"><i class="fas fa-window-close"></i></a>
-                </div>
-            </div>
-            <div class="textoBusqueda">
-                <input type="text" name="txtBuscar" id="txtBuscar" placeholder="Buscar" class="w90por">
-                <button type="button" class="boton3" id="btnAceptItems">Aceptar</button>
-            </div>
-            <div class="tablaBusqueda">
-                <table class="tablaWrap" id="pedidos">
-                    <thead class="stickytop">
-                        <tr >
-                            <th width="4%">Pedido</th>
-                            <th width="5%">Emisión</th>
-                            <th width="15%">Concepto</th>
-                            <th width="15%">Area</th>
-                            <th width="15%">Centro de Costos</th>
-                            <th width="7%">Codigo</th>
-                            <th width="20%">Descripción</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-    <div class="modal" id="anula">
-        <div class="ventanaPregunta">
-            <h3>Anular la orden?</h3>
-            <div>
-                <button type="button" id="btnAceptarAnula">Aceptar</button>
-                <button type="button" id="btnCancelarAnula">Cancelar</button>
-            </div>
-        </div>
-    </div>
-    <div class="modal" id="esperar">
-        <div class="loadingio-spinner-spinner-5ulcsi06hlf">
-            <div class="ldio-fifgg00y5y">
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-            </div>
-        </div>
-    </div>
     <div class="modal" id="vistaprevia">
         <div class="ventanaVistaPrevia">
             <div class="tituloVista">
@@ -313,77 +224,6 @@
             </div>
             <iframe src=""></iframe>
         </div>
-    </div>
-    <div class="modal" id="comentarios">
-        <div class="ventanaComentarios">
-            <h3>Observaciones</h3>
-            <hr>
-            <div class="cuerpoComentarios">
-                <table class="tabla" id="tablaComentarios">
-                    <thead>
-                         <tr>
-                             <th>Usuario:</th>
-                             <th>Fecha:</th>
-                             <th>Comentarios</th>
-                             <th>...</th>
-                         </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-            </div>
-            <div>
-                <button type="button" id="btnAceptarDialogo">Aceptar</button>
-            </div>
-        </div>
-    </div>
-    <div class="modal" id="sendMail">
-        <form action="#" method="post" id="formMails">
-            <input type="hidden" name="estadoPedido" id="estadoPedido">
-            <div class="ventanaCorreo">
-                    <input type="file" name="mailAtach[]" id="mailAtach" multiple class="oculto">
-                    <div class="tituloCorreo">
-                        <h3 class="w100por">Enviar Correo</h3>
-                        <a href="#" id="closeMail" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
-                        <hr>
-                    </div>
-                    <div class="cuerpoCorreo">
-                        <div class="correoIzq">
-                            <div class="asunto">
-                                <label for="subject">Asunto :</label>
-                                <input type="text" name="subject" id="subject">
-                            </div>
-                            <div class="opciones">
-                                <button class="boton3 js-boton" data-type="bold" type="button"><i class="fas fa-bold"></i></button>
-                                <button class="boton3 js-boton" data-type="italic" type="button"><i class="fas fa-italic"></i></button>
-                            </div>
-                            <div class="messaje">
-                                <div contenteditable="true">
-
-                                </div>
-                            </div>
-                            <div class="commands">
-                                <button class="boton3" id="btnConfirmSend">Enviar</button>
-                            </div>
-                        </div>
-                        <div class="correoDerch">
-                            <h4>Correos</h4>
-                            <table id="listaCorreos" class="tabla">
-                                <thead>
-                                    <tr>
-                                        <th>Nombre</th>
-                                        <th>Correo</th>
-                                        <th>...</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-            </div>
-        </form>
     </div>
     <div class="modal" id="archivos">
         <div class="ventanaArchivos">
@@ -404,7 +244,7 @@
         </div>
     </div>
     <div class="cabezaModulo">
-        <h1>Editar Ordenes</h1>
+        <h1>Descargar Ordenes</h1>
         <div>
             <a href="#" id="nuevoRegistro"><i class="far fa-file"></i><p>Nuevo</p></a>
             <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
@@ -414,25 +254,38 @@
         <form action="#" id="formConsulta">
             <div class="variasConsultas">
                     <div>
-                        <label for="tipo">Tipo : </label>
-                        <select name="tipoSearch" id="tipoSearch">
-                            <option value="37">Bienes</option>
-                            <option value="38">Servicios</option>
+                        <label for="tipo">Nro.Orden : </label>
+                        <input type="text" name="ordenSearch" id="ordenSearch">
+                    </div>
+                    <div>
+                        <label for="costosSearch">Centro de Costos: </label>
+                        <select name="costosSearch" id="costosSearch" class="item4">
+                            <?php echo $this->listaCostosSelect ?>
                         </select>
                     </div>
                     <div>
-                        <label for="costosSearch">Centro de Costos</label>
-                        <input type="text" name="costosSearch" id="costosSearch">
-                    </div>
-                    <div>
                         <label for="mes">Mes</label>
-                        <input type="number" name="mesSearch" id="mesSearch" value="<?php echo date("m")?>" class="textoCentro">
+                        <select name="mesSearch" id="mesSearch">
+                            <option value="-1">Mes</option>
+                            <option value="01">Enero</option>
+                            <option value="02">Febrero</option>
+                            <option value="03">Marzo</option>
+                            <option value="04">Abril</option>
+                            <option value="05">Mayo</option>
+                            <option value="06">Junio</option>
+                            <option value="07">Julio</option>
+                            <option value="08">Agosto</option>
+                            <option value="09">Setiembre</option>
+                            <option value="10">Octubre</option>
+                            <option value="11">Noviembre</option>
+                            <option value="12">Diciembre</option>
+                        </select>
                     </div>
                     <div>
                         <label for="anio">Año :</label>
-                        <input type="number" name="anioSearch" id="anioSearch" value="<?php echo date("Y")?>" class="textoCentro">
+                        <input type="number" name="anioSearch" id="anioSearch" class="textoCentro">
                     </div>
-                    <button type="button">Procesar</button> 
+                    <button type="button" id="btnConsult">Procesar</button> 
             </div>
         </form>
     </div>
@@ -440,29 +293,31 @@
         <table id="tablaPrincipal">
             <thead class="stickytop">
                     <tr>
-                    <th rowspan="2">Num.</th>  
+                    <th rowspan="2" data-idcol="0" class="datafiltro">Num.</th>  
                     <th rowspan="2">Emision</th>
-                    <th rowspan="2">Descripción</th>
-                    <th rowspan="2">Centro Costos</th> 
-                    <th rowspan="2">Area</th>
-                    <th rowspan="2" width="15%">Proveedor</th>
-                    <th rowspan="2">Atencion</th>
+                    <th rowspan="2" width="25%" data-idcol="2" class="datafiltro">Descripción</th>
+                    <th rowspan="2" data-idcol="3" class="datafiltro">Centro Costos</th> 
+                    <th rowspan="2" data-idcol="4" class="datafiltro">Area</th>
+                    <th rowspan="2" width="15%" data-idcol="5" class="datafiltro">Proveedor</th>
+                    <th rowspan="2" >Precio Soles</th>
+                    <th rowspan="2">Precio Dólares</th>
+                    <th rowspan="2" data-idcol="8" class="datafiltro">Atencion</th>
+                    <th rowspan="2">Estado</th>
                     <th colspan="3" width="16%">Firmas</th>
                     <tr>
                         <th>Procura</th>
                         <th>Finanzas</th>
                         <th>Operaciones</th>
                     </tr>
-                    
                 </tr>
             </thead>
             <tbody>
-                <?php //echo $this->listaOrdenes;?>
+                
             </tbody>
         </table>
     </div>
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
     <script src="<?php echo constant('URL');?>public/js/funciones.js?<?php echo constant('VERSION')?>"></script>
-    <script src="<?php echo constant('URL');?>public/js/ordenedit.js?<?php echo constant('VERSION')?>"></script>
+    <script src="<?php echo constant('URL');?>public/js/ordenactual.js?<?php echo constant('VERSION')?>"></script>
 </body>
 </html>

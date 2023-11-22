@@ -353,10 +353,9 @@
 
             for ($i=0; $i < count($data); $i++) { 
                 try {
-                    $select = "SELECT COUNT( idreg ) AS contador FROM tb_usermod WHERE classmenu = :id AND iduser = :usr AND flgactivo = 1";
+                    $select = "SELECT COUNT( * ) AS contador FROM tb_usermod WHERE ncodmod = :id AND iduser = :usr AND flgactivo = 1";
 
-                    //verifcar a aca el mensaje de error por que no se cierra la ventana del navegador
-                    $sw = $this->verificaExisteItem($data[$i]->clas,$data[$i]->iduser,$select);
+                    $sw = $this->verificaExisteItem($data[$i]->codm,$data[$i]->iduser,$select);
 
                     if ($sw == 0) {
                         $sql = $this->db->connect()->prepare("INSERT INTO tb_usermod 

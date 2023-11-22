@@ -401,7 +401,7 @@
                 if ($rowCount > 0) {
                     $docData = array();
                     while($row=$sql->fetch(PDO::FETCH_ASSOC)){
-                        $docData[] = $row;
+                            $docData[] = $row;
                     }
                 }
 
