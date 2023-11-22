@@ -1322,6 +1322,17 @@ $emitido:#F8CAAD;
         justify-content: space-between;
         padding:1rem;
     }
+
+    .listaAdjuntos {
+        height: 85%;   
+    }
+
+    .opcionesArchivosDescarga {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-top: 1rem;
+    }
     
     ul{
         display: flex;
@@ -1332,10 +1343,11 @@ $emitido:#F8CAAD;
         margin-right: 1rem;
         padding: 1rem;
         overflow:auto;
+        max-height: 100%;
 
         li {
             border: 1px solid $blanco;
-            height: 4rem;
+            height: 5rem;
             
             a {
                 display: flex;

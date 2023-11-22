@@ -372,5 +372,45 @@
                 return false;
             }
         }
+
+        public function listarAdjuntos($cc) {
+            try{
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        lg_regdocumento.creferencia,
+                                                        lg_regdocumento.cmodulo,
+                                                        UPPER(
+                                                        SUBSTR( lg_regdocumento.cdocumento FROM 1 FOR 30 )) AS documento,
+                                                        UPPER( lg_regdocumento.cdocumento ) AS mensaje,
+                                                        LPAD( lg_regdocumento.nidrefer, 6, 0 ) AS orden,
+                                                        lg_regdocumento.id_regmov,
+                                                        lg_ordencab.ncodcos,
+                                                        lg_regdocumento.fregsys 
+                                                    FROM
+                                                        lg_regdocumento
+                                                        INNER JOIN lg_ordencab ON lg_regdocumento.nidrefer = lg_ordencab.id_regmov 
+                                                    WHERE
+                                                        lg_regdocumento.cmodulo = 'ORD' 
+                                                        AND lg_regdocumento.nflgactivo = 1 
+                                                        AND lg_ordencab.ncodcos = :cc
+                                                    ORDER BY
+                                                        lg_regdocumento.nidrefer DESC");
+                $sql->execute(["cc"=>$cc]);
+
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0) {
+                    $docData = array();
+                    while($row=$sql->fetch(PDO::FETCH_ASSOC)){
+                        $docData[] = $row;
+                    }
+                }
+
+                return array("adjuntos"=>$docData);
+
+            }catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
     }
 ?>

@@ -7,10 +7,34 @@
     <title>Document</title>
 </head>
 <body>
-<div class="cabezaModulo">
+    <div class="mensaje">
+        <p></p>
+    </div>
+    <div class="modal" id="vistaAdjuntos">
+        <div class="ventanaAdjuntos">
+            <div class="tituloAdjuntos">
+                <h3>Adjuntos Ordenes</h3>
+                <a href="#" id="closeAtach" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
+            </div>
+            <div class="listaAdjuntos">
+                <ul>
+                </ul>
+            </div>
+            <div class="opcionesArchivosDescarga">
+                <button type="button" class="boton3" id="btnConfirmDonwLoad">Descargar</button>
+                <button type="button" class="boton3" id="btnCancelDonwLoad">Cancelar</button>
+            </div>
+        </div>
+    </div>
+    <div class="cabezaModulo">
         <h1>Reporte Valorizado</h1>
         <div>
-            <a href="#" id="irInicio"><i class="fas fa-home"></i></a>
+            <a href="#" id="downFiles"><i class="fas fa-inbox" class="boton3"></i>
+                <p>Descargar<br>Adjuntos</p>
+            </a>
+            <a href="#" id="irInicio"><i class="fas fa-home" class="boton3"></i>
+                <p>Inicio</p>
+            </a>
         </div>
     </div>
     <div class="barraTrabajo">

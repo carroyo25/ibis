@@ -17,5 +17,9 @@
         function exportar(){
             echo json_encode($this->model->exportarValorizado($_POST['detalles']));  
         }
+
+        function adjuntos() {
+            echo json_encode($this->model->listarAdjuntos($_POST['cc']));
+        }
     }
 ?>
