@@ -3149,6 +3149,8 @@
                 $filename = "public/documentos/ordenes/aprobadas/".$file;
             }else if ($condicion == 3){
                 $filename = "public/documentos/ordenes/descargadas/".$file;
+            }else if ($condicion == 4){
+                $filename = "public/documentos/ordenes/modificadas/".$file;
             }
 
             $pdf->Output($filename,'F');

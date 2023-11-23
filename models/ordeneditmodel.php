@@ -137,7 +137,8 @@
 
                 $salida = array("respuesta"=>true,
                                 "mensaje"=>"Registro modificado",
-                                "clase"=>"mensaje_correcto");
+                                "clase"=>"mensaje_correcto",
+                                "user_modifica"=>$_SESSION['iduser']);
 
                 
                 return $salida;

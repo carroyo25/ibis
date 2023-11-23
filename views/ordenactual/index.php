@@ -299,8 +299,8 @@
                     <th rowspan="2" data-idcol="3" class="datafiltro">Centro Costos</th> 
                     <th rowspan="2" data-idcol="4" class="datafiltro">Area</th>
                     <th rowspan="2" width="15%" data-idcol="5" class="datafiltro">Proveedor</th>
-                    <th rowspan="2" >Precio Soles</th>
-                    <th rowspan="2">Precio Dólares</th>
+                    <th rowspan="2" width="5%">Precio Soles</th>
+                    <th rowspan="2" width="5%">Precio Dólares</th>
                     <th rowspan="2" data-idcol="8" class="datafiltro">Atencion</th>
                     <th rowspan="2">Estado</th>
                     <th colspan="3" width="16%">Firmas</th>

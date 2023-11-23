@@ -54,7 +54,13 @@
                                                         FORMAT( lg_ordencab.nplazo, 0 ) AS plazo,
                                                         DATE_FORMAT( lg_ordencab.ffechadoc, '%d/%m/%Y' ) AS fecha_orden,
                                                         DATE_FORMAT( lg_ordencab.ffechaent, '%d/%m/%Y' ) AS fecha_entrega,
+                                                        DATE_FORMAT( lg_ordencab.ffechades, '%d/%m/%Y' ) AS fecha_descarga,
                                                         DATE_FORMAT( lg_ordencab.fechafin, '%d/%m/%Y' ) AS fecha_autorizacion_orden,
+                                                        lg_ordencab.ffechades,
+                                                        lg_ordencab.fechaLog,
+                                                        lg_ordencab.fechaOpe,
+                                                        lg_ordencab.FechaFin,
+                                                        lg_ordencab.ffechaent,
                                                         UPPER( cm_entidad.crazonsoc ) AS proveedor,
                                                         ( SELECT SUM(lg_ordendet.ncanti) FROM lg_ordendet WHERE lg_ordendet.niddeta = tb_pedidodet.iditem AND lg_ordendet.id_orden != 0 ) AS cantidad_orden,
                                                         ( SELECT SUM( alm_recepdet.ncantidad ) FROM alm_recepdet WHERE alm_recepdet.niddetaPed = tb_pedidodet.iditem AND alm_recepdet.nflgactivo = 1 ) AS ingreso,
@@ -63,7 +69,7 @@
                                                         ( SELECT SUM( alm_existencia.cant_ingr ) FROM alm_existencia WHERE alm_existencia.idpedido = tb_pedidodet.iditem AND alm_existencia.nflgActivo = 1 ) AS atencion_almacen,
                                                         UPPER( tb_user.cnameuser ) AS operador,
                                                         UPPER( tb_pedidocab.concepto ) AS concepto,
-                                                        DATEDIFF( NOW(), lg_ordencab.ffechaent ) AS dias_atraso,
+                                                        DATEDIFF(  lg_ordencab.ffechades, NOW() ) AS dias_atraso,
                                                         transporte.cdescripcion AS transporte,
                                                         transporte.nidreg,
                                                         user_aprueba.cnombres,
@@ -256,6 +262,15 @@
                             }
 
                             $cantidad = $rs['cantidad_aprobada'] == 0 ? $rs['cantidad_pedido'] : $rs['cantidad_aprobada'];
+
+                            $fecha_entrega = "";
+                            $dias_plazo = '+'. $rs['plazo'].' days';
+
+                            if ( $rs['ffechades'] == "" ) {
+                                $fecha_entrega = date("d/m/Y",strtotime($rs['ffechaent'].$dias_plazo));
+                            }else {
+                                $fecha_entrega = date("d/m/Y",strtotime($rs['ffechades'].$dias_plazo));
+                            }
     
                             $salida.='<tr class="pointer" 
                                         data-itempedido="'.$rs['iditem'].'" 
@@ -289,7 +304,7 @@
                                         <td class="pl10px">'.$rs['fecha_autorizacion_orden'].'</td>
                                         <td class="textoDerecha pr15px">'.number_format($rs['cantidad_atendida'],2).'</td>
                                         <td class="pl10px">'.$rs['proveedor'].'</td>
-                                        <td class="textoCentro">'.$rs['fecha_entrega'].'</td>
+                                        <td class="textoCentro">'.$fecha_entrega.'</td>
                                         <td class="textoDerecha pr15px">'.$rs['ingreso'].'</td>
                                         <td class="textoCentro">'.$rs['nota_ingreso'].'</td>
                                         <td class="textoDerecha pr15px">'.$saldoRecibir.'</td>

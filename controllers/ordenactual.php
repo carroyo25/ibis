@@ -16,6 +16,10 @@
         
             echo json_encode([$this->model->listarOrdenActualScroll($pagina,$cantidad)]);
         }
+
+        function filtroOrdenes(){
+            echo $this->model->filtrarActualizacion($_POST);
+        }
         
     }
 ?>

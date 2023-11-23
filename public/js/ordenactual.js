@@ -1,6 +1,4 @@
 $(() => {
-    $("#esperar").fadeOut();
-
     const body = document.querySelector("#tablaPrincipal tbody");
 
     let listItemFinal = null,estoyPidiendo = false;
@@ -310,6 +308,23 @@ $(() => {
         $(".listaArchivos").empty();
 
    });
+
+   $("#btnConsult").click(function (e) { 
+    e.preventDefault();
+    
+    let srt = $("#formConsulta").serialize();
+
+    $.post(RUTA+"ordenactual/filtroOrdenes", srt,
+        function (data, text, requestXHR) {
+            $("#tablaPrincipal tbody")
+                .empty()
+                .append(data);
+        },
+        "text"
+    );
+    
+    return false
+});
 
 })
 

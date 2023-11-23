@@ -142,6 +142,7 @@ $(function(){
                 $("#dias").val(data.cabecera[0].nplazo);
 
                 $("#total_adicional").val(data.total_adicionales);
+                
                 $("#user_modifica").val(data.cabecera[0].userModifica);
 
                 $("#nivel_autorizacion").val(data.cabecera[0].autorizado);
@@ -457,11 +458,11 @@ $(function(){
             if (result['codigo_transporte'] == "") throw "Elija la forma de transporte";
             if (result['codigo_almacen'] == "") throw "Indique el lugar de entrega";
 
-            $.post(RUTA+"ordenedit/vistaPreliminar", {cabecera:result,condicion:3,detalles:JSON.stringify(detalles())},
+            $.post(RUTA+"ordenedit/vistaPreliminar", {cabecera:result,condicion:4,detalles:JSON.stringify(detalles())},
                 function (data, textStatus, jqXHR) {
                     $(".ventanaVistaPrevia iframe")
                         .attr("src","")
-                        .attr("src","public/documentos/ordenes/aprobadas/"+data);
+                        .attr("src","public/documentos/ordenes/modificadas/"+data);
                     
                     $("#vista_previa").val(data);    
                     $("#vistaprevia").fadeIn();
@@ -569,11 +570,12 @@ $(function(){
                 dataType:"json",    
                 // UI response after the file upload
                 beforeSend: function () {
-                    $("#esperar").fadeIn();
+                    $("#esperar").css({"display":"block","opacity":"1"});
                 },  
                 success: function(response)
                 {   
-                    $("#esperar").fadeOut();
+                    $("#esperar").css({"display":"none","opacity":"0"});
+                    $("#user_modifica").val(response.user_modifica);
                     mostrarMensaje(response.mensaje,response.clase);
                 }
             });
