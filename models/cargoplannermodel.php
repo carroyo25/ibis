@@ -248,18 +248,22 @@
                                 $estadofila = "item_ingreso_parcial";
                                 $estado_item = "atendido";
                                 $estado_pedido = "atendido";
-                            }else if ( $rs['ingreso_obra'] && $suma_atendido == $rs['cantidad_aprobada']) {
+                            }else if ( $rs['ingreso_obra'] && $suma_atendido === $rs['cantidad_aprobada']) {
                                 $porcentaje = "100%";
                                 $estadofila = "entregado";
                                 $estado_item = "atendido";
                                 $estado_pedido = "atendido";
                                 $semaforo = "Entregado";
-                            }else if ( $rs['ingreso_obra'] && $rs['ingreso_obra'] == $rs['cantidad_orden']) {
+                            }else if ( $rs['ingreso_obra'] && $rs['ingreso_obra'] === $rs['cantidad_orden']) {
                                 $porcentaje = "100%";
                                 $estadofila = "entregado";
                                 $estado_item = "atendido";
                                 $estado_pedido = "atendido";
                             }
+
+                            /*if ($porcentaje == "100%") {
+                                $estadofila = "entregado";
+                            }*/
 
                             $cantidad = $rs['cantidad_aprobada'] == 0 ? $rs['cantidad_pedido'] : $rs['cantidad_aprobada'];
 
