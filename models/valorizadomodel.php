@@ -353,7 +353,7 @@
                     $objPHPExcel->getActiveSheet()->setCellValue('AE'.$fila,$datos[$i]->parte);
                     $objPHPExcel->getActiveSheet()->setCellValue('AF'.$fila,$datos[$i]->equipo);
                     $objPHPExcel->getActiveSheet()->setCellValue('AG'.$fila,$datos[$i]->estado);
-                    $objPHPExcel->getActiveSheet()->setCellValue('AH'.$fila,$datos[$i]->descripcion);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AH'.$fila,$datos[$i]->concepto);
                    
 
                     $fila++;

@@ -371,6 +371,84 @@ $(() =>{
         return false;
     });
 
+    $("#saveOrden").click(function (e) { 
+        e.preventDefault();
+
+        let result = {};
+    
+        $.each($("#formProceso").serializeArray(),function(){
+            result[this.name] = this.value;
+        })
+
+        formData = new FormData();
+        formData.append("usuario",$("#id_user").val());
+        formData.append("cabecera",JSON.stringify(result));
+        formData.append("detalles",JSON.stringify(detalles()));
+        formData.append("comentarios",JSON.stringify(comentarios()));
+        formData.append("adicionales",JSON.stringify(adicionales()));
+
+        try {
+            if ( accion == "" ) throw "Orden grabada";
+            if ($("#codigo_estado").val() == 59) throw "La orden esta en firmas.";
+            if (result['numero'] == "") throw "No tiene numero de orden";
+            if (result['dias'] == "") throw "ingrese el numero de dias";
+            if (result['codigo_moneda'] == "") throw "Elija la moneda";
+            if (result['codigo_pago'] == "") throw "Elija el tipo de pago";
+            if (result['codigo_almacen'] == "") throw "Indique el lugar de entrega";
+            if (result['total'] == "") throw "No se registro el total de la orden";
+            if ($("#tablaDetalles tbody tr") .length <= 0) throw "No tiene items cargados";
+            if ($("#id_user").val() <= "") throw "Error General";
+
+            grabado = true;
+            
+            if ( accion == 'n' ){
+                $.ajax({
+                    // URL to move the uploaded image file to server
+                    url: RUTA + 'contratos/nuevoRegistro',
+                    // Request type
+                    type: "POST", 
+                    // To send the full form data
+                    data: formData,
+                    contentType:false,      
+                    processData:false,
+                    dataType:"json",    
+                    // UI response after the file upload
+                    beforeSend: function () {
+                        $("#esperar").fadeIn();
+                    },  
+                    success: function(response)
+                    {   
+                        mostrarMensaje(response.mensaje,response.clase);
+                        $("#esperar").fadeOut();
+                        $("#tablaDetalles tbody tr").attr('data-grabado',1);
+                        $("#codigo_orden").val(response.orden);
+                        $("#tablaPrincipal tbody")
+                            .empty()
+                            .append(response.pedidos);
+                            
+                            accion = ' ';
+                    }
+                });
+            }else if ( accion == 'u' ){
+                $.post(RUTA+"contratos/modificaRegistro", { cabecera:result,
+                                                        detalles:JSON.stringify(detalles()),
+                                                        comentarios:JSON.stringify(comentarios()),
+                                                        usuario:$("#id_user").val()},
+                    function (data, textStatus, jqXHR) {
+                        $("#tablaDetalles tbody tr").attr('data-grabado',1);
+                        mostrarMensaje(data.mensaje,data.clase);
+                    },
+                    "json"
+                );
+            }
+
+        } catch (error) {
+            mostrarMensaje(error,'mensaje_error'); 
+        }
+
+        return false;
+    });
+
 })
 
 calcularTotales = () => {
@@ -444,4 +522,30 @@ detalles = () => {
     });
 
     return DATA;
+}
+
+comentarios = () => {
+    let COMENTARIOS = [];
+
+    let TABLA = $("#tablaComentarios tbody >tr");
+
+    TABLA.each(function (){
+        let USUARIO     = $("#id_user").val(),
+            FECHA       = $(this).find('td').eq(1).children().val(),
+            COMENTARIO  = $(this).find('td').eq(2).children().val(),
+            GRABAR      = $(this).data("grabar");
+
+        item = {};
+
+        if ( GRABAR == "0" && COMENTARIO !=""){
+            item['usuario']     = USUARIO;
+            item['fecha']       = FECHA;
+            item['comentario']  = COMENTARIO;
+            item['grabar']      = GRABAR;
+
+            COMENTARIOS.push(item);
+        }        
+    });
+
+    return COMENTARIOS;
 }

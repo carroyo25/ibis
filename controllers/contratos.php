@@ -20,6 +20,16 @@
         function vistaPreliminar(){
             echo $this->model->generarContrato($_POST['cabecera'],$_POST['condicion'],$_POST['detalles']);
         }
+
+        function nuevoRegistro(){
+            echo json_encode($this->model->insertarContratos($_POST['cabecera'],
+                                                        $_POST['detalles'],
+                                                        $_POST['comentarios'],
+                                                        $_POST['adicionales'],
+                                                        $_FILES,
+                                                        $_POST['usuario']));
+        }
+
         
     }
 ?>

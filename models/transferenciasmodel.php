@@ -328,6 +328,7 @@
                                                             OR ibis.tb_pedidocab.estadodoc = 60
                                                             OR ibis.tb_pedidocab.estadodoc = 62
                                                             OR ibis.tb_pedidocab.estadodoc = 58
+                                                            OR ibis.tb_pedidocab.estadodoc = 52
                                                             OR ibis.tb_pedidocab.estadodoc = 230) 
                                                         AND ibis.tb_pedidocab.nflgactivo = 1 
                                                         AND ibis.tb_pedidocab.idtipomov = 37 

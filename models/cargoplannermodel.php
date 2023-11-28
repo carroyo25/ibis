@@ -157,7 +157,7 @@
                             $tipo_orden = $rs['idtipomov'] == 37 ? 'BIENES' : 'SERVICIO';
                             $clase_operacion = $rs['idtipomov'] == 37 ? 'bienes' : 'servicios';
                             $saldoRecibir = $rs['cantidad_orden'] - $rs['ingreso'] > 0 ? $rs['cantidad_orden'] - $rs['ingreso'] : "-";
-                            $dias_atraso  =  $saldoRecibir > 0 ? $rs['dias_atraso'] : "-" ;
+                            $dias_atraso  =  $saldoRecibir > 0 ? "-" :$rs['dias_atraso'] ;
                             $suma_atendido = number_format($rs['cantidad_orden'] + $rs['atencion_almacen'],2);
 
                             $estado_pedido =  $rs['estadoItem'] >= 54 ? "Atendido":"Pendiente";
@@ -243,36 +243,31 @@
                                 $estadofila = "item_transito";
                                 $estado_item = "atendido";
                                 $estado_pedido = "atendido";
-                            }else if ( $rs['ingreso_obra'] && $rs['ingreso_obra'] < $rs['cantidad_orden']) {
+                            }else if ( round($rs['ingreso_obra'],2) < round($rs['cantidad_orden'],2)) {
                                 $porcentaje = "85%";
                                 $estadofila = "item_ingreso_parcial";
                                 $estado_item = "atendido";
                                 $estado_pedido = "atendido";
-                            }else if ( $rs['ingreso_obra'] && $suma_atendido === $rs['cantidad_aprobada']) {
+                            }else if ( $rs['ingreso_obra'] && round($suma_atendido,2) === round($rs['cantidad_aprobada'],2)) {
                                 $porcentaje = "100%";
                                 $estadofila = "entregado";
                                 $estado_item = "atendido";
                                 $estado_pedido = "atendido";
                                 $semaforo = "Entregado";
-                            }else if ( $rs['ingreso_obra'] && $rs['ingreso_obra'] === $rs['cantidad_orden']) {
+                            }else if ( $rs['ingreso_obra'] && round($rs['ingreso_obra'],2) === round($rs['cantidad_orden'],2)) {
                                 $porcentaje = "100%";
                                 $estadofila = "entregado";
                                 $estado_item = "atendido";
                                 $estado_pedido = "atendido";
                             }
 
-                            /*if ($porcentaje == "100%") {
-                                $estadofila = "entregado";
-                            }*/
 
                             $cantidad = $rs['cantidad_aprobada'] == 0 ? $rs['cantidad_pedido'] : $rs['cantidad_aprobada'];
 
                             $fecha_entrega = "";
-                            $dias_plazo = '+'. $rs['plazo'].' days';
+                            $dias_plazo = '+'. intVal( $rs['plazo']) .' days';
 
-                            if ( $rs['ffechades'] == "" ) {
-                                $fecha_entrega = date("d/m/Y",strtotime($rs['ffechaent'].$dias_plazo));
-                            }else {
+                            if ( $rs['ffechades'] !== NULL ) {
                                 $fecha_entrega = date("d/m/Y",strtotime($rs['ffechades'].$dias_plazo));
                             }
     
