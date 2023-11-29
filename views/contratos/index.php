@@ -194,6 +194,9 @@
                         <span>Detalles</span>
                         <div>
                             <button type="button" id="addCharges" title="Otros Cargos" class="cerrarLista boton3">
+                                <i class="fas fa-tasks"></i> Condiciones del Contrato
+                            </button>
+                            <button type="button" id="addCharges" title="Otros Cargos" class="cerrarLista boton3">
                                 <i class="far fa-paper-plane"></i> Otros Adicionales
                             </button>
                             <button type="button" id="uploadCotiz" title="Adjuntar Cotizacion" class="cerrarLista boton3">
@@ -284,13 +287,94 @@
             </div>
         </div>
     </div>
-    <div class="cabezaModulo">
-        <h1>Contratos</h1>
-        <div>
-            <a href="#" id="nuevoRegistro"><i class="far fa-file"></i><p>Nuevo</p></a>
-            <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
+    <div class="modal" id="esperar">
+        <div class="loadingio-spinner-spinner-5ulcsi06hlf">
+            <div class="ldio-fifgg00y5y">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
         </div>
     </div>
+    <div class="modal" id="comentarios">
+        <div class="ventanaComentarios">
+            <h3>Observaciones</h3>
+            <hr>
+            <div class="cuerpoComentarios">
+                <table class="tabla" id="tablaComentarios">
+                    <thead>
+                         <tr>
+                             <th>Usuario:</th>
+                             <th>Fecha:</th>
+                             <th>Comentarios</th>
+                             <th>...</th>
+                         </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div>
+                <button type="button" id="btnAceptarDialogo">Aceptar</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="archivos">
+        <div class="ventanaArchivos">
+            <form action="#" id="fileAtachs" name="fileAtachs" enctype='multipart/form-data'>
+                <input type="hidden" name="nroordenatach" id="nroordenatach">
+                <input type="file" name="uploadAtach" id="uploadAtach" multiple class="oculto">
+                <div class="tituloArchivos">
+                    <h3>Adjuntar Archivos</h3>
+                    <a href="#" id="openArch" title="Adjuntar Archivos"><i class="fas fa-file-medical"></i></a>
+                </div>            
+                <ul class="listaArchivos" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
+                </ul>
+                <div class="opcionesArchivos">
+                    <button type="button" class="boton3" id="btnConfirmAtach">Aceptar</button>
+                    <button type="button" class="boton3" id="btnCancelAtach">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="modal" id="adicionales">
+        <div class="ventanaArchivos">
+            <form action="#" id="ordenAdic" enctype='multipart/form-data'>
+                <div class="tituloArchivos">
+                    <h3>Cargos adicionales</h3>
+                    <a href="#" id="addAdic" title="Agregar Costos"><i class="far fa-plus-square"></i><p>Añadir Item</p></a>
+                </div>            
+                <div>
+                    <table id="tablaAdicionales">
+                        <thead>
+                            <tr>
+                                <th>Descripcion</th>
+                                <th>Moneda</th>
+                                <th>Valor</th>
+                                <th>...</th>
+                            </tr>
+                            <tbody>
+
+                            </tbody>
+                        </thead>
+                    </table>
+                </div>
+                <div class="opcionesArchivos">
+                    <button type="button" class="boton3" id="btnConfirmAdic">Aceptar</button>
+                    <button type="button" class="boton3" id="btnCancelAdic">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div> 
     <div class="modal" id="vistaprevia">
         <div class="ventanaVistaPrevia">
             <div class="tituloVista">
@@ -298,6 +382,13 @@
                 <a href="#" id="closePreview" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
             </div>
             <iframe src=""></iframe>
+        </div>
+    </div>
+    <div class="cabezaModulo">
+        <h1>Contratos</h1>
+        <div>
+            <a href="#" id="nuevoRegistro"><i class="far fa-file"></i><p>Nuevo</p></a>
+            <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
         </div>
     </div>
     <div class="barraTrabajo">
@@ -342,17 +433,27 @@
     <div class="itemsTabla">
         <table id="tablaPrincipal">
             <thead class="stickytop">
+                <tr>
+                    <th rowspan="2" data-idcol="0" class="datafiltro">Num.</th>  
+                    <th rowspan="2">Emision</th>
+                    <th rowspan="2" data-idcol="2" class="datafiltro">Descripción</th>
+                    <th rowspan="2" width="5%" data-idcol="3" class="datafiltro">C. Costos</th> 
+                    <th rowspan="2" data-idcol="4">Area</th>
+                    <th rowspan="2" data-idcol="5" class="datafiltro">Proveedor</th>
+                    <th rowspan="2" class="datafiltro" data-idcol="6">Usuario</th>
+                    <th width="5%" rowspan="2">Total</th>
+                    <th rowspan="2">Atencion</th>
+                    <th width="10%" colspan="3" width="16%">Firmas</th>
+                    <th rowspan="2" width="3%">Comentarios</th>
                     <tr>
-                    <th>Num.</th>  
-                    <th>Emision</th>
-                    <th>Descripción</th>
-                    <th>Proyecto</th> 
-                    <th>Area</th>
-                    <th>Estado</th>
+                        <th>Procura</th>
+                        <th>Finanzas</th>
+                        <th>Operaciones</th>
+                    </tr>
                 </tr>
             </thead>
             <tbody>
-                <?php //echo $this->listaOrdenes;?>
+                <?php echo $this->listaContratos;?>
             </tbody>
         </table>
     </div>

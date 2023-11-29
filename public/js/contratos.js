@@ -4,20 +4,35 @@ $(() =>{
         entidad  = "",
         pedido   = 0,
         proforma = "",
-        ingresos = 0,
-        swcoment = false,
-        autorizado = 0,
-        costos = "",
-        fp = 0;
+        costos = "";
 
     $("#esperar").fadeOut();
 
     $("#nuevoRegistro").click(function (e) { 
         e.preventDefault();
 
+        $("#estado")
+            .removeClass()
+            .addClass("textoCentro estado procesando");
+
         $("#proceso").fadeIn();
+        $("#sw").val(0);
+        $("#codigo_estado").val(0);
+        $(".button__comment").hide();
+        $("#atach_counter").text(0);
+        $(".listaArchivos").empty();
+
+        $("#formProceso input[type='hidden']").each(function(){
+            $(this).val("");
+        });
+
+        $("#cpago").val("CREDITO A 30 DIAS");
+        $("#codigo_pago").val(73);
+        $("#codigo_almacen").val(7);
 
         accion = 'n';
+        grabado = false;
+        costos = "";
 
         return false;
     });
@@ -25,7 +40,31 @@ $(() =>{
     $("#closeProcess").click(function (e) { 
         e.preventDefault();
 
+        $("#formProceso input[type='hidden']").each(function(){
+            $(this).val("");
+        });
+
+        $("form")[0].reset();
+        $("form")[1].reset();
+        $("#tablaDetalles tbody").empty();
+
         $("#proceso").fadeOut();
+
+        /*$.post(RUTA+"contratos/actualizaListado",
+            function (data, textStatus, jqXHR) {
+                $(".itemsTabla table tbody")
+                    .empty()
+                    .append(data);
+
+                $("#proceso").fadeOut(function(){
+                    grabado = false;
+                    $("form")[0].reset();
+                    $("form")[1].reset();
+                    $("#tablaDetalles tbody").empty();
+                });
+            },
+            "text"
+        );*/
 
         return false;
     });
@@ -484,7 +523,6 @@ detalles = () => {
             TOTAL       = $(this).find('td').eq(7).text(),
             NROPARTE    = $(this).find('td').eq(8).text(),
             PEDIDO      = $(this).find('td').eq(9).text(),
-            PAYMENT     = $(this).find('td').eq(11).children().val(),
             CODPROD     = $(this).data('codprod'),
             MONEDA      = $("#codigo_moneda").val(),
             ITEMPEDIDO  = $(this).data('itped'),
@@ -492,7 +530,7 @@ detalles = () => {
             CANTPED     = $(this).data('cant'),
             REFPEDI     = $(this).data('refpedi'),
             DETALLES    = $(this).find('td').eq(10).children().val(),
-            INDICE      = $(this).data('itord');
+            INDICE     = $(this).data('itord');
 
         item = {};
         
@@ -515,7 +553,6 @@ detalles = () => {
             item['refpedi']     = REFPEDI;
             item['detalles']    = DETALLES;
             item['indice']      = INDICE;
-            item['payment']     = PAYMENT;
 
             DATA.push(item);
         //}
@@ -548,4 +585,93 @@ comentarios = () => {
     });
 
     return COMENTARIOS;
+}
+
+mailsList = () => {
+    CORREOS = [];
+
+    let TABLA =  $("#listaCorreos tbody >tr");
+
+    TABLA.each(function(){
+        let CORREO      = $(this).find('td').eq(1).text(),
+            NOMBRE      = $(this).find('td').eq(0).text(),
+            ENVIAR      = $(this).find('td').eq(2).children().prop("checked"),
+
+        item= {};
+        
+        if (ENVIAR) {
+            item['nombre']= NOMBRE;
+            item['correo']= CORREO;
+
+            CORREOS.push(item);
+        }
+        
+    })
+
+    return CORREOS;
+}
+
+adicionales = () => {
+    ADICIONALES = [];
+
+    let TABLA = $("#tablaAdicionales tbody >tr");
+
+    TABLA.each(function (){
+        let ENTIDAD      = $("#codigo_entidad").val(),
+            MONEDA       = $("#codigo_moneda").val(),
+            DESCRIPCION  = $(this).find('td').eq(0).children().val(),
+            VALOR        = $(this).find('td').eq(2).children().val();
+
+        item = {};
+
+        item['entidad']     = ENTIDAD;
+        item['moneda']      = MONEDA;
+        item['descripcion'] = DESCRIPCION;
+        item['valor']       = VALOR;
+
+        ADICIONALES.push(item);
+    });
+
+    return ADICIONALES;
+}
+
+
+//funcion para sumar eliminando el problema de las comas 
+sumarAdicionales = (TABLA,indice) =>{
+    let sum = 0;
+
+    TABLA.each(function() {  
+        sum += parseFloat($(this).find('td').eq(indice).children().val().replace(/,/g, ''), 10);  
+    }); 
+       
+    return sum.toFixed(2);
+}
+
+calcularTotales = () => {
+    let im = 0,
+        adic = parseFloat(sumarAdicionales($("#tablaAdicionales tbody >tr"),2)),
+        np   = $("#total_numero").val();
+
+        if ($("#total_numero").val() == 0) {
+            $("#im").val("0.00");
+        }else {
+            im = parseFloat($("#total_numero").val())*parseFloat($('input[name="radioIgv"]:checked').val());
+        }
+
+    suma_total = parseFloat(np)+parseFloat(im)+parseFloat(adic);
+
+    $("#im").val(im.toFixed(2));
+    $("#oa").val(adic);
+    $("#it").val((numberWithCommas(suma_total.toFixed(2))));
+}
+
+sumardias = () => {
+    let fecha = new Date();
+    let dias = parseInt($('#dias').val()); // Número de días a agregar
+    
+    fecha.setDate(fecha.getDate() + dias);
+    fecha = fecha.getFullYear() + '-' + $.strPad((fecha.getMonth() + 1),2) + '-' +  $.strPad(fecha.getDate(),2);
+    
+
+    $("#fentrega").val(fecha);
 }

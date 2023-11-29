@@ -10,7 +10,7 @@
             $this->view->listaTransportes = $this->model->listarParametros("08");
             $this->view->listaMonedas =  $this->model->listarParametros("03");
             $this->view->listaPagos = $this->model->listarParametros("11");
-            $this->view->listaOrdenes = $this->model->listarOrdenes($_SESSION['iduser']);
+            $this->view->listaContratos = $this->model->listarContratos($_SESSION['iduser']);
             $this->view->listaEntidades = $this->model->listarEntidades();
             $this->view->listaCostosSelect = $this->model->costosPorUsuarioSelect($_SESSION['iduser']);
             $this->view->fechaOrden = $this->model->fechaOrden();
@@ -22,7 +22,7 @@
         }
 
         function nuevoRegistro(){
-            echo json_encode($this->model->insertarContratos($_POST['cabecera'],
+            echo json_encode($this->model->insertarContrato($_POST['cabecera'],
                                                         $_POST['detalles'],
                                                         $_POST['comentarios'],
                                                         $_POST['adicionales'],
