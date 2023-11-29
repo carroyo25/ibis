@@ -18,7 +18,7 @@
         }
 
         function vistaPreliminar(){
-            echo $this->model->generarContrato($_POST['cabecera'],$_POST['condicion'],$_POST['detalles']);
+            echo $this->model->generarContrato($_POST['cabecera'],$_POST['condicion'],$_POST['detalles'],$_POST['condiciones']);
         }
 
         function nuevoRegistro(){
@@ -27,7 +27,16 @@
                                                         $_POST['comentarios'],
                                                         $_POST['adicionales'],
                                                         $_FILES,
-                                                        $_POST['usuario']));
+                                                        $_POST['usuario'],
+                                                        $_POST['condiciones']));
+        }
+
+        function ordenId(){
+            echo json_encode($this->model->consultarContratoId($_POST['id']));
+        }
+
+        function actualizaListado() {
+            echo $this->model->listarContratos($_SESSION['iduser']);
         }
 
         

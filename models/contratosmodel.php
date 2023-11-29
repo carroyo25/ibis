@@ -114,7 +114,7 @@
            }
         }
 
-        public function insertarContrato($cabecera,$detalles,$comentarios,$adicionales,$adjuntos,$usuario){
+        public function insertarContrato($cabecera,$detalles,$comentarios,$adicionales,$adjuntos,$usuario,$descripcion){
             try {
                 $salida = false;
                 $respuesta = false;
@@ -174,6 +174,7 @@
                     $this->grabarDetalles($indice,$detalles,$cab->codigo_costos,$orden);
                     $this->grabarComentarios($indice,$comentarios,$usuario);
                     $this->grabarAdicionales($indice,$adicionales);
+                    $this->grabarCondicionesContrato($indice,$descripcion);
                     $this->actualizarDetallesPedido(84,$detalles,$orden,$cab->codigo_entidad);
                     $this->actualizarCabeceraPedido(58,$cab->codigo_pedido,$orden);
                     $respuesta = true;
@@ -333,9 +334,10 @@
             }
         }
 
-        private function grabarCondicionesContrato($indice){
+        private function grabarCondicionesContrato($indice,$descripcion){
             try {
-                //code...
+                $sql = $this->db->connect()->prepare("INSERT INTO lg_ordenextras SET idorden=:indice,cdescription=:descripcion,nflgactivo=:activo");
+                $sql->execute(["indice"=>$indice, "descripcion"=>$descripcion, "activo"=>1]);
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;

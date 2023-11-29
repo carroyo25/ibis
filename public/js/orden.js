@@ -865,7 +865,7 @@ $(function(){
         }
  
         return false;
-     });
+    });
  
     $("#btnConfirmAtach").on("click", function (e) {
          e.preventDefault();
@@ -896,14 +896,14 @@ $(function(){
         return false;
     });
  
-     $("#btnCancelAtach").on("click", function (e) {
+    $("#btnCancelAtach").on("click", function (e) {
          e.preventDefault();
  
          $("#archivos").fadeOut();
          $("#fileAtachs")[0].reset();
          $(".listaArchivos").empty();
  
-     });
+    });
 
     $("#btnConsulta").on('click', function(e) {
         e.preventDefault();

@@ -20,6 +20,7 @@
                                                         lg_ordencab.ncodpago,
                                                         lg_ordencab.nplazo,
                                                         lg_ordencab.cdocPDF,
+                                                        lg_ordencab.ntipdoc,
                                                         FORMAT(lg_ordencab.ntotal,2) AS ntotal,
                                                         tb_proyectos.ccodproy,
                                                         UPPER( lg_ordencab.cObservacion ) AS concepto,
@@ -48,11 +49,13 @@
                                                         INNER JOIN tb_parametros AS monedas ON lg_ordencab.ncodmon = monedas.nidreg  
                                                     WHERE
                                                         tb_costusu.id_cuser = :user
-                                                        AND tb_costusu.nflgactivo = 1 
-                                                        AND lg_ordencab.nEstadoDoc BETWEEN 49 
-                                                        AND 59
+                                                        AND tb_costusu.nflgactivo = 1
+                                                        AND lg_ordencab.nEstadoDoc BETWEEN 49 AND 59
+                                                        AND ISNULL(lg_ordencab.ntipdoc)
                                                     ORDER BY  lg_ordencab.id_regmov DESC");
+
                 $sql->execute(["user"=>$_SESSION['iduser']]);
+
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0){
@@ -93,7 +96,7 @@
                                     <td class="pl20px">'.$rs['concepto'].'</td>
                                     <td class="pl20px">'.utf8_decode($rs['ccodproy']).'</td>
                                     <td class="pl20px">'.$rs['area'].'</td>
-                                    <td class="pl20px">'.$rs['crazonsoc'].'</td>
+                                    <td class="pl20px">'.$rs['ntipdoc'].'</td>
                                     <td class="pl5px">'.$rs['cnameuser'].'</td>
                                     <td class="textoDerecha">'.$rs['cabrevia'].' '. $rs['ntotal'].'</td>
                                     <td class="textoCentro '.strtolower($rs['atencion']).'">'.$rs['atencion'].'</td>

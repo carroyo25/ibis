@@ -193,7 +193,7 @@
                     <div class="barraOpciones">
                         <span>Detalles</span>
                         <div>
-                            <button type="button" id="addCharges" title="Otros Cargos" class="cerrarLista boton3">
+                            <button type="button" id="addConditions" title="Condiciones del Contrato" class="cerrarLista boton3">
                                 <i class="fas fa-tasks"></i> Condiciones del Contrato
                             </button>
                             <button type="button" id="addCharges" title="Otros Cargos" class="cerrarLista boton3">
@@ -226,7 +226,7 @@
                                     <th>Nro.</br>Parte</th>
                                     <th width="7%">Pedido</th>
                                     <th width="25%">Detalle Item</th>
-                                    <th>Payment</br>Basis</th>
+                                    <!-- <th>Payment</br>Basis</th> -->
                                 </tr>
                             </thead>
                             <tbody>
@@ -382,6 +382,24 @@
                 <a href="#" id="closePreview" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
             </div>
             <iframe src=""></iframe>
+        </div>
+    </div>
+    <div class="modal" id="condiciones">
+        <div class="ventanaArchivos">
+            <form action="#" id="conditions" enctype='multipart/form-data'>
+                <div class="tituloArchivos">
+                    <h3>Condiciones del contrato</h3>
+                </div>            
+                <div class="conditions_text">
+                    <textarea name="description_conditions" id="description_conditions">
+
+                    </textarea>
+                </div>
+                <div class="opcionesArchivos">
+                    <button type="button" class="boton3" id="btnConfirmCodition">Aceptar</button>
+                    <button type="button" class="boton3" id="btnCancelCondition">Cancelar</button>
+                </div>
+            </form>
         </div>
     </div>
     <div class="cabezaModulo">

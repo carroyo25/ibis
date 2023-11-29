@@ -6,6 +6,141 @@ $(() =>{
         proforma = "",
         costos = "";
 
+    $("#tablaPrincipal tbody").on("click","tr", function (e) {
+            e.preventDefault();
+    
+            autorizado = $(this).data('finanzas')+$(this).data('logistica')+$(this).data('operaciones');
+    
+            $.post(RUTA+"orden/ordenId", {id:$(this).data("indice")},
+                function (data, textStatus, jqXHR) {
+    
+                    let estado = "textoCentro " + data.cabecera[0].estado;
+                    let total = parseFloat(data.cabecera[0].total_multiplicado).toFixed(2);
+                    let total_format =  formatoNumeroConComas(total,2,'.',',');
+                    
+                    let adicionales = 0;
+                    let adicionales_format = '0.00';
+                    
+                    if  ( data.total_adicionales > 0 ){
+                        adicionales = parseFloat(data.total_adicionales).toFixed(2);
+                        adicionales_format = formatoNumeroConComas(adicionales,2,'.',',');
+                    }
+    
+                    $("#codigo_costos").val(data.cabecera[0].ncodcos);
+                    $("#codigo_area").val(data.cabecera[0].ncodarea);
+                    $("#codigo_transporte").val(data.cabecera[0].ctiptransp);
+                    $("#codigo_tipo").val(data.cabecera[0].ntipmov);
+                    $("#codigo_almacen").val(data.cabecera[0].ncodalm);
+                    $("#codigo_pedido").val(data.cabecera[0].id_refpedi);
+                    $("#codigo_orden").val(data.cabecera[0].id_regmov);
+                    $("#codigo_estado").val(data.cabecera[0].nEstadoDoc);
+                    $("#codigo_entidad").val(data.cabecera[0].id_centi);
+                    $("#codigo_moneda").val(data.cabecera[0].ncodmon);
+                    $("#codigo_pago").val(data.cabecera[0].ncodpago);
+                    $("#ruc_entidad").val(data.cabecera[0].cnumdoc);
+                    $("#direccion_entidad").val(data.cabecera[0].cviadireccion);
+                    $("#direccion_almacen").val(data.cabecera[0].direccion);
+                    $("#telefono_entidad").val(data.cabecera[0].ctelefono1);
+                    $("#correo_entidad").val(data.cabecera[0].mail_entidad);
+                    $("#codigo_verificacion").val(data.cabecera[0].cverificacion);
+                    $("#telefono_contacto").val(data.cabecera[0].ctelefono1);
+                    $("#correo_contacto").val(data.cabecera[0].cemail);
+                    $("#proforma").val(data.cabecera[0].cnumcot);
+                    $("#retencion").val(data.cabecera[0].nagenret);
+                    $("#nivel_atencion").val(data.cabecera[0].nivelAten);
+                    $("#numero").val(data.cabecera[0].cnumero);
+                    $("#emision").val(data.cabecera[0].ffechadoc);
+                    $("#costos").val(data.cabecera[0].costos);
+                    $("#area").val(data.cabecera[0].area);
+                    $("#concepto").val(data.cabecera[0].concepto);
+                    $("#detalle").val(data.cabecera[0].detalle);
+                    $("#moneda").val(data.cabecera[0].nombre_moneda);
+                    $("#total").val(total_format);
+                    $("#tipo").val(data.cabecera[0].tipo);
+                    $("#fentrega").val(data.cabecera[0].ffechaent);
+                    $("#cpago").val(data.cabecera[0].pagos);
+                    $("#estado").val(data.cabecera[0].descripcion_estado);
+                    $("#entidad").val(data.cabecera[0].crazonsoc);
+                    $("#atencion").val(data.cabecera[0].cnombres);
+                    $("#transporte").val(data.cabecera[0].transporte);
+                    $("#lentrega").val(data.cabecera[0].lentrega);
+                    $("#total_numero").val(data.cabecera[0].total_multiplicado);
+                    $("#ncotiz").val(data.cabecera[0].cnumcot);
+                    $("#tcambio").val(data.cabecera[0].ntcambio);
+                    $("#user_modifica").val(data.cabecera[0].userModifica);
+                    $("#nro_pedido").val(data.cabecera[0].nrodoc);
+                    $("#total_adicional").val(data.total_adicionales);
+                    $("#oa").val(adicionales_format);
+                    $("#referencia").val(data.cabecera[0].cReferencia);
+                    $("#dias").val(data.cabecera[0].nplazo);
+                    $("#nivel_autorizacion").val(data.cabecera[0].autorizado);
+                    $("#procura").val(data.cabecera[0].nfirmaLog);
+                    $("#finanzas").val(data.cabecera[0].nfirmaFin);
+                    $("#operaciones").val(data.cabecera[0].nfirmaOpe);
+                    $("#description_conditions").val(data.cabecera[0].condiciones);
+                    
+                    $("#in").val(total_format);
+    
+                    let igv = 0;
+    
+                    if (data.cabecera[0].nigv != 0) {
+                            igv = parseFloat(data.cabecera[0].total_multiplicado)*.18;
+                            $("#si").prop("checked", true);
+                            $("#im").val(igv.toFixed(2));
+                    }else {
+                            $("#no").prop("checked", true);
+                            $("#im").val(0);
+                    };
+    
+                    let total_orden = parseFloat(total)+parseFloat(igv)+parseFloat(adicionales),
+                        total_orden_format = formatoNumeroConComas(total_orden,2,'.',',');
+    
+                    $("#it").val(total_orden_format);
+    
+                    $("#estado")
+                        .removeClass()
+                        .addClass(estado);
+    
+                    $("#tablaDetalles tbody")
+                        .empty()
+                        .append(data.detalles);
+    
+                    $("#tablaComentarios tbody")
+                        .empty()
+                        .append(data.comentarios);
+    
+    
+                    $("#tablaAdicionales tbody")
+                        .empty()
+                        .append(data.adicionales);
+    
+                    $("#atach_counter").text(data.total_adjuntos);
+    
+                    $("#sw").val(1);
+    
+                    if ( data.bocadillo != 0) {
+                        $(".button__comment")
+                            .text(data.bocadillo)
+                            .show();
+                    }else{
+                        $(".button__comment").hide();
+                    }
+    
+                    $("#proceso").fadeIn();
+    
+                    $(".filtro").fadeOut();
+                },
+                "json"
+            );
+        
+            accion      = "u";
+            grabado     = true;
+            ingresos    = 0
+            swcoment    = false;
+    
+            return false;
+    });
+
     $("#esperar").fadeOut();
 
     $("#nuevoRegistro").click(function (e) { 
@@ -44,13 +179,7 @@ $(() =>{
             $(this).val("");
         });
 
-        $("form")[0].reset();
-        $("form")[1].reset();
-        $("#tablaDetalles tbody").empty();
-
-        $("#proceso").fadeOut();
-
-        /*$.post(RUTA+"contratos/actualizaListado",
+        $.post(RUTA+"contratos/actualizaListado",
             function (data, textStatus, jqXHR) {
                 $(".itemsTabla table tbody")
                     .empty()
@@ -64,7 +193,7 @@ $(() =>{
                 });
             },
             "text"
-        );*/
+        );
 
         return false;
     });
@@ -379,10 +508,9 @@ $(() =>{
     
             if (result['numero'] == "") throw "No tiene numero de orden";
             if (result['fentrega'] == "") throw "Elija la fecha de entrega";
-            //if (result['codigo_transporte'] == "") throw "Elija la forma de transporte";
             if (result['codigo_almacen'] == "") throw "Indique el lugar de entrega";
 
-            $.post(RUTA+"contratos/vistaPreliminar", {cabecera:result,condicion:0,detalles:JSON.stringify(detalles())},
+            $.post(RUTA+"contratos/vistaPreliminar", {cabecera:result,condicion:0,detalles:JSON.stringify(detalles()),condiciones:$("#description_conditions").val()},
                 function (data, textStatus, jqXHR) {
                     $(".ventanaVistaPrevia iframe")
                         .attr("src","")
@@ -425,6 +553,7 @@ $(() =>{
         formData.append("detalles",JSON.stringify(detalles()));
         formData.append("comentarios",JSON.stringify(comentarios()));
         formData.append("adicionales",JSON.stringify(adicionales()));
+        formData.append("condiciones",$("#description_conditions").val());
 
         try {
             if ( accion == "" ) throw "Orden grabada";
@@ -488,6 +617,193 @@ $(() =>{
         return false;
     });
 
+    $("#addCharges").click(function(e){
+        e.preventDefault();
+        
+        try {
+            if ($("#codigo_costos").val() == "") throw "Faltan datos en la orden";
+            if ($("#codigo_moneda").val() == "") throw "Seleccione el tipo de moneda";
+
+            $("#adicionales").fadeIn();
+            
+        } catch (error) {
+            mostrarMensaje(error,"mensaje_error");
+        }
+        
+        return false;
+    });
+
+    $("#addConditions").click(function(e){
+        e.preventDefault();
+        
+        try {
+            if ($("#codigo_costos").val() == "") throw "Faltan datos en la orden";
+            if ($("#codigo_moneda").val() == "") throw "Seleccione el tipo de moneda";
+
+            $("#condiciones").fadeIn();
+            
+        } catch (error) {
+            mostrarMensaje(error,"mensaje_error");
+        }
+        
+        return false;
+    });
+
+    $("#btnConfirmCodition").click(function(e){
+        e.preventDefault();
+        
+        $("#condiciones").fadeOut();
+        $("#description_conditions").empty();
+        
+        return false;
+    });
+
+    $("#btnCancelCondition").click(function(e){
+        e.preventDefault();
+        
+        $("#condiciones").fadeOut();
+        $("#description_conditions").empty();
+        
+        return false;
+    });
+
+    $("#btnCancelAdic").on("click", function (e) {
+        e.preventDefault();
+
+        $("#tablaAdicionales tbody").empty();
+        $("#adicionales").fadeOut();
+
+        return false;
+    });
+
+    $("#btnConfirmAdic").on("click", function (e) {
+        e.preventDefault();
+
+        $("#adicionales").fadeOut();
+
+        $("#total_adicional").val(sumarAdicionales($("#tablaAdicionales tbody >tr"),2));
+
+        calcularTotales();
+
+        return false;
+    });
+
+    $("#addAdic").click(function (e) { 
+        e.preventDefault();
+        
+        let moneda = $("#moneda").val();
+
+        let row =  `<tr class="pointer">
+                        <td><input type="text" class="pl20px mayusculas"></td>
+                        <td class="textoCentro">${moneda}</td>
+                        <td><input type="number" class="textoDerecha"></td>
+                        <td class="textoCentro"><a href="#"></a><i class="fas fa-minus"></i></td>
+                    </tr>`;
+
+        $("#tablaAdicionales tbody")
+            .append(row);
+
+        return false;
+    });
+
+    $("#uploadCotiz").click(function(e){
+        e.preventDefault();
+
+        try {
+
+            if ( $("#codigo_orden").val().length == 0 ) throw new Error ("Por favor grabe la orden");
+
+            if ( parseInt($("#atach_counter").text()) > 0 ){
+
+                $.post(RUTA+"orden/listarAdjuntos", {orden:$("#codigo_orden").val(),tipo:"ORD"},
+                    function (data, text, requestXHR) {
+                        $(".listaArchivos")
+                            .empty()
+                            .append(data.adjuntos);
+                            $("#archivos").fadeIn();
+                    },
+                    "json"
+                );
+            }else {
+                $("#archivos").fadeIn();
+            }
+            
+            
+        } catch (error) {
+            mostrarMensaje(error,"mensaje_error");
+        }
+
+        return false;
+    });
+
+    $("#openArch").click(function (e) { 
+        e.preventDefault();
+        
+        $("#uploadAtach").trigger("click");
+ 
+        return false;
+    });
+
+    $("#uploadAtach").on("change", function (e) {
+        e.preventDefault();
+ 
+        fp = $(this);
+        let lg = fp[0].files.length;
+        let items = fp[0].files;
+        let fragment = "";
+ 
+        if (lg > 0) {
+             for (var i = 0; i < lg; i++) {
+                 var fileName = items[i].name; // get file name
+ 
+                 // append li to UL tag to display File info
+                 fragment +=`<li><p><i class="far fa-file"></i></p>
+                                 <p>${fileName}</p></li>`;
+             }
+ 
+             $(".listaArchivos").append(fragment);
+        }
+ 
+        return false;
+    });
+
+    $("#btnConfirmAtach").on("click", function (e) {
+        e.preventDefault();
+
+       let formData = new FormData();
+
+       formData.append('codigo',$("#codigo_orden").val());
+
+       $.each($('#uploadAtach')[0].files, function(i, file) {
+           formData.append('file-'+i, file);
+       });
+
+       $.ajax({
+           type: "POST",
+           url: RUTA+"orden/archivos",
+           data: formData,
+           data: formData,
+           contentType:false,      
+           processData:false,
+           dataType: "json",
+           success: function (response) {
+               $("#atach_counter").text(response.adjuntos);
+               $("#archivos").fadeOut();
+               $("#fileAtachs")[0].reset();
+           }
+       });
+
+       return false;
+    });
+
+    $("#btnCancelAtach").on("click", function (e) {
+        e.preventDefault();
+
+        $("#archivos").fadeOut();
+        $("#fileAtachs")[0].reset();
+        $(".listaArchivos").empty();
+    });
+
 })
 
 calcularTotales = () => {
@@ -523,6 +839,7 @@ detalles = () => {
             TOTAL       = $(this).find('td').eq(7).text(),
             NROPARTE    = $(this).find('td').eq(8).text(),
             PEDIDO      = $(this).find('td').eq(9).text(),
+            PAYMENT     = $(this).find('td').eq(11).text(),
             CODPROD     = $(this).data('codprod'),
             MONEDA      = $("#codigo_moneda").val(),
             ITEMPEDIDO  = $(this).data('itped'),
@@ -530,7 +847,7 @@ detalles = () => {
             CANTPED     = $(this).data('cant'),
             REFPEDI     = $(this).data('refpedi'),
             DETALLES    = $(this).find('td').eq(10).children().val(),
-            INDICE     = $(this).data('itord');
+            INDICE      = $(this).data('itord');
 
         item = {};
         
@@ -553,6 +870,7 @@ detalles = () => {
             item['refpedi']     = REFPEDI;
             item['detalles']    = DETALLES;
             item['indice']      = INDICE;
+            item['payment']     = PAYMENT;
 
             DATA.push(item);
         //}

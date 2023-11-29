@@ -2433,7 +2433,8 @@
                                                         lg_ordencab.nfirmaFin,
                                                         lg_ordencab.nfirmaOpe,
                                                         LPAD( tb_pedidocab.nrodoc, 6, 0 ) AS nrodoc,
-                                                        ( SELECT SUM( lg_ordendet.nunitario * lg_ordendet.ncanti ) FROM lg_ordendet WHERE lg_ordendet.id_orden = lg_ordencab.id_regmov ) AS total_multiplicado 
+                                                        ( SELECT SUM( lg_ordendet.nunitario * lg_ordendet.ncanti ) FROM lg_ordendet WHERE lg_ordendet.id_orden = lg_ordencab.id_regmov ) AS total_multiplicado,
+                                                        UPPER(lg_ordenextras.cdescription) AS condiciones
                                                     FROM
                                                         lg_ordencab
                                                         INNER JOIN tb_pedidocab ON lg_ordencab.id_refpedi = tb_pedidocab.idreg
@@ -2447,7 +2448,8 @@
                                                         INNER JOIN cm_entidadcon ON cm_entidad.id_centi = cm_entidadcon.id_centi
                                                         INNER JOIN tb_parametros AS transportes ON lg_ordencab.ctiptransp = transportes.nidreg
                                                         INNER JOIN tb_almacen ON lg_ordencab.ncodalm = tb_almacen.ncodalm
-                                                        INNER JOIN lg_ordendet ON lg_ordencab.id_regmov = lg_ordendet.id_regmov 
+                                                        INNER JOIN lg_ordendet ON lg_ordencab.id_regmov = lg_ordendet.id_regmov
+                                                        LEFT JOIN lg_ordenextras ON lg_ordencab.id_regmov = lg_ordenextras.idorden
                                                     WHERE
                                                         lg_ordencab.id_regmov = :id 
                                                         AND lg_ordencab.nflgactivo = 1 
@@ -2550,6 +2552,7 @@
             }
         }
 
+       
         public function creaComentario($orden){
             try {
                 $sql= $this->db->connect()->prepare("SELECT
@@ -2909,10 +2912,6 @@
                 echo $th->getMessage();
                 return false;
             }
-        }
-
-        public function verificarConversacion($orden,$area){
-            
         }
 
         //marcar items para no ser consultados
@@ -3322,7 +3321,7 @@
         }
 
          //genera la vista de la orden
-         public function generarContrato($cabecera,$condicion,$detalles){
+         public function generarContrato($cabecera,$condicion,$detalles,$condiciones){
             //genera vista previa
             require_once("public/formatos/contratos.php");
 
@@ -3366,7 +3365,8 @@
                             $cabecera['costos'],$cabecera['concepto'],$_SESSION['nombres'],$cabecera['entidad'],$cabecera['ruc_entidad'],
                             $cabecera['direccion_entidad'],$cabecera['telefono_entidad'],$cabecera['correo_entidad'],$cabecera['retencion'],
                             $cabecera['atencion'],$cabecera['telefono_contacto'],$cabecera['correo_contacto'],
-                            $cabecera['direccion_almacen'],$cabecera['referencia'],$cabecera['procura'],$cabecera['finanzas'],$cabecera['operaciones']);
+                            $cabecera['direccion_almacen'],$cabecera['referencia'],$cabecera['procura'],$cabecera['finanzas'],$cabecera['operaciones'],
+                            $condiciones);
 
             $pdf->AddPage();
             $pdf->AliasNbPages();
@@ -3388,7 +3388,7 @@
                 $pdf->SetAligns(array("C","C","C","R","C","L","C","R","R"));
                 $pdf->Row(array($datos[$i]->item,
                                 $datos[$i]->codigo,
-                                $datos[$i]->payment,
+                                null,
                                 $datos[$i]->cantidad,
                                 $datos[$i]->unidad,
                                 TRIM(utf8_decode(strtoupper($datos[$i]->descripcion .' '. $datos[$i]->detalles .' '. $nparte))),

@@ -8,7 +8,7 @@
                                     $info,$detalle,$usuario,$razon_social,
                                     $ruc,$direccion,$telefono,$correo,$retencion,
                                     $contacto,$tel_contacto,$cor_contacto,$direccion_almacen,$referencia,
-                                    $procura,$finanzas,$operaciones)
+                                    $procura,$finanzas,$operaciones,$condiciones)
         {
             parent::__construct();
             $this->titulo           = $titulo;
@@ -38,6 +38,7 @@
             $this->procura          = $procura;
             $this->finanzas         = $finanzas;
             $this->operaciones      = $operaciones;
+            $this->condiciones      = $condiciones;
         }
 
         function header(){
@@ -133,35 +134,11 @@
         }
 
         function footer(){
-            $this->setXY(10,207);
+            $this->setXY(10,220);
             //$this->Ln(3);
-            $this->MultiCell(190,2.5,utf8_decode('
-            La presente orden (LA ORDEN) es una (1) de un total de tres (3) órdenes mediante las cuales SEPCON encarga a ENERFLEX Services Inc. y/o sus subsidiarias (ENERFLEX) la provisión integral de todos los bienes y servicios comprendidos en el alcance de la propuesta elaborada por ENERFLEX, y consignados como de su responsabilidad en el marco de la Matriz de Responsabilidades adjunta como Anexo 2.
+            $this->MultiCell(190,3,utf8_decode($this->condiciones),"TLRB");
 
-LA ORDEN se rige, para todo efecto, y por encima de cualquier otro documento anexo, por:
-
-Anexo 1: Los términos y condiciones del documento “Term Sheet Summary Mipaya PO” (LOS T&C).
-
-Anexo 2: La Matriz de Responsabilidades contenida en el documento “2023 09 21 Responsability Matrix Rev 16 – Postbid SEPCON PRIME CONTRACTOR” (LA MATRIZ), y
-
-Anexo 8: El Protocolo de Procura para LLI´s establecido por PLUSPETROL.
-
-Forman también parte integrante e indivisible de LA ORDEN los siguientes documentos, los que deberán interpretarse en el orden de prelación en el que son listados abajo:
-        Hitos contractuales
-
-Anexo 3: El Presupuesto tentativo (a confirmarse y desembolsarse en función de lo determinado por el numeral 2 de LOS T&C).
-
-Anexo 4: El Protocolo de manejo de la cuenta escrow y pagos (*)
-
-Anexo 5: El Postbid Log de la Licitación RFP-EPC TURNKEY PLANTA DE COMPRESIÓN MIPAYA-56-PER-2023.
-
-Anexo 6: La Propuesta QL1230020 elaborada por ENERFLEX en atención a las especificaciones técnicas y aclaraciones del Prebid Log recibidas de PLUSPETROL PERU CORPORATION SA en el marco del proceso de
-
-Anexo 7: LICITACIÓN NÚMERO: RFP-EPC TURNKEY PLANTA DE COMPRESIÓN MIPAYA-56-PER-2023'),"TLR");
-
-            $this->Cell(190,4,utf8_decode('                       (*) Documento pendiente a la fecha de emisión de LA ORDEN. A ser remitido dentro los siguientes 7 días'),"LBR",1); //envia de parametro
-            $this->Ln(3);
-
+            $this->setXY(10,278);
             $this->SetFillColor(229, 229, 229);
             $this->SetFont('Arial',"","7");
             $this->cell(30,4,"ELABORADO POR",1,0,"C",true);
@@ -176,24 +153,32 @@ Anexo 7: LICITACIÓN NÚMERO: RFP-EPC TURNKEY PLANTA DE COMPRESIÓN MIPAYA-56-PE
             $this->Cell(30,4,utf8_decode('Página ').$this->PageNo()." de ".'/{nb}',1,1,"C");
 
             $this->setXY(80,-18);
-            $this->cell(50,4,"","LTR",0);
-            $this->cell(20,4,"",0,0); //espacio de separacion
-            $this->cell(50,4,"","LTR",1);
+            $this->cell(35,4,"","LTR",0);
+            $this->cell(7,4,"",0,0); //espacio de separacion
+            $this->cell(35,4,"","LTR",0);
+            $this->cell(7,4,"",0,0); //espacio de separacion
+            $this->cell(35,4,"","LTR",1);
 
             $this->setXY(80,-14);
-            $this->cell(50,4,"","LR",0);
-            $this->cell(20,4,"",0,0); //espacio de separacion
-            $this->cell(50,4,"","LR",1);
+            $this->cell(35,4,"","LR",0);
+            $this->cell(7,4,"",0,0); //espacio de separacion
+            $this->cell(35,4,"","LR",0);
+            $this->cell(7,4,"",0,0); //espacio de separacion
+            $this->cell(35,4,"","LR",1);
 
             $this->setXY(80,-10);
-            $this->cell(50,4,"","LR",0);
-            $this->cell(20,4,"",0,0); //espacio de separacion
-            $this->cell(50,4,"","LR",1);
+            $this->cell(35,4,"","LR",0);
+            $this->cell(7,4,"",0,0); //espacio de separacion
+            $this->cell(35,4,"","LR",0);
+            $this->cell(7,4,"",0,0); //espacio de separacion
+            $this->cell(35,4,"","LR",1);
 
             $this->setXY(80,-6);
-            $this->cell(50,4,"APROBADO",1,0,"C");
-            $this->cell(20,4,"",0,0); //espacio de separacion
-            $this->cell(50,4,"APROBADO",1,1,"C");
+            $this->cell(35,4,"PROCURA INTERNACIONAL",1,0,"C");
+            $this->cell(7,4,"",0,0); //espacio de separacion
+            $this->cell(35,4,"OPERACIONES",1,0,"C");
+            $this->cell(7,4,"",0,0); //espacio de separacion
+            $this->cell(35,4,"GERENTE FINANZAS",1,1,"C");
         }
     }
 ?>
