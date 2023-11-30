@@ -3379,7 +3379,6 @@
 
             $datos = json_decode($detalles);
             $nreg = count($datos);
-           
 
             for ($i=0; $i < $nreg; $i++) { 
                
@@ -3403,8 +3402,6 @@
                         $lc = 0;
                     }
             }
-            
-            
 
             $pdf->Ln(2);
 

@@ -296,7 +296,6 @@ $(() =>{
                             <td class="textoCentro">${nro_parte}</td>
                             <td class="textoCentro">${nroreq}</td>
                             <td class="pl20px"><textarea>${detalle}</textarea></td>
-                            <td class="pl20px"><input type="text"></td>
                         </tr>`;
 
 
@@ -341,7 +340,9 @@ $(() =>{
                     $("#nivel_atencion").val(data.pedido[0].nivelAten);
                     $("#tcambio").val(data.cambio);
                     
-                    $("#numero").val(data.orden);
+                    if ( $("#numero").length === 0)
+                        $("#numero").val(data.orden);
+                    
                     $("#codigo_verificacion").val(data.pedido[0].verificacion);
                     
                     $("#busqueda").fadeOut(); 
@@ -802,6 +803,55 @@ $(() =>{
         $("#archivos").fadeOut();
         $("#fileAtachs")[0].reset();
         $(".listaArchivos").empty();
+    });
+
+    $("#addMessage").click(function (e) { 
+        e.preventDefault();
+        
+
+        let date = fechaActual(),
+            usuario = $("#name_user").val();
+        
+        let row = `<tr data-grabar="0">
+                        <td >${usuario}</td>
+                        <td><input type="date" value="${date}" readonly></td>
+                        <td><input type="text" placeholder="Escriba su comentario"></td>
+                        <td class="con_borde centro"><a href="#"><i class="far fa-trash-alt"></i></a></td>
+                    </tr>`;
+
+
+        if (ingresos == 0) {
+            if ($("#tablaComentarios tbody tr").length <= 0)
+                $("#tablaComentarios tbody").append(row);
+            else{
+                $('#tablaComentarios > tbody tr:eq(0)').before(row);
+            }
+
+            ingresos++;
+        }
+        
+        $("#comentarios").fadeIn();
+
+        return false;
+    });
+
+    $("#btnAceptarDialogo").click(function (e) { 
+        e.preventDefault();
+        
+        $("#comentarios").fadeOut();
+
+        if ( !swcoment) {
+            $.post(RUTA+"orden/comentarios", {codigo:$("#codigo_orden").val(),
+                                              comentarios:JSON.stringify(comentarios()),
+                                              usuario:$("#id_user").val()},
+                function (data, textStatus, jqXHR) {
+                    swcoment = true;
+                },
+                "text"
+            );
+        }
+
+        return false
     });
 
 })

@@ -323,7 +323,8 @@ $(function(){
                 tabPos      = $("#tablaDetalles tr").length;
 
                 cantidad_final = compra - atendida;
-
+            
+            
             $("#nro_pedido").val(nroreq);
 
             if (!checkExistTable($("#tablaDetalles tbody tr"),codigo,5)){
@@ -406,8 +407,10 @@ $(function(){
                     $("#nivel_atencion").val(data.pedido[0].nivelAten);
                     $("#tcambio").val(data.cambio);
                     
-                    $("#numero").val(data.orden);
-                    $("#codigo_verificacion").val(data.pedido[0].verificacion);
+                    if ($("#numero").length === 0)
+                        $("#numero").val(data.orden);
+                    
+                        $("#codigo_verificacion").val(data.pedido[0].verificacion);
                     
                     $("#busqueda").fadeOut(); 
                 },
@@ -431,9 +434,11 @@ $(function(){
             })
     
             if (result['numero'] == "") throw "No tiene numero de orden";
+            if (!grabado) throw new Error ("Por favor grabe la orden");
             if (result['fentrega'] == "") throw "Elija la fecha de entrega";
             if (result['codigo_transporte'] == "") throw "Elija la forma de transporte";
             if (result['codigo_almacen'] == "") throw "Indique el lugar de entrega";
+            
 
             $.post(RUTA+"orden/vistaPreliminar", {cabecera:result,condicion:0,detalles:JSON.stringify(detalles())},
                 function (data, textStatus, jqXHR) {

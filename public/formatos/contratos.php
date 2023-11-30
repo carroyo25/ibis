@@ -136,7 +136,8 @@
         function footer(){
             $this->setXY(10,220);
             //$this->Ln(3);
-            $this->MultiCell(190,3,utf8_decode($this->condiciones),"TLRB");
+            if ($this->condiciones > 0 )
+                $this->MultiCell(190,3,utf8_decode($this->condiciones),"TLRB");
 
             $this->setXY(10,278);
             $this->SetFillColor(229, 229, 229);
