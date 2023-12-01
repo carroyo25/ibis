@@ -51,7 +51,7 @@
                                                         tb_costusu.id_cuser = :user
                                                         AND tb_costusu.nflgactivo = 1
                                                         AND lg_ordencab.nEstadoDoc BETWEEN 49 AND 59
-                                                        AND ISNULL(lg_ordencab.ntipdoc)
+                                                        AND lg_ordencab.ntipdoc IS NULL
                                                     ORDER BY  lg_ordencab.id_regmov DESC");
 
                 $sql->execute(["user"=>$_SESSION['iduser']]);

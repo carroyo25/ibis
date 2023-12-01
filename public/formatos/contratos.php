@@ -16,7 +16,7 @@
             $this->fecha            = $fecha;
             $this->moneda           = $moneda;
             $this->plazo            = "SEGÚN ANEXOS";
-            $this->lugar            = "SEGÚN ANEXOS";
+            $this->lugar            = $lugar;
             $this->cotizacion       = $cotizacion;
             $this->fentrega         = "SEGÚN ANEXOS";
             $this->pago             = "SEGÚN ANEXOS";
@@ -91,7 +91,7 @@
 	        $this->Cell(30,4,utf8_decode($this->moneda),"R",1);
             
             $this->Cell(30,4,"Lugar de entrega de bienes :","LB",0);
-	        $this->Cell(130,4,utf8_decode($this->lugar . " ". $this->direccion_almacen),"BR",1); //envia de parametro
+	        $this->Cell(130,4,utf8_decode(strtoupper($this->lugar)),"BR",1); //envia de parametro
 
     		$this->Ln(1);
 
@@ -127,7 +127,7 @@
 	        // Salto de línea
     		$this->Ln(5);
             $this->Rect(10,73,190,7,"F"); //fondo de mensaje
-    		$this->SetWidths(array(10,15,15,15,10,80,17,13,15));
+    		$this->SetWidths(array(10,15,15,15,10,80,15,15,15));
     		$this->SetAligns(array("C","C","C","C","C","C","C","C","C"));
     		$this->Row(array('Item',utf8_decode('Código'),'Payment Basis','Cant.','Und.',utf8_decode('Descripción'),'Nro.Pedido','Precio Unitario','Valor Total'));
                     

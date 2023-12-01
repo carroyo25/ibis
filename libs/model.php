@@ -3383,7 +3383,7 @@
 
             $pdf->AddPage();
             $pdf->AliasNbPages();
-            $pdf->SetWidths(array(10,15,15,15,10,80,17,13,15));
+            $pdf->SetWidths(array(10,15,15,15,10,80,15,15,15));
             $pdf->SetFont('Arial','',5);
             
             $lc = 0;
@@ -3455,7 +3455,8 @@
             $pdf->Cell(10,6,$tipo,"RB",0,"C");
             $pdf->Cell(10,6,str_pad($cabecera['nro_pedido'],6,0,STR_PAD_LEFT),"RB",0);
             $pdf->Cell(10,6,"","RB",0);
-           
+            
+            $pdf->Ln(7);
             $nreg = count($bancos);
 
             $x = $pdf->GetX();
