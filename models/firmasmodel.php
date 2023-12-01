@@ -8,8 +8,19 @@
 
         public function listarOrdenesFirmas(){
             try {
-                 $salida = "";
-                 $sql = $this->db->connect()->query("SELECT
+
+                $filtroDocumento = $this->filtrarDocumentos();
+
+                $cadena = "";
+
+                if ($filtroDocumento == 1) {
+                    $cadena = "AND lg_ordencab.ntipdoc IS NULL";
+                }else if ($filtroDocumento == 2){
+                    $cadena = "AND lg_ordencab.ntipdoc IS NOT NULL";
+                }
+
+                $salida = "";
+                $sql = $this->db->connect()->query("SELECT
                                                     lg_ordencab.id_regmov,
                                                     lg_ordencab.cnumero,
                                                     lg_ordencab.ffechadoc,
@@ -45,7 +56,8 @@
                                                     INNER JOIN tb_parametros AS monedas ON lg_ordencab.ncodmon = monedas.nidreg
                                                 WHERE
                                                     lg_ordencab.nEstadoDoc = 59 
-                                                    AND ( lg_ordencab.nfirmaLog IS NULL OR lg_ordencab.nfirmaOpe IS NULL OR lg_ordencab.nfirmaFin IS NULL ) 
+                                                    AND ( lg_ordencab.nfirmaLog IS NULL OR lg_ordencab.nfirmaOpe IS NULL OR lg_ordencab.nfirmaFin IS NULL )
+                                                    $cadena
                                                 GROUP BY
                                                     lg_ordencab.id_regmov 
                                                 ORDER BY
@@ -346,6 +358,16 @@
                 $mes    = $parametros['mesSearch'] == -1 ? "%" :  $parametros['mesSearch'];
                 $anio   = $parametros['anioSearch'];
 
+                $filtroDocumento = $this->filtrarDocumentos();
+
+                $cadena = "";
+
+                if ($filtroDocumento == 1) {
+                    $cadena = "AND lg_ordencab.ntipdoc IS NULL";
+                }else if ($filtroDocumento == 2){
+                    $cadena = "AND lg_ordencab.ntipdoc IS NOT NULL";
+                }
+
 
                 $salida = "";
                  $sql = $this->db->connect()->prepare("SELECT
@@ -398,7 +420,8 @@
                                                                 AND lg_ordencab.ntipmov LIKE :tipomov 
                                                                 AND MONTH ( lg_ordencab.ffechadoc ) LIKE :mes
                                                                 AND YEAR ( lg_ordencab.ffechadoc ) LIKE :anio
-                                                                AND (lg_ordencab.nfirmaLog IS NULL OR lg_ordencab.nfirmaOpe IS NULL  OR lg_ordencab.nfirmaFin IS NULL )");
+                                                                AND (lg_ordencab.nfirmaLog IS NULL OR lg_ordencab.nfirmaOpe IS NULL  OR lg_ordencab.nfirmaFin IS NULL )
+                                                                $cadena");
                                                                 
                  $sql->execute(["tipomov"=>$tipo,
                                 "costos"=>$costos,
@@ -465,6 +488,20 @@
                 $result = $sql->fetchAll();
 
                 return $result[0]['rol'];
+
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        private function filtrarDocumentos(){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT tb_user.nrol,tb_user.nflgvista,tb_user.ccargo FROM tb_user WHERE tb_user.iduser =:usr");
+                $sql->execute(["usr"=>$_SESSION["iduser"]]);
+                $result = $sql->fetchAll();
+
+                return $result[0]['nflgvista'];
 
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();

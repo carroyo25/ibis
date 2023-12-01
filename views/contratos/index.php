@@ -402,6 +402,54 @@
             </form>
         </div>
     </div>
+    <div class="modal" id="sendMail">
+        <form action="#" method="post" id="formMails">
+            <input type="hidden" name="estadoPedido" id="estadoPedido">
+            <div class="ventanaCorreo">
+                    <input type="file" name="mailAtach[]" id="mailAtach" multiple class="oculto">
+                    <div class="tituloCorreo">
+                        <h3 class="w100por">Enviar Correo</h3>
+                        <a href="#" id="closeMail" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
+                        <hr>
+                    </div>
+                    <div class="cuerpoCorreo">
+                        <div class="correoIzq">
+                            <div class="asunto">
+                                <label for="subject">Asunto :</label>
+                                <input type="text" name="subject" id="subject">
+                            </div>
+                            <div class="opciones">
+                                <button class="boton3 js-boton" data-type="bold" type="button"><i class="fas fa-bold"></i></button>
+                                <button class="boton3 js-boton" data-type="italic" type="button"><i class="fas fa-italic"></i></button>
+                            </div>
+                            <div class="messaje">
+                                <div contenteditable="true">
+
+                                </div>
+                            </div>
+                            <div class="commands">
+                                <button class="boton3" id="btnConfirmSend">Enviar</button>
+                            </div>
+                        </div>
+                        <div class="correoDerch">
+                            <h4>Correos</h4>
+                            <table id="listaCorreos" class="tabla">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Correo</th>
+                                        <th>...</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+            </div>
+        </form>
+    </div>
     <div class="cabezaModulo">
         <h1>Contratos</h1>
         <div>
@@ -413,7 +461,7 @@
         <form action="#" id="formConsulta">
             <div class="variasConsultas">
                     <div>
-                        <label for="tipo">N° Guia : </label>
+                        <label for="tipo">N° Orden : </label>
                         <input type="text" name="ordenSearch" id="ordenSearch">
                     </div>
                     <div>

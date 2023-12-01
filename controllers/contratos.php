@@ -31,12 +31,30 @@
                                                         $_POST['condiciones']));
         }
 
+        function modificaRegistro(){
+            echo json_encode($this->model->modificarContrato($_POST['cabecera'],$_POST['detalles'],$_POST['comentarios'],$_POST['usuario'],$_POST['condiciones']));
+        }
+
         function ordenId(){
             echo json_encode($this->model->consultarContratoId($_POST['id']));
         }
 
         function actualizaListado() {
             echo $this->model->listarContratos($_SESSION['iduser']);
+        }
+
+        function buscaRol(){
+            echo $this->model->buscarFirmas($_POST['rol'],$_POST['vista']);
+        }
+
+        function correo(){
+            echo json_encode($this->model->enviarCorreoContrato($_POST['cabecera'],
+                                                        $_POST['detalles'],
+                                                        $_POST['correos'],
+                                                        $_POST['asunto'],
+                                                        $_POST['mensaje'],
+                                                        $_POST['condiciones']
+                                                    ));
         }
 
         

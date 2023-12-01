@@ -1,10 +1,11 @@
 $(() =>{
     let accion   = "",
-        grabado  = false,
         entidad  = "",
         pedido   = 0,
         proforma = "",
         costos = "";
+
+    var grabado  = false;
 
     $("#tablaPrincipal tbody").on("click","tr", function (e) {
             e.preventDefault();
@@ -164,6 +165,9 @@ $(() =>{
         $("#cpago").val("CREDITO A 30 DIAS");
         $("#codigo_pago").val(73);
         $("#codigo_almacen").val(7);
+
+        $("#tablaAdicionales tbody").empty();
+        $("#description_conditions").val("");
 
         accion = 'n';
         grabado = false;
@@ -340,7 +344,7 @@ $(() =>{
                     $("#nivel_atencion").val(data.pedido[0].nivelAten);
                     $("#tcambio").val(data.cambio);
                     
-                    if ( $("#numero").length === 0)
+                    if ( $("#numero").val() === "")
                         $("#numero").val(data.orden);
                     
                     $("#codigo_verificacion").val(data.pedido[0].verificacion);
@@ -510,6 +514,7 @@ $(() =>{
             if (result['numero'] == "") throw "No tiene numero de orden";
             if (result['fentrega'] == "") throw "Elija la fecha de entrega";
             if (result['codigo_almacen'] == "") throw "Indique el lugar de entrega";
+            if (!grabado) throw "Por favor grabar el documento";
 
             $.post(RUTA+"contratos/vistaPreliminar", {cabecera:result,condicion:0,detalles:JSON.stringify(detalles()),condiciones:$("#description_conditions").val()},
                 function (data, textStatus, jqXHR) {
@@ -602,7 +607,8 @@ $(() =>{
                 $.post(RUTA+"contratos/modificaRegistro", { cabecera:result,
                                                         detalles:JSON.stringify(detalles()),
                                                         comentarios:JSON.stringify(comentarios()),
-                                                        usuario:$("#id_user").val()},
+                                                        usuario:$("#id_user").val(),
+                                                        condiciones:$("#description_conditions").val()},
                     function (data, textStatus, jqXHR) {
                         $("#tablaDetalles tbody tr").attr('data-grabado',1);
                         mostrarMensaje(data.mensaje,data.clase);
@@ -852,6 +858,76 @@ $(() =>{
         }
 
         return false
+    });
+
+    $("#requestAprob").click(function (e) { 
+        e.preventDefault();
+
+        try {
+            if ($("#codigo_estado").val() == 59) throw "La orden esta en firmas.";
+            if (!grabado) throw "Por favor grabar la orden";
+
+            $("#subject").val($("#entidad").val() + ' - ' + $("#numero").val());
+
+            $.post(RUTA+"orden/buscaRol", {rol:$(this).data("rol"),documento:"c"},
+                function (data, textStatus, jqXHR) {
+                    $("#listaCorreos tbody").empty().append(data);
+                    $("#sendMail").fadeIn();
+                },
+                "text"
+            );
+        } catch (error) {
+            mostrarMensaje(error,'mensaje_error'); 
+        }
+        
+        return false;
+    });
+
+    $("#btnConfirmSend").click(function (e) { 
+        e.preventDefault();
+        
+        try {
+            if ($("#subject").val() =="") throw "Escriba el asunto";
+            if ($("messaje div").html() =="") throw "Escriba el asunto";
+
+            let result = {};
+    
+            $.each($("#formProceso").serializeArray(),function(){
+                result[this.name] = this.value;
+            })
+
+            $("#esperar").css("opacity","1").fadeIn();
+
+            $.post(RUTA+"contratos/correo", {cabecera:result,
+                                        detalles:JSON.stringify(detalles()),
+                                        correos:JSON.stringify(mailsList()),
+                                        asunto:$("#subject").val(),
+                                        mensaje:$(".messaje div").html(),
+                                        condiciones:$("#description_conditions").val()},
+                                                
+            function (data, textStatus, jqXHR) {
+                mostrarMensaje(data.mensaje,data.clase);
+                $("#sendMail").fadeOut();
+                $("#esperar").css("opacity","0").fadeOut();
+            },
+            "json"
+        );
+        } catch (error) {
+            mostrarMensaje(error,'mensaje_error');
+        }
+
+        return false;
+    });
+
+    $("#closeMail").click(function (e) { 
+        e.preventDefault();
+
+        $("form")[2].reset();
+        $(".atachs").empty();
+        $(".messaje div").empty();
+        $("#sendMail").fadeOut();
+
+        return false;
     });
 
 })

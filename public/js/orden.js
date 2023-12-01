@@ -1,6 +1,5 @@
 $(function(){
     let accion   = "",
-        grabado  = false,
         entidad  = "",
         pedido   = 0,
         proforma = "",
@@ -10,6 +9,8 @@ $(function(){
         costos = "",
         fp = 0,
         datafiltro = "";
+
+    var grabado  = false;
 
     $("#esperar").fadeOut();
 
@@ -168,6 +169,8 @@ $(function(){
         $("#cpago").val("CREDITO A 30 DIAS");
         $("#codigo_pago").val(73);
         $("#codigo_almacen").val(7);
+
+        $("#tablaAdicionales tbody").empty();
 
         accion = 'n';
         grabado = false;
@@ -438,6 +441,7 @@ $(function(){
             if (result['fentrega'] == "") throw "Elija la fecha de entrega";
             if (result['codigo_transporte'] == "") throw "Elija la forma de transporte";
             if (result['codigo_almacen'] == "") throw "Indique el lugar de entrega";
+            if (!grabado) throw "Por favor grabar el documento";
             
 
             $.post(RUTA+"orden/vistaPreliminar", {cabecera:result,condicion:0,detalles:JSON.stringify(detalles())},
@@ -604,7 +608,7 @@ $(function(){
 
             $("#subject").val($("#entidad").val() + ' - ' + $("#numero").val());
 
-            $.post(RUTA+"orden/buscaRol", {rol:$(this).data("rol")},
+            $.post(RUTA+"orden/buscaRol", {rol:$(this).data("rol"),documento:"o"},
                 function (data, textStatus, jqXHR) {
                     $("#listaCorreos tbody").empty().append(data);
                     $("#sendMail").fadeIn();

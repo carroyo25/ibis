@@ -195,6 +195,53 @@
             }    
         }
 
+        public function modificarContrato($cabecera,$detalles,$comentarios,$usuario,$condiciones){
+            try {
+                $entrega = $cabecera['dias'];
+
+                $sql = $this->db->connect()->prepare("UPDATE lg_ordencab 
+                                                        SET  ffechaent=:entrega,ntotal=:total,ctiptransp=:transp,
+                                                             nplazo=:plazo,ncodalm=:alm,nigv =:igv,id_centi=:enti,
+                                                             ncodpago=:pago,cnumcot=:cotizacion,creferencia=:referencia,
+                                                             lentrega=:lugar,ncodmon=:moneda,cObservacion=:observacion
+                                                        WHERE id_regmov = :id");
+                $sql->execute(['entrega'=>$cabecera['fentrega'],
+                                "total"=>$cabecera['total_numero'],
+                                "transp"=>$cabecera['codigo_transporte'],
+                                "plazo"=>$entrega,
+                                "alm"=>$cabecera['codigo_almacen'],
+                                "igv"=>$cabecera['radioIgv'],
+                                "id"=>$cabecera['codigo_orden'],
+                                "enti"=>$cabecera['codigo_entidad'],
+                                "pago"=>$cabecera['codigo_pago'],
+                                "cotizacion"=>$cabecera['ncotiz'],
+                                "referencia"=>$cabecera['referencia'],
+                                "lugar"=>$cabecera['lentrega'],
+                                "moneda"=>$cabecera['codigo_moneda'],
+                                "observacion"=>$cabecera['concepto']]);
+                
+                $this->grabarDetalles($cabecera['codigo_orden'],$detalles,$cabecera['codigo_costos'],$cabecera['codigo_orden']);
+                $this->grabarComentarios($cabecera['codigo_verificacion'],$comentarios,$usuario);
+
+                if ($this->buscarCondicciones( $cabecera['codigo_orden'] ) === 0 ) {
+                    $this->grabarCondicionesContrato($cabecera['codigo_orden'],$condiciones);
+                }else {
+                    $this->actualizarCondicionesContrato($cabecera['codigo_orden'],$condiciones);
+                }
+
+                $salida = array("respuesta"=>true,
+                                "mensaje"=>"Registro modificado",
+                                "clase"=>"mensaje_correcto");
+
+                
+                return $salida;
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            } 
+        }
+
         private function grabarAdicionales($indice,$adicionales){
             try {
                 
@@ -379,6 +426,125 @@
                 echo $th->getMessage();
                 return false;
             }
+        }
+
+        private function buscarCondicciones($orden){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT COUNT(*) AS condiciones FROM lg_ordenextras WHERE lg_ordenextras.idorden=:id AND lg_ordenextras.nflgactivo=1");
+                $sql->execute(["id"=>$orden]);
+
+                $result = $sql ->fetchAll();
+
+                return $result[0]['condiciones'];
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        private function actualizarCondicionesContrato($indice,$descripcion){
+            try {
+                $sql = $this->db->connect()->prepare("UPDATE lg_ordenextras SET cdescription=:descripcion WHERE idorden=:indice AND nflgactivo=1");
+                $sql->execute(["indice"=>$indice, "descripcion"=>$descripcion]);
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            } 
+        }
+
+        public function enviarCorreoContrato($cabecera,$detalles,$correos,$asunto,$mensaje,$condiciones){
+            try {
+                require_once("public/PHPMailer/PHPMailerAutoload.php");
+
+                $documento = $this->generarContrato($cabecera,1,$detalles,$condiciones);
+
+                $data       = json_decode($correos);
+                $nreg       = count($data);
+                $subject    = utf8_decode($asunto);
+
+                $messaje    = '<div style="width:100%;display: flex;flex-direction: column;justify-content: center;align-items: center;
+                                    font-family: Futura, Arial, sans-serif;">
+                            <div style="width: 45%;border: 1px solid #c2c2c2;background: #0078D4; padding:1rem">
+                                <h1 style="text-align: center;">Aprobación</h1>
+                            </div>
+                            <div style="width: 45%;
+                                        border-left: 1px solid #c2c2c2;
+                                        border-right: 1px solid #c2c2c2;
+                                        border-bottom: 1px solid #c2c2c2;
+                                        padding:1rem">
+                                <p style="padding:.5rem"><strong style="font-style: italic;">Ing:</strong></p>
+                                <p style="padding:.5rem;line-height: 1rem;">  '.$mensaje.'</p>
+                                <p style="padding:.5rem;line-height: 1rem;">   Moneda   : '.$cabecera['moneda'].'</p>
+                                <p style="padding:.5rem;line-height: 1rem;">   Proveedor: '.$cabecera['entidad'].'</p>
+                                <p style="padding:.5rem">Fecha de Emisión : '. date("d/m/Y h:i:s") .'</p>
+                            </div>
+                        </div>';
+
+                $estadoEnvio= false;
+                $clase = "mensaje_error";
+                $salida = "";
+                
+                $origen = $_SESSION['user']."@sepcon.net";
+                $nombre_envio = $_SESSION['user'];
+
+                $mail = new PHPMailer;
+                $mail->isSMTP();
+                $mail->SMTPDebug = 0;
+                $mail->Debugoutput = 'html';
+                $mail->Host = 'mail.sepcon.net';
+                $mail->SMTPAuth = true;
+                $mail->Username = 'sistema_ibis@sepcon.net';
+                $mail->Password = $_SESSION['password'];
+                $mail->Port = 465;
+                $mail->SMTPSecure = "ssl";
+                $mail->SMTPOptions = array(
+                    'ssl' => array(
+                        'verify_peer' => false,
+                        'verify_peer_name' => false,
+                        'allow_self_signed' => false
+                    )
+                );
+                
+                $mail->setFrom($origen,$nombre_envio);
+
+                for ($i=0; $i < $nreg; $i++) {
+                    $mail->addAddress($data[$i]->correo,$data[$i]->nombre);
+        
+                    $mail->Subject = $subject;
+                    $mail->msgHTML(utf8_decode($messaje));
+
+                    if (file_exists( 'public/documentos/ordenes/emitidas/'.$documento)) {
+                        $mail->AddAttachment('public/documentos/ordenes/emitidas/'.$documento);
+                    }
+        
+                    if (!$mail->send()) {
+                        $mensaje = "Mensaje de correo no enviado";
+                        $estadoEnvio = false; 
+                    }else {
+                        $mensaje = "Mensaje de correo enviado";
+                        $estadoEnvio = true; 
+                    }
+                        
+                    $mail->clearAddresses();
+                }
+
+                if ($estadoEnvio){
+                    $clase = "mensaje_correcto";
+                    $this->actualizarCabeceraPedido(59,$cabecera['codigo_pedido'],$cabecera['codigo_orden']);
+                    $this->actualizarDetallesPedido(59,$detalles,$cabecera['codigo_orden'],$cabecera['codigo_entidad']);
+                    $this->actualizarCabeceraOrden(59,$cabecera['codigo_orden'],$cabecera['fentrega']);
+                }
+
+                $salida= array("estado"=>$estadoEnvio,
+                                "mensaje"=>$mensaje,
+                                "clase"=>$clase );
+
+                return $salida;
+            
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            } 
         }
     }
 ?>

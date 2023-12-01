@@ -47,7 +47,7 @@
         }
 
         function buscaRol(){
-            echo $this->model->buscarFirmas($_POST['rol']);
+            echo $this->model->buscarFirmas($_POST['rol'],$_POST['documento']);
         }
 
         function correo(){

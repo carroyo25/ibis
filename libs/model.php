@@ -1324,10 +1324,11 @@
             }
         }
 
-        public function buscarFirmas($rol){
+        public function buscarFirmas($rol,$doc){
             try {
                 $salida = "";
-                $sql = $this->db->connect()->prepare("SELECT
+                if ( $doc == "o" ){
+                    $sql = $this->db->connect()->prepare("SELECT
                                                         ibis.tb_user.ccorreo AS correo,
                                                         ibis.tb_user.nrol,
                                                         ibis.tb_user.cnombres,
@@ -1335,8 +1336,20 @@
                                                     FROM
                                                         ibis.tb_user
                                                     WHERE
-                                                        tb_user.nrol =:rol");
-                    $sql->execute(["rol"=>$rol]);
+                                                        tb_user.nrol =:rol AND ( tb_user.nflgvista = 1 OR tb_user.nflgvista = 3)");
+                }elseif( $doc == "c" ){
+                    $sql = $this->db->connect()->prepare("SELECT
+                        ibis.tb_user.ccorreo AS correo,
+                        ibis.tb_user.nrol,
+                        ibis.tb_user.cnombres,
+                        ibis.tb_user.ccargo 
+                    FROM
+                        ibis.tb_user
+                    WHERE
+                        tb_user.nrol =:rol AND  ( tb_user.nflgvista = 2 OR tb_user.nflgvista = 3)");
+                }
+                
+                $sql->execute(["rol"=>$rol]);
                 
                 $rowCount = $sql->rowCount();
 
