@@ -40,6 +40,14 @@ $(function(){
 		return false;
 	});
 
+	$("body").on("focusOut","#cabecera_menu", function (e) {
+		e.preventDefault();
+
+		$("#cabecera_menu").fadeOut();
+
+		return false;
+	});
+
 	$("body").on("click","#irInicio", function (e) {
 		e.preventDefault();
 

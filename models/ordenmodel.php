@@ -266,6 +266,7 @@
                 $orden = $this->generarNumeroOrden();
                 
                 $periodo = explode('-',$cab->emision);
+
                 $dias_entrega = intval($cab->dias);
 
                 $sql = $this->db->connect()->prepare("INSERT INTO lg_ordencab SET id_refpedi=:pedi,cper=:anio,cmes=:mes,ntipmov=:tipo,cnumero=:orden,
@@ -382,7 +383,7 @@
                                         "verif"=>"",
                                         "moneda"=>$datos[$i]->moneda,
                                         "costos"=>$costos,
-                                        "ordenidx"=>$idx,
+                                        "ordenidx"=>$indice,
                                         "saldo"=>$datos[$i]->cantidad,
                                         "detalles"=>$datos[$i]->detalles,
                                         "itemord"=>$datos[$i]->item]);
@@ -835,7 +836,7 @@
 
         private function generarNumeroOrden(){
             try {
-                $sql = $this->db->connect()->query("SELECT MAX(id_regmov) AS numero FROM lg_ordencab");
+                $sql = $this->db->connect()->query("SELECT MAX(id_regmov) AS numero FROM lg_ordencab WHERE YEAR(lg_ordencab.fregsys) = YEAR(NOW())");
                 $sql->execute();
 
                 $result = $sql->fetchAll();

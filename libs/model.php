@@ -2686,7 +2686,7 @@
                                             INNER JOIN tb_parametros AS monedas ON lg_ordendet.nmonref = monedas.nidreg
                                             INNER JOIN tb_pedidocab ON lg_ordendet.nidpedi = tb_pedidocab.idreg 
                                         WHERE
-                                            lg_ordendet.id_orden = :id 
+                                            lg_ordendet.id_regmov = :id 
                                             AND ISNULL(
                                             lg_ordendet.nflgactivo)");
                 $sql->execute(["id"=>$id]);

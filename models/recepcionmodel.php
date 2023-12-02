@@ -794,6 +794,8 @@
                 $sql->execute(["usr"=>$_SESSION['iduser'],"id"=>$id]);
                 $rowCount = $sql->rowCount();
 
+                //AND lg_ordencab.cnumero = 1 Esto cambiaria para ie considerando
+
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()) {
                         //compara la orden si fue ingresada esta completa y no la muestra

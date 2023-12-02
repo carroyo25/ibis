@@ -410,10 +410,10 @@ $(function(){
                     $("#nivel_atencion").val(data.pedido[0].nivelAten);
                     $("#tcambio").val(data.cambio);
                     
-                    if ($("#numero").length === 0)
+                    if ( $("#numero").val() === "")
                         $("#numero").val(data.orden);
                     
-                        $("#codigo_verificacion").val(data.pedido[0].verificacion);
+                    $("#codigo_verificacion").val(data.pedido[0].verificacion);
                     
                     $("#busqueda").fadeOut(); 
                 },
