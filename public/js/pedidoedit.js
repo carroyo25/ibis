@@ -245,7 +245,7 @@ $(function(){
         if ( iditempedido == '-') {
             fila.remove();
         }else{
-            $.post(RUTA+"pedidoedit/accionItem",{id:iditempedido,valor:0,estado:105},
+            $.post(RUTA+"pedidoedit/accionItem",{id:iditempedido,valor:1,estado:105},
                 function (data, textStatus, jqXHR) {
                     fila.remove();
                     $("#preguntaItemBorra").fadeOut();

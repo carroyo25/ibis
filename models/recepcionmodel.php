@@ -794,7 +794,7 @@
                 $sql->execute(["usr"=>$_SESSION['iduser'],"id"=>$id]);
                 $rowCount = $sql->rowCount();
 
-                //AND lg_ordencab.cnumero = 1 Esto cambiaria para ie considerando
+                //AND lg_ordencab.cnumero = 1 Esto cambiaria para ir considerando
 
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()) {
