@@ -19,6 +19,8 @@
                     $cadena = "AND lg_ordencab.ntipdoc IS NOT NULL";
                 }
 
+                //echo $filtroDocumento;
+
                 $salida = "";
                 $sql = $this->db->connect()->query("SELECT
                                                     lg_ordencab.id_regmov,

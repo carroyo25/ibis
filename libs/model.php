@@ -3340,9 +3340,6 @@
 
             $bancos = $this->bancosProveedor($cabecera['codigo_entidad']);
 
-            //verificar para el numero de orden
-            //$sql = "SELECT COUNT(lg_ordencab.id_regmov) AS numero FROM lg_ordencab WHERE lg_ordencab.ncodcos =:cod";
-
             $noc = $cabecera['numero'];
             
             if ($cabecera['codigo_tipo'] == "37") {
