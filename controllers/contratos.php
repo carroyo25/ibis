@@ -57,6 +57,10 @@
                                                     ));
         }
 
+        function envioContrato(){
+            echo json_encode($this->model->descargarContrato($_POST['cabecera'],$_POST['detalles'],$_POST['condiciones']));
+        }
+
         
     }
 ?>

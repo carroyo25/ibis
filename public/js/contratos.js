@@ -930,6 +930,42 @@ $(() =>{
         return false;
     });
 
+    $("#sendEntOrden").click(function (e) { 
+        e.preventDefault();
+
+        try {
+            ///ojo con la orden urgente
+
+            if ( ($("#procura").val() != 1 || $("#finanzas").val() != 1 || $("#operaciones").val() != 1 ) && $("#nivel_autorizacion").val() === "47" ) throw "La orden no ha sido autorizada";
+
+            let result = {};
+
+            $("#fentrega").val(sumarDias( parseInt( $("#dias").val() ) ) );
+    
+            $.each($("#formProceso").serializeArray(),function(){
+                result[this.name] = this.value;
+            });
+
+            $.post(RUTA+"contratos/envioContrato", {cabecera:result,
+                                                detalles:JSON.stringify(detalles()),
+                                                condiciones:$("#description_conditions").val()},
+                function (data, textStatus, jqXHR) {
+                    mostrarMensaje(data.mensaje,data.clase);
+                    $("#tablaPrincipal tbody")
+                        .empty()
+                        .append(data.ordenes);
+                    $("#esperar").fadeOut();
+                },
+                "json"
+            );
+
+        } catch (error) {
+            mostrarMensaje(error,'mensaje_error');
+        }
+
+        return false;
+    });
+
 })
 
 calcularTotales = () => {

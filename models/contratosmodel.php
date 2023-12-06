@@ -546,5 +546,80 @@
                 return false;
             } 
         }
+
+        public function descargarContrato($cabecera,$detalles,$condiciones){
+            try {
+                require_once("public/PHPMailer/PHPMailerAutoload.php");
+
+                $documento = $this->generarContrato($cabecera,2,$detalles,$condiciones);
+
+                $subject    = utf8_decode("Atención Sub Contrato Sepcon");
+                $messaje    = utf8_decode("Su atencion al contrato adjunto");
+
+                $origen = $_SESSION['user']."@sepcon.net";
+                $nombre_envio = $_SESSION['user'];
+                
+                $mail = new PHPMailer;
+                $mail->isSMTP();
+                $mail->SMTPDebug = 0;
+                $mail->Debugoutput = 'html';
+                $mail->Host = 'mail.sepcon.net';
+                $mail->SMTPAuth = true;
+                $mail->Username = 'sistema_ibis@sepcon.net';
+                $mail->Password = $_SESSION['password'];
+                $mail->Port = 465;
+                $mail->SMTPSecure = "ssl";
+                $mail->SMTPOptions = array(
+                    'ssl' => array(
+                        'verify_peer' => false,
+                        'verify_peer_name' => false,
+                        'allow_self_signed' => false
+                    )
+                );
+                
+                $mail->setFrom($origen,$nombre_envio);
+                $mail->addAddress($_SESSION['correo'],$_SESSION['nombres']);
+                
+                $mail->Subject = $subject;
+                    $mail->msgHTML(utf8_decode($messaje));
+
+                    if (file_exists( 'public/documentos/ordenes/aprobadas/'.$documento)) {
+                        $mail->AddAttachment('public/documentos/ordenes/aprobadas/'.$documento);
+                    }
+
+                    $firmas = intval($cabecera['procura'])+intval($cabecera['finanzas'])+intval($cabecera['operaciones']);
+                    $cambio = 60;
+
+                    if ( $cabecera['nivel_autorizacion'] == 46 && $firmas == 3 ){
+                        $cambio = 60;
+                    }else {
+                        $cambio = 59;
+                    }
+
+                    if ( $cabecera['nivel_autorizacion'] == 47 && $firmas == 3 ){
+                        $cambio = 60;
+                    }
+                    
+                    if (!$mail->send()) {
+                        return array("mensaje"=>"Hubo un error, en el envio",
+                                    "clase"=>"mensaje_error");
+                    }else {
+                        $this->actualizarCabeceraPedido($cambio,$cabecera['codigo_pedido'],$cabecera['codigo_orden']);
+                        $this->actualizarDetallesPedidoCorreo($cambio,$detalles);
+                        $this->actualizarCabeceraOrden($cambio,$cabecera['codigo_orden'],$cabecera['fentrega']);
+
+                        return array("mensaje"=>"Correo enviado",
+                                    "clase"=>"mensaje_correcto",
+                                    "ordenes"=>$this->listarOrdenes($_SESSION['iduser']));
+                    }
+                        
+                    $mail->clearAddresses();
+
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
     }
 ?>
