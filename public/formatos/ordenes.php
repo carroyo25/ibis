@@ -115,15 +115,15 @@
 
             $this->Cell(113,3,"","L",0);
             $this->Cell(20,3,utf8_decode("Referencia Pago: "),"L",0);
-            $this->SetFont('Arial','',5.2);
-            $this->MultiCell(57,2.3,strtoupper(utf8_decode($this->referencia)),0); //ver de donde sale
+            $this->SetFont('Arial','',4.5);
+            $this->MultiCell(57,2,strtoupper(utf8_decode($this->referencia)),0); //ver de donde sale
             
-            $this->Line(200,50,200,60); //Lineas de caja
-            $this->Line(10,50,10,60); //Lineas de caja
-            $this->Line(123,50,123,60); //Lineas de caja
+            $this->Line(200,50,200,80); //Lineas de caja
+            $this->Line(10,50,10,80); //Lineas de caja
+            $this->Line(123,50,123,80); //Lineas de caja*/
 
 
-            $this->SetY(59);
+            $this->SetY(61);
             $this->SetFont('Arial','',6);
             $this->Cell(13,3,utf8_decode("Atención :"),"L",0);
             $this->Cell(40,3,utf8_decode($this->contacto),0); //envia de parametro
@@ -149,7 +149,7 @@
             }
             
             $this->SetTextColor(0,0,0);
-            $this->SetXY(10,65);
+            $this->SetXY(10,67);
             $this->Cell(16,3,utf8_decode(""),"L",0);
             $this->Cell(10,3,utf8_decode("Contacto :"),"0",0);
             $this->Cell(40,3,utf8_decode($this->contacto),0,0); //envia de parametro
@@ -159,9 +159,9 @@
 
             $this->SetFillColor(255, 255, 0);
             $this->SetFont('Arial','',5);
-            $this->SetXY(133,65.5);
+            $this->SetXY(133,67.5);
             $this ->MultiCell(64,2,utf8_decode($this->detalle), 0, 'L', 1);
-            $this->SetY(68);
+            $this->SetY(69);
             $this->SetFont('Arial','',6);
             $this->Cell(16,3,utf8_decode(""),"BL",0);
             $this->Cell(13,3,utf8_decode("E-mail :"),"B",0);

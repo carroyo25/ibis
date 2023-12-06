@@ -859,6 +859,7 @@
                                                     UPPER( tb_partidas.cdescripcion ) AS partida,
                                                     DATE_FORMAT( tb_pedidocab.emision, '%d/%m/%Y' ) AS crea_pedido,
                                                     DATE_FORMAT( tb_pedidocab.faprueba, '%d/%m/%Y' ) AS aprobacion_pedido,
+                                                    DATE_FORMAT( lg_ordencab.ffechades, '%d/%m/%Y' ) AS fecha_descarga,
                                                     tb_pedidocab.anio AS anio_pedido,
                                                     tb_pedidocab.mes AS pedido_mes,
                                                     tb_pedidocab.nivelAten AS atencion,
@@ -1271,8 +1272,8 @@
                         $objPHPExcel->getActiveSheet()->setCellValue('W'.$fila,$rs['cantidad_atendida']);
                         $objPHPExcel->getActiveSheet()->setCellValue('X'.$fila,$rs['proveedor']);
 
-                        if  ($rs['fecha_entrega'] !== "")
-                            $objPHPExcel->getActiveSheet()->setCellValue('Y'.$fila,PHPExcel_Shared_Date::PHPToExcel($rs['fecha_entrega']));
+                        if  ($rs['fecha_descarga'] !== "")
+                            $objPHPExcel->getActiveSheet()->setCellValue('Y'.$fila,PHPExcel_Shared_Date::PHPToExcel($rs['fecha_descarga']));
                             $objPHPExcel->getActiveSheet()->getStyle('Y'.$fila)->getNumberFormat()->setFormatCode('dd/mm/yyyy');
 
                         $objPHPExcel->getActiveSheet()->setCellValue('Z'.$fila,$rs['ingreso']);

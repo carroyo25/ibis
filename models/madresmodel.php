@@ -470,6 +470,8 @@
         }
 
         private function crear_files($movimiento,$path,$nombre_archivo,$header,$body){
+            $xml = $this->desarrollo_xml_sepcon($header,$body);
+
             if ( $movimiento == 93) {
                 $xml = $this->desarrollo_xml_externos($header,$body);
             }else if ($movimiento == 94){
