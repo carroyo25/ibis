@@ -837,8 +837,12 @@
         public function exportarTotal(){
             require_once('public/PHPExcel/PHPExcel.php');
             try {
-                $salida = "";
-                $sql = $this->db->connect()->query("SELECT
+               $salida = "";
+
+               /*$_SESSION['progreso'] = 0;
+               session_write_close();*/
+
+               $sql = $this->db->connect()->query("SELECT
                                                     tb_pedidodet.iditem,
                                                     tb_pedidodet.idpedido,
                                                     tb_pedidodet.idprod,
@@ -847,7 +851,7 @@
                                                     tb_pedidodet.cant_pedida AS cantidad_pedido,
                                                     tb_pedidodet.cant_aprob AS cantidad_aprobada,
                                                     tb_pedidodet.cant_atend AS cantidad_atendida,
-                                                    LPAD(tb_pedidocab.nrodoc,6,0) AS pedido,
+                                                    LPAD( tb_pedidocab.nrodoc, 6, 0 ) AS pedido,
                                                     lg_ordendet.id_orden AS orden,
                                                     lg_ordendet.item AS item_orden,
                                                     cm_producto.ccodprod,
@@ -872,11 +876,6 @@
                                                     DATE_FORMAT( lg_ordencab.ffechaent, '%d/%m/%Y' ) AS fecha_entrega,
                                                     DATE_FORMAT( lg_ordencab.fechafin, '%d/%m/%Y' ) AS fecha_autorizacion_orden,
                                                     UPPER( cm_entidad.crazonsoc ) AS proveedor,
-                                                    ( SELECT SUM(lg_ordendet.ncanti) FROM lg_ordendet WHERE lg_ordendet.niddeta = tb_pedidodet.iditem AND lg_ordendet.id_orden != 0) AS cantidad_orden,
-                                                    ( SELECT SUM( alm_recepdet.ncantidad ) FROM alm_recepdet WHERE alm_recepdet.niddetaPed = tb_pedidodet.iditem AND alm_recepdet.nflgactivo = 1 ) AS ingreso,
-                                                    ( SELECT SUM( alm_despachodet.ndespacho ) FROM alm_despachodet WHERE alm_despachodet.niddetaPed = lg_ordendet.niddeta AND alm_despachodet.nflgactivo = 1 ) AS despachos,
-                                                    ( SELECT SUM( alm_existencia.cant_ingr ) FROM alm_existencia WHERE alm_existencia.idpedido = tb_pedidodet.iditem AND alm_existencia.nflgActivo = 1 ) AS ingreso_obra,
-                                                    ( SELECT SUM( alm_existencia.cant_ingr ) FROM alm_existencia WHERE alm_existencia.idpedido = tb_pedidodet.iditem AND alm_existencia.nflgActivo = 1 ) AS atencion_almacen,
                                                     UPPER( tb_user.cnameuser ) AS operador,
                                                     UPPER( tb_pedidocab.concepto ) AS concepto,
                                                     DATEDIFF( NOW(), lg_ordencab.ffechaent ) AS dias_atraso,
@@ -884,9 +883,13 @@
                                                     transporte.nidreg,
                                                     user_aprueba.cnombres,
                                                     alm_despachocab.cnumguia,
-                                                    LPAD(alm_recepcab.nnronota,6,0) AS nota_ingreso,
-                                                    LPAD(alm_cabexist.idreg,6,0) AS nota_obra,
-                                                    tb_equipmtto.cregistro 
+                                                    LPAD( alm_recepcab.nnronota, 6, 0 ) AS nota_ingreso,
+                                                    LPAD( alm_cabexist.idreg, 6, 0 ) AS nota_obra,
+                                                    tb_equipmtto.cregistro,
+                                                    o.cantidad_orden,
+                                                    i.ingreso,
+                                                    d.despachos,
+                                                    a.ingreso_obra 
                                                 FROM
                                                     tb_pedidodet
                                                     INNER JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
@@ -907,15 +910,24 @@
                                                     LEFT JOIN alm_recepcab ON alm_recepdet.id_regalm = alm_recepcab.id_regalm
                                                     LEFT JOIN alm_existencia ON tb_pedidodet.iditem = alm_existencia.idpedido
                                                     LEFT JOIN alm_cabexist ON alm_existencia.idregistro = alm_cabexist.idreg
-                                                    LEFT JOIN tb_equipmtto ON tb_pedidodet.nregistro = tb_equipmtto.idreg 
-                                        WHERE
-                                            tb_pedidodet.nflgActivo
-                                            AND ISNULL( lg_ordendet.nflgactivo )
-                                            AND tb_pedidocab.anio = YEAR(NOW())
-                                        GROUP BY
-                                            tb_pedidodet.iditem");
+                                                    LEFT JOIN tb_equipmtto ON tb_pedidodet.nregistro = tb_equipmtto.idreg
+                                                    LEFT JOIN ( SELECT SUM( lg_ordendet.ncanti ) AS cantidad_orden, lg_ordendet.niddeta FROM lg_ordendet WHERE lg_ordendet.id_orden != 0 GROUP BY lg_ordendet.niddeta ) AS o ON tb_pedidodet.iditem = o.niddeta
+                                                    LEFT JOIN ( SELECT SUM( alm_recepdet.ncantidad ) AS ingreso, alm_recepdet.niddetaPed FROM alm_recepdet WHERE alm_recepdet.nflgactivo = 1 GROUP BY alm_recepdet.niddetaPed ) AS i ON tb_pedidodet.iditem = i.niddetaPed
+                                                    LEFT JOIN ( SELECT SUM( alm_despachodet.ndespacho ) AS despachos, alm_despachodet.niddetaPed FROM alm_despachodet WHERE alm_despachodet.nflgactivo = 1 GROUP BY alm_despachodet.niddetaPed ) AS d ON tb_pedidodet.iditem = d.niddetaPed
+                                                    LEFT JOIN ( SELECT SUM( alm_existencia.cant_ingr ) AS ingreso_obra, alm_existencia.idpedido FROM alm_existencia WHERE alm_existencia.nflgActivo = 1 GROUP BY alm_existencia.idpedido ) AS a ON tb_pedidodet.iditem = a.idpedido 
+                                                WHERE
+                                                    tb_pedidodet.nflgActivo 
+                                                    AND ISNULL( lg_ordendet.nflgactivo ) 
+                                                    AND tb_pedidocab.anio = YEAR (
+                                                    NOW()) 
+                                                GROUP BY
+                                                    tb_pedidodet.iditem
+                                                    LIMIT 200");
                 $sql->execute();
                 $rowCount = $sql->rowCount();
+
+                $cacheMethod = PHPExcel_CachedObjectStorageFactory::cache_in_memory_serialized; 
+                PHPExcel_Settings::setCacheStorageMethod($cacheMethod);
 
                 $objPHPExcel = new PHPExcel();
                 $objPHPExcel->getProperties()
@@ -962,6 +974,7 @@
                 $objPHPExcel->getActiveSheet()->getColumnDimension("X")->setAutoSize(true);
                 $objPHPExcel->getActiveSheet()->getColumnDimension("Y")->setAutoSize(true);
                 $objPHPExcel->getActiveSheet()->getColumnDimension("AB")->setAutoSize(true);
+                $objPHPExcel->getActiveSheet()->getColumnDimension("AE")->setAutoSize(true);
                 $objPHPExcel->getActiveSheet()->getColumnDimension("AG")->setAutoSize(true);
                 $objPHPExcel->getActiveSheet()->getColumnDimension("AJ")->setAutoSize(true);
                 $objPHPExcel->getActiveSheet()->getColumnDimension("AK")->setAutoSize(true);
@@ -1044,6 +1057,55 @@
                 $objPHPExcel->getActiveSheet()->setCellValue('AN2','Operador Logístico'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('AO2','Tipo Transporte'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('AP2','Observaciones/Concepto'); // esto cambia
+
+                $objPHPExcel->getActiveSheet()->getStyle('B:C')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('B:C')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                
+                $objPHPExcel->getActiveSheet()->getStyle('F:K')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('F:K')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+
+                $objPHPExcel->getActiveSheet()->getStyle('M:N')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('M:N')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+
+                $objPHPExcel->getActiveSheet()->getStyle('P:S')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('P:S')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+
+                $objPHPExcel->getActiveSheet()->getStyle('V')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('V')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+
+                $objPHPExcel->getActiveSheet()->getStyle('Q:S')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('Q:S')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+
+                $objPHPExcel->getActiveSheet()->getStyle('Y')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('Y')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+
+                $objPHPExcel->getActiveSheet()->getStyle('AA')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('AA')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+
+                $objPHPExcel->getActiveSheet()->getStyle('AE')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('AE')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+
+                $objPHPExcel->getActiveSheet()->getStyle('AE')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('AE')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+
+                $objPHPExcel->getActiveSheet()->getStyle('AG:AH')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('AG:AH')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+
+                $objPHPExcel->getActiveSheet()->getStyle('AJ:AO')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('AJ:AO')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+
+
+                $objPHPExcel->getActiveSheet()->getStyle('J')->getNumberFormat()->setFormatCode('dd/mm/yyyy');
+                $objPHPExcel->getActiveSheet()->getStyle('L')->getNumberFormat()->setFormatCode('#,##0.00');
+                $objPHPExcel->getActiveSheet()->getStyle('T')->getNumberFormat()->setFormatCode('#,##0.00');
+                $objPHPExcel->getActiveSheet()->getStyle('V')->getNumberFormat()->setFormatCode('dd/mm/yyyy');
+                $objPHPExcel->getActiveSheet()->getStyle('W')->getNumberFormat()->setFormatCode('#,##0.00');
+                $objPHPExcel->getActiveSheet()->getStyle('Y')->getNumberFormat()->setFormatCode('dd/mm/yyyy');
+                $objPHPExcel->getActiveSheet()->getStyle('Z')->getNumberFormat()->setFormatCode('#,##0.00');
+                $objPHPExcel->getActiveSheet()->getStyle('AB')->getNumberFormat()->setFormatCode('#,##0.00');
+                $objPHPExcel->getActiveSheet()->getStyle('AI')->getNumberFormat()->setFormatCode('#,##0.00');
+                $objPHPExcel->getActiveSheet()->getStyle('AF')->getNumberFormat()->setFormatCode('#,##0.00');
+
                
                 $fila = 3;
                 $estado = "";
@@ -1065,6 +1127,10 @@
                 
                 if($rowCount > 0) {
                     while($rs = $sql->fetch()){
+
+                        /*$_SESSION['progreso']+=1;
+                        session_write_close();*/
+
                         if ( $rs['orden'] ){
                             if ( $nro_orden == $rs['orden'] ) {
                                 $itemOrden++;
@@ -1079,7 +1145,7 @@
                         $clase_operacion = $rs['idtipomov'] == 37 ? 'bienes' : 'servicios';
                         $saldoRecibir = $rs['cantidad_orden'] - $rs['ingreso'] > 0 ? $rs['cantidad_orden'] - $rs['ingreso'] : "-";
                         $dias_atraso  =  $saldoRecibir > 0 ? $rs['dias_atraso'] : "-" ;
-                        $suma_atendido = number_format($rs['cantidad_orden'] + $rs['atencion_almacen'],2);
+                        $suma_atendido = number_format($rs['cantidad_orden'] + $rs['cantidad_atendida'],2);
 
                         $cantidad = $rs['cantidad_aprobada'] == 0 ? $rs['cantidad_pedido'] : $rs['cantidad_aprobada'];
 
@@ -1224,7 +1290,7 @@
                                     'argb' => $color_semaforo,
                                 ),
                                 'endcolor' => array(
-                                    'argb' =>  $color_semaforo,
+                                    'argb' => $color_semaforo,
                                 ),
                             ),
                         );
@@ -1242,15 +1308,16 @@
                         $objPHPExcel->getActiveSheet()->setCellValue('I'.$fila,$rs['pedido']);
 
                         if  ($rs['crea_pedido'] !== "")
-                        $objPHPExcel->getActiveSheet()->setCellValue('J'.$fila,PHPExcel_Shared_Date::PHPToExcel($rs['crea_pedido']));
-                        $objPHPExcel->getActiveSheet()->getStyle('J'.$fila)->getNumberFormat()->setFormatCode('dd/mm/yyyy');
-
-                        if  ($rs['aprobacion_pedido'] !== NULL)
+                            $objPHPExcel->getActiveSheet()->setCellValue('J'.$fila,PHPExcel_Shared_Date::PHPToExcel($rs['crea_pedido']));
+                           
+                        if  ( $rs['aprobacion_pedido'] !== null )
                             $objPHPExcel->getActiveSheet()->setCellValue('K'.$fila,$rs['aprobacion_pedido']);
                         else
                             $objPHPExcel->getActiveSheet()->setCellValue('K'.$fila,'');
 
-                        $objPHPExcel->getActiveSheet()->setCellValue('L'.$fila,number_format($cantidad,2));
+                        $objPHPExcel->getActiveSheet()->setCellValue('L'.$fila,$cantidad);
+                        
+
                         $objPHPExcel->getActiveSheet()->setCellValue('M'.$fila,$rs['ccodprod']);
                         $objPHPExcel->getActiveSheet()->setCellValue('N'.$fila,$rs['unidad']);
                         $objPHPExcel->getActiveSheet()->setCellValue('O'.$fila,$rs['descripcion']);
@@ -1258,27 +1325,37 @@
                         $objPHPExcel->getActiveSheet()->setCellValue('Q'.$fila,$rs['anio_orden']);
                         $objPHPExcel->getActiveSheet()->setCellValue('R'.$fila,$rs['orden']);
 
-                        if  ($rs['fecha_orden'] !== NULL)
+                        if  ($rs['fecha_orden'] !== null)
                             $objPHPExcel->getActiveSheet()->setCellValue('S'.$fila,PHPExcel_Shared_Date::PHPToExcel($rs['fecha_orden']));
                             $objPHPExcel->getActiveSheet()->getStyle('S'.$fila)->getNumberFormat()->setFormatCode('dd/mm/yyyy');
 
                         $objPHPExcel->getActiveSheet()->setCellValue('T'.$fila,$rs['cantidad_orden']);
+                       
+
                         $objPHPExcel->getActiveSheet()->setCellValue('U'.$fila,$rs['item_orden']);
 
-                        if  ($rs['fecha_autorizacion_orden'] !== "")
+                        if  ($rs['fecha_autorizacion_orden'] !== null)
                             $objPHPExcel->getActiveSheet()->setCellValue('V'.$fila,PHPExcel_Shared_Date::PHPToExcel($rs['fecha_autorizacion_orden']));
-                            $objPHPExcel->getActiveSheet()->getStyle('V'.$fila)->getNumberFormat()->setFormatCode('dd/mm/yyyy');
+                            
                         
                         $objPHPExcel->getActiveSheet()->setCellValue('W'.$fila,$rs['cantidad_atendida']);
+                       
+
                         $objPHPExcel->getActiveSheet()->setCellValue('X'.$fila,$rs['proveedor']);
 
-                        if  ($rs['fecha_descarga'] !== "")
+                        if  ($rs['fecha_descarga'] !== null){
                             $objPHPExcel->getActiveSheet()->setCellValue('Y'.$fila,PHPExcel_Shared_Date::PHPToExcel($rs['fecha_descarga']));
-                            $objPHPExcel->getActiveSheet()->getStyle('Y'.$fila)->getNumberFormat()->setFormatCode('dd/mm/yyyy');
-
+                            
+                        }else {
+                            $objPHPExcel->getActiveSheet()->setCellValue('Y'.$fila,"-");
+                        }
+                           
                         $objPHPExcel->getActiveSheet()->setCellValue('Z'.$fila,$rs['ingreso']);
                         $objPHPExcel->getActiveSheet()->setCellValue('AA'.$fila,$rs['nota_ingreso']);
+
                         $objPHPExcel->getActiveSheet()->setCellValue('AB'.$fila,$saldoRecibir);
+                       
+                        
                         $objPHPExcel->getActiveSheet()->setCellValue('AC'.$fila,$rs['plazo']);
                         $objPHPExcel->getActiveSheet()->setCellValue('AD'.$fila,$dias_atraso);
                         
@@ -1288,7 +1365,10 @@
                         $objPHPExcel->getActiveSheet()->setCellValue('AF'.$fila,$rs['despachos']);
                         $objPHPExcel->getActiveSheet()->setCellValue('AG'.$fila,$rs['cnumguia']);
                         $objPHPExcel->getActiveSheet()->setCellValue('AH'.$fila,$rs['nota_obra']);
-                        $objPHPExcel->getActiveSheet()->setCellValue('AI'.$fila,number_format($rs['ingreso_obra'],2));
+                        
+                        $objPHPExcel->getActiveSheet()->setCellValue('AI'.$fila,$rs['ingreso_obra'],2);
+                        
+
                         $objPHPExcel->getActiveSheet()->setCellValue('AJ'.$fila,$estado_pedido);
                         $objPHPExcel->getActiveSheet()->setCellValue('AK'.$fila,$estado_item);
                         $objPHPExcel->getActiveSheet()->setCellValue('AL'.$fila,$rs['nroparte']);
@@ -1300,44 +1380,34 @@
                     }
                 }
 
-                $objPHPExcel->getActiveSheet()->getStyle('B:C')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                $objPHPExcel->getActiveSheet()->getStyle('B:C')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                
-                $objPHPExcel->getActiveSheet()->getStyle('F:K')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                $objPHPExcel->getActiveSheet()->getStyle('F:K')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-
-                $objPHPExcel->getActiveSheet()->getStyle('M:N')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                $objPHPExcel->getActiveSheet()->getStyle('M:N')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-
-                $objPHPExcel->getActiveSheet()->getStyle('P:S')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                $objPHPExcel->getActiveSheet()->getStyle('P:S')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-
-                $objPHPExcel->getActiveSheet()->getStyle('V:W')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                $objPHPExcel->getActiveSheet()->getStyle('V:W')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-
-                $objPHPExcel->getActiveSheet()->getStyle('Q:T')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                $objPHPExcel->getActiveSheet()->getStyle('Q:T')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-
-                $objPHPExcel->getActiveSheet()->getStyle('Y')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                $objPHPExcel->getActiveSheet()->getStyle('Y')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-
-                $objPHPExcel->getActiveSheet()->getStyle('AA:AG')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                $objPHPExcel->getActiveSheet()->getStyle('AA:AG')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-
-                $objPHPExcel->getActiveSheet()->getStyle('AI:AL')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                $objPHPExcel->getActiveSheet()->getStyle('AI:AL')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-
-
+            
                 $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel,'Excel2007');
                 $objWriter->save('public/documentos/reportes/cargoplan.xlsx');
 
                 return array("documento"=>'public/documentos/reportes/cargoplan.xlsx');
 
-                exit();
+                //exit();
 
                 return $salida;
 
             } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        public function contarItemsCargoPlan(){
+            try{
+                $_SESSION['progreso'] = 0;
+
+                $sql = $this->db->connect()->query("SELECT COUNT(*) AS items FROM tb_pedidodet WHERE tb_pedidodet.nflgActivo = 1");
+                $sql->execute();
+
+                $result = $sql->fetchAll();
+
+                return $result[0]['items'];
+
+            }catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;
             }

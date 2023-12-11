@@ -1,5 +1,7 @@
 $(function() {
-    let idpedido = "";
+    let idpedido = "",progreso = 0;
+
+    
     
     $("#esperar").fadeOut();
     
@@ -150,22 +152,30 @@ $(function() {
         return false;
     });
 
+
     $("#excelFile").click(function (e) { 
-        e.preventDefault();
+        e.preventDefault(e);
 
         $("#esperarCargo").css("opacity","1").fadeIn();
+        
+        const myInterval = setInterval(processItems, 1000);
 
-        $.post(RUTA+"cargoplanner/dataExcelTotalCargoPlan",
-            function (data, textStatus, jqXHR) {
-                
+        fetch(RUTA+"cargoplanner/dataExcelTotalCargoPlan")
+            .then((response)=> {
+                return response.json();
+            })
+            .then((json)=> {
+                clearInterval(myInterval);
                 $("#esperarCargo").css("opacity","0").fadeOut();
-                window.location.href = data.documento;
-            },
-            "json"
-        );
+                window.location.href = json.documento;
+            })
+            .catch((err)=> {
+                console.log(err);
+            });
+
+        
 
         return false;
-        
     });
 
     $("#cargoPlanDescrip tbody").on('click','tr', function(e) {
@@ -282,4 +292,26 @@ function s2ab(s) {
     var view = new Uint8Array(buf);
     for (var i=0; i<s.length; i++) view[i] = s.charCodeAt(i) & 0xFF;
     return buf;
+}
+
+async function processItems(){
+    fetch(RUTA+"cargoplanner/itemsProcesados")
+        .then((response) =>{
+            return response.text();
+        })
+        .then((text) =>{
+            console.log(text);
+        })
+        .catch((err)=> {
+            console.log(err);
+        });
+}
+
+function myTimer() {
+    const date = new Date();
+    document.getElementById("demo").innerHTML = date.toLocaleTimeString();
+}
+  
+function myStopFunction() {
+    clearInterval(myInterval);
 }

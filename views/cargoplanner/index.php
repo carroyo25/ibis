@@ -218,7 +218,7 @@
             </div>
         </form>
     </div>
-    <div class="itemsCargoPlanner">
+    <div class="itemsCargoPlanner" id="demo">
         <table id="cargoPlanDescrip">
             <thead>
                 <tr class="stickytop">
@@ -270,6 +270,15 @@
                 
             </tbody>
         </table>
+    </div>
+    <div class="modal" id="ventanaProgreso">
+        <div class="ventanaPregunta">
+            <h3>Procesando...</h3>
+            <h3 id="valorPorcentaje">0%</h3>
+            <div>
+                <progress id="progress" max="100" value="0">70%</progress>
+            </div>
+        </div>
     </div>
     
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
