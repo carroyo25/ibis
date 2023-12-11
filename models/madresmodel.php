@@ -407,8 +407,9 @@
             header('Access-Control-Allow-Origin: *');
             require 'public/libraries/efactura.php';
 
-            $header = json_decode ($datos['datosGuia']);
-            $body = json_decode ($datos['detalles']);
+            $header = json_decode($datos['datosGuia']);
+            $body = json_decode($datos['detalles']);
+            $formulario = json_decode($datos['datosFormulario']);
 
             $empresa = $header->destinatario_razon;
             $guia    = $header->numero_guia;
@@ -421,9 +422,11 @@
                 unlink($path."XML/".$nombre_archivo.".xml");  
             }
 
+            echo $header->codigo_modalidad;
+
             $token_access = $this->token('d12d8bf5-4b57-4c57-9569-9072b3e1bfcd', 'iLMGwQBEehJMXQ+Z/LR2KA==', '20504898173SISTEMA1', 'Lima123');
             //$token_access = $this->token('test-85e5b0ae-255c-4891-a595-0b98c65c9854', 'test-Hty/M6QshYvPgItX2P0+Kw==', '20504898173MODDATOS', 'MODDATOS');
-            $firma = $this->crear_files($header->codigo_modalidad,$path, $nombre_archivo, $header, $body);
+            $firma = $this->crear_files($formulario->modalidad_traslado,$path, $nombre_archivo, $header, $body);
             $respuesta = $this->envio_xml($path.'FIRMA/', $nombre_archivo, $token_access);
             $numero_ticket = $respuesta->numTicket;
 
@@ -435,6 +438,8 @@
             var_dump($respuesta_ticket);
         
             return array("archivo"=>$nombre_archivo,"token"=>$token_access);
+
+            //$this->crear_files($header->codigo_modalidad,$path, $nombre_archivo, $header, $body);
         }
 
         private function token($client_id, $client_secret, $usuario_secundario, $usuario_password){
@@ -470,11 +475,11 @@
         }
 
         private function crear_files($movimiento,$path,$nombre_archivo,$header,$body){
-            $xml = $this->desarrollo_xml_sepcon($header,$body);
+            //$xml = $this->desarrollo_xml_sepcon($header,$body);
 
-            if ( $movimiento == 93) {
+            if ( $movimiento == 108 ) {
                 $xml = $this->desarrollo_xml_externos($header,$body);
-            }else if ($movimiento == 94){
+            }else if ($movimiento == 107 ){
                 $xml = $this->desarrollo_xml_sepcon($header,$body);
             }else{
                 $tipo_envio_sunat = 'Error en el tipo de envio';
@@ -734,7 +739,7 @@
                                 <cbc:LineID>1</cbc:LineID>
                             </cac:OrderLineReference>
                             <cac:Item>
-                                <cbc:Description>'.$detalle->descripcion.'</cbc:Description>
+                                <cbc:Description>'.utf8_encode($detalle->descripcion).'</cbc:Description>
                                     <cac:SellersItemIdentification>
                                     <cbc:ID>'.$detalle->codigo.'</cbc:ID>
                                     </cac:SellersItemIdentification>
@@ -881,7 +886,7 @@
                                 <cbc:LineID>1</cbc:LineID>
                             </cac:OrderLineReference>
                             <cac:Item>
-                                <cbc:Description>'.$detalle->descripcion.'</cbc:Description>
+                                <cbc:Description>'.utf8_encode($detalle->descripcion).'</cbc:Description>
                                 <cac:SellersItemIdentification>
                                 <cbc:ID>'.$detalle->codigo.'</cbc:ID>
                                 </cac:SellersItemIdentification>
