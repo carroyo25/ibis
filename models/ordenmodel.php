@@ -96,7 +96,7 @@
                                     <td class="pl20px">'.$rs['concepto'].'</td>
                                     <td class="pl20px">'.utf8_decode($rs['ccodproy']).'</td>
                                     <td class="pl20px">'.$rs['area'].'</td>
-                                    <td class="pl20px">'.$rs['ntipdoc'].'</td>
+                                    <td class="pl20px">'.$rs['crazonsoc'].'</td>
                                     <td class="pl5px">'.$rs['cnameuser'].'</td>
                                     <td class="textoDerecha">'.$rs['cabrevia'].' '. $rs['ntotal'].'</td>
                                     <td class="textoCentro '.strtolower($rs['atencion']).'">'.$rs['atencion'].'</td>

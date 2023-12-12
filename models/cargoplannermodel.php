@@ -921,8 +921,7 @@
                                                     AND tb_pedidocab.anio = YEAR (
                                                     NOW()) 
                                                 GROUP BY
-                                                    tb_pedidodet.iditem
-                                                    LIMIT 200");
+                                                    tb_pedidodet.iditem");
                 $sql->execute();
                 $rowCount = $sql->rowCount();
 

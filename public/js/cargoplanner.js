@@ -158,7 +158,7 @@ $(function() {
 
         $("#esperarCargo").css("opacity","1").fadeIn();
         
-        const myInterval = setInterval(processItems, 1000);
+        //const myInterval = setInterval(processItems, 1000);
 
         fetch(RUTA+"cargoplanner/dataExcelTotalCargoPlan")
             .then((response)=> {
@@ -166,7 +166,7 @@ $(function() {
             })
             .then((json)=> {
                 clearInterval(myInterval);
-                $("#esperarCargo").css("opacity","0").fadeOut();
+                //$("#esperarCargo").css("opacity","0").fadeOut();
                 window.location.href = json.documento;
             })
             .catch((err)=> {
