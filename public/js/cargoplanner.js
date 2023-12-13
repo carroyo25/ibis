@@ -165,8 +165,8 @@ $(function() {
                 return response.json();
             })
             .then((json)=> {
-                clearInterval(myInterval);
-                //$("#esperarCargo").css("opacity","0").fadeOut();
+                //clearInterval(myInterval);
+                $("#esperarCargo").css("opacity","0").fadeOut();
                 window.location.href = json.documento;
             })
             .catch((err)=> {
@@ -177,7 +177,6 @@ $(function() {
 
         return false;
     });
-
     $("#cargoPlanDescrip tbody").on('click','tr', function(e) {
         e.preventDefault();
 

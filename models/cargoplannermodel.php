@@ -878,7 +878,8 @@
                                                     UPPER( cm_entidad.crazonsoc ) AS proveedor,
                                                     UPPER( tb_user.cnameuser ) AS operador,
                                                     UPPER( tb_pedidocab.concepto ) AS concepto,
-                                                    DATEDIFF( NOW(), lg_ordencab.ffechaent ) AS dias_atraso,
+                                                    DATEDIFF( DATE_ADD( lg_ordencab.ffechades, INTERVAL lg_ordencab.nplazo DAY ), NOW() ) AS dias_atraso,
+                                                    DATE_ADD( lg_ordencab.ffechades, INTERVAL lg_ordencab.nplazo DAY ) AS fecha_final,
                                                     transporte.cdescripcion AS transporte,
                                                     transporte.nidreg,
                                                     user_aprueba.cnombres,
@@ -1104,6 +1105,7 @@
                 $objPHPExcel->getActiveSheet()->getStyle('AB')->getNumberFormat()->setFormatCode('#,##0.00');
                 $objPHPExcel->getActiveSheet()->getStyle('AI')->getNumberFormat()->setFormatCode('#,##0.00');
                 $objPHPExcel->getActiveSheet()->getStyle('AF')->getNumberFormat()->setFormatCode('#,##0.00');
+                $objPHPExcel->getActiveSheet()->getStyle('S')->getNumberFormat()->setFormatCode('dd/mm/yyyy');
 
                
                 $fila = 3;
@@ -1143,7 +1145,7 @@
                         $tipo_orden = $rs['idtipomov'] == 37 ? 'BIENES' : 'SERVICIO';
                         $clase_operacion = $rs['idtipomov'] == 37 ? 'bienes' : 'servicios';
                         $saldoRecibir = $rs['cantidad_orden'] - $rs['ingreso'] > 0 ? $rs['cantidad_orden'] - $rs['ingreso'] : "-";
-                        $dias_atraso  =  $saldoRecibir > 0 ? $rs['dias_atraso'] : "-" ;
+                        $dias_atraso  =  $saldoRecibir > 0 && $rs['dias_atraso'] < 1 ? $rs['dias_atraso'] : "-" ;
                         $suma_atendido = number_format($rs['cantidad_orden'] + $rs['cantidad_atendida'],2);
 
                         $cantidad = $rs['cantidad_aprobada'] == 0 ? $rs['cantidad_pedido'] : $rs['cantidad_aprobada'];
@@ -1157,6 +1159,13 @@
                         $color_mostrar  = 'FFFFFF';
                         $color_semaforo = 'FFFFFF';
                         $porcentaje = '';
+
+                        $fecha_entrega = "";
+                        $dias_plazo = '+'. intVal( $rs['plazo']) .' days';
+
+                        if ( $rs['fecha_descarga'] !== NULL ) {
+                            $fecha_entrega = $rs['fecha_final'];
+                        }
 
                         if ( $rs['cantidad_orden'] ) {
                             if ( $rs['ingreso_obra'] == $rs['cantidad_orden'] ){
@@ -1326,7 +1335,6 @@
 
                         if  ($rs['fecha_orden'] !== null)
                             $objPHPExcel->getActiveSheet()->setCellValue('S'.$fila,PHPExcel_Shared_Date::PHPToExcel($rs['fecha_orden']));
-                            $objPHPExcel->getActiveSheet()->getStyle('S'.$fila)->getNumberFormat()->setFormatCode('dd/mm/yyyy');
 
                         $objPHPExcel->getActiveSheet()->setCellValue('T'.$fila,$rs['cantidad_orden']);
                        
@@ -1343,8 +1351,7 @@
                         $objPHPExcel->getActiveSheet()->setCellValue('X'.$fila,$rs['proveedor']);
 
                         if  ($rs['fecha_descarga'] !== null){
-                            $objPHPExcel->getActiveSheet()->setCellValue('Y'.$fila,PHPExcel_Shared_Date::PHPToExcel($rs['fecha_descarga']));
-                            
+                            $objPHPExcel->getActiveSheet()->setCellValue('Y'.$fila,PHPExcel_Shared_Date::PHPToExcel($fecha_entrega));   
                         }else {
                             $objPHPExcel->getActiveSheet()->setCellValue('Y'.$fila,"-");
                         }
@@ -1378,14 +1385,13 @@
                         $fila++;
                     }
                 }
-
             
                 $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel,'Excel2007');
                 $objWriter->save('public/documentos/reportes/cargoplan.xlsx');
 
                 return array("documento"=>'public/documentos/reportes/cargoplan.xlsx');
 
-                //exit();
+                exit();
 
                 return $salida;
 
