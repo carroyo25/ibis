@@ -532,7 +532,7 @@
                     $clase = "mensaje_correcto";
                     $this->actualizarCabeceraPedido(59,$cabecera['codigo_pedido'],$cabecera['codigo_orden']);
                     $this->actualizarDetallesPedido(59,$detalles,$cabecera['codigo_orden'],$cabecera['codigo_entidad']);
-                    $this->actualizarCabeceraOrden(59,$cabecera['codigo_orden'],$cabecera['fentrega']);
+                    $this->actualizarCabeceraOrden(59,$cabecera['codigo_orden'],NULL);
                 }
 
                 $salida= array("estado"=>$estadoEnvio,
@@ -552,6 +552,8 @@
                 require_once("public/PHPMailer/PHPMailerAutoload.php");
 
                 $documento = $this->generarContrato($cabecera,2,$detalles,$condiciones);
+
+                $fechaActual = date('Y-m-d');
 
                 $subject    = utf8_decode("Atención Sub Contrato Sepcon");
                 $messaje    = utf8_decode("Su atencion al contrato adjunto");
@@ -606,7 +608,7 @@
                     }else {
                         $this->actualizarCabeceraPedido($cambio,$cabecera['codigo_pedido'],$cabecera['codigo_orden']);
                         $this->actualizarDetallesPedidoCorreo($cambio,$detalles);
-                        $this->actualizarCabeceraOrden($cambio,$cabecera['codigo_orden'],$cabecera['fentrega']);
+                        $this->actualizarCabeceraOrden($cambio,$cabecera['codigo_orden'],$fechaActual);
 
                         return array("mensaje"=>"Correo enviado",
                                     "clase"=>"mensaje_correcto",

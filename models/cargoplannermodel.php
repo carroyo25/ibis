@@ -76,7 +76,10 @@
                                                         alm_despachocab.cnumguia,
                                                         LPAD(alm_recepcab.nnronota,6,0) AS nota_ingreso,
                                                         LPAD(alm_cabexist.idreg,6,0) AS nota_obra,
-                                                        tb_equipmtto.cregistro 
+                                                        DATE_FORMAT( alm_cabexist.ffechadoc, '%d/%m/%Y' ) AS fecha_ingreso_almacen_obra,
+                                                        DATE_FORMAT( alm_recepcab.ffecdoc, '%d/%m/%Y' ) AS fecha_recepcion_proveedor,
+                                                        tb_equipmtto.cregistro,
+	                                                    usuarios.cnombres AS usuario
                                                     FROM
                                                         tb_pedidodet
                                                         INNER JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
@@ -97,7 +100,8 @@
                                                         LEFT JOIN alm_recepcab ON alm_recepdet.id_regalm = alm_recepcab.id_regalm
                                                         LEFT JOIN alm_existencia ON tb_pedidodet.iditem = alm_existencia.idpedido
                                                         LEFT JOIN alm_cabexist ON alm_existencia.idregistro = alm_cabexist.idreg
-                                                        LEFT JOIN tb_equipmtto ON tb_pedidodet.nregistro = tb_equipmtto.idreg 
+                                                        LEFT JOIN tb_equipmtto ON tb_pedidodet.nregistro = tb_equipmtto.idreg
+                                                        LEFT JOIN tb_user AS usuarios ON tb_pedidocab.usuario = usuarios.iduser 
                                             WHERE
                                                 tb_pedidodet.nflgActivo
                                                 AND ISNULL( lg_ordendet.nflgactivo ) 
@@ -265,10 +269,12 @@
                             $cantidad = $rs['cantidad_aprobada'] == 0 ? $rs['cantidad_pedido'] : $rs['cantidad_aprobada'];
 
                             $fecha_entrega = "";
+                            $fecha_descarga = "";
                             $dias_plazo = '+'. intVal( $rs['plazo']) .' days';
 
                             if ( $rs['ffechades'] !== NULL ) {
                                 $fecha_entrega = date("d/m/Y",strtotime($rs['ffechades'].$dias_plazo));
+                                $fecha_descarga = $rs['fecha_descarga'];
                             }
     
                             $salida.='<tr class="pointer" 
@@ -303,9 +309,13 @@
                                         <td class="pl10px">'.$rs['fecha_autorizacion_orden'].'</td>
                                         <td class="textoDerecha pr15px">'.number_format($rs['cantidad_atendida'],2).'</td>
                                         <td class="pl10px">'.$rs['proveedor'].'</td>
+                                        <td class="textoCentro">'.$fecha_descarga.'</td>
                                         <td class="textoCentro">'.$fecha_entrega.'</td>
+
                                         <td class="textoDerecha pr15px">'.$rs['ingreso'].'</td>
                                         <td class="textoCentro">'.$rs['nota_ingreso'].'</td>
+                                        <td class="textoCentro">'.$rs['fecha_recepcion_proveedor'].'</td>
+
                                         <td class="textoDerecha pr15px">'.$saldoRecibir.'</td>
                                         <td class="textoDerecha pr15px">'.$rs['plazo'].'</td>
                                         <td class="textoDerecha pr15px">'.$dias_atraso.'</td>
@@ -313,6 +323,7 @@
                                         <td class="textoDerecha">'.$rs['despachos'].'</td>
                                         <td class="textoCentro">'.$rs['cnumguia'].'</td>
                                         <td class="textoCentro">'.$rs['nota_obra'].'</td>
+                                        <td class="textoCentro">'.$rs['fecha_ingreso_almacen_obra'].'</td>
                                         <td class="textoDerecha">'.number_format($rs['ingreso_obra'],2).'</td>
                                         <td class="textoCentro">'.$estado_pedido.'</td>
                                         <td class="textoCentro">'.$estado_item.'</td>
@@ -321,6 +332,7 @@
                                         <td class="textoCentro">'.$rs['operador'].'</td>
                                         <td class="textoCentro">'.$transporte.'</td>
                                         <td class="pl10px">'.$rs['concepto'].'</td>
+                                        <td class="pl10px">'.$rs['usuario'].'</td>
                                 </tr>';
                                 
                                 $nro_orden = $rs['orden'];

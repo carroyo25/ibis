@@ -177,6 +177,7 @@ $(function() {
 
         return false;
     });
+    
     $("#cargoPlanDescrip tbody").on('click','tr', function(e) {
         e.preventDefault();
 

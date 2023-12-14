@@ -246,16 +246,19 @@
                     <th style="background:#AAFFAA; color:#000">Fecha</br>Autorización</th>
                     <th>Atencion</br>Almacen</th>
                     <th style="background:#AB7FAB; color:#fff" width="10%" data-idcol="22" class="datafiltro">Descripcion Proveedor</th>
+                    <th>Fecha Envio</br>Proveedor</th>
                     <th>Fecha Entrega</br>Proveedor</th>
                     <th width="50px">Cantidad</br>Recibida</th>
                     <th width="50px" data-idcol="25" class="datafiltro">Nota</br>Ingreso</th>
+                    <th width="50px">Fecha</br>Recepcion Proveedor</th>
                     <th>Saldo por</br>Recibir</th>
                     <th width="50px">Días</br>Entrega</th>
                     <th>Días</br>Atrazo</th>
                     <th>Semaforo</th>
                     <th style="background:#25AFF3; color:#000">Cantidad</br>Enviada</th>
                     <th style="background:#25AFF3; color:#000" data-idcol="31" class="datafiltro">Nro. Guia</th>
-                    <th style="background:#DA500B; color:#000" data-idcol="32" class="datafiltro">Registro</br>Almacen</th>
+                    <th style="background:#DA500B; color:#000">Registro</br>Almacen</th>
+                    <th style="background:#DA500B; color:#000">Fecha</br>Ingreso Almacen</th>
                     <th style="background:#DA500B; color:#000">Cantidad</br>Recibida</br>Obra</th>
                     <th>Estado</br>Pedido</th>
                     <th>Estado</br>Item</th>
@@ -264,6 +267,7 @@
                     <th>Operador</br>Logístico</th>
                     <th>Tipo</br>Transporte</th>
                     <th data-idcol="40" class="datafiltro">Observaciones/Concepto</th>
+                    <th data-idcol="41" class="datafiltro">Solicitante</th>
                 </tr>
             </thead>
             <tbody>

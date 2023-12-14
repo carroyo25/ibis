@@ -678,7 +678,7 @@ $(function(){
 
             let result = {};
 
-            $("#fentrega").val(sumarDias( parseInt( $("#dias").val() ) ) );
+            //$("#fentrega").val(sumarDias( parseInt( $("#dias").val() ) ) );
     
             $.each($("#formProceso").serializeArray(),function(){
                 result[this.name] = this.value;
