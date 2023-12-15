@@ -132,6 +132,19 @@
                             </tbody>
                         </table>
                     </section>
+                    <section class="seccion5">
+                        <table id="tablaObra">
+                            <caption>Registros Obra</caption>
+                            <thead>
+                                <th>Nro. Nota</th>
+                                <th>Fecha Ingreso</th>
+                                <th>...</th>
+                            </thead>
+                            <tbody>
+                                 
+                            </tbody>
+                        </table>
+                    </section>
                 </div>
             </form>
         </div>

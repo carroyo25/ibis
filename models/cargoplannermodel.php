@@ -275,6 +275,8 @@
                             if ( $rs['ffechades'] !== NULL ) {
                                 $fecha_entrega = date("d/m/Y",strtotime($rs['ffechades'].$dias_plazo));
                                 $fecha_descarga = $rs['fecha_descarga'];
+                            }else{
+                                $fecha_entrega = $rs['fecha_entrega'];
                             }
     
                             $salida.='<tr class="pointer" 
@@ -427,6 +429,7 @@
             require_once('public/PHPExcel/PHPExcel.php');
             try {
                 $objPHPExcel = new PHPExcel();
+                
                 $objPHPExcel->getProperties()
                     ->setCreator("Sical")
                     ->setLastModifiedBy("Sical")
@@ -445,9 +448,6 @@
 
                 $objPHPExcel->setActiveSheetIndex(0);
                 $objPHPExcel->getActiveSheet()->setTitle("Cargo Plan");
-
-
-                $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel,'Excel2007');
 
                 $objPHPExcel->getActiveSheet()->mergeCells('A1:AP1');
                 $objPHPExcel->getActiveSheet()->setCellValue('A1','CARGO PLAN');
@@ -491,14 +491,7 @@
                             ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
                             ->getStartColor()
                             ->setRGB('00FFFF');
-
-                $objPHPExcel->getActiveSheet()
-                            ->getStyle('AE2:AP2')
-                            ->getFill()
-                            ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
-                            ->getStartColor()
-                            ->setRGB('FFFF00');
-
+                
                 $objPHPExcel->getActiveSheet()
                             ->getStyle('W2:AD2')
                             ->getFill()
@@ -506,7 +499,16 @@
                             ->getStartColor()
                             ->setRGB('BFCDDB');
 
-                $objPHPExcel->getActiveSheet()->getStyle('A1:AK2')->getAlignment()->setWrapText(true);
+                $objPHPExcel->getActiveSheet()
+                            ->getStyle('AE2:AT2')
+                            ->getFill()
+                            ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
+                            ->getStartColor()
+                            ->setRGB('FFFF00');
+
+                
+
+                $objPHPExcel->getActiveSheet()->getStyle('A1:AT2')->getAlignment()->setWrapText(true);
 
                 $objPHPExcel->getActiveSheet()->setCellValue('A2','Items'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('B2','Estado Actual'); // esto cambia
@@ -532,26 +534,30 @@
                 $objPHPExcel->getActiveSheet()->setCellValue('V2','Fecha Autorizacion'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('W2','Atencion Almacen'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('X2','Descripcion del proveedor'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('Y2','Fecha Entrega'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('Z2','Cant. Recibida'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AA2','Nota de Ingreso'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AB2','Saldo por Recibir'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AC2','Dias Entrega'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AD2','Días Atrazo'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AE2','Semáforo'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AF2','Cantidad Despachada'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AG2','Nro. Guia'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AH2','Registro Almacen'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AI2','Cantidad en Obra'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AJ2','Estado Pedido'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AK2','Estado Item'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AL2','N° Parte'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AM2','Codigo Activo'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AN2','Operador Logístico'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AO2','Tipo Transporte'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AP2','Observaciones/Concepto'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('Y2','Fecha Envio Proveedor'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('Z2','Fecha Entrega Proveedor'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AA2','Cant. Recibida'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AB2','Nota de Ingreso'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AC2','Fecha Recepcion Proveedor'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AD2','Saldo por Recibir'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AE2','Dias Entrega'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AF2','Días Atrazo'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AG2','Semáforo'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AH2','Cantidad Despachada'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AI2','Nro. Guia'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AJ2','Registro Almacen'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AK2','Fecha Ingreso Almacen'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AL2','Cantidad en Obra'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AM2','Estado Pedido'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AN2','Estado Item'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AO2','N° Parte'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AP2','Codigo Activo'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AQ2','Operador Logístico'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AR2','Tipo Transporte'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AS2','Observaciones/Concepto'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AT2','Solicitante'); // esto cambia
                
-                $fila = 3;
+                /*$fila = 3;
                 $datos = json_decode($registros);
                 $nreg = count($datos);
 
@@ -638,7 +644,6 @@
                         $objPHPExcel->getActiveSheet()->setCellValue('J'.$fila,PHPExcel_Shared_Date::PHPToExcel($datos[$i]->crea_pedido));
                         $objPHPExcel->getActiveSheet()->getStyle('J'.$fila)->getNumberFormat()->setFormatCode('dd/mm/yyyy');
 
-                    //$objPHPExcel->getActiveSheet()->setCellValue('K'.$fila,$datos[$i]->apro_pedido);
                     if  ($datos[$i]->apro_pedido !== "")
                         $objPHPExcel->getActiveSheet()->setCellValue('K'.$fila,PHPExcel_Shared_Date::PHPToExcel($datos[$i]->apro_pedido));
                         $objPHPExcel->getActiveSheet()->getStyle('K'.$fila)->getNumberFormat()->setFormatCode('dd/mm/yyyy');
@@ -689,8 +694,7 @@
                     $objPHPExcel->getActiveSheet()->setCellValue('AO'.$fila,$datos[$i]->transporte);
                     $objPHPExcel->getActiveSheet()->setCellValue('AP'.$fila,$datos[$i]->observaciones);
 
-                    $fila++;
-                }
+                    $fila++;               }
 
                 $objPHPExcel->getActiveSheet()->getStyle('A:C')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
                 $objPHPExcel->getActiveSheet()->getStyle('A:C')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
@@ -708,7 +712,7 @@
                 $objPHPExcel->getActiveSheet()->getStyle('AI:AL')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
                 $objPHPExcel->getActiveSheet()->getStyle('AP')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                $objPHPExcel->getActiveSheet()->getStyle('AP')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('AP')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);*/
 
                 $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel,'Excel2007');
                 $objWriter->save('public/documentos/reportes/cargoplan.xlsx');
@@ -964,8 +968,8 @@
                 $objPHPExcel->setActiveSheetIndex(0);
                 $objPHPExcel->getActiveSheet()->setTitle("Cargo Plan");
 
-
-                $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel,'Excel2007');
+                //$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel,'Excel2007');
+                
                 $objPHPExcel->getActiveSheet()->mergeCells('A1:AP1');
                 $objPHPExcel->getActiveSheet()->setCellValue('A1','CARGO PLAN');
 
