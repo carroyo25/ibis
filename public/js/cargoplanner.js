@@ -216,26 +216,31 @@ detalles = () =>{
             CANTIDAD_ORDEN      = $(this).find('td').eq(19).text(),
             ITEM_ORDEN          = $(this).find('td').eq(20).text(),
             AUTORIZA_ORDEN      = $(this).find('td').eq(21).text(),
-            CANTIDA_ALMACEN     = $(this).find('td').eq(22).text(),
+            CANTIDAD_ALMACEN    = $(this).find('td').eq(22).text(),
             PROVEEDOR           = $(this).find('td').eq(23).text(),
-            FECHA_ENTREGA       = $(this).find('td').eq(24).text(),
-            CANTIDAD_RECIBIDA   = $(this).find('td').eq(25).text(),
-            NOTA_INGRESO        = $(this).find('td').eq(26).text(),
-            SALDO_RECIBIR       = $(this).find('td').eq(27).text(),
-            DIAS_ENTREGA        = $(this).find('td').eq(28).text(),
-            DIAS_ATRASO         = $(this).find('td').eq(29).text(),
-            SEMAFORO            = $(this).find('td').eq(30).text(),
-            DESPACHO            = $(this).find('td').eq(31).text(),
-            NUMERO_GUIA         = $(this).find('td').eq(32).text(),
-            REGISTRO_ALMACEN    = $(this).find('td').eq(33).text(),
-            CANTIDA_OBRA        = $(this).find('td').eq(34).text(),
-            ESTADO_PEDIDO       = $(this).find('td').eq(35).text(),
-            ESTADO_ITEM         = $(this).find('td').eq(36).text(),
-            NUMERO_PARTE        = $(this).find('td').eq(37).text(),
-            CODIGO_ACTIVO       = $(this).find('td').eq(38).text(),
-            OPERADOR            = $(this).find('td').eq(39).text(),
-            TRANSPORTE          = $(this).find('td').eq(40).text(),
-            OBSERVACIONES       = $(this).find('td').eq(41).text();
+            
+            FECHA_ENVIO         = $(this).find('td').eq(24).text(),
+            FECHA_ENTREGA       = $(this).find('td').eq(25).text(),
+            CANTIDAD_RECIBIDA   = $(this).find('td').eq(26).text(),
+            NOTA_INGRESO        = $(this).find('td').eq(27).text(),
+            FECHA_RECEPCION       = $(this).find('td').eq(28).text(),
+            SALDO_RECIBIR       = $(this).find('td').eq(29).text(),
+            DIAS_ENTREGA        = $(this).find('td').eq(30).text(),
+            DIAS_ATRASO         = $(this).find('td').eq(31).text(),
+            SEMAFORO            = $(this).find('td').eq(32).text(),
+            DESPACHO            = $(this).find('td').eq(33).text(),
+            NUMERO_GUIA         = $(this).find('td').eq(34).text(),
+            REGISTRO_ALMACEN    = $(this).find('td').eq(35).text(),
+            FECHA_REGISTRO_OBRA = $(this).find('td').eq(26).text(),
+            CANTIDA_OBRA        = $(this).find('td').eq(37).text(),
+            ESTADO_PEDIDO       = $(this).find('td').eq(38).text(),
+            ESTADO_ITEM         = $(this).find('td').eq(39).text(),
+            NUMERO_PARTE        = $(this).find('td').eq(40).text(),
+            CODIGO_ACTIVO       = $(this).find('td').eq(41).text(),
+            OPERADOR            = $(this).find('td').eq(42).text(),
+            TRANSPORTE          = $(this).find('td').eq(43).text(),
+            OBSERVACIONES       = $(this).find('td').eq(44).text(),
+            SOLICITANTE         = $(this).find('td').eq(45).text();
 
         item = {};
 
@@ -259,19 +264,29 @@ detalles = () =>{
         item['nro_orden']           = NRO_ORDEN;
         item['fecha_orden']         = FECHA_ORDEN;
         item['item_orden']          = ITEM_ORDEN;
+        item['cantidad_orden']      = CANTIDAD_ORDEN;
         item['autoriza_orden']      = AUTORIZA_ORDEN;
+        item['cantidad_almacen']    = CANTIDAD_ALMACEN;
+
         item['proveedor']           = PROVEEDOR;
+        item['fecha_envio']         = FECHA_ENVIO;
         item['fecha_entrega']       = FECHA_ENTREGA;
+
         item['cantidad_recibida']   = CANTIDAD_RECIBIDA;
         item['nota_ingreso']        = NOTA_INGRESO;
+        item['fecha_recepcion']     = FECHA_RECEPCION;
+
         item['saldo_recibir']       = SALDO_RECIBIR;
         item['dias_entrega']        = DIAS_ENTREGA;
         item['dias_atraso']         = DIAS_ATRASO;
         item['semaforo']            = SEMAFORO;
         item['despacho']            = DESPACHO;
         item['numero_guia']         = NUMERO_GUIA;
+
         item['registro_almacen']    = REGISTRO_ALMACEN;
+        item['fecha_registro_obra'] = FECHA_REGISTRO_OBRA;
         item['cantidad_obra']       = CANTIDA_OBRA;
+        
         item['estado_pedido']       = ESTADO_PEDIDO;
         item['estado_item']         = ESTADO_ITEM;
         item['numero_parte']        = NUMERO_PARTE;
@@ -279,7 +294,8 @@ detalles = () =>{
         item['operador']            = OPERADOR;
         item['transporte']          = TRANSPORTE;
         item['observaciones']       = OBSERVACIONES;
-        item['cantidad_orden']      = CANTIDAD_ORDEN;
+        item['solicitante']         = SOLICITANTE;
+        
         
         DATA.push(item);
     })
