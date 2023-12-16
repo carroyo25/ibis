@@ -61,6 +61,7 @@
                                                         lg_ordencab.fechaOpe,
                                                         lg_ordencab.FechaFin,
                                                         lg_ordencab.ffechaent,
+                                                        lg_ordencab.nEstadoDoc,
                                                         UPPER( cm_entidad.crazonsoc ) AS proveedor,
                                                         ( SELECT SUM(lg_ordendet.ncanti) FROM lg_ordendet WHERE lg_ordendet.niddeta = tb_pedidodet.iditem AND lg_ordendet.id_orden != 0 ) AS cantidad_orden,
                                                         ( SELECT SUM( alm_recepdet.ncantidad ) FROM alm_recepdet WHERE alm_recepdet.niddetaPed = tb_pedidodet.iditem AND alm_recepdet.nflgactivo = 1 ) AS ingreso,
@@ -79,7 +80,8 @@
                                                         DATE_FORMAT( alm_cabexist.ffechadoc, '%d/%m/%Y' ) AS fecha_ingreso_almacen_obra,
                                                         DATE_FORMAT( alm_recepcab.ffecdoc, '%d/%m/%Y' ) AS fecha_recepcion_proveedor,
                                                         tb_equipmtto.cregistro,
-	                                                    usuarios.cnombres AS usuario
+	                                                    usuarios.cnombres AS usuario,
+                                                        DATE_ADD( lg_ordencab.ffechades, INTERVAL lg_ordencab.nplazo DAY ) AS fecha_entrega_final
                                                     FROM
                                                         tb_pedidodet
                                                         INNER JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
@@ -148,7 +150,7 @@
 
                         $porcentaje = "100%";
 
-                            if ($rs['orden'] ){
+                            if ( $rs['orden'] ){
                                 if ( $nro_orden == $rs['orden'] ) {
                                     $itemOrden++;
                                 }else{
@@ -272,12 +274,16 @@
                             $fecha_descarga = "";
                             $dias_plazo = '+'. intVal( $rs['plazo']) .' days';
 
-                            if ( $rs['ffechades'] !== NULL ) {
-                                $fecha_entrega = date("d/m/Y",strtotime($rs['ffechades'].$dias_plazo));
-                                $fecha_descarga = $rs['fecha_descarga'];
-                            }else{
-                                $fecha_entrega = $rs['fecha_entrega'];
+                            if ( $rs['orden'] != "" && $rs['orden'] != 60 ) {
+                                if ( $rs['ffechades'] !== NULL ) {
+                                    $fecha_descarga = $rs['ffechades'];
+                                    $fecha_entrega = $rs['fecha_entrega_final'];
+                                }else{
+                                    $fecha_entrega = date("d/m/Y",strtotime($rs['ffechaent'].$dias_plazo));
+                                    $fecha_descarga = $rs['fecha_autorizacion_orden'];
+                                }
                             }
+                               
     
                             $salida.='<tr class="pointer" 
                                         data-itempedido="'.$rs['iditem'].'" 
@@ -1406,6 +1412,14 @@
                        
 
                         $objPHPExcel->getActiveSheet()->setCellValue('X'.$fila,$rs['proveedor']);
+
+                        if ( $rs['ffechades'] !== NULL ) {
+                            $fecha_descarga = $rs['fecha_descarga'];
+                            $fecha_entrega = $rs['fecha_entrega_final'];
+                        }else{
+                            $fecha_entrega = date("d/m/Y",strtotime($rs['ffechaent'].$dias_plazo));
+                            $fecha_descarga = $rs['fecha_entrega'];
+                        }
 
                         if  ($rs['fecha_descarga'] !== null){
                             $objPHPExcel->getActiveSheet()->setCellValue('Y'.$fila,PHPExcel_Shared_Date::PHPToExcel($rs['fecha_descarga']));   
