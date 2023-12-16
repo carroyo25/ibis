@@ -231,7 +231,7 @@ detalles = () =>{
             DESPACHO            = $(this).find('td').eq(33).text(),
             NUMERO_GUIA         = $(this).find('td').eq(34).text(),
             REGISTRO_ALMACEN    = $(this).find('td').eq(35).text(),
-            FECHA_REGISTRO_OBRA = $(this).find('td').eq(26).text(),
+            FECHA_REGISTRO_OBRA = $(this).find('td').eq(36).text(),
             CANTIDA_OBRA        = $(this).find('td').eq(37).text(),
             ESTADO_PEDIDO       = $(this).find('td').eq(38).text(),
             ESTADO_ITEM         = $(this).find('td').eq(39).text(),

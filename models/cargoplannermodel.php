@@ -570,6 +570,7 @@
                 $objPHPExcel->getActiveSheet()->getStyle('V')->getNumberFormat()->setFormatCode('dd/mm/yyyy');
                 $objPHPExcel->getActiveSheet()->getStyle('Y')->getNumberFormat()->setFormatCode('dd/mm/yyyy');
                 $objPHPExcel->getActiveSheet()->getStyle('Z')->getNumberFormat()->setFormatCode('dd/mm/yyyy');
+                $objPHPExcel->getActiveSheet()->getStyle('AK')->getNumberFormat()->setFormatCode('dd/mm/yyyy');
 
                 for ($i=0; $i < $nreg ; $i++) {
 
@@ -697,11 +698,11 @@
                     $objPHPExcel->getActiveSheet()->setCellValue('AH'.$fila,$datos[$i]->despacho);
                     $objPHPExcel->getActiveSheet()->setCellValue('AI'.$fila,$datos[$i]->numero_guia);
                     $objPHPExcel->getActiveSheet()->setCellValue('AJ'.$fila,$datos[$i]->registro_almacen);
-                    
-                    $objPHPExcel->getActiveSheet()->setCellValue('AK'.$fila,$datos[$i]->cantidad_obra);
 
                     if  ($datos[$i]->fecha_registro_obra !== "")
-                        $objPHPExcel->getActiveSheet()->setCellValue('AL'.$fila,PHPExcel_Shared_Date::PHPToExcel($datos[$i]->fecha_registro_obra));
+                        $objPHPExcel->getActiveSheet()->setCellValue('AK'.$fila,PHPExcel_Shared_Date::PHPToExcel($datos[$i]->fecha_registro_obra));
+
+                    $objPHPExcel->getActiveSheet()->setCellValue('AL'.$fila,$datos[$i]->cantidad_obra);
 
                     $objPHPExcel->getActiveSheet()->setCellValue('AM'.$fila,$datos[$i]->estado_pedido);
                     $objPHPExcel->getActiveSheet()->setCellValue('AN'.$fila,$datos[$i]->estado_item);
