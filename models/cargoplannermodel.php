@@ -272,19 +272,13 @@
 
                             $fecha_entrega = "";
                             $fecha_descarga = "";
-                            $dias_plazo = '+'. intVal( $rs['plazo']) .' days';
+                            $dias_plazo = intVal( $rs['plazo'] )+1 .' days';
 
-                            if ( $rs['orden'] != "" && $rs['orden'] != 60 ) {
-                                if ( $rs['ffechades'] !== NULL ) {
-                                    $fecha_descarga = $rs['ffechades'];
-                                    $fecha_entrega = $rs['fecha_entrega_final'];
-                                }else{
-                                    $fecha_entrega = date("d/m/Y",strtotime($rs['ffechaent'].$dias_plazo));
-                                    $fecha_descarga = $rs['fecha_autorizacion_orden'];
-                                }
+                            if ( $rs['fecha_autorizacion_orden'] !== null && $rs['estadoItem'] !== 105 ) { 
+                                $fecha_entrega = date("d/m/Y",strtotime($rs['FechaFin'].$dias_plazo));
+                                $fecha_descarga = date("d/m/Y",strtotime($rs['FechaFin'].' 1 days'));
                             }
-                               
-    
+
                             $salida.='<tr class="pointer" 
                                         data-itempedido="'.$rs['iditem'].'" 
                                         data-pedido="'.$rs['idpedido'].'" 
@@ -683,9 +677,10 @@
                     
                     $objPHPExcel->getActiveSheet()->setCellValue('X'.$fila,$datos[$i]->proveedor);
 
-                    $objPHPExcel->getActiveSheet()->setCellValue('Y'.$fila,PHPExcel_Shared_Date::PHPToExcel($datos[$i]->fecha_envio));
+                    if  ( $datos[$i]->fecha_envio !== "" )
+                        $objPHPExcel->getActiveSheet()->setCellValue('Y'.$fila,PHPExcel_Shared_Date::PHPToExcel($datos[$i]->fecha_envio));
 
-                    if  ($datos[$i]->fecha_entrega !== "")
+                    if  ( $datos[$i]->fecha_entrega !== "" )
                         $objPHPExcel->getActiveSheet()->setCellValue('Z'.$fila,PHPExcel_Shared_Date::PHPToExcel($datos[$i]->fecha_entrega));
 
                     $objPHPExcel->getActiveSheet()->setCellValue('AA'.$fila,$datos[$i]->cantidad_recibida);
@@ -913,6 +908,7 @@
                                                 tb_unimed.cabrevia AS unidad,
                                                 lg_ordencab.cper AS anio_orden,
                                                 lg_ordencab.ntipmov,
+                                                lg_ordencab.FechaFin,
                                                 FORMAT( lg_ordencab.nplazo, 0 ) AS plazo,
                                                 DATE_FORMAT( lg_ordencab.ffechadoc, '%d/%m/%Y' ) AS fecha_orden,
                                                 DATE_FORMAT( lg_ordencab.ffechaent, '%d/%m/%Y' ) AS fecha_entrega,
@@ -1224,10 +1220,12 @@
                         $porcentaje = '';
 
                         $fecha_entrega = "";
-                        $dias_plazo = '+'. intVal( $rs['plazo']) .' days';
+                        $fecha_descarga = "";
+                        $dias_plazo = intVal( $rs['plazo'] )+1 .' days';
 
-                        if ( $rs['fecha_descarga'] !== NULL ) {
-                            $fecha_entrega = $rs['fecha_entrega_final'];
+                        if ( $rs['fecha_autorizacion_orden'] !== null && $rs['estadoItem'] !== 105 ) { 
+                            $fecha_entrega = date("d/m/Y",strtotime($rs['FechaFin'].$dias_plazo));
+                            $fecha_descarga = date("d/m/Y",strtotime($rs['FechaFin'].' 1 days'));
                         }
 
                         if ( $rs['cantidad_orden'] ) {
@@ -1413,25 +1411,11 @@
 
                         $objPHPExcel->getActiveSheet()->setCellValue('X'.$fila,$rs['proveedor']);
 
-                        if ( $rs['ffechades'] !== NULL ) {
-                            $fecha_descarga = $rs['fecha_descarga'];
-                            $fecha_entrega = $rs['fecha_entrega_final'];
-                        }else{
-                            $fecha_entrega = date("d/m/Y",strtotime($rs['ffechaent'].$dias_plazo));
-                            $fecha_descarga = $rs['fecha_entrega'];
-                        }
-
-                        if  ($rs['fecha_descarga'] !== null){
-                            $objPHPExcel->getActiveSheet()->setCellValue('Y'.$fila,PHPExcel_Shared_Date::PHPToExcel($rs['fecha_descarga']));   
-                        }else {
-                            $objPHPExcel->getActiveSheet()->setCellValue('Y'.$fila,"-");
-                        }
-
-                        if  ($rs['fecha_entrega_final'] !== null){
-                            $objPHPExcel->getActiveSheet()->setCellValue('Z'.$fila,PHPExcel_Shared_Date::PHPToExcel($rs['fecha_entrega_final']));   
-                        }else {
-                            $objPHPExcel->getActiveSheet()->setCellValue('Z'.$fila,PHPExcel_Shared_Date::PHPToExcel($rs['fecha_entrega'])); 
-                        }
+                        if ( $fecha_descarga != "" )
+                            $objPHPExcel->getActiveSheet()->setCellValue('Y'.$fila,PHPExcel_Shared_Date::PHPToExcel($fecha_descarga));   
+                        
+                        if ( $fecha_entrega != "" )
+                        $objPHPExcel->getActiveSheet()->setCellValue('Z'.$fila,PHPExcel_Shared_Date::PHPToExcel($fecha_entrega));   
 
                         $objPHPExcel->getActiveSheet()->setCellValue('AA'.$fila,$rs['ingreso']);
                         $objPHPExcel->getActiveSheet()->setCellValue('AB'.$fila,$rs['nota_ingreso']);
