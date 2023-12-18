@@ -70,7 +70,7 @@
                                                         ( SELECT SUM( alm_existencia.cant_ingr ) FROM alm_existencia WHERE alm_existencia.idpedido = tb_pedidodet.iditem AND alm_existencia.nflgActivo = 1 ) AS atencion_almacen,
                                                         UPPER( tb_user.cnameuser ) AS operador,
                                                         UPPER( tb_pedidocab.concepto ) AS concepto,
-                                                        DATEDIFF(  lg_ordencab.ffechades, NOW() ) AS dias_atraso,
+                                                        DATEDIFF(  lg_ordencab.ffechaent, NOW() ) AS dias_atraso,
                                                         transporte.cdescripcion AS transporte,
                                                         transporte.nidreg,
                                                         user_aprueba.cnombres,
@@ -132,8 +132,7 @@
                 $estado = "";
                 $porcentaje = 0;
                 $estadofila = 0;
-                $estadoSemaforo = "";
-                $semaforo = "";
+                
                 $saldoRecibir = "";
                 $saldo = "";
                 $dias_atraso = "";
@@ -162,8 +161,14 @@
                             
                             $tipo_orden = $rs['idtipomov'] == 37 ? 'BIENES' : 'SERVICIO';
                             $clase_operacion = $rs['idtipomov'] == 37 ? 'bienes' : 'servicios';
+                            
                             $saldoRecibir = $rs['cantidad_orden'] - $rs['ingreso'] > 0 ? $rs['cantidad_orden'] - $rs['ingreso'] : "-";
-                            $dias_atraso  =  $saldoRecibir > 0 ? "-" :$rs['dias_atraso'] ;
+
+                            $dias_atraso  =  "";
+                            
+                            $estadoSemaforo = "";
+                            $semaforo = "";
+
                             $suma_atendido = number_format($rs['cantidad_orden'] + $rs['atencion_almacen'],2);
 
                             $estado_pedido =  $rs['estadoItem'] >= 54 ? "Atendido":"Pendiente";
@@ -172,22 +177,7 @@
                             $transporte = $rs['nidreg'] == 39 ? "TERRESTRE": $rs['transporte'];
 
                             $atencion = $rs['atencion'] == 47 ? "NORMAL" : "URGENTE"; 
-
-                            if ( $rs['cantidad_orden'] ) {
-                                if ( $rs['ingreso_obra'] == $rs['cantidad_orden'] ){
-                                    $estadoSemaforo = "semaforoVerde";
-                                    $semaforo = "Entregado";
-                                }else if ($dias_atraso <= 5) {
-                                    $estadoSemaforo = "semaforoVerde";
-                                    $semaforo = "Verde";
-                                }else if ( $rs['cantidad_orden'] == $rs['ingreso'] ) {
-                                    $estadoSemaforo = "semaforoNaranja";
-                                    $semaforo = "Naranja";
-                                }else if ( $dias_atraso > 5 && ($rs['cantidad_orden'] != $rs['ingreso']) ) {
-                                    $estadoSemaforo = "semaforoRojo";
-                                    $semaforo = "Rojo";
-                                }
-                            }
+                           
                             
                             if ( $rs['estadoItem'] == 105 ) {
                                 $porcentaje = "0%";
@@ -267,7 +257,6 @@
                                 $estado_pedido = "atendido";
                             }
 
-
                             $cantidad = $rs['cantidad_aprobada'] == 0 ? $rs['cantidad_pedido'] : $rs['cantidad_aprobada'];
 
                             $fecha_entrega = "";
@@ -277,6 +266,39 @@
                             if ( $rs['fecha_autorizacion_orden'] !== null && $rs['estadoItem'] !== 105 ) { 
                                 $fecha_entrega = date("d/m/Y",strtotime($rs['FechaFin'].$dias_plazo));
                                 $fecha_descarga = date("d/m/Y",strtotime($rs['FechaFin'].' 1 days'));
+                            }
+
+                            if ( $rs['estadoItem'] !== 105 ) {
+
+                                if  ($fecha_entrega !== ''){
+                                    $dias_atraso  =  $rs['dias_atraso'];
+
+                                    //$dias = $this->calcularDiasCargoPlan($fecha_entrega);
+
+                                    if ( $rs['ingreso_obra'] == $rs['cantidad_orden'] ){
+                                        $estadoSemaforo = "semaforoVerde";
+                                        $semaforo = "Entregado";
+                                        $dias_atraso  = "";
+                                    }else if ( $dias_atraso > 7 ) {
+                                        $estadoSemaforo = "semaforoVerde";
+                                        $semaforo = "Verde";
+                                        $dias_atraso  = "";
+                                    }else if ( $dias_atraso >= 0 && $dias_atraso <= 7){
+                                        $estadoSemaforo = "semaforoNaranja";
+                                        $semaforo = "Naranja";
+                                        $dias_atraso  = "";
+                                    }
+                                    else if ($dias_atraso < 0) {
+                                        $estadoSemaforo = "semaforoRojo";
+                                        $semaforo = "Rojo";
+                                        $dias_atraso  =  $rs['dias_atraso']*-1;
+                                    } 
+                                }else {
+                                    $dias_atraso  =  "";
+                                }
+                            }else {
+                                $estadoSemaforo = "anulado";
+                                $semaforo = "Anulado";
                             }
 
                             $salida.='<tr class="pointer" 
@@ -1228,7 +1250,7 @@
                             $fecha_descarga = date("d/m/Y",strtotime($rs['FechaFin'].' 1 days'));
                         }
 
-                        if ( $rs['cantidad_orden'] ) {
+                        /*if ( $rs['cantidad_orden'] ) {
                             if ( $rs['ingreso_obra'] == $rs['cantidad_orden'] ){
                                 $semaforoEstado = "Entregado";
                                 $color_semaforo = '90EE90';
@@ -1245,7 +1267,39 @@
                                 $semaforoEstado = "Entregado";
                                 $color_semaforo = '90EE90';
                             }
+                        }*/
+
+                        if ( $rs['estadoItem'] !== 105 ) {
+
+                            if  ($fecha_entrega !== ''){
+                                $dias_atraso  =  $rs['dias_atraso'];
+
+                                if ( $rs['ingreso_obra'] == $rs['cantidad_orden'] ){
+                                    $semaforoEstado = "Entregado";
+                                    $color_semaforo = '90EE90';
+                                    $dias_atraso  = "";
+                                }else if ( $dias_atraso > 7 ) {
+                                    $semaforoEstado = "Verde";
+                                    $color_semaforo = '90EE90';
+                                    $dias_atraso  = "";
+                                }else if ( $dias_atraso >= 0 && $dias_atraso <= 7){
+                                    $semaforoEstado = "Naranja";
+                                    $color_semaforo = 'FFD700';
+                                    $dias_atraso  = "";
+                                }
+                                else if ($dias_atraso < 0) {
+                                    $semaforoEstado = "Rojo";
+                                    $color_semaforo = 'FF0000';
+                                    $dias_atraso  =  $rs['dias_atraso']*-1;
+                                } 
+                            }else {
+                                $dias_atraso  =  "";
+                            }
+                        }else {
+                            $color_semaforo = 'CDCDCD';
+                            $semaforoEstado = "Anulado";
                         }
+
                         
                         if ( $rs['estadoItem'] === 105 ) {
                             $porcentaje = "0%";
@@ -1479,6 +1533,15 @@
                 echo "Error: ".$th->getMessage();
                 return false;
             }
+        }
+
+        private function calcularDiasCargoPlan($fechaInicial){
+            $fechaActual = date('Y-m-d'); // la fecha del ordenador
+
+            $diff = abs(strtotime($fechaActual) - strtotime($fechaInicial));
+            $years = floor($diff / (365*60*60*24));
+
+            return floor(($diff - $years * 365*60*60*24 - $months*30*60*60*24)/ (60*60*24));
         }
     }
 ?>

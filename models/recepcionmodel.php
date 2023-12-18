@@ -728,6 +728,7 @@
                                                         AND lg_ordencab.ncodpry = :id 
                                                         AND tb_costusu.nflgactivo = 1 
                                                         AND lg_ordencab.nEstadoDoc = 60");
+                
                 $sql->execute(["usr"=>$_SESSION['iduser'],"id"=>$id]);
                 $rowCount = $sql->rowCount();
 
@@ -754,6 +755,8 @@
             }
         }
 
+        
+        //verificar aca para el cambio de año
         public function filtrarOrdenesID($id){
             try {
                 $salida = "";
