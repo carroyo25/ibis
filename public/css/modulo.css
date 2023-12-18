@@ -531,6 +531,33 @@
   position: absolute;
   border: 1px solid #000;
 }
+.barraTrabajo .variasConsultas6campos {
+  color: #fff;
+  padding: 5px 15px;
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 10% 15px 45% 15px 10% 15px 10% 15px 10% 15px 10%;
+  grid-template-columns: 10% 45% 10% 10% 10% 10%;
+  -webkit-column-gap: 15px;
+     -moz-column-gap: 15px;
+          column-gap: 15px;
+  position: relative;
+}
+.barraTrabajo .variasConsultas6campos label {
+  line-height: 2rem;
+}
+.barraTrabajo .variasConsultas6campos input, .barraTrabajo .variasConsultas6campos select {
+  height: 2rem;
+  outline: none;
+  border: none;
+  padding-left: 20px;
+  border-radius: 8px;
+  width: 100%;
+}
+.barraTrabajo .variasConsultas6campos #vistafirma {
+  position: absolute;
+  border: 1px solid #000;
+}
 .barraTrabajo .variasConsultasColumna {
   display: -ms-grid;
   display: grid;

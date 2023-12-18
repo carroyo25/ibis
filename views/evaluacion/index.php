@@ -130,7 +130,7 @@
     </div>
     <div class="barraTrabajo">
         <form action="#" id="formConsulta">
-            <div class="variasConsultas">
+            <div class="variasConsultas6campos">
                     <div>
                         <label for="nroSearch">Nro : </label>
                         <input type="text" name="nroSearch" id="nroSearch">
@@ -139,6 +139,14 @@
                         <label for="costosSearch">Centro de Costos: </label>
                         <select name="costosSearch" id="costosSearch" class="item4">
                             <?php echo $this->listaCostosSelect ?>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="tipo">Tipo</label>
+                        <select name="tipoSearch" id="tipoSearch">
+                            <option value="-1">Elija Tipo</option>
+                            <option value="37">Bienes</option>
+                            <option value="38">Servicios</option>
                         </select>
                     </div>
                     <div>

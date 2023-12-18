@@ -25,7 +25,7 @@
         }
 
         function listaFiltrada(){
-            echo $this->model->listarOrdenesEval($_POST['nroSearch'],$_POST['costosSearch'],$_POST['mesSearch'],$_POST['anioSearch']);
+            echo $this->model->listarOrdenesEval($_POST['nroSearch'],$_POST['costosSearch'],$_POST['mesSearch'],$_POST['anioSearch'],$_POST['tipoSearch']);
         }
 
         function listaScroll(){

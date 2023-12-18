@@ -6,12 +6,13 @@
             parent::__construct();
         }
 
-        public function listarOrdenesEval($orden,$cc,$mes,$anio){
+        public function listarOrdenesEval($orden,$cc,$mes,$anio,$tipo){
             try {
                 $o = $orden == "" ? "%" : $orden ;
                 $m = $mes   == -1 ? "%" : $mes;
                 $c = $cc    == -1 ? "%" : $cc;
                 $a = $anio  == "" ? "%" : $anio;
+                $t = $tipo  == -1 ? "%" : $tipo;
 
                 $salida = "";
                 $sql = $this->db->connect()->prepare("SELECT
@@ -56,6 +57,7 @@
                                                         AND lg_ordencab.id_regmov LIKE :orden
                                                         AND tb_costusu.ncodproy LIKE :costos
                                                         AND lg_ordencab.cmes LIKE :mes
+                                                        AND lg_ordencab.ntipmov LIKE :tipo
                                                     ORDER BY lg_ordencab.id_regmov DESC
                                                     LIMIT 1,30");
 
@@ -63,7 +65,8 @@
                                 "anio"=>$a,
                                 "orden"=>$o,
                                 "costos"=>$c,
-                                "mes"=>$m]);
+                                "mes"=>$m,
+                                "tipo"=>$t]);
 
                  $rowCount = $sql->rowCount();
  
@@ -72,7 +75,7 @@
  
                          $salida .='<tr class="pointer" data-indice="'.$rs['id_regmov'].'" data-tipo="'.$rs['ntipmov'].'" data-rol="'.$rs['nrol'].'">
                                      <td class="textoCentro">'.str_pad($rs['cnumero'],4,0,STR_PAD_LEFT).'</td>
-                                     <td class="textoCentro">'.date("d/m/Y", strtotime($rs['emision'])).'</td>
+                                     <td class="textoCentro">'.$rs['emision'].'</td>
                                      <td class="pl20px">'.$rs['cObservacion'].'</td>
                                      <td class="pl20px">'.utf8_decode($rs['ccodproy']).'</td>
                                      <td class="pl20px">'.$rs['area'].'</td>
