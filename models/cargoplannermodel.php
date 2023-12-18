@@ -938,7 +938,7 @@
                                                 UPPER( cm_entidad.crazonsoc ) AS proveedor,
                                                 UPPER( tb_user.cnameuser ) AS operador,
                                                 UPPER( tb_pedidocab.concepto ) AS concepto,
-                                                DATEDIFF( DATE_ADD( lg_ordencab.ffechades, INTERVAL lg_ordencab.nplazo DAY ), NOW() ) AS dias_atraso,
+                                                DATEDIFF(  lg_ordencab.ffechaent, NOW() ) AS dias_atraso,
                                                 DATE_ADD( lg_ordencab.ffechades, INTERVAL lg_ordencab.nplazo DAY ) AS fecha_entrega_final,
                                                 transporte.cdescripcion AS transporte,
                                                 transporte.nidreg,
