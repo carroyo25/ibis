@@ -264,8 +264,9 @@
                             $dias_plazo = intVal( $rs['plazo'] )+1 .' days';
 
                             if ( $rs['fecha_autorizacion_orden'] !== null && $rs['estadoItem'] !== 105 ) { 
-                                $fecha_entrega = date("d/m/Y",strtotime($rs['FechaFin'].$dias_plazo));
+                                //$fecha_entrega = date("d/m/Y",strtotime($rs['FechaFin'].$dias_plazo));
                                 $fecha_descarga = date("d/m/Y",strtotime($rs['FechaFin'].' 1 days'));
+                                $fecha_entrega = $rs['fecha_entrega'];
                             }
 
                             if ( $rs['estadoItem'] !== 105 ) {
@@ -1246,28 +1247,11 @@
                         $dias_plazo = intVal( $rs['plazo'] )+1 .' days';
 
                         if ( $rs['fecha_autorizacion_orden'] !== null && $rs['estadoItem'] !== 105 ) { 
-                            $fecha_entrega = date("d/m/Y",strtotime($rs['FechaFin'].$dias_plazo));
+                            //$fecha_entrega = date("d/m/Y",strtotime($rs['FechaFin'].$dias_plazo));
                             $fecha_descarga = date("d/m/Y",strtotime($rs['FechaFin'].' 1 days'));
+                            $fecha_entrega = $rs['fecha_entrega'];
                         }
 
-                        /*if ( $rs['cantidad_orden'] ) {
-                            if ( $rs['ingreso_obra'] == $rs['cantidad_orden'] ){
-                                $semaforoEstado = "Entregado";
-                                $color_semaforo = '90EE90';
-                            }else if ($dias_atraso <= 5) {
-                                $semaforoEstado = "Verde";
-                                $color_semaforo = '90EE90';
-                            }else if ( $rs['cantidad_orden'] == $rs['ingreso'] ) {
-                                $semaforoEstado = "Naranja";
-                                $color_semaforo = 'FFD700';
-                            }else if ( $dias_atraso > 5 && ($rs['cantidad_orden'] != $rs['ingreso']) ) {
-                                $semaforoEstado = "Rojo";
-                                $color_semaforo = 'FF0000';
-                            }else if ( ($rs['cantidad_aprobada'] == $rs['ingreso']) ) {
-                                $semaforoEstado = "Entregado";
-                                $color_semaforo = '90EE90';
-                            }
-                        }*/
 
                         if ( $rs['estadoItem'] !== 105 ) {
 
