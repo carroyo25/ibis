@@ -907,7 +907,8 @@
                                                         distritos.cdubigeo AS dist,
                                                         provincias.cdubigeo AS prov,
                                                         dptos.cdubigeo AS dpto,
-                                                        csunatalm 
+                                                        tb_almacen.csunatalm,
+                                                        tb_almacen.ncubigeo
                                                     FROM
                                                         tb_almacen
                                                         LEFT JOIN tb_ubigeo AS distritos ON tb_almacen.ncubigeo = distritos.ccubigeo
@@ -925,6 +926,7 @@
                                         data-sunat="'.$rs['csunatalm'].'"
                                         data-dpto="'.$rs['dpto'].'"
                                         data-prov="'.$rs['prov'].'"
+                                        data-ubigeo="'.$rs['ncubigeo'].'"
                                         data-dist="'.$rs['dist'].'">'.$rs['almacen'].'</a></li>';
                     }
 

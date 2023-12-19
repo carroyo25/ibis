@@ -58,8 +58,7 @@
                                                         AND tb_costusu.ncodproy LIKE :costos
                                                         AND lg_ordencab.cmes LIKE :mes
                                                         AND lg_ordencab.ntipmov LIKE :tipo
-                                                    ORDER BY lg_ordencab.id_regmov DESC
-                                                    LIMIT 1,30");
+                                                    ORDER BY lg_ordencab.id_regmov DESC");
 
                 $sql->execute(["user"=>$_SESSION['iduser'],
                                 "anio"=>$a,

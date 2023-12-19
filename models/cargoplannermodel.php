@@ -199,6 +199,11 @@
                                 $estadofila = "comprado";
                                 $estado_item = "Compra Local";
                                 $estado_pedido = "Compra Local";
+                            }else if( $rs['estadoItem'] == 52  && $rs['ingreso_obra'] == $rs['cantidad_pedido'] ) {
+                                $porcentaje = "100%";
+                                $estadofila = "entregado";
+                                $estado_item = "atendido";
+                                $estado_pedido = "atendido";
                             }else if( $rs['estadoItem'] == 52  && $rs['ingreso_obra'] == $rs['cantidad_aprobada']) {
                                 $porcentaje = "100%";
                                 $estadofila = "entregado";
@@ -239,7 +244,7 @@
                                 $estadofila = "item_transito";
                                 $estado_item = "atendido";
                                 $estado_pedido = "atendido";
-                            }else if ( round($rs['ingreso_obra'],2) < round($rs['cantidad_orden'],2)) {
+                            }else if ( round($rs['ingreso_obra'],2) < round($rs['cantidad_orden'],2 )) {
                                 $porcentaje = "85%";
                                 $estadofila = "item_ingreso_parcial";
                                 $estado_item = "atendido";
@@ -270,11 +275,10 @@
                             }
 
                             if ( $rs['estadoItem'] !== 105 ) {
+                                
 
                                 if  ($fecha_entrega !== ''){
                                     $dias_atraso  =  $rs['dias_atraso'];
-
-                                    //$dias = $this->calcularDiasCargoPlan($fecha_entrega);
 
                                     if ( $rs['ingreso_obra'] == $rs['cantidad_orden'] ){
                                         $estadoSemaforo = "semaforoVerde";
@@ -288,14 +292,19 @@
                                         $estadoSemaforo = "semaforoNaranja";
                                         $semaforo = "Naranja";
                                         $dias_atraso  = "";
-                                    }
-                                    else if ($dias_atraso < 0) {
+                                    }else if ($dias_atraso < 0) {
                                         $estadoSemaforo = "semaforoRojo";
                                         $semaforo = "Rojo";
                                         $dias_atraso  =  $rs['dias_atraso']*-1;
                                     } 
                                 }else {
                                     $dias_atraso  =  "";
+
+                                    if ( $rs['ingreso_obra'] === $rs['cantidad_atendida'] ){
+                                        $estadoSemaforo = "semaforoVerde";
+                                        $semaforo = "Entregado";
+                                        $dias_atraso  = "";
+                                    }
                                 }
                             }else {
                                 $estadoSemaforo = "anulado";
@@ -1278,6 +1287,12 @@
                                 } 
                             }else {
                                 $dias_atraso  =  "";
+
+                                if ( $rs['ingreso_obra'] === $rs['cantidad_atendida'] ){
+                                    $semaforoEstado = "Entregado";
+                                    $color_semaforo = '90EE90';
+                                    $dias_atraso  = "";
+                                }
                             }
                         }else {
                             $color_semaforo = 'CDCDCD';
@@ -1315,6 +1330,12 @@
                             $estado_item = "Compra Local";
                             $estado_pedido = "Compra Local";
                             $color_mostrar = 'FF0000';
+                        }else if( $rs['estadoItem'] == 52  && $rs['ingreso_obra'] == $rs['cantidad_pedido'] ) {
+                            $porcentaje = "100%";
+                            $estadofila = "entregado";
+                            $estado_item = "atendido";
+                            $estado_pedido = "atendido";
+                            $color_mostrar = '00FF00';
                         }else if( $rs['estadoItem'] === 52  && $rs['ingreso_obra'] == $rs['cantidad_aprobada']) {
                             $porcentaje = "100%";
                             $estadofila = "entregado";

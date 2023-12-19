@@ -423,15 +423,13 @@
                 unlink($path."XML/".$nombre_archivo.".xml");  
             }
 
-            echo $header->codigo_modalidad;
-
             $token_access = $this->token('d12d8bf5-4b57-4c57-9569-9072b3e1bfcd', 'iLMGwQBEehJMXQ+Z/LR2KA==', '20504898173SISTEMA1', 'Lima123');
             //$token_access = $this->token('test-85e5b0ae-255c-4891-a595-0b98c65c9854', 'test-Hty/M6QshYvPgItX2P0+Kw==', '20504898173MODDATOS', 'MODDATOS');
-            $firma = $this->crear_files($formulario->modalidad_traslado,$path, $nombre_archivo, $header, $body);
+            $firma = $this->crear_files($header->codigo_modalidad,$path, $nombre_archivo, $header, $body);
             $respuesta = $this->envio_xml($path.'FIRMA/', $nombre_archivo, $token_access);
             $numero_ticket = $respuesta->numTicket;
 
-            //var_dump($respuesta);
+            var_dump($respuesta);
 
             sleep(2);//damos tiempo para que SUNAT procese y responda.
             $respuesta_ticket = $this->envio_ticket($path.'CDR/', $numero_ticket, $token_access, $header->destinatario_ruc, $nombre_archivo);
@@ -439,8 +437,6 @@
             var_dump($respuesta_ticket);
         
             return array("archivo"=>$nombre_archivo,"token"=>$token_access);
-
-            //$this->crear_files($header->codigo_modalidad,$path, $nombre_archivo, $header, $body);
         }
 
         private function token($client_id, $client_secret, $usuario_secundario, $usuario_password){
@@ -476,8 +472,6 @@
         }
 
         private function crear_files($movimiento,$path,$nombre_archivo,$header,$body){
-            $xml = $this->desarrollo_xml_sepcon($header,$body);
-
             if ( $movimiento == 108 ) {
                 $xml = $this->desarrollo_xml_externos($header,$body);
             }else if ($movimiento == 107 ){
@@ -541,8 +535,12 @@
                 $response_1  = curl_exec($curl);
                 $response3  = json_decode($response_1);
                 $codRespuesta = $response3->codRespuesta;
-                curl_close($curl);                    
-                //var_dump($response3);exit;
+                curl_close($curl); 
+
+                var_dump($response3);
+                
+                exit;
+
                 
                 $mensaje['ticket_rpta'] = $codRespuesta;
                 if($codRespuesta == '99'){
@@ -707,7 +705,7 @@
                                     </cac:PartyIdentification>
                                     <cac:PartyLegalEntity>
                                         <cbc:RegistrationName><![CDATA['.$header->empresa_transporte_razon.']]></cbc:RegistrationName>
-                                        <cbc:CompanyID>'.$header->registro_mtc.'</cbc:CompanyID>
+                                        <cbc:CompanyID>'.$header->mut_proveedor.'</cbc:CompanyID>
                                     </cac:PartyLegalEntity>
                                 </cac:CarrierParty>
                             </cac:ShipmentStage>
@@ -802,10 +800,10 @@
          $xml .=    '<cac:DeliveryCustomerParty>
                         <cac:Party>
                             <cac:PartyIdentification>
-                                <cbc:ID schemeID="6" schemeName="Documento de Identidad" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">'.$header->destinatario_ruc.'</cbc:ID>
+                                <cbc:ID schemeID="6" schemeName="Documento de Identidad" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">20100039207</cbc:ID>
                             </cac:PartyIdentification>
                             <cac:PartyLegalEntity>
-                                <cbc:RegistrationName><![CDATA['.$header->destinatario_razon.']]></cbc:RegistrationName>
+                                <cbc:RegistrationName><![CDATA[RANSA COMERCIAL S.A.]]></cbc:RegistrationName>
                             </cac:PartyLegalEntity>
                         </cac:Party>
                     </cac:DeliveryCustomerParty>';
@@ -842,8 +840,8 @@
                 if($header->tipoTrasladoSunat == '2'){
                 $xml .= '<cac:DriverPerson>
                                 <cbc:ID schemeID="1" schemeName="Documento de Identidad" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">'.$header->conductor_dni.'</cbc:ID>
-                                <cbc:FirstName>'.$header->nombre_conductor.'</cbc:FirstName>
-                                <cbc:FamilyName>'.$header->nombre_conductor.'</cbc:FamilyName>
+                                <cbc:FirstName>'.utf8_encode($header->nombre_conductor).'</cbc:FirstName>
+                                <cbc:FamilyName>'.utf8_encode($header->nombre_conductor).'</cbc:FamilyName>
                                 <cbc:JobTitle>Principal</cbc:JobTitle>
                                 <cac:IdentityDocumentReference>
                                     <cbc:ID>'.$header->licencia_conducir.'</cbc:ID>

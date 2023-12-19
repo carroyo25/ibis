@@ -141,10 +141,12 @@ $(() =>{
             $("#codigo_origen").val(codigo);
             $("#almacen_origen").val($(this).text());
             $("#almacen_origen_direccion").val($(this).data('direccion'));
+            $("#ubig_origen").val($(this).data('ubigeo'));
         }else if(contenedor_padre == "listaDestino"){
             $("#codigo_almacen_destino").val(codigo);
             $("#almacen_destino").val($(this).text());
             $("#almacen_destino_direccion").val($(this).data('direccion'));
+            $("#ubig_destino").val($(this).data('ubigeo'));
         }else if(contenedor_padre == "listaModalidad"){
             $("#modalidad_traslado").val($(this).text());
             $("#codigo_modalidad").val(codigo);
@@ -177,7 +179,7 @@ $(() =>{
 
         try {
             if ($("#codigo_aprueba").val() == 0) throw "Elija la persona que aprueba";
-            if ($("#codigo_costos_origen").val() == 0) throw "Indique el centro de costos"; 
+            //if ($("#codigo_costos_origen").val() == 0) throw "Indique el centro de costos"; 
 
             $("#esperar").fadeIn();
 
