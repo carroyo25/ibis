@@ -38,9 +38,10 @@
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
                         <div>
-                            <button type="button" id="importData" title="Importar Ingresos" class="boton3">
-                                <i class="fab fa-wpexplorer"></i> Importar Guias
+                            <button type="button" id="guiaRemision" title="Guia de Remision" class="cerrarLista boton3">
+                                <i class="fas fa-upload"></i> Guia de Remisión
                             </button>
+                            
                             <button type="button" id="closeProcess" title="Cerrar" class="boton3">
                                 <i class="fas fa-window-close"></i>
                             </button>
@@ -114,8 +115,8 @@
                     <div class="barraOpciones">
                         <span>Detalles</span>
                         <div>
-                            <button type="button" id="guiaRemision" title="Guia de Remision" class="cerrarLista boton3">
-                                <i class="fas fa-upload"></i> Guia de Remisión
+                            <button type="button" id="importData" title="Importar Ingresos" class="boton3">
+                                <i class="fab fa-wpexplorer"></i> Importar Guias
                             </button>
                         </div>
                     </div>
@@ -185,7 +186,7 @@
                 <input type="hidden" name="id_guia" id="id_guia" value=0>
                 <input type="hidden" name="ubig_origen" id="ubig_origen">
                 <input type="hidden" name="ubig_destino" id="ubig_destino">
-                <input type="hidden" name="registro_mtc" id="registro_mtc" value="1502229MRP">
+                <input type="hidden" name="registro_mtc" id="registro_mtc" value="15M23018628E">
                 <input type="hidden" name="tipoTrasladoSunat" id="tipoTrasladoSunat" value="2">
                 <input type="hidden" name="cso" id="cso">
                 <input type="hidden" name="csd" id="csd">
@@ -268,6 +269,7 @@
                                 <span></span>
                                 <label for="ruc_proveedor">R.U.C.</label>
                                 <input type="text" name="ruc_proveedor" id="ruc_proveedor" class="datosEntidad">
+                                
                             </div>
                         </div>
                     </div>
@@ -306,8 +308,8 @@
                                     <?php echo $this->listaPersonal?>
                                 </ul> 
                             </div>
-                            <label for="observaciones_guia">Observaciones:</label>
-                            <textarea name="observaciones" id="observaciones" placeholder="Observaciones" class="dos"></textarea>
+                            <!--<label for="observaciones_guia">Observaciones:</label>
+                            <textarea name="observaciones" id="observaciones" placeholder="Observaciones" class="dos"></textarea>-->
                         </div>
                         <p><strong>Datos del Conductor</strong></p>
                         <div class="tres_columnas_interna">
@@ -327,6 +329,9 @@
                             <span></span>
                             <label for="placa">Nro. Placa :</label>
                             <input type="text" name="placa" id="placa">
+                            <span></span>
+                            <label for="mut_proveedor">M.U.T.</label>
+                            <input type="text" name="mut_proveedor" id="_proveedor" class="datosEntidad">
                         </div>
                         <p><strong>Datos Adicionales</strong></p>
                         <div class="tres_columnas_interna">

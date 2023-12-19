@@ -213,7 +213,7 @@ $(() =>{
             
             try {
                 if ($("#codigo_aprueba").val() == 0 ) throw "Elija la persona que aprueba";
-                if ($("#codigo_costos_destino").val() == 0 ) throw "Indique el centro de costos"; 
+                //if ($("#codigo_costos_destino").val() == 0 ) throw "Indique el centro de costos"; 
     
                 $("#esperar").fadeIn();
     
@@ -376,7 +376,7 @@ $(() =>{
 
                 function (data, textStatus, jqXHR) {
                     mostrarMensaje(data.mensaje,data.clase);
-                    $("#numero").val(data.guia);
+                    $("#numero, #numero_guia").val(data.guia);
                 },
                 "json"
             );

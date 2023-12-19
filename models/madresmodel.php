@@ -11,6 +11,7 @@
                 $salida = "";
 
                 $g = $guia == "" ? "%": "%".$guia."%";
+                $cc = '%';
 
                 $sql = $this->db->connect()->prepare("SELECT
                                                 lg_guias.cnumguia,
@@ -28,7 +29,8 @@
                                                 AND alm_despachocab.nflgactivo = 1 
                                                 AND lg_guias.cnumguia LIKE :guia 
                                                 AND alm_despachocab.ncodpry LIKE :costos 
-                                                AND lg_guias.flgmadre = 0");
+                                                AND lg_guias.flgmadre = 0
+                                            ORDER BY alm_despachocab.ffecdoc DESC");
                 
                 $sql->execute(["guia"=>$g,"costos"=>$cc]);
                 $rowCount = $sql->rowCount();
@@ -39,7 +41,7 @@
                                         <td class="textoCentro">'.$rs['cnumguia'].'</td>
                                         <td class="textoCentro">'.$rs['ffecdoc'].'</td>
                                         <td class="pl10px">'.$rs['cdesproy'].'</td>
-                                        <td class="textoCentro"><button>Seleccionar</button></td>
+                                        <td class="textoCentro"></td>
                                     </tr>';
                     }
                 }
@@ -402,7 +404,6 @@
                          "token"=>$envioSunat['token']);
         }
 
-
         private function procesoSunat($datos){
             header('Access-Control-Allow-Origin: *');
             require 'public/libraries/efactura.php';
@@ -475,7 +476,7 @@
         }
 
         private function crear_files($movimiento,$path,$nombre_archivo,$header,$body){
-            //$xml = $this->desarrollo_xml_sepcon($header,$body);
+            $xml = $this->desarrollo_xml_sepcon($header,$body);
 
             if ( $movimiento == 108 ) {
                 $xml = $this->desarrollo_xml_externos($header,$body);
