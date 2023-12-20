@@ -60,7 +60,7 @@
                 $sql = $this->db->connect()->prepare("SELECT
                                                         UPPER( cm_producto.ccodprod ) AS cccodprod,
                                                         UPPER( cm_producto.cdesprod ) AS cdesprod,
-                                                        alm_despachodet.ncantidad,
+                                                        Falm_despachodet.ncantidad,
                                                         tb_unimed.cabrevia,
                                                         alm_despachodet.id_regalm,
                                                         alm_despachodet.niddeta,
@@ -429,7 +429,9 @@
             $respuesta = $this->envio_xml($path.'FIRMA/', $nombre_archivo, $token_access);
             $numero_ticket = $respuesta->numTicket;
 
-            var_dump($respuesta);
+
+            //
+            //var_dump($respuesta);
 
             sleep(2);//damos tiempo para que SUNAT procese y responda.
             $respuesta_ticket = $this->envio_ticket($path.'CDR/', $numero_ticket, $token_access, $header->destinatario_ruc, $nombre_archivo);
@@ -441,8 +443,6 @@
 
         private function token($client_id, $client_secret, $usuario_secundario, $usuario_password){
             $url = "https://api-seguridad.sunat.gob.pe/v1/clientessol/".$client_id."/oauth2/token/";
-
-            //$url = "https://gre-test.nubefact.com/v1/clientessol/".$client_id."/oauth2/token/";
 
             $curl = curl_init($url);
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -543,6 +543,7 @@
 
                 
                 $mensaje['ticket_rpta'] = $codRespuesta;
+
                 if($codRespuesta == '99'){
                     $error = $response3->error;
                     $mensaje['cdr_hash'] = '';
