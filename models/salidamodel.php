@@ -25,6 +25,7 @@
                                                     UPPER(destino.ctipovia) AS direccion_destino,
                                                     alm_despachocab.cnumguia,
                                                     alm_despachocab.nEstadoDoc,
+                                                    lg_ordencab.cnumero,
                                                     UPPER(
                                                             CONCAT_WS(
                                                                 ' ',
@@ -44,7 +45,8 @@
                                                     INNER JOIN tb_almacen AS destino ON alm_despachocab.ncodalm2 = destino.ncodalm
                                                     INNER JOIN tb_proyectos ON alm_despachocab.ncodpry = tb_proyectos.nidreg
                                                     INNER JOIN tb_costusu ON alm_despachocab.ncodpry = alm_despachocab.ncodpry
-                                                    INNER JOIN tb_parametros ON alm_despachocab.nEstadoDoc = tb_parametros.nidreg 
+                                                    INNER JOIN tb_parametros ON alm_despachocab.nEstadoDoc = tb_parametros.nidreg
+                                                    INNER JOIN lg_ordencab   ON lg_ordencab.id_regmov = alm_despachodet.nropedido
                                                 WHERE
                                                     tb_costusu.nflgactivo = 1 
                                                     AND tb_costusu.id_cuser = :usr
@@ -66,7 +68,7 @@
                                         <td class="pl20px">'.$rs['costos'].'</td>
                                         <td class="textoCentro">'.$rs['anio'].'</td>
                                         <td class="textoCentro">'.$rs['cnumguia'].'</td>
-                                        <td class="textoCentro ">'.str_pad($rs['orden'],6,0,STR_PAD_LEFT).'</td>
+                                        <td class="textoCentro ">'.str_pad($rs['cnumero'],6,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro ">'.str_pad($rs['pedido'],6,0,STR_PAD_LEFT).'</td>
                                     </tr>';
                     }
@@ -659,7 +661,7 @@
                                                         INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi 
                                                     WHERE
                                                         tb_costusu.id_cuser = :usr
-                                                        AND lg_ordencab.id_regmov = :id 
+                                                        AND lg_ordencab.cnumero = :id 
                                                         AND tb_costusu.nflgactivo = 1 
                                                         AND lg_ordencab.nEstadoDoc BETWEEN 60 AND 62
                                                     ORDER BY id_regmov DESC");
@@ -789,6 +791,7 @@
                                                     tb_unimed.nfactor,
                                                     tb_unimed.cabrevia,
                                                     tb_pedidocab.nrodoc,
+                                                    lg_ordencab.cnumero,
                                                     (SELECT	 SUM(alm_recepdet.ncantidad) FROM alm_recepdet 
                                                         WHERE alm_recepdet.niddetaOrd = alm_despachodet.niddetaOrd 
                                                          AND  alm_recepdet.nflgactivo = 1) AS ingresado
@@ -797,7 +800,8 @@
                                                     LEFT JOIN cm_producto ON alm_despachodet.id_cprod = cm_producto.id_cprod
                                                     LEFT JOIN tb_pedidodet ON alm_despachodet.niddetaPed = tb_pedidodet.iditem
                                                     LEFT JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
-                                                    LEFT JOIN tb_pedidocab ON alm_despachodet.nropedido = tb_pedidocab.idreg 
+                                                    LEFT JOIN tb_pedidocab ON alm_despachodet.nropedido = tb_pedidocab.idreg
+                                                    LEFT JOIN lg_ordencab  ON lg_ordencab.id_regmov = alm_despachodet.nropedido
                                                 WHERE
                                                     alm_despachodet.id_regalm = :id
                                                     AND alm_despachodet.nflgactivo = 1");
@@ -834,7 +838,7 @@
                                         <td class="textoDerecha pr20px">'.$pendiente.'</td>
                                         <td class="pr20px"><input type="text" value="'.$rs['cobserva'].'"></td>
                                         <td class="textoCentro">'.str_pad($rs['pedido'],6,0,STR_PAD_LEFT).'</td>
-                                        <td class="textoCentro">'.str_pad($rs['orden'],6,0,STR_PAD_LEFT).'</td>
+                                        <td class="textoCentro">'.str_pad($rs['cnumero'],6,0,STR_PAD_LEFT).'</td>
                                     </tr>';
                         }
 
@@ -917,7 +921,8 @@
                                                         tb_costusu.nflgactivo,
                                                         tb_parametros.cdescripcion,
                                                         tb_parametros.cabrevia,
-                                                        alm_despachocab.id_regalm 
+                                                        alm_despachocab.id_regalm,
+                                                        lg_ordencab.cnumero
                                                     FROM
                                                         alm_despachodet
                                                         INNER JOIN alm_despachocab ON alm_despachodet.id_regalm = alm_despachocab.id_regalm
@@ -926,11 +931,12 @@
                                                         INNER JOIN tb_proyectos ON alm_despachocab.ncodpry = tb_proyectos.nidreg
                                                         INNER JOIN tb_costusu ON alm_despachocab.ncodpry = alm_despachocab.ncodpry
                                                         INNER JOIN tb_parametros ON alm_despachocab.nEstadoDoc = tb_parametros.nidreg 
+                                                        INNER JOIN lg_ordencab ON lg_ordencab.id_regmov = alm_despachodet.nropedido
                                                     WHERE
                                                         tb_costusu.nflgactivo = 1 
                                                         AND alm_despachocab.nEstadoDoc = 62
                                                         AND tb_costusu.id_cuser = :usr 
-                                                        AND alm_despachodet.nropedido = :orden 
+                                                        AND lg_ordencab.cnumero = :orden 
                                                         AND alm_despachocab.ncodpry LIKE :costos 
                                                         AND alm_despachocab.cper LIKE :anio 
                                                         AND alm_despachocab.cmes LIKE :mes 
@@ -953,7 +959,7 @@
                                         <td class="pl20px">'.$rs['costos'].'</td>
                                         <td class="textoCentro">'.$rs['anio'].'</td>
                                         <td class="textoCentro">'.$rs['cnumguia'].'</td>
-                                        <td class="textoCentro ">'.str_pad($rs['orden'],6,0,STR_PAD_LEFT).'</td>
+                                        <td class="textoCentro ">'.str_pad($rs['cnumero'],6,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro ">'.str_pad($rs['pedido'],6,0,STR_PAD_LEFT).'</td>
                                     </tr>';
                     }

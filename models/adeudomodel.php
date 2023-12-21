@@ -324,19 +324,26 @@
 
             $pdf->AddPage();
             $pdf->AliasNbPages();
-            $pdf->SetWidths(array(15,25,130,20));
+            $pdf->SetWidths(array(15,25,110,20,20));
             $pdf->SetFont('Arial','',5);
 
             $lc = 0;
 
             $detalle = $this->itemsAdeudo($costo,$doc);
             $nreg = count($detalle);
+            $items_devueltos = 0;
 
             for ($i=0; $i < $nreg; $i++) { 
-                $pdf->SetAligns(array("C","C","L","R"));
+                if ( $detalle[$i]['flgdevolver'] === 1) {
+                    $estado = "DEVUELTO";
+                    $items_devueltos++;
+                }
+
+                $pdf->SetAligns(array("C","C","L","C","R"));
                 $pdf->Row(array(str_pad($lc++,3,0,STR_PAD_LEFT),
                                 $detalle[$i]['ccodprod'],
-                                $detalle[$i]['cdesprod'],
+                                $detalle[$i]['cdesprod'].' '.strtoupper($detalle[$i]['cserie']),
+                                $estado,
                                 $detalle[$i]['cantdevolucion']));
                     $lc++;
 
@@ -345,6 +352,27 @@
                         $lc = 0;
                     }
             }
+
+            $pdf->ln(2);
+
+            $pdf->SetFont('Arial','',8);
+            $pdf->Cell(190,6,"Cantidad de items entregados: ".str_pad($i,2,0,STR_PAD_LEFT),0,1,'L');
+            $pdf->Cell(190,6,"Cantidad de items devueltos :  ".str_pad($items_devueltos,2,0,STR_PAD_LEFT),0,1,'L');
+
+            $pdf->SetFont('Arial','B',8);
+
+            if ( $i === $items_devueltos ) {
+                $pdf->Cell(15,6,"Estado :",'T',0,'L');
+                $pdf->SetTextColor(0,118,184);
+                $pdf->Cell(175,6,"Sin pendientes de entrega",'T',1,'L');
+            }else {
+                $pdf->Cell(15,6,"Estado :",'T',0,'L');
+                $pdf->SetTextColor(252,65,54);
+                $pdf->Cell(175,6,"Tiene pendientes de entrega",'T',1,'L');
+            }
+
+            $pdf->SetFont('Arial','',8);
+            $pdf->SetTextColor(0,0,0);
 
             $filename = "public/documentos/adeudos/".$file;
 
@@ -364,6 +392,8 @@
                                                         alm_consumo.fechasalida,
                                                         alm_consumo.calmacen,
                                                         alm_consumo.cfirma,
+                                                        alm_consumo.cserie,
+                                                        alm_consumo.flgdevolver,
                                                         cm_producto.ccodprod,
                                                         UPPER(cm_producto.cdesprod) AS cdesprod,
                                                         tb_unimed.cabrevia,

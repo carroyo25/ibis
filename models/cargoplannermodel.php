@@ -62,6 +62,7 @@
                                                         lg_ordencab.FechaFin,
                                                         lg_ordencab.ffechaent,
                                                         lg_ordencab.nEstadoDoc,
+                                                        LPAD(lg_ordencab.cnumero,4,0) AS cnumero,
                                                         UPPER( cm_entidad.crazonsoc ) AS proveedor,
                                                         ( SELECT SUM(lg_ordendet.ncanti) FROM lg_ordendet WHERE lg_ordendet.niddeta = tb_pedidodet.iditem AND lg_ordendet.id_orden != 0 ) AS cantidad_orden,
                                                         ( SELECT SUM( alm_recepdet.ncantidad ) FROM alm_recepdet WHERE alm_recepdet.niddetaPed = tb_pedidodet.iditem AND alm_recepdet.nflgactivo = 1 ) AS ingreso,
@@ -108,7 +109,7 @@
                                                 tb_pedidodet.nflgActivo
                                                 AND ISNULL( lg_ordendet.nflgactivo ) 
                                                 AND tb_pedidocab.nrodoc LIKE :pedido 
-                                                AND IFNULL( lg_ordendet.id_orden, '' ) LIKE :orden
+                                                AND IFNULL( lg_ordencab.cnumero, '' ) LIKE :orden
                                                 AND tb_proyectos.nidreg LIKE :costo
                                                 AND tb_pedidocab.idtipomov LIKE :tipo
                                                 AND cm_producto.ccodprod LIKE :codigo
@@ -336,7 +337,7 @@
                                         <td class="pl10px">'.$rs['descripcion'].'</td>
                                         <td class="textoCentro '.$clase_operacion.'">'.$tipo_orden.'</td>
                                         <td class="textoCentro">'.$rs['anio_orden'].'</td>
-                                        <td class="textoCentro">'.$rs['orden'].'</td>
+                                        <td class="textoCentro">'.$rs['cnumero'].'</td>
                                         <td class="textoCentro">'.$rs['fecha_orden'].'</td>
                                         <td class="textoDerecha pr15px" style="background:#e8e8e8;font-weight: bold">'.$rs['cantidad_orden'].'</td>
                                         <td class="pl10px">'.$rs['item_orden'].'</td>

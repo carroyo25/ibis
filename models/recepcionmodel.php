@@ -664,7 +664,7 @@
                                                         AND tb_costusu.nflgactivo = 1
                                                         AND alm_recepcab.nEstadoDoc BETWEEN  60 AND 62
                                                         AND alm_recepcab.ncodpry LIKE :costos 
-                                                        AND alm_recepcab.idref_abas LIKE :orden 
+                                                        AND lg_ordencab.cnumero LIKE :orden 
                                                         AND YEAR ( alm_recepcab.ffecdoc ) = :anio
                                                     ORDER BY lg_ordencab.id_regmov DESC");
                 $sql->execute(["usr"=>$_SESSION['iduser'],
@@ -788,7 +788,7 @@
                                                         INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi 
                                                     WHERE
                                                         tb_costusu.id_cuser = :usr 
-                                                        AND lg_ordencab.id_regmov = :id 
+                                                        AND lg_ordencab.cnumero = :id 
                                                         AND tb_costusu.nflgactivo = 1
                                                         AND lg_ordencab.ntipmov = 37 
                                                         AND lg_ordencab.nEstadoDoc BETWEEN 60 AND 62 

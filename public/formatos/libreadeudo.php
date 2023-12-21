@@ -13,6 +13,8 @@
         }
 
         function Header(){
+			$almacen = $_SESSION['nombres'];
+
             $this->Rect(10,10,30,20); //marco de la imagen
         	$this->Rect(10,10,190,20); //marco general
 
@@ -28,14 +30,14 @@
             $this->SetX(50);
 	        $this->Cell(190,6,'Nombre del Trabajador: '.utf8_decode($this->nombre),0,1,'L'); //pasa dato
             $this->SetX(50);
-	        $this->Cell(190,7,'Responsable del Almacen :'.utf8_decode($this->almacenero),0,1,'L'); //pasa dato condicion
+	        $this->Cell(190,7,'Responsable del Almacen : '.utf8_decode($almacen),0,1,'L'); //pasa dato condicion
             $this->ln(1);
 
             $this->SetFont('Arial','B',6);
     		$this->Rect(10,30,190,4,"F"); //fondo de mensaje
-    		$this->SetWidths(array(15,25,130,20));
-    		$this->SetAligns(array("C","C","C","C"));
-    		$this->Row(array('Item',utf8_decode('Código'),utf8_decode('Descripción'),'Importe'));
+    		$this->SetWidths(array(15,25,110,20,20));
+    		$this->SetAligns(array("C","C","C","C","C"));
+    		$this->Row(array('Item',utf8_decode('Código'),utf8_decode('Descripción'),'Estado','Cantidad'));
         }
 
         // Pie de página
@@ -46,10 +48,19 @@
 		    $this->Line(80, 225, 130, 225);
 		    $this->Line(150, 225, 190, 225);
 
-		   
+			$firma = $_SESSION['iduser'];
+
+			$firma = './public/img/'.$firma.'.jpg';
+
+			if ( file_exists($firma) ){
+				$this->Image($firma,160,205,25);
+			}
+
 		   	$this->Cell(64,4,"FIRMA JEFE DE OBRA",0,0,"C");
 		    $this->Cell(64,4,"FIRMA DEL TRABAJADOR",0,0,"C");
 		    $this->Cell(64,4,"FIRMA ALMACEN",0,1,"C");
+
+			
 		}
     }
 ?>
