@@ -295,7 +295,7 @@ $(function() {
                 $.post(RUTA+"pedidomtto/modificaPedido", {cabecera:result,detalles:JSON.stringify(itemsSave())},
                     function (data, textStatus, jqXHR) {
                         mostrarMensaje(data.mensaje,data.clase);
-                        accion = "";
+                        accion = "u";
                     },
                     "json");
             }
@@ -644,6 +644,8 @@ itemsSave = () =>{
             item['registext']   = REGISTEXT;
             item['atendida']    = 0;
             item['observac']    = "";
+
+            $(this).attr('data-grabado',1);
 
             DATA.push(item);
         } 

@@ -332,9 +332,12 @@
             $detalle = $this->itemsAdeudo($costo,$doc);
             $nreg = count($detalle);
             $items_devueltos = 0;
+            $estado = "PENDIENTE";
 
             for ($i=0; $i < $nreg; $i++) { 
-                if ( $detalle[$i]['flgdevolver'] === 1) {
+                $estado = "PENDIENTE";
+                
+                if ( $detalle[$i]['ncondicion'] === 1) {
                     $estado = "DEVUELTO";
                     $items_devueltos++;
                 }
@@ -407,8 +410,7 @@
                                                     WHERE
                                                         alm_consumo.nrodoc = :doc 
                                                         AND alm_consumo.ncostos = :cc 
-                                                        AND alm_consumo.flgdevolver = 1 
-                                                        AND alm_consumo.ncondicion = 1");
+                                                        AND alm_consumo.flgdevolver = 1");
                 $sql->execute(["doc"=>$doc,"cc"=>$cc]);
                 $result = $sql->fetchAll();
 
