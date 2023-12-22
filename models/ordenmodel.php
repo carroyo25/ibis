@@ -838,7 +838,7 @@
 
         private function generarNumeroOrden(){
             try {
-                $sql = $this->db->connect()->query("SELECT MAX(id_regmov) AS numero FROM lg_ordencab WHERE YEAR(lg_ordencab.fregsys) = YEAR(NOW())");
+                $sql = $this->db->connect()->query("SELECT MAX(cnumero) AS numero FROM lg_ordencab WHERE YEAR(lg_ordencab.fregsys) = YEAR(NOW())");
                 //$sql = $this->db->connect()->query("SELECT MAX(id_regmov) AS numero FROM lg_ordencab WHERE YEAR(lg_ordencab.fregsys) = 2024");
 
                 $sql->execute();
