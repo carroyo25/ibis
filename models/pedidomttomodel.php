@@ -208,7 +208,7 @@
                     }else{
                     //cambia los datos 
                         for ($i=0; $i < count($details); $i++) { 
-                            $rowDetails = $this->updateItemsMtto($datos['codigo_atencion'],
+                            $rowDetails = $this->updateItemsMtto($details['registro'],
                                                              $details[$i]->cantidad,
                                                              $details[$i]->calidad,
                                                              $details[$i]->itempedido,

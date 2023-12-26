@@ -14,6 +14,7 @@
             $this->view->listaEntidad = $this->model->listarEntidades();
             $this->view->listaModalidad = $this->model->listarParametros(14);
             $this->view->listaEnvio = $this->model->listarParametros('08');
+            $this->view->listaTipoGuia = $this->model->listarParametros('20');
             $this->view->listaPersonal = $this->model->listarPersonalRol(4);
             $this->view->render('madres/index');
         }

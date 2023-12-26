@@ -171,6 +171,9 @@ $(() =>{
         }else if(contenedor_padre == "listaMovimiento"){
             $("#codigo_movimiento").val(codigo);
             $("#tipo_envio").val($(this).text());
+        }else if(contenedor_padre == "listaTipoGuia"){
+            $("#codigo_tipo_guia").val(codigo);
+            $("#tipo_guia").val($(this).text());
         }
 
         return false;

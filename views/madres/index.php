@@ -182,11 +182,12 @@
                 <input type="hidden" name="ruc_entidad_transporte" id="ruc_entidad_transporte">
                 <input type="hidden" name="codigo_modalidad" id="codigo_modalidad">
                 <input type="hidden" name="codigo_tipo" id="codigo_tipo">
+                <input type="hidden" name="codigo_tipo_guia" id="codigo_tipo_guia">
                 <input type="hidden" name="motivo_traslado" id="motivo_traslado">
-                <input type="hidden" name="id_guia" id="id_guia" value=0>
+                <input type="hidden" name="id_guia" id="id_guia">
                 <input type="hidden" name="ubig_origen" id="ubig_origen">
                 <input type="hidden" name="ubig_destino" id="ubig_destino">
-                <input type="hidden" name="registro_mtc" id="registro_mtc" value="15M23018628E">
+                <input type="hidden" name="registro_mtc" id="registro_mtc">
                 <input type="hidden" name="tipoTrasladoSunat" id="tipoTrasladoSunat" value="1">
                 <input type="hidden" name="cso" id="cso">
                 <input type="hidden" name="csd" id="csd">
@@ -215,7 +216,7 @@
                             </div>
                             <div>
                                 <label for="ftraslado">Fecha Traslado:</label>
-                                <input type="date" name="ftraslado" id="ftraslado">
+                                <input type="date" name="ftraslado" id="ftraslado" value="<?php echo date("Y-m-d")?>">
                             </div>
                         </div>
                         <div>
@@ -300,12 +301,12 @@
                                     <?php echo $this->listaPersonal?>
                                 </ul> 
                             </div>
-                            <label for="destinatario">Destinatario:</label>
-                            <input type="text" name="destinatario" id="destinatario" class="busqueda" placeholder="Elija opción">
+                            <label for="destinatario">Tipo de Guia:</label>
+                            <input type="text" name="tipo_guia" id="tipo_guia" class="busqueda" placeholder="Elija opción">
                             <button type="button" class="btnCallMenu boton3">+</button>
-                            <div class="lista uno rowFour" id="listaDestinatario">
+                            <div class="lista uno rowFour" id="listaTipoGuia">
                                 <ul>
-                                    <?php echo $this->listaPersonal?>
+                                    <?php echo $this->listaTipoGuia?>
                                 </ul> 
                             </div>
                             <!--<label for="observaciones_guia">Observaciones:</label>
