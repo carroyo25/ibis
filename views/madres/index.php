@@ -7,11 +7,6 @@
     <title>Guias Madre</title>
 </head>
 <body>
-   <!--  <div class="progress">
-		<p>PHP</p>
-		<progress id="php" max="100" value="72"></progress>
-		<span></span>
-	</div> -->
     <div class="modal" id="proceso">
         <div class="ventanaProceso tamanioProceso">
             <div class="cabezaProceso">
@@ -293,14 +288,14 @@
                                     <?php echo $this->listaEnvio?>
                                 </ul> 
                             </div>
-                            <label for="autoriza">Autoriza:</label>
+                            <!-- <label for="autoriza">Autoriza:</label>
                             <input type="text" name="autoriza" id="autoriza" class="dos mostrarListaInterna busqueda" placeholder="Elija opción">
                             <button type="button" class="btnCallMenu boton3">+</button>
                             <div class="lista uno rowThree" id="listaAutoriza">
                                 <ul>
                                     <?php echo $this->listaPersonal?>
                                 </ul> 
-                            </div>
+                            </div> -->
                             <label for="destinatario">Tipo de Guia:</label>
                             <input type="text" name="tipo_guia" id="tipo_guia" class="busqueda" placeholder="Elija opción">
                             <button type="button" class="btnCallMenu boton3">+</button>
@@ -317,6 +312,9 @@
                             <label for="nombre_conductor">Nombre :</label>
                             <input type="text" name="nombre_conductor" id="nombre_conductor" class="cerrarLista">
                             <span></span>
+                            <label for="apellido_conductor">Apellidos :</label>
+                            <input type="text" name="apellido_conductor" id="apellido_conductor" class="cerrarLista">
+                            <span></span>
                             <label for="licencia_conducir">N° Licencia :</label>
                             <input type="text" name="licencia_conducir" id="licencia_conducir" class="cerrarLista">
                             <span></span>
@@ -332,7 +330,7 @@
                             <input type="text" name="placa" id="placa">
                             <span></span>
                             <label for="mut_proveedor">M.U.T.</label>
-                            <input type="text" name="mut_proveedor" id="_proveedor" class="datosEntidad">
+                            <input type="text" name="mut_proveedor" id="mut_proveedor" class="datosEntidad">
                         </div>
                         <p><strong>Datos Adicionales</strong></p>
                         <div class="tres_columnas_interna">

@@ -46,5 +46,9 @@
         function envioSunat(){
             echo json_encode($this->model->enviarSunat($_POST));
         }
+
+        function numeroSunat() {
+            echo $this->model->generarNumeroSunat();
+        }
     }
 ?>

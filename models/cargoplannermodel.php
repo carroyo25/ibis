@@ -603,6 +603,7 @@
                 $objPHPExcel->getActiveSheet()->getStyle('V')->getNumberFormat()->setFormatCode('dd/mm/yyyy');
                 $objPHPExcel->getActiveSheet()->getStyle('Y')->getNumberFormat()->setFormatCode('dd/mm/yyyy');
                 $objPHPExcel->getActiveSheet()->getStyle('Z')->getNumberFormat()->setFormatCode('dd/mm/yyyy');
+                $objPHPExcel->getActiveSheet()->getStyle('AC')->getNumberFormat()->setFormatCode('dd/mm/yyyy');
                 $objPHPExcel->getActiveSheet()->getStyle('AK')->getNumberFormat()->setFormatCode('dd/mm/yyyy');
 
                 for ($i=0; $i < $nreg ; $i++) {
@@ -999,9 +1000,6 @@
                                                 tb_pedidodet.iditem");
                 $sql->execute();
                 $rowCount = $sql->rowCount();
-
-                /*$cacheMethod = PHPExcel_CachedObjectStorageFactory::cache_in_memory_serialized; 
-                PHPExcel_Settings::setCacheStorageMethod($cacheMethod);*/
 
                 $objPHPExcel = new PHPExcel();
                 $objPHPExcel->getProperties()

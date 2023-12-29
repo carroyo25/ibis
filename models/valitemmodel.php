@@ -36,7 +36,8 @@
                                                     WHERE
                                                         lg_ordencab.ntipmov = 37 
                                                         AND lg_ordendet.ncodcos LIKE :costos 
-                                                        AND cm_producto.ccodprod LIKE :codigo 
+                                                        AND cm_producto.ccodprod LIKE :codigo
+                                                        AND lg_ordendet.nestado = 1
                                                     ORDER BY
                                                         lg_ordencab.id_regmov ASC");
                 $sql->execute(["costos"=>$costos,"codigo"=>$codigo]);

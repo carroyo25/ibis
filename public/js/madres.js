@@ -78,13 +78,22 @@ $(() =>{
     $("#nuevoRegistro").click(function (e) { 
         e.preventDefault();
 
-        $("#proceso").fadeIn();
+        $.post(RUTA+"madres/numeroSunat",
+            function (data, text, requestXHR) {
+                $("#proceso").fadeIn();
 
-        accion = 'n';
+                accion = 'n';
 
-        document.getElementById("formProceso").reset();
-        document.getElementById("guiaremision").reset();
-        $("#tablaDetalles tbody").empty();
+                document.getElementById("formProceso").reset();
+                document.getElementById("guiaremision").reset();
+                $("#tablaDetalles tbody").empty();
+                
+                $("#numero, #numero_guia").val(data);
+            },
+            "text"
+        );
+
+        
 
         return false;
     });
@@ -265,6 +274,7 @@ $(() =>{
         e.preventDefault();
         
         try {
+
             $("#vistadocumento").fadeIn();
         } catch (error) {
             mostrarMensaje(error,'mensaje_error');
@@ -398,7 +408,7 @@ $(() =>{
             function (data, text, requestXHR) {
 
                 $("#fecha").val(data.cabecera[0].ffecdoc);
-                $("#numero").val(data.cabecera[0].idreg);
+                $("#numero").val(data.cabecera[0].cnroguia);
 
                 $("#aprueba").val(data.cabecera[0].autoriza);
                 $("#almacen_origen_despacho").val(data.cabecera[0].origen);
