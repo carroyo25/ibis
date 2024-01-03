@@ -244,8 +244,16 @@
             $api = file_get_contents('https://api.apis.net.pe/v1/tipo-cambio-sunat');
             $cambio = json_decode($api);
 
+            /*$txt = file_get_contents('https://www.sunat.gob.pe/a/txt/tipoCambio.txt');
+            $txt_array = explode('|', $txt);
+            $cambio = round($txt_array[2],2);*/
+
             $numero = $this->generarNumeroOrden();
 
+            /*$salida = array("pedido"=>$datosPedido,
+                            "orden"=>str_pad($numero,6,0,STR_PAD_LEFT),
+                            "cambio"=>$cambio);*/
+            
             $salida = array("pedido"=>$datosPedido,
                             "orden"=>str_pad($numero,6,0,STR_PAD_LEFT),
                             "cambio"=>$cambio->compra);
@@ -838,7 +846,7 @@
 
         private function generarNumeroOrden(){
             try {
-                $sql = $this->db->connect()->query("SELECT MAX(cnumero) AS numero FROM lg_ordencab WHERE YEAR(lg_ordencab.fregsys) = YEAR(NOW())");
+                $sql = $this->db->connect()->query("SELECT COUNT(cnumero) AS numero FROM lg_ordencab WHERE YEAR(lg_ordencab.fregsys) = YEAR(NOW())");
                 //$sql = $this->db->connect()->query("SELECT MAX(id_regmov) AS numero FROM lg_ordencab WHERE YEAR(lg_ordencab.fregsys) = 2024");
 
                 $sql->execute();

@@ -63,7 +63,7 @@
                                                                 ) 
                                                         OR ( alm_recepcab.cper = YEAR ( NOW()) AND alm_recepcab.cmes = MONTH ( NOW()) ))
                                                     ORDER BY lg_ordencab.id_regmov DESC
-                                                    LIMIT 200");
+                                                    LIMIT 50");
                 $sql->execute(["usr"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowcount();
                 if ($rowCount > 0){

@@ -64,7 +64,7 @@
                                                     AND alm_despachocab.nEstadoDoc = 62
                                                 GROUP BY alm_despachocab.id_regalm
                                                     ORDER BY alm_despachocab.ffecdoc DESC
-                                                LIMIT 200");
+                                                LIMIT 50");
                 $sql->execute(["usr"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowCount();
 

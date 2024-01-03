@@ -75,6 +75,44 @@
             <iframe src=""></iframe>
         </div>
     </div>
+    <div class="modal" id="registro">
+        <div class="vistaPrevia">
+            <div class="ventanaPregunta">
+                <section>
+                    <h3>Buscar</h3>
+                    <input type="search" name="buscaKardex" id="buscaKardex">
+                </section>
+                <section>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Codigo</th>
+                                <th>Descripcion</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                </section>
+                <section>
+                    <label for="motivo_cambio">Motivo de Cambio</label>
+                    <select id="motivo_cambio">
+                        <option value="-1">Elija Opcion</option>   
+                        <option value="240">DESGASTE</option>
+                        <option value="241">ROTURA</option>
+                        <option value="242">PERDIDA</option>
+                        <option value="243">DEFORMADO</option>
+                        <option value="244">FALTA PARTES</option>
+                        <option value="245">OTROS</option>
+                    </select>
+                </section>
+                <section>
+                    
+                </section>
+            </div>
+        </div>
+    </div>
     <div class="cabezaModulo">
         <h1>Kardex Personal</h1>
         <div>
@@ -133,6 +171,7 @@
                     <th>Observaciones</th>
                     <th width="30px">Serie</th>
                     <th>Patrimonio</th>
+                    <th>Concepto</br>Cambio</th>
                     <th width="30px">Estado</th>
                     <th width="20px">Firma</th>
                     <th>...</th>

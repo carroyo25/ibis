@@ -298,6 +298,7 @@
                                         <td class="pl5px">'.$rs['cobserentrega'].'</td>
                                         <td class="pl5px">'.$rs['cserie'].'</td>
                                         <td class="textoCentro"><input type="checkbox" '.$marcado.'></td>
+                                        <td></td>
                                         <td class="pl5px">'.$rs['cestado'].'</td>
                                         <td class="textoCentro">
                                             <div style ="width:110px !important; text-align:center">

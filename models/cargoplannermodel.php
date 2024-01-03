@@ -995,7 +995,6 @@
                                             WHERE
                                                 tb_pedidodet.nflgActivo 
                                                 AND ISNULL( lg_ordendet.nflgactivo )
-                                                AND tb_pedidocab.anio = YEAR (NOW())
                                             GROUP BY
                                                 tb_pedidodet.iditem");
                 $sql->execute();

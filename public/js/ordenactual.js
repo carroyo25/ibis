@@ -248,8 +248,7 @@ $(() => {
         return false;
     });
 
-
-   $("#uploadAtach").on("change", function (e) {
+    $("#uploadAtach").on("change", function (e) {
         e.preventDefault();
 
         fp = $(this);
@@ -272,7 +271,7 @@ $(() => {
         return false;
     });
 
-   $("#btnConfirmAtach").on("click", function (e) {
+    $("#btnConfirmAtach").on("click", function (e) {
         e.preventDefault();
 
         let formData = new FormData();
@@ -307,9 +306,9 @@ $(() => {
         $("#fileAtachs")[0].reset();
         $(".listaArchivos").empty();
 
-   });
+    });
 
-   $("#btnConsult").click(function (e) { 
+    $("#btnConsult").click(function (e) { 
     e.preventDefault();
     
     let srt = $("#formConsulta").serialize();
@@ -324,7 +323,7 @@ $(() => {
     );
     
     return false
-});
+    });
 
 })
 

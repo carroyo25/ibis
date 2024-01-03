@@ -41,6 +41,12 @@ $(function(){
 
     $("#codeRead").keypress(function (e) { 
         if(e.which == 13) {
+
+            if ($(this).val() == "") {
+                $("#registro").fadeIn();
+                return false;
+            }
+
             $.post(RUTA+"consumo/productos", {codigo:$(this).val()},
                 function (data, textStatus, jqXHR) {
                     let fecha = fechaActual();
@@ -59,6 +65,15 @@ $(function(){
                                 <td class=""><input type="text" class="entrada"></td>
                                 <td class="textoCentro"><input type="checkbox" class="entrada"></td>
                                 <td class=""><input type="text" class="entrada"></td>
+                                <td class=""><select id="motivo">
+                                             <option value="-1">Elija Opcion</option>   
+                                             <option value="240">DESGASTE</option>
+                                             <option value="241">ROTURA</option>
+                                             <option value="242">PERDIDA</option>
+                                             <option value="243">DEFORMADO</option>
+                                             <option value="244">FALTA PARTES</option>
+                                             <option value="245">OTROS</option>
+                                            </select></td>
                                 <td class=""></td>
                                 <td class="textoCentro"><a href=""><i class="far fa-trash-alt"></i></a></td>
                         </tr>`;
