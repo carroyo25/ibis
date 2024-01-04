@@ -333,7 +333,7 @@
                 $salida = array("respuesta"=>$respuesta,
                                 "mensaje"=>$mensaje,
                                 "clase"=>$clase,
-                                "orden"=>$orden);
+                                "orden"=>$indice);
 
             
                 return $salida;
@@ -551,9 +551,9 @@
 
         public function enviarCorreo($cabecera,$detalles,$correos,$asunto,$mensaje){
             try {
-                require_once("public/PHPMailer/PHPMailerAutoload.php");
+                //require_once("public/PHPMailer/PHPMailerAutoload.php");
 
-                $documento = $this->generarDocumento($cabecera,1,$detalles);
+                /*$documento = $this->generarDocumento($cabecera,1,$detalles);
 
                 $data       = json_decode($correos);
                 $nreg       = count($data);
@@ -623,10 +623,13 @@
                     }
                         
                     $mail->clearAddresses();
-                }
+                }*/
+
+                $estadoEnvio = true;
 
                 if ($estadoEnvio){
                     $clase = "mensaje_correcto";
+                    $mensaje = "Enviado para aprobacion";
                     $this->actualizarCabeceraPedido(59,$cabecera['codigo_pedido'],$cabecera['codigo_orden']);
                     $this->actualizarDetallesPedido(59,$detalles,$cabecera['codigo_orden'],$cabecera['codigo_entidad']);
                     $this->actualizarCabeceraOrden(59,$cabecera['codigo_orden'],NULL);

@@ -19,6 +19,7 @@
                 $pedido     = $parametros['pedidoSearch'] == "" ? "%" : $parametros['pedidoSearch'];
                 $concepto   = $parametros['conceptoSearch'] == "" ? "%" : "%".$parametros['conceptoSearch']."%";
                 $estadoItem = $parametros['estado_item'] == "" ? "%" : $parametros['estado_item'];
+                $anio       = $parametros['anioSearch'] == "" ? "%" : $parametros['anioSearch'];
                 
                 $salida = "No hay registros";
                 $item = 1;
@@ -112,6 +113,7 @@
                                                 AND IFNULL( lg_ordencab.cnumero, '' ) LIKE :orden
                                                 AND tb_proyectos.nidreg LIKE :costo
                                                 AND tb_pedidocab.idtipomov LIKE :tipo
+                                                AND tb_pedidocab.anio LIKE :anio
                                                 AND cm_producto.ccodprod LIKE :codigo
                                                 AND tb_pedidocab.concepto LIKE :concepto
                                                 AND tb_pedidodet.estadoItem LIKE :estado
@@ -126,7 +128,8 @@
                                "concepto"       =>$concepto,
                                "tipo"           =>$tipo,
                                "estado"         =>$estadoItem,
-                                "descripcion"   =>$descrip]);
+                               "descripcion"    =>$descrip,
+                               "anio"           =>$anio]);
                 
                 $rowCount = $sql->rowCount();
 
@@ -300,10 +303,16 @@
                                     } 
                                 }else {
                                     $dias_atraso  =  "";
+                                    $estadoSemaforo = "semaforoAmarillo";
+                                    $semaforo = "Procesando";
 
-                                    if ( $rs['ingreso_obra'] === $rs['cantidad_atendida'] ){
+                                    if ( $rs['ingreso_obra'] > 0 && $rs['ingreso_obra'] === $rs['cantidad_atendida'] ){
                                         $estadoSemaforo = "semaforoVerde";
                                         $semaforo = "Entregado";
+                                        $dias_atraso  = "";
+                                    }else if ( $rs['cantidad_atendida'] > 0) {
+                                        $estadoSemaforo = "semaforoVerde";
+                                        $semaforo = "Stock";
                                         $dias_atraso  = "";
                                     }
                                 }
@@ -1285,10 +1294,16 @@
                                 } 
                             }else {
                                 $dias_atraso  =  "";
+                                $semaforoEstado = "Procesando";
+                                $color_semaforo = "FFFF00";
 
-                                if ( $rs['ingreso_obra'] === $rs['cantidad_atendida'] ){
+                                if ( $rs['ingreso_obra'] > 0 && $rs['ingreso_obra'] === $rs['cantidad_atendida'] ){
                                     $semaforoEstado = "Entregado";
                                     $color_semaforo = '90EE90';
+                                    $dias_atraso  = "";
+                                }else if ( $rs['cantidad_atendida'] > 0) {
+                                    $semaforoEstado = "Stock";
+                                    $color_semaforo = "9068B0";
                                     $dias_atraso  = "";
                                 }
                             }

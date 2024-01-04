@@ -186,7 +186,6 @@
                                 <?php echo $this->listaCostos ?>
                             </select>
                         </div>
-                       
                         <div>
                             <label for="codigo">Codigo:</label>
                             <input type="text" name="codigoSearch" id="codigoSearch" class="textoCentro">
@@ -206,6 +205,10 @@
                         <div>
                             <label for="conceptoSearch">Concepto : </label>
                             <input type="text" name="conceptoSearch" id="conceptoSearch">
+                        </div>
+                        <div>
+                            <label for="anioSearch">Año : </label>
+                            <input type="text" name="anioSearch" id="anioSearch" value="2024">
                         </div>
                     </div>
                     <div class="procesos">
