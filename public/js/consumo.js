@@ -42,10 +42,10 @@ $(function(){
     $("#codeRead").keypress(function (e) { 
         if(e.which == 13) {
 
-            if ($(this).val() == "") {
+            /*if ($(this).val() == "") {
                 $("#registro").fadeIn();
                 return false;
-            }
+            }*/
 
             $.post(RUTA+"consumo/productos", {codigo:$(this).val()},
                 function (data, textStatus, jqXHR) {
