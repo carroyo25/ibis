@@ -393,7 +393,7 @@
                                                         tb_pedidodet.idpedido = :indice 
                                                         AND tb_pedidodet.nflgActivo = 1 
                                                         AND tb_pedidodet.cant_atend > 0
-                                                        AND ( tb_pedidodet.estadoItem = 54 OR tb_pedidodet.estadoItem = 230 ) 
+                                                        AND ( tb_pedidodet.estadoItem = 54 OR tb_pedidodet.estadoItem = 230 OR tb_pedidodet.estadoItem = 52) 
                                                     GROUP BY
                                                         tb_pedidodet.iditem");
                 $sql -> execute(['indice'=>$indice]);
