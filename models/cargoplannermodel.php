@@ -802,6 +802,7 @@
                 $salida = "";
                 $sql = $this->db->connect()->prepare("SELECT
                                                             lg_ordencab.id_regmov,
+                                                            lg_ordencab.cnumero,
                                                             DATE_FORMAT( lg_ordencab.ffechadoc, '%d/%m/%Y' ) AS ffechadoc,
                                                             tb_proyectos.ccodproy,
                                                             cm_entidad.crazonsoc 
@@ -817,7 +818,7 @@
                 if($rowCount > 0) {
                     while($rs = $sql->fetch()){
                         $salida .= '<tr>
-                                        <td class="textoCentro">'.$rs['id_regmov'].'</td>
+                                        <td class="textoCentro">'.$rs['cnumero'].'</td>
                                         <td class="textoCentro">'.$rs['ffechadoc'].'</td>
                                         <td class="pl20px">'.$rs['crazonsoc'].'</td>
                                         <td class="pl20px">'.$rs['ccodproy'].'</td>
@@ -952,6 +953,7 @@
                                                 lg_ordencab.cper AS anio_orden,
                                                 lg_ordencab.ntipmov,
                                                 lg_ordencab.FechaFin,
+                                                lg_ordencab.cnumero,
                                                 FORMAT( lg_ordencab.nplazo, 0 ) AS plazo,
                                                 DATE_FORMAT( lg_ordencab.ffechadoc, '%d/%m/%Y' ) AS fecha_orden,
                                                 DATE_FORMAT( lg_ordencab.ffechaent, '%d/%m/%Y' ) AS fecha_entrega,
@@ -1464,7 +1466,7 @@
                         $objPHPExcel->getActiveSheet()->setCellValue('O'.$fila,$rs['descripcion']);
                         $objPHPExcel->getActiveSheet()->setCellValue('P'.$fila,$tipo_orden);
                         $objPHPExcel->getActiveSheet()->setCellValue('Q'.$fila,$rs['anio_orden']);
-                        $objPHPExcel->getActiveSheet()->setCellValue('R'.$fila,$rs['orden']);
+                        $objPHPExcel->getActiveSheet()->setCellValue('R'.$fila,$rs['cnumero']);
 
                         if  ($rs['fecha_orden'] !== null)
                             $objPHPExcel->getActiveSheet()->setCellValue('S'.$fila,PHPExcel_Shared_Date::PHPToExcel($rs['fecha_orden']));

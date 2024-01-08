@@ -3201,7 +3201,7 @@
 
             $anio = explode("-",$datosOrden[0]['ffechadoc']);
 
-            $orden = str_pad($datosOrden[0]['id_regmov'],6,0,STR_PAD_LEFT);
+            $orden = str_pad($datosOrden[0]['cnumero'],6,0,STR_PAD_LEFT);
             $titulo = $titulo . " " .$anio[0]. " - " . $orden;
             
             $file = uniqid().".pdf";
