@@ -24,7 +24,7 @@
         }
 
         function autorizaExpress(){
-            echo json_encode($this->model->firmarExpress($_POST['id']));
+            echo json_encode($this->model->firmarExpress($_POST['id'],$_POST['numero']));
         }
 
         function actualizaListado() {

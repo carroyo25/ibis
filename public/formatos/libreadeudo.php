@@ -58,7 +58,7 @@
 
 		   	$this->Cell(64,4,"FIRMA JEFE DE OBRA",0,0,"C");
 		    $this->Cell(64,4,"FIRMA DEL TRABAJADOR",0,0,"C");
-		    $this->Cell(64,4,"FIRMA ALMACEN",0,1,"C");
+		    $this->Cell(64,4,"FIRMA JEFE DE ALMACEN",0,1,"C");
 
 			
 		}

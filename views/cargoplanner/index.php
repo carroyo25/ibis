@@ -206,10 +206,6 @@
                             <label for="conceptoSearch">Concepto : </label>
                             <input type="text" name="conceptoSearch" id="conceptoSearch">
                         </div>
-                        <div>
-                            <label for="anioSearch">Año : </label>
-                            <input type="text" name="anioSearch" id="anioSearch" value="2024">
-                        </div>
                     </div>
                     <div class="procesos">
                         <div class="item_anulado"><a href="105" title="Anulado">0%<p>Anulado</p></a></div>

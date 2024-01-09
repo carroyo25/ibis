@@ -173,7 +173,7 @@
             }
         }
 
-        public function firmarExpress($id) {
+        public function firmarExpress($id,$numero) {
             $fecha =  date("Y-m-d");
             
             try {
@@ -197,7 +197,7 @@
                 $rowCount = $sql->rowCount();
                 
                 if ($rowCount > 0){
-                    $this->enviarCorreoAviso($id);
+                    $this->enviarCorreoAviso($numero);
 
                     return array("mensaje"=>"Se autorizo la orden",
                                 "clase"=>"mensaje_correcto",
@@ -235,7 +235,7 @@
                                         border-bottom: 1px solid #c2c2c2;">
                                 <p style="padding:.5rem"><strong style="font-style: italic;">Ing:</strong></p>
                                 <p style="padding:.5rem;line-height: 1rem;">El presente correo es para informar que se ha aprobado la orden Nro. '.$id.' en forma urgente.</p>
-                                <p style="padding:.5rem">>Relizado por : '. $_SESSION['nombres'].'</p>
+                                <p style="padding:.5rem">Realizado por : '. $_SESSION['nombres'].'</p>
                                 <p style="padding:.5rem">Fecha de Aprobación : '. date("d/m/Y h:i:s") .'</p>
                             </div>
                         </div>';

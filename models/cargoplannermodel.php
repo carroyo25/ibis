@@ -19,7 +19,6 @@
                 $pedido     = $parametros['pedidoSearch'] == "" ? "%" : $parametros['pedidoSearch'];
                 $concepto   = $parametros['conceptoSearch'] == "" ? "%" : "%".$parametros['conceptoSearch']."%";
                 $estadoItem = $parametros['estado_item'] == "" ? "%" : $parametros['estado_item'];
-                $anio       = $parametros['anioSearch'] == "" ? "%" : $parametros['anioSearch'];
                 
                 $salida = "No hay registros";
                 $item = 1;
@@ -113,7 +112,6 @@
                                                 AND IFNULL( lg_ordencab.cnumero, '' ) LIKE :orden
                                                 AND tb_proyectos.nidreg LIKE :costo
                                                 AND tb_pedidocab.idtipomov LIKE :tipo
-                                                AND tb_pedidocab.anio LIKE :anio
                                                 AND cm_producto.ccodprod LIKE :codigo
                                                 AND tb_pedidocab.concepto LIKE :concepto
                                                 AND tb_pedidodet.estadoItem LIKE :estado
@@ -128,8 +126,7 @@
                                "concepto"       =>$concepto,
                                "tipo"           =>$tipo,
                                "estado"         =>$estadoItem,
-                               "descripcion"    =>$descrip,
-                               "anio"           =>$anio]);
+                               "descripcion"    =>$descrip]);
                 
                 $rowCount = $sql->rowCount();
 
