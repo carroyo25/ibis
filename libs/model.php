@@ -2929,6 +2929,42 @@
             }
         }
 
+        public function verAdjuntosDocs($id,$tipo){
+            try {
+                $salida = "";
+
+                $sql = $this->db->connect()->prepare("SELECT creferencia,
+                                                            cdocumento,
+                                                            id_regmov 
+                                                        FROM lg_regdocumento 
+                                                        WHERE nidrefer=:id
+                                                        AND nflgactivo = 1
+                                                        AND cmodulo=:tipo");
+                $sql->execute(['id'=>$id,"tipo"=>$tipo]);
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0) {
+                    while ($rs = $sql->fetch()) {
+
+                        $icono = $this->tipoArchivo($rs['creferencia']);
+
+                        $salida .= '<li>
+                                        <a href="'.$rs['creferencia'].'" data-archivo="'.$rs['creferencia'].'" class="icono_archivo">'.$icono.'<p>'.$rs['cdocumento'].'</p></a>
+                                        <a href="'.$rs['id_regmov'].'" class="file_delete"><i class="fas fa-ban"></i></a>
+                                    </li>';
+                    }
+                }
+                
+                $ret = array("adjuntos"=>$salida,
+                            "archivos"=>$rowCount);
+
+                return $ret;
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
         //marcar items para no ser consultados
         public function itemMarcado($id,$estado,$io){
             try {
@@ -3805,7 +3841,8 @@
                 return array("cabecera"=>$docData,
                             "detalles"=>$this->detallesNota($indice,$clase),
                             "series"=>$this->seriesNota($indice),
-                            "adjuntos"=>$this->adjuntosNota($indice));
+                            "adjuntos"=>$this->adjuntosNota($indice),
+                            "total_adjuntos"=>$this->contarAdjuntos($indice,"NI"));
 
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
@@ -3871,7 +3908,7 @@
                                         <td class="pr5px"><input type="text" class="textoDerecha" value="'.$rs['ncantidad'].'"></td>
                                         <td><input type="text" value="'.$rs['cobserva'].'" readonly></td>
                                         <td class="pr20px textoDerecha"></td>
-                                        <td class="textoCentro"><a href="'.$rs['id_regalm'].'"><i class="fas fa-barcode"></i></a></td>
+                                        <td class="textoCentro"><a href="'.$rs['id_regalm'].'" data-accion="series"><i class="fas fa-barcode"></i></a></td>
                                     </tr>';
                     }
                 }

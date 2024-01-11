@@ -54,7 +54,7 @@
                                         <td></td>
                                         <td></td>
                                         <td></td>
-                                        <td><b>Total Orden '.$rs['id_regmov'].'</b></td>
+                                        <td><b>Total Orden '.$rs['cnumero'].'</b></td>
                                         <td></td>
                                         <td></td>
                                         <td class="textoDerecha">'.$rs['ntotal'].'</td>
@@ -128,7 +128,9 @@
                                                     lg_ordendet.ntotal,
                                                     DATE_FORMAT( lg_ordencab.ffechaent, '%d/%m/%Y' ) AS fecha_entrega,
                                                     FORMAT( IF ( lg_ordencab.ncodmon = 21, lg_ordendet.ntotal, lg_ordendet.ntotal / lg_ordencab.ntcambio ), 2 ) AS dolares,
-	                                                FORMAT( IF ( lg_ordencab.ncodmon = 20, lg_ordendet.ntotal, lg_ordendet.ntotal * lg_ordencab.ntcambio ), 2 ) AS soles
+	                                                FORMAT( IF ( lg_ordencab.ncodmon = 20, lg_ordendet.ntotal, lg_ordendet.ntotal * lg_ordencab.ntcambio ), 2 ) AS soles,
+                                                    tb_equipmtto.cdescripcion,
+	                                                tb_equipmtto.cregistro
                                                 FROM
                                                     lg_ordendet
                                                     INNER JOIN cm_producto ON lg_ordendet.id_cprod = cm_producto.id_cprod
@@ -143,6 +145,7 @@
                                                     INNER JOIN tb_grupo ON cm_producto.ngrupo = tb_grupo.ncodgrupo
                                                     LEFT JOIN alm_recepdet ON lg_ordendet.niddeta = alm_recepdet.niddeta
                                                     INNER JOIN tb_clase ON cm_producto.nclase = tb_clase.ncodclase
+                                                    LEFT JOIN tb_equipmtto ON tb_pedidodet.nroparte = tb_equipmtto.idreg
                                                 WHERE lg_ordendet.id_orden = :id
                                                 AND lg_ordendet.nestado = 1");
 
@@ -198,7 +201,7 @@
                                         <td class="textoCentro">'.$rs['cnumdoc'].'</td>
                                         <td class="pl20px">'.$rs['cnumcot'].'</td>
                                         <td class="pl20px">'.$rs['nroparte'].'</td>
-                                        <td class="pl20px">'.$rs['nregistro'].'</td>
+                                        <td class="pl20px">'.$rs['cregistro'].'</td>
                                         <td class="textoCentro">'.$estado.'</td>
                                         <td class="pl20px">'.$rs['observacion'].'</td>
                                     </tr>';

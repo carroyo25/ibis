@@ -82,7 +82,7 @@
 
         function listaScroll(){
             $pagina = $_POST['pagina'] ?? 1;
-            $cantidad = 30;
+            $cantidad = 100;
         
             echo json_encode([$this->model->listarOrdenScroll($pagina,$cantidad)]);
         }

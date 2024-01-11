@@ -131,13 +131,15 @@
                                                         ( SELECT SUM( alm_recepdet.ncantidad ) FROM alm_recepdet WHERE alm_recepdet.niddetaOrd = lg_ordendet.nitemord 
                                                             AND alm_recepdet.nflgActivo = 1) AS ingresos,
                                                         ( SELECT SUM( alm_despachodet.ndespacho ) FROM alm_despachodet WHERE alm_despachodet.niddetaOrd = lg_ordendet.nitemord 
-                                                        AND alm_despachodet.nflgActivo = 1) AS despachos 
+                                                        AND alm_despachodet.nflgActivo = 1) AS despachos,
+                                                        lg_ordencab.cnumero
                                                     FROM
                                                         lg_ordendet
                                                         INNER JOIN cm_producto ON lg_ordendet.id_cprod = cm_producto.id_cprod
                                                         INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
                                                         INNER JOIN tb_pedidodet ON lg_ordendet.niddeta = tb_pedidodet.iditem
-                                                        INNER JOIN tb_pedidocab ON tb_pedidocab.idreg = tb_pedidodet.idpedido 
+                                                        INNER JOIN tb_pedidocab ON tb_pedidocab.idreg = tb_pedidodet.idpedido
+                                                        INNER JOIN lg_ordencab ON lg_ordendet.id_regmov = lg_ordencab.id_regmov
                                                     WHERE
                                                         lg_ordendet.id_orden = :id");
                 $sql->execute(["id"=>$id]);
@@ -179,7 +181,7 @@
                                         <td class="textoDerecha pr20px">'. number_format($pendientes,2) .'</td>
                                         <td><input type="text"></td>
                                         <td class="textoCentro">'.$rs['pedido'].'</td>
-                                        <td class="textoCentro">'.str_pad($rs['id_orden'],6,0,STR_PAD_LEFT).'</td>
+                                        <td class="textoCentro">'.str_pad($rs['cnumero'],6,0,STR_PAD_LEFT).'</td>
                                     </tr>';
                             }    
                         }

@@ -443,37 +443,7 @@ $(function(){
         return false;
     });
 
-    /*$("#sendEntOrden").click(function(e){
-        e.preventDefault();
-
-       let result = {};
-
-        $.each($("#formProceso").serializeArray(),function(){
-            result[this.name] = this.value;
-        });
-
-        try {
-            if (result['codigo_almacen'] == '') throw "Elija el Almacen";
-            if (result['codigo_costos'] == '') throw "Elija Centro de Costos";
-            if (result['codigo_aprueba'] == '') throw "Elija la persona que aprueba";
-            if (result['codigo_movimiento'] == '') throw "Elija tipo de movimiento";
-            if (result['guia'] == '') throw "Escriba el número de guia"
-
-            $.post(RUTA+"recepcion/envioProveedor",{cabecera:result,
-                                                    detalles:JSON.stringify(detalles()),
-                                                    condicion:1},
-                function (data, textStatus, jqXHR) {
-                   
-                },
-                "text"
-            );
-        } catch (error) {
-            mostrarMensaje(error,'mensaje_error');
-        }
-
-        return false;
-    });*/
-
+    
     $("#btnConsulta").on('click', function(e) {
         e.preventDefault();
 
