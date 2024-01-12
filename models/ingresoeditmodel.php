@@ -90,7 +90,7 @@
         }
 
         public function subirArchivosGuiasIngreso($codigo,$adjuntos){
-            $countfiles = count( $adjuntos);
+            $countfiles = count($adjuntos);
 
             for( $i=0;$i<$countfiles;$i++ ){
                 try {
@@ -117,7 +117,67 @@
                 }
             }
 
-            return array("adjuntos"=>$this->contarAdjuntos($codigo,'ORD'));
+            return array("adjuntos"=>$this->contarAdjuntos($codigo,'NI'));
+        }
+
+        public function grabarSeriesIngreso($id,$series) {
+            try {
+                $datos = json_decode($series);
+                $nreg = count($datos);
+
+                if ($nreg > 0 ) {
+                    for ($i=0; $i < $nreg; $i++) { 
+                        $sql= $this->db->connect()->prepare("INSERT INTO alm_recepserie SET id_cprod=:cprod,idref_movi=:nota,idref_alma=:almacen,
+                                                                                            cdesserie=:serie,idref_pedido=:itempedido,
+                                                                                            cdetalle=:tipo,nflgactivo:=activo");
+                         $sql ->execute(["cprod"=>$datos[$i]->producto,
+                                         "almacen"=>$datos[$i]->almacen,
+                                         "nota"=>$id,
+                                         "serie"=>$datos[$i]->serie,
+                                         "itempedido"=>$datos[$i]->idped,
+                                         "tipo"=>"I",
+                                         "activo"=>1]);
+                    }
+                }
+                
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        public function mostrarSeries($id){
+            try{
+                $salida = "";
+
+                $sql = $this->db->connect()->prepare("SELECT
+                                                    alm_recepserie.ncodserie,
+                                                    alm_recepserie.cdesserie,
+                                                    cm_producto.ccodprod,
+                                                    cm_producto.cdesprod 
+                                                FROM
+                                                    alm_recepserie
+                                                    INNER JOIN cm_producto ON alm_recepserie.id_cprod = cm_producto.id_cprod 
+                                                WHERE
+                                                    alm_recepserie.nflgactivo = 1 
+                                                    AND alm_recepserie.idref_pedido =:id");
+                $sql->execute(["id"=>$id]);
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0) {
+                    while ($rs = $sql->fetch()) {
+                        $salida .='<tr>
+                                        <td style="height:2rem;padding-left:20px;">'.$rs['cdesprod'].'</td>
+                                        <td style="height:2rem;padding-left:20px;">'.$rs['cdesserie'].'</td>
+                                    </tr>';
+                    }
+                }
+
+                return $salida;
+            }catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
         }
     }
 ?>

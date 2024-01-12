@@ -87,34 +87,40 @@ $(() => {
     $("#tablaDetalles tbody").on("click","a", function (e) {
         e.preventDefault();
 
-        fila = $(this).parent().parent();
-        idfila = $(this).parent().parent().data('iddetped');
+        let fila = $(this).parent().parent(),
+            idfila = $(this).parent().parent().data('iddetped');
+            nfilas = 0;
 
         if ( $(this).data("accion") == "series" ) {
-            let filas   = parseInt($(this).parent().parent().find("td").eq(7).children().val()),
-            orden       = $(this).parent().parent().data('detorden'),
-            producto    = $(this).parent().parent().data('idprod'),
-            almacen     = $("#codigo_almacen").val(),
-            nombre      = $(this).parent().parent().find("td").eq(3).text(),
-            item        = $(this).parent().parent().data('iddetped');
+            let filas       = parseInt($(this).parent().parent().find("td").eq(7).children().val()),
+                orden       = $(this).parent().parent().data('detorden'),
+                producto    = $(this).parent().parent().data('idprod'),
+                almacen     = $("#codigo_almacen").val(),
+                nombre      = $(this).parent().parent().find("td").eq(4).text(),
+                item        = $(this).parent().parent().data('iddetped');
 
             row = `<tr data-orden="${orden}" data-producto="${producto}" data-almacen="${almacen}" data-itempedido="${item}">
                         <td>${nombre}</td>
                         <td><input type="text"></td>
                     </tr>`
 
-            if (accion == 'n') {
-                $("#tablaSeries tbody").empty();
+            $.post(RUTA+"ingresoedit/seriesConsulta", {id:item},
+                function (data, text, requestXHR) {
+                    $("#tablaSeries tbody").empty().append(data);
 
-                for (let index = 0; index < filas; index++) {
-                    $("#tablaSeries").append(row);        
-                }
-            }
-
+                    if ( $("#tablaSeries tbody >tr").length === 0) {
+                        $("#tablaSeries tbody").empty();
+                        for (let index = 0; index < filas; index++) {
+                            $("#tablaSeries").append(row);        
+                        }
+                    } ;
+                },
+                "text"
+            );
+            
             $("#series").fadeIn();
         }
         
-
         return false;
     });
 
@@ -234,4 +240,58 @@ $(() => {
 
         return false;
     });
+
+    $("#btnCancelSeries").click(function (e) { 
+        e.preventDefault();
+
+        $("#tablaSeries tbody").empty();
+        $("#series").fadeOut();
+        
+        return false;
+    });
+
+    $("#btnConfirmSeries").click(function (e) { 
+        e.preventDefault();
+
+        $("#series").fadeOut();
+
+        $.post("ingresoedit/series",{id:$("#codigo_ingreso").val(),series:JSON.stringify(series())},
+            function (data, text, requestXHR) {
+                console.log(data);
+            },
+            "json"
+        );
+        
+        return false;
+    });
 })
+
+series = () => {
+    SERIES = [];
+
+    let TABLA = $("#tablaSeries tbody >tr");
+
+    TABLA.each(function(){
+
+        let ORDEN   = $(this).data('orden'),
+            ALMACEN = $("#codigo_almacen").val(),
+            PRODUCTO = $(this).data('producto'),
+            IDPED    = $(this).data('itempedido')
+            SERIE  = $(this).find('td').eq(1).children().val();
+    
+        item = {};
+
+        if (SERIE != ""){
+            item['orden']       = ORDEN;
+            item['almacen']     = ALMACEN;
+            item['producto']    = PRODUCTO;
+            item['serie']       = SERIE;
+            item['idped']       = IDPED;
+        }
+        
+
+        SERIES.push(item);
+    })
+
+    return SERIES;
+}

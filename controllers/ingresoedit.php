@@ -18,6 +18,14 @@
         function verAdjuntos(){
             echo json_encode($this->model->verAdjuntosDocs($_POST['id'],$_POST['tipo']));
         }
+
+        function series(){
+            echo json_encode($this->model->grabarSeriesIngreso($_POST['id'],$_POST['series']));
+        }
+
+        function seriesConsulta(){
+            echo $this->model->mostrarSeries($_POST['id']);
+        }
         
     }
 ?>

@@ -273,7 +273,6 @@
             try {
                 $datos = json_decode($series);
                 $nreg = count($datos);
-               //echo $nreg;
 
                 if ($nreg > 0 ) {
                     for ($i=0; $i < $nreg; $i++) { 
