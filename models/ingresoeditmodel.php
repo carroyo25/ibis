@@ -129,7 +129,7 @@
                     for ($i=0; $i < $nreg; $i++) { 
                         $sql= $this->db->connect()->prepare("INSERT INTO alm_recepserie SET id_cprod=:cprod,idref_movi=:nota,idref_alma=:almacen,
                                                                                             cdesserie=:serie,idref_pedido=:itempedido,
-                                                                                            cdetalle=:tipo,nflgactivo:=activo");
+                                                                                            cdetalle=:tipo,nflgactivo=:activo");
                          $sql ->execute(["cprod"=>$datos[$i]->producto,
                                          "almacen"=>$datos[$i]->almacen,
                                          "nota"=>$id,
@@ -166,7 +166,7 @@
 
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()) {
-                        $salida .='<tr>
+                        $salida .='<tr data-grabado="1">
                                         <td style="height:2rem;padding-left:20px;">'.$rs['cdesprod'].'</td>
                                         <td style="height:2rem;padding-left:20px;">'.$rs['cdesserie'].'</td>
                                     </tr>';

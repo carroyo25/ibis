@@ -111,6 +111,7 @@
                 $salida =  '<tr><td colspan="3" class="textoCentro">No hay registro</td></tr>';
                 $sql = $this->db->connect()->prepare("SELECT
                                 LPAD(lg_ordencab.id_regmov,6,0) AS nroorden,
+                                LPAD(lg_ordencab.cnumero,6,0) AS numero,
                                 DATE_FORMAT(lg_ordencab.ffechadoc,'%d/%m/%Y') AS fechaOrden,
                                 lg_ordencab.id_regmov
                         FROM
@@ -124,7 +125,7 @@
                     $salida = "";
                     while ($rs = $sql->fetch()) {
                         $salida .= '<tr>
-                                        <td class="textoCentro">'.$rs['nroorden'].'</td>
+                                        <td class="textoCentro">'.$rs['numero'].'</td>
                                         <td class="textoCentro">'.$rs['fechaOrden'].'</td>
                                         <td class="textoCentro"><a href="'.$rs['id_regmov'].'"><i class="fas fa-file-pdf"></i></a></td>
                                     </tr>';

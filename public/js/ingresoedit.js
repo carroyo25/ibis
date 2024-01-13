@@ -1,5 +1,7 @@
 $(() => {
 
+    let swgrabar = false;
+
     $("#esperar").fadeOut();
 
     $("#tablaPrincipal tbody").on("click","tr", function (e) {
@@ -99,7 +101,7 @@ $(() => {
                 nombre      = $(this).parent().parent().find("td").eq(4).text(),
                 item        = $(this).parent().parent().data('iddetped');
 
-            row = `<tr data-orden="${orden}" data-producto="${producto}" data-almacen="${almacen}" data-itempedido="${item}">
+            row = `<tr data-orden="${orden}" data-producto="${producto}" data-almacen="${almacen}" data-itempedido="${item}" data-grabado="0">
                         <td>${nombre}</td>
                         <td><input type="text"></td>
                     </tr>`
@@ -108,12 +110,16 @@ $(() => {
                 function (data, text, requestXHR) {
                     $("#tablaSeries tbody").empty().append(data);
 
-                    if ( $("#tablaSeries tbody >tr").length === 0) {
+                    if ( $("#tablaSeries tbody >tr").length === 0 ) {
                         $("#tablaSeries tbody").empty();
+                        swgrabar = true;
+
                         for (let index = 0; index < filas; index++) {
                             $("#tablaSeries").append(row);        
                         }
-                    } ;
+                    } else {
+                        swgrabar = false;
+                    };
                 },
                 "text"
             );
@@ -253,14 +259,14 @@ $(() => {
     $("#btnConfirmSeries").click(function (e) { 
         e.preventDefault();
 
-        $("#series").fadeOut();
-
         $.post("ingresoedit/series",{id:$("#codigo_ingreso").val(),series:JSON.stringify(series())},
-            function (data, text, requestXHR) {
-                console.log(data);
-            },
-            "json"
-        );
+                function (data, text, requestXHR) {
+                    
+                },
+                "json"
+            ); 
+        
+        $("#series").fadeOut();
         
         return false;
     });
@@ -273,24 +279,28 @@ series = () => {
 
     TABLA.each(function(){
 
-        let ORDEN   = $(this).data('orden'),
-            ALMACEN = $("#codigo_almacen").val(),
+        let ORDEN    = $(this).data('orden'),
+            ALMACEN  = $("#codigo_almacen").val(),
             PRODUCTO = $(this).data('producto'),
-            IDPED    = $(this).data('itempedido')
-            SERIE  = $(this).find('td').eq(1).children().val();
+            IDPED    = $(this).data('itempedido'),
+            SERIE    = $(this).find('td').eq(1).children().val(),
+            GRABADO  = $(this).data('grabado');
+
+            console.log(GRABADO);
     
         item = {};
 
-        if (SERIE != ""){
+        if ( SERIE != "" && GRABADO === 0){
             item['orden']       = ORDEN;
             item['almacen']     = ALMACEN;
             item['producto']    = PRODUCTO;
             item['serie']       = SERIE;
             item['idped']       = IDPED;
-        }
-        
 
-        SERIES.push(item);
+            $(this).attr('data-grabado',1);
+
+            SERIES.push(item);
+        }
     })
 
     return SERIES;

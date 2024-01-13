@@ -385,7 +385,8 @@
                 }
 
                 return array("cabecera"=>$docData,
-                            "detalles"=>$this->registroDetalles($indice));
+                            "detalles"=>$this->registroDetalles($indice),
+                            "total_adjuntos"=>$this->contarAdjuntos($indice,"GA"));
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;
@@ -628,23 +629,27 @@
                     $ext = explode('.',$adjuntos[$file]['name']);
                     $filename = uniqid().".".end($ext);
                     // Upload file
-                    if (move_uploaded_file($adjuntos[$file]['tmp_name'],'public/documentos/certificados/'.$filename)){
+                    if (move_uploaded_file($adjuntos[$file]['tmp_name'],'public/documentos/almacen/adjuntos/'.$filename)){
                         $sql= $this->db->connect()->prepare("INSERT INTO lg_regdocumento 
                                                                     SET nidrefer=:cod,cmodulo=:mod,cdocumento=:doc,
                                                                         creferencia=:ref,nflgactivo=:est");
                         $sql->execute(["cod"=>$codigo,
-                                        "mod"=>"CER",
+                                        "mod"=>"GA",
                                         "ref"=>$filename,
                                         "doc"=>$adjuntos[$file]['name'],
                                         "est"=>1]);
                     }
+
+                    
+
                 } catch (PDOException $th) {
                     echo "Error: ".$th->getMessage();
                     return false;
                 }
             }
 
-            $this->actualizarDetallePedido($codigo,$filename);
+            //$this->actualizarDetallePedido($codigo,$filename);
+            return array("total_adjuntos"=>$countfiles);
         }
 
         private function actualizarDetallePedido($codigo,$filename){

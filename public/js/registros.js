@@ -10,9 +10,14 @@ $(function(){
         $("#estado")
             .removeClass()
             .addClass("textoCentro w35por estado procesando");
+
         $("#proceso").fadeIn();
         $("form")[1].reset();
         $("#tablaDetalles tbody").empty();
+
+        $("#formProceso input[type='hidden']").each(function(){
+            $(this).val("");
+        });
 
         accion = 'n';
 
@@ -44,6 +49,8 @@ $(function(){
                 $("#tablaDetalles tbody")
                     .empty()
                     .append(data.detalles);
+
+                $("#atach_counter").text(data.total_adjuntos);
             },
             "json"
         );
@@ -308,7 +315,7 @@ $(function(){
     $("#tablaDetalles tbody").on('click','a', function(e) {
         e.preventDefault();
 
-        if ($(this).children().attr('class') == 'fas fa-paperclip' ) {
+        /*if ($(this).children().attr('class') == 'fas fa-paperclip' ) {
             $("#certificadoAtach").val($(this).attr('href'));
             $("#archivos").fadeIn();
         }else {
@@ -318,7 +325,22 @@ $(function(){
                     
             $("#vistaCertificado").fadeIn();
            
+        }*/
+
+        return false;
+    });
+
+    $("#atachDocs").click(function(e){
+        e.preventDefault();
+
+        try {
+            if ($("#codigo_ingreso").val() === "") throw new Error("Debe grabar el documento");
+
+            $("#archivos").fadeIn();
+        } catch (error) {
+            mostrarMensaje(error,"mensaje_error");
         }
+        
 
         return false;
     });
@@ -362,7 +384,7 @@ $(function(){
  
          let formData = new FormData();
  
-         formData.append('codigo',$("#certificadoAtach").val());
+         formData.append('codigo',$("#codigo_ingreso").val());
  
          $.each($('#uploadAtach')[0].files, function(i, file) {
              formData.append('file-'+i, file);
@@ -377,9 +399,13 @@ $(function(){
              processData:false,
              dataType: "json",
              success: function (response) {
-                 //$("#atach_counter").text(response.adjuntos);
                  $("#archivos").fadeOut();
                  $("#fileAtachs")[0].reset();
+
+                 $("#atach_counter").text(response.total_adjuntos);
+
+                 $("#fileAtachs")[0].reset();
+                 $(".listaArchivos").empty();
              }
          });
  
@@ -394,14 +420,48 @@ $(function(){
          $(".listaArchivos").empty();
     });
 
-    $("#closePreview").click(function (e) { 
+    $("#previewDocs").click(function (e) { 
         e.preventDefault();
 
-        $(".ventanaVistaPrevia iframe").attr("src","");
-        $("#vistaCertificado").fadeOut();
+        try {
+            if ($("#codigo_ingreso").val() == "") throw "Seleccione un ingreso, para ver los adjuntos";
+            if ($("#atach_counter").text() == 0)  throw "No se han registrado adjuntos";
+
+            $.post(RUTA+"ingresoedit/verAdjuntos", {id:$("#codigo_ingreso").val(),tipo:'GA'},
+                function (data, textStatus, jqXHR) {
+                    $("#listaAdjuntos").empty().append(data.adjuntos);
+                    $("#listaAdjuntos li a:nth-child(2)").hide();
+
+                    $("#vistaAdjuntos").fadeIn();
+                },
+                "json"
+            );
+        } catch (error) {
+            mostrarMensaje(error,'mensaje_error')
+        }
+       
+        return false;
+    });
+
+    $("#vistaAdjuntos").on("click","a", function (e) {
+        e.preventDefault();
+        
+        $(".ventanaAdjuntos iframe")
+            .attr("src","")
+            .attr("src","public/documentos/almacen/adjuntos/"+$(this).attr("href"));
+        
+        return false;
+    });
+
+    $("#closeAtach").click(function (e) { 
+        e.preventDefault();
+
+        $(".ventanaAdjuntos iframe").attr("src","");
+        $("#vistaAdjuntos").fadeOut();
 
         return false;
     });
+
 
 })
 

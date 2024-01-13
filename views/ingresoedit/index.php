@@ -186,7 +186,7 @@
     <div class="modal" id="vistaAdjuntos">
         <div class="ventanaAdjuntos">
             <div class="tituloAdjuntos">
-                <h3>Adjuntos Orden</h3>
+                <h3>Adjuntos</h3>
                 <a href="#" id="closeAtach" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
             </div>
             <ul id="listaAdjuntos">

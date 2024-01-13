@@ -44,7 +44,8 @@
                                                      WHERE
                                                          tb_costusu.id_cuser = :user 
                                                          AND tb_costusu.nflgactivo = 1
-                                                    ORDER BY id_regmov");
+                                                         AND lg_ordencab.cper = YEAR(NOW())
+                                                    ORDER BY lg_ordencab.fregsys DESC");
                  $sql->execute(["user"=>$_SESSION['iduser']]);
                  $rowCount = $sql->rowCount();
  
@@ -242,10 +243,11 @@
                                                      WHERE
                                                         tb_costusu.id_cuser = :user 
                                                         AND tb_costusu.nflgactivo = 1
-                                                        AND id_regmov LIKE  :nroOrden
+                                                        AND cnumero LIKE  :nroOrden
                                                         AND ncodproy LIKE :proyecto
                                                         AND MONTH (ibis.lg_ordencab.ffechadoc) LIKE :mes
-                                                        AND YEAR (ibis.lg_ordencab.ffechadoc) = :anio");
+                                                        AND YEAR (ibis.lg_ordencab.ffechadoc) = :anio
+                                                    ORDER BY lg_ordencab.fregsys DESC");
                  $sql->execute(["user"=>$_SESSION['iduser'],
                                 "nroOrden"=>$orden,
                                 "proyecto"=>$costos,
@@ -276,7 +278,7 @@
                                         <td class="textoCentro">'.str_pad($rs['cnumero'],4,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.date("d/m/Y", strtotime($rs['ffechadoc'])).'</td>
                                         <td class="pl20px">'.$rs['concepto'].'</td>
-                                        <td class="pl20px">'.utf8_decode($rs['costos']).'</td>
+                                        <td class="pl20px">'.$rs['costos'].'</td>
                                         <td class="pl20px">'.$rs['area'].'</td>
                                         <td class="textoCentro">'.$estado.'</td>
                                      </tr>';

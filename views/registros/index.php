@@ -23,6 +23,9 @@
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
                         <div>
+                            <button type="button" id="atachDocs" title="Adjuntar documentos" class="boton3">
+                                <i class="fas fa-paperclip"></i> Adjuntar Documentos
+                            </button>
                             <button type="button" id="updateDocument" title="Cerrar Salida" class="boton3">
                                 <i class="far fa-save"></i> Grabar Ingreso
                             </button>
@@ -89,6 +92,10 @@
                     <div class="barraOpciones">
                         <span>Detalles</span>
                         <div>
+                            <button type="button" id="previewDocs" title="Documentos Adjuntos" class="cerrarLista boton3">
+                                <i class="fas fa-upload"></i> Ver Adjuntos
+                                <span class="button__atach cookie_info" id="atach_counter"></span>
+                            </button>
                             <button type="button" id="itemsImport" title="Importar Guias de Remision" class="cerrarLista boton3">
                                 <i class="fas fa-upload"></i> Guias de Remisión
                             </button>
@@ -200,7 +207,7 @@
         <div class="ventanaArchivos">
             <form action="#" id="fileAtachs" enctype='multipart/form-data'>
                 <input type="hidden" name="certificadoAtach" id="certificadoAtach">
-                <input type="hidden" name="uploadAtach" id="uploadAtach" multiple class="oculto">
+                <input type="file" name="uploadAtach" id="uploadAtach" multiple class="oculto">
                 <div class="tituloArchivos">
                     <h3>Adjuntar Archivos</h3>
                     <a href="#" id="openArch" title="Adjuntar Archivos"><i class="fas fa-file-medical"></i><p>Añadir</p></a>
@@ -220,6 +227,18 @@
                 <h3>Vista Previa</h3>
                 <a href="#" id="closePreview" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
             </div>
+            <iframe src=""></iframe>
+        </div>
+    </div>
+    <div class="modal" id="vistaAdjuntos">
+        <div class="ventanaAdjuntos">
+            <div class="tituloAdjuntos">
+                <h3>Adjuntos</h3>
+                <a href="#" id="closeAtach" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
+            </div>
+            <ul id="listaAdjuntos">
+
+            </ul>
             <iframe src=""></iframe>
         </div>
     </div>
