@@ -3508,6 +3508,50 @@
                 $pdf->Cell(45,4,"",0,0);
             }
 
+            $pdf->SetXY(146,115);
+            
+            $pdf->Cell(33,6,"Valor Venta",0,0);
+            $pdf->Cell(20,6,number_format($cabecera['total_numero'],2),0,1,"R");
+
+            if($cabecera['radioIgv'] ==  0) {
+                $pdf->SetX(146);
+                $pdf->Cell(8,3,"",0,0);
+                $pdf->Cell(20,3,"",0,0);
+                $pdf->SetX(185);
+                $pdf->Cell(20,3,"",0,1); 
+            }else{
+                $igv = round((floatval($cabecera['total_numero'])*0.18),2);
+                $pdf->SetX(146);
+                $pdf->Cell(13,3,"IGV",0,0);
+                $pdf->Cell(20,3,"(18%)",0,0);
+                $pdf->Cell(20,3,number_format($igv,2),0,1,"R");
+            }
+
+            $pdf->SetX(146);
+
+            if ( $cabecera['total_adicional'] ) {
+                $pdf->Cell(33,6,"CARGO(0)",0,0);
+                $pdf->Cell(20,6,number_format($cabecera['total_adicional'],2),0,1,"R");
+            }else {
+                $pdf->Cell(43,6,"",0,0);
+                $pdf->Cell(30,6,"",0,1);
+            }
+            
+            $pdf->SetX(146);
+            $pdf->SetFont('Arial',"B","8");
+            $pdf->Cell(20,4,"TOTAL",1,0,"L",true);
+            $pdf->Cell(15,4,$cabecera['moneda'],1,0,"C",true);
+
+
+            if ( $cabecera['radioIgv'] == 0 ){
+                $pdf->Cell(20,4,number_format($cabecera['total_numero'] +  $total_adicional ,2),1,1,"R",true);
+            }        
+            else {
+                $pdf->Cell(20,4,number_format((($cabecera['total_numero']*1.18)+ $total_adicional ),2),1,1,"R",true);
+            }
+
+            $pdf->SetFont('Arial',"","6");
+
             if ($condicion == 0){
                 $filename = "public/documentos/ordenes/vistaprevia/".$file;
             }else if ($condicion == 1){

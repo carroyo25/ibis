@@ -18,7 +18,7 @@
             $this->plazo            = "SEGÚN ANEXOS";
             $this->lugar            = $lugar;
             $this->cotizacion       = $cotizacion;
-            $this->fentrega         = "SEGÚN ANEXOS";
+            $this->fentrega         = $fentrega;
             $this->pago             = "SEGÚN ANEXOS";
             $this->importe          = $importe;
             $this->info             = $info;
@@ -134,7 +134,7 @@
         }
 
         function footer(){
-            $this->setXY(10,220);
+            $this->setXY(10,145);
             //$this->Ln(3);
             if ( $this->condiciones != "" )
                 $this->MultiCell(190,3,utf8_decode($this->condiciones),"TLRB");
@@ -144,7 +144,7 @@
             $this->SetFont('Arial',"","7");
             $this->cell(30,4,"ELABORADO POR",1,0,"C",true);
             $this->cell(30,4,"IMPRESO POR",1,1,"C",true);
-            $this->SetFont('Arial',"","5");
+            $this->SetFont('Arial',"","4");
             $this->cell(30,4,utf8_decode($this->usuario),1,0,"C"); //envia de parametro
             $this->cell(30,4,"SYSTEM",1,1,"C");
             $this->SetFont('Arial',"","7");
