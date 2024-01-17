@@ -140,17 +140,17 @@
         <table id="tablaPrincipal">
             <thead>
                 <tr class="stickytop">
-                    <th>Item</th>
-                    <th>Codigo</th>
-                    <th width="50%">Descripcion</th>
-                    <th>Unidad</th>
-                    <th>Moneda</th>
-                    <th>Tipo<br>Cambio</th>
-                    <th>Fecha Orden</th>
-                    <th>Nro. Orden</th>
-                    <th>Cantidad</th>
-                    <th>Precio Soles</th>
-                    <th>Precio Dólares</th>
+                    <th data-titulo="item">Item</th>
+                    <th data-titulo="codigo">Codigo</th>
+                    <th data-titulo="descripcion" width="50%">Descripcion</th>
+                    <th data-titulo="unidad">Unidad</th>
+                    <th data-titulo="moneda">Moneda</th>
+                    <th data-titulo="cambio">Tipo<br>Cambio</th>
+                    <th data-titulo="fecha">Fecha Orden</th>
+                    <th data-titulo="orden">Nro. Orden</th>
+                    <th data-titulo="cantidad">Cantidad</th>
+                    <th data-titulo="soles">Precio Soles</th>
+                    <th data-titulo="dolares">Precio Dólares</th>
                 </tr>
             </thead>
             <tbody>

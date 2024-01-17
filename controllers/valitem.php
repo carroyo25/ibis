@@ -13,6 +13,10 @@
         function consulta(){
             echo $this->model->consultarItems($_POST);
         }
+
+        function exportar(){
+            echo json_encode($this->model->exportarValorizadoItem($_POST['detalles']));  
+        }
         
     }
 ?>
