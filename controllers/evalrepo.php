@@ -7,8 +7,17 @@
 
         function render(){
             $this->view->listaCostos = "";
-            $this->view->listarOrdenes = $this->model->listarEvaluaciones();
+            $this->view->listarOrdenes = "";
+            $this->view->listaCostosSelect = $this->model->costosPorUsuarioSelect($_SESSION['iduser']);
             $this->view->render('evalrepo/index');
+        }
+
+        function evaluaciones(){
+            echo $this->model->crearReporte($_POST);
+        }
+
+        function evaluacionesExcel(){
+            echo json_encode($this->model->crearExcel($_POST));
         }
         
     }
