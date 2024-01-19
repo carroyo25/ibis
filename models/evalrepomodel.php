@@ -267,7 +267,7 @@
                 $this->exportarCompras($anio, $mes);
             }
             else{
-
+                $this->exportarServicios($anio, $mes);
             }
 
             return array("documento"=>'public/documentos/reportes/evaluacion.xlsx');
@@ -421,8 +421,6 @@
             try {
                 require_once('public/PHPExcel/PHPExcel.php');
 
-                $anio = $parametros["anioSearch"] == "" ? "2024" : $parametros["anioSearch"];
-
                 $result = $this->compras($anio,$mes);
 
                 $objPHPExcel = new PHPExcel();
@@ -434,23 +432,127 @@
                     ->setDescription("Reporte de Evaluación de Proveedores")
                     ->setKeywords("Template excel");
 
-                $cuerpo = array(
-                    'font'  => array(
-                    'bold'  => false,
-                    'size'  => 7,
-                ));
-
                 $objWorkSheet = $objPHPExcel->createSheet(1);
 
                 $objPHPExcel->setActiveSheetIndex(0);
-                $objPHPExcel->getActiveSheet()->setTitle("Reporte de Evaluación de Proveedores - Compras");
+                $objPHPExcel->getActiveSheet()->setTitle("Reporte Evaluación - Compras");
+
+                $objPHPExcel->getActiveSheet()->mergeCells('A1:AQ1');
+                $objPHPExcel->getActiveSheet()->mergeCells('F2:J2');
+                $objPHPExcel->getActiveSheet()->mergeCells('K2:Q2');
+                $objPHPExcel->getActiveSheet()->mergeCells('R2:V2');
+                $objPHPExcel->getActiveSheet()->mergeCells('W2:AD2');
+                $objPHPExcel->getActiveSheet()->mergeCells('AE2:AG2');
+
+                $objPHPExcel->getActiveSheet()->getRowDimension('2')->setRowHeight(60);
+                $objPHPExcel->getActiveSheet()->getRowDimension('3')->setRowHeight(60);
+
+                $objPHPExcel->getActiveSheet()->getStyle('F3:AH3')->getAlignment()->setWrapText(true);
+
+                $objPHPExcel->getActiveSheet()->setCellValue('A1','Reporte de Evaluación de Proveedores - Compras');
+
+                $objPHPExcel->getActiveSheet()->getStyle('A1:AH2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('A1:AH2')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+
+                $objPHPExcel->getActiveSheet()->getStyle('A3:AH3')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('A3:AH3')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+
+                $objPHPExcel->getActiveSheet()->setCellValue('A2','N°.ORDEN');
+                $objPHPExcel->getActiveSheet()->setCellValue('B2','EMISION');
+                $objPHPExcel->getActiveSheet()->setCellValue('C2','DESCRIPCION');
+                $objPHPExcel->getActiveSheet()->setCellValue('D2','CC');
+                $objPHPExcel->getActiveSheet()->setCellValue('E2','PROVEEDOR');
+                $objPHPExcel->getActiveSheet()->setCellValue('F2','ALMACEN RECEPCION');
+                $objPHPExcel->getActiveSheet()->setCellValue('K2','QA/QC');
+                $objPHPExcel->getActiveSheet()->setCellValue('R2','ALMACEN OBRA');
+                $objPHPExcel->getActiveSheet()->setCellValue('W2','COMPRAS');
+                $objPHPExcel->getActiveSheet()->setCellValue('AE2','USUARIO/GERENTE DE PROYECTO');
+                $objPHPExcel->getActiveSheet()->setCellValue('AH2','TOTAL');
+
+                $objPHPExcel->getActiveSheet()->setCellValue('F3','Fecha de Entrega');
+                $objPHPExcel->getActiveSheet()->setCellValue('G3','Condiciones de Llegada');
+                $objPHPExcel->getActiveSheet()->setCellValue('H3','Embalaje de Proveedor');
+                $objPHPExcel->getActiveSheet()->setCellValue('I3','Cantidad Entregada');
+                $objPHPExcel->getActiveSheet()->setCellValue('J3','Documentación');
+
+                $objPHPExcel->getActiveSheet()->setCellValue('K3','Cumplimiento Técnico');
+                $objPHPExcel->getActiveSheet()->setCellValue('L3','Documentación');
+                $objPHPExcel->getActiveSheet()->setCellValue('M3','Inspeccion Visual');
+                $objPHPExcel->getActiveSheet()->setCellValue('N3','Trazabilidad');
+                $objPHPExcel->getActiveSheet()->setCellValue('O3','Comunicación');
+                $objPHPExcel->getActiveSheet()->setCellValue('P3','Aceptación de Reclamos');
+                $objPHPExcel->getActiveSheet()->setCellValue('Q3','Almacenamiento y Preservacion');
+
+                $objPHPExcel->getActiveSheet()->setCellValue('R3','Cantidad Entregada');
+                $objPHPExcel->getActiveSheet()->setCellValue('S3','Condiciones de Llegada');
+                $objPHPExcel->getActiveSheet()->setCellValue('T3','Embalaje');
+                $objPHPExcel->getActiveSheet()->setCellValue('U3','Garantía del Material');
+                $objPHPExcel->getActiveSheet()->setCellValue('V3','Documentación');
+
+                $objPHPExcel->getActiveSheet()->setCellValue('W3','Precio Competitivo');
+                $objPHPExcel->getActiveSheet()->setCellValue('X3','Descuento');
+                $objPHPExcel->getActiveSheet()->setCellValue('Y3','Delivery');
+                $objPHPExcel->getActiveSheet()->setCellValue('Z3','Aceptación de Reclamos');
+                $objPHPExcel->getActiveSheet()->setCellValue('AA3','Forma de Pago');
+                $objPHPExcel->getActiveSheet()->setCellValue('AB3','Comunicación');
+                $objPHPExcel->getActiveSheet()->setCellValue('AC3','Seriedad');
+                $objPHPExcel->getActiveSheet()->setCellValue('AD3','Capacitación');
+
+                $objPHPExcel->getActiveSheet()->setCellValue('AE3','Fecha de Atención');
+                $objPHPExcel->getActiveSheet()->setCellValue('AF3','Calidad');
+                $objPHPExcel->getActiveSheet()->setCellValue('AG3','Cantidad de Procesos');
+                $objPHPExcel->getActiveSheet()->setCellValue('AH3','TOTAL');
+
+                $fila = 4;
+
+                foreach ($result as $rs) {
+                    $objPHPExcel->getActiveSheet()->setCellValue('A'.$fila,str_pad($rs['cnumero'],4,0,STR_PAD_LEFT));
+                    $objPHPExcel->getActiveSheet()->setCellValue('B'.$fila,date("d/m/Y", strtotime($rs['ffechadoc'])));
+                    $objPHPExcel->getActiveSheet()->setCellValue('C'.$fila,$rs['concepto']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('D'.$fila,$rs['ccodproy']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('E'.$fila,$rs['proveedor']);
+                    
+                    $objPHPExcel->getActiveSheet()->setCellValue('F'.$fila,$rs['c1']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('G'.$fila,$rs['c2']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('H'.$fila,$rs['c3']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('I'.$fila,$rs['c4']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('J'.$fila,$rs['c5']);
+
+                    $objPHPExcel->getActiveSheet()->setCellValue('K'.$fila,$rs['c6']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('L'.$fila,$rs['c7']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('M'.$fila,$rs['c8']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('N'.$fila,$rs['c9']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('O'.$fila,$rs['c10']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('P'.$fila,$rs['c11']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('Q'.$fila,$rs['c12']);
+
+                    $objPHPExcel->getActiveSheet()->setCellValue('R'.$fila,$rs['c13']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('S'.$fila,$rs['c14']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('T'.$fila,$rs['c15']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('U'.$fila,$rs['c16']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('V'.$fila,$rs['c17']);
+
+                    $objPHPExcel->getActiveSheet()->setCellValue('W'.$fila,$rs['c18']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('X'.$fila,$rs['c19']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('Y'.$fila,$rs['c20']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('Z'.$fila,$rs['c39']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AA'.$fila,$rs['c41']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AB'.$fila,$rs['c42']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AC'.$fila,$rs['c43']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AD'.$fila,$rs['c44']);
+
+                    $objPHPExcel->getActiveSheet()->setCellValue('AE'.$fila,$rs['c53']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AF'.$fila,$rs['c54']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AG'.$fila,$rs['c55']);
 
 
+                    $fila++;
+                }
 
-                $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel,'Excel2007');
-                $objWriter->save('public/documentos/reportes/catalogo.xlsx');
-                $objPHPExcel->getActiveSheet()->mergeCells('A1:K1');
-                $objPHPExcel->getActiveSheet()->setCellValue('A1','REPORTE EVALUACION');
+                $objPHPExcel->getActiveSheet()->getColumnDimension("B")->setAutoSize(true);
+                $objPHPExcel->getActiveSheet()->getColumnDimension("C")->setAutoSize(true);
+                $objPHPExcel->getActiveSheet()->getColumnDimension("E")->setAutoSize(true);
+                
                 $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel,'Excel2007');
                 $objWriter->save('public/documentos/reportes/evaluacion.xlsx');
 
@@ -463,9 +565,11 @@
             }
         }
 
-        private function exportarServicios($datos){
+        private function exportarServicios($anio,$mes){
             try {
                 require_once('public/PHPExcel/PHPExcel.php');
+
+                $result = $this->servicios($anio,$mes);
 
                 $objPHPExcel = new PHPExcel();
                 $objPHPExcel->getProperties()
@@ -476,21 +580,95 @@
                     ->setDescription("Reporte de Evaluación de Proveedores")
                     ->setKeywords("Template excel");
 
-                $cuerpo = array(
-                    'font'  => array(
-                    'bold'  => false,
-                    'size'  => 7,
-                ));
+                    $objWorkSheet = $objPHPExcel->createSheet(1);
 
-                $objWorkSheet = $objPHPExcel->createSheet(1);
+                    $objPHPExcel->setActiveSheetIndex(0);
+                    $objPHPExcel->getActiveSheet()->setTitle("Reporte Evaluación - Servicios");
+    
+                    $objPHPExcel->getActiveSheet()->getRowDimension('2')->setRowHeight(60);
+                    $objPHPExcel->getActiveSheet()->getRowDimension('3')->setRowHeight(60);
+    
+                    $objPHPExcel->getActiveSheet()->getStyle('F3:AH3')->getAlignment()->setWrapText(true);
+    
+                    $objPHPExcel->getActiveSheet()->setCellValue('A1','Reporte de Evaluación de Proveedores - Servicios');
+    
+                    $objPHPExcel->getActiveSheet()->getStyle('A1:W2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                    $objPHPExcel->getActiveSheet()->getStyle('A1:W2')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+    
+                    $objPHPExcel->getActiveSheet()->getStyle('A3:W3')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                    $objPHPExcel->getActiveSheet()->getStyle('A3:W3')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-                $objPHPExcel->setActiveSheetIndex(0);
-                $objPHPExcel->getActiveSheet()->setTitle("Reporte de Evaluación de Proveedores - Servicios");
+                    $objPHPExcel->getActiveSheet()->mergeCells('A1:W1');
+                    $objPHPExcel->getActiveSheet()->mergeCells('F2:M2');
+                    $objPHPExcel->getActiveSheet()->mergeCells('N2:S2');
+                    $objPHPExcel->getActiveSheet()->mergeCells('T2:V2');
+    
+                    $objPHPExcel->getActiveSheet()->setCellValue('A2','N°.ORDEN');
+                    $objPHPExcel->getActiveSheet()->setCellValue('B2','EMISION');
+                    $objPHPExcel->getActiveSheet()->setCellValue('C2','DESCRIPCION');
+                    $objPHPExcel->getActiveSheet()->setCellValue('D2','CC');
+                    $objPHPExcel->getActiveSheet()->setCellValue('E2','PROVEEDOR');
+                    $objPHPExcel->getActiveSheet()->setCellValue('F2','QA/QC');
+                    $objPHPExcel->getActiveSheet()->setCellValue('N2','COMPRAS');
+                    $objPHPExcel->getActiveSheet()->setCellValue('T2','USUARIO/GERENTE DE PROYECTO');
+                    $objPHPExcel->getActiveSheet()->setCellValue('W2','TOTAL');
 
-                $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel,'Excel2007');
-                $objWriter->save('public/documentos/reportes/catalogo.xlsx');
-                $objPHPExcel->getActiveSheet()->mergeCells('A1:K1');
-                $objPHPExcel->getActiveSheet()->setCellValue('A1','REPORTE EVALUACION');
+                    $objPHPExcel->getActiveSheet()->setCellValue('F3','Plan de Gestion');
+                    $objPHPExcel->getActiveSheet()->setCellValue('G3','Plan de Puntos');
+                    $objPHPExcel->getActiveSheet()->setCellValue('H3','Procedimientos');
+                    $objPHPExcel->getActiveSheet()->setCellValue('I3','Requisitos');
+                    $objPHPExcel->getActiveSheet()->setCellValue('J3','Aceptación de Reclamos');
+                    $objPHPExcel->getActiveSheet()->setCellValue('K3','Comunicación');
+                    $objPHPExcel->getActiveSheet()->setCellValue('L3','Dossier');
+                    $objPHPExcel->getActiveSheet()->setCellValue('M3','Avisa oportunamente');
+
+                    $objPHPExcel->getActiveSheet()->setCellValue('N3','Precio');
+                    $objPHPExcel->getActiveSheet()->setCellValue('O3','Descuento');
+                    $objPHPExcel->getActiveSheet()->setCellValue('P3','Notificaciones');
+                    $objPHPExcel->getActiveSheet()->setCellValue('Q3','Aceptación de Reclamos');
+                    $objPHPExcel->getActiveSheet()->setCellValue('R3','Comunicación');
+                    $objPHPExcel->getActiveSheet()->setCellValue('S3','Seriedad');
+
+                    $objPHPExcel->getActiveSheet()->setCellValue('T3','Fecha de Entrega');
+                    $objPHPExcel->getActiveSheet()->setCellValue('U3','Calidad');
+                    $objPHPExcel->getActiveSheet()->setCellValue('V3','Cantidad de Procesos');
+
+                    $fila = 4;
+
+                foreach ($result as $rs) {
+                    $objPHPExcel->getActiveSheet()->setCellValue('A'.$fila,str_pad($rs['cnumero'],4,0,STR_PAD_LEFT));
+                    $objPHPExcel->getActiveSheet()->setCellValue('B'.$fila,date("d/m/Y", strtotime($rs['ffechadoc'])));
+                    $objPHPExcel->getActiveSheet()->setCellValue('C'.$fila,$rs['concepto']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('D'.$fila,$rs['ccodproy']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('E'.$fila,$rs['proveedor']);
+                    
+                    $objPHPExcel->getActiveSheet()->setCellValue('F'.$fila,$rs['c26']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('G'.$fila,$rs['c27']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('H'.$fila,$rs['c28']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('I'.$fila,$rs['c29']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('J'.$fila,$rs['c30']);
+
+                    $objPHPExcel->getActiveSheet()->setCellValue('K'.$fila,$rs['c31']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('L'.$fila,$rs['c32']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('M'.$fila,$rs['c33']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('N'.$fila,$rs['c34']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('O'.$fila,$rs['c45']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('P'.$fila,$rs['c46']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('Q'.$fila,$rs['c47']);
+
+                    $objPHPExcel->getActiveSheet()->setCellValue('R'.$fila,$rs['c48']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('S'.$fila,$rs['c49']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('T'.$fila,$rs['c50']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('U'.$fila,$rs['c51']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('V'.$fila,$rs['c52']);
+
+                    $fila++;
+                }
+
+                $objPHPExcel->getActiveSheet()->getColumnDimension("B")->setAutoSize(true);
+                $objPHPExcel->getActiveSheet()->getColumnDimension("C")->setAutoSize(true);
+                $objPHPExcel->getActiveSheet()->getColumnDimension("E")->setAutoSize(true);
+
                 $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel,'Excel2007');
                 $objWriter->save('public/documentos/reportes/evaluacion.xlsx');
 

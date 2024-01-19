@@ -108,7 +108,7 @@ $(() => {
         }
     });
 
-    $("#excelFile").click(function(e){
+    $("#btnExporta").click(function(e){
         e.preventDefault();
 
        
