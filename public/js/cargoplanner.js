@@ -69,6 +69,7 @@ $(function() {
                 $("#tablaOrdenes tbody").empty().append(data.orden);
                 $("#tablaIngresos tbody").empty().append(data.ingresos);
                 $("#tablaDespachos tbody").empty().append(data.despachos);
+                $("#tablaObra tbody").empty().append(data.registros);
             },
             "json"
         );
@@ -117,6 +118,55 @@ $(function() {
 
         return false;
     });
+
+    $("#tablaIngresos").on('click','a', function(e) {
+        e.preventDefault();
+
+        $.post(RUTA+"cargoplanner/vistaIngreso", {id: $(this).attr("href")},
+            function (data, text, requestXHR) {
+                /*$(".ventanaVistaPrevia iframe")
+                .attr("src","")
+                .attr("src",data);*/
+
+                $("#vistaprevia").fadeIn();
+            },"text"
+        );
+
+        return false;
+    });
+
+    $("#tablaDespachos").on('click','a', function(e) {
+        e.preventDefault();
+
+        /*$.post(RUTA+"pedidoseg/datosOrden", {id: $(this).attr("href")},
+            function (data, text, requestXHR) {
+                $(".ventanaVistaPrevia iframe")
+                .attr("src","")
+                .attr("src",data);
+
+                $("#vistaprevia").fadeIn();
+            },"text"
+        );*/
+
+        return false;
+    });
+
+    $("#tablaObra").on('click','a', function(e) {
+        e.preventDefault();
+
+        /*$.post(RUTA+"pedidoseg/datosOrden", {id: $(this).attr("href")},
+            function (data, text, requestXHR) {
+                $(".ventanaVistaPrevia iframe")
+                .attr("src","")
+                .attr("src",data);
+
+                $("#vistaprevia").fadeIn();
+            },"text"
+        );*/
+
+        return false;
+    });
+
 
     $("#closePreview").click(function (e) { 
         e.preventDefault();

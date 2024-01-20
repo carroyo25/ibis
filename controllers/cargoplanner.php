@@ -35,5 +35,9 @@
             echo $_SESSION['progreso']++;
             session_write_close();
         }
+
+        function vistaIngreso() {
+            echo json_encode($this->model->gererarNotaIngreso($_POST['id']));
+        }
     }
 ?>

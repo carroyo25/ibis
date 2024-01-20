@@ -791,7 +791,8 @@
         public function consultaResumen($orden,$refpedido) {
             return array("orden"=>$this->ordenes($orden),
                         "ingresos"=>$this->ingresos($refpedido),
-                        "despachos"=>$this->despachos($refpedido));
+                        "despachos"=>$this->despachos($refpedido),
+                        "registros"=>$this->registros($refpedido));
         }
 
         private function ordenes($orden) {
@@ -799,7 +800,7 @@
                 $salida = "";
                 $sql = $this->db->connect()->prepare("SELECT
                                                             lg_ordencab.id_regmov,
-                                                            lg_ordencab.cnumero,
+                                                            LPAD(lg_ordencab.cnumero,6,0) AS cnumero,
                                                             DATE_FORMAT( lg_ordencab.ffechadoc, '%d/%m/%Y' ) AS ffechadoc,
                                                             tb_proyectos.ccodproy,
                                                             cm_entidad.crazonsoc 
@@ -819,7 +820,7 @@
                                         <td class="textoCentro">'.$rs['ffechadoc'].'</td>
                                         <td class="pl20px">'.$rs['crazonsoc'].'</td>
                                         <td class="pl20px">'.$rs['ccodproy'].'</td>
-                                        <td class="textoCentro"><a href="'.$rs['id_regmov'].'"><i class="far fa-file-pdf"></i></a></td>
+                                        <td class="textoDerecha"><a href="'.$rs['id_regmov'].'"><i class="far fa-file-pdf"></i></a></td>
                                     </tr>';
                     }
                 }
@@ -840,7 +841,8 @@
                                                         alm_recepdet.niddetaPed,
                                                         alm_recepdet.niddetaOrd,
                                                         alm_recepcab.nnronota,
-                                                        DATE_FORMAT( alm_recepcab.ffecdoc, '%d/%m,/%Y' ) AS ffecdoc,
+                                                        alm_recepcab.id_regalm,
+                                                        DATE_FORMAT( alm_recepcab.ffecdoc, '%d/%m/%Y' ) AS ffecdoc,
                                                         alm_recepcab.cnumguia 
                                                     FROM
                                                         alm_recepdet
@@ -857,7 +859,7 @@
                                         <td class="textoCentro">'.$rs['nnronota'].'</td>
                                         <td class="textoCentro">'.$rs['ffecdoc'].'</td>
                                         <td class="textoCentro">'.$rs['cnumguia'].'</td>
-                                        <td class="textoCentro"><a href="'.$rs['nnronota'].'"><i class="far fa-file-pdf"></i></a></td>
+                                        <td class="textoDerecha"><a href="'.$rs['id_regalm'].'"><i class="far fa-file-pdf"></i></a></td>
                                     </tr>';
                     }
                 }
@@ -875,10 +877,10 @@
                 $salida = "";
                 $sql = $this->db->connect()->prepare("SELECT
                                                         alm_despachodet.niddeta, 
-                                                        alm_despachocab.nnronota, 
+                                                        LPAD(alm_despachocab.nnronota,6,0) AS nnronota, 
                                                         alm_despachocab.ffecdoc, 
                                                         alm_despachocab.cnumguia, 
-                                                        alm_despachocab.ffecenvio, 
+                                                        DATE_FORMAT(alm_despachocab.ffecenvio,'%d/%m/%Y') AS ffecenvio, 
                                                         alm_despachocab.nReferido
                                                     FROM
                                                         alm_despachodet
@@ -899,7 +901,41 @@
                                         <td class="textoCentro">'.$rs['ffecdoc'].'</td>
                                         <td class="textoCentro">'.$rs['cnumguia'].'</td>
                                         <td class="textoCentro">'.$rs['nReferido'].'</td>
-                                        <td class="textoCentro"><a href="'.$rs['nnronota'].'"><i class="far fa-file-pdf"></i></a></td>
+                                        <td class="textoDerecha"><a href="'.$rs['nnronota'].'"><i class="far fa-file-pdf"></i></a></td>
+                                    </tr>';
+                    }
+                }
+
+                return $salida;
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function registros($refpedi) {
+            try {
+                $salida = "";
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        alm_existencia.idregistro,
+                                                        DATE_FORMAT( alm_cabexist.ffechadoc, '%d/%m/%Y' ) AS ffechadoc,
+                                                        alm_existencia.idreg 
+                                                    FROM
+                                                        alm_existencia
+                                                        INNER JOIN alm_cabexist ON alm_existencia.idregistro = alm_cabexist.idreg 
+                                                    WHERE
+                                                        alm_existencia.idpedido = :ref_pedi 
+                                                        AND alm_existencia.nflgActivo = 1");
+                $sql->execute(["ref_pedi"=>$refpedi]);
+                $rowCount = $sql->rowCount();
+                
+                if($rowCount > 0) {
+                    while($rs = $sql->fetch()){
+                        $salida .= '<tr>
+                                        <td class="textoCentro">'.$rs['idregistro'].'</td>
+                                        <td class="textoCentro">'.$rs['ffechadoc'].'</td>
+                                        <td class="textoDerecha"><a href="'.$rs['idregistro'].'"><i class="far fa-file-pdf"></i></a></td>
                                     </tr>';
                     }
                 }
@@ -1559,6 +1595,145 @@
             $years = floor($diff / (365*60*60*24));
 
             return floor(($diff - $years * 365*60*60*24 - $months*30*60*60*24)/ (60*60*24));
+        }
+
+        public function gererarNotaIngreso($id) {
+            require_once("public/formatos/notaingreso.php");
+
+            $cabecera = $this->cabeceraNotaIngreso($id);
+            $detalles = $this->detallesIngreso($id);
+            $fecha = explode("-",$cabecera[0]['ffecdoc']);
+
+            $dia = $fecha[2];
+            $mes = $fecha[1];
+            $anio = $fecha[0];
+
+            $pdf = new PDF($cabecera[0]['nnronota'],0,$dia,$mes,$anio,
+                            $cabecera[0]['proyecto'],$cabecera[0]['almacen'],'I',$cabecera[0]['orden'],
+                            $cabecera[0]['pedido'],$cabecera[0]['cnumguia'],$cabecera[0]['cnombres'],NULL,$cabecera[0]['cdescripcion'],NULL);
+
+            $file = uniqid("NI").".pdf";
+            $filename = "public/documentos/temp/".$file;
+
+            $pdf->Output($filename,'F');
+            
+            return $filename;
+        }
+
+        private function cabeceraNotaIngreso($id) { 
+            try {
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        ibis.alm_recepcab.id_regalm,
+                                                        ibis.alm_recepcab.ctipmov,
+                                                        ibis.alm_recepcab.ncodmov,
+                                                        ibis.alm_recepcab.nnronota,
+                                                        ibis.alm_recepcab.cper,
+                                                        ibis.alm_recepcab.cmes,
+                                                        ibis.alm_recepcab.ncodalm1,
+                                                        ibis.alm_recepcab.ffecdoc,
+                                                        ibis.alm_recepcab.cnumguia,
+                                                        ibis.alm_recepcab.ncodpry,
+                                                        ibis.alm_recepcab.ncodarea,
+                                                        ibis.alm_recepcab.ncodcos,
+                                                        ibis.alm_recepcab.idref_pedi,
+                                                        ibis.alm_recepcab.idref_abas,
+                                                        ibis.alm_recepcab.id_userAprob,
+                                                        ibis.alm_recepcab.nEstadoDoc,
+                                                        ibis.tb_proyectos.ccodproy,
+                                                        UPPER( ibis.tb_proyectos.cdesproy ) AS proyecto,
+                                                        ibis.tb_area.ccodarea,
+                                                        UPPER ( ibis.tb_area.cdesarea ) AS area,
+                                                        ibis.tb_user.cnombres,
+                                                        ibis.tb_pedidocab.idsolicita,
+                                                        ibis.tb_almacen.ccodalm,
+                                                        UPPER( ibis.tb_almacen.cdesalm ) AS almacen,
+                                                        ibis.alm_recepcab.nnromov,
+                                                        ibis.tb_parametros.cdescripcion,
+                                                        ibis.cm_entidad.crazonsoc,
+                                                        LPAD( ibis.tb_pedidocab.nrodoc, 6, 0 ) AS pedido,
+                                                        LPAD( ibis.lg_ordencab.cnumero, 6, 0 ) AS orden,
+                                                        UPPER( ibis.tb_pedidocab.concepto ) AS concepto,
+                                                        UPPER( ibis.tb_pedidocab.detalle ) AS detalle,
+                                                        estados.cabrevia AS estado,
+                                                        ibis.alm_recepcab.nflgCalidad 
+                                                    FROM
+                                                        ibis.alm_recepcab
+                                                        INNER JOIN ibis.tb_proyectos ON alm_recepcab.ncodpry = tb_proyectos.nidreg
+                                                        INNER JOIN ibis.tb_area ON alm_recepcab.ncodarea = tb_area.ncodarea
+                                                        INNER JOIN ibis.tb_user ON alm_recepcab.id_userAprob = tb_user.iduser
+                                                        INNER JOIN ibis.tb_pedidocab ON ibis.alm_recepcab.idref_pedi = ibis.tb_pedidocab.idreg
+                                                        INNER JOIN ibis.tb_almacen ON ibis.alm_recepcab.ncodalm1 = ibis.tb_almacen.ncodalm
+                                                        INNER JOIN ibis.tb_parametros ON ibis.alm_recepcab.ncodmov = ibis.tb_parametros.nidreg
+                                                        INNER JOIN ibis.cm_entidad ON ibis.alm_recepcab.id_centi = ibis.cm_entidad.id_centi
+                                                        INNER JOIN ibis.lg_ordencab ON ibis.alm_recepcab.idref_abas = ibis.lg_ordencab.id_regmov
+                                                        INNER JOIN ibis.tb_parametros AS estados ON ibis.alm_recepcab.nEstadoDoc = estados.nidreg 
+                                                    WHERE alm_recepcab.id_regalm = :id
+                                                    LIMIT 1");
+                $sql->execute(["id"=>$id]);
+
+                $rowCount = $sql->rowCount();
+                
+                if ($rowCount > 0) {
+                    $docData = array();
+                    while($row=$sql->fetch(PDO::FETCH_ASSOC)){
+                        $docData[] = $row;
+                    }
+                }
+
+                return $docData;
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function detallesIngreso($id){
+            $detalles=[];
+
+            $sql=$this->db->connect()->prepare("SELECT
+                                                    alm_recepdet.niddeta,
+                                                    alm_recepdet.id_regalm,
+                                                    alm_recepdet.ncodalm1,
+                                                    alm_recepdet.id_cprod,
+                                                    alm_recepdet.ncantidad AS ncantidad,
+                                                    alm_recepdet.niddetaPed,
+                                                    alm_recepdet.niddetaOrd,
+                                                    alm_recepdet.nestadoreg,
+                                                    cm_producto.ccodprod,
+                                                    UPPER(
+                                                        CONCAT_WS(
+                                                            ' ',
+                                                            cm_producto.cdesprod,
+                                                            tb_pedidodet.observaciones,
+                                                            tb_pedidodet.docEspec
+                                                        )
+                                                    ) AS cdesprod,
+                                                    lg_ordendet.ncanti AS cantidad_orden,
+                                                    tb_unimed.cabrevia
+                                                FROM
+                                                    alm_recepdet
+                                                INNER JOIN tb_pedidodet ON alm_recepdet.niddetaPed = tb_pedidodet.iditem
+                                                INNER JOIN cm_producto ON alm_recepdet.id_cprod = cm_producto.id_cprod
+                                                INNER JOIN lg_ordendet ON alm_recepdet.niddetaOrd = lg_ordendet.nitemord
+                                                INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                WHERE
+                                                    alm_recepdet.id_regalm = :id
+                                                AND alm_recepdet.nflgactivo = 1");
+                $sql->execute(['id'=>$id]);
+                $rowCount = $sql->rowCount();
+                
+                if ($rowCount > 0) {
+                    while ($rs = $sql->fetch()) {
+                        $item['codigo'] = $rs['ccodprod'];
+                        $item['nombre'] = $rs['cdesprod'];
+                        $item['cantidad'] = $rs['cantidad_orden'];
+                        $item['unidad'] = $rs['cabrevia'];
+
+                        array_push($detalles,$item);
+                    }
+                }
+
+                return $detalles;
         }
     }
 ?>
