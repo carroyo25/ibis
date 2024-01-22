@@ -876,7 +876,8 @@
             try {
                 $salida = "";
                 $sql = $this->db->connect()->prepare("SELECT
-                                                        alm_despachodet.niddeta, 
+                                                        alm_despachodet.niddeta,
+                                                        alm_despachodet.id_regalm,
                                                         LPAD(alm_despachocab.nnronota,6,0) AS nnronota, 
                                                         alm_despachocab.ffecdoc, 
                                                         alm_despachocab.cnumguia, 
@@ -901,7 +902,7 @@
                                         <td class="textoCentro">'.$rs['ffecdoc'].'</td>
                                         <td class="textoCentro">'.$rs['cnumguia'].'</td>
                                         <td class="textoCentro">'.$rs['nReferido'].'</td>
-                                        <td class="textoDerecha"><a href="'.$rs['nnronota'].'"><i class="far fa-file-pdf"></i></a></td>
+                                        <td class="textoDerecha"><a href="'.$rs['id_regalm'].'"><i class="far fa-file-pdf"></i></a></td>
                                     </tr>';
                     }
                 }
@@ -1602,6 +1603,7 @@
 
             $cabecera = $this->cabeceraNotaIngreso($id);
             $detalles = $this->detallesIngreso($id);
+            $nreg = count($detalles);
             $fecha = explode("-",$cabecera[0]['ffecdoc']);
 
             $dia = $fecha[2];
@@ -1609,8 +1611,40 @@
             $anio = $fecha[0];
 
             $pdf = new PDF($cabecera[0]['nnronota'],0,$dia,$mes,$anio,
-                            $cabecera[0]['proyecto'],$cabecera[0]['almacen'],'I',$cabecera[0]['orden'],
+                            $cabecera[0]['proyecto'],$cabecera[0]['almacen'],$cabecera[0]['cdescripcion'],$cabecera[0]['orden'],
                             $cabecera[0]['pedido'],$cabecera[0]['cnumguia'],$cabecera[0]['cnombres'],NULL,$cabecera[0]['cdescripcion'],NULL);
+
+            $pdf->AliasNbPages();
+            $pdf->AddPage();
+            $pdf->SetWidths(array(7,20,55,8,12,15,45,13,15));
+            $pdf->SetFont('Arial','',6);
+            $lc = 0;
+            $rc = 0;
+
+            
+            $item = 1;
+
+            foreach ($detalles as $detalle) {
+                $pdf->SetAligns(array("C","L","L","L","R","L","L","L","L"));
+
+                $pdf->Row(array(str_pad($item++,3,"0",STR_PAD_LEFT),
+                                        $detalle['codigo'],
+                                        utf8_decode($detalle['nombre']),
+                                        $detalle['unidad'],
+                                        $detalle['cantidad'],
+                                        '',
+                                        $cabecera[0]['crazonsoc'],
+                                        '',
+                                        ''));
+                $lc++;
+                $rc++;
+                
+                if ($pdf->getY() >= 190) {
+                    $pdf->AddPage();
+                    $lc = 0;
+                }
+            }
+            
 
             $file = uniqid("NI").".pdf";
             $filename = "public/documentos/temp/".$file;
@@ -1734,6 +1768,28 @@
                 }
 
                 return $detalles;
+        }
+
+        public function cabeceraSalida($id) {
+            try {
+                //code...
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function detalleSalida($id) { 
+
+        }
+
+        public function generarGuiaRemision($id) {
+            try {
+                //code...
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
         }
     }
 ?>

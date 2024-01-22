@@ -84,6 +84,8 @@ body {
 }
 .landZone .ingreso h1 {
   margin-top: 2rem;
+  font-size: 2rem;
+  font-weight: bold;
 }
 .landZone .ingreso .entradaTexto {
   width: 100%;

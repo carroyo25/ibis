@@ -124,9 +124,9 @@ $(function() {
 
         $.post(RUTA+"cargoplanner/vistaIngreso", {id: $(this).attr("href")},
             function (data, text, requestXHR) {
-                /*$(".ventanaVistaPrevia iframe")
+                $(".ventanaVistaPrevia iframe")
                 .attr("src","")
-                .attr("src",data);*/
+                .attr("src",data);
 
                 $("#vistaprevia").fadeIn();
             },"text"
@@ -137,6 +137,8 @@ $(function() {
 
     $("#tablaDespachos").on('click','a', function(e) {
         e.preventDefault();
+
+        $("#vistaprevia").fadeIn();
 
         /*$.post(RUTA+"pedidoseg/datosOrden", {id: $(this).attr("href")},
             function (data, text, requestXHR) {

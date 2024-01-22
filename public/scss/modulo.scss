@@ -56,6 +56,11 @@ $emitido:#F8CAAD;
         color: $tituloModulo;
     }
 
+    h1{
+        font-size: 2rem;
+        font-weight: bold;
+    }
+
     div:nth-child(2){
         text-align: center;
         display: flex;

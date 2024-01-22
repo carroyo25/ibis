@@ -21,6 +21,10 @@
 .cabezaModulo h3, .cabezaModulo h1, .cabezaModulo h2 {
   color: #797777;
 }
+.cabezaModulo h1 {
+  font-size: 2rem;
+  font-weight: bold;
+}
 .cabezaModulo div:nth-child(2) {
   text-align: center;
   display: -webkit-box;

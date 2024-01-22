@@ -37,7 +37,7 @@
         }
 
         function vistaIngreso() {
-            echo json_encode($this->model->gererarNotaIngreso($_POST['id']));
+            echo $this->model->gererarNotaIngreso($_POST['id']);
         }
     }
 ?>

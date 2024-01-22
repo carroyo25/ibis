@@ -67,6 +67,9 @@ $(() => {
 
                 $("#atach_counter").text(data.total_adjuntos);
 
+                $(".listaArchivos").empty();
+                $("#fileAtachs")[0].reset();
+
                 accion = "u";
                 grabado = true;
                 $("#proceso").fadeIn();
@@ -189,6 +192,8 @@ $(() => {
             processData:false,
             dataType: "json",
             success: function (response) {
+                $(".listaArchivos").empty();
+                $("#fileAtachs")[0].reset();
                 $("#atach_counter").text(response.adjuntos);
                 $("#archivos").fadeOut();
             }
