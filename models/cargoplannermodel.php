@@ -879,7 +879,7 @@
                                                         alm_despachodet.niddeta,
                                                         alm_despachodet.id_regalm,
                                                         LPAD(alm_despachocab.nnronota,6,0) AS nnronota, 
-                                                        alm_despachocab.ffecdoc, 
+                                                        DATE_FORMAT(alm_despachocab.ffecdoc,'%d/%m/%Y') AS ffecdoc, 
                                                         alm_despachocab.cnumguia, 
                                                         DATE_FORMAT(alm_despachocab.ffecenvio,'%d/%m/%Y') AS ffecenvio, 
                                                         alm_despachocab.nReferido
@@ -1786,6 +1786,30 @@
         public function generarGuiaRemision($id) {
             try {
                 //code...
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        public function listarArchivos($id){
+            try {
+                $salida = "";
+
+                $sql = $this->db->connect()->prepare("SELECT lg_regdocumento.nidrefer, lg_regdocumento.creferencia, lg_regdocumento.cdocumento 
+                                                      FROM lg_regdocumento
+                                                      WHERE lg_regdocumento.nflgactivo = 1 
+                                                      AND lg_regdocumento.nidrefer =:id");
+                $sql->execute(["id"=>$id]);
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0){
+                    while ($rs = $sql->fetch()) {
+                        $salida.='<li><a href="'.$rs['creferencia'].'">'.$rs['cdocumento'].'</a></li>';
+                    }
+                }
+
+                return $salida;
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;

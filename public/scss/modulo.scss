@@ -948,7 +948,8 @@ $emitido:#F8CAAD;
 .ventanaResumen,
 .ventanaCambio,
 .ventanaOperador,
-.ventanaDetalles{
+.ventanaDetalles,
+.ventanaFiltros{
     background:$blanco;
     position: absolute;
     top: 50%;
@@ -1803,6 +1804,24 @@ $emitido:#F8CAAD;
             }
 
         }
+    }
+}
+
+.ventanaFiltros{
+    width: 25%;
+
+    .tituloDocumento{
+        display: flex;
+        justify-content: space-between;
+        padding: 1rem;
+
+        p {
+            display:inline-block;
+        }  
+    }
+
+    .cuerpoDocumento {
+        padding: 1rem;
     }
 }
 

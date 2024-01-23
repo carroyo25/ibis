@@ -156,19 +156,38 @@ $(function() {
     $("#tablaObra").on('click','a', function(e) {
         e.preventDefault();
 
-        /*$.post(RUTA+"pedidoseg/datosOrden", {id: $(this).attr("href")},
+        $.post(RUTA+"cargoplanner/vistaRegistros", {id: $(this).attr("href"),tipo:'GA'},
             function (data, text, requestXHR) {
-                $(".ventanaVistaPrevia iframe")
-                .attr("src","")
-                .attr("src",data);
+                $("#listaAdjuntos").empty().append(data.adjuntos);
+                $("#listaAdjuntos li a:nth-child(2)").hide();
 
-                $("#vistaprevia").fadeIn();
-            },"text"
-        );*/
+                $("#vistaAdjuntos").fadeIn();
+            },"json"
+        );
 
         return false;
     });
 
+    $("#vistaAdjuntos").on("click","a", function (e) {
+        e.preventDefault();
+        
+        $(".ventanaAdjuntos iframe")
+            .attr("src","")
+            .attr("src","public/documentos/almacen/adjuntos/"+$(this).attr("href"));
+        
+        return false;
+    });
+
+    $("#closeAtach").click(function (e) { 
+        e.preventDefault();
+        
+        $(".ventanaAdjuntos iframe")
+            .attr("src","");
+
+        $("#vistaAdjuntos").fadeOut();
+
+        return false;
+    });
 
     $("#closePreview").click(function (e) { 
         e.preventDefault();
@@ -237,6 +256,23 @@ $(function() {
 
         return false;
     });
+
+    $("#filtrosAvanzados").click(function(e){
+        e.preventDefault();
+
+        $("#filtros").fadeIn();
+
+        return false;
+    });
+
+    $("#closeFilters").click(function (e) { 
+        e.preventDefault();
+
+        $("#filtros").fadeOut();
+
+        return false;
+    });
+
     
 })
 

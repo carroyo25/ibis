@@ -9,7 +9,11 @@
         public function listarProyectos(){
             try {
                 $salida = "";
-                $sql = $this->db->connect()->query("SELECT nidreg,ccodproy,cdesproy,cubica,cabrevia FROM tb_proyectos WHERE nflgactivo=1");
+                $sql = $this->db->connect()->query("SELECT 
+                                                    nidreg,ccodproy,cdesproy,cubica,cabrevia 
+                                                    FROM tb_proyectos 
+                                                    WHERE nflgactivo=1
+                                                    ORDER BY ccodproy ASC");
                 $sql->execute();
                 $rc = $sql->rowcount();
                 $item = 1;

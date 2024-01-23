@@ -134,7 +134,7 @@
     </div>
     <div class="itemsTabla">
         <table id="tablaPrincipal" class="tabla4columnas">
-            <thead>
+            <thead class="stickytop">
                 <tr>
                     <th>Item</th>
                     <th>Codigo</th>

@@ -149,6 +149,38 @@
             </form>
         </div>
     </div>
+    <div class="modal" id="filtros">
+        <div class="ventanaFiltros">
+            <div   div class="tituloDocumento">
+                <div>
+                    <p class="titulo_seccion"><strong> Filtros Avanzados : </strong></p>
+                </div>
+                <div>
+                    <a href="#" id="closeFilters" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
+                </div>
+            </div>
+            <hr>
+            <div class="cuerpoDocumento">
+                <div class="proyectos">
+                    <ul class="listaCostos">
+                        <?php for ($i=0; $i < 10; $i++) {?> 
+                            <li><input type="checkbox" name="proyecto" id="<?php echo $i ?>">Proyecto</li>
+                        <?php } ?>
+                    </ul>
+                </div>
+                <div class="fechas">
+                    <label for="desde">Fecha Inicio:</label>
+                    <input type="date" name="fecha_inicio" id="fecha_inicio">
+                    <label for="desde">Fecha Final:</label>
+                    <input type="date" name="fecha_final" id="fecha_final">
+                </div>
+                <div class="porcentajes">
+                </div>
+                <div class="opciones">
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="modal" id="vistaprevia">
         <div class="ventanaVistaPrevia">
             <div class="tituloVista">
@@ -158,12 +190,24 @@
             <iframe src=""></iframe>
         </div>
     </div>
+    <div class="modal" id="vistaAdjuntos">
+        <div class="ventanaAdjuntos">
+            <div class="tituloAdjuntos">
+                <h3>Adjuntos Orden</h3>
+                <a href="#" id="closeAtach" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
+            </div>
+            <ul id="listaAdjuntos">
+
+            </ul>
+            <iframe src=""></iframe>
+        </div>
+    </div>
     <div class="cabezaModulo">
         <h1>Cargo Plan</h1>
         <div>
+            <!-- <a href="#" id="filtrosAvanzados"><i class="fab fa-searchengin"></i><p>Filtros</p></a> -->
             <a href="#" id="excelFile"><i class="fas fa-file-excel"></i><p>Exportar</p></a>
             <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
-            
         </div>
     </div>
     <div class="barraTrabajo">

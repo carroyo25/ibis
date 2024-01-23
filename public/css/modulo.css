@@ -1207,7 +1207,8 @@
 .ventanaResumen,
 .ventanaCambio,
 .ventanaOperador,
-.ventanaDetalles {
+.ventanaDetalles,
+.ventanaFiltros {
   background: #fff;
   position: absolute;
   top: 50%;
@@ -2090,6 +2091,25 @@
   width: 100%;
   outline: none;
   line-height: 1.5rem;
+}
+
+.ventanaFiltros {
+  width: 25%;
+}
+.ventanaFiltros .tituloDocumento {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  padding: 1rem;
+}
+.ventanaFiltros .tituloDocumento p {
+  display: inline-block;
+}
+.ventanaFiltros .cuerpoDocumento {
+  padding: 1rem;
 }
 
 .opciones_modal {

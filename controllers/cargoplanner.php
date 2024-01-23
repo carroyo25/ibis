@@ -39,5 +39,9 @@
         function vistaIngreso() {
             echo $this->model->gererarNotaIngreso($_POST['id']);
         }
+
+        function vistaRegistros(){
+            echo json_encode($this->model->verAdjuntosDocs($_POST['id'],$_POST['tipo']));
+        }
     }
 ?>

@@ -157,7 +157,7 @@
                                     "aprobador" =>$result[0]['aprobador'],
                                     "aprobacion"=>$result[0]['aprobacion'],
                                     "avance"    =>$result[0]['avance'],
-                                    "ordenes"   =>$this->ordenesPedido($id),
+                                    "ordenes"   =>$this->ordenesPedidoAdmin($id),
                                     "ingresos"  =>$this->ingresosPedido($id),
                                     "despachos" =>$this->salidasPedido($id),
                                     "registros" =>$this->registrosPedido($id),
@@ -171,7 +171,7 @@
             }
         }
 
-        private function ordenesPedido($pedido) {
+        private function ordenesPedidoAdmin($pedido) {
             try {
                 $salida =  '<tr><td colspan="3" class="textoCentro">No hay registro</td></tr>';
                 $sql = $this->db->connect()->prepare("SELECT
@@ -190,7 +190,7 @@
                     $salida = "";
                     while ($rs = $sql->fetch()) {
                         $salida .= '<tr>
-                                        <td class="textoCentro"></td>
+                                        <td class="textoCentro">'.$rs['numero'].'</td>
                                         <td class="textoCentro">'.$rs['fechaOrden'].'</td>
                                         <td class="textoCentro"><a href="'.$rs['id_regmov'].'"><i class="fas fa-file-pdf"></i></a></td>
                                     </tr>';
