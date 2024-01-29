@@ -205,6 +205,8 @@
                                     <th>Nro.</br>Parte</th>
                                     <th>Pedido</th>
                                     <th width="20%">Detalles</th>
+                                    <th>...</th>
+                                    <th>...</th>
                                 </tr>
                             </thead>
                             <tbody>

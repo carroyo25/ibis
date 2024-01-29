@@ -1,8 +1,6 @@
 $(function() {
     let idpedido = "",progreso = 0;
 
-    
-    
     $("#esperar").fadeOut();
     
     $("#btnProcesa").click(function(e){
@@ -260,20 +258,43 @@ $(function() {
     $("#filtrosAvanzados").click(function(e){
         e.preventDefault();
 
-        $("#filtros").fadeIn();
+        $.post(RUTA+"cargoplanner/proyectos",
+            function (data, text, requestXHR) {
+                
+                $("#filtros").fadeIn(function(){
+                    $("#costos").empty().append(data);
+                });
+
+
+            },
+            "text"
+        );
 
         return false;
     });
 
     $("#closeFilters").click(function (e) { 
         e.preventDefault();
-
+ 
         $("#filtros").fadeOut();
 
         return false;
     });
 
-    
+    $("#btnAceptarFiltro").click(function(e){
+        e.preventDefault();
+        
+        let items = {}
+            indice = 0; 
+
+        $('#costos input[type=checkbox]:checked').each(function() {
+            items[indice++] = $(this).attr("id");
+        });
+
+        console.log(items);
+
+        return false;
+    });   
 })
 
 detalles = () =>{

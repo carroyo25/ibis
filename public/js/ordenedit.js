@@ -7,6 +7,8 @@ $(function(){
         swcoment = false,
         autorizado = 0,
         fp = 0;
+
+    /*scroll*/
     
     const body = document.querySelector("#tablaPrincipal tbody");
 
@@ -34,7 +36,7 @@ $(function(){
         const FD = new FormData();
         FD.append('pagina',pagina);
 
-        const r = await fetch(RUTA+'ordenedit/listaScroll',{
+        const r = await fetch(RUTA+'ordenconsult/listaScroll',{
             method: 'POST',
             body:FD
         });
@@ -47,7 +49,28 @@ $(function(){
 
             let logistica = i.logistica == 0 ? '<i class="far fa-square"></i>' : '<i class="far fa-check-square"></i>',
                 finanzas  = i.finanzas  == 0 ? '<i class="far fa-square"></i>' : '<i class="far fa-check-square"></i>',
-                operaciones = i.operaciones == 0 ? '<i class="far fa-square"></i>' : '<i class="far fa-check-square"></i>';
+                operaciones = i.operaciones == 0 ? '<i class="far fa-square"></i>' : '<i class="far fa-check-square"></i>',
+                montoDolares = "",montoSoles = "",estado="";
+
+            if ( i.ncodmon == 20) {
+                montoSoles = "S/. "+i.ntotal;
+            }else{
+                montoDolares =  "$ "+i.ntotal;
+            }
+
+            if ( i.nEstadoDoc == 49) {
+                estado = "procesando";
+            }else if ( i.nEstadoDoc == 59 ) {
+                estado = "firmas";
+            }else if ( i.nEstadoDoc == 60 ) {
+                estado = "recepcion";
+            }else if ( i.nEstadoDoc == 62 ) {
+                estado = "despacho";
+            }else if ( i.nEstadoDoc == 105 ) {
+                estado = "anulado";
+                montoDolares = "";
+                montoSoles = "";
+            }
             
             tr.innerHTML = `<td class="textoCentro">${i.cnumero}</td>
                             <td class="textoCentro">${i.emision}</td>
@@ -55,7 +78,10 @@ $(function(){
                             <td class="pl20px">${i.ccodproy}</td>
                             <td class="pl20px">${i.area}</td>
                             <td class="pl20px">${i.proveedor}</td>
+                            <td class="textoDerecha">${montoSoles}</td>
+                            <td class="textoDerecha">${montoDolares}</td>
                             <td class="textoCentro ${i.atencion.toLowerCase()}">${i.atencion}</td>
+                            <td class="textoCentro ${estado.toLowerCase()}">${i.estado}</td>
                             <td class="textoCentro">${logistica}</td>
                             <td class="textoCentro">${finanzas}</td>
                             <td class="textoCentro">${operaciones}</td>`;
@@ -83,6 +109,8 @@ $(function(){
     }
 
     query();
+
+    /* end scroll */
     
     $("#esperar").fadeOut();
 
@@ -193,7 +221,9 @@ $(function(){
     $("#tablaDetalles tbody").on("click","a",function(e){
         e.preventDefault();
 
-        let suma = 0;
+        $("#pregunta").fadeIn();
+
+        /*let suma = 0;
         let estado = $(this).parent().parent().data("proceso");
 
         try {
@@ -222,10 +252,26 @@ $(function(){
             );
         } catch (error) {
             mostrarMensaje(error,"mensaje_error");
-        }
+        }*/
 
         return false;
-    })
+    });
+
+    $('#btnLiberaPregunta').click(function (e) {
+
+    });
+
+    $('#btnAnulaPregunta').click(function (e) {
+
+    });
+
+    $('#btnCancelarPregunta').click(function (e) {
+        e.preventDefault();
+
+        $("#pregunta").fadeOut();
+
+        return false;
+    });
 
     $(".mostrarLista").focus(function (e) { 
         e.preventDefault();
@@ -829,6 +875,25 @@ $(function(){
 
         return false;
     })
+
+    $("#btnConsult").click(function (e) { 
+        e.preventDefault();
+
+        let str = $("#formConsulta").serialize();
+
+        $.post(RUTA+"ordenconsult/listaFiltrada",str,
+            function (data, textStatus, jqXHR) {
+                $("#tablaPrincipal tbody")
+                    .empty()
+                    .append(data);
+            },
+            "text"
+        );
+        
+        return false;
+    });
+
+    
 })
 
 

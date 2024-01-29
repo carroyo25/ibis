@@ -195,27 +195,14 @@ $(function(){
     $("#btnAceptarDialogo").click(function (e) { 
         e.preventDefault();
 
-        $.post(RUTA+'consumo/buscaCodigo',{codigo:$("#codigoSearch").val(),
-                                            documento:$("#docident").val(),
-                                            costos:$("#costosSearch").val()},
-                function (data, textStatus, jqXHR) {
-                
-                    $("#tablaPrincipal tbody")
-                                .empty()
-                                .append(data);
-
-                    $("#dialogo").fadeOut();
-                },
-                "text"
-            );
-        
+    
         return false;
     });
 
     $("#btnCancelarDialogo").click(function (e) { 
         e.preventDefault();
 
-        $("#dialogo").fadeOut();
+        $("#dialogo_registro").fadeOut();
         
         return false;
     });
@@ -361,6 +348,57 @@ $(function(){
 
         return false;
     });
+
+    $("#btnRegister").click(function(e){
+        e.preventDefault();
+
+            $.post(RUTA+"pedidos/llamaProductos", {tipo:37},
+                function (data, textStatus, jqXHR) {
+                    $("#tabla_detalles_productos tbody")
+                        .empty()
+                        .append(data);
+
+                        $("#dialogo_registro").fadeIn();
+
+                },
+                "text"
+            );
+
+        
+        return false;
+    });
+
+    //filtrar Item del pedido
+    $("#codigoSearch, #descripSearch").on("keypress", function (e) {
+        if(e.which == 13) {
+            $("#esperar").fadeIn();
+            
+            $.post(RUTA+"pedidos/filtraItems", {codigo:$("#codigoSearch").val(),
+                                                descripcion:$("#descripSearch").val(),
+                                                tipo:37},
+                    function (data, textStatus, jqXHR) {
+                        $("#tabla_detalles_productos tbody")
+                            .empty()
+                            .append(data);
+                        $("#esperar").fadeOut();
+                    },
+                    "text"
+                );
+        }
+    });
+
+    $("#tabla_detalles_productos tbody").on('click','tr', function(e) {
+        e.preventDefault();
+
+        let codigo = $(this).data("idprod");
+
+        $(this).toggleClass('semaforoNaranja');
+
+
+        return false;
+    });
+
+
 })
 
 detalles = () => {

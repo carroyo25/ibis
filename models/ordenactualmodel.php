@@ -108,7 +108,7 @@
                                                         tb_costusu.id_cuser,
                                                         lg_ordencab.id_regmov,
                                                         LPAD(lg_ordencab.cnumero,6,0) AS cnumero,
-                                                        DATE_FORMAT(lg_ordencab.ffechadoc,'%d/%m/%Y') AS emision,
+                                                        lg_ordencab.ffechadoc AS emision,
                                                         lg_ordencab.nNivAten,
                                                         lg_ordencab.nEstadoDoc,
                                                         lg_ordencab.ncodpago,
@@ -146,7 +146,7 @@
                                                         tb_costusu.id_cuser = :user 
                                                         AND tb_costusu.nflgactivo = 1 
                                                         AND lg_ordencab.cper LIKE :anio
-                                                        AND lg_ordencab.id_regmov LIKE :orden
+                                                        AND lg_ordencab.cnumero LIKE :orden
                                                         AND tb_costusu.ncodproy LIKE :costos
                                                         AND lg_ordencab.cmes LIKE :mes
                                                         AND (lg_ordencab.nEstadoDoc = 60 OR lg_ordencab.nEstadoDoc = 62)

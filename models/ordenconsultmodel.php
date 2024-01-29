@@ -316,7 +316,7 @@
                                                         tb_costusu.id_cuser = :user 
                                                         AND tb_costusu.nflgactivo = 1 
                                                         AND lg_ordencab.cper LIKE :anio
-                                                        AND lg_ordencab.id_regmov LIKE :orden
+                                                        AND lg_ordencab.cnumero LIKE :orden
                                                         AND tb_costusu.ncodproy LIKE :costos
                                                         AND lg_ordencab.cmes LIKE :mes
                                                     ORDER BY

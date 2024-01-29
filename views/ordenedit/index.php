@@ -10,15 +10,7 @@
     <div class="mensaje">
         <p></p>
     </div>
-    <div class="modal" id="pregunta">
-        <div class="ventanaPregunta">
-            <h3>Eliminar el registro?</h3>
-            <div>
-                <button type="button" id="btnAceptarPregunta">Aceptar</button>
-                <button type="button" id="btnCancelarPregunta">Cancelar</button>
-            </div>
-        </div>
-    </div>  
+    
     <div class="modal" id="proceso">
         <div class="ventanaProceso tamanioProceso">
             <div class="cabezaProceso">
@@ -403,6 +395,16 @@
             </form>
         </div>
     </div>
+    <div class="modal" id="pregunta">
+        <div class="ventanaPregunta">
+            <h3>¿Que desea hacer?</h3>
+            <div>
+                <button type="button" id="btnLiberaPregunta">Liberar</button>
+                <button type="button" id="btnAnulaPregunta">Anular</button>
+                <button type="button" id="btnCancelarPregunta">Cerrar</button>
+            </div>
+        </div>
+    </div> 
     <div class="cabezaModulo">
         <h1>Editar Ordenes</h1>
         <div>
@@ -414,15 +416,14 @@
         <form action="#" id="formConsulta">
             <div class="variasConsultas">
                     <div>
-                        <label for="tipo">Tipo : </label>
-                        <select name="tipoSearch" id="tipoSearch">
-                            <option value="37">Bienes</option>
-                            <option value="38">Servicios</option>
-                        </select>
+                        <label for="tipo">Nro.Orden : </label>
+                        <input type="text" name="ordenSearch" id="ordenSearch">
                     </div>
                     <div>
-                        <label for="costosSearch">Centro de Costos</label>
-                        <input type="text" name="costosSearch" id="costosSearch">
+                        <label for="costosSearch">Centro de Costos: </label>
+                        <select name="costosSearch" id="costosSearch" class="item4">
+                            <?php echo $this->listaCostosSelect ?>
+                        </select>
                     </div>
                     <div>
                         <label for="mes">Mes</label>
@@ -432,7 +433,7 @@
                         <label for="anio">Año :</label>
                         <input type="number" name="anioSearch" id="anioSearch" value="<?php echo date("Y")?>" class="textoCentro">
                     </div>
-                    <button type="button">Procesar</button> 
+                    <button type="button" id="btnConsult">Procesar</button> 
             </div>
         </form>
     </div>
@@ -440,24 +441,26 @@
         <table id="tablaPrincipal">
             <thead class="stickytop">
                     <tr>
-                    <th rowspan="2">Num.</th>  
+                    <th rowspan="2" data-idcol="0" class="datafiltro">Num.</th>  
                     <th rowspan="2">Emision</th>
-                    <th rowspan="2">Descripción</th>
-                    <th rowspan="2">Centro Costos</th> 
-                    <th rowspan="2">Area</th>
-                    <th rowspan="2" width="15%">Proveedor</th>
-                    <th rowspan="2">Atencion</th>
+                    <th rowspan="2" width="25%" data-idcol="2" class="datafiltro">Descripción</th>
+                    <th rowspan="2" data-idcol="3" class="datafiltro">Centro Costos</th> 
+                    <th rowspan="2" data-idcol="4" class="datafiltro">Area</th>
+                    <th rowspan="2" width="15%" data-idcol="5" class="datafiltro">Proveedor</th>
+                    <th rowspan="2" width="5%">Precio Soles</th>
+                    <th rowspan="2" width="5%">Precio Dólares</th>
+                    <th rowspan="2" data-idcol="8" class="datafiltro">Atencion</th>
+                    <th rowspan="2">Estado</th>
                     <th colspan="3" width="16%">Firmas</th>
                     <tr>
                         <th>Procura</th>
                         <th>Finanzas</th>
                         <th>Operaciones</th>
                     </tr>
-                    
                 </tr>
             </thead>
             <tbody>
-                <?php //echo $this->listaOrdenes;?>
+                
             </tbody>
         </table>
     </div>

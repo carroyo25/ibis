@@ -5,85 +5,120 @@
             parent::__construct();
         }
 
-        public function listarOrdenes($user){
-           try {
-                $salida = "";
-                $sql = $this->db->connect()->prepare("SELECT
-                                                        tb_costusu.ncodcos,
-                                                        tb_costusu.ncodproy,
-                                                        tb_costusu.id_cuser,
-                                                        lg_ordencab.id_regmov,
-                                                        lg_ordencab.cnumero,
-                                                        lg_ordencab.ffechadoc,
-                                                        lg_ordencab.nNivAten,
-                                                        lg_ordencab.nEstadoDoc,
-                                                        lg_ordencab.ncodpago,
-                                                        lg_ordencab.nplazo,
-                                                        lg_ordencab.cdocPDF,
-                                                        UPPER( lg_ordencab.cObservacion ) AS concepto,
-                                                        UPPER( tb_pedidocab.detalle ) AS detalle,
-                                                        UPPER(
-                                                        CONCAT_WS( tb_area.ccodarea, tb_area.cdesarea )) AS area,
-                                                        UPPER(
-                                                        CONCAT_WS( tb_proyectos.ccodproy, tb_proyectos.cdesproy )) AS costos,
-                                                        tb_proyectos.ccodproy,
-                                                        lg_ordencab.nfirmaLog,
-                                                        lg_ordencab.nfirmaFin,
-                                                        lg_ordencab.nfirmaOpe,
-                                                        tb_parametros.cdescripcion AS atencion,
-                                                        UPPER(cm_entidad.crazonsoc) AS proveedor 
-                                                    FROM
-                                                        tb_costusu
-                                                        INNER JOIN lg_ordencab ON tb_costusu.ncodproy = lg_ordencab.ncodpry
-                                                        INNER JOIN tb_pedidocab ON lg_ordencab.id_refpedi = tb_pedidocab.idreg
-                                                        INNER JOIN tb_area ON lg_ordencab.ncodarea = tb_area.ncodarea
-                                                        INNER JOIN tb_proyectos ON lg_ordencab.ncodpry = tb_proyectos.nidreg
-                                                        INNER JOIN tb_parametros ON lg_ordencab.nNivAten = tb_parametros.nidreg
-                                                        INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi 
-                                                    WHERE
-                                                        tb_costusu.id_cuser = :user 
-                                                        AND tb_costusu.nflgactivo = 1
-            ORDER BY id_regmov DESC");
-                $sql->execute(["user"=>$_SESSION['iduser']]);
-                $rowCount = $sql->rowCount();
-
-                if ($rowCount > 0){
-                    while ($rs = $sql->fetch()) {
-
-                        $log = is_null($rs['nfirmaLog']) ? '<i class="far fa-square"></i>' : '<i class="far fa-check-square"></i>';
-                        $ope = is_null($rs['nfirmaOpe']) ? '<i class="far fa-square"></i>' : '<i class="far fa-check-square"></i>';
-                        $fin = is_null($rs['nfirmaFin']) ? '<i class="far fa-square"></i>' : '<i class="far fa-check-square"></i>';
-
-                        $flog = is_null($rs['nfirmaLog']) ? 0 : 1;
-                        $fope = is_null($rs['nfirmaOpe']) ? 0 : 1;
-                        $ffin = is_null($rs['nfirmaFin']) ? 0 : 1;
-
-                        $resaltado = $rs['nEstadoDoc'] == 59 ? "resaltado_firma" :  "";
-
-                        $salida .='<tr class="pointer '.$resaltado.'" data-indice="'.$rs['id_regmov'].'" 
-                                                        data-estado="'.$rs['nEstadoDoc'].'"
-                                                        data-finanzas="'.$ffin.'"
-                                                        data-logistica="'.$flog.'"
-                                                        data-operaciones="'.$fope.'">
-                                    <td class="textoCentro">'.str_pad($rs['cnumero'],4,0,STR_PAD_LEFT).'</td>
-                                    <td class="textoCentro">'.date("d/m/Y", strtotime($rs['ffechadoc'])).'</td>
-                                    <td class="pl20px">'.$rs['concepto'].'</td>
-                                    <td class="pl20px">'.utf8_decode($rs['ccodproy']).'</td>
-                                    <td class="pl20px">'.$rs['area'].'</td>
-                                    <td class="pl20px">'.$rs['proveedor'].'</td>
-                                    <td class="textoCentro '.strtolower($rs['atencion']).'">'.$rs['atencion'].'</td>
-                                    <td class="textoCentro">'.$log.'</td>
-                                    <td class="textoCentro">'.$ope.'</td>
-                                    <td class="textoCentro">'.$fin.'</td>
-                                    </tr>';
-                    }
-                }
-
-                return $salida;                    
-           } catch (PDOException $th) {
-               echo "Error: " . $th->getMessage();
-               return false;
-           }
+        public function listarOrdenesEdit($user){
+            try {
+                 $salida = "";
+                 $sql = $this->db->connect()->prepare("SELECT
+                                                         tb_costusu.ncodcos,
+                                                         tb_costusu.ncodproy,
+                                                         tb_costusu.id_cuser,
+                                                         lg_ordencab.id_regmov,
+                                                         lg_ordencab.cnumero,
+                                                         lg_ordencab.ffechadoc,
+                                                         lg_ordencab.nNivAten,
+                                                         lg_ordencab.nEstadoDoc,
+                                                         lg_ordencab.ncodpago,
+                                                         lg_ordencab.nplazo,
+                                                         lg_ordencab.cdocPDF,
+                                                         lg_ordencab.ntotal,
+                                                         lg_ordencab.ncodmon,
+                                                         UPPER( lg_ordencab.cObservacion ) AS concepto,
+                                                         UPPER( tb_pedidocab.detalle ) AS detalle,
+                                                         UPPER(
+                                                         CONCAT_WS( tb_area.ccodarea, tb_area.cdesarea )) AS area,
+                                                         UPPER(
+                                                         CONCAT_WS( tb_proyectos.ccodproy, tb_proyectos.cdesproy )) AS costos,
+                                                         tb_proyectos.ccodproy,
+                                                         lg_ordencab.nfirmaLog,
+                                                         lg_ordencab.nfirmaFin,
+                                                         lg_ordencab.nfirmaOpe,
+                                                         tb_parametros.cdescripcion AS atencion,
+                                                         UPPER(cm_entidad.crazonsoc) AS proveedor 
+                                                     FROM
+                                                         tb_costusu
+                                                         INNER JOIN lg_ordencab ON tb_costusu.ncodproy = lg_ordencab.ncodpry
+                                                         INNER JOIN tb_pedidocab ON lg_ordencab.id_refpedi = tb_pedidocab.idreg
+                                                         INNER JOIN tb_area ON lg_ordencab.ncodarea = tb_area.ncodarea
+                                                         INNER JOIN tb_proyectos ON lg_ordencab.ncodpry = tb_proyectos.nidreg
+                                                         INNER JOIN tb_parametros ON lg_ordencab.nNivAten = tb_parametros.nidreg
+                                                         INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
+                                                         INNER JOIN tb_parametros AS estados ON lg_ordencab.nEstadoDoc = estados.nidreg 
+                                                     WHERE
+                                                         tb_costusu.id_cuser = :user 
+                                                         AND tb_costusu.nflgactivo = 1
+                                                         AND YEAR(lg_ordencab.ffechadoc) = YEAR(NOW())
+                                                         ORDER BY id_regmov DESC");
+                 $sql->execute(["user"=>$_SESSION['iduser']]);
+                 $rowCount = $sql->rowCount();
+ 
+                 
+ 
+                 if ($rowCount > 0){
+                     while ($rs = $sql->fetch()) {
+ 
+                         $montoDolares = 0;
+                         $montoSoles = 0;
+                         $estado = '';
+ 
+                         $log = is_null($rs['nfirmaLog']) ? '<i class="far fa-square"></i>' : '<i class="far fa-check-square"></i>';
+                         $ope = is_null($rs['nfirmaOpe']) ? '<i class="far fa-square"></i>' : '<i class="far fa-check-square"></i>';
+                         $fin = is_null($rs['nfirmaFin']) ? '<i class="far fa-square"></i>' : '<i class="far fa-check-square"></i>';
+ 
+                         $flog = is_null($rs['nfirmaLog']) ? 0 : 1;
+                         $fope = is_null($rs['nfirmaOpe']) ? 0 : 1;
+                         $ffin = is_null($rs['nfirmaFin']) ? 0 : 1;
+ 
+ 
+                         if ( $rs['ncodmon'] == 20) {
+                             $montoSoles = "S/. ".number_format($rs['ntotal'],2);
+                             $montoDolares = "";
+                         }else{
+                             $montoSoles = "";
+                             $montoDolares =  "$ ".number_format($rs['ntotal'],2);
+                         }
+ 
+                         if ( $rs['nEstadoDoc'] == 49) {
+                             $estado = "procesando";
+                         }else if ( $rs['nEstadoDoc'] == 59 ) {
+                             $estado = "firmas";
+                         }else if ( $rs['nEstadoDoc'] == 60 ) {
+                             $estado = "recepcion";
+                         }else if ( $rs['nEstadoDoc'] == 62 ) {
+                             $estado = "despacho";
+                         }else if ( $rs['nEstadoDoc'] == 105 ) {
+                             $estado = "anulado";
+                             $montoDolares = "";
+                             $montoSoles = "";
+                         }
+ 
+ 
+                         $salida .='<tr class="pointer " data-indice="'.$rs['id_regmov'].'" 
+                                                         data-estado="'.$rs['nEstadoDoc'].'"
+                                                         data-finanzas="'.$ffin.'"
+                                                         data-logistica="'.$flog.'"
+                                                         data-operaciones="'.$fope.'">
+                                     <td class="textoCentro">'.str_pad($rs['cnumero'],4,0,STR_PAD_LEFT).'</td>
+                                     <td class="textoCentro">'.date("d/m/Y", strtotime($rs['ffechadoc'])).'</td>
+                                     <td class="pl20px">'.$rs['concepto'].'</td>
+                                     <td class="pl20px">'.utf8_decode($rs['ccodproy']).'</td>
+                                     <td class="pl20px">'.$rs['area'].'</td>
+                                     <td class="pl20px">'.$rs['proveedor'].'</td>
+                                     <td class="textoDerecha">'.$montoSoles.'</td>
+                                     <td class="textoDerecha">'.$montoDolares.'</td>
+                                     <td class="textoCentro '.strtolower($rs['atencion']).'">'.$rs['atencion'].'</td>
+                                     <td class="textoCentro '.$estado.'">'.strtoupper($estado).'</td>
+                                     <td class="textoCentro">'.$log.'</td>
+                                     <td class="textoCentro">'.$fin.'</td>
+                                     <td class="textoCentro">'.$ope.'</td>
+                                     </tr>';
+                     }
+                 }
+ 
+                 return $salida;                    
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
         }
 
 

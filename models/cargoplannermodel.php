@@ -270,7 +270,6 @@
                             $dias_plazo = intVal( $rs['plazo'] )+1 .' days';
 
                             if ( $rs['fecha_autorizacion_orden'] !== null && $rs['estadoItem'] !== 105 ) { 
-                                //$fecha_entrega = date("d/m/Y",strtotime($rs['FechaFin'].$dias_plazo));
                                 $fecha_descarga = date("d/m/Y",strtotime($rs['FechaFin'].' 1 days'));
                                 $fecha_entrega = $rs['fecha_entrega'];
                             }
@@ -1299,7 +1298,6 @@
                         $dias_plazo = intVal( $rs['plazo'] )+1 .' days';
 
                         if ( $rs['fecha_autorizacion_orden'] !== null && $rs['estadoItem'] !== 105 ) { 
-                            //$fecha_entrega = date("d/m/Y",strtotime($rs['FechaFin'].$dias_plazo));
                             $fecha_descarga = date("d/m/Y",strtotime($rs['FechaFin'].' 1 days'));
                             $fecha_entrega = $rs['fecha_entrega'];
                         }
@@ -1433,14 +1431,14 @@
                             $estado_item = "Entrega Parcial";
                             $estado_pedido = "Entrega Parcial";
                             $color_mostrar = 'FFFFE1';
-                        }else if ( $rs['ingreso_obra'] && $suma_atendido == $rs['cantidad_aprobada']) {
+                        }else if ( $rs['ingreso_obra'] && round($suma_atendido,2) === round($rs['cantidad_aprobada'],2)) {
                             $porcentaje = "100%";
                             $estadofila = "entregado";
                             $estado_item = "atendido";
                             $estado_pedido = "atendido";
                             $semaforo = "Entregado";
                             $color_mostrar = '00FF00';
-                        }else if ( $rs['ingreso_obra'] && $rs['ingreso_obra'] == $rs['cantidad_orden'] ) {
+                        }else if ( $rs['ingreso_obra'] && round($rs['ingreso_obra'],2) === round($rs['cantidad_orden'],2)) {
                             $porcentaje = "100%";
                             $estadofila = "entregado";
                             $estado_item = "atendido";
@@ -1810,6 +1808,43 @@
                 }
 
                 return $salida;
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        public function listarProyectosFiltro(){
+            try {
+                $salida = "";
+
+                $sql = $this->db->connect()->prepare("SELECT
+                                                    tb_costusu.ncodproy,
+                                                    UPPER(
+                                                    CONCAT_WS( ' ', tb_proyectos.ccodproy, tb_proyectos.cdesproy )) AS nombre 
+                                                FROM
+                                                    tb_costusu
+                                                    INNER JOIN tb_proyectos ON tb_costusu.ncodproy = tb_proyectos.nidreg 
+                                                WHERE
+                                                    tb_costusu.id_cuser = :user 
+                                                    AND tb_costusu.nflgactivo = 1 
+                                                    AND tb_proyectos.nflgactivo = 1 
+                                                ORDER BY
+                                                    tb_proyectos.ccodproy");
+                $sql->execute(["user"=>$_SESSION["iduser"]]);
+                $rowCount = $sql->rowCount();
+
+                if ( $rowCount > 0 ) {
+                    while ($rs = $sql->fetch()) {
+                        $salida .= '<li>
+                                        <input type="checkbox" name="'.$rs['ncodproy'].'" id="'.$rs['ncodproy'].'">
+                                        <label for="'.$rs['ncodproy'].'">'.$rs['nombre'].'</label>
+                                    </li>';
+                    }
+                }
+
+                return $salida;
+                            
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;

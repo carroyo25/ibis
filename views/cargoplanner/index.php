@@ -162,21 +162,25 @@
             <hr>
             <div class="cuerpoDocumento">
                 <div class="proyectos">
-                    <ul class="listaCostos">
-                        <?php for ($i=0; $i < 10; $i++) {?> 
-                            <li><input type="checkbox" name="proyecto" id="<?php echo $i ?>">Proyecto</li>
-                        <?php } ?>
+                    <ul class="listaCostos" id="costos">
+                        
                     </ul>
                 </div>
                 <div class="fechas">
-                    <label for="desde">Fecha Inicio:</label>
-                    <input type="date" name="fecha_inicio" id="fecha_inicio">
-                    <label for="desde">Fecha Final:</label>
-                    <input type="date" name="fecha_final" id="fecha_final">
+                    <div>
+                        <label for="desde">Fecha Inicio:</label>
+                        <input type="date" name="fecha_inicio" id="fecha_inicio">
+                    </div>
+                    <div>
+                        <label for="desde">Fecha Final:</label>
+                        <input type="date" name="fecha_final" id="fecha_final">
+                    </div>
                 </div>
                 <div class="porcentajes">
                 </div>
                 <div class="opciones">
+                    <button type="button" id="btnAceptarFiltro" class="boton5">Aceptar</button>
+                    <button type="button" id="btnCancelarFiltro" class="boton5">Cancelar</button>
                 </div>
             </div>
         </div>
@@ -205,7 +209,7 @@
     <div class="cabezaModulo">
         <h1>Cargo Plan</h1>
         <div>
-            <!-- <a href="#" id="filtrosAvanzados"><i class="fab fa-searchengin"></i><p>Filtros</p></a> -->
+            <a href="#" id="filtrosAvanzados"><i class="fab fa-searchengin"></i><p>Filtros</p></a>
             <a href="#" id="excelFile"><i class="fas fa-file-excel"></i><p>Exportar</p></a>
             <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
         </div>

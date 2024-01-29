@@ -309,20 +309,20 @@ $(() => {
     });
 
     $("#btnConsult").click(function (e) { 
-    e.preventDefault();
-    
-    let srt = $("#formConsulta").serialize();
+        e.preventDefault();
+        
+        let srt = $("#formConsulta").serialize();
 
-    $.post(RUTA+"ordenactual/filtroOrdenes", srt,
-        function (data, text, requestXHR) {
-            $("#tablaPrincipal tbody")
-                .empty()
-                .append(data);
-        },
-        "text"
-    );
-    
-    return false
+        $.post(RUTA+"ordenactual/filtroOrdenes", srt,
+            function (data, text, requestXHR) {
+                $("#tablaPrincipal tbody")
+                    .empty()
+                    .append(data);
+            },
+            "text"
+        );
+        
+        return false
     });
 
 })

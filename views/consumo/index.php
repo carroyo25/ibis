@@ -40,15 +40,63 @@
             </div>
         </div>
     </div>
-    <div class="modal" id="dialogo">
-        <div class="ventanaPregunta">
+    <div class="modal" id="dialogo_registro">
+        <div class="ventanaConsumo">
             <h3>Ingrese Codigo</h3>
-            <div>
-                <input type="text" name="codigoSearch" id="codigoSearch">
-            </div>
-            <div>
-                <button type="button" id="btnAceptarDialogo">Aceptar</button>
-                <button type="button" id="btnCancelarDialogo">Cancelar</button>
+            <div class="contenedor">
+                <div class="cabecera_dialogo">
+                    <label for="codigoSearch">Codigo</label>
+                    <input type="text" name="codigoSearch" id="codigoSearch" placeholder="Ingrese codigo">
+                    <label for="descripSearch">Descripcion</label>
+                    <input type="text" name="descripSearch" id="descripSearch" placeholder="Ingrese Descripcion">
+                </div>
+                <div class="tabla_dialogo">
+                    <table id="tabla_detalles_productos" class="tabla">
+                        <thead class="stickytop">
+                            <tr>
+                                <th>Codigo</th>
+                                <th>Descripcion</th>
+                                <th>Und</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                </div>
+                <div class="cuerpo_dialogo">
+                    <div class="datos_cuerpo">
+                        <label for="patrimonio">Patrimonio</label>
+                        <input type="checkbox" name="patrimonio" id="patrimonio">
+                        <label for="cambio_epp">Motivo de Cambio</label>
+                        <select name="cambio_epp" id="cambio_epp">
+                            <option value="-1">Seleccione una opcion</option>
+                            <option value="240">PRIMERA ENTREGA</option>
+                            <option value="240">DESGASTE POR PROPIO USO</option>
+                            <option value="241">ROTURA</option>
+                            <option value="242">PERDIDA</option>
+                            <option value="243">DEFORMADO</option>
+                            <option value="244">FALTA PARTES</option>
+                            <option value="245">OTROS</option>
+                        </select>
+                        <label for="cantidad_dialogo">Cantidad</label>
+                        <input type="number" name="cantidad_dialogo" id="cantidad_dialogo" placeholder="Cantidad">
+                        <label for="serie_dialogo">N° Serie</label>
+                        <input type="text" name="serie_dialogo" id="serie_dialogo" placeholder="Serie">
+                        <label for="nhoja_dialogo">N° Hoja</label>
+                        <input type="text" name="nhoja_dialogo" id="nhoja_dialogo" placeholder="N° Hoja">
+                        <label for="isometricos_dialogo">Isometrico</label>
+                        <input type="text" name="isometricos_dialogo" id="isometricos_dialogo" placeholder="Isometricos">
+                    </div>
+                    <div class="datos_cuerpo_observaciones">
+                        <label for="observaciones_dialogo">Observaciones</label>
+                        <textarea name="observaciones_dialogo" id="observaciones_dialogo" placeholder="Observaciones"></textarea>
+                    </div>
+                </div>
+                <div class="opciones_dialogo">
+                    <button type="button" id="btnAceptarDialogo">Aceptar</button>
+                    <button type="button" id="btnCancelarDialogo">Cancelar</button>
+                </div>
             </div>
         </div>
     </div>
@@ -116,6 +164,7 @@
     <div class="cabezaModulo">
         <h1>Kardex Personal</h1>
         <div>
+            <a href="#" id="btnRegister"><i class="fas fa-project-diagram"></i><p>Kardex</p></a>
             <a href="#" id="btnKardex"><i class="fas fa-file-pdf"></i><p>Kardex</p></a>
             <a href="#" id="excelFile"><i class="fas fa-file-excel"></i><p>Reporte</p></a>
             <a href="#" id="btnBuscar"><i class="fas fa-search-location"></i><p>Buscar</p></a>
