@@ -1,11 +1,13 @@
 $(function(){
     let fila = "",
         registro = 0,
-        sw = 0;
+        sw = 0,
+        codigo="",
+        idprod="",
+        descripcion="",
+        und = "";
 
     $("#espera").fadeOut();
-
-    let row = ``;
 
     $("#docident").focus;
 
@@ -41,18 +43,12 @@ $(function(){
 
     $("#codeRead").keypress(function (e) { 
         if(e.which == 13) {
-
-            /*if ($(this).val() == "") {
-                $("#registro").fadeIn();
-                return false;
-            }*/
-
             $.post(RUTA+"consumo/productos", {codigo:$(this).val()},
                 function (data, textStatus, jqXHR) {
                     let fecha = fechaActual();
                     let nfilas = $("#tablaPrincipal tr").length;
 
-                    var row = `<tr data-registrado=0 class="pointer" data-idprod="${data.idprod}">
+                    let row = `<tr data-registrado=0 class="pointer" data-idprod="${data.idprod}">
                                 <td class="textoDerecha">${nfilas}</td>
                                 <td class="textoCentro">${data.codigo}</td>
                                 <td class="pl20px">${data.descripcion}</td>
@@ -64,17 +60,17 @@ $(function(){
                                 <td class=""><input type="text" class="entrada"></td>
                                 <td class=""><input type="text" class="entrada"></td>
                                 <td class="textoCentro"><input type="checkbox" class="entrada"></td>
-                                <td class=""><input type="text" class="entrada"></td>
                                 <td class=""><select id="motivo">
-                                             <option value="-1">Elija Opcion</option>   
-                                             <option value="240">DESGASTE</option>
-                                             <option value="241">ROTURA</option>
-                                             <option value="242">PERDIDA</option>
-                                             <option value="243">DEFORMADO</option>
-                                             <option value="244">FALTA PARTES</option>
-                                             <option value="245">OTROS</option>
+                                                <option value="-1">Elija Opcion</option>   
+                                                <option value="240">DESGASTE</option>
+                                                <option value="241">ROTURA</option>
+                                                <option value="242">PERDIDA</option>
+                                                <option value="243">DEFORMADO</option>
+                                                <option value="244">FALTA PARTES</option>
+                                                <option value="245">OTROS</option>
                                             </select></td>
                                 <td class=""></td>
+                                <td class=""><input type="text" class="entrada"></td>
                                 <td class="textoCentro"><a href=""><i class="far fa-trash-alt"></i></a></td>
                         </tr>`;
 
@@ -192,17 +188,89 @@ $(function(){
         return false;
     });
 
-    $("#btnAceptarDialogo").click(function (e) { 
+    $("#btnAceptarDialogoKardex").click(function (e) { 
         e.preventDefault();
 
-    
+        try {
+            if(idprod === "") throw new Error("Elija un producto para registrar");
+            if($("#cantidad_dialogo").val() =="") throw new Error("Ingrese una cantidad para registrar");
+
+            let 
+                cant            = $("#cantidad_dialogo").val(),
+                fsalida         = fechaActual(),
+                nhoja           = $("#nhoja_dialogo").val(),
+                isometricos     = $("#isometricos_dialogo").val(),
+                observaciones   = $("#observaciones_dialogo").val(),
+                serie           = $("#serie_dialogo").val(),
+                patrimonio      = $("#patrimonio").prop('checked'),
+                cambio          = $("#cambio_epp").val(),
+                nfilas          = $("#tablaPrincipal tr").length,
+                estado          = $("#estado_dialogo").val(),
+                textoSelect     = "",
+                pat             = "";
+
+                pat = patrimonio === true ? '<i class="far fa-check-square"></i>' : '<i class="far fa-square"></i>';
+                textoSelect = cambio !== "-1" ? $('select[name="cambio_epp"] option:selected').text() : "";
+
+            let row = `<tr data-registrado=0 class="pointer" data-idprod="${idprod}" data-cambio="${cambio}" data-patrimonio="${patrimonio}">
+                            <td class="textoDerecha">${nfilas}</td>
+                            <td class="textoCentro">${codigo}</td>
+                            <td class="pl20px">${descripcion}</td>
+                            <td class="textoCentro">${und}</td>
+                            <td class=""><input type="text" value="${cant}"></td>
+                            <td class=""><input type="date" class="unstyled textoCentro entrada" value="${fsalida}"></td>
+                            <td class=""><input type="text" class="entrada" value="${nhoja}"></td>
+                            <td class=""><input type="text" class="entrada" value="${isometricos}"></td>
+                            <td class=""><input type="text" class="entrada" value="${observaciones}"></td>
+                            <td class=""><input type="text" class="entrada" value="${serie}"></td>
+                            <td class="textoCentro">${pat}</td>
+                            <td class="">${textoSelect}</td>
+                            <td class="">${estado}</td>
+                            <td class=""></td>
+                            <td class="textoCentro"><a href=""><i class="far fa-trash-alt"></i></a></td>
+                    </tr>`;
+             
+            //codigos para mantenimiento        
+            let arraymtto = ['B05010002','B05010006','B05010003'],
+                codmmtto = codigo.substring(0,9),
+                formData = new FormData(),
+                search = arraymtto.includes(codmmtto);
+
+                formData.append('codigo',idprod);
+                formData.append('serie',serie);
+                formData.append('documento',$("#docident").val());
+                formData.append("costos",$("#costosSearch").val());
+                
+            if (search) {
+                fetch(RUTA+'consumo/mantenimientos',{
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data=>{
+                   console.log(data.respuesta);
+                })
+            }
+
+            $(row).insertBefore("#tablaPrincipal tbody tr:first");
+            cleanDialogControls();
+            idprod="";
+           
+        } catch (error) {
+            mostrarMensaje(error,"mensaje_error")
+        }
+
         return false;
     });
 
-    $("#btnCancelarDialogo").click(function (e) { 
+    $("#btnCancelarDialogoKardex").click(function (e) { 
         e.preventDefault();
 
         $("#dialogo_registro").fadeOut();
+        
+        cleanDialogControls();
+        
+        idprod="";
         
         return false;
     });
@@ -390,15 +458,16 @@ $(function(){
     $("#tabla_detalles_productos tbody").on('click','tr', function(e) {
         e.preventDefault();
 
-        let codigo = $(this).data("idprod");
+        idprod = $(this).data("idprod");
+        codigo = $(this).find('td').eq(0).text();
+        descripcion = $(this).find('td').eq(1).text();
+        und = $(this).find('td').eq(2).text();
 
         $(this).toggleClass('semaforoNaranja');
 
 
         return false;
     });
-
-
 })
 
 detalles = () => {
@@ -418,10 +487,13 @@ detalles = () => {
             ISOMETRICO  = $(this).find('td').eq(7).children().val(),
             OBSERVAC    = $(this).find('td').eq(8).children().val(),
             SERIE       = $(this).find('td').eq(9).children().val(),
-            PATRIMONIO  = $(this).find('td').eq(10).children().prop('checked'),
-            ESTADO      = $(this).find('td').eq(11).children().val(),
+            //PATRIMONIO  = $(this).find('td').eq(10).children().prop('checked'),
+            //ESTADO      = $(this).find('td').eq(11).children().val(),
+            ESTADO      = $(this).find('td').eq(12).text(),
             COSTOS      = $("#costosSearch").val(),
-            NRODOC      = $("#docident").val();
+            NRODOC      = $("#docident").val(),
+            PATRIMONIO  = $(this).data("patrimonio"),
+            CAMBIO      = $(this).data("cambio");
 
 
         item = {};
@@ -442,6 +514,7 @@ detalles = () => {
             item['nrodoc']      = NRODOC;
             item['idprod']      = IDPROD;
             item['serie']       = SERIE;
+            item['cambio']      = CAMBIO;
 
             DATA.push(item);
         }
@@ -537,5 +610,17 @@ function render() {
             imagen.src = canvasImg.toDataURL("image/jpeg", 1.0)
         });
     });
+}
+
+cleanDialogControls = () => {
+    $("#codigoSearch").val("");
+    $("#descripSearch").val("");
+    $("#patrimonio").prop("checked", false);
+    $("#cambio_epp").val(-1);
+    $("#cantidad_dialogo").val("");
+    $("#serie_dialogo").val("");
+    $("#nhoja_dialogo").val("");
+    $("#isometricos_dialogo").val("");
+    $("#observaciones_dialogo").val("");
 }
 

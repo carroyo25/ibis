@@ -42,7 +42,7 @@
     </div>
     <div class="modal" id="dialogo_registro">
         <div class="ventanaConsumo">
-            <h3>Ingrese Codigo</h3>
+            <h3>Registrar Consumo</h3>
             <div class="contenedor">
                 <div class="cabecera_dialogo">
                     <label for="codigoSearch">Codigo</label>
@@ -71,13 +71,14 @@
                         <label for="cambio_epp">Motivo de Cambio</label>
                         <select name="cambio_epp" id="cambio_epp">
                             <option value="-1">Seleccione una opcion</option>
-                            <option value="240">PRIMERA ENTREGA</option>
-                            <option value="240">DESGASTE POR PROPIO USO</option>
+                            <option value="239">PRIMERA ENTREGA </option>
+                            <option value="240">CAMBIO EPP</option>
                             <option value="241">ROTURA</option>
                             <option value="242">PERDIDA</option>
                             <option value="243">DEFORMADO</option>
                             <option value="244">FALTA PARTES</option>
-                            <option value="245">OTROS</option>
+                            <option value="245">DESGASTE POR PROPIO USO</option>
+                            <option value="246">OTROS</option>
                         </select>
                         <label for="cantidad_dialogo">Cantidad</label>
                         <input type="number" name="cantidad_dialogo" id="cantidad_dialogo" placeholder="Cantidad">
@@ -87,6 +88,8 @@
                         <input type="text" name="nhoja_dialogo" id="nhoja_dialogo" placeholder="N° Hoja">
                         <label for="isometricos_dialogo">Isometrico</label>
                         <input type="text" name="isometricos_dialogo" id="isometricos_dialogo" placeholder="Isometricos">
+                        <label for="estado_dialogo">Estado</label>
+                        <input type="text" name="estado_dialogo" id="estado_dialogo" placeholder="Estado">
                     </div>
                     <div class="datos_cuerpo_observaciones">
                         <label for="observaciones_dialogo">Observaciones</label>
@@ -94,8 +97,8 @@
                     </div>
                 </div>
                 <div class="opciones_dialogo">
-                    <button type="button" id="btnAceptarDialogo">Aceptar</button>
-                    <button type="button" id="btnCancelarDialogo">Cancelar</button>
+                    <button type="button" id="btnAceptarDialogoKardex">Aceptar</button>
+                    <button type="button" id="btnCancelarDialogoKardex">Cancelar</button>
                 </div>
             </div>
         </div>
@@ -197,8 +200,9 @@
             <div>
                 <img src="" id="vistafirma">
             </div> 
-            <button id="btnGrabarKardex" class="oculto boton3">Aceptar</button>
-            <button type="button" class="boton3" id="btnFirmar" onclick="StartSign()">Firmar</button>
+            <!--no te olvides cambiar esto-->
+            <button id="btnGrabarKardex" class="boton3">Aceptar</button>
+            <button type="button" class="oculto boton3" id="btnFirmar" onclick="StartSign()">Firmar</button>
             <div>
                 <label for="codeRead">Codigo: </label>
                 <input type="text" name="codeRead" id="codeRead" style="opacity:1;position:relative" value=""> 
@@ -213,16 +217,16 @@
                     <th>Codigo</th>
                     <th>Descripcion</th>
                     <th>UND.</th>
-                    <th width="30px">Cant.</th>
-                    <th width="40px">Fecha</br>Salida</th>
-                    <th width="60px">N° Hoja</th>
-                    <th width="30px">Isometricos</th>
+                    <th>Cant.</th>
+                    <th>Fecha</br>Salida</th>
+                    <th>N° Hoja</th>
+                    <th>Isometricos</th>
                     <th>Observaciones</th>
-                    <th width="30px">Serie</th>
+                    <th>Serie</th>
                     <th>Patrimonio</th>
                     <th>Concepto</br>Cambio</th>
-                    <th width="30px">Estado</th>
-                    <th width="20px">Firma</th>
+                    <th>Estado</th>
+                    <th>Firma</th>
                     <th>...</th>
                 </tr>
             </thead>
@@ -237,7 +241,6 @@
         <input type="hidden" name="firmado" id="firmado">
 	</form>
 
-    
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
     <script src="<?php echo constant('URL');?>public/js/regfirma.js"></script>
     <script src="<?php echo constant('URL');?>public/js/funciones.js?<?php echo constant('VERSION')?>"></script>

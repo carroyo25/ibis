@@ -26,7 +26,7 @@ a {
 
 body {
     background:$blanco;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: sans-serif;
     overflow:hidden;
 }
 
@@ -46,6 +46,11 @@ h1 {
     font-size: 2rem;
     font-weight: bold;
     margin: 10px 0;
+}
+
+h3 {
+    font-weight: bold;
+    margin-bottom: 10px;
 }
 
 input[type="text"],input[type="mail"],input[type="password"],input[type="date"],input[type="number"]{

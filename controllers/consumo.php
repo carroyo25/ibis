@@ -45,6 +45,10 @@
         function kardex() {
             echo $this->model->generarKardex($_POST);
         }
+
+        function mantenimientos(){
+            echo json_encode($this->model->registrarMantenimientos($_POST));
+        }
         
     }
 ?>

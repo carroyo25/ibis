@@ -1223,9 +1223,24 @@
 .ventanaConsumo {
   padding: 1rem;
   width: 35%;
-  /*
-
-  */
+}
+.ventanaConsumo .titulo_dialogo {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
+.ventanaConsumo .titulo_dialogo a {
+  display: block;
+  text-align: center;
+}
+.ventanaConsumo .titulo_dialogo a i {
+  font-size: 1.5rem;
+}
+.ventanaConsumo .titulo_dialogo a p {
+  font-size: 0.8rem;
 }
 .ventanaConsumo .contenedor {
   padding: 1rem;
@@ -1283,6 +1298,10 @@
 }
 .ventanaConsumo .contenedor .opciones_dialogo button {
   height: 2rem;
+}
+.ventanaConsumo .contenedor .opciones_dialogo button:hover {
+  -webkit-box-shadow: 3px 2px 5px #fff;
+          box-shadow: 3px 2px 5px #fff;
 }
 .ventanaConsumo input, .ventanaConsumo textarea {
   border: 1px solid #c2c2c2 !important;

@@ -67,7 +67,8 @@
             }
         }
 
-        public function subirFirma($detalles,$correo,$nombre,$cc) {
+        //regresar cuando este en produccion
+        /*public function subirFirma($detalles,$correo,$nombre,$cc) {
             if (array_key_exists('img',$_REQUEST)) {
                 // convierte la imagen recibida en base64
                 // Eliminamos los 22 primeros caracteres, que 
@@ -112,7 +113,8 @@
                                                                         nkardex=:kardex,
                                                                         cfirma=:firma,
                                                                         cserie=:serie,
-                                                                        ncostos=:cc");
+                                                                        ncostos=:cc
+                                                                        ncambioepp=:cambio");
                         $sql->execute(["user"=>$_SESSION['iduser'],
                                         "documento"=>$datos[$i]->nrodoc,
                                         "producto"=>$datos[$i]->idprod,
@@ -126,13 +128,61 @@
                                         "kardex"=>$kardex,
                                         "firma"=>$namefile,
                                         "serie"=>$datos[$i]->serie,
-                                        "cc"=>$datos[$i]->costos]);
+                                        "cc"=>$datos[$i]->costos,
+                                        "cambio"=>$datos[$i]->cambio]);
                     }
                 }            
             }
 
             $this->correoMovimiento($detalles,$nombre,$correo,$kardex,$cc);
         
+            return  $respuesta;
+        }*/
+
+
+        
+        public function subirFirma($detalles,$correo,$nombre,$cc) {
+           
+                    $respuesta = true;
+
+                    $datos = json_decode($detalles);
+                    $nreg = count($datos);
+                    $kardex = $this->norepite();
+
+                    for ($i=0; $i<$nreg; $i++){
+                        $sql = $this->db->connect()->prepare("INSERT INTO alm_consumo 
+                                                                    SET reguser=:user,
+                                                                        nrodoc=:documento,
+                                                                        idprod=:producto,
+                                                                        cantsalida=:cantidad,
+                                                                        fechasalida=:salida,
+                                                                        nhoja=:hoja,
+                                                                        cisometrico=:isometrico,
+                                                                        cobserentrega=:observaciones,
+                                                                        flgdevolver=:patrimonio,
+                                                                        cestado=:estado,
+                                                                        nkardex=:kardex,
+                                                                        cfirma=:firma,
+                                                                        cserie=:serie,
+                                                                        ncostos=:cc,
+                                                                        ncambioepp=:cambio");
+                        $sql->execute(["user"=>$_SESSION['iduser'],
+                                        "documento"=>$datos[$i]->nrodoc,
+                                        "producto"=>$datos[$i]->idprod,
+                                        "cantidad"=>$datos[$i]->cantidad,
+                                        "salida"=>$datos[$i]->fecha,
+                                        "hoja"=>$datos[$i]->hoja,
+                                        "isometrico"=>$datos[$i]->isometrico,
+                                        "observaciones"=>$datos[$i]->observac,
+                                        "patrimonio"=>$datos[$i]->patrimonio,
+                                        "estado"=>$datos[$i]->estado,
+                                        "kardex"=>$kardex,
+                                        "firma"=>$namefile,
+                                        "serie"=>$datos[$i]->serie,
+                                        "cc"=>$datos[$i]->costos,
+                                        "cambio"=>$datos[$i]->cambio]);
+                    }
+
             return  $respuesta;
         }
 
@@ -249,11 +299,13 @@
                                                         alm_consumo.nkardex,
                                                         alm_consumo.calmacen,
                                                         UPPER(cm_producto.cdesprod) AS cdesprod,
-                                                        tb_unimed.cabrevia,COUNT(*) 
+                                                        tb_unimed.cabrevia,COUNT(*),
+                                                        tb_parametros.cdescripcion  AS motivo_epp
                                                     FROM
                                                         alm_consumo
                                                         LEFT JOIN cm_producto ON alm_consumo.idprod = cm_producto.id_cprod
-                                                        LEFT JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed 
+                                                        LEFT JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                        LEFT JOIN tb_parametros ON alm_consumo.ncambioepp = tb_parametros.nidreg  
                                                     WHERE
                                                         alm_consumo.nrodoc = :documento 
                                                         AND ncostos = :cc
@@ -298,7 +350,7 @@
                                         <td class="pl5px">'.$rs['cobserentrega'].'</td>
                                         <td class="pl5px">'.$rs['cserie'].'</td>
                                         <td class="textoCentro"><input type="checkbox" '.$marcado.'></td>
-                                        <td></td>
+                                        <td class="pl5px">'.$rs['motivo_epp'].'</td>
                                         <td class="pl5px">'.$rs['cestado'].'</td>
                                         <td class="textoCentro">
                                             <div style ="width:110px !important; text-align:center">
@@ -445,7 +497,8 @@
                                                         ibis.tb_clase.cdescrip AS clase,
                                                         ibis.tb_familia.cdescrip AS familia,
                                                         CONCAT_WS( ' ', rrhh.tabla_aquarius.apellidos, rrhh.tabla_aquarius.nombres ) AS nombres,
-                                                        UPPER( rrhh.tabla_aquarius.dcargo ) AS cargo 
+                                                        UPPER( rrhh.tabla_aquarius.dcargo ) AS cargo,
+                                                        ibis.tb_user.cnombres  
                                                     FROM
                                                         ibis.alm_consumo
                                                         LEFT JOIN ibis.cm_producto ON alm_consumo.idprod = cm_producto.id_cprod
@@ -453,6 +506,7 @@
                                                         LEFT JOIN ibis.tb_clase ON cm_producto.nclase = tb_clase.ncodclase
                                                         LEFT JOIN ibis.tb_familia ON cm_producto.nfam = tb_familia.ncodfamilia
                                                         LEFT JOIN rrhh.tabla_aquarius ON ibis.alm_consumo.nrodoc = rrhh.tabla_aquarius.dni 
+                                                        LEFT JOIN ibis.tb_user ON ibis.alm_consumo.reguser = ibis.tb_user.iduser 
                                                     WHERE
                                                         alm_consumo.flgactivo = 1
                                                         AND alm_consumo.ncostos =:cc
@@ -488,26 +542,29 @@
                 $objPHPExcel->getActiveSheet()->mergeCells('A1:Q1');
                 $objPHPExcel->getActiveSheet()->setCellValue('A1','REPORTE CONSUMO');
 
-                $objPHPExcel->getActiveSheet()->getStyle('A1:Q2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                $objPHPExcel->getActiveSheet()->getStyle('A1:Q2')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('A1:S2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('A1:S2')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
                 $objPHPExcel->getActiveSheet()->getRowDimension('2')->setRowHeight(60);
 
-                $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(80);
-                $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(80);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(60);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(70);
                 $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(20);
                 $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(80);
-                $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(20);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(15);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('H')->setWidth(15);
                 $objPHPExcel->getActiveSheet()->getColumnDimension('L')->setWidth(50);
                 $objPHPExcel->getActiveSheet()->getColumnDimension('M')->setWidth(50);
-                $objPHPExcel->getActiveSheet()->getColumnDimension('N')->setWidth(50);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('N')->setWidth(30);
                 $objPHPExcel->getActiveSheet()->getColumnDimension('O')->setWidth(50);
                 $objPHPExcel->getActiveSheet()->getColumnDimension('P')->setWidth(50);
                 $objPHPExcel->getActiveSheet()->getColumnDimension('Q')->setWidth(50);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('R')->setWidth(30);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('S')->setWidth(40);
                 
 
                 $objPHPExcel->getActiveSheet()
-                            ->getStyle('A2:Q2')
+                            ->getStyle('A2:S2')
                             ->getFill()
                             ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
                             ->getStartColor()
@@ -532,6 +589,8 @@
                 $objPHPExcel->getActiveSheet()->setCellValue('O2','Grupo'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('P2','Clase'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('Q2','Familia'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('R2','Fecha'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('S2','Registrado'); // esto cambia
 
                 $fila = 3;
                 $item = 1;
@@ -564,6 +623,7 @@
                         $objPHPExcel->getActiveSheet()->setCellValue('P'.$fila,$rs['clase']);
                         $objPHPExcel->getActiveSheet()->setCellValue('Q'.$fila,$rs['familia']);
                         $objPHPExcel->getActiveSheet()->setCellValue('R'.$fila,$rs['fechasalida']);
+                        $objPHPExcel->getActiveSheet()->setCellValue('S'.$fila,$rs['cnombres']);
 
                         $fila++;
                         $item++;
@@ -671,6 +731,51 @@
             $pdf->Output($filename,'F');
 
             return $file;
+        }
+
+        public function registrarMantenimientos($parametros){
+            try {
+                $fechaActual = date('Y-m-d');
+                $fechas = array("+6 month","+12 month","+18 month","+24 month","+30 month","+36 month");
+                $numero = 1;
+
+                for ($i=0; $i < 6; $i++) { 
+                    $respuesta = false;
+                    $fechaMtto = $this->calcularProximos($fechas[$i]);
+                    $sql = $this->db->connect()->prepare("INSERT INTO ti_mmttos 
+                                                            SET ti_mmttos.nrodoc =:doc,
+                                                                ti_mmttos.fentrega =:entrega,
+                                                                ti_mmttos.fmtto =:fecmmtto,
+                                                                ti_mmttos.idprod=:idprod,
+                                                                ti_mmttos.nmtto=:numero,
+                                                                ti_mmttos.idcostos=:costos,
+                                                                ti_mmttos.cserie=:serie");
+                    $sql->execute(["doc"=>$parametros['documento'],
+                                    "entrega"=>$fechaActual,
+                                    "fecmmtto"=>$fechaMtto,
+                                    "idprod"=>$parametros['codigo'],
+                                    "numero"=>$numero++,
+                                    "costos"=>$parametros['costos'],
+                                    "serie"=>$parametros['serie']]);
+                    $rowCount = $sql->rowCount();
+
+                    if($rowCount){
+                        $respuesta = true;
+                    } 
+                }
+
+                return array("respuesta"=>$respuesta);
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            } 
+        }
+
+        private function calcularProximos($meses){
+            $fecha_actual = date("d-m-Y");
+            $nuevafecha = date("Y-m-d",strtotime($fecha_actual.$meses));
+	 
+		    return $nuevafecha;
         }
     }
 ?>

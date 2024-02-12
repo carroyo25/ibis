@@ -963,6 +963,24 @@ $emitido:#F8CAAD;
     padding: 1rem;
     width: 35%;
 
+    .titulo_dialogo{
+        display: flex;
+        justify-content: space-between;
+
+        a {
+            display: block;
+            text-align: center;
+
+            i {
+                font-size: 1.5rem;
+            }
+
+            p {
+                font-size: 0.8rem;
+            }
+        }
+    }
+
     .contenedor {
         padding: 1rem;
         line-height: 1.5rem;
@@ -1015,6 +1033,10 @@ $emitido:#F8CAAD;
 
             button {
                 height: 2rem;
+
+                &:hover{
+                    box-shadow: 3px 2px 5px #fff;
+                }
             }
         }
     }
@@ -1028,13 +1050,6 @@ $emitido:#F8CAAD;
     label {
         font-weight: bold;
     }
-
-    
-
-
-    /*
-    
-    */
 }
 
 .ventanaDetalles{

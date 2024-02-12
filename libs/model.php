@@ -1231,6 +1231,7 @@
                                                         INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
                                                         INNER JOIN tb_parametros ON cm_producto.ntipo = tb_parametros.nidreg
                                                     WHERE ntipo = :tipo
+                                                    AND cm_producto.flgActivo = 1
                                                     LIMIT 100");
                 $sql->execute(["tipo"=>$tipo]);
                 $rowCount = $sql->rowCount();
