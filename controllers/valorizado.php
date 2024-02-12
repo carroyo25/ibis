@@ -21,5 +21,9 @@
         function adjuntos() {
             echo json_encode($this->model->listarAdjuntos($_POST['cc']));
         }
+
+        function adjuntosCarpeta(){
+            echo json_encode($this->model->listarAdjuntosCarpeta($_POST));
+        }
     }
 ?>

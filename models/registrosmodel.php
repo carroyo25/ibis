@@ -412,13 +412,16 @@
                                                         alm_existencia.condicion,
                                                         alm_existencia.vence,
                                                         alm_existencia.idreg,
-                                                        tb_pedidodet.docEspec
+                                                        tb_pedidodet.docEspec,
+	                                                    lg_ordencab.cnumero 
                                                     FROM
                                                         alm_existencia
                                                         INNER JOIN cm_producto ON alm_existencia.codprod = cm_producto.id_cprod
                                                         INNER JOIN tb_pedidodet ON alm_existencia.idpedido = tb_pedidodet.iditem
                                                         INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
-                                                        INNER JOIN tb_area ON alm_existencia.area_solicita = tb_area.ncodarea 
+                                                        INNER JOIN tb_area ON alm_existencia.area_solicita = tb_area.ncodarea
+                                                        INNER JOIN lg_ordendet ON tb_pedidodet.iditem = lg_ordendet.niddeta
+	                                                    INNER JOIN lg_ordencab ON lg_ordendet.id_regmov = lg_ordencab.id_regmov  
                                                     WHERE
                                                         alm_existencia.idregistro = :id");
                 $sql->execute(["id"=>$indice]);
@@ -444,7 +447,7 @@
                                         <td class="textoCentro">'.$rs['condicion'].'</td>
                                         <td class="pl20px">'.$rs['ubicacion'].'</td>
                                         <td class="textoCentro">'.$rs['pedido'].'</td>
-                                        <td class="textoCentro">'.$rs['orden'].'</td>
+                                        <td class="textoCentro">'.$rs['cnumero'].'</td>
                                         <td class="textoCentro"></td>
                                         <td class="textoCentro"><a href="'.$rs['docEspec'].'">'.$icono.'</a></td>
                                     </tr>';

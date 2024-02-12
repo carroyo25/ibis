@@ -321,7 +321,7 @@
                 $sql->execute(["documento"=>$d,"cc"=>$c]);
                 $rowCount = $sql->rowCount();
                 $item = 1;
-                $salida ="No hay registros";
+                $salida ="";
                 $numero_item = $this->cantidadItems($d,$c);
 
                 /*SELECT DISTINCTROW nrodoc,fechasalida,nkardex FROM alm_consumo WHERE nrodoc=21136515 AND ncostos=34*/

@@ -75,7 +75,7 @@ $(function(){
                         </tr>`;
 
                     if (data.registrado) {
-                        if ( $("#tablaPrincipal tbody tr").length == 0) {
+                        if ( $("#tablaPrincipal tbody tr").length == 0)  {
                             $("#tablaPrincipal tbody").append(row);
                             $('#tablaPrincipal tbody tr:last').find('td').eq(4).children().focus();
                         }
@@ -252,7 +252,15 @@ $(function(){
                 })
             }
 
-            $(row).insertBefore("#tablaPrincipal tbody tr:first");
+            //$(row).insertBefore("#tablaPrincipal tbody tr:first");
+
+            if ( $("#tablaPrincipal tbody tr").length == 0)  {
+                $("#tablaPrincipal tbody").append(row);
+            }
+            else {
+                $(row).insertBefore("#tablaPrincipal tbody tr:first");
+            } 
+
             cleanDialogControls();
             idprod="";
            

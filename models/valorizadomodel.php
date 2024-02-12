@@ -120,6 +120,7 @@
                                                     UPPER(cm_entidad.cviadireccion) as cviadireccion,
                                                     lg_ordencab.nfirmaOpe,
                                                     lg_ordencab.nfirmaFin,
+                                                    LPAD(lg_ordencab.cnumero,6,0) AS cnumero,
                                                     lg_ordencab.nfirmaLog,
                                                     alm_recepdet.ncantidad,
                                                     tb_clase.cdescrip AS clase,
@@ -179,7 +180,7 @@
                                         <td class="textoCentro">'.$tipo.'</td>
                                         <td class="textoCentro">'.$rs['anio'].'</td>
                                         <td class="textoCentro">'.$rs['pedido'].'</td>
-                                        <td class="textoCentro">'.$rs['orden'].'</td>
+                                        <td class="textoCentro">'.$rs['cnumero'].'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="pl20px">'.$rs['descripcion'].'</td>
                                         <td class="textoCentro">'.$rs['unidad'].'</td>
@@ -412,6 +413,41 @@
                 return array("adjuntos"=>$docData);
 
             }catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function listarAdjuntosCarpeta($parametros){
+            try {
+
+                $docData = [];
+
+                $sql = $this->db->connect()->prepare("SELECT
+                                                    lg_ordencab.id_regmov,
+                                                    lg_ordencab.cper,
+                                                    lg_ordencab.cmes,
+                                                    lg_ordencab.ntipmov,
+                                                    LPAD(lg_ordencab.cnumero,6,0) AS cnumero,
+                                                    lg_ordencab.ffechadoc, 
+	                                                UPPER(lg_ordencab.cObservacion) AS cObservacion
+                                                FROM
+                                                    lg_ordencab
+                                                WHERE
+                                                    lg_ordencab.nflgactivo = 1 
+                                                    AND lg_ordencab.cnumero LIKE '%'
+                                                    AND lg_ordencab.cper =:anio
+                                                    AND lg_ordencab.ncodcos =:cc");
+                $sql->execute(["anio"=>$parametros['anio'],"cc"=>$parametros['cc']]);
+
+                if ($sql->rowCount() > 0){
+                    while($row=$sql->fetch(PDO::FETCH_ASSOC)){
+                        $docData[] = $row;
+                    }
+                }
+
+                return array("ordenes"=>$docData);
+            } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
             }

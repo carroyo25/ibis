@@ -1,18 +1,16 @@
 $(function(){
     $("#esperar").fadeOut();
 
-    
-
     $("#btnConsulta").on('click', function(e) {
         e.preventDefault();
 
-        $("#esperar").fadeIn();
+        $("#esperar").css("opacity","1").fadeIn();
 
         let str = $("#formConsulta").serialize();
 
         $.post(RUTA+"valorizado/consulta", str,
             function (data, text, requestXHR) {
-                $("#esperar").fadeOut();
+                $("#esperar").css("opacity","0").fadeOut();
                 $("#tableValorizado tbody")
                     .empty()
                     .append(data);
@@ -53,7 +51,50 @@ $(function(){
         return false;
     });
 
-    $("#downFiles").click(function (e) { 
+    $("#downFiles").click(function(e){
+        e.preventDefault();
+
+        try {
+            if  ( $("#costosSearch").val() ===  "-1" ) throw "Seleccione un centro de costos";
+
+            
+            let row = "",
+            formData = new FormData();
+            formData.append("cc",$("#costosSearch").val());
+            formData.append("anio",$("#anioSearch").val());
+
+            $("#esperar").css("opacity","1").fadeIn();
+
+            fetch(RUTA+'valorizado/adjuntosCarpeta',{
+                method:'POST',
+                body:formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                data.ordenes.forEach(element => {
+                    let tipo = element.ntipmov == 37 ? 'OC':'OS';
+                    row +=`<li>
+                                <a href="#" data-id="${element.id_regmov}" title="${element.cObservacion}">
+                                    <i class="fas fa-folder" style="color: #FFD43B;"></i>
+                                    <p>${tipo}: ${element.cnumero}</p>
+                                </a>
+                            </li>`;
+                    
+                    $(".listaAdjuntos ul").empty().append(row);    
+                });
+
+                $("#esperar").css("opacity","0").fadeOut();
+                $("#vistaAdjuntos").fadeIn();
+            })
+            
+        } catch (error) {
+            mostrarMensaje(error,'mensaje_error');  
+        }
+
+        return false;
+    });
+
+    /*$("#downFiles").click(function (e) { 
         e.preventDefault();
 
         try {
@@ -87,7 +128,7 @@ $(function(){
 
         
         return false;
-    });
+    });*/
 
     $("#closeAtach").click(function (e) { 
         e.preventDefault();
