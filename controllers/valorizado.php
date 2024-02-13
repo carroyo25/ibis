@@ -19,7 +19,7 @@
         }
 
         function adjuntosArchivos() {
-            echo json_encode($this->model->listarAdjuntos($_POST['orden']));
+            echo json_encode($this->model->listarAdjuntosValorizado($_POST['orden']));
         }
 
         function adjuntosCarpeta(){

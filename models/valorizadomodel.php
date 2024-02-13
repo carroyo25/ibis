@@ -378,18 +378,60 @@
             }
         }
 
-        public function listarAdjuntos($orden){
+        public function listarAdjuntosValorizado($orden){
             $ordenes = $this->adjuntosOrden($orden);
-            $guias;
+            $nroingreso = $this->buscarAdjuntoGuia($orden);
+            $guias = $this->adjuntosIngreso($nroingreso);
 
-            return array("ordenes"=>$ordenes);
+            return array("ordenes"=>$ordenes,
+                        "nroingreso"=>$nroingreso,
+                        "guiasalmacen"=>$guias );
         }
 
-        public function adjuntosGuias($orden){
+        private function adjuntosOrden($orden) {
+            $docData = array();
 
+            try{
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        lg_regdocumento.creferencia,
+                                                        lg_regdocumento.cmodulo,
+                                                        UPPER(
+                                                        SUBSTR( lg_regdocumento.cdocumento FROM 1 FOR 30 )) AS documento,
+                                                        UPPER( lg_regdocumento.cdocumento ) AS mensaje,
+                                                        LPAD( lg_regdocumento.nidrefer, 6, 0 ) AS orden,
+                                                        lg_regdocumento.id_regmov,
+                                                        lg_ordencab.ncodcos,
+                                                        LPAD(lg_ordencab.cnumero,6,0) AS cnumero,
+                                                        lg_regdocumento.fregsys 
+                                                    FROM
+                                                        lg_regdocumento
+                                                        INNER JOIN lg_ordencab ON lg_regdocumento.nidrefer = lg_ordencab.id_regmov 
+                                                    WHERE
+                                                        lg_regdocumento.cmodulo = 'ORD' 
+                                                        AND lg_regdocumento.nflgactivo = 1 
+                                                        AND lg_regdocumento.nidrefer = :orden
+                                                    ORDER BY
+                                                        lg_regdocumento.nidrefer DESC");
+                $sql->execute(["orden"=>$orden]);
+
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0) {
+                    
+                    while($row=$sql->fetch(PDO::FETCH_ASSOC)){
+                        $docData[] = $row;
+                    }
+                }
+
+                return $docData;
+
+            }catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
         }
 
-        public function adjuntosOrden($orden) {
+        private function adjuntosIngreso($ingreso) {
             $docData = array();
 
             try{
@@ -407,12 +449,12 @@
                                                         lg_regdocumento
                                                         INNER JOIN lg_ordencab ON lg_regdocumento.nidrefer = lg_ordencab.id_regmov 
                                                     WHERE
-                                                        lg_regdocumento.cmodulo = 'ORD' 
+                                                        lg_regdocumento.cmodulo = 'GA' 
                                                         AND lg_regdocumento.nflgactivo = 1 
-                                                        AND lg_regdocumento.nidrefer = :orden
+                                                        AND lg_regdocumento.nidrefer = :ingreso
                                                     ORDER BY
                                                         lg_regdocumento.nidrefer DESC");
-                $sql->execute(["orden"=>$orden]);
+                $sql->execute(["ingreso"=>$ingreso]);
 
                 $rowCount = $sql->rowCount();
 
@@ -468,6 +510,8 @@
 
         private function buscarAdjuntoGuia($orden){
             try {
+                $respuesta = 0;
+
                 $sql = $this->db->connect()->prepare("SELECT
                                                         alm_existencia.idregistro, 
                                                         alm_existencia.idpedido, 
@@ -477,7 +521,17 @@
                                                         INNER JOIN
                                                         lg_ordendet
                                                         ON alm_existencia.idpedido = lg_ordendet.niddeta
-                                                        WHERE lg_ordendet.id_regmov =:orden");
+                                                        WHERE lg_ordendet.id_regmov =:orden
+                                                        LIMIT 1");
+                $sql->execute(["orden" => $orden]);
+                $rowCount = $sql->rowcount();
+                
+                if ( $rowCount > 0 ) {
+                    $result = $sql->fetchAll();
+                    $respuesta = $result[0]['idregistro'];
+                }
+                
+                return $respuesta;
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;

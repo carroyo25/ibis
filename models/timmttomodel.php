@@ -107,7 +107,7 @@
                                                                 ti_mmttos.idcostos =:costos,
                                                                 ti_mmttos.iduser =:usuario,
                                                                 ti_mmttos.frelmtto =:fecha,
-                                                                ti_mmttos.flgestado =: estado");
+                                                                ti_mmttos.flgestado =:estado");
 
                     $sql->execute(["documento"  =>$parametros['documento_usuario'],
                                     "producto"  =>$parametros['codigo_producto'],

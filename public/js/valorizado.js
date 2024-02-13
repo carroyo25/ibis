@@ -93,64 +93,103 @@ $(function(){
         return false;
     });
 
-
     $(".listaCarpetas ul").on("click","a", function (e) {
         e.preventDefault();
         
-        let formData = new FormData();
+        let formData = new FormData(),
+            row = "";
         formData.append("orden",$(this).attr('href'))
 
-        fetch(RUTA+'valorizado/adjuntosArchivos',{
-            method:'POST',
-            body: formData
+        fetch(RUTA+"valorizado/adjuntosArchivos",{
+            method:"POST",
+            body:formData
         })
-        .then(response=>response.json())
-        .then(data=>{
-            console.log(data);
+        .then(response =>response.json())
+        .then(data => {
+            let archivos =  data.ordenes;;
+
+            if (data.guiasalmacen.length > 0) {
+                archivos = data.ordenes.concat(data.guiasalmacen);
+            }
+            //public/documentos/ordenes/adjuntos/
+
+            archivos.forEach(element => {
+                let ext = getFileExtension3(element.creferencia),
+                    fileIcon = '<i class="far fa-file"></i>',
+                    ruta = "";
+
+                switch (ext) {
+                    case 'pdf':
+                        fileIcon = '<i class="fas fa-file-pdf" style="color: #dd5836;"></i>';
+                        break;
+                    case 'msg':
+                        fileIcon = '<i class="fas fa-envelope-open-text" style="color: #63E6BE;"></i>'; 
+                        break;
+                    case 'xls':
+                        fileIcon = '<i class="fas fa-file-excel" style="color: #04b983;"></i>'; 
+                        break;
+                    case 'xlsx':
+                        fileIcon = '<i class="fas fa-file-excel" style="color: #04b983;"></i>'; 
+                        break;
+                    case 'doc':
+                        fileIcon = '<i class="fas fa-file-word" style="color: #2b72ee;"></i>';
+                        break;
+                    case 'docx':
+                        fileIcon = '<i class="fas fa-file-word" style="color: #2b72ee;"></i>'; 
+                        break;
+                    case 'rar':
+                        fileIcon = '<i class="fas fa-file-archive" style="color: #f051c6;"></i>'; 
+                        break;
+                    case 'zip':
+                        fileIcon = '<i class="fas fa-file-archive" style="color: #f051c6;"></i>'; 
+                        break;
+                    case 'xls':
+                        fileIcon = '<i class="fas fa-file-excel" style="color: #04b983;"></i>'; 
+                        break;
+                    case 'jpg':
+                        fileIcon = '<i class="far fa-images" style="color: #acb1b9;"></i>'; 
+                        break;
+                    case 'jpeg':
+                        fileIcon = '<i class="far fa-images" style="color: #acb1b9;"></i>';
+                        break;
+                    case 'png':
+                        fileIcon = '<i class="far fa-images" style="color: #acb1b9;"></i>'; 
+                        break;
+                    case 'gif':
+                        fileIcon = '<i class="far fa-images" style="color: #acb1b9;"></i>'; 
+                        break;
+                }
+
+                if (element.cmodulo == "ORD") {
+                    ruta = "http://sicalsepcon.net/ibis/public/documentos/ordenes/adjuntos/"+element.creferencia;
+                }else {
+                    ruta = "http://sicalsepcon.net/ibis/public/documentos/almacen/adjuntos/"+element.creferencia;
+                }
+                
+                row +=` <li>
+                            <a href="${ruta}" title="${element.mensaje}">
+                                ${fileIcon}
+                                <p>${element.documento}</p>
+                            </a>
+                        </li>`;
+
+                $("#listaAdjuntos").empty().append(row);  
+            })
+
+            $("#vistaAdjuntos").fadeIn();
         })
-
-
-        $("#vistaArchivos").fadeIn();
 
         return false;
     });
 
-    /*$("#downFiles").click(function (e) { 
+    $("#listaAdjuntos").on("click","a", function(e) {
         e.preventDefault();
 
-        try {
-          if  ( $("#costosSearch").val() ===  "-1" ) throw "Seleccione un centro de costos";
+        $(".ventanaAdjuntos iframe").attr("src", $(this).attr("href"));
 
-          
-          let row = "";
-
-          $.post(RUTA+"valorizado/adjuntos",{cc:$("#costosSearch").val()},
-            function (data, textStatus, jqXHR) {
-                data.adjuntos.forEach(adjunto => {
-                    row +=` <li>
-                                <a href="public/documentos/ordenes/adjuntos/${adjunto.creferencia}" title="${adjunto.mensaje}" target="_blank" rel="noopener noreferrer" >
-                                    <i class="fas fa-file"></i>
-                                    <p>Orden N°: ${adjunto.orden}</p>
-                                    <p>${adjunto.documento}</p>
-                                </a>
-                            </li>`;
-                });
-
-                $(".listaAdjuntos ul").empty().append(row);
-            },
-            "json"
-          );
-
-          $("#vistaAdjuntos").fadeIn();
-
-        } catch (error) {
-            mostrarMensaje(error,'mensaje_error');  
-        }
-
-        
         return false;
-    });*/
-
+    });
+    
     $("#closeAtach").click(function (e) { 
         e.preventDefault();
 
@@ -160,11 +199,16 @@ $(function(){
         return false;
     });
 
-    /*$(".listaAdjuntos").on("click","a", function (e) {
+    $("#closeAtachFiles").click(function (e) { 
         e.preventDefault();
 
-
+        $(".ventanaAdjuntos iframe").attr("src","");
+        $("#vistaAdjuntos").fadeOut();
 
         return false;
-    });*/
+    });
 })
+
+function getFileExtension3(filename) {
+    return filename.slice((filename.lastIndexOf(".") - 1 >>> 0) + 2);
+}

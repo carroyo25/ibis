@@ -950,7 +950,8 @@ $emitido:#F8CAAD;
 .ventanaOperador,
 .ventanaDetalles,
 .ventanaFiltros,
-.ventanaConsumo{
+.ventanaConsumo,
+.ventanaCarpetas{
     background:$blanco;
     position: absolute;
     top: 50%;
@@ -1471,6 +1472,83 @@ $emitido:#F8CAAD;
         padding: 1rem;
         overflow:auto;
         max-height: 100%;
+
+        li {
+            border: 1px solid $blanco;
+            height: 5rem;
+            
+            a {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                width: 8rem;
+                padding: 0.3rem;
+                transition: .5s;
+                border-radius: 8px;
+
+                &:hover {
+                    background: rgba(0,120,212,.4);
+                    backdrop-filter: saturate(180%) blur(20px);
+                }
+            }
+            
+            i{
+                font-size: 2rem;
+                margin-bottom: 5px;
+            }
+
+            p{
+                font-size: 0.6rem;
+                text-align: center;
+                overflow: hidden;
+                width: 100%;
+            }
+
+            
+        }
+    }
+}
+
+.ventanaCarpetas{
+    width: 45%;
+    border-radius: 8px;
+    height: 50rem;
+
+    object,iframe{
+        margin: 15px;
+        width: 95%;
+        height: 68%;
+        overflow: auto;
+    }
+
+    .tituloAdjuntos{
+        display: flex;
+        justify-content: space-between;
+        padding:1rem;
+    }
+
+    .listaAdjuntos {
+        height: 85%;   
+    }
+
+    .opcionesArchivosDescarga {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-top: 1rem;
+    }
+    
+    ul{
+        display: flex;
+        flex-wrap: wrap;
+        width: 95%;
+        border: 1px solid $bordeCajas;
+        margin-left: 1rem;
+        margin-right: 1rem;
+        padding: 1rem;
+        overflow:auto;
+        max-height: 55vh;
+        height: 55vh;
 
         li {
             border: 1px solid $blanco;

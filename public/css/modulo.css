@@ -1209,7 +1209,8 @@
 .ventanaOperador,
 .ventanaDetalles,
 .ventanaFiltros,
-.ventanaConsumo {
+.ventanaConsumo,
+.ventanaCarpetas {
   background: #fff;
   position: absolute;
   top: 50%;
@@ -1775,6 +1776,91 @@
   margin-bottom: 5px;
 }
 .ventanaAdjuntos ul li p {
+  font-size: 0.6rem;
+  text-align: center;
+  overflow: hidden;
+  width: 100%;
+}
+
+.ventanaCarpetas {
+  width: 45%;
+  border-radius: 8px;
+  height: 50rem;
+}
+.ventanaCarpetas object, .ventanaCarpetas iframe {
+  margin: 15px;
+  width: 95%;
+  height: 68%;
+  overflow: auto;
+}
+.ventanaCarpetas .tituloAdjuntos {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  padding: 1rem;
+}
+.ventanaCarpetas .listaAdjuntos {
+  height: 85%;
+}
+.ventanaCarpetas .opcionesArchivosDescarga {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  gap: 20px;
+  margin-top: 1rem;
+}
+.ventanaCarpetas ul {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  width: 95%;
+  border: 1px solid #E0E0E0;
+  margin-left: 1rem;
+  margin-right: 1rem;
+  padding: 1rem;
+  overflow: auto;
+  max-height: 55vh;
+  height: 50vh;
+}
+.ventanaCarpetas ul li {
+  border: 1px solid #fff;
+  height: 5rem;
+}
+.ventanaCarpetas ul li a {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  width: 8rem;
+  padding: 0.3rem;
+  -webkit-transition: 0.5s;
+  transition: 0.5s;
+  border-radius: 8px;
+}
+.ventanaCarpetas ul li a:hover {
+  background: rgba(0, 120, 212, 0.4);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+          backdrop-filter: saturate(180%) blur(20px);
+}
+.ventanaCarpetas ul li i {
+  font-size: 2rem;
+  margin-bottom: 5px;
+}
+.ventanaCarpetas ul li p {
   font-size: 0.6rem;
   text-align: center;
   overflow: hidden;
