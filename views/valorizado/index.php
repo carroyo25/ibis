@@ -10,13 +10,25 @@
     <div class="mensaje">
         <p></p>
     </div>
-    <div class="modal" id="vistaAdjuntos">
+    <div class="modal" id="vistaCarpetas">
         <div class="ventanaAdjuntos">
             <div class="tituloAdjuntos">
                 <h3>Adjuntos Ordenes</h3>
                 <a href="#" id="closeAtach" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
             </div>
-            <div class="listaAdjuntos">
+            <div class="listaCarpetas">
+                <ul>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="vistaArchivos">
+        <div class="ventanaAdjuntos">
+            <div class="tituloAdjuntos">
+                <h3>Archivos Adjuntos : </h3>
+                <a href="#" id="closeAtachInside" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
+            </div>
+            <div class="listaArchivos">
                 <ul>
                 </ul>
             </div>

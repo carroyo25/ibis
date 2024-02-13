@@ -378,7 +378,20 @@
             }
         }
 
-        public function listarAdjuntos($cc) {
+        public function listarAdjuntos($orden){
+            $ordenes = $this->adjuntosOrden($orden);
+            $guias;
+
+            return array("ordenes"=>$ordenes);
+        }
+
+        public function adjuntosGuias($orden){
+
+        }
+
+        public function adjuntosOrden($orden) {
+            $docData = array();
+
             try{
                 $sql = $this->db->connect()->prepare("SELECT
                                                         lg_regdocumento.creferencia,
@@ -396,21 +409,21 @@
                                                     WHERE
                                                         lg_regdocumento.cmodulo = 'ORD' 
                                                         AND lg_regdocumento.nflgactivo = 1 
-                                                        AND lg_ordencab.ncodcos = :cc
+                                                        AND lg_regdocumento.nidrefer = :orden
                                                     ORDER BY
                                                         lg_regdocumento.nidrefer DESC");
-                $sql->execute(["cc"=>$cc]);
+                $sql->execute(["orden"=>$orden]);
 
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0) {
-                    $docData = array();
+                    
                     while($row=$sql->fetch(PDO::FETCH_ASSOC)){
-                            $docData[] = $row;
+                        $docData[] = $row;
                     }
                 }
 
-                return array("adjuntos"=>$docData);
+                return $docData;
 
             }catch (PDOException $th) {
                 echo $th->getMessage();
@@ -447,6 +460,24 @@
                 }
 
                 return array("ordenes"=>$docData);
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        private function buscarAdjuntoGuia($orden){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        alm_existencia.idregistro, 
+                                                        alm_existencia.idpedido, 
+                                                        lg_ordendet.id_orden
+                                                    FROM
+                                                        alm_existencia
+                                                        INNER JOIN
+                                                        lg_ordendet
+                                                        ON alm_existencia.idpedido = lg_ordendet.niddeta
+                                                        WHERE lg_ordendet.id_regmov =:orden");
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;

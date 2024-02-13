@@ -56,7 +56,6 @@ $(function(){
 
         try {
             if  ( $("#costosSearch").val() ===  "-1" ) throw "Seleccione un centro de costos";
-
             
             let row = "",
             formData = new FormData();
@@ -74,22 +73,44 @@ $(function(){
                 data.ordenes.forEach(element => {
                     let tipo = element.ntipmov == 37 ? 'OC':'OS';
                     row +=`<li>
-                                <a href="#" data-id="${element.id_regmov}" title="${element.cObservacion}">
+                                <a href="${element.id_regmov}" data-id="${element.id_regmov}" title="${element.cObservacion}">
                                     <i class="fas fa-folder" style="color: #FFD43B;"></i>
                                     <p>${tipo}: ${element.cnumero}</p>
                                 </a>
                             </li>`;
                     
-                    $(".listaAdjuntos ul").empty().append(row);    
+                    $(".listaCarpetas ul").empty().append(row);    
                 });
 
                 $("#esperar").css("opacity","0").fadeOut();
-                $("#vistaAdjuntos").fadeIn();
+                $("#vistaCarpetas").fadeIn();
             })
             
         } catch (error) {
             mostrarMensaje(error,'mensaje_error');  
         }
+
+        return false;
+    });
+
+
+    $(".listaCarpetas ul").on("click","a", function (e) {
+        e.preventDefault();
+        
+        let formData = new FormData();
+        formData.append("orden",$(this).attr('href'))
+
+        fetch(RUTA+'valorizado/adjuntosArchivos',{
+            method:'POST',
+            body: formData
+        })
+        .then(response=>response.json())
+        .then(data=>{
+            console.log(data);
+        })
+
+
+        $("#vistaArchivos").fadeIn();
 
         return false;
     });
@@ -134,7 +155,7 @@ $(function(){
         e.preventDefault();
 
         $(".ventanaAdjuntos iframe").attr("src","");
-        $("#vistaAdjuntos").fadeOut();
+        $("#vistaCarpetas").fadeOut();
 
         return false;
     });
