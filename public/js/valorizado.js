@@ -106,11 +106,12 @@ $(function(){
         })
         .then(response =>response.json())
         .then(data => {
-            let archivos =  data.ordenes;;
+            let archivos =  data.ordenes;
 
             if (data.guiasalmacen.length > 0) {
                 archivos = data.ordenes.concat(data.guiasalmacen);
             }
+
             //public/documentos/ordenes/adjuntos/
 
             archivos.forEach(element => {

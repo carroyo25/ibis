@@ -312,15 +312,21 @@
         public function generarAdeudo($parametros){
             require_once("public/formatos/libreadeudo.php");
 
-            $costo  = $parametros['cc'];
-            $doc    = $parametros['doc'];
-            $nombre = $parametros['nombre'];
-            $almacen= "";
-            $fecha = "";
+            $costo      = $parametros['cc'];
+            $doc        = $parametros['doc'];
+            $nombre     = $parametros['nombre'];
+            $cctext     = $parametros['proyecto'];
+            $almacen    = "";
+            $fecha      = "";
 
             $file = uniqid();
 
-            $pdf = new PDF($doc,$nombre,$almacen,$costo,$fecha);
+            $detalle = $this->itemsAdeudo($costo,$doc);
+            $nreg = count($detalle);
+            $items_devueltos = 0;
+            $estado = "PENDIENTE";
+
+            $pdf = new PDF($doc,$nombre,$almacen,$costo,$fecha,$cctext);
 
             $pdf->AddPage();
             $pdf->AliasNbPages();
@@ -328,11 +334,6 @@
             $pdf->SetFont('Arial','',5);
 
             $lc = 0;
-
-            $detalle = $this->itemsAdeudo($costo,$doc);
-            $nreg = count($detalle);
-            $items_devueltos = 0;
-            $estado = "PENDIENTE";
 
             for ($i=0; $i < $nreg; $i++) { 
                 $estado = "PENDIENTE";
@@ -362,20 +363,24 @@
             $pdf->Cell(190,6,"Cantidad de items entregados: ".str_pad($i,2,0,STR_PAD_LEFT),0,1,'L');
             $pdf->Cell(190,6,"Cantidad de items devueltos :  ".str_pad($items_devueltos,2,0,STR_PAD_LEFT),0,1,'L');
 
-            $pdf->SetFont('Arial','B',8);
+            $pdf->SetFont('Arial','B',14);
+
+            $pdf->setY(30);
 
             if ( $i === $items_devueltos ) {
-                $pdf->Cell(15,6,"Estado :",'T',0,'L');
+                $pdf->Cell(50,10,"Estado :",'B',0,'R');
                 $pdf->SetTextColor(0,118,184);
-                $pdf->Cell(175,6,"Sin pendientes de entrega",'T',1,'L');
+                $pdf->Cell(140,10,"SIN PENDIENTES DE ENTREGA",'B',1,'L');
             }else {
-                $pdf->Cell(15,6,"Estado :",'T',0,'L');
+                $pdf->Cell(50,10,"Estado :",'T',0,'C');
                 $pdf->SetTextColor(252,65,54);
-                $pdf->Cell(175,6,"Tiene pendientes de entrega",'T',1,'L');
+                $pdf->Cell(140,10,"TIENE PENDIENTES DE ENTREGA",'B',1,'L');
             }
 
             $pdf->SetFont('Arial','',8);
             $pdf->SetTextColor(0,0,0);
+
+            
 
             $filename = "public/documentos/adeudos/".$file;
 

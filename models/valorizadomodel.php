@@ -382,6 +382,7 @@
             $ordenes = $this->adjuntosOrden($orden);
             $nroingreso = $this->buscarAdjuntoGuia($orden);
             $guias = $this->adjuntosIngreso($nroingreso);
+    
 
             return array("ordenes"=>$ordenes,
                         "nroingreso"=>$nroingreso,
@@ -433,9 +434,13 @@
 
         private function adjuntosIngreso($ingreso) {
             $docData = array();
+            $files = array();
 
             try{
-                $sql = $this->db->connect()->prepare("SELECT
+                $nreg = count($ingreso);
+
+                for ($i=0; $i < $nreg ; $i++) {
+                    $sql = $this->db->connect()->prepare("SELECT
                                                         lg_regdocumento.creferencia,
                                                         lg_regdocumento.cmodulo,
                                                         UPPER(
@@ -453,17 +458,18 @@
                                                         AND lg_regdocumento.nflgactivo = 1 
                                                         AND lg_regdocumento.nidrefer = :ingreso
                                                     ORDER BY
-                                                        lg_regdocumento.nidrefer DESC");
-                $sql->execute(["ingreso"=>$ingreso]);
+                                                            lg_regdocumento.nidrefer DESC");
+                    $sql->execute(["ingreso"=>$ingreso[$i]["idregistro"]]);
 
-                $rowCount = $sql->rowCount();
+                    $rowCount = $sql->rowCount();
 
-                if ($rowCount > 0) {
-                    
-                    while($row=$sql->fetch(PDO::FETCH_ASSOC)){
-                        $docData[] = $row;
+                    if ($rowCount > 0) {
+                        while($row=$sql->fetch(PDO::FETCH_ASSOC)){
+                            $docData[] = $row;
+                        }
                     }
                 }
+                
 
                 return $docData;
 
@@ -510,28 +516,25 @@
 
         private function buscarAdjuntoGuia($orden){
             try {
-                $respuesta = 0;
+                $result = 0;
 
                 $sql = $this->db->connect()->prepare("SELECT
-                                                        alm_existencia.idregistro, 
-                                                        alm_existencia.idpedido, 
-                                                        lg_ordendet.id_orden
+                                                        alm_existencia.idregistro
                                                     FROM
                                                         alm_existencia
                                                         INNER JOIN
                                                         lg_ordendet
                                                         ON alm_existencia.idpedido = lg_ordendet.niddeta
                                                         WHERE lg_ordendet.id_regmov =:orden
-                                                        LIMIT 1");
+                                                        GROUP BY alm_existencia.idregistro");
                 $sql->execute(["orden" => $orden]);
                 $rowCount = $sql->rowcount();
                 
                 if ( $rowCount > 0 ) {
                     $result = $sql->fetchAll();
-                    $respuesta = $result[0]['idregistro'];
                 }
                 
-                return $respuesta;
+                return $result;
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;

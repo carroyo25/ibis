@@ -416,12 +416,12 @@
 	                                                    lg_ordencab.cnumero 
                                                     FROM
                                                         alm_existencia
-                                                        INNER JOIN cm_producto ON alm_existencia.codprod = cm_producto.id_cprod
-                                                        INNER JOIN tb_pedidodet ON alm_existencia.idpedido = tb_pedidodet.iditem
-                                                        INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
-                                                        INNER JOIN tb_area ON alm_existencia.area_solicita = tb_area.ncodarea
-                                                        INNER JOIN lg_ordendet ON tb_pedidodet.iditem = lg_ordendet.niddeta
-	                                                    INNER JOIN lg_ordencab ON lg_ordendet.id_regmov = lg_ordencab.id_regmov  
+                                                        LEFT JOIN cm_producto ON alm_existencia.codprod = cm_producto.id_cprod
+                                                        LEFT JOIN tb_pedidodet ON alm_existencia.idpedido = tb_pedidodet.iditem
+                                                        LEFT JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                        LEFT JOIN tb_area ON alm_existencia.area_solicita = tb_area.ncodarea
+                                                        LEFT JOIN lg_ordendet ON tb_pedidodet.iditem = lg_ordendet.niddeta
+                                                        LEFT JOIN lg_ordencab ON lg_ordendet.id_regmov = lg_ordencab.id_regmov   
                                                     WHERE
                                                         alm_existencia.idregistro = :id");
                 $sql->execute(["id"=>$indice]);

@@ -33,7 +33,8 @@ $(function(){
 
         $.post(RUTA+"adeudo/formato",{cc:$("#costosSearch").val(),
                                         doc:$("#docident").val(),
-                                        nombre:$("#nombre").val()},
+                                        nombre:$("#nombre").val(),
+                                        proyecto:$('select[name="costosSearch"] option:selected').text()},
             function (data, textStatus, jqXHR) {
                 $(".ventanaVistaPrevia iframe")
                     .attr("src","")
