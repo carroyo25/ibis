@@ -953,8 +953,6 @@
             try {
                $salida = "";
 
-               /*$_SESSION['progreso'] = 0;
-               session_write_close();*/
 
                $sql = $this->db->connect()->query("SELECT
                                                 tb_pedidodet.iditem,
@@ -1262,9 +1260,6 @@
                 if($rowCount > 0) {
                     while($rs = $sql->fetch()){
 
-                        /*$_SESSION['progreso']+=1;
-                        session_write_close();*/
-
                         if ( $rs['orden'] ){
                             if ( $nro_orden == $rs['orden'] ) {
                                 $itemOrden++;
@@ -1346,6 +1341,7 @@
                             $semaforoEstado = "Anulado";
                         }
 
+                        $porcentaje = "100%";
                         
                         if ( $rs['estadoItem'] === 105 ) {
                             $porcentaje = "0%";
@@ -1445,6 +1441,7 @@
                             $estado_pedido = "atendido";
                             $color_mostrar = '00FF00';
                         }
+
                     
                         $color = array(
                             'fill' => array(

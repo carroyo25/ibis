@@ -57,7 +57,7 @@
                     <input type="hidden" name="procura" id="procura" value="0">
                     <input type="hidden" name="finanzas" id="finanzas" value="0">
                     <input type="hidden" name="operaciones" id="operaciones" value="0">
-                    <input type="hidden" name="user_modifica" id="user_modifica" value="<?php echo $_SESSION["iduser"]?>">
+                    <input type="hidden" name="user_modifica" id="user_modifica" value="">
 
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>

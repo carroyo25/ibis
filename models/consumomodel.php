@@ -315,7 +315,8 @@
                                                             alm_consumo.fechasalida,
                                                             cm_producto.ccodprod,
                                                             alm_consumo.cantsalida,
-                                                            alm_consumo.nhoja
+                                                            alm_consumo.nhoja,
+                                                            alm_consumo.cserie
                                                     HAVING COUNT(*) >= 1
                                                     ORDER BY alm_consumo.freg DESC" );
                 $sql->execute(["documento"=>$d,"cc"=>$c]);

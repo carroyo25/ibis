@@ -1786,6 +1786,7 @@
   width: 45%;
   border-radius: 8px;
   height: 50rem;
+  position: relative;
 }
 .ventanaCarpetas object, .ventanaCarpetas iframe {
   margin: 15px;
@@ -1828,7 +1829,7 @@
   padding: 1rem;
   overflow: auto;
   max-height: 55vh;
-  height: 50vh;
+  height: 55vh;
 }
 .ventanaCarpetas ul li {
   border: 1px solid #fff;
