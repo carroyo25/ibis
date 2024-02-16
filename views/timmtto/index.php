@@ -116,38 +116,44 @@
             <thead class="stickytop">
                 <tr>
                     <th>Item</th>
-                    <th>Codigo</th>
                     <th>Descripcion</th>
                     <th>Usuario</th>
                     <th>Serie</th>
                     <th>Fecha Entrega</th>
-                    <th>Fecha Estimada </br>Mantenimiento</th>
-                    <th>Fecha de</br>Mantenimiento</th>
                     <th>Centro Costos</th>
+                    <th>1er MMTTO</th>
+                    <th>Estado</th>
+                    <th>2do MMTTO</th>
+                    <th>Estado</th>
+                    <th>3er MMTTO</th>
+                    <th>Estado</th>
+                    <th>4to MMTTO</th>
                     <th>Estado</th>
                 </tr>
             </thead>
             <tbody>
-                <?php $item = 1; foreach($this->listaMantenimientos as $registro) { ?> 
-                    <?php $estado = $registro['estado']== "Pendiente" ? "semaforoNaranja" : "semaforoVerde" ?>
-                    
+                <?php $item = 1; foreach($this->listaMantenimientos['datos'] as $registro) { ?> 
+                
+                
                     <tr class="pointer" data-id="<?php echo $registro['idreg']; ?>" 
                                         data-correo="<?php echo $registro['correo']; ?>"
                                         data-documento="<?php echo $registro['nrodoc']; ?>"
                                         data-costos="<?php echo $registro['nidreg']; ?>"
                                         data-idprod="<?php echo $registro['id_cprod']; ?>">
                         <td class="pl20px"><?php echo $item++; ?></td>
-                        <td class="textoCentro"><?php echo $registro['ccodprod']; ?></td>
                         <td class="pl20px"><?php echo $registro['cdesprod']; ?></td>
                         <td class="pl20px"><?php echo $registro['usuario']; ?></td>
                         <td class="pl20px"><?php echo $registro['cserie']; ?></td>
                         <td class="textoCentro"><?php echo $registro['fentrega']; ?></td>
-                        <td class="textoCentro"><?php echo $registro['fmtto']; ?></td>
-                        <td class="textoCentro"></td>
                         <td class="textoCentro "><?php echo $registro['ccodproy']; ?></td>
-                        <td class="textoCentro <?php echo $estado ?>"><?php echo $registro['estado']; ?></td>
-                    </tr>
+                        
+                        <?php foreach($this->listaMantenimientos['mmttos'] as $registro) {?>
+                            <?php $estado = $registro['estado']== "Pendiente" ? "semaforoNaranja" : "semaforoVerde" ?>
 
+                            <td class="textoCentro"><?php echo $registro['fmtto']; ?></td>
+                            <td class="textoCentro <?php echo $estado?>"><?php echo $registro['estado']; ?></td>
+                        <?php }?>
+                    </tr>
                 <?php }; ?>
             </tbody>
         </table>

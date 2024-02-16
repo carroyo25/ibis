@@ -61,6 +61,7 @@ $(function(){
             formData = new FormData();
             formData.append("cc",$("#costosSearch").val());
             formData.append("anio",$("#anioSearch").val());
+            formData.append("numero","");
 
             $("#esperar").css("opacity","1").fadeIn();
 
@@ -207,6 +208,40 @@ $(function(){
         $("#vistaAdjuntos").fadeOut();
 
         return false;
+    });
+
+    $("#ordenSearch").keypress(function (e) { 
+        if(e.which == 13) { 
+            let row = "",
+            formData = new FormData();
+                formData.append("cc",$("#costosSearch").val());
+                formData.append("anio",$("#anioSearch").val());
+                formData.append("numero",$(this).val());
+
+            $("#esperar").css("opacity","1").fadeIn();
+
+            fetch(RUTA+'valorizado/adjuntosCarpeta',{
+                method:'POST',
+                body:formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                data.ordenes.forEach(element => {
+                    let tipo = element.ntipmov == 37 ? 'OC':'OS';
+                    row +=`<li>
+                                <a href="${element.id_regmov}" data-id="${element.id_regmov}" title="${element.cObservacion}">
+                                    <i class="fas fa-folder" style="color: #FFD43B;"></i>
+                                    <p>${tipo}: ${element.cnumero}</p>
+                                </a>
+                            </li>`;
+                    
+                    $(".listaCarpetas ul").empty().append(row);    
+                });
+
+                $("#esperar").css("opacity","0").fadeOut();
+                $("#vistaCarpetas").fadeIn();
+            })
+        }
     });
 })
 

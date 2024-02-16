@@ -434,42 +434,44 @@
 
         private function adjuntosIngreso($ingreso) {
             $docData = array();
-            $files = array();
 
             try{
-                $nreg = count($ingreso);
 
-                for ($i=0; $i < $nreg ; $i++) {
-                    $sql = $this->db->connect()->prepare("SELECT
-                                                        lg_regdocumento.creferencia,
-                                                        lg_regdocumento.cmodulo,
-                                                        UPPER(
-                                                        SUBSTR( lg_regdocumento.cdocumento FROM 1 FOR 30 )) AS documento,
-                                                        UPPER( lg_regdocumento.cdocumento ) AS mensaje,
-                                                        LPAD( lg_regdocumento.nidrefer, 6, 0 ) AS orden,
-                                                        lg_regdocumento.id_regmov,
-                                                        lg_ordencab.ncodcos,
-                                                        lg_regdocumento.fregsys 
-                                                    FROM
-                                                        lg_regdocumento
-                                                        INNER JOIN lg_ordencab ON lg_regdocumento.nidrefer = lg_ordencab.id_regmov 
-                                                    WHERE
-                                                        lg_regdocumento.cmodulo = 'GA' 
-                                                        AND lg_regdocumento.nflgactivo = 1 
-                                                        AND lg_regdocumento.nidrefer = :ingreso
-                                                    ORDER BY
-                                                            lg_regdocumento.nidrefer DESC");
-                    $sql->execute(["ingreso"=>$ingreso[$i]["idregistro"]]);
+                if ($ingreso > 0) {
+                    
+                    $nreg = count($ingreso);
 
-                    $rowCount = $sql->rowCount();
-
-                    if ($rowCount > 0) {
-                        while($row=$sql->fetch(PDO::FETCH_ASSOC)){
-                            $docData[] = $row;
+                    for ($i=0; $i < $nreg ; $i++) {
+                        $sql = $this->db->connect()->prepare("SELECT
+                                                            lg_regdocumento.creferencia,
+                                                            lg_regdocumento.cmodulo,
+                                                            UPPER(
+                                                            SUBSTR( lg_regdocumento.cdocumento FROM 1 FOR 30 )) AS documento,
+                                                            UPPER( lg_regdocumento.cdocumento ) AS mensaje,
+                                                            LPAD( lg_regdocumento.nidrefer, 6, 0 ) AS orden,
+                                                            lg_regdocumento.id_regmov,
+                                                            lg_ordencab.ncodcos,
+                                                            lg_regdocumento.fregsys 
+                                                        FROM
+                                                            lg_regdocumento
+                                                            INNER JOIN lg_ordencab ON lg_regdocumento.nidrefer = lg_ordencab.id_regmov 
+                                                        WHERE
+                                                            lg_regdocumento.cmodulo = 'GA' 
+                                                            AND lg_regdocumento.nflgactivo = 1 
+                                                            AND lg_regdocumento.nidrefer = :ingreso
+                                                        ORDER BY
+                                                                lg_regdocumento.nidrefer DESC");
+                        $sql->execute(["ingreso"=>$ingreso[$i]["idregistro"]]);
+    
+                        $rowCount = $sql->rowCount();
+    
+                        if ($rowCount > 0) {
+                            while($row=$sql->fetch(PDO::FETCH_ASSOC)){
+                                $docData[] = $row;
+                            }
                         }
                     }
                 }
-                
 
                 return $docData;
 
@@ -484,6 +486,8 @@
 
                 $docData = [];
 
+                $numero = $parametros['numero'] === "" ? "%" : $parametros['numero'];
+
                 $sql = $this->db->connect()->prepare("SELECT
                                                     lg_ordencab.id_regmov,
                                                     lg_ordencab.cper,
@@ -496,10 +500,11 @@
                                                     lg_ordencab
                                                 WHERE
                                                     lg_ordencab.nflgactivo = 1 
-                                                    AND lg_ordencab.cnumero LIKE '%'
+                                                    AND lg_ordencab.cnumero LIKE :numero
                                                     AND lg_ordencab.cper =:anio
                                                     AND lg_ordencab.ncodcos =:cc");
-                $sql->execute(["anio"=>$parametros['anio'],"cc"=>$parametros['cc']]);
+                
+                $sql->execute(["anio"=>$parametros['anio'],"cc"=>$parametros['cc'],"numero"=>$numero]);
 
                 if ($sql->rowCount() > 0){
                     while($row=$sql->fetch(PDO::FETCH_ASSOC)){

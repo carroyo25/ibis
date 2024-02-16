@@ -1787,6 +1787,7 @@
   border-radius: 8px;
   height: 50rem;
   position: relative;
+  padding: 1rem;
 }
 .ventanaCarpetas object, .ventanaCarpetas iframe {
   margin: 15px;
@@ -1822,10 +1823,7 @@
   display: flex;
   -ms-flex-wrap: wrap;
       flex-wrap: wrap;
-  width: 95%;
   border: 1px solid #E0E0E0;
-  margin-left: 1rem;
-  margin-right: 1rem;
   padding: 1rem;
   overflow: auto;
   max-height: 55vh;
@@ -1865,6 +1863,16 @@
   font-size: 0.6rem;
   text-align: center;
   overflow: hidden;
+  width: 100%;
+}
+.ventanaCarpetas .searchContainer {
+  border: 1px solid #c2c2c2;
+  line-height: 1.5rem;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+}
+.ventanaCarpetas .searchContainer input {
+  outline: none;
   width: 100%;
 }
 

@@ -47,7 +47,9 @@
                                                     WHERE Ibis.ti_mmttos.flgestado  = 0
                                                     AND ibis.tb_proyectos.nidreg LIKE :costos
                                                     AND ibis.ti_mmttos.cserie LIKE :serie
-                                                    AND rrhh.tabla_aquarius.apellidos LIKE :usuario");
+                                                    AND rrhh.tabla_aquarius.apellidos LIKE :usuario
+                                                    GROUP BY ibis.ti_mmttos.nrodoc,
+                                                            ibis.ti_mmttos.cserie");
                 $sql->execute(["costos" =>$cc,
                                 "serie" =>$serie,
                                 "usuario" =>"%"]);
@@ -58,9 +60,57 @@
                     
                     while($row = $sql->fetch(PDO::FETCH_ASSOC)){
                         $docData[] = $row;
+
+                        $mantenimientos = $this->fechaMantenimientos($docData[0]['nidreg'],$docData[0]['cserie'],$docData[0]['nrodoc']);
                     }
                 }
-        
+
+                return array("datos"=>$docData,
+                            "mmttos"=>$mantenimientos);
+
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        private function fechaMantenimientos($costos,$serie,$documento){
+            try {
+                $docData = [];
+
+                $sql = $this->db->connect()->prepare("SELECT
+                                                    ibis.ti_mmttos.idreg,
+                                                    DATE_FORMAT( ibis.ti_mmttos.fmtto, '%d/%m/%Y' ) AS fmtto,
+                                                    ibis.ti_mmttos.cserie,
+                                                    ibis.ti_mmttos.flgestado,
+                                                    ibis.ti_mmttos.nrodoc,
+                                                    DATEDIFF(
+                                                        ibis.ti_mmttos.fmtto,
+                                                    NOW()) AS periodo,
+                                                CASE
+                                                        Ibis.ti_mmttos.flgestado 
+                                                        WHEN 0 THEN
+                                                        'Pendiente' 
+                                                        WHEN 1 THEN
+                                                        'Realizado' 
+                                                    END AS estado 
+                                                FROM
+                                                    ibis.ti_mmttos
+                                                    INNER JOIN ibis.cm_producto ON ti_mmttos.idprod = cm_producto.id_cprod
+                                                    INNER JOIN ibis.tb_proyectos ON ibis.ti_mmttos.idcostos = ibis.tb_proyectos.nidreg 
+                                                WHERE
+                                                    ibis.tb_proyectos.nidreg = :cc
+                                                    AND ibis.ti_mmttos.cserie = :serie
+                                                    AND ibis.ti_mmttos.nrodoc = :doc
+                                                    AND ibis.ti_mmttos.ntipo = 1");
+                $sql->execute(['cc'=>$costos,'serie'=>$serie,'doc'=>$documento]);
+
+                if ($sql->rowCount()) {
+                    while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+                        $docData[] = $row;
+                    }
+                }
+
                 return $docData;
 
             } catch (PDOException $th) {

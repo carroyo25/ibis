@@ -4,7 +4,7 @@ $(() => {
     $("#tablaPrincipal tr").on("click", function (e) {
         e.preventDefault();
 
-        $("#serie").val( $(this).find('td').eq(4).text() );
+        $("#serie").val( $(this).find('td').eq(3).text() );
         $("#descripcion").val( $(this).find('td').eq(2).text() );
         $("#fecha_sugerida").val( $(this).find('td').eq(6).text() );
         $("#usuario").val($(this).find('td').eq(3).text());

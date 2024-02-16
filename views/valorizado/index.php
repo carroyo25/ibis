@@ -13,10 +13,14 @@
     <div class="modal" id="vistaCarpetas">
         <div class="ventanaCarpetas">
             <div class="tituloAdjuntos">
-                <h3>Adjuntos Ordenes</h3>
+                <h3>Ordenes de Compra</h3>
                 <a href="#" id="closeAtach" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
             </div>
+            
             <div class="listaCarpetas">
+                <div class="searchContainer">
+                    <input type="search" name="ordenSearch" id="ordenSearch" placeholder="Buscar...">
+                </div>
                 <ul>
                 </ul>
             </div>

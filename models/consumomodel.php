@@ -740,7 +740,7 @@
                 $fechas = array("+6 month","+12 month","+18 month","+24 month","+30 month","+36 month");
                 $numero = 1;
 
-                for ($i=0; $i < 6; $i++) { 
+                for ($i=0; $i < 4; $i++) { 
                     $respuesta = false;
                     $fechaMtto = $this->calcularProximos($fechas[$i]);
                     $sql = $this->db->connect()->prepare("INSERT INTO ti_mmttos 
