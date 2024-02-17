@@ -62,7 +62,7 @@ $(function() {
         $("#aprobacion_pedido").val(tabla.find('td').eq(10).text());
         $("#aprobado_por").val(tabla.data("aprueba"));
 
-        $.post(RUTA+"cargoplanner/resumen", {orden:tabla.data("orden"),refpedido:$(this).data('itempedido')},
+        $.post(RUTA+"cargoplanner/resumen", {orden:tabla.data("orden"),refpedido:$(this).data('itempedido'),despacho:$(this).data('despacho')},
             function (data, textStatus, jqXHR) {
                 $("#tablaOrdenes tbody").empty().append(data.orden);
                 $("#tablaIngresos tbody").empty().append(data.ingresos);

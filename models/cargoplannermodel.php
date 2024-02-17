@@ -82,7 +82,8 @@
                                                         DATE_FORMAT( alm_recepcab.ffecdoc, '%d/%m/%Y' ) AS fecha_recepcion_proveedor,
                                                         tb_equipmtto.cregistro,
 	                                                    usuarios.cnombres AS usuario,
-                                                        DATE_ADD( lg_ordencab.ffechades, INTERVAL lg_ordencab.nplazo DAY ) AS fecha_entrega_final
+                                                        DATE_ADD( lg_ordencab.ffechades, INTERVAL lg_ordencab.nplazo DAY ) AS fecha_entrega_final,
+                                                        alm_despachodet.id_regalm
                                                     FROM
                                                         tb_pedidodet
                                                         INNER JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
@@ -324,6 +325,7 @@
                                         data-estado="'.$rs['estadoItem'].'"
                                         data-producto="'.$rs['idprod'].'"
                                         data-aprueba="'.$rs['cnombres'].'"
+                                        data-despacho="'.$rs['id_regalm'].'"
                                         data-porcentaje="'.$porcentaje.'">
                                         <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro '.$estadofila.'">'.$porcentaje.'</td>
@@ -1607,7 +1609,7 @@
 
             $pdf = new PDF($cabecera[0]['nnronota'],0,$dia,$mes,$anio,
                             $cabecera[0]['proyecto'],$cabecera[0]['almacen'],$cabecera[0]['cdescripcion'],$cabecera[0]['orden'],
-                            $cabecera[0]['pedido'],$cabecera[0]['cnumguia'],$cabecera[0]['cnombres'],NULL,$cabecera[0]['cdescripcion'],NULL);
+                            $cabecera[0]['pedido'],$cabecera[0]['cnumguia'],$cabecera[0]['cnombres'],NULL,'I',$cabecera[0]['cdescripcion'],NULL);
 
             $pdf->AliasNbPages();
             $pdf->AddPage();
@@ -1780,7 +1782,105 @@
 
         public function generarGuiaRemision($id) {
             try {
-                //code...
+                require_once("public/formatos/guiaremision.php");
+
+                $cabecera = $this->cabeceraGuiaRemision($id);
+                $detalles = $this->detallesGuiaRemision($id);
+                $nreg = count($detalles);
+
+                $file = uniqid("GR").".pdf";
+                $filename = "public/documentos/temp/".$file;
+
+                $pdf->Output($filename,'F');
+                
+                return $filename;
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function cabeceraGuiaRemision($id) {
+            try {
+                $sql = $this->db->connect->prepare("SELECT
+                                lg_guias.idreg,
+                                lg_guias.id_regalm,
+                                lg_guias.cnumguia,
+                                lg_guias.corigen,
+                                lg_guias.cdirorigen,
+                                lg_guias.cdestino,
+                                lg_guias.cdirdest,
+                                lg_guias.centi,
+                                lg_guias.centidir,
+                                lg_guias.centiruc,
+                                lg_guias.ctraslado,
+                                lg_guias.cenvio,
+                                lg_guias.cautoriza,
+                                lg_guias.cmarca,
+                                lg_guias.cplaca,
+                                lg_guias.cnumadre,
+                                lg_guias.cnombre,
+                                lg_guias.flgmadre,
+                                lg_guias.clicencia,
+                                lg_guias.ftraslado,
+                                lg_guias.fguia,
+                                lg_guias.cobserva,
+                                lg_guias.cdestinatario 
+                            FROM
+                                lg_guias 
+                            WHERE
+                                lg_guias.id_regalm =:id");
+                
+                $sql->execute(["id"=>$id]);
+
+                if ($rowCount > 0) {
+                    $docData = array();
+                    while($row=$sql->fetch(PDO::FETCH_ASSOC)){
+                        $docData[] = $row;
+                    }
+                }
+
+                return $docData;
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function detalleGuiaRemision($id) {
+            try {
+                $sql=$this->db->connect->prepare("SELECT
+                                            alm_despachodet.ncantidad,
+                                            alm_despachodet.niddetaPed,
+                                            LPAD( alm_despachodet.nropedido, 6, 0 ) AS orden,
+                                            LPAD( alm_despachodet.nroorden, 6, 0 ) AS pedido,
+                                            cm_producto.ccodprod,
+                                            REPLACE ( FORMAT( alm_despachodet.ncantidad, 2 ), ',', '' ) AS cantidad,
+                                            UPPER( CONCAT_WS( ' ', cm_producto.cdesprod, tb_pedidodet.observaciones ) ) AS cdesprod,
+                                            tb_unimed.cabrevia
+                                        FROM
+                                            alm_despachodet
+                                            LEFT JOIN cm_producto ON alm_despachodet.id_cprod = cm_producto.id_cprod
+                                            LEFT JOIN tb_pedidodet ON alm_despachodet.niddetaPed = tb_pedidodet.iditem
+                                            LEFT JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                            LEFT JOIN tb_pedidocab ON alm_despachodet.nropedido = tb_pedidocab.idreg
+                                            LEFT JOIN lg_ordencab ON lg_ordencab.id_regmov = alm_despachodet.nropedido 
+                                        WHERE
+                                            alm_despachodet.id_regalm = :id 
+                                            AND alm_despachodet.nflgactivo = 1");
+                $sql->execute(["id"=>$id]);
+
+                $rowCount = $sql->rowCount();
+                
+                if ($rowCount > 0) {
+                    $docData = array();
+                    while($row=$sql->fetch(PDO::FETCH_ASSOC)){
+                        $docData[] = $row;
+                    }
+                }
+
+                return $docData;
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;
