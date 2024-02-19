@@ -1788,6 +1788,42 @@
                 $detalles = $this->detallesGuiaRemision($id);
                 $nreg = count($detalles);
 
+                $pdf = new PDF($cabecera[0]['cnumguia'],
+                $cabecera[0]['ffecdoc'],
+                null,
+                null,
+                null,
+                $cabecera['centi'],
+                $cabecera['ruc_proveedor'],
+                $cabecera['centidir'],
+                $cabecera['cdirorigen'],
+                null,
+                null,
+                null,
+                $fecha_traslado,
+                $cabecera['cenvio'],
+                $cabecera['cdestino'],
+                null,
+                null,
+                null,
+                $cabecera['cmarca'],
+                $cabecera['cplaca'],
+                $cabecera['cnombre'],
+                $cabecera['clincencia'],
+                $cabecera['cenvio'],
+                $referido,
+                $proyecto,
+                $anio[0],
+                $cabecera["cobserva"],
+                $cabecera["cdestinatario"],
+                'A4');
+
+                $pdf->AliasNbPages();
+                $pdf->AddPage();
+                $pdf->SetWidths(array(10,15,15,147));
+                $pdf->SetFillColor(255,255,255);
+                $pdf->SetTextColor(0,0,0);
+
                 $file = uniqid("GR").".pdf";
                 $filename = "public/documentos/temp/".$file;
 
@@ -1802,38 +1838,42 @@
 
         private function cabeceraGuiaRemision($id) {
             try {
-                $sql = $this->db->connect->prepare("SELECT
-                                lg_guias.idreg,
-                                lg_guias.id_regalm,
-                                lg_guias.cnumguia,
-                                lg_guias.corigen,
-                                lg_guias.cdirorigen,
-                                lg_guias.cdestino,
-                                lg_guias.cdirdest,
-                                lg_guias.centi,
-                                lg_guias.centidir,
-                                lg_guias.centiruc,
-                                lg_guias.ctraslado,
-                                lg_guias.cenvio,
-                                lg_guias.cautoriza,
-                                lg_guias.cmarca,
-                                lg_guias.cplaca,
-                                lg_guias.cnumadre,
-                                lg_guias.cnombre,
-                                lg_guias.flgmadre,
-                                lg_guias.clicencia,
-                                lg_guias.ftraslado,
-                                lg_guias.fguia,
-                                lg_guias.cobserva,
-                                lg_guias.cdestinatario 
-                            FROM
-                                lg_guias 
-                            WHERE
-                                lg_guias.id_regalm =:id");
+                $sql = $this->db->connect()->prepare("SELECT
+                                                    lg_guias.idreg,
+                                                    lg_guias.id_regalm,
+                                                    lg_guias.cnumguia,
+                                                    lg_guias.corigen,
+                                                    lg_guias.cdirorigen,
+                                                    lg_guias.cdestino,
+                                                    lg_guias.cdirdest,
+                                                    lg_guias.centi,
+                                                    lg_guias.centidir,
+                                                    lg_guias.centiruc,
+                                                    lg_guias.ctraslado,
+                                                    lg_guias.cenvio,
+                                                    lg_guias.cautoriza,
+                                                    lg_guias.cmarca,
+                                                    lg_guias.cplaca,
+                                                    lg_guias.cnumadre,
+                                                    lg_guias.cnombre,
+                                                    lg_guias.flgmadre,
+                                                    lg_guias.clicencia,
+                                                    lg_guias.ftraslado,
+                                                    lg_guias.fguia,
+                                                    lg_guias.cobserva,
+                                                    lg_guias.cdestinatario,
+                                                    alm_despachocab.ffecenvio,
+                                                    alm_despachocab.ffecdoc 
+                                                FROM
+                                                    lg_guias
+                                                    INNER JOIN alm_despachocab ON lg_guias.id_regalm = alm_despachocab.id_regalm 
+                                                WHERE
+                                                    lg_guias.id_regalm = :id 
+                                                    AND lg_guias.nflgActivo");
                 
                 $sql->execute(["id"=>$id]);
 
-                if ($rowCount > 0) {
+                if ($sql->rowCount() > 0) {
                     $docData = array();
                     while($row=$sql->fetch(PDO::FETCH_ASSOC)){
                         $docData[] = $row;
@@ -1848,9 +1888,9 @@
             }
         }
 
-        private function detalleGuiaRemision($id) {
+        private function detallesGuiaRemision($id) {
             try {
-                $sql=$this->db->connect->prepare("SELECT
+                $sql=$this->db->connect()->prepare("SELECT
                                             alm_despachodet.ncantidad,
                                             alm_despachodet.niddetaPed,
                                             LPAD( alm_despachodet.nropedido, 6, 0 ) AS orden,

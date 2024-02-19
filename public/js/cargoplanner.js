@@ -138,7 +138,7 @@ $(function() {
 
         $("#vistaprevia").fadeIn();
 
-        /*$.post(RUTA+"pedidoseg/datosOrden", {id: $(this).attr("href")},
+        $.post(RUTA+"cargoplanner/vistaDespachos", {id: $(this).attr("href")},
             function (data, text, requestXHR) {
                 $(".ventanaVistaPrevia iframe")
                 .attr("src","")
@@ -146,7 +146,7 @@ $(function() {
 
                 $("#vistaprevia").fadeIn();
             },"text"
-        );*/
+        );
 
         return false;
     });
