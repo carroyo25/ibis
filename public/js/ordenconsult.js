@@ -145,6 +145,7 @@ $(function(){
                 $("#detalle").val(data.cabecera[0].detalle);
                 $("#moneda").val(data.cabecera[0].nombre_moneda);
                 $("#total").val(total);
+                $("#total_adicional").val(data.total_adicionales);
                 $("#tipo").val(data.cabecera[0].tipo);
                 $("#fentrega").val(data.cabecera[0].ffechaent);
                 $("#cpago").val(data.cabecera[0].pagos);

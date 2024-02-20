@@ -3094,18 +3094,18 @@
 
             $pdf->SetFillColor(229, 229, 229);
             $pdf->SetFont('Arial','B',8);
-            $pdf->Cell(20,6,"TOTAL :","LTB",0,"C",true);
+            $pdf->Cell(15,6,"TOTAL :","LTB",0,"C",true);
             
-            $pdf->SetFont('Arial','B',8);
+            $pdf->SetFont('Arial','B',7);
 
             $total_adicional = $cabecera['total_adicional'] == ""  ? 0 :  $cabecera['total_adicional']; 
 
             if ($cabecera['radioIgv'] == 0){
-                $pdf->Cell(140,6,$this->convertir($cabecera['total_numero']+$total_adicional)." ".$cabecera['moneda'],"TBR",0,"L",true); 
+                $pdf->Cell(145,6,$this->convertir($cabecera['total_numero']+$total_adicional)." ".$cabecera['moneda'],"TBR",0,"L",true); 
                 $pdf->Cell(30,6,number_format($cabecera['total_numero']+$total_adicional,2),"1",1,"R",true);
             }
             else {
-                $pdf->Cell(140,6,$this->convertir(($cabecera['total_numero']*1.18)+$total_adicional)." ".$cabecera['moneda'],"TBR",0,"L",true);
+                $pdf->Cell(145,6,$this->convertir(($cabecera['total_numero']*1.18)+$total_adicional)." ".$cabecera['moneda'],"TBR",0,"L",true);
                 $pdf->Cell(30,6,number_format(($cabecera['total_numero']*1.18)+$total_adicional,2),"1",1,"R",true);
             }
 
