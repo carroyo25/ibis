@@ -3509,7 +3509,7 @@
                 $pdf->Cell(45,4,"",0,0);
             }
 
-            $pdf->SetXY(146,115);
+            $pdf->SetXY(146,120);
             
             $pdf->Cell(33,6,"Valor Venta",0,0);
             $pdf->Cell(20,6,number_format($cabecera['total_numero'],2),0,1,"R");
