@@ -294,7 +294,20 @@ $(function() {
         console.log(items);
 
         return false;
-    });   
+    });
+    
+    $("#csvFile").click(function(e){
+        e.preventDefault();
+
+        $.post(RUTA+"cargoplanner/archivocvs",{"usuario":$("#id_user").val()},
+            function (data, text, requestXHR) {
+                console.log(data);
+            },
+            "json"
+        );
+
+        return false;
+    });
 })
 
 detalles = () =>{

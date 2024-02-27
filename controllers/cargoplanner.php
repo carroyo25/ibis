@@ -51,5 +51,9 @@
         function proyectos(){
             echo $this->model->listarProyectosFiltro();
         }
+
+        function archivocvs(){
+            echo json_encode($this->model->exportarcsv($_POST['usuario']));
+        }
     }
 ?>

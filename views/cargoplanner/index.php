@@ -211,6 +211,7 @@
         <div>
             <a href="#" id="filtrosAvanzados"><i class="fab fa-searchengin"></i><p>Filtros</p></a>
             <a href="#" id="excelFile"><i class="fas fa-file-excel"></i><p>Exportar</p></a>
+            <a href="#" id="csvFile"><i class="fas fa-file-csv"></i><p>Exportar CSV</p></a>
             <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
         </div>
     </div>

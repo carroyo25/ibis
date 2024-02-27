@@ -337,13 +337,13 @@
                 }
 
                 $pdf->Ln(1);
-                    $pdf->SetX(13);
-                    //$pdf->MultiCell(190,2,utf8_decode($cabecera["observaciones"]));
-                    $pdf->Ln(2);
-                    $pdf->SetX(13);
-                    $pdf->Output($archivo,'F');
+                $pdf->SetX(13);
+                //$pdf->MultiCell(190,2,utf8_decode($cabecera["observaciones"]));
+                $pdf->Ln(2);
+                $pdf->SetX(13);
+                $pdf->Output($archivo,'F');
                     
-                    return array("archivo"=>$archivo);
+                return array("archivo"=>$archivo);
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();

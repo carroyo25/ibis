@@ -1788,41 +1788,67 @@
                 $detalles = $this->detallesGuiaRemision($id);
                 $nreg = count($detalles);
 
+
                 $pdf = new PDF($cabecera[0]['cnumguia'],
-                $cabecera[0]['ffecdoc'],
-                null,
-                null,
-                null,
-                $cabecera['centi'],
-                $cabecera['ruc_proveedor'],
-                $cabecera['centidir'],
-                $cabecera['cdirorigen'],
-                null,
-                null,
-                null,
-                $fecha_traslado,
-                $cabecera['cenvio'],
-                $cabecera['cdestino'],
-                null,
-                null,
-                null,
-                $cabecera['cmarca'],
-                $cabecera['cplaca'],
-                $cabecera['cnombre'],
-                $cabecera['clincencia'],
-                $cabecera['cenvio'],
-                $referido,
-                $proyecto,
-                $anio[0],
-                $cabecera["cobserva"],
-                $cabecera["cdestinatario"],
-                'A4');
+                                    $cabecera[0]['ffecdoc'],
+                                    "20504898173",
+                                    "SERVICIOS PETROLEROS Y CONSTRUCCIONES SEPCON S.A.C",
+                                    "AV. SAN BORJA NORTE N° 445 - SAN BORJA-LIMA-PERU.",
+                                    $cabecera[0]['centi'],
+                                    $cabecera[0]['centiruc'],
+                                    $cabecera[0]['centidir'],
+                                    $cabecera[0]['cdirorigen'],
+                                    null,
+                                    null,
+                                    null,
+                                    $cabecera[0]['ffecenvio'],
+                                    $cabecera[0]['cenvio'],
+                                    $cabecera[0]['cdestino'],
+                                    null,
+                                    null,
+                                    null,
+                                    $cabecera[0]['cmarca'],
+                                    $cabecera[0]['cplaca'],
+                                    $cabecera[0]['cnombre'],
+                                    $cabecera[0]['clicencia'],
+                                    $cabecera[0]['cenvio'],
+                                    $cabecera[0]['nReferido'],
+                                    $cabecera[0]['cdesproy'],
+                                    $cabecera[0]['cper'],
+                                    $cabecera[0]["cobserva"],
+                                    $cabecera[0]["cdestinatario"],'A4');
 
                 $pdf->AliasNbPages();
                 $pdf->AddPage();
                 $pdf->SetWidths(array(10,15,15,147));
                 $pdf->SetFillColor(255,255,255);
                 $pdf->SetTextColor(0,0,0);
+
+                $pdf->SetFont('Arial','',7);
+                $lc = 0;
+                $rc = 0;
+
+                //aca podria sumar la orden
+
+                for($i=1;$i<=$nreg;$i++){
+
+                    $pdf->SetX(13);
+                    $pdf->SetCellHeight(3);
+                    //$pdf->SetFont('Arial','',3);
+
+                    $pdf->SetAligns(array("R","R","C","L"));
+                    $pdf->Row(array(str_pad($i,3,"0",STR_PAD_LEFT),
+                                    $detalles[$rc]['ncantidad'],
+                                    $detalles[$rc]['cabrevia'],
+                                    utf8_decode($detalles[$rc]['ccodprod'] .' '. $detalles[$rc]['cdesprod']  .' '.'O : '.$detalles[$rc]['pedido'].' P : '.$detalles[$rc]['orden'])));
+                    $lc++;
+                    $rc++;
+
+                    if ($lc == 26) {
+                        $pdf->AddPage();
+                        $lc = 0;
+                    }
+                }
 
                 $file = uniqid("GR").".pdf";
                 $filename = "public/documentos/temp/".$file;
@@ -1839,37 +1865,42 @@
         private function cabeceraGuiaRemision($id) {
             try {
                 $sql = $this->db->connect()->prepare("SELECT
-                                                    lg_guias.idreg,
-                                                    lg_guias.id_regalm,
-                                                    lg_guias.cnumguia,
-                                                    lg_guias.corigen,
-                                                    lg_guias.cdirorigen,
-                                                    lg_guias.cdestino,
-                                                    lg_guias.cdirdest,
-                                                    lg_guias.centi,
-                                                    lg_guias.centidir,
-                                                    lg_guias.centiruc,
-                                                    lg_guias.ctraslado,
-                                                    lg_guias.cenvio,
-                                                    lg_guias.cautoriza,
-                                                    lg_guias.cmarca,
-                                                    lg_guias.cplaca,
-                                                    lg_guias.cnumadre,
-                                                    lg_guias.cnombre,
-                                                    lg_guias.flgmadre,
-                                                    lg_guias.clicencia,
-                                                    lg_guias.ftraslado,
-                                                    lg_guias.fguia,
-                                                    lg_guias.cobserva,
-                                                    lg_guias.cdestinatario,
-                                                    alm_despachocab.ffecenvio,
-                                                    alm_despachocab.ffecdoc 
-                                                FROM
-                                                    lg_guias
-                                                    INNER JOIN alm_despachocab ON lg_guias.id_regalm = alm_despachocab.id_regalm 
-                                                WHERE
-                                                    lg_guias.id_regalm = :id 
-                                                    AND lg_guias.nflgActivo");
+                                                        lg_guias.idreg,
+                                                        lg_guias.id_regalm,
+                                                        lg_guias.cnumguia,
+                                                        lg_guias.corigen,
+                                                        lg_guias.cdirorigen,
+                                                        lg_guias.cdestino,
+                                                        lg_guias.cdirdest,
+                                                        lg_guias.centi,
+                                                        lg_guias.centidir,
+                                                        lg_guias.centiruc,
+                                                        lg_guias.ctraslado,
+                                                        lg_guias.cenvio,
+                                                        lg_guias.cautoriza,
+                                                        lg_guias.cmarca,
+                                                        lg_guias.cplaca,
+                                                        lg_guias.cnumadre,
+                                                        lg_guias.cnombre,
+                                                        lg_guias.flgmadre,
+                                                        lg_guias.clicencia,
+                                                        lg_guias.ftraslado,
+                                                        lg_guias.fguia,
+                                                        lg_guias.cobserva,
+                                                        lg_guias.cdestinatario,
+                                                        alm_despachocab.ffecenvio,
+                                                        alm_despachocab.ffecdoc,
+                                                        alm_despachocab.nReferido,
+                                                        alm_despachocab.cper,
+                                                        tb_proyectos.ccodproy,
+                                                        tb_proyectos.cdesproy 
+                                                    FROM
+                                                        lg_guias
+                                                        LEFT JOIN alm_despachocab ON lg_guias.id_regalm = alm_despachocab.id_regalm
+                                                        LEFT JOIN tb_proyectos ON alm_despachocab.ncodpry = tb_proyectos.nidreg 
+                                                    WHERE
+                                                        lg_guias.id_regalm = :id 
+                                                        AND lg_guias.nflgActivo");
                 
                 $sql->execute(["id"=>$id]);
 
@@ -1986,6 +2017,34 @@
                 echo "Error: ".$th->getMessage();
                 return false;
             }
+        }
+
+        public function exportarCsv($usuario){
+            try {
+                $arreglo[0] = array("Nombre","Apellido","Animal","Fruto");
+                $arreglo[1] = array("Juan","Juarez","Jirafa","Jicama");
+                $arreglo[2] = array("Maria","Martinez","Mono","Mandarina");
+                $arreglo[3] = array("Esperanza","Escobedo","Elefante","Elote");
+
+                $ruta ="public/documentos/temp/mi_archivo.csv";
+
+                $this->generarCSV($arreglo, $ruta, $delimitador = ';', $encapsulador = '"');
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        function generarCSV($arreglo, $ruta, $delimitador, $encapsulador){
+            $file_handle = fopen($ruta, 'w');
+            
+            foreach ($arreglo as $linea) {
+              fputcsv($file_handle, $linea, $delimitador, $encapsulador);
+            }
+
+            rewind($file_handle);
+            fclose($file_handle);
         }
     }
 ?>
