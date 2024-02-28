@@ -3082,7 +3082,7 @@
                     $lc++;
 
                     //aca controla la linea de impresion 
-                    if ($pdf->getY() >= 185) {
+                    if ($pdf->getY() >= 181) {
                         $pdf->AddPage();
                         $lc = 0;
                     }
