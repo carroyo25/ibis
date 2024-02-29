@@ -71,8 +71,8 @@
                         <label for="cargo">Cargo</label>
                         <input type="cargo" id="cargo" name="cargo">
                     </div>
-                    <button id="btnGrabarKardex" class="oculto boton3">Aceptar</button>
-                    <button type="button" class="boton3" id="btnFirmar" onclick="StartSign()">Firmar</button>
+                    <button id="btnGrabarKardex" class="boton3">Aceptar</button>
+                    <button type="button" class="boton3 oculto" id="btnFirmar" onclick="StartSign()">Firmar</button>
             </div>
     </div>
     <div class="itemsTabla">

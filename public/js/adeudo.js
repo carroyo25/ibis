@@ -88,7 +88,11 @@ $(function(){
 
         let canvas = document.getElementById("cnv");
 
-        $.post(RUTA+'adeudo/firma', {img : canvas.toDataURL(),detalles:JSON.stringify(detalles())},
+        $.post(RUTA+'adeudo/firma', {img : canvas.toDataURL(),
+                                    detalles:JSON.stringify(detalles()),
+                                    nombre:$("#nombre").val(),
+                                    proyecto:$("#costosSearch option:selected").text(),
+                                    correo:$("#correo").val()},
             function (data, textStatus, jqXHR) {
                 if (data) {
                     mostrarMensaje("Devolucion registrada","mensaje_correcto");
@@ -177,8 +181,8 @@ detalles = () => {
             FDEVUELTO   = $(this).find('td').eq(7).children().val(),
             HOJA        = $(this).find('td').eq(8).text(),
             ISOMETRICO  = $(this).find('td').eq(9).text(),
-            OBSERVAC    = $(this).find('td').eq(10).children().val(),
-            SERIE       = $(this).find('td').eq(11).children().val(),
+            OBSERVAC    = $(this).find('td').eq(10).text(),
+            SERIE       = $(this).find('td').eq(11).text(),
             PATRIMONIO  = $(this).find('td').eq(12).children().prop('checked'),
             ESTADO      = $(this).find('td').eq(13).children().val(),
             COSTOS      = $("#costosSearch").val(),
@@ -201,14 +205,15 @@ detalles = () => {
             item['isometrico']  = ISOMETRICO;
             item['observac']    = OBSERVAC;
             item['patrimonio']  = PATRIMONIO;
+            item['serie']       = SERIE;
             item['estado']      = ESTADO;
             item['costos']      = COSTOS;
             item['nrodoc']      = NRODOC;
             item['idprod']      = IDPROD;
             item['idreg']       = IDREG;
-        }
-        
-        DATA.push(item);
+
+            DATA.push(item);
+        }  
     })
 
     return DATA;

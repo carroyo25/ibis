@@ -15,7 +15,7 @@
         }
 
         function firma(){
-            echo $this->model->subirFirmaAlmacen($_POST['detalles']);
+            echo $this->model->subirFirmaAlmacen($_POST['detalles'],$_POST['nombre'],$_POST['proyecto'],$_POST['correo']);
         }
 
         /*function consulta(){

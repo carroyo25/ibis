@@ -203,10 +203,10 @@
             <!--no te olvides cambiar esto-->
             <button id="btnGrabarKardex" class="oculto boton3">Aceptar</button>
             <button type="button" class="boton3" id="btnFirmar" onclick="StartSign()">Firmar</button>
-            <div>
+            <!--<div>
                 <label for="codeRead">Codigo: </label>
                 <input type="text" name="codeRead" id="codeRead" style="opacity:1;position:relative" value=""> 
-            </div>
+            </div>-->
         </div>
     </div>
     <div class="itemsTabla">

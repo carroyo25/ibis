@@ -57,7 +57,7 @@
                                                     INNER JOIN tb_user ON lg_ordencab.id_cuser = tb_user.iduser
                                                     INNER JOIN tb_parametros AS monedas ON lg_ordencab.ncodmon = monedas.nidreg
                                                 WHERE
-                                                    lg_ordencab.nEstadoDoc = 59 
+                                                    lg_ordencab.nEstadoDoc BETWEEN 59 AND 62 
                                                     AND ( lg_ordencab.nfirmaLog IS NULL OR lg_ordencab.nfirmaOpe IS NULL OR lg_ordencab.nfirmaFin IS NULL )
                                                     $cadena
                                                 GROUP BY

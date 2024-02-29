@@ -175,8 +175,9 @@
             }
         }
 
-        public function subirFirmaAlmacen($detalles) {
-            if (array_key_exists('img',$_REQUEST)) {
+        public function subirFirmaAlmacen($detalles,$nombre,$cc,$correo) {
+            $respuesta = false;
+            /*if (array_key_exists('img',$_REQUEST)) {
                 // convierte la imagen recibida en base64
                 // Eliminamos los 22 primeros caracteres, que 
                 // contienen el substring "data:image/png;base64,"
@@ -230,7 +231,9 @@
                        
                     }
                 }      
-            }
+            }*/
+
+            $this->correoDevolucion($detalles,$nombre,$correo,$cc);
         
             return  $respuesta;
         }
@@ -422,6 +425,96 @@
                 return $result;
 
             }catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            } 
+        }
+
+        private function correoDevolucion($detalles,$nombre,$correo,$cc){
+            require_once("public/PHPMailer/PHPMailerAutoload.php");
+
+            $datos      = json_decode($detalles);
+            $nreg       = count($datos);
+            $subject    = utf8_decode('Devolucion de Equipos '.' - '.$nombre);
+            $fecha_actual = date("d-m-Y h:i:s");
+            
+            $origen = $_SESSION['correo'];
+            $nombre_envio = $_SESSION['nombres'];
+
+            $estadoEnvio= false;
+            $clase = "mensaje_error";
+            $salida = "";
+
+            $mail = new PHPMailer;
+            $mail->isSMTP();
+            $mail->SMTPDebug = 0;
+            $mail->Debugoutput = 'html';
+            $mail->Host = 'mail.sepcon.net';
+            $mail->SMTPAuth = true;
+            $mail->Username = 'sistema_ibis@sepcon.net';
+            $mail->Password = $_SESSION['password'];
+            $mail->Port = 465;
+            $mail->SMTPSecure = "ssl";
+            $mail->SMTPOptions = array(
+                'ssl' => array(
+                    'verify_peer' => false,
+                    'verify_peer_name' => false,
+                    'allow_self_signed' => false
+                )
+            );
+
+            try {
+                $mail->setFrom('kardex@sepcon.net', 'Almacen Sepcon'); 
+                $mail->addAddress($origen,$nombre_envio);
+                $mail->addAddress($correo,utf8_decode($nombre));
+                $mail->addAddress('kardex@sepcon.net','kardex@sepcon.net');
+
+                $mail->Subject = $subject;
+                $contador = 1;
+
+                $mensaje = '<p>Estimado : <strong style="font-style: italic;">'. utf8_decode($nombre) .' </strong></p>';
+                $mensaje .=  utf8_decode('<p>Realizaste una devolución al almacén: '.$cc.'</p>');
+                $mensaje .= utf8_decode('<p>Para constancia de lo devuelto te enviamos los datos de tu operación:</p>');
+
+                $mensaje.= '<table style="width: 80%; border:1px solid #c2c2c2; border-collapse: collapse; font-size:.9rem">
+                                <thead>
+                                    <tr style="color:white; background:#0364B8; padding: 0 5px">
+                                        <th>ITEM</th>
+                                        <th>CODIGO</th>
+                                        <th>DESCRIPCION</th>
+                                        <th>UNIDAD</th>
+                                        <th>FECHA</th>
+                                        <th>SERIE</th>
+                                        <th>CANTIDAD</th>
+                                    </tr>
+                                </thead>
+                                <tbody>';
+                
+                for ($i=0; $i < $nreg; $i++) { 
+                    $mensaje .= '<tr style="border:1px dotted #c2c2c2">
+                                    <td>'.$contador++.'</td>
+                                    <td>'.$datos[$i]->codigo.'</td>
+                                    <td>'.$datos[$i]->descripcion.'</td>
+                                    <td>'.$datos[$i]->unidad.'</td>
+                                    <td>'.$fecha_actual.'</td>
+                                    <td>'.$datos[$i]->serie.'</td>
+                                    <td>'.$datos[$i]->cantidad.'</td>
+                                </tr>';
+                }
+
+                $mensaje.='</tbody></table>';
+                $mensaje.= '<p>Atentamente</p>';
+                $mensaje.= '<p>Almacenes Sepcon</p>';
+
+                $mensaje.= '<p style="font-size:.6rem; color:#0364B8; font-style:italic;">No responda este correo</p>';
+
+
+                $mail->msgHTML($mensaje);
+
+                $mail->send();
+                $mail->ClearAddresses();
+
+            } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
             } 
