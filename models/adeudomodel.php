@@ -177,7 +177,7 @@
 
         public function subirFirmaAlmacen($detalles,$nombre,$cc,$correo) {
             $respuesta = false;
-            /*if (array_key_exists('img',$_REQUEST)) {
+            if (array_key_exists('img',$_REQUEST)) {
                 // convierte la imagen recibida en base64
                 // Eliminamos los 22 primeros caracteres, que 
                 // contienen el substring "data:image/png;base64,"
@@ -227,13 +227,19 @@
                                             "estado"=>$datos[$i]->estado,
                                             "firma"=>$namefile,
                                             "user"=>$_SESSION['iduser']]);
+                            
+                            $rowCount = $sql->rowCount();
+
+                            if ($rowCount > 0) {
+                                $this->correoDevolucion($detalles,$nombre,$correo,$cc);
+                            }
                         }
                        
                     }
                 }      
-            }*/
+            }
 
-            $this->correoDevolucion($detalles,$nombre,$correo,$cc);
+            
         
             return  $respuesta;
         }

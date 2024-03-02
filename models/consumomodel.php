@@ -139,8 +139,6 @@
             return  $respuesta;
         }
 
-
-        
         /*public function subirFirma($detalles,$correo,$nombre,$cc) {
            
                     $respuesta = true;

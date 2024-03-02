@@ -5,9 +5,9 @@ $(() => {
         e.preventDefault();
 
         $("#serie").val( $(this).find('td').eq(3).text() );
-        $("#descripcion").val( $(this).find('td').eq(2).text() );
+        $("#descripcion").val( $(this).find('td').eq(1).text() );
         $("#fecha_sugerida").val( $(this).find('td').eq(6).text() );
-        $("#usuario").val($(this).find('td').eq(3).text());
+        $("#usuario").val($(this).find('td').eq(2).text());
         $("#correo_usuario").val( $(this).data('correo'));
         $("#sendNotify").prop("href", $(this).data('id'));
 
@@ -15,13 +15,12 @@ $(() => {
         cc = $(this).data('costos');
         docidetuser = $(this).data('documento');
 
-
         $("#tabla_detalles_mttos tbody").empty();
 
         id = $(this).data('id');
 
         let formData = new FormData();
-        formData.append('serie',$(this).find('td').eq(4).text());
+        formData.append('serie',$(this).find('td').eq(3).text());
         formData.append('documento',$(this).data('documento'));
 
         fetch(RUTA+'timmtto/anteriores',{
@@ -43,8 +42,7 @@ $(() => {
             $("#dialogo_registro").fadeIn();
         })
 
-        
-
+    
         return false;
     });
 
@@ -55,7 +53,7 @@ $(() => {
             if ($("#fecha_mmto").val() == "") throw new Error("No ingreso fecha del mantenimiento");
 
             let formData = new FormData();
-                formData.append('id',id);
+                formData.append('id',null);
                 formData.append('fmmto',$("#fecha_mmto").val());
                 formData.append('correo',$("#correo_usuario").val());
                 formData.append('observa',$("#observaciones_dialogo").val());
@@ -66,7 +64,7 @@ $(() => {
                 formData.append('tipo_mmtto',$("#tipo_mmtto").val());
                 
                 formData.append('codigo_costos',cc);
-                formData.append('codigo_producto',idprod);
+                formData.append('codigo_producto',null);
                 formData.append('serie_producto',$("#serie").val());
                 formData.append('documento_usuario',docidetuser);
 

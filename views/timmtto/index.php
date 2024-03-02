@@ -134,7 +134,6 @@
             <tbody>
                 <?php $item = 1; foreach($this->listaMantenimientos['datos'] as $registro) { ?> 
                 
-                
                     <tr class="pointer" data-id="<?php echo $registro['idreg']; ?>" 
                                         data-correo="<?php echo $registro['correo']; ?>"
                                         data-documento="<?php echo $registro['nrodoc']; ?>"
@@ -146,16 +145,19 @@
                         <td class="pl20px"><?php echo $registro['cserie']; ?></td>
                         <td class="textoCentro"><?php echo $registro['fentrega']; ?></td>
                         <td class="textoCentro "><?php echo $registro['ccodproy']; ?></td>
-                        
-                        <?php foreach($this->listaMantenimientos['mmttos'] as $registro) {?>
-                            <?php $estado = $registro['estado']== "Pendiente" ? "semaforoNaranja" : "semaforoVerde" ?>
-
-                            <td class="textoCentro"><?php echo $registro['fmtto']; ?></td>
-                            <td class="textoCentro <?php echo $estado?>"><?php echo $registro['estado']; ?></td>
-                        <?php }?>
+                        <td class="textoCentro "><?php echo $registro['fmtto1']; ?></td>
+                        <td class="textoCentro <?php echo $registro['est1'] == "pendiente" ? "semaforoNaranja" : "semaforoVerde" ; ?>"><?php echo $registro['est1']; ?></td>
+                        <td class="textoCentro "><?php echo $registro['fmtto2']; ?></td>
+                        <td class="textoCentro <?php echo $registro['est2'] == "pendiente" ? "semaforoNaranja" : "semaforoVerde" ; ?>"><?php echo $registro['est2']; ?></td>
+                        <td class="textoCentro "><?php echo $registro['fmtto3']; ?></td>
+                        <td class="textoCentro <?php echo $registro['est3'] == "pendiente" ? "semaforoNaranja" : "semaforoVerde" ; ?>"><?php echo $registro['est3']; ?></td>
+                        <td class="textoCentro "><?php echo $registro['fmtto4']; ?></td>
+                        <td class="textoCentro <?php echo $registro['est4'] == "pendiente" ? "semaforoNaranja" : "semaforoVerde" ; ?>"><?php echo $registro['est4']; ?></td>
                     </tr>
                 <?php }; ?>
             </tbody>
+
+            
         </table>
     </div>
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>

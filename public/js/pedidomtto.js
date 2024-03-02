@@ -186,6 +186,7 @@ $(function() {
         let descrip = $(this).children('td:eq(1)').text();
         let unidad = $(this).children('td:eq(2)').text();
         let grabado = 0;
+        let tabPos  = $("#tablaDetalles tr").length;
         
 
         let row = `<tr data-grabado="${grabado}" data-idprod="${idprod}" data-codund="${nunid}" data-idx="-" data-registro="">
@@ -195,7 +196,13 @@ $(function() {
                     <td class="textoCentro">${codigo}</td>
                     <td class="pl20px">${descrip}</td>
                     <td class="textoCentro">${unidad}</td>
-                    <td><input type="number" step="any" placeholder="0.00" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"></td>
+                    <td>
+                        <input type="number" 
+                            step="any" 
+                            placeholder="0.00" 
+                            onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"
+                            tabIndex="${tabPos}">
+                    </td>
                     <td><textarea></textarea></td>
                     <td class="textoCentro"><input type="text"></td>
                     <td class="textoCentro select"></td>
@@ -256,6 +263,19 @@ $(function() {
         fillTables($("#tablaDetalles tbody > tr"),2);
 
         return false;
+    });
+
+    $("#tablaDetalles tbody").on('keypress','input', function (e) {
+        if (e.which == 13) {
+            //para cambiar el foco con el enter
+
+            cb = parseInt($(this).attr('tabindex'));
+
+            if ($(':input[tabindex=\'' + (cb + 1) + '\']') != null) {
+                $(':input[tabindex=\'' + (cb + 1) + '\']').focus();
+                $(':input[tabindex=\'' + (cb + 1) + '\']').select();
+            }
+        }
     });
 
     $("#saveItem").click(function (e) { 
