@@ -4,7 +4,7 @@ $(function(){
         fila = "",
         idfila = "";
     
-    var tipoVista = null;
+    let tipoVista = null;
        
     $("#esperar").fadeOut();
 
@@ -54,7 +54,6 @@ $(function(){
                     .removeClass()
                     .addClass(estado);
                 
-                
                 $("#tablaDetalles tbody")
                     .empty()
                     .append(data.detalles);
@@ -67,7 +66,8 @@ $(function(){
                     .empty()
                     .append(data.adjuntos);
 
-                $("#items").val($("#tablaDetalles tbody tr").length);
+                $(".primeraBarra").css("background","#0078D4");
+                $(".primeraBarra span").text("Datos Generales");
 
                 accion = "u";
                 grabado = true;
@@ -90,6 +90,9 @@ $(function(){
         
         accion = 'n';
         tipoVista = null;
+        $(".primeraBarra").css("background","#0078D4");
+        $(".primeraBarra span").text('Datos Generales');
+        $("#tablaDetalles tbody").empty();
 
         return false;
     });
@@ -413,7 +416,7 @@ $(function(){
         });
 
         try {
-            if (tipoVista == null) throw "Debe grabar el documento...";
+            if ( tipoVista == null ) throw "Debe grabar el documento...";
 
             $.post(RUTA+"recepcion/documentopdf",{cabecera:result,
                                                     detalles:JSON.stringify(detalles(tipoVista)),
@@ -508,8 +511,11 @@ $(function(){
             if (result['codigo_aprueba'] == '') throw "Elija la persona que aprueba";
             if (result['guia'] == '') throw "Escriba el número de guia";
             if (verificarCantidadesInput()) throw "Verifque las cantidades ingresadas";
+            if (detalles(tipoVista).length == 0) throw "No hay items que procesar";
+
 
             if (accion == "n") {
+                console.log(detalles(tipoVista));
                 $.post(RUTA+"recepcion/nuevoIngreso", {cabecera:result,
                     detalles:JSON.stringify(detalles(tipoVista)),
                     series:JSON.stringify(series())},
@@ -519,15 +525,20 @@ $(function(){
                             $("#tablaPrincipal tbody")
                                 .empty()
                                 .append(data.listado);
-                            accion = "u";
+                            accion = "";
+                            $(".primeraBarra").css("background","#819830");
+                            $(".primeraBarra span").text('Datos Generales ... Grabado');
+                            tipoVista = null;
                         },
                         "json"
                     );
-            }else{
+            }else if(accion == "u"){
                 $.post(RUTA+"recepcion/modificarRegistro",  {cabecera:result,
                     detalles:JSON.stringify(detalles(true))},
                     function (data, textStatus, jqXHR) {
                         mostrarMensaje("Nota Modifcada","mensaje_correcto");
+                        accion = "";
+                        $("#tablaDetalles tbody").empty();
                     },
                     "json"
                 );
@@ -630,7 +641,6 @@ $(function(){
                       mostrarMensaje("EL item ya tiene registro de salida","mensaje_error");
                     else
                         $("#pregunta").fadeIn();
-                       
                 },
                 "text"
             );
@@ -695,7 +705,7 @@ detalles = (flag) =>{
     
         item = {};
 
-        if ( CHECKED == flag)  {
+        if ( CHECKED == flag )  {
             if (CANTREC > 0) {
                 item['item']        = ITEM;
                 item['iddetorden']  = IDDETORDEN;

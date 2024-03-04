@@ -229,13 +229,11 @@
                                             "user"=>$_SESSION['iduser']]);
                             
                             $rowCount = $sql->rowCount();
-
-                            if ($rowCount > 0) {
-                                $this->correoDevolucion($detalles,$nombre,$correo,$cc);
-                            }
                         }
                        
                     }
+
+                    $this->correoDevolucion($detalles,$nombre,$correo,$cc);
                 }      
             }
 

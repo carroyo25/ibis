@@ -47,7 +47,7 @@ mostrarMensaje = (mensaje,clase) => {
     
     setTimeout(function() {
         $(".mensaje").css('right',"-100%");
-    },2500);
+    },3600);
 
 }
 
