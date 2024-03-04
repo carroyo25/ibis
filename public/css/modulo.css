@@ -534,6 +534,8 @@
 .barraTrabajo .variasConsultas5campos #vistafirma {
   position: absolute;
   border: 1px solid #000;
+  width: 8%;
+  top: 0;
 }
 .barraTrabajo .variasConsultas6campos {
   color: #fff;

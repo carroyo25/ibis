@@ -231,7 +231,7 @@ $(function(){
                     </tr>`;
              
             //codigos para mantenimiento        
-            let arraymtto = ['B05010002','B05010006','B05010003'],
+            let arraymtto = ['B05010002','B05010006'],
                 codmmtto = codigo.substring(0,9),
                 formData = new FormData(),
                 search = arraymtto.includes(codmmtto);
@@ -241,7 +241,7 @@ $(function(){
                 formData.append('documento',$("#docident").val());
                 formData.append("costos",$("#costosSearch").val());
                 
-            if (search) {
+            if ( search ) {
                 fetch(RUTA+'consumo/mantenimientos',{
                     method: 'POST',
                     body: formData

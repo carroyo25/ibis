@@ -14,7 +14,6 @@
 
             try {
                 $docData = [];
-                $mantenimientos = [];
 
                 $sql = $this->db->connect()->prepare("SELECT
                                                         ibis.ti_mmttos.idreg,
@@ -66,75 +65,19 @@
                     
                     while($row = $sql->fetch(PDO::FETCH_ASSOC)){
                         $docData[] = $row;
-
-                        $mantenimientos[] = $this->fechaMantenimientos($row['nidreg'],$row['cserie'],$row['nrodoc']);
                     }
                 }
 
-                return array("datos"=>$docData,
-                            "mmttos"=>$mantenimientos);
+                return array("datos"=>$docData);
 
                 
-
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
             }
         }
 
-        private function fechaMantenimientos($costos,$serie,$documento){
-            try {
-                $docData = [];
-                $item = array();
-
-                $sql = $this->db->connect()->prepare("SELECT
-                                                    DATE_FORMAT( ibis.ti_mmttos.fmtto, '%d/%m/%Y' ) AS fmtto,
-                                                    ibis.ti_mmttos.cserie,
-                                                    DATEDIFF(
-                                                        ibis.ti_mmttos.fmtto,
-                                                    NOW()) AS periodo,
-                                                CASE
-                                                        Ibis.ti_mmttos.flgestado 
-                                                        WHEN 0 THEN
-                                                        'Pendiente' 
-                                                        WHEN 1 THEN
-                                                        'Realizado' 
-                                                    END AS estado 
-                                                FROM
-                                                    ibis.ti_mmttos
-                                                    INNER JOIN ibis.cm_producto ON ti_mmttos.idprod = cm_producto.id_cprod
-                                                    INNER JOIN ibis.tb_proyectos ON ibis.ti_mmttos.idcostos = ibis.tb_proyectos.nidreg 
-                                                WHERE
-                                                    ibis.tb_proyectos.nidreg = :cc
-                                                    AND ibis.ti_mmttos.cserie = :serie
-                                                    AND ibis.ti_mmttos.nrodoc = :doc
-                                                    AND ibis.ti_mmttos.ntipo = 1");
-                $sql->execute(['cc'=>$costos,'serie'=>$serie,'doc'=>$documento]);
-
-                /*if ($sql->rowCount()) {
-                    while($row = $sql->fetch(PDO::FETCH_ASSOC)){
-                        $docData[] = $row;
-                    }
-                }*/
-
-                if($sql->rowCount()){
-                    while ($rs = $sql->fetch()) {
-                        $item['fmtto'] = $rs['fmtto'];
-                        $item['cserie'] = $rs['cserie'];
-                        $item['estado'] = $rs['estado'];
-                        
-                        array_push($docData,$item);
-                    }
-                }
-
-                return $docData;
-
-            } catch (PDOException $th) {
-                echo $th->getMessage();
-                return false;
-            }
-        }
-
+       
         public function registrarMmtto($parametros){
             try {
                 $docData = [];

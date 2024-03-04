@@ -113,7 +113,7 @@
                                                                         nkardex=:kardex,
                                                                         cfirma=:firma,
                                                                         cserie=:serie,
-                                                                        ncostos=:cc
+                                                                        ncostos=:cc,
                                                                         ncambioepp=:cambio");
                         $sql->execute(["user"=>$_SESSION['iduser'],
                                         "documento"=>$datos[$i]->nrodoc,
@@ -139,6 +139,7 @@
             return  $respuesta;
         }
 
+        /* est es sin biometrico */
         /*public function subirFirma($detalles,$correo,$nombre,$cc) {
            
                     $respuesta = true;
@@ -180,6 +181,8 @@
                                         "cc"=>$datos[$i]->costos,
                                         "cambio"=>$datos[$i]->cambio]);
                     }
+            
+            $this->correoMovimiento($detalles,$nombre,$correo,$kardex,$cc);
 
             return  $respuesta;
         }*/
