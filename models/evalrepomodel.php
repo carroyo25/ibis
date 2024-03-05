@@ -154,7 +154,7 @@
                     foreach ($result as $rs) {
                         $total = $rs['c1']+$rs['c2']+$rs['c3']+$rs['c4']+$rs['c5']+$rs['c6']+$rs['c7']+$rs['c8']+$rs['c9']+$rs['c10']+$rs['c11']+$rs['c12']+
                                     $rs['c13']+$rs['c14']+$rs['c15']+$rs['c16']+$rs['c17']+$rs['c18']+$rs['c19']+$rs['c20']+$rs['c39']+$rs['c41']+$rs['c42']+$rs['c43']+
-                                    $rs['c44']+$rs['c53']+$rs['c54']+$rs['c55'];
+                                    $rs['c44'];
                         
                         $salida .='<tr class="pointer" data-indice="'.$rs['id_regmov'].'"">
                                     <td class="textoCentro">'.str_pad($rs['cnumero'],4,0,STR_PAD_LEFT).'</td>
@@ -192,9 +192,7 @@
 
                                     <td class="textoCentro">'.$rs['c43'].'</td>
                                     <td class="textoCentro">'.$rs['c44'].'</td>
-                                    <td class="textoCentro">'.$rs['c53'].'</td>
-                                    <td class="textoCentro">'.$rs['c54'].'</td>
-                                    <td class="textoCentro">'.$rs['c55'].'</td>
+                                    
 
                                     <td class="textoCentro"><strong>'.$total.'</strong></td>
                                  </tr>';
@@ -466,8 +464,6 @@
                 $objPHPExcel->getActiveSheet()->setCellValue('K2','QA/QC');
                 $objPHPExcel->getActiveSheet()->setCellValue('R2','ALMACEN OBRA');
                 $objPHPExcel->getActiveSheet()->setCellValue('W2','COMPRAS');
-                $objPHPExcel->getActiveSheet()->setCellValue('AE2','USUARIO/GERENTE DE PROYECTO');
-                $objPHPExcel->getActiveSheet()->setCellValue('AH2','TOTAL');
 
                 $objPHPExcel->getActiveSheet()->setCellValue('F3','Fecha de Entrega');
                 $objPHPExcel->getActiveSheet()->setCellValue('G3','Condiciones de Llegada');
@@ -497,11 +493,8 @@
                 $objPHPExcel->getActiveSheet()->setCellValue('AB3','Comunicación');
                 $objPHPExcel->getActiveSheet()->setCellValue('AC3','Seriedad');
                 $objPHPExcel->getActiveSheet()->setCellValue('AD3','Capacitación');
-
-                $objPHPExcel->getActiveSheet()->setCellValue('AE3','Fecha de Atención');
-                $objPHPExcel->getActiveSheet()->setCellValue('AF3','Calidad');
-                $objPHPExcel->getActiveSheet()->setCellValue('AG3','Cantidad de Procesos');
-                $objPHPExcel->getActiveSheet()->setCellValue('AH3','TOTAL');
+               
+                $objPHPExcel->getActiveSheet()->setCellValue('AE3','TOTAL');
 
                 $fila = 4;
 
@@ -540,11 +533,6 @@
                     $objPHPExcel->getActiveSheet()->setCellValue('AB'.$fila,$rs['c42']);
                     $objPHPExcel->getActiveSheet()->setCellValue('AC'.$fila,$rs['c43']);
                     $objPHPExcel->getActiveSheet()->setCellValue('AD'.$fila,$rs['c44']);
-
-                    $objPHPExcel->getActiveSheet()->setCellValue('AE'.$fila,$rs['c53']);
-                    $objPHPExcel->getActiveSheet()->setCellValue('AF'.$fila,$rs['c54']);
-                    $objPHPExcel->getActiveSheet()->setCellValue('AG'.$fila,$rs['c55']);
-
 
                     $fila++;
                 }
@@ -600,8 +588,8 @@
 
                     $objPHPExcel->getActiveSheet()->mergeCells('A1:W1');
                     $objPHPExcel->getActiveSheet()->mergeCells('F2:M2');
-                    $objPHPExcel->getActiveSheet()->mergeCells('N2:S2');
-                    $objPHPExcel->getActiveSheet()->mergeCells('T2:V2');
+                    $objPHPExcel->getActiveSheet()->mergeCells('N2:T2');
+                    $objPHPExcel->getActiveSheet()->mergeCells('U2:W2');
     
                     $objPHPExcel->getActiveSheet()->setCellValue('A2','N°.ORDEN');
                     $objPHPExcel->getActiveSheet()->setCellValue('B2','EMISION');
@@ -610,7 +598,7 @@
                     $objPHPExcel->getActiveSheet()->setCellValue('E2','PROVEEDOR');
                     $objPHPExcel->getActiveSheet()->setCellValue('F2','QA/QC');
                     $objPHPExcel->getActiveSheet()->setCellValue('N2','COMPRAS');
-                    $objPHPExcel->getActiveSheet()->setCellValue('T2','USUARIO/GERENTE DE PROYECTO');
+                    $objPHPExcel->getActiveSheet()->setCellValue('U2','USUARIO/GERENTE DE PROYECTO');
                     $objPHPExcel->getActiveSheet()->setCellValue('W2','TOTAL');
 
                     $objPHPExcel->getActiveSheet()->setCellValue('F3','Plan de Gestion');
@@ -618,7 +606,7 @@
                     $objPHPExcel->getActiveSheet()->setCellValue('H3','Procedimientos');
                     $objPHPExcel->getActiveSheet()->setCellValue('I3','Requisitos');
                     $objPHPExcel->getActiveSheet()->setCellValue('J3','Aceptación de Reclamos');
-                    $objPHPExcel->getActiveSheet()->setCellValue('K3','Comunicación');
+                    $objPHPExcel->getActiveSheet()->setCellValue('K3','Comunicación Oportuna');
                     $objPHPExcel->getActiveSheet()->setCellValue('L3','Dossier');
                     $objPHPExcel->getActiveSheet()->setCellValue('M3','Avisa oportunamente');
 
@@ -626,12 +614,13 @@
                     $objPHPExcel->getActiveSheet()->setCellValue('O3','Descuento');
                     $objPHPExcel->getActiveSheet()->setCellValue('P3','Notificaciones');
                     $objPHPExcel->getActiveSheet()->setCellValue('Q3','Aceptación de Reclamos');
-                    $objPHPExcel->getActiveSheet()->setCellValue('R3','Comunicación');
-                    $objPHPExcel->getActiveSheet()->setCellValue('S3','Seriedad');
+                    $objPHPExcel->getActiveSheet()->setCellValue('R3','Forma de Pago');
+                    $objPHPExcel->getActiveSheet()->setCellValue('S3','Comunicación');
+                    $objPHPExcel->getActiveSheet()->setCellValue('T3','Seriedad');
 
-                    $objPHPExcel->getActiveSheet()->setCellValue('T3','Fecha de Entrega');
-                    $objPHPExcel->getActiveSheet()->setCellValue('U3','Calidad');
-                    $objPHPExcel->getActiveSheet()->setCellValue('V3','Cantidad de Procesos');
+                    $objPHPExcel->getActiveSheet()->setCellValue('U3','Fecha de Entrega');
+                    $objPHPExcel->getActiveSheet()->setCellValue('V3','Calidad');
+                    $objPHPExcel->getActiveSheet()->setCellValue('W3','Cantidad de Procesos');
 
                     $fila = 4;
 
@@ -642,25 +631,26 @@
                     $objPHPExcel->getActiveSheet()->setCellValue('D'.$fila,$rs['ccodproy']);
                     $objPHPExcel->getActiveSheet()->setCellValue('E'.$fila,$rs['proveedor']);
                     
-                    $objPHPExcel->getActiveSheet()->setCellValue('F'.$fila,$rs['c26']);
-                    $objPHPExcel->getActiveSheet()->setCellValue('G'.$fila,$rs['c27']);
-                    $objPHPExcel->getActiveSheet()->setCellValue('H'.$fila,$rs['c28']);
-                    $objPHPExcel->getActiveSheet()->setCellValue('I'.$fila,$rs['c29']);
-                    $objPHPExcel->getActiveSheet()->setCellValue('J'.$fila,$rs['c30']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('F'.$fila,$rs['c45']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('G'.$fila,$rs['c46']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('H'.$fila,$rs['c47']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('I'.$fila,$rs['c48']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('J'.$fila,$rs['c49']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('K'.$fila,$rs['c50']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('L'.$fila,$rs['c51']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('M'.$fila,$rs['c52']);
 
-                    $objPHPExcel->getActiveSheet()->setCellValue('K'.$fila,$rs['c31']);
-                    $objPHPExcel->getActiveSheet()->setCellValue('L'.$fila,$rs['c32']);
-                    $objPHPExcel->getActiveSheet()->setCellValue('M'.$fila,$rs['c33']);
-                    $objPHPExcel->getActiveSheet()->setCellValue('N'.$fila,$rs['c34']);
-                    $objPHPExcel->getActiveSheet()->setCellValue('O'.$fila,$rs['c45']);
-                    $objPHPExcel->getActiveSheet()->setCellValue('P'.$fila,$rs['c46']);
-                    $objPHPExcel->getActiveSheet()->setCellValue('Q'.$fila,$rs['c47']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('N'.$fila,$rs['c28']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('O'.$fila,$rs['c29']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('P'.$fila,$rs['c30']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('Q'.$fila,$rs['c31']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('R'.$fila,$rs['c32']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('S'.$fila,$rs['c33']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('T'.$fila,$rs['c34']);
 
-                    $objPHPExcel->getActiveSheet()->setCellValue('R'.$fila,$rs['c48']);
-                    $objPHPExcel->getActiveSheet()->setCellValue('S'.$fila,$rs['c49']);
-                    $objPHPExcel->getActiveSheet()->setCellValue('T'.$fila,$rs['c50']);
-                    $objPHPExcel->getActiveSheet()->setCellValue('U'.$fila,$rs['c51']);
-                    $objPHPExcel->getActiveSheet()->setCellValue('V'.$fila,$rs['c52']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('U'.$fila,$rs['c50']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('V'.$fila,$rs['c51']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('W'.$fila,$rs['c52']);
 
                     $fila++;
                 }

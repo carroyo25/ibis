@@ -19,7 +19,6 @@ $(() => {
                         <th colspan="7">QA/QC</th> 
                         <th colspan="5">ALMACEN OBRA</th>
                         <th colspan="8">COMPRAS</th> 
-                        <th colspan="3">USUARIO / GERENTE DE PROYECTO</th>
                         <th rowspan="3" class="filter">Total</th>
                     </tr>
                     <tr>
@@ -51,10 +50,6 @@ $(() => {
                         <th>Comunicación</th>
                         <th>Seriedad</th>
                         <th>Capacitación</th>
-
-                        <th>Fecha de Atención</th>
-                        <th>Calidad</th>
-                        <th>Cantidad de Procesos</th>
                     </tr>`;
             }else {
                 cabecera = `<tr>
