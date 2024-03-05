@@ -159,11 +159,12 @@
                                 $series  = strlen($this->itemSeries($rs['niddeta'])) == 0 ? "" : strtoupper("N/S :".$this->itemSeries($rs['niddeta']));
 
                                 $salida.='<tr data-detorden="'.$rs['nitemord'].'" 
-                                            data-idprod="'.$rs['id_cprod'].'"
-                                            data-iddetped="'.$rs['niddeta'].'"
-                                            data-saldo="'.$saldo.'"
-                                            data_pedido="'.$rs['nidpedi'].'"
-                                            data_orden="'.$rs['id_orden'].'">
+                                            data-idprod   ="'.$rs['id_cprod'].'"
+                                            data-iddetped ="'.$rs['niddeta'].'"
+                                            data-saldo    ="'.$saldo.'"
+                                            data-pedido   ="'.$rs['nidpedi'].'"
+                                            data-orden    ="'.$rs['id_orden'].'"
+                                            data-estado   ="0">
                                         <td class="textoCentro"><a href="'.$rs['id_orden'].'" data-accion="deleteItem" class="eliminarItem"><i class="fas fa-minus"></i></a></td>
                                         <td class="textoCentro"><input type="checkbox"></td>
                                         <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
@@ -799,7 +800,7 @@
                                                     FORMAT( alm_despachodet.nsaldo, 2 ) AS nsaldo,
                                                     cm_producto.ccodprod,
                                                     REPLACE ( FORMAT( alm_despachodet.ncantidad, 2 ), ',', '' ) AS cantidad,
-                                                    UPPER( CONCAT_WS( ' ', cm_producto.cdesprod, tb_pedidodet.observaciones ) ) AS cdesprod,
+                                                    UPPER(cm_producto.cdesprod) AS cdesprod,
                                                     tb_unimed.nfactor,
                                                     tb_unimed.cabrevia,
                                                     tb_pedidocab.nrodoc,
@@ -836,7 +837,8 @@
                                         data-iddespacho="'.$rs['niddeta'].'"
                                         data-idproducto ="'.$rs['id_cprod'].'"
                                         data-pedido ="'.$rs['pedido'].'"
-                                        data-orden ="'.$rs['orden'].'">
+                                        data-orden ="'.$rs['orden'].'"
+                                        data-estado ="1">
                                         <td class="textoCentro"><a href="'.$rs['niddeta'].'" data-accion="deleteItem" class="eliminarItem"><i class="fas fa-minus"></i></a></td>
                                         <td class="textoCentro"><input type="checkbox" checked></td>
                                         <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
@@ -999,11 +1001,14 @@
 
                 $rowCount = $sql->rowCount();
 
-                $this->modificarDetalles($detalles);
+                //$this->modificarDetalles($detalles,$cabecera['codigo_salida']);
 
-                if ($rowCount > 0) {
-                    return true;
-                }
+                $this->grabarDetallesDespacho($cabecera['codigo_salida'],$detalles,$cabecera['codigo_almacen_origen']);
+                $this->actualizarDetallesPedido($cabecera['codigo_salida'],$detalles);
+
+                //f ($rowCount > 0) {
+                return true;
+                //}
                 
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
@@ -1011,7 +1016,7 @@
             }
         }
 
-        private function modificarDetalles($detalles){
+        private function modificarDetalles($detalles,$id){
             try {
                 $datos = json_decode($detalles);
                 $nreg = count($datos);
@@ -1024,7 +1029,7 @@
                                                                                 ncodalm2=:destino,
                                                                                 ndespacho=:candesp
                                                                         WHERE niddeta=:id");
-                            $sql->execute(["id"=>$datos[$i]->iddespacho,
+                            $sql->execute(["id"=>$id,
                                             "origen"=>$datos[$i]->almacen,
                                             "destino"=>$datos[$i]->destino,
                                             "candesp"=>$datos[$i]->cantdesp,

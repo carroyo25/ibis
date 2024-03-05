@@ -528,7 +528,6 @@ $(function(){
                             accion = "";
                             $(".primeraBarra").css("background","#819830");
                             $(".primeraBarra span").text('Datos Generales ... Grabado');
-                            tipoVista = null;
                         },
                         "json"
                     );
@@ -703,7 +702,7 @@ detalles = (flag) =>{
             CHECKED     = $(this).find('td').eq(1).children().prop("checked");//codigo
 
     
-        item = {};
+        let item = {};
 
         if ( CHECKED == flag )  {
             if (CANTREC > 0) {

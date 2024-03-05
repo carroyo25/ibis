@@ -74,7 +74,7 @@
         }
 
         function modificarSalida() {
-            echo $this->model->modificar($_POST['cabecera'],$_POST['detalles']);
+            echo $this->model->modificar($_POST['cabecera'],$_POST['detalles'],$_POST['iddespacho']);
         }
         
         function existeObra() {

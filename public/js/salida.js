@@ -6,6 +6,7 @@ $(function() {
         idfila = "",
         ordenes = [],
         sw=0;
+        
 
     $("#esperar").fadeOut();
 
@@ -91,6 +92,10 @@ $(function() {
                 $("#proceso").fadeIn();
 
                 tipoVista = true;
+                estado = 1;
+
+                $(".primeraBarra").css("background","#0078D4");
+                $(".primeraBarra span").text("Datos Generales");
             },
             "json"
         );
@@ -117,6 +122,11 @@ $(function() {
         
         accion = 'n';
         cc = "";
+
+        tipoVista = null;
+
+        $(".primeraBarra").css("background","#0078D4");
+        $(".primeraBarra span").text("Datos Generales");
 
         return false;
     });
@@ -145,26 +155,21 @@ $(function() {
 
     $("#importData").click(function (e) { 
         e.preventDefault();
-        
-        if ( accion == 'n') {
-            try {
-                $.post(RUTA+"salida/ordenes",
-                function (data, textStatus, jqXHR) {
-                    $("#ordenes tbody")
-                        .empty()
-                        .append(data);
 
-                    $("#busqueda").fadeIn();
-                },
-                "text"
-                );
-                
-            } catch (error) {
-                mostrarMensaje(error,'mensaje_error');
-            }
-                
-        }else{
-            mostrarMensaje('El despacho se esta procesando','mensaje_error');
+        try {
+            $.post(RUTA+"salida/ordenes",
+            function (data, textStatus, jqXHR) {
+                $("#ordenes tbody")
+                    .empty()
+                    .append(data);
+
+                $("#busqueda").fadeIn();
+            },
+            "text"
+            );
+            
+        } catch (error) {
+            mostrarMensaje(error,'mensaje_error');
         }
 
         return false
@@ -267,10 +272,10 @@ $(function() {
                 result[this.name] = this.value;
             });
 
-            if (tipoVista == null) throw "Por favor grabar el documento";
+            if ( tipoVista == null ) throw "Por favor grabar el documento";
 
             $.post(RUTA+"salida/documentoPdf", {cabecera:result,
-                                                detalles:JSON.stringify(detalles(tipoVista)),
+                                                detalles:JSON.stringify(detalles(tipoVista,1)),
                                                 condicion:0},
                 function (data, textStatus, jqXHR) {
                     $(".ventanaVistaPrevia iframe")
@@ -317,7 +322,9 @@ $(function() {
 
             $.post(RUTA+"salida/ordenId", {id:$(this).data("orden"),costo:$(this).data("idcosto")},
             function (data, textStatus, jqXHR) {
-                $("#numero").val(data.numero);
+                if (accion == "n")
+                    $("#numero").val(data.numero);
+
                 $("#tablaDetalles tbody").append(data.items);
                 $("#costos").val(data.costos);
 
@@ -340,7 +347,7 @@ $(function() {
     $("#btnPendientes, #btnTotales").click(function (e) { 
         e.preventDefault();
 
-        tipoVista = e.target.id == "btnTotales"?true:false;
+        tipoVista = e.target.id == "btnTotales" ? true:false;
 
         let result = {};
 
@@ -353,28 +360,38 @@ $(function() {
             if (result['codigo_almacen_destino'] == '') throw "Elija el Almacen";
             if (result['codigo_aprueba'] == '') throw "Elija la persona que aprueba";
             if (verificarCantidadesInput()) throw "Verifque las cantidades ingresadas";
+            if (detalles(tipoVista,0).length == 0) throw "No hay items que procesar";
 
             if (accion == "n") {
                 $.post(RUTA+"salida/nuevasalida", {cabecera:result,
-                    detalles:JSON.stringify(detalles(tipoVista))},
+                    detalles:JSON.stringify(detalles(tipoVista,0))},
                         function (data, textStatus, jqXHR) {
-                            $("#codigo_ingreso").val(data.indice);
+                            $("#codigo_ingreso").val(data.indice);  //no te dejes llevar por esto
                             mostrarMensaje("Nota Grabada","mensaje_correcto");
                            
                             $("#codigo_salida").val(data.indice);
                             accion = "u";
+
+                            $(".primeraBarra").css("background","#819830");
+                            $(".primeraBarra span").text('Datos Generales ... Grabado');
+
                         },
                     "json"
                 );
             }else {
                 $.post(RUTA+"salida/modificarsalida", {cabecera:result,
-                    detalles:JSON.stringify(detalles(true))},
+                    detalles:JSON.stringify(detalles(tipoVista,0)),
+                    iddespacho:$("#codigo_salida").val()},
                         function (data, textStatus, jqXHR) {
-                            $("#codigo_ingreso").val(data.indice);
+                            //$("#codigo_ingreso").val(data.indice);
                             mostrarMensaje("Nota Grabada","mensaje_correcto");
                             
                             $("#codigo_salida").val(data.indice);
-                            accion = "u";
+
+                            accion = " ";
+
+                            $(".primeraBarra").css("background","#819830");
+                            $(".primeraBarra span").text('Datos Generales ... Grabado');
                         },
                     "json"
                 );
@@ -452,7 +469,7 @@ $(function() {
             
             
             $.post(RUTA+"salida/vistaPreviaGuiaRemision", {cabecera:result,
-                                                            detalles:JSON.stringify(detalles(tipoVista)),
+                                                            detalles:JSON.stringify(detalles(tipoVista,1)),
                                                             proyecto: $("#costos").val()},
                 function (data, textStatus, jqXHR) {
                         
@@ -491,7 +508,7 @@ $(function() {
         });
 
         $.post(RUTA+"salida/GrabaGuia", {cabecera:result,
-                                        detalles:JSON.stringify(detalles(tipoVista)),
+                                        detalles:JSON.stringify(detalles(tipoVista,1)),
                                         proyecto: $("#costos").val(),
                                         despacho: $("#codigo_salida").val(),
                                         operacion:accion,
@@ -521,7 +538,7 @@ $(function() {
             if (result['codigo_traslado'] == "") throw "Seleccione la modalidad de traslado";
             
             $.post(RUTA+"salida/preImpreso", {cabecera:result,
-                                              detalles:JSON.stringify(detalles(tipoVista)),
+                                              detalles:JSON.stringify(detalles(tipoVista,1)),
                                               proyecto: $("#costos").val(),
                                               despacho: $("#codigo_salida").val(),
                                               operacion:accion},
@@ -715,17 +732,17 @@ verificarCantidadesInput = () =>{
     return errorCantidad;
 }
 
-detalles = (flag) =>{
+detalles = (flag,sw) =>{
     DETALLES = [];
 
     let TABLA = $("#tablaDetalles tbody >tr");
-    
+
     TABLA.each(function(){
         let ITEM        = $(this).find('td').eq(1).text(),
             IDDETORDEN  = $(this).data("detorden"),
             IDDETPED    = $(this).data("iddetped"),
+            ESTADO      = $(this).data("estado"),
             IDPROD      = $(this).data("idprod"),
-            IDDESPACHO  = $(this).data("iddespacho"),
             PEDIDO      = $(this).find('td').eq(11).text(),
             ORDEN       = $(this).find('td').eq(12).text(),
             INGRESO     = $(this).data("ingreso"),
@@ -739,12 +756,13 @@ detalles = (flag) =>{
             DESTINO     = $("#codigo_almacen_destino").val(),
             CHECKED     = $(this).find('td').eq(1).children().prop("checked");//codigo
     
-        item = {};
+        let item = {};
 
-        if (CHECKED == flag) {
+        if ( CHECKED == flag && ESTADO == sw ) {
             item['item']         = ITEM;
             item['iddetorden']   = IDDETORDEN;
             item['iddetped']     = IDDETPED;
+            item['iddespacho']   = null;
             item['idprod']       = IDPROD;
             item['pedido']       = ORDEN;
             item['orden']        = PEDIDO;
@@ -753,12 +771,12 @@ detalles = (flag) =>{
             item['cantidad']     = CANTIDAD;
             item['cantdesp']     = CANTDESP;
             item['obser']        = OBSER;
-            item['iddespacho']   = IDDESPACHO;
-
             item['codigo']       = CODIGO;
             item['descripcion']  = DESCRIPCION;
             item['unidad']       = UNIDAD;
             item['destino']      = DESTINO;
+
+            $(this).attr('data-estado',1);
             
             DETALLES.push(item);
         }
