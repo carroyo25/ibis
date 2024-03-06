@@ -73,6 +73,25 @@
                         <label for="observaciones_dialogo">Observaciones</label>
                         <textarea name="observaciones_dialogo" id="observaciones_dialogo"></textarea>
                     </div>
+                    <br><br>
+                    <div class="datos_cuerpo">
+                        <label for="procesador">Procesador :</label>
+                        <input type="text" name="procesador" id="procesador">
+                        <label for="ram">Memoria RAM :</label>
+                        <input type="text" name="ram" id="ram">
+                        <label for="hdd">Disco Duro:</label>
+                        <input type="text" name="hdd id="hdd>
+                        <!--<label for="tipo_mmtto">Mantenimiento</label>
+                        <select name="tipo_mmtto" id="tipo_mmtto">
+                            <option value="1">Mantenimiento Programado</option>
+                            <option value="2">Mantenimiento Preventivo</option>
+                            <option value="3">Mantenimiento Correctivo</option>
+                        </select>-->
+                    </div>
+                    <div class="datos_cuerpo_observaciones">
+                        <label for="otros">Observaciones</label>
+                        <textarea name="otros" id="otros"></textarea>
+                    </div>
                 </div>
                 <div class="opciones_dialogo">
                     <button type="button" id="btnAceptarDialogo">Aceptar</button>

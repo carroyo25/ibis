@@ -77,7 +77,6 @@
             }
         }
 
-       
         public function registrarMmtto($parametros){
             try {
                 $docData = [];
@@ -137,6 +136,10 @@
                                             $parametros['observa'],
                                             $parametros['fmmto'],
                                             $parametros['asignado']);*/
+
+                        if ( !$this->existeSerie($parametros['serie_producto']) ) {
+                            $this->grabarEspecificaciones($parametros);
+                        }
                     }
                 }
 
@@ -319,6 +322,24 @@
 
                 return array("respuesta"=>$respuesta);
 
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        private function existeSerie($serie){
+            try {
+                //code...
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        private function grabarEspecificaciones($serie,$id,$procesador,$memoria,$hdd,$otros){
+            try {
+                //code...
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;

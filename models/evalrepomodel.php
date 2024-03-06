@@ -602,8 +602,8 @@
                     $objPHPExcel->getActiveSheet()->setCellValue('W2','TOTAL');
 
                     $objPHPExcel->getActiveSheet()->setCellValue('F3','Plan de Gestion');
-                    $objPHPExcel->getActiveSheet()->setCellValue('G3','Plan de Puntos');
-                    $objPHPExcel->getActiveSheet()->setCellValue('H3','Procedimientos');
+                    $objPHPExcel->getActiveSheet()->setCellValue('G3','Plan PIE');
+                    $objPHPExcel->getActiveSheet()->setCellValue('H3','Procedimientos Especificos');
                     $objPHPExcel->getActiveSheet()->setCellValue('I3','Requisitos');
                     $objPHPExcel->getActiveSheet()->setCellValue('J3','Aceptación de Reclamos');
                     $objPHPExcel->getActiveSheet()->setCellValue('K3','Comunicación Oportuna');

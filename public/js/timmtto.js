@@ -62,6 +62,11 @@ $(() => {
                 formData.append('correo_tecnico',$("#mail_user").val());
                 formData.append('asignado',$("#usuario").val());
                 formData.append('tipo_mmtto',$("#tipo_mmtto").val());
+
+                formData.append('procesador',$("#procesador").val()); //
+                formData.append('ram',$("#ram").val()); //
+                formData.append('hdd',$("#hdd").val()); //
+                formData.append('otros',$("#otros").val()); //
                 
                 formData.append('codigo_costos',cc);
                 formData.append('codigo_producto',null);

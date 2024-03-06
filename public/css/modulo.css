@@ -1265,7 +1265,7 @@
   margin-bottom: 1rem;
 }
 .ventanaConsumo .contenedor .cuerpo_dialogo {
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 }
 .ventanaConsumo .contenedor .cuerpo_dialogo .datos_cuerpo {
   display: -ms-grid;
@@ -1289,7 +1289,7 @@
           flex-direction: column;
 }
 .ventanaConsumo .contenedor .cuerpo_dialogo .datos_cuerpo_observaciones textarea {
-  height: 3rem;
+  height: 3.5rem !important;
   padding-left: 20px;
 }
 .ventanaConsumo .contenedor .opciones_dialogo {

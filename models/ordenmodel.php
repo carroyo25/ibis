@@ -241,22 +241,22 @@
         public function verDatosCabecera($pedido){
             $datosPedido = $this->datosPedido($pedido);
             
-            $api = file_get_contents('https://api.apis.net.pe/v1/tipo-cambio-sunat');
-            $cambio = json_decode($api);
+            /*$api = file_get_contents('https://api.apis.net.pe/v1/tipo-cambio-sunat');
+            $cambio = json_decode($api);*/
 
-            /*$txt = file_get_contents('https://www.sunat.gob.pe/a/txt/tipoCambio.txt');
+            $txt = file_get_contents('https://www.sunat.gob.pe/a/txt/tipoCambio.txt');
             $txt_array = explode('|', $txt);
-            $cambio = round($txt_array[2],2);*/
+            $cambio = round($txt_array[2],2);
 
             $numero = $this->generarNumeroOrden();
 
-            /*$salida = array("pedido"=>$datosPedido,
-                            "orden"=>str_pad($numero,6,0,STR_PAD_LEFT),
-                            "cambio"=>$cambio);*/
-            
             $salida = array("pedido"=>$datosPedido,
                             "orden"=>str_pad($numero,6,0,STR_PAD_LEFT),
-                            "cambio"=>$cambio->compra);
+                            "cambio"=>$cambio);
+            
+            /*$salida = array("pedido"=>$datosPedido,
+                            "orden"=>str_pad($numero,6,0,STR_PAD_LEFT),
+                            "cambio"=>$cambio->compra);*/
 
             return $salida;
         }

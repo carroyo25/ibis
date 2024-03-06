@@ -1004,7 +1004,7 @@ $emitido:#F8CAAD;
         }
 
         .cuerpo_dialogo {
-            margin-bottom: 1rem;
+            margin-bottom: .5rem;
 
             .datos_cuerpo {
                 display: grid;
@@ -1023,7 +1023,7 @@ $emitido:#F8CAAD;
                 flex-direction: column;
 
                 textarea{
-                    height: 3rem;
+                    height: 3.5rem !important;
                     padding-left: 20px;
                 }
             }
