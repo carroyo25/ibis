@@ -27,6 +27,9 @@
     </div>
     <div class="modal" id="dialogo_registro">
         <div class="ventanaConsumo">
+            <input type="hidden" name="idmmtto" id="idmmtto">
+            <input type="hidden" name="idlastmmtto" id="idlastmmtto">
+            
             <div class="titulo_dialogo">
                 <h3>Registrar Mantenimiento</h3>
                 <a href="#" id="sendNotify" title="Enviar Programación"><i class="far fa-envelope"></i><p>Notificar</p></a>
@@ -80,7 +83,7 @@
                         <label for="ram">Memoria RAM :</label>
                         <input type="text" name="ram" id="ram">
                         <label for="hdd">Disco Duro:</label>
-                        <input type="text" name="hdd id="hdd>
+                        <input type="text" name="hdd" id="hdd">
                         <!--<label for="tipo_mmtto">Mantenimiento</label>
                         <select name="tipo_mmtto" id="tipo_mmtto">
                             <option value="1">Mantenimiento Programado</option>
@@ -89,7 +92,7 @@
                         </select>-->
                     </div>
                     <div class="datos_cuerpo_observaciones">
-                        <label for="otros">Observaciones</label>
+                        <label for="otros">Especificaciones: </label>
                         <textarea name="otros" id="otros"></textarea>
                     </div>
                 </div>
@@ -148,6 +151,7 @@
                     <th>Estado</th>
                     <th>4to MMTTO</th>
                     <th>Estado</th>
+                    <th>...</th>
                 </tr>
             </thead>
             <tbody>
@@ -157,7 +161,11 @@
                                         data-correo="<?php echo $registro['correo']; ?>"
                                         data-documento="<?php echo $registro['nrodoc']; ?>"
                                         data-costos="<?php echo $registro['nidreg']; ?>"
-                                        data-idprod="<?php echo $registro['id_cprod']; ?>">
+                                        data-idprod="<?php echo $registro['id_cprod']; ?>"
+                                        data-procesador="<?php echo $registro['cprocesador']; ?>"
+                                        data-ram="<?php echo $registro['cram']; ?>"
+                                        data-hdd="<?php echo $registro['chdd']; ?>"
+                                        data-otros ="<?php echo $registro['totros']; ?>">
                         <td class="pl20px"><?php echo $item++; ?></td>
                         <td class="pl20px"><?php echo $registro['cdesprod']; ?></td>
                         <td class="pl20px"><?php echo $registro['usuario']; ?></td>
@@ -172,6 +180,11 @@
                         <td class="textoCentro <?php echo $registro['est3'] == "pendiente" ? "semaforoNaranja" : "semaforoVerde" ; ?>"><?php echo $registro['est3']; ?></td>
                         <td class="textoCentro "><?php echo $registro['fmtto4']; ?></td>
                         <td class="textoCentro <?php echo $registro['est4'] == "pendiente" ? "semaforoNaranja" : "semaforoVerde" ; ?>"><?php echo $registro['est4']; ?></td>
+                        <td class="textoCentro">
+                            <a href="<?php echo $registro['cserie'];?>" data-fecha ="<?php echo $registro['entrega']; ?>" data-documento ="<?php echo $registro['dni']; ?>">
+                                <i class="fas fa-calendar-alt"></i>
+                            </a>
+                        </td>
                     </tr>
                 <?php }; ?>
             </tbody>

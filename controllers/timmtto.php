@@ -26,6 +26,14 @@
         function notificar(){
             echo json_encode($this->model->enviarNotificacion($_POST));
         }
+
+        function cambiofechas(){
+            echo json_encode($this->model->actualizarFechas($_POST));
+        }
+
+        function mmttospendientes() {
+            echo json-encode($this->model->mmttoUltimoPendiente($serie,$documento));
+        }
         
     }
 ?>

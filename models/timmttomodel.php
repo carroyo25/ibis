@@ -22,11 +22,13 @@
                                                         ibis.cm_producto.ccodprod,
                                                         ibis.cm_producto.id_cprod,
                                                         CONCAT_WS( ' ', rrhh.tabla_aquarius.nombres, rrhh.tabla_aquarius.apellidos ) AS usuario,
+                                                        tabla_aquarius.dni,
                                                         ibis.tb_proyectos.ccodproy,
                                                         ibis.tb_proyectos.nidreg,
                                                         rrhh.tabla_aquarius.correo,
                                                         ibis.ti_mmttos.cserie,
                                                         ibis.ti_mmttos.nrodoc,
+                                                        ibis.ti_mmttos.fentrega AS entrega,
                                                         DATEDIFF(
                                                             ibis.ti_mmttos.fmtto,
                                                         NOW()) AS periodo,
@@ -37,16 +39,21 @@
                                                         DATE_FORMAT( m3.fmtto, '%d/%m/%Y' ) AS fmtto3,
                                                         IF(m3.flgestado = 1,'realizado','pendiente') AS est3,
                                                         DATE_FORMAT( m4.fmtto, '%d/%m/%Y' ) AS fmtto4,
-                                                        IF(m4.flgestado = 1,'realizado','pendiente') AS est4
-                                                    FROM
-                                                        ibis.ti_mmttos
-                                                        INNER JOIN ibis.cm_producto ON ti_mmttos.idprod = cm_producto.id_cprod
-                                                        LEFT JOIN rrhh.tabla_aquarius ON ibis.ti_mmttos.nrodoc = rrhh.tabla_aquarius.dni COLLATE utf8_unicode_ci
-                                                        INNER JOIN ibis.tb_proyectos ON ibis.ti_mmttos.idcostos = ibis.tb_proyectos.nidreg
-                                                    LEFT JOIN ( SELECT ti_mmttos.fmtto,ti_mmttos.flgestado,ti_mmttos.cserie FROM ti_mmttos WHERE ti_mmttos.nmtto = 2 )	AS m2 ON m2.cserie = ti_mmttos.cserie
-                                                        LEFT JOIN ( SELECT ti_mmttos.fmtto,ti_mmttos.flgestado,ti_mmttos.cserie FROM ti_mmttos WHERE ti_mmttos.nmtto = 3 )	AS m3 ON m3.cserie = ti_mmttos.cserie
-                                                        LEFT JOIN ( SELECT ti_mmttos.fmtto,ti_mmttos.flgestado,ti_mmttos.cserie FROM ti_mmttos WHERE ti_mmttos.nmtto = 4 )	AS m4 ON m4.cserie = ti_mmttos.cserie
-                                                    WHERE
+                                                        IF(m4.flgestado = 1,'realizado','pendiente') AS est4,
+                                                        ibis.tb_tiespec.cprocesador,
+                                                        ibis.tb_tiespec.cram,
+                                                        ibis.tb_tiespec.chdd,
+                                                        ibis.tb_tiespec.totros 
+                                                        FROM
+                                                            ibis.ti_mmttos
+                                                            INNER JOIN ibis.cm_producto ON ti_mmttos.idprod = cm_producto.id_cprod
+                                                            LEFT JOIN rrhh.tabla_aquarius ON ibis.ti_mmttos.nrodoc = rrhh.tabla_aquarius.dni COLLATE utf8_unicode_ci
+                                                            INNER JOIN ibis.tb_proyectos ON ibis.ti_mmttos.idcostos = ibis.tb_proyectos.nidreg
+                                                            LEFT JOIN ( SELECT ti_mmttos.fmtto, ti_mmttos.flgestado, ti_mmttos.cserie FROM ti_mmttos WHERE ti_mmttos.nmtto = 2 ) AS m2 ON m2.cserie = ti_mmttos.cserie
+                                                            LEFT JOIN ( SELECT ti_mmttos.fmtto, ti_mmttos.flgestado, ti_mmttos.cserie FROM ti_mmttos WHERE ti_mmttos.nmtto = 3 ) AS m3 ON m3.cserie = ti_mmttos.cserie
+                                                            LEFT JOIN ( SELECT ti_mmttos.fmtto, ti_mmttos.flgestado, ti_mmttos.cserie FROM ti_mmttos WHERE ti_mmttos.nmtto = 4 ) AS m4 ON m4.cserie = ti_mmttos.cserie
+                                                            LEFT JOIN ibis.tb_tiespec ON ibis.tb_tiespec.cserie = ibis.ti_mmttos.cserie COLLATE utf8_unicode_ci
+                                                        WHERE
                                                         ibis.ti_mmttos.flgactivo = 1 
                                                         AND ibis.tb_proyectos.nidreg LIKE :costos 
                                                         AND ibis.ti_mmttos.cserie LIKE :serie 
@@ -81,8 +88,18 @@
             try {
                 $docData = [];
                 $respuesta = false;
+                $mensaje = "el equipo ya esta registrado";
 
-                if ($parametros['tipo_mmtto'] === 1){
+                if ( !$this->existeSerie($parametros['serie_producto']) ) {
+                    $this->grabarEspecificaciones($parametros);
+
+                    $mensaje = "Equipo registrado";
+                    $respuesta = true;
+                }
+
+                if ($parametros['tipo_mmtto'] === "1"){
+
+                    $respuesta = "mantenimiento programado";
                     $sql = $this->db->connect()->prepare("UPDATE ti_mmttos 
                                                         SET ti_mmttos.frelmtto =:fecha,
                                                             ti_mmttos.flgestado =:estado,
@@ -94,18 +111,19 @@
                                     "estado"    =>1,
                                     "user"      =>$parametros['user'],
                                     "observa"   =>$parametros['observa'],
-                                    "id"        =>$parametros['id']]);
+                                    "id"        =>$parametros['lastMmtto']]);
                     if ( $sql->rowCount() > 0){
                         $respuesta = true;
 
-                        $this->envio_correo_mantenimiento($parametros['correo'],
+                       /* $this->envio_correo_mantenimiento($parametros['correo'],
                                                         $parametros['tecnico'],
                                                         $parametros['correo_tecnico'],
                                                         $parametros['observa'],
                                                         $parametros['fmmto'],
-                                                        $parametros['asignado']);
+                                                        $parametros['asignado']);*/
                     }
                 }else {
+                    $respuesta = "otro mantenimiento";
                     $sql = $this->db->connect()->prepare("INSERT ti_mmttos 
                                                             SET ti_mmttos.nrodoc =:documento,
                                                                 ti_mmttos.idprod =:producto,
@@ -136,10 +154,6 @@
                                             $parametros['observa'],
                                             $parametros['fmmto'],
                                             $parametros['asignado']);*/
-
-                        if ( !$this->existeSerie($parametros['serie_producto']) ) {
-                            $this->grabarEspecificaciones($parametros);
-                        }
                     }
                 }
 
@@ -178,8 +192,10 @@
                         $docData[] = $row;
                     }
                 }
+
+                $pendientes = $this->mmttoUltimoPendiente($parametros['serie'],$parametros['documento']);
         
-                return $docData;
+                return array("mmttos" =>$docData,"lastmmttos" =>$pendientes);
 
             } catch (PDOException $th) {
                 echo $th->getMessage();
@@ -330,6 +346,64 @@
 
         private function existeSerie($serie){
             try {
+                $respuesta = false;
+
+                $sql = $this->db->connect()->prepare("SELECT 
+                                                        tb_tiespec.idreg 
+                                                    FROM  
+                                                        tb_tiespec 
+                                                    WHERE 
+                                                        tb_tiespec.cserie =:serie");
+                $sql->execute(["serie"=>$serie]);
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0){
+                    $respuesta = true;
+                }
+
+                return $respuesta;
+
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        private function grabarEspecificaciones($parametros){
+            try {
+                $respuesta = false;
+
+                $sql = $this->db->connect()->prepare("INSERT INTO 
+                                                        tb_tiespec 
+                                                      SET 
+                                                        tb_tiespec.idkardex =:kardex,
+                                                        tb_tiespec.cserie =:serie,
+                                                        tb_tiespec.cprocesador =:procesador,
+                                                        tb_tiespec.cram =:ram,
+                                                        tb_tiespec.chDd =:hdd,
+                                                        tb_tiespec.totros =:otros");
+
+                $sql->execute(["kardex" =>$parametros['id'],
+                                "serie"=>$parametros['serie_producto'],
+                                "procesador"=>$parametros['procesador'],
+                                "ram"=>$parametros['ram'],
+                                "hdd"=>$parametros['hdd'],
+                                "otros"=>$parametros['otros']]);
+
+                if( $sql->rowCount() > 0){
+                    $respuesta = true;
+                }
+
+                return $respuesta;
+
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function actualizarFechas($parametros){
+            try {
                 //code...
             } catch (PDOException $th) {
                 echo $th->getMessage();
@@ -337,9 +411,29 @@
             }
         }
 
-        private function grabarEspecificaciones($serie,$id,$procesador,$memoria,$hdd,$otros){
+        private function mmttoUltimoPendiente($serie,$documento){
             try {
-                //code...
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        ti_mmttos.idreg,
+                                                        ti_mmttos.cserie,
+                                                        ti_mmttos.nrodoc,
+                                                        DATE_FORMAT(MIN(ti_mmttos.fmtto),'%d/%m/%Y') as fecha_proxima 
+                                                    FROM
+                                                        ti_mmttos 
+                                                    WHERE
+                                                        ti_mmttos.cserie = :serie 
+                                                        AND ti_mmttos.nrodoc = :documento 
+                                                        AND ti_mmttos.ntipo = 1
+                                                        AND ti_mmttos.flgactivo = 1
+                                                        AND ti_mmttos.flgestado = 0");
+                
+                $sql->execute(["serie"=>$serie,"documento"=>$documento]);
+                $return = $sql->fetchAll();
+
+                return array("serie"=>$return[0]['cserie'],
+                            "id"=>$return[0]['idreg'],
+                            "fecha_proxima"=>$return[0]['fecha_proxima']);
+
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;

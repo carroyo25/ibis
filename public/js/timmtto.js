@@ -1,18 +1,42 @@
 $(() => {
     let id,idprod,cc,docidetuser;
 
+    $("#tablaPrincipal tr").on('click','a', function(e) {
+        e.preventDefault();
+
+            /*let formData = new FormData();
+                formData.append("fecha",$(this).data('fecha'));
+                formData.append("serie",$(this).prop("href"));
+                formData.append("documento",$(this).data('documento'));
+
+            fetch(RUTA+'timmtto/cambiofechas',{
+                method: 'POST',
+                data: formData
+            })*/
+
+        
+
+        return false;
+    });
+
     $("#tablaPrincipal tr").on("click", function (e) {
         e.preventDefault();
 
         $("#serie").val( $(this).find('td').eq(3).text() );
+        $("#idmmtto").val( $(this).data('id') );
         $("#descripcion").val( $(this).find('td').eq(1).text() );
         $("#fecha_sugerida").val( $(this).find('td').eq(6).text() );
         $("#usuario").val($(this).find('td').eq(2).text());
         $("#correo_usuario").val( $(this).data('correo'));
         $("#sendNotify").prop("href", $(this).data('id'));
 
-        idprod = $(this).data('idprod');
-        cc = $(this).data('costos');
+        $("#procesador").val($(this).data('procesador'));
+        $("#ram").val($(this).data('ram'));
+        $("#hdd").val($(this).data('hdd'));
+        $("#otros").val($(this).data('otros'));
+
+        idprod      = $(this).data('idprod');
+        cc          = $(this).data('costos');
         docidetuser = $(this).data('documento');
 
         $("#tabla_detalles_mttos tbody").empty();
@@ -29,7 +53,7 @@ $(() => {
         })
         .then(response => response.json())
         .then(data => {
-            data.forEach(element => {
+            data.mmttos.forEach(element => {
                 let row = `<tr>
                                 <td class="textoCentro">${element.frelmtto}</td>
                                 <td class="pl20px">${element.cobserva}</td>
@@ -38,6 +62,10 @@ $(() => {
 
                 $("#tabla_detalles_mttos tbody").append(row);
             });
+
+
+            $("#idlastmmtto").val(data.lastmmttos.id);
+            $("#fecha_sugerida").val(data.lastmmttos.fecha_proxima);
 
             $("#dialogo_registro").fadeIn();
         })
@@ -53,7 +81,7 @@ $(() => {
             if ($("#fecha_mmto").val() == "") throw new Error("No ingreso fecha del mantenimiento");
 
             let formData = new FormData();
-                formData.append('id',null);
+                formData.append('id',$("#idmmtto").val());
                 formData.append('fmmto',$("#fecha_mmto").val());
                 formData.append('correo',$("#correo_usuario").val());
                 formData.append('observa',$("#observaciones_dialogo").val());
@@ -73,6 +101,8 @@ $(() => {
                 formData.append('serie_producto',$("#serie").val());
                 formData.append('documento_usuario',docidetuser);
 
+                formData.append('lastMmtto',$("#idlastmmtto").val());
+
             fetch(RUTA+'timmtto/mantenimiento',{
                 method: 'POST',
                 body:formData
@@ -87,11 +117,9 @@ $(() => {
         } catch (error) {
             mostrarMensaje(error,"mensaje_error")
         }
-        
 
         return false;
     })
-
 
     $("#btnCancelarDialogo").click(function (e) {
         e.preventDefault();
