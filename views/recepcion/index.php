@@ -33,6 +33,9 @@
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
                         <div>
+                            <button type="button" id="cancelRegister" title="Anular Nota de Ingreso" class="boton4">
+                                <i class="fas fa-ban"></i> Anular Nota
+                            </button>
                             <button type="button" id="importData" title="Importar Orden" class="boton3">
                                 <i class="fab fa-wpexplorer"></i> Importar Orden
                             </button>

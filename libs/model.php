@@ -3950,7 +3950,7 @@
                                         <td class="pl20px">'.$rs['cdesprod'].'</td>
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                         <td class="pr20px textoDerecha">'.$rs['cantidad_orden'].'</td>
-                                        <td class="pr5px"><input type="text" class="textoDerecha" value="'.$rs['ncantidad'].'"></td>
+                                        <td class="pr5px"><input type="text" class="textoDerecha" value="'.$rs['ncantidad'].'" onClick="this.select();"></td>
                                         <td><input type="text" value="'.$rs['cobserva'].'" readonly></td>
                                         <td class="pr20px textoDerecha"></td>
                                         <td class="textoCentro"><a href="'.$rs['id_regalm'].'" data-accion="series"><i class="fas fa-barcode"></i></a></td>

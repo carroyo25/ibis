@@ -459,7 +459,9 @@
                                         <input type="number" 
                                             step="any" 
                                             placeholder="0.00" 
-                                            onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)" value="'.$saldo.'">
+                                            onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)" 
+                                            onClick="this.select();"
+                                            value="'.$saldo.'">
                                     </td>
                                     <td><input type="text"></td>
                                     <td></td>
@@ -764,7 +766,6 @@
             }
         }
 
-        
         //verificar aca para el cambio de año
         public function filtrarOrdenesID($id){
             try {
@@ -849,6 +850,87 @@
             try {
                 $sql = $this->db->connect()->prepare("UPDATE alm_recepdet SET alm_recepdet.nflgactivo=0 WHERE alm_recepdet.niddetaPed =:id");
                 $sql->execute(["id"=>$id]);
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        public function anularIngreso($parametros){
+            try {
+                $despachos = $this->buscarOrdenDespacho($parametros['orden']);
+                $mensaje = "Error en el proceso";
+                $clase = "mensaje_error";
+
+                if ( $despachos <= 0 ){
+                    if ( $this->anularDespacho($parametros['id']) == true ){
+                        $this->anularItemsDespacho($parametros['id']);
+                        $clase = "mensaje_correcto";
+                        $mensaje = "Nota Anulada!!";
+                    };
+                }else{
+                    $mensaje = "La orden tienes despachos, no se puede anular";
+                }
+                
+                return array("mensaje"=>$mensaje,"despachos"=>$despachos,"clase"=>$clase);
+   
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        private function buscarOrdenDespacho($orden){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        count(alm_despachodet.nropedido) AS despachos
+                                                    FROM
+                                                        alm_despachodet 
+                                                    WHERE
+                                                        alm_despachodet.nropedido =:orden
+                                                        AND YEAR ( alm_despachodet.fregsys ) = YEAR(NOW())");
+                $sql->execute(["orden"=>$orden]);
+                $result = $sql->fetchAll();
+
+                return $result[0]['despachos'];
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        private function anularItemsDespacho($id){
+            try {
+                $sql = $this->db->connect()->prepare("UPDATE alm_recepdet 
+                                                    SET alm_recepdet.ncantidad =:cantidad,
+                                                        alm_recepdet.niddetaPed =:pedido,
+                                                        alm_recepdet.niddetaOrd =:orden,
+                                                        alm_recepdet.nflgactivo =:activo
+                                                    WHERE alm_recepdet.id_regalm =:id");
+                $sql->execute(["cantidad"=>null,"pedido"=>null,"orden"=>null,"activo"=>0,"id"=>$id]);
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        private function anularDespacho($id){
+            try {
+                $estado = false;
+                
+                $sql = $this->db->connect()->prepare("UPDATE alm_recepcab 
+                                                      SET alm_recepcab.nEstadoDoc  =:estado,
+                                                          alm_recepcab.nflgactivo  =:activo
+                                                      WHERE alm_recepcab.id_regalm =:id
+                                                      LIMIT 1");
+
+                $sql->execute(["estado"=>105,"activo"=>0,"id"=>$id]);
+
+                if ( $sql->rowCount() > 0) {
+                    $estado = true;
+                }
+
+                return $estado;
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
                 return false;

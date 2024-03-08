@@ -81,5 +81,9 @@
         function marcaItem(){
             echo $this->model->marcarItem($_POST['id']);
         }
+
+        function anular(){
+            echo json_encode($this->model->anularingreso($_POST));
+        }
     }
 ?>

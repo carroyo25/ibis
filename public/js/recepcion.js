@@ -178,7 +178,7 @@ $(function(){
         e.preventDefault();
         
         try {
-            if (accion == "u") throw "La nota, no puede modificarse";
+            if (accion == "u") throw "No se puede añadir mas registros al ingreso";
 
             $.post(RUTA+"recepcion/ordenes",
                 function (data, textStatus, jqXHR) {
@@ -332,63 +332,6 @@ $(function(){
  
     });
 
-    /*$("#closeDocument").click(function (e) { 
-        e.preventDefault();
-        
-        let result = {};
-
-        $.each($("#formProceso").serializeArray(),function(){
-            result[this.name] = this.value;
-        });
-
-        try {
-            if (result['codigo_ingreso'] == '') throw "Debe grabar el documento";
-            if (result['codigo_costos'] == '') throw "Elija Centro de Costos";
-            if (result['codigo_aprueba'] == '') throw "Elija la persona que aprueba";
-            if (result['codigo_movimiento'] == '') throw "Elija tipo de movimiento";
-            if (result['guia'] == '') throw "Escriba el número de guia"
-
-            $.post(RUTA+"recepcion/cierraIngreso", {cabecera:result,
-                                                    detalles:JSON.stringify(detalles())},
-                function (data, textStatus, jqXHR) {
-                    console.log(data);
-                },
-                "text"
-            );
-        } catch (error) {
-            mostrarMensaje(error,'mensaje_error');
-        }
-
-        return false;
-    });*/
-
-     /*añadir registro de adjuntos
-    $("#fileAtachs").on("submit", function (e) {
-        e.preventDefault()
-
-        let aInfo = new FormData( this );
-            aInfo.append("nroIngreso",$("#codigo_ingreso").val());
-
-        $.ajax({
-            // URL to move the uploaded image file to server
-            url: RUTA + 'recepcion/adjuntos',
-            // Request type
-            type: "POST", 
-            // To send the full form data
-            data: aInfo,
-            contentType:false,      
-            processData:false,
-            dataType:"json",    
-            // UI response after the file upload  
-            success: function(data)
-            {   
-                
-            }
-        });
-        
-        return false;
-    });*/
-
     $("#btnCancelSeries").click(function (e) { 
         e.preventDefault();
 
@@ -445,8 +388,7 @@ $(function(){
 
         return false;
     });
-
-    
+  
     $("#btnConsulta").on('click', function(e) {
         e.preventDefault();
 
@@ -535,9 +477,8 @@ $(function(){
                 $.post(RUTA+"recepcion/modificarRegistro",  {cabecera:result,
                     detalles:JSON.stringify(detalles(true))},
                     function (data, textStatus, jqXHR) {
-                        mostrarMensaje("Nota Modifcada","mensaje_correcto");
+                        mostrarMensaje("Nota Modificada","mensaje_correcto");
                         accion = "";
-                        $("#tablaDetalles tbody").empty();
                     },
                     "json"
                 );
@@ -669,6 +610,37 @@ $(function(){
         e.preventDefault();
         
         $("#pregunta").fadeOut();
+
+        return false;
+    });
+
+    $("#cancelRegister").click(function (e) { 
+        e.preventDefault();
+
+        //usuarios autorizados para anular
+        let users = ['628c5d20e3173','62145bbb5a092'],
+            usuario = $("#id_user").val();
+        try {
+            if(!users.includes(usuario)) throw Error("No tiene privilegios para anular");
+
+            formData = new FormData();
+            formData.append('id',$("#codigo_ingreso").val());
+            formData.append('orden',$("#orden").val());
+
+            $("#esperar").css("opacity","1").fadeIn();
+
+            fetch(RUTA+'recepcion/anular',{
+                method: 'POST',
+                body:formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                $("#esperar").css("opacity","0").fadeOut();
+                mostrarMensaje(data.mensaje,data.clase);
+            })
+        } catch (error) {
+            mostrarMensaje(error,"mensaje_error");
+        }
 
         return false;
     });
