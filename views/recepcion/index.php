@@ -239,6 +239,15 @@
             </div>
         </div>
     </div>
+    <div class="modal" id="preguntaAnula">
+        <div class="ventanaPregunta">
+            <h3>¿Eliminar la nota de ingreso?</h3>
+            <div>
+                <button type="button" id="btnAceptarAnula">Si</button>
+                <button type="button" id="btnCancelarAnula">Cancelar</button>
+            </div>
+        </div>
+    </div>
     <div class="modal" id="vistaAdjuntos">
         <div class="ventanaAdjuntos">
             <div class="tituloAdjuntos">

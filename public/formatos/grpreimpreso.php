@@ -175,7 +175,7 @@
                 $this->Cell(5,4,"",0,0,"C");
                 $this->SetXY(37,268);
                 $this->Cell(25,4,"",0,0);
-                $this->SetXY(35,269);
+                $this->SetXY(35,265);
                 $this->Cell(15,4,"",0,0);
                 $this->Cell(90,4,utf8_decode($this->modtras),0,0);
     

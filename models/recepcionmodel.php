@@ -862,14 +862,14 @@
                 $mensaje = "Error en el proceso";
                 $clase = "mensaje_error";
 
-                if ( $despachos <= 0 ){
+                if ( $despachos == 0 ){
                     if ( $this->anularDespacho($parametros['id']) == true ){
                         $this->anularItemsDespacho($parametros['id']);
                         $clase = "mensaje_correcto";
                         $mensaje = "Nota Anulada!!";
                     };
                 }else{
-                    $mensaje = "La orden tienes despachos, no se puede anular";
+                    $mensaje = "No puede ser anulado!!";
                 }
                 
                 return array("mensaje"=>$mensaje,"despachos"=>$despachos,"clase"=>$clase);

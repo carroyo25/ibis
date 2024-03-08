@@ -617,11 +617,19 @@ $(function(){
     $("#cancelRegister").click(function (e) { 
         e.preventDefault();
 
+        $("#preguntaAnula").fadeIn();
+
+        return false;
+    });
+
+    $("#btnAceptarAnula").click(function(e){
+        e.preventDefault();
+
         //usuarios autorizados para anular
         let users = ['628c5d20e3173','62145bbb5a092'],
             usuario = $("#id_user").val();
         try {
-            if(!users.includes(usuario)) throw Error("No tiene privilegios para anular");
+            if(!users.includes(usuario)) throw Error("No puede realizar esta accion!");
 
             formData = new FormData();
             formData.append('id',$("#codigo_ingreso").val());
@@ -635,12 +643,22 @@ $(function(){
             })
             .then(response => response.json())
             .then(data => {
+                $("#preguntaAnula").fadeOut();
                 $("#esperar").css("opacity","0").fadeOut();
                 mostrarMensaje(data.mensaje,data.clase);
+                
             })
         } catch (error) {
             mostrarMensaje(error,"mensaje_error");
         }
+
+        return false;
+    });
+
+    $("#btnCancelarAnula").click(function(e){
+        e.preventDefault();
+
+        $("#preguntaAnula").fadeOut();
 
         return false;
     });

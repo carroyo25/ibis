@@ -826,7 +826,6 @@
                     $item = 1;
                     while ($rs = $sql->fetch()){
 
-                        //$series = $this->buscarSeries($rs['id_cprod'],$rs['id_regalm'],$rs['ncodalm1']);
                         
                         $pendiente = $rs['cantidad'] - $rs['ingresado'];
 

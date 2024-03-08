@@ -55,8 +55,8 @@ $(function() {
                 if (data.guias.length == 1) {
                     $("#id_guia").val(data.guias[0].idreg);
                     $("#numero_guia").val(data.guias[0].cnumguia);
-                    $("#fgemision").val(data.guias[0].fguia);
-                    $("#ftraslado").val(data.guias[0].ftraslado);
+                    $("#fgemision").val(data.cabecera[0].ffecdoc);
+                    $("#ftraslado").val(data.cabecera[0].ffecenvio);
                     $("#almacen_origen").val(data.guias[0].corigen);
                     $("#almacen_origen_direccion").val(data.guias[0].cdirorigen);
                     $("#almacen_destino").val(data.guias[0].cdestino);
