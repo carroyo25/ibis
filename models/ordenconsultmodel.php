@@ -480,9 +480,9 @@
 
                 for ($i=0; $i < $nreg ; $i++) {
 
-                    $logistica = $datos[$i]->logistica == 1 ? "X" : "";
-                    $operaciones = $datos[$i]->logistica == 1 ? "X" : "";
-                    $finanzas = $datos[$i]->logistica == 1 ? "X" : "";
+                    $logistica      = $datos[$i]->logistica == 1 ? "X" : "";
+                    $operaciones    = $datos[$i]->operaciones == 1 ? "X" : "";
+                    $finanzas       = $datos[$i]->finanzas == 1 ? "X" : "";
 
                     $soles = explode(" ",$datos[$i]->soles);
                     $dolares = explode(" ",$datos[$i]->dolares);
