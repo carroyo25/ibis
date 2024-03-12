@@ -139,7 +139,7 @@
             return  $respuesta;
         }
 
-        /* est es sin biometrico */
+        /* est es sin biometrico //*/
         /*public function subirFirma($detalles,$correo,$nombre,$cc) {
            
                     $respuesta = true;

@@ -2671,7 +2671,8 @@
                                             FORMAT( lg_ordendet.ntotal, 4 ) AS ntotal,
                                             REPLACE ( FORMAT( lg_ordendet.nunitario * lg_ordendet.ncanti, 2 ), ',', '' ) AS total_real,
                                             cm_producto.ccodprod,
-                                            UPPER( CONCAT_WS( ' ', cm_producto.cdesprod, tb_pedidodet.observaciones, tb_pedidodet.docEspec ) ) AS cdesprod,
+                                            /*UPPER( CONCAT_WS( ' ', cm_producto.cdesprod, tb_pedidodet.observaciones, tb_pedidodet.docEspec ) ) AS cdesprod,*/
+                                            UPPER(cm_producto.cdesprod) AS cdesprod,
                                             cm_producto.nund,
                                             tb_unimed.cabrevia,
                                             FORMAT( tb_pedidodet.total, 2 ) AS total,

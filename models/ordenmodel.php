@@ -193,13 +193,13 @@
                                                        data-codprod="'.$rs['id_cprod'].'"
                                                        data-iditem="'.$rs['iditem'].'"
                                                        data-costos="'.$rs['idcostos'].'"
+                                                       data-compra="'.$cant.'"
                                                        data-itord="-"
                                                        data-nropedido=""
                                                        data-nparte="'.$rs['nroparte'].'"
-                                                       data-detalle="'.$rs['detalle'].'"
                                                        data-estado="'.$rs['estadoItem'].'"
-                                                       data-compra="'.$cant.'"
-                                                       data-atendida="'.$aten.'">
+                                                       data-atendida="'.$aten.'"
+                                                       data-detalle="'.htmlspecialchars($rs['detalle']).'">
                                         <td class="textoCentro">'.str_pad($rs['nrodoc'],6,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.date("d/m/Y", strtotime($rs['emision'])).'</td>
                                         <td class="pl5px">'.$rs['concepto'].'</td>

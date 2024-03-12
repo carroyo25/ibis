@@ -5,7 +5,8 @@ $(function() {
         fila = "",
         idfila = "",
         ordenes = [],
-        sw=0;
+        sw=0,
+        grabado = false;
         
 
     $("#esperar").fadeOut();
@@ -122,6 +123,7 @@ $(function() {
         
         accion = 'n';
         cc = "";
+        grabado = false;
 
         tipoVista = null;
 
@@ -374,6 +376,8 @@ $(function() {
 
                             $(".primeraBarra").css("background","#819830");
                             $(".primeraBarra span").text('Datos Generales ... Grabado');
+                            
+                            grabado = true;
 
                         },
                     "json"
@@ -392,6 +396,8 @@ $(function() {
 
                             $(".primeraBarra").css("background","#819830");
                             $(".primeraBarra span").text('Datos Generales ... Grabado');
+
+                            grabado = true;
                         },
                     "json"
                 );
