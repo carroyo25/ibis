@@ -41,7 +41,7 @@
         </div>
     </div>
     <div class="cabezaModulo">
-        <h1>Control de Almacen</h1>
+        <h1>Control de Existencias Minimas</h1>
         <div>
             <a href="#" id="excelFile"><i class="fas fa-file-excel"></i><p>Exportar</p></a>
             <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>

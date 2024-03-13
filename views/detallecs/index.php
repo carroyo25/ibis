@@ -11,7 +11,7 @@
         <p></p>
     </div>
     <div class="cabezaModulo">
-        <h1>Exixtencias Items</h1>
+        <h1>Existencias Items</h1>
         <div>
             <a href="#" id="excelFile"><i class="fas fa-file-excel"></i><p>Reporte</p></a>
             <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>

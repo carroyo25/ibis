@@ -7,7 +7,7 @@ $(function () {
     const anioActual = fecha.getFullYear();
     const mesActual = fecha.getMonth() + 1;
 
-    if ( $("#rol_user").val() == 9 || $("#rol_user").val() == 2) {
+    if ( $("#rol_user").val() == 9 || $("#rol_user").val() == 2 || $("#rol_user").val() == 110) {
         $.ajax({
             type: "POST",
             url: RUTA+"panel/pedidos",
