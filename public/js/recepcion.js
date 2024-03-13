@@ -2,7 +2,8 @@ $(function(){
     let accion = "",
         co = 1,
         fila = "",
-        idfila = "";
+        idfila = "",
+        grabado = false;
     
     let tipoVista = null;
        
@@ -71,6 +72,7 @@ $(function(){
 
                 accion = "u";
                 grabado = true;
+
                 $("#proceso").fadeIn();
 
             },
@@ -90,6 +92,8 @@ $(function(){
         
         accion = 'n';
         tipoVista = null;
+        grabado = false;
+
         $(".primeraBarra").css("background","#0078D4");
         $(".primeraBarra span").text('Datos Generales');
         $("#tablaDetalles tbody").empty();
@@ -360,6 +364,7 @@ $(function(){
 
         try {
             if ( tipoVista == null ) throw "Debe grabar el documento...";
+            if ( !grabado ) throw "Debe grabar el documento";
 
             $.post(RUTA+"recepcion/documentopdf",{cabecera:result,
                                                     detalles:JSON.stringify(detalles(tipoVista)),
@@ -440,9 +445,13 @@ $(function(){
     $("#btnPendientes, #btnTotales").click(function (e) { 
         e.preventDefault();
 
+        tipoVista = "";
+
         tipoVista = e.target.id == "btnTotales"?true:false;
 
         let result = {};
+
+        
 
         $.each($("#formProceso").serializeArray(),function(){
             result[this.name] = this.value;
@@ -457,7 +466,7 @@ $(function(){
 
 
             if (accion == "n") {
-                console.log(detalles(tipoVista));
+                
                 $.post(RUTA+"recepcion/nuevoIngreso", {cabecera:result,
                     detalles:JSON.stringify(detalles(tipoVista)),
                     series:JSON.stringify(series())},
@@ -467,7 +476,10 @@ $(function(){
                             $("#tablaPrincipal tbody")
                                 .empty()
                                 .append(data.listado);
+                            
                             accion = "";
+                            grabado = true;
+
                             $(".primeraBarra").css("background","#819830");
                             $(".primeraBarra span").text('Datos Generales ... Grabado');
                         },
@@ -478,7 +490,9 @@ $(function(){
                     detalles:JSON.stringify(detalles(true))},
                     function (data, textStatus, jqXHR) {
                         mostrarMensaje("Nota Modificada","mensaje_correcto");
+                        
                         accion = "";
+                        grabado = true;
                     },
                     "json"
                 );
@@ -670,56 +684,37 @@ detalles = (flag) =>{
     let TABLA = $("#tablaDetalles tbody >tr");
     
     TABLA.each(function(){
-        let ITEM        = $(this).find('td').eq(1).text(),
-            IDDETORDEN  = $(this).data("detorden"),
-            IDDETPED    = $(this).data("iddetped"),
-            IDPROD      = $(this).data("idprod"),
-            IDDETING    = $(this).data("iddetnota"),
-            PEDIDO      = $("#codigo_pedido").val(),
-            ORDEN       = $("#codigo_orden").val(),
-            ALMACEN     = $("#codigo_almacen").val(),
-            CANTSOL     = parseFloat($(this).find('td').eq(6).text()),
-            CANTREC     = $(this).find('td').eq(7).children().val(),// cantidad
-            CANTSAL     = null,
-            OBSER       = $(this).find('td').eq(8).children().val(),
-            VENCE       = null,
-            CODIGO      = $(this).find('td').eq(3).text(),//codigo
-            DESCRIPCION = $(this).find('td').eq(4).text(),//descripcion
-            UNIDAD      = $(this).find('td').eq(5).text(),//unidad
-            NESTADO     = null,
-            CESTADO     = null //$(this).find("select[name='estado'] option:selected").text(),
-            UBICACION   = "",
-            CHECKED     = $(this).find('td').eq(1).children().prop("checked");//codigo
+        let  CHECKED  = $(this).find('td').eq(1).children().prop("checked");
 
-    
-        let item = {};
+        if ( CHECKED === flag ) {
+            if ( $(this).find('td').eq(7).children().val() > 0) {
+                let item = {};
 
-        if ( CHECKED == flag )  {
-            if (CANTREC > 0) {
-                item['item']        = ITEM;
-                item['iddetorden']  = IDDETORDEN;
-                item['iddetped']    = IDDETPED;
-                item['idprod']      = IDPROD;
-                item['iddeting']    = IDDETING;
-                item['pedido']      = ORDEN;
-                item['orden']       = PEDIDO;
-                item['almacen']     = ALMACEN;
-                item['cantrec']     = CANTREC;
-                item['cantsol']     = CANTSOL;
-                item['cantsal']     = CANTSAL;
-                item['obser']       = OBSER;
-                item['vence']       = VENCE;
+                item['item']        = $(this).find('td').eq(1).text();
+                item['iddetorden']  = $(this).data("detorden");
+                item['iddetped']    = $(this).data("iddetped");
+                item['idprod']      = $(this).data("idprod");
+                item['iddeting']    = $(this).data("iddetnota");
+                item['pedido']      = $("#codigo_pedido").val();
+                item['orden']       = $("#codigo_orden").val();
+                item['almacen']     = $("#codigo_almacen").val();
+                item['cantrec']     = $(this).find('td').eq(7).children().val();
+                item['cantsol']     = parseFloat($(this).find('td').eq(6).text());
+                item['cantsal']     = null;
+                item['obser']       = $(this).find('td').eq(8).children().val();
+                item['vence']       = null;
 
-                item['codigo']     = CODIGO;
-                item['descripcion']= DESCRIPCION;
-                item['unidad']     = UNIDAD;
-                item['nestado']    = NESTADO;
-                item['cestado']    = CESTADO;
-                item['ubicacion']  = UBICACION;
+                item['codigo']     = $(this).find('td').eq(3).text();
+                item['descripcion']= $(this).find('td').eq(4).text();
+                item['unidad']     = $(this).find('td').eq(5).text();
+                item['nestado']    = null;
+                item['cestado']    = null;
+                item['ubicacion']  = null;
+                item['itemstat']   = CHECKED;
 
                 DETALLES.push(item);
             }
-        }  
+        }
     })
 
     return DETALLES; 
