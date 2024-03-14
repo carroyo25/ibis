@@ -68,7 +68,7 @@
         }
 
         //regresar cuando este en produccion
-        public function subirFirma($detalles,$correo,$nombre,$cc) {
+        /*public function subirFirma($detalles,$correo,$nombre,$cc) {
             if (array_key_exists('img',$_REQUEST)) {
                 // convierte la imagen recibida en base64
                 // Eliminamos los 22 primeros caracteres, que 
@@ -91,12 +91,12 @@
                 fwrite($fp, $imgData);
                 fclose($fp);
                 
-                if (file_exists($file)){
+                //if ( file_exists($file) ){
                     $respuesta = true;
 
                     $datos = json_decode($detalles);
                     $nreg = count($datos);
-                    $kardex = $this->norepite();
+                    $kardex = time();
 
                     for ($i=0; $i<$nreg; $i++){
                         $sql = $this->db->connect()->prepare("INSERT INTO alm_consumo 
@@ -131,22 +131,23 @@
                                         "cc"=>$datos[$i]->costos,
                                         "cambio"=>$datos[$i]->cambio]);
                     }
-                }            
+                //}            
             }
 
             $this->correoMovimiento($detalles,$nombre,$correo,$kardex,$cc);
         
             return  $respuesta;
-        }
+        }*/
 
         /* est es sin biometrico //*/
-        /*public function subirFirma($detalles,$correo,$nombre,$cc) {
+        public function subirFirma($detalles,$correo,$nombre,$cc) {
            
                     $respuesta = true;
+                    $namefile = "";
 
                     $datos = json_decode($detalles);
                     $nreg = count($datos);
-                    $kardex = $this->norepite();
+                    $kardex = time();
 
                     for ($i=0; $i<$nreg; $i++){
                         $sql = $this->db->connect()->prepare("INSERT INTO alm_consumo 
@@ -185,7 +186,7 @@
             $this->correoMovimiento($detalles,$nombre,$correo,$kardex,$cc);
 
             return  $respuesta;
-        }*/
+        }
 
         private function correoMovimiento($detalles,$nombre,$correo,$kardex,$cc){
             require_once("public/PHPMailer/PHPMailerAutoload.php");

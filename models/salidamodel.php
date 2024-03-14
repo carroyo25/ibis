@@ -1476,6 +1476,29 @@
             file_put_contents("public/documentos/guia_electronica/FIRMA/".$name_file, $content);
         }
 
+        private function ultimaGuiaAlmacen($almacen) {
+            try {
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        alm_despachocab.cnumguia,
+                                                        alm_despachocab.ffecdoc
+                                                    FROM
+                                                        alm_despachocab
+                                                    WHERE
+                                                        alm_despachocab.ncodalm1 = :almacen
+                                                        AND YEAR(alm_despachocab.ffecdoc) = YEAR(NOW())
+                                                    ORDER BY alm_despachocab.cnumguia DESC
+                                                    LIMIT 1");
+                $sql->execute(["almacen"=>$almacen]);
+
+                $result = $sql->fetchAll();
+
+                return $result[0]['cnumguia'];
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
         function envio_ticket($ruta_archivo_cdr, $ticket, $token_access, $ruc, $nombre_file){
             if(($ticket == "") || ($ticket == null)){
                 $mensaje['cdr_hash'] = '';
