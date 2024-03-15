@@ -277,7 +277,7 @@ $(function() {
             if ( tipoVista == null ) throw "Por favor grabar el documento";
 
             $.post(RUTA+"salida/documentoPdf", {cabecera:result,
-                                                detalles:JSON.stringify(detalles(tipoVista,1)),
+                                                detalles:JSON.stringify(detallesVista(1)),
                                                 condicion:0},
                 function (data, textStatus, jqXHR) {
                     $(".ventanaVistaPrevia iframe")
@@ -441,7 +441,7 @@ $(function() {
         return false;
     });
 
-      //filtrado en la lista de solicitante
+    //filtrado en la lista de solicitante
     $(".busqueda").on("keyup", function() {
         var value = $(this).val().toLowerCase();
         $(this).next().attr("id");
@@ -475,7 +475,7 @@ $(function() {
             
             
             $.post(RUTA+"salida/vistaPreviaGuiaRemision", {cabecera:result,
-                                                            detalles:JSON.stringify(detalles(tipoVista,1)),
+                                                            detalles:JSON.stringify(detallesVista(1)),
                                                             proyecto: $("#costos").val()},
                 function (data, textStatus, jqXHR) {
                         
@@ -514,7 +514,7 @@ $(function() {
         });
 
         $.post(RUTA+"salida/GrabaGuia", {cabecera:result,
-                                        detalles:JSON.stringify(detalles(tipoVista,1)),
+                                        detalles:JSON.stringify(detallesVista(1)),
                                         proyecto: $("#costos").val(),
                                         despacho: $("#codigo_salida").val(),
                                         operacion:accion,
@@ -544,7 +544,7 @@ $(function() {
             if (result['codigo_traslado'] == "") throw "Seleccione la modalidad de traslado";
             
             $.post(RUTA+"salida/preImpreso", {cabecera:result,
-                                              detalles:JSON.stringify(detalles(tipoVista,1)),
+                                              detalles:JSON.stringify(detallesVista(1)),
                                               proyecto: $("#costos").val(),
                                               despacho: $("#codigo_salida").val(),
                                               operacion:accion},
@@ -701,7 +701,7 @@ $(function() {
         let datosJSON = new FormData();
 
         datosJSON.append("cabecera",JSON.stringify(result));
-        datosJSON.append("detalles",JSON.stringify(detalles(tipoVista)));
+        datosJSON.append("detalles",JSON.stringify(detallesVista(1)));
 
         $.ajax({
             type: "POST",
@@ -783,6 +783,42 @@ detalles = (flag,sw) =>{
             item['destino']      = DESTINO;
 
             $(this).attr('data-estado',1);
+            
+            DETALLES.push(item);
+        }
+    })
+
+    return DETALLES; 
+}
+
+detallesVista = (sw) =>{
+    DETALLES = [];
+
+    let TABLA = $("#tablaDetalles tbody >tr");
+
+    TABLA.each(function(){
+        let STATUS  = $(this).data("estado");
+        let item = {};
+
+        console.log(STATUS);
+
+        if ( STATUS == 1 ) {
+            item['item']         = $(this).find('td').eq(1).text();
+            item['iddetorden']   = $(this).data("detorden");
+            item['iddetped']     = $(this).data("iddetped");
+            item['iddespacho']   = null;
+            item['idprod']       = $(this).data("idprod");
+            item['pedido']       = $(this).find('td').eq(11).text();
+            item['orden']        = $(this).find('td').eq(12).text();
+            item['ingreso']      = $(this).data("ingreso");
+            item['almacen']      = $("#codigo_almacen_origen").val();
+            item['cantidad']     = $(this).find('td').eq(6).text();
+            item['cantdesp']     = $(this).find('td').eq(8).children().val();
+            item['obser']        = $(this).find('td').eq(10).children().val();
+            item['codigo']       = $(this).find('td').eq(3).text();
+            item['descripcion']  = $(this).find('td').eq(4).text();
+            item['unidad']       = $(this).find('td').eq(5).text();
+            item['destino']      = $("#codigo_almacen_destino").val();
             
             DETALLES.push(item);
         }
