@@ -4,17 +4,9 @@ $(() => {
     $("#tablaPrincipal tr").on('click','a', function(e) {
         e.preventDefault();
 
-            /*let formData = new FormData();
-                formData.append("fecha",$(this).data('fecha'));
-                formData.append("serie",$(this).prop("href"));
-                formData.append("documento",$(this).data('documento'));
+        $("#cambio_fecha").fadeIn();
 
-            fetch(RUTA+'timmtto/cambiofechas',{
-                method: 'POST',
-                data: formData
-            })*/
-
-        
+           
 
         return false;
     });
@@ -95,6 +87,7 @@ $(() => {
                 formData.append('ram',$("#ram").val()); //
                 formData.append('hdd',$("#hdd").val()); //
                 formData.append('otros',$("#otros").val()); //
+                formData.append('estado',$("#estado_eqipo").val()); //
                 
                 formData.append('codigo_costos',cc);
                 formData.append('codigo_producto',null);
@@ -159,6 +152,31 @@ $(() => {
         } catch (error) {
             mostrarMensaje(error,"mensaje_error")
         }
+
+        return false;
+    });
+
+    $("#btnAceptarGrabar").click(function(e) {
+        e.preventDefault();
+
+         let formData = new FormData();
+                formData.append("fecha",$(this).data('fecha'));
+                formData.append("serie",$(this).prop("href"));
+                formData.append("documento",$(this).data('documento'));
+
+        fetch(RUTA+'timmtto/cambiofechas',{
+            method: 'POST',
+            data: formData
+        })
+        
+        return false;
+    });
+    
+
+    $("#btnCancelarGrabar").click(function(e) {
+        e.preventDefault();
+
+        $("#cambio_fecha").fadeOut();
 
         return false;
     });

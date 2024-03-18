@@ -84,12 +84,16 @@
                         <input type="text" name="ram" id="ram">
                         <label for="hdd">Disco Duro:</label>
                         <input type="text" name="hdd" id="hdd">
-                        <!--<label for="tipo_mmtto">Mantenimiento</label>
-                        <select name="tipo_mmtto" id="tipo_mmtto">
-                            <option value="1">Mantenimiento Programado</option>
-                            <option value="2">Mantenimiento Preventivo</option>
-                            <option value="3">Mantenimiento Correctivo</option>
-                        </select>-->
+                        <label for="tipo_mmtto">Mantenimiento</label>
+                        <select name="estado_eqipo" id="estado_eqipo">
+                            <option value="1">Nuevo</option>
+                            <option value="2" selected>Usado Nivel 1</option>
+                            <option value="3">Usado Nivel 2</option>
+                            <option value="4">Usado Nivel 3</option>
+                            <option value="5">Inoperativo</option>
+                            <option value="6">Obsoleto </option>
+                            <option value="7">Inoperativo</option>
+                        </select>
                     </div>
                     <div class="datos_cuerpo_observaciones">
                         <label for="otros">Especificaciones: </label>
@@ -100,6 +104,18 @@
                     <button type="button" id="btnAceptarDialogo">Aceptar</button>
                     <button type="button" id="btnCancelarDialogo">Cancelar</button>
                 </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="cambio_fecha">
+        <div class="ventanaPregunta">
+            <h3>Fecha de Entrega</h3>
+            <div>
+                <input type="date" name="fecha_nueva" id="fecha_nueva">
+            </div>
+            <div>
+                <button type="button" id="btnAceptarGrabar">Aceptar</button>
+                <button type="button" id="btnCancelarGrabar">Cancelar</button>
             </div>
         </div>
     </div>
@@ -161,6 +177,7 @@
                                         data-correo="<?php echo $registro['correo']; ?>"
                                         data-documento="<?php echo $registro['nrodoc']; ?>"
                                         data-costos="<?php echo $registro['nidreg']; ?>"
+                                        data-serie="<?php echo $registro['cserie']; ?>"
                                         data-idprod="<?php echo $registro['id_cprod']; ?>"
                                         data-procesador="<?php echo $registro['cprocesador']; ?>"
                                         data-ram="<?php echo $registro['cram']; ?>"
