@@ -715,7 +715,6 @@ $(function() {
             }
         });
 
-        //console.log(result);
 
         return false;
     });
@@ -797,10 +796,8 @@ detallesVista = (sw) =>{
     let TABLA = $("#tablaDetalles tbody >tr");
 
     TABLA.each(function(){
-        let STATUS  = $(this).data("estado");
+        let STATUS  = $(this).attr("data-estado");
         let item = {};
-
-        console.log(STATUS);
 
         if ( STATUS == 1 ) {
             item['item']         = $(this).find('td').eq(1).text();
@@ -819,6 +816,8 @@ detallesVista = (sw) =>{
             item['descripcion']  = $(this).find('td').eq(4).text();
             item['unidad']       = $(this).find('td').eq(5).text();
             item['destino']      = $("#codigo_almacen_destino").val();
+            item['estado']       = $(this).data("estado");
+
             
             DETALLES.push(item);
         }
