@@ -1,12 +1,13 @@
 $(() => {
-    let id,idprod,cc,docidetuser;
+    let id,cc,docidetuser;
 
     $("#tablaPrincipal tr").on('click','a', function(e) {
         e.preventDefault();
 
-        $("#cambio_fecha").fadeIn();
+        id = $(this).attr('href');
+        docidetuser = $(this).attr('data-documento');
 
-           
+        $("#cambio_fecha").fadeIn();
 
         return false;
     });
@@ -158,16 +159,23 @@ $(() => {
 
     $("#btnAceptarGrabar").click(function(e) {
         e.preventDefault();
+        try {
+            if ( $("#fecha_nueva").val() === "" ) throw new Error("Escoja una fecha");
 
-         let formData = new FormData();
-                formData.append("fecha",$(this).data('fecha'));
+            let formData = new FormData();
+                formData.append("fecha",$(this).data('fecha_nueva'));
                 formData.append("serie",$(this).prop("href"));
                 formData.append("documento",$(this).data('documento'));
 
-        fetch(RUTA+'timmtto/cambiofechas',{
-            method: 'POST',
-            data: formData
-        })
+            fetch(RUTA+'timmtto/cambiofechas',{
+                method: 'POST',
+                data: formData
+            });
+            
+        } catch (error) {
+            mostrarMensaje(error,'mensaje_error');
+        }
+
         
         return false;
     });
