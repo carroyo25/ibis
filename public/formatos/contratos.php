@@ -134,7 +134,7 @@
         }
 
         function footer(){
-            $this->setXY(10,145);
+            $this->setXY(10,$this->GetY()+5);
             //$this->Ln(3);
             if ( $this->condiciones != "" )
                 $this->MultiCell(190,3,utf8_decode($this->condiciones),"TLRB");
