@@ -233,7 +233,7 @@
             $this->cell(43,16,$estado2,1,0,"C"); //envia de parametro
             $this->cell(43,16,$estado1,1,1,"C"); //envia de parametro
 
-            $this->SetFont('Arial',"","7");
+            $this->SetFont('Arial',"","6.5");
             $this->SetTextColor(0,0,0);
             $this->cell(60,4,"20210003024022021122904",1,0,"C"); //envia de parametro
             $this->cell(43,4,"OPERACIONES / G.GENERAL",1,0,"C");
@@ -247,14 +247,16 @@
 2. Todo material recibido fuera de tiempo, SEPCON; se reserva los derechos de recepción y/o penalización sin               conocimiento previo del proveedor.
 3. Al momento de hacer entrega de los materiales, el proveedor deberá adjuntar cuando corresponda:                            Certificado de calidad, Hojas SDS, manuales de operación y mantenimiento, certificado de calibración,                        instrucciones de conservación, etc.
 4. Al momento de hacer la entrega de los materiales, el proveedor debe solicitar al almacén "La Nota de                          Ingreso" debidamente sellada. 
-5. Sirva adjuntar la Nota de Ingreso, Guia de Remisión y Factura, referente a una sola Orden de                                      Compra o Servicio
+5. Sirva adjuntar la Nota de Ingreso, Guia de Remisión y Factura, referente a una sola Orden de Compra o Servicio
 6. Consignar el número de la Orden de Compra en la Guia de Remisión y Factura. Presentar Factura                              original, con copia Sunat.'),1);
 
-            $this->setXY(144,229);
-            $this->MultiCell(55,3.2,utf8_decode('***IMPORTANTE***
-Es requisito indispensable que el proveedor ingrese en físico sus Facturas, Notas de Crédito y/o Notas de Débito debidamente sustentadas, por el Área de Recepción de SEPCON (Av. San Borja Norte 445-San Borja), único lugar
-autorizado para recibir dichos documentos, de otra manera no podrán ser ingresadas al proceso de pago. 
-SEPCON no se responsabiliza por la pérdida o extravío de documentos que no lleven su sello de recepción'),1);
+            $this->setXY(141,229);
+            $this->MultiCell(58,3.2,utf8_decode(
+                '***IMPORTANTE***
+
+Es requisito indispensable que el proveedor envíe sus facturas debidamente sustentadas en un solo archivo PDF, al correo: recepcion_factelec@sepcon.net, para su validación y registro, así mismo adjuntar los archivos XML y CDR de ser el caso, en el horario establecido:
+
+Martes y Jueves (De 08:30am a 12:40pm y 02:00pm hasta 03:30pm'),1);
             
         $this->Ln(2);
         $this->MultiCell(189,3.3,utf8_decode('En SEPCON contribuimos con la protección, cuidado y conservación del Medio Ambiente, por ello les alcanzamos algunas eco recomendaciones: 

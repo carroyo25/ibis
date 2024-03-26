@@ -68,7 +68,7 @@
         }
 
         //regresar cuando este en produccion
-        /*public function subirFirma($detalles,$correo,$nombre,$cc) {
+        public function subirFirma($detalles,$correo,$nombre,$cc) {
             if (array_key_exists('img',$_REQUEST)) {
                 // convierte la imagen recibida en base64
                 // Eliminamos los 22 primeros caracteres, que 
@@ -137,10 +137,10 @@
             $this->correoMovimiento($detalles,$nombre,$correo,$kardex,$cc);
         
             return  $respuesta;
-        }*/
+        }
 
         /* est es sin biometrico //*/
-        public function subirFirma($detalles,$correo,$nombre,$cc) {
+        /*public function subirFirma($detalles,$correo,$nombre,$cc) {
            
                     $respuesta = true;
                     $namefile = "";
@@ -186,7 +186,7 @@
             //$this->correoMovimiento($detalles,$nombre,$correo,$kardex,$cc);
 
             return  $respuesta;
-        }
+        }*/
 
         private function correoMovimiento($detalles,$nombre,$correo,$kardex,$cc){
             require_once("public/PHPMailer/PHPMailerAutoload.php");
