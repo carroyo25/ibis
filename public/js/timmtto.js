@@ -1,5 +1,5 @@
 $(() => {
-    let id,cc,docidetuser;
+    let id,cc,docidetuser,serie;
 
     const tabla_principal = document.getElementById('tablaPrincipal');
 
@@ -8,8 +8,8 @@ $(() => {
 
         if (e.target.matches(".click_link *")){
             
-            id = $(this).attr('href');
-            docidetuser = $(this).attr('data-documento');
+            serie = e.target.parentNode.getAttribute('href');
+            docidetuser = e.target.parentNode.dataset.documento;
 
             $("#cambio_fecha").fadeIn();
 
@@ -22,10 +22,10 @@ $(() => {
             $("#correo_usuario").val( e.target.closest(".click_tr").dataset.correo );
             $("#sendNotify").prop("href", e.target.closest(".click_tr").dataset.id );
 
-            $("#procesador").val($(this).data('procesador'));
-            $("#ram").val($(this).data('ram'));
-            $("#hdd").val($(this).data('hdd'));
-            $("#otros").val($(this).data('otros'));
+            $("#procesador").val(e.target.closest(".click_tr").dataset.procesador);
+            $("#ram").val(e.target.closest(".click_tr").dataset.ram);
+            $("#hdd").val(e.target.closest(".click_tr").dataset.hdd);
+            $("#otros").val(e.target.closest(".click_tr").dataset.otros);
 
             idprod      = $(this).data('idprod');
             cc          = $(this).data('costos');
@@ -63,67 +63,10 @@ $(() => {
             })
 
             return false;
-
         }
 
         return false;
     })
-
-
-    /*$("#tablaPrincipal tr").on("click", function (e) {
-        e.preventDefault();
-
-        $("#serie").val( $(this).find('td').eq(3).text() );
-        $("#idmmtto").val( $(this).data('id') );
-        $("#descripcion").val( $(this).find('td').eq(1).text() );
-        $("#fecha_sugerida").val( $(this).find('td').eq(6).text() );
-        $("#usuario").val($(this).find('td').eq(2).text());
-        $("#correo_usuario").val( $(this).data('correo'));
-        $("#sendNotify").prop("href", $(this).data('id'));
-
-        $("#procesador").val($(this).data('procesador'));
-        $("#ram").val($(this).data('ram'));
-        $("#hdd").val($(this).data('hdd'));
-        $("#otros").val($(this).data('otros'));
-
-        idprod      = $(this).data('idprod');
-        cc          = $(this).data('costos');
-        docidetuser = $(this).data('documento');
-
-        $("#tabla_detalles_mttos tbody").empty();
-
-        id = $(this).data('id');
-
-        let formData = new FormData();
-        formData.append('serie',$(this).find('td').eq(3).text());
-        formData.append('documento',$(this).data('documento'));
-
-        fetch(RUTA+'timmtto/anteriores',{
-            method: 'POST',
-            body:formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            data.mmttos.forEach(element => {
-                let row = `<tr>
-                                <td class="textoCentro">${element.frelmtto}</td>
-                                <td class="pl20px">${element.cobserva}</td>
-                                <td class="pl20px">${element.tecnico}</td>
-                            </tr>`;
-
-                $("#tabla_detalles_mttos tbody").append(row);
-            });
-
-
-            $("#idlastmmtto").val(data.lastmmttos.id);
-            $("#fecha_sugerida").val(data.lastmmttos.fecha_proxima);
-
-            $("#dialogo_registro").fadeIn();
-        })
-
-    
-        return false;
-    });*/
 
     $("#btnAceptarDialogo").click(function (e) {
         e.preventDefault();
@@ -146,7 +89,7 @@ $(() => {
                 formData.append('ram',$("#ram").val()); //
                 formData.append('hdd',$("#hdd").val()); //
                 formData.append('otros',$("#otros").val()); //
-                formData.append('estado',$("#estado_eqipo").val()); //
+                formData.append('estado',$("#estado_equipo").val()); //
                 
                 formData.append('codigo_costos',cc);
                 formData.append('codigo_producto',null);
@@ -221,14 +164,18 @@ $(() => {
             if ( $("#fecha_nueva").val() === "" ) throw new Error("Escoja una fecha");
 
             let formData = new FormData();
-                formData.append("fecha",$(this).data('fecha_nueva'));
-                formData.append("serie",$(this).prop("href"));
-                formData.append("documento",$(this).data('documento'));
+                formData.append("fecha",$("#fecha_nueva").val());
+                formData.append("serie",serie);
+                formData.append("documento",docidetuser);
 
             fetch(RUTA+'timmtto/cambiofechas',{
                 method: 'POST',
-                data: formData
-            });
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+            })
             
         } catch (error) {
             mostrarMensaje(error,'mensaje_error');
@@ -285,6 +232,7 @@ $(() => {
                                     data-hdd        ="${element.chdd}"
                                     data-otros      ="${element.totros}">
                                 <td class="pl20px">${item++}</td>
+                                <td class="pl20px">${element.cdesprod}</td>
                                 <td class="pl20px">${nombre}</td>
                                 <td class="pl20px">${element.cserie}</td>
                                 <td class="textoCentro">${element.fentrega}</td>

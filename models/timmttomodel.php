@@ -81,17 +81,17 @@
                 $docData = [];
 
                 $sql = $this->db->connect()->query("SELECT
-                                                        tabla_aquarius.dni,
-                                                        CONCAT_WS( ' ', tabla_aquarius.nombres, tabla_aquarius.apellidos ) AS usuario,
-                                                        tabla_aquarius.correo 
+                                                        rrhh.tabla_aquarius.dni,
+                                                        CONCAT_WS( ' ', rrhh.tabla_aquarius.nombres, rrhh.tabla_aquarius.apellidos ) AS usuario,
+                                                        rrhh.tabla_aquarius.correo 
                                                     FROM
-                                                        tabla_aquarius 
+                                                        rrhh.tabla_aquarius 
                                                     WHERE
-                                                        tabla_aquarius.estado = 'AC' 
+                                                        rrhh.tabla_aquarius.estado = 'AC' 
                                                     GROUP BY
-                                                        tabla_aquarius.dni 
+                                                        rrhh.tabla_aquarius.dni 
                                                     ORDER BY
-                                                        tabla_aquarius.dni");
+                                                        rrhh.tabla_aquarius.dni");
                 $sql->execute();
                 while($row = $sql->fetch(PDO::FETCH_ASSOC)){
                     $docData[] = $row;
@@ -441,7 +441,7 @@
                                 "ram"=>$parametros['ram'],
                                 "hdd"=>$parametros['hdd'],
                                 "otros"=>$parametros['otros'],
-                                "estado"=>$parametros['estado_equipo']]);
+                                "estado"=>$parametros['estado']]);
 
                 if( $sql->rowCount() > 0){
                     $respuesta = true;
@@ -457,11 +457,44 @@
 
         public function actualizarFechas($parametros){
             try {
-                //code...
+                $fecha = $parametros['fecha'];
+                $serie = $parametros['serie'];
+                $documento = $parametros['documento'];
+                $nuevas_fechas = [];
+                $fmmtto = 1;
+
+                $lapso = array("+6 month","+12 month","+18 month","+24 month");
+
+                for ($i = 0; $i < 4 ; $i++) {
+                    $nuevas_fechas[$i] = $this->calcularProximos($fecha,$lapso[$i]);
+
+                    $sql = $this->db->connect()->prepare("UPDATE ti_mmttos 
+                                                         SET ti_mmttos.fmtto =:fecha,
+                                                             ti_mmttos.fentrega =:entrega
+                                                         WHERE ti_mmttos.nrodoc =:documento 
+                                                                AND ti_mmttos.cserie =:serie
+                                                                AND ti_mmttos.nmtto =:mmtto
+                                                        LIMIT 1");
+                    
+                    $sql->execute(["fecha"=>$nuevas_fechas[$i],
+                                    "entrega"=>$fecha,
+                                    "documento"=>$documento,
+                                    "serie"=>$serie,
+                                    "mmtto"=>$fmmtto++]);
+
+                } 
+
+                return array("nuevas_fechas"=>$nuevas_fechas);
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
             }
+        }
+
+        private function calcularProximos($fecha,$meses){
+            $nuevafecha = date("Y-m-d",strtotime($fecha.$meses));
+	 
+		    return $nuevafecha;
         }
 
         private function mmttoUltimoPendiente($serie,$documento){

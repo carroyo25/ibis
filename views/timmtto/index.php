@@ -85,7 +85,7 @@
                         <label for="hdd">Disco Duro:</label>
                         <input type="text" name="hdd" id="hdd">
                         <label for="tipo_mmtto">Mantenimiento</label>
-                        <select name="estado_eqipo" id="estado_eqipo">
+                        <select name="estado_equipo" id="estado_equipo">
                             <option value="1">Nuevo</option>
                             <option value="2" selected>Usado Nivel 1</option>
                             <option value="3">Usado Nivel 2</option>
@@ -191,11 +191,11 @@
                         <td class="textoCentro"><?php echo $registro['fmtto1']; ?></td>
                         <td class="textoCentro <?php echo $registro['est1'] == 0 ? 'semaforoNaranja':'semaforoVerde'; ?>"><?php echo $registro['est1'] == 0 ? 'Pendiente':'Realizado'; ?></td>
                         <td class="textoCentro"><?php echo $registro['fmtto2']; ?></td>
-                        <td class="textoCentro <?php echo $registro['est1'] == 0 ? 'semaforoNaranja':'semaforoVerde'; ?>"><?php echo $registro['est2'] == 0 ? 'Pendiente':'Realizado';?></td>
+                        <td class="textoCentro <?php echo $registro['est2'] == 0 ? 'semaforoNaranja':'semaforoVerde'; ?>"><?php echo $registro['est2'] == 0 ? 'Pendiente':'Realizado';?></td>
                         <td class="textoCentro"><?php echo $registro['fmtto3']; ?></td>
-                        <td class="textoCentro <?php echo $registro['est1'] == 0 ? 'semaforoNaranja':'semaforoVerde'; ?>"><?php echo $registro['est3'] == 0 ? 'Pendiente':'Realizado';?></td>
+                        <td class="textoCentro <?php echo $registro['est3'] == 0 ? 'semaforoNaranja':'semaforoVerde'; ?>"><?php echo $registro['est3'] == 0 ? 'Pendiente':'Realizado';?></td>
                         <td class="textoCentro"><?php echo $registro['fmtto4']; ?></td>
-                        <td class="textoCentro <?php echo $registro['est1'] == 0 ? 'semaforoNaranja':'semaforoVerde'; ?>"><?php echo $registro['est4'] == 0 ? 'Pendiente':'Realizado';?></td>
+                        <td class="textoCentro <?php echo $registro['est4'] == 0 ? 'semaforoNaranja':'semaforoVerde'; ?>"><?php echo $registro['est4'] == 0 ? 'Pendiente':'Realizado';?></td>
                         <td class="textoCentro click_link">
                             <a href="<?php echo $registro['cserie'];?>" data-fecha ="<?php echo $registro['entrega']; ?>" data-documento ="<?php echo $registro['nrodoc']; ?>">
                                 <i class="fas fa-calendar-alt"></i>
