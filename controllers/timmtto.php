@@ -7,7 +7,7 @@
 
         function render(){
             $this->view->listaCostosSelect = $this->model->costosPorUsuarioSelect($_SESSION['iduser']);
-            $this->view->listaMantenimientos = $this->model->listarMantenimientos(-1,"","");
+            $this->view->listaMantenimientos = $this->model->listarMantenimientos(-1,"");
             $this->view->render('timmtto/index');
         }
 
@@ -32,7 +32,11 @@
         }
 
         function mmttospendientes() {
-            echo json-encode($this->model->mmttoUltimoPendiente($serie,$documento));
+            echo json_encode($this->model->mmttoUltimoPendiente($serie,$documento));
+        }
+
+        function listaMmttos() {
+            echo json_encode($this->model->listarMantenimientos($_POST['costos'],$_POST['serie']));
         }
         
     }

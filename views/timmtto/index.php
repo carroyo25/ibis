@@ -173,32 +173,31 @@
             <tbody>
                 <?php $item = 1; foreach($this->listaMantenimientos['datos'] as $registro) { ?> 
                 
-                    <tr class="pointer" data-id="<?php echo $registro['idreg']; ?>" 
-                                        data-correo="<?php echo $registro['correo']; ?>"
+                    <tr class="pointer click_tr" data-id="<?php echo $registro['idreg']; ?>" 
+                                        data-correo="<?php foreach($this->listaMantenimientos['usuarios'] as $usuario ){if ( $usuario['dni'] == $registro['nrodoc'] ){ echo $usuario['correo'];}}?>"
                                         data-documento="<?php echo $registro['nrodoc']; ?>"
                                         data-costos="<?php echo $registro['nidreg']; ?>"
                                         data-serie="<?php echo $registro['cserie']; ?>"
-                                        data-idprod="<?php echo $registro['id_cprod']; ?>"
                                         data-procesador="<?php echo $registro['cprocesador']; ?>"
                                         data-ram="<?php echo $registro['cram']; ?>"
                                         data-hdd="<?php echo $registro['chdd']; ?>"
                                         data-otros ="<?php echo $registro['totros']; ?>">
                         <td class="pl20px"><?php echo $item++; ?></td>
                         <td class="pl20px"><?php echo $registro['cdesprod']; ?></td>
-                        <td class="pl20px"><?php echo $registro['usuario']; ?></td>
+                        <td class="pl20px"><?php foreach($this->listaMantenimientos['usuarios'] as $usuario ){if ( $usuario['dni'] == $registro['nrodoc'] ){ echo $usuario['usuario'];}}?></td>
                         <td class="pl20px"><?php echo $registro['cserie']; ?></td>
                         <td class="textoCentro"><?php echo $registro['fentrega']; ?></td>
-                        <td class="textoCentro "><?php echo $registro['ccodproy']; ?></td>
-                        <td class="textoCentro "><?php echo $registro['fmtto1']; ?></td>
-                        <td class="textoCentro <?php echo $registro['est1'] == "pendiente" ? "semaforoNaranja" : "semaforoVerde" ; ?>"><?php echo $registro['est1']; ?></td>
-                        <td class="textoCentro "><?php echo $registro['fmtto2']; ?></td>
-                        <td class="textoCentro <?php echo $registro['est2'] == "pendiente" ? "semaforoNaranja" : "semaforoVerde" ; ?>"><?php echo $registro['est2']; ?></td>
-                        <td class="textoCentro "><?php echo $registro['fmtto3']; ?></td>
-                        <td class="textoCentro <?php echo $registro['est3'] == "pendiente" ? "semaforoNaranja" : "semaforoVerde" ; ?>"><?php echo $registro['est3']; ?></td>
-                        <td class="textoCentro "><?php echo $registro['fmtto4']; ?></td>
-                        <td class="textoCentro <?php echo $registro['est4'] == "pendiente" ? "semaforoNaranja" : "semaforoVerde" ; ?>"><?php echo $registro['est4']; ?></td>
-                        <td class="textoCentro">
-                            <a href="<?php echo $registro['cserie'];?>" data-fecha ="<?php echo $registro['entrega']; ?>" data-documento ="<?php echo $registro['dni']; ?>">
+                        <td class="textoCentro"><?php echo $registro['ccodproy']; ?></td>
+                        <td class="textoCentro"><?php echo $registro['fmtto1']; ?></td>
+                        <td class="textoCentro <?php echo $registro['est1'] == 0 ? 'semaforoNaranja':'semaforoVerde'; ?>"><?php echo $registro['est1'] == 0 ? 'Pendiente':'Realizado'; ?></td>
+                        <td class="textoCentro"><?php echo $registro['fmtto2']; ?></td>
+                        <td class="textoCentro <?php echo $registro['est1'] == 0 ? 'semaforoNaranja':'semaforoVerde'; ?>"><?php echo $registro['est2'] == 0 ? 'Pendiente':'Realizado';?></td>
+                        <td class="textoCentro"><?php echo $registro['fmtto3']; ?></td>
+                        <td class="textoCentro <?php echo $registro['est1'] == 0 ? 'semaforoNaranja':'semaforoVerde'; ?>"><?php echo $registro['est3'] == 0 ? 'Pendiente':'Realizado';?></td>
+                        <td class="textoCentro"><?php echo $registro['fmtto4']; ?></td>
+                        <td class="textoCentro <?php echo $registro['est1'] == 0 ? 'semaforoNaranja':'semaforoVerde'; ?>"><?php echo $registro['est4'] == 0 ? 'Pendiente':'Realizado';?></td>
+                        <td class="textoCentro click_link">
+                            <a href="<?php echo $registro['cserie'];?>" data-fecha ="<?php echo $registro['entrega']; ?>" data-documento ="<?php echo $registro['nrodoc']; ?>">
                                 <i class="fas fa-calendar-alt"></i>
                             </a>
                         </td>

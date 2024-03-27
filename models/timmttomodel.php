@@ -6,64 +6,56 @@
             parent::__construct();
         }
 
-        public function listarMantenimientos($costos,$serie,$usuario){
+        public function listarMantenimientos($costos,$serie){
 
             $cc = $costos != -1 ? $costos : "%";
             $serie = $serie != "" ? $serie : "%";
-            $usuario = $usuario != "" ? $usuario:"%";
 
             try {
                 $docData = [];
 
                 $sql = $this->db->connect()->prepare("SELECT
                                                         ibis.ti_mmttos.idreg,
-                                                        DATE_FORMAT( ibis.ti_mmttos.fentrega, '%d/%m/%Y' ) AS fentrega,
+                                                        ibis.ti_mmttos.fentrega AS entrega,
                                                         UPPER( ibis.cm_producto.cdesprod ) AS cdesprod,
-                                                        ibis.cm_producto.ccodprod,
-                                                        ibis.cm_producto.id_cprod,
-                                                        CONCAT_WS( ' ', rrhh.tabla_aquarius.nombres, rrhh.tabla_aquarius.apellidos ) AS usuario,
-                                                        tabla_aquarius.dni,
                                                         ibis.tb_proyectos.ccodproy,
                                                         ibis.tb_proyectos.nidreg,
-                                                        rrhh.tabla_aquarius.correo,
-                                                        ibis.ti_mmttos.cserie,
+                                                        UPPER(ibis.ti_mmttos.cserie) AS cserie,
                                                         ibis.ti_mmttos.nrodoc,
-                                                        ibis.ti_mmttos.fentrega AS entrega,
                                                         DATEDIFF(
                                                             ibis.ti_mmttos.fmtto,
                                                         NOW()) AS periodo,
                                                         DATE_FORMAT( ibis.ti_mmttos.fmtto, '%d/%m/%Y' ) AS fmtto1,
-                                                        IF (ibis.ti_mmttos.flgestado = 1,'realizado','pendiente') AS est1,
+                                                        DATE_FORMAT( ibis.ti_mmttos.fentrega, '%d/%m/%Y' ) AS fentrega,
+                                                        ibis.ti_mmttos.flgestado AS est1,
                                                         DATE_FORMAT( m2.fmtto, '%d/%m/%Y' ) AS fmtto2,
-                                                        IF(m2.flgestado = 1,'realizado','pendiente') AS est2,
+                                                        m2.flgestado AS est2,
                                                         DATE_FORMAT( m3.fmtto, '%d/%m/%Y' ) AS fmtto3,
-                                                        IF(m3.flgestado = 1,'realizado','pendiente') AS est3,
+                                                        m3.flgestado AS est3,
                                                         DATE_FORMAT( m4.fmtto, '%d/%m/%Y' ) AS fmtto4,
-                                                        IF(m4.flgestado = 1,'realizado','pendiente') AS est4,
+                                                        m4.flgestado AS est4,
                                                         ibis.tb_tiespec.cprocesador,
                                                         ibis.tb_tiespec.cram,
                                                         ibis.tb_tiespec.chdd,
-                                                        ibis.tb_tiespec.totros 
-                                                        FROM
-                                                            ibis.ti_mmttos
-                                                            INNER JOIN ibis.cm_producto ON ti_mmttos.idprod = cm_producto.id_cprod
-                                                            LEFT JOIN rrhh.tabla_aquarius ON ibis.ti_mmttos.nrodoc = rrhh.tabla_aquarius.dni COLLATE utf8_unicode_ci
-                                                            INNER JOIN ibis.tb_proyectos ON ibis.ti_mmttos.idcostos = ibis.tb_proyectos.nidreg
-                                                            LEFT JOIN ( SELECT ti_mmttos.fmtto, ti_mmttos.flgestado, ti_mmttos.cserie FROM ti_mmttos WHERE ti_mmttos.nmtto = 2 ) AS m2 ON m2.cserie = ti_mmttos.cserie
-                                                            LEFT JOIN ( SELECT ti_mmttos.fmtto, ti_mmttos.flgestado, ti_mmttos.cserie FROM ti_mmttos WHERE ti_mmttos.nmtto = 3 ) AS m3 ON m3.cserie = ti_mmttos.cserie
-                                                            LEFT JOIN ( SELECT ti_mmttos.fmtto, ti_mmttos.flgestado, ti_mmttos.cserie FROM ti_mmttos WHERE ti_mmttos.nmtto = 4 ) AS m4 ON m4.cserie = ti_mmttos.cserie
-                                                            LEFT JOIN ibis.tb_tiespec ON ibis.tb_tiespec.cserie = ibis.ti_mmttos.cserie COLLATE utf8_unicode_ci
-                                                        WHERE
+                                                        ibis.tb_tiespec.totros
+                                                    FROM
+                                                        ibis.ti_mmttos
+                                                        LEFT JOIN ibis.cm_producto ON ti_mmttos.idprod = cm_producto.id_cprod
+                                                        LEFT JOIN ibis.tb_proyectos ON ibis.ti_mmttos.idcostos = ibis.tb_proyectos.nidreg
+                                                        LEFT JOIN ( SELECT ti_mmttos.fmtto, ti_mmttos.flgestado, ti_mmttos.cserie FROM ti_mmttos WHERE ti_mmttos.nmtto = 2 ) AS m2 ON m2.cserie = ti_mmttos.cserie
+                                                        LEFT JOIN ( SELECT ti_mmttos.fmtto, ti_mmttos.flgestado, ti_mmttos.cserie FROM ti_mmttos WHERE ti_mmttos.nmtto = 3 ) AS m3 ON m3.cserie = ti_mmttos.cserie
+                                                        LEFT JOIN ( SELECT ti_mmttos.fmtto, ti_mmttos.flgestado, ti_mmttos.cserie FROM ti_mmttos WHERE ti_mmttos.nmtto = 4 ) AS m4 ON m4.cserie = ti_mmttos.cserie
+                                                        LEFT JOIN ibis.tb_tiespec ON ibis.tb_tiespec.cserie = ibis.ti_mmttos.cserie COLLATE utf8_unicode_ci
+                                                    WHERE
                                                         ibis.ti_mmttos.flgactivo = 1 
                                                         AND ibis.tb_proyectos.nidreg LIKE :costos 
                                                         AND ibis.ti_mmttos.cserie LIKE :serie 
-                                                        AND rrhh.tabla_aquarius.apellidos LIKE :usuario 
                                                     GROUP BY
                                                         ibis.ti_mmttos.nrodoc,
                                                         ibis.ti_mmttos.cserie");
+                                                    
                 $sql->execute(["costos" =>$cc,
-                                "serie" =>$serie,
-                                "usuario" =>$usuario]);
+                                "serie" =>$serie]);
                 $rowCount = $sql->rowCount();
                 
                 if ($rowCount) {
@@ -75,9 +67,37 @@
                     }
                 }
 
-                return array("datos"=>$docData);
+                return array("datos"=>$docData,"usuarios"=>$this->usuariosAquarius());
 
                 
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function usuariosAquarius(){
+            try {
+                $docData = [];
+
+                $sql = $this->db->connect()->query("SELECT
+                                                        tabla_aquarius.dni,
+                                                        CONCAT_WS( ' ', tabla_aquarius.nombres, tabla_aquarius.apellidos ) AS usuario,
+                                                        tabla_aquarius.correo 
+                                                    FROM
+                                                        tabla_aquarius 
+                                                    WHERE
+                                                        tabla_aquarius.estado = 'AC' 
+                                                    GROUP BY
+                                                        tabla_aquarius.dni 
+                                                    ORDER BY
+                                                        tabla_aquarius.dni");
+                $sql->execute();
+                while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+                    $docData[] = $row;
+                }
+
+                return $docData;
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;

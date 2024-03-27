@@ -1,18 +1,76 @@
 $(() => {
     let id,cc,docidetuser;
 
-    $("#tablaPrincipal tr").on('click','a', function(e) {
+    const tabla_principal = document.getElementById('tablaPrincipal');
+
+    tabla_principal.addEventListener('click',(e)=>{
         e.preventDefault();
 
-        id = $(this).attr('href');
-        docidetuser = $(this).attr('data-documento');
+        if (e.target.matches(".click_link *")){
+            
+            id = $(this).attr('href');
+            docidetuser = $(this).attr('data-documento');
 
-        $("#cambio_fecha").fadeIn();
+            $("#cambio_fecha").fadeIn();
+
+        }else if (e.target.matches(".click_tr *")){
+            $("#serie").val( e.target.closest(".click_tr").dataset.serie );
+            $("#idmmtto").val( e.target.closest(".click_tr").dataset.id );
+            $("#descripcion").val( e.target.closest(".click_tr").cells[1].innerHTML );
+            $("#fecha_sugerida").val( e.target.closest(".click_tr").cells[5].innerHTML );
+            $("#usuario").val( e.target.closest(".click_tr").cells[2].innerHTML );
+            $("#correo_usuario").val( e.target.closest(".click_tr").dataset.correo );
+            $("#sendNotify").prop("href", e.target.closest(".click_tr").dataset.id );
+
+            $("#procesador").val($(this).data('procesador'));
+            $("#ram").val($(this).data('ram'));
+            $("#hdd").val($(this).data('hdd'));
+            $("#otros").val($(this).data('otros'));
+
+            idprod      = $(this).data('idprod');
+            cc          = $(this).data('costos');
+            docidetuser = $(this).data('documento');
+
+            $("#tabla_detalles_mttos tbody").empty();
+
+            id = $(this).data('id');
+
+            let formData = new FormData();
+                formData.append('serie',e.target.closest(".click_tr").cells[3].innerHTML);
+                formData.append('documento',e.target.closest(".click_tr").dataset.documento);
+
+        
+            fetch(RUTA+'timmtto/anteriores',{
+                method: 'POST',
+                body:formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                data.mmttos.forEach(element => {
+                    let row = `<tr>
+                                    <td class="textoCentro">${element.frelmtto}</td>
+                                    <td class="pl20px">${element.cobserva}</td>
+                                    <td class="pl20px">${element.tecnico}</td>
+                                </tr>`;
+    
+                    $("#tabla_detalles_mttos tbody").append(row);
+                });
+    
+                $("#idlastmmtto").val(data.lastmmttos.id);
+                $("#fecha_sugerida").val(data.lastmmttos.fecha_proxima);
+    
+                $("#dialogo_registro").fadeIn();
+            })
+
+            return false;
+
+        }
 
         return false;
-    });
+    })
 
-    $("#tablaPrincipal tr").on("click", function (e) {
+
+    /*$("#tablaPrincipal tr").on("click", function (e) {
         e.preventDefault();
 
         $("#serie").val( $(this).find('td').eq(3).text() );
@@ -65,7 +123,7 @@ $(() => {
 
     
         return false;
-    });
+    });*/
 
     $("#btnAceptarDialogo").click(function (e) {
         e.preventDefault();
@@ -179,12 +237,76 @@ $(() => {
         
         return false;
     });
-    
 
     $("#btnCancelarGrabar").click(function(e) {
         e.preventDefault();
 
         $("#cambio_fecha").fadeOut();
+
+        return false;
+    });
+
+    $("#btnConsulta").click(function (e) { 
+        e.preventDefault();
+
+        $("#tablaPrincipal tbody").empty();
+
+        let formData = new FormData();
+            formData.append("costos",$("#costosSearch").val());
+            formData.append("serie",$("#serieBusqueda").val());
+        
+        fetch(RUTA+'timmtto/listaMmttos',{
+            method: 'POST',
+            body: formData,
+        })
+        .then(response=>response.json())
+        .then(data=>{
+            let item = 1,nombre,correo;
+
+            $("#tablaPrincipal tbody").empty();
+
+            data.datos.forEach (element =>{
+
+                data.usuarios.forEach (usuario => {
+                    if ( usuario.dni === element.nrodoc){
+                        nombre = usuario.usuario;
+                        correo = usuario.correo;
+                    }
+                })
+
+                let fila = `<tr class="pointer click_tr" 
+                                    data-id         ="${element.idreg}" 
+                                    data-correo     ="${correo}"
+                                    data-documento  ="${element.nrodoc}"
+                                    data-costos     ="${element.nidreg}"
+                                    data-serie      ="${element.cserie}"
+                                    data-procesador ="${element.cprocesador}"
+                                    data-ram        ="${element.cram}"
+                                    data-hdd        ="${element.chdd}"
+                                    data-otros      ="${element.totros}">
+                                <td class="pl20px">${item++}</td>
+                                <td class="pl20px">${nombre}</td>
+                                <td class="pl20px">${element.cserie}</td>
+                                <td class="textoCentro">${element.fentrega}</td>
+                                <td class="textoCentro">${element.ccodproy}</td>
+                                <td class="textoCentro">${element.fmtto1}</td>
+                                <td class="textoCentro ${element.est1 == 0 ? 'semaforoNaranja':'semaforoVerde'}">${element.est1 == 0 ? 'Pendiente':'Realizado'}</td>
+                                <td class="textoCentro">${element.fmtto2}</td>
+                                <td class="textoCentro ${element.est2 == 0 ? 'semaforoNaranja':'semaforoVerde'}">${element.est2 == 0 ? 'Pendiente':'Realizado'}</td>
+                                <td class="textoCentro">${element.fmtto3}</td>
+                                <td class="textoCentro ${element.est3 == 0 ? 'semaforoNaranja':'semaforoVerde'}">${element.est3 == 0 ? 'Pendiente':'Realizado'}</td>
+                                <td class="textoCentro">${element.fmtto4}</td>
+                                <td class="textoCentro ${element.est4 == 0 ? 'semaforoNaranja':'semaforoVerde'}">${element.est4 == 0 ? 'Pendiente':'Realizado'}</td>
+                                <td class="textoCentro click_link">
+                                    <a href="${element.cserie}" data-fecha ="${element.entrega}" data-documento ="${element.nrodoc}">
+                                        <i class="fas fa-calendar-alt"></i>
+                                    </a>
+                                </td>
+                            </tr>`;
+
+                $("#tablaPrincipal tbody").append(fila);
+            })
+        })
 
         return false;
     });
