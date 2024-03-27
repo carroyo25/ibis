@@ -194,9 +194,40 @@
                 }
 
                 $pendientes = $this->mmttoUltimoPendiente($parametros['serie'],$parametros['documento']);
+                $detallesEquipos = $this->detallesEquipos($parametros['serie']);
         
-                return array("mmttos" =>$docData,"lastmmttos" =>$pendientes);
+                return array("mmttos" =>$docData,"lastmmttos" =>$pendientes, "especificaciones" => $detallesEquipos);
 
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        private function detallesEquipos($serie){
+            try {
+                $docData = [];
+
+                $sql = $this->db->connect()->prepare("SELECT tb_tiespec.cprocesador, 
+                                                            tb_tiespec.cram, 
+                                                            tb_tiespec.chdd, 
+                                                            tb_tiespec.nestado
+                                                        FROM tb_tiespec
+                                                        WHERE  tb_tiespec.cserie = :serie");
+
+                $sql->execute(["serie"=>$serie]);
+
+                $rowCount = $sql->rowCount();
+                
+                if ($rowCount) {
+                    $respuesta = true;
+                    
+                    while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+                        $docData[] = $row;
+                    }
+                }
+
+                return $docData;
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
@@ -381,14 +412,16 @@
                                                         tb_tiespec.cprocesador =:procesador,
                                                         tb_tiespec.cram =:ram,
                                                         tb_tiespec.chDd =:hdd,
-                                                        tb_tiespec.totros =:otros");
+                                                        tb_tiespec.totros =:otros,
+                                                        tb_tiespec.nestado =:estado");
 
                 $sql->execute(["kardex" =>$parametros['id'],
                                 "serie"=>$parametros['serie_producto'],
                                 "procesador"=>$parametros['procesador'],
                                 "ram"=>$parametros['ram'],
                                 "hdd"=>$parametros['hdd'],
-                                "otros"=>$parametros['otros']]);
+                                "otros"=>$parametros['otros'],
+                                "estado"=>$parametros['estado_equipo']]);
 
                 if( $sql->rowCount() > 0){
                     $respuesta = true;

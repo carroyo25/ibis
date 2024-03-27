@@ -1,20 +1,13 @@
 $(() => {
-    let id,idprod,cc,docidetuser;
+    let id,cc,docidetuser;
 
     $("#tablaPrincipal tr").on('click','a', function(e) {
         e.preventDefault();
 
-            /*let formData = new FormData();
-                formData.append("fecha",$(this).data('fecha'));
-                formData.append("serie",$(this).prop("href"));
-                formData.append("documento",$(this).data('documento'));
+        id = $(this).attr('href');
+        docidetuser = $(this).attr('data-documento');
 
-            fetch(RUTA+'timmtto/cambiofechas',{
-                method: 'POST',
-                data: formData
-            })*/
-
-        
+        $("#cambio_fecha").fadeIn();
 
         return false;
     });
@@ -95,6 +88,7 @@ $(() => {
                 formData.append('ram',$("#ram").val()); //
                 formData.append('hdd',$("#hdd").val()); //
                 formData.append('otros',$("#otros").val()); //
+                formData.append('estado',$("#estado_eqipo").val()); //
                 
                 formData.append('codigo_costos',cc);
                 formData.append('codigo_producto',null);
@@ -159,6 +153,38 @@ $(() => {
         } catch (error) {
             mostrarMensaje(error,"mensaje_error")
         }
+
+        return false;
+    });
+
+    $("#btnAceptarGrabar").click(function(e) {
+        e.preventDefault();
+        try {
+            if ( $("#fecha_nueva").val() === "" ) throw new Error("Escoja una fecha");
+
+            let formData = new FormData();
+                formData.append("fecha",$(this).data('fecha_nueva'));
+                formData.append("serie",$(this).prop("href"));
+                formData.append("documento",$(this).data('documento'));
+
+            fetch(RUTA+'timmtto/cambiofechas',{
+                method: 'POST',
+                data: formData
+            });
+            
+        } catch (error) {
+            mostrarMensaje(error,'mensaje_error');
+        }
+
+        
+        return false;
+    });
+    
+
+    $("#btnCancelarGrabar").click(function(e) {
+        e.preventDefault();
+
+        $("#cambio_fecha").fadeOut();
 
         return false;
     });
