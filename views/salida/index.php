@@ -213,13 +213,13 @@
                 <input type="hidden" name="registro_mtc" id="registro_mtc" value="1502229MRP">
                 <input type="hidden" name="cso" id="cso">
                 <input type="hidden" name="csd" id="csd">
-                
 
                 <div class="tituloDocumento">
                     <div>
                         <p class="titulo_seccion"><strong> Guia de Remision y despacho : </strong></p>
                         <input type="text" name="serie_guia" id="serie_guia" class="w10por" value="T001" readonly>
-                        <input type="text" name="numero_guia" id="numero_guia">    
+                        <input type="text" name="numero_guia" id="numero_guia">
+                            
                     </div>
                     <div class="opciones_modal">
                         <!-- <a href="#" id="guiaSunat" title="Guia Sunat" ><i class="fas fa-shipping-fast"></i><p>Sunat</p></a> -->
@@ -240,6 +240,13 @@
                             <div>
                                 <label for="ftraslado">Fecha Traslado:</label>
                                 <input type="date" name="ftraslado" id="ftraslado">
+                            </div>
+                            <div>
+                                <label for="ftraslado">Tipo Guia:</label>
+                                <select name="tipo_documento" id="tipo_documento">
+                                    <option value="1">REMITENTE</option>
+                                    <option value="2">TRANSPORTISTA</option>
+                                </select>
                             </div>
                         </div>
                         <div>

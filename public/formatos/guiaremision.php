@@ -5,7 +5,7 @@
         // Cabecera de página
             public function __construct($nguia,$fecha_emision,$ruc,$razondest,$direccdest,$raztransp,$ructransp,$dirtransp,
                                         $vianomorg,$nroorg,$distorg,$zonaorg,$feenttrans,$modtras,$vianomodest,$nrodest,$zondest,$depdest,
-                                        $marca,$placa,$detcond,$licencia,$tipoEnvio,$referido,$origen,$anio,$observaciones,$atencion){
+                                        $marca,$placa,$detcond,$licencia,$tipoEnvio,$referido,$origen,$anio,$observaciones,$atencion,$tipo){
                 parent::__construct();
                 $this->nguia = $nguia;
                 $this->fecha_emision = $fecha_emision;
@@ -35,12 +35,21 @@
                 $this->anio = $anio;
                 $this->observaciones = $observaciones;
                 $this->atencion = $atencion;
+                $this->tipo = $tipo;
             }
 
             function Header(){
+
+                $tipo_guia = ["","GUIA DE REMISION - REMITENTE", "GUIA DE REMISION -TRANSPORTISTA"];
                 $this->SetFillColor(229, 229, 229);
                 $this->Image('public/img/logo.png',12,12,50);
                 //cabecera
+                $this->SetFont('Arial','B',9);
+                $this->SetXY(0,5);
+                $this->setTextColor(255,0,0);
+                $this->Cell(190,6,"GUIA DE TRANSPORTE PROVISIONAL",0,1,"C");
+                
+                $this->setTextColor(0,0,0);
                 $this->SetFont('Arial','B',11);
                 $this->SetXY(53,15);
                 $this->Cell(90,6,"SERVICIOS PETROLEROS Y",0,1,"C");
@@ -58,8 +67,8 @@
                 $this->SetXY(135,18);
                 $this->Cell(65,6,"R.U.C. 20504898173",0,1,"C");
                 $this->SetXY(135,28);
-                $this->SetFont('Arial','B',10);
-                $this->Cell(65,8,"GUIA DE REMISION - REMITENTE",1,1,"C",true);
+                $this->SetFont('Arial','B',9);
+                $this->Cell(65,8,$tipo_guia[$this->tipo],1,1,"C",true);
                 $this->SetXY(135,38);
                 $this->SetFont('Arial','B',12);
                 $this->Cell(65,6,"0001 - ".$this->nguia,0,1,"C"); //pasa parametro
@@ -144,7 +153,7 @@
     
                 // Salto de línea
                 $this->Ln(1);
-                $this->SetFillColor(0, 0, 0);
+                $this->SetFillColor(0, 92, 132);
                 $this->SetTextColor(255,255,255);
                 $this->SetXY(13,116); //detalle del documento
                 $this->SetFont('Arial','',6);
