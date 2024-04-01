@@ -635,13 +635,14 @@
                 $objPHPExcel->getActiveSheet()->setTitle("Inventario");
 
                 //combinar celdas
-                $objPHPExcel->getActiveSheet()->mergeCells('A1:H1');
+                $objPHPExcel->getActiveSheet()->mergeCells('A1:Q1');
+                $objPHPExcel->getActiveSheet()->mergeCells('K3:Q3');
 
                 //alineacion
-                $objPHPExcel->getActiveSheet()->getStyle('A1:H4')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                $objPHPExcel->getActiveSheet()->getStyle('A1:H4')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('A1:Q4')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('A1:Q4')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-                $objPHPExcel->getActiveSheet()->getStyle('A1:H5')->getAlignment()->setWrapText(true);
+                //objPHPExcel->getActiveSheet()->getStyle('A1:H5')->getAlignment()->setWrapText(true);
 
                 //ancho de columnas
                 $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(10);
@@ -652,27 +653,41 @@
                 $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(20);
                 $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(20);
                 $objPHPExcel->getActiveSheet()->getColumnDimension('H')->setWidth(20);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('I')->setWidth(20);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('J')->setWidth(20);
                         
                 //Titulo 
                 $objPHPExcel->getActiveSheet()->setCellValue('A1','Control de Almacén');
 
                 $objPHPExcel->getActiveSheet()
-                    ->getStyle('A1:I4')
+                    ->getStyle('A1:Q4')
                     ->getFill()
                     ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
                     ->getStartColor()
                     ->setRGB('FDE9D9');
 
-                $objPHPExcel->getActiveSheet()->setCellValue('A4','ITEM'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('B4','CODIGO'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('C4','DESCRIPCION'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('D4','UNIDAD'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('E4','CANTIDAD GUIAS'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('F4','INGRESO INVENTARIO'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('G4','CANTIDAD SALIDAS'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('H4','CANTIDAD DEVUELTO'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('I4','TRANSFERENCIAS'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('J4','SALDO'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('A3','ITEM'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('B3','CODIGO'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('C3','DESCRIPCION'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('D3','UNIDAD'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('E3','CANTIDAD GUIAS'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('F3','INGRESO INVENTARIO'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('G3','CANTIDAD SALIDAS'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('H3','CANTIDAD DEVUELTO'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('I3','TRANSFERENCIAS'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('J3','SALDO');
+                $objPHPExcel->getActiveSheet()->setCellValue('K3','CONDICION'); // esto cambia
+
+                
+
+                $objPHPExcel->getActiveSheet()->setCellValue('K4','1A');
+                $objPHPExcel->getActiveSheet()->setCellValue('L4','1B');
+                $objPHPExcel->getActiveSheet()->setCellValue('M4','2A');
+                $objPHPExcel->getActiveSheet()->setCellValue('N4','2B');
+                $objPHPExcel->getActiveSheet()->setCellValue('O4','3A');
+                $objPHPExcel->getActiveSheet()->setCellValue('P4','3B');
+                $objPHPExcel->getActiveSheet()->setCellValue('Q4','3C');
+
        
                 $fila = 5;
                 $datos = json_decode($registros);
@@ -689,6 +704,14 @@
                     $objPHPExcel->getActiveSheet()->setCellValue('H'.$fila,$datos[$i]->devuelto);
                     $objPHPExcel->getActiveSheet()->setCellValue('I'.$fila,$datos[$i]->transferencias);
                     $objPHPExcel->getActiveSheet()->setCellValue('J'.$fila,$datos[$i]->saldo);
+
+                    $objPHPExcel->getActiveSheet()->setCellValue('K'.$fila,$datos[$i]->a1);
+                    $objPHPExcel->getActiveSheet()->setCellValue('L'.$fila,$datos[$i]->a2);
+                    $objPHPExcel->getActiveSheet()->setCellValue('M'.$fila,$datos[$i]->b1);
+                    $objPHPExcel->getActiveSheet()->setCellValue('N'.$fila,$datos[$i]->b2);
+                    $objPHPExcel->getActiveSheet()->setCellValue('O'.$fila,$datos[$i]->a3);
+                    $objPHPExcel->getActiveSheet()->setCellValue('P'.$fila,$datos[$i]->b3);
+                    $objPHPExcel->getActiveSheet()->setCellValue('Q'.$fila,$datos[$i]->c3);
                     
                     $fila++;
                 }

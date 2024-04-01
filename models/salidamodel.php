@@ -311,7 +311,7 @@
                 $pdf->SetFillColor(255,255,255);
                 $pdf->SetTextColor(0,0,0);
                 
-                $pdf->SetFont('Arial','',7);
+                $pdf->SetFont('Arial','',8);
                 $lc = 0;
                 $rc = 0;
 
@@ -327,11 +327,11 @@
                     $pdf->Row(array(str_pad($i,3,"0",STR_PAD_LEFT),
                                     $datos[$rc]->cantdesp,
                                     $datos[$rc]->unidad,
-                                    utf8_decode($datos[$rc]->codigo .' '. $datos[$rc]->descripcion  .' '.'O : '.$datos[$rc]->pedido.' P : '.$datos[$rc]->orden)));
+                                    utf8_decode($datos[$rc]->codigo .' '. $datos[$rc]->descripcion  .' '.'P : '.$datos[$rc]->pedido.' O : '.$datos[$rc]->orden)));
                     $lc++;
                     $rc++;
 
-                    if ($lc == 26) {
+                    if ($lc == 32) {
                         $pdf->AddPage();
                         $lc = 0;
                     }
@@ -456,7 +456,7 @@
                 $pdf->SetFillColor(255,255,255);
                 $pdf->SetTextColor(0,0,0);
                 
-                $pdf->SetFont('Arial','',9);
+                $pdf->SetFont('Arial','',8.5);
                 $lc = 0;
                 $rc = 0;
 
@@ -473,11 +473,12 @@
                         $pdf->Row(array(str_pad($i,3,"0",STR_PAD_LEFT),
                                         $datos[$rc]->cantdesp,
                                         $datos[$rc]->unidad,
-                                        '  O : '.$datos[$rc]->pedido.' P : '.$datos[$rc]->orden .' '. utf8_decode($datos[$rc]->codigo .' '. $datos[$rc]->descripcion )));
+                                        '  P : '.$datos[$rc]->pedido.' O : '.$datos[$rc]->orden .' '. utf8_decode($datos[$rc]->codigo .' '. $datos[$rc]->descripcion )));
                         $lc++;
                         $rc++;
 
-                        if ($lc == 24) {
+                        //ACA CONTROLO EL NUMERO DE LINEAS
+                        if ( $lc == 32 ) {
                             $pdf->AddPage();
                             $lc = 0;
                         }
@@ -938,7 +939,7 @@
                                                         lg_ordencab.cnumero
                                                     FROM
                                                         alm_despachodet
-                                                        INNER JOIN alm_despachocab ON alm_despachodet.id_regalm = alm_despachocab.id_regalm
+                                                        LEFT JOIN alm_despachocab ON alm_despachocab.id_regalm = alm_despachodet.id_regalm
                                                         INNER JOIN tb_almacen AS origen ON alm_despachocab.ncodalm1 = origen.ncodalm
                                                         INNER JOIN tb_almacen AS destino ON alm_despachocab.ncodalm2 = destino.ncodalm
                                                         INNER JOIN tb_proyectos ON alm_despachocab.ncodpry = tb_proyectos.nidreg
@@ -953,7 +954,8 @@
                                                         AND alm_despachocab.ncodpry LIKE :costos 
                                                         AND alm_despachocab.cper LIKE :anio 
                                                         AND alm_despachocab.cmes LIKE :mes 
-                                                        GROUP BY alm_despachocab.id_regalm");
+                                                        AND alm_despachodet.nflgactivo = 1
+                                                    GROUP BY alm_despachocab.id_regalm");
                 
                 $sql->execute(["usr"=>$_SESSION['iduser'],
                                 "orden"=>$orden,

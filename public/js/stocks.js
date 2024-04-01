@@ -70,9 +70,12 @@ $(() => {
     $("#excelFile").click(function (e) { 
         e.preventDefault();
 
+        $("#esperar").css("opacity","1").fadeIn();
+
         $.post(RUTA+"stocks/exporta", {detalles:JSON.stringify(detalles())},
             function (data, textStatus, jqXHR) {
                 window.location.href = data.documento;
+                 $("#esperar").css("opacity","0").fadeOut();
             },
             "json"
         );
@@ -229,29 +232,26 @@ detalles = () =>{
     let TABLA = $("#tablaPrincipal tbody >tr");
 
     TABLA.each(function(){
-        let ITEM            = $(this).find('td').eq(0).text(),
-            CODIGO          = $(this).find('td').eq(1).text(),
-            DESCRIPCION     = $(this).find('td').eq(2).text(),
-            UNIDAD          = $(this).find('td').eq(3).text(),
-            INGRESO         = $(this).find('td').eq(4).text(),
-            INVENTARIO      = $(this).find('td').eq(5).text(),
-            SALIDA          = $(this).find('td').eq(6).text(),
-            DEVUELTO        = $(this).find('td').eq(7).text(),
-            TRANSFERENCIA   = $(this).find('td').eq(8).text(),
-            SALDO           = $(this).find('td').eq(10).text();
-           
         item= {};
         
-        item['item']            = ITEM;
-        item['codigo']          = CODIGO;
-        item['descripcion']     = DESCRIPCION;
-        item['unidad']          = UNIDAD;
-        item['ingreso']         = INGRESO;
-        item['inventario']      = INVENTARIO;
-        item['salida']          = SALIDA;
-        item['devuelto']        = DEVUELTO;
-        item['transferencias']  = TRANSFERENCIA;
-        item['saldo']           = SALDO;
+        item['item']            = $(this).find('td').eq(0).text();
+        item['codigo']          = $(this).find('td').eq(1).text();
+        item['descripcion']     = $(this).find('td').eq(2).text();
+        item['unidad']          = $(this).find('td').eq(3).text();
+        item['ingreso']         = $(this).find('td').eq(4).text();
+        item['inventario']      = $(this).find('td').eq(6).text();
+        item['salida']          = $(this).find('td').eq(6).text();
+        item['devuelto']        = $(this).find('td').eq(7).text();
+        item['transferencias']  = $(this).find('td').eq(8).text();
+        item['saldo']           = $(this).find('td').eq(10).text();
+
+        item['a1']           = $(this).find('td').eq(11).text();
+        item['a2']           = $(this).find('td').eq(12).text();
+        item['b1']           = $(this).find('td').eq(13).text();
+        item['b2']           = $(this).find('td').eq(14).text();
+        item['a3']           = $(this).find('td').eq(15).text();
+        item['b3']           = $(this).find('td').eq(16).text();
+        item['c3']           = $(this).find('td').eq(17).text();
             
         DATA.push(item);
     })
@@ -266,7 +266,7 @@ esnulo = (valor) => {
 progreso = () => {
     $.post(RUTA+"stocks/conteo",
         function (data, textStatus, jqXHR) {
-            console.log(data);
+            //console.log(data);
         },
         "text"
     );
@@ -275,7 +275,7 @@ progreso = () => {
 vueltas = (str) => {
     $.post(RUTA+"stocks/vueltas",str,
         function (data, textStatus, jqXHR) {
-            console.log(data);
+            //console.log(data);
         },
         "text"
     );

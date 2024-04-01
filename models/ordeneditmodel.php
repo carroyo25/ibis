@@ -121,7 +121,6 @@
             }
         }
 
-
         public function verDatosCabecera($pedido){
             $datosPedido = $this->datosPedido($pedido);
             $sql = "SELECT COUNT(lg_ordencab.id_regmov) AS numero FROM lg_ordencab WHERE lg_ordencab.ncodcos =:cod";
@@ -644,7 +643,9 @@
             try {
                 $sql = $this->db->connect()->prepare("UPDATE lg_ordendet 
                                                         SET lg_ordendet.nEstadoReg = 105,
-                                                            lg_ordendet.nflgactivo = 0
+                                                            lg_ordendet.nestado = 0,
+                                                            lg_ordendet.ncanti = 0,
+                                                            lg_ordendet.niddeta = null
                                                         WHERE lg_ordendet.id_orden = :id");
                 $sql->execute(["id"=>$id]);
 
