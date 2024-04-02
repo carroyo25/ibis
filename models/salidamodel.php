@@ -365,16 +365,18 @@
 
                 $fecha_emision = date("d/m/Y", strtotime($cabeceraGuia['fgemision']));
 
-                if ($guia == "") {
-                    $salida = $this->grabarDatosGuia($cabeceraGuia,$despacho,$fecha_emision,$fecha_traslado);
-                    $guia = $cabeceraGuia['numero_guia'];
+                if ( $guia == "" ) {
+                    $guia = $this->numeroGuia();
+                    $salida = $this->grabarDatosGuia($cabeceraGuia,$despacho,$fecha_emision,$fecha_traslado,$guia);
+                    //$guia = $cabeceraGuia['numero_guia'];
+                    
                 }else {
                     $salida = $this->modificarDatosGuia($cabeceraGuia,$despacho,$fecha_emision,$fecha_traslado);
                     $guia = $cabeceraGuia['numero_guia'];
                 }
 
             $referido = $this->generarRS();     
-            $this->actualizarGuiaEnDespacho($cabeceraGuia,$referido,$despacho);
+            $this->actualizarGuiaEnDespacho($cabeceraGuia,$referido,$despacho,$guia);
 
             return array("mensaje"=>$salida,"guia"=>$guia);    
                 
@@ -384,15 +386,19 @@
             }
         }
 
-        private function actualizarGuiaEnDespacho($cabecera,$referido,$nro_despacho){
+        private function actualizarGuiaEnDespacho($cabecera,$referido,$nro_despacho,$guia){
             try {
                 $sql = $this->db->connect()->prepare("UPDATE alm_despachocab 
-                                                        SET ffecenvio=:envio,nReferido=:referido,cnumguia=:guia,id_centi=:entidad
+                                                        SET ffecenvio=:envio,
+                                                            nReferido=:referido,
+                                                            cnumguia=:guia,
+                                                            id_centi=:entidad,
+                                                            cSerieguia='F001'
                                                         WHERE id_regalm =:despacho");
                 
                 $sql->execute(["envio"=>$cabecera['ftraslado'],
                                 "referido"=>$referido,
-                                "guia"=>$cabecera['numero_guia'],
+                                "guia"=>$guia,
                                 "entidad"=>$cabecera['codigo_entidad_transporte'],
                                 "despacho"=>$nro_despacho]);
             } catch (PDOException $th) {
@@ -1048,7 +1054,7 @@
             }
         }
 
-        public function grabarDatosGuia($cabeceraGuia,$despacho,$emision,$traslado){
+        public function grabarDatosGuia($cabeceraGuia,$despacho,$emision,$traslado,$nroguia){
             try {
                 $sql = $this->db->connect()->prepare("INSERT INTO lg_guias SET id_regalm=:despacho,cnumguia=:guia,corigen=:origen,
                                                                                 cdirorigen=:direccion_origen,cdestino=:destino,
@@ -1059,7 +1065,7 @@
                                                                                 ftraslado=:fecha_traslado,fguia=:fecha_guia");
 
                 $sql->execute([ "despacho"=>$despacho,
-                                "guia"=>$cabeceraGuia['numero_guia'],
+                                "guia"=>$nroguia,
                                 "origen"=>$cabeceraGuia['almacen_origen'],
                                 "direccion_origen"=>$cabeceraGuia['almacen_origen_direccion'],
                                 "destino"=>$cabeceraGuia['almacen_destino'],
@@ -1502,7 +1508,7 @@
             }
         }
 
-        function envio_ticket($ruta_archivo_cdr, $ticket, $token_access, $ruc, $nombre_file){
+        private function envio_ticket($ruta_archivo_cdr, $ticket, $token_access, $ruc, $nombre_file){
             if(($ticket == "") || ($ticket == null)){
                 $mensaje['cdr_hash'] = '';
                 $mensaje['cdr_msj_sunat'] = 'Ticket vacio';
@@ -1576,6 +1582,27 @@
                 }
             }
             return $mensaje;
+        }
+
+        private function numeroGuia(){
+            try {
+                $guiaInicial = 1330000;
+
+                $sql = $this->db->connect()->query("SELECT
+                                                        COUNT( alm_despachocab.cnumguia ) AS nroguia 
+                                                    FROM
+                                                        alm_despachocab 
+                                                    WHERE
+                                                        alm_despachocab.cSerieguia = 'F001'");
+                $sql->execute();
+                $result = $sql->fetchAll();
+
+                return str_pad($result[0]['nroguia']+$guiaInicial,7,0,STR_PAD_RIGHT);
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
         }
     } 
 ?>

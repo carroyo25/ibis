@@ -509,22 +509,26 @@ $(function() {
 
         let result = {};
 
-        $.each($("#guiaremision").serializeArray(),function(){
-            result[this.name] = this.value;
-        });
+        try {
+            $.each($("#guiaremision").serializeArray(),function(){
+                result[this.name] = this.value;
+            });
 
-        $.post(RUTA+"salida/GrabaGuia", {cabecera:result,
-                                        detalles:JSON.stringify(detallesVista(1)),
-                                        proyecto: $("#costos").val(),
-                                        despacho: $("#codigo_salida").val(),
-                                        operacion:accion,
-                                        guia:$("#guia").val()},
-                function (data, textStatus, jqXHR) {
-                    mostrarMensaje(data.mensaje,"mensaje_correcto");
-                    $("#guia").val(data.guia);
-                },
-                "json"
+            $.post(RUTA+"salida/GrabaGuia", {cabecera:result,
+                                            detalles:JSON.stringify(detallesVista(1)),
+                                            proyecto: $("#costos").val(),
+                                            despacho: $("#codigo_salida").val(),
+                                            operacion:accion,
+                                            guia:$("#guia").val()},
+                    function (data, textStatus, jqXHR) {
+                        mostrarMensaje(data.mensaje,"mensaje_correcto");
+                        $("#guia,#numero_guia").val(data.guia);
+                    },
+                    "json"
             );
+        } catch (error) {
+            mostrarMensaje(error,"mensaje_error");
+        }
 
         return false;
     });
