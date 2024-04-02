@@ -40,7 +40,7 @@
         }
 
         function consultID(){
-            echo json_encode($this->model->consultarTransferencia($_POST['id']));
+            echo json_encode($this->model->consultarTransferencia($_POST['id'],$_POST['guia']));
         }
 
         function grabaGuia(){

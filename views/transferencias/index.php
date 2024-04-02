@@ -347,6 +347,13 @@
                                 <label for="ftraslado">Fecha Traslado:</label>
                                 <input type="date" name="ftraslado" id="ftraslado">
                             </div>
+                            <div>
+                                <label for="ftraslado">Tipo Guia:</label>
+                                <select name="tipo_documento" id="tipo_documento">
+                                    <option value="1">REMITENTE</option>
+                                    <option value="2">TRANSPORTISTA</option>
+                                </select>
+                            </div>
                         </div>
                         <div>
                             <p class="titulo_seccion"><strong>Datos del destinatario</strong></p>

@@ -4376,5 +4376,26 @@
                 return false;
             }
         }
+
+        public function numeroGuia(){
+            try {
+                $guiaInicial = 1330000;
+
+                $sql = $this->db->connect()->query("SELECT
+                                                        COUNT( alm_despachocab.cnumguia ) AS nroguia 
+                                                    FROM
+                                                        alm_despachocab 
+                                                    WHERE
+                                                        alm_despachocab.cSerieguia = 'F001'");
+                $sql->execute();
+                $result = $sql->fetchAll();
+
+                return str_pad($result[0]['nroguia']+$guiaInicial,7,0,STR_PAD_RIGHT);
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
     }
 ?>

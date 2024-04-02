@@ -36,7 +36,7 @@
 
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()) {
-                        $salida .='<tr class="pointer" data-indice="'.$rs['idreg'].'">
+                        $salida .='<tr class="pointer" data-indice="'.$rs['idreg'].'" data-guia="'.$rs['cnumguia'].'">
                                         <td class="textoCentro">'.str_pad($rs['idreg'],4,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.date("d/m/Y", strtotime($rs['ftraslado'])).'</td>
                                         <td class="pl20px">'.$rs['origen_cc'].'</td>
@@ -53,7 +53,7 @@
             }
         }
 
-        public function consultarTransferencia($id) {
+        public function consultarTransferencia($id,$guia) {
             try {
                 $cabecera = "";
                 $result = [];
@@ -101,7 +101,7 @@
 
                 return array("cabecera"=>$docData,
                             "detalles"=>$this->detalles($id),
-                            "guias"=>$this->consultarDatosGuiaTrans($id));
+                            "guias"=>$this->consultarDatosGuiaTrans($id,$guia));
 
 
             } catch (PDOException $th) {
@@ -174,7 +174,7 @@
             }
         }
 
-        private function consultarDatosGuiaTrans($transferencia){
+        private function consultarDatosGuiaTrans($transferencia,$guia){
             try {
                 $guiaData="";
                 $sql=$this->db->connect()->prepare("SELECT
@@ -203,8 +203,9 @@
                                                 FROM
                                                     lg_guias 
                                                 WHERE
-                                                    lg_guias.id_regalm =:transferencia");
-                $sql->execute(["transferencia"=>$transferencia]);
+                                                    lg_guias.id_regalm =:transferencia
+                                                AND lg_guias.cnumguia =:guia");
+                $sql->execute(["transferencia"=>$transferencia,"guia"=>$guia]);
 
                 $rowCount = $sql->rowCount();
                 
@@ -726,6 +727,7 @@
                                 $anio[0],
                                 $cabecera["observaciones"],
                                 $cabecera["destinatario"],
+                                $cabecera["tipo_documento"],
                                 'A4');
                 $pdf->AliasNbPages();
                 $pdf->AddPage();

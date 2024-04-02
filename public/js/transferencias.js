@@ -6,7 +6,7 @@ $(function(){
     $("#tablaPrincipal tbody").on('click','tr', function(e) {
         e.preventDefault();
 
-        $.post(RUTA+"transferencias/consultID",{id:$(this).data('indice')},
+        $.post(RUTA+"transferencias/consultID",{id:$(this).data('indice'),guia:$(this).data('guia')},
             function (data, text, requestXHR) {
 
                 let numero = $.strPad(data.cabecera[0].idreg,6);

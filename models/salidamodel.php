@@ -366,7 +366,7 @@
                 $fecha_emision = date("d/m/Y", strtotime($cabeceraGuia['fgemision']));
 
                 if ( $guia == "" ) {
-                    $guia = $this->numeroGuia();
+                    $guia = $this->model->numeroGuia();
                     $salida = $this->grabarDatosGuia($cabeceraGuia,$despacho,$fecha_emision,$fecha_traslado,$guia);
                     //$guia = $cabeceraGuia['numero_guia'];
                     
@@ -1062,7 +1062,7 @@
                                                                                 centiruc=:ruc_entidad,ctraslado=:traslado,cenvio=:envio,
                                                                                 cautoriza=:autoriza,cdestinatario=:destinatario,cobserva=:observaciones,
                                                                                 cnombre=:nombres,cmarca=:marca,clicencia=:licencia,cplaca=:placa,
-                                                                                ftraslado=:fecha_traslado,fguia=:fecha_guia");
+                                                                                ftraslado=:fecha_traslado,fguia=:fecha_guia,cserie=:serie");
 
                 $sql->execute([ "despacho"=>$despacho,
                                 "guia"=>$nroguia,
@@ -1083,7 +1083,8 @@
                                 "licencia"=>$cabeceraGuia['licencia_conducir'],
                                 "placa"=>$cabeceraGuia['placa'],
                                 "fecha_traslado"=>$traslado,
-                                "fecha_guia"=>$emision]);
+                                "fecha_guia"=>$emision,
+                                "serie"=>'F001']);
                 
                 $rowCount = $sql->rowcount();
 
@@ -1584,25 +1585,6 @@
             return $mensaje;
         }
 
-        private function numeroGuia(){
-            try {
-                $guiaInicial = 1330000;
-
-                $sql = $this->db->connect()->query("SELECT
-                                                        COUNT( alm_despachocab.cnumguia ) AS nroguia 
-                                                    FROM
-                                                        alm_despachocab 
-                                                    WHERE
-                                                        alm_despachocab.cSerieguia = 'F001'");
-                $sql->execute();
-                $result = $sql->fetchAll();
-
-                return str_pad($result[0]['nroguia']+$guiaInicial,7,0,STR_PAD_RIGHT);
-
-            } catch (PDOException $th) {
-                echo "Error: ".$th->getMessage();
-                return false;
-            }
-        }
+        
     } 
 ?>
