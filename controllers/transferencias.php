@@ -36,7 +36,8 @@
             echo json_encode($this->model->insertarTransferencia($_POST['cabecera'],
                                                     $_POST['detalles'],
                                                     $_POST['idpedido'],
-                                                    $_POST['atendidos']));
+                                                    $_POST['atendidos'],
+                                                    $_POST['estado']));
         }
 
         function consultID(){

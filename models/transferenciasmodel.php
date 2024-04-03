@@ -604,19 +604,64 @@
 
         public function grabarGuiaTransferencia($cabeceraGuia,$nota,$operacion){
             try {
+                if ($operacion == "n") {
 
-                if (!$this->verificarGuiaTrans($nota,$cabeceraGuia['numero_guia'])) {
+                    $guiaAutomatica = $this->numeroGuia();
+
                     $sql = $this->db->connect()->prepare("INSERT INTO lg_guias SET id_regalm=:nota,cnumguia=:guia,corigen=:origen,
-                                                                                    cdirorigen=:direccion_origen,cdestino=:destino,
-                                                                                    cdirdest=:direccion_destino,centi=:entidad,centidir=:direccion_entidad,
-                                                                                    centiruc=:ruc_entidad,ctraslado=:traslado,cenvio=:envio,
-                                                                                    cautoriza=:autoriza,cdestinatario=:destinatario,cobserva=:observaciones,
-                                                                                    cnombre=:nombres,cmarca=:marca,clicencia=:licencia,cplaca=:placa,
-                                                                                    ftraslado=:fecha_traslado,fguia=:fecha_guia,cmotivo=:motivo");
+                                                                                        cdirorigen=:direccion_origen,cdestino=:destino,
+                                                                                        cdirdest=:direccion_destino,centi=:entidad,centidir=:direccion_entidad,
+                                                                                        centiruc=:ruc_entidad,ctraslado=:traslado,cenvio=:envio,
+                                                                                        cautoriza=:autoriza,cdestinatario=:destinatario,cobserva=:observaciones,
+                                                                                        cnombre=:nombres,cmarca=:marca,clicencia=:licencia,cplaca=:placa,
+                                                                                        ftraslado=:fecha_traslado,fguia=:fecha_guia,cmotivo=:motivo,
+                                                                                        cserie=:serie");
 
                     $sql->execute([ "nota"=>$nota,
-                                    "guia"=>$cabeceraGuia['numero_guia'],
-                                    "origen"=>$cabeceraGuia['almacen_origen'],
+                                        "guia"=>$guiaAutomatica,
+                                        "origen"=>$cabeceraGuia['almacen_origen'],
+                                        "direccion_origen"=>$cabeceraGuia['almacen_origen_direccion'],
+                                        "destino"=>$cabeceraGuia['almacen_destino'],
+                                        "direccion_destino"=>$cabeceraGuia['almacen_destino_direccion'],
+                                        "entidad"=>$cabeceraGuia['empresa_transporte_razon'],
+                                        "direccion_entidad"=>$cabeceraGuia['direccion_proveedor'],
+                                        "ruc_entidad"=>$cabeceraGuia['ruc_proveedor'],
+                                        "traslado"=>$cabeceraGuia['modalidad_traslado'],
+                                        "envio"=>$cabeceraGuia['tipo_envio'],
+                                        "autoriza"=>$cabeceraGuia['autoriza'],
+                                        "destinatario"=>$cabeceraGuia['destinatario'],
+                                        "observaciones"=>$cabeceraGuia['observaciones'],
+                                        "nombres"=>$cabeceraGuia['nombre_conductor'],
+                                        "marca"=>$cabeceraGuia['marca'],
+                                        "licencia"=>$cabeceraGuia['licencia_conducir'],
+                                        "placa"=>$cabeceraGuia['placa'],
+                                        "fecha_traslado"=>$cabeceraGuia['ftraslado'],
+                                        "fecha_guia"=>$cabeceraGuia['fgemision'],
+                                        "motivo"=>94,
+                                        "serie"=>"F001"]);
+                        
+                        $rowCount = $sql->rowcount();
+
+                        if ($rowCount > 0) {
+                            $mensaje = "Registro grabado";
+                            $this->actualizarGuiaEnNota($cabeceraGuia,$nota,$guiaAutomatica);
+                        }else {
+                            $mensaje = "Error al crear el registro";
+                        }
+                }else {
+                    $guiaAutomatica = $cabeceraGuia['numero_guia'];
+
+                    $sql = $this->db->connect()->prepare("UPDATE lg_guias SET corigen=:origen,
+                                                                              cdirorigen=:direccion_origen,cdestino=:destino,
+                                                                              cdirdest=:direccion_destino,centi=:entidad,centidir=:direccion_entidad,
+                                                                              centiruc=:ruc_entidad,ctraslado=:traslado,cenvio=:envio,
+                                                                              cautoriza=:autoriza,cdestinatario=:destinatario,cobserva=:observaciones,
+                                                                              cnombre=:nombres,cmarca=:marca,clicencia=:licencia,cplaca=:placa,
+                                                                              ftraslado=:fecha_traslado,fguia=:fecha_guia
+                                                            WHERE cnumguia=:guia
+                                                            LIMIT 1");
+
+                    $sql->execute([ "origen"=>$cabeceraGuia['almacen_origen'],
                                     "direccion_origen"=>$cabeceraGuia['almacen_origen_direccion'],
                                     "destino"=>$cabeceraGuia['almacen_destino'],
                                     "direccion_destino"=>$cabeceraGuia['almacen_destino_direccion'],
@@ -634,22 +679,20 @@
                                     "placa"=>$cabeceraGuia['placa'],
                                     "fecha_traslado"=>$cabeceraGuia['ftraslado'],
                                     "fecha_guia"=>$cabeceraGuia['fgemision'],
-                                    "motivo"=>94]);
-                    
-                    $rowCount = $sql->rowcount();
+                                    "guia"=>$guiaAutomatica,]);
 
+                    $rowCount = $sql->rowcount();
+    
                     if ($rowCount > 0) {
-                        $mensaje = "Registro grabado";
-                        $this->actualizarGuiaEnNota($cabeceraGuia,$nota);
+                        $mensaje = "Registro modificado";
+                        $this->actualizarGuiaEnNota($cabeceraGuia,$nota,$guiaAutomatica);
                     }else {
                         $mensaje = "Error al crear el registro";
-                    }
-                }else{
-                    $mensaje = "El documento ya esta registrado";
+                    }  
                 }
 
-                return array("mensaje"=>$mensaje,
-                            "guia"=>$cabeceraGuia['numero_guia']);              
+                return array("mensaje"=>$mensaje,"guia"=>$guiaAutomatica);              
+                
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
                 return false;
@@ -667,7 +710,7 @@
             return $result['0']['existe'];
         }
 
-        private function actualizarGuiaEnNota($cabecera,$nota){
+        private function actualizarGuiaEnNota($cabecera,$nota,$guia){
             try {
                 $sql = $this->db->connect()->prepare("UPDATE alm_transfercab 
                                                         SET ffreg=:envio,
@@ -675,7 +718,7 @@
                                                         WHERE idreg =:nota");
                 
                 $sql->execute(["envio"=>$cabecera['ftraslado'],
-                                "guia"=>$cabecera['numero_guia'],
+                                "guia"=>$guia,
                                 "nota"=>$nota]);
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();

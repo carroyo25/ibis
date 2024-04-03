@@ -1,5 +1,5 @@
 $(function(){
-    let accion = "u";
+    let accion = "u",flag=false;
 
     $("#esperar").fadeOut();
 
@@ -48,6 +48,11 @@ $(function(){
                     $("#licencia_conducir").val(data.guias[0].clicencia);
                     $("#marca").val(data.guias[0].cmarca);
                     $("#placa").val(data.guias[0].cplaca);
+
+                    $(".primeraBarra").css("background","#0078D4");
+                    $(".primeraBarra span").text('Datos Generales');
+
+                    accion = "u";
                 }
             },
             "json"
@@ -74,6 +79,9 @@ $(function(){
         $("#codigo_movimiento").val(144);
 
         $('#barra_notifica').removeClass('primerabarra');
+
+        $(".primeraBarra").css("background","#0078D4");
+        $(".primeraBarra span").text('Datos Generales');
         
         accion = 'n';
 
@@ -232,31 +240,35 @@ $(function(){
 
         try {
 
-            //if  ( checkCantTables($("#tablaDetalles tbody > tr"),6) ) throw "Revise las cantidades ingresadas";
+            //if  ( checkCantTables($("#tablaDetalles tbody > tr"),6) ) throw "Revise las cantidades ingresadas";//
 
-            if (accion == "n") {
+            if ( accion == "n" ) {
                 
                 $("#esperar").css("opacity","1").fadeIn();
 
                 $.post(RUTA+"transferencias/registro",{cabecera:result,
                                                     detalles:JSON.stringify(detalles(false)),
                                                     idpedido:pedido,
-                                                    atendidos:suma_atendidos()},
+                                                    atendidos:suma_atendidos(),
+                                                    estado:accion},
                     function (data, textStatus, jqXHR) {
                         if(data.estado){
                             mostrarMensaje(data.mensaje,"mensaje_correcto");
                             $("#numero").val(data.documento);
                             $("#codigo_transferencia").val(data.indice);
+
+                            $(".primeraBarra").css("background","#819830");
+                            $(".primeraBarra span").text('Datos Generales ... Grabado');
                         }else{
                             mostrarMensaje(data.mensaje,"mensaje_error");
                         }
 
                         $("#esperar").css("opacity","0").fadeOut();
-
-                        accion = "d";
                     },
                     "json"
                 );
+            }else {
+
             }
 
         } catch (error) {
@@ -422,7 +434,9 @@ $(function(){
                                                 operacion:accion},
             function (data, textStatus, jqXHR) {
                 mostrarMensaje(data.mensaje,"mensaje_correcto");
-                $("#guia").val(data.guia);
+                $("#guia,#numero_guia").val(data.guia);
+
+                accion = "u";
             },
             "json"
         );
@@ -621,7 +635,7 @@ detalles = (flag) =>{
     
         item = {};
 
-        if (!GRABADO) {
+        //if (!GRABADO) {
             item['item']         = ITEM;
             item['idprod']       = IDPROD;
             item['origen']       = ORIGEN;
@@ -643,7 +657,7 @@ detalles = (flag) =>{
             item['condicion']    = CONDICION;
                 
             DETALLES.push(item);
-        }     
+        //}     
     })
 
     return DETALLES; 

@@ -4382,11 +4382,11 @@
                 $guiaInicial = 1330000;
 
                 $sql = $this->db->connect()->query("SELECT
-                                                        COUNT( alm_despachocab.cnumguia ) AS nroguia 
+                                                        COUNT( lg_guias.cnumguia ) AS nroguia 
                                                     FROM
-                                                        alm_despachocab 
+                                                        lg_guias 
                                                     WHERE
-                                                        alm_despachocab.cSerieguia = 'F001'");
+                                                        lg_guias.cserie = 'F001'");
                 $sql->execute();
                 $result = $sql->fetchAll();
 

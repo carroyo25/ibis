@@ -366,7 +366,7 @@
                 $fecha_emision = date("d/m/Y", strtotime($cabeceraGuia['fgemision']));
 
                 if ( $guia == "" ) {
-                    $guia = $this->model->numeroGuia();
+                    $guia = $this->numeroGuia();
                     $salida = $this->grabarDatosGuia($cabeceraGuia,$despacho,$fecha_emision,$fecha_traslado,$guia);
                     //$guia = $cabeceraGuia['numero_guia'];
                     
