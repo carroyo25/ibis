@@ -301,7 +301,8 @@
                                                         alm_consumo.nkardex,
                                                         alm_consumo.calmacen,
                                                         UPPER(cm_producto.cdesprod) AS cdesprod,
-                                                        tb_unimed.cabrevia,COUNT(*),
+                                                        tb_unimed.cabrevia,
+                                                        /*COUNT(*),*/
                                                         tb_parametros.cdescripcion  AS motivo_epp
                                                     FROM
                                                         alm_consumo
@@ -312,14 +313,14 @@
                                                         alm_consumo.nrodoc = :documento 
                                                         AND ncostos = :cc
                                                         AND alm_consumo.flgactivo = 1
-                                                    GROUP BY
+                                                    /*GROUP BY
                                                             alm_consumo.idprod,
                                                             alm_consumo.fechasalida,
                                                             cm_producto.ccodprod,
                                                             alm_consumo.cantsalida,
                                                             alm_consumo.nhoja,
                                                             alm_consumo.cserie
-                                                    HAVING COUNT(*) >= 1
+                                                    HAVING COUNT(*) >= 1*/
                                                     ORDER BY alm_consumo.freg DESC" );
                 $sql->execute(["documento"=>$d,"cc"=>$c]);
                 $rowCount = $sql->rowCount();
@@ -327,7 +328,6 @@
                 $salida ="";
                 $numero_item = $this->cantidadItems($d,$c);
 
-                /*SELECT DISTINCTROW nrodoc,fechasalida,nkardex FROM alm_consumo WHERE nrodoc=21136515 AND ncostos=34*/
 
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()){
