@@ -264,7 +264,9 @@
                                 $estado_pedido = "atendido";
                             }
 
-                            $cantidad = $rs['cantidad_aprobada'] == 0 ? $rs['cantidad_pedido'] : $rs['cantidad_aprobada'];
+                            //$cantidad = $rs['cantidad_aprobada'] == 0 ? $rs['cantidad_pedido'] : $rs['cantidad_aprobada'];
+                            $cantidad = $rs['cantidad_pedido'];
+
 
                             $fecha_entrega = "";
                             $fecha_descarga = "";
@@ -1278,7 +1280,8 @@
                         $dias_atraso  =  $saldoRecibir > 0 && $rs['dias_atraso'] < 1 ? $rs['dias_atraso'] : "-" ;
                         $suma_atendido = number_format($rs['cantidad_orden'] + $rs['cantidad_atendida'],2);
 
-                        $cantidad = $rs['cantidad_aprobada'] == 0 ? $rs['cantidad_pedido'] : $rs['cantidad_aprobada'];
+                        //$cantidad = $rs['cantidad_aprobada'] == 0 ? $rs['cantidad_pedido'] : $rs['cantidad_aprobada'];
+                        $cantidad = $rs['cantidad_pedido'];
 
                         $estado_pedido =  $rs['estadoItem'] >= 54 ? "Atendido":"Pendiente";
                         $estado_item   =  $rs['estadoItem'] >= 54 ? "Atendido":"Pendiente";

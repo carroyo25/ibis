@@ -22,6 +22,10 @@
         function nroguia(){
             echo json_encode($this->model->nuevonumeroguia());
         }
+
+        function grabaGuiaManual(){
+            echo json_encode($this->model->grabarGuiaManual($_POST['guiaCab'],$_POST['formCab'],$_POST['detalles'],$_POST['operacion']));
+        }
         
     }
 ?>
