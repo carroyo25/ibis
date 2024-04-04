@@ -18,6 +18,10 @@
             $this->view->listaCostosSelect = $this->model->costosPorUsuarioSelect($_SESSION['iduser']);
             $this->view->render('guiamanual/index');
         }
+
+        function nroguia(){
+            echo json_encode($this->model->nuevonumeroguia());
+        }
         
     }
 ?>

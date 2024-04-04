@@ -9,5 +9,12 @@
         public function listarGuiasManuales(){
             
         }
+
+        public function nuevonumeroguia(){
+            $guiaAutomatica = $this->numeroGuia();
+            $mensaje = "numero de guia creado";
+
+            return array("mensaje"=>$mensaje,"guia"=>$guiaAutomatica); 
+        }
     }
 ?>

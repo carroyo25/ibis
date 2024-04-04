@@ -451,7 +451,7 @@
         <table id="tablaPrincipal">
             <thead class="stickytop">
                 <tr>
-                    <th>Num. Nota</th>
+                    <th>Num. Guia</th>
                     <th>F.Emisión</th>
                     <th>Almacen Origen</th>
                     <th>Almacen Destino</th>
