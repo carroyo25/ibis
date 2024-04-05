@@ -126,9 +126,9 @@
                 $r = $rol;
 
                 if ( $rol  == 5 ) {
-                    $r = 68;
+                    $r = 3;
                 }else if ( $rol == 9 && $docData[0]["ntipmov"] == 37 ) {
-                    $r = 109;
+                    $r = 3;
                 }
 
                 if ($ordenEvaluada) {
