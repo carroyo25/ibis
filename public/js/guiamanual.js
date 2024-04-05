@@ -3,11 +3,7 @@ $(function() {
         tipoVista = null,
         cc = "",
         fila = "",
-        idfila = "",
-        ordenes = [],
-        sw=0,
-        grabado = false,
-        nfila = 0;
+        grabado = false;
         
 
     $("#esperar").fadeOut();
@@ -45,6 +41,9 @@ $(function() {
         e.preventDefault();
 
         $("#proceso").fadeOut();
+
+        $(".primeraBarra").css("background","#0078D4");
+        $(".primeraBarra span").text("Datos Generales");
 
         /*$.post(RUTA+"salida/actualizaDespachos",
             function (data, textStatus, jqXHR) {
@@ -147,7 +146,7 @@ $(function() {
                         <td class="textoCentro"><a href="search"><i class="fas fa-search"></i></a></td>
                         <td class="textoCentro">${nFilas}</td>
                         <td class="textoCentro"><input type="text" value="-"></td>
-                        <td class="pl20px"><textarea></textarea></td>
+                        <td class="pl20px"><textarea>Prueba ${nFilas}</textarea></td>
                         <td><input type="text" value="-"></td>
                         <td><input type="number" value=1 min=1></td>
                         <td class="pl20px"><textarea></textarea></td>
@@ -234,13 +233,6 @@ $(function() {
         return false;
     });
 
-    /*$("#saveRegister").click(function (e) { 
-        e.preventDefault();
-
-        accion="u";
-
-        return false;
-    });*/
 
     $(".tituloDocumento").on("click","#closeDocument", function (e) {
         e.preventDefault();
@@ -264,14 +256,17 @@ $(function() {
             form[this.name] = this.value;
         });
 
-        $.post(RUTA+"guiaManua/GrabaGuiaManual",{guiaCab:guia,
+        $.post(RUTA+"guiaManual/grabaGuiaManual",{guiaCab:guia,
                                                 formCab:form,
-                                                detalles:JSON.stringify(detalles()),
-                                                operacion:accion
+                                                detalles:JSON.stringify(detalles(false)),
+                                                operacion:"n"
                                             },
             function (data, textStatus, jqXHR) {
                 mostrarMensaje(data.mensaje,"mensaje_correcto");
                 $("#guia,#numero_guia").val(data.guia);
+
+                $(".primeraBarra").css("background","#819830");
+                $(".primeraBarra span").text('Datos Generales ... Grabado');
 
                 accion = "u";
             },
@@ -310,16 +305,16 @@ $(function() {
 })
 
 
-const detallesVista = () =>{
+detalles = (sw) =>{
     DETALLES = [];
 
     let TABLA = $("#tablaDetalles tbody >tr");
 
     TABLA.each(function(){
-        let STATUS  = $(this).attr("data-estado");
+        let STATUS  = $(this).attr("data-grabado");
         let item = {};
 
-        if ( STATUS == 1 ) {
+        if ( STATUS == sw ) {
             item['item']         = $(this).find('td').eq(2).text();
             item['iddetorden']   = null;
             item['iddetped']     = null;
@@ -330,7 +325,7 @@ const detallesVista = () =>{
             item['ingreso']      = null
             item['almacen']      = $("#codigo_almacen_origen").val();
             item['cantidad']     = null;
-            item['cantdesp']     = $(this).find('td').eq(5).children().val();
+            item['cantdesp']     = $(this).find('td').eq(6).children().val();
             item['obser']        = $(this).find('td').eq(7).children().val();
             item['codigo']       = $(this).find('td').eq(3).children().val();
             item['descripcion']  = $(this).find('td').eq(4).children().val();

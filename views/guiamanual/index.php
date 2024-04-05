@@ -37,9 +37,6 @@
                             <button type="button" id="addItem" title="Agregar Item" class="boton3">
                                 <i class="fab fa-wpexplorer"></i> Agregar Item
                             </button>
-                            <button type="button" id="saveRegister" title="Grabar Documento" class="boton3">
-                                <i class="far fa-save"></i> Grabar Documento
-                            </button>
                             <button type="button" id="closeProcess" title="Cerrar" class="boton3">
                                 <i class="fas fa-window-close"></i>
                             </button>
@@ -418,19 +415,16 @@
         <table id="tablaPrincipal">
             <thead class="stickytop">
                 <tr>
-                    <th>Num. Nota</th>
+                    <th>Item</th>
                     <th>F.Emisión</th>
                     <th>Almacen Origen</th>
                     <th>Almacen Destino</th>
                     <th>Centro de Costos</th>
-                    <th>Año</th>
-                    <th>Guia</br>Remision</th>
-                    <th>Orden</th>
-                    <th>Pedido</th>
+                    <th>Num. Guia</th>
                 </tr>
             </thead>
             <tbody>
-                <?php //echo $this->listaNotasSalidas;?>
+                <?php echo $this->listaNotasSalidas;?>
             </tbody>
         </table>
     </div>
