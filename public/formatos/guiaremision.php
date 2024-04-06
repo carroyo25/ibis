@@ -36,11 +36,10 @@
                 $this->observaciones = $observaciones;
                 $this->atencion = $atencion;
                 $this->tipo = $tipo;
+                $this->tipo_guia = ["","EMISOR","REMITENTE","TRANSPORTISTA","SUNAT"];
             }
 
             function Header(){
-
-                $tipo_guia = ["","GUIA DE REMISION - REMITENTE", "GUIA DE REMISION -TRANSPORTISTA"];
                 $this->SetFillColor(229, 229, 229);
                 $this->Image('public/img/logo.png',12,12,50);
                 //cabecera
@@ -68,7 +67,7 @@
                 $this->Cell(65,6,"R.U.C. 20504898173",0,1,"C");
                 $this->SetXY(135,28);
                 $this->SetFont('Arial','B',9);
-                $this->Cell(65,8,$tipo_guia[$this->tipo],1,1,"C",true);
+                $this->Cell(65,8,"GUIA DE REMISION - ".$this->tipo_guia[$this->tipo],1,1,"C",true);
                 $this->SetXY(135,38);
                 $this->SetFont('Arial','B',12);
                 $this->Cell(65,6,"0001 - ".$this->nguia,0,1,"C"); //pasa parametro
@@ -78,7 +77,7 @@
                 $this->SetXY(13,36);
                 $this->SetFont('Arial',"",7);
                 $this->Cell(10,6,"ORIGEN :",0,0);
-                $this->Cell(10,6,$this->origen,0,1);
+                $this->Cell(10,6,utf8_decode($this->origen),0,1);
                 
                 $this->SetXY(150,42);
                 $this->SetFont('Arial',"",5);
@@ -107,7 +106,6 @@
                 $this->Cell(15,5,$this->ruc,0,0);
                 $this->RoundedRect(108, 50, 92, 20, 1, '1234', 'D'); //
                 $this->SetXY(108,50);
-                //$this->SetFont('Arial','',5);
                 $this->Cell(92,5,"EMPRESA DE TRANSPORTES",1,1,"C",true);
                 $this->SetXY(110,55);
                 $this->Cell(25,5,utf8_decode("NOMBRE O RAZÓN SOCIAL:"),0,0);
@@ -123,13 +121,13 @@
                 $this->SetFont('Arial','',6);
                 $this->Cell(92,5,"PUNTO DE PARTIDA",1,1,"C",true);
                 $this->SetX(15);
-                $this->Cell(92,5,utf8_decode($this->vianomorg),0,1);
+                $this->MultiCell(92,5,utf8_decode($this->vianomorg),0,1);
     
                 $this->RoundedRect(108, 72, 92, 20, 1, '1234', 'D');
                 $this->SetXY(108,72);
                 $this->Cell(92,5,"PUNTO DE LLEGADA",1,1,"C",true);
                 $this->SetX(110);
-                $this->Cell(92,5,utf8_decode($this->vianomodest ." - ". $this->depdest),0,1);
+                $this->MultiCell(92,5,utf8_decode($this->vianomodest ." - ". $this->depdest),0,1);
     
                 $this->RoundedRect(13, 94, 187, 20, 1, '1234', 'D');
                 $this->SetXY(13,94);
@@ -144,7 +142,6 @@
                 else
                     $this->Cell(92,5,$this->feenttrans,0,1);
 
-                //$this->Cell(92,5,$this->feenttrans,0,1);
                 $this->SetX(15);
                 $this->Cell(35,5,utf8_decode("REPRESENTANTE:"),0,0);
                 $this->Cell(45,5,utf8_decode($this->detcond),0,0);
@@ -166,13 +163,14 @@
     
             function Footer(){
                 $this->SetFillColor(229, 229, 229);
-                $this->SetY(-60);
+                $this->SetY(-65);
                 //$this->SetXY(30,230);
                 $this->SetX(30);
                 $this->SetFont('Arial','',9);
                 $this->Cell(90,4,utf8_decode("Atención : ").$this->atencion,0,1);
                 $this->SetX(30);
-                $this->Cell(90,4,"Observaciones : ".$this->observaciones,0,1);
+                $this->MultiCell(180,4,utf8_decode($this->observaciones),0,1);
+
                 $this->RoundedRect(13, 250, 187, 30, 1, '1234', 'D');
                 $this->SetXY(13,250);
                 $this->SetFont('Arial','',8);
@@ -236,7 +234,10 @@
     
                 $this->SetXY(13,280); //detalle del documento
                 $this->SetFont('Arial','',10);
-                $this->Cell(187,6,"** SOMOS AGENTE DE RETENCION DEL IGV DE ACUERDO A R.S. 225 2000",0,0,"C");
+                $this->Cell(187,6,"** SOMOS AGENTE DE RETENCION DEL IGV DE ACUERDO A R.S. 225 2000",0,1,"C");
+                
+                $this->setTextColor(255,0,0);
+                $this->Cell(187,6,$this->tipo_guia[$this->tipo],0,1,"R");
             }
         }
     

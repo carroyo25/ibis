@@ -122,7 +122,7 @@
                                                         lg_ordendet.id_orden,
                                                         cm_producto.ccodprod,
                                                         LPAD( tb_pedidocab.nrodoc, 6, 0 ) AS pedido,
-                                                        UPPER( CONCAT_WS( ' ', cm_producto.cdesprod, tb_pedidodet.observaciones, tb_pedidodet.docEspec ) ) AS cdesprod,
+                                                        UPPER( CONCAT_WS( ' ', cm_producto.cdesprod ) ) AS cdesprod,
                                                         cm_producto.nund,
                                                         tb_unimed.cabrevia,
                                                         tb_pedidodet.idpedido,
@@ -244,7 +244,7 @@
                     $lc++;
                     $rc++;
                     
-                    if ($lc == 52) {
+                    if ($lc == 49) {
                         $pdf->AddPage();
                         $lc = 0;
                     }	
@@ -312,7 +312,7 @@
                 $pdf->SetFillColor(255,255,255);
                 $pdf->SetTextColor(0,0,0);
                 
-                $pdf->SetFont('Arial','',8);
+                $pdf->SetFont('Arial','',6);
                 $lc = 0;
                 $rc = 0;
 
@@ -321,8 +321,8 @@
                 for($i=1;$i<=$nreg;$i++){
 
                     $pdf->SetX(13);
-                    $pdf->SetCellHeight(3);
-                    //$pdf->SetFont('Arial','',3);
+                    //$pdf->SetCellHeight(1);
+                    $pdf->SetFont('Arial','',6);
 
                     $pdf->SetAligns(array("R","R","C","L"));
                     $pdf->Row(array(str_pad($i,3,"0",STR_PAD_LEFT),

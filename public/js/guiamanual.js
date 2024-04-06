@@ -302,6 +302,51 @@ $(function() {
         return false
     });
 
+    $("#previewDocument").click(function (e) { 
+        e.preventDefault();
+        
+        try {
+            let result = {};
+
+            $.each($("#guiaremision").serializeArray(),function(){
+                result[this.name] = this.value;
+            });
+
+            if (result['numero_guia'] == "") throw "Ingrese el Nro. de Guia";
+            if (result['codigo_entidad'] == "") throw "Seleccione la empresa de transportes";
+            if (result['codigo_traslado'] == "") throw "Seleccione la modalidad de traslado";
+            
+            $.post(RUTA+"guiamanual/vistaPreviaGuia", {cabecera:result,
+                                                            detalles:JSON.stringify(detallesVista(1)),
+                                                            proyecto: $("#costos").val()},
+                function (data, textStatus, jqXHR) {
+                        
+                       if (data.archivo !== ""){
+                            $(".ventanaVistaPrevia iframe")
+                            .attr("src","")
+                            .attr("src",data.archivo);
+        
+                            $("#vistaprevia").fadeIn();
+                       }
+                    },
+                    "json"
+            );
+        } catch (error) {
+            mostrarMensaje(error,'mensaje_error');
+        }
+        
+        return false
+    });
+
+    $("#closePreview").click(function (e) { 
+        e.preventDefault();
+
+        $(".ventanaVistaPrevia iframe").attr("src","");
+        $("#vistaprevia").fadeOut();
+
+        return false;
+    })
+
 })
 
 

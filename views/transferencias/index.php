@@ -348,10 +348,12 @@
                                 <input type="date" name="ftraslado" id="ftraslado">
                             </div>
                             <div>
-                                <label for="ftraslado">Tipo Guia:</label>
+                                <label for="tipo_documento">Tipo Guia:</label>
                                 <select name="tipo_documento" id="tipo_documento">
-                                    <option value="1">REMITENTE</option>
-                                    <option value="2">TRANSPORTISTA</option>
+                                    <option value="1">EMISOR</option>
+                                    <option value="2">REMITENTE</option>
+                                    <option value="3">TRANSPORTISTA</option>
+                                    <option value="4">SUNAT</option>
                                 </select>
                             </div>
                         </div>
@@ -462,6 +464,14 @@
                             <span></span>
                             <label for="placa">Nro. Placa :</label>
                             <input type="text" name="placa" id="placa">
+                        </div>
+                        <p><strong>Datos Adicionales</strong></p>
+                        <div class="tres_columnas_interna">
+                            <label for="marca">Peso :</label>
+                            <input type="text" name="peso" id="peso">
+                            <span></span>
+                            <label for="bultos">Nro. Bultos :</label>
+                            <input type="text" name="bultos" id="bultos">
                         </div>
                     </div>
                 </div>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -202,10 +202,12 @@
                                 <input type="date" name="ftraslado" id="ftraslado">
                             </div>
                             <div>
-                                <label for="ftraslado">Tipo Guia:</label>
+                                <label for="tipo_documento">Tipo Guia:</label>
                                 <select name="tipo_documento" id="tipo_documento">
-                                    <option value="1">REMITENTE</option>
-                                    <option value="2">TRANSPORTISTA</option>
+                                    <option value="1">EMISOR</option>
+                                    <option value="2">REMITENTE</option>
+                                    <option value="3">TRANSPORTISTA</option>
+                                    <option value="4">SUNAT</option>
                                 </select>
                             </div>
                         </div>
@@ -363,6 +365,15 @@
                     </tbody>
                 </table>
             </div>
+        </div>
+    </div>
+    <div class="modal" id="vistaprevia">
+        <div class="ventanaVistaPrevia">
+            <div class="tituloVista">
+                <h3>Vista Previa</h3>
+                <a href="#" id="closePreview" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
+            </div>
+            <iframe src="" id="pdfPreview"></iframe>
         </div>
     </div>
     <div class="cabezaModulo">

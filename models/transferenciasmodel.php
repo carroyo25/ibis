@@ -778,7 +778,7 @@
                 $pdf->SetFillColor(255,255,255);
                 $pdf->SetTextColor(0,0,0);
                 
-                $pdf->SetFont('Arial','',7);
+                $pdf->SetFont('Arial','',6);
                 $lc = 0;
                 $rc = 0;
                 $item = 1;
@@ -791,7 +791,6 @@
 
                     
                     $pdf->SetX(13);
-                    $pdf->SetCellHeight(3);
 
                     $pdf->SetAligns(array("R","R","C","L"));
                     if ($cantidad > 0){
@@ -811,12 +810,12 @@
                 }
 
                 $pdf->Ln(1);
-                    $pdf->SetX(13);
-                    $pdf->Ln(2);
-                    $pdf->SetX(13);
-                    $pdf->Output($archivo,'F');
+                $pdf->SetX(13);
+                $pdf->Ln(2);
+                $pdf->SetX(13);
+                $pdf->Output($archivo,'F');
                     
-                    return array("archivo"=>$archivo);
+                return array("archivo"=>$archivo);
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();

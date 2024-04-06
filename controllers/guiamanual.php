@@ -26,6 +26,10 @@
         function grabaGuiaManual(){
             echo json_encode($this->model->grabarGuiaManual($_POST['guiaCab'],$_POST['formCab'],$_POST['detalles'],$_POST['operacion']));
         }
+
+        function vistaPreviaGuia(){
+            echo json_encode($this->model->generarGuiaPdf($_POST['cabecera'],$_POST['detalles'],$_POST['proyecto']));
+        }
         
     }
 ?>

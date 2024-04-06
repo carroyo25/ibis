@@ -4379,7 +4379,7 @@
 
         public function numeroGuia(){
             try {
-                $guiaInicial = 1330000;
+                $guiaInicial = 136401;
 
                 $sql = $this->db->connect()->query("SELECT
                                                         COUNT( lg_guias.cnumguia ) AS nroguia 
@@ -4390,7 +4390,7 @@
                 $sql->execute();
                 $result = $sql->fetchAll();
 
-                return str_pad($result[0]['nroguia']+$guiaInicial,7,0,STR_PAD_RIGHT);
+                return str_pad($result[0]['nroguia']+$guiaInicial,7,0,STR_PAD_LEFT);
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
