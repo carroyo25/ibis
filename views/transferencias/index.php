@@ -350,7 +350,7 @@
                             <div>
                                 <label for="tipo_documento">Tipo Guia:</label>
                                 <select name="tipo_documento" id="tipo_documento">
-                                    <option value="1">EMISOR</option>
+                                    <option value="1">DESTINATARIO</option>
                                     <option value="2">REMITENTE</option>
                                     <option value="3">TRANSPORTISTA</option>
                                     <option value="4">SUNAT</option>

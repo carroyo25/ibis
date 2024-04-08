@@ -36,7 +36,7 @@
                 $this->observaciones = $observaciones;
                 $this->atencion = $atencion;
                 $this->tipo = $tipo;
-                $this->tipo_guia = ["","EMISOR","REMITENTE","TRANSPORTISTA","SUNAT"];
+                $this->tipo_guia = ["","DESTINATARIO","REMITENTE","TRANSPORTISTA","SUNAT"];
             }
 
             function Header(){
