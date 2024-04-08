@@ -65,8 +65,7 @@
                             </div>
                             <div class="column2">
                                 <label for="aprueba">Aprueba:</label>
-                                <input type="text" name="aprueba" id="aprueba" class="mostrarLista busqueda" placeholder="Elija opción"
-                                        readonly>
+                                <input type="text" name="aprueba" id="aprueba" class="mostrarLista busqueda" placeholder="Elija opción">
                                 <div class="lista" id="listaAprueba">
                                     <ul>
                                         <?php echo $this->listaAprueba?>
@@ -76,20 +75,20 @@
                         </div>
                         <div class="seccion_medio">
                             <div class="column2">
-                                <label for="almacen_origen_despacho">Almacen Origen:</label>
-                                <input type="text" name="almacen_origen_despacho" id="almacen_origen_despacho" class="mostrarLista busqueda" readonly>
+                                <label for="almacen_origen_despacho">Origen:</label>
+                                <input type="text" name="almacen_origen_despacho" id="almacen_origen_despacho" class="mostrarLista busqueda">
                                 <div class="lista" id="listaOrigen">
                                    <ul>
-                                       <?php echo $this->listaAlmacen?>
+                                       <?php echo $this->listaEntidad?>
                                    </ul> 
                                 </div>
                             </div>
                             <div class="column2">
-                                <label for="almacen_destino_despacho">Almacen Destino:</label>
-                                <input type="text" name="almacen_destino_despacho" id="almacen_destino_despacho" class="mostrarLista busqueda" readonly>
+                                <label for="almacen_destino_despacho">Destino:</label>
+                                <input type="text" name="almacen_destino_despacho" id="almacen_destino_despacho" class="mostrarLista busqueda">
                                 <div class="lista" id="listaDestino">
                                    <ul>
-                                       <?php echo $this->listaAlmacen?>
+                                       <?php echo $this->listaEntidad?>
                                    </ul> 
                                 </div>
                             </div>
@@ -170,7 +169,7 @@
                 <input type="hidden" name="id_guia" id="id_guia" value=0>
                 <input type="hidden" name="ubig_origen" id="ubig_origen">
                 <input type="hidden" name="ubig_destino" id="ubig_destino">
-                <input type="hidden" name="registro_mtc" id="registro_mtc" value="1502229MRP">
+                <input type="hidden" name="registro_mtc" id="registro_mtc" value="">
                 <input type="hidden" name="cso" id="cso">
                 <input type="hidden" name="csd" id="csd">
 
@@ -215,11 +214,11 @@
                             <p class="titulo_seccion"><strong>Datos del destinatario</strong></p>
                             <div class="dos_columnas_interna">
                                 <label>R.U.C.</label>
-                                <input type="text" name="destinatario_ruc" id="destinatario_ruc" value="20504898173" readonly>
+                                <input type="text" name="destinatario_ruc" id="destinatario_ruc">
                                 <label>Razón Social :</label>
-                                <input type="text" name="destinatario_razon" id="destinatario_razon" value="SERVICIOS PETROLEROS Y CONSTRUCCIONES SEPCON S.A.C" readonly>
+                                <input type="text" name="destinatario_razon" id="destinatario_razon">
                                 <label>Dirección:</label>
-                                <input type="text" name="destinatario_direccion" id="destinatario_direccion" value="AV. SAN BORJA NORTE N° 445 - SAN BORJA-LIMA-PERU." readonly>
+                                <input type="text" name="destinatario_direccion" id="destinatario_direccion">
                             </div>
                             <p><strong>Domicilio de partida</strong></p>
                             <div class="tres_columnas_interna">

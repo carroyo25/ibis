@@ -6,7 +6,7 @@
         }
 
         function render(){
-            $this->view->listaNotasSalidas = $this->model->listarGuiasManuales();
+            $this->view->listaNotasSalidas = $this->model->listarGuiasManuales(null,-1,2024);
             $this->view->listaEnvio = $this->model->listarParametros('08');
             $this->view->listaAprueba = $this->model->apruebaRecepción();
             $this->view->listaAlmacen = $this->model->listarAlmacenGuia();
@@ -29,6 +29,14 @@
 
         function vistaPreviaGuia(){
             echo json_encode($this->model->generarGuiaPdf($_POST['cabecera'],$_POST['detalles'],$_POST['proyecto']));
+        }
+
+        function guiaManualId(){
+            echo json_encode($this->model->consultarGuiaManualId($_POST['indice'],$_POST['guia']));
+        }
+
+        function listaFiltrada() {
+            echo $this->model->listarGuiasManuales($_POST['guia'],$_POST['costos'],$_POST['anio'],);
         }
         
     }

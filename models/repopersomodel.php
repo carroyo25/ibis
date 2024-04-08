@@ -106,7 +106,6 @@
                                                                 alm_consumo.ncostos,
                                                                 UPPER(cm_producto.cdesprod) AS cdesprod,
                                                                 tb_unimed.cabrevia,
-                                                                /*COUNT(*),*/
                                                                 tb_proyectos.ccodproy,
                                                                 tb_proyectos.cdesproy 
                                                             FROM
@@ -118,13 +117,6 @@
                                                                     alm_consumo.nrodoc = :documento 
                                                                 AND alm_consumo.ncostos = :costos
                                                                 AND cm_producto.ccodprod LIKE :codigo
-                                                           /* GROUP BY
-                                                                    alm_consumo.idprod,
-                                                                    alm_consumo.fechasalida,
-                                                                    cm_producto.ccodprod,
-                                                                    alm_consumo.cantsalida,
-                                                                    alm_consumo.nhoja
-                                                            HAVING COUNT(*) >= 1*/
                                                             ORDER BY alm_consumo.freg DESC" );
                         $sql->execute(["documento"=>$d,"costos"=>$c,"codigo"=>$i]);
                         $rowCount = $sql->rowCount();

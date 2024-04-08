@@ -96,11 +96,12 @@
                 $this->RoundedRect(13, 50, 92, 20, 1, '1234', 'D'); //
                 $this->SetXY(13,50);
                 $this->Cell(92,5,utf8_decode("NOMBRE O RAZÓN SOCIAL DEL DESTINATARIO"),1,0,"C",true);
-                $this->SetXY(15,55);
-                $this->Cell(15,5,utf8_decode($this->razondest),0,1);
+                $this->SetXY(15,57);
+                $this->MultiCell(95,2,utf8_decode($this->razondest),0,1);
                 $this->SetX(15);
                 $this->Cell(15,5,utf8_decode("DIRECCIÓN: "),0,0);
-                $this->Cell(15,5,utf8_decode($this->direccdest),0,1);
+                $this->MultiCell(60,2,utf8_decode($this->direccdest),0,1);
+                //$this->Cell(15,5,utf8_decode($this->direccdest),0,1);
                 $this->SetX(15);
                 $this->Cell(15,5,"R.U.C",0,0);
                 $this->Cell(15,5,$this->ruc,0,0);
@@ -127,7 +128,7 @@
                 $this->SetXY(108,72);
                 $this->Cell(92,5,"PUNTO DE LLEGADA",1,1,"C",true);
                 $this->SetX(110);
-                $this->MultiCell(92,5,utf8_decode($this->vianomodest ." - ". $this->depdest),0,1);
+                $this->MultiCell(85,5,utf8_decode($this->vianomodest ." - ". $this->depdest),0,1);
     
                 $this->RoundedRect(13, 94, 187, 20, 1, '1234', 'D');
                 $this->SetXY(13,94);

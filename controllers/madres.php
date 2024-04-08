@@ -28,7 +28,7 @@
         }
 
         function grabaGuiaMadre(){
-            echo json_encode ($this->model->grabarGuia($_POST));
+            echo json_encode ($this->model->grabarGuia($_POST['guiaCab'],$_POST['formCab'],$_POST['detalles'],$_POST['operacion']));
         }
 
         function listaScroll(){

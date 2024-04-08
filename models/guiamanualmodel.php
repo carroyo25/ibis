@@ -6,40 +6,49 @@
             parent::__construct();
         }
 
-        public function listarGuiasManuales(){
+        public function listarGuiasManuales($g,$c,$a){
             try {
                 $salida = ""; 
 
+                $guia = $g == null ? "%" : "%".$g."%";
+                $costo = $c == -1  ? "%" : "%".$g."%";
+                $anio = $a == "" ? 2024 : $a; 
+
                 $sql = $this->db->connect()->prepare("SELECT
                                                         alm_desplibrescab.id_regalm,
-                                                        DATE_FORMAT( alm_desplibrescab.ffecdoc, '%d/%m/%Y' ) AS fechaDocumento,
-                                                        tb_proyectos.ccodproy,
-                                                        UPPER( origen.cdesalm ) AS almacen_origen,
-                                                        UPPER( alm_desplibrescab.id_centi ) AS proveedor,
-                                                        destino.cdesalm AS almacen_destino,
-                                                        alm_desplibrescab.cnumguia 
+                                                        DATE_FORMAT(alm_desplibrescab.ffecdoc,'%d/%m/%Y') AS fechaDocumento,
+                                                        alm_desplibrescab.cnumguia,
+                                                        entidad_origen.id_centi AS id_origen,
+                                                        entidad_origen.cviadireccion,
+                                                        UPPER( entidad_destino.crazonsoc ) AS razon_destino,
+                                                        entidad_destino.cnumdoc AS ruc_destino,
+                                                        entidad_origen.cnumdoc AS ruc_origen,
+                                                        UPPER( entidad_origen.crazonsoc ) AS razon_origen,
+                                                        entidad_destino.id_centi AS id_destino,
+                                                        UPPER(tb_proyectos.cdesproy) AS costos,
+                                                        tb_proyectos.ccodproy 
                                                     FROM
                                                         alm_desplibrescab
-                                                        INNER JOIN tb_proyectos ON alm_desplibrescab.ncodpry = tb_proyectos.nidreg
-                                                        INNER JOIN tb_almacen AS origen ON alm_desplibrescab.ncodalm1 = origen.ncodalm
-                                                        INNER JOIN tb_almacen AS destino ON alm_desplibrescab.ncodalm2 = destino.ncodalm 
+                                                        LEFT JOIN cm_entidad AS entidad_origen ON alm_desplibrescab.ncodalm1 = entidad_origen.id_centi
+                                                        LEFT JOIN cm_entidad AS entidad_destino ON alm_desplibrescab.ncodalm2 = entidad_destino.id_centi
+                                                        LEFT JOIN tb_proyectos ON alm_desplibrescab.ncodpry = tb_proyectos.nidreg 
                                                     WHERE
-                                                        alm_desplibrescab.nflgactivo = 1");
-                $sql->execute();
+                                                        alm_desplibrescab.nflgactivo = 1
+                                                        AND alm_desplibrescab.cnumguia LIKE :guia
+                                                        AND tb_proyectos.nidreg LIKE :costos
+                                                        AND YEAR(alm_desplibrescab.ffecdoc) LIKE :anio");
+                $sql->execute(["guia"=>$guia,"costos"=>$costo,"anio"=>$anio]);
                 $rowCount = $sql->rowCount();
 
-               
-
                 if ($rowCount > 0) {
-                   
-
+                
                     while ($rs = $sql->fetch()){
-                        $salida .='<tr data-indice="'.$rs['id_regalm'].'" class="pointer">
+                        $salida .='<tr data-indice="'.$rs['id_regalm'].'" data-guia="cnumguia" class="pointer">
                                         <td class="textoCentro">'.str_pad($rs['id_regalm'],6,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$rs['fechaDocumento'].'</td>
-                                        <td class="textoCentro">'.$rs['almacen_origen'].'</td>
-                                        <td class="pl20px">'.$rs['almacen_destino'].'</td>
-                                        <td class="pl20px">'.$rs['ccodproy'].'</td>
+                                        <td class="textoCentro">'.$rs['razon_origen'].'</td>
+                                        <td class="pl20px">'.$rs['razon_destino'].'</td>
+                                        <td class="pl20px">'.$rs['costos'].'</td>
                                         <td class="textoCentro">'.$rs['cnumguia'].'</td>
                                     </tr>';
                     }
@@ -50,13 +59,6 @@
                 echo "Error: ".$th->getMessage();
                 return false;
             }
-        }
-
-        public function nuevonumeroguia(){
-            $guiaAutomatica = $this->numeroGuia();
-            $mensaje = "numero de guia creado";
-
-            return array("mensaje"=>$mensaje,"guia"=>$guiaAutomatica); 
         }
 
         public function grabarGuiaManual($guia,$form,$detalles,$operacion){
@@ -155,7 +157,8 @@
                                                                                             nropedido=:pedido,
                                                                                             ndespacho=:candesp,
                                                                                             cobserva=:observac,
-                                                                                            cDescripcion=:descripcion");
+                                                                                            cDescripcion=:descripcion,
+                                                                                            cUnidad=:unidad");
                          $sql->execute(["cod"=>$indice,
                                         "ori"=>$almacen,
                                         "cpro"=>$datos[$i]->codigo,
@@ -171,6 +174,7 @@
                                         "pedido"=>$datos[$i]->pedido,
                                         "orden"=>$datos[$i]->orden,
                                         "observac"=>$datos[$i]->obser,
+                                        "unidad"=>$datos[$i]->unidad,
                                         "descripcion"=>$datos[$i]->descripcion]);
                     } catch (PDOException $th) {
                         echo $th->getMessage();
@@ -291,12 +295,12 @@
                 $rc = 0;
                 $item = 1;
 
+                //$pdf->Cell(190,5,$nreg,1,1);
 
                 for($i=1;$i<=$nreg;$i++){
 
-                    $cantidad = intval($datos[$rc]->cantidad);
+                    $cantidad = intval($datos[$rc]->cantdesp);
 
-                    
                     $pdf->SetX(13);
 
                     $pdf->SetAligns(array("R","R","C","L"));
@@ -304,7 +308,7 @@
                         $pdf->Row(array(str_pad($item++,3,"0",STR_PAD_LEFT),
                                         $cantidad,
                                         $datos[$rc]->unidad,
-                                        utf8_decode($datos[$rc]->codigo .' '. $datos[$rc]->descripcion  .' P : '.$datos[$rc]->nropedido)));
+                                        $datos[$rc]->codigo." ".$datos[$rc]->descripcion));
                     }
                 
                     $lc++;
@@ -323,6 +327,128 @@
                 $pdf->Output($archivo,'F');
 
                 return array("archivo"=>$archivo);
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        public function consultarGuiaManualId($indice,$guia){
+            try {
+                $docdata = [];
+
+                $sql = $this->db->connect()->prepare("SELECT
+                                                    alm_desplibrescab.ffecdoc fechadocumento,
+                                                    alm_desplibrescab.cnumguia,
+                                                    entidad_origen.id_centi AS id_origen,
+                                                    UPPER( entidad_origen.cviadireccion ) AS direccion_origen,
+                                                    UPPER( entidad_destino.cviadireccion ) AS direccion_destino,
+                                                    UPPER( entidad_destino.crazonsoc ) AS razon_destino,
+                                                    entidad_destino.cnumdoc AS ruc_destino,
+                                                    entidad_origen.cnumdoc AS ruc_origen,
+                                                    UPPER( entidad_origen.crazonsoc ) AS razon_origen,
+                                                    entidad_destino.id_centi AS id_destino,
+                                                    tb_proyectos.cdesproy,
+                                                    tb_proyectos.ccodproy,
+                                                    lg_guias.cserie,
+                                                    lg_guias.ctraslado,
+                                                    lg_guias.cmarca,
+                                                    lg_guias.cplaca,
+                                                    lg_guias.cnombre,
+                                                    lg_guias.clicencia,
+                                                    lg_guias.ftraslado,
+                                                    lg_guias.cdestinatario,
+                                                    lg_guias.cmotivo,
+                                                    lg_guias.corigen,
+                                                    lg_guias.cdirorigen,
+                                                    lg_guias.cdestino,
+                                                    lg_guias.cdirdest,
+                                                    lg_guias.centi,
+                                                    lg_guias.nDniConductor,
+                                                    lg_guias.nPeso,
+                                                    lg_guias.nBultos,
+                                                    UPPER(lg_guias.centidir) AS centidir,
+                                                    lg_guias.centiruc,
+                                                    lg_guias.cenvio,
+                                                    lg_guias.cautoriza,
+                                                    tb_user.cnombres, 
+	                                                tb_user.iduser,
+                                                    tipos.cdescripcion AS tipo,
+                                                    estados.cdescripcion AS estado  
+                                                FROM
+                                                    alm_desplibrescab
+                                                    LEFT JOIN cm_entidad AS entidad_origen ON alm_desplibrescab.ncodalm1 = entidad_origen.id_centi
+                                                    LEFT JOIN cm_entidad AS entidad_destino ON alm_desplibrescab.ncodalm2 = entidad_destino.id_centi
+                                                    LEFT JOIN tb_proyectos ON alm_desplibrescab.ncodpry = tb_proyectos.nidreg
+                                                    LEFT JOIN lg_guias ON alm_desplibrescab.cnumguia = lg_guias.cnumguia
+                                                    LEFT JOIN tb_user ON alm_desplibrescab.id_userAprob = tb_user.iduser
+                                                    INNER JOIN tb_parametros AS tipos ON alm_desplibrescab.ntipmov = tipos.nidreg
+	                                                INNER JOIN tb_parametros AS estados ON alm_desplibrescab.nEstadoDoc = estados.nidreg 
+                                                WHERE
+                                                    alm_desplibrescab.nflgactivo = 1 
+                                                    AND alm_desplibrescab.id_regalm =:indice");
+                $sql->execute(["indice"=>$indice]);
+
+                $rowCount = $sql->rowCount();
+                
+                if ($rowCount) {
+                    $respuesta = true;
+                    $i = 0;
+                    
+                    while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+                        $docData[] = $row;
+                    }
+                }
+
+                return array("cabecera"=>$docData,
+                            "detalles"=>$this->detallesGuia($indice));
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function detallesGuia($indice){
+            try {
+                $salida = "";
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        alm_desplibresdet.id_regalm, 
+                                                        alm_desplibresdet.ndespacho, 
+                                                        alm_desplibresdet.cDescripcion,
+                                                        alm_desplibresdet.cCodigo, 
+                                                        alm_desplibresdet.cSerie, 
+                                                        alm_desplibresdet.cobserva,
+                                                        alm_desplibresdet.cUnidad
+                                                    FROM
+                                                        alm_desplibresdet
+                                                    WHERE
+                                                        alm_desplibresdet.nflgactivo = 1 AND
+                                                        alm_desplibresdet.id_regalm = :indice");
+                $sql->execute(["indice"=>$indice]);
+
+                $rowCount = $sql->rowCount();
+                $item = 1;
+
+                if($rowCount > 0) {
+                    while ($rs = $sql->fetch()){
+                        $salida .='<tr data-grabado="1" >
+                                        <td class="textoCentro"><a href="delete"><i class="fas fa-trash-alt"></i></a></td>
+                                        <td class="textoCentro"><a href="search"><i class="fas fa-search"></i></a></td>
+                                        <td class="textoCentro">'.$item++.'</td>
+                                        <td class="textoCentro"><input type="text" value="'.$rs['cCodigo'].'" readOnly></td>
+                                        <td class="pl20px"><textarea readOnly>'.$rs['cDescripcion'].'</textarea></td>
+                                        <td><input type="text" value="'.$rs['cUnidad'].'"></td>
+                                        <td><input type="number" value="'.$rs['ndespacho'].'" min=1></td>
+                                        <td class="pl20px"><textarea>'.$rs['cobserva'].'</textarea></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>';
+                    }
+                }
+
+                return $salida;
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();

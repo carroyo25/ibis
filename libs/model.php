@@ -880,7 +880,9 @@
                                                 FROM
                                                     cm_entidad
                                                 WHERE
-                                                    cm_entidad.nflgactivo = 7");
+                                                    cm_entidad.nflgactivo = 7
+                                                ORDER BY 
+                                                    cm_entidad.crazonsoc");
                 $sql->execute();
                 $rowCount = $sql->rowCount();
 
@@ -4379,7 +4381,7 @@
 
         public function numeroGuia(){
             try {
-                $guiaInicial = 136401;
+                $guiaInicial = 137401;
 
                 $sql = $this->db->connect()->query("SELECT
                                                         COUNT( lg_guias.cnumguia ) AS nroguia 

@@ -3,10 +3,78 @@ $(function() {
         tipoVista = null,
         cc = "",
         fila = "",
-        grabado = false;
+        grabado = 1;
         
 
     $("#esperar").fadeOut();
+
+    $("#tablaPrincipal tbody").on("click","tr", function (e) {
+        e.preventDefault();
+
+        $.post(RUTA+"guiamanual/guiaManualId",{indice:$(this).data("indice"),guia:$(this).data('guia')},
+            function (data, textStatus, jqXHR) {
+                //console.log(data);
+                $("#fecha").val(data.cabecera[0].fechadocumento);
+                $("#codigo_costos").val(data.cabecera[0].codproy);
+                $("#codigo_aprueba").val(data.cabecera[0].iduser);
+                $("#codigo_almacen_origen").val(data.cabecera[0].id_origen);
+                $("#codigo_almacen_destino").val(data.cabecera[0].id_destino);
+                $("#guia").val(data.cabecera[0].cnumguia);
+                $("#aprueba").val(data.cabecera[0].cnombres);
+                $("#almacen_origen_despacho").val(data.cabecera[0].razon_origen);
+                $("#almacen_destino_despacho").val(data.cabecera[0].razon_destino);
+                $("#movimiento").val();
+                $("#estado").val(data.cabecera[0].estado);
+                $("#tipo").val(data.cabecera[0].tipo);
+                $("#costos").val(data.cabecera[0].cdesproy);
+                $("#numero").val(data.cabecera[0].cnumguia);
+
+
+                $("#serie_guia").val('F001');
+                $("#numero_guia").val(data.cabecera[0].cnumguia);
+                $("#fgemision").val(data.cabecera[0].fechadocumento);
+                $("#ftraslado").val(data.cabecera[0].ftraslado);
+
+                $("#destinatario_ruc").val(data.cabecera[0].ruc_destino);
+                $("#destinatario_razon").val(data.cabecera[0].razon_destino);
+                $("#destinatario_direccion").val(data.cabecera[0].direccion_destino);
+
+                $("#almacen_origen").val(data.cabecera[0].razon_origen);
+                $("#almacen_origen_direccion").val(data.cabecera[0].direccion_origen);
+
+                $("#almacen_destino").val(data.cabecera[0].razon_destino);
+                $("#almacen_destino_direccion").val(data.cabecera[0].direccion_destino);
+
+                $("#empresa_transporte_razon").val(data.cabecera[0].centi);
+                $("#direccion_proveedor").val(data.cabecera[0].centidir);
+                $("#ruc_proveedor").val(data.cabecera[0].centiruc);
+
+                $("#modalidad_traslado").val(data.cabecera[0].ctraslado);
+                $("#tipo_envio").val(data.cabecera[0].cenvio);
+                $("#autoriza").val(data.cabecera[0].cautoriza);
+                $("#destinatario").val(data.cabecera[0].cdestinatario);
+                $("#observaciones").val(data.cabecera[0].cobserva);
+                $("#nombre_conductor").val(data.cabecera[0].cnombre);
+                $("#licencia_conducir").val(data.cabecera[0].clicencia);
+                $("#conductor_dni").val(data.cabecera[0].clicencia);
+                $("#marca").val(data.cabecera[0].cmarca);
+                $("#placa").val(data.cabecera[0].cplaca);
+                $("#peso").val(data.cabecera[0].nPeso);
+                $("#bultos").val(data.cabecera[0].nBultos);
+
+                $("#tablaDetalles tbody")
+                    .empty()
+                    .append(data.detalles);
+
+                $("#proceso").fadeIn();
+
+                grabado = 1;
+            },
+            "json"
+        );
+
+        return false;
+    });
 
     $("#nuevoRegistro").click(function (e) { 
         e.preventDefault();
@@ -105,11 +173,16 @@ $(function() {
             $("#almacen_origen").val($(this).text());
             $("#almacen_origen_direccion").val($(this).data('direccion'));
             $("#codigo_origen_sunat").val($(this).data('sunat'));
+
         }else if(contenedor_padre == "listaDestino"){
             $("#codigo_almacen_destino").val(codigo);
             $("#almacen_destino").val($(this).text());
             $("#almacen_destino_direccion").val($(this).data('direccion'));
             $("#codigo_destino_sunat").val($(this).data('sunat'));
+
+            $("#destinatario_ruc").val($(this).data('ruc'));
+            $("#destinatario_razon").val($(this).text());
+            $("#destinatario_direccion").val($(this).data('direccion'));
         }else if(contenedor_padre == "listaAutoriza"){
             $("#autoriza").val($(this).text());
             $("#codigo_autoriza").val(codigo);
@@ -146,7 +219,7 @@ $(function() {
                         <td class="textoCentro"><a href="search"><i class="fas fa-search"></i></a></td>
                         <td class="textoCentro">${nFilas}</td>
                         <td class="textoCentro"><input type="text" value="-"></td>
-                        <td class="pl20px"><textarea>Prueba ${nFilas}</textarea></td>
+                        <td class="pl20px"><textarea></textarea></td>
                         <td><input type="text" value="-"></td>
                         <td><input type="number" value=1 min=1></td>
                         <td class="pl20px"><textarea></textarea></td>
@@ -233,7 +306,6 @@ $(function() {
         return false;
     });
 
-
     $(".tituloDocumento").on("click","#closeDocument", function (e) {
         e.preventDefault();
 
@@ -269,6 +341,7 @@ $(function() {
                 $(".primeraBarra span").text('Datos Generales ... Grabado');
 
                 accion = "u";
+                grabado = 0;
             },
             "json"
         );
@@ -317,7 +390,7 @@ $(function() {
             if (result['codigo_traslado'] == "") throw "Seleccione la modalidad de traslado";
             
             $.post(RUTA+"guiamanual/vistaPreviaGuia", {cabecera:result,
-                                                            detalles:JSON.stringify(detallesVista(1)),
+                                                            detalles:JSON.stringify(detalles(grabado)),
                                                             proyecto: $("#costos").val()},
                 function (data, textStatus, jqXHR) {
                         
@@ -345,7 +418,37 @@ $(function() {
         $("#vistaprevia").fadeOut();
 
         return false;
-    })
+    });
+
+    //filtrado en la lista de solicitante
+    $(".busqueda").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+        $(this).next().attr("id");
+
+        //aignar a una variable el contenido
+        let l = "#"+ $(this).next().attr("id")+ " li a"
+
+        $(l).filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+    });
+
+    $("#btnConsulta").click(function (e) { 
+        e.preventDefault();
+
+        $("#esperar").css({"display":"block","opacity":"1"});
+        
+        $.post(RUTA+"guiamanual/listaFiltrada", {guia:$("#ordenSearch").val(),costos:$("#costosSearch").val(),anio:$("#anioSearch").val()},
+            function (data, textStatus, jqXHR) {
+                $("#tablaPrincipal tbody").empty().append(data);
+
+                $("#esperar").css({"display":"none","opacity":"0"});
+            },
+            "text"
+        );
+
+        return false;
+    });
 
 })
 

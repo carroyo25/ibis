@@ -174,6 +174,7 @@
                 <input type="hidden" name="codigo_destinatario" id="codigo_destinatario">
                 <input type="hidden" name="codigo_entidad_transporte" id="codigo_entidad_transporte">
                 <input type="hidden" name="direccion_entidad_transporte" id="direccion_entidad_transporte">
+                <input type="hidden" name="codigo_costos" id="codigo_costos">
                 <input type="hidden" name="ruc_entidad_transporte" id="ruc_entidad_transporte">
                 <input type="hidden" name="codigo_modalidad" id="codigo_modalidad">
                 <input type="hidden" name="codigo_tipo" id="codigo_tipo">
@@ -184,13 +185,15 @@
                 <input type="hidden" name="ubig_destino" id="ubig_destino">
                 <input type="hidden" name="registro_mtc" id="registro_mtc">
                 <input type="hidden" name="tipoTrasladoSunat" id="tipoTrasladoSunat" value="1">
+                <input type="hidden" name="observaciones" id="observaciones" value="1">
+                <input type="hidden" name="destinatario" id="destinatario" value="1">
                 <input type="hidden" name="cso" id="cso">
                 <input type="hidden" name="csd" id="csd">
 
                 <div class="tituloDocumento">
                     <div>
                         <p class="titulo_seccion"><strong> Guia de Remisión : </strong></p>
-                        <input type="text" name="serie_guia" id="serie_guia" class="w10por" value="T001" readonly>
+                        <input type="text" name="serie_guia" id="serie_guia" class="w10por" value="F001" readonly>
                         <input type="text" name="numero_guia" id="numero_guia">    
                     </div>
                     <div class="opciones_modal">
@@ -212,6 +215,15 @@
                             <div>
                                 <label for="ftraslado">Fecha Traslado:</label>
                                 <input type="date" name="ftraslado" id="ftraslado" value="<?php echo date("Y-m-d")?>">
+                            </div>
+                            <div>
+                                <label for="tipo_documento">Tipo Guia:</label>
+                                <select name="tipo_documento" id="tipo_documento">
+                                    <option value="1">EMISOR</option>
+                                    <option value="2">REMITENTE</option>
+                                    <option value="3">TRANSPORTISTA</option>
+                                    <option value="4">SUNAT</option>
+                                </select>
                             </div>
                         </div>
                         <div>

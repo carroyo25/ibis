@@ -64,7 +64,8 @@
                                                         tb_unimed.cabrevia,
                                                         alm_despachodet.id_regalm,
                                                         alm_despachodet.niddeta,
-                                                        alm_despachocab.cnumguia 
+                                                        alm_despachocab.cnumguia,
+                                                        cm_producto.id_cprod  
                                                     FROM
                                                         alm_despachodet
                                                         INNER JOIN cm_producto ON alm_despachodet.id_cprod = cm_producto.id_cprod
@@ -81,7 +82,7 @@
 
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()) {
-                        $salida .='<tr data-despacho="'.$rs['id_regalm'].'" data-itemdespacho="'.$rs['niddeta'].'">
+                        $salida .='<tr data-despacho="'.$rs['id_regalm'].'" data-itemdespacho="'.$rs['niddeta'].'" data-idprod="'.$rs['id_cprod'].'">
                                         <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$rs['cccodprod'].'</td>
                                         <td class="pl10px">'.$rs['cdesprod'].'</td>
@@ -99,95 +100,161 @@
             }
         }
 
-        public function grabarGuia($datos){
-            $detalles = json_decode($datos['detalles']);
-            $nreg = count($detalles);
+        public function grabarGuia($guia,$form,$detalles,$operacion){
+            $mensaje = "error de creacion";
+            $guiaAutomatica = "";
 
-            $mensaje = "Error, no se grabaron los datos";
-            $clase = "mensaje error";
-
-           
             try {
-                $sql = $this->db->connect()->prepare("INSERT INTO lg_guiamadre SET ffecdoc =:emision,
-                                                                            ffectraslado = :traslado,
-                                                                            cnroguia = :guia,
-                                                                            ncostos =:costos,
-                                                                            nlamorigen =:origen,
-                                                                            nalmdestino = :destino,
-                                                                            nentitrans = :transporte,
-                                                                            nmottranp = :motivo,
-                                                                            ntipmov = :tipo,
-                                                                            clincencia =:licencia,
-                                                                            ndni =:dni,
-                                                                            cmarca =:marca,
-                                                                            cplaca =:placa,
-                                                                            npeso =:peso,
-                                                                            nbultos =:bultos,
-                                                                            useremit =:user,
-                                                                            idaprueba =:aprueba,
-                                                                            iddestino =:recibe,
-                                                                            nTipoEnvio =:envio,
-                                                                            cConductor =:conductor,
-                                                                            cObserva=:observaciones");
-            
-                $sql->execute(["emision"=>$datos['emision'],
-                                "traslado"=>$datos['traslado'],
-                                "guia"=>$datos['guia'],
-                                "costos"=>$datos['costos'],
-                                "origen"=>$datos['alm_origen'],
-                                "destino"=>$datos['alm_destino'],
-                                "transporte"=>$datos['transportista'],
-                                "motivo"=>$datos['modalidad'],
-                                "tipo"=>$datos['tipo'],
-                                "licencia"=>$datos['licencia'],
-                                "dni"=>$datos['dni'],
-                                "marca"=>$datos['marca'],
-                                "placa"=>$datos['placa'],
-                                "peso"=>$datos['peso'],
-                                "bultos"=>$datos['bultos'],
-                                "user"=>$datos['useremit'],
-                                "aprueba"=>$datos['aprueba'],
-                                "recibe"=>$datos['recibe'],
-                                "envio"=>$datos['envio'],
-                                "conductor"=>$datos['conductor'],
-                                "observaciones"=>$datos['observaciones']]);
+                if ( $operacion == 'n' ){
+                    $guiaAutomatica = $this->numeroGuia();
+                    $mensaje = "Se grabo la guia de remision";
+                    
+                    $this->grabarDatosCabeceraGuiaMadre($form,$detalles,$guiaAutomatica);
+                    $this->grabarDatosGuia($guia,$form,$guiaAutomatica);
 
-                $rowCount = $sql->rowCount();
-
-                if ($rowCount > 0) {
-                    $indice = $this->generarNumeroSunat();
-                    $this->grabarDetallesGuia($indice,$detalles,$datos['guia']);
-                    $mensaje = "Guia grabada correctamente";
-                    $clase = "mensaje_correcto";
+                }else if( $operacion == 'u' ){
+                    $mensaje = "Se actualizo la guia de remision";
                 }
 
-                return array("guia"=>$datos['guia'],"mensaje"=>$mensaje,"clase" => $clase );
+                return array("mensaje"=>$mensaje,"guia"=>$guiaAutomatica);
+
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
             }
         }
 
-        private function grabarDetallesGuia($indice,$detalles,$guiaMadre){
-            $nreg = count($detalles);
+        private function grabarDatosCabeceraGuiaMadre($formCab,$detalles,$guia){
+            try {
+                
+                $fecha = explode("-",$formCab['fecha']);
 
-            for ($i=0; $i < $nreg; $i++) { 
-                try {
-                    $sql=$this->db->connect()->prepare("INSERT INTO lg_detallemadres SET ndespacho=:despacho,
-                                                                                          itemdespacho=:item,
-                                                                                          idguiasunat=:indice");
-                    
-                    $sql->execute(["indice"=>$indice,"item"=>$detalles[$i]->iddespacho,"despacho"=>$detalles[$i]->despacho]);
+                $sql = $this->db->connect()->prepare("INSERT INTO alm_madrescap SET ntipmov = :ntipmov,
+                                                                                    nnromov = :nnromov,
+                                                                                    cper = :cper,
+                                                                                    cmes = :cmes,
+                                                                                    ncodalm1 = :ncodalm1,
+                                                                                    ncodalm2 = :ncodalm2,
+                                                                                    ffecdoc = :ffecdoc,
+                                                                                    ncodpry = :ncodpry,
+                                                                                    nnronota=:nnronota,
+                                                                                    id_userAprob = :id_userAprob,
+                                                                                    id_userElabora = :id_user,
+                                                                                    nEstadoDoc = :nEstadoDoc,
+                                                                                    nflgactivo = :nflgactivo,
+                                                                                    cnumguia =:guia");
 
-                    $rowCount = $sql->rowCount();
+                $sql->execute(["ntipmov"=>$formCab['codigo_movimiento'],
+                                "nnromov"=>null,
+                                "cper"=>null,
+                                "cmes"=>$fecha[1],
+                                "ncodalm1"=>$formCab['codigo_almacen_origen'],
+                                "ncodalm2"=>$formCab['codigo_almacen_destino'],
+                                "ffecdoc"=>$formCab['fecha'],
+                                "ncodpry"=>null,
+                                "nnronota"=>null,
+                                "id_userAprob"=>$formCab['codigo_aprueba'],
+                                "nEstadoDoc"=>62,
+                                "nflgactivo"=>1,
+                                "id_user"=>$_SESSION['iduser'],
+                                "guia"=>$guia]);
 
-                    if ($rowCount > 0) {
-                        $this->actualizaEstadoGuia($detalles[$i]->despacho,$guiaMadre);
-                    }
-                } catch (PDOException $th) {
-                    echo $th->getMessage();
-                    return false;
+                $rowCount = $sql->rowCount();
+                
+                if ($rowCount > 0) {
+                    $indice = $this->lastInsertId("SELECT COUNT(id_regalm) AS id FROM alm_madrescap");
+                    $this->grabarDetallesMadre($indice,$detalles,$formCab['codigo_almacen_origen'],$guia);
                 }
+                
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function grabarDatosGuia($guiaCab,$formCab,$nroguia){
+            try {
+                $sql = $this->db->connect()->prepare("INSERT INTO lg_guias SET id_regalm=:despacho,cnumguia=:guia,corigen=:origen,
+                                                                                cdirorigen=:direccion_origen,cdestino=:destino,
+                                                                                cdirdest=:direccion_destino,centi=:entidad,centidir=:direccion_entidad,
+                                                                                centiruc=:ruc_entidad,ctraslado=:traslado,cenvio=:envio,
+                                                                                cautoriza=:autoriza,cdestinatario=:destinatario,cobserva=:observaciones,
+                                                                                cnombre=:nombres,cmarca=:marca,clicencia=:licencia,cplaca=:placa,
+                                                                                ftraslado=:fecha_traslado,fguia=:fecha_guia,cserie=:serie,
+                                                                                cmotivo=:tipo");
+
+                $sql->execute([ "despacho"=>null,
+                                "guia"=>$nroguia,
+                                "origen"=>$guiaCab['almacen_origen'],
+                                "direccion_origen"=>$guiaCab['almacen_origen_direccion'],
+                                "destino"=>$guiaCab['almacen_destino'],
+                                "direccion_destino"=>$guiaCab['almacen_destino_direccion'],
+                                "entidad"=>$guiaCab['empresa_transporte_razon'],
+                                "direccion_entidad"=>$guiaCab['direccion_proveedor'],
+                                "ruc_entidad"=>$guiaCab['ruc_proveedor'],
+                                "traslado"=>$guiaCab['modalidad_traslado'],
+                                "envio"=>$guiaCab['tipo_envio'],
+                                "autoriza"=>null,
+                                "destinatario"=>null,
+                                "observaciones"=>null,
+                                "nombres"=>$guiaCab['nombre_conductor'],
+                                "marca"=>$guiaCab['marca'],
+                                "licencia"=>$guiaCab['licencia_conducir'],
+                                "placa"=>$guiaCab['placa'],
+                                "fecha_traslado"=>$guiaCab['ftraslado'],
+                                "fecha_guia"=>$guiaCab['fgemision'],
+                                "serie"=>'F001',
+                                "tipo"=>248]);
+                
+                $rowCount = $sql->rowcount();
+
+                if ($rowCount > 0) {
+                    $mensaje = "Registro grabado";
+                }else {
+                    $mensaje = "Error al crear el registro";
+                }
+
+                return $mensaje;                
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        private function grabarDetallesMadre($indice,$detalles,$almacen,$guia){
+            try {
+                $datos = json_decode($detalles);
+                $nreg = count($datos);
+
+                for ($i=0; $i < $nreg; $i++) { 
+                    try {
+                        $sql=$this->db->connect()->prepare("INSERT INTO alm_madresdet SET id_regalm=:cod,
+                                                                                            ncodalm1=:ori,
+                                                                                            id_cprod=:cpro,
+                                                                                            nflgactivo=:flag,
+                                                                                            nestadoreg=:estadoItem,
+                                                                                            cobserva=:observac,
+                                                                                            nGuia=:guia,
+                                                                                            nGuiaMadre=:guiaMadre,
+                                                                                            ncantidad=:cantidad");
+                         $sql->execute(["cod"=>$indice,
+                                        "ori"=>$almacen,
+                                        "cpro"=>$datos[$i]->idprod,
+                                        "flag"=>1,
+                                        "estadoItem"=>32,
+                                        "observac"=>$datos[$i]->obser,
+                                        "guia"=>$datos[$i]->guia,
+                                        "guiaMadre"=>$guia,
+                                        "cantidad"=>$datos[$i]->cantdesp]);
+                    } catch (PDOException $th) {
+                        echo $th->getMessage();
+                        return false;
+                    }
+                }
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
             }
         }
 

@@ -68,7 +68,7 @@ $(() =>{
         }
     }
 
-    query();
+    //query();
 
     ///FIN DEL SCROLL
 
@@ -78,22 +78,11 @@ $(() =>{
     $("#nuevoRegistro").click(function (e) { 
         e.preventDefault();
 
-        $.post(RUTA+"madres/numeroSunat",
-            function (data, text, requestXHR) {
-                $("#proceso").fadeIn();
-
-                accion = 'n';
-
-                document.getElementById("formProceso").reset();
-                document.getElementById("guiaremision").reset();
-                $("#tablaDetalles tbody").empty();
-                
-                $("#numero, #numero_guia").val(data);
-            },
-            "text"
-        );
-
-        
+        $("#proceso").fadeIn();
+        accion = 'n';
+        document.getElementById("formProceso").reset();
+        document.getElementById("guiaremision").reset();
+        $("#tablaDetalles tbody").empty();
 
         return false;
     });
@@ -274,7 +263,6 @@ $(() =>{
         e.preventDefault();
         
         try {
-
             $("#vistadocumento").fadeIn();
         } catch (error) {
             mostrarMensaje(error,'mensaje_error');
@@ -327,7 +315,7 @@ $(() =>{
                 result[this.name] = this.value;
             });
 
-            if (result['numero_guia'] == "") throw "Ingrese el Nro. de Guia";
+            //if (result['numero_guia'] == "") throw "Ingrese el Nro. de Guia";
             if (result['codigo_entidad'] == "") throw "Seleccione la empresa de transportes";
             if (result['codigo_traslado'] == "") throw "Seleccione la modalidad de traslado";
             
@@ -366,37 +354,35 @@ $(() =>{
     $("#saveDocument").click(function(e){
         e.preventDefault();
 
-        $.post(RUTA+"madres/grabaGuiaMadre", {detalles:JSON.stringify(detalles()),
-                                                proyecto: $("#corigen").val(),
-                                                guia:$("#numero_guia").val(),
-                                                costos:$("#codigo_costos_origen").val(),
-                                                aprueba:$("#codigo_autoriza").val(),
-                                                recibe:$("#codigo_destinatario").val(),
-                                                alm_origen:$("#codigo_almacen_origen").val(),
-                                                alm_destino:$("#codigo_almacen_destino").val(),
-                                                modalidad:$("#codigo_modalidad").val(),
-                                                tipo:$("#codigo_tipo").val(),
-                                                envio:$("#codigo_movimiento").val(),
-                                                transportista:$("#codigo_entidad_transporte").val(),
-                                                conductor:$("#nombre_conductor").val(),
-                                                licencia:$("#licencia_conducir").val(),
-                                                dni:$("#conductor_dni").val(),
-                                                marca:$("#marca").val(),
-                                                placa:$("#placa").val(),
-                                                peso:$("#peso").val(),
-                                                bultos:$("#bultos").val(),
-                                                emision:$("#fgemision").val(),
-                                                traslado:$("#ftraslado").val(),
-                                                useremit:$("#id_user").val(),
-                                                observaciones:$("#observaciones").val(),
-                                                conductor:$("#nombre_conductor").val()},
+        let guia = {},
+            form = {};
 
-                function (data, textStatus, jqXHR) {
-                    mostrarMensaje(data.mensaje,data.clase);
-                    $("#numero, #numero_guia").val(data.guia);
-                },
-                "json"
-            );
+        $.each($("#guiaremision").serializeArray(),function(){
+            guia[this.name] = this.value;
+        });
+
+        $.each($("#formProceso").serializeArray(),function(){
+            form[this.name] = this.value;
+        });
+
+        $.post(RUTA+"madres/grabaGuiaMadre",{guiaCab:guia,
+                                                formCab:form,
+                                                detalles:JSON.stringify(detalles(false)),
+                                                operacion:"n"
+                                            },
+            function (data, textStatus, jqXHR) {
+                mostrarMensaje(data.mensaje,"mensaje_correcto");
+                $("#guia,#numero_guia").val(data.guia);
+
+                $(".primeraBarra").css("background","#819830");
+                $(".primeraBarra span").text('Datos Generales ... Grabado');
+
+                
+                accion = "u";
+                grabado = 0;
+            },
+            "json"
+        );
 
         return false;
     });
@@ -493,7 +479,7 @@ detalles = () =>{
         let ITEM        = $(this).find('td').eq(0).text(),
             IDDETORDEN  = "",
             IDDETPED    = "",
-            IDPROD      = "",
+            IDPROD      = $(this).data('idprod'),
             IDDESPACHO  = $(this).data('itemdespacho'),
             DESPACHO    = $(this).data('despacho'),
             PEDIDO      = "",
@@ -506,9 +492,10 @@ detalles = () =>{
             DESCRIPCION = $(this).find('td').eq(2).text(),//descripcion
             UNIDAD      = $(this).find('td').eq(3).text(),//unidad
             DESTINO     = $("#codigo_almacen_destino").val(),
-            CANTIDAD    = $(this).find('td').eq(4).text();
+            CANTIDAD    = $(this).find('td').eq(4).text(),
+            GUIA        = $(this).find('td').eq(5).text();
     
-        item = {};
+        let item = {};
 
         //if (CHECKED == flag) {
             item['item']         = ITEM;
@@ -529,6 +516,7 @@ detalles = () =>{
             item['descripcion']  = DESCRIPCION;
             item['unidad']       = UNIDAD;
             item['destino']      = DESTINO;
+            item['guia']         = GUIA;
 
             
             DETALLES.push(item);
@@ -538,32 +526,3 @@ detalles = () =>{
     return DETALLES; 
 }
 
-function animateprogress (id, val){    
-    var getRequestAnimationFrame = function () {  /* <------- Declaro getRequestAnimationFrame intentando obtener la máxima compatibilidad con todos los navegadores */
-        return window.requestAnimationFrame ||
-        window.webkitRequestAnimationFrame ||  
-        window.mozRequestAnimationFrame ||
-        window.oRequestAnimationFrame ||
-        window.msRequestAnimationFrame ||
-        function ( callback ){
-            window.setTimeout(enroute, 1 / 60 * 1000);
-        };
-    };
-     
-    var fpAnimationFrame = getRequestAnimationFrame();   /* <--- Declaro una instancia de getRequestAnimationFrame para llamar a la función animación */
-    var i = 0;
-    var animacion = function () {
-             
-    if (i<=val)
-        {
-            document.querySelector(id).setAttribute("value",i);      /* <----  Incremento el valor de la barra de progreso */
-            document.querySelector(id+"+ span").innerHTML = i+"%";     /* <---- Incremento el porcentaje y lo muestro en la etiqueta span */
-            i++;
-            fpAnimationFrame(animacion);          /* <------------------ Mientras que el contador no llega al porcentaje fijado la función vuelve a llamarse con fpAnimationFrame     */
-        }
-                                         
-    }
- 
-    fpAnimationFrame(animacion);   /*  <---- Llamo la función animación por primera vez usando fpAnimationFrame para que se ejecute a 60fps  */
-                 
-}
