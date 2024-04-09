@@ -8,7 +8,7 @@
                                     $info,$detalle,$usuario,$razon_social,
                                     $ruc,$direccion,$telefono,$correo,$retencion,
                                     $contacto,$tel_contacto,$cor_contacto,$direccion_almacen,$referencia,
-                                    $procura,$finanzas,$operaciones)
+                                    $procura,$finanzas,$operaciones,$tipo)
         {
             parent::__construct();
             $this->titulo           = $titulo;
@@ -38,6 +38,7 @@
             $this->procura          = $procura;
             $this->finanzas         = $finanzas;
             $this->operaciones      = $operaciones;
+            $this->tipo             = $tipo;
         }
 
         function header(){
@@ -46,7 +47,7 @@
         	$this->Rect(10,10,190,20); //marco general
 
             if ($this->condicion == 0) {
-                $condicion = "VISTA PREVIA";
+                $condicion = "VISTA PREVIA - NO APTO PARA PAGO";
             }else if($this->condicion == 1){
                 $condicion = "EMITIDO";
             }else if($this->condicion == 2){
@@ -242,13 +243,25 @@
 
             $this->Ln(2);
 
-            $this->MultiCell(130,3,utf8_decode('NOTA INFORMATIVA :
+            if ( $this->tipo == "37" )
+            
+            $this->MultiCell(130,3.18,utf8_decode('NOTA INFORMATIVA :
+            
 1. Se adjunta a la presente Orden los términos y condiciones de compra.
-2. Todo material recibido fuera de tiempo, SEPCON; se reserva los derechos de recepción y/o penalización sin               conocimiento previo del proveedor.
-3. Al momento de hacer entrega de los materiales, el proveedor deberá adjuntar cuando corresponda:                            Certificado de calidad, Hojas SDS, manuales de operación y mantenimiento, certificado de calibración,                        instrucciones de conservación, etc.
-4. Al momento de hacer la entrega de los materiales, el proveedor debe solicitar al almacén "La Nota de                          Ingreso" debidamente sellada. 
-5. Sirva adjuntar la Nota de Ingreso, Guia de Remisión y Factura, referente a una sola Orden de Compra o Servicio
-6. Consignar el número de la Orden de Compra en la Guia de Remisión y Factura. Presentar Factura                              original, con copia Sunat.'),1);
+2. SEPCON se reserva los derechos de recepción y/o penalización sin conocimiento previo del proveedor por material                recibido fuera de tiempo.
+3. Al hacer entrega de los materiales, el proveedor deberá adjuntar cuando corresponda: Certificado de calidad, Hojas SDS,        manuales de operación y mantenimiento, certificado de calibración, instrucciones de conservación, etc.
+4. Una vez realizada la entrega de los materiales, el proveedor debe solicitar al almacén "La Nota de Ingreso" debidamente        sellada. 
+5. Para la presentación de la factura:Sirva adjuntar la Nota de Ingreso, Guia de Remision y Factura, referente a una sola             Orden de Compra. Se debe consignar en la Guía de remisión el número de Orden de Compra.'),1);
+            else 
+
+            $this->MultiCell(130,3,utf8_decode('NOTA INFORMATIVA :
+1. Se adjunta a la presente Orden los términos y condiciones de Compra y la Cartilla de Lineamientos de SSMMA para                Contratistas PSPC-100-X-IN-005.
+2. SEPCON se reseva los derechos de penalización sin conocimiiento previo del proveedor por un servicio que no cumpla            con las condiciones pactadas.
+3. Una vez realizado el servicio, el proveedor debe solicitar la aprobación de su valorización.
+4. Para presentación de factura: Sirva adjuntar la Valorización Aprobada y su respectiva Orden de Servicio. Para el caso de        servicios por suscripción o de naturaleza electrónica/digital se podrá reemplazar la Valorización Aprobada con una                   comunicación oficial escrita dando conformidad por el servicio.   
+5. Para aquellos servicios que intervengan con el obejto principal de la organización , se debe completar el Formulario de            Evaluación de Proveedores de Servicio SST PSPC-410-X-PR-002-FR-001, siendo condición de pago la debida                        presentación de dicho formulario'),1);
+            
+
 
             $this->setXY(141,229);
             $this->MultiCell(58,3.2,utf8_decode(
@@ -259,8 +272,10 @@ Es requisito indispensable que el proveedor envíe sus facturas debidamente sust
 Martes y Jueves (De 08:30am a 12:40pm y 02:00pm hasta 03:30pm'),1);
             
         $this->Ln(2);
-        $this->MultiCell(189,3.3,utf8_decode('En SEPCON contribuimos con la protección, cuidado y conservación del Medio Ambiente, por ello les alcanzamos algunas eco recomendaciones: 
-(i) Use con responsabilidad y de forma racional los recursos no renovables. (ii) Reduzca el consumo de materiales desechables; busque, evalúe y proponga opciones "eco-amigables" y reutilice lo más posible. (iii) Si transporta materiales peligrosos, asegurarse de contar con permisos, plan de contingencia, hojas SDS, recursos y personal capacitado.'),1);
+        $this->MultiCell(189,3.3,utf8_decode('En SEPCON contribuimos con la protección, cuidado y conservación del Medio Ambiente y mitigación del cambio climático, por ello les alcanzamos algunas eco recomendaciones: 
+(i) Promueva el uso de energías renovables y use con responsabilidad y de forma racional los recursos no renovables (agua,papel,electricidad,etc). 
+(ii) Reduzca el consumo de materiales desechables; busque, evalúe y proponga opciones "eco-amigables" y reutilice lo más posible. 
+(iii) Si transporta materiales peligrosos, asegurarse de contar con permisos, plan de contingencia, hojas SDS, recursos y personal capacitado.'),1);
 
         $this->Ln(1);
         $this->Cell(189,6,utf8_decode("** SOMOS AGENTE DE RETENCIÓN DEL IGV DE ACUERDO A R.S.219-2006 **"),0,0,"C");

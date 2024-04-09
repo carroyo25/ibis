@@ -3053,7 +3053,8 @@
                             $cabecera['costos'],$cabecera['concepto'],$_SESSION['nombres'],$cabecera['entidad'],$cabecera['ruc_entidad'],
                             $cabecera['direccion_entidad'],$cabecera['telefono_entidad'],$cabecera['correo_entidad'],$cabecera['retencion'],
                             $cabecera['atencion'],$cabecera['telefono_contacto'],$cabecera['correo_contacto'],
-                            $cabecera['direccion_almacen'],$cabecera['referencia'],$cabecera['procura'],$cabecera['finanzas'],$cabecera['operaciones']);
+                            $cabecera['direccion_almacen'],$cabecera['referencia'],$cabecera['procura'],$cabecera['finanzas'],$cabecera['operaciones'],
+                            $cabecera['codigo_tipo']);
 
             $pdf->AddPage();
             $pdf->AliasNbPages();

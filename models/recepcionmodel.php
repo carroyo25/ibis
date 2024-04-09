@@ -788,7 +788,16 @@
                                                             tb_area.ccodarea,
                                                         UPPER( tb_area.cdesarea )) AS area,
                                                         cm_entidad.crazonsoc,
-                                                        ( SELECT SUM( alm_recepdet.ncantidad ) FROM alm_recepdet WHERE pedido = lg_ordencab.id_regmov AND nflgactivo = 1 ) AS ingresos,
+                                                        (
+                                                            SELECT
+                                                                SUM( alm_recepdet.ncantidad ) 
+                                                            FROM
+                                                                alm_recepdet 
+                                                            WHERE
+                                                                alm_recepdet.pedido = lg_ordencab.id_regmov 
+                                                                AND alm_recepdet.orden = lg_ordencab.id_refpedi 
+                                                                AND nflgactivo = 1 
+                                                            ) AS ingresos,
                                                         ( SELECT SUM( lg_ordendet.ncanti ) FROM lg_ordendet WHERE lg_ordendet.id_orden = lg_ordencab.id_regmov ) AS cantidad_orden 
                                                     FROM
                                                         tb_costusu
@@ -861,6 +870,8 @@
                 $despachos = $this->buscarOrdenDespacho($parametros['orden']);
                 $mensaje = "Error en el proceso";
                 $clase = "mensaje_error";
+
+                $despachos = 0;
 
                 if ( $despachos == 0 ){
                     if ( $this->anularDespacho($parametros['id']) == true ){
