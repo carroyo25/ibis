@@ -127,7 +127,6 @@
                                                         REPLACE ( FORMAT( tb_pedidodet.cant_atend, 2 ), ',', '' ) AS atendida,
                                                         FORMAT( tb_pedidodet.precio, 2 ) AS precio,
                                                         REPLACE ( FORMAT( tb_pedidodet.cant_pedida, 2 ), ',', '' ) AS cantidad_pedida,
-                                                        /*IF (ISNULL(SUM( alm_transferdet.ncanti)),0,SUM( alm_transferdet.ncanti)) AS atendido_almacen,*/
                                                         tb_pedidodet.cant_atend AS stock_almacen,
                                                         tb_pedidodet.igv,
                                                         tb_proyectos.ccodproy,
@@ -179,7 +178,7 @@
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()) {
 
-                        //aca se resta lo de almacen; por lo tanto ya es la cantidad final de compra
+                        //aca se resta lo de almacen; por lo tanto ya es la cantidad final de compra **ojo aca hay que 
                         $cant = floatval($rs['cant_aprob']) -  floatval($rs['stock_almacen']);
                         $aten   = $rs['stock_almacen'] == NULL ? 0 : $rs['stock_almacen'];
 

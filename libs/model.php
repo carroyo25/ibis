@@ -3045,7 +3045,7 @@
             $orden = $cabecera['sw'] == 0 ? $noc : $cabecera['numero'];
             $titulo = $titulo . " " .$anio[0]. " - " . $orden;
             
-            $file = $cabecera['entidad']."_".$prefix.$noc.".pdf";
+            $file = $cabecera['entidad']."_".$prefix.$noc."_".$anio[0].".pdf";
             //$entrega = $this->calcularDias($cabecera['fentrega']);
 
             $pdf = new PDF($titulo,$condicion,$cabecera['emision'],$cabecera['moneda'],$cabecera['dias'] ." dias",
