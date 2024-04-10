@@ -35,9 +35,8 @@
                                                     WHERE
                                                         alm_desplibrescab.nflgactivo = 1
                                                         AND alm_desplibrescab.cnumguia LIKE :guia
-                                                        AND tb_proyectos.nidreg LIKE :costos
                                                         AND YEAR(alm_desplibrescab.ffecdoc) LIKE :anio");
-                $sql->execute(["guia"=>$guia,"costos"=>$costo,"anio"=>$anio]);
+                $sql->execute(["guia"=>$guia,"anio"=>$anio]);
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0) {
