@@ -34,7 +34,7 @@
         }
         
         function ordenId(){
-            echo json_encode($this->model->consultarOrdenId($_POST['id']));
+            echo json_encode($this->model->consultarOrdenEditId($_POST['id']));
         }
 
         function buscaRol(){
@@ -86,6 +86,10 @@
             $cantidad = 100;
         
             echo json_encode([$this->model->listarOrdenScroll($pagina,$cantidad)]);
+        }
+
+        function mmttoItem(){
+            echo json_encode($this->model->modificarItem($_POST));
         }
     }
 ?>

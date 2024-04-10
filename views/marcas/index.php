@@ -6,6 +6,9 @@
     <title>Document</title>
 </head>
 <body>
+    <div class="mensaje">
+        <p></p>
+    </div>
     <div class="modal" id="proceso">
         <div class="ventanaProceso tamanioProceso">
             <div class="cabezaProceso">

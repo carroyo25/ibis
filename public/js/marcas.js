@@ -151,7 +151,7 @@ $(function (){
                                                 detalles:JSON.stringify(itemsSave()),
                                                 user:$("#id_user").val()},
                 function (data, textStatus, jqXHR) {
-                    //mostrarMensaje(data.mensaje,data.clase);     
+                    mostrarMensaje("Pedido Actualizado","mensaje_correcto");  
                 },
                 "json"
             );

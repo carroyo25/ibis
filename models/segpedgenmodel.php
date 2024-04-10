@@ -331,7 +331,7 @@
                             $datosOrden[0]['costos'],$datosOrden[0]['concepto'],$datosOrden[0]['cnameuser'],$datosOrden[0]['crazonsoc'],
                             $datosOrden[0]['cnumdoc'],$datosOrden[0]['cviadireccion'],$datosOrden[0]['ctelefono1'],$datosOrden[0]['cemail'],$datosOrden[0]['nagenret'],
                             $datosOrden[0]['cnombres'],$datosOrden[0]['ctelefono1'],$datosOrden[0]['mail_entidad'],
-                            $datosOrden[0]['direccion']);
+                            $datosOrden[0]['direccion'],1,1);
 
             $pdf->AddPage();
             $pdf->AliasNbPages();

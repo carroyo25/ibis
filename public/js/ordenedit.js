@@ -170,7 +170,7 @@ $(function(){
                 $("#referencia").val(data.cabecera[0].cReferencia);
                 $("#dias").val(data.cabecera[0].nplazo);
 
-                $("#total_adicional").val(data.total_adicionales);
+                //$("#total_adicional").val(data.total_adicionales);
                 
                 $("#user_modifica").val(data.cabecera[0].userModifica);
 
@@ -222,38 +222,51 @@ $(function(){
     $("#tablaDetalles tbody").on("click","a",function(e){
         e.preventDefault();
 
-        $("#pregunta").fadeIn();
+        let suma = 0,
+            estado = $(this).parent().parent().data("proceso"),
+            idorden = $(this).attr("href"),
+            idpedido = e.target.closest('tr').dataset.itped,
+            nrorden = $("#codigo_orden").val(),
+            accion = "";
 
-        /*let suma = 0;
-        let estado = $(this).parent().parent().data("proceso");
 
-        try {
-
-            if ( estado != 84 ) throw "No se puede editar el item";
-
-            $(this).parent().parent().remove();
+        if ( $(this).data('option') == 'delete' ) {
+            e.target.closest('tr').remove();
             fillTables($("#tablaDetalles tbody > tr"),1);
-            $("#tablaDetalles tbody  > tr").each(function () {
-                suma += parseFloat($(this).find('td').eq(7).text()||0,10);
-            })
+            accion = "d";
+        }else if( $(this).data('option') == 'change' ){
+            accion = "c";
+        }else if ( $(this).data('option') == 'free' ){
+            e.target.closest('tr').remove();
+            fillTables($("#tablaDetalles tbody > tr"),1);
+            accion = "f";
+        }
 
-            if(suma > 0) {
-                $("#total").val(numberWithCommas(suma.toFixed(2)));
-                $("#total_numero").val(suma.toFixed(2));
-            }
+        $("#tablaDetalles tbody  > tr").each(function () {
+            suma += parseFloat($(this).find('td').eq(7).text()||0,10);
+        });
 
-            $.post(RUTA+"ordenedit/actualizaItem", {
-                itemOrden:$(this).attr("href"),
-                itemPedido:$(this).parent().parent().data("itped"),
-                itemCantPed:$(this).parent().parent().data("cant")},
-                function (data, text, requestXHR) {
+        if(suma > 0) {
+            $("#total").val(numberWithCommas(suma.toFixed(2)));
+            $("#total_numero").val(suma.toFixed(2));
+        }
 
-                },
-                "text"
-            );
-        } catch (error) {
-            mostrarMensaje(error,"mensaje_error");
-        }*/
+        let formData = new FormData();
+            formData.append("idorden",idorden);
+            formData.append("idpedido",idpedido);
+            formData.append("orden",nrorden);
+            formData.append("suma",suma);
+            formData.append("accion",accion);
+            formData.append("usuario",$("#id_user").val());
+
+        fetch(RUTA+"ordenedit/mmttoItem",{
+            method: "POST",
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+        });
 
         return false;
     });

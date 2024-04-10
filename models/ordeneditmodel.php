@@ -734,5 +734,306 @@
                 return false;
             }
         }
+
+        public function consultarOrdenEditId($id){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        lg_ordencab.id_regmov,
+                                                        LPAD( lg_ordencab.cnumero, 6, 0 ) AS cnumero,
+                                                        lg_ordencab.ffechadoc,
+                                                        lg_ordencab.ncodcos,
+                                                        lg_ordencab.ncodarea,
+                                                        lg_ordencab.id_centi,
+                                                        lg_ordencab.ctiptransp,
+                                                        lg_ordencab.ncodpago,
+                                                        lg_ordencab.nplazo,
+                                                        lg_ordencab.ncodcot,
+                                                        lg_ordencab.nEstadoDoc,
+                                                        lg_ordencab.id_refpedi,
+                                                        lg_ordencab.ntcambio,
+                                                        lg_ordencab.cnumcot,
+                                                        lg_ordencab.userModifica,
+                                                        UPPER( lg_ordencab.cObservacion ) AS concepto,
+                                                        UPPER( tb_pedidocab.detalle ) AS detalle,
+                                                        tb_pedidocab.docPdfAprob,
+                                                        UPPER(
+                                                        CONCAT_WS( ' ', tb_proyectos.ccodproy, tb_proyectos.cdesproy )) AS costos,
+                                                        lg_ordencab.ncodpry,
+                                                        lg_ordencab.ncodalm,
+                                                        UPPER(
+                                                        CONCAT_WS( ' ', tb_area.ccodarea, tb_area.cdesarea )) AS area,
+                                                        lg_ordencab.ncodmon,
+                                                        monedas.cdescripcion AS nombre_moneda,
+                                                        monedas.cabrevia AS abrevia_moneda,
+                                                        lg_ordencab.ntipmov,
+                                                        tipos.cdescripcion AS tipo,
+                                                        pagos.cdescripcion AS pagos,
+                                                        lg_ordencab.ffechaent,
+                                                        estados.cabrevia AS estado,
+                                                        estados.cdescripcion AS descripcion_estado,
+                                                        cm_entidad.crazonsoc,
+                                                        cm_entidad.cnumdoc,
+                                                        UPPER( cm_entidadcon.cnombres ) AS cnombres,
+                                                        cm_entidadcon.cemail,
+                                                        cm_entidadcon.ctelefono1,
+                                                        transportes.cdescripcion AS transporte,
+                                                        UPPER( tb_almacen.cdesalm ) AS cdesalm,
+                                                        UPPER( tb_almacen.ctipovia ) AS direccion,
+                                                        cm_entidad.cviadireccion,
+                                                        cm_entidad.cemail AS mail_entidad,
+                                                        cm_entidad.nagenret,
+                                                        lg_ordencab.cverificacion,
+                                                        lg_ordencab.ntotal,
+                                                        lg_ordencab.nigv,
+                                                        lg_ordencab.lentrega,
+                                                        lg_ordencab.cReferencia,
+                                                        FORMAT( lg_ordencab.ntotal, 2 ) AS ctotal,
+                                                        tb_pedidocab.nivelAten,
+                                                        lg_ordencab.nNivAten AS autorizado,
+                                                        lg_ordencab.nfirmaLog,
+                                                        lg_ordencab.nfirmaFin,
+                                                        lg_ordencab.nfirmaOpe,
+                                                        LPAD( tb_pedidocab.nrodoc, 6, 0 ) AS nrodoc,
+                                                        ( SELECT SUM( lg_ordendet.nunitario * lg_ordendet.ncanti ) FROM lg_ordendet WHERE lg_ordendet.id_orden = lg_ordencab.id_regmov ) AS total_multiplicado,
+                                                        UPPER(lg_ordenextras.cdescription) AS condiciones
+                                                    FROM
+                                                        lg_ordencab
+                                                        INNER JOIN tb_pedidocab ON lg_ordencab.id_refpedi = tb_pedidocab.idreg
+                                                        INNER JOIN tb_proyectos ON lg_ordencab.ncodcos = tb_proyectos.nidreg
+                                                        INNER JOIN tb_area ON lg_ordencab.ncodarea = tb_area.ncodarea
+                                                        INNER JOIN tb_parametros AS monedas ON lg_ordencab.ncodmon = monedas.nidreg
+                                                        INNER JOIN tb_parametros AS tipos ON lg_ordencab.ntipmov = tipos.nidreg
+                                                        INNER JOIN tb_parametros AS pagos ON lg_ordencab.ncodpago = pagos.nidreg
+                                                        INNER JOIN tb_parametros AS estados ON lg_ordencab.nEstadoDoc = estados.nidreg
+                                                        INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
+                                                        INNER JOIN cm_entidadcon ON cm_entidad.id_centi = cm_entidadcon.id_centi
+                                                        INNER JOIN tb_parametros AS transportes ON lg_ordencab.ctiptransp = transportes.nidreg
+                                                        INNER JOIN tb_almacen ON lg_ordencab.ncodalm = tb_almacen.ncodalm
+                                                        INNER JOIN lg_ordendet ON lg_ordencab.id_regmov = lg_ordendet.id_regmov
+                                                        LEFT JOIN lg_ordenextras ON lg_ordencab.id_regmov = lg_ordenextras.idorden
+                                                    WHERE
+                                                        lg_ordencab.id_regmov = :id 
+                                                        AND lg_ordencab.nflgactivo = 1 
+                                                        LIMIT 1");
+                $sql->execute(["id"=>$id]);
+                $rowCount = $sql->rowCount();
+                
+                if ($rowCount > 0) {
+                    $docData = array();
+                    while($row=$sql->fetch(PDO::FETCH_ASSOC)){
+                        $docData[] = $row;
+                    }
+                }
+
+                $detalles = $this->consultarDetallesOrden($id);
+                $comentarios = null;
+                $total = $this->calculaTotalOrden($id);
+                $ncomentarios = null;
+                $adjuntos = null;
+                $adicionales = null;
+                $nro_adjuntos = null;
+
+                return array("cabecera"=>$docData,
+                            "detalles"=>$detalles,
+                            "comentarios"=>$comentarios,
+                            "total"=>$total,
+                            "bocadillo"=>$ncomentarios,
+                            "adjuntos"=>$adjuntos,
+                            "adicionales"=>$adicionales,
+                            "total_adicionales"=>null,
+                            "total_adjuntos"=>$nro_adjuntos);
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function consultarDetallesOrden($id){
+            try {
+                $salida = "";
+                $sql=$this->db->connect()->prepare("SELECT
+                                            lg_ordendet.nitemord,
+                                            lg_ordendet.id_regmov,
+                                            lg_ordendet.niddeta,
+                                            lg_ordendet.nidpedi,
+                                            lg_ordendet.cobserva,
+                                            lg_ordendet.id_cprod,
+                                            REPLACE ( FORMAT( lg_ordendet.ncanti, 2 ), ',', '' ) AS ncanti,
+                                            REPLACE ( FORMAT(lg_ordendet.nunitario,4), ',', '') AS nunitario,
+                                            FORMAT( lg_ordendet.nigv, 4 ) AS nigv,
+                                            FORMAT( tb_pedidodet.total - lg_ordendet.nigv, 2 ) AS subtotal,
+                                            FORMAT( lg_ordendet.ntotal, 4 ) AS ntotal,
+                                            REPLACE ( FORMAT( lg_ordendet.nunitario * lg_ordendet.ncanti, 2 ), ',', '' ) AS total_real,
+                                            cm_producto.ccodprod,
+                                            UPPER(cm_producto.cdesprod) AS cdesprod,
+                                            cm_producto.nund,
+                                            tb_unimed.cabrevia,
+                                            FORMAT( tb_pedidodet.total, 2 ) AS total,
+                                            tb_pedidodet.idpedido,
+                                            tb_pedidodet.nroparte,
+                                            tb_pedidodet.estadoItem,
+                                            monedas.cabrevia AS moneda,
+                                            tb_pedidodet.total AS total_numero,
+                                            LPAD( tb_pedidocab.nrodoc, 6, 0 ) AS nro_pedido 
+                                        FROM
+                                            lg_ordendet
+                                            INNER JOIN cm_producto ON lg_ordendet.id_cprod = cm_producto.id_cprod
+                                            INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                            INNER JOIN tb_pedidodet ON lg_ordendet.niddeta = tb_pedidodet.iditem
+                                            INNER JOIN tb_parametros AS monedas ON lg_ordendet.nmonref = monedas.nidreg
+                                            INNER JOIN tb_pedidocab ON lg_ordendet.nidpedi = tb_pedidocab.idreg 
+                                        WHERE
+                                            lg_ordendet.id_regmov = :id 
+                                            AND ISNULL(
+                                            lg_ordendet.nflgactivo)");
+                $sql->execute(["id"=>$id]);
+                $rowCount = $sql->rowCount();
+                $item = 1;
+                if ($rowCount > 0) {
+                    while ($rs = $sql->fetch()){
+
+                        $observa = $rs['cobserva'] == 'undefined' ? '' : $rs['cobserva'];
+                        $nroparte = $rs['nroparte'] == 'undefined' ? '' : $rs['nroparte'];
+
+
+                        $salida.='<tr data-grabado="1" 
+                                        data-total="'.$rs['ntotal'].'" 
+                                        data-codprod="'.$rs['id_cprod'].'" 
+                                        data-itPed="'.$rs['niddeta'].'"
+                                        data-itOrd="'.$rs['nitemord'].'"
+                                        data-cant="'.$rs['ncanti'].'"
+                                        data-proceso="'.$rs['estadoItem'].'"
+                                        data-pedido="'.$rs['nidpedi'].'">
+                                    <td class="textoCentro"><a href="'.$rs['nitemord'].'" data-option="delete" title="Eliminar Item"><i class="fas fa-ban"></i></a></td>
+                                    <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
+                                    <td class="textoCentro">'.$rs['ccodprod'].'</td>
+                                    <td class="pl20px">'.$rs['cdesprod'].'</td>
+                                    <td class="textoCentro">'.$rs['cabrevia'].'</td>
+                                    <td class="textoDerecha pr5px"><input type="number" 
+                                                                    step="any" 
+                                                                    placeholder="0.00" 
+                                                                    onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"
+                                                                    onclick="this.select()"
+                                                                    value='.$rs['ncanti'].'>
+                                    </td>
+                                    <td class="textoDerecha pr5px">
+                                    <input type="number"
+                                        step="any" 
+                                        placeholder="0.00" 
+                                        onclick="this.select()"
+                                        onchange="(function(el){el.value=parseFloat(el.value).toFixed(4);})(this)"
+                                        value='.$rs['nunitario'].'
+                                        class="textoDerecha">
+                                    </td>
+                                    <td class="textoDerecha pr5px">'.$rs['total_real'].'</td>
+                                    <td class="textoCentro">'.$nroparte.'</td>
+                                    <td class="pl20px">'.$rs['nro_pedido'].'</td>
+                                    <td><textarea>'.$observa.'</textarea></td>
+                                    <td class="textoCentro"><a href="'.$rs['nitemord'].'" data-option="change" title="Cambiar Item"><i class="fas fa-exchange-alt"></i></a></td>
+                                    <td class="textoCentro"><a href="'.$rs['nitemord'].'" data-option="free" title="Liberar Item"><i class="fas fa-eraser"></i></a></td>
+                                </tr>';
+                    }
+                }
+
+                return $salida;
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function calculaTotalOrden($id){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        FORMAT( SUM( lg_ordendet.ncanti * lg_ordendet.nunitario ) + lg_ordendet.nigv, 2 ) AS total 
+                                                    FROM
+                                                        lg_ordendet 
+                                                    WHERE
+                                                        lg_ordendet.id_regmov = :id");
+                $sql->execute(["id"=>$id]);
+                $result = $sql->fetchAll();
+
+                return $result[0]["total"];
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        public function modificarItem($parametros){
+           $idorden = $parametros['idorden'];
+           $idpedido = $parametros['idpedido'];
+           $orden = $parametros['orden'];
+           $suma = $parametros['suma'];
+           $accion = $parametros['accion'];
+           $usuario = $parametros['usuario'];
+
+           $respuesta = "Error al actualizar"; 
+
+           if ( $accion === "d" || $accion === "f" ){
+                try {
+                    $sql = $this->db->connect()->prepare("UPDATE lg_ordendet 
+                                                        SET lg_ordendet.id_regmov = null, 
+                                                            lg_ordendet.niddeta = null, 
+                                                            lg_ordendet.ncanti = 0, 
+                                                            lg_ordendet.nestado = 0,
+                                                            lg_ordendet.nEstadoReg = 105
+                                                        WHERE lg_ordendet.nitemord =:indice
+                                                        LIMIT 1");
+
+                    $sql->execute(["indice"=>$idorden]);
+
+                    if ( $sql->rowCount() > 0 ){
+                        $this->actualizarPedido($accion,$idpedido);
+                        $this->actualizarPrecioOrden($orden,$suma,$usuario);
+                        $respuesta = "Item Anulado"; 
+                    }
+                } catch (PDOException $th) {
+                    echo "Error: ".$th->getMessage();
+                    return false;
+                }
+
+                
+           }elseif ($accion === "c"){
+                $respuesta = "Cambiar Item"; 
+           }
+
+           return array("respuesta"=>$respuesta);
+        }
+
+        private function actualizarPedido($accion,$indice){
+            $estado = $accion == "d" ? 105:54;
+
+            try {
+                $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet 
+                                                        SET tb_pedidodet.idorden = null,
+                                                            tb_pedidodet.estadoItem =:estado,
+                                                            tb_pedidodet.nflgOrden = 0,
+                                                            tb_pedidodet.cant_orden = 0
+                                                        WHERE tb_pedidodet.iditem = :indice
+                                                        LIMIT 1");
+                $sql->execute(["estado"=>$estado,"indice"=>$indice]);
+
+            } catch (PDOException $th) {
+                    echo "Error: ".$th->getMessage();
+                    return false;
+            }
+        }
+
+        private function actualizarPrecioOrden($indice,$suma,$usuario){
+            try {
+                $sql = $this->db->connect()->prepare("UPDATE lg_ordencab 
+                                                    SET lg_ordencab.ntotal = :suma,
+                                                        lg_ordencab.userModifica = :usuario
+                                                    WHERE lg_ordencab.id_regmov = :indice
+                                                    LIMIT 1");
+                $sql->execute(["suma"=>$suma,"indice"=>$indice,"usuario"=>$usuario]);
+            } catch (PDOException $th) {
+                    echo "Error: ".$th->getMessage();
+                    return false;
+                }
+        }
+
     }
 ?>

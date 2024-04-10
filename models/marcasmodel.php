@@ -8,6 +8,9 @@
 
         public function listarPedidosScrollMarca($pagina,$cantidad){
             try {
+
+                $pedidos = [];
+                
                 $inicio = ($pagina - 1) * $cantidad;
                 $limite = $this->contarItems();
 
@@ -102,7 +105,6 @@
             }
 
             if ( $total_cantidad == $total_atendido ) {
-                echo "actualiza";
                 $estadoCabecera = 52;
                 $this->modificarCabeceraPedido($cabecera['codigo_pedido'],$estadoCabecera,$user);
             }

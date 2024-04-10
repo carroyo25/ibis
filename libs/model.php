@@ -2673,7 +2673,6 @@
                                             FORMAT( lg_ordendet.ntotal, 4 ) AS ntotal,
                                             REPLACE ( FORMAT( lg_ordendet.nunitario * lg_ordendet.ncanti, 2 ), ',', '' ) AS total_real,
                                             cm_producto.ccodprod,
-                                            /*UPPER( CONCAT_WS( ' ', cm_producto.cdesprod, tb_pedidodet.observaciones, tb_pedidodet.docEspec ) ) AS cdesprod,*/
                                             UPPER(cm_producto.cdesprod) AS cdesprod,
                                             cm_producto.nund,
                                             tb_unimed.cabrevia,
@@ -3254,7 +3253,7 @@
                             $datosOrden[0]['costos'],$datosOrden[0]['concepto'],$datosOrden[0]['cnameuser'],$datosOrden[0]['crazonsoc'],
                             $datosOrden[0]['cnumdoc'],$datosOrden[0]['cviadireccion'],$datosOrden[0]['ctelefono1'],$datosOrden[0]['cemail'],$datosOrden[0]['nagenret'],
                             $datosOrden[0]['cnombres'],$datosOrden[0]['ctelefono1'],$datosOrden[0]['mail_entidad'],
-                            $datosOrden[0]['direccion'],$datosOrden[0]['cReferencia'],null,null,null);
+                            $datosOrden[0]['direccion'],$datosOrden[0]['cReferencia'],null,null,null,$datosOrden[0]['ntipmov'],null);
 
             $pdf->AddPage();
             $pdf->AliasNbPages();
