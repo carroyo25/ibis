@@ -646,7 +646,7 @@
                             $mensaje = "Registro grabado";
                             $this->actualizarGuiaEnNota($cabeceraGuia,$nota,$guiaAutomatica);
                         }else {
-                            $mensaje = "Error al crear el registro";
+                            $mensaje = "No se actualizo el registro";
                         }
                 }else {
                     $guiaAutomatica = $cabeceraGuia['numero_guia'];
@@ -687,7 +687,7 @@
                         $mensaje = "Registro modificado";
                         $this->actualizarGuiaEnNota($cabeceraGuia,$nota,$guiaAutomatica);
                     }else {
-                        $mensaje = "Error al crear el registro";
+                        $mensaje = "No se modifico la guia";
                     }  
                 }
 
