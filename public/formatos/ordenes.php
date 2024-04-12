@@ -72,7 +72,7 @@
 	        $this->Cell(190,7,$condicion,0,0,'C');
 	        $this->SetXY(170,11);
 	        $this->SetFont('Arial','',6);
-	        $this->MultiCell(30,5,utf8_decode('PSPC-410-X-PR-001-FR-002 Revisión: 0 Emisión: 06/05/2019 '),0,'L',false);
+	        $this->MultiCell(30,5,utf8_decode('PSPC-410-X-PR-001-FR-002 Revisión: 01 Emisión: 12/04/2024 '),0,'L',false);
 
             $this->SetXY(170,32);
 	        $this->Cell(10,4,utf8_decode("Día"),1,0,"C");
@@ -256,10 +256,10 @@
 
             $this->MultiCell(130,3,utf8_decode('NOTA INFORMATIVA :
 1. Se adjunta a la presente Orden los términos y condiciones de Compra y la Cartilla de Lineamientos de SSMMA para                Contratistas PSPC-100-X-IN-005.
-2. SEPCON se reseva los derechos de penalización sin conocimiiento previo del proveedor por un servicio que no cumpla            con las condiciones pactadas.
+2. SEPCON se reserva los derechos de penalización sin conocimiento previo del proveedor por un servicio que no cumpla            con las condiciones pactadas.
 3. Una vez realizado el servicio, el proveedor debe solicitar la aprobación de su valorización.
 4. Para presentación de factura: Sirva adjuntar la Valorización Aprobada y su respectiva Orden de Servicio. Para el caso de        servicios por suscripción o de naturaleza electrónica/digital se podrá reemplazar la Valorización Aprobada con una                   comunicación oficial escrita dando conformidad por el servicio.   
-5. Para aquellos servicios que intervengan con el obejto principal de la organización , se debe completar el Formulario de            Evaluación de Proveedores de Servicio SST PSPC-410-X-PR-002-FR-001, siendo condición de pago la debida                        presentación de dicho formulario'),1);
+5. Para aquellos servicios que intervengan con el objeto principal de la organización , se debe completar el Formulario de            Evaluación de Proveedores de Servicio SST PSPC-410-X-PR-002-FR-001, siendo condición de pago la debida                        presentación de dicho formulario'),1);
             
 
 
