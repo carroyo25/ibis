@@ -1222,15 +1222,25 @@ calcularTotales = () => {
 }
 
 sumardias = () => {
-    let fecha = new Date();
-    let dias = parseInt($('#dias').val()); // Número de días a agregar
-    
-    fecha.setDate(fecha.getDate() + dias);
+    let fecha = new Date(),
+        dias = parseInt( $('#dias').val() ),
+        diaSemana = ['Domingo','Lunes','Martes','Miercoles','Jueves','Viernes','Sabado']
+
+    fecha.setDate( fecha.getDate() + dias );
+
+    if ( fecha.getDay() === 0 || fecha.getDay() === 6 ) {
+        fecha = new Date();
+        fecha.setDate( fecha.getDate() + ( dias + 2 ) );
+
+        mostrarMensaje("La fecha de entrega se cambio un dia utíl","mensaje_correcto");
+    }
+
     fecha = fecha.getFullYear() + '-' + $.strPad((fecha.getMonth() + 1),2) + '-' +  $.strPad(fecha.getDate(),2);
     
-
     $("#fentrega").val(fecha);
+
 }
+
 
 
 

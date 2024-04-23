@@ -178,8 +178,7 @@
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()) {
 
-                        //aca se resta lo de almacen; por lo tanto ya es la cantidad final de compra **ojo aca hay que 
-                        $cant = floatval($rs['cant_aprob']) -  floatval($rs['stock_almacen']);
+                        $cant   = floatval($rs['cant_aprob']) -  floatval($rs['stock_almacen']);
                         $aten   = $rs['stock_almacen'] == NULL ? 0 : $rs['stock_almacen'];
 
                         //validar para las compras parciales
@@ -205,7 +204,7 @@
                                         <td class="pl5px">'.$rs['area'].'</td>
                                         <td class="textoCentro">'.$rs['ccodproy'].'</td>
                                         <td class="textoCentro" data-codigo="'.$rs['id_cprod'].'">'.$rs['ccodprod'].'</td>
-                                        <td class="textoDerecha">'.$rs['cantidad'].'</td>
+                                        <td class="textoDerecha">'.$cant.'</td>
                                         <td class="textoDerecha">'.$aten.'</td>
                                         <td class="pl5px">'.$rs['cdesprod'].'</td>
                                     </tr>';
