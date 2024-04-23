@@ -209,7 +209,7 @@
     <div class="cabezaModulo">
         <h1>Cargo Plan</h1>
         <div>
-            <a href="#" id="filtrosAvanzados" class="oculto"><i class="fab fa-searchengin"></i><p>Filtros</p></a>
+            <a href="#" id="filtrosAvanzados"><i class="fab fa-searchengin"></i><p>Filtros</p></a>
             <a href="#" id="excelFile"><i class="fas fa-file-excel"></i><p>Exportar</p></a>
             <a href="#" id="csvFile" class="oculto"><i class="fas fa-file-csv"></i><p>Exportar CSV</p></a>
             <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
@@ -307,7 +307,6 @@
                     <th style="background:#AAFFAA; color:#000">Fecha</br>Autorización</th>
                     <th>Atencion</br>Almacen</th>
                     <th style="background:#AB7FAB; color:#fff" width="10%" data-idcol="22" class="datafiltro">Descripcion Proveedor</th>
-                    <th>Fecha Envio</br>Proveedor</th>
                     <th>Fecha Entrega</br>Proveedor</th>
                     <th width="50px">Cantidad</br>Recibida</th>
                     <th width="50px" data-idcol="25" class="datafiltro">Nota</br>Ingreso</th>
