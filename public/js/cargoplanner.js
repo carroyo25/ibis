@@ -351,17 +351,20 @@ detalles = () =>{
             SEMAFORO            = $(this).find('td').eq(31).text(),
             DESPACHO            = $(this).find('td').eq(32).text(),
             NUMERO_GUIA         = $(this).find('td').eq(33).text(),
-            REGISTRO_ALMACEN    = $(this).find('td').eq(34).text(),
-            FECHA_REGISTRO_OBRA = $(this).find('td').eq(35).text(),
-            CANTIDA_OBRA        = $(this).find('td').eq(36).text(),
-            ESTADO_PEDIDO       = $(this).find('td').eq(37).text(),
-            ESTADO_ITEM         = $(this).find('td').eq(38).text(),
-            NUMERO_PARTE        = $(this).find('td').eq(39).text(),
-            CODIGO_ACTIVO       = $(this).find('td').eq(40).text(),
-            OPERADOR            = $(this).find('td').eq(41).text(),
-            TRANSPORTE          = $(this).find('td').eq(42).text(),
-            OBSERVACIONES       = $(this).find('td').eq(43).text(),
-            SOLICITANTE         = $(this).find('td').eq(44).text();
+            GUIA_TRANSFER       = $(this).find('td').eq(34).text(),
+            FECHA_TRASLADO      = $(this).find('td').eq(35).text(),
+            
+            REGISTRO_ALMACEN    = $(this).find('td').eq(36).text(),
+            FECHA_REGISTRO_OBRA = $(this).find('td').eq(37).text(),
+            CANTIDA_OBRA        = $(this).find('td').eq(38).text(),
+            ESTADO_PEDIDO       = $(this).find('td').eq(39).text(),
+            ESTADO_ITEM         = $(this).find('td').eq(40).text(),
+            NUMERO_PARTE        = $(this).find('td').eq(41).text(),
+            CODIGO_ACTIVO       = $(this).find('td').eq(42).text(),
+            OPERADOR            = $(this).find('td').eq(43).text(),
+            TRANSPORTE          = $(this).find('td').eq(44).text(),
+            OBSERVACIONES       = $(this).find('td').eq(45).text(),
+            SOLICITANTE         = $(this).find('td').eq(46).text();
 
         item = {};
 
@@ -406,6 +409,9 @@ detalles = () =>{
         item['registro_almacen']    = REGISTRO_ALMACEN;
         item['fecha_registro_obra'] = FECHA_REGISTRO_OBRA;
         item['cantidad_obra']       = CANTIDA_OBRA;
+
+        item['guia_transfer']       = GUIA_TRANSFER;
+        item['fecha_traslado']      = FECHA_TRASLADO;
         
         item['estado_pedido']       = ESTADO_PEDIDO;
         item['estado_item']         = ESTADO_ITEM;
