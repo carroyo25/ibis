@@ -64,7 +64,7 @@
                                                         ) AS inventarios ON inventarios.codprod = cm_producto.id_cprod
                                                         LEFT JOIN (
                                                         SELECT
-                                                            alm_consumo.cantsalida,
+                                                            SUM(alm_consumo.cantsalida) AS cantsalida,
                                                             alm_consumo.cantdevolucion,
                                                             alm_consumo.idprod 
                                                         FROM

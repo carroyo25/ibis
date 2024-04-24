@@ -55,5 +55,9 @@
         function archivocvs(){
             echo json_encode($this->model->exportarcsv($_POST['usuario']));
         }
+
+        function filtroCargoPlanExporta(){
+            echo json_encode($this->model->filtrarExportarTotal($_POST));
+        }
     }
 ?>

@@ -60,7 +60,7 @@
                 $sql = $this->db->connect()->prepare("SELECT
                                                         UPPER( cm_producto.ccodprod ) AS cccodprod,
                                                         UPPER( cm_producto.cdesprod ) AS cdesprod,
-                                                        alm_despachodet.ncantidad,
+                                                        alm_despachodet.ndespacho,
                                                         tb_unimed.cabrevia,
                                                         alm_despachodet.id_regalm,
                                                         alm_despachodet.niddeta,
@@ -87,7 +87,7 @@
                                         <td class="textoCentro">'.$rs['cccodprod'].'</td>
                                         <td class="pl10px">'.$rs['cdesprod'].'</td>
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
-                                        <td class="textoDerecha">'.$rs['ncantidad'].'</td>
+                                        <td class="textoDerecha">'.$rs['ndespacho'].'</td>
                                         <td class="textoDerecha">'.$rs['cnumguia'].'</td>
                                     </tr>';
                     }

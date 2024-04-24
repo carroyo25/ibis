@@ -285,13 +285,25 @@ $(function() {
         e.preventDefault();
         
         let items = {}
-            indice = 0; 
+            indice = 0,
+            formData = new FormData();
 
         $('#costos input[type=checkbox]:checked').each(function() {
             items[indice++] = $(this).attr("id");
         });
 
-        console.log(items);
+        formData.append('costos',JSON.stringify(items));
+        formData.append('fechaInicio',$("#fecha_inicio").val());
+        formData.append('fechaFinal',$("#fecha_final").val());
+
+        fetch(RUTA+'cargoplanner/filtroCargoPlanExporta',{
+            method:'POST',
+            body:formData,
+        })
+        .then(response =>response.json)
+        .then(data => {
+            console.log(data);
+        })
 
         return false;
     });

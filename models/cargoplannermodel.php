@@ -974,93 +974,106 @@
         public function exportarTotal(){
             require_once('public/PHPExcel/PHPExcel.php');
             try {
-               $salida = "";
+                $salida = "";
 
-               $sql = $this->db->connect()->query("SELECT
-                                                tb_pedidodet.iditem,
-                                                tb_pedidodet.idpedido,
-                                                tb_pedidodet.idprod,
-                                                tb_pedidodet.nroparte,
-                                                tb_pedidodet.nregistro,
-                                                tb_pedidodet.cant_pedida AS cantidad_pedido,
-                                                tb_pedidodet.cant_aprob AS cantidad_aprobada,
-                                                tb_pedidodet.cant_atend AS cantidad_atendida,
-                                                LPAD( tb_pedidocab.nrodoc, 6, 0 ) AS pedido,
-                                                lg_ordendet.id_orden AS orden,
-                                                lg_ordendet.item AS item_orden,
-                                                cm_producto.ccodprod,
-                                                UPPER( CONCAT_WS( ' ', cm_producto.cdesprod, tb_pedidodet.observaciones ) ) AS descripcion,
-                                                tb_pedidodet.estadoItem,
-                                                tb_proyectos.ccodproy,
-                                                tb_proyectos.nidreg AS idproyecto,
-                                                UPPER( tb_area.cdesarea ) AS area,
-                                                UPPER( tb_partidas.cdescripcion ) AS partida,
-                                                DATE_FORMAT( tb_pedidocab.emision, '%d/%m/%Y' ) AS crea_pedido,
-                                                DATE_FORMAT( tb_pedidocab.faprueba, '%d/%m/%Y' ) AS aprobacion_pedido,
-                                                DATE_FORMAT( lg_ordencab.ffechades, '%d/%m/%Y' ) AS fecha_descarga,
-                                                tb_pedidocab.anio AS anio_pedido,
-                                                tb_pedidocab.mes AS pedido_mes,
-                                                tb_pedidocab.nivelAten AS atencion,
-                                                tb_pedidocab.idtipomov,
-                                                tb_unimed.cabrevia AS unidad,
-                                                lg_ordencab.cper AS anio_orden,
-                                                lg_ordencab.ntipmov,
-                                                lg_ordencab.FechaFin,
-                                                lg_ordencab.cnumero,
-                                                FORMAT( lg_ordencab.nplazo, 0 ) AS plazo,
-                                                DATE_FORMAT( lg_ordencab.ffechadoc, '%d/%m/%Y' ) AS fecha_orden,
-                                                DATE_FORMAT( lg_ordencab.ffechaent, '%d/%m/%Y' ) AS fecha_entrega,
-                                                DATE_FORMAT( lg_ordencab.fechafin, '%d/%m/%Y' ) AS fecha_autorizacion_orden,
-                                                UPPER( cm_entidad.crazonsoc ) AS proveedor,
-                                                UPPER( tb_user.cnameuser ) AS operador,
-                                                UPPER( tb_pedidocab.concepto ) AS concepto,
-                                                DATEDIFF(  lg_ordencab.ffechaent, NOW() ) AS dias_atraso,
-                                                DATE_ADD( lg_ordencab.ffechades, INTERVAL lg_ordencab.nplazo DAY ) AS fecha_entrega_final,
-                                                transporte.cdescripcion AS transporte,
-                                                transporte.nidreg,
-                                                user_aprueba.cnombres,
-                                                alm_despachocab.cnumguia,
-                                                LPAD( alm_recepcab.nnronota, 6, 0 ) AS nota_ingreso,
-                                                LPAD( alm_cabexist.idreg, 6, 0 ) AS nota_obra,
-                                                tb_equipmtto.cregistro,
-                                                o.cantidad_orden,
-                                                i.ingreso,
-                                                d.despachos,
-                                                a.ingreso_obra,
-                                                usuarios.cnombres AS nombre_elabora,
-                                                DATE_FORMAT( alm_recepcab.ffecdoc, '%d/%m/%Y' ) AS fecha_recepcion_proveedor,
-                                                DATE_FORMAT( alm_cabexist.ffechadoc, '%d/%m/%Y' ) AS fecha_registro_almacen
-                                            FROM
-                                                tb_pedidodet
-                                                LEFT JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
-                                                LEFT JOIN lg_ordendet ON lg_ordendet.niddeta = tb_pedidodet.iditem
-                                                LEFT JOIN cm_producto ON tb_pedidodet.idprod = cm_producto.id_cprod
-                                                LEFT JOIN tb_proyectos ON tb_pedidodet.idcostos = tb_proyectos.nidreg
-                                                LEFT JOIN tb_area ON tb_pedidodet.idarea = tb_area.ncodarea
-                                                LEFT JOIN tb_partidas ON tb_pedidocab.idpartida = tb_partidas.idreg
-                                                LEFT JOIN tb_unimed ON tb_pedidodet.unid = tb_unimed.ncodmed
-                                                LEFT JOIN lg_ordencab ON lg_ordendet.id_orden = lg_ordencab.id_regmov
-                                                LEFT JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
-                                                LEFT JOIN tb_user ON lg_ordencab.id_cuser = tb_user.iduser
-                                                LEFT JOIN tb_parametros AS transporte ON lg_ordencab.ctiptransp = transporte.nidreg
-                                                LEFT JOIN tb_user AS user_aprueba ON tb_pedidocab.aprueba = user_aprueba.iduser
-                                                LEFT JOIN alm_despachodet ON tb_pedidodet.iditem = alm_despachodet.niddetaPed
-                                                LEFT JOIN alm_despachocab ON alm_despachodet.id_regalm = alm_despachocab.id_regalm
-                                                LEFT JOIN alm_recepdet ON tb_pedidodet.iditem = alm_recepdet.niddetaPed
-                                                LEFT JOIN alm_recepcab ON alm_recepdet.id_regalm = alm_recepcab.id_regalm
-                                                LEFT JOIN alm_existencia ON tb_pedidodet.iditem = alm_existencia.idpedido
-                                                LEFT JOIN alm_cabexist ON alm_existencia.idregistro = alm_cabexist.idreg
-                                                LEFT JOIN tb_equipmtto ON tb_pedidodet.nregistro = tb_equipmtto.idreg
-                                                LEFT JOIN ( SELECT SUM( lg_ordendet.ncanti ) AS cantidad_orden, lg_ordendet.niddeta FROM lg_ordendet WHERE lg_ordendet.id_orden != 0 GROUP BY lg_ordendet.niddeta ) AS o ON   o.niddeta = tb_pedidodet.iditem
-                                                LEFT JOIN ( SELECT SUM( alm_recepdet.ncantidad ) AS ingreso, alm_recepdet.niddetaPed FROM alm_recepdet WHERE alm_recepdet.nflgactivo = 1 GROUP BY alm_recepdet.niddetaPed ) AS i ON i.niddetaPed = tb_pedidodet.iditem
-                                                LEFT JOIN ( SELECT SUM( alm_despachodet.ndespacho ) AS despachos, alm_despachodet.niddetaPed FROM alm_despachodet WHERE alm_despachodet.nflgactivo = 1 GROUP BY alm_despachodet.niddetaPed ) AS d ON  d.niddetaPed = tb_pedidodet.iditem
-                                                LEFT JOIN ( SELECT SUM( alm_existencia.cant_ingr ) AS ingreso_obra, alm_existencia.idpedido FROM alm_existencia WHERE alm_existencia.nflgActivo = 1 GROUP BY alm_existencia.idpedido ) AS a ON a.idpedido= tb_pedidodet.iditem
-                                                LEFT JOIN tb_user AS usuarios ON tb_pedidocab.usuario = usuarios.iduser 
-                                            WHERE
-                                                tb_pedidodet.nflgActivo 
-                                                AND ISNULL( lg_ordendet.nflgactivo )
-                                            GROUP BY
-                                                tb_pedidodet.iditem");
+                $sql = $this->db->connect()->query("SELECT
+                                                    tb_pedidodet.iditem,
+                                                    tb_pedidodet.idpedido,
+                                                    tb_pedidodet.idprod,
+                                                    tb_pedidodet.nroparte,
+                                                    tb_pedidodet.nregistro,
+                                                    tb_pedidodet.cant_pedida AS cantidad_pedido,
+                                                    tb_pedidodet.cant_aprob AS cantidad_aprobada,
+                                                    tb_pedidodet.cant_atend AS cantidad_atendida,
+                                                    LPAD( tb_pedidocab.nrodoc, 6, 0 ) AS pedido,
+                                                    lg_ordendet.id_orden AS orden,
+                                                    lg_ordendet.item AS item_orden,
+                                                    cm_producto.ccodprod,
+                                                    UPPER( CONCAT_WS( ' ', cm_producto.cdesprod, tb_pedidodet.observaciones ) ) AS descripcion,
+                                                    tb_pedidodet.estadoItem,
+                                                    tb_proyectos.ccodproy,
+                                                    tb_proyectos.nidreg AS idproyecto,
+                                                    UPPER( tb_area.cdesarea ) AS area,
+                                                    UPPER( tb_partidas.cdescripcion ) AS partida,
+                                                    DATE_FORMAT( tb_pedidocab.emision, '%d/%m/%Y' ) AS crea_pedido,
+                                                    DATE_FORMAT( tb_pedidocab.faprueba, '%d/%m/%Y' ) AS aprobacion_pedido,
+                                                    DATE_FORMAT( lg_ordencab.ffechades, '%d/%m/%Y' ) AS fecha_descarga,
+                                                    tb_pedidocab.anio AS anio_pedido,
+                                                    tb_pedidocab.mes AS pedido_mes,
+                                                    tb_pedidocab.nivelAten AS atencion,
+                                                    tb_pedidocab.idtipomov,
+                                                    tb_unimed.cabrevia AS unidad,
+                                                    lg_ordencab.cper AS anio_orden,
+                                                    lg_ordencab.ntipmov,
+                                                    lg_ordencab.FechaFin,
+                                                    lg_ordencab.cnumero,
+                                                    DATE_FORMAT( lg_ordencab.ffechadoc, '%d/%m/%Y' ) AS fecha_orden,
+                                                    UPPER( cm_entidad.crazonsoc ) AS proveedor,
+                                                    UPPER( tb_user.cnameuser ) AS operador,
+                                                    UPPER( tb_pedidocab.concepto ) AS concepto,
+                                                    DATEDIFF( lg_ordencab.ffechaent, NOW() ) AS dias_atraso,
+                                                    transporte.cdescripcion AS transporte,
+                                                    transporte.nidreg,
+                                                    user_aprueba.cnombres,
+                                                    alm_despachocab.cnumguia,
+                                                    LPAD( alm_recepcab.nnronota, 6, 0 ) AS nota_ingreso,
+                                                    LPAD( alm_cabexist.idreg, 6, 0 ) AS nota_obra,
+                                                    tb_equipmtto.cregistro,
+                                                    o.cantidad_orden,
+                                                    i.ingreso,
+                                                    d.despachos,
+                                                    a.ingreso_obra,
+                                                    usuarios.cnombres AS nombre_elabora,
+                                                    DATE_FORMAT( alm_recepcab.ffecdoc, '%d/%m/%Y' ) AS fecha_recepcion_proveedor,
+                                                    DATE_FORMAT( alm_cabexist.ffechadoc, '%d/%m/%Y' ) AS fecha_registro_almacen,
+                                                    alm_transfercab.cnumguia AS guia_transferencia,
+                                                    DATE_FORMAT( alm_transfercab.ftraslado, '%d/%m/%Y' ) AS fecha_traslado,
+                                                    DATE_FORMAT(
+                                                        GREATEST( COALESCE ( lg_ordencab.fechaLog, '' ), COALESCE ( lg_ordencab.fechaOpe, '' ), COALESCE ( lg_ordencab.FechaFin, '' ) ),
+                                                        '%d/%m/%Y' 
+                                                    ) AS fecha_autorizacion,
+                                                    DATE_FORMAT(
+                                                        DATE_ADD(
+                                                            GREATEST( COALESCE ( lg_ordencab.fechaLog, '' ), COALESCE ( lg_ordencab.fechaOpe, '' ), COALESCE ( lg_ordencab.FechaFin, '' ) ),
+                                                            INTERVAL lg_ordencab.nplazo DAY 
+                                                        ),
+                                                        '%d/%m/%Y' 
+                                                    ) AS fecha_entrega_final,
+                                                    FORMAT( lg_ordencab.nplazo, 0 ) AS plazo
+                                                FROM
+                                                    tb_pedidodet
+                                                    LEFT JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
+                                                    LEFT JOIN lg_ordendet ON lg_ordendet.niddeta = tb_pedidodet.iditem
+                                                    LEFT JOIN cm_producto ON tb_pedidodet.idprod = cm_producto.id_cprod
+                                                    LEFT JOIN tb_proyectos ON tb_pedidodet.idcostos = tb_proyectos.nidreg
+                                                    LEFT JOIN tb_area ON tb_pedidodet.idarea = tb_area.ncodarea
+                                                    LEFT JOIN tb_partidas ON tb_pedidocab.idpartida = tb_partidas.idreg
+                                                    LEFT JOIN tb_unimed ON tb_pedidodet.unid = tb_unimed.ncodmed
+                                                    LEFT JOIN lg_ordencab ON lg_ordendet.id_orden = lg_ordencab.id_regmov
+                                                    LEFT JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
+                                                    LEFT JOIN tb_user ON lg_ordencab.id_cuser = tb_user.iduser
+                                                    LEFT JOIN tb_parametros AS transporte ON lg_ordencab.ctiptransp = transporte.nidreg
+                                                    LEFT JOIN tb_user AS user_aprueba ON tb_pedidocab.aprueba = user_aprueba.iduser
+                                                    LEFT JOIN alm_despachodet ON tb_pedidodet.iditem = alm_despachodet.niddetaPed
+                                                    LEFT JOIN alm_despachocab ON alm_despachodet.id_regalm = alm_despachocab.id_regalm
+                                                    LEFT JOIN alm_recepdet ON tb_pedidodet.iditem = alm_recepdet.niddetaPed
+                                                    LEFT JOIN alm_recepcab ON alm_recepdet.id_regalm = alm_recepcab.id_regalm
+                                                    LEFT JOIN alm_existencia ON tb_pedidodet.iditem = alm_existencia.idpedido
+                                                    LEFT JOIN alm_cabexist ON alm_existencia.idregistro = alm_cabexist.idreg
+                                                    LEFT JOIN tb_equipmtto ON tb_pedidodet.nregistro = tb_equipmtto.idreg
+                                                    LEFT JOIN ( SELECT SUM( lg_ordendet.ncanti ) AS cantidad_orden, lg_ordendet.niddeta FROM lg_ordendet WHERE lg_ordendet.id_orden != 0 GROUP BY lg_ordendet.niddeta ) AS o ON o.niddeta = tb_pedidodet.iditem
+                                                    LEFT JOIN ( SELECT SUM( alm_recepdet.ncantidad ) AS ingreso, alm_recepdet.niddetaPed FROM alm_recepdet WHERE alm_recepdet.nflgactivo = 1 GROUP BY alm_recepdet.niddetaPed ) AS i ON i.niddetaPed = tb_pedidodet.iditem
+                                                    LEFT JOIN ( SELECT SUM( alm_despachodet.ndespacho ) AS despachos, alm_despachodet.niddetaPed FROM alm_despachodet WHERE alm_despachodet.nflgactivo = 1 GROUP BY alm_despachodet.niddetaPed ) AS d ON d.niddetaPed = tb_pedidodet.iditem
+                                                    LEFT JOIN ( SELECT SUM( alm_existencia.cant_ingr ) AS ingreso_obra, alm_existencia.idpedido FROM alm_existencia WHERE alm_existencia.nflgActivo = 1 GROUP BY alm_existencia.idpedido ) AS a ON a.idpedido = tb_pedidodet.iditem
+                                                    LEFT JOIN tb_user AS usuarios ON tb_pedidocab.usuario = usuarios.iduser
+                                                    LEFT JOIN alm_transferdet ON alm_transferdet.iddetped = tb_pedidodet.iditem
+                                                    LEFT JOIN alm_transfercab ON alm_transfercab.idreg = alm_transferdet.idtransfer 
+                                                WHERE
+                                                    tb_pedidodet.nflgActivo 
+                                                    AND ISNULL( lg_ordendet.nflgactivo )
+                                                GROUP BY
+                                                    tb_pedidodet.iditem
+                                                LIMIT 20");
                 $sql->execute();
                 $rowCount = $sql->rowCount();
 
@@ -1183,28 +1196,27 @@
                 $objPHPExcel->getActiveSheet()->setCellValue('V2','Fecha Autorizacion'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('W2','Atencion Almacen'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('X2','Descripcion del proveedor'); // esto cambia
-                //$objPHPExcel->getActiveSheet()->setCellValue('Y2','Fecha Envio Proveedor'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('Z2','Fecha Entrega Proveedor'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AA2','Cant. Recibida'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AB2','Nota de Ingreso'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AC2','Fecha Recepcion Proveedor'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AD2','Saldo por Recibir'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AE2','Dias Entrega'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AF2','Días Atrazo'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AG2','Semáforo'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AH2','Cantidad Despachada'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AI2','Nro. Guia'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AJ2','Registro Almacen'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AK2','Fecha Ingreso Almacen'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AL2','Cantidad en Obra'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AM2','Estado Pedido'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AN2','Estado Item'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AO2','N° Parte'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AP2','Codigo Activo'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AQ2','Operador Logístico'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AR2','Tipo Transporte'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('Y2','Fecha Entrega Proveedor'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('Z2','Cant. Recibida'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AA2','Nota de Ingreso'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AB2','Fecha Recepcion Proveedor'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AC2','Saldo por Recibir'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AD2','Dias Entrega'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AE2','Días Atrazo'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AF2','Semáforo'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AG2','Cantidad Despachada'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AH2','Nro. Guia'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AI2','Registro Almacen'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AJ2','Fecha Ingreso Almacen'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AK2','Cantidad en Obra'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AL2','Estado Pedido'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AM2','Estado Item'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AN2','N° Parte'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AO2','Codigo Activo'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AP2','Operador Logístico'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AQ2','Tipo Transporte'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('AS2','Observaciones/Concepto'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AT2','Solicitante'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AR2','Solicitante'); // esto cambia
 
 
                 $objPHPExcel->getActiveSheet()->getStyle('B:C')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
@@ -1249,15 +1261,14 @@
                 $objPHPExcel->getActiveSheet()->getStyle('T')->getNumberFormat()->setFormatCode('#,##0.00');
                 $objPHPExcel->getActiveSheet()->getStyle('V')->getNumberFormat()->setFormatCode('dd/mm/yyyy');
                 $objPHPExcel->getActiveSheet()->getStyle('W')->getNumberFormat()->setFormatCode('#,##0.00');
-                //$objPHPExcel->getActiveSheet()->getStyle('Y')->getNumberFormat()->setFormatCode('dd/mm/yyyy');
-                $objPHPExcel->getActiveSheet()->getStyle('Z')->getNumberFormat()->setFormatCode('dd/mm/yyyy');
+                $objPHPExcel->getActiveSheet()->getStyle('Y')->getNumberFormat()->setFormatCode('dd/mm/yyyy');
 
-                $objPHPExcel->getActiveSheet()->getStyle('AA')->getNumberFormat()->setFormatCode('#,##0.00');
-                $objPHPExcel->getActiveSheet()->getStyle('AC')->getNumberFormat()->setFormatCode('dd/mm/yyyy');
-                $objPHPExcel->getActiveSheet()->getStyle('AD')->getNumberFormat()->setFormatCode('#,##0.00');
-                $objPHPExcel->getActiveSheet()->getStyle('AH')->getNumberFormat()->setFormatCode('#,##0.00');
-                $objPHPExcel->getActiveSheet()->getStyle('AK')->getNumberFormat()->setFormatCode('dd/mm/yyyy');
-                $objPHPExcel->getActiveSheet()->getStyle('AL')->getNumberFormat()->setFormatCode('#,##0.00');
+                $objPHPExcel->getActiveSheet()->getStyle('Z')->getNumberFormat()->setFormatCode('#,##0.00');
+                $objPHPExcel->getActiveSheet()->getStyle('AB')->getNumberFormat()->setFormatCode('dd/mm/yyyy');
+                $objPHPExcel->getActiveSheet()->getStyle('AC')->getNumberFormat()->setFormatCode('#,##0.00');
+                $objPHPExcel->getActiveSheet()->getStyle('AG')->getNumberFormat()->setFormatCode('#,##0.00');
+                $objPHPExcel->getActiveSheet()->getStyle('AJ')->getNumberFormat()->setFormatCode('dd/mm/yyyy');
+                $objPHPExcel->getActiveSheet()->getStyle('AK')->getNumberFormat()->setFormatCode('#,##0.00');
                
                 $fila = 3;
                 $estado = "";
@@ -1296,7 +1307,6 @@
                         $dias_atraso  =  $saldoRecibir > 0 && $rs['dias_atraso'] < 1 ? $rs['dias_atraso'] : "-" ;
                         $suma_atendido = number_format($rs['cantidad_orden'] + $rs['cantidad_atendida'],2);
 
-                        //$cantidad = $rs['cantidad_aprobada'] == 0 ? $rs['cantidad_pedido'] : $rs['cantidad_aprobada'];
                         $cantidad = $rs['cantidad_pedido'];
 
                         $estado_pedido =  $rs['estadoItem'] >= 54 ? "Atendido":"Pendiente";
@@ -1313,9 +1323,9 @@
                         $fecha_descarga = "";
                         $dias_plazo = intVal( $rs['plazo'] )+1 .' days';
 
-                        if ( $rs['fecha_autorizacion_orden'] !== null && $rs['estadoItem'] !== 105 ) { 
+                        if ( $rs['fecha_autorizacion'] !== null && $rs['estadoItem'] !== 105 ) { 
                             $fecha_descarga = date("d/m/Y",strtotime($rs['FechaFin'].' 1 days'));
-                            $fecha_entrega = $rs['fecha_entrega'];
+                            $fecha_entrega = $rs['fecha_entrega_final'];
                         }
 
 
@@ -1526,46 +1536,43 @@
 
                         $objPHPExcel->getActiveSheet()->setCellValue('U'.$fila,$rs['item_orden']);
 
-                        if  ($rs['fecha_autorizacion_orden'] !== null)
+                        if  ($rs['fecha_autorizacion'] !== null)
                             $objPHPExcel->getActiveSheet()->setCellValue('V'.$fila,PHPExcel_Shared_Date::PHPToExcel($rs['fecha_autorizacion']));
-                            
                         
                         $objPHPExcel->getActiveSheet()->setCellValue('W'.$fila,$rs['cantidad_atendida']);
-                       
 
                         $objPHPExcel->getActiveSheet()->setCellValue('X'.$fila,$rs['proveedor']); 
                         
                         if ( $fecha_entrega != "" )
-                        $objPHPExcel->getActiveSheet()->setCellValue('Z'.$fila,PHPExcel_Shared_Date::PHPToExcel($rs['fecha_entrega_final']));   
+                        $objPHPExcel->getActiveSheet()->setCellValue('Y'.$fila,PHPExcel_Shared_Date::PHPToExcel($rs['fecha_entrega_final']));   
 
-                        $objPHPExcel->getActiveSheet()->setCellValue('AA'.$fila,$rs['ingreso']);
-                        $objPHPExcel->getActiveSheet()->setCellValue('AB'.$fila,$rs['nota_ingreso']);
-                        $objPHPExcel->getActiveSheet()->setCellValue('AC'.$fila,$rs['fecha_recepcion_proveedor']);
-                        $objPHPExcel->getActiveSheet()->setCellValue('AD'.$fila,$saldoRecibir);
-                       
+                        $objPHPExcel->getActiveSheet()->setCellValue('Z'.$fila,$rs['ingreso']);
+                        $objPHPExcel->getActiveSheet()->setCellValue('AA'.$fila,$rs['nota_ingreso']);
+                        $objPHPExcel->getActiveSheet()->setCellValue('AB'.$fila,$rs['fecha_recepcion_proveedor']);
+                        $objPHPExcel->getActiveSheet()->setCellValue('AC'.$fila,$saldoRecibir);
                         
-                        $objPHPExcel->getActiveSheet()->setCellValue('AE'.$fila,$rs['plazo']);
-                        $objPHPExcel->getActiveSheet()->setCellValue('AF'.$fila,$dias_atraso);
+                        $objPHPExcel->getActiveSheet()->setCellValue('AD'.$fila,$rs['plazo']);
+                        $objPHPExcel->getActiveSheet()->setCellValue('AE'.$fila,$dias_atraso);
                         
-                        $objPHPExcel->getActiveSheet()->setCellValue('AG'.$fila,strtoupper($semaforoEstado));
-                        $objPHPExcel->getActiveSheet()->getStyle('AG'.$fila)->applyFromArray($semaforo);
+                        $objPHPExcel->getActiveSheet()->setCellValue('AF'.$fila,strtoupper($semaforoEstado));
+                        $objPHPExcel->getActiveSheet()->getStyle('AF'.$fila)->applyFromArray($semaforo);
                         
-                        $objPHPExcel->getActiveSheet()->setCellValue('AH'.$fila,$rs['despachos']);
-                        $objPHPExcel->getActiveSheet()->setCellValue('AI'.$fila,$rs['cnumguia']);
+                        $objPHPExcel->getActiveSheet()->setCellValue('AG'.$fila,$rs['despachos']);
+                        $objPHPExcel->getActiveSheet()->setCellValue('AH'.$fila,$rs['cnumguia']);
                         
-                        $objPHPExcel->getActiveSheet()->setCellValue('AJ'.$fila,$rs['nota_obra']);
-                        $objPHPExcel->getActiveSheet()->setCellValue('AK'.$fila,$rs['fecha_registro_almacen']);
-                        $objPHPExcel->getActiveSheet()->setCellValue('AL'.$fila,$rs['ingreso_obra']);
+                        $objPHPExcel->getActiveSheet()->setCellValue('AI'.$fila,$rs['nota_obra']);
+                        $objPHPExcel->getActiveSheet()->setCellValue('AJ'.$fila,$rs['fecha_registro_almacen']);
+                        $objPHPExcel->getActiveSheet()->setCellValue('AK'.$fila,$rs['ingreso_obra']);
 
-                        $objPHPExcel->getActiveSheet()->setCellValue('AM'.$fila,$estado_pedido);
-                        $objPHPExcel->getActiveSheet()->setCellValue('AN'.$fila,$estado_item);
-                        $objPHPExcel->getActiveSheet()->setCellValue('AO'.$fila,$rs['nroparte']);
-                        $objPHPExcel->getActiveSheet()->setCellValue('AP'.$fila,$rs['cregistro']);
-                        $objPHPExcel->getActiveSheet()->setCellValue('AQ'.$fila,$rs['operador']);
-                        $objPHPExcel->getActiveSheet()->setCellValue('AR'.$fila,$transporte);
-                        $objPHPExcel->getActiveSheet()->setCellValue('AS'.$fila,$rs['concepto']);
+                        $objPHPExcel->getActiveSheet()->setCellValue('AL'.$fila,$estado_pedido);
+                        $objPHPExcel->getActiveSheet()->setCellValue('AM'.$fila,$estado_item);
+                        $objPHPExcel->getActiveSheet()->setCellValue('AN'.$fila,$rs['nroparte']);
+                        $objPHPExcel->getActiveSheet()->setCellValue('AO'.$fila,$rs['cregistro']);
+                        $objPHPExcel->getActiveSheet()->setCellValue('AP'.$fila,$rs['operador']);
+                        $objPHPExcel->getActiveSheet()->setCellValue('AQ'.$fila,$transporte);
+                        $objPHPExcel->getActiveSheet()->setCellValue('AR'.$fila,$rs['concepto']);
 
-                        $objPHPExcel->getActiveSheet()->setCellValue('AT'.$fila,$rs['nombre_elabora']);
+                        $objPHPExcel->getActiveSheet()->setCellValue('AS'.$fila,$rs['nombre_elabora']);
                         $fila++;
                     }
                 }
@@ -2051,7 +2058,7 @@
             }
         }
 
-        function generarCSV($arreglo, $ruta, $delimitador, $encapsulador){
+        public function generarCSV($arreglo, $ruta, $delimitador, $encapsulador){
             $file_handle = fopen($ruta, 'w');
             
             foreach ($arreglo as $linea) {
@@ -2061,107 +2068,136 @@
             rewind($file_handle);
             fclose($file_handle);
         }
+
+        public function filtrarExportarTotal($parametros){
+            try {
+                $docData = [];
+                $costos = json_decode($parametros['costos']);
+                $cc = array();
+
+                foreach ($costos as $costo){
+                    array_push($cc,$costo);
+                }
+
+                $string_from_array = implode(', ', $cc);
+
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        tb_pedidodet.iditem,
+                                                        tb_pedidodet.idpedido,
+                                                        tb_pedidodet.idprod,
+                                                        tb_pedidodet.nroparte,
+                                                        tb_pedidodet.nregistro,
+                                                        tb_pedidodet.cant_pedida AS cantidad_pedido,
+                                                        tb_pedidodet.cant_aprob AS cantidad_aprobada,
+                                                        tb_pedidodet.cant_atend AS cantidad_atendida,
+                                                        LPAD( tb_pedidocab.nrodoc, 6, 0 ) AS pedido,
+                                                        lg_ordendet.id_orden AS orden,
+                                                        lg_ordendet.item AS item_orden,
+                                                        cm_producto.ccodprod,
+                                                        UPPER( CONCAT_WS( ' ', cm_producto.cdesprod, tb_pedidodet.observaciones ) ) AS descripcion,
+                                                        tb_pedidodet.estadoItem,
+                                                        tb_proyectos.ccodproy,
+                                                        tb_proyectos.nidreg AS idproyecto,
+                                                        UPPER( tb_area.cdesarea ) AS area,
+                                                        UPPER( tb_partidas.cdescripcion ) AS partida,
+                                                        DATE_FORMAT( tb_pedidocab.emision, '%d/%m/%Y' ) AS crea_pedido,
+                                                        DATE_FORMAT( tb_pedidocab.faprueba, '%d/%m/%Y' ) AS aprobacion_pedido,
+                                                        DATE_FORMAT( lg_ordencab.ffechades, '%d/%m/%Y' ) AS fecha_descarga,
+                                                        tb_pedidocab.anio AS anio_pedido,
+                                                        tb_pedidocab.mes AS pedido_mes,
+                                                        tb_pedidocab.nivelAten AS atencion,
+                                                        tb_pedidocab.idtipomov,
+                                                        tb_unimed.cabrevia AS unidad,
+                                                        lg_ordencab.cper AS anio_orden,
+                                                        lg_ordencab.ntipmov,
+                                                        lg_ordencab.FechaFin,
+                                                        lg_ordencab.cnumero,
+                                                        DATE_FORMAT( lg_ordencab.ffechadoc, '%d/%m/%Y' ) AS fecha_orden,
+                                                        UPPER( cm_entidad.crazonsoc ) AS proveedor,
+                                                        UPPER( tb_user.cnameuser ) AS operador,
+                                                        UPPER( tb_pedidocab.concepto ) AS concepto,
+                                                        DATEDIFF( lg_ordencab.ffechaent, NOW() ) AS dias_atraso,
+                                                        transporte.cdescripcion AS transporte,
+                                                        transporte.nidreg,
+                                                        user_aprueba.cnombres,
+                                                        alm_despachocab.cnumguia,
+                                                        LPAD( alm_recepcab.nnronota, 6, 0 ) AS nota_ingreso,
+                                                        LPAD( alm_cabexist.idreg, 6, 0 ) AS nota_obra,
+                                                        tb_equipmtto.cregistro,
+                                                        o.cantidad_orden,
+                                                        i.ingreso,
+                                                        d.despachos,
+                                                        a.ingreso_obra,
+                                                        usuarios.cnombres AS nombre_elabora,
+                                                        DATE_FORMAT( alm_recepcab.ffecdoc, '%d/%m/%Y' ) AS fecha_recepcion_proveedor,
+                                                        DATE_FORMAT( alm_cabexist.ffechadoc, '%d/%m/%Y' ) AS fecha_registro_almacen,
+                                                        alm_transfercab.cnumguia AS guia_transferencia,
+                                                        DATE_FORMAT( alm_transfercab.ftraslado, '%d/%m/%Y' ) AS fecha_traslado,
+                                                        DATE_FORMAT(
+                                                            GREATEST( COALESCE ( lg_ordencab.fechaLog, '' ), COALESCE ( lg_ordencab.fechaOpe, '' ), COALESCE ( lg_ordencab.FechaFin, '' ) ),
+                                                            '%d/%m/%Y' 
+                                                        ) AS fecha_autorizacion,
+                                                        DATE_FORMAT(
+                                                            DATE_ADD(
+                                                                GREATEST( COALESCE ( lg_ordencab.fechaLog, '' ), COALESCE ( lg_ordencab.fechaOpe, '' ), COALESCE ( lg_ordencab.FechaFin, '' ) ),
+                                                                INTERVAL lg_ordencab.nplazo DAY 
+                                                            ),
+                                                            '%d/%m/%Y' 
+                                                        ) AS fecha_entrega_final,
+                                                        FORMAT( lg_ordencab.nplazo, 0 ) AS plazo
+                                                    FROM
+                                                        tb_pedidodet
+                                                        LEFT JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
+                                                        LEFT JOIN lg_ordendet ON lg_ordendet.niddeta = tb_pedidodet.iditem
+                                                        LEFT JOIN cm_producto ON tb_pedidodet.idprod = cm_producto.id_cprod
+                                                        LEFT JOIN tb_proyectos ON tb_pedidodet.idcostos = tb_proyectos.nidreg
+                                                        LEFT JOIN tb_area ON tb_pedidodet.idarea = tb_area.ncodarea
+                                                        LEFT JOIN tb_partidas ON tb_pedidocab.idpartida = tb_partidas.idreg
+                                                        LEFT JOIN tb_unimed ON tb_pedidodet.unid = tb_unimed.ncodmed
+                                                        LEFT JOIN lg_ordencab ON lg_ordendet.id_orden = lg_ordencab.id_regmov
+                                                        LEFT JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
+                                                        LEFT JOIN tb_user ON lg_ordencab.id_cuser = tb_user.iduser
+                                                        LEFT JOIN tb_parametros AS transporte ON lg_ordencab.ctiptransp = transporte.nidreg
+                                                        LEFT JOIN tb_user AS user_aprueba ON tb_pedidocab.aprueba = user_aprueba.iduser
+                                                        LEFT JOIN alm_despachodet ON tb_pedidodet.iditem = alm_despachodet.niddetaPed
+                                                        LEFT JOIN alm_despachocab ON alm_despachodet.id_regalm = alm_despachocab.id_regalm
+                                                        LEFT JOIN alm_recepdet ON tb_pedidodet.iditem = alm_recepdet.niddetaPed
+                                                        LEFT JOIN alm_recepcab ON alm_recepdet.id_regalm = alm_recepcab.id_regalm
+                                                        LEFT JOIN alm_existencia ON tb_pedidodet.iditem = alm_existencia.idpedido
+                                                        LEFT JOIN alm_cabexist ON alm_existencia.idregistro = alm_cabexist.idreg
+                                                        LEFT JOIN tb_equipmtto ON tb_pedidodet.nregistro = tb_equipmtto.idreg
+                                                        LEFT JOIN ( SELECT SUM( lg_ordendet.ncanti ) AS cantidad_orden, lg_ordendet.niddeta FROM lg_ordendet WHERE lg_ordendet.id_orden != 0 GROUP BY lg_ordendet.niddeta ) AS o ON o.niddeta = tb_pedidodet.iditem
+                                                        LEFT JOIN ( SELECT SUM( alm_recepdet.ncantidad ) AS ingreso, alm_recepdet.niddetaPed FROM alm_recepdet WHERE alm_recepdet.nflgactivo = 1 GROUP BY alm_recepdet.niddetaPed ) AS i ON i.niddetaPed = tb_pedidodet.iditem
+                                                        LEFT JOIN ( SELECT SUM( alm_despachodet.ndespacho ) AS despachos, alm_despachodet.niddetaPed FROM alm_despachodet WHERE alm_despachodet.nflgactivo = 1 GROUP BY alm_despachodet.niddetaPed ) AS d ON d.niddetaPed = tb_pedidodet.iditem
+                                                        LEFT JOIN ( SELECT SUM( alm_existencia.cant_ingr ) AS ingreso_obra, alm_existencia.idpedido FROM alm_existencia WHERE alm_existencia.nflgActivo = 1 GROUP BY alm_existencia.idpedido ) AS a ON a.idpedido = tb_pedidodet.iditem
+                                                        LEFT JOIN tb_user AS usuarios ON tb_pedidocab.usuario = usuarios.iduser
+                                                        LEFT JOIN alm_transferdet ON alm_transferdet.iddetped = tb_pedidodet.iditem
+                                                        LEFT JOIN alm_transfercab ON alm_transfercab.idreg = alm_transferdet.idtransfer 
+                                                    WHERE
+                                                        tb_pedidodet.nflgActivo 
+                                                        AND ISNULL( lg_ordendet.nflgactivo )
+                                                        AND tb_pedidocab.emision BETWEEN '2024-03-01' AND '2024-04-30'
+                                                        AND tb_proyectos.nidreg IN (:costos)
+                                                        AND tb_pedidodet.estadoItem LIKE 54
+                                                    GROUP BY
+                                                        tb_pedidodet.iditem
+                                                    ORDER BY 
+                                                        tb_proyectos.nidreg");
+
+                $sql->execute(["costos"=>$string_from_array]);
+                                                            
+                while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+                    $docData[] = $row;
+                }
+
+                return array("costos"=>$cc,$docData);
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
     }
-    /*SELECT
-	tb_pedidodet.iditem,
-	tb_pedidodet.idpedido,
-	tb_pedidodet.idprod,
-	tb_pedidodet.nroparte,
-	tb_pedidodet.nregistro,
-	tb_pedidodet.cant_pedida AS cantidad_pedido,
-	tb_pedidodet.cant_aprob AS cantidad_aprobada,
-	tb_pedidodet.cant_atend AS cantidad_atendida,
-	LPAD( tb_pedidocab.nrodoc, 6, 0 ) AS pedido,
-	lg_ordendet.id_orden AS orden,
-	lg_ordendet.item AS item_orden,
-	cm_producto.ccodprod,
-	UPPER( CONCAT_WS( ' ', cm_producto.cdesprod, tb_pedidodet.observaciones ) ) AS descripcion,
-	tb_pedidodet.estadoItem,
-	tb_proyectos.ccodproy,
-	tb_proyectos.nidreg AS idproyecto,
-	UPPER( tb_area.cdesarea ) AS area,
-	UPPER( tb_partidas.cdescripcion ) AS partida,
-	DATE_FORMAT( tb_pedidocab.emision, '%d/%m/%Y' ) AS crea_pedido,
-	DATE_FORMAT( tb_pedidocab.faprueba, '%d/%m/%Y' ) AS aprobacion_pedido,
-	DATE_FORMAT( lg_ordencab.ffechades, '%d/%m/%Y' ) AS fecha_descarga,
-	tb_pedidocab.anio AS anio_pedido,
-	tb_pedidocab.mes AS pedido_mes,
-	tb_pedidocab.nivelAten AS atencion,
-	tb_pedidocab.idtipomov,
-	tb_unimed.cabrevia AS unidad,
-	lg_ordencab.cper AS anio_orden,
-	lg_ordencab.ntipmov,
-	lg_ordencab.FechaFin,
-	lg_ordencab.cnumero,
-	DATE_FORMAT( lg_ordencab.ffechadoc, '%d/%m/%Y' ) AS fecha_orden,
-	UPPER( cm_entidad.crazonsoc ) AS proveedor,
-	UPPER( tb_user.cnameuser ) AS operador,
-	UPPER( tb_pedidocab.concepto ) AS concepto,
-	DATEDIFF( lg_ordencab.ffechaent, NOW() ) AS dias_atraso,
-	transporte.cdescripcion AS transporte,
-	transporte.nidreg,
-	user_aprueba.cnombres,
-	alm_despachocab.cnumguia,
-	LPAD( alm_recepcab.nnronota, 6, 0 ) AS nota_ingreso,
-	LPAD( alm_cabexist.idreg, 6, 0 ) AS nota_obra,
-	tb_equipmtto.cregistro,
-	o.cantidad_orden,
-	i.ingreso,
-	d.despachos,
-	a.ingreso_obra,
-	usuarios.cnombres AS nombre_elabora,
-	DATE_FORMAT( alm_recepcab.ffecdoc, '%d/%m/%Y' ) AS fecha_recepcion_proveedor,
-	DATE_FORMAT( alm_cabexist.ffechadoc, '%d/%m/%Y' ) AS fecha_registro_almacen,
-	alm_transfercab.cnumguia AS guia_transferencia,
-	DATE_FORMAT( alm_transfercab.ftraslado, '%d/%m/%Y' ) AS fecha_traslado,
-	DATE_FORMAT(
-		GREATEST( COALESCE ( lg_ordencab.fechaLog, '' ), COALESCE ( lg_ordencab.fechaOpe, '' ), COALESCE ( lg_ordencab.FechaFin, '' ) ),
-		'%d/%m/%Y' 
-	) AS fecha_autorizacion,
-	DATE_FORMAT(
-		DATE_ADD(
-			GREATEST( COALESCE ( lg_ordencab.fechaLog, '' ), COALESCE ( lg_ordencab.fechaOpe, '' ), COALESCE ( lg_ordencab.FechaFin, '' ) ),
-			INTERVAL lg_ordencab.nplazo DAY 
-		),
-		'%d/%m/%Y' 
-	) AS fecha_entrega_final,
-	FORMAT( lg_ordencab.nplazo, 0 ) AS plazo
-FROM
-	tb_pedidodet
-	LEFT JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
-	LEFT JOIN lg_ordendet ON lg_ordendet.niddeta = tb_pedidodet.iditem
-	LEFT JOIN cm_producto ON tb_pedidodet.idprod = cm_producto.id_cprod
-	LEFT JOIN tb_proyectos ON tb_pedidodet.idcostos = tb_proyectos.nidreg
-	LEFT JOIN tb_area ON tb_pedidodet.idarea = tb_area.ncodarea
-	LEFT JOIN tb_partidas ON tb_pedidocab.idpartida = tb_partidas.idreg
-	LEFT JOIN tb_unimed ON tb_pedidodet.unid = tb_unimed.ncodmed
-	LEFT JOIN lg_ordencab ON lg_ordendet.id_orden = lg_ordencab.id_regmov
-	LEFT JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
-	LEFT JOIN tb_user ON lg_ordencab.id_cuser = tb_user.iduser
-	LEFT JOIN tb_parametros AS transporte ON lg_ordencab.ctiptransp = transporte.nidreg
-	LEFT JOIN tb_user AS user_aprueba ON tb_pedidocab.aprueba = user_aprueba.iduser
-	LEFT JOIN alm_despachodet ON tb_pedidodet.iditem = alm_despachodet.niddetaPed
-	LEFT JOIN alm_despachocab ON alm_despachodet.id_regalm = alm_despachocab.id_regalm
-	LEFT JOIN alm_recepdet ON tb_pedidodet.iditem = alm_recepdet.niddetaPed
-	LEFT JOIN alm_recepcab ON alm_recepdet.id_regalm = alm_recepcab.id_regalm
-	LEFT JOIN alm_existencia ON tb_pedidodet.iditem = alm_existencia.idpedido
-	LEFT JOIN alm_cabexist ON alm_existencia.idregistro = alm_cabexist.idreg
-	LEFT JOIN tb_equipmtto ON tb_pedidodet.nregistro = tb_equipmtto.idreg
-	LEFT JOIN ( SELECT SUM( lg_ordendet.ncanti ) AS cantidad_orden, lg_ordendet.niddeta FROM lg_ordendet WHERE lg_ordendet.id_orden != 0 GROUP BY lg_ordendet.niddeta ) AS o ON o.niddeta = tb_pedidodet.iditem
-	LEFT JOIN ( SELECT SUM( alm_recepdet.ncantidad ) AS ingreso, alm_recepdet.niddetaPed FROM alm_recepdet WHERE alm_recepdet.nflgactivo = 1 GROUP BY alm_recepdet.niddetaPed ) AS i ON i.niddetaPed = tb_pedidodet.iditem
-	LEFT JOIN ( SELECT SUM( alm_despachodet.ndespacho ) AS despachos, alm_despachodet.niddetaPed FROM alm_despachodet WHERE alm_despachodet.nflgactivo = 1 GROUP BY alm_despachodet.niddetaPed ) AS d ON d.niddetaPed = tb_pedidodet.iditem
-	LEFT JOIN ( SELECT SUM( alm_existencia.cant_ingr ) AS ingreso_obra, alm_existencia.idpedido FROM alm_existencia WHERE alm_existencia.nflgActivo = 1 GROUP BY alm_existencia.idpedido ) AS a ON a.idpedido = tb_pedidodet.iditem
-	LEFT JOIN tb_user AS usuarios ON tb_pedidocab.usuario = usuarios.iduser
-	LEFT JOIN alm_transferdet ON alm_transferdet.iddetped = tb_pedidodet.iditem
-	LEFT JOIN alm_transfercab ON alm_transfercab.idreg = alm_transferdet.idtransfer 
-WHERE
-	tb_pedidodet.nflgActivo 
-	AND ISNULL( lg_ordendet.nflgactivo )
-	AND tb_pedidocab.emision BETWEEN '2024-03-01' AND '2024-04-30'
-	AND tb_proyectos.nidreg IN (57,72,40)
-	AND tb_pedidodet.estadoItem LIKE 54
-GROUP BY
-	tb_pedidodet.iditem
-ORDER BY 
-	tb_proyectos.nidreg*/
+    /**/
 ?>
