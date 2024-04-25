@@ -284,7 +284,7 @@ $(function() {
     $("#btnAceptarFiltro").click(function(e){
         e.preventDefault();
         
-        let items = {}
+        let items = [];
             indice = 0,
             formData = new FormData();
 
@@ -292,19 +292,29 @@ $(function() {
             items[indice++] = $(this).attr("id");
         });
 
-        formData.append('costos',JSON.stringify(items));
-        formData.append('fechaInicio',$("#fecha_inicio").val());
-        formData.append('fechaFinal',$("#fecha_final").val());
 
-        fetch(RUTA+'cargoplanner/filtroCargoPlanExporta',{
-            method:'POST',
-            body:formData,
-        })
-        .then(response =>response.json)
-        .then(data => {
-            console.log(data);
-        })
+        try {
+            if (items.length == 0) throw new Error("Debe seleccionar un centro de costos");
+            if ($("#fecha_inicio").val() == "") throw new Error("Selecione una fecha de inicio");
+            if ($("#fecha_final").val() == "") throw new Error("Selecione una fecha final");
 
+            formData.append('costos',JSON.stringify(items));
+            formData.append('fechaInicio',$("#fecha_inicio").val());
+            formData.append('fechaFinal',$("#fecha_final").val());
+
+            fetch(RUTA+'cargoplanner/filtroCargoPlanExporta',{
+                method:'POST',
+                body:formData,
+            })
+            .then(response =>response.json())
+            .then(data => {
+                console.log(data.documento);
+            })
+        } catch (error) {
+            mostrarMensaje(error,"mensaje_error");
+        }
+
+            
         return false;
     });
     

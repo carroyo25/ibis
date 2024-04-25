@@ -8,6 +8,9 @@
     <title>Document</title>
 </head>
 <body>
+    <div class="mensaje">
+        <p></p>
+    </div>
     <div class="modal" id="esperarCargo">
         <div class="loadingio-spinner-spinner-5ulcsi06hlf">
             <div class="ldio-fifgg00y5y">
