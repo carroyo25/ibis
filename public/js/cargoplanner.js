@@ -308,7 +308,8 @@ $(function() {
             })
             .then(response =>response.json())
             .then(data => {
-                console.log(data.documento);
+                //console.log(data);
+                window.location.href = data.documento;
             })
         } catch (error) {
             mostrarMensaje(error,"mensaje_error");

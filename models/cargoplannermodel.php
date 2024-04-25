@@ -1076,7 +1076,7 @@
                 $sql->execute();
                 $rowCount = $sql->rowCount();
 
-                $objPHPExcel = new PHPExcel();
+                /*$objPHPExcel = new PHPExcel();
                 $objPHPExcel->getProperties()
                     ->setCreator("Sical")
                     ->setLastModifiedBy("Sical")
@@ -1591,7 +1591,19 @@
 
                 exit();
 
-                return $salida;
+                return $salida;*/
+                
+                if ($rowCount) {
+                    $respuesta = true;
+                    
+                    while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+                        $docData[] = $row;
+                    }
+
+                    $this->crearExcel($docData);
+                }
+
+                return array("documento"=>'public/documentos/reportes/cargoplan.xlsx');
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
@@ -2086,7 +2098,7 @@
                     array_push($cc,$costo);
                 }
 
-                $string_from_array = implode(', ', $cc);
+                $string_from_array = implode(',', $cc);
 
                 $sql = $this->db->connect()->prepare("SELECT
                                                         tb_pedidodet.iditem,
@@ -2184,20 +2196,18 @@
                                                         tb_pedidodet.nflgActivo 
                                                         AND ISNULL( lg_ordendet.nflgactivo )
                                                         AND tb_pedidocab.emision BETWEEN :fecha_inicio AND :fecha_final
-                                                        AND tb_proyectos.nidreg IN (:costos)
-                                                        AND tb_pedidodet.estadoItem LIKE 54
+                                                        AND tb_proyectos.nidreg IN ($string_from_array)
                                                     GROUP BY
                                                         tb_pedidodet.iditem
                                                     ORDER BY 
                                                         tb_proyectos.nidreg");
 
-                $sql->execute(["costos"=>$string_from_array,"fecha_inicio"=>$parametros['fechaInicio'],"fecha_final"=>$parametros['fechaFinal']]);
+                $sql->execute(["fecha_inicio"=>$parametros['fechaInicio'],"fecha_final"=>$parametros['fechaFinal']]);
                 
                 $rowCount = $sql->rowCount();
                 
                 if ($rowCount) {
                     $respuesta = true;
-                    $i = 0;
                     
                     while($row = $sql->fetch(PDO::FETCH_ASSOC)){
                         $docData[] = $row;
@@ -2206,7 +2216,7 @@
                     $this->crearExcel($docData);
                 }
                 
-                return array("documento"=>'public/documentos/reportes/cargoplan.xlsx');
+                return array("documento"=>'public/documentos/reportes/cargoplan.xlsx',"rango"=>$string_from_array);
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
@@ -2438,8 +2448,276 @@
                 $item = 1;
 
                 forEach($datos AS $dato){
+
+                    $tipo_orden = $dato['idtipomov'] == 37 ? 'BIENES' : 'SERVICIO';
+                    $clase_operacion = $dato['idtipomov'] == 37 ? 'bienes' : 'servicios';
+                    $saldoRecibir = $dato['cantidad_orden'] - $dato['ingreso'] > 0 ? $dato['cantidad_orden'] - $dato['ingreso'] : "-";
+                    $dias_atraso  =  $saldoRecibir > 0 && $dato['dias_atraso'] < 1 ? $dato['dias_atraso'] : "-" ;
+                    $suma_atendido = number_format($dato['cantidad_orden'] + $dato['cantidad_atendida'],2);
+
+                    $cantidad = $dato['cantidad_pedido'];
+
+                    $estado_pedido =  $dato['estadoItem'] >= 54 ? "Atendido":"Pendiente";
+                    $estado_item   =  $dato['estadoItem'] >= 54 ? "Atendido":"Pendiente";
+
+                    $transporte = $dato['nidreg'] == 39 ? "TERRESTRE": $dato['transporte'];
+                    $atencion = $dato['atencion'] == 47 ? "NORMAL" : "URGENTE"; 
+
+                    $color_mostrar  = 'FFFFFF';
+                    $color_semaforo = 'FFFFFF';
+                    $porcentaje = '';
+
+                    $fecha_entrega = "";
+                    $dias_plazo = intVal( $dato['plazo'] )+1 .' days';
+
+                    if ( $dato['fecha_autorizacion'] !== null && $dato['estadoItem'] !== 105 ) { 
+                        $fecha_entrega = $dato['fecha_entrega_final'];
+                    }
+
+                    /*datos para el semaforo */
+                    if ( $dato['estadoItem'] !== 105 ) {
+
+                        if  ($fecha_entrega !== ''){
+                            $dias_atraso  =  $dato['dias_atraso'];
+
+                            if ( $dato['ingreso_obra'] == $dato['cantidad_orden'] ){
+                                $semaforoEstado = "Entregado";
+                                $color_semaforo = '90EE90';
+                                $dias_atraso  = "";
+                            }else if ( $dias_atraso > 7 ) {
+                                $semaforoEstado = "Verde";
+                                $color_semaforo = '90EE90';
+                                $dias_atraso  = "";
+                            }else if ( $dias_atraso >= 0 && $dias_atraso <= 7){
+                                $semaforoEstado = "Naranja";
+                                $color_semaforo = 'FFD700';
+                                $dias_atraso  = "";
+                            }
+                            else if ($dias_atraso < 0) {
+                                $semaforoEstado = "Rojo";
+                                $color_semaforo = 'FF0000';
+                                $dias_atraso  =  $dato['dias_atraso']*-1;  //para que no salga negativo
+                            } 
+                        }else {
+                            $dias_atraso  =  "";
+                            $semaforoEstado = "Procesando";
+                            $color_semaforo = "FFFF00";
+
+                            if ( $dato['ingreso_obra'] > 0 && $dato['ingreso_obra'] === $dato['cantidad_atendida'] ){
+                                $semaforoEstado = "Entregado";
+                                $color_semaforo = '90EE90';
+                                $dias_atraso  = "";
+                            }else if ( $dato['cantidad_atendida'] > 0) {
+                                $semaforoEstado = "Stock";
+                                //$color_semaforo = "9068B0";
+                                $color_semaforo = '90EE90';
+                                $dias_atraso  = "";
+                            }
+                        }
+                    }else {
+                        $color_semaforo = 'CDCDCD';
+                        $semaforoEstado = "Anulado";
+                    }
+
+                    /*datos para el estado de los items*/
+                    if ( $dato['estadoItem'] === 105 ) {
+                        $porcentaje = "0%";
+                        $estadofila = "anulado";
+                        $estado_item = "anulado";
+                        $estado_pedido = "anulado";
+                        $color_mostrar = 'C8C8C8';
+                    }else if( $dato['estadoItem'] === 49 ) {
+                        $porcentaje = "10%";
+                        $estadofila = "procesando";
+                        $estado_item = "procesando";
+                        $estado_pedido = "procesando";
+                        $color_mostrar = 'F8CAAD';
+                    }else if( $dato['estadoItem'] === 53 ) {
+                        $porcentaje = "10%";
+                        $estadofila = "emitido";
+                        $estado_item = "Emitido";
+                        $estado_pedido = "Pedido Emitido";
+                        $color_mostrar = 'FF0000';
+                    }else if( $dato['estadoItem'] === 54 ) {
+                        $porcentaje = "15%";
+                        $estadofila = "aprobado";
+                        $estado_item = "aprobado";
+                        $estado_pedido = "Pedido aprobado";
+                        $color_mostrar = 'FF0000';
+                    }else if( $dato['estadoItem'] === 230 ) {
+                        $porcentaje = "100%";
+                        $estadofila = "comprado";
+                        $estado_item = "Compra Local";
+                        $estado_pedido = "Compra Local";
+                        $color_mostrar = 'FF0000';
+                    }else if( $dato['estadoItem'] === 52 ) {
+                        $porcentaje = "20%";
+                        $estadofila = "stock";
+                        $estado_item = "item_stock";
+                        $estado_pedido = "stock";
+                        $color_mostrar = 'B3C5E6';
+                    }else if( $dato['estadoItem'] == 52  && $dato['ingreso_obra'] == $dato['cantidad_pedido'] ) {
+                        $porcentaje = "100%";
+                        $estadofila = "entregado";
+                        $estado_item = "atendido";
+                        $estado_pedido = "atendido";
+                        $color_mostrar = '00FF00';
+                    }else if( $dato['estadoItem'] === 52  && $dato['ingreso_obra'] == $dato['cantidad_aprobada'] && $dato['cantidad_aprobada'] > 0) {
+                        $porcentaje = "100%";
+                        $estadofila = "entregado";
+                        $estado_item = "atendido";
+                        $estado_pedido = "atendido";
+                        $color_mostrar = '00FF00';
+                    }else if ( $dato['orden'] && !$dato['proveedor']) {
+                        $porcentaje = "25%";
+                        $estadofila = "item_orden";
+                        $estado_item = "aprobado";
+                        $estado_pedido = "aprobado";
+                        $color_mostrar = 'FFFF00';   
+                    }else if ( $dato['proveedor'] && !$dato['ingreso'] ) {
+                        $porcentaje = "30%";
+                        $estadofila = "item_enviado";
+                        $estado_item = "atendido";
+                        $estado_pedido = "atendido";
+                        $color_mostrar = 'C0DCC0';
+                    }else  if( $dato['ingreso'] && $dato['ingreso'] < $dato['cantidad_orden']) {
+                        $porcentaje = "40%";
+                        $estadofila = "item_ingreso_parcial";
+                        $estado_item = "atendido";
+                        $estado_pedido = "atendido";
+                        $color_mostrar = 'FFFFE1';
+                    }else  if( !$dato['despachos'] && $dato['ingreso'] && $dato['ingreso'] == $dato['cantidad_orden'] ) {
+                        $porcentaje = "50%";
+                        $estadofila = "item_ingreso_total";
+                        $estado_item = "atendido";
+                        $estado_pedido = "atendido";
+                        $color_mostrar = 'A9D08F';
+                    }else if ( $dato['despachos'] && !$dato['ingreso_obra'] ) {
+                        $porcentaje = "75%";
+                        $estadofila = "item_transito";
+                        $estado_item = "atendido";
+                        $estado_pedido = "atendido";
+                        $color_mostrar = '00FFFF';
+                    }else if ( $dato['ingreso_obra'] && $dato['ingreso_obra'] < $dato['cantidad_orden']) {
+                        $porcentaje = "85%";
+                        $estadofila = "item_ingreso_parcial";
+                        $estado_item = "Entrega Parcial";
+                        $estado_pedido = "Entrega Parcial";
+                        $color_mostrar = 'FFFFE1';
+                    }else if ( $dato['ingreso_obra'] && round($suma_atendido,2) === round($dato['cantidad_aprobada'],2)) {
+                        $porcentaje = "100%";
+                        $estadofila = "entregado";
+                        $estado_item = "atendido";
+                        $estado_pedido = "atendido";
+                        $semaforo = "Entregado";
+                        $color_mostrar = '00FF00';
+                    }else if ( $dato['ingreso_obra'] && round($dato['ingreso_obra'],2) === round($dato['cantidad_orden'],2)) {
+                        $porcentaje = "100%";
+                        $estadofila = "entregado";
+                        $estado_item = "atendido";
+                        $estado_pedido = "atendido";
+                        $color_mostrar = '00FF00';
+                    }
+
+                    $color = array(
+                        'fill' => array(
+                            'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                            'startcolor' => array(
+                                'argb' => $color_mostrar,
+                            ),
+                            'endcolor' => array(
+                                'argb' =>  $color_mostrar,
+                            ),
+                        ),
+                    );
+
+                    $semaforo = array(
+                        'fill' => array(
+                            'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                            'startcolor' => array(
+                                'argb' => $color_semaforo,
+                            ),
+                            'endcolor' => array(
+                                'argb' => $color_semaforo,
+                            ),
+                        ),
+                    );
+
                     $objPHPExcel->getActiveSheet()->setCellValue('A'.$fila,$item++);
-                    $objPHPExcel->getActiveSheet()->setCellValue('B'.$fila,$dato['iditem']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('B'.$fila,$porcentaje);
+                    $objPHPExcel->getActiveSheet()->getStyle('B'.$fila)->applyFromArray($color);
+
+                    $objPHPExcel->getActiveSheet()->setCellValue('C'.$fila,$dato['ccodproy']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('D'.$fila,$dato['area']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('E'.$fila,$dato['partida']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('F'.$fila,$atencion);
+                    $objPHPExcel->getActiveSheet()->setCellValue('G'.$fila,$tipo_orden);
+                    $objPHPExcel->getActiveSheet()->setCellValue('H'.$fila,$dato['anio_pedido']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('I'.$fila,$dato['pedido']);
+
+                    if  ( $dato['crea_pedido'] !== "" && $dato['crea_pedido'] !== null )
+                            $objPHPExcel->getActiveSheet()->setCellValue('J'.$fila,PHPExcel_Shared_Date::PHPToExcel($dato['crea_pedido']));
+                           
+                    if  ( $dato['aprobacion_pedido'] !== null )
+                        $objPHPExcel->getActiveSheet()->setCellValue('K'.$fila,$dato['aprobacion_pedido']);
+                    else
+                        $objPHPExcel->getActiveSheet()->setCellValue('K'.$fila,'');
+
+                    $objPHPExcel->getActiveSheet()->setCellValue('L'.$fila,$cantidad);
+
+                    $objPHPExcel->getActiveSheet()->setCellValue('M'.$fila,$dato['ccodprod']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('N'.$fila,$dato['unidad']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('O'.$fila,$dato['descripcion']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('P'.$fila,$tipo_orden);
+                    $objPHPExcel->getActiveSheet()->setCellValue('Q'.$fila,$dato['anio_orden']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('R'.$fila,$dato['cnumero']);
+
+                    if  ($dato['fecha_orden'] !== null)
+                        $objPHPExcel->getActiveSheet()->setCellValue('S'.$fila,PHPExcel_Shared_Date::PHPToExcel($dato['fecha_orden']));
+
+                    $objPHPExcel->getActiveSheet()->setCellValue('T'.$fila,$dato['cantidad_orden']);
+
+                    $objPHPExcel->getActiveSheet()->setCellValue('U'.$fila,$dato['item_orden']);
+
+                    if  ($dato['fecha_autorizacion'] !== null)
+                        $objPHPExcel->getActiveSheet()->setCellValue('V'.$fila,PHPExcel_Shared_Date::PHPToExcel($dato['fecha_autorizacion']));
+                        
+                    $objPHPExcel->getActiveSheet()->setCellValue('W'.$fila,$dato['cantidad_atendida']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('X'.$fila,$dato['proveedor']); 
+                        
+                    if ( $fecha_entrega != "" )
+                        $objPHPExcel->getActiveSheet()->setCellValue('Y'.$fila,PHPExcel_Shared_Date::PHPToExcel($dato['fecha_entrega_final']));
+                    
+                    $objPHPExcel->getActiveSheet()->setCellValue('Z'.$fila,$dato['ingreso']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AA'.$fila,$dato['nota_ingreso']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AB'.$fila,$dato['fecha_recepcion_proveedor']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AC'.$fila,$saldoRecibir);
+                        
+                    $objPHPExcel->getActiveSheet()->setCellValue('AD'.$fila,$dato['plazo']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AE'.$fila,$dias_atraso);
+                        
+                    $objPHPExcel->getActiveSheet()->setCellValue('AF'.$fila,strtoupper($semaforoEstado));
+                    $objPHPExcel->getActiveSheet()->getStyle('AF'.$fila)->applyFromArray($semaforo);
+                        
+                    $objPHPExcel->getActiveSheet()->setCellValue('AG'.$fila,$dato['despachos']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AH'.$fila,$dato['cnumguia']);
+
+                    $objPHPExcel->getActiveSheet()->setCellValue('AJ'.$fila,$dato['guia_transferencia']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AI'.$fila,$dato['fecha_traslado']);
+                        
+                    $objPHPExcel->getActiveSheet()->setCellValue('AK'.$fila,$dato['nota_obra']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AL'.$fila,$dato['fecha_registro_almacen']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AM'.$fila,$dato['ingreso_obra']);
+
+                    $objPHPExcel->getActiveSheet()->setCellValue('AN'.$fila,$estado_pedido);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AO'.$fila,$estado_item);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AP'.$fila,$dato['nroparte']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AQ'.$fila,$dato['cregistro']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AR'.$fila,$dato['operador']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AS'.$fila,$transporte);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AT'.$fila,$dato['concepto']);
+
+                    $objPHPExcel->getActiveSheet()->setCellValue('AU'.$fila,$dato['nombre_elabora']);
 
                     $fila++;
                 }
