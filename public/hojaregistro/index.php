@@ -20,7 +20,24 @@
             </section>
         </div>
         <div class="wrap__body">
-            <p></p>
+            <p>Bienvenidos!</p>
+            <p>Registro de proveedores SEPCON.</p>
+        </div>
+        <div class="wrap__options">
+            <div class="options">
+                <i class="fas fa-luggage-cart"></i>
+                <a href="#">Registrar nuevo proveedor</a>
+                <div class="option">
+                    <button class="btn anim-bottom to-left">Ingresar</button>
+                </div>
+            </div>
+            <div class="options">
+                <i class="fas fa-tools"></i>
+                <a href="#">Actualizar datos proveedor</a>
+                <div class="option">
+                    <button class="btn anim-bottom to-left">Ingresar</button>
+                </div>
+            </div>
         </div>
     </div>
 </body>
