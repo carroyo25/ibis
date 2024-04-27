@@ -28,14 +28,18 @@
                 <i class="fas fa-luggage-cart"></i>
                 <a href="#">Registrar nuevo proveedor</a>
                 <div class="option">
-                    <button class="btn anim-bottom to-left">Ingresar</button>
+                    <a href="http://localhost/ibis/public/hojaregistro/alta.php">
+                        <button class="btn anim-bottom to-left">Ingresar</button>
+                    </a>
                 </div>
             </div>
             <div class="options">
                 <i class="fas fa-tools"></i>
                 <a href="#">Actualizar datos proveedor</a>
                 <div class="option">
-                    <button class="btn anim-bottom to-left">Ingresar</button>
+                    <a href="http://localhost/ibis/public/hojaregistro/modifica.php">
+                        <button class="btn anim-bottom to-left">Ingresar</button>
+                    </a>
                 </div>
             </div>
         </div>
