@@ -26,8 +26,8 @@
                     <label for="ruc">R.U.C</label>
                     <input type="text" name="ruc" id="ruc">
 
-                    <label for="nombre_empresa">Nombre de la empresa</label>
-                    <input type="text" name="nombre_empresa" id="nombre_empresa">
+                    <label for="razon_social">Razón Social</label>
+                    <input type="text" name="razon_social" id="razon_social">
 
                     <label for="direccion">Dirección</label>
                     <input type="text" name="direccion" id="direccion">

@@ -2,18 +2,24 @@ const $ = document;
 
 ruc = $.getElementById("ruc");
 
-ruc.keydown = (e) => {
+console.log('Alta de proveedores');
+
+ruc.onkeypress = (e) => {
     if (e.key === "Enter") {
-        console.log("Enter key pressed");
+      let ruc_valor = ruc.value;
+
+      const requestOptions = {
+        method: "GET",
+        redirect: "follow"
+      };
+
+      fetch("https://dniruc.apisperu.com/api/v1/ruc/"+ruc_valor+"?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImNhYXJyb3lvQGhvdG1haWwuY29tIn0.8qOPsmbIXb6G5eTo1OQ8CJXKDisde7LItI2faTRSeoE", requestOptions)
+        .then((response) => response.json())
+        .then((result) => {
+            $.getElementById('razon_social').value = result.razonSocial;
+            $.getElementById('direccion').value = result.direccion;
+        })
+        .catch((error) => console.error(error));
+
     }
 }
-
-/*const requestOptions = {
-  method: "GET",
-  redirect: "follow"
-};
-
-fetch("https://dniruc.apisperu.com/api/v1/ruc/20504898173?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImNhYXJyb3lvQGhvdG1haWwuY29tIn0.8qOPsmbIXb6G5eTo1OQ8CJXKDisde7LItI2faTRSeoE", requestOptions)
-  .then((response) => response.text())
-  .then((result) => console.log(result))
-  .catch((error) => console.error(error));*/
