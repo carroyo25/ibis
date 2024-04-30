@@ -206,7 +206,7 @@
                     $objWorkSheet = $objPHPExcel->createSheet(1);
 
                     $objPHPExcel->setActiveSheetIndex(0);
-                    $objPHPExcel->getActiveSheet()->setTitle("Reporte de Vencimiento de Productos");
+                    $objPHPExcel->getActiveSheet()->setTitle("Reporte de Vencimiento");
     
     
                     $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel,'Excel2007');
