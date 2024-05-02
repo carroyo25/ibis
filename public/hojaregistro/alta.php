@@ -1,3 +1,13 @@
+<?php
+    require_once('consultas.php');
+
+    $paises = getCountries($pdo);
+    $pagos = getPaymentList($pdo);
+    $actividades = getEconomicActivity($pdo);
+
+
+    //var_dump($paises);
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -43,15 +53,26 @@
 
                     <label for="pais">Pais</label>
                     <select name="pais" id="pais">
-
+                        <?php
+                            foreach ($paises as $pais) { ?>
+                                <option value="<?php echo $pais['ccodpais'] ?>"><?php echo $pais['cdespais']?></option>
+                        <?php } ?>
                     </select>
 
                     <label for="forma_pago">Forma de Pago</label>
-                    <select name="forma_pago" id="forma_pago"></select>
+                    <select name="forma_pago" id="forma_pago">
+                        <?php
+                            foreach ($pagos as $pago) { ?>
+                                <option value="<?php echo $pago['nidreg'] ?>"><?php echo $pago['cdescripcion']?></option>
+                        <?php } ?>
+                    </select>
                     
                     <label for="actividad_economica">Actividad Económica</label>
                     <select name="actividad_economica" id="actividad_economica">
-
+                        <?php
+                            foreach ($actividades as $actividad) { ?>
+                                <option value="<?php echo $actividad['nidreg'] ?>"><?php echo $actividad['cdescripcion']?></option>
+                        <?php } ?>
                     </select>
                 </div>
             </section>
@@ -86,19 +107,20 @@
             <section class="seccion_pagina">
                 <div class="contenedor_detalles">
                     <p class="detalle">SECCION 3: Información Bancaria</p>
-                    <a href="#" class="btn btn-1">Agregar</a>
+                    <a href="#" class="btn btn-1" id="agregar_bancos">Agregar</a>
                 </div>
                 </br>
-                <table>
+                <table id="tabla_bancos">
                     <thead>
                         <tr>
                             <th>Nombre Entidad Financieria</th>
                             <th>Moneda</th>
                             <th>Tipo de cuenta</th>
                             <th>N° de cuenta</th>
+                            <th>...</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="tabla_bancos_body">
 
                     </tbody>
                 </table>
@@ -112,8 +134,8 @@
                     <p class="detalle">SECCION 4: Adjuntos</p>
                 </div>
                 <div class="opciones">
-                    <a href="#" class="btn btn-1">Ficha R.U.C</a>
-                    <a href="#" class="btn btn-1">Catálogo Productos</a>
+                    <a href="#" class="btn btn-1" id="ficha_ruc">Ficha R.U.C</a>
+                    <a href="#" class="btn btn-1" id="catalogo">Catálogo Productos</a>
                 </div>
             </section>
         </form>

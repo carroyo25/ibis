@@ -103,27 +103,7 @@
         }
     }
 
-    function verificaParticipa($pdo,$pedido,$proveedor){
-        try {
-            $ret = false;
-            $sql = "SELECT id_regmov FROM lg_proformacab WHERE id_regmov=? AND id_centi=?";
-            $statement = $pdo->prepare($sql);
-		    $statement -> execute(array($pedido,$proveedor));
-		    $result = $statement ->fetchAll();
-		    $rowaffect = $statement->rowCount($sql);
-
-            if ($rowaffect > 0) {
-                $ret = true;
-            }
-
-            return $ret;
-
-        } catch (PDOException $th) {
-            echo $th->getMessage();
-            return false;
-        }
-    }
-    
+     
     function parametros($pdo,$clase){
         try {
             $sql = "SELECT

@@ -126,7 +126,7 @@ body {
                 border-radius: .5rem;
             }
 
-            input{
+            input,select{
                 padding-left: 20px;
             }
         }
@@ -145,6 +145,21 @@ body {
                 background-color: var(--colorlinea);
                 color: #fff;
                 height: 2rem;
+            }
+
+            tbody {
+                tr{
+                    border-bottom: 1px dotted #c2c2c2;
+
+                    td {
+                        input,select{
+                            border: none;
+                            width: 100%;
+                            outline: none;
+                            height: 1.5rem;
+                        }
+                    }
+               };
             }
         }
 
