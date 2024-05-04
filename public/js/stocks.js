@@ -239,7 +239,7 @@ detalles = () =>{
         item['descripcion']     = $(this).find('td').eq(2).text();
         item['unidad']          = $(this).find('td').eq(3).text();
         item['ingreso']         = $(this).find('td').eq(4).text();
-        item['inventario']      = $(this).find('td').eq(6).text();
+        item['inventario']      = $(this).find('td').eq(5).text();
         item['salida']          = $(this).find('td').eq(6).text();
         item['devuelto']        = $(this).find('td').eq(7).text();
         item['transferencias']  = $(this).find('td').eq(8).text();

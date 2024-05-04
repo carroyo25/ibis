@@ -642,7 +642,6 @@
                 $objPHPExcel->getActiveSheet()->getStyle('A1:Q4')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
                 $objPHPExcel->getActiveSheet()->getStyle('A1:Q4')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-                //objPHPExcel->getActiveSheet()->getStyle('A1:H5')->getAlignment()->setWrapText(true);
 
                 //ancho de columnas
                 $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(10);
