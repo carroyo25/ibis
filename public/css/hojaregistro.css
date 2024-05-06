@@ -33,6 +33,11 @@ body {
     display: none;
 }
 
+.obligatorio{
+    border-color: red !important;
+}
+
+
 .btn {
 	position: relative;
 	padding: 10px  25px;

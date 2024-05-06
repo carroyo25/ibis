@@ -130,6 +130,9 @@ $(() =>{
                     $("#proceso").fadeIn();
     
                     $(".filtro").fadeOut();
+
+                    $(".primeraBarra").css("background","#0078D4");
+                    $(".primeraBarra span").text("Datos Generales");
                 },
                 "json"
             );
@@ -172,6 +175,9 @@ $(() =>{
         accion = 'n';
         grabado = false;
         costos = "";
+
+        $(".primeraBarra").css("background","#0078D4");
+        $(".primeraBarra span").text("Datos Generales");
 
         return false;
     });
@@ -621,6 +627,9 @@ $(() =>{
             mostrarMensaje(error,'mensaje_error'); 
         }
 
+        $(".primeraBarra").css("background","#819830");
+        $(".primeraBarra span").text('Datos Generales ... Grabado');
+
         return false;
     });
 
@@ -1005,7 +1014,7 @@ detalles = () => {
             CODPROD     = $(this).data('codprod'),
             MONEDA      = $("#codigo_moneda").val(),
             ITEMPEDIDO  = $(this).data('itped'),
-            GRABAR      = $(this).data('grabado'),
+            GRABAR      = $(this).attr('data-grabado'),
             CANTPED     = $(this).data('cant'),
             REFPEDI     = $(this).data('refpedi'),
             DETALLES    = $(this).find('td').eq(10).children().val(),

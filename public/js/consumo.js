@@ -220,7 +220,7 @@ $(function(){
                             <td class=""><input type="text" value="${cant}"></td>
                             <td class=""><input type="date" class="unstyled textoCentro entrada" value="${fsalida}"></td>
                             <td class=""><input type="text" class="entrada" value="${nhoja}"></td>
-                            <td class=""><input type="text" class="entrada" value="${isometricos}"></td>
+                            <td class=""><input type="text" class="entrada" value='${isometricos.replace('"','¨')}'></td>
                             <td class=""><input type="text" class="entrada" value="${observaciones}"></td>
                             <td class=""><input type="text" class="entrada" value="${serie}"></td>
                             <td class="textoCentro">${pat}</td>
@@ -229,7 +229,9 @@ $(function(){
                             <td class=""></td>
                             <td class="textoCentro"><a href=""><i class="far fa-trash-alt"></i></a></td>
                     </tr>`;
-             
+
+            console.log(row);
+                         
             //codigos para mantenimiento        
             let arraymtto = ['B05010002','B05010006'],
                 codmmtto = codigo.substring(0,9),

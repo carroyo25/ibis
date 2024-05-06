@@ -2,9 +2,10 @@ const $ = document;
 const bancos = $.getElementById("agregar_bancos");
 const tabla_bancos = $.getElementById("tabla_bancos");
 const tabla_bancos_body = $.getElementById("tabla_bancos_body");
+const btn_guardar = $.getElementById("btn_guardar");
+const requerido = $.querySelectorAll("input");
 
 ruc = $.getElementById("ruc");
-
 
 bancos.onclick = (e) => {
   e.preventDefault();
@@ -42,6 +43,26 @@ bancos.onclick = (e) => {
 
   return false;
 }
+
+btn_guardar.onclick = (e) => {
+  e.preventDefault();
+
+  requerido.forEach((campo)=>{
+    let item = campo.getAttribute("id");
+    if ( campo.value == "" ){
+      $.getElementById(item).classList.add("obligatorio");
+    }
+  })
+
+  return false;
+}
+
+/*requerido.addEventListener("keydown", (e) => {
+  let item = campo.getAttribute("id");
+  if ( campo.value != "" ){
+      $.getElementById(item).classList.remove("obligatorio");
+  }
+})*/
 
 
 /*ruc.onkeypress = (e) => {

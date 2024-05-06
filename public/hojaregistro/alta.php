@@ -5,8 +5,6 @@
     $pagos = getPaymentList($pdo);
     $actividades = getEconomicActivity($pdo);
 
-
-    //var_dump($paises);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -25,7 +23,7 @@
             <section class="wrap__header">
                 <img src="../img/logo.png" alt="logo_sepcon">
                 <span>FORMULARIO DE REGISTRO DE PROVEEDORES</span>
-                <a href="#" class="btn btn-1">Grabar Datos</a>
+                <a href="#" class="btn btn-1" id="btn_guardar">Grabar Datos</a>
             </section>
             <section class="seccion_pagina">
                 <p class="nota1">Sirvase rellenar los datos en su totalidad</p>
@@ -34,13 +32,13 @@
                 </div>
                 <div class="seccion_data">
                     <label for="ruc">R.U.C</label>
-                    <input type="text" name="ruc" id="ruc">
+                    <input type="text" name="ruc" id="ruc" class="requerido">
 
                     <label for="razon_social">Razón Social</label>
-                    <input type="text" name="razon_social" id="razon_social">
+                    <input type="text" name="razon_social" id="razon_social" class="requerido">
 
                     <label for="direccion">Dirección</label>
-                    <input type="text" name="direccion" id="direccion">
+                    <input type="text" name="direccion" id="direccion" class="requerido">
 
                     <label for="correo_electronico">Correo Electrónico</label>
                     <input type="email" name="correo_electronico" id="correo_electronico">
