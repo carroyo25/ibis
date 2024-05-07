@@ -3,7 +3,8 @@ const bancos = $.getElementById("agregar_bancos");
 const tabla_bancos = $.getElementById("tabla_bancos");
 const tabla_bancos_body = $.getElementById("tabla_bancos_body");
 const btn_guardar = $.getElementById("btn_guardar");
-const requerido = $.querySelectorAll("input");
+const requerido = $.querySelectorAll(".requerido");
+
 
 ruc = $.getElementById("ruc");
 
@@ -47,20 +48,35 @@ bancos.onclick = (e) => {
 btn_guardar.onclick = (e) => {
   e.preventDefault();
 
+  let contador = 0;
+
   requerido.forEach((campo)=>{
     let item = campo.getAttribute("id");
     if ( campo.value == "" ){
       $.getElementById(item).classList.add("obligatorio");
+      contador++;
     }
   })
+
+  try {
+    if ( contador > 0 ) throw new Error('Hay campos sin rellenar');
+  } catch (error) {
+    console.log(error.message);
+  }
 
   return false;
 }
 
-/*requerido.addEventListener("keydown", (e) => {
-  let item = campo.getAttribute("id");
-  if ( campo.value != "" ){
-      $.getElementById(item).classList.remove("obligatorio");
+$.addEventListener("change", (e)=>{
+  let item = e.target.getAttribute("id");
+  if ( e.target.value != "" ){
+    $.getElementById(item).classList.remove("obligatorio");
+  }
+})
+
+/*entrada.addEventListener("keydown", (e) => {
+  if ( e.target.value != "" ){
+      e.target.classList.remove("obligatorio");
   }
 })*/
 

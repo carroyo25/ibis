@@ -367,7 +367,8 @@
 
                 $mail->setFrom("ti@sepcon.net",utf8_encode("Dpto. Tecnologia Informatica"));
                 $mail->addAddress($parametros['correo'],$parametros['usuario']);
-
+                $mail->addAddress($parametros['correo_tecnico'],$parametros['tecnico']);
+                $mail->addAddress('fichas@sepcon.net','Correo de Notificación de Mantenimiento');
 
                 $mail->Subject = $subject;
                 $mail->msgHTML(utf8_decode($messaje));

@@ -174,7 +174,42 @@
             $this->cell(7,4,"",0,0); //espacio de separacion
             $this->cell(35,4,"","LR",1);
 
+            if ($this->condicion == 0){
+                $this->SetTextColor(170,218,245);
+                $estado1 = chr(45);
+                $estado2 = chr(45);
+                $estado3 = chr(45); //envia de parametro
+            }else if(($this->condicion == 1)){
+                $this->SetTextColor(29,162,97);
+                $estado1 = chr(45);
+                $estado2 = chr(45);
+                $estado3 = chr(45);
+            }else if(($this->condicion == 2)){
+                $this->SetTextColor(29,162,97);
+                $estado1 = $this->procura == 1 ? chr(51) : chr(45);
+                $estado2 = $this->finanzas == 1 ? chr(51) : chr(45);
+                $estado3 = $this->operaciones == 1 ? chr(51) : chr(45);
+            }else if(($this->condicion == 3)){
+                $this->SetTextColor(29,162,97);
+                $estado1 = chr(51);
+                $estado2 = chr(51);
+                $estado3 = chr(51); //envia de parametro
+            }else if(($this->condicion == 4)){
+                $this->SetTextColor(29,162,97);
+                $estado1 = $this->procura == 1 ? chr(51) : chr(45);
+                $estado2 = $this->finanzas == 1 ? chr(51) : chr(45);
+                $estado3 = $this->operaciones == 1 ? chr(51) : chr(45);
+            }
+
+            $this->SetFont('ZapfDingbats','',24);
+            $this->setXY(75,278);
+            $this->cell(45,16,$estado3,0,0,"C"); //envia de parametro
+            $this->cell(40,16,$estado2,0,0,"C"); //envia de parametro
+            $this->cell(40,16,$estado1,0,1,"C"); //envia de parametro
+
             $this->setXY(80,-6);
+            $this->SetFont('Arial',"","7");
+            $this->SetTextColor(0,0,0);
             $this->cell(35,4,"PROCURA INTERNACIONAL",1,0,"C");
             $this->cell(7,4,"",0,0); //espacio de separacion
             $this->cell(35,4,"OPERACIONES",1,0,"C");
