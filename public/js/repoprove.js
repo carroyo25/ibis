@@ -1,0 +1,3 @@
+$(function() {
+    $("#espera").fadeOut();
+})

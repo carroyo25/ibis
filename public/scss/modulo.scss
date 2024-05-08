@@ -3160,6 +3160,47 @@ $emitido:#F8CAAD;
 }
 
 
+.wrap__new {
+    width: 100%;
+    height: 100vh;
+    position: relative;
+
+    .wrap__title_filters {
+        height: 4rem;
+        border-top: 1px solid #c2c2c2;
+        border-bottom: 1px solid #c2c2c2;
+    }
+
+    .wrap__body{
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+        gap: 10px;
+
+        .table_body{
+            grid-area: 1 / 1 / 2 / 3;
+            height: 40vh;
+
+            table {
+                width: 100%;
+                color: #fff;
+                border-collapse: collapse;
+            }
+        }
+
+        .graphic_body{
+            grid-area: 2 / 1 / 3 / 2;
+            border-top: 1px solid #c2c2c2;
+        }
+
+        .account_body{
+            grid-area: 2 / 2 / 3 / 3;
+            border-top: 1px solid #c2c2c2;
+        }
+    }
+}
+
+
 @media screen and (max-width: 1024px) {
     
 }
