@@ -3474,11 +3474,26 @@
   -ms-grid-column-span: 2;
   grid-area: 1/1/2/3;
   height: 40vh;
+  overflow: auto;
 }
 .wrap__new .wrap__body .table_body table {
   width: 100%;
-  color: #fff;
   border-collapse: collapse;
+  font-size: 0.8rem;
+}
+.wrap__new .wrap__body .table_body table thead {
+  color: #fff;
+}
+.wrap__new .wrap__body .table_body table thead a {
+  color: #fff;
+}
+.wrap__new .wrap__body .table_body table tbody tr {
+  border: 1px dotted #c2c2c2;
+  height: 1.5rem;
+  cursor: pointer;
+}
+.wrap__new .wrap__body .table_body table tbody tr:hover {
+  background: rgba(128, 128, 255, 0.5);
 }
 .wrap__new .wrap__body .graphic_body {
   -ms-grid-row: 2;

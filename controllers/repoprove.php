@@ -6,7 +6,7 @@
         }
 
         function render(){
-            $this->view->listaCostos = "";
+            $this->view->listaOrdenes = $this->model->listarOrdenesProveedor("");
             $this->view->render('repoprove/index');
         }
         

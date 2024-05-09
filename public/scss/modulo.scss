@@ -3180,11 +3180,32 @@ $emitido:#F8CAAD;
         .table_body{
             grid-area: 1 / 1 / 2 / 3;
             height: 40vh;
+            overflow: auto;
 
             table {
                 width: 100%;
-                color: #fff;
                 border-collapse: collapse;
+                font-size: 0.8rem;
+
+                thead{
+                    color: #fff;
+
+                    a {
+                        color: #fff;
+                    }
+                }
+
+                tbody {
+                    tr {
+                        border: 1px dotted #c2c2c2;
+                        height: 1.5rem;
+                        cursor: pointer;
+
+                        &:hover {
+                           background: rgba(128,128,255,0.5);
+                        }
+                    }
+                }
             }
         }
 
