@@ -432,3 +432,18 @@ ordernarAscende = (tabla,columna,valor) => {
 }
 
 //////////////////////////////////////////////////
+
+$(".headerTableFilter").append(
+    `<a href="#" class="contenedorfiltro"><i class="fas fa-angle-down"></i></a>
+    <div class="filter_options">
+        <label>Buscar</label>
+        <input type="text" name="strSearch" id="strSearch" placeholder="Buscar Elementos">
+        <ul class="filterList">
+            <li><input type="checkbox"> 2021 </li>
+            <li><input type="checkbox"> 2022 </li>
+            <li><input type="checkbox"> 2023 </li>
+            <li><input type="checkbox"> 2024 </li>
+        </ul>
+        <button class="btn_sendfilter">Aceptar</button>
+    </div>`
+);

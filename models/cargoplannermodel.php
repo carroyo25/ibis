@@ -2032,7 +2032,7 @@
                         $estado_item = "aprobado";
                         $estado_pedido = "Pedido aprobado";
                         $color_mostrar = 'FF0000';
-                    }else if( $dato['estadoItem'] == 54 && $dato['cantidad_atendida'] > 0) {
+                    }else if( $dato['estadoItem'] == 54 && $dato['cantidad_atendida'] > 0 ) {
                         $porcentaje = "20%";
                         $estadofila = "stock";
                         $estado_item = "item_stock";

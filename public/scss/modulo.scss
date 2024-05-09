@@ -3179,12 +3179,61 @@ $emitido:#F8CAAD;
 
         .table_body{
             grid-area: 1 / 1 / 2 / 3;
-            height: 40vh;
+            height: 45vh;
+            font-size: 0.9rem;
+            overflow: auto;
 
             table {
                 width: 100%;
-                color: #fff;
                 border-collapse: collapse;
+                
+                thead{
+                    color: #fff;
+
+                    th {
+                        position: relative;
+
+                        a{
+                            color: #fff;
+                        }
+    
+                        .filter_options {
+                            background: #fff;
+                            position: absolute;
+                            color: #000;
+                            border: 1px solid #000;
+                            box-shadow: 3px 2px 5px #000;
+                            top: 2rem;
+                            padding: 5px;
+                            display: none;
+
+                            input[type="text"]{
+                                border: 1px solid #c2c2c2;
+                                margin-bottom: 1rem;
+                            }
+
+                            ul {
+                                border: 1px solid #c2c2c2;
+                                text-align: left;
+                                padding: 5px;
+
+                                li{
+                                    height: 1.5rem;
+                                }
+                            }
+
+                            button{
+                                width: 100%;
+                                margin-top: 10px;
+                                height: 2rem;
+                            }
+                        }
+                    }  
+                }
+
+                tr{
+                    border-bottom: 1px dotted #c2c2c2;
+                }
             }
         }
 

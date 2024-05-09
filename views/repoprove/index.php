@@ -9,25 +9,21 @@
     <div class="wrap__new">
         <div class="wrap__title">
             <h1>Reporte de Proveedores</h1>
-            <div class="wrap__title_filters">
-                opciones
-            </div>
             <div class="wrap__body">
                 <div class="table_body">
                     <table id="tablaPrincipalProveedor">
                         <thead class="stickytop">
                                 <tr>
-                                <th rowspan="2">Num.</th>  
-                                <th rowspan="2">Emision</th>
-                                <th rowspan="2" width="25%">Descripción</th>
-                                <th rowspan="2">Centro Costos</th> 
-                                <th rowspan="2" >Area</th>
-                                <th rowspan="2" width="15%">Proveedor</th>
-                                <th rowspan="2" >Precio Soles</th>
-                                <th rowspan="2">Precio Dólares</th>
-                                <th rowspan="2">Atencion</th>
-                                <th rowspan="2">Estado</th>
-                                <th colspan="3" width="16%">Firmas</th>
+                                    <th rowspan="2" class="headerTableFilter">Num.</th>  
+                                    <th rowspan="2">Emision</th>
+                                    <th rowspan="2" width="25%">Descripción</th>
+                                    <th rowspan="2">Centro Costos</th> 
+                                    <th rowspan="2" >Area</th>
+                                    <th rowspan="2" width="15%">Proveedor</th>
+                                    <th rowspan="2" >Precio Soles</th>
+                                    <th rowspan="2">Precio Dólares</th>
+                                    <th rowspan="2">Estado</th>
+                                    <th colspan="3" width="16%">Firmas</th>
                                 <tr>
                                     <th>Procura</th>
                                     <th>Finanzas</th>
@@ -36,7 +32,22 @@
                             </tr>
                         </thead>
                         <tbody>
-                            
+                            <?php foreach($this->listaOrden['ordenes'] as $orden) {?>
+                                <tr>
+                                    <td><?php echo $orden['cnumero']?></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            <?php } ?>
                         </tbody>
                     </table>
                 </div>

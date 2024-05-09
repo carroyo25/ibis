@@ -3473,12 +3473,53 @@
   -ms-grid-column: 1;
   -ms-grid-column-span: 2;
   grid-area: 1/1/2/3;
-  height: 40vh;
+  height: 45vh;
+  font-size: 0.9rem;
+  overflow: auto;
 }
 .wrap__new .wrap__body .table_body table {
   width: 100%;
-  color: #fff;
   border-collapse: collapse;
+}
+.wrap__new .wrap__body .table_body table thead {
+  color: #fff;
+}
+.wrap__new .wrap__body .table_body table thead th {
+  position: relative;
+}
+.wrap__new .wrap__body .table_body table thead th a {
+  color: #fff;
+}
+.wrap__new .wrap__body .table_body table thead th .filter_options {
+  background: #fff;
+  position: absolute;
+  color: #000;
+  border: 1px solid #000;
+  -webkit-box-shadow: 3px 2px 5px #000;
+          box-shadow: 3px 2px 5px #000;
+  top: 2rem;
+  padding: 5px;
+  display: none;
+}
+.wrap__new .wrap__body .table_body table thead th .filter_options input[type=text] {
+  border: 1px solid #c2c2c2;
+  margin-bottom: 1rem;
+}
+.wrap__new .wrap__body .table_body table thead th .filter_options ul {
+  border: 1px solid #c2c2c2;
+  text-align: left;
+  padding: 5px;
+}
+.wrap__new .wrap__body .table_body table thead th .filter_options ul li {
+  height: 1.5rem;
+}
+.wrap__new .wrap__body .table_body table thead th .filter_options button {
+  width: 100%;
+  margin-top: 10px;
+  height: 2rem;
+}
+.wrap__new .wrap__body .table_body table tr {
+  border-bottom: 1px dotted #c2c2c2;
 }
 .wrap__new .wrap__body .graphic_body {
   -ms-grid-row: 2;

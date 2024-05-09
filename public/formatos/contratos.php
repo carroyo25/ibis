@@ -15,11 +15,11 @@
             $this->condicion        = $condicion;
             $this->fecha            = $fecha;
             $this->moneda           = $moneda;
-            $this->plazo            = "SEGÚN ANEXOS";
+            $this->plazo            = $plazo;
             $this->lugar            = $lugar;
             $this->cotizacion       = $cotizacion;
             $this->fentrega         = $fentrega;
-            $this->pago             = "SEGÚN ANEXOS";
+            $this->pago             = $pago;
             $this->importe          = $importe;
             $this->info             = $info;
             $this->detalle          = $detalle;
