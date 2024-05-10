@@ -79,5 +79,38 @@
                 return false;
             }
         }
+
+        public function valoresfiltros($campo) {
+            if ($campo == 'cnumero') {
+                $valores = $this->listaNumeroOrden();
+            }
+
+            return array("valores"=>$valores);
+        }
+
+        private function listaNumeroOrden() {
+            try {
+                $sql = $this->db->connect()->query("SELECT
+                                                        LPAD( lg_ordencab.cnumero, 6, 0 ) AS onumero 
+                                                    FROM
+                                                        lg_ordencab 
+                                                    GROUP BY
+                                                        lg_ordencab.cnumero 
+                                                    ORDER BY
+                                                        lg_ordencab.ffechadoc DESC");
+                $sql->execute();
+
+                if( $sql->rowCount() ) {
+                    while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+                        $docData[] = $row;
+                    }
+                }
+
+                return $docData;
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
     } 
 ?>

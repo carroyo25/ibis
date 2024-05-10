@@ -3190,9 +3190,23 @@ $emitido:#F8CAAD;
                 thead{
                     color: #fff;
 
-                    a {
-                        color: #fff;
-                    }
+                    tr {
+                        th {
+                            position: relative;
+
+                            a {
+                                color: #fff;
+
+                                i {
+                                    margin-left: 5px;
+                                    margin-top: 10px;
+                                    color: #009933;
+                                    font-size: 1rem;
+                                    display: inline-block;
+                                }
+                            }
+                        }
+                    } 
                 }
 
                 tbody {
@@ -3220,6 +3234,39 @@ $emitido:#F8CAAD;
         }
     }
 }
+
+.filter_options {
+    position: absolute;
+    background: #fff;
+    top: 2rem;
+    border: 1px solid #c2c2c2;
+    padding: 5px;
+    text-align: center;
+    color: #000;
+    box-shadow: 2px 4px 5px #000;
+    display: none;
+
+    input[type="text"] {
+        border: 1px solid #c2c2c2;
+        margin-bottom: 0.5rem;
+    }
+
+    ul {
+        border: 1px solid #c2c2c2;
+        text-align: left;
+        padding: 0.5rem;
+    };
+
+    button {
+        width: 100%;
+        margin-top: 10px;
+        height: 1.5rem;
+    }
+}
+
+
+
+
 
 
 @media screen and (max-width: 1024px) {

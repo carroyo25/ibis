@@ -3484,8 +3484,18 @@
 .wrap__new .wrap__body .table_body table thead {
   color: #fff;
 }
-.wrap__new .wrap__body .table_body table thead a {
+.wrap__new .wrap__body .table_body table thead tr th {
+  position: relative;
+}
+.wrap__new .wrap__body .table_body table thead tr th a {
   color: #fff;
+}
+.wrap__new .wrap__body .table_body table thead tr th a i {
+  margin-left: 5px;
+  margin-top: 10px;
+  color: #009933;
+  font-size: 1rem;
+  display: inline-block;
 }
 .wrap__new .wrap__body .table_body table tbody tr {
   border: 1px dotted #c2c2c2;
@@ -3510,4 +3520,31 @@
   -ms-grid-column-span: 1;
   grid-area: 2/2/3/3;
   border-top: 1px solid #c2c2c2;
+}
+
+.filter_options {
+  position: absolute;
+  background: #fff;
+  top: 2rem;
+  border: 1px solid #c2c2c2;
+  padding: 5px;
+  text-align: center;
+  color: #000;
+  -webkit-box-shadow: 2px 4px 5px #000;
+          box-shadow: 2px 4px 5px #000;
+  display: none;
+}
+.filter_options input[type=text] {
+  border: 1px solid #c2c2c2;
+  margin-bottom: 0.5rem;
+}
+.filter_options ul {
+  border: 1px solid #c2c2c2;
+  text-align: left;
+  padding: 0.5rem;
+}
+.filter_options button {
+  width: 100%;
+  margin-top: 10px;
+  height: 1.5rem;
 }
