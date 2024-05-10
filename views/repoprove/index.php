@@ -33,13 +33,13 @@
                         </thead>
                         <tbody>
                             <?php foreach($this->listaOrden['ordenes'] as $orden) {?>
-                                <tr>
+                                <tr class="pointer">
                                     <td><?php echo $orden['cnumero']?></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
+                                    <td><?php echo $orden['ffechadoc']?></td>
+                                    <td><?php echo $orden['concepto']?></td>
+                                    <td><?php echo $orden['ccodproy']?></td>
+                                    <td><?php echo $orden['area']?></td>
+                                    <td><?php echo $orden['proveedor']?></td>
                                     <td></td>
                                     <td></td>
                                     <td></td>
