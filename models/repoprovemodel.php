@@ -6,10 +6,12 @@
             parent::__construct();
         }
 
-        public function ordenesProveedor($parametos){
-            $orden  = isset($parametros['ordenSearch'])  && $parametros['ordenSearch'] != "" ?  $parametros['ordenSearch'] : "%";
-            $costos = isset($parametros['costosSearch']) && $parametros['costosSearch'] == "" ? $parametros['costosSearch'] : "%";
-            $anio   = isset($parametros['anioSearch'])   && $parametros['anioSearch'] != "" ? $parametros['anioSearch'] : "2024";
+        public function listarOrdenesProveedor($parametros){
+            $orden          = isset($parametros['ordenSearch'])  && $parametros['ordenSearch'] != "" ? $parametros['ordenSearch'] : "%";
+            $entidad        = isset($parametros['entidad'])  && $parametros['entidad'] != "" ? $parametros['entidad'] : "%";
+            $costos         = isset($parametros['costosSearch'])  && $parametros['costosSearch'] != "" ? $parametros['costosSearch'] : "%";
+            $anioInicial    = isset($parametros['inicialSearch']) && $parametros['inicialSearch'] != "" ? $parametros['inicialSearch'] : "%";
+            $anioFinal      = isset($parametros['finalSearch']) && $parametros['finalSearch'] != "" ? $parametros['finalSearch'] : "%";
             $docData = [];
 
             try {
@@ -18,8 +20,8 @@
                                                         tb_costusu.ncodproy,
                                                         tb_costusu.id_cuser,
                                                         lg_ordencab.id_regmov,
-                                                        lg_ordencab.cnumero,
-                                                        lg_ordencab.ffechadoc,
+                                                        LPAD(lg_ordencab.cnumero,6,0) AS cnumero,
+                                                        DATE_FORMAT(lg_ordencab.ffechadoc,'%d/%m/%Y') AS ffechadoc,
                                                         lg_ordencab.nNivAten,
                                                         lg_ordencab.nEstadoDoc,
                                                         lg_ordencab.ncodpago,
@@ -53,19 +55,18 @@
                                                         AND lg_ordencab.cper LIKE :anio
                                                         AND lg_ordencab.cnumero LIKE :orden
                                                         AND tb_costusu.ncodproy LIKE :costos
+                                                        AND cm_entidad.crazonsoc LIKE :entidad
                                                         AND ISNULL(lg_ordencab.ntipdoc)
                                                     ORDER BY
-                                                        id_regmov DESC
-                                                    LIMIT 150");
-                    
-                    $sql->execute(["user"=>$_SESSION['iduser'],
-                                   "anio"=>$anio,
-                                   "orden"=>$orden,
-                                   "costos"=>$costos]);
-
+                                                        id_regmov DESC");
+                
+                $sql->execute(["user"=>$_SESSION['iduser'],"anio"=>2024,"orden"=>$orden,"costos"=>$costos,"entidad"=>$entidad]);
                 $rowCount = $sql->rowCount();
-
+                
                 if ($rowCount) {
+                    $respuesta = true;
+                    $i = 0;
+                    
                     while($row = $sql->fetch(PDO::FETCH_ASSOC)){
                         $docData[] = $row;
                     }
@@ -78,5 +79,5 @@
                 return false;
             }
         }
-    }
+    } 
 ?>
