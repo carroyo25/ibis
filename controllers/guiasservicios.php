@@ -46,6 +46,10 @@
         function ordenId(){
             echo json_encode($this->model->consultarOrdenIdServicio($_POST['id']));
         }
+
+        function grabaGuiaServicios(){
+            echo json_encode($this->model->grabarGuiaServicios($_POST['guiaCab'],$_POST['formCab'],$_POST['detalles'],$_POST['operacion']));
+        }
         
     }
 ?>

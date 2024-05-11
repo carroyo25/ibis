@@ -84,7 +84,7 @@
                         <input type="text" name="ram" id="ram">
                         <label for="hdd">Disco Duro:</label>
                         <input type="text" name="hdd" id="hdd">
-                        <label for="tipo_mmtto">Mantenimiento</label>
+                        <label for="estado_equipo">Estado Equipo</label>
                         <select name="estado_equipo" id="estado_equipo">
                             <option value="1">Nuevo</option>
                             <option value="2" selected>Usado Nivel 1</option>

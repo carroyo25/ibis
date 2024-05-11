@@ -212,22 +212,30 @@ $(function() {
     $("#addItem").click(function(e){
         e.preventDefault();
 
-        let nFilas = $.strPad($("#tablaDetalles tr").length,3);
+        try {
+            if ($("#codigo_orden").val() == "") throw new Error("Debe seleccionar una orden de servicio");
 
-        let row = `<tr data-grabado="0" >
-                        <td class="textoCentro"><a href="delete"><i class="fas fa-trash-alt"></i></a></td>
-                        <td class="textoCentro"><a href="search"><i class="fas fa-search"></i></a></td>
-                        <td class="textoCentro">${nFilas}</td>
-                        <td class="textoCentro"><input type="text" value="-"></td>
-                        <td class="pl20px"><textarea></textarea></td>
-                        <td><input type="text" value="-"></td>
-                        <td><input type="number" value=1 min=1></td>
-                        <td class="pl20px"><textarea></textarea></td>
-                        <td></td>
-                        <td></td>
-                    </tr>`;
+            let nFilas = $.strPad($("#tablaDetalles tr").length,3);
 
-        $("#tablaDetalles tbody").append(row);
+            let row = `<tr data-grabado="0" >
+                            <td class="textoCentro"><a href="delete"><i class="fas fa-trash-alt"></i></a></td>
+                            <td class="textoCentro"><a href="search"><i class="fas fa-search"></i></a></td>
+                            <td class="textoCentro">${nFilas}</td>
+                            <td class="textoCentro"></td>
+                            <td class="pl20px"><textarea></textarea></td>
+                            <td></td>
+                            <td><input type="number" value=1 min=1></td>
+                            <td class="pl20px"><textarea></textarea></td>
+                            <td><input type="date"></td>
+                            <td><input type="text"></td>
+                            <td></td>
+                            <td></td>
+                        </tr>`;
+
+            $("#tablaDetalles tbody").append(row);
+        } catch (error) {
+            mostrarMensaje(error.message,"mensaje_error");
+        }
 
         return false;
     })
@@ -294,9 +302,9 @@ $(function() {
     $("#tablaModulos tbody").on("click","tr", function (e) {
         e.preventDefault();
 
-        fila.cells[3].children[0].value = $(this).find('td').eq(0).text();
-        fila.cells[4].children[0].value = $(this).find('td').eq(1).text();
-        fila.cells[5].children[0].value = $(this).find('td').eq(2).text();
+        fila.cells[3].innerHTML = $(this).find('td').eq(0).text();
+        fila.cells[4].innerHTML = $(this).find('td').eq(1).text();
+        fila.cells[5].innerHTML = $(this).find('td').eq(2).text();
 
         return false;
     });
@@ -336,7 +344,7 @@ $(function() {
             form[this.name] = this.value;
         });
 
-        $.post(RUTA+"guiaManual/grabaGuiaManual",{guiaCab:guia,
+        $.post(RUTA+"guiaServicios/grabaGuiaServicio",{guiaCab:guia,
                                                 formCab:form,
                                                 detalles:JSON.stringify(detalles(false)),
                                                 operacion:"n"

@@ -137,11 +137,13 @@
                                     <th width="3%">...</th>
                                     <th width="3%">...</th>
                                     <th width="5%">Item</th>
-                                    <th width="5%">Codigo</th>
+                                    <th width="7%">Codigo</th>
                                     <th width="30">Descripcion</th>
                                     <th width="5%">Unidad</th>
                                     <th width="5%">Cantidad</br>Despacho</th>
                                     <th width="30">Observaciones</th>
+                                    <th width="9">Vencimiento</th>
+                                    <th width="9">Serie</th>
                                     <th width="3%">Pedido</th>
                                     <th width="3%">Orden</th>
                                 </tr>

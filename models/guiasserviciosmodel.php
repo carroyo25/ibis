@@ -648,6 +648,8 @@
                                             <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                             <td class="textoDerecha pr20px">'.$rs['cantidad'].'</td>
                                             <td class="textoCentro"><input type="text"></td>
+                                            <td></td>
+                                            <td></td>
                                             <td class="textoCentro">'.$rs['nrodoc'].'</td>
                                             <td class="textoCentro">'.$rs['cnumero'].'</td>
                                     </tr>';
@@ -658,6 +660,30 @@
                 return $salida;
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        public function grabarGuiaServicios($guia,$form,$detalles,$operacion){
+            $mensaje = "error de creacion";
+            $guiaAutomatica = "";
+
+            try {
+                if ( $operacion == 'n' ){
+                    $guiaAutomatica = $this->numeroGuia();
+                    $mensaje = "Se grabo la guia de remision";
+                    
+                    //$this->grabarDatosDocumento($form,$detalles,$guiaAutomatica);
+                    //$this->grabarDatosGuia($guia,$form,$guiaAutomatica);
+
+                }else if( $operacion == 'u' ){
+                    $mensaje = "Se actualizo la guia de remision";
+                }
+
+                return array("mensaje"=>$mensaje,"guia"=>$guiaAutomatica);
+
+            } catch (PDOException $th) {
+                echo $th->getMessage();
                 return false;
             }
         }
