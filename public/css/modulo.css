@@ -3542,6 +3542,8 @@
   border: 1px solid #c2c2c2;
   text-align: left;
   padding: 0.5rem;
+  max-height: 20rem;
+  overflow: auto;
 }
 .filter_options button {
   width: 100%;

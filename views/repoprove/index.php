@@ -14,12 +14,12 @@
                     <table id="tablaPrincipalProveedor">
                         <thead class="stickytop">
                                 <tr>
-                                <th rowspan="2" width="3%" class="headerTableFilter" data-campo="cnumero">Num.</th>  
-                                <th rowspan="2" class="headerTableFilter">Emision</th>
-                                <th rowspan="2" width="25%">Descripción</th>
-                                <th rowspan="2">Centro Costos</th> 
+                                <th rowspan="2" width="3%" data-campo="cnumero">Num.</th>  
+                                <th rowspan="2" class="headerTableFilter" data-campo="ffemision">Emision</th>
+                                <th rowspan="2" width="25%" class="headerTableFilter" data-campo="cConcepto">Descripción</th>
+                                <th rowspan="2" class="headerTableFilter" data-campo="cCostos">Centro Costos</th> 
                                 <th rowspan="2" >Area</th>
-                                <th rowspan="2" width="15%">Proveedor</th>
+                                <th rowspan="2" width="15%" class="headerTableFilter" data-campo="cEnti">Proveedor</th>
                                 <th rowspan="2" >Precio Soles</th>
                                 <th rowspan="2">Precio Dólares</th>
                                 <th rowspan="2">Estado</th>

@@ -112,5 +112,32 @@
                 return false;
             }
         }
+
+        private function listaCostos(){
+            try {
+                //code...
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        private function listaAnio(){
+            try {
+                //code...
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        private function listaProveedores(){
+            try {
+                //code...
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
     } 
 ?>

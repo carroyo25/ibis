@@ -229,6 +229,55 @@ $(function(){
         return false;
     });
 
+    $("#saveRegister").click(function(e){
+        e.preventDefault();
+
+        let result = {},
+            pedido = $("#tablaDetalles tbody >tr").data("pedido");
+
+        $.each($("#formProceso").serializeArray(),function(){
+            result[this.name] = this.value;
+        });
+
+        try {
+
+            //if  ( checkCantTables($("#tablaDetalles tbody > tr"),6) ) throw "Revise las cantidades ingresadas";//
+
+            if ( accion == "n" ) {
+                
+                $("#esperar").css("opacity","1").fadeIn();
+
+                $.post(RUTA+"transferencias/registro",{cabecera:result,
+                                                    detalles:JSON.stringify(detalles(false)),
+                                                    idpedido:pedido,
+                                                    atendidos:suma_atendidos(),
+                                                    estado:accion},
+                    function (data, textStatus, jqXHR) {
+                        if(data.estado){
+                            mostrarMensaje(data.mensaje,"mensaje_correcto");
+                            $("#numero").val(data.documento);
+                            $("#codigo_transferencia").val(data.indice);
+
+                            $(".primeraBarra").css("background","#819830");
+                            $(".primeraBarra span").text('Datos Generales ... Grabado');
+                        }else{
+                            mostrarMensaje(data.mensaje,"mensaje_error");
+                        }
+
+                        $("#esperar").css("opacity","0").fadeOut();
+                    },
+                    "json"
+                );
+            }else {
+
+            }
+
+        } catch (error) {
+            mostrarMensaje(error,'mensaje_error');
+        }
+
+        return false;
+    });
 
     $(".cerrarLista").focus(function (e) { 
         e.preventDefault();
