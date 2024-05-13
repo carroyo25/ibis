@@ -6,7 +6,7 @@
         }
 
         function render(){
-            $this->view->listaNotasSalidas = $this->model->listarGuiasManuales(null,-1,2024);
+            $this->view->listaNotasSalidas = $this->model->listarGuiasServicio(null,-1,2024);
             $this->view->listaEnvio = $this->model->listarParametros('08');
             $this->view->listaAprueba = $this->model->apruebaRecepción();
             $this->view->listaAlmacen = $this->model->listarAlmacenGuia();
@@ -47,8 +47,12 @@
             echo json_encode($this->model->consultarOrdenIdServicio($_POST['id']));
         }
 
-        function grabaGuiaServicios(){
+        function grabaGuiaServicio(){
             echo json_encode($this->model->grabarGuiaServicios($_POST['guiaCab'],$_POST['formCab'],$_POST['detalles'],$_POST['operacion']));
+        }
+
+        function guiaServiciosId(){
+            echo json_encode($this->model->consultarGuiaServicioId($_POST['indice'],$_POST['guia']));
         }
         
     }

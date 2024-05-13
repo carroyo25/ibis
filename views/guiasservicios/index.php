@@ -353,7 +353,7 @@
                 <select name="itemCostos" id="itemCostos">
                     <?php echo $this->listaCostosSelect ?>
                 </select>
-                <button type="button" class="boton3" id="btnAceptItems">Aceptar</button>
+                <button type="button" class="boton3" id="btnAceptOrders">Aceptar</button>
             </div>
             <div class="tablaBusqueda">
                 <table class="tablaWrap" id="ordenes">

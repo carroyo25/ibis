@@ -121,8 +121,6 @@
 
                 $rowCount = $sql->rowCount();
                 
-                //var_dump($sql->errorInfo());
-
                 if ($rowCount > 0) {
                     $indice = $this->lastInsertId("SELECT COUNT(id_regalm) AS id FROM alm_desplibrescab");
                     $this->grabarDetalles($indice,$detalles,$formCab['codigo_almacen_origen']);

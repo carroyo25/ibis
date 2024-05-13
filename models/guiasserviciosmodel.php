@@ -6,7 +6,7 @@
             parent::__construct();
         }
 
-        public function listarGuiasManuales($g,$c,$a){
+        public function listarGuiasServicio($g,$c,$a){
             try {
                 $salida = ""; 
 
@@ -60,30 +60,6 @@
             }
         }
 
-        public function grabarGuiaManual($guia,$form,$detalles,$operacion){
-            $mensaje = "error de creacion";
-            $guiaAutomatica = "";
-
-            try {
-                if ( $operacion == 'n' ){
-                    $guiaAutomatica = $this->numeroGuia();
-                    $mensaje = "Se grabo la guia de remision";
-                    
-                    $this->grabarDatosDocumento($form,$detalles,$guiaAutomatica);
-                    $this->grabarDatosGuia($guia,$form,$guiaAutomatica);
-
-                }else if( $operacion == 'u' ){
-                    $mensaje = "Se actualizo la guia de remision";
-                }
-
-                return array("mensaje"=>$mensaje,"guia"=>$guiaAutomatica);
-
-            } catch (PDOException $th) {
-                echo $th->getMessage();
-                return false;
-            }
-        }
-
         private function grabarDatosDocumento($formCab,$detalles,$guia){
             try {
                 
@@ -120,8 +96,6 @@
                                 "guia"=>$guia]);
 
                 $rowCount = $sql->rowCount();
-                
-                //var_dump($sql->errorInfo());
 
                 if ($rowCount > 0) {
                     $indice = $this->lastInsertId("SELECT COUNT(id_regalm) AS id FROM alm_servicioscab");
@@ -141,8 +115,9 @@
 
                 for ($i=0; $i < $nreg; $i++) { 
                     try {
-                        $sql=$this->db->connect()->prepare("INSERT INTO alm_desplibresdet SET id_regalm=:cod,
+                        $sql=$this->db->connect()->prepare("INSERT INTO alm_serviciosdet SET id_regalm=:cod,
                                                                                             ncodalm1=:ori,
+                                                                                            id_cprod=:idprod,
                                                                                             cCodigo=:cpro,
                                                                                             ncantidad=:cant,
                                                                                             niddetaPed=:idpedido,
@@ -160,6 +135,7 @@
                                                                                             cUnidad=:unidad");
                          $sql->execute(["cod"=>$indice,
                                         "ori"=>$almacen,
+                                        "idprod"=>$datos[$i]->idprod,
                                         "cpro"=>$datos[$i]->codigo,
                                         "cant"=>$datos[$i]->cantidad,
                                         "idpedido"=>$datos[$i]->iddetped,
@@ -413,18 +389,18 @@
             try {
                 $salida = "";
                 $sql = $this->db->connect()->prepare("SELECT
-                                                        alm_desplibresdet.id_regalm, 
-                                                        alm_desplibresdet.ndespacho, 
-                                                        alm_desplibresdet.cDescripcion,
-                                                        alm_desplibresdet.cCodigo, 
-                                                        alm_desplibresdet.cSerie, 
-                                                        alm_desplibresdet.cobserva,
-                                                        alm_desplibresdet.cUnidad
+                                                        alm_serviciosdet.id_regalm, 
+                                                        alm_serviciosdet.ndespacho, 
+                                                        alm_serviciosdet.cDescripcion,
+                                                        alm_serviciosdet.cCodigo, 
+                                                        alm_serviciosdet.cSerie, 
+                                                        alm_serviciosdet.cobserva,
+                                                        alm_serviciosdet.cUnidad
                                                     FROM
-                                                        alm_desplibresdet
+                                                        alm_serviciosdet
                                                     WHERE
-                                                        alm_desplibresdet.nflgactivo = 1 AND
-                                                        alm_desplibresdet.id_regalm = :indice");
+                                                        alm_serviciosdet.nflgactivo = 1 AND
+                                                        alm_serviciosdet.id_regalm = :indice");
                 $sql->execute(["indice"=>$indice]);
 
                 $rowCount = $sql->rowCount();
@@ -639,17 +615,19 @@
                             $salida.='<tr data-detorden="'.$rs['nitemord'].'" 
                                         data-idprod="'.$rs['id_cprod'].'"
                                         data-iddetped="'.$rs['niddeta'].'"
-                                        data-saldo="'.$saldo.'">
+                                        data-saldo="'.$saldo.'"
+                                        data-grabado="0"
+                                        data-id="-">
                                             <td class="textoCentro"><a href="'.$rs['id_orden'].'" data-accion="deleteItem" class="eliminarItem"><i class="fas fa-minus"></i></a></td>
                                             <td class="textoCentro"><input type="checkbox"></td>
                                             <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
                                             <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                             <td class="pl20px">'.$rs['cdesprod'].'</td>
                                             <td class="textoCentro">'.$rs['cabrevia'].'</td>
-                                            <td class="textoDerecha pr20px">'.$rs['cantidad'].'</td>
-                                            <td class="textoCentro"><input type="text"></td>
-                                            <td></td>
-                                            <td></td>
+                                            <td class="textoDerecha pr20px"><input type="text" value="'.$rs['cantidad'].'" readonly></td>
+                                            <td class="textoCentro"><input type="hidden" readonly></td>
+                                            <td class="textoCentro"><input type="hidden" readonly></td>
+                                            <td class="textoCentro"><input type="hidden" readonly></td>
                                             <td class="textoCentro">'.$rs['nrodoc'].'</td>
                                             <td class="textoCentro">'.$rs['cnumero'].'</td>
                                     </tr>';
@@ -673,8 +651,8 @@
                     $guiaAutomatica = $this->numeroGuia();
                     $mensaje = "Se grabo la guia de remision";
                     
-                    //$this->grabarDatosDocumento($form,$detalles,$guiaAutomatica);
-                    //$this->grabarDatosGuia($guia,$form,$guiaAutomatica);
+                    $this->grabarDatosDocumento($form,$detalles,$guiaAutomatica);
+                    $this->grabarDatosGuia($guia,$form,$guiaAutomatica);
 
                 }else if( $operacion == 'u' ){
                     $mensaje = "Se actualizo la guia de remision";
@@ -684,6 +662,130 @@
 
             } catch (PDOException $th) {
                 echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function consultarGuiaServicioId($indice,$guia){
+            try {
+                $docdata = [];
+
+                $sql = $this->db->connect()->prepare("SELECT
+                                                    alm_servicioscab.ffecdoc fechadocumento,
+                                                    alm_servicioscab.cnumguia,
+                                                    entidad_origen.id_centi AS id_origen,
+                                                    UPPER( entidad_origen.cviadireccion ) AS direccion_origen,
+                                                    UPPER( entidad_destino.cviadireccion ) AS direccion_destino,
+                                                    UPPER( entidad_destino.crazonsoc ) AS razon_destino,
+                                                    entidad_destino.cnumdoc AS ruc_destino,
+                                                    entidad_origen.cnumdoc AS ruc_origen,
+                                                    UPPER( entidad_origen.crazonsoc ) AS razon_origen,
+                                                    entidad_destino.id_centi AS id_destino,
+                                                    tb_proyectos.cdesproy,
+                                                    tb_proyectos.ccodproy,
+                                                    lg_guias.cserie,
+                                                    lg_guias.ctraslado,
+                                                    lg_guias.cmarca,
+                                                    lg_guias.cplaca,
+                                                    lg_guias.cnombre,
+                                                    lg_guias.clicencia,
+                                                    lg_guias.ftraslado,
+                                                    lg_guias.cdestinatario,
+                                                    lg_guias.cmotivo,
+                                                    lg_guias.corigen,
+                                                    lg_guias.cdirorigen,
+                                                    lg_guias.cdestino,
+                                                    lg_guias.cdirdest,
+                                                    lg_guias.centi,
+                                                    lg_guias.nDniConductor,
+                                                    lg_guias.nPeso,
+                                                    lg_guias.nBultos,
+                                                    UPPER(lg_guias.centidir) AS centidir,
+                                                    lg_guias.centiruc,
+                                                    lg_guias.cenvio,
+                                                    lg_guias.cautoriza,
+                                                    tb_user.cnombres, 
+	                                                tb_user.iduser,
+                                                    tipos.cdescripcion AS tipo,
+                                                    estados.cdescripcion AS estado  
+                                                FROM
+                                                    alm_servicioscab
+                                                    LEFT JOIN cm_entidad AS entidad_origen ON alm_servicioscab.ncodalm1 = entidad_origen.id_centi
+                                                    LEFT JOIN cm_entidad AS entidad_destino ON alm_servicioscab.ncodalm2 = entidad_destino.id_centi
+                                                    LEFT JOIN tb_proyectos ON alm_servicioscab.ncodpry = tb_proyectos.nidreg
+                                                    LEFT JOIN lg_guias ON alm_servicioscab.cnumguia = lg_guias.cnumguia
+                                                    LEFT JOIN tb_user ON alm_servicioscab.id_userAprob = tb_user.iduser
+                                                    INNER JOIN tb_parametros AS tipos ON alm_servicioscab.ntipmov = tipos.nidreg
+	                                                INNER JOIN tb_parametros AS estados ON alm_servicioscab.nEstadoDoc = estados.nidreg 
+                                                WHERE
+                                                    alm_servicioscab.nflgactivo = 1 
+                                                    AND alm_servicioscab.id_regalm =:indice");
+                $sql->execute(["indice"=>$indice]);
+
+                $rowCount = $sql->rowCount();
+                
+                if ($rowCount) {
+                    $respuesta = true;
+                    $i = 0;
+                    
+                    while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+                        $docData[] = $row;
+                    }
+                }
+
+                return array("cabecera"=>$docData,
+                            "detalles"=>$this->detallesGuiaServicio($indice));
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function detallesGuiaServicio($indice){
+            try {
+                $salida = "";
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        alm_serviciosdet.id_regalm, 
+                                                        alm_serviciosdet.ndespacho, 
+                                                        alm_serviciosdet.cDescripcion,
+                                                        alm_serviciosdet.cCodigo, 
+                                                        alm_serviciosdet.cSerie, 
+                                                        alm_serviciosdet.cobserva,
+                                                        alm_serviciosdet.cUnidad
+                                                    FROM
+                                                        alm_serviciosdet
+                                                    WHERE
+                                                        alm_serviciosdet.nflgactivo = 1 AND
+                                                        alm_serviciosdet.id_regalm = :indice");
+                $sql->execute(["indice"=>$indice]);
+
+                $rowCount = $sql->rowCount();
+                $item = 1;
+
+                if($rowCount > 0) {
+                    while ($rs = $sql->fetch()){
+                        $salida .='<tr data-grabado="1" >
+                                        <td class="textoCentro"><a href="delete"><i class="fas fa-trash-alt"></i></a></td>
+                                        <td class="textoCentro"><a href="search"><i class="fas fa-search"></i></a></td>
+                                        <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
+                                        <td class="textoCentro"><input type="text" value="'.$rs['cCodigo'].'" readOnly></td>
+                                        <td class="pl20px"><textarea readOnly>'.$rs['cDescripcion'].'</textarea></td>
+                                        <td class="textoCentro">'.$rs['cUnidad'].'</td>
+                                        <td><input type="number" value="'.$rs['ndespacho'].'" min=1></td>
+                                        <td class="pl20px"><textarea>'.$rs['cobserva'].'</textarea></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>';
+                    }
+                }
+
+                return $salida;
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
                 return false;
             }
         }

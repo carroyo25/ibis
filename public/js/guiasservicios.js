@@ -11,7 +11,7 @@ $(function() {
     $("#tablaPrincipal tbody").on("click","tr", function (e) {
         e.preventDefault();
 
-        $.post(RUTA+"guiamanual/guiaManualId",{indice:$(this).data("indice"),guia:$(this).data('guia')},
+        $.post(RUTA+"guiasservicios/guiaServiciosId",{indice:$(this).data("indice"),guia:$(this).data('guia')},
             function (data, textStatus, jqXHR) {
                 //console.log(data);
                 $("#fecha").val(data.cabecera[0].fechadocumento);
@@ -69,6 +69,7 @@ $(function() {
                 $("#proceso").fadeIn();
 
                 grabado = 1;
+                accion = "u"
             },
             "json"
         );
@@ -213,26 +214,19 @@ $(function() {
         e.preventDefault();
 
         try {
-            if ($("#codigo_orden").val() == "") throw new Error("Debe seleccionar una orden de servicio");
+            //if ($("#codigo_orden").val() == "") throw new Error("Debe seleccionar una orden de servicio");
 
-            let nFilas = $.strPad($("#tablaDetalles tr").length,3);
-
-            let row = `<tr data-grabado="0" >
-                            <td class="textoCentro"><a href="delete"><i class="fas fa-trash-alt"></i></a></td>
-                            <td class="textoCentro"><a href="search"><i class="fas fa-search"></i></a></td>
-                            <td class="textoCentro">${nFilas}</td>
-                            <td class="textoCentro"></td>
-                            <td class="pl20px"><textarea></textarea></td>
-                            <td></td>
-                            <td><input type="number" value=1 min=1></td>
-                            <td class="pl20px"><textarea></textarea></td>
-                            <td><input type="date"></td>
-                            <td><input type="text"></td>
-                            <td></td>
-                            <td></td>
-                        </tr>`;
-
-            $("#tablaDetalles tbody").append(row);
+            $.post(RUTA+"pedidos/llamaProductos", {tipo:37},
+            function (data, textStatus, jqXHR) {
+                    $("#tablaModulos tbody")
+                        .empty()
+                        .append(data);
+    
+                    $("#busqueda").fadeIn();
+                },
+                "text"
+            );
+           
         } catch (error) {
             mostrarMensaje(error.message,"mensaje_error");
         }
@@ -302,9 +296,36 @@ $(function() {
     $("#tablaModulos tbody").on("click","tr", function (e) {
         e.preventDefault();
 
-        fila.cells[3].innerHTML = $(this).find('td').eq(0).text();
-        fila.cells[4].innerHTML = $(this).find('td').eq(1).text();
-        fila.cells[5].innerHTML = $(this).find('td').eq(2).text();
+        let nFilas = $.strPad($("#tablaDetalles tr").length,3);
+        let idprod = $(this).data("idprod");
+        let nunid = $(this).data("ncomed");
+        let codigo = $(this).children('td:eq(0)').text();
+        let descrip = $(this).children('td:eq(1)').text();
+        let unidad = $(this).children('td:eq(2)').text();
+        let grabado = 0;
+        let tabPos  = $("#tablaDetalles tr").length;
+
+        let row = `<tr data-grabado="${grabado}" data-idprod="${idprod}" data-codund="${nunid}" data-idx="-">
+                    <td></td>
+                    <td class="textoCentro"><a href="#"><i class="fas fa-eraser"></i></a></td>
+                    <td class="textoCentro">${nFilas}</td>
+                    <td class="textoCentro">${codigo}</td>
+                    <td class="pl20px">${descrip}</td>
+                    <td class="textoCentro">${unidad}</td>
+                    <td><input type="number" 
+                                step="any" 
+                                placeholder="0.00" 
+                                onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"
+                                tabIndex="${tabPos}">
+                    </td>
+                    <td><input type="text"></td>
+                    <td><input type="date"></td>
+                    <td><input type="text"></td>
+                    <td class="textoCentro"></td>
+                    <td class="textoCentro"></td>
+                </tr>`;
+
+        $("#tablaDetalles tbody").append(row);
 
         return false;
     });
@@ -344,23 +365,29 @@ $(function() {
             form[this.name] = this.value;
         });
 
-        $.post(RUTA+"guiaServicios/grabaGuiaServicio",{guiaCab:guia,
-                                                formCab:form,
-                                                detalles:JSON.stringify(detalles(false)),
-                                                operacion:"n"
-                                            },
-            function (data, textStatus, jqXHR) {
-                mostrarMensaje(data.mensaje,"mensaje_correcto");
-                $("#guia,#numero_guia").val(data.guia);
+        if (accion == "n")
+        
+            $.post(RUTA+"guiasservicios/grabaGuiaServicio",{guiaCab:guia,
+                                                    formCab:form,
+                                                    detalles:JSON.stringify(detalles(false)),
+                                                    operacion:accion
+                                                },
+                function (data, textStatus, jqXHR) {
+                    mostrarMensaje(data.mensaje,"mensaje_correcto");
+                    $("#guia,#numero_guia").val(data.guia);
 
-                $(".primeraBarra").css("background","#819830");
-                $(".primeraBarra span").text('Datos Generales ... Grabado');
+                    $(".primeraBarra").css("background","#819830");
+                    $(".primeraBarra span").text('Datos Generales ... Grabado');
 
-                accion = "u";
-                grabado = 0;
-            },
-            "json"
-        );
+                    accion = "x";
+                    grabado = 0;
+                },
+                "json"
+            );
+        
+            else if (accion == "u") {
+                mostrarMensaje("Actualizar datos","mensaje_correcto");
+            }
 
         return false;
     });
@@ -406,7 +433,7 @@ $(function() {
             if (result['codigo_traslado'] == "") throw "Seleccione la modalidad de traslado";
             
             $.post(RUTA+"guiamanual/vistaPreviaGuia", {cabecera:result,
-                                                            detalles:JSON.stringify(detalles(grabado)),
+                                                            detalles:JSON.stringify(detalles(true)),
                                                             proyecto: $("#costos").val()},
                 function (data, textStatus, jqXHR) {
                         
@@ -526,7 +553,13 @@ $(function() {
         return false
     });
 
+    $("#btnAceptOrders").click(function (e) { 
+        e.preventDefault();
+        
+        $("#busquedaOrden").fadeOut();
 
+        return false;
+    });
 })
 
 
@@ -552,12 +585,15 @@ detalles = (sw) =>{
             item['cantidad']     = null;
             item['cantdesp']     = $(this).find('td').eq(6).children().val();
             item['obser']        = $(this).find('td').eq(7).children().val();
-            item['codigo']       = $(this).find('td').eq(3).children().val();
-            item['descripcion']  = $(this).find('td').eq(4).children().val();
-            item['unidad']       = $(this).find('td').eq(5).children().val();
+            item['codigo']       = $(this).find('td').eq(3).text();
+            item['descripcion']  = $(this).find('td').eq(4).text();
+            item['unidad']       = $(this).find('td').eq(5).text();
+            item['vence']        = $(this).find('td').eq(8).children().val();
+            item['serie']        = $(this).find('td').eq(9).children().val();
             item['destino']      = $("#codigo_almacen_destino").val();
             item['estado']       = $(this).data("estado");
 
+            $(this).attr('data-grabado',1);
             
             DETALLES.push(item);
         }
