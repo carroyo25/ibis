@@ -3245,10 +3245,12 @@ $emitido:#F8CAAD;
     color: #000;
     box-shadow: 2px 4px 5px #000;
     display: none;
+    width: max-content;
 
     input[type="text"] {
         border: 1px solid #c2c2c2;
         margin-bottom: 0.5rem;
+        width: 100%;
     }
 
     ul {
@@ -3257,10 +3259,16 @@ $emitido:#F8CAAD;
         padding: 0.5rem;
         max-height: 20rem;
         overflow: auto;
+        line-height: 1.5rem;
+
+        li {
+            font-size: 0.8rem;
+            font-weight: normal;
+        }
     };
 
     button {
-        width: 100%;
+        width: 30%;
         margin-top: 10px;
         height: 1.5rem;
     }

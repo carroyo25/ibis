@@ -3533,10 +3533,14 @@
   -webkit-box-shadow: 2px 4px 5px #000;
           box-shadow: 2px 4px 5px #000;
   display: none;
+  width: -webkit-max-content;
+  width: -moz-max-content;
+  width: max-content;
 }
 .filter_options input[type=text] {
   border: 1px solid #c2c2c2;
   margin-bottom: 0.5rem;
+  width: 100%;
 }
 .filter_options ul {
   border: 1px solid #c2c2c2;
@@ -3544,9 +3548,14 @@
   padding: 0.5rem;
   max-height: 20rem;
   overflow: auto;
+  line-height: 1.5rem;
+}
+.filter_options ul li {
+  font-size: 0.8rem;
+  font-weight: normal;
 }
 .filter_options button {
-  width: 100%;
+  width: 30%;
   margin-top: 10px;
   height: 1.5rem;
 }

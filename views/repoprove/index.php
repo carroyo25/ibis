@@ -16,10 +16,10 @@
                                 <tr>
                                 <th rowspan="2" width="3%" data-campo="cnumero">Num.</th>  
                                 <th rowspan="2" class="headerTableFilter" data-campo="ffemision">Emision</th>
-                                <th rowspan="2" width="25%" class="headerTableFilter" data-campo="cConcepto">Descripción</th>
+                                <th rowspan="2" width="25%" data-campo="cConcepto">Descripción</th>
                                 <th rowspan="2" class="headerTableFilter" data-campo="cCostos">Centro Costos</th> 
                                 <th rowspan="2" >Area</th>
-                                <th rowspan="2" width="15%" class="headerTableFilter" data-campo="cEnti">Proveedor</th>
+                                <th rowspan="2" width="15%" class="headerTableFilter" data-campo="cEntidad">Proveedor</th>
                                 <th rowspan="2" >Precio Soles</th>
                                 <th rowspan="2">Precio Dólares</th>
                                 <th rowspan="2">Estado</th>

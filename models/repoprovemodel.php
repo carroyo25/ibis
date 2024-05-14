@@ -58,7 +58,8 @@
                                                         AND cm_entidad.crazonsoc LIKE :entidad
                                                         AND ISNULL(lg_ordencab.ntipdoc)
                                                     ORDER BY
-                                                        id_regmov DESC");
+                                                        id_regmov DESC
+                                                    LIMIT 150");
                 
                 $sql->execute(["user"=>$_SESSION['iduser'],"anio"=>2024,"orden"=>$orden,"costos"=>$costos,"entidad"=>$entidad]);
                 $rowCount = $sql->rowCount();
@@ -83,6 +84,12 @@
         public function valoresfiltros($campo) {
             if ($campo == 'cnumero') {
                 $valores = $this->listaNumeroOrden();
+            }else if ($campo == 'ffemision'){
+                $valores = $this->listaAnioEmision();
+            }else if ($campo == 'cCostos'){
+                $valores = $this->listaCostos();
+            }else if ($campo == 'cEntidad'){
+                $valores = $this->listaProveedores();
             }
 
             return array("valores"=>$valores);
@@ -115,16 +122,53 @@
 
         private function listaCostos(){
             try {
-                //code...
+                $sql = $this->db->connect()->query("SELECT
+                                                        UPPER(CONCAT_WS(' ',tb_proyectos.ccodproy,tb_proyectos.cdesproy)) AS onumero,
+                                                        tb_proyectos.nidreg AS id
+                                                    FROM
+                                                        lg_ordencab
+                                                        INNER JOIN tb_proyectos ON lg_ordencab.ncodcos = tb_proyectos.nidreg 
+                                                    GROUP BY
+                                                        tb_proyectos.cdesproy 
+                                                    ORDER BY
+                                                        tb_proyectos.ccodproy ASC");
+                $sql->execute();
+
+                if( $sql->rowCount() ) {
+                    while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+                        $docData[] = $row;
+                    }
+                }
+
+                return $docData;
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
                 return false;
             }
         }
 
-        private function listaAnio(){
+        private function listaAnioEmision(){
             try {
-                //code...
+                $sql = $this->db->connect()->query("SELECT
+                                                        lg_ordencab.cper AS onumero,
+                                                        lg_ordencab.cper AS id
+                                                    FROM
+                                                        lg_ordencab 
+                                                    WHERE
+                                                        lg_ordencab.nflgactivo = 1 
+                                                    GROUP BY
+                                                        lg_ordencab.cper 
+                                                    ORDER BY
+                                                        lg_ordencab.cper DESC");
+                $sql->execute();
+
+                if( $sql->rowCount() ) {
+                    while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+                        $docData[] = $row;
+                    }
+                }
+
+                return $docData;
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
                 return false;
@@ -133,7 +177,28 @@
 
         private function listaProveedores(){
             try {
-                //code...
+                $sql = $this->db->connect()->query("SELECT
+                                                        UPPER(cm_entidad.crazonsoc) as onumero,
+                                                        cm_entidad.id_centi AS id
+                                                    FROM
+                                                        lg_ordencab
+                                                        INNER JOIN
+                                                        cm_entidad
+                                                        ON 
+                                                            lg_ordencab.id_centi = cm_entidad.id_centi
+                                                    GROUP BY
+                                                        lg_ordencab.id_centi
+                                                    ORDER BY
+                                                        cm_entidad.crazonsoc ASC ");
+                $sql->execute();
+
+                if( $sql->rowCount() ) {
+                    while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+                        $docData[] = $row;
+                    }
+                }
+
+                return $docData;
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
                 return false;
