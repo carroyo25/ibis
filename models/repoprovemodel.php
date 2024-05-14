@@ -204,5 +204,108 @@
                 return false;
             }
         }
+
+        public function listaFiltradas($parametros){
+            try {
+                $emision  = $this->cambiarLista($parametros['filtro_emision']);
+                $costos  = $this->cambiarLista($parametros['filtro_costos']);
+                $entidad  = $this->cambiarLista($parametros['filtro_entidad']);
+
+                //$filtroTabla = $this->mostrarTablaConFiltros($emision,$costos,$entidad);
+
+                //return array("filas" => $filtroTabla);
+                return array("proveedores" => $entidad);
+
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        private function mostrarTablaConFiltros($emision,$costos,$proveedor){
+            try{
+                $docData = [];
+
+                $fecha = $emision == "" ? "LIKE %": "IN ($emision)";
+                $costo = $costos == "" ? "LIKE %": "IN ($costos)";
+                $entidad = $proveedor == "" ? "LIKE %": "IN ($proveedor)"; 
+                
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        tb_costusu.ncodcos,
+                                                        tb_costusu.ncodproy,
+                                                        tb_costusu.id_cuser,
+                                                        lg_ordencab.id_regmov,
+                                                        LPAD(lg_ordencab.cnumero,6,0) AS cnumero,
+                                                        DATE_FORMAT(lg_ordencab.ffechadoc,'%d/%m/%Y') AS ffechadoc,
+                                                        lg_ordencab.nNivAten,
+                                                        lg_ordencab.nEstadoDoc,
+                                                        lg_ordencab.ncodpago,
+                                                        lg_ordencab.nplazo,
+                                                        lg_ordencab.cdocPDF,
+                                                        lg_ordencab.ntotal,
+                                                        lg_ordencab.ncodmon,
+                                                        UPPER( tb_pedidocab.concepto ) AS concepto,
+                                                        UPPER( tb_pedidocab.detalle ) AS detalle,
+                                                        UPPER(
+                                                        CONCAT_WS( tb_area.ccodarea, tb_area.cdesarea )) AS area,
+                                                        UPPER(
+                                                        CONCAT_WS( tb_proyectos.ccodproy, tb_proyectos.cdesproy )) AS costos,
+                                                        tb_proyectos.ccodproy,
+                                                        lg_ordencab.nfirmaLog,
+                                                        lg_ordencab.nfirmaFin,
+                                                        lg_ordencab.nfirmaOpe,
+                                                        tb_parametros.cdescripcion AS atencion,
+                                                        UPPER( cm_entidad.crazonsoc ) AS proveedor 
+                                                    FROM
+                                                        tb_costusu
+                                                        INNER JOIN lg_ordencab ON tb_costusu.ncodproy = lg_ordencab.ncodpry
+                                                        INNER JOIN tb_pedidocab ON lg_ordencab.id_refpedi = tb_pedidocab.idreg
+                                                        INNER JOIN tb_area ON lg_ordencab.ncodarea = tb_area.ncodarea
+                                                        INNER JOIN tb_proyectos ON lg_ordencab.ncodpry = tb_proyectos.nidreg
+                                                        INNER JOIN tb_parametros ON lg_ordencab.nNivAten = tb_parametros.nidreg
+                                                        INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi 
+                                                    WHERE
+                                                        tb_costusu.id_cuser = :user 
+                                                        AND tb_costusu.nflgactivo = 1 
+                                                        AND lg_ordencab.cper $fecha
+                                                        AND tb_costusu.ncodproy $costo
+                                                        AND cm_entidad.crazonsoc $entidad
+                                                        AND ISNULL(lg_ordencab.ntipdoc)
+                                                    ORDER BY
+                                                        id_regmov DESC");
+
+                $sql->execute(["user"=>$_SESSION['iduser']]);
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount) {
+                    $respuesta = true;
+                    $i = 0;
+                    
+                    while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+                        $docData[] = $row;
+                    }
+                }
+
+                return $docData;
+
+            }catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        private function cambiarLista($items){
+            $temp = array();
+            
+            $items = json_decode($items);
+
+            foreach ($items as $item){
+                array_push($temp,$item);
+            }
+
+            $string_from_array = implode(',',$temp);
+
+            return $string_from_array;
+        }
     } 
 ?>

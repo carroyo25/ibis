@@ -13,6 +13,10 @@
         function consultarValoresLista() {
             echo json_encode($this->model->valoresFiltros($_POST['campo']));
         }
+
+        function filtros(){
+            echo json_encode($this->model->listaFiltradas($_POST));
+        }
         
     }
 ?>

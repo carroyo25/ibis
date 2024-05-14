@@ -58,8 +58,7 @@
                                     $montoDolares = "";
                                     $montoSoles = "";
                                 }
-
-                                ?>
+                            ?>
                                 <tr class="pointer">
                                     <td class="textoCentro"><?php echo $orden['cnumero']?></td>
                                     <td class="textoCentro"><?php echo $orden['ffechadoc']?></td>
