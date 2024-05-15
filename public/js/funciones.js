@@ -437,9 +437,12 @@ $(".headerTableFilter").append(
     `<a href="#" class="contenedorfiltro"><i class="fas fa-angle-down"></i></a>
     <div class="filter_options">
         <p>Buscar</p>
-        <input type="text" name="strSearch" id="strSearch" placeholder="Buscar Elementos">
+        <input type="text" name="strSearch" id="strSearch" class="textoNuevoBuscar" placeholder="Buscar Elementos">
         <ul class="filterList">
         </ul>
-        <button class="btn_sendfilter">Aceptar</button>
+        <div class="btn_options">
+            <button class="btn_sendfilter">Aceptar</button>
+            <button class="btn_cancelfilter">Cancelar</button>
+        </div>
     </div>`
 );

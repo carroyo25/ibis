@@ -211,10 +211,9 @@
                 $costos  = $this->cambiarLista($parametros['filtro_costos']);
                 $entidad  = $this->cambiarLista($parametros['filtro_entidad']);
 
-                //$filtroTabla = $this->mostrarTablaConFiltros($emision,$costos,$entidad);
+                $filtroTabla = $this->mostrarTablaConFiltros($emision,$costos,$entidad);
 
-                //return array("filas" => $filtroTabla);
-                return array("proveedores" => $entidad);
+                return array("filas" => $filtroTabla);
 
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
@@ -226,9 +225,9 @@
             try{
                 $docData = [];
 
-                $fecha = $emision == "" ? "LIKE %": "IN ($emision)";
-                $costo = $costos == "" ? "LIKE %": "IN ($costos)";
-                $entidad = $proveedor == "" ? "LIKE %": "IN ($proveedor)"; 
+                $fecha = $emision == "" ? "LIKE '%'": "IN ($emision)";
+                $costo = $costos == "" ? "LIKE '%'": "IN ($costos)";
+                $entidad = $proveedor == "" ? "LIKE '%'": "IN ($proveedor)"; 
                 
                 $sql = $this->db->connect()->prepare("SELECT
                                                         tb_costusu.ncodcos,
@@ -269,7 +268,7 @@
                                                         AND tb_costusu.nflgactivo = 1 
                                                         AND lg_ordencab.cper $fecha
                                                         AND tb_costusu.ncodproy $costo
-                                                        AND cm_entidad.crazonsoc $entidad
+                                                        AND cm_entidad.id_centi $entidad
                                                         AND ISNULL(lg_ordencab.ntipdoc)
                                                     ORDER BY
                                                         id_regmov DESC");

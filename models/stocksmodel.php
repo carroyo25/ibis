@@ -196,7 +196,7 @@
                 }
 
                 $_SESSION['progreso'] = 0;
-                session_write_close();
+                //session_write_close();
 
                 return $salida;
 

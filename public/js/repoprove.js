@@ -101,11 +101,30 @@ $(function() {
             $("#tablaPrincipalProveedor tbody").append(row);
         })
     
-        $(this).parent().fadeOut();
+        $(this).parent().parent().fadeOut();
     
         return false;
     });
     
+
+    $(".btn_cancelfilter").click(function(e){
+        e.preventDefault();
+
+        $(this).parent().parent().fadeOut();
+
+        return false;
+    });
+
+    $(".textoNuevoBuscar").keyup(function () {
+        let value = $(this).val().toLowerCase(),
+            f = ".filterList"+" li span";
+
+            console.log(value);
+        
+        $(f).filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+    });
 })
 
 
@@ -122,7 +141,7 @@ llamarFiltro = (control,campo) => {
     .then(reponse => reponse.json())
     .then(data => {
         data.valores.forEach(valor => {
-            let item = ` <li><input type="checkbox" id="${valor['id']}"> ${valor['onumero']} </li>`;
+            let item = ` <li><span><input type="checkbox" id="${valor['id']}"> ${valor['onumero']}</span></li>`;
             $(".filter_options").children('ul').append(item);
         });
 

@@ -62,6 +62,7 @@
                                                         lg_ordencab.FechaFin,
                                                         lg_ordencab.ffechaent,
                                                         lg_ordencab.nEstadoDoc,
+                                                        lg_ordencab.nNivAten,
                                                         LPAD(lg_ordencab.cnumero,4,0) AS cnumero,
                                                         UPPER( cm_entidad.crazonsoc ) AS proveedor,
                                                         ( SELECT SUM(lg_ordendet.ncanti) FROM lg_ordendet WHERE lg_ordendet.niddeta = tb_pedidodet.iditem AND lg_ordendet.id_orden != 0 ) AS cantidad_orden,
@@ -286,6 +287,8 @@
                                 $fecha_descarga = date("d/m/Y",strtotime($rs['FechaFin'].' 1 days'));
                                 $fecha_entrega = $rs['fecha_entrega'];
                             }
+
+
 
                             if ( $rs['estadoItem'] !== 105 ) {
                                 
