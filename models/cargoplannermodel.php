@@ -283,12 +283,23 @@
                             $fecha_descarga = "";
                             $dias_plazo = intVal( $rs['plazo'] )+1 .' days';
 
-                            if ( $rs['fecha_autorizacion_orden'] !== null && $rs['estadoItem'] !== 105 ) { 
-                                $fecha_descarga = date("d/m/Y",strtotime($rs['FechaFin'].' 1 days'));
-                                $fecha_entrega = $rs['fecha_entrega'];
+                            $fecha_autoriza = "-";
+                            $fecha_entrega = "-";
+
+                            /*if( $rs['fechaLog'] !== "" && $rs['fechaOpe'] !== "" && $rs['FechaFin'] !== "" && $rs['nNivAten'] === 47 ) {
+                                $fecha_autoriza = $rs['fecha_autorizacion'];
+                                $fecha_entrega = $rs['fecha_entrega_final'];
+                            }*/
+
+                            if( $rs['fechaLog'] !== "" && $rs['fechaOpe'] !== "" && $rs['FechaFin'] !== "") {
+                                $fecha_autoriza = $rs['fecha_autorizacion'];
+                                $fecha_entrega = $rs['fecha_entrega_final'];
                             }
 
-
+                            /*if( $rs['fechaLog'] !== "" && $rs['fechaOpe'] !== "" && $rs['FechaFin'] !== "" && $rs['nNivAten'] === 46 ) {
+                                $fecha_autoriza = $rs['fecha_autorizacion'];
+                                $fecha_entrega = $rs['fecha_entrega_final'];
+                            }*/
 
                             if ( $rs['estadoItem'] !== 105 ) {
                                 
@@ -363,10 +374,10 @@
                                         <td class="textoCentro">'.$rs['fecha_orden'].'</td>
                                         <td class="textoDerecha pr15px" style="background:#e8e8e8;font-weight: bold">'.$rs['cantidad_orden'].'</td>
                                         <td class="pl10px">'.$rs['item_orden'].'</td>
-                                        <td class="pl10px">'.$rs['fecha_autorizacion'].'</td>
+                                        <td class="pl10px">'.$fecha_autoriza.'</td>
                                         <td class="textoDerecha pr15px">'.number_format($rs['cantidad_atendida'],2).'</td>
                                         <td class="pl10px">'.$rs['proveedor'].'</td>
-                                        <td class="textoCentro">'.$rs['fecha_entrega_final'].'</td>
+                                        <td class="textoCentro">'.$fecha_entrega.'</td>
 
                                         <td class="textoDerecha pr15px">'.$rs['ingreso'].'</td>
                                         <td class="textoCentro">'.$rs['nota_ingreso'].'</td>
@@ -1015,6 +1026,9 @@
                                                     lg_ordencab.ntipmov,
                                                     lg_ordencab.FechaFin,
                                                     lg_ordencab.cnumero,
+                                                    lg_ordencab.fechaLog,
+                                                    lg_ordencab.fechaOpe,
+                                                    lg_ordencab.nNivAten,
                                                     DATE_FORMAT( lg_ordencab.ffechadoc, '%d/%m/%Y' ) AS fecha_orden,
                                                     UPPER( cm_entidad.crazonsoc ) AS proveedor,
                                                     UPPER( tb_user.cnameuser ) AS operador,
@@ -1622,6 +1636,12 @@
                                                         lg_ordencab.ntipmov,
                                                         lg_ordencab.FechaFin,
                                                         lg_ordencab.cnumero,
+                                                        lg_ordencab.ffechades,
+                                                        lg_ordencab.fechaLog,
+                                                        lg_ordencab.fechaOpe,
+                                                        lg_ordencab.ffechaent,
+                                                        lg_ordencab.nEstadoDoc,
+                                                        lg_ordencab.nNivAten,
                                                         DATE_FORMAT( lg_ordencab.ffechadoc, '%d/%m/%Y' ) AS fecha_orden,
                                                         UPPER( cm_entidad.crazonsoc ) AS proveedor,
                                                         UPPER( tb_user.cnameuser ) AS operador,
@@ -1959,9 +1979,12 @@
                     $porcentaje = '';
 
                     $fecha_entrega = "";
+                    $fecha_autoriza = "";
+
                     $dias_plazo = intVal( $dato['plazo'] )+1 .' days';
 
-                    if ( $dato['fecha_autorizacion'] !== null && $dato['estadoItem'] !== 105 ) { 
+                    if( $dato['fechaLog'] !== "" && $dato['fechaOpe'] !== "" && $dato['FechaFin'] !== "") {
+                        $fecha_autoriza = $dato['fecha_autorizacion'];
                         $fecha_entrega = $dato['fecha_entrega_final'];
                     }
 
@@ -2175,14 +2198,14 @@
 
                     $objPHPExcel->getActiveSheet()->setCellValue('U'.$fila,$dato['item_orden']);
 
-                    if  ($dato['fecha_autorizacion'] !== null)
-                        $objPHPExcel->getActiveSheet()->setCellValue('V'.$fila,PHPExcel_Shared_Date::PHPToExcel($dato['fecha_autorizacion']));
+                    if  ( $fecha_autoriza !== "" )
+                        $objPHPExcel->getActiveSheet()->setCellValue('V'.$fila,PHPExcel_Shared_Date::PHPToExcel($fecha_autoriza));
                         
                     $objPHPExcel->getActiveSheet()->setCellValue('W'.$fila,$dato['cantidad_atendida']);
                     $objPHPExcel->getActiveSheet()->setCellValue('X'.$fila,$dato['proveedor']); 
                         
-                    if ( $fecha_entrega != "" )
-                        $objPHPExcel->getActiveSheet()->setCellValue('Y'.$fila,PHPExcel_Shared_Date::PHPToExcel($dato['fecha_entrega_final']));
+                    if ( $fecha_entrega !== "" )
+                        $objPHPExcel->getActiveSheet()->setCellValue('Y'.$fila,PHPExcel_Shared_Date::PHPToExcel($fecha_entrega));
                     
                     $objPHPExcel->getActiveSheet()->setCellValue('Z'.$fila,$dato['ingreso']);
                     $objPHPExcel->getActiveSheet()->setCellValue('AA'.$fila,$dato['nota_ingreso']);

@@ -45,8 +45,8 @@
                 //cabecera
                 $this->SetFont('Arial','B',9);
                 $this->SetXY(0,5);
-                $this->setTextColor(255,0,0);
-                $this->Cell(190,6,"GUIA DE TRANSPORTE PROVISIONAL",0,1,"C");
+                //$this->setTextColor(255,0,0);
+                //$this->Cell(190,6,"GUIA DE TRANSPORTE PROVISIONAL",0,1,"C");
                 
                 $this->setTextColor(0,0,0);
                 $this->SetFont('Arial','B',11);
