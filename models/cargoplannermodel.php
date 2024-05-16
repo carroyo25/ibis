@@ -1094,7 +1094,9 @@
                                                     tb_pedidodet.nflgActivo 
                                                     AND ISNULL( lg_ordendet.nflgactivo )
                                                 GROUP BY
-                                                    tb_pedidodet.iditem");
+                                                    tb_pedidodet.iditem
+                                                ORDER BY
+                                                    tb_pedidocab.emision ASC");
                 $sql->execute();
                 $rowCount = $sql->rowCount();
 
@@ -1978,8 +1980,8 @@
                     $color_semaforo = 'FFFFFF';
                     $porcentaje = '';
 
-                    $fecha_entrega = "";
-                    $fecha_autoriza = "";
+                    $fecha_entrega = null;
+                    $fecha_autoriza = null;
 
                     $dias_plazo = intVal( $dato['plazo'] )+1 .' days';
 
@@ -2198,13 +2200,13 @@
 
                     $objPHPExcel->getActiveSheet()->setCellValue('U'.$fila,$dato['item_orden']);
 
-                    if  ( $fecha_autoriza !== "" )
+                    if  ( $fecha_autoriza !== null )
                         $objPHPExcel->getActiveSheet()->setCellValue('V'.$fila,PHPExcel_Shared_Date::PHPToExcel($fecha_autoriza));
                         
                     $objPHPExcel->getActiveSheet()->setCellValue('W'.$fila,$dato['cantidad_atendida']);
                     $objPHPExcel->getActiveSheet()->setCellValue('X'.$fila,$dato['proveedor']); 
                         
-                    if ( $fecha_entrega !== "" )
+                    if ( $fecha_entrega !== null )
                         $objPHPExcel->getActiveSheet()->setCellValue('Y'.$fila,PHPExcel_Shared_Date::PHPToExcel($fecha_entrega));
                     
                     $objPHPExcel->getActiveSheet()->setCellValue('Z'.$fila,$dato['ingreso']);

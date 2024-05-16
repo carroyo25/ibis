@@ -78,6 +78,11 @@
 
                          $estado    = intval( $rs['pasados'] );
                          $saldo     = $rs['ingresos'] - $rs['consumo'];
+
+                         if ( $rs['pasados'] < 0 )
+                            $pasados = "";
+                        else 
+                            $pasados = $rs['pasados'];
                          
                          if ($estado > 7) {
                              $alerta ="semaforoRojo";
@@ -97,7 +102,7 @@
                                          <td class="pl20px">'.$rs['producto'].'</td>
                                          <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                          <td class="textoCentro '.$alerta.'" style="color:#fff">'.$rs['vence'].'</td>
-                                         <td class="textoDerecha">'.$rs['pasados'].'</td>
+                                         <td class="textoDerecha">'.$pasados.'</td>
                                          <td class="textoDerecha">'.number_format($rs['ingresos'],2,'.','').'</td>
                                          <td class="textoDerecha">'.number_format($rs['consumo'],2,'.','').'</td>
                                          <td class="textoDerecha">'.number_format($saldo,2,'.','').'</td>

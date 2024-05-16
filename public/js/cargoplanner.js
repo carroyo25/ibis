@@ -227,16 +227,17 @@ $(function() {
 
         $("#esperarCargo").css("opacity","1").fadeIn();
         
-        //const myInterval = setInterval(processItems, 1000);
+        console.time();
 
         fetch(RUTA+"cargoplanner/dataExcelTotalCargoPlan")
             .then((response)=> {
                 return response.json();
             })
             .then((json)=> {
-                //clearInterval(myInterval);
                 $("#esperarCargo").css("opacity","0").fadeOut();
                 window.location.href = json.documento;
+
+                console.timeEnd();
             })
             .catch((err)=> {
                 console.log(err);
