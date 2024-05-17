@@ -1094,9 +1094,7 @@
                                                     tb_pedidodet.nflgActivo 
                                                     AND ISNULL( lg_ordendet.nflgactivo )
                                                 GROUP BY
-                                                    tb_pedidodet.iditem
-                                                ORDER BY
-                                                    tb_pedidocab.emision ASC");
+                                                    tb_pedidodet.iditem");
                 $sql->execute();
                 $rowCount = $sql->rowCount();
 
@@ -1985,7 +1983,7 @@
 
                     $dias_plazo = intVal( $dato['plazo'] )+1 .' days';
 
-                    if( $dato['fechaLog'] !== "" && $dato['fechaOpe'] !== "" && $dato['FechaFin'] !== "") {
+                    if( $dato['fechaLog'] !== null && $dato['fechaOpe'] !== null && $dato['FechaFin'] !== null ) {
                         $fecha_autoriza = $dato['fecha_autorizacion'];
                         $fecha_entrega = $dato['fecha_entrega_final'];
                     }
