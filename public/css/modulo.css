@@ -3473,7 +3473,7 @@
   -ms-grid-column: 1;
   -ms-grid-column-span: 2;
   grid-area: 1/1/2/3;
-  height: 40vh;
+  height: 50vh;
   overflow: auto;
 }
 .wrap__new .wrap__body .table_body table {
@@ -3520,6 +3520,31 @@
   -ms-grid-column-span: 1;
   grid-area: 2/2/3/3;
   border-top: 1px solid #c2c2c2;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+.wrap__new .wrap__body .account_body .account_body_details {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
+  row-gap: 1.5rem;
+  padding-left: 2rem;
+}
+.wrap__new .wrap__body .account_body .account_body_details h2 {
+  color: #c2c2c2;
+  height: 1.5rem;
+}
+.wrap__new .wrap__body .account_body .account_body_details span {
+  font-weight: bold;
+  font-size: 1.5rem;
+  border: 1px dotted #c2c2c2;
+  text-align: right;
 }
 
 .filter_options {

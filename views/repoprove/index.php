@@ -78,10 +78,32 @@
                     </table>
                 </div>
                 <div class="graphic_body">
-                    2
+                    <div id="repo_graphic">
+
+                    </div>
                 </div>
                 <div class="account_body">
-                    3
+                    <h1>Detalles</h1>
+
+                    <div class="account_body_details">
+                        <h2>Año(s) Consultados:</h2>
+                        <span id="anios">2024</span>
+
+                        <h2>Nro. Ordenes :</h2>
+                        <span id="nroOrdenes">0</span>
+
+                        <h2>Nro. Ordenes Compra:</h2>
+                        <span id="orden_compra">0</span>
+
+                        <h2>Nro. Ordenes Servicio:</h2>
+                        <span id="orden_servicio">0</span>
+
+                        <h2>Total Soles :</h2>
+                        <span id="total_soles">0.00</span>
+
+                        <h2>Total Dolares :</h2>
+                        <span id="total_dolares">0.00</span>
+                    </div>
                 </div>
             </div>
         </div>

@@ -3,8 +3,11 @@ $(function() {
         ffemision = [],
         cCostos = [],
         cEntidad = [];
+
+    let valores =  [ 1, 2, 3, 4, 5, 5, 7, 8, 8, 10, 11, 12 ];
     
     $("#espera").fadeOut();
+
 
     $(".contenedorfiltro *").click(function(e){
         e.preventDefault();
@@ -53,8 +56,21 @@ $(function() {
                 estado = "",
                 ope="",
                 fin="",
-                log="";
-            
+                log="",
+                anio_proceso        = "",
+                ordenes_proceso     = "",
+                compras_proceso     = "",
+                servicio_proceso    = "",
+                soles_proceso       = "",
+                dolares_proceso     = "";
+
+            anio_proceso    = data.anios;
+            ordenes_proceso = data.ordenes;
+            compras_proceso = data.compras;
+            servicio_proceso = data.servicios;
+            soles_proceso = data.soles == null ? "-" : "S/. "+data.soles;
+            dolares_proceso = data.dolares == null ? "-" : "$ "+data.dolares;
+
             data.filas.forEach(fila => {
                 if ( fila['ncodmon'] == 20) {
                     montoSoles = "S/. " + fila['ntotal'];
@@ -98,8 +114,18 @@ $(function() {
                         </tr>`;
             });
 
+            $("#anios").text(anio_proceso);
+            $("#nroOrdenes").text(ordenes_proceso);
+            $("#orden_compra").text(compras_proceso);
+            $("#orden_servicio").text(servicio_proceso);
+            $("#total_soles").text(soles_proceso);
+            $("#total_dolares").text(dolares_proceso);
+
+            barras(valores);
+
             $("#tablaPrincipalProveedor tbody").append(row);
         })
+
     
         $(this).parent().parent().fadeOut();
     
@@ -119,8 +145,6 @@ $(function() {
         let value = $(this).val().toLowerCase(),
             f = ".filterList"+" li span";
 
-            console.log(value);
-        
         $(f).filter(function() {
             $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
         });
@@ -146,6 +170,29 @@ llamarFiltro = (control,campo) => {
         });
 
         control.parent().parent().children(".filter_options").fadeToggle();
+    });
+}
+
+barras = (valores) => {
+    Highcharts.chart('repo_graphic', {
+        chart: {
+            type: 'column'
+        },
+        xAxis: {
+            categories: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
+        },
+        plotOptions: {
+            series: {
+                pointWidth: 20
+            }
+        },
+        title: {
+            text: 'Total Items Soles',
+        },
+        series: [{
+            name: "",
+            data: valores
+        }]
     });
 }
 

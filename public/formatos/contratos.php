@@ -129,8 +129,7 @@
             $this->Rect(10,73,190,7,"F"); //fondo de mensaje
     		$this->SetWidths(array(10,15,15,15,10,80,15,15,15));
     		$this->SetAligns(array("C","C","C","C","C","C","C","C","C"));
-    		$this->Row(array('Item',utf8_decode('Código'),'Payment Basis','Cant.','Und.',utf8_decode('Descripción'),'Nro.Pedido','Precio Unitario','Valor Total'));
-                    
+    		$this->Row(array('Item',utf8_decode('Código'),'Payment Basis','Cant.','Und.',utf8_decode('Descripción'),'Nro.Pedido','Precio Unitario','Valor Total'));          
         }
 
         function footer(){
@@ -203,9 +202,9 @@
 
             $this->SetFont('ZapfDingbats','',24);
             $this->setXY(75,278);
-            $this->cell(45,16,$estado3,0,0,"C"); //envia de parametro
+            $this->cell(45,16,$estado1,0,0,"C"); //envia de parametro
             $this->cell(40,16,$estado2,0,0,"C"); //envia de parametro
-            $this->cell(40,16,$estado1,0,1,"C"); //envia de parametro
+            $this->cell(40,16,$estado3,0,1,"C"); //envia de parametro
 
             $this->setXY(80,-6);
             $this->SetFont('Arial',"","7");

@@ -72,7 +72,7 @@
 	        $this->Cell(190,7,$condicion,0,0,'C');
 	        $this->SetXY(170,11);
 	        $this->SetFont('Arial','',6);
-	        $this->MultiCell(30,5,utf8_decode('PSPC-410-X-PR-001-FR-002 Revisión: 01 Emisión: 12/04/2024 '),0,'L',false);
+	        $this->MultiCell(30,5,utf8_decode('PSPC-410-X-PR-001-FR-002 Revisión: 01 Emisión: 13/05/2024 '),0,'L',false);
 
             $this->SetXY(170,32);
 	        $this->Cell(10,4,utf8_decode("Día"),1,0,"C");

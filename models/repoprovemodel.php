@@ -211,9 +211,13 @@
                 $costos  = $this->cambiarLista($parametros['filtro_costos']);
                 $entidad  = $this->cambiarLista($parametros['filtro_entidad']);
 
-                $filtroTabla = $this->mostrarTablaConFiltros($emision,$costos,$entidad);
-
-                return array("filas" => $filtroTabla);
+                return array("filas" => $this->mostrarTablaConFiltros($emision,$costos,$entidad),
+                             "anios" => $parametros['filtro_emision'],
+                             "ordenes" => $this->orden_total($emision,$costos,$entidad),
+                             "compras" => $this->orden_tipo($emision,$costos,$entidad,37),
+                             "servicios" => $this->orden_tipo($emision,$costos,$entidad,38),
+                             "soles" => $this->totales($emision,$costos,$entidad,20),
+                             "dolares" => $this->totales($emision,$costos,$entidad,21));
 
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
@@ -241,7 +245,7 @@
                                                         lg_ordencab.ncodpago,
                                                         lg_ordencab.nplazo,
                                                         lg_ordencab.cdocPDF,
-                                                        lg_ordencab.ntotal,
+                                                        FORMAT(lg_ordencab.ntotal,2) as ntotal,
                                                         lg_ordencab.ncodmon,
                                                         UPPER( tb_pedidocab.concepto ) AS concepto,
                                                         UPPER( tb_pedidocab.detalle ) AS detalle,
@@ -288,6 +292,105 @@
                 return $docData;
 
             }catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        private function orden_total($emision,$costos,$proveedor){
+            try {
+                $fecha = $emision == "" ? "LIKE '%'": "IN ($emision)";
+                $costo = $costos == "" ? "LIKE '%'": "IN ($costos)";
+                $entidad = $proveedor == "" ? "LIKE '%'": "IN ($proveedor)"; 
+
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        COUNT( lg_ordencab.id_regmov ) AS ordenes 
+                                                    FROM
+                                                        tb_costusu
+                                                        INNER JOIN lg_ordencab ON tb_costusu.ncodproy = lg_ordencab.ncodpry
+                                                        INNER JOIN tb_proyectos ON lg_ordencab.ncodpry = tb_proyectos.nidreg
+                                                        INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi 
+                                                    WHERE
+                                                        tb_costusu.id_cuser = :user 
+                                                        AND tb_costusu.nflgactivo = 1 
+                                                        AND lg_ordencab.cper $fecha
+                                                        AND tb_costusu.ncodproy $costo
+                                                        AND cm_entidad.id_centi $entidad
+                                                        AND ISNULL(lg_ordencab.ntipdoc)");
+                
+                $sql->execute(["user"=>$_SESSION['iduser']]);
+                $respuesta = $sql->fetchAll();
+
+                return $respuesta[0]['ordenes'];
+
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        private function orden_tipo($emision,$costos,$proveedor,$tipo){
+            try {
+                $fecha = $emision == "" ? "LIKE '%'": "IN ($emision)";
+                $costo = $costos == "" ? "LIKE '%'": "IN ($costos)";
+                $entidad = $proveedor == "" ? "LIKE '%'": "IN ($proveedor)"; 
+
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        COUNT( lg_ordencab.id_regmov ) AS ordenes 
+                                                    FROM
+                                                        tb_costusu
+                                                        INNER JOIN lg_ordencab ON tb_costusu.ncodproy = lg_ordencab.ncodpry
+                                                        INNER JOIN tb_proyectos ON lg_ordencab.ncodpry = tb_proyectos.nidreg
+                                                        INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi 
+                                                    WHERE
+                                                        tb_costusu.id_cuser = :user 
+                                                        AND tb_costusu.nflgactivo = 1 
+                                                        AND lg_ordencab.cper $fecha
+                                                        AND tb_costusu.ncodproy $costo
+                                                        AND cm_entidad.id_centi $entidad
+                                                        AND ISNULL(lg_ordencab.ntipdoc)
+                                                        AND lg_ordencab.ntipmov = :tipo");
+                
+                $sql->execute(["user"=>$_SESSION['iduser'],"tipo"=>$tipo]);
+                $respuesta = $sql->fetchAll();
+
+                return $respuesta[0]['ordenes'];
+
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+        
+        private function totales($emision,$costos,$proveedor,$moneda){
+            try {
+                $fecha = $emision       == "" ? "LIKE '%'": "IN ($emision)";
+                $costo = $costos        == "" ? "LIKE '%'": "IN ($costos)";
+                $entidad = $proveedor   == "" ? "LIKE '%'": "IN ($proveedor)"; 
+
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        FORMAT(SUM( lg_ordencab.ntotal ),2) AS totales 
+                                                    FROM
+                                                        tb_costusu
+                                                        INNER JOIN lg_ordencab ON tb_costusu.ncodproy = lg_ordencab.ncodpry
+                                                        INNER JOIN tb_proyectos ON lg_ordencab.ncodpry = tb_proyectos.nidreg
+                                                        INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi 
+                                                    WHERE
+                                                        tb_costusu.id_cuser = :user 
+                                                        AND tb_costusu.nflgactivo = 1
+                                                        AND lg_ordencab.nflgactivo = 1  
+                                                        AND lg_ordencab.cper $fecha
+                                                        AND tb_costusu.ncodproy $costo
+                                                        AND cm_entidad.id_centi $entidad
+                                                        AND ISNULL(lg_ordencab.ntipdoc)
+                                                        AND lg_ordencab.ncodmon = :moneda");
+                
+                $sql->execute(["user"=>$_SESSION['iduser'],"moneda"=>$moneda]);
+                $respuesta = $sql->fetchAll();
+
+                return $respuesta[0]['totales'];
+
+            } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
                 return false;
             }
