@@ -122,17 +122,20 @@
 
         private function listaCostos(){
             try {
-                $sql = $this->db->connect()->query("SELECT
-                                                        UPPER(CONCAT_WS(' ',tb_proyectos.ccodproy,tb_proyectos.cdesproy)) AS onumero,
-                                                        tb_proyectos.nidreg AS id
-                                                    FROM
-                                                        lg_ordencab
-                                                        INNER JOIN tb_proyectos ON lg_ordencab.ncodcos = tb_proyectos.nidreg 
-                                                    GROUP BY
-                                                        tb_proyectos.cdesproy 
-                                                    ORDER BY
-                                                        tb_proyectos.ccodproy ASC");
-                $sql->execute();
+                $sql = $this->db->connect()->prepare("SELECT
+                                                    tb_costusu.ncodproy,
+                                                    UPPER(
+                                                    CONCAT_WS('  ', tb_proyectos.ccodproy, tb_proyectos.cdesproy )) AS onumero,
+                                                    tb_proyectos.nidreg AS id
+                                                FROM
+                                                    tb_costusu
+                                                    INNER JOIN tb_proyectos ON tb_costusu.ncodproy = tb_proyectos.nidreg 
+                                                WHERE
+                                                    tb_costusu.id_cuser = :user 
+                                                    AND tb_costusu.nflgactivo = 1 
+                                                ORDER BY
+                                                    tb_proyectos.ccodproy ASC");
+                $sql->execute(["user"=>$_SESSION['iduser']]);
 
                 if( $sql->rowCount() ) {
                     while($row = $sql->fetch(PDO::FETCH_ASSOC)){
@@ -211,13 +214,14 @@
                 $costos  = $this->cambiarLista($parametros['filtro_costos']);
                 $entidad  = $this->cambiarLista($parametros['filtro_entidad']);
 
-                return array("filas" => $this->mostrarTablaConFiltros($emision,$costos,$entidad),
-                             "anios" => $parametros['filtro_emision'],
-                             "ordenes" => $this->orden_total($emision,$costos,$entidad),
-                             "compras" => $this->orden_tipo($emision,$costos,$entidad,37),
+                return array("filas"     => $this->mostrarTablaConFiltros($emision,$costos,$entidad),
+                             "anios"     => $parametros['filtro_emision'],
+                             "ordenes"   => $this->orden_total($emision,$costos,$entidad),
+                             "compras"   => $this->orden_tipo($emision,$costos,$entidad,37),
                              "servicios" => $this->orden_tipo($emision,$costos,$entidad,38),
-                             "soles" => $this->totales($emision,$costos,$entidad,20),
-                             "dolares" => $this->totales($emision,$costos,$entidad,21));
+                             "soles"     => $this->totales($emision,$costos,$entidad,20),
+                             "dolares"   => $this->totales($emision,$costos,$entidad,21),
+                             "valores"   => $this->valoresBarras($emision,$costos,$entidad));
 
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
@@ -408,6 +412,55 @@
             $string_from_array = implode(',',$temp);
 
             return $string_from_array;
+        }
+
+        private function valoresBarras($emision,$costos,$proveedor){
+            try {
+                $docData = [];
+
+                $fecha = $emision       == "" ? "LIKE '%'": "IN ($emision)";
+                $costo = $costos        == "" ? "LIKE '%'": "IN ($costos)";
+                $entidad = $proveedor   == "" ? "LIKE '%'": "IN ($proveedor)"; 
+
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        lg_ordencab.cper,
+                                                        lg_ordencab.cmes,
+                                                        lg_ordencab.ntotal,
+                                                        COUNT( lg_ordencab.cper ) AS numero_por_mes 
+                                                    FROM
+                                                        tb_costusu
+                                                        INNER JOIN lg_ordencab ON tb_costusu.ncodproy = lg_ordencab.ncodpry
+                                                        INNER JOIN tb_proyectos ON lg_ordencab.ncodpry = tb_proyectos.nidreg
+                                                        INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi 
+                                                    WHERE
+                                                        tb_costusu.id_cuser = :user
+                                                        AND lg_ordencab.nflgactivo = 1 
+                                                        AND tb_costusu.nflgactivo = 1 
+                                                        AND lg_ordencab.cper $fecha 
+                                                        AND tb_costusu.ncodproy $costo 
+                                                        AND cm_entidad.id_centi $entidad  
+                                                        AND ISNULL( lg_ordencab.ntipdoc ) 
+                                                    GROUP BY
+                                                        lg_ordencab.cmes,
+                                                        lg_ordencab.cper 
+                                                    ORDER BY
+                                                        lg_ordencab.cper,
+                                                        lg_ordencab.cmes");
+
+            $sql->execute(["user"=>$_SESSION['iduser']]);
+
+            if( $sql->rowCount() ) {
+                while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+                    $docData[] = $row;
+                }
+            }
+
+            return $docData;
+
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
         }
     } 
 ?>

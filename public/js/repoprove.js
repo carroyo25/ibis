@@ -4,7 +4,8 @@ $(function() {
         cCostos = [],
         cEntidad = [];
 
-    let valores =  [ 1, 2, 3, 4, 5, 5, 7, 8, 8, 10, 11, 12 ];
+    let valores =  [  119, 197 ],
+        valores1 =  [ 253, 222, 291, 276, 385, 511, 591, 474, 462, 590, 766, 538 ];
     
     $("#espera").fadeOut();
 
@@ -121,7 +122,7 @@ $(function() {
             $("#total_soles").text(soles_proceso);
             $("#total_dolares").text(dolares_proceso);
 
-            barras(valores);
+            barras(valores,valores1);
 
             $("#tablaPrincipalProveedor tbody").append(row);
         })
@@ -173,7 +174,8 @@ llamarFiltro = (control,campo) => {
     });
 }
 
-barras = (valores) => {
+
+barras = (valores,valores1) => {
     Highcharts.chart('repo_graphic', {
         chart: {
             type: 'column'
@@ -187,12 +189,18 @@ barras = (valores) => {
             }
         },
         title: {
-            text: 'Total Items Soles',
+            text: 'Total Ordenes por Año',
         },
-        series: [{
-            name: "",
-            data: valores
-        }]
+        series: [
+            {
+                name: '2022',
+                data: valores
+            },
+            {
+                name: '2023',
+                data: valores1
+            }
+        ]
     });
 }
 

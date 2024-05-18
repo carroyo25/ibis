@@ -6,9 +6,9 @@ $(function(){
     //entrada
     barras(valores);
 
-    qrygrupos(0,2023,7);
-    qryclases(0,0,2023,7)
-    qryfamilias(0,0,0,2023,7);
+    qrygrupos(0,2024,7);
+    qryclases(0,0,2024,7)
+    qryfamilias(0,0,0,2024,7);
 
     //sucesos
     $("#costos").on('change', function(e) {
