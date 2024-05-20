@@ -221,7 +221,7 @@
                              "servicios" => $this->orden_tipo($emision,$costos,$entidad,38),
                              "soles"     => $this->totales($emision,$costos,$entidad,20),
                              "dolares"   => $this->totales($emision,$costos,$entidad,21),
-                             "valores"   => $this->valoresBarras($emision,$costos,$entidad));
+                            /*"valores"   => $this->valoresBarras($emision,$costos,$entidad*)*/);
 
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();

@@ -122,7 +122,7 @@ $(function() {
             $("#total_soles").text(soles_proceso);
             $("#total_dolares").text(dolares_proceso);
 
-            let seriesData = [];
+            /*let seriesData = [];
 
             data.valores[0].forEach(valor =>{
                 seriesData.push({
@@ -131,7 +131,7 @@ $(function() {
                 });
             })
 
-            barras(seriesData);
+            barras(seriesData);*/
 
             $("#tablaPrincipalProveedor tbody").append(row);
         })

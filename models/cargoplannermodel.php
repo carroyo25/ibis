@@ -286,25 +286,16 @@
                             $fecha_autoriza = "-";
                             $fecha_entrega = "-";
 
-                            /*if( $rs['fechaLog'] !== "" && $rs['fechaOpe'] !== "" && $rs['FechaFin'] !== "" && $rs['nNivAten'] === 47 ) {
-                                $fecha_autoriza = $rs['fecha_autorizacion'];
-                                $fecha_entrega = $rs['fecha_entrega_final'];
-                            }*/
-
                             if( $rs['fechaLog'] !== "" && $rs['fechaOpe'] !== "" && $rs['FechaFin'] !== "") {
                                 $fecha_autoriza = $rs['fecha_autorizacion'];
                                 $fecha_entrega = $rs['fecha_entrega_final'];
                             }
 
-                            /*if( $rs['fechaLog'] !== "" && $rs['fechaOpe'] !== "" && $rs['FechaFin'] !== "" && $rs['nNivAten'] === 46 ) {
-                                $fecha_autoriza = $rs['fecha_autorizacion'];
-                                $fecha_entrega = $rs['fecha_entrega_final'];
-                            }*/
 
                             if ( $rs['estadoItem'] !== 105 ) {
                                 
 
-                                if  ($fecha_entrega !== ''){
+                                if  ($fecha_entrega !== null){
                                     $dias_atraso  =  $rs['dias_atraso'];
 
                                     if ( $rs['ingreso_obra'] == $rs['cantidad_orden'] ){
@@ -1991,7 +1982,7 @@
                     /*datos para el semaforo */
                     if ( $dato['estadoItem'] !== 105 ) {
 
-                        if  ($fecha_entrega !== ''){
+                        if  ($fecha_entrega !== null){
                             $dias_atraso  =  $dato['dias_atraso'];
 
                             if ( $dato['ingreso_obra'] == $dato['cantidad_orden'] ){
