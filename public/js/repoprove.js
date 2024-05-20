@@ -4,8 +4,8 @@ $(function() {
         cCostos = [],
         cEntidad = [];
 
-    let valores =  [  119, 197 ],
-        valores1 =  [ 253, 222, 291, 276, 385, 511, 591, 474, 462, 590, 766, 538 ];
+    /*let valores =  [  119, 197 ],
+        valores1 =  [ 253, 222, 291, 276, 385, 511, 591, 474, 462, 590, 766, 538 ];*/
     
     $("#espera").fadeOut();
 
@@ -122,7 +122,16 @@ $(function() {
             $("#total_soles").text(soles_proceso);
             $("#total_dolares").text(dolares_proceso);
 
-            barras(valores,valores1);
+            let seriesData = [];
+
+            data.valores[0].forEach(valor =>{
+                seriesData.push({
+                    name: valor['nombre'],
+                    data: valor['series']
+                });
+            })
+
+            barras(seriesData);
 
             $("#tablaPrincipalProveedor tbody").append(row);
         })
@@ -174,8 +183,7 @@ llamarFiltro = (control,campo) => {
     });
 }
 
-
-barras = (valores,valores1) => {
+barras = (seriesData) => {
     Highcharts.chart('repo_graphic', {
         chart: {
             type: 'column'
@@ -189,18 +197,9 @@ barras = (valores,valores1) => {
             }
         },
         title: {
-            text: 'Total Ordenes por Año',
+            text: 'Total Ordenes'
         },
-        series: [
-            {
-                name: '2022',
-                data: valores
-            },
-            {
-                name: '2023',
-                data: valores1
-            }
-        ]
+        series: seriesData
     });
 }
 
