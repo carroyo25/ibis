@@ -34,6 +34,9 @@
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
                         <div>
+                            <button type="button" id="addRequest" title="Buscar Pedido" class="boton3">
+                                <i class="fab fa-wpexplorer"></i> Buscar Pedido
+                            </button>
                             <button type="button" id="addOrder" title="Buscar Orden" class="boton3">
                                 <i class="fab fa-wpexplorer"></i> Buscar OS
                             </button>
@@ -364,6 +367,38 @@
                             <th>Area</th>
                             <th>Centro de Costos</th>
                             <th>Proveedor</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="busquedaPedido">
+        <div class="ventanaBusqueda w60por">
+            <div class="tituloVentana">
+                <span id="tituloBusqueda">Pedidos</span>
+                <div>
+                    <a href="#" id="closeSearch"><i class="fas fa-window-close"></i></a>
+                </div>
+            </div>
+            <div class="textoBusquedaGrid">
+                <input type="text" name="requestSearch" id="requestSearch" placeholder="N° Pedido">
+                <select name="itemCostos" id="itemCostos">
+                    <?php echo $this->listaCostosSelect ?>
+                </select>
+                <button type="button" class="boton3" id="btnAceptRequest">Aceptar</button>
+            </div>
+            <div class="tablaBusqueda">
+                <table class="tablaWrap" id="pedidos">
+                    <thead>
+                        <tr class="stickytop" >
+                            <th>Pedido</th>
+                            <th>Emisión</th>
+                            <th>Area</th>
+                            <th>Centro de Costos</th>
                         </tr>
                     </thead>
                     <tbody>

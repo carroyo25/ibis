@@ -54,6 +54,10 @@
         function guiaServiciosId(){
             echo json_encode($this->model->consultarGuiaServicioId($_POST['indice'],$_POST['guia']));
         }
+
+        function filtraPedido(){
+            echo $this->model->filtrarPedidoServicioID($_POST['id'],$_POST['costos']);
+        }
         
     }
 ?>

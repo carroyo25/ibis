@@ -242,6 +242,14 @@ $(function() {
         return false;
     })
 
+    $("#addRequest").click(function(e){
+        e.preventDefault();
+
+        $("#busquedaPedido").fadeIn();
+
+        return false;
+    })
+
     $("#tablaDetalles tbody").on("click","a", function (e) {
         e.preventDefault();
 
@@ -500,6 +508,22 @@ $(function() {
             $.post(RUTA+"guiasservicios/filtraOrden", {id:$(this).val()},
                 function (data, textStatus, jqXHR) {
                     $("#ordenes tbody")
+                        .empty()
+                        .append(data);
+                    $("#esperar").fadeOut();
+                },
+                "text"
+            );
+        }
+    });
+
+    $("#requestSearch").keyup(function (e) { 
+        if(e.which == 13) {
+            $("#esperar").fadeIn();
+            
+            $.post(RUTA+"guiasservicios/filtraPedido", {id:$(this).val(),costos:$("#itemCostos").val()},
+                function (data, textStatus, jqXHR) {
+                    $("#pedidos tbody")
                         .empty()
                         .append(data);
                     $("#esperar").fadeOut();

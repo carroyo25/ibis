@@ -480,8 +480,6 @@
                 $sql->execute(["usr"=>$_SESSION['iduser'],"id"=>$id]);
                 $rowCount = $sql->rowCount();
 
-                //AND lg_ordencab.cnumero = 1 Esto cambiaria para ir considerando
-
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()) {
                         //compara la orden si fue ingresada esta completa y no la muestra
@@ -497,6 +495,61 @@
                                 </tr>';
                         }
                     }
+                }
+                return $salida;
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        public function filtrarPedidoServicioID($id,$costos){
+            try {
+                $salida = "NO DA VALOR";
+
+                $sql = $this->db->connect()->prepare("SELECT
+                                                    tb_pedidocab.idreg,
+                                                    tb_pedidocab.idcostos,
+                                                    tb_pedidocab.idarea,
+                                                    tb_pedidocab.emision,
+                                                    tb_pedidocab.vence,
+                                                    tb_pedidocab.estadodoc,
+                                                    tb_pedidocab.nrodoc,
+                                                    tb_pedidocab.idtipomov,
+                                                    UPPER( ibis.tb_pedidocab.concepto ) AS concepto,
+                                                    UPPER(
+                                                    CONCAT( ibis.tb_proyectos.ccodproy, ' ', ibis.tb_proyectos.cdesproy )) AS costos,
+                                                    tb_pedidocab.nivelAten,
+                                                    atenciones.cdescripcion AS atencion,
+                                                    estados.cdescripcion AS estado,
+                                                    estados.cabrevia,
+                                                    tb_area.cdesarea 
+                                                FROM
+                                                    tb_pedidocab
+                                                    LEFT JOIN tb_proyectos ON tb_pedidocab.idcostos = tb_proyectos.nidreg
+                                                    LEFT JOIN tb_parametros AS atenciones ON tb_pedidocab.nivelAten = atenciones.nidreg
+                                                    LEFT JOIN tb_parametros AS estados ON tb_pedidocab.estadodoc = estados.nidreg
+                                                    LEFT JOIN tb_area ON tb_pedidocab.idarea = tb_area.ncodarea 
+                                                WHERE
+                                                    tb_pedidocab.estadodoc = 54 
+                                                    AND tb_pedidocab.idtipomov = 38 
+                                                    AND tb_pedidocab.idcostos LIKE '%' 
+                                                    AND tb_pedidocab.nrodoc = :numero");
+
+                $sql->execute(["numero"=>$id]);
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0) {
+
+                    while ($rs = $sql->fetch()) {
+                        $salida.='<tr data-orden="'.$rs['idreg'].'">
+                                <td class="textoCentro">'.$rs['nrodoc'].'</td>
+                                <td class="textoCentro">'.$rs['emision'].'</td>
+                                <td class="pl20px">'.$rs['concepto'].'</td>
+                                <td class="textoDerecha pr5px">'.$rs['costos'].'</td>
+                         </tr>';
+                    }
+
                 }
                 return $salida;
             } catch (PDOException $th) {
