@@ -86,8 +86,8 @@
                     <h1>Detalles</h1>
 
                     <div class="account_body_details">
-                        <h2>Año(s) Consultados:</h2>
-                        <span id="anios">2024</span>
+                        <h2>Año(s) Consultado(s):</h2>
+                        <span id="anios"></span>
 
                         <h2>Nro. Ordenes :</h2>
                         <span id="nroOrdenes">0</span>

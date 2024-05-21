@@ -63,7 +63,8 @@ $(function() {
                 compras_proceso     = "",
                 servicio_proceso    = "",
                 soles_proceso       = "",
-                dolares_proceso     = "";
+                dolares_proceso     = "",
+                seriesData          = [];
 
             anio_proceso    = data.anios;
             ordenes_proceso = data.ordenes;
@@ -122,8 +123,6 @@ $(function() {
             $("#total_soles").text(soles_proceso);
             $("#total_dolares").text(dolares_proceso);
 
-            /*let seriesData = [];
-
             data.valores[0].forEach(valor =>{
                 seriesData.push({
                     name: valor['nombre'],
@@ -131,7 +130,7 @@ $(function() {
                 });
             })
 
-            barras(seriesData);*/
+            barras(seriesData);
 
             $("#tablaPrincipalProveedor tbody").append(row);
         })

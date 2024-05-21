@@ -3493,7 +3493,7 @@
 .wrap__new .wrap__body .table_body table thead tr th a i {
   margin-left: 5px;
   margin-top: 10px;
-  color: #009933;
+  color: #fff;
   font-size: 1rem;
   display: inline-block;
 }
@@ -3545,6 +3545,7 @@
   font-size: 1.5rem;
   border: 1px dotted #c2c2c2;
   text-align: right;
+  width: 4rem;
 }
 
 .filter_options {
@@ -3558,9 +3559,7 @@
   -webkit-box-shadow: 2px 4px 5px #000;
           box-shadow: 2px 4px 5px #000;
   display: none;
-  width: -webkit-max-content;
-  width: -moz-max-content;
-  width: max-content;
+  width: 35rem;
 }
 .filter_options input[type=text] {
   border: 1px solid #c2c2c2;

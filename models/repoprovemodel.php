@@ -221,7 +221,7 @@
                              "servicios" => $this->orden_tipo($emision,$costos,$entidad,38),
                              "soles"     => $this->totales($emision,$costos,$entidad,20),
                              "dolares"   => $this->totales($emision,$costos,$entidad,21),
-                            /*"valores"   => $this->valoresBarras($emision,$costos,$entidad*)*/);
+                             "valores"   => $this->valoresBarras($emision,$costos,$entidad));
 
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
@@ -424,34 +424,152 @@
                 $entidad    = $proveedor     == "" ? "LIKE '%'": "IN ($proveedor)"; 
 
                 $sql = $this->db->connect()->prepare("SELECT
-                                                            lg_ordencab.cper AS ac,
-                                                            ( SELECT COUNT( lg_ordencab.id_regmov ) FROM lg_ordencab lg_ordencab WHERE lg_ordencab.cmes = '01' AND lg_ordencab.cper = ac ) AS ene,
-                                                            ( SELECT COUNT( lg_ordencab.id_regmov ) FROM lg_ordencab lg_ordencab WHERE lg_ordencab.cmes = '02' AND lg_ordencab.cper = ac ) AS feb,
-                                                            ( SELECT COUNT( lg_ordencab.id_regmov ) FROM lg_ordencab lg_ordencab WHERE lg_ordencab.cmes = '03' AND lg_ordencab.cper = ac ) AS mar,
-                                                            ( SELECT COUNT( lg_ordencab.id_regmov ) FROM lg_ordencab lg_ordencab WHERE lg_ordencab.cmes = '04' AND lg_ordencab.cper = ac ) AS abr,
-                                                            ( SELECT COUNT( lg_ordencab.id_regmov ) FROM lg_ordencab lg_ordencab WHERE lg_ordencab.cmes = '05' AND lg_ordencab.cper = ac ) AS may,
-                                                            ( SELECT COUNT( lg_ordencab.id_regmov ) FROM lg_ordencab lg_ordencab WHERE lg_ordencab.cmes = '06' AND lg_ordencab.cper = ac ) AS jun,
-                                                            ( SELECT COUNT( lg_ordencab.id_regmov ) FROM lg_ordencab lg_ordencab WHERE lg_ordencab.cmes = '07' AND lg_ordencab.cper = ac ) AS jul,
-                                                            ( SELECT COUNT( lg_ordencab.id_regmov ) FROM lg_ordencab lg_ordencab WHERE lg_ordencab.cmes = '08' AND lg_ordencab.cper = ac ) AS ago,
-                                                            ( SELECT COUNT( lg_ordencab.id_regmov ) FROM lg_ordencab lg_ordencab WHERE lg_ordencab.cmes = '09' AND lg_ordencab.cper = ac ) AS sep,
-                                                            ( SELECT COUNT( lg_ordencab.id_regmov ) FROM lg_ordencab lg_ordencab WHERE lg_ordencab.cmes = '10' AND lg_ordencab.cper = ac ) AS oct,
-                                                            ( SELECT COUNT( lg_ordencab.id_regmov ) FROM lg_ordencab lg_ordencab WHERE lg_ordencab.cmes = '11' AND lg_ordencab.cper = ac ) AS nov,
-                                                            ( SELECT COUNT( lg_ordencab.id_regmov ) FROM lg_ordencab lg_ordencab WHERE lg_ordencab.cmes = '12' AND lg_ordencab.cper = ac ) AS dic 
+                                                        lg_ordencab.cper AS per,
+                                                        (
+                                                        SELECT
+                                                            COUNT( lg_ordencab.id_regmov ) 
                                                         FROM
-                                                            tb_costusu
-                                                            INNER JOIN lg_ordencab ON tb_costusu.ncodproy = lg_ordencab.ncodpry
-                                                            INNER JOIN tb_proyectos ON lg_ordencab.ncodpry = tb_proyectos.nidreg
-                                                            INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi 
+                                                            lg_ordencab lg_ordencab 
                                                         WHERE
-                                                            tb_costusu.id_cuser = :user 
-                                                            AND lg_ordencab.nflgactivo = 1 
-                                                            AND tb_costusu.nflgactivo = 1 
-                                                            AND lg_ordencab.cper $fecha 
-                                                            AND tb_costusu.ncodproy $costos 
-                                                            AND cm_entidad.id_centi $entidad 
-                                                            AND ISNULL( lg_ordencab.ntipdoc ) 
-                                                        GROUP BY
-                                                            lg_ordencab.cper");
+                                                            lg_ordencab.cmes = '01' 
+                                                            AND lg_ordencab.cper = per 
+                                                            AND lg_ordencab.ncodcos $costo 
+                                                            AND lg_ordencab.id_centi $entidad 
+                                                        ) AS ene,
+                                                        (
+                                                        SELECT
+                                                            COUNT( lg_ordencab.id_regmov ) 
+                                                        FROM
+                                                            lg_ordencab lg_ordencab 
+                                                        WHERE
+                                                            lg_ordencab.cmes = '02' 
+                                                            AND lg_ordencab.cper = per 
+                                                            AND lg_ordencab.ncodcos $costo 
+                                                            AND lg_ordencab.id_centi $entidad 
+                                                        ) AS feb,
+                                                        (
+                                                        SELECT
+                                                            COUNT( lg_ordencab.id_regmov ) 
+                                                        FROM
+                                                            lg_ordencab lg_ordencab 
+                                                        WHERE
+                                                            lg_ordencab.cmes = '03' 
+                                                            AND lg_ordencab.cper = per 
+                                                            AND lg_ordencab.ncodcos $costo 
+                                                            AND lg_ordencab.id_centi $entidad 
+                                                        ) AS mar,
+                                                        (
+                                                        SELECT
+                                                            COUNT( lg_ordencab.id_regmov ) 
+                                                        FROM
+                                                            lg_ordencab lg_ordencab 
+                                                        WHERE
+                                                            lg_ordencab.cmes = '04' 
+                                                            AND lg_ordencab.cper = per 
+                                                            AND lg_ordencab.ncodcos $costo 
+                                                            AND lg_ordencab.id_centi $entidad 
+                                                        ) AS abr,
+                                                        (
+                                                        SELECT
+                                                            COUNT( lg_ordencab.id_regmov ) 
+                                                        FROM
+                                                            lg_ordencab lg_ordencab 
+                                                        WHERE
+                                                            lg_ordencab.cmes = '05' 
+                                                            AND lg_ordencab.cper = per 
+                                                            AND lg_ordencab.ncodcos $costo 
+                                                            AND lg_ordencab.id_centi $entidad  
+                                                        ) AS may,
+                                                        (
+                                                        SELECT
+                                                            COUNT( lg_ordencab.id_regmov ) 
+                                                        FROM
+                                                            lg_ordencab lg_ordencab 
+                                                        WHERE
+                                                            lg_ordencab.cmes = '06' 
+                                                            AND lg_ordencab.cper = per 
+                                                            AND lg_ordencab.ncodcos $costo 
+                                                            AND lg_ordencab.id_centi $entidad  
+                                                        ) AS jun,
+                                                        (
+                                                        SELECT
+                                                            COUNT( lg_ordencab.id_regmov ) 
+                                                        FROM
+                                                            lg_ordencab lg_ordencab 
+                                                        WHERE
+                                                            lg_ordencab.cmes = '07' 
+                                                            AND lg_ordencab.cper = per 
+                                                            AND lg_ordencab.ncodcos $costo 
+                                                            AND lg_ordencab.id_centi $entidad  
+                                                        ) AS jul,
+                                                        (
+                                                        SELECT
+                                                            COUNT( lg_ordencab.id_regmov ) 
+                                                        FROM
+                                                            lg_ordencab lg_ordencab 
+                                                        WHERE
+                                                            lg_ordencab.cmes = '08' 
+                                                            AND lg_ordencab.cper = per 
+                                                            AND lg_ordencab.ncodcos $costo 
+                                                            AND lg_ordencab.id_centi $entidad 
+                                                        ) AS ago,
+                                                        (
+                                                        SELECT
+                                                            COUNT( lg_ordencab.id_regmov ) 
+                                                        FROM
+                                                            lg_ordencab lg_ordencab 
+                                                        WHERE
+                                                            lg_ordencab.cmes = '09' 
+                                                            AND lg_ordencab.cper = per 
+                                                            AND lg_ordencab.ncodcos $costo 
+                                                            AND lg_ordencab.id_centi $entidad 
+                                                        ) AS sep,
+                                                        (
+                                                        SELECT
+                                                            COUNT( lg_ordencab.id_regmov ) 
+                                                        FROM
+                                                            lg_ordencab lg_ordencab 
+                                                        WHERE
+                                                            lg_ordencab.cmes = '10' 
+                                                            AND lg_ordencab.cper = per 
+                                                            AND lg_ordencab.ncodcos $costo 
+                                                            AND lg_ordencab.id_centi $entidad  
+                                                        ) AS oct,
+                                                        (
+                                                        SELECT
+                                                            COUNT( lg_ordencab.id_regmov ) 
+                                                        FROM
+                                                            lg_ordencab lg_ordencab 
+                                                        WHERE
+                                                            lg_ordencab.cmes = '11' 
+                                                            AND lg_ordencab.cper = per 
+                                                            AND lg_ordencab.ncodcos $costo 
+                                                            AND lg_ordencab.id_centi $entidad  
+                                                        ) AS nov,
+                                                        (
+                                                        SELECT
+                                                            COUNT( lg_ordencab.id_regmov ) 
+                                                        FROM
+                                                            lg_ordencab lg_ordencab 
+                                                        WHERE
+                                                            lg_ordencab.cmes = '12' 
+                                                            AND lg_ordencab.cper = per 
+                                                            AND lg_ordencab.ncodcos $costo 
+                                                            AND lg_ordencab.id_centi $entidad  
+                                                        ) AS dic 
+                                                    FROM
+                                                        tb_costusu
+                                                        LEFT JOIN lg_ordencab ON tb_costusu.ncodproy = lg_ordencab.ncodpry 
+                                                    WHERE
+                                                        tb_costusu.id_cuser = :user 
+                                                        AND lg_ordencab.nflgactivo = 1 
+                                                        AND tb_costusu.nflgactivo = 1 
+                                                        AND ISNULL( lg_ordencab.ntipdoc ) 
+                                                        AND lg_ordencab.cper $fecha 
+                                                        AND lg_ordencab.ncodcos $costo 
+                                                        AND lg_ordencab.id_centi $entidad  
+                                                    GROUP BY
+                                                        lg_ordencab.cper");
 
             $sql->execute(["user"=>$_SESSION['iduser']]);
 
@@ -460,7 +578,7 @@
 
             if( $sql->rowCount() ) {
                 while ($rs = $sql->fetch()) {
-                    $valor['nombre'] = $rs['ac'];
+                    $valor['nombre'] = $rs['per'];
                     $valor['series'] = [$rs['ene'],$rs['feb'],$rs['mar'],$rs['abr'],$rs['may'],$rs['jun'],$rs['jul'],$rs['ago'],$rs['sep'],$rs['oct'],$rs['nov'],$rs['dic']];
 
                     array_push($valores,$valor);
