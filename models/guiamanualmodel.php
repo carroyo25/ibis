@@ -35,7 +35,8 @@
                                                     WHERE
                                                         alm_desplibrescab.nflgactivo = 1
                                                         AND alm_desplibrescab.cnumguia LIKE :guia
-                                                        AND YEAR(alm_desplibrescab.ffecdoc) LIKE :anio");
+                                                        AND YEAR(alm_desplibrescab.ffecdoc) LIKE :anio
+                                                    ORDER BY alm_desplibrescab.ffecdoc DESC");
                 $sql->execute(["guia"=>$guia,"anio"=>$anio]);
                 $rowCount = $sql->rowCount();
 

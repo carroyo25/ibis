@@ -3542,10 +3542,10 @@
 }
 .wrap__new .wrap__body .account_body .account_body_details span {
   font-weight: bold;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   border: 1px dotted #c2c2c2;
   text-align: right;
-  width: 4rem;
+  width: 20rem;
 }
 
 .filter_options {
