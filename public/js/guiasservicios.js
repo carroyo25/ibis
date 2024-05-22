@@ -590,7 +590,7 @@ $(function() {
         $("#tipo").val("PEDIDO DE SERVICIO");
         $("#codigo_movimiento").val(89);
 
-        $("#busqueda").fadeOut();
+        $("#busquedaPedido").fadeOut();
 
         return false;
     });

@@ -505,7 +505,7 @@
 
         public function filtrarPedidoServicioID($id,$costos){
             try {
-                $salida = "NO DA VALOR";
+                $salida = "";
 
                 $sql = $this->db->connect()->prepare("SELECT
                                                     tb_pedidocab.idreg,
@@ -689,6 +689,68 @@
                 }
 
                 return $salida;
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        public function detallesPedidoServicio($id){
+            try {
+                $sql=$this->db->connect()->prepare("SELECT
+                                                    tb_pedidodet.iditem,
+                                                    tb_pedidodet.idpedido,
+                                                    tb_pedidodet.idprod,
+                                                    tb_pedidodet.idcostos,
+                                                    tb_pedidodet.unid,
+                                                    tb_pedidodet.cant_pedida,
+                                                    UPPER( tb_pedidodet.observaciones ) AS observaciones,
+                                                    tb_pedidodet.idorden, 
+	                                                cm_producto.cdesprod,
+                                                    cm_producto.ccodprod,
+                                                    UPPER( cm_producto.cdesprod ) AS cdesprod,
+                                                    tb_unimed.cabrevia 
+                                                FROM
+                                                    tb_pedidodet
+                                                    INNER JOIN cm_producto ON tb_pedidodet.idprod = cm_producto.id_cprod
+                                                    INNER JOIN tb_unimed ON tb_pedidodet.unid = tb_unimed.ncodmed 
+                                                WHERE
+                                                    tb_pedidodet.idpedido = :id 
+                                                    AND tb_pedidodet.nflgActivo = 1");
+                $sql->execute(["id"=>$id]);
+                
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0) {
+                    $item=1;
+                    
+                    while ($rs = $sql->fetch()){
+                        $saldo = $rs['cantidad'] - $rs['pendiente'];
+
+                        if ( $saldo > 0 ) {
+                            $salida.='<tr data-detorden="'.$rs['idorden'].'" 
+                                        data-idprod="'.$rs['idprod'].'"
+                                        data-iddetped="'.$rs['idpedido'].'"
+                                        data-saldo="'.$rs['cant_pedida'].'"
+                                        data-grabado="0"
+                                        data-id="-">
+                                            <td class="textoCentro"><a href="'.$rs['id_orden'].'" data-accion="deleteItem" class="eliminarItem"><i class="fas fa-minus"></i></a></td>
+                                            <td class="textoCentro"><input type="checkbox"></td>
+                                            <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
+                                            <td class="textoCentro">'.$rs['ccodprod'].'</td>
+                                            <td class="pl20px">'.$rs['cdesprod'].'</td>
+                                            <td class="textoCentro">'.$rs['cabrevia'].'</td>
+                                            <td class="textoDerecha pr20px"><input type="text" value="'.$rs['cantidad'].'" readonly></td>
+                                            <td class="textoCentro"><input type="hidden" readonly></td>
+                                            <td class="textoCentro"><input type="hidden" readonly></td>
+                                            <td class="textoCentro"><input type="hidden" readonly></td>
+                                            <td class="textoCentro">'.$rs['nrodoc'].'</td>
+                                            <td class="textoCentro">'.$rs['cnumero'].'</td>
+                                    </tr>';
+                        }
+                    }
+                }
+
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
                 return false;
