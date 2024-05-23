@@ -58,6 +58,10 @@
         function filtraPedido(){
             echo $this->model->filtrarPedidoServicioID($_POST['id'],$_POST['costos']);
         }
+
+        function detallesPedido(){
+            echo $this->model->detallesPedidoServicio($_POST['id']);
+        }
         
     }
 ?>

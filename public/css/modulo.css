@@ -3604,6 +3604,21 @@
   border: 1px dotted #979797;
   padding: 1rem;
   gap: 20px;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
+.wrap_compras .wrap_compras_workarea .filtros > div {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  gap: 1rem;
+}
+.wrap_compras .wrap_compras_workarea .filtros .opcionesFiltros {
+  width: 100%;
+}
+.wrap_compras .wrap_compras_workarea .filtros .iconosFiltros {
+  gap: 2rem;
 }
 .wrap_compras .wrap_compras_workarea .indicadores {
   height: 75vh;

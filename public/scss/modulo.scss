@@ -3314,6 +3314,20 @@ $emitido:#F8CAAD;
             border: 1px dotted #979797;
             padding: 1rem;
             gap: 20px;
+            justify-content: space-between;
+
+            &>div{
+                display: flex;
+                gap: 1rem;
+            }
+
+            .opcionesFiltros{
+                width: 100%;
+            }
+
+            .iconosFiltros {
+                gap: 2rem;
+            }
         }
     
         .indicadores {

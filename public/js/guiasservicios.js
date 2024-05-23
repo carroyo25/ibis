@@ -590,6 +590,18 @@ $(function() {
         $("#tipo").val("PEDIDO DE SERVICIO");
         $("#codigo_movimiento").val(89);
 
+        $.post(RUTA+"guiasservicios/detallesPedido",{id:$(this).data("orden")},
+            function (data, text, requestXHR) {
+                $("#tablaDetalles tbody")
+                .empty()
+                .append(data);
+
+                $("#items").val($("#tablaDetalles tbody tr").length);
+
+            },
+            "text"
+        );
+
         $("#busquedaPedido").fadeOut();
 
         return false;

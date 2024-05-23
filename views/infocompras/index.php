@@ -10,12 +10,20 @@
         <h1>Reporte de Compras</h1>
         <div class="wrap_compras_workarea">
             <div class="filtros">
-                <div class="item-filtro">
-                    <a href="#" class="item-filtro-click">Proyecto <i class="fas fa-angle-down"></i></a>
+                <div class="opcionesFiltros">
+                    <div class="item-filtro">
+                        <a href="#" class="item-filtro-click">Proyecto <i class="fas fa-angle-down"></i></a>
+                    </div>
+                    <div class="item-filtro">
+                        <a href="#" class="item-filtro-click">Año <i class="fas fa-angle-down"></i></a>
+                    </div>
                 </div>
-                <div class="item-filtro">
-                    <a href="#" class="item-filtro-click">Año <i class="fas fa-angle-down"></i></a>
-                </div>    
+                <div class="iconosFiltros">
+                    <a href="#"><i class="fas fa-stop"></i></i></a>
+                    <a href="#"><i class="fas fa-pause"></i></a>
+                    <a href="#"><i class="fas fa-grip-horizontal"></i></a>
+                    <a href="#"><i class="fas fa-th-large"></i></a>
+                </div>
             </div>
             <div class="indicadores">
                 <div class="indicadoresExterno">
@@ -35,7 +43,7 @@
                                     <td>1</td>
                                     <td>ANULADO</td>
                                     <td></td>
-                                    <td></td>
+                                    <td>10</td>
                                 </tr>
                                 <tr>
                                     <td>2</td>
@@ -47,7 +55,7 @@
                                     <td>3</td>
                                     <td>FIRMA</td>
                                     <td></td>
-                                    <td></td>
+                                    <td>1</td>
                                 </tr>
                                 <tr>
                                     <td>4</td>
@@ -71,13 +79,13 @@
                                     <td>7</td>
                                     <td>EN ALMACEN LURIN</td>
                                     <td></td>
-                                    <td></td>
+                                    <td>367</td>
                                 </tr>
                                 <tr>
                                     <td>8</td>
                                     <td>TRANSITO</td>
                                     <td></td>
-                                    <td></td>
+                                    <td>155</td>
                                 </tr>
                                 <tr>
                                     <td>9</td>

@@ -697,6 +697,9 @@
 
         public function detallesPedidoServicio($id){
             try {
+
+                $salida = "";
+
                 $sql=$this->db->connect()->prepare("SELECT
                                                     tb_pedidodet.iditem,
                                                     tb_pedidodet.idpedido,
@@ -725,31 +728,29 @@
                     $item=1;
                     
                     while ($rs = $sql->fetch()){
-                        $saldo = $rs['cantidad'] - $rs['pendiente'];
-
-                        if ( $saldo > 0 ) {
                             $salida.='<tr data-detorden="'.$rs['idorden'].'" 
                                         data-idprod="'.$rs['idprod'].'"
                                         data-iddetped="'.$rs['idpedido'].'"
                                         data-saldo="'.$rs['cant_pedida'].'"
                                         data-grabado="0"
                                         data-id="-">
-                                            <td class="textoCentro"><a href="'.$rs['id_orden'].'" data-accion="deleteItem" class="eliminarItem"><i class="fas fa-minus"></i></a></td>
+                                            <td class="textoCentro"><a href="'.$rs['idpedido'].'" data-accion="deleteItem" class="eliminarItem"><i class="fas fa-minus"></i></a></td>
                                             <td class="textoCentro"><input type="checkbox"></td>
                                             <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
                                             <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                             <td class="pl20px">'.$rs['cdesprod'].'</td>
                                             <td class="textoCentro">'.$rs['cabrevia'].'</td>
-                                            <td class="textoDerecha pr20px"><input type="text" value="'.$rs['cantidad'].'" readonly></td>
+                                            <td class="textoDerecha pr20px"><input type="text" value="'.$rs['cant_pedida'].'" readonly></td>
                                             <td class="textoCentro"><input type="hidden" readonly></td>
                                             <td class="textoCentro"><input type="hidden" readonly></td>
                                             <td class="textoCentro"><input type="hidden" readonly></td>
-                                            <td class="textoCentro">'.$rs['nrodoc'].'</td>
-                                            <td class="textoCentro">'.$rs['cnumero'].'</td>
+                                            <td class="textoCentro"></td>
+                                            <td class="textoCentro"></td>
                                     </tr>';
-                        }
                     }
                 }
+
+                return $salida;
 
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
