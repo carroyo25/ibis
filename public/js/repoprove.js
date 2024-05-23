@@ -3,9 +3,6 @@ $(function() {
         ffemision = [],
         cCostos = [],
         cEntidad = [];
-
-    /*let valores =  [  119, 197 ],
-        valores1 =  [ 253, 222, 291, 276, 385, 511, 591, 474, 462, 590, 766, 538 ];*/
     
     $("#espera").fadeOut();
 

@@ -3583,3 +3583,96 @@
   margin-top: 10px;
   height: 1.5rem;
 }
+
+.wrap_compras {
+  width: 100%;
+  height: 100vh;
+  position: relative;
+}
+.wrap_compras .wrap_compras_workarea {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-rows: 5% 16px 1fr;
+  grid-template-rows: 5% 1fr;
+  gap: 16px;
+  width: 100%;
+}
+.wrap_compras .wrap_compras_workarea .filtros {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  border: 1px dotted #979797;
+  padding: 1rem;
+  gap: 20px;
+}
+.wrap_compras .wrap_compras_workarea .indicadores {
+  height: 75vh;
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-rows: 37vh 10px 37vh;
+  grid-template-rows: repeat(2, 37vh);
+  -ms-grid-columns: 1fr 10px 1fr 10px 1fr;
+  grid-template-columns: repeat(3, 1fr);
+  overflow: auto;
+  gap: 10px;
+}
+.wrap_compras .wrap_compras_workarea .indicadores > *:nth-child(1) {
+  -ms-grid-row: 1;
+  -ms-grid-column: 1;
+}
+.wrap_compras .wrap_compras_workarea .indicadores > *:nth-child(2) {
+  -ms-grid-row: 1;
+  -ms-grid-column: 3;
+}
+.wrap_compras .wrap_compras_workarea .indicadores > *:nth-child(3) {
+  -ms-grid-row: 1;
+  -ms-grid-column: 5;
+}
+.wrap_compras .wrap_compras_workarea .indicadores > *:nth-child(4) {
+  -ms-grid-row: 3;
+  -ms-grid-column: 1;
+}
+.wrap_compras .wrap_compras_workarea .indicadores > *:nth-child(5) {
+  -ms-grid-row: 3;
+  -ms-grid-column: 3;
+}
+.wrap_compras .wrap_compras_workarea .indicadores > *:nth-child(6) {
+  -ms-grid-row: 3;
+  -ms-grid-column: 5;
+}
+.wrap_compras .wrap_compras_workarea .indicadores h4 {
+  display: block;
+  background: #000;
+  color: #fff;
+  font-size: 0.8rem;
+  line-height: 1.5rem;
+  padding-left: 10px;
+}
+.wrap_compras .wrap_compras_workarea .indicadores .indicadoresExterno {
+  border: 1px solid #979797;
+  overflow: auto;
+}
+.wrap_compras .wrap_compras_workarea .indicadores .indicadoresExterno .indicadoresInterno {
+  padding: 0.5rem;
+}
+.wrap_compras .wrap_compras_workarea .indicadores table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 10px;
+  font-size: 0.8rem;
+}
+.wrap_compras .wrap_compras_workarea .indicadores table thead {
+  background: #0078D4;
+  line-height: 1.5rem;
+  color: #fff;
+  border: 1px solid #ccc;
+}
+.wrap_compras .wrap_compras_workarea .indicadores table tbody {
+  border: 1px solid #ccc;
+}
+.wrap_compras .wrap_compras_workarea .indicadores table tbody tr, .wrap_compras .wrap_compras_workarea .indicadores table tbody td, .wrap_compras .wrap_compras_workarea .indicadores table tbody th {
+  border: 1px solid #ccc;
+}
+.wrap_compras .wrap_compras_workarea .indicadores table tfoot {
+  border: 1px solid #ccc;
+}
