@@ -686,6 +686,7 @@
                                                         AND tb_costusu.nflgactivo = 1 
                                                         AND lg_ordencab.nEstadoDoc BETWEEN 60 AND 62
                                                     ORDER BY id_regmov DESC");
+                                                    
                 $sql->execute(["usr"=>$_SESSION['iduser'],"id"=>$id]);
                 $rowCount = $sql->rowCount();
 
@@ -947,12 +948,12 @@
                                                     FROM
                                                         alm_despachodet
                                                         LEFT JOIN alm_despachocab ON alm_despachocab.id_regalm = alm_despachodet.id_regalm
-                                                        INNER JOIN tb_almacen AS origen ON alm_despachocab.ncodalm1 = origen.ncodalm
-                                                        INNER JOIN tb_almacen AS destino ON alm_despachocab.ncodalm2 = destino.ncodalm
-                                                        INNER JOIN tb_proyectos ON alm_despachocab.ncodpry = tb_proyectos.nidreg
-                                                        INNER JOIN tb_costusu ON alm_despachocab.ncodpry = alm_despachocab.ncodpry
-                                                        INNER JOIN tb_parametros ON alm_despachocab.nEstadoDoc = tb_parametros.nidreg 
-                                                        INNER JOIN lg_ordencab ON lg_ordencab.id_regmov = alm_despachodet.nropedido
+                                                        LEFT JOIN tb_almacen AS origen ON alm_despachocab.ncodalm1 = origen.ncodalm
+                                                        LEFT JOIN tb_almacen AS destino ON alm_despachocab.ncodalm2 = destino.ncodalm
+                                                        LEFT JOIN tb_proyectos ON alm_despachocab.ncodpry = tb_proyectos.nidreg
+                                                        LEFT JOIN tb_costusu ON alm_despachocab.ncodpry = alm_despachocab.ncodpry
+                                                        LEFT JOIN tb_parametros ON alm_despachocab.nEstadoDoc = tb_parametros.nidreg 
+                                                        LEFT JOIN lg_ordencab ON lg_ordencab.id_regmov = alm_despachodet.nropedido
                                                     WHERE
                                                         tb_costusu.nflgactivo = 1 
                                                         AND alm_despachocab.nEstadoDoc = 62

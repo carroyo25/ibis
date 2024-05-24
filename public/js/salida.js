@@ -136,13 +136,15 @@ $(function() {
     $("#closeProcess").click(function (e) { 
         e.preventDefault();
 
+        $("#proceso").fadeOut();
+
         $.post(RUTA+"salida/actualizaDespachos",
             function (data, textStatus, jqXHR) {
                 $(".itemsTabla table tbody")
                     .empty()
                     .append(data);
 
-                $("#proceso").fadeOut();
+                
                 $("#codigo_costos").val("");
 
                 document.getElementById("formProceso").reset();

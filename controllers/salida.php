@@ -70,7 +70,7 @@
         }
 
         function filtraDespachos() {
-            echo $this->model-> filtrarNotasDespacho($_POST);
+            echo $this->model->filtrarNotasDespacho($_POST);
         }
 
         function modificarSalida() {
