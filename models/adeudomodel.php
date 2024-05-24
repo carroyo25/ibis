@@ -206,6 +206,7 @@
                     $datos = json_decode($detalles);
                     $nreg = count($datos);
                     $kardex = $this->norepite();
+                    $mmtto = false;
 
                     for ($i=0; $i<$nreg; $i++){
                         if ($datos[$i]->devuelto > 0) {
@@ -229,6 +230,8 @@
                                             "user"=>$_SESSION['iduser']]);
                             
                             $rowCount = $sql->rowCount();
+
+                            $mmtto = $this->liberarMantenimiento($datos[$i]->serie,$datos[$i]->nrodoc);
                         }
                        
                     }
@@ -237,8 +240,6 @@
                 }      
             }
 
-            
-        
             return  $respuesta;
         }
 
@@ -518,6 +519,30 @@
                 $mail->send();
                 $mail->ClearAddresses();
 
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            } 
+        }
+
+        private function liberarMantenimiento($serie,$documento){
+            try {
+
+                $salida = "mmtto no actualizado";
+                
+                $sql=$this->db->connect()->prepare("UPDATE ti_mmttos 
+                                                    SET ti_mmttos.flgactivo = 0
+                                                    WHERE 
+                                                        ti_mmttos.cserie LIKE :serie
+                                                        AND ti_mmttos.nrodoc = :documento");
+
+                $sql->execute(['serie'=>'%'.$serie."%","documento"=>$documento]);
+
+                if ($sql->rowCount() >0) {
+                    $salida = "mmtto actualizado";
+                }
+
+                return $salida;
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
