@@ -8,7 +8,13 @@
 <body>
     <div class="wrap__new">
         <div class="wrap__title">
-            <h1>Reporte de Proveedores</h1>
+            <div class="header__title">
+                <h1>Reporte de Proveedores</h1>
+                <div>
+                    <a href="#" id="excelFile"><i class="fas fa-file-excel"></i><p>Exportar</p></a>
+                    <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
+                </div>
+            </div>
             <div class="wrap__body">
                 <div class="table_body">
                     <table id="tablaPrincipalProveedor">

@@ -592,5 +592,121 @@
                 return false;
             }
         }
+
+        public function crearExcelProveedores($detalles){
+            require_once('public/PHPExcel/PHPExcel.php');
+            try {
+                $objPHPExcel = new PHPExcel();
+                
+                $objPHPExcel->getProperties()
+                    ->setCreator("Sical")
+                    ->setLastModifiedBy("Sical")
+                    ->setTitle("Reporte Proveedores")
+                    ->setSubject("Template excel")
+                    ->setDescription("Cargo Plan")
+                    ->setKeywords("Template excel");
+
+                $cuerpo = array(
+                    'font'  => array(
+                    'bold'  => false,
+                    'size'  => 7,
+                ));
+
+                $objWorkSheet = $objPHPExcel->createSheet(1);
+
+                $objPHPExcel->setActiveSheetIndex(0);
+                $objPHPExcel->getActiveSheet()->setTitle("Reporte Proveedores");
+
+                $objPHPExcel->getActiveSheet()
+                            ->getStyle('A2:N2')
+                            ->getFill()
+                            ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
+                            ->getStartColor()
+                            ->setRGB('BFCDDB');
+
+                $objPHPExcel->getActiveSheet()->mergeCells('A1:H1');
+                $objPHPExcel->getActiveSheet()->setCellValue('A1','REPORTE DE PROVEDORES');
+
+                $objPHPExcel->getActiveSheet()->getStyle('A1:AH2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('A1:AH2')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+
+                $objPHPExcel->getActiveSheet()->getRowDimension('2')->setRowHeight(60);
+
+                $objPHPExcel->getActiveSheet()->getColumnDimension("B")->setAutoSize(true);
+                $objPHPExcel->getActiveSheet()->getColumnDimension("C")->setAutoSize(true);
+                $objPHPExcel->getActiveSheet()->getColumnDimension("D")->setAutoSize(true);
+                $objPHPExcel->getActiveSheet()->getColumnDimension("E")->setAutoSize(true);
+                $objPHPExcel->getActiveSheet()->getColumnDimension("F")->setAutoSize(true);
+                $objPHPExcel->getActiveSheet()->getColumnDimension("G")->setAutoSize(true);
+                $objPHPExcel->getActiveSheet()->getColumnDimension("H")->setAutoSize(true);
+                
+
+
+                $objPHPExcel->getActiveSheet()->getStyle('A1:AH2')->getAlignment()->setWrapText(true);
+
+                $objPHPExcel->getActiveSheet()->setCellValue('A2','Orden'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('B2','Emision'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('C2','Descripcion'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('D2','Centro Costos'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('E2','Area'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('F2','Proveedor'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('G2','Precio Soles'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('H2','Precio Dolares'); // esto cambia
+
+                $datos = json_decode($detalles);
+                $fila = 3;
+                $color_estado1 = "#FFD700";
+                $color2 = "#FFD700";
+                $color3 = "#FFD700";
+                $color4 = "#FFD700";
+
+                forEach($datos AS $dato){
+                    
+                    /*if ($dato->estado1 == 'Pendiente'){
+                        $color_estado1 = "#FFD700";
+                    }else if($dato->estado1 == 'Realizado'){
+                        $color_estado1 = "#36DC2E";
+                    }else if($dato->estado1 == 'Vencido'){
+                        $color_estado1 = "#DC362E";
+                    }
+
+                    $color1 = array(
+                        'fill' => array(
+                            'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                            'startcolor' => array(
+                                'argb' => $color_estado1,
+                            ),
+                            'endcolor' => array(
+                                'argb' => $color_estado1,
+                            ),
+                        ),
+                    );*/
+
+
+                    $objPHPExcel->getActiveSheet()->setCellValue('A'.$fila,$dato->numero);
+                    $objPHPExcel->getActiveSheet()->setCellValue('B'.$fila,$dato->emision);
+                    $objPHPExcel->getActiveSheet()->setCellValue('C'.$fila,$dato->descripcion);
+                    $objPHPExcel->getActiveSheet()->setCellValue('D'.$fila,$dato->costos);
+                    $objPHPExcel->getActiveSheet()->setCellValue('E'.$fila,$dato->area);
+                    $objPHPExcel->getActiveSheet()->setCellValue('F'.$fila,$dato->proveedor);
+                    $objPHPExcel->getActiveSheet()->setCellValue('G'.$fila,$dato->soles);
+                    $objPHPExcel->getActiveSheet()->setCellValue('H'.$fila,$dato->dolares);
+
+                    $fila++;
+                }
+
+                $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel,'Excel2007');
+                $objWriter->save('public/documentos/reportes/repoprove.xlsx');
+
+                return array("documento"=>'public/documentos/reportes/repoprove.xlsx');
+
+                exit();
+
+                
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
     } 
 ?>

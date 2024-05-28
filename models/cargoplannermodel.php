@@ -2014,7 +2014,6 @@
                                 $dias_atraso  = "";
                             }else if ( $dato['cantidad_atendida'] > 0) {
                                 $semaforoEstado = "Stock";
-                                //$color_semaforo = "9068B0";
                                 $color_semaforo = '90EE90';
                                 $dias_atraso  = "";
                             }

@@ -3171,6 +3171,21 @@ $emitido:#F8CAAD;
         border-bottom: 1px solid #c2c2c2;
     }
 
+    .header__title{
+        display: flex;
+        justify-content: space-between;
+
+        div{
+            display: flex;
+            gap: 20px;
+
+            a {
+                display: block;
+                text-align: center;
+            }
+        }
+    }
+
     .wrap__body{
         display: grid;
         grid-template-columns: repeat(2, 1fr);
@@ -3179,7 +3194,7 @@ $emitido:#F8CAAD;
 
         .table_body{
             grid-area: 1 / 1 / 2 / 3;
-            height: 50vh;
+            height: 40vh;
             overflow: auto;
 
             table {
@@ -3279,7 +3294,7 @@ $emitido:#F8CAAD;
         border: 1px solid #c2c2c2;
         text-align: left;
         padding: 0.5rem;
-        max-height: 20rem;
+        max-height: 15rem;
         overflow: auto;
         line-height: 1.5rem;
 
