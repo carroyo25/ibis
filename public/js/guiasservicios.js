@@ -253,22 +253,9 @@ $(function() {
     $("#tablaDetalles tbody").on("click","a", function (e) {
         e.preventDefault();
 
-        if ( $(this).attr("href") === 'search' ){
-            
-            fila = e.target.closest("tr");
-
-            $.post(RUTA+"pedidos/llamaProductos", {tipo:37},
-            function (data, textStatus, jqXHR) {
-                    $("#tablaModulos tbody")
-                        .empty()
-                        .append(data);
-    
-                    $("#busqueda").fadeIn();
-                },
-                "text"
-            );
-        }else if( $(this).attr("href") === 'delete' ){
+        if( $(this).attr("href") === 'delete' ){
             e.target.closest("tr").remove();
+            fillTables($("#tablaDetalles tbody > tr"),0);
         }
 
         return false;
@@ -315,7 +302,7 @@ $(function() {
 
         let row = `<tr data-grabado="${grabado}" data-idprod="${idprod}" data-codund="${nunid}" data-idx="-">
                     <td></td>
-                    <td class="textoCentro"><a href="#"><i class="fas fa-eraser"></i></a></td>
+                    <td class="textoCentro"><a href="delete"><i class="fas fa-eraser"></i></a></td>
                     <td class="textoCentro">${nFilas}</td>
                     <td class="textoCentro">${codigo}</td>
                     <td class="pl20px">${descrip}</td>

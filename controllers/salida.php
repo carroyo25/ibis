@@ -86,7 +86,7 @@
         }
 
         function guiaSunat() {
-            echo json_encode($this->model->enviarSunat($_POST['cabecera'],$_POST['detalles']));
+            echo json_encode($this->model->enviarSunatSalida($_POST['cabecera'],$_POST['detalles']));
         }
 
         function generaNumero(){

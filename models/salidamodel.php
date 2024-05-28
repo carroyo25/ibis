@@ -1224,7 +1224,7 @@
             }
         }
 
-        public function enviarSunat($cabecera,$detalles) {
+        public function enviarSunatSalida($cabecera,$detalles) {
             header('Access-Control-Allow-Origin: *');
             require 'public/libraries/efactura.php';
 
@@ -1279,7 +1279,7 @@
         }
 
         private function desarrollo_xml($header,$detalles){
-            $serie  = 'T001';
+            $serie  = 'TC01';
             $numero = '00000001';
 
             $xml =  '<?xml version="1.0" encoding="UTF-8"?>
@@ -1414,7 +1414,7 @@
 
         private function desarrollo_xml_almacenes_internos($header,$detalles){
             $serie  = 'T001';
-            $numero = '0000004';
+            $numero = '00000006';
 
             $xml = '<?xml version="1.0" encoding="UTF-8"?>
                      <DespatchAdvice xmlns="urn:oasis:names:specification:ubl:schema:xsd:DespatchAdvice-2" 
@@ -1498,7 +1498,7 @@
                                      <cbc:JobTitle>Principal</cbc:JobTitle>
                                      <cac:IdentityDocumentReference>
                                          <!-- LICENCIA DE CONDUCIR -->
-                                         <cbc:ID></cbc:ID>
+                                         <cbc:ID>'.$header->licencia_conducir.'</cbc:ID>
                                      </cac:IdentityDocumentReference>
                                  </cac:DriverPerson>
                              </cac:ShipmentStage>

@@ -132,7 +132,8 @@
                                                                                             ndespacho=:candesp,
                                                                                             cobserva=:observac,
                                                                                             cDescripcion=:descripcion,
-                                                                                            cUnidad=:unidad");
+                                                                                            cUnidad=:unidad,
+                                                                                            cSerie=:serie");
                          $sql->execute(["cod"=>$indice,
                                         "ori"=>$almacen,
                                         "idprod"=>$datos[$i]->idprod,
@@ -150,7 +151,8 @@
                                         "orden"=>$datos[$i]->orden,
                                         "observac"=>$datos[$i]->obser,
                                         "unidad"=>$datos[$i]->unidad,
-                                        "descripcion"=>$datos[$i]->descripcion]);
+                                        "descripcion"=>$datos[$i]->descripcion,
+                                        "serie"=>$datos[$i]->serie]);
                     } catch (PDOException $th) {
                         echo $th->getMessage();
                         return false;
@@ -868,7 +870,8 @@
                                                         alm_serviciosdet.cCodigo, 
                                                         alm_serviciosdet.cSerie, 
                                                         alm_serviciosdet.cobserva,
-                                                        alm_serviciosdet.cUnidad
+                                                        alm_serviciosdet.cUnidad,
+                                                        alm_serviciosdet.fvence
                                                     FROM
                                                         alm_serviciosdet
                                                     WHERE
@@ -882,16 +885,16 @@
                 if($rowCount > 0) {
                     while ($rs = $sql->fetch()){
                         $salida .='<tr data-grabado="1" >
-                                        <td class="textoCentro"><a href="delete"><i class="fas fa-trash-alt"></i></a></td>
-                                        <td class="textoCentro"><a href="search"><i class="fas fa-search"></i></a></td>
+                                        <td class="textoCentro"><a href="#"><i class="fas fa-trash-alt"></i></a></td>
+                                        <td class="textoCentro"><a href="#"><i class="fas fa-search"></i></a></td>
                                         <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro"><input type="text" value="'.$rs['cCodigo'].'" readOnly></td>
                                         <td class="pl20px"><textarea readOnly>'.$rs['cDescripcion'].'</textarea></td>
                                         <td class="textoCentro">'.$rs['cUnidad'].'</td>
                                         <td><input type="number" value="'.$rs['ndespacho'].'" min=1></td>
                                         <td class="pl20px"><textarea>'.$rs['cobserva'].'</textarea></td>
-                                        <td></td>
-                                        <td></td>
+                                        <td class"textoCentro">'.$rs['fvence'].'</td>
+                                        <td class"textoCentro">'.$rs['cSerie'].'</td>
                                         <td></td>
                                         <td></td>
                                     </tr>';

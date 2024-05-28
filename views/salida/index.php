@@ -217,8 +217,8 @@
                 <div class="tituloDocumento">
                     <div>
                         <p class="titulo_seccion"><strong> Guia de Remision y despacho : </strong></p>
-                        <input type="text" name="serie_guia" id="serie_guia" class="w10por" value="F001" readonly>
-                        <input type="text" name="numero_guia" id="numero_guia" readonly>
+                        <input type="text" name="serie_guia" id="serie_guia" class="w10por" value="0001">
+                        <input type="text" name="numero_guia" id="numero_guia" value="00000006">
                             
                     </div>
                     <div class="opciones_modal">
