@@ -155,6 +155,33 @@ $(function() {
             $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
         });
     });
+
+    $("#excelFile").click(function (e) { 
+        e.preventDefault();
+        
+        $("#esperarCargo").css("opacity","1").fadeIn();
+
+        let formdata = new FormData();
+
+        formdata.append('detalles',JSON.stringify(detalles()));
+
+        fetch (RUTA+"repoprove/archivoExcel",{
+            method: "POST",
+            body: formdata
+        })
+            .then((response)=> {
+                return response.json();
+            })
+            .then((json)=> {
+                $("#esperarCargo").css("opacity","0").fadeOut();
+                window.location.href = json.documento;
+            })
+            .catch((err)=> {
+                console.log(err);
+            });
+
+        return false;
+    });
 })
 
 
@@ -199,3 +226,24 @@ barras = (seriesData) => {
     });
 }
 
+detalles = () => {
+    let DATA = [];
+        
+    let TABLA = $("#tablaPrincipalProveedor tbody >tr");
+    
+    TABLA.each(function(){
+        item= {};
+        item['numero']          = $(this).find('td').eq(0).text(),
+        item['emision']         = $(this).find('td').eq(1).text(),
+        item['descripcion']     = $(this).find('td').eq(2).text(),
+        item['costos']          = $(this).find('td').eq(3).text(),
+        item['area']            = $(this).find('td').eq(4).text(),
+        item['proveedor']       = $(this).find('td').eq(5).text(),
+        item['soles']           = $(this).find('td').eq(6).text(),
+        item['dolares']         = $(this).find('td').eq(7).text(),
+
+        DATA.push(item);
+    })
+
+    return DATA;
+}

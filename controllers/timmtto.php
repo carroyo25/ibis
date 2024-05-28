@@ -38,6 +38,9 @@
         function listaMmttos() {
             echo json_encode($this->model->listarMantenimientos($_POST['costos'],$_POST['serie']));
         }
-        
+
+        function archivoExcel() {
+            echo json_encode($this->model->crearExcel($_POST['detalles']));
+        }
     }
 ?>

@@ -17,6 +17,10 @@
         function filtros(){
             echo json_encode($this->model->listaFiltradas($_POST));
         }
+
+        function archivoExcel() {
+            echo json_encode($this->model->crearExcelProveedores($_POST['detalles']));
+        }
         
     }
 ?>

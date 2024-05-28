@@ -258,4 +258,59 @@ $(() => {
 
         return false;
     });
+
+    $("#excelFile").click(function (e) { 
+        e.preventDefault();
+        
+        $("#esperarCargo").css("opacity","1").fadeIn();
+
+        let formdata = new FormData();
+
+        formdata.append('detalles',JSON.stringify(detalles()));
+
+        fetch (RUTA+"timmtto/archivoExcel",{
+            method: "POST",
+            body: formdata
+        })
+            .then((response)=> {
+                return response.json();
+            })
+            .then((json)=> {
+                $("#esperarCargo").css("opacity","0").fadeOut();
+                window.location.href = json.documento;
+            })
+            .catch((err)=> {
+                console.log(err);
+            });
+
+        return false;
+    });
 })
+
+detalles = () => {
+    let DATA = [];
+        
+    let TABLA = $("#tablaPrincipal tbody >tr");
+    
+    TABLA.each(function(){
+        item= {};
+        item['item']        = $(this).find('td').eq(0).text(),
+        item['descripcion'] = $(this).find('td').eq(1).text(),
+        item['usuario']     = $(this).find('td').eq(2).text(),
+        item['serie']       = $(this).find('td').eq(3).text(),
+        item['entrega']     = $(this).find('td').eq(4).text(),
+        item['costos']      = $(this).find('td').eq(5).text(),
+        item['mmtto1']      = $(this).find('td').eq(6).text(),
+        item['estado1']     = $(this).find('td').eq(7).text(),
+        item['mmtto2']      = $(this).find('td').eq(8).text(),
+        item['estado2']      = $(this).find('td').eq(9).text(),
+        item['mmtto3']      = $(this).find('td').eq(10).text(),
+        item['estado3']      = $(this).find('td').eq(11).text(),
+        item['mmtto3']      = $(this).find('td').eq(12).text(),
+        item['estado4']      = $(this).find('td').eq(13).text();
+
+        DATA.push(item);
+    })
+
+    return DATA;
+}

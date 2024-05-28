@@ -396,6 +396,145 @@
             }
         }
 
+        public function crearExcel($detalles){
+            require_once('public/PHPExcel/PHPExcel.php');
+            try {
+                $objPHPExcel = new PHPExcel();
+                
+                $objPHPExcel->getProperties()
+                    ->setCreator("Sical")
+                    ->setLastModifiedBy("Sical")
+                    ->setTitle("Reporte MMTTO")
+                    ->setSubject("Template excel")
+                    ->setDescription("Cargo Plan")
+                    ->setKeywords("Template excel");
+
+                $cuerpo = array(
+                    'font'  => array(
+                    'bold'  => false,
+                    'size'  => 7,
+                ));
+
+                $objWorkSheet = $objPHPExcel->createSheet(1);
+
+                $objPHPExcel->setActiveSheetIndex(0);
+                $objPHPExcel->getActiveSheet()->setTitle("Reporte MMTTO");
+
+                $objWorkSheet = $objPHPExcel->createSheet(1);
+
+                $objPHPExcel->getActiveSheet()
+                            ->getStyle('A2:N2')
+                            ->getFill()
+                            ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
+                            ->getStartColor()
+                            ->setRGB('BFCDDB');
+
+                $objPHPExcel->getActiveSheet()->mergeCells('A1:N1');
+                $objPHPExcel->getActiveSheet()->setCellValue('A1','REPORTE DE MANTENIMIENTO');
+
+                $objPHPExcel->getActiveSheet()->getStyle('A1:AN2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('A1:AN2')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+
+                $objPHPExcel->getActiveSheet()->getRowDimension('2')->setRowHeight(60);
+
+                $objPHPExcel->getActiveSheet()->getColumnDimension("B")->setAutoSize(true);
+                $objPHPExcel->getActiveSheet()->getColumnDimension("C")->setAutoSize(true);
+                $objPHPExcel->getActiveSheet()->getColumnDimension("D")->setAutoSize(true);
+                $objPHPExcel->getActiveSheet()->getColumnDimension("E")->setAutoSize(true);
+                $objPHPExcel->getActiveSheet()->getColumnDimension("F")->setAutoSize(true);
+                $objPHPExcel->getActiveSheet()->getColumnDimension("G")->setAutoSize(true);
+                $objPHPExcel->getActiveSheet()->getColumnDimension("H")->setAutoSize(true);
+                $objPHPExcel->getActiveSheet()->getColumnDimension("I")->setAutoSize(true);
+                $objPHPExcel->getActiveSheet()->getColumnDimension("J")->setAutoSize(true);
+                $objPHPExcel->getActiveSheet()->getColumnDimension("K")->setAutoSize(true);
+                $objPHPExcel->getActiveSheet()->getColumnDimension("L")->setAutoSize(true);
+                $objPHPExcel->getActiveSheet()->getColumnDimension("M")->setAutoSize(true);
+                $objPHPExcel->getActiveSheet()->getColumnDimension("N")->setAutoSize(true);
+
+
+                $objPHPExcel->getActiveSheet()->getStyle('A1:AN2')->getAlignment()->setWrapText(true);
+
+                $objPHPExcel->getActiveSheet()->setCellValue('A2','Items'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('B2','Descripcion'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('C2','Usuario'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('D2','Serie'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('E2','Fecha Entrega'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('F2','Centro Costos'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('G2','1er MMTTO'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('H2','Estado'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('I2','2do MMTTO'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('J2','Estado'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('K2','3er MMTTO'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('L2','Estado'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('M2','4to MMTTO'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('N2','Estado'); // esto cambia
+
+                $datos = json_decode($detalles);
+                $fila = 3;
+                $color_estado1 = "#FFD700";
+                $color2 = "#FFD700";
+                $color3 = "#FFD700";
+                $color4 = "#FFD700";
+
+                forEach($datos AS $dato){
+                    
+                    /*if ($dato->estado1 == 'Pendiente'){
+                        $color_estado1 = "#FFD700";
+                    }else if($dato->estado1 == 'Realizado'){
+                        $color_estado1 = "#36DC2E";
+                    }else if($dato->estado1 == 'Vencido'){
+                        $color_estado1 = "#DC362E";
+                    }
+
+                    $color1 = array(
+                        'fill' => array(
+                            'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                            'startcolor' => array(
+                                'argb' => $color_estado1,
+                            ),
+                            'endcolor' => array(
+                                'argb' => $color_estado1,
+                            ),
+                        ),
+                    );*/
+
+
+                    $objPHPExcel->getActiveSheet()->setCellValue('A'.$fila,$dato->item);
+                    $objPHPExcel->getActiveSheet()->setCellValue('B'.$fila,$dato->descripcion);
+                    $objPHPExcel->getActiveSheet()->setCellValue('C'.$fila,$dato->usuario);
+                    $objPHPExcel->getActiveSheet()->setCellValue('D'.$fila,$dato->serie);
+                    $objPHPExcel->getActiveSheet()->setCellValue('E'.$fila,$dato->entrega);
+                    $objPHPExcel->getActiveSheet()->setCellValue('F'.$fila,$dato->costos);
+                    $objPHPExcel->getActiveSheet()->setCellValue('G'.$fila,$dato->mmtto1);
+                    $objPHPExcel->getActiveSheet()->setCellValue('H'.$fila,$dato->estado1);
+                    //$objPHPExcel->getActiveSheet()->getStyle('H'.$fila)->applyFromArray($color1);
+                    $objPHPExcel->getActiveSheet()->setCellValue('I'.$fila,$dato->mmtto2);
+                    $objPHPExcel->getActiveSheet()->setCellValue('J'.$fila,$dato->estado2);
+                    //$objPHPExcel->getActiveSheet()->getStyle('J'.$fila)->applyFromArray($color2);
+                    $objPHPExcel->getActiveSheet()->setCellValue('K'.$fila,$dato->mmtto3);
+                    $objPHPExcel->getActiveSheet()->setCellValue('L'.$fila,$dato->estado3);
+                    //$objPHPExcel->getActiveSheet()->getStyle('L'.$fila)->applyFromArray($color3);
+                    $objPHPExcel->getActiveSheet()->setCellValue('M'.$fila,$dato->mmtto3);
+                    $objPHPExcel->getActiveSheet()->setCellValue('N'.$fila,$dato->estado4);
+                    //$objPHPExcel->getActiveSheet()->getStyle('N'.$fila)->applyFromArray($color4);
+
+                    $fila++;
+                }
+
+                $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel,'Excel2007');
+                $objWriter->save('public/documentos/reportes/repommtto.xlsx');
+
+                return array("documento"=>'public/documentos/reportes/repommtto.xlsx');
+
+                exit();
+
+                
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
         private function existeSerie($serie){
             try {
                 $respuesta = false;

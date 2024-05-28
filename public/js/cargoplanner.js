@@ -227,8 +227,6 @@ $(function() {
 
         $("#esperarCargo").css("opacity","1").fadeIn();
         
-        console.time();
-
         fetch(RUTA+"cargoplanner/dataExcelTotalCargoPlan")
             .then((response)=> {
                 return response.json();
@@ -236,14 +234,10 @@ $(function() {
             .then((json)=> {
                 $("#esperarCargo").css("opacity","0").fadeOut();
                 window.location.href = json.documento;
-
-                console.timeEnd();
             })
             .catch((err)=> {
                 console.log(err);
             });
-
-        
 
         return false;
     });
