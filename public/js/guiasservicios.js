@@ -427,7 +427,7 @@ $(function() {
             if (result['codigo_entidad'] == "") throw "Seleccione la empresa de transportes";
             if (result['codigo_traslado'] == "") throw "Seleccione la modalidad de traslado";
             
-            $.post(RUTA+"guiamanual/vistaPreviaGuia", {cabecera:result,
+            $.post(RUTA+"guiasservicios/vistaPreviaGuia", {cabecera:result,
                                                             detalles:JSON.stringify(detalles(true)),
                                                             proyecto: $("#costos").val()},
                 function (data, textStatus, jqXHR) {
@@ -625,6 +625,7 @@ detalles = (sw) =>{
             item['serie']        = $(this).find('td').eq(9).children().val();
             item['destino']      = $("#codigo_almacen_destino").val();
             item['estado']       = $(this).data("estado");
+
 
             $(this).attr('data-grabado',1);
             

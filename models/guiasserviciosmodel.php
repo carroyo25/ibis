@@ -212,10 +212,8 @@
             }
         }
 
-        public function generarGuiaPdf($cabecera,$detalles,$proyecto){
+        public function generarGuiaServicioPdf($cabecera,$detalles,$proyecto){
             try {
-                require_once("public/formatos/guiaremision.php");
-
                 require_once("public/formatos/guiaremision.php");
                 
                 $archivo = "public/documentos/guias_remision/".$cabecera['numero_guia'].".pdf";
@@ -285,7 +283,7 @@
                         $pdf->Row(array(str_pad($item++,3,"0",STR_PAD_LEFT),
                                         $cantidad,
                                         $datos[$rc]->unidad,
-                                        $datos[$rc]->codigo." ".$datos[$rc]->descripcion));
+                                        $datos[$rc]->codigo." ".$datos[$rc]->descripcion."  ".$datos[$rc]->obser."  ".$datos[$rc]->serie));
                     }
                 
                     $lc++;
@@ -411,8 +409,8 @@
                 if($rowCount > 0) {
                     while ($rs = $sql->fetch()){
                         $salida .='<tr data-grabado="1" >
-                                        <td class="textoCentro"><a href="delete"><i class="fas fa-trash-alt"></i></a></td>
-                                        <td class="textoCentro"><a href="search"><i class="fas fa-search"></i></a></td>
+                                        <td class="textoCentro"><a href="#"><i class="fas fa-trash-alt"></i></a></td>
+                                        <td class="textoCentro"><a href="#"><i class="fas fa-search"></i></a></td>
                                         <td class="textoCentro">'.$item++.'</td>
                                         <td class="textoCentro"><input type="text" value="'.$rs['cCodigo'].'" readOnly></td>
                                         <td class="pl20px"><textarea readOnly>'.$rs['cDescripcion'].'</textarea></td>
@@ -894,7 +892,7 @@
                                         <td><input type="number" value="'.$rs['ndespacho'].'" min=1></td>
                                         <td class="pl20px"><textarea>'.$rs['cobserva'].'</textarea></td>
                                         <td class"textoCentro">'.$rs['fvence'].'</td>
-                                        <td class"textoCentro">'.$rs['cSerie'].'</td>
+                                        <td class"textoCentro"><input type="text" value="'.$rs['cSerie'].'" readOnly></td>
                                         <td></td>
                                         <td></td>
                                     </tr>';

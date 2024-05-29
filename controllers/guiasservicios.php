@@ -28,7 +28,7 @@
         }
 
         function vistaPreviaGuia(){
-            echo json_encode($this->model->generarGuiaPdf($_POST['cabecera'],$_POST['detalles'],$_POST['proyecto']));
+            echo json_encode($this->model->generarGuiaServicioPdf($_POST['cabecera'],$_POST['detalles'],$_POST['proyecto']));
         }
 
         function guiaManualId(){
