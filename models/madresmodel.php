@@ -78,7 +78,7 @@
                 $sql->execute(["id"=>$idx]);
                 $rowCount = $sql->rowCount();
 
-                $item = 0;
+                $item = 1;
 
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()) {
@@ -129,7 +129,7 @@
                 
                 $fecha = explode("-",$formCab['fecha']);
 
-                $sql = $this->db->connect()->prepare("INSERT INTO alm_madrescap SET ntipmov = :ntipmov,
+                $sql = $this->db->connect()->prepare("INSERT INTO alm_madrescab SET ntipmov = :ntipmov,
                                                                                     nnromov = :nnromov,
                                                                                     cper = :cper,
                                                                                     cmes = :cmes,
@@ -162,7 +162,7 @@
                 $rowCount = $sql->rowCount();
                 
                 if ($rowCount > 0) {
-                    $indice = $this->lastInsertId("SELECT COUNT(id_regalm) AS id FROM alm_madrescap");
+                    $indice = $this->lastInsertId("SELECT COUNT(id_regalm) AS id FROM alm_madrescab");
                     $this->grabarDetallesMadre($indice,$detalles,$formCab['codigo_almacen_origen'],$guia);
                 }
                 

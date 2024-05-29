@@ -67,7 +67,7 @@
                         </div>
                         <div class="seccion_medio">
                             <div class="column2">
-                                <label for="almacen_origen_despacho">Almacen Origen:</label>
+                                <label for="almacen_origen_despacho">Origen:</label>
                                 <input type="text" name="almacen_origen_despacho" id="almacen_origen_despacho" class="mostrarLista busqueda" readonly>
                                 <div class="lista" id="listaOrigen">
                                    <ul>
@@ -76,7 +76,7 @@
                                 </div>
                             </div>
                             <div class="column2">
-                                <label for="almacen_destino_despacho">Almacen Destino:</label>
+                                <label for="almacen_destino_despacho">Destino:</label>
                                 <input type="text" name="almacen_destino_despacho" id="almacen_destino_despacho" class="mostrarLista busqueda" readonly>
                                 <div class="lista" id="listaDestino">
                                    <ul>
@@ -185,8 +185,8 @@
                 <input type="hidden" name="ubig_destino" id="ubig_destino">
                 <input type="hidden" name="registro_mtc" id="registro_mtc">
                 <input type="hidden" name="tipoTrasladoSunat" id="tipoTrasladoSunat" value="1">
-                <input type="hidden" name="observaciones" id="observaciones" value="1">
-                <input type="hidden" name="destinatario" id="destinatario" value="1">
+                <input type="hidden" name="observaciones" id="observaciones">
+                <input type="hidden" name="destinatario" id="destinatario">
                 <input type="hidden" name="cso" id="cso">
                 <input type="hidden" name="csd" id="csd">
 
@@ -238,12 +238,12 @@
                             </div>
                             <p><strong>Domicilio de partida</strong></p>
                             <div class="tres_columnas_interna">
-                                <label for="almacen_origen">Almacen Origen: </label>
+                                <label for="almacen_origen">Origen: </label>
                                 <input type="text" name="almacen_origen" id="almacen_origen" class="cerrarLista" >
                                 <button type="button" id="btnAlmacenOrigen" class="btnCallMenu boton3">+</button>
                                 <div class="lista" id="listaOrigen">
                                    <ul>
-                                       <?php echo $this->listaAlmacen?>
+                                       <?php echo $this->listaEntidad?>
                                    </ul> 
                                 </div>
                                 <label for="almacen_origen_direccion ">Dirección:</label>
@@ -251,12 +251,12 @@
                             </div>
                             <p><strong>Domicilio de Llegada</strong></p>
                             <div class="tres_columnas_interna">
-                                <label for="almacen_destino">Almacen Destino: </label>
+                                <label for="almacen_destino">Destino: </label>
                                 <input type="text" name="almacen_destino" id="almacen_destino">
                                 <button type="button" class="btnCallMenu boton3">+</button>
                                 <div class="lista" id="listaDestino">
                                    <ul>
-                                       <?php echo $this->listaAlmacen?>
+                                       <?php echo $this->listaEntidad?>
                                    </ul> 
                                 </div>
                                 <label for="almacen_destino_direccion ">Dirección:</label>
@@ -316,8 +316,8 @@
                                     <?php echo $this->listaTipoGuia?>
                                 </ul> 
                             </div>
-                            <!--<label for="observaciones_guia">Observaciones:</label>
-                            <textarea name="observaciones" id="observaciones" placeholder="Observaciones" class="dos"></textarea>-->
+                            <label for="observaciones_guia">Observaciones:</label>
+                            <textarea name="observaciones" id="observaciones" placeholder="Observaciones" class="dos"></textarea>
                         </div>
                         <p><strong>Datos del Conductor</strong></p>
                         <div class="tres_columnas_interna">

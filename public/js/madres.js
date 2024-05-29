@@ -315,9 +315,9 @@ $(() =>{
                 result[this.name] = this.value;
             });
 
-            //if (result['numero_guia'] == "") throw "Ingrese el Nro. de Guia";
-            if (result['codigo_entidad'] == "") throw "Seleccione la empresa de transportes";
-            if (result['codigo_traslado'] == "") throw "Seleccione la modalidad de traslado";
+            if (result['numero_guia'] == "") throw "Ingrese el Nro. de Guia";
+            //if (result['codigo_entidad'] == "") throw "Seleccione la empresa de transportes";
+            //if (result['codigo_traslado'] == "") throw "Seleccione la modalidad de traslado";
             
             
             $.post(RUTA+"salida/vistaPreviaGuiaRemision", {cabecera:result,
