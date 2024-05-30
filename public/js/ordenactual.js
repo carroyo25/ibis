@@ -148,7 +148,7 @@ $(() => {
                 $("#entidad").val(data.cabecera[0].crazonsoc);
                 $("#atencion").val(data.cabecera[0].cnombres);
                 $("#transporte").val(data.cabecera[0].transporte);
-                $("#lentrega").val(data.cabecera[0].cdesalm);
+                $("#lentrega").val(data.cabecera[0].lentrega);
                 $("#total_numero").val(data.cabecera[0].total_multiplicado);
                 $("#ncotiz").val(data.cabecera[0].cnumcot);
                 $("#tcambio").val(data.cabecera[0].ntcambio);

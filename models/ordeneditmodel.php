@@ -785,7 +785,7 @@
                                                         lg_ordencab.cverificacion,
                                                         lg_ordencab.ntotal,
                                                         lg_ordencab.nigv,
-                                                        lg_ordencab.lentrega,
+                                                        UPPER(lg_ordencab.lentrega) AS lentrega,
                                                         lg_ordencab.cReferencia,
                                                         FORMAT( lg_ordencab.ntotal, 2 ) AS ctotal,
                                                         tb_pedidocab.nivelAten,
