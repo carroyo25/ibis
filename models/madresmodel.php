@@ -64,6 +64,8 @@
                                                         tb_unimed.cabrevia,
                                                         alm_despachodet.id_regalm,
                                                         alm_despachodet.niddeta,
+                                                        alm_despachodet.niddetaOrd,
+                                                        alm_despachodet.niddetaPed,
                                                         alm_despachocab.cnumguia,
                                                         cm_producto.id_cprod  
                                                     FROM
@@ -82,7 +84,11 @@
 
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()) {
-                        $salida .='<tr data-despacho="'.$rs['id_regalm'].'" data-itemdespacho="'.$rs['niddeta'].'" data-idprod="'.$rs['id_cprod'].'">
+                        $salida .='<tr data-despacho="'.$rs['id_regalm'].'" 
+                                        data-itemdespacho="'.$rs['niddeta'].'" 
+                                        data-idprod="'.$rs['id_cprod'].'"
+                                        data-orden="'.$rs['niddetaOrd'].'"
+                                        data-pedido="'.$rs['niddetaPed'].'">
                                         <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$rs['cccodprod'].'</td>
                                         <td class="pl10px">'.$rs['cdesprod'].'</td>
@@ -142,7 +148,8 @@
                                                                                     id_userElabora = :id_user,
                                                                                     nEstadoDoc = :nEstadoDoc,
                                                                                     nflgactivo = :nflgactivo,
-                                                                                    cnumguia =:guia");
+                                                                                    cnumguia =:guia,
+                                                                                    ncodcos = :costos");
 
                 $sql->execute(["ntipmov"=>$formCab['codigo_movimiento'],
                                 "nnromov"=>null,
@@ -157,7 +164,8 @@
                                 "nEstadoDoc"=>62,
                                 "nflgactivo"=>1,
                                 "id_user"=>$_SESSION['iduser'],
-                                "guia"=>$guia]);
+                                "guia"=>$guia,
+                                "costos"=>$formCab['codigo_costos_origen']]);
 
                 $rowCount = $sql->rowCount();
                 
@@ -181,7 +189,7 @@
                                                                                 cautoriza=:autoriza,cdestinatario=:destinatario,cobserva=:observaciones,
                                                                                 cnombre=:nombres,cmarca=:marca,clicencia=:licencia,cplaca=:placa,
                                                                                 ftraslado=:fecha_traslado,fguia=:fecha_guia,cserie=:serie,
-                                                                                cmotivo=:tipo");
+                                                                                cmotivo=:tipo,nPeso=:peso,nBultos=:bultos");
 
                 $sql->execute([ "despacho"=>null,
                                 "guia"=>$nroguia,
@@ -196,13 +204,15 @@
                                 "envio"=>$guiaCab['tipo_envio'],
                                 "autoriza"=>null,
                                 "destinatario"=>null,
-                                "observaciones"=>null,
+                                "observaciones"=>$guiaCab['observaciones'],
                                 "nombres"=>$guiaCab['nombre_conductor'],
                                 "marca"=>$guiaCab['marca'],
                                 "licencia"=>$guiaCab['licencia_conducir'],
                                 "placa"=>$guiaCab['placa'],
                                 "fecha_traslado"=>$guiaCab['ftraslado'],
                                 "fecha_guia"=>$guiaCab['fgemision'],
+                                "peso"=>$guiaCab['peso'],
+                                "bultos"=>$guiaCab['bultos'],
                                 "serie"=>'F001',
                                 "tipo"=>248]);
                 
@@ -236,7 +246,9 @@
                                                                                             cobserva=:observac,
                                                                                             nGuia=:guia,
                                                                                             nGuiaMadre=:guiaMadre,
-                                                                                            ncantidad=:cantidad");
+                                                                                            ncantidad=:cantidad,
+                                                                                            niddetaPed=:pedido,
+                                                                                            niddetaOrd=:orden");
                          $sql->execute(["cod"=>$indice,
                                         "ori"=>$almacen,
                                         "cpro"=>$datos[$i]->idprod,
@@ -245,7 +257,9 @@
                                         "observac"=>$datos[$i]->obser,
                                         "guia"=>$datos[$i]->guia,
                                         "guiaMadre"=>$guia,
-                                        "cantidad"=>$datos[$i]->cantdesp]);
+                                        "cantidad"=>$datos[$i]->cantdesp,
+                                        "pedido"=>$datos[$i]->pedido,
+                                        "orden"=>$datos[$i]->orden]);
                     } catch (PDOException $th) {
                         echo $th->getMessage();
                         return false;
@@ -272,12 +286,58 @@
             }
         }
 
+        public function listarGuiasMadre(){
+            try {
+
+                $salida = "";
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        alm_madrescab.id_regalm,
+                                                        alm_madrescab.cnumguia,
+                                                        alm_madrescab.ncodcos,
+                                                        UPPER( origenes.crazonsoc ) AS nombre_origen,
+                                                        UPPER( origenes.cviadireccion ) AS direccion_origen,
+                                                        UPPER( destinos.crazonsoc ) AS nombre_destino,
+                                                        UPPER( destinos.cviadireccion ) AS direccion_destino,
+                                                        DATE_FORMAT( alm_madrescab.ffecdoc, '%d/%m7/%Y' ) AS emitido,
+                                                        DATE_FORMAT( lg_guias.ftraslado, '%d/%m7/%Y' ) AS traslado 
+                                                    FROM
+                                                        alm_madrescab
+                                                        INNER JOIN cm_entidad AS origenes ON alm_madrescab.ncodalm1 = origenes.id_centi
+                                                        INNER JOIN cm_entidad AS destinos ON alm_madrescab.ncodalm2 = destinos.id_centi
+                                                        INNER JOIN lg_guias ON alm_madrescab.cnumguia = lg_guias.cnumguia 
+                                                    WHERE
+                                                        alm_madrescab.nflgactivo = 1");
+
+                $sql->execute();
+                $item = 1;
+
+                if( $sql->rowCount() > 0 ){
+                    while($rs = $sql->fetch()){
+                        $salida .= '<tr class="pointer" data-indice="'.$rs['id_regalm'].'">
+                                        <td class="textoCentro">'.str_pad($item++,4,0,STR_PAD_LEFT).'</td>
+                                        <td class="textoCentro">'.$rs['emitido'].'</td>
+                                        <td class="textoCentro">'.$rs['traslado'].'</td>
+                                        <td class="pl20px">'.$rs['nombre_origen'].'</td>
+                                        <td class="pl20px">'.$rs['nombre_destino'].'</td>
+                                    </tr>';
+                    }
+                }
+
+                return $salida;
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
         public function listarGuiasScroll($pagina,$cantidad){
             try {
                 $inicio = ($pagina - 1) * $cantidad;
                 $limite = $this->contarItems();
+                $guias = [];
 
-                if ($limite < 30) {
+                if ($limite < 1) {
                     $cantidad = $limite;
                 }
 
@@ -294,7 +354,7 @@
                                                             LEFT JOIN tb_almacen AS origen ON lg_guiamadre.nlamorigen = origen.ncodalm
                                                             LEFT JOIN tb_almacen AS destino ON lg_guiamadre.nalmdestino = destino.ncodalm
                                                         WHERE lg_guiamadre.nflgActivo = 1
-                                                        LIMIT $inicio,$cantidad");
+                                                        LIMIT 1,1");
                 
                 $sql->execute();
 
@@ -314,8 +374,6 @@
                     $quedan = false;
                 }
 
-                
-
                 return array("guias"=>$guias,
                             'quedan'=> $quedan);
 
@@ -327,7 +385,7 @@
 
         private function contarItems(){
             try {
-                $sql = $this->db->connect()->query("SELECT COUNT(*) AS regs FROM lg_guiamadre WHERE nflgActivo = 1");
+                $sql = $this->db->connect()->query("SELECT COUNT(*) AS regs FROM alm_madrescab WHERE nflgActivo = 1");
                 $sql->execute();
                 $filas = $sql->fetch();
 
@@ -352,51 +410,42 @@
             try {
                 $salida = "";
                 $sql= $this->db->connect()->prepare("SELECT
-                                                            lg_guiamadre.idreg,
-                                                            lg_guiamadre.cnroguia,
-                                                            tb_user.cnombres AS autoriza,
-                                                            lg_guiamadre.ffecdoc,
-                                                            lg_guiamadre.ffectraslado,
-                                                            UPPER( origen.cdesalm ) AS origen,
-                                                            UPPER( destino.cdesalm ) AS destino,
-                                                            lg_guiamadre.nflgSunat,
-                                                            movimientos.cdescripcion AS movimiento,
-                                                            UPPER( origen.ctipovia ) AS origen_direccion,
-                                                            UPPER( destino.ctipovia ) AS destino_direccion,
-                                                            cm_entidad.cnumdoc AS ruc_proveedor,
-                                                            cm_entidad.crazonsoc AS nombre_proveedor,
-                                                            UPPER( cm_entidad.cviadireccion ) AS direccion_proveedor,
-                                                            UPPER( destinatarios.cnombres ) AS recibe,
-                                                            lg_guiamadre.nTipoEnvio,
-                                                            lg_guiamadre.clincencia,
-                                                            lg_guiamadre.ndni,
-                                                            lg_guiamadre.cmarca,
-                                                            lg_guiamadre.cplaca,
-                                                            lg_guiamadre.npeso,
-                                                            lg_guiamadre.nbultos,
-                                                            lg_guiamadre.cConductor,
-                                                            lg_guiamadre.cObserva,
-                                                            tb_parametros.cdescripcion AS tipo_envio,
-                                                            lg_guiamadre.nmottranp,
-                                                            lg_guiamadre.ntipmov,
-                                                            origen.ncubigeo AS ubigeo_origen,
-                                                            destino.ncubigeo AS ubigeo_destino,
-                                                            origen.csunatalm AS codigo_sunat_origen,
-                                                            destino.csunatalm AS codigo_sunat_destino 
-                                                        FROM
-                                                            lg_guiamadre
-                                                            LEFT JOIN tb_user ON lg_guiamadre.idaprueba = tb_user.iduser
-                                                            LEFT JOIN tb_almacen AS origen ON lg_guiamadre.nlamorigen = origen.ncodalm
-                                                            LEFT JOIN tb_almacen AS destino ON lg_guiamadre.nalmdestino = destino.ncodalm
-                                                            LEFT JOIN tb_parametros AS movimientos ON lg_guiamadre.ntipmov = movimientos.nidreg
-                                                            LEFT JOIN cm_entidad ON lg_guiamadre.nentitrans = cm_entidad.id_centi
-                                                            LEFT JOIN tb_user AS destinatarios ON lg_guiamadre.iddestino = destinatarios.iduser
-                                                            LEFT JOIN tb_parametros ON lg_guiamadre.nmottranp = tb_parametros.nidreg 
-                                                        WHERE
-                                                            lg_guiamadre.nflgActivo = 1 
-                                                            AND lg_guiamadre.idreg = :id");
+                                                        alm_madrescab.id_regalm,
+                                                        alm_madrescab.cnumguia,
+                                                        tb_user.iduser,
+                                                        alm_madrescab.ffecdoc AS emision,
+                                                        lg_guias.ftraslado AS traslado,
+                                                        origen.cnumdoc AS origen_ruc,
+                                                        UPPER(origen.crazonsoc) AS origen,
+                                                        UPPER(destino.crazonsoc) AS destino,
+                                                        destino.cnumdoc AS destino_ruc,
+                                                        UPPER(destino.cviadireccion) AS destino_direccion,
+                                                        UPPER(origen.cviadireccion) AS origen_direccion,
+                                                        lg_guias.cdestinatario AS recibe,
+                                                        lg_guias.corigen,
+                                                        lg_guias.cdirorigen,
+                                                        lg_guias.cdestino,
+                                                        lg_guias.cdirdest,
+                                                        lg_guias.cmarca,
+                                                        lg_guias.cplaca,
+                                                        lg_guias.clicencia,
+                                                        lg_guias.nPeso,
+                                                        lg_guias.nBultos,
+                                                        lg_guias.cenvio,
+                                                        lg_guias.cobserva,
+                                                        CONCAT_WS(' ',tb_proyectos.ccodproy,tb_proyectos.cdesproy ) AS proyecto,
+                                                        tb_user.cnombres AS autoriza
+                                                    FROM
+                                                        alm_madrescab
+                                                        INNER JOIN tb_user ON alm_madrescab.id_userAprob = tb_user.iduser
+                                                        INNER JOIN lg_guias ON alm_madrescab.cnumguia = lg_guias.cnumguia
+                                                        INNER JOIN cm_entidad AS origen ON alm_madrescab.ncodalm1 = origen.id_centi
+                                                        INNER JOIN cm_entidad AS destino ON alm_madrescab.ncodalm2 = destino.id_centi
+                                                        INNER JOIN tb_proyectos ON alm_madrescab.ncodcos = tb_proyectos.nidreg
+                                                    WHERE alm_madrescab.id_regalm =:id");
 
                 $sql->execute(["id"=>$id]);
+
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0) {
@@ -419,22 +468,29 @@
 
             try {
                 $sql = $this->db->connect()->prepare("SELECT
-                                                        lg_detallemadres.idreg,
-                                                        alm_despachodet.id_cprod,
-                                                        FORMAT(alm_despachodet.ncantidad,2) AS ncantidad,
+                                                        alm_madresdet.niddeta,
+                                                        alm_madresdet.id_cprod,
+                                                        alm_madresdet.ncantidad,
                                                         cm_producto.ccodprod,
-                                                        UPPER( cm_producto.cdesprod ) AS cdesprod,
+                                                        UPPER( cm_producto.cdesprod ) AS producto,
+                                                        alm_madresdet.niddetaPed,
+                                                        alm_madresdet.niddetaOrd,
+                                                        alm_madresdet.nroorden,
+                                                        alm_madresdet.nropedido,
+                                                        alm_madresdet.nGuia,
                                                         tb_unimed.cabrevia,
-                                                        alm_despachocab.cnumguia 
-                                                    FROM
-                                                        lg_detallemadres
-                                                        LEFT JOIN alm_despachodet ON lg_detallemadres.itemdespacho = alm_despachodet.niddeta
-                                                        LEFT JOIN cm_producto ON alm_despachodet.id_cprod = cm_producto.id_cprod
-                                                        LEFT JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
-                                                        LEFT JOIN alm_despachocab ON alm_despachodet.id_regalm = alm_despachocab.id_regalm 
-                                                    WHERE
-                                                        lg_detallemadres.idguiasunat = :id 
-                                                        AND lg_detallemadres.nflgActivo = 1");
+                                                        tb_pedidocab.nrodoc,
+	                                                    lg_ordencab.cnumero 
+                                                        FROM
+                                                            alm_madresdet
+                                                            INNER JOIN cm_producto ON alm_madresdet.id_cprod = cm_producto.id_cprod
+                                                            INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                            INNER JOIN tb_pedidodet ON alm_madresdet.niddetaOrd = tb_pedidodet.iditem
+                                                            INNER JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
+                                                            INNER JOIN lg_ordendet ON alm_madresdet.niddetaPed = lg_ordendet.nitemord
+                                                            INNER JOIN lg_ordencab ON lg_ordendet.id_regmov = lg_ordencab.id_regmov 
+                                                        WHERE
+                                                        alm_madresdet.id_regalm = :id");
                 $sql->execute(["id"=>$id]);
 
                 $rowCount = $sql->rowCount();
@@ -442,13 +498,13 @@
 
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()) {
-                        $salida.= '<tr>
+                        $salida.= '<tr data-orden="'.$rs['cnumero'].'" data-pedido="'.$rs['nrodoc'].'">
                                     <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
                                     <td class="textoCentro">'.$rs['ccodprod'].'</td>
-                                    <td class="pl20px">'.$rs['cdesprod'].'</td>
+                                    <td class="pl20px">'.$rs['producto'].'</td>
                                     <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                     <td class="textoDerecha">'.$rs['ncantidad'].'</td>
-                                    <td class="textoCentro">'.$rs['cnumguia'].'</td>
+                                    <td class="textoCentro">'.$rs['nGuia'].'</td>
                                 </tr>';
                     }
                 }

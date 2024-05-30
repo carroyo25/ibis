@@ -68,19 +68,19 @@
                         <div class="seccion_medio">
                             <div class="column2">
                                 <label for="almacen_origen_despacho">Origen:</label>
-                                <input type="text" name="almacen_origen_despacho" id="almacen_origen_despacho" class="mostrarLista busqueda" readonly>
+                                <input type="text" name="almacen_origen_despacho" id="almacen_origen_despacho" class="mostrarLista busqueda">
                                 <div class="lista" id="listaOrigen">
                                    <ul>
-                                       <?php echo $this->listaAlmacen?>
+                                       <?php echo $this->listaEntidad?>
                                    </ul> 
                                 </div>
                             </div>
                             <div class="column2">
                                 <label for="almacen_destino_despacho">Destino:</label>
-                                <input type="text" name="almacen_destino_despacho" id="almacen_destino_despacho" class="mostrarLista busqueda" readonly>
+                                <input type="text" name="almacen_destino_despacho" id="almacen_destino_despacho" class="mostrarLista busqueda">
                                 <div class="lista" id="listaDestino">
                                    <ul>
-                                       <?php echo $this->listaAlmacen?>
+                                       <?php echo $this->listaEntidad?>
                                    </ul> 
                                 </div>
                             </div>
@@ -185,7 +185,6 @@
                 <input type="hidden" name="ubig_destino" id="ubig_destino">
                 <input type="hidden" name="registro_mtc" id="registro_mtc">
                 <input type="hidden" name="tipoTrasladoSunat" id="tipoTrasladoSunat" value="1">
-                <input type="hidden" name="observaciones" id="observaciones">
                 <input type="hidden" name="destinatario" id="destinatario">
                 <input type="hidden" name="cso" id="cso">
                 <input type="hidden" name="csd" id="csd">
@@ -307,7 +306,7 @@
                                 <ul>
                                     <?php echo $this->listaPersonal?>
                                 </ul> 
-                            </div> -->
+                            </div> 
                             <label for="destinatario">Tipo de Guia:</label>
                             <input type="text" name="tipo_guia" id="tipo_guia" class="busqueda" placeholder="Elija opción">
                             <button type="button" class="btnCallMenu boton3">+</button>
@@ -315,7 +314,7 @@
                                 <ul>
                                     <?php echo $this->listaTipoGuia?>
                                 </ul> 
-                            </div>
+                            </div>-->
                             <label for="observaciones_guia">Observaciones:</label>
                             <textarea name="observaciones" id="observaciones" placeholder="Observaciones" class="dos"></textarea>
                         </div>
@@ -422,11 +421,10 @@
                     <th>Fecha Traslado</th> 
                     <th>Almacen Origen</th>
                     <th>Almacen Destino</th>
-                    <th>Estado Envio</th>
                 </tr>
             </thead>
             <tbody>
-                
+                <?php echo $this->listaGuias ?>
             </tbody>
         </table>
     </div>

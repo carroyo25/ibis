@@ -6,7 +6,7 @@
         }
 
         function render(){
-            $this->view->listaGuias = "";
+            $this->view->listaGuias = $this->model->listarGuiasMadre();
             $this->view->listaCostos = $this->model->costosPorUsuario($_SESSION['iduser']);
             $this->view->listaAprueba = $this->model->apruebaRecepción();
             $this->view->listaAlmacen = $this->model->listarAlmacenGuia();

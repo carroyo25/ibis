@@ -365,24 +365,26 @@ $(() =>{
             form[this.name] = this.value;
         });
 
-        $.post(RUTA+"madres/grabaGuiaMadre",{guiaCab:guia,
+        if (accion == "n") {
+            $.post(RUTA+"madres/grabaGuiaMadre",{guiaCab:guia,
                                                 formCab:form,
                                                 detalles:JSON.stringify(detalles(false)),
                                                 operacion:"n"
                                             },
-            function (data, textStatus, jqXHR) {
-                mostrarMensaje(data.mensaje,"mensaje_correcto");
-                $("#guia,#numero_guia").val(data.guia);
+                function (data, textStatus, jqXHR) {
+                    mostrarMensaje(data.mensaje,"mensaje_correcto");
+                    $("#guia,#numero_guia").val(data.guia);
 
-                $(".primeraBarra").css("background","#819830");
-                $(".primeraBarra span").text('Datos Generales ... Grabado');
+                    $(".primeraBarra").css("background","#819830");
+                    $(".primeraBarra span").text('Datos Generales ... Grabado');
 
-                
-                accion = "u";
-                grabado = 0;
-            },
-            "json"
-        );
+                    
+                    accion = "u";
+                    grabado = 0;
+                },
+                "json"
+            );
+        }
 
         return false;
     });
@@ -393,17 +395,18 @@ $(() =>{
         $.post(RUTA+"madres/guiasRemision", {id:$(this).data("indice")},
             function (data, text, requestXHR) {
 
-                $("#fecha").val(data.cabecera[0].ffecdoc);
-                $("#numero").val(data.cabecera[0].cnroguia);
+                $("#fecha").val(data.cabecera[0].emision);
+                $("#numero").val(data.cabecera[0].cnumguia);
 
                 $("#aprueba").val(data.cabecera[0].autoriza);
                 $("#almacen_origen_despacho").val(data.cabecera[0].origen);
                 $("#almacen_destino_despacho").val(data.cabecera[0].destino);
-                $("#tipo").val(data.cabecera[0].movimiento);
+                $("#tipo").val(data.cabecera[0].cenvio);
+                $("#tipo_envio").val(data.cabecera[0].cenvio);
 
-                $("#numero_guia").val(data.cabecera[0].cnroguia);
-                $("#fgemision").val(data.cabecera[0].ffecdoc);
-                $("#ftraslado").val(data.cabecera[0].ffectraslado);
+                $("#numero_guia").val(data.cabecera[0].cnumguia);
+                $("#fgemision").val(data.cabecera[0].emision);
+                $("#ftraslado").val(data.cabecera[0].traslado);
                 $("#almacen_origen").val(data.cabecera[0].origen);
                 $("#almacen_origen_direccion").val(data.cabecera[0].origen_direccion);
                 $("#almacen_destino").val(data.cabecera[0].destino);
@@ -411,7 +414,7 @@ $(() =>{
                 $("#empresa_transporte_razon").val(data.cabecera[0].nombre_proveedor);
                 $("#direccion_proveedor").val(data.cabecera[0].direccion_proveedor);
                 $("#ruc_proveedor").val(data.cabecera[0].ruc_proveedor);
-                $("#modalidad_traslado").val(data.cabecera[0].movimiento);
+                $("#modalidad_traslado").val(data.cabecera[0].cenvio);
                 $("#tipo_envio").val(data.cabecera[0].tipo_envio);
                 $("#autoriza").val(data.cabecera[0].autoriza);
                 $("#destinatario").val(data.cabecera[0].recibe);
@@ -421,9 +424,10 @@ $(() =>{
                 $("#conductor_dni").val(data.cabecera[0].ndni);
                 $("#marca").val(data.cabecera[0].cmarca);
                 $("#placa").val(data.cabecera[0].cplaca);
-                $("#peso").val(data.cabecera[0].npeso);
-                $("#bultos").val(data.cabecera[0].nbultos);
-                $("#observaciones").val(data.cabecera[0].cObserva);
+                $("#peso").val(data.cabecera[0].nPeso);
+                $("#bultos").val(data.cabecera[0].nBultos);
+                $("#observaciones").val(data.cabecera[0].cobserva);
+                $("#corigen").val(data.cabecera[0].proyecto);
 
                 $("#ubig_origen").val(data.cabecera[0].ubigeo_origen);
                 $("#ubig_destino").val(data.cabecera[0].ubigeo_destino);
@@ -468,6 +472,19 @@ $(() =>{
 
         return false;
     });
+
+    //filtrado en la lista de solicitante
+    $(".busqueda").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+        $(this).next().attr("id");
+
+        //aignar a una variable el contenido
+        let l = "#"+ $(this).next().attr("id")+ " li a"
+
+        $(l).filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+    });
 })
 
 detalles = () =>{
@@ -482,8 +499,8 @@ detalles = () =>{
             IDPROD      = $(this).data('idprod'),
             IDDESPACHO  = $(this).data('itemdespacho'),
             DESPACHO    = $(this).data('despacho'),
-            PEDIDO      = "",
-            ORDEN       = "",
+            PEDIDO      = $(this).data('pedido'),
+            ORDEN       = $(this).data('orden'),
             INGRESO     = "",
             ALMACEN     = "",
             CANTDESP    = $(this).find('td').eq(4).text(),

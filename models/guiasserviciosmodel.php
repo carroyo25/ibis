@@ -15,27 +15,20 @@
                 $anio = $a == "" ? 2024 : $a; 
 
                 $sql = $this->db->connect()->prepare("SELECT
-                                                        alm_servicioscab.id_regalm,
-                                                        DATE_FORMAT(alm_servicioscab.ffecdoc,'%d/%m/%Y') AS fechaDocumento,
-                                                        alm_servicioscab.cnumguia,
-                                                        entidad_origen.id_centi AS id_origen,
-                                                        entidad_origen.cviadireccion,
-                                                        UPPER( entidad_destino.crazonsoc ) AS razon_destino,
-                                                        entidad_destino.cnumdoc AS ruc_destino,
-                                                        entidad_origen.cnumdoc AS ruc_origen,
-                                                        UPPER( entidad_origen.crazonsoc ) AS razon_origen,
-                                                        entidad_destino.id_centi AS id_destino,
-                                                        UPPER(tb_proyectos.cdesproy) AS costos,
-                                                        tb_proyectos.ccodproy 
-                                                    FROM
-                                                        alm_servicioscab
-                                                        LEFT JOIN cm_entidad AS entidad_origen ON alm_servicioscab.ncodalm1 = entidad_origen.id_centi
-                                                        LEFT JOIN cm_entidad AS entidad_destino ON alm_servicioscab.ncodalm2 = entidad_destino.id_centi
-                                                        LEFT JOIN tb_proyectos ON alm_servicioscab.ncodpry = tb_proyectos.nidreg 
-                                                    WHERE
-                                                        alm_servicioscab.nflgactivo = 1
-                                                        AND alm_servicioscab.cnumguia LIKE :guia
-                                                        AND YEAR(alm_servicioscab.ffecdoc) LIKE :anio");
+                                                            alm_madrescab.id_regalm,
+                                                            alm_madrescab.cnumguia,
+                                                            alm_madrescab.ncodcos,
+                                                            UPPER( origenes.crazonsoc ) AS razon_origen,
+                                                            UPPER( origenes.cviadireccion ) AS direccion_origen,
+                                                            UPPER( destinos.crazonsoc ) AS razon_destino,
+                                                            UPPER( destinos.cviadireccion ) AS direccion_destino,
+                                                            DATE_FORMAT( alm_madrescab.ffecdoc, '%d/%m7/%Y' ) AS fechaDocumento 
+                                                        FROM
+                                                            alm_madrescab
+                                                            INNER JOIN cm_entidad AS origenes ON alm_madrescab.ncodalm1 = origenes.id_centi
+                                                            INNER JOIN cm_entidad AS destinos ON alm_madrescab.ncodalm2 = destinos.id_centi 
+                                                        WHERE
+                                                            alm_madrescab.nflgactivo = 1");
                 $sql->execute(["guia"=>$guia,"anio"=>$anio]);
                 $rowCount = $sql->rowCount();
 
