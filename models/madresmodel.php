@@ -95,6 +95,7 @@
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                         <td class="textoDerecha">'.$rs['ndespacho'].'</td>
                                         <td class="textoDerecha">'.$rs['cnumguia'].'</td>
+                                        <td class="textoCentro"><a href="#"><i class="fas fa-trash-alt"></i></a></td>
                                     </tr>';
                     }
                 }
@@ -319,6 +320,7 @@
                                         <td class="textoCentro">'.$rs['traslado'].'</td>
                                         <td class="pl20px">'.$rs['nombre_origen'].'</td>
                                         <td class="pl20px">'.$rs['nombre_destino'].'</td>
+                                        <td class="textoCentro">'.$rs['cnumguia'].'</td>
                                     </tr>';
                     }
                 }
@@ -505,6 +507,7 @@
                                     <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                     <td class="textoDerecha">'.$rs['ncantidad'].'</td>
                                     <td class="textoCentro">'.$rs['nGuia'].'</td>
+                                    <td></td>
                                 </tr>';
                     }
                 }

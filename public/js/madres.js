@@ -1,7 +1,8 @@
 $(() =>{
     const body = document.querySelector("#tablaPrincipal tbody");
 
-    let listItemFinal = null,estoyPidiendo = false,accion = "";
+    let listItemFinal = null,estoyPidiendo = false,accion = "",
+        fila="";
 
     //animateprogress("#php",72);
 
@@ -408,9 +409,9 @@ $(() =>{
                 $("#fgemision").val(data.cabecera[0].emision);
                 $("#ftraslado").val(data.cabecera[0].traslado);
                 $("#almacen_origen").val(data.cabecera[0].origen);
-                $("#almacen_origen_direccion").val(data.cabecera[0].origen_direccion);
+                $("#almacen_origen_direccion").val(data.cabecera[0].cdirorigen);
                 $("#almacen_destino").val(data.cabecera[0].destino);
-                $("#almacen_destino_direccion").val(data.cabecera[0].destino_direccion);
+                $("#almacen_destino_direccion").val(data.cabecera[0].cdirdest);
                 $("#empresa_transporte_razon").val(data.cabecera[0].nombre_proveedor);
                 $("#direccion_proveedor").val(data.cabecera[0].direccion_proveedor);
                 $("#ruc_proveedor").val(data.cabecera[0].ruc_proveedor);
@@ -472,6 +473,35 @@ $(() =>{
 
         return false;
     });
+
+    $("#tablaDetalles tbody").on("click","a", function (e) {
+        e.preventDefault();
+
+        fila = $(this);
+
+        $("#preguntaItemBorra").fadeIn();
+
+        return false;
+    });
+
+    $("#btnAceptarEliminaItem").click(function (e) { 
+        e.preventDefault();
+
+        fila.closest("tr").remove();
+
+        $("#preguntaItemBorra").fadeOut();
+
+        return false;
+    });
+
+    $("#btnCancelarEliminaItem").click(function (e) { 
+        e.preventDefault();
+
+        $("#preguntaItemBorra").fadeOut();
+
+        return false;
+    });
+
 
     //filtrado en la lista de solicitante
     $(".busqueda").on("keyup", function() {

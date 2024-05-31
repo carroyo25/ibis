@@ -125,6 +125,7 @@
                                     <th class="">Unidad</th>
                                     <th width="7%">Cantidad</th>
                                     <th width="7%">Nro.Guia</th>
+                                    <th width="7%">...</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -185,7 +186,6 @@
                 <input type="hidden" name="ubig_destino" id="ubig_destino">
                 <input type="hidden" name="registro_mtc" id="registro_mtc">
                 <input type="hidden" name="tipoTrasladoSunat" id="tipoTrasladoSunat" value="1">
-                <input type="hidden" name="destinatario" id="destinatario">
                 <input type="hidden" name="cso" id="cso">
                 <input type="hidden" name="csd" id="csd">
 
@@ -299,22 +299,14 @@
                                     <?php echo $this->listaEnvio?>
                                 </ul> 
                             </div>
-                            <!-- <label for="autoriza">Autoriza:</label>
-                            <input type="text" name="autoriza" id="autoriza" class="dos mostrarListaInterna busqueda" placeholder="Elija opción">
+                            <label for="destinatario">Destinatario:</label>
+                            <input type="text" name="destinatario" id="destinatario" class="busqueda" placeholder="Elija opción">
                             <button type="button" class="btnCallMenu boton3">+</button>
-                            <div class="lista uno rowThree" id="listaAutoriza">
+                            <div class="lista uno rowFour" id="listaDestinatario">
                                 <ul>
                                     <?php echo $this->listaPersonal?>
                                 </ul> 
-                            </div> 
-                            <label for="destinatario">Tipo de Guia:</label>
-                            <input type="text" name="tipo_guia" id="tipo_guia" class="busqueda" placeholder="Elija opción">
-                            <button type="button" class="btnCallMenu boton3">+</button>
-                            <div class="lista uno rowFour" id="listaTipoGuia">
-                                <ul>
-                                    <?php echo $this->listaTipoGuia?>
-                                </ul> 
-                            </div>-->
+                            </div>
                             <label for="observaciones_guia">Observaciones:</label>
                             <textarea name="observaciones" id="observaciones" placeholder="Observaciones" class="dos"></textarea>
                         </div>
@@ -364,6 +356,15 @@
                 <a href="#" id="closePreview" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
             </div>
             <iframe src="" id="pdfPreview"></iframe>
+        </div>
+    </div>
+    <div class="modal" id="preguntaItemBorra">
+        <div class="ventanaPregunta">
+            <h3>¿Eliminar el item?</h3>
+            <div>
+                <button type="button" id="btnAceptarEliminaItem">Aceptar</button>
+                <button type="button" id="btnCancelarEliminaItem">Cancelar</button>
+            </div>
         </div>
     </div>
     <div class="cabezaModulo">
@@ -421,6 +422,7 @@
                     <th>Fecha Traslado</th> 
                     <th>Almacen Origen</th>
                     <th>Almacen Destino</th>
+                    <th>N° Guia</th>
                 </tr>
             </thead>
             <tbody>
