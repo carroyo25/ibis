@@ -276,6 +276,10 @@ $(".datafiltro").append(`
             <input type="text" class="filterSearch" placeholder="Buscar Elementos...">
             <ul class="ul_filtro"> 
             </ul>
+            <div>
+                <button>Aceptar</button>
+                <button>Cancelar</button>
+            </div>
         </div>`);
 
 //filtrar tablas por la cabecera
