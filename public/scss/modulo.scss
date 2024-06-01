@@ -793,6 +793,17 @@ $emitido:#F8CAAD;
                         }
                     }
                 }
+
+                .filter__option{
+                    background: #005D84;
+                    display: flex;
+                    gap: 10px;
+
+                    button{
+                        width: 50%;
+                        height: 1.5rem;
+                    }
+                }
             }
         }
 

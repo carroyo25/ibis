@@ -276,7 +276,7 @@ $(".datafiltro").append(`
             <input type="text" class="filterSearch" placeholder="Buscar Elementos...">
             <ul class="ul_filtro"> 
             </ul>
-            <div class="oculto">
+            <div class="filter__options">
                 <button id="btn_filter_accept">Aceptar</button>
                 <button id="btn_filter_cancel">Cancelar</button>
             </div>
@@ -299,6 +299,14 @@ $(".listaFiltroTabla").click(function (e) {
         });
 
         return false;
+});
+
+$(".filtro").on('click','#btn_filter_cancel', function(e) {
+    e.preventDefault();
+
+    console.log("muestra el boton");
+
+    return false;
 });
 
 $(".ul_filtro").on('click','a', function(e) {
@@ -352,7 +360,6 @@ $(".filterSearch").keyup(function () {
         });
 
 });
-
 
 
 //filtros en tablas
