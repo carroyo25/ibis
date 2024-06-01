@@ -276,9 +276,9 @@ $(".datafiltro").append(`
             <input type="text" class="filterSearch" placeholder="Buscar Elementos...">
             <ul class="ul_filtro"> 
             </ul>
-            <div>
-                <button>Aceptar</button>
-                <button>Cancelar</button>
+            <div class="oculto">
+                <button id="btn_filter_accept">Aceptar</button>
+                <button id="btn_filter_cancel">Cancelar</button>
             </div>
         </div>`);
 

@@ -1063,7 +1063,7 @@
   display: block;
 }
 .itemsTabla table thead .filtro ul a:hover, .itemsTablaVertical table thead .filtro ul a:hover {
-  background: #0075B7;
+  background: #00b718;
   color: #fff;
 }
 .itemsTabla table tbody .pointer, .itemsTablaVertical table tbody .pointer {
@@ -2868,7 +2868,7 @@
   display: block;
 }
 .tabla thead .filtro ul a:hover, .tablaWrap thead .filtro ul a:hover {
-  background: #0075B7;
+  background: #b7ab00;
   color: #fff;
 }
 .tabla tbody tr td, .tablaWrap tbody tr td {
