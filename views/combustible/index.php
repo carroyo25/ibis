@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="mensaje">
+        <p></p>
+    </div>
+    <div class="modal" id="dialogo_registro">
+        <div class="ventanaConsumo">
+            <div class="titulo_dialogo">
+                <h3>Registrar Combustible</h3>
+            </div>
+               <form id="registro_combustible">
+                    <input type="hidden" name="idprod" id="idprod">
+                    <div class="ingreso_combustible">
+                        <div class="grid3col">
+                            <div>
+                                <label for="fechaRegistro">Fecha de Registro</label>
+                                <input type="date" id="fechaRegistro" name="fechaRegistro" value="<?php echo date("Y-m-d");?>" min="<?php echo date("Y-m-d")?>">
+                            </div>
+                            <div>
+                                <label for="item">Almacen</label>
+                                <select name="almacen" id="almacen">
+                                    <option value="-1">Elija opcion</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="item">Tipo</label>
+                                <select name="tipo" id="tipo">
+                                    <option value="-1">Elija opcion</option>
+                                    <option value="I">Ingreso</option>
+                                    <option value="S">Salida</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="grid3col">
+                            <div>
+                                <label for="item">Codigo</label>
+                                <input type="text" id="codigo" name="codigo">
+                            </div>
+                            <div>
+                                <label for="item">Descripcion</label>
+                                <input type="text" id="descripcion" name="descripcion" readonly>
+                            </div>
+                            <div>
+                                <label for="item">Unidad</label>
+                                <input type="text" id="unidad" name="unidad" readonly>
+                            </div>
+                        </div>
+                        <div class="grid2col">
+                            <div>
+                                <label for="item">Cantidad</label>
+                                <input type="text" id="item" name="item">
+                            </div>
+                            <div>   
+                                <label for="item">Movimiento</label>
+                                <input type="text" id="item" name="item">
+                            </div>
+                        </div>
+                        <div class="grid2col">
+                            <div>
+                                <label for="item">documento</label>
+                                <input type="text" id="documento" name="documento">
+                            </div>
+                            <div>
+                                <label for="item">Trabajador</label>
+                                <input type="text" id="trabajador" name="trabajador">
+                            </div>
+                        </div>
+                        <div class="grid3col">
+                            <div>
+                                <label for="usuario">Usuario</label>
+                                <input type="text" id="usuario" name="usuario" readonly>
+                            </div>
+                            <div>
+                                <label for="proyecto">Proyecto</label>
+                                <select name="proyecto" id="proyecto">
+                                    <option value="-1">Elija opcion</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="guia">Guia de Remision</label>
+                                <input type="text" id="guia" name="guia">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="observacionesItem">Observaciones del Item</label>
+                            <textarea name="observacionesItem" id="observacionesItem"></textarea>
+                        </div>
+                        <div>
+                            <label for="observacionesDocumento">Observaciones del Documento</label>
+                            <textarea name="observacionesDocumento" id="observacionesDocumento"></textarea>
+                        </div>
+                        <div class="grid3col">
+                            <div>
+                                <label for="mes">mes</label>
+                                <select name="mes" id="mes">
+                                    <option value="-1">Elija opcion</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="area">Area</label>
+                                <select name="area" id="area">
+                                    <option value="-1">Elija opcion</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="referencia">Referencia Adicional</label>
+                                <select name="area" id="area">
+                                    <option value="-1">Elija opcion</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="opciones">
+                            <button id="btn_consumo_aceptar">Aceptar</button>
+                            <button id="btn_consumo_cancelar">Cancelar</button>
+                        </div>
+                    </div>
+                    <div class="resumen_combustible">
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td>STOCK INICIAL (MES ANTERIOR):</td>
+                                    <td>0</td>
+                                </tr>
+                                <tr>
+                                    <td>CANTIDAD DE INGRESO:</td>
+                                    <td>0</td>
+                                </tr>
+                                <tr>
+                                    <td>CANTIDAD DE CONSUMO:</td>
+                                    <td>0</td>
+                                </tr>
+                                <tr>
+                                    <td>STOCK FINAL:</td>
+                                    <td>0</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+               </form>
+        </div>
+    </div>
+    <div class="cabezaModulo">
+        <h1>Control de Combustible</h1>
+        <div>
+            <a href="#" id="nuevoRegistro"><i class="far fa-file"></i><p>Nuevo</p></a>
+            <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
+        </div>
+    </div>
+    <div class="barraTrabajo">
+        <form action="#" id="formConsulta">
+            <div class="variasConsultas">
+                    <div>
+                        <label for="tipo">Nro. Guia</label>
+                        <input type="text" id="ordenSearch" name="ordenSearch">
+                    </div>
+                    <div>
+                        <label for="costosSearch">Centro de Costos: </label>
+                        <select name="costosSearch" id="costosSearch" class="item4">
+                            <?php echo $this->listaCostosSelect ?>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="mes">Mes</label>
+                        <select name="mesSearch" id="mesSearch">
+                            <option value="-1">Mes</option>
+                            <option value="1">Enero</option>
+                            <option value="2">Febrero</option>
+                            <option value="3">Marzo</option>
+                            <option value="4">Abril</option>
+                            <option value="5">Mayo</option>
+                            <option value="6">Junio</option>
+                            <option value="7">Julio</option>
+                            <option value="8">Agosto</option>
+                            <option value="9">Setiembre</option>
+                            <option value="10">Octubre</option>
+                            <option value="11">Noviembre</option>
+                            <option value="12">Diciembre</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="anio">Año :</label>
+                        <input type="number" name="anioSearch" id="anioSearch" value="<?php echo date("Y")?>" class="textoCentro">
+                    </div>
+                    <button type="button" class="boton3" id="btnConsulta">Consultar</button> 
+            </div>
+        </form>
+    </div>
+    <div class="itemsTabla">
+        <table id="tablaPrincipal">
+            <thead class="stickytop">
+                <tr>
+                    <th>Item</th>
+                    <th>Fecha<br>Registro</th>
+                    <th>Almacen</th>
+                    <th>Tipo</th>
+                    <th>Codigo</th>
+                    <th>Descripción</th>
+                    <th>Unidad</th>
+                    <th>Cantidad</th>
+                    <th>Movimiento</th>
+                    <th>Trabajador</th>
+                    <th>Usuario</th>
+                    <th>Proyecto</th>
+                    <th>Guia Remision</th>
+                    <th>Observaciones</th>
+                    <th>Observacion<br> del documento<br> de almacen</th>
+                    <th>Area</th>
+                    <th>Referencia<br>Adicional</th>
+                    <th>Mes</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php echo $this->listaItemsCombustible;?>
+            </tbody>
+        </table>
+    </div>
+    <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
+    <script src="<?php echo constant('URL');?>public/js/funciones.js?<?php echo constant('VERSION')?>"></script>
+    <script src="<?php echo constant('URL');?>public/js/combustible.js?<?php echo constant('VERSION')?>"></script>
+</body>
+</html>

@@ -276,8 +276,7 @@ $(".datafiltro").append(`
             <input type="text" class="filterSearch" placeholder="Buscar Elementos...">
             <ul class="ul_filtro"> 
             </ul>
-            <div class="filter__options">
-                <button id="btn_filter_accept">Aceptar</button>
+            <div class="opciones_filtro">
                 <button id="btn_filter_cancel">Cancelar</button>
             </div>
         </div>`);
@@ -304,7 +303,7 @@ $(".listaFiltroTabla").click(function (e) {
 $(".filtro").on('click','#btn_filter_cancel', function(e) {
     e.preventDefault();
 
-    console.log("muestra el boton");
+    $(this).closest('.filtro').fadeOut();
 
     return false;
 });

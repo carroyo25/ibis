@@ -757,18 +757,19 @@ $emitido:#F8CAAD;
                 position: absolute;
                 text-align: left;
                 min-width: 15rem;
-                width: max-content;
+                width: 30rem;
                 line-height: 1.5rem;
                 border-radius: 3px;
                 display: none;
                 padding: 5px;
                 box-shadow: 5px 6px 5px #c2c2c2;
-                top: 48px;
+                top: 40px;
 
                 input {
                     border: 1px solid #ccc;
                     width: 100%;
                     padding-left: 5px;
+                    margin-top: 10px;
                 }
 
                 ul {
@@ -777,6 +778,7 @@ $emitido:#F8CAAD;
                     max-height: 20rem;
                     overflow: auto;
                     border: 1px solid #a2a2a2;
+                    margin-top: 10px;
                     
                     li {
                         display: block;
@@ -794,14 +796,21 @@ $emitido:#F8CAAD;
                     }
                 }
 
-                .filter__option{
-                    background: #005D84;
+                .opciones_filtro{
                     display: flex;
                     gap: 10px;
+                    padding: 5px;
+                    justify-content: center;
 
                     button{
                         width: 50%;
                         height: 1.5rem;
+                        border: 1px solid transparent;
+                        transition: all .5s ease;
+
+                        &:hover{
+                            border: 1px solid #000;
+                        }
                     }
                 }
             }
@@ -2576,6 +2585,8 @@ $emitido:#F8CAAD;
             margin-left: 10px;
         }
 
+        //filtro para cabeceras
+
         .filtro{
             background: #fff;
             color: #000;
@@ -2618,6 +2629,16 @@ $emitido:#F8CAAD;
                         background: #b7ab00;
                         color: #fff;
                     }
+                }
+            }
+
+            .filter__options{
+                background: red;
+                display: flex;
+                gap: 10px;
+
+                button{
+                    width: 100%;
                 }
             }
         }
@@ -3413,6 +3434,68 @@ $emitido:#F8CAAD;
     }
 }
 
+
+.ingreso_combustible{
+    display: flex;
+    flex-direction: column;
+    font-size: .8rem;
+    gap: 10px;
+
+    label {
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    input,textarea,select{
+        padding-left: 20px;
+        border-radius: 8px;
+    }
+
+    select{
+        display: block;
+        border: 1px solid #ccc; 
+        padding: 7px;
+    }
+
+    textarea{
+        height: 3rem;
+    }
+
+    >div{
+        display: grid;
+        gap: 10px;
+
+        div{
+            * {
+                width: 100%;
+            }
+        }
+    }
+
+    .grid3col{
+        grid-template-columns: .4fr 1fr .5fr;
+    }
+
+    .grid2col{
+        grid-template-columns: .5fr 1fr;
+    }
+
+    .opciones{
+        padding: 1rem;
+        grid-template-columns: 1fr 1fr;
+        margin: 10px 0;
+
+        button {
+            padding: 1rem;
+            border: 1px solid transparent;
+            transition:all 0.5s;
+
+            &:hover{
+                border: 1px solid #000;
+            }
+        }
+    }
+}
 
 
 @media screen and (max-width: 1024px) {

@@ -17,7 +17,7 @@
                                                     ibis.tb_pedidocab.vence,
                                                     ibis.tb_pedidocab.estadodoc,
                                                     ibis.tb_pedidocab.nrodoc,
-                                                    ibis.tb_pedidocab.idtipomov,
+                                                    IF(ibis.tb_pedidocab.idtipomov=37,'B','S') AS idtipomov,
                                                     UPPER(ibis.tb_pedidocab.concepto) AS concepto,
                                                     CONCAT(rrhh.tabla_aquarius.nombres,' ',rrhh.tabla_aquarius.apellidos) AS nombres,
                                                     UPPER(CONCAT(ibis.tb_proyectos.ccodproy,' ',ibis.tb_proyectos.cdesproy)) AS costos,
@@ -39,11 +39,12 @@
 
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()) {
-                        $tipo = $rs['idtipomov'] == 37 ? "B":"S";
+                        //$tipo = $rs['idtipomov'] == 37 ? "B":"S";
+
                         $salida .='<tr class="pointer" data-indice="'.$rs['idreg'].'">
                                         <td class="textoCentro">'.str_pad($rs['nrodoc'],4,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.date("d/m/Y", strtotime($rs['emision'])).'</td>
-                                        <td class="textoCentro">'.$tipo.'</td>
+                                        <td class="textoCentro">'.$rs['idtipomov'].'</td>
                                         <td class="pl20px">'.$rs['concepto'].'</td>
                                         <td class="pl20px">'.$rs['costos'].'</td>
                                         <td class="pl20px">'.$rs['nombres'].'</td>
@@ -73,7 +74,7 @@
                                                         ibis.tb_pedidocab.vence,
                                                         ibis.tb_pedidocab.estadodoc,
                                                         LPAD(ibis.tb_pedidocab.nrodoc,6,0) AS nrodoc,
-                                                        ibis.tb_pedidocab.idtipomov,
+                                                        IF(ibis.tb_pedidocab.idtipomov=37,'B','S') AS idtipomov,
                                                         UPPER(ibis.tb_pedidocab.concepto) AS concepto,
                                                         CONCAT(rrhh.tabla_aquarius.nombres,' ',rrhh.tabla_aquarius.apellidos) AS nombres,
                                                         UPPER(CONCAT(ibis.tb_proyectos.ccodproy,' ',ibis.tb_proyectos.cdesproy)) AS costos,

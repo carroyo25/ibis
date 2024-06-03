@@ -1026,21 +1026,20 @@
   position: absolute;
   text-align: left;
   min-width: 15rem;
-  width: -webkit-max-content;
-  width: -moz-max-content;
-  width: max-content;
+  width: 30rem;
   line-height: 1.5rem;
   border-radius: 3px;
   display: none;
   padding: 5px;
   -webkit-box-shadow: 5px 6px 5px #c2c2c2;
           box-shadow: 5px 6px 5px #c2c2c2;
-  top: 48px;
+  top: 40px;
 }
 .itemsTabla table thead .filtro input, .itemsTablaVertical table thead .filtro input {
   border: 1px solid #ccc;
   width: 100%;
   padding-left: 5px;
+  margin-top: 10px;
 }
 .itemsTabla table thead .filtro ul, .itemsTablaVertical table thead .filtro ul {
   display: -webkit-box;
@@ -1053,6 +1052,7 @@
   max-height: 20rem;
   overflow: auto;
   border: 1px solid #a2a2a2;
+  margin-top: 10px;
 }
 .itemsTabla table thead .filtro ul li, .itemsTablaVertical table thead .filtro ul li {
   display: block;
@@ -1065,6 +1065,26 @@
 .itemsTabla table thead .filtro ul a:hover, .itemsTablaVertical table thead .filtro ul a:hover {
   background: #00b718;
   color: #fff;
+}
+.itemsTabla table thead .filtro .opciones_filtro, .itemsTablaVertical table thead .filtro .opciones_filtro {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  gap: 10px;
+  padding: 5px;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+.itemsTabla table thead .filtro .opciones_filtro button, .itemsTablaVertical table thead .filtro .opciones_filtro button {
+  width: 50%;
+  height: 1.5rem;
+  border: 1px solid transparent;
+  -webkit-transition: all 0.5s ease;
+  transition: all 0.5s ease;
+}
+.itemsTabla table thead .filtro .opciones_filtro button:hover, .itemsTablaVertical table thead .filtro .opciones_filtro button:hover {
+  border: 1px solid #000;
 }
 .itemsTabla table tbody .pointer, .itemsTablaVertical table tbody .pointer {
   cursor: pointer;
@@ -2871,6 +2891,16 @@
   background: #b7ab00;
   color: #fff;
 }
+.tabla thead .filtro .filter__options, .tablaWrap thead .filtro .filter__options {
+  background: red;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  gap: 10px;
+}
+.tabla thead .filtro .filter__options button, .tablaWrap thead .filtro .filter__options button {
+  width: 100%;
+}
 .tabla tbody tr td, .tablaWrap tbody tr td {
   border: 1px solid #616161;
   line-height: 1rem;
@@ -3708,4 +3738,63 @@
 }
 .wrap_compras .wrap_compras_workarea .indicadores table tfoot {
   border: 1px solid #ccc;
+}
+
+.ingreso_combustible {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  font-size: 0.8rem;
+  gap: 10px;
+}
+.ingreso_combustible label {
+  display: block;
+  margin-bottom: 5px;
+}
+.ingreso_combustible input, .ingreso_combustible textarea, .ingreso_combustible select {
+  padding-left: 20px;
+  border-radius: 8px;
+}
+.ingreso_combustible select {
+  display: block;
+  border: 1px solid #ccc;
+  padding: 7px;
+}
+.ingreso_combustible textarea {
+  height: 3rem;
+}
+.ingreso_combustible > div {
+  display: -ms-grid;
+  display: grid;
+  gap: 10px;
+}
+.ingreso_combustible > div div * {
+  width: 100%;
+}
+.ingreso_combustible .grid3col {
+  -ms-grid-columns: 0.4fr 1fr 0.5fr;
+  grid-template-columns: 0.4fr 1fr 0.5fr;
+}
+.ingreso_combustible .grid2col {
+  -ms-grid-columns: 0.5fr 1fr;
+  grid-template-columns: 0.5fr 1fr;
+}
+.ingreso_combustible .opciones {
+  padding: 1rem;
+  -ms-grid-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
+  margin: 10px 0;
+}
+.ingreso_combustible .opciones button {
+  padding: 1rem;
+  border: 1px solid transparent;
+  -webkit-transition: all 0.5s;
+  transition: all 0.5s;
+}
+.ingreso_combustible .opciones button:hover {
+  border: 1px solid #000;
 }
