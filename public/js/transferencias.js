@@ -610,6 +610,14 @@ $(function(){
             });
         }
     });
+
+    $("#closePreviewNota").click(function(e){
+        e.preventDefault();
+
+        $("#vistaTransferencia").fadeOut();
+
+        return false;
+    });
 })
 
 suma_atendidos = () => {

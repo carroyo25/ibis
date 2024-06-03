@@ -14,9 +14,16 @@
             <div class="titulo_dialogo">
                 <h3>Registrar Combustible</h3>
             </div>
-               <form id="registro_combustible">
-                    <input type="hidden" name="idprod" id="idprod">
-                    <div class="ingreso_combustible">
+                <input type="hidden" name="idprod" id="idprod">
+                <input type="hidden" name="codigo_almacen" id="codigo_almacen">
+                <input type="hidden" name="codigo_area" id="codigo_area">
+                <input type="hidden" name="codigo_proyecto" id="codigo_proyecto">
+                <input type="hidden" name="codigo_tipo" id="codigo_tipo">
+                <input type="hidden" name="codigo_unidad" id="codigo_unidad">
+                <input type="hidden" name="codigo_equipo" id="codigo_equipo">
+
+                <div class="ingreso_combustible">
+                    <form id="form__combustible" class="form__combustible">
                         <div class="grid3col">
                             <div>
                                 <label for="fechaRegistro">Fecha de Registro</label>
@@ -25,7 +32,7 @@
                             <div>
                                 <label for="item">Almacen</label>
                                 <select name="almacen" id="almacen">
-                                    <option value="-1">Elija opcion</option>
+                                    <?php echo $this->listaAlmacen ?>
                                 </select>
                             </div>
                             <div>
@@ -54,11 +61,11 @@
                         <div class="grid2col">
                             <div>
                                 <label for="item">Cantidad</label>
-                                <input type="text" id="item" name="item">
+                                <input type="number" id="item" name="item">
                             </div>
-                            <div>   
-                                <label for="item">Movimiento</label>
-                                <input type="text" id="item" name="item">
+                            <div>
+                                <label for="observacionesItem">Observaciones del Item :</label>
+                                <input type="text" id="observacionesItem" name="observacionesItem">
                             </div>
                         </div>
                         <div class="grid2col">
@@ -77,73 +84,62 @@
                                 <input type="text" id="usuario" name="usuario" readonly>
                             </div>
                             <div>
-                                <label for="proyecto">Proyecto</label>
+                                <label for="proyecto">Proyecto :</label>
                                 <select name="proyecto" id="proyecto">
-                                    <option value="-1">Elija opcion</option>
+                                    <?php echo $this->listaCostosSelect ?>
                                 </select>
                             </div>
                             <div>
-                                <label for="guia">Guia de Remision</label>
+                                <label for="guia">Guia de Remision :</label>
                                 <input type="text" id="guia" name="guia">
                             </div>
                         </div>
-
                         <div>
-                            <label for="observacionesItem">Observaciones del Item</label>
-                            <textarea name="observacionesItem" id="observacionesItem"></textarea>
+                            <label for="observacionesDocumento">Observaciones del Documento :</label>
+                            <input type="text" id="observacionesDocumento" name="observacionesDocumento">
                         </div>
-                        <div>
-                            <label for="observacionesDocumento">Observaciones del Documento</label>
-                            <textarea name="observacionesDocumento" id="observacionesDocumento"></textarea>
-                        </div>
-                        <div class="grid3col">
+                        <div class="grid2col">
                             <div>
-                                <label for="mes">mes</label>
-                                <select name="mes" id="mes">
-                                    <option value="-1">Elija opcion</option>
+                                <label for="referencia">Referencia Adicional</label>
+                                <select name="referencia" id="referencia">
+                                    <?php echo $this->listaAlmacen ?>
                                 </select>
                             </div>
                             <div>
                                 <label for="area">Area</label>
                                 <select name="area" id="area">
-                                    <option value="-1">Elija opcion</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label for="referencia">Referencia Adicional</label>
-                                <select name="area" id="area">
-                                    <option value="-1">Elija opcion</option>
+                                    <?php echo $this->listaAreas?>
                                 </select>
                             </div>
                         </div>
-                        <div class="opciones">
-                            <button id="btn_consumo_aceptar">Aceptar</button>
-                            <button id="btn_consumo_cancelar">Cancelar</button>
-                        </div>
+                    </form>
+                    <div class="opciones">
+                        <button id="btn_consumo_aceptar">Aceptar</button>
+                        <button id="btn_consumo_cancelar">Cancelar</button>
                     </div>
-                    <div class="resumen_combustible">
-                        <table>
-                            <tbody>
-                                <tr>
-                                    <td>STOCK INICIAL (MES ANTERIOR):</td>
-                                    <td>0</td>
-                                </tr>
-                                <tr>
-                                    <td>CANTIDAD DE INGRESO:</td>
-                                    <td>0</td>
-                                </tr>
-                                <tr>
-                                    <td>CANTIDAD DE CONSUMO:</td>
-                                    <td>0</td>
-                                </tr>
-                                <tr>
-                                    <td>STOCK FINAL:</td>
-                                    <td>0</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-               </form>
+                </div>
+                <div class="resumen_combustible">
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td>STOCK INICIAL (MES ANTERIOR):</td>
+                                <td>0</td>
+                            </tr>
+                            <tr>
+                                <td>CANTIDAD DE INGRESO:</td>
+                                <td>0</td>
+                            </tr>
+                            <tr>
+                                <td>CANTIDAD DE CONSUMO:</td>
+                                <td>0</td>
+                            </tr>
+                            <tr>
+                                <td>STOCK FINAL:</td>
+                                <td>0</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
         </div>
     </div>
     <div class="cabezaModulo">

@@ -3740,7 +3740,7 @@
   border: 1px solid #ccc;
 }
 
-.ingreso_combustible {
+.ingreso_combustible .form__combustible {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -3751,49 +3751,55 @@
   font-size: 0.8rem;
   gap: 10px;
 }
-.ingreso_combustible label {
+.ingreso_combustible .form__combustible label {
   display: block;
   margin-bottom: 5px;
 }
-.ingreso_combustible input, .ingreso_combustible textarea, .ingreso_combustible select {
+.ingreso_combustible .form__combustible input, .ingreso_combustible .form__combustible textarea, .ingreso_combustible .form__combustible select {
   padding-left: 20px;
   border-radius: 8px;
 }
-.ingreso_combustible select {
+.ingreso_combustible .form__combustible select {
   display: block;
   border: 1px solid #ccc;
   padding: 7px;
 }
-.ingreso_combustible textarea {
+.ingreso_combustible .form__combustible textarea {
   height: 3rem;
 }
-.ingreso_combustible > div {
+.ingreso_combustible .form__combustible > div {
   display: -ms-grid;
   display: grid;
   gap: 10px;
 }
-.ingreso_combustible > div div * {
+.ingreso_combustible .form__combustible > div div * {
   width: 100%;
 }
-.ingreso_combustible .grid3col {
+.ingreso_combustible .form__combustible .grid3col {
   -ms-grid-columns: 0.4fr 1fr 0.5fr;
   grid-template-columns: 0.4fr 1fr 0.5fr;
 }
-.ingreso_combustible .grid2col {
+.ingreso_combustible .form__combustible .grid2col {
   -ms-grid-columns: 0.5fr 1fr;
   grid-template-columns: 0.5fr 1fr;
 }
 .ingreso_combustible .opciones {
   padding: 1rem;
-  -ms-grid-columns: 1fr 1fr;
-  grid-template-columns: 1fr 1fr;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
   margin: 10px 0;
+  gap: 5px;
 }
 .ingreso_combustible .opciones button {
   padding: 1rem;
   border: 1px solid transparent;
   -webkit-transition: all 0.5s;
   transition: all 0.5s;
+  width: 45%;
 }
 .ingreso_combustible .opciones button:hover {
   border: 1px solid #000;

@@ -3434,68 +3434,73 @@ $emitido:#F8CAAD;
     }
 }
 
-
-.ingreso_combustible{
-    display: flex;
-    flex-direction: column;
-    font-size: .8rem;
-    gap: 10px;
-
-    label {
-        display: block;
-        margin-bottom: 5px;
-    }
-
-    input,textarea,select{
-        padding-left: 20px;
-        border-radius: 8px;
-    }
-
-    select{
-        display: block;
-        border: 1px solid #ccc; 
-        padding: 7px;
-    }
-
-    textarea{
-        height: 3rem;
-    }
-
-    >div{
-        display: grid;
+.ingreso_combustible {
+    .form__combustible{
+        display: flex;
+        flex-direction: column;
+        font-size: .8rem;
         gap: 10px;
-
-        div{
-            * {
-                width: 100%;
+    
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+    
+        input,textarea,select{
+            padding-left: 20px;
+            border-radius: 8px;
+        }
+    
+        select{
+            display: block;
+            border: 1px solid #ccc; 
+            padding: 7px;
+        }
+    
+        textarea{
+            height: 3rem;
+        }
+    
+        >div{
+            display: grid;
+            gap: 10px;
+    
+            div{
+                * {
+                    width: 100%;
+                }
             }
         }
+    
+        .grid3col{
+            grid-template-columns: .4fr 1fr .5fr;
+        }
+    
+        .grid2col{
+            grid-template-columns: .5fr 1fr;
+        }
     }
-
-    .grid3col{
-        grid-template-columns: .4fr 1fr .5fr;
-    }
-
-    .grid2col{
-        grid-template-columns: .5fr 1fr;
-    }
-
+    
     .opciones{
         padding: 1rem;
-        grid-template-columns: 1fr 1fr;
+        display: flex;
+        justify-content: space-between;
         margin: 10px 0;
-
+        gap: 5px;
+    
         button {
             padding: 1rem;
             border: 1px solid transparent;
             transition:all 0.5s;
-
+            width: 45%;
+    
             &:hover{
                 border: 1px solid #000;
             }
         }
     }
 }
+
 
 
 @media screen and (max-width: 1024px) {

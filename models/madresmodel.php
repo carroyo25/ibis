@@ -435,6 +435,9 @@
                                                         lg_guias.nBultos,
                                                         lg_guias.cenvio,
                                                         lg_guias.cobserva,
+                                                        lg_guias.centi AS nombre_proveedor,
+                                                        lg_guias.centiruc AS ruc_proveedor,
+                                                        lg_guias.centidir AS direccion_proveedor,
                                                         CONCAT_WS(' ',tb_proyectos.ccodproy,tb_proyectos.cdesproy ) AS proyecto,
                                                         tb_user.cnombres AS autoriza
                                                     FROM

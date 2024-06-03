@@ -549,8 +549,8 @@ detalles = () =>{
             item['iddetorden']   = IDDETORDEN;
             item['iddetped']     = IDDETPED;
             item['idprod']       = IDPROD;
-            item['pedido']       = ORDEN;
-            item['orden']        = PEDIDO;
+            item['pedido']       = PEDIDO;
+            item['orden']        = ORDEN;
             item['ingreso']      = INGRESO;
             item['almacen']      = ALMACEN;
             item['cantidad']     = CANTIDAD;

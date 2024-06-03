@@ -1094,6 +1094,30 @@
             }
         }
 
+        public function listaAreas(){
+            try {
+                $salida = "<option value='-1'>Seleccione una opción</option>";
+
+                $sql = $this->db->connect()->query("SELECT ncodarea,ccodarea,UPPER(cdesarea) AS cdesarea 
+                                                    FROM tb_area 
+                                                    WHERE nflgactivo = 1
+                                                    ORDER BY cdesarea");
+                $sql->execute();
+                $rowCount = $sql->rowCount(); 
+
+                if ($rowCount > 0){
+                    while ($rs = $sql->fetch()){
+                        $salida .='<option value="'.$rs['ncodarea'].'">'.$rs['cdesarea'].'</option>';
+                    }
+
+                    return $salida;
+                }
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
         //genera los numero de los documentos
         public function generarNumero($id,$query){
             try {
@@ -4396,6 +4420,35 @@
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        public function listaEquiposMmtto(){
+            try {
+                $salida = '<option value="-1" class="oculto">Elija una opción</option>';
+                $sql = $this->db->connect()->query("SELECT
+                                                        tb_equipmtto.cdescripcion,
+                                                        tb_equipmtto.cregistro,
+                                                        tb_equipmtto.idreg
+                                                    FROM
+                                                        tb_equipmtto 
+                                                    WHERE
+                                                        tb_equipmtto.nflgactivo = 1 
+                                                    ORDER BY
+                                                        tb_equipmtto.cdescripcion");
+                $sql->execute();
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0){
+                    while ($rs = $sql->fetch()){
+                        $salida .= '<option value="'.$rs['idreg'].'">'.$rs['cregistro']."  ".$rs['cdescripcion'].'</option>';
+                    }
+
+                    return $salida;
+                } 
+            } catch (PDOException $th) {
+                echo $th->getMessage();
                 return false;
             }
         }
