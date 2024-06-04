@@ -102,7 +102,7 @@
                             <div>
                                 <label for="referencia">Referencia Adicional</label>
                                 <select name="referencia" id="referencia">
-                                    <?php echo $this->listaAlmacen ?>
+                                    <?php echo $this->listaEquipos ?>
                                 </select>
                             </div>
                             <div>

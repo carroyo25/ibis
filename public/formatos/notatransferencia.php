@@ -23,71 +23,69 @@
 	// Cabecera de página
 		function Header(){
 		   
-		    $this->Rect(10,10,30,20); //marco de la imagen
-        	$this->Rect(10,10,190,20); //marco general
+		    $this->Rect(10,10,30,16); //marco de la imagen
+        	$this->Rect(10,10,190,16); //marco general
+			$this->Rect(170,10,30,16); //marco del numero
+
+			$this->Rect(10,26,190,18); //segundo marco
 
         	$this->SetFillColor(229, 229, 229);
-        	$this->Rect(70,24,70,5,"F"); //fondo de mensaje
         	$this->Image('public/img/logo.png',12,12,25);
 	        $this->SetFont('Arial','B',12);
 			$this->SetTextColor(0,0,0);
-
-	 		$this->SetFillColor(229, 229, 229);
             $this->SetFont('Arial','B',9);
-	        $this->Cell(190,7,utf8_decode('NOTA DE INGRESO DE EQUIPOS/ MATERIALES Y/O REPUESTOS'),0,1,'C');
-	        $this->SetFont('Arial','B',10);
-	        $this->Cell(190,7,'',0,1,'C'); //pasa dato condicion
-	        $this->Cell(190,7,'EMITIDO',0,0,'C'); //pasa dato condicion
+			$this->Cell(190,3,"",0,1,'C');
+	        $this->Cell(190,7,utf8_decode('NOTA DE SALIDA DE EQUIPOS/ MATERIALES Y/O REPUESTOS'),0,1,'C');
 
 	        $this->SetXY(160,10);
-	        $this->Cell(40,5,"","LR",1,"C");//pasa dato*/
-            $this->SetXY(160,12);
-            $this->SetFont('Arial','B',8);
-            $this ->MultiCell(35,2.3,"PSPB-430-X-FR-010
-                                    Revision: 2
-            Emision:13/05/2015", 'L', 'L', 0);
-            $this->SetXY(160,24);
-
             $this->SetTextColor(233,61,59);
-            $this->Cell(40,5,utf8_decode("N° ").$this->nguia,"LR",1,"C");//pasa dato*/
+            $this->Cell(45,5,utf8_decode("N° ").$this->nguia,0,1,"C");//pasa dato*/
             $this->SetTextColor(0,0,0);
 
             $this->SetFont('Arial','B',10);
 
-	        $this->SetXY(10,32);
+	        $this->SetXY(10,27);
 	        $this->SetFont('Arial','B',5);
-	        $this->Cell(12,5,"Nro Registro",0,0);
-	        $this->Cell(24,5,$this->nguia,0,0); //pasa dato
-	        $this->Cell(12,5,"Fecha",0,0);
-	        $this->Cell(24,5,utf8_decode($this->fecha),0,0); //pasa dato
-	        $this->Cell(10,5,"Nro. Guia",0,0);
-	        $this->Cell(24,5,"",0,0); //pasa dato
-	        $this->Cell(15,5,utf8_decode("Proyecto"),0,0);
-	        $this->Cell(24,5,"",0,0);
-            $this->Cell(10,5,utf8_decode("Centro de Costo"),0,0);
-	        $this->Cell(20,5,"",0,1);
+	        $this->Cell(20,4,"TRANSFERENCIA",0,0);
+	        $this->Cell(5,4,"X",1,0); //pasa dato
+			$this->Cell(11,4,"",0,0); //pasa dato
+			$this->Cell(20,4,"DEVOLUCION",0,0);
+	        $this->Cell(5,4,"",1,0); //pasa dato
+			$this->Cell(11,4,"",0,0); //pasa dato
+			$this->Cell(12,4,"OTROS",0,0);
+	        $this->Cell(5,4,"",1,0); //pasa dato
+			$this->Cell(11,4,"",0,0); //pasa dato
+			$this->Cell(25,4,"MATERIAL DE TERCEROS",0,0);
+	        $this->Cell(5,4,"",1,0); //pasa dato
+			$this->Cell(20,4,"",0,0); //pasa dato
+			$this->Cell(18,4,"No Documento",1,0);
+	        $this->Cell(22,4,"",1,1); //pasa dato
+			
+			$this->Cell(150,4,"",0,0); //pasa dato
+			$this->Cell(18,4,"Centro de Costos",1,0);
+	        $this->Cell(22,4,"",1,1); //pasa dato
+	        
+			$this->Cell(20,4,"SALIDA",0,0);
+	        $this->Cell(5,4,"",1,0); //pasa dato
+			$this->Cell(11,4,"",0,0); //pasa dato
+			$this->Cell(20,4,"PRESTAMO",0,0);
+	        $this->Cell(5,4,"",1,0); //pasa dato
+			$this->Cell(89,4,"",0,0);
+			$this->Cell(18,4,"Area Solicitante",1,0);
+	        $this->Cell(22,4,"",1,1); //pasa dato
+			$this->Cell(150,4,"",0,0);
+			$this->Cell(18,4,"Lugar",1,0);
+	        $this->Cell(22,4,"",1,1); //pasa dato
 
-            $this->Cell(20,5,utf8_decode("Tipo de Movimiento"),0,0);
-	        $this->Cell(52,5,"TRANSFERENCIA DE ALMACEN",0,0);
-            $this->Cell(20,5,utf8_decode("Pedido"),0,0);
-	        $this->Cell(53,5,"",0,0);
-            $this->Cell(20,5,utf8_decode("Area Solicitante"),0,0);
-	        $this->Cell(60,5,"",0,1);
-
-            $this->Cell(20,5,utf8_decode("Almacen Origen"),0,0);
-	        $this->Cell(52,5,"",0,0);
-            $this->Cell(20,5,utf8_decode("Nro. Compra"),0,0);
-	        $this->Cell(50,5,"",0,1);
 
 	        // Salto de línea
     		$this->Ln(1);
     		$this->SetFont('Arial','B',6);
-    		$this->Rect(10,47,190,3,"F"); //fondo de mensaje
-    		$this->SetWidths(array(10,15,70,8,10,30,17,15,15));
-    		$this->SetAligns(array("C","C","C","C","C","C","C","C","C"));
+    		$this->Rect(10,44,190,3,"F"); //fondo de mensaje
+    		$this->SetWidths(array(10,15,105,10,25,25));
+    		$this->SetAligns(array("C","C","C","C","C","C"));
     		$this->Row(array('Item',utf8_decode('Código'),utf8_decode('Descripción'),
-    				'Und.','Cant.','Observ. Item','Proveedor','Estado',
-    				'Ubica Fisica'));
+    				'Und.','Cant Solicitada','Cant.Despachada'));
     		
 		}
 

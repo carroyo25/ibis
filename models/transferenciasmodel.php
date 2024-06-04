@@ -1001,20 +1001,17 @@
 
                 $pdf->AliasNbPages();
                 $pdf->AddPage();
-                $pdf->SetWidths(array(10,15,70,8,10,30,17,15,15));
+                $pdf->SetWidths(array(10,15,105,10,25,25));
                 $pdf->SetFont('Arial','',4);
 
                 for($i=1;$i<=$nreg;$i++){
-                    $pdf->SetAligns(array("C","L","L","L","R","L","L","L","L"));
+                    $pdf->SetAligns(array("C","L","L","L","R","R"));
                     $pdf->Row(array(str_pad($i,3,"0",STR_PAD_LEFT),
                                             $datos[$rc]->codigo,
                                             utf8_decode($datos[$rc]->descripcion),
                                             $datos[$rc]->unidad,
                                             $datos[$rc]->cantidad,
-                                            "",
-                                            "",
-                                            "",
-                                            ""));
+                                            $datos[$rc]->cantidad));
                     $lc++;
                     $rc++;
                     
