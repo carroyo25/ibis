@@ -590,8 +590,32 @@ $(function(){
     $("#preview").click(function(e){
         e.preventDefault();
 
-        $("#vistaTransferencia").fadeIn();
+        try {
+            let result = {};
 
+            $.each($("#formProceso").serializeArray(),function(){
+                result[this.name] = this.value;
+            });
+
+            //if ( tipoVista == null ) throw "Por favor grabar el documento";
+
+            $.post(RUTA+"transferencias/notaTransferencia", {cabecera:result,
+                                                detalles:JSON.stringify(detalles(1)),
+                                                condicion:0},
+                function (data, textStatus, jqXHR) {
+                    $(".ventanaVistaPrevia iframe")
+                    .attr("src","")
+                    .attr("src",data);
+
+                    $("#vistaTransferencia").fadeIn();
+                },
+                "text"
+            );
+
+        } catch (error) {
+            mostrarMensaje(error,'mensaje_error');
+        }
+    
         return false;
     });
 

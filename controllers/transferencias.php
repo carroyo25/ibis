@@ -61,6 +61,10 @@
         function consultaId(){
             echo json_encode($this->model->consultarReqId($_POST['id'],51,54,49,null));
         }
+
+        function notaTransferencia(){
+            echo $this->model->generarPdfTransferencia($_POST['cabecera'],$_POST['detalles'],$_POST['condicion']);
+        }
         
     }
 ?>
