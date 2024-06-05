@@ -716,6 +716,39 @@ $emitido:#F8CAAD;
     height: 65vh;
     overflow-x: auto;
     overflow-y: auto;
+
+    .carpetas{
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        text-align: center;
+        justify-content: space-around;
+
+        a {
+            display: block;
+            padding: 0.5rem;
+            border: 1px solid transparent;
+            width: 7rem;
+            height: 5rem;
+            transition: all 0.5s ease;
+            border-radius: 1rem;
+
+            &:hover {
+                border: 1px solid #c2c2c2;
+            }
+
+            i{
+                font-size: 2rem;
+                color: gold;
+            }
+    
+            p{
+                font-size: .9rem;
+            }
+        }
+
+        
+    }
 }
 
 .itemsTablaVertical{

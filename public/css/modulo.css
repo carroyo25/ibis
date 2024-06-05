@@ -989,6 +989,37 @@
   overflow-x: auto;
   overflow-y: auto;
 }
+.itemsTabla .carpetas {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  gap: 10px;
+  text-align: center;
+  -ms-flex-pack: distribute;
+      justify-content: space-around;
+}
+.itemsTabla .carpetas a {
+  display: block;
+  padding: 0.5rem;
+  border: 1px solid transparent;
+  width: 7rem;
+  height: 5rem;
+  -webkit-transition: all 0.5s ease;
+  transition: all 0.5s ease;
+  border-radius: 1rem;
+}
+.itemsTabla .carpetas a:hover {
+  border: 1px solid #c2c2c2;
+}
+.itemsTabla .carpetas a i {
+  font-size: 2rem;
+  color: gold;
+}
+.itemsTabla .carpetas a p {
+  font-size: 0.9rem;
+}
 
 .itemsTablaVertical {
   overflow: hidden;
