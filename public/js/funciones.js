@@ -450,7 +450,7 @@ $(".headerTableFilter").append(
         <input type="text" name="strSearch" id="strSearch" class="textoNuevoBuscar" placeholder="Buscar Elementos">
         <ul class="filterList">
         </ul>
-        <div class="btn_options oculto">
+        <div class="btn_options">
             <button class="btn_sendfilter">Aceptar</button>
             <button class="btn_cancelfilter">Cancelar</button>
         </div>

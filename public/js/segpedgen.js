@@ -45,6 +45,7 @@ $(function(){
                             <td class="pl20px">${i.concepto}</td>
                             <td class="pl20px">${i.costos}</td>
                             <td class="pl20px">${i.nombres}</td>
+                            <td class="pl20px">${i.area}</td>
                             <td class="textoCentro ${i.cabrevia.toLowerCase()}">${i.cabrevia}</td>
                             <td class="textoCentro ${i.atencion.toLowerCase()}">${i.atencion}</td>`;
             tr.classList.add("pointer");

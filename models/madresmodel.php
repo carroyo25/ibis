@@ -488,12 +488,12 @@
 	                                                    lg_ordencab.cnumero 
                                                         FROM
                                                             alm_madresdet
-                                                            INNER JOIN cm_producto ON alm_madresdet.id_cprod = cm_producto.id_cprod
-                                                            INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
-                                                            INNER JOIN tb_pedidodet ON alm_madresdet.niddetaOrd = tb_pedidodet.iditem
-                                                            INNER JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
-                                                            INNER JOIN lg_ordendet ON alm_madresdet.niddetaPed = lg_ordendet.nitemord
-                                                            INNER JOIN lg_ordencab ON lg_ordendet.id_regmov = lg_ordencab.id_regmov 
+                                                            LEFT JOIN cm_producto ON alm_madresdet.id_cprod = cm_producto.id_cprod
+                                                            LEFT JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                            LEFT JOIN tb_pedidodet ON alm_madresdet.niddetaOrd = tb_pedidodet.iditem
+                                                            LEFT JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
+                                                            LEFT JOIN lg_ordendet ON alm_madresdet.niddetaPed = lg_ordendet.nitemord
+                                                            LEFT JOIN lg_ordencab ON lg_ordendet.id_regmov = lg_ordencab.id_regmov 
                                                         WHERE
                                                         alm_madresdet.id_regalm = :id");
                 $sql->execute(["id"=>$id]);

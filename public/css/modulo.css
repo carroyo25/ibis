@@ -1215,7 +1215,7 @@
   height: 25px;
 }
 .itemsCargoPlanner table tbody .pointer:hover, .itemsValorizado table tbody .pointer:hover {
-  background: rgba(255, 255, 43, 0.7);
+  background: rgba(255, 64, 43, 0.7);
 }
 
 .lista {
@@ -2884,14 +2884,13 @@
   width: -webkit-max-content;
   width: -moz-max-content;
   width: max-content;
-  line-height: 1.5rem;
   border-radius: 3px;
   display: none;
   padding: 5px;
   -webkit-box-shadow: 5px 6px 5px #c2c2c2;
           box-shadow: 5px 6px 5px #c2c2c2;
   top: 45px;
-  height: 15rem;
+  height: 22rem;
   overflow: auto;
 }
 .tabla thead .filtro input, .tablaWrap thead .filtro input {
@@ -2907,8 +2906,10 @@
   -webkit-box-direction: normal;
       -ms-flex-direction: column;
           flex-direction: column;
-  height: 20rem;
+  height: 16rem;
+  max-height: 16rem;
   overflow: auto;
+  line-height: 1.5rem;
 }
 .tabla thead .filtro ul li, .tablaWrap thead .filtro ul li {
   display: block;
@@ -2919,18 +2920,20 @@
   display: block;
 }
 .tabla thead .filtro ul a:hover, .tablaWrap thead .filtro ul a:hover {
-  background: #b7ab00;
+  background: #0000b7;
   color: #fff;
 }
-.tabla thead .filtro .filter__options, .tablaWrap thead .filtro .filter__options {
-  background: red;
+.tabla thead .filtro .filter__options, .tabla thead .filtro .opciones_filtro, .tablaWrap thead .filtro .filter__options, .tablaWrap thead .filtro .opciones_filtro {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
   gap: 10px;
+  padding: 0.5rem;
+  text-align: center;
 }
-.tabla thead .filtro .filter__options button, .tablaWrap thead .filtro .filter__options button {
+.tabla thead .filtro .filter__options button, .tabla thead .filtro .opciones_filtro button, .tablaWrap thead .filtro .filter__options button, .tablaWrap thead .filtro .opciones_filtro button {
   width: 100%;
+  padding: 0.5rem;
 }
 .tabla tbody tr td, .tablaWrap tbody tr td {
   border: 1px solid #616161;

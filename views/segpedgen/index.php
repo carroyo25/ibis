@@ -350,6 +350,7 @@
                     <th data-idcol="3" class="datafiltro">Descripción</th>
                     <th data-idcol="4" class="datafiltro">Centro Costos</th>
                     <th data-idcol="5" class="datafiltro">Resposable</th>
+                    <th data-idcol="6" class="datafiltro">Area</th>
                     <th>Estado</th>
                     <th>Atencion</th>
                 </tr>

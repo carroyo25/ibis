@@ -14,9 +14,34 @@ $(() => {
     $("#btn_consumo_aceptar").click(function (e) { 
         e.preventDefault();
 
-        $("#dialogo_registro").fadeOut();
-        accion = "n";
+        try {
 
+            if ($("#tipo").val() == -1) throw new Error("Seleccione el tipo de operación");
+            if ($("#codigo").val() == "") throw new Error("Selecione el codigo del item");
+            if ($("#cantidad").val() == 0) throw new Error("Ingrese una cantidad válida");
+            if ($("#documento").val() == "") throw new Error("Ingrese el número de documento");
+            if ($("#proyecto").val() == -1) throw new Error("Seleccion el proyecto");
+            if ($("#referencia").val() == -1) throw new Error("Seleccione una referencia adicional");
+            if ($("#area").val() == -1) throw new Error("Seleccione el area");
+
+            let result = $("#form__combustible").serialize(),
+                formData = new FormDta();
+
+            formData.append('datos',result);
+
+            fetch(RUTA+'combustible/registro',{
+                method: 'POST',
+                body:formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                $("#dialogo_registro").fadeOut();
+                accion = "u";
+            });
+        } catch (error) {
+            mmostrarMensaje(error.message,"mensaje_error");
+        }
         return false;
     });
 
@@ -55,11 +80,46 @@ $(() => {
                     .catch((err)=> {
                         console.log(err);
                     });
+            } catch (error) {
+                mostrarMensaje(error.message,"mensaje_error");
+            }
+        }
+    });
+
+    $("#documento").keypress(function (e) { 
+        if(e.which == 13) {
+            try {
+                let documento = $(this).val(),
+                    formdata = new FormData();
+
+                if ( documento == "" ) throw new Error("Ingrese el N° de documento");
+
+                formdata.append('documento',documento);
+
+                $("#esperarCargo").css("opacity","1").fadeIn();
+
+                fetch (RUTA+"combustible/documento",{
+                    method: "POST",
+                    body: formdata
+                })
+                    .then((response)=> {
+                        return response.json();
+                    })
+                    .then((data)=> {
+                        if(data.registrado) {
+                            $("#trabajador").val(data.datos[0].nombres+' '+data.datos[0].paterno+' '+data.datos[0].materno);
+                        }else{
+                            mostrarMensaje("Trabajador no registrado","mensaje_error");
+                        }
+                        
+                    })
+                    .catch((err)=> {
+                        console.log(err);
+                    });
 
             } catch (error) {
                 mostrarMensaje(error.message,"mensaje_error");
             }
-            
         }
     });
 })

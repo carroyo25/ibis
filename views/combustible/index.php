@@ -39,8 +39,8 @@
                                 <label for="item">Tipo</label>
                                 <select name="tipo" id="tipo">
                                     <option value="-1">Elija opcion</option>
-                                    <option value="I">Ingreso</option>
-                                    <option value="S">Salida</option>
+                                    <option value="1">Ingreso</option>
+                                    <option value="2">Salida</option>
                                 </select>
                             </div>
                         </div>
@@ -61,7 +61,7 @@
                         <div class="grid2col">
                             <div>
                                 <label for="item">Cantidad</label>
-                                <input type="number" id="item" name="item">
+                                <input type="number" id="item" name="cantidad" placeholder="0.00">
                             </div>
                             <div>
                                 <label for="observacionesItem">Observaciones del Item :</label>
@@ -70,18 +70,18 @@
                         </div>
                         <div class="grid2col">
                             <div>
-                                <label for="item">documento</label>
+                                <label for="documento">Documento :</label>
                                 <input type="text" id="documento" name="documento">
                             </div>
                             <div>
-                                <label for="item">Trabajador</label>
+                                <label for="item">Trabajador :</label>
                                 <input type="text" id="trabajador" name="trabajador">
                             </div>
                         </div>
                         <div class="grid3col">
                             <div>
                                 <label for="usuario">Usuario</label>
-                                <input type="text" id="usuario" name="usuario" readonly>
+                                <input type="text" id="usuario" name="usuario" value ="<?php echo strtoupper($_SESSION['user']); ?>" readonly >
                             </div>
                             <div>
                                 <label for="proyecto">Proyecto :</label>

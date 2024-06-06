@@ -36,5 +36,29 @@
                 return false;
             }
         }
+
+        public function buscarDocumento($doc) {
+            $registrado = false;
+
+            $url = "http://sicalsepcon.net/api/activesapi.php?documento=".$doc;
+            
+            $api = file_get_contents($url);
+
+            $datos =  json_decode($api);
+            $nreg = count($datos);
+
+            $registrado = $nreg > 0 ? true: false;
+
+            return array("datos" => $datos, "registrado"=>$registrado);
+        }
+
+        public function registrarCombustible($datos){
+            try {
+                //code...
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
     }
 ?>

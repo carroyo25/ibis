@@ -17,6 +17,14 @@
         function codigo(){
             echo json_encode($this->model->consultarCodigo($_POST['codigo']));
         }
+
+        function documento(){
+            echo json_encode($this->model->buscarDocumento($_POST['documento']));
+        }
+
+        function registro(){
+            echo json_encode($this->model->registrarCombustible($_POST['documento']));
+        }
         
     }
 ?>

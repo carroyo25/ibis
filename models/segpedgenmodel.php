@@ -24,13 +24,15 @@
                                                     ibis.tb_pedidocab.nivelAten,
                                                     atenciones.cdescripcion AS atencion,
                                                     estados.cdescripcion AS estado,
-                                                    estados.cabrevia 
+                                                    estados.cabrevia,
+                                                    UPPER(ibis.tb_area.cdesarea) AS area   
                                                 FROM
                                                     ibis.tb_pedidocab
                                                     INNER JOIN rrhh.tabla_aquarius ON ibis.tb_pedidocab.idsolicita = rrhh.tabla_aquarius.internal
                                                     INNER JOIN ibis.tb_proyectos ON ibis.tb_pedidocab.idcostos = ibis.tb_proyectos.nidreg
                                                     INNER JOIN ibis.tb_parametros AS atenciones ON ibis.tb_pedidocab.nivelAten = atenciones.nidreg
                                                     INNER JOIN ibis.tb_parametros AS estados ON ibis.tb_pedidocab.estadodoc = estados.nidreg
+                                                    INNER JOIN ibis.tb_area ON ibis.tb_pedidocab.idarea = ibis.tb_area.ncodarea
                                                 WHERE YEAR(ibis.tb_pedidocab.emision) = YEAR(NOW())
                                                     AND ibis.tb_pedidocab.estadodoc != 105
                                                 ORDER BY ibis.tb_pedidocab.emision DESC");
@@ -48,6 +50,7 @@
                                         <td class="pl20px">'.$rs['concepto'].'</td>
                                         <td class="pl20px">'.$rs['costos'].'</td>
                                         <td class="pl20px">'.$rs['nombres'].'</td>
+                                        <td></td>
                                         <td class="textoCentro '.$rs['cabrevia'].'">'.$rs['estado'].'</td>
                                         <td class="textoCentro '.strtolower($rs['atencion']).'">'.$rs['atencion'].'</td>
                                     </tr>';
@@ -81,13 +84,15 @@
                                                         ibis.tb_pedidocab.nivelAten,
                                                         atenciones.cdescripcion AS atencion,
                                                         estados.cdescripcion AS estado,
-                                                        estados.cabrevia 
+                                                        estados.cabrevia,
+                                                        UPPER(ibis.tb_area.cdesarea) AS area  
                                                     FROM
                                                         ibis.tb_pedidocab
                                                         INNER JOIN rrhh.tabla_aquarius ON ibis.tb_pedidocab.idsolicita = rrhh.tabla_aquarius.internal
                                                         INNER JOIN ibis.tb_proyectos ON ibis.tb_pedidocab.idcostos = ibis.tb_proyectos.nidreg
                                                         INNER JOIN ibis.tb_parametros AS atenciones ON ibis.tb_pedidocab.nivelAten = atenciones.nidreg
                                                         INNER JOIN ibis.tb_parametros AS estados ON ibis.tb_pedidocab.estadodoc = estados.nidreg
+                                                        INNER JOIN ibis.tb_area ON ibis.tb_pedidocab.idarea = ibis.tb_area.ncodarea 
                                                     WHERE YEAR(ibis.tb_pedidocab.emision) = YEAR(NOW())
                                                         AND ibis.tb_pedidocab.estadodoc != 105
                                                     ORDER BY ibis.tb_pedidocab.emision DESC
@@ -639,13 +644,15 @@
                                                         ibis.tb_pedidocab.nivelAten,
                                                         atenciones.cdescripcion AS atencion,
                                                         estados.cdescripcion AS estado,
-                                                        estados.cabrevia
+                                                        estados.cabrevia,
+                                                        UPPER(ibis.tb_area.cdesarea) AS area 
                                                     FROM
                                                         ibis.tb_pedidocab
                                                     INNER JOIN rrhh.tabla_aquarius ON ibis.tb_pedidocab.idsolicita = rrhh.tabla_aquarius.internal
                                                     INNER JOIN ibis.tb_proyectos ON ibis.tb_pedidocab.idcostos = ibis.tb_proyectos.nidreg
                                                     INNER JOIN ibis.tb_parametros AS atenciones ON ibis.tb_pedidocab.nivelAten = atenciones.nidreg
                                                     INNER JOIN ibis.tb_parametros AS estados ON ibis.tb_pedidocab.estadodoc = estados.nidreg
+                                                    INNER JOIN ibis.tb_area ON ibis.tb_pedidocab.idarea = ibis.tb_area.ncodarea
                                                     WHERE
                                                         ibis.tb_pedidocab.idtipomov LIKE :tipomov
                                                     AND ibis.tb_pedidocab.idcostos LIKE :costos
@@ -669,6 +676,7 @@
                                         <td class="pl20px">'.$rs['concepto'].'</td>
                                         <td class="pl20px">'.$rs['costos'].'</td>
                                         <td class="pl20px">'.$rs['nombres'].'</td>
+                                        <td class="pl20px">'.$rs['area'].'</td>
                                         <td class="textoCentro '.$rs['cabrevia'].'">'.$rs['estado'].'</td>
                                         <td class="textoCentro '.strtolower($rs['atencion']).'">'.$rs['atencion'].'</td>
                                     </tr>';

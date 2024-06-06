@@ -954,7 +954,7 @@ $emitido:#F8CAAD;
                 height: 25px;
 
                 &:hover {
-                    background:rgba(255,255,43,.7);
+                    background:rgba(255, 64, 43, 0.7);
                 }
             };
         }
@@ -2628,13 +2628,13 @@ $emitido:#F8CAAD;
             text-align: left;
             min-width: 15rem;
             width: max-content;
-            line-height: 1.5rem;
+            
             border-radius: 3px;
             display: none;
             padding: 5px;
             box-shadow: 5px 6px 5px #c2c2c2;
             top: 45px;
-            height: 15rem;
+            height: 22rem;
             overflow: auto;
 
             input {
@@ -2646,8 +2646,10 @@ $emitido:#F8CAAD;
             ul {
                 display: flex;
                 flex-direction: column;
-                height: 20rem;
+                height: 16rem;
+                max-height: 16rem;
                 overflow: auto;
+                line-height: 1.5rem;
                 
                 li {
                     display: block;
@@ -2659,19 +2661,21 @@ $emitido:#F8CAAD;
                     display: block;
 
                     &:hover {
-                        background: #b7ab00;
+                        background: #0000b7;
                         color: #fff;
                     }
                 }
             }
 
-            .filter__options{
-                background: red;
+            .filter__options,.opciones_filtro{
                 display: flex;
                 gap: 10px;
+                padding: 0.5rem;
+                text-align: center;
 
                 button{
                     width: 100%;
+                    padding: 0.5rem;
                 }
             }
         }
