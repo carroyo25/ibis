@@ -22,25 +22,22 @@ $(() => {
             if ($("#documento").val() == "") throw new Error("Ingrese el número de documento");
             if ($("#proyecto").val() == -1) throw new Error("Seleccion el proyecto");
             if ($("#referencia").val() == -1) throw new Error("Seleccione una referencia adicional");
-            if ($("#area").val() == -1) throw new Error("Seleccione el area");
+            if ($("#area").val() == -1) throw new Error("Seleccione una area");
 
-            let result = $("#form__combustible").serialize(),
-                formData = new FormDta();
-
-            formData.append('datos',result);
+            const datos = new URLSearchParams(new FormData(document.getElementById("form__combustible")));
 
             fetch(RUTA+'combustible/registro',{
                 method: 'POST',
-                body:formData
+                body:datos
             })
             .then(response => response.json())
             .then(data => {
-                console.log(data);
                 $("#dialogo_registro").fadeOut();
                 accion = "u";
             });
+            
         } catch (error) {
-            mmostrarMensaje(error.message,"mensaje_error");
+            mostrarMensaje(error.message,"mensaje_error");
         }
         return false;
     });
@@ -76,6 +73,7 @@ $(() => {
                         $("#esperarCargo").css("opacity","0").fadeOut();
                         $("#descripcion").val(json.datos[0].cdesprod);
                         $("#unidad").val(json.datos[0].cdesmed);
+                        $("#codigo_producto").val(json.datos[0].id_cprod)
                     })
                     .catch((err)=> {
                         console.log(err);

@@ -14,16 +14,16 @@
             <div class="titulo_dialogo">
                 <h3>Registrar Combustible</h3>
             </div>
-                <input type="hidden" name="idprod" id="idprod">
-                <input type="hidden" name="codigo_almacen" id="codigo_almacen">
-                <input type="hidden" name="codigo_area" id="codigo_area">
-                <input type="hidden" name="codigo_proyecto" id="codigo_proyecto">
-                <input type="hidden" name="codigo_tipo" id="codigo_tipo">
-                <input type="hidden" name="codigo_unidad" id="codigo_unidad">
-                <input type="hidden" name="codigo_equipo" id="codigo_equipo">
-
                 <div class="ingreso_combustible">
                     <form id="form__combustible" class="form__combustible">
+                    <input type="hidden" name="codigo_producto" id="codigo_producto">
+                    <input type="hidden" name="codigo_almacen" id="codigo_almacen">
+                    <input type="hidden" name="codigo_area" id="codigo_area">
+                    <input type="hidden" name="codigo_proyecto" id="codigo_proyecto">
+                    <input type="hidden" name="codigo_tipo" id="codigo_tipo">
+                    <input type="hidden" name="codigo_unidad" id="codigo_unidad">
+                    <input type="hidden" name="codigo_equipo" id="codigo_equipo">
+
                         <div class="grid3col">
                             <div>
                                 <label for="fechaRegistro">Fecha de Registro</label>

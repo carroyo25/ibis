@@ -23,7 +23,7 @@
         }
 
         function registro(){
-            echo json_encode($this->model->registrarCombustible($_POST['documento']));
+            echo json_encode($this->model->registrarCombustible($_POST));
         }
         
     }

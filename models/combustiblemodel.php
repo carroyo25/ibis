@@ -6,6 +6,10 @@
             parent::__construct();
         }
 
+        public function listarConsumos(){
+            
+        }
+
         public function consultarCodigo($codigo){
             try {
                 $sql = $this->db->connect()->prepare("SELECT
@@ -54,7 +58,37 @@
 
         public function registrarCombustible($datos){
             try {
-                //code...
+                $sql=$this->db->connect()->prepare("INSERT INTO alm_combustible 
+                                                    SET alm_combustible.fregistro=:fecha,
+                                                        alm_combustible.idalm=:idalmacen,
+                                                        alm_combustible.idtipo=:tipo,
+                                                        alm_combustible.idprod=:producto,
+                                                        alm_combustible.ncantidad=:cantidad,
+                                                        alm_combustible.tobseritem=:obseritem,
+                                                        alm_combustible.cdocumento=:nrodoc,
+                                                        alm_combustible.idusuario=:usuario,
+                                                        alm_combustible.idproyecto=:proyecto,
+                                                        alm_combustible.cguia=:guia,
+                                                        alm_combustible.tobserdocum=:obserdoc,
+                                                        alm_combustible.nidref=:referencia,
+                                                        alm_combustible.idarea=:area");
+                $sql->execute([
+                    "fecha"=>$datos['fechaRegistro'],
+                    "idalmacen"=>$datos['almacen'],
+                    "tipo"=>$datos['tipo'],
+                    "producto"=>$datos['codigo_producto'],
+                    "cantidad"=>$datos['cantidad'],
+                    "obseritem"=>strtoupper($datos['observacionesItem']),
+                    "nrodoc"=>$datos['documento'],
+                    "usuario"=>$datos['usuario'],
+                    "proyecto"=>$datos['proyecto'],
+                    "guia"=>$datos['guia'],
+                    "obserdoc"=>strtoupper($datos['observacionesDocumento']),
+                    "referencia"=>$datos['referencia'],
+                    "area"=>$datos['area']]);
+
+                return array("mensaje"=>'Consumo registrado');
+
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
