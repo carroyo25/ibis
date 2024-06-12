@@ -118,34 +118,55 @@
                         <button id="btn_consumo_cancelar">Cancelar</button>
                     </div>
                 </div>
+        </div>
+    </div>
+    <div class="modal" id="filtros">
+        <div class="ventanaInformes">
+            <div class="title__informe">
+                <h3>Detalles de Consumo</h3>
+                <a href="#" id="closeInform"><i class="far fa-window-close"></i></a>
+            </div>
+            <div class="body">
                 <div class="resumen_combustible">
                     <table>
+                        <thead>
+                            <tr>
+                                <th>Descripcion</th>
+                                <th>Cantidad</th>
+                            </tr>
+                        </thead>
                         <tbody>
                             <tr>
                                 <td>STOCK INICIAL (MES ANTERIOR):</td>
-                                <td>0</td>
+                                <td class="textoDerecha">0</td>
                             </tr>
                             <tr>
                                 <td>CANTIDAD DE INGRESO:</td>
-                                <td>0</td>
+                                <td class="textoDerecha">0</td>
                             </tr>
                             <tr>
                                 <td>CANTIDAD DE CONSUMO:</td>
-                                <td>0</td>
+                                <td class="textoDerecha">0</td>
                             </tr>
                             <tr>
                                 <td>STOCK FINAL:</td>
-                                <td>0</td>
+                                <td class="textoDerecha">0</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
+                <div class="graficoEstadistico">
+                    <h3>Grafico</h3>
+                </div>
+            </div>
         </div>
     </div>
     <div class="cabezaModulo">
         <h1>Control de Combustible</h1>
         <div>
             <a href="#" id="nuevoRegistro"><i class="far fa-file"></i><p>Nuevo</p></a>
+            <a href="#" id="reportExport"><i class="fas fa-file-excel"></i><p>Exportar</p></a>
+            <a href="#" id="kardexDetails"><i class="fas fa-window-restore"></i><p>Detalles</p></a>
             <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
         </div>
     </div>
@@ -153,8 +174,12 @@
         <form action="#" id="formConsulta">
             <div class="variasConsultas">
                     <div>
-                        <label for="tipo">Nro. Guia</label>
-                        <input type="text" id="ordenSearch" name="ordenSearch">
+                        <label for="tipo">Tipo</label>
+                        <select name="tipo" id="tipo">
+                            <option value="-1">Tipo</option>
+                            <option value="1">Ingreso</option>
+                            <option value="2">Salida</option>
+                        </select>
                     </div>
                     <div>
                         <label for="costosSearch">Centro de Costos: </label>
@@ -195,12 +220,11 @@
                     <th>Item</th>
                     <th>Fecha<br>Registro</th>
                     <th>Almacen</th>
-                    <th>Tipo</th>
+                    <th>Tipo de <br> Movimiento</th>
                     <th>Codigo</th>
                     <th>Descripción</th>
                     <th>Unidad</th>
                     <th>Cantidad</th>
-                    <th>Movimiento</th>
                     <th>Trabajador</th>
                     <th>Usuario</th>
                     <th>Proyecto</th>
@@ -213,7 +237,31 @@
                 </tr>
             </thead>
             <tbody>
-                <?php echo $this->listaItemsCombustible;?>
+                <?php $item = 1; 
+                    foreach($this->listaItemsCombustible['datos'] as $registro)
+                    $tipo = $registro['idtipo'] == 1 ? 'INGRESO POR COMPRA':'SALIDA POR CONSUMO'; 
+                    $mes = ['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO','SETIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE'];
+                {?>
+                    <tr class="pointer click_tr" data-id="<?php echo $registro['idreg']; ?>">
+                        <td class="textoCentro"><?php echo str_pad($item++,3,0,STR_PAD_LEFT); ?></td>
+                        <td class="textoCentro"><?php echo $registro['fregistro']; ?></td>
+                        <td class="pl20px"><?php echo $registro['cdesalm']; ?></td>
+                        <td class="pl20px"><?php echo $tipo; ?></td>
+                        <td class="textoCentro"><?php echo $registro['ccodprod']; ?></td>
+                        <td class="pl20px"><?php echo $registro['cdesprod']; ?></td>
+                        <td class="textoCentro"><?php echo $registro['cabrevia']; ?></td>
+                        <td class="textoDerecha"><?php echo $registro['ncantidad']; ?></td>
+                        <td class="pl20px"><?php foreach($this->listaItemsCombustible['usuarios'] as $usuario ){if ( $usuario['dni'] == $registro['cdocumento'] ){ echo $usuario['usuario'];}}?></td>
+                        <td class="textoCentro"><?php echo $registro['idusuario']; ?></td>
+                        <td class="textoCentro"><?php echo $registro['ccodproy']; ?></td>
+                        <td class="textoCentro"><?php echo $registro['cguia']; ?></td>
+                        <td class="pl20px"><?php echo $registro['tobseritem']; ?></td>
+                        <td class="pl20px"><?php echo $registro['tobserdocum']; ?></td>
+                        <td class="pl20px"><?php echo $registro['cdesarea']; ?></td>
+                        <td class="textoCentro"><?php echo $registro['cregistro']; ?></td>
+                        <td class="textoCentro"><?php echo $mes[$registro['mes']-1]; ?></td>
+                    </tr>
+                <?php }; ?>
             </tbody>
         </table>
     </div>

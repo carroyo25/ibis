@@ -6,8 +6,72 @@
             parent::__construct();
         }
 
-        public function listarConsumos(){
-            
+        public function listaConsumosCombustibles($t,$c,$a){
+            try {
+
+                $docData = [];
+
+                $costo = $c != -1 ? $c : "%";
+                $tipo  = $t != -1 ? $t : "%";
+
+                $sql = $this->db->connect()->prepare("SELECT
+                                                    alm_combustible.idreg,
+                                                    DATE_FORMAT(alm_combustible.fregistro,'%d/%m/%Y') AS fregistro,
+                                                    alm_combustible.idalm,
+                                                    alm_combustible.idtipo,
+                                                    alm_combustible.idprod,
+                                                    FORMAT(alm_combustible.ncantidad,2) AS ncantidad,
+                                                    UPPER(alm_combustible.tobseritem) AS tobseritem,
+                                                    UPPER(alm_combustible.cdocumento) AS cdocumento,
+                                                    alm_combustible.idusuario,
+                                                    alm_combustible.idproyecto,
+                                                    alm_combustible.cguia,
+                                                    UPPER(alm_combustible.tobserdocum) AS tobserdocum,
+                                                    alm_combustible.nidref,
+                                                    alm_combustible.idarea,
+                                                    UPPER( tb_almacen.cdesalm ) AS cdesalm,
+                                                    cm_producto.ccodprod,
+                                                    cm_producto.cdesprod,
+                                                    tb_unimed.cabrevia,
+                                                    tb_proyectos.ccodproy,
+                                                    UPPER( tb_proyectos.cdesproy ) AS desproy,
+                                                    UPPER(tb_equipmtto.cregistro) AS cregistro,
+                                                    tb_equipmtto.cdescripcion,
+                                                    UPPER(tb_area.cdesarea) AS cdesarea,
+                                                    MONTH(alm_combustible.fregistro) AS mes
+                                                FROM
+                                                    alm_combustible
+                                                    INNER JOIN tb_almacen ON alm_combustible.idalm = tb_almacen.ncodalm
+                                                    INNER JOIN cm_producto ON alm_combustible.idprod = cm_producto.id_cprod
+                                                    INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                    INNER JOIN tb_proyectos ON alm_combustible.idproyecto = tb_proyectos.nidreg
+                                                    INNER JOIN tb_equipmtto ON alm_combustible.nidref = tb_equipmtto.idreg
+                                                    INNER JOIN tb_area ON alm_combustible.idarea = tb_area.ncodarea 
+                                                WHERE
+                                                    alm_combustible.nflgactivo = 1
+                                                    AND YEAR(alm_combustible.fregistro) = :anio
+                                                    AND alm_combustible.idtipo LIKE :tipo
+                                                    AND alm_combustible.idproyecto LIKE :costo");
+
+                $sql->execute(["costo" =>$costo,"tipo" =>$tipo,"anio"=>$a]);
+                $rowCount = $sql->rowCount();
+                
+                if ($rowCount) {
+                    $respuesta = true;
+                    $i = 0;
+                    
+                    while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+                        $docData[] = $row;
+                    }
+                }
+
+
+                return array("datos"=>$docData,"usuarios"=>$this->usuariosAquarius());
+
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
         }
 
         public function consultarCodigo($codigo){

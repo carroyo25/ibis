@@ -4452,5 +4452,33 @@
                 return false;
             }
         }
+
+        public function usuariosAquarius(){
+            try {
+                $docData = [];
+
+                $sql = $this->db->connect()->query("SELECT
+                                                        rrhh.tabla_aquarius.dni,
+                                                        CONCAT_WS( ' ', rrhh.tabla_aquarius.nombres, rrhh.tabla_aquarius.apellidos ) AS usuario,
+                                                        rrhh.tabla_aquarius.correo 
+                                                    FROM
+                                                        rrhh.tabla_aquarius 
+                                                    WHERE
+                                                        rrhh.tabla_aquarius.estado = 'AC' 
+                                                    GROUP BY
+                                                        rrhh.tabla_aquarius.dni 
+                                                    ORDER BY
+                                                        rrhh.tabla_aquarius.dni");
+                $sql->execute();
+                while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+                    $docData[] = $row;
+                }
+
+                return $docData;
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
     }
 ?>

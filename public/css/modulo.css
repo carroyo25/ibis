@@ -1263,7 +1263,8 @@
 .ventanaDetalles,
 .ventanaFiltros,
 .ventanaConsumo,
-.ventanaCarpetas {
+.ventanaCarpetas,
+.ventanaInformes {
   background: #fff;
   position: absolute;
   top: 50%;
@@ -1272,6 +1273,51 @@
           transform: translate(-50%, -50%);
   -webkit-box-shadow: 5px 8px 5px #000;
           box-shadow: 5px 8px 5px #000;
+}
+
+.ventanaInformes {
+  width: 50%;
+  height: 35%;
+}
+.ventanaInformes .title__informe {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  padding: 5px;
+}
+.ventanaInformes .body {
+  padding: 0.5rem;
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 1fr 10px 1fr;
+  grid-template-columns: repeat(2, 1fr);
+  -ms-grid-rows: 1fr;
+  grid-template-rows: 1fr;
+  gap: 10px;
+  height: 30vh;
+}
+.ventanaInformes .body > *:nth-child(1) {
+  -ms-grid-row: 1;
+  -ms-grid-column: 1;
+}
+.ventanaInformes .body > *:nth-child(2) {
+  -ms-grid-row: 1;
+  -ms-grid-column: 3;
+}
+.ventanaInformes .body div {
+  border: 1px solid #ccc;
+  height: inherit;
+}
+.ventanaInformes .body .resumen_combustible {
+  padding: 1px;
+}
+.ventanaInformes .body .resumen_combustible table {
+  margin-top: 10px;
+  line-height: 2rem;
+  width: 100%;
 }
 
 .ventanaConsumo {

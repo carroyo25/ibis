@@ -120,4 +120,12 @@ $(() => {
             }
         }
     });
+
+    $("#kardexDetails").click(function (e) { 
+        e.preventDefault();
+        
+        $("#filtros").fadeIn();
+
+        return false;
+    });
 })

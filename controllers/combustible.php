@@ -10,7 +10,7 @@
             $this->view->listaCostosSelect = $this->model->costosPorUsuarioSelect($_SESSION['iduser']);
             $this->view->listaAreas = $this->model->listaAreas();
             $this->view->listaEquipos = $this->model->listaEquiposMmtto();
-            $this->view->listaItemsCombustible = "";
+            $this->view->listaItemsCombustible = $this->model->listaConsumosCombustibles('%','%',2024);
             $this->view->render('combustible/index');
         }
 
