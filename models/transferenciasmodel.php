@@ -975,55 +975,24 @@
         }
 
         public function generarPdfTransferencia($cabecera,$detalles,$condicion){
-            require_once("public/formatos/notatransferencia.php");
+            require_once("public/formatos/transferencia.php");
             try {
-                $datos = json_decode($detalles);
-                $nreg = count($datos);
 
-                $fecha = explode("-",$cabecera['fecha']);
-
-                $lc = 0;
-                $rc = 0;
-
-                $dia = $fecha[2];
-                $mes = $fecha[1];
-                $anio = $fecha[0];
-
-                $cargo = "Jefe de Almacen";
-
-                $file = uniqid("NT")."_".$cabecera['numero']."_".$cabecera['corigen'].".pdf";
-
+                $file = $cabecera['numero']."_".$cabecera['cdestino'].".pdf";
                 $filename = "public/documentos/notas_transferencia/emitidas/".$file;
-                
-                $pdf = new PDF($cabecera['codigo_transferencia'],$condicion,$dia,$mes,$anio,$cabecera['corigen'],
-                            $cabecera['corigen'],$cabecera['cdestino'],
-                            $cabecera['tipo'],$cabecera['numero'],$cabecera['aprueba'],$cargo,$cabecera['fecha']);
 
+                $pdf = new PDF($cabecera['numero']);
+                
                 $pdf->AliasNbPages();
-                $pdf->AddPage();
-                $pdf->SetWidths(array(10,15,105,10,25,25));
-                $pdf->SetFont('Arial','',4);
+                $pdf->AddPage('P','A5');
+                $pdf->SetFont('Times','',12);
+                for($i=1;$i<=20;$i++)
+                    $pdf->Cell(0,10,'Imprimiendo linea numero '.$i,0,1);
+                
+                $pdf->Output($filename,'F');
+                
+                return $filename;
 
-                for($i=1;$i<=$nreg;$i++){
-                    $pdf->SetAligns(array("C","L","L","L","R","R"));
-                    $pdf->Row(array(str_pad($i,3,"0",STR_PAD_LEFT),
-                                            $datos[$rc]->codigo,
-                                            utf8_decode($datos[$rc]->descripcion),
-                                            $datos[$rc]->unidad,
-                                            $datos[$rc]->cantidad,
-                                            $datos[$rc]->cantidad));
-                    $lc++;
-                    $rc++;
-                    
-                    if ($lc == 49) {
-                        $pdf->AddPage();
-                        $lc = 0;
-                    }	
-                }
-                
-            $pdf->Output($filename,'F');
-                
-            return $filename;
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;
