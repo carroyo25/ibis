@@ -978,16 +978,43 @@
             require_once("public/formatos/transferencia.php");
             try {
 
+                $datos = json_decode($detalles);
+                $nreg = count($datos);
+
                 $file = $cabecera['numero']."_".$cabecera['cdestino'].".pdf";
                 $filename = "public/documentos/notas_transferencia/emitidas/".$file;
 
-                $pdf = new PDF($cabecera['numero']);
+                $pdf = new PDF($cabecera['numero'],$cabecera['corigen'],$cabecera['cdestino'],$cabecera['aprueba']);
                 
                 $pdf->AliasNbPages();
                 $pdf->AddPage('P','A5');
-                $pdf->SetFont('Times','',12);
-                for($i=1;$i<=20;$i++)
-                    $pdf->Cell(0,10,'Imprimiendo linea numero '.$i,0,1);
+                $pdf->SetFont('Arial','',6);
+
+                $x = 4;
+                $y = $pdf->GetY();
+                $rc = 0;
+                $pdf->SetFont('Arial','',5);
+
+                for($i=1;$i<=$nreg;$i++){
+                    if ( $datos[$rc]->cantidad > 0){
+                        $pdf->SetX(4);
+                        $pdf->Cell(10,5,str_pad($i,3,0,STR_PAD_LEFT),'BL',0,'R');
+                        $pdf->Cell(20,5,$datos[$rc]->codigo,'BLR',0,'C');
+                        $y = $pdf->GetY();
+                        $pdf->SetXY(35,$y+1);
+                        $pdf->Multicell(88,2,utf8_decode($datos[$rc]->descripcion)." P:".$datos[$rc]->nropedido,0,'L');
+                        $pdf->Line(34,$y+5,122,$y+5);
+                        $pdf->SetXY(122,$y);
+                        $pdf->Cell(10,5,$datos[$rc]->unidad,'BL',0,'C');
+                        $pdf->Cell(13,5,$datos[$rc]->cantidad,'BRL',1,'R');
+
+                        if ($pdf->GetY() > 164) {
+                            $pdf->AddPage('P','A5');
+                        }
+                    }
+
+                    $rc++;
+                }  
                 
                 $pdf->Output($filename,'F');
                 

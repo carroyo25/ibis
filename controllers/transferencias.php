@@ -16,6 +16,7 @@
             $this->view->listaAtencion = $this->model->listarPedidosAtendidos();
             $this->view->listaEntidad = $this->model->listarEntidades();
             $this->view->listaPedidos = $this->model->listarPedidos();
+            $this->view->listaCriteriosAlmacen = $this->model->listarParametros(22);
 
             $this->view->render('transferencias/index');
         }

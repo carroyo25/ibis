@@ -41,6 +41,7 @@
                     <input type="hidden" name="guia" id="guia">
                     <input type="hidden" name="total_items" id="total_items">
                     <input type="hidden" name="items_atendidos" id="items_atendidos">
+                    <input type="hidden" name="motivo_transferencia" id="motivo_transferencia">
 
                     <div class="barraOpciones primeraBarra" id="barra_notifica">
                         <span>Datos Generales</span>
@@ -107,8 +108,7 @@
                         <div class="seccion_derecha">
                             <div class="column2">
                                 <label for="tipo">Tipo Mov.:</label>
-                                <input type="text" name="tipo" id="tipo" class="mostrarLista busqueda" placeholder="Elija opción"
-                                    readonly>
+                                <input type="text" name="tipo" id="tipo" class="mostrarLista busqueda" placeholder="Elija opción" readonly>
                                 <div class="lista" id="listaMovimiento">
                                    <ul>
                                        <?php echo $this->listaMovimiento?>
@@ -118,7 +118,12 @@
                             <div class="column4_55">
                                 <div class="column2">
                                     <label for="movimiento">Mov Almacen:</label>
-                                    <input type="text" name="movimiento" id="movimiento" class="w100por" readonly>
+                                    <input type="text" name="movimiento" id="movimiento" class="mostrarLista busqueda" placeholder="Elija opción"  readonly>
+                                    <div class="lista" id="listaCriterio">
+                                        <ul>
+                                            <?php echo $this->listaCriteriosAlmacen?>
+                                        </ul> 
+                                    </div>
                                 </div>
                                 <div class="column2">
                                     <label for="estado">Estado:</label>
