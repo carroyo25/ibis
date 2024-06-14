@@ -61,33 +61,38 @@
                 /**/
 
                 $sql = $this->db->connect()->prepare("SELECT
-                                                            alm_transfercab.idreg,
-                                                            alm_transfercab.idcc,
-                                                            alm_transfercab.idaprueba,
-                                                            alm_transfercab.almorigen,
-                                                            alm_transfercab.almdestino,
-                                                            alm_transfercab.ftraslado,
-                                                            alm_transfercab.cnumguia,
-                                                            tb_user.cnombres,
-                                                            UPPER( almacenOrigen.cdesalm ) AS origen,
-                                                            UPPER( almacenDestino.cdesalm ) AS destino,
-                                                            tb_parametros.cdescripcion,
-                                                            alm_transfercab.ntipmov,
-                                                            UPPER( costos_origen.cdesproy ) AS costo_origen,
-                                                            costos_origen.nidreg AS codigo_origen, 
-                                                            UPPER( costos_destino.cdesproy ) AS costo_destino,
-                                                            costos_destino.nidreg AS codigo_destino
-                                                        FROM
-                                                            alm_transfercab
-                                                            INNER JOIN tb_user ON alm_transfercab.idaprueba = tb_user.iduser COLLATE utf8_unicode_ci
-                                                            INNER JOIN tb_almacen AS almacenOrigen ON alm_transfercab.almorigen = almacenOrigen.ncodalm
-                                                            INNER JOIN tb_almacen AS almacenDestino ON alm_transfercab.almdestino = almacenDestino.ncodalm
-                                                            INNER JOIN tb_proyectos AS costos_origen ON alm_transfercab.idcc = costos_origen.nidreg
-                                                            INNER JOIN tb_parametros ON alm_transfercab.ntipmov = tb_parametros.nidreg
-                                                            LEFT JOIN tb_proyectos AS costos_destino ON alm_transfercab.idcd = costos_destino.nidreg 
-                                                        WHERE
-                                                            alm_transfercab.idreg = :id 
-                                                            AND alm_transfercab.nflgactivo = 1");
+                                                        alm_transfercab.idreg,
+                                                        alm_transfercab.idcc,
+                                                        alm_transfercab.idaprueba,
+                                                        alm_transfercab.almorigen,
+                                                        alm_transfercab.almdestino,
+                                                        alm_transfercab.ftraslado,
+                                                        alm_transfercab.cnumguia,
+                                                         alm_transfercab.movalma,
+                                                        tb_user.cnombres,
+                                                        UPPER( almacenOrigen.cdesalm ) AS origen,
+                                                        UPPER( almacenDestino.cdesalm ) AS destino,
+                                                        tipos.cdescripcion AS tipo,
+                                                        alm_transfercab.ntipmov,
+                                                        UPPER( costos_origen.cdesproy ) AS costo_origen,
+                                                        costos_origen.nidreg AS codigo_origen,
+                                                        UPPER( costos_destino.cdesproy ) AS costo_destino,
+                                                        costos_destino.nidreg AS codigo_destino,
+                                                        alm_transfercab.cusuario,
+                                                        movimientos.cdescripcion AS movimiento,
+                                                        movimientos.cdescripcion AS ccod  
+                                                    FROM
+                                                        alm_transfercab
+                                                        INNER JOIN tb_user ON alm_transfercab.idaprueba = tb_user.iduser COLLATE utf8_unicode_ci
+                                                        INNER JOIN tb_almacen AS almacenOrigen ON alm_transfercab.almorigen = almacenOrigen.ncodalm
+                                                        INNER JOIN tb_almacen AS almacenDestino ON alm_transfercab.almdestino = almacenDestino.ncodalm
+                                                        INNER JOIN tb_proyectos AS costos_origen ON alm_transfercab.idcc = costos_origen.nidreg
+                                                        INNER JOIN tb_parametros AS tipos ON alm_transfercab.ntipmov = tipos.nidreg
+                                                        LEFT JOIN tb_proyectos AS costos_destino ON alm_transfercab.idcd = costos_destino.nidreg
+                                                        LEFT JOIN tb_parametros AS movimientos ON alm_transfercab.movalma = movimientos.nidreg 
+                                                    WHERE
+                                                        alm_transfercab.idreg = :id 
+                                                        AND alm_transfercab.nflgactivo = 1");
                 
                 $sql->execute(["id"=>$id]);
                 $rowCount = $sql->rowCount();
@@ -475,7 +480,7 @@
                 $sql = $this->db->connect()->prepare("INSERT INTO alm_transfercab 
                                                         SET idcc=:corigen,idaprueba=:aprueba,almorigen=:origen,almdestino=:destino,
                                                             ftraslado=:fecha_traslado,ntipmov=:tipo_movimiento,nestado=:estado,
-                                                            idcd=:cdestino");
+                                                            idcd=:cdestino,movalma=:motivo_transferencia,cusuario=:usuario_genera");
                 
                 $sql->execute([
                     "corigen"=>$cabecera['codigo_costos_origen'],
@@ -485,6 +490,8 @@
                     "destino"=>$cabecera['codigo_almacen_destino'],
                     "fecha_traslado"=>$cabecera['fecha'],
                     "tipo_movimiento"=>$cabecera['codigo_movimiento'],
+                    "usuario_genera"=>$cabecera['usuario_genera'],
+                    "motivo_transferencia"=>$cabecera['motivo_transferencia'],
                     "estado"=>1,
                 ]);
 
@@ -984,7 +991,12 @@
                 $file = $cabecera['numero']."_".$cabecera['cdestino'].".pdf";
                 $filename = "public/documentos/notas_transferencia/emitidas/".$file;
 
-                $pdf = new PDF($cabecera['numero'],$cabecera['corigen'],$cabecera['cdestino'],$cabecera['aprueba']);
+                $pdf = new PDF($cabecera['numero'],
+                                $cabecera['corigen'],
+                                $cabecera['cdestino'],
+                                $cabecera['usuario_genera'],
+                                $cabecera['motivo_transferencia'],
+                                $cabecera['aprueba']);
                 
                 $pdf->AliasNbPages();
                 $pdf->AddPage('P','A5');

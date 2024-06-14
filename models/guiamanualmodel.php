@@ -293,11 +293,9 @@
                 $rc = 0;
                 $item = 1;
 
-                //$pdf->Cell(190,5,$nreg,1,1);
-
                 for($i=1;$i<=$nreg;$i++){
 
-                    $cantidad = intval($datos[$rc]->cantdesp);
+                    $cantidad = floatval($datos[$rc]->cantdesp);
 
                     $pdf->SetX(13);
 

@@ -2,11 +2,13 @@
 
  	require_once "public/fpdf/fpdf.php";
 	 class PDF extends FPDF{
-		public function __construct($numero,$origen,$destino) {
+		public function __construct($numero,$origen,$destino,$usuario,$motivo) {
 			parent::__construct();
 			$this->numero = $numero;
 			$this->origen = $origen;
 			$this->destino = $destino;
+			$this->usuario = $usuario;
+			$this->motivo = $motivo;
 		}
 
 		function Header() {
@@ -30,19 +32,19 @@
 			$this->Ln(4);
 			$this->SetFont('Arial','',6);
 			$this->Cell(16,3,"DEVOLUCION",0,0,'L');
-			$this->Cell(5,3,"",1,0,'L');
+			$this->Cell(5,3,$this->motivo == 249 ? "X":"",1,0,'C');
 			$this->Cell(5);
 			$this->Cell(15,3,"PRESTAMO",0,0,'L');
-			$this->Cell(5,3,"",1,0,'L');
+			$this->Cell(5,3,$this->motivo == 250 ? "X":"",1,0,'C');
 			$this->Cell(5);
 			$this->Cell(25,3,"MATERIAL TERCEROS",0,0,'L');
-			$this->Cell(5,3,"",1,0,'L');
+			$this->Cell(5,3,$this->motivo == 251 ? "X":"",1,0,'C');
 			$this->Cell(5);
 			$this->Cell(10,3,"DEBITO",0,0,'L');
-			$this->Cell(5,3,"",1,1,'L');
+			$this->Cell(5,3,$this->motivo == 252 ? "X":"",1,1,'C');
 			$this->Ln(4);
 			$this->Cell(16,3,"PERSONALES",0,0,'L');
-			$this->Cell(5,3,"",1,1,'L');
+			$this->Cell(5,3,$this->motivo == 253 ? "X":"",1,1,'C');
 			$this->Ln(4);
 			$this->SetX(4);
 			$this->SetFont('Arial','',5);
@@ -66,7 +68,7 @@
 			$this->Cell(13,9,"",'B',1,'L');
 			$this->SetX(122);
 			$this->Cell(10,6,"USUARIO:",0,0,'L');
-			$this->Cell(13,6,"",0,1,'L');
+			$this->Cell(13,6,$this->usuario,0,1,'L');
 			
 			$this->SetFont('Arial','',6);
 			$this->SetFillColor(0,92,132);
