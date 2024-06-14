@@ -14,14 +14,17 @@ $(function(){
 
                 $("#codigo_costos_origen").val(data.cabecera[0].codigo_origen);
                 $("#codigo_costos_destino").val(data.cabecera[0].codigo_destino);
+                $("#motivo_transferencia").val(data.cabecera[0].movalma);
+                $("#usuario_genera").val(data.cabecera[0].cusuario);
                 $("#numero").val(numero);
+                $("#movimiento").val(data.cabecera[0].movimiento);
                 //$("#fecha").val(ftraslado);
                 $("#corigen").val(data.cabecera[0].costo_origen);
                 $("#cdestino").val(data.cabecera[0].costo_destino);
                 $("#aprueba").val(data.cabecera[0].cnombres);
                 $("#almacen_origen_despacho").val(data.cabecera[0].origen);
                 $("#almacen_destino_despacho").val(data.cabecera[0].destino);
-                $("#tipo").val(data.cabecera[0].cdescripcion);
+                $("#tipo").val(data.cabecera[0].tipo);
                 $("#codigo_transferencia").val(data.cabecera[0].idreg);
 
                 $("#tablaDetalles tbody")
@@ -167,6 +170,8 @@ $(function(){
             $("#codigo_almacen_destino").val(codigo);
         }else if(contenedor_padre == "listaMovimiento"){
             $("#codigo_movimiento").val(codigo);
+        }else if(contenedor_padre == "listaCriterio"){
+            $("#motivo_transferencia").val(codigo);
         }
 
         return false;
@@ -260,6 +265,7 @@ $(function(){
 
                             $(".primeraBarra").css("background","#819830");
                             $(".primeraBarra span").text('Datos Generales ... Grabado');
+                            accion == "u"
                         }else{
                             mostrarMensaje(data.mensaje,"mensaje_error");
                         }

@@ -33,7 +33,6 @@
                     <input type="hidden" name="codigo_pedido" id="codigo_pedido">
                     <input type="hidden" name="codigo_orden" id="codigo_orden">
                     <input type="hidden" name="codigo_estado" id="codigo_estado">
-                    <input type="hidden" name="codigo_moneda" id="codigo_moneda">
                     <input type="hidden" name="codigo_ingreso" id="codigo_ingreso">
                     <input type="hidden" name="codigo_salida" id="codigo_salida">
                     <input type="hidden" name="codigo_transferencia" id="codigo_transferencia">
@@ -42,6 +41,7 @@
                     <input type="hidden" name="total_items" id="total_items">
                     <input type="hidden" name="items_atendidos" id="items_atendidos">
                     <input type="hidden" name="motivo_transferencia" id="motivo_transferencia">
+                    <input type="hidden" name="usuario_genera" id="usuario_genera">
 
                     <div class="barraOpciones primeraBarra" id="barra_notifica">
                         <span>Datos Generales</span>
