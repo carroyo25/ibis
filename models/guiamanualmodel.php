@@ -297,12 +297,12 @@
 
                 for($i=1;$i<=$nreg;$i++){
 
-                    $cantidad = intval($datos[$rc]->cantdesp);
+                    $cantidad = floatval($datos[$rc]->cantdesp);
 
                     $pdf->SetX(13);
 
                     $pdf->SetAligns(array("R","R","C","L"));
-                    if ($cantidad > 0){
+                    if ( $cantidad > 0 ){
                         $pdf->Row(array(str_pad($item++,3,"0",STR_PAD_LEFT),
                                         $cantidad,
                                         $datos[$rc]->unidad,

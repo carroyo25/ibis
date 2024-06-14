@@ -2,11 +2,14 @@
 
  	require_once "public/fpdf/fpdf.php";
 	 class PDF extends FPDF{
-		public function __construct($numero,$origen,$destino) {
+		public function __construct($numero,$origen,$destino,$reponsable,$documento) {
 			parent::__construct();
 			$this->numero = $numero;
 			$this->origen = $origen;
 			$this->destino = $destino;
+			$this->responsable = $responsable;
+			$this->documento = $documento;
+
 		}
 
 		function Header() {
@@ -112,7 +115,7 @@
 
 			$this->setX(4);
 			$this->SetFont('Arial','',5);
-			$this->Cell(141,4,"CARGO ALMACEN :",1,1,'R');
+			$this->Cell(141,4,$this->documento,1,1,'R');
 
 		}
 	}

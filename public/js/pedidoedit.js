@@ -232,7 +232,7 @@ $(function(){
 
                 listarItems($("#codigo_tipo").val());
             } catch (error) {
-                mostrarMensaje(error,'mensaje_error');
+                mostrarMensaje(error.message,'mensaje_error');
             }
         }
 

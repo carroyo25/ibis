@@ -189,10 +189,9 @@ detalles = () => {
             NRODOC      = $("#docident").val();
             IDREG       = $(this).data('item');
 
-
         item = {};
         
-        if (!CONDICION) {
+        if ( !CONDICION && DEVUELTO > 0 ) {
             item['item']        = ITEM;
             item['codigo']      = CODIGO;
             item['descripcion'] = DESCRIPCION;

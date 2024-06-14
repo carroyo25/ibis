@@ -472,7 +472,7 @@
                 $mail->setFrom('kardex@sepcon.net', 'Almacen Sepcon'); 
                 $mail->addAddress($origen,$nombre_envio);
                 $mail->addAddress($correo,utf8_decode($nombre));
-                $mail->addAddress('kardex@sepcon.net','kardex@sepcon.net');
+                //$mail->addAddress('kardex@sepcon.net','kardex@sepcon.net');
 
                 $mail->Subject = $subject;
                 $contador = 1;

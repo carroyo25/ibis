@@ -981,10 +981,28 @@
                 $datos = json_decode($detalles);
                 $nreg = count($datos);
 
-                $file = $cabecera['numero']."_".$cabecera['cdestino'].".pdf";
-                $filename = "public/documentos/notas_transferencia/emitidas/".$file;
+                $file1 = $cabecera['numero']."_".$cabecera['cdestino']."_1.pdf";
+                $file2 = $cabecera['numero']."_".$cabecera['cdestino']."_2.pdf";
+                $file3 = $cabecera['numero']."_".$cabecera['cdestino']."_3.pdf";
+                $file4 = $cabecera['numero']."_".$cabecera['cdestino']."_4.pdf";
 
-                $pdf = new PDF($cabecera['numero'],$cabecera['corigen'],$cabecera['cdestino'],$cabecera['aprueba']);
+                $filename1 = "public/documentos/notas_transferencia/emitidas/".$file1;
+                $tipo_documento = "Cargo Almacén";
+                $pdf = new PDF($cabecera['numero'],$cabecera['corigen'],$cabecera['cdestino'],$cabecera['aprueba'],$tipo_documento);
+
+                $filename2 = "public/documentos/notas_transferencia/emitidas/".$file2;
+                $tipo_documento = "Cargo Logistica SPC";
+                $pdf = new PDF($cabecera['numero'],$cabecera['corigen'],$cabecera['cdestino'],$cabecera['aprueba'],$tipo_documento);
+
+                $filename3 = "public/documentos/notas_transferencia/emitidas/".$file3;
+                $tipo_documento = "Cargo Logistica PPC/ Seguridad de vigilancia";
+                $pdf = new PDF($cabecera['numero'],$cabecera['corigen'],$cabecera['cdestino'],$cabecera['aprueba'],$tipo_documento);
+
+                $filename4 = "public/documentos/notas_transferencia/emitidas/".$file4;
+                $tipo_documento = "Usuario";
+                $pdf = new PDF($cabecera['numero'],$cabecera['corigen'],$cabecera['cdestino'],$cabecera['aprueba'],$tipo_documento);
+
+                
                 
                 $pdf->AliasNbPages();
                 $pdf->AddPage('P','A5');
@@ -1016,9 +1034,12 @@
                     $rc++;
                 }  
                 
-                $pdf->Output($filename,'F');
+                $pdf->Output($filename1,'F');
+                $pdf->Output($filename2,'F');
+                $pdf->Output($filename3,'F');
+                $pdf->Output($filename4,'F');
                 
-                return $filename;
+                return $filename1;
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();

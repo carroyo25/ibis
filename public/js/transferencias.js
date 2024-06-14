@@ -603,11 +603,11 @@ $(function(){
                                                 detalles:JSON.stringify(detalles(1)),
                                                 condicion:0},
                 function (data, textStatus, jqXHR) {
-                    $(".ventanaVistaPrevia iframe")
+                    /*$(".ventanaVistaPrevia iframe")
                     .attr("src","")
                     .attr("src",data);
 
-                    $("#vistaTransferencia").fadeIn();
+                    $("#vistaTransferencia").fadeIn();*/
                 },
                 "text"
             );
