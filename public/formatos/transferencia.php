@@ -1,14 +1,15 @@
 <?php
-
  	require_once "public/fpdf/fpdf.php";
 	 class PDF extends FPDF{
-		public function __construct($numero,$origen,$destino,$reponsable,$documento) {
+		public function __construct($numero,$origen,$destino,$usuario,$motivo,$responsable,$tipo) {
 			parent::__construct();
 			$this->numero = $numero;
 			$this->origen = $origen;
 			$this->destino = $destino;
+			$this->usuario = $usuario;
+			$this->motivo = $motivo;
 			$this->responsable = $responsable;
-			$this->documento = $documento;
+			$this->tipo = $tipo;
 
 		}
 
@@ -33,19 +34,19 @@
 			$this->Ln(4);
 			$this->SetFont('Arial','',6);
 			$this->Cell(16,3,"DEVOLUCION",0,0,'L');
-			$this->Cell(5,3,"",1,0,'L');
+			$this->Cell(5,3,$this->motivo==249?"X":"",1,0,'C');
 			$this->Cell(5);
 			$this->Cell(15,3,"PRESTAMO",0,0,'L');
-			$this->Cell(5,3,"",1,0,'L');
+			$this->Cell(5,3,$this->motivo==250?"X":"",1,0,'C');
 			$this->Cell(5);
 			$this->Cell(25,3,"MATERIAL TERCEROS",0,0,'L');
-			$this->Cell(5,3,"",1,0,'L');
+			$this->Cell(5,3,$this->motivo==251?"X":"",1,0,'C');
 			$this->Cell(5);
 			$this->Cell(10,3,"DEBITO",0,0,'L');
-			$this->Cell(5,3,"",1,1,'L');
+			$this->Cell(5,3,$this->motivo==252?"X":"",1,1,'C');
 			$this->Ln(4);
 			$this->Cell(16,3,"PERSONALES",0,0,'L');
-			$this->Cell(5,3,"",1,1,'L');
+			$this->Cell(5,3,$this->motivo==253?"X":"",1,1,'C');
 			$this->Ln(4);
 			$this->SetX(4);
 			$this->SetFont('Arial','',5);
@@ -69,7 +70,7 @@
 			$this->Cell(13,9,"",'B',1,'L');
 			$this->SetX(122);
 			$this->Cell(10,6,"USUARIO:",0,0,'L');
-			$this->Cell(13,6,"",0,1,'L');
+			$this->Cell(13,6,$this->usuario,0,1,'L');
 			
 			$this->SetFont('Arial','',6);
 			$this->SetFillColor(0,92,132);
@@ -85,7 +86,7 @@
 
 		function Footer(){
 			 // Posición: a 1,5 cm del final
-			//$this->SetY(-26);
+			//$this->SetY(-28);
 			// Arial italic 8
 			$this->SetFont('Arial','I',6);
 			// Número de página
@@ -115,7 +116,7 @@
 
 			$this->setX(4);
 			$this->SetFont('Arial','',5);
-			$this->Cell(141,4,$this->documento,1,1,'R');
+			$this->Cell(141,4,utf8_decode($this->tipo),1,1,'R');
 
 		}
 	}

@@ -201,22 +201,13 @@ $(function(){
     });
 
     $("#tablaDetalles tbody").on('blur','input', function (e) {
-        let ingreso     = parseInt($(this).parent().parent().find("td").eq(8).children().val()),
-            atendida    = parseInt($(this).parent().parent().find("td").eq(7).text()),
-            aprobado    = parseInt($(this).parent().parent().find("td").eq(6).text()),
+        let ingreso     = parseFloat($(this).val()),
+            atendida    = parseFloat($("#tablaDetalles tbody").find('td').eq(4).text());
             
             registrado = ingreso+atendida;
 
-        if (registrado > aprobado ) {
-            mostrarMensaje('La cantidad ingresada, es mayor a lo aprobado','mensaje_error')
-            return false;
-        }
-
-    });
-
-    $("#tablaDetalles tbody").on('keypress','input', function (e) {
-        if (e.which == 13) {
-            $('#tablaDetalles tbody tr:last').find('td').eq(5).children().focus();
+        if ( atendido > ingreso ) {
+            mostrarMensaje('Error en el ingreso','mensaje_error');
         }
     });
 
@@ -244,10 +235,9 @@ $(function(){
             result[this.name] = this.value;
         });
 
+        if  ( checkCantTables($("#tablaDetalles tbody > tr"),6) ) throw "Revise las cantidades ingresadas";//
+
         try {
-
-            //if  ( checkCantTables($("#tablaDetalles tbody > tr"),6) ) throw "Revise las cantidades ingresadas";//
-
             if ( accion == "n" ) {
                 
                 $("#esperar").css("opacity","1").fadeIn();
@@ -274,8 +264,6 @@ $(function(){
                     },
                     "json"
                 );
-            }else {
-
             }
 
         } catch (error) {
@@ -605,15 +593,14 @@ $(function(){
 
             //if ( tipoVista == null ) throw "Por favor grabar el documento";
 
-            $.post(RUTA+"transferencias/notaTransferencia", {cabecera:result,
-                                                detalles:JSON.stringify(detalles(1)),
-                                                condicion:0},
+            $.post(RUTA+"transferencias/variosPdfs", {cabecera:result,
+                                                detalles:JSON.stringify(detalles(1))},
                 function (data, textStatus, jqXHR) {
-                    /*$(".ventanaVistaPrevia iframe")
+                    $(".ventanaVistaPrevia iframe")
                     .attr("src","")
                     .attr("src",data);
 
-                    $("#vistaTransferencia").fadeIn();*/
+                    $("#vistaTransferencia").fadeIn();
                 },
                 "text"
             );

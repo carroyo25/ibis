@@ -1,6 +1,8 @@
 <?php
-    class TransferenciasModel extends Model{
+    use \setasign\Fpdi\Fpdi;
 
+    class TransferenciasModel extends Model{
+        
         public function __construct()
         {
             parent::__construct();
@@ -131,6 +133,7 @@
                                                     UPPER(CONCAT_WS(' ',cm_producto.cdesprod,tb_pedidodet.observaciones)) AS producto,
                                                     tb_pedidodet.cant_aprob,
                                                     tb_pedidodet.cant_orden,
+                                                    FORMAT(tb_pedidodet.cant_atend,2) AS cant_atend,
                                                     alm_transferdet.nflgactivo,
                                                     tb_unimed.cabrevia,
                                                     LPAD(tb_pedidocab.nrodoc,3,0) AS pedido  
@@ -160,9 +163,9 @@
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="pl20px">'.$rs['producto'].'</td>
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
-                                        <td class="textoDerecha">'.$rs['cant_aprob'].'</td>
+                                        <td class="textoDerecha">'.$rs['cant_atend'].'</td>
                                         <td class="textoDerecha">'.$rs['cant_orden'].'</td>
-                                        <td class="textoDerecha"><input type="text" value="'.$rs['ncanti'].'" readonly></td>
+                                        <td><input type="text" class="textoDerecha" value="'.$rs['ncanti'].'" readonly></td>
                                         <td></td>
                                         <td></td>
                                         <td></td>
@@ -399,7 +402,7 @@
                                                         tb_pedidodet.idpedido = :indice 
                                                         AND tb_pedidodet.nflgActivo = 1 
                                                         AND tb_pedidodet.cant_atend > 0
-                                                        AND ( tb_pedidodet.estadoItem = 54 OR tb_pedidodet.estadoItem = 230 OR tb_pedidodet.estadoItem = 52) 
+                                                        AND ( tb_pedidodet.estadoItem = 54 OR tb_pedidodet.estadoItem = 230 OR tb_pedidodet.estadoItem = 52 ) 
                                                     GROUP BY
                                                         tb_pedidodet.iditem");
                 $sql -> execute(['indice'=>$indice]);
@@ -981,22 +984,69 @@
             }
         }
 
-        public function generarPdfTransferencia($cabecera,$detalles,$condicion){
+        public function generarVariosArchivos($cabecera,$detalles){
+            require_once "public/fpdf/fpdf.php";
+            require_once("public/fpdi/src/autoload.php");
+
+            $archivo1 = $this->generarPdfTransferencia($cabecera,$detalles,$cabecera['numero']."_1.pdf",'Cargo Almacén');
+            $archivo2 = $this->generarPdfTransferencia($cabecera,$detalles,$cabecera['numero']."_2.pdf",'Cargo Logística SPC');
+            $archivo3 = $this->generarPdfTransferencia($cabecera,$detalles,$cabecera['numero']."_3.pdf",'Cargo Logística PPC/ Seguridad de vigilancia');
+            $archivo4 = $this->generarPdfTransferencia($cabecera,$detalles,$cabecera['numero']."_4.pdf",'Usuario');
+            
+            // define some files to concatenate
+            //$ruta = "public/documentos/notas_transferencia/emitidas/";
+            
+            $files = array($archivo1,$archivo2,$archivo3,$archivo4);
+
+            // initiate FPDI
+            $pdf = new Fpdi();
+
+            // iterate through the files
+            foreach($files as $file){
+                // get the page count
+                $pageCount = $pdf->setSourceFile($file);
+                // iterate through all pages
+                for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
+                    // import a page
+                    $templateId = $pdf->importPage($pageNo);
+                   
+                    // get the size of the imported page
+                    $size = $pdf->getTemplateSize($templateId);
+
+                    // add a page with the same orientation and size
+                    $pdf->AddPage($size['orientation'], $size);
+
+                    // use the imported page
+                    $pdf->useTemplate($templateId);
+                }
+            }
+
+            // Output the new PDF
+            $filename = "public/documentos/notas_transferencia/emitidas/".$cabecera['numero'].".pdf";
+            $pdf->Output($filename,'F');
+
+            return $filename;
+        }
+
+        public function generarPdfTransferencia($cabecera,$detalles,$archivo,$tipo){
             require_once("public/formatos/transferencia.php");
             try {
 
                 $datos = json_decode($detalles);
                 $nreg = count($datos);
 
-                $file = $cabecera['numero']."_".$cabecera['cdestino'].".pdf";
-                $filename = "public/documentos/notas_transferencia/emitidas/".$file;
+                $valor_maximo_lineas  = 24;
+                $contador_linea = 0;
+
+                $filename = "public/documentos/temp/".$archivo;
 
                 $pdf = new PDF($cabecera['numero'],
                                 $cabecera['corigen'],
                                 $cabecera['cdestino'],
                                 $cabecera['usuario_genera'],
                                 $cabecera['motivo_transferencia'],
-                                $cabecera['aprueba']);
+                                $cabecera['aprueba'],
+                                $tipo);
                 
                 $pdf->AliasNbPages();
                 $pdf->AddPage('P','A5');
@@ -1005,12 +1055,13 @@
                 $x = 4;
                 $y = $pdf->GetY();
                 $rc = 0;
+                $item = 1;
                 $pdf->SetFont('Arial','',5);
 
                 for($i=1;$i<=$nreg;$i++){
-                    if ( $datos[$rc]->cantidad > 0){
+                    if ( $datos[$rc]->cantidad > 0 ){
                         $pdf->SetX(4);
-                        $pdf->Cell(10,5,str_pad($i,3,0,STR_PAD_LEFT),'BL',0,'R');
+                        $pdf->Cell(10,5,str_pad($item++,3,0,STR_PAD_LEFT),'BL',0,'R');
                         $pdf->Cell(20,5,$datos[$rc]->codigo,'BLR',0,'C');
                         $y = $pdf->GetY();
                         $pdf->SetXY(35,$y+1);
@@ -1020,13 +1071,31 @@
                         $pdf->Cell(10,5,$datos[$rc]->unidad,'BL',0,'C');
                         $pdf->Cell(13,5,$datos[$rc]->cantidad,'BRL',1,'R');
 
-                        if ($pdf->GetY() > 164) {
+                        if ( $pdf->GetY() > 164 ) {
                             $pdf->AddPage('P','A5');
                         }
                     }
 
                     $rc++;
-                }  
+                    $contador_linea++;
+                }
+
+                if ( $contador_linea < $valor_maximo_lineas ){
+                    $lineas_faltantes = $valor_maximo_lineas-$contador_linea;
+        
+                    for ($i=0; $i < $lineas_faltantes ; $i++) { 
+                        $pdf->SetX(4);
+                        $pdf->Cell(10,5,"",'BL',0,'R');
+                        $pdf->Cell(20,5,"",'BLR',0,'C');
+                        $y = $pdf->GetY();
+                        $pdf->SetXY(35,$y+1);
+                        $pdf->Multicell(88,2,"",0,'L');
+                        $pdf->Line(34,$y+5,122,$y+5);
+                        $pdf->SetXY(122,$y);
+                        $pdf->Cell(10,5,"",'BL',0,'C');
+                        $pdf->Cell(13,5,"",1,1,'R');
+                    }  
+                }
                 
                 $pdf->Output($filename,'F');
                 
