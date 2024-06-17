@@ -739,7 +739,7 @@
                                             <td class="textoCentro"><input type="checkbox"></td>
                                             <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
                                             <td class="textoCentro">'.$rs['ccodprod'].'</td>
-                                            <td class="pl20px">'.$rs['cdesprod'].'</td>
+                                            <td class="pl20px">'.$rs['cdesprod'].''.$rs['observaciones'].'</td>
                                             <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                             <td class="textoDerecha pr20px"><input type="text" value="'.$rs['cant_pedida'].'" readonly></td>
                                             <td class="textoCentro"><input type="hidden" readonly></td>
