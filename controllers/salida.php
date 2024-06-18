@@ -12,6 +12,7 @@
             $this->view->listaAlmacen = $this->model->listarAlmacenGuia();
             $this->view->listaEntidad = $this->model->listarEntidades();
             $this->view->listaModalidad = $this->model->listarParametros(14);
+            $this->view->listaTransporte = $this->model->listarParametros(23);
             $this->view->listaPersonal = $this->model->listarPersonalRol(4);
             $this->view->listaMovimiento = $this->model->listarParametros(12);
             $this->view->listaCostos = $this->model->costosPorUsuario($_SESSION['iduser']);

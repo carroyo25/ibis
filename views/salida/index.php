@@ -205,12 +205,13 @@
                 <input type="hidden" name="direccion_entidad_transporte" id="direccion_entidad_transporte">
                 <input type="hidden" name="ruc_entidad_transporte" id="ruc_entidad_transporte">
                 <input type="hidden" name="codigo_modalidad" id="codigo_modalidad">
+                <input type="hidden" name="codigo_transporte" id="codigo_transporte">
                 <input type="hidden" name="codigo_tipo" id="codigo_tipo">
                 <input type="hidden" name="motivo_traslado" id="motivo_traslado">
                 <input type="hidden" name="id_guia" id="id_guia" value=0>
                 <input type="hidden" name="ubig_origen" id="ubig_origen">
                 <input type="hidden" name="ubig_destino" id="ubig_destino">
-                <input type="hidden" name="registro_mtc" id="registro_mtc" value="1502229MRP">
+                <input type="hidden" name="registro_mtc" id="registro_mtc" value="">
                 <input type="hidden" name="cso" id="cso">
                 <input type="hidden" name="csd" id="csd">
 
@@ -308,6 +309,14 @@
                     <div class="columna_derecha">
                         <p><strong>Motivo</strong></p>
                         <div class="tres_columnas_interna">
+                            <label for="tipo_transporte" class="uno">Tipo Transporte :</label>
+                            <input type="text" name="tipo_transporte" id="tipo_transporte" class="dos mostrarListaInterna busqueda">
+                            <button type="button" class="btnCallMenu boton3">+</button>
+                            <div class="lista rowOne uno" id="listaTransporte">
+                                <ul>
+                                    <?php echo $this->listaTransporte?>
+                                </ul> 
+                            </div>
                             <label for="modalidad_traslado" class="uno">Modalidad Traslado :</label>
                             <input type="text" name="modalidad_traslado" id="modalidad_traslado" class="dos mostrarListaInterna busqueda">
                             <button type="button" class="btnCallMenu boton3">+</button>

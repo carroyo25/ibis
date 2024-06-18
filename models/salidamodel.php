@@ -1224,6 +1224,8 @@
             }
         }
 
+        /////*------------------PROCESOS SUNAT--------------------*///////
+
         public function enviarSunatSalida($cabecera,$detalles) {
             header('Access-Control-Allow-Origin: *');
             require 'public/libraries/efactura.php';
@@ -1231,12 +1233,15 @@
             $header = json_decode($cabecera);
             $body = json_decode($detalles);
 
+            //var_dump($cabecera);
+            //var_dump($detalles);
+
             $empresa = $header->destinatario_razon;
             $guia    = $header->numero_guia;
             $numero_ticket = "Sin valor";
             $respuesta_ticket = "";
 
-           ///////////////////////////////////////////////////////////////////////////////////////////////////////
+           ///////////////////////////////////////////////////////////////////////////////////////////////////////*
 
             $path = "public/documentos/guia_electronica/";
 
@@ -1247,8 +1252,10 @@
             }
 
             $token_access = $this->token('d12d8bf5-4b57-4c57-9569-9072b3e1bfcd', 'iLMGwQBEehJMXQ+Z/LR2KA==', '20504898173SISTEMA1', 'Lima123');
-            //$token_access = $this->token('test-85e5b0ae-255c-4891-a595-0b98c65c9854', 'test-Hty/M6QshYvPgItX2P0+Kw==', '20504898173MODDATOS', 'MODDATOS');
-            $firma = $this->crear_files($path, $nombre_archivo, $header, $body);
+
+            $this->crear_files($path, $nombre_archivo, $header, $body);
+
+            /*$firma = $this->crear_files($path, $nombre_archivo, $header, $body);
             $respuesta = $this->envio_xml($path.'FIRMA/', $nombre_archivo, $token_access);
             $numero_ticket = $respuesta->numTicket;
 
@@ -1259,23 +1266,91 @@
 
             var_dump($respuesta_ticket);
             
-            return array("archivo" => $nombre_archivo,"ticket" => $respuesta_ticket);
+            return array("archivo" => $nombre_archivo,"ticket" => $respuesta_ticket);*/
+
+            return array("token"=>$token_access);
         }
 
         private function crear_files($path,$nombre_archivo,$header,$body){
-            $xml = $this->desarrollo_xml_almacenes_internos($header, $body);
+            $xml = $this->caso1($header, $body);
+           //$xml = $this->caso1($header,$body);
+
             $archivo = fopen($path."XML/".$nombre_archivo.".xml", "w+");
             fwrite($archivo, utf8_decode($xml));
             fclose($archivo);
 
-            $this->firmar_xml($nombre_archivo.".xml", "1");
+            /*$this->firmar_xml($nombre_archivo.".xml", "1");
 
             $zip = new ZipArchive();
             if($zip->open($path."FIRMA/".$nombre_archivo.".zip", ZipArchive::CREATE) === true){
                 $zip->addFile($path."FIRMA/".$nombre_archivo.".xml", $nombre_archivo.".xml");
-            }
+            }*/
 
             return $nombre_archivo;
+        }
+
+        //entre_almacenes -- transporte propio
+        private function caso1($header,$detalles){
+            try {
+                $serie  = 'TC01';
+
+                $xml =  '<?xml version="1.0" encoding="UTF-8"?>';
+                $xml .= '<DespatchAdvice xmlns="urn:oasis:names:specification:ubl:schema:xsd:DespatchAdvice-2" 
+                                    xmlns:ds="http://www.w3.org/2000/09/xmldsig#" 
+                                    xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" 
+                                    xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" 
+                                    xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2">
+                                    <ext:UBLExtensions>
+                                        <ext:UBLExtension>
+                                            <ext:ExtensionContent></ext:ExtensionContent>
+                                        </ext:UBLExtension>
+                                    </ext:UBLExtensions>
+                                    <cbc:UBLVersionID>2.1</cbc:UBLVersionID>
+                                    <cbc:CustomizationID>2.0</cbc:CustomizationID>
+                                    <cbc:ID>'.$serie.'-'.$header->numero_guia.'</cbc:ID>
+                                    <!--  FECHA Y HORA DE EMISION  -->
+                                    <cbc:IssueDate>'.$header->fgemision.'</cbc:IssueDate>
+                                    <cbc:IssueTime>'.date("H:i:s").'</cbc:IssueTime>
+                                    <cbc:DespatchAdviceTypeCode listAgencyName="PE:SUNAT" listName="Tipo de Documento" listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo01">09</cbc:DespatchAdviceTypeCode>
+                                    <!--  DOCUMENTOS ADICIONALES (Catalogo 41) -->
+                                    <cac:Signature>
+                                    <cbc:ID>'.$header->destinatario_ruc.'</cbc:ID>
+                                    <cac:SignatoryParty>
+                                        <cac:PartyIdentification>
+                                        <cbc:ID>'.$header->destinatario_ruc.'</cbc:ID>
+                                        </cac:PartyIdentification>
+                                    </cac:SignatoryParty>
+                                    <cac:DigitalSignatureAttachment>
+                                        <cac:ExternalReference>
+                                        <cbc:URI>'.$header->destinatario_ruc.'</cbc:URI>
+                                        </cac:ExternalReference>
+                                    </cac:DigitalSignatureAttachment>
+                                </cac:Signature>
+                                <!--  DATOS DEL EMISOR (REMITENTE)  -->
+                                <cac:DespatchSupplierParty>
+                                    <cac:Party>
+                                            <cac:PartyIdentification>
+                                                <cbc:ID schemeID="6" schemeName="Documento de Identidad" 
+                                                    schemeAgencyName="PE:SUNAT" 
+                                                    schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">'.$header->destinatario_ruc.'</cbc:ID>
+                                            </cac:PartyIdentification>
+                                            <cac:PartyName>
+                                                <cbc:Name><![CDATA['.$header->destinatario_razon.']]></cbc:Name>
+                                            </cac:PartyName>
+                                            <cac:PartyLegalEntity>
+                                                <cbc:RegistrationName><![CDATA['.$header->destinatario_razon.']]></cbc:RegistrationName>
+                                            </cac:PartyLegalEntity>
+                                    </cac:Party>
+                                </cac:DespatchSupplierParty>
+                                <!--  DATOS DEL RECEPTOR (DESTINATARIO)  -->';
+                $xml.=  '</DespatchAdvice>';
+
+                return $xml;
+                
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
         }
 
         private function desarrollo_xml($header,$detalles){
@@ -1412,7 +1487,7 @@
             return $xml;
         }
 
-        private function desarrollo_xml_almacenes_internos($header,$detalles){
+        /*private function desarrollo_xml_almacenes_internos($header,$detalles){
             $serie  = 'T001';
             $numero = '00000006';
 
@@ -1574,12 +1649,10 @@
              $xml.=  '</DespatchAdvice>';
  
              return $xml;
-         }
+        }*/
 
         private function token($client_id, $client_secret, $usuario_secundario, $usuario_password){
             $url = "https://api-seguridad.sunat.gob.pe/v1/clientessol/".$client_id."/oauth2/token/";
-
-            //$url = "https://gre-test.nubefact.com/v1/clientessol/".$client_id."/oauth2/token/";
 
             $curl = curl_init($url);
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -1654,29 +1727,6 @@
             $xml = $factura->firmar($domDocument, '', $entorno);
             $content = $xml->saveXML();
             file_put_contents("public/documentos/guia_electronica/FIRMA/".$name_file, $content);
-        }
-
-        private function ultimaGuiaAlmacen($almacen) {
-            try {
-                $sql = $this->db->connect()->prepare("SELECT
-                                                        alm_despachocab.cnumguia,
-                                                        alm_despachocab.ffecdoc
-                                                    FROM
-                                                        alm_despachocab
-                                                    WHERE
-                                                        alm_despachocab.ncodalm1 = :almacen
-                                                        AND YEAR(alm_despachocab.ffecdoc) = YEAR(NOW())
-                                                    ORDER BY alm_despachocab.cnumguia DESC
-                                                    LIMIT 1");
-                $sql->execute(["almacen"=>$almacen]);
-
-                $result = $sql->fetchAll();
-
-                return $result[0]['cnumguia'];
-            } catch (PDOException $th) {
-                echo "Error: ".$th->getMessage();
-                return false;
-            }
         }
 
         private function envio_ticket($ruta_archivo_cdr, $ticket, $token_access, $ruc, $nombre_file){
@@ -1755,6 +1805,28 @@
             return $mensaje;
         }
 
+        private function ultimaGuiaAlmacen($almacen) {
+            try {
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        alm_despachocab.cnumguia,
+                                                        alm_despachocab.ffecdoc
+                                                    FROM
+                                                        alm_despachocab
+                                                    WHERE
+                                                        alm_despachocab.ncodalm1 = :almacen
+                                                        AND YEAR(alm_despachocab.ffecdoc) = YEAR(NOW())
+                                                    ORDER BY alm_despachocab.cnumguia DESC
+                                                    LIMIT 1");
+                $sql->execute(["almacen"=>$almacen]);
+
+                $result = $sql->fetchAll();
+
+                return $result[0]['cnumguia'];
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
         
     } 
 ?>

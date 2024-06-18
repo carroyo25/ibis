@@ -260,6 +260,9 @@ $(function() {
             $("#empresa_transporte_razon").val($(this).text());
             $("#ruc_proveedor").val($(this).data("ruc"));
             $("#direccion_proveedor").val($(this).data("direccion"));
+        }else if(contenedor_padre == "listaTransporte"){
+            $("#codigo_transporte").val(codigo);
+            $("#tipo_transporte").val($(this).text());
         }
 
         return false;
@@ -703,25 +706,40 @@ $(function() {
         $.each($("#guiaremision").serializeArray(),function(){
             result[this.name] = this.value;
         });
+
+        try {
+            if ( result['ftraslado'] == "") throw new Error("Indique la fecha de traslado");
+            if ( result['peso'] == "") throw new Error("Ingrese el peso");
+            if ( result['codigo_transporte'] == "") throw new Error("Indique el tipo de transporte");
+            if ( result['codigo_modalidad'] == "") throw new Error("Indique la modalidad de traslado");
+
+            if ( result['codigo_modalidad'] == 254 && result['nombre_conductor'] == "") throw new Error("Registre el nombre del conductor");
+            if ( result['codigo_modalidad'] == 254 && result['licencia_conducir'] == "") throw new Error("Registre la licencia del conductor");
+            if ( result['codigo_modalidad'] == 254 && result['licencia_conducir'] == "") throw new Error("Registre la placa del vehículo");
+
+            if ( result['codigo_modalidad'] == 253 && result['ruc_proveedor'] == "") throw new Error("Indique el RUC del transportista");
+
+            let datosJSON = new FormData();
+
+            datosJSON.append("cabecera",JSON.stringify(result));
+            datosJSON.append("detalles",JSON.stringify(detallesVista(1)));
+
+            $.ajax({
+                type: "POST",
+                url: RUTA+"salida/guiaSunat",
+                data: datosJSON,
+                dataType: "json",
+                contentType:false,      
+                processData:false,
+                success: function (data) {
+                    console.log(data);
+                }
+            });
+
+        } catch (error) {
+            mostrarMensaje(error.message,"mensaje_error");
+        }
         
-        let datosJSON = new FormData();
-
-        datosJSON.append("cabecera",JSON.stringify(result));
-        datosJSON.append("detalles",JSON.stringify(detallesVista(1)));
-
-        $.ajax({
-            type: "POST",
-            url: RUTA+"salida/guiaSunat",
-            data: datosJSON,
-            dataType: "json",
-            contentType:false,      
-            processData:false,
-            success: function (data) {
-                console.log(data);
-            }
-        });
-
-
         return false;
     });
 })
