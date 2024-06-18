@@ -298,6 +298,8 @@
                     <th style="background:#FBD341; color:#000" width="80px">Creación</br>Pedido</th>
                     <th style="background:#FBD341; color:#000" width="80px">Aprobación</br>Pedido</th>
                     <th style="background:#FBD341; color:#000">Cantidad</br>Pedida</th>
+                    <th style="background:#FBD341; color:#000">Cantidad</br>Aprobada</th>
+                    <th style="background:#FBD341; color:#000">Cantidad</br>para compra</th>
                     <th style="background:#A6CAF0; color:#000" data-idcol="12" class="datafiltro">Codigo del</br>Bien/Servicio</th>
                     <th style="background:#A6CAF0; color:#000">Unidad</br>Medida</th>
                     <th style="background:#A6CAF0; color:#000" width="10%" data-idcol="14" class="datafiltro">Descripcion del Bien/Servicio</th>

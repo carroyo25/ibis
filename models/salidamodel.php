@@ -1353,7 +1353,7 @@
             }
         }
 
-        private function desarrollo_xml($header,$detalles){
+        /*private function desarrollo_xml($header,$detalles){
             $serie  = 'TC01';
             $numero = '00000001';
 
