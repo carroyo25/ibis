@@ -1,4 +1,7 @@
 <?php
+    use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
+	use Box\Spout\Common\Type;
+
     class CargoPlannerModel extends Model{
 
         public function __construct()
@@ -1042,12 +1045,13 @@
             }
         }
 
-        public function exportarTotal(){
+        public function exportarTotal($estado){
             require_once('public/PHPExcel/PHPExcel.php');
             try {
                 $salida = "";
+                $docData = [];
 
-                $sql = $this->db->connect()->query("SELECT
+                /*$sql = $this->db->connect()->query("SELECT
                                                     tb_pedidodet.iditem,
                                                     tb_pedidodet.idpedido,
                                                     tb_pedidodet.idprod,
@@ -1151,19 +1155,30 @@
                                                 ORDER BY 
                                                     tb_pedidocab.anio DESC");
                 $sql->execute();
-                $rowCount = $sql->rowCount();
+                $rowCount = $sql->rowCount();*/
 
-                if ($rowCount) {
-                    $respuesta = true;
+                //if ($rowCount) {
+                    //$respuesta = true;
                     
-                    while($row = $sql->fetch(PDO::FETCH_ASSOC)){
-                        $docData[] = $row;
+                    //while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+                        //$docData[] = $row;
+                    //}
+
+                    if ($estado == 1){
+                        //$this->crearExcel($docData);
+                        $archivo = 'public/documentos/reportes/cargoplan.xlsx';
                     }
+                    else if ($estado == 2){
+                        //$this->crearCSV($docData);
+                        $archivo = 'public/documentos/reportes/cargoplan.csv';
+                    }
+                    else if ($estado == 3){
+                        $this->crearSpout($docData);
+                        $archivo = 'public/documentos/reportes/cargoplanspout.xlsx';
+                    }      
+                //}
 
-                    $this->crearExcel($docData);
-                }
-
-                return array("documento"=>'public/documentos/reportes/cargoplan.xlsx');
+                return array("documento"=>$archivo);
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
@@ -2327,5 +2342,21 @@
                 $objWriter->save('public/documentos/reportes/cargoplan.xlsx');
         }
 
+        private function crearSpout($datos){
+            require_once("public/Box/Spout/Autoloader/autoload.php");
+
+            $writer = WriterEntityFactory::createXLSXWriter();
+            $writer->setTempFolder('public/documentos/temp/');
+
+		    //$writer->openToBrowser("prueba1.xlsx"); // stream data directly to the browser
+            $writer->openToFile('public/documentos/temp/cargoplan.xlsx');
+
+            /** Shortcut: add a row from an array of values */
+            $values = ['Carl', 'is', 'great!'];
+            $rowFromValues = WriterEntityFactory::createRowFromArray($values);
+            $writer->addRow($rowFromValues);
+
+            $writer->close();
+        }
     }
 ?>

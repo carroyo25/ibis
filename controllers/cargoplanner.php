@@ -24,7 +24,7 @@
         }
 
         function dataExcelTotalCargoPlan(){
-            echo json_encode($this->model->exportarTotal());
+            echo json_encode($this->model->exportarTotal($_POST['estado']));
         }
 
         function totalItemsCargoPlan(){

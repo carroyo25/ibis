@@ -213,8 +213,9 @@
         <h1>Cargo Plan</h1>
         <div>
             <a href="#" id="filtrosAvanzados"><i class="fab fa-searchengin"></i><p>Filtros</p></a>
-            <a href="#" id="excelFile"><i class="fas fa-file-excel"></i><p>Exportar Total</p></a>
-            <a href="#" id="csvFile" class="oculto"><i class="fas fa-file-csv"></i><p>Exportar CSV</p></a>
+            <a href="1" id="excelFile" class="exportReport"><i class="fas fa-file-excel"></i><p>Exportar Total Lento</p></a>
+            <a href="2" id="csvFile" class="exportReport"><i class="fas fa-file-csv"></i><p>Exportar CSV</p></a>
+            <a href="3" id="excelSpoutFile" class="exportReport"><i class="fas fa-file-excel"></i><p>Exportar Total Rapido</p></a>
             <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
         </div>
     </div>

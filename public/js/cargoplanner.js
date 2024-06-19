@@ -222,22 +222,32 @@ $(function() {
     });
 
 
-    $("#excelFile").click(function (e) { 
+    $(".exportReport").click(function (e) { 
         e.preventDefault(e);
+
+        let estado = $(this).attr("href"),
+            formData = new FormData();
+
+        formData.append('estado', estado);
+
 
         $("#esperarCargo").css("opacity","1").fadeIn();
         
-        fetch(RUTA+"cargoplanner/dataExcelTotalCargoPlan")
-            .then((response)=> {
-                return response.json();
-            })
-            .then((json)=> {
-                $("#esperarCargo").css("opacity","0").fadeOut();
-                window.location.href = json.documento;
-            })
-            .catch((err)=> {
-                console.log(err);
-            });
+        fetch(RUTA+"cargoplanner/dataExcelTotalCargoPlan",{
+            method:'POST',
+            body:formData
+        })
+        .then((response)=> {
+            return response.json();
+        })
+        .then((json)=> {
+            $("#esperarCargo").css("opacity","0").fadeOut();
+            //window.location.href = json.documento;
+            console.log(json.documento);
+        })
+        .catch((err)=> {
+            console.log(err);
+        });
 
         return false;
     });
