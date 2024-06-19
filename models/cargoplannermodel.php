@@ -334,6 +334,10 @@
                                 $semaforo = "Anulado";
                             }
 
+                            $aprobado=0;
+
+                            $aprobado = $rs['cantidad_aprobada'] == 0 ? $rs['cantidad_pedido']:$rs['cantidad_aprobada'];
+
                             $salida.='<tr class="pointer" 
                                         data-itempedido="'.$rs['iditem'].'" 
                                         data-pedido="'.$rs['idpedido'].'" 
@@ -355,7 +359,7 @@
                                         <td class="textoCentro">'.$rs['crea_pedido'].'</td>
                                         <td class="textoCentro">'.$rs['aprobacion_pedido'].'</td>
                                         <td class="textoDerecha">'.number_format($cantidad,2).'</td>
-                                        <td class="textoDerecha">'.number_format($rs['cantidad_aprobada'],2).'</td>
+                                        <td class="textoDerecha">'.number_format($aprobado,2).'</td>
                                         <td class="textoCentro">'.number_format($cantidad-$rs['cantidad_atendida'],2).'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="textoCentro">'.$rs['unidad'].'</td>
@@ -679,7 +683,6 @@
                 $objPHPExcel->getActiveSheet()->getStyle('AB')->getNumberFormat()->setFormatCode('#,##0.00');
                 $objPHPExcel->getActiveSheet()->getStyle('AI')->getNumberFormat()->setFormatCode('#,##0.00');
                 $objPHPExcel->getActiveSheet()->getStyle('AK')->getNumberFormat()->setFormatCode('dd/mm/yyyy');
-                //$objPHPExcel->getActiveSheet()->getStyle('AO')->getNumberFormat()->setFormatCode('#,##0.00');
 
                 for ($i=0; $i < $nreg ; $i++) {
 
@@ -768,13 +771,15 @@
 
                     $objPHPExcel->getActiveSheet()->setCellValue('L'.$fila,$datos[$i]->cantidad);
                     $objPHPExcel->getActiveSheet()->setCellValue('M'.$fila,$datos[$i]->aprobado);
-                    $objPHPExcel->getActiveSheet()->setCellValue('N'.$fila,floatval($datos[$i]->cantidad)-floatval($datos[$i]->compra));
+                    $objPHPExcel->getActiveSheet()->setCellValue('N'.$fila,$datos[$i]->compra);
                     $objPHPExcel->getActiveSheet()->setCellValue('O'.$fila,$datos[$i]->codigo);
                     $objPHPExcel->getActiveSheet()->setCellValue('P'.$fila,$datos[$i]->unidad);
                     $objPHPExcel->getActiveSheet()->setCellValue('Q'.$fila,$datos[$i]->descripcion);
                     $objPHPExcel->getActiveSheet()->setCellValue('R'.$fila,$datos[$i]->tipo_orden);
                     $objPHPExcel->getActiveSheet()->setCellValue('S'.$fila,$datos[$i]->anio_orden);
                     $objPHPExcel->getActiveSheet()->setCellValue('T'.$fila,$datos[$i]->nro_orden);
+
+                    $aprobado = $datos[$i]->aprobado == 0 ? $datos[$i]->cantidad : $datos[$i]->aprobado;
                    
                     if  ($datos[$i]->fecha_orden !== "")
                         $objPHPExcel->getActiveSheet()->setCellValue('U'.$fila,PHPExcel_Shared_Date::PHPToExcel($datos[$i]->fecha_orden));
@@ -832,7 +837,6 @@
                     $fila++;               
                 }
 
-                
                 $objPHPExcel->getActiveSheet()->getStyle('B:C')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
                 $objPHPExcel->getActiveSheet()->getStyle('B:C')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
                 
@@ -1141,6 +1145,7 @@
                                                 WHERE
                                                     tb_pedidodet.nflgActivo 
                                                     AND ISNULL( lg_ordendet.nflgactivo )
+                                                    AND tb_proyectos.nflgactivo = 1
                                                 GROUP BY
                                                     tb_pedidodet.iditem
                                                 ORDER BY 
@@ -1615,14 +1620,23 @@
             }
         }
 
-        public function exportarCsv($usuario){
+        public function exportarCsv($datos){
             try {
-                $arreglo[0] = array("Nombre","Apellido","Animal","Fruto");
-                $arreglo[1] = array("Juan","Juarez","Jirafa","Jicama");
-                $arreglo[2] = array("Maria","Martinez","Mono","Mandarina");
-                $arreglo[3] = array("Esperanza","Escobedo","Elefante","Elote");
+               
 
-                $ruta ="public/documentos/temp/mi_archivo.csv";
+                $arreglo = [];
+                $titulo = array('Items','Estado Actual','Codigo Proyecto','Area','Partida','Atención','Tipo','Año Pedido','N° Pedido', 'Creación Pedido',
+                                    'Aprobación del Pedido','Cantidad Pedida', 'Cantidad Aprobada', 'Cantidad Compra','Codigo del Bien/Servicio','Unidad Medida',
+                                    'Descripcion del Bien/Servicio','Tipo Orden','Año Orden', 'Nro Orden', 'Fecha Orden', 'Cantidad Orden', 'Item Orden', 'Fecha Autorizacion',
+                                    'Atencion Almacen', 'Descripcion del proveedor','Fecha Entrega Proveedor','Cant. Recibida','Nota de Ingreso', 'Fecha Recepcion Proveedor',
+                                    'Saldo por Recibir','Dias Entrega','Días Atrazo','Semáforo', 'Cantidad Despachada','Nro. Guia','Fecha Traslado','Nro. Guia Transferencia',
+                                    'Registro Almacen','Fecha Ingreso Almacen', 'Cantidad en Obra', 'Estado Pedido', 'Estado Item', 'N° Parte', 'Codigo Activo', 'Operador Logístico', 
+                                    'Tipo Transporte','Observaciones/Concepto','Solicitante');
+
+
+                array_push($arreglo,$titulo);
+
+                $ruta ="public/documentos/temp/cargoplan.csv";
 
                 $this->generarCSV($arreglo, $ruta, $delimitador = ';', $encapsulador = '"');
 
@@ -2225,6 +2239,8 @@
                             ),
                         ),
                     );
+
+                    $aprobado = $dato['cantidad_aprobada'] == 0 ? $cantidad : $dato['cantidad_aprobada'];
 
                     $objPHPExcel->getActiveSheet()->setCellValue('A'.$fila,$item++);
                     $objPHPExcel->getActiveSheet()->setCellValue('B'.$fila,$porcentaje);
