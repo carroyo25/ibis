@@ -1051,7 +1051,7 @@
                 $salida = "";
                 $docData = [];
 
-                /*$sql = $this->db->connect()->query("SELECT
+                $sql = $this->db->connect()->query("SELECT
                                                     tb_pedidodet.iditem,
                                                     tb_pedidodet.idpedido,
                                                     tb_pedidodet.idprod,
@@ -1155,28 +1155,28 @@
                                                 ORDER BY 
                                                     tb_pedidocab.anio DESC");
                 $sql->execute();
-                $rowCount = $sql->rowCount();*/
+                $rowCount = $sql->rowCount();
 
-                //if ($rowCount) {
-                    //$respuesta = true;
+                if ($rowCount) {
+                    $respuesta = true;
                     
-                    //while($row = $sql->fetch(PDO::FETCH_ASSOC)){
-                        //$docData[] = $row;
-                    //}
+                    while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+                        $docData[] = $row;
+                    }
 
                     if ($estado == 1){
-                        //$this->crearExcel($docData);
+                        $this->crearExcel($docData);
                         $archivo = 'public/documentos/reportes/cargoplan.xlsx';
                     }
                     else if ($estado == 2){
-                        //$this->crearCSV($docData);
+                        $this->crearCSV($docData);
                         $archivo = 'public/documentos/reportes/cargoplan.csv';
                     }
                     else if ($estado == 3){
                         $this->crearSpout($docData);
                         $archivo = 'public/documentos/reportes/cargoplanspout.xlsx';
                     }      
-                //}
+                }
 
                 return array("documento"=>$archivo);
 
@@ -1637,8 +1637,6 @@
 
         public function exportarCsv($datos){
             try {
-               
-
                 $arreglo = [];
                 $titulo = array('Items','Estado Actual','Codigo Proyecto','Area','Partida','Atención','Tipo','Año Pedido','N° Pedido', 'Creación Pedido',
                                     'Aprobación del Pedido','Cantidad Pedida', 'Cantidad Aprobada', 'Cantidad Compra','Codigo del Bien/Servicio','Unidad Medida',
@@ -1661,7 +1659,7 @@
             }
         }
 
-        public function generarCSV($arreglo, $ruta, $delimitador, $encapsulador){
+        public function crearCSV($arreglo, $ruta, $delimitador, $encapsulador){
             $file_handle = fopen($ruta, 'w');
             
             foreach ($arreglo as $linea) {
@@ -2345,16 +2343,31 @@
         private function crearSpout($datos){
             require_once("public/Box/Spout/Autoloader/autoload.php");
 
+            $fila = [];
+            $i = 1;
+
             $writer = WriterEntityFactory::createXLSXWriter();
             $writer->setTempFolder('public/documentos/temp/');
 
-		    //$writer->openToBrowser("prueba1.xlsx"); // stream data directly to the browser
             $writer->openToFile('public/documentos/temp/cargoplan.xlsx');
 
             /** Shortcut: add a row from an array of values */
-            $values = ['Carl', 'is', 'great!'];
-            $rowFromValues = WriterEntityFactory::createRowFromArray($values);
+            $titulo = array('Items','Estado Actual','Codigo Proyecto','Area','Partida','Atención','Tipo','Año Pedido','N° Pedido', 'Creación Pedido',
+                                    'Aprobación del Pedido','Cantidad Pedida', 'Cantidad Aprobada', 'Cantidad Compra','Codigo del Bien/Servicio','Unidad Medida',
+                                    'Descripcion del Bien/Servicio','Tipo Orden','Año Orden', 'Nro Orden', 'Fecha Orden', 'Cantidad Orden', 'Item Orden', 'Fecha Autorizacion',
+                                    'Atencion Almacen', 'Descripcion del proveedor','Fecha Entrega Proveedor','Cant. Recibida','Nota de Ingreso', 'Fecha Recepcion Proveedor',
+                                    'Saldo por Recibir','Dias Entrega','Días Atrazo','Semáforo', 'Cantidad Despachada','Nro. Guia','Fecha Traslado','Nro. Guia Transferencia',
+                                    'Registro Almacen','Fecha Ingreso Almacen', 'Cantidad en Obra', 'Estado Pedido', 'Estado Item', 'N° Parte', 'Codigo Activo', 'Operador Logístico', 
+                                    'Tipo Transporte','Observaciones/Concepto','Solicitante');
+
+            $rowFromValues = WriterEntityFactory::createRowFromArray($titulo);
             $writer->addRow($rowFromValues);
+
+            foreach($datos as $dato){
+                $fila = array($i++,$dato['estadoItem']);
+                $rowFromValues = WriterEntityFactory::createRowFromArray($fila);
+                $writer->addRow($rowFromValues);
+            }
 
             $writer->close();
         }
