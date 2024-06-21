@@ -200,8 +200,13 @@
 
         public function cerrarPedido($id,$estado,$detalles){
             try {
-                $sql = $this->db->connect()->prepare("UPDATE tb_pedidocab SET estadodoc=:est WHERE idreg=:id");
+                $sql = $this->db->connect()->prepare("UPDATE 
+                                                    tb_pedidocab 
+                                                    SET estadodoc=:est,
+                                                        atiende=:user, 
+                                                    WHERE idreg=:id");
                 $sql->execute(["est"=>$estado,
+                                "user" => $_SESSION['iduser'],
                                 "id"=>$id]);
                 $rowCount = $sql->fetch();
                 
@@ -220,6 +225,9 @@
                 $nreg =  count($datos);
                 
                 for ($i=0; $i < $nreg; $i++) { 
+                    
+                    $estado = $datos[$i]->cantidad == $datos[$i]->atendida ? 52:54;
+
                     $p = $datos[$i]->itempedido;
                     $c = $datos[$i]->cantidad;
                     $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet SET estadoItem=:est,cant_atend=:aten,cant_resto=:resto WHERE iditem=:id");
