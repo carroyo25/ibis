@@ -99,7 +99,12 @@
                                 <label for="entidad">Entidad:</label>
                                 <input type="text" name="entidad" id="entidad" readonly>
                             </div>
+                            <div class="column2">
+                                <label for="entidad">Observaciones:</label>
+                                <input type="text" name="observaciones" id="observaciones">
+                            </div>
                         </div>
+                       
                     </div>
                     <div class="barraOpciones">
                         <span>Criterios de Evaluación</span>

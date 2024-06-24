@@ -190,7 +190,6 @@
 
                             $atencion = $rs['atencion'] == 47 ? "NORMAL" : "URGENTE"; 
                            
-                            
                             if ( $rs['estadoItem'] == 105 ) {
                                 $porcentaje = "0%";
                                 $estadofila = "anulado";
@@ -2364,7 +2363,115 @@
             $writer->addRow($rowFromValues);
 
             foreach($datos as $dato){
-                $fila = array($i++,$dato['estadoItem']);
+
+                if ( $dato['estadoItem'] == 105 ) {
+                    $porcentaje = "0%";
+                    $estadofila = "anulado";
+                    $estado_item = "anulado";
+                    $estado_pedido = "anulado";
+                    $color_mostrar = 'C8C8C8';
+                }else if( $dato['estadoItem'] == 49 ) {
+                    $porcentaje = "10%";
+                    $estadofila = "Procesando";
+                    $estado_item = "item_stock";
+                    $estado_pedido = "Procesando";
+                    $color_mostrar = 'F8CAAD';
+                }else if( $dato['estadoItem'] == 53 ) {
+                    $porcentaje = "10%";
+                    $estadofila = "emitido";
+                    $estado_item = "Emitido";
+                    $estado_pedido = "Pedido Emitido";
+                }else if( $dato['estadoItem'] == 230 ) {
+                    $porcentaje = "100%";
+                    $estadofila = "comprado";
+                    $estado_item = "Compra Local";
+                    $estado_pedido = "Compra Local";
+                    $color_mostrar = 'FF0000';
+                }else if( $dato['estadoItem'] == 54) {
+                    $porcentaje = "15%";
+                    $estadofila = "aprobado";
+                    $estado_item = "aprobado";
+                    $estado_pedido = "aprobado";
+                    $color_mostrar = 'FC4236';
+                }else if( $dato['estadoItem'] == 52  && $dato['ingreso_obra'] == $dato['cantidad_pedido'] ) {
+                    $porcentaje = "100%";
+                    $estadofila = "entregado";
+                    $estado_item = "atendido";
+                    $estado_pedido = "atendido";
+                    $color_mostrar = 'B3C5E6';
+                }else if( $dato['estadoItem'] == 52  && $dato['ingreso_obra'] == $dato['cantidad_aprobada'] && $dato['cantidad_aprobada'] > 0) {
+                    $porcentaje = "100%";
+                    $estadofila = "entregado";
+                    $estado_item = "atendido";
+                    $estado_pedido = "atendido";
+                    $color_mostrar = 'B3C5E6';
+                }else if( $dato['estadoItem'] == 52 ) {
+                    $porcentaje = "20%";
+                    $estadofila = "stock";
+                    $estado_item = "item_stock";
+                    $estado_pedido = "stock";
+                    $color_mostrar = 'B3C5E6';
+                }else if (!$dato['orden'] ) {
+                    $porcentaje = "15%";
+                    $estadofila = "item_aprobado";
+                    $estado_item = "aprobado";
+                    $estado_pedido = "aprobado";
+                    $color_mostrar = 'FC4236';   
+                }else if ( $dato['orden'] && !$dato['proveedor']) {
+                    $porcentaje = "25%";
+                    $estadofila = "item_orden";
+                    $estado_item = "aprobado";
+                    $estado_pedido = "aprobado";   
+                }else if ( $dato['proveedor'] && !$dato['ingreso'] ) {
+                    $porcentaje = "30%";
+                    $estadofila = "item_enviado";
+                    $estado_item = "atendido";
+                    $estado_pedido = "atendido";
+                    $color_mostrar = 'C0DCC0';
+                }else if( $dato['ingreso'] && $dato['ingreso'] < $dato['cantidad_orden'] ) {
+                    $porcentaje = "40%";
+                    $estadofila = "item_ingreso_parcial";
+                    $estado_item = "atendido";
+                    $estado_pedido = "atendido";
+                    $color_mostrar = 'C0DCC0';
+                }else  if( !$dato['despachos'] && $dato['ingreso'] && $dato['ingreso'] == $dato['cantidad_orden'] ) {
+                    $porcentaje = "50%";
+                    $estadofila = "item_ingreso_total";
+                    $estado_item = "atendido";
+                    $estado_pedido = "atendido";
+                    $color_mostrar = 'A9D08F';
+                }else if ( $dato['despachos'] && !$dato['ingreso_obra'] ) {
+                    $porcentaje = "75%";
+                    $estadofila = "item_transito";
+                    $estado_item = "atendido";
+                    $estado_pedido = "atendido";
+                    $color_mostrar = '00FFFF';
+                }else if ( round($dato['ingreso_obra'],2) < round($dato['cantidad_orden'],2 )) {
+                    $porcentaje = "85%";
+                    $estadofila = "item_ingreso_parcial";
+                    $estado_item = "atendido";
+                    $estado_pedido = "atendido";
+                    $color_mostrar = 'FFFFE1';
+                }else if ( $dato['ingreso_obra'] && round($suma_atendido,2) === round($dato['cantidad_aprobada'],2)) {
+                    $porcentaje = "100%";
+                    $estadofila = "entregado";
+                    $estado_item = "atendido";
+                    $estado_pedido = "atendido";
+                    $semaforo = "Entregado";
+                    $color_mostrar = '00FF00';
+                }else if ( $dato['ingreso_obra'] && round($dato['ingreso_obra'],2) === round($dato['cantidad_orden'],2)) {
+                    $porcentaje = "100%";
+                    $estadofila = "entregado";
+                    $estado_item = "atendido";
+                    $estado_pedido = "atendido";
+                    $color_mostrar = '00FF00';
+                }
+
+                $transporte = $rs['nidreg'] == 39 ? "TERRESTRE": $rs['transporte'];
+
+                $atencion = $rs['atencion'] == 47 ? "NORMAL" : "URGENTE"; 
+
+                $fila = array($i++,$porcentaje,$dato['ccodproy'],$dato['area'],$dato['partida'],$atencion);
                 $rowFromValues = WriterEntityFactory::createRowFromArray($fila);
                 $writer->addRow($rowFromValues);
             }

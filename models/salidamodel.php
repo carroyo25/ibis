@@ -1256,10 +1256,10 @@
 
             //var_dump($respuesta);
 
-            sleep(2);//damos tiempo para que SUNAT procese y responda.
+            sleep(5);//damos tiempo para que SUNAT procese y responda.
             $respuesta_ticket = $this->envio_ticket($path.'CDR/', $numero_ticket, $token_access, $header->destinatario_ruc, $nombre_archivo);
 
-            //var_dump($respuesta_ticket);
+            var_dump($respuesta_ticket);
             
             return array("archivo" => $nombre_archivo,"ticket" => $respuesta_ticket);
         }
@@ -1610,8 +1610,6 @@
             $content = $xml->saveXML();
             file_put_contents("public/documentos/guia_electronica/FIRMA/".$name_file, $content);
         }
-
-        
 
         private function ultimaGuiaAlmacen($almacen) {
             try {
