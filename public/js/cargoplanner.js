@@ -221,7 +221,6 @@ $(function() {
         return false;
     });
 
-
     $(".exportReport").click(function (e) { 
         e.preventDefault(e);
 
@@ -242,8 +241,7 @@ $(function() {
         })
         .then((json)=> {
             $("#esperarCargo").css("opacity","0").fadeOut();
-            //window.location.href = json.documento;
-            console.log(json.documento);
+            window.location.href = json.documento;
         })
         .catch((err)=> {
             console.log(err);

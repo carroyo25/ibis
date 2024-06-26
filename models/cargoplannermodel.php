@@ -1,5 +1,8 @@
 <?php
     use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
+    use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
+    use Box\Spout\Common\Entity\Style\CellAlignment;
+    use Box\Spout\Common\Entity\Style\Color;
 	use Box\Spout\Common\Type;
 
     class CargoPlannerModel extends Model{
@@ -1373,7 +1376,7 @@
                     while ($rs = $sql->fetch()) {
                         $item['codigo'] = $rs['ccodprod'];
                         $item['nombre'] = $rs['cdesprod'];
-                        $item['cantidad'] = $rs['cantidad_orden'];
+                        $item['cantidad'] = $rs['ncantidad'];
                         $item['unidad'] = $rs['cabrevia'];
 
                         array_push($detalles,$item);
@@ -2350,6 +2353,16 @@
 
             $writer->openToFile('public/documentos/temp/cargoplan.xlsx');
 
+            /** Create a style with the StyleBuilder */
+            $header = (new StyleBuilder())
+            ->setFontBold()
+            ->setFontSize(10)
+            ->setFontColor(Color::WHITE)
+            ->setShouldWrapText()
+            ->setCellAlignment(CellAlignment::CENTER)
+            ->setBackgroundColor(Color::BLUE)
+            ->build();
+
             /** Shortcut: add a row from an array of values */
             $titulo = array('Items','Estado Actual','Codigo Proyecto','Area','Partida','Atención','Tipo','Año Pedido','N° Pedido', 'Creación Pedido',
                                     'Aprobación del Pedido','Cantidad Pedida', 'Cantidad Aprobada', 'Cantidad Compra','Codigo del Bien/Servicio','Unidad Medida',
@@ -2359,10 +2372,29 @@
                                     'Registro Almacen','Fecha Ingreso Almacen', 'Cantidad en Obra', 'Estado Pedido', 'Estado Item', 'N° Parte', 'Codigo Activo', 'Operador Logístico', 
                                     'Tipo Transporte','Observaciones/Concepto','Solicitante');
 
-            $rowFromValues = WriterEntityFactory::createRowFromArray($titulo);
+            $rowFromValues = WriterEntityFactory::createRowFromArray($titulo,$header);
             $writer->addRow($rowFromValues);
 
             foreach($datos as $dato){
+
+                $tipo_orden = $dato['idtipomov'] == 37 ? 'BIENES' : 'SERVICIO';
+                $clase_operacion = $dato['idtipomov'] == 37 ? 'bienes' : 'servicios';
+                
+                $saldoRecibir = $dato['cantidad_orden'] - $dato['ingreso'] > 0 ? $dato['cantidad_orden'] - $dato['ingreso'] : "-";
+
+                $dias_atraso  =  "";
+                
+                $estadoSemaforo = "";
+                $semaforo = "";
+                $porcentaje = "100%";
+
+                $transporte = $dato['nidreg'] == 39 ? "TERRESTRE": $dato['transporte'];
+                $atencion = $dato['atencion'] == 47 ? "NORMAL" : "URGENTE"; 
+
+                $suma_atendido = number_format($dato['cantidad_orden'] + $dato['cantidad_atendida'],2);
+
+                $estado_pedido =  $dato['estadoItem'] >= 54 ? "Atendido":"Pendiente";
+                $estado_item   =  $dato['estadoItem'] >= 54 ? "Atendido":"Pendiente";
 
                 if ( $dato['estadoItem'] == 105 ) {
                     $porcentaje = "0%";
@@ -2466,10 +2498,6 @@
                     $estado_pedido = "atendido";
                     $color_mostrar = '00FF00';
                 }
-
-                $transporte = $rs['nidreg'] == 39 ? "TERRESTRE": $rs['transporte'];
-
-                $atencion = $rs['atencion'] == 47 ? "NORMAL" : "URGENTE"; 
 
                 $fila = array($i++,$porcentaje,$dato['ccodproy'],$dato['area'],$dato['partida'],$atencion);
                 $rowFromValues = WriterEntityFactory::createRowFromArray($fila);

@@ -1255,18 +1255,18 @@
             $respuesta = $this->envio_xml($path.'FIRMA/', $nombre_archivo, $token_access);
             $numero_ticket = $respuesta->numTicket;
 
-            var_dump($respuesta);
+            //var_dump($respuesta);
 
-            //sleep(5);//damos tiempo para que SUNAT procese y responda.
-            //$respuesta_ticket = $this->envio_ticket($path.'CDR/', $numero_ticket, $token_access, $header->destinatario_ruc, $nombre_archivo);
+            sleep(5);//damos tiempo para que SUNAT procese y responda.
+            $respuesta_ticket = $this->envio_ticket($path.'CDR/', $numero_ticket, $token_access, $header->destinatario_ruc, $nombre_archivo);
 
-            //var_dump($respuesta_ticket);
+            var_dump($respuesta_ticket);
             
             return array("archivo" => $nombre_archivo,"ticket" => $respuesta_ticket, "token" => $token_access);
         }
 
         private function crear_files($path,$nombre_archivo,$header,$body){
-            $xml = $this->caso1($header, $body);
+            $xml = $this->caso2($header, $body);
 
             $archivo = fopen($path."XML/".$nombre_archivo.".xml", "w+");
             fwrite($archivo, utf8_decode($xml));
@@ -1526,15 +1526,161 @@
             }
         }
 
-        //entre almacenes propios -- transporte publico
         private function caso2($header,$detalles){
             try {
-                //code...
+                $serie  = 'T001';
+
+                $xml =  '<?xml version="1.0" encoding="UTF-8"?>';
+                $xml .= '<DespatchAdvice xmlns="urn:oasis:names:specification:ubl:schema:xsd:DespatchAdvice-2" 
+                                    xmlns:ds="http://www.w3.org/2000/09/xmldsig#" 
+                                    xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" 
+                                    xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" 
+                                    xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2">
+                                    <ext:UBLExtensions>
+                                        <ext:UBLExtension>
+                                            <ext:ExtensionContent></ext:ExtensionContent>
+                                        </ext:UBLExtension>
+                                    </ext:UBLExtensions>
+                                    <cbc:UBLVersionID>2.1</cbc:UBLVersionID>
+                                    <cbc:CustomizationID>2.0</cbc:CustomizationID>
+                                    <cbc:ID>'.$serie.'-'.$header->numero_guia.'</cbc:ID>
+                                    <!--  FECHA Y HORA DE EMISION  -->
+                                    <cbc:IssueDate>'.$header->fgemision.'</cbc:IssueDate>
+                                    <cbc:IssueTime>'.date("H:i:s").'</cbc:IssueTime>
+                                    <cbc:DespatchAdviceTypeCode listAgencyName="PE:SUNAT" listName="Tipo de Documento" listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo01">09</cbc:DespatchAdviceTypeCode>
+                                    <cbc:Note>'.$header->observaciones.'</cbc:Note>
+                                    <!--  DOCUMENTOS ADICIONALES (Catalogo 41) -->
+                                    <cac:Signature>
+                                    <cbc:ID>'.$header->destinatario_ruc.'</cbc:ID>
+                                    <cac:SignatoryParty>
+                                        <cac:PartyIdentification>
+                                        <cbc:ID>'.$header->destinatario_ruc.'</cbc:ID>
+                                        </cac:PartyIdentification>
+                                    </cac:SignatoryParty>
+                                    <cac:DigitalSignatureAttachment>
+                                        <cac:ExternalReference>
+                                        <cbc:URI>'.$header->destinatario_ruc.'</cbc:URI>
+                                        </cac:ExternalReference>
+                                    </cac:DigitalSignatureAttachment>
+                                </cac:Signature>
+                                <!--  DATOS DEL EMISOR (REMITENTE)  -->
+                                <cac:DespatchSupplierParty>
+                                    <cac:Party>
+                                            <cac:PartyIdentification>
+                                                <cbc:ID schemeID="6" schemeName="Documento de Identidad" 
+                                                    schemeAgencyName="PE:SUNAT" 
+                                                    schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">'.$header->destinatario_ruc.'</cbc:ID>
+                                            </cac:PartyIdentification>
+                                            <cac:PartyLegalEntity>
+                                                <cbc:RegistrationName><![CDATA['.$header->destinatario_razon.']]></cbc:RegistrationName>
+                                            </cac:PartyLegalEntity>
+                                    </cac:Party>
+                                </cac:DespatchSupplierParty>
+                                <!--  DATOS DEL RECEPTOR (DESTINATARIO)  -->
+                                <cac:DeliveryCustomerParty>
+                                    <cac:Party>
+                                        <cac:PartyIdentification>
+                                            <cbc:ID schemeID="6" schemeName="Documento de Identidad" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">'.$header->destinatario_ruc.'</cbc:ID>
+                                        </cac:PartyIdentification>
+                                        <cac:PartyLegalEntity>
+                                            <cbc:RegistrationName><![CDATA['.$header->destinatario_razon.']]></cbc:RegistrationName>
+                                        </cac:PartyLegalEntity>
+                                    </cac:Party>
+                                </cac:DeliveryCustomerParty>
+                                <!-- DATOS DEL PROVEEDOR -->
+                                <!-- DATOS DEL TRASLADO -->
+                                <cac:Shipment>
+                                    <!-- ID OBLIGATORIO POR UBL -->
+                                    <cbc:ID>SUNAT_Envio</cbc:ID>
+                                    <!-- MOTIVO DEL TRASLADO -->
+                                        <cbc:HandlingCode 
+                                        listAgencyName="PE:SUNAT" 
+                                        listName="Motivo de traslado" 
+                                        listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo20">04</cbc:HandlingCode>
+                                    <!-- PESO BRUTO TOTAL DE LA CARGA-->
+                                    <cbc:GrossWeightMeasure unitCode="KGM">'.$header->peso.'</cbc:GrossWeightMeasure>
+                                    <cac:ShipmentStage>
+                                        <!-- MODALIDAD DE TRASLADO  -->
+                                        <cbc:TransportModeCode listName="Modalidad de traslado" listAgencyName="PE:SUNAT" listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo18">01</cbc:TransportModeCode>
+                                        <!-- FECHA DE INICIO DEL TRASLADO o FECHA DE ENTREGA DE BIENES AL TRANSPORTISTA -->
+                                        <cac:TransitPeriod>
+                                            <cbc:StartDate>'.$header->ftraslado.'</cbc:StartDate>
+                                        </cac:TransitPeriod>
+                                        <!-- DATOS DEL TRANSPORTISTA -->
+                                        <cac:CarrierParty>
+                                            <cac:PartyIdentification>
+                                            <cbc:ID schemeID="6" schemeName="Documento de Identidad" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">20512524380</cbc:ID>
+                                            </cac:PartyIdentification>
+                                            <cac:PartyLegalEntity>
+                                            <!-- NOMBRE/RAZON SOCIAL DEL TRANSPORTISTA-->
+                                            <cbc:RegistrationName>TRANSCARGO PAUCAR S S.R.L.</cbc:RegistrationName>
+                                            <!-- NUMERO DE REGISTRO DEL MTC -->
+                                            <cbc:CompanyID>1518409CNG</cbc:CompanyID>
+                                            </cac:PartyLegalEntity>
+                                        </cac:CarrierParty>
+                                    </cac:ShipmentStage>
+                                    <cac:Delivery>
+                                        <!-- DIRECCION DEL PUNTO DE LLEGADA -->
+                                        <cac:DeliveryAddress>
+                                            <!-- UBIGEO DE LLEGADA -->
+                                            <cbc:ID schemeName="Ubigeos" schemeAgencyName="PE:INEI">'.$header->ubig_destino.'</cbc:ID>
+                                            <!-- CODIGO DE ESTABLECIMIENTO ANEXO DE LLEGADA -->
+                                            <cbc:AddressTypeCode listID="20504898173" listAgencyName="PE:SUNAT" listName="Establecimientos anexos">'.$header->csd.'</cbc:AddressTypeCode>
+                                            <!-- DIRECCION COMPLETA Y DETALLADA DE LLEGADA -->
+                                            <cac:AddressLine>
+                                                <cbc:Line>'.utf8_encode($header->almacen_destino_direccion).'</cbc:Line>
+                                            </cac:AddressLine>
+                                        </cac:DeliveryAddress>
+                                        <cac:Despatch>
+                                            <!-- DIRECCION DEL PUNTO DE PARTIDA -->
+                                            <cac:DespatchAddress>
+                                                <!-- UBIGEO DE PARTIDA -->
+                                                <cbc:ID schemeName="Ubigeos" schemeAgencyName="PE:INEI">'.$header->ubig_origen.'</cbc:ID>
+                                                <!-- CODIGO DE ESTABLECIMIENTO ANEXO DE PARTIDA -->
+                                                <cbc:AddressTypeCode listID="20504898173" listAgencyName="PE:SUNAT" listName="Establecimientos anexos">'.$header->cso.'</cbc:AddressTypeCode>
+                                                <!-- DIRECCION COMPLETA Y DETALLADA DE PARTIDA -->
+                                                <cac:AddressLine>
+                                                    <cbc:Line>'.utf8_encode($header->almacen_origen_direccion).'</cbc:Line>
+                                                </cac:AddressLine>
+                                            </cac:DespatchAddress>
+                                        </cac:Despatch>
+                                    </cac:Delivery>
+                                    <cac:TransportHandlingUnit>
+                                    <cac:TransportEquipment>
+                                        <cbc:ID>'.$header->placa.'</cbc:ID>
+                                    </cac:TransportEquipment>
+                                    </cac:TransportHandlingUnit>
+                                </cac:Shipment>';
+                $i = 1;
+
+                foreach($detalles as $detalle){
+                    $xml.='<!-- DETALLES DE BIENES A TRASLADAR -->
+                               <cac:DespatchLine>
+                                    <cbc:ID>'.$i.'</cbc:ID>
+                                    <cbc:DeliveredQuantity unitCode="'.$detalle->unidad.'" unitCodeListID="UN/ECE rec 20" unitCodeListAgencyName="United Nations Economic Commission for Europe">'.$detalle->cantidad.'</cbc:DeliveredQuantity>
+                                    <cac:OrderLineReference>
+                                        <cbc:LineID>'.$i.'</cbc:LineID>
+                                    </cac:OrderLineReference>
+                                    <cac:Item>
+                                    <cbc:Description>'.utf8_encode($detalle->descripcion).'</cbc:Description>
+                                    <cac:SellersItemIdentification>
+                                        <cbc:ID>'.$detalle->codigo.'</cbc:ID>
+                                    </cac:SellersItemIdentification>
+                                    </cac:Item>
+                                </cac:DespatchLine>';
+                    $i++;
+                }
+           
+                $xml.=  '</DespatchAdvice>';
+
+                return $xml;
+                
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
                 return false;
             }
         }
+        
 
         private function token($client_id, $client_secret, $usuario_secundario, $usuario_password){
             $url = "https://api-seguridad.sunat.gob.pe/v1/clientessol/".$client_id."/oauth2/token/";
