@@ -1,4 +1,6 @@
 <?php
+    header('Access-Control-Allow-Origin: *');
+
     class SalidaModel extends Model{
 
         public function __construct()
@@ -1227,7 +1229,6 @@
         /////*------------------PROCESOS SUNAT--------------------*///////
 
         public function enviarSunatSalida($cabecera,$detalles) {
-            header('Access-Control-Allow-Origin: *');
             require 'public/libraries/efactura.php';
 
             $header = json_decode($cabecera);
@@ -1254,14 +1255,14 @@
             $respuesta = $this->envio_xml($path.'FIRMA/', $nombre_archivo, $token_access);
             $numero_ticket = $respuesta->numTicket;
 
-            //var_dump($respuesta);
+            var_dump($respuesta);
 
-            sleep(2);//damos tiempo para que SUNAT procese y responda.
-            $respuesta_ticket = $this->envio_ticket($path.'CDR/', $numero_ticket, $token_access, $header->destinatario_ruc, $nombre_archivo);
+            //sleep(5);//damos tiempo para que SUNAT procese y responda.
+            //$respuesta_ticket = $this->envio_ticket($path.'CDR/', $numero_ticket, $token_access, $header->destinatario_ruc, $nombre_archivo);
 
             //var_dump($respuesta_ticket);
             
-            return array("archivo" => $nombre_archivo,"ticket" => $respuesta_ticket);
+            return array("archivo" => $nombre_archivo,"ticket" => $respuesta_ticket, "token" => $token_access);
         }
 
         private function crear_files($path,$nombre_archivo,$header,$body){
@@ -1610,8 +1611,6 @@
             $content = $xml->saveXML();
             file_put_contents("public/documentos/guia_electronica/FIRMA/".$name_file, $content);
         }
-
-        
 
         private function ultimaGuiaAlmacen($almacen) {
             try {
