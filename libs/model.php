@@ -566,7 +566,7 @@
 
                     if ( $valor == 53 ){
                        //esta linea es para cambiar los items 52 -- atendido en su totalidad por almacen
-                       $estado = floatval($datos[$i]->cantidad) - floatval($datos[$i]->atendida) == 0 ? 52: $valor;
+                       $estado = floatval( $datos[$i]->cantidad) - floatval($datos[$i]->atendida ) == 0 ? 52: $valor;
                        $resto = floatval($datos[$i]->cantidad) - floatval($datos[$i]->atendida);
  
                        $sql = $this->db->connect()->prepare("UPDATE $tabla SET estadoItem=:est,

@@ -15,13 +15,12 @@ $(() => {
         e.preventDefault();
 
         try {
-
             if ($("#tipo").val() == -1) throw new Error("Seleccione el tipo de operación");
             if ($("#codigo").val() == "") throw new Error("Selecione el codigo del item");
             if ($("#cantidad").val() == 0) throw new Error("Ingrese una cantidad válida");
             if ($("#documento").val() == "") throw new Error("Ingrese el número de documento");
             if ($("#proyecto").val() == -1) throw new Error("Seleccion el proyecto");
-            if ($("#referencia").val() == -1) throw new Error("Seleccione una referencia adicional");
+            //if ($("#referencia").val() == -1) throw new Error("Seleccione una referencia adicional");
             if ($("#area").val() == -1) throw new Error("Seleccione una area");
 
             const datos = new URLSearchParams(new FormData(document.getElementById("form__combustible")));
@@ -126,6 +125,42 @@ $(() => {
         
         $("#filtros").fadeIn();
 
+        return false;
+    });
+
+    $("#closeInform").click(function (e) { 
+        e.preventDefault();
+        
+        $("#filtros").fadeOut();
+
+        return false;
+    });
+
+    $("#tipo_item").change(function (e) { 
+        e.preventDefault();
+
+        if( $('select[name="tipo_item"] option:selected').val() !== "0"){
+            let formData = new FormData();
+
+            formData.append("item",$('select[name="tipo_item"] option:selected').val());
+
+            fetch(RUTA+'combustible/reporte',{
+                method: 'POST',
+                body: formData
+            })
+            .then(reponse => reponse.json())
+            .then(data =>{
+                let stock_inicial = data.stock_inicial == null ? 0 : data.stock_inicial,
+                    ingreso_mes_actual = data.ingreso_mes_actual == null ? 0 : data.ingreso_mes_actual,
+                    consumo_mes_actual = data.consumo_mes_actual == null ? 0 : data.consumo_mes_actual;
+
+                $("#stockInicial").text(stock_inicial);
+                $("#ingresomesactual").text(ingreso_mes_actual);
+                $("#cantidadconsumo").text(consumo_mes_actual);
+                $("#stockfinal").text((stock_inicial+ingreso_mes_actual)-consumo_mes_actual);
+            })
+        };
+        
         return false;
     });
 })

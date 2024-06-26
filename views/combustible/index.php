@@ -128,6 +128,15 @@
             </div>
             <div class="body">
                 <div class="resumen_combustible">
+                    <div>
+                        <label for="tipo_item">Producto</label>
+                        <select name="tipo_item" id="tipo_item">
+                            <option value="0" selected>Elija un combustible</option>
+                            <?php foreach ($this->listaCombustible['datos'] as $registro) {?>
+                                <option value="<?php echo $registro['id_cprod']?>"><?php echo $registro['cdesprod']?></option>
+                            <?php }?>
+                        </select>
+                    </div>
                     <table>
                         <thead>
                             <tr>
@@ -138,19 +147,19 @@
                         <tbody>
                             <tr>
                                 <td>STOCK INICIAL (MES ANTERIOR):</td>
-                                <td class="textoDerecha">0</td>
+                                <td class="textoDerecha" id="stockInicial"></td>
                             </tr>
                             <tr>
                                 <td>CANTIDAD DE INGRESO:</td>
-                                <td class="textoDerecha">0</td>
+                                <td class="textoDerecha" id="ingresomesactual"></td>
                             </tr>
                             <tr>
                                 <td>CANTIDAD DE CONSUMO:</td>
-                                <td class="textoDerecha">0</td>
+                                <td class="textoDerecha" id="cantidadconsumo"></td>
                             </tr>
                             <tr>
                                 <td>STOCK FINAL:</td>
-                                <td class="textoDerecha">0</td>
+                                <td class="textoDerecha"><h2 id="stockfinal"></h2></td>
                             </tr>
                         </tbody>
                     </table>
@@ -237,11 +246,13 @@
                 </tr>
             </thead>
             <tbody>
-                <?php $item = 1; 
-                    foreach($this->listaItemsCombustible['datos'] as $registro)
-                    $tipo = $registro['idtipo'] == 1 ? 'INGRESO POR COMPRA':'SALIDA POR CONSUMO'; 
-                    $mes = ['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO','SETIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE'];
-                {?>
+                <?php 
+                    if (count($this->listaItemsCombustible['datos']) > 0) {
+                        $item = 1; 
+                        foreach($this->listaItemsCombustible['datos'] as $registro)
+                            $tipo = $registro['idtipo'] == 1 ? 'INGRESO POR COMPRA':'SALIDA POR CONSUMO'; 
+                            $mes = ['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO','SETIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE'];
+                    {?>
                     <tr class="pointer click_tr" data-id="<?php echo $registro['idreg']; ?>">
                         <td class="textoCentro"><?php echo str_pad($item++,3,0,STR_PAD_LEFT); ?></td>
                         <td class="textoCentro"><?php echo $registro['fregistro']; ?></td>
@@ -261,7 +272,8 @@
                         <td class="textoCentro"><?php echo $registro['cregistro']; ?></td>
                         <td class="textoCentro"><?php echo $mes[$registro['mes']-1]; ?></td>
                     </tr>
-                <?php }; ?>
+                <?php } 
+                }; ?>
             </tbody>
         </table>
     </div>

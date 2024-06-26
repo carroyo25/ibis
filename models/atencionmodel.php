@@ -45,8 +45,8 @@
                                         <td class="textoCentro">'.str_pad($rs['nrodoc'],4,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.date("d/m/Y", strtotime($rs['emision'])).'</td>
                                         <td class="textoCentro">'.date("d/m/Y", strtotime($rs['vence'])).'</td>
-                                        <td class="pl20px">'.utf8_decode($rs['concepto']).'</td>
-                                        <td class="pl20px">'.utf8_decode($rs['costos']).'</td>
+                                        <td class="pl20px">'.$rs['concepto'].'</td>
+                                        <td class="pl20px">'.$rs['costos'].'</td>
                                         <td class="pl20px">'.$rs['nombres'].'</td>
                                         <td class="textoCentro '.$rs['cabrevia'].'">'.$rs['estado'].'</td>
                                         <td class="textoCentro '.strtolower($rs['atencion']).'">'.$rs['atencion'].'</td>
@@ -183,8 +183,8 @@
 
                 if ($estadoEnvio){
                     $clase = "mensaje_correcto";
-                    $this->actualizarCabecera("tb_pedidocab",$estado,$pedido,$emitido,null);
-                    $this->actualizarAtenciones("tb_pedidodet",$estado,$detalles);
+                    $this->modificarCabeceraAtencion(53,$pedido,$detalles);
+                    $this->modificarItemsAtencion($estado,$detalles);
                 }
 
                 $salida= array("estado"=>$estadoEnvio,
@@ -198,19 +198,16 @@
             }
         }
 
-        public function cerrarPedido($id,$estado,$detalles){
+        private function modificarCabeceraAtencion($estado,$id,$detalles){
             try {
                 $sql = $this->db->connect()->prepare("UPDATE 
                                                     tb_pedidocab 
                                                     SET estadodoc=:est,
-                                                        atiende=:user, 
+                                                        atiende=:user 
                                                     WHERE idreg=:id");
                 $sql->execute(["est"=>$estado,
                                 "user" => $_SESSION['iduser'],
                                 "id"=>$id]);
-                $rowCount = $sql->fetch();
-                
-                $this->cerrarItems($estado,$detalles);
 
                 return true;
             } catch (PDOException $th) {
@@ -219,17 +216,17 @@
             }
         }
 
-        public function cerrarItems($estado,$detalles){
+        private function modificarItemsAtencion($estado,$detalles){
             try {
                 $datos = json_decode($detalles);
                 $nreg =  count($datos);
                 
                 for ($i=0; $i < $nreg; $i++) { 
                     
-                    $estado = $datos[$i]->cantidad == $datos[$i]->atendida ? 52:54;
+                    $estado = $datos[$i]->cantidad == $datos[$i]->atendida ? 52:53;
 
                     $p = $datos[$i]->itempedido;
-                    $c = $datos[$i]->cantidad;
+                    $c = $datos[$i]->atendida;
                     $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet SET estadoItem=:est,cant_atend=:aten,cant_resto=:resto WHERE iditem=:id");
                     $sql->execute(["est"=>$estado,
                                     "id"=>$p,

@@ -9,6 +9,7 @@
             $this->view->listaAlmacen = $this->model->selectAlmacen();
             $this->view->listaCostosSelect = $this->model->costosPorUsuarioSelect($_SESSION['iduser']);
             $this->view->listaAreas = $this->model->listaAreas();
+            $this->view->listaCombustible = $this->model->tipoCombustible();
             $this->view->listaEquipos = $this->model->listaEquiposMmtto();
             $this->view->listaItemsCombustible = $this->model->listaConsumosCombustibles('%','%',2024);
             $this->view->render('combustible/index');
@@ -24,6 +25,10 @@
 
         function registro(){
             echo json_encode($this->model->registrarCombustible($_POST));
+        }
+
+        function reporte(){
+            echo json_encode($this->model->generarReporte($_POST['item']));
         }
         
     }

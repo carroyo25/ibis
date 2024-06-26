@@ -186,6 +186,8 @@ $(function(){
             if ($("#subject").val() =="") throw "Escriba el asunto";
             if ($("messaje div").html() =="") throw "Escriba el asunto";
 
+            $("#esperar").css({"display":"block","opacity":"1"});
+
             $.post(RUTA+"atencion/correos", {pedido:$("#codigo_pedido").val(),
                                             detalles:JSON.stringify(itemsSave()),
                                             correos:JSON.stringify(mailsList()),
@@ -196,7 +198,10 @@ $(function(){
                                                 
              function (data, textStatus, jqXHR) {
                 mostrarMensaje(data.mensaje,data.clase);
-                $("#sendMail,#esperar").fadeOut();
+                
+                $("#sendMail").fadeOut();
+
+                $("#esperar").css({"display":"none","opacity":"0"});
              },
              "json"
          );

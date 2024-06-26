@@ -41,12 +41,12 @@
                                                     MONTH(alm_combustible.fregistro) AS mes
                                                 FROM
                                                     alm_combustible
-                                                    INNER JOIN tb_almacen ON alm_combustible.idalm = tb_almacen.ncodalm
-                                                    INNER JOIN cm_producto ON alm_combustible.idprod = cm_producto.id_cprod
-                                                    INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
-                                                    INNER JOIN tb_proyectos ON alm_combustible.idproyecto = tb_proyectos.nidreg
-                                                    INNER JOIN tb_equipmtto ON alm_combustible.nidref = tb_equipmtto.idreg
-                                                    INNER JOIN tb_area ON alm_combustible.idarea = tb_area.ncodarea 
+                                                    LEFT JOIN tb_almacen ON alm_combustible.idalm = tb_almacen.ncodalm
+                                                    LEFT JOIN cm_producto ON alm_combustible.idprod = cm_producto.id_cprod
+                                                    LEFT JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                    LEFT JOIN tb_proyectos ON alm_combustible.idproyecto = tb_proyectos.nidreg
+                                                    LEFT JOIN tb_equipmtto ON alm_combustible.nidref = tb_equipmtto.idreg
+                                                    LEFT JOIN tb_area ON alm_combustible.idarea = tb_area.ncodarea 
                                                 WHERE
                                                     alm_combustible.nflgactivo = 1
                                                     AND YEAR(alm_combustible.fregistro) = :anio
@@ -152,6 +152,127 @@
                     "area"=>$datos['area']]);
 
                 return array("mensaje"=>'Consumo registrado');
+
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function tipoCombustible(){
+            try {
+                $docData = [];
+
+                $sql=$this->db->connect()->query("SELECT
+                                                    cm_producto.ccodprod,
+                                                    cm_producto.cdesprod,
+                                                    cm_producto.id_cprod 
+                                                FROM
+                                                    cm_producto 
+                                                WHERE
+                                                    cm_producto.ngrupo = 8 
+                                                    AND cm_producto.nclase = 60 
+                                                    AND cm_producto.nfam = 234 
+                                                    AND cm_producto.flgActivo = 1");
+
+                while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+                    $docData[] = $row;
+                }
+
+                return array("datos"=>$docData);
+
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function generarReporte($item){
+            $stock_inicial = $this->stock_inicial($item);
+            $ingreso_mes_actual = $this->ingreso_mes_actual($item);
+            $consumo_mes_actual = $this->consumo_mes_actual($item);
+
+            return array("stock_inicial"=>$stock_inicial,
+                         "ingreso_mes_actual"=>$ingreso_mes_actual,
+                         "consumo_mes_actual"=>$consumo_mes_actual);
+        }
+
+        private function stock_inicial($item){
+            try {
+                $sql=$this->db->connect()->prepare("SELECT
+                                                alm_recepdet.id_cprod,
+                                                alm_recepcab.cper,
+                                                alm_recepcab.cmes,
+                                                alm_recepcab.ncodpry,
+                                                SUM(alm_recepdet.ncantidad) AS ingresos_mes_anterior
+                                            FROM
+                                                alm_recepdet
+                                                INNER JOIN alm_recepcab ON alm_recepdet.id_regalm = alm_recepcab.id_regalm 
+                                            WHERE
+                                                alm_recepdet.nflgactivo = 1 
+                                                AND alm_recepdet.id_cprod =:item
+                                                AND alm_recepcab.cper = IF ( MONTH(NOW()) = 1,YEAR(NOW())-1,YEAR(NOW()))
+                                                AND alm_recepcab.cmes = IF ( MONTH(NOW()) = 1,12,MONTH(NOW())-1)");
+                $sql->execute(["item"=>$item]);
+
+                $result = $sql->fetchAll();
+
+                return $result[0]['ingresos_mes_anterior'];
+
+
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        private function ingreso_mes_actual($item){
+            try {
+                $sql=$this->db->connect()->prepare("SELECT
+                                                alm_recepdet.id_cprod,
+                                                alm_recepcab.cper,
+                                                alm_recepcab.cmes,
+                                                alm_recepcab.ncodpry,
+                                                FORMAT(SUM(alm_recepdet.ncantidad),2) AS ingresos_mes_actual
+                                            FROM
+                                                alm_recepdet
+                                                INNER JOIN alm_recepcab ON alm_recepdet.id_regalm = alm_recepcab.id_regalm 
+                                            WHERE
+                                                alm_recepdet.nflgactivo = 1 
+                                                AND alm_recepdet.id_cprod =:item
+                                                AND alm_recepcab.cper = YEAR(NOW())
+                                                AND alm_recepcab.cmes = MONTH(NOW())");
+                $sql->execute(["item"=>$item]);
+
+                $result = $sql->fetchAll();
+
+                return $result[0]['ingresos_mes_actual'];
+
+
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        private function consumo_mes_actual($item){
+            try {
+                $sql=$this->db->connect()->prepare("SELECT
+                                                    SUM(alm_combustible.ncantidad) AS consumo_mes,
+                                                    alm_combustible.idprod 
+                                                FROM
+                                                    alm_combustible 
+                                                WHERE
+                                                    alm_combustible.idprod = :item 
+                                                    AND alm_combustible.nflgactivo = 1
+                                                    AND MONTH(alm_combustible.fregistro) = MONTH(NOW())
+                                                    AND YEAR(alm_combustible.fregistro) = YEAR(NOW())");
+                $sql->execute(["item"=>$item]);
+
+                $result = $sql->fetchAll();
+
+                return $result[0]['consumo_mes'];
+
 
             } catch (PDOException $th) {
                 echo $th->getMessage();
