@@ -146,6 +146,10 @@
                         </thead>
                         <tbody>
                             <tr>
+                                <td>CONSOLIDADO ANUAL:</td>
+                                <td class="textoDerecha" id="consolidadoAnual"></td>
+                            </tr>
+                            <tr>
                                 <td>STOCK INICIAL (MES ANTERIOR):</td>
                                 <td class="textoDerecha" id="stockInicial"></td>
                             </tr>
@@ -165,7 +169,7 @@
                     </table>
                 </div>
                 <div class="graficoEstadistico">
-                    <h3>Grafico</h3>
+                    
                 </div>
             </div>
         </div>
@@ -246,34 +250,32 @@
                 </tr>
             </thead>
             <tbody>
-                <?php 
-                    if (count($this->listaItemsCombustible['datos']) > 0) {
-                        $item = 1; 
-                        foreach($this->listaItemsCombustible['datos'] as $registro)
-                            $tipo = $registro['idtipo'] == 1 ? 'INGRESO POR COMPRA':'SALIDA POR CONSUMO'; 
-                            $mes = ['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO','SETIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE'];
-                    {?>
-                    <tr class="pointer click_tr" data-id="<?php echo $registro['idreg']; ?>">
-                        <td class="textoCentro"><?php echo str_pad($item++,3,0,STR_PAD_LEFT); ?></td>
-                        <td class="textoCentro"><?php echo $registro['fregistro']; ?></td>
-                        <td class="pl20px"><?php echo $registro['cdesalm']; ?></td>
-                        <td class="pl20px"><?php echo $tipo; ?></td>
-                        <td class="textoCentro"><?php echo $registro['ccodprod']; ?></td>
-                        <td class="pl20px"><?php echo $registro['cdesprod']; ?></td>
-                        <td class="textoCentro"><?php echo $registro['cabrevia']; ?></td>
-                        <td class="textoDerecha"><?php echo $registro['ncantidad']; ?></td>
-                        <td class="pl20px"><?php foreach($this->listaItemsCombustible['usuarios'] as $usuario ){if ( $usuario['dni'] == $registro['cdocumento'] ){ echo $usuario['usuario'];}}?></td>
-                        <td class="textoCentro"><?php echo $registro['idusuario']; ?></td>
-                        <td class="textoCentro"><?php echo $registro['ccodproy']; ?></td>
-                        <td class="textoCentro"><?php echo $registro['cguia']; ?></td>
-                        <td class="pl20px"><?php echo $registro['tobseritem']; ?></td>
-                        <td class="pl20px"><?php echo $registro['tobserdocum']; ?></td>
-                        <td class="pl20px"><?php echo $registro['cdesarea']; ?></td>
-                        <td class="textoCentro"><?php echo $registro['cregistro']; ?></td>
-                        <td class="textoCentro"><?php echo $mes[$registro['mes']-1]; ?></td>
-                    </tr>
-                <?php } 
-                }; ?>
+                <?php
+                    $item = 1; 
+                    $mes = ['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO','SETIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE'];
+
+                    foreach($this->listaItemsCombustible['datos'] as $registro){
+                        $tipo = $registro['idtipo'] == 1 ? 'INGRESO POR COMPRA':'SALIDA POR CONSUMO';?>
+                        <tr class="pointer click_tr" data-id="<?php echo $registro['idreg']; ?>">
+                            <td class="textoCentro"><?php echo str_pad($item++,3,0,STR_PAD_LEFT); ?></td>
+                            <td class="textoCentro"><?php echo $registro['fregistro']; ?></td>
+                            <td class="pl20px"><?php echo $registro['cdesalm']; ?></td>
+                            <td class="pl20px"><?php echo $tipo; ?></td>
+                            <td class="textoCentro"><?php echo $registro['ccodprod']; ?></td>
+                            <td class="pl20px"><?php echo $registro['cdesprod']; ?></td>
+                            <td class="textoCentro"><?php echo $registro['cabrevia']; ?></td>
+                            <td class="textoDerecha"><?php echo $registro['ncantidad']; ?></td>
+                            <td class="pl20px"><?php foreach($this->listaItemsCombustible['usuarios'] as $usuario ){if ( $usuario['dni'] == $registro['cdocumento'] ){ echo $usuario['usuario'];}}?></td>
+                            <td class="textoCentro"><?php echo $registro['idusuario']; ?></td>
+                            <td class="textoCentro"><?php echo $registro['ccodproy']; ?></td>
+                            <td class="textoCentro"><?php echo $registro['cguia']; ?></td>
+                            <td class="pl20px"><?php echo $registro['tobseritem']; ?></td>
+                            <td class="pl20px"><?php echo $registro['tobserdocum']; ?></td>
+                            <td class="pl20px"><?php echo $registro['cdesarea']; ?></td>
+                            <td class="textoCentro"><?php echo $registro['cregistro']; ?></td>
+                            <td class="textoCentro"><?php echo $mes[$registro['mes']-1]; ?></td>
+                        </tr>
+                    <?php } ?>
             </tbody>
         </table>
     </div>

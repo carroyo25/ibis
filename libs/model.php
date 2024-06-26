@@ -3020,7 +3020,7 @@
         private function quitarItemOrden($io) {
             try {
                 $sql = $this->db->connect()->prepare("UPDATE lg_ordendet 
-                                                        SET nflgactivo = 1,
+                                                        SET nflgactivo = NULL,
                                                             id_orden = NULL,
                                                             nEstadoReg = 105
                                                         WHERE nitemord =:id");
