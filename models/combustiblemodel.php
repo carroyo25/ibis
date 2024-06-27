@@ -191,10 +191,12 @@
             $stock_inicial = $this->stock_inicial($item);
             $ingreso_mes_actual = $this->ingreso_mes_actual($item);
             $consumo_mes_actual = $this->consumo_mes_actual($item);
+            $consolidado_anual = $this->consolidado_anual($item);
 
             return array("stock_inicial"=>$stock_inicial,
                          "ingreso_mes_actual"=>$ingreso_mes_actual,
-                         "consumo_mes_actual"=>$consumo_mes_actual);
+                         "consumo_mes_actual"=>$consumo_mes_actual,
+                         "consolidado_anual"=>$consolidado_anual);
         }
 
         private function stock_inicial($item){
@@ -272,6 +274,34 @@
                 $result = $sql->fetchAll();
 
                 return $result[0]['consumo_mes'];
+
+
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        private function consolidado_anual($item){
+            try {
+                $sql=$this->db->connect()->prepare("SELECT
+                                                    alm_recepdet.id_cprod,
+                                                    alm_recepcab.cper,
+                                                    alm_recepcab.cmes,
+                                                    alm_recepcab.ncodpry,
+                                                    SUM( alm_recepdet.ncantidad ) AS consolidado_anual 
+                                                FROM
+                                                    alm_recepdet
+                                                    INNER JOIN alm_recepcab ON alm_recepdet.id_regalm = alm_recepcab.id_regalm 
+                                                WHERE
+                                                    alm_recepdet.nflgactivo = 1 
+                                                    AND alm_recepdet.id_cprod =:item
+                                                    AND alm_recepcab.cper = YEAR(NOW())");
+                $sql->execute(["item"=>$item]);
+
+                $result = $sql->fetchAll();
+
+                return $result[0]['consolidado_anual'];
 
 
             } catch (PDOException $th) {

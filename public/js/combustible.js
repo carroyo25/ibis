@@ -1,6 +1,9 @@
 $(() => {
     let accion = "u",flag=false;
 
+    let seriesData = [1,2,3,4,5,6,7,8,9,10,11,12];
+
+
     $("#esperar").fadeOut();
 
     $("#nuevoRegistro").click(function (e) { 
@@ -152,15 +155,82 @@ $(() => {
             .then(data =>{
                 let stock_inicial = data.stock_inicial == null ? 0 : data.stock_inicial,
                     ingreso_mes_actual = data.ingreso_mes_actual == null ? 0 : data.ingreso_mes_actual,
-                    consumo_mes_actual = data.consumo_mes_actual == null ? 0 : data.consumo_mes_actual;
+                    consumo_mes_actual = data.consumo_mes_actual == null ? 0 : data.consumo_mes_actual,
+                    consolidado_anual = data.consolidado_anual == null ? 0 : data.consolidado_anual;
 
+                $("#consolidadoAnual").text(consolidado_anual);
                 $("#stockInicial").text(stock_inicial);
                 $("#ingresomesactual").text(ingreso_mes_actual);
                 $("#cantidadconsumo").text(consumo_mes_actual);
                 $("#stockfinal").text((stock_inicial+ingreso_mes_actual)-consumo_mes_actual);
+
+                barras(seriesData);
             })
         };
         
         return false;
     });
+
+    $("#excelFile").click(function (e) { 
+        e.preventDefault();
+        
+
+        return false;
+    });
 })
+
+barras = (seriesData) => {
+    Highcharts.chart('graficoEstadistico', {
+        chart: {
+            type: 'column'
+        },
+        title:{
+            text:'Ingreso y consumo de combustible por mes',
+            align: 'center'
+        },
+        xAxis: {
+            categories: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: 'Galones (GL)'
+            }
+        },
+        plotOptions: {
+            series: {
+                pointWidth: 20
+            }
+        },
+        series:[ 
+            {   name:'Ingresos',
+                data: [1,2,3,4,5,6,7,8,9,10,11,12],
+            },
+            {   name:'Salidas',
+                data: [12,11,10,9,8,7,6,5,4,3,2,1]
+            }
+        ]
+    });
+}
+
+detalles = () => {
+    let DATA = [];
+        
+    let TABLA = $("#tablaPrincipalProveedor tbody >tr");
+    
+    TABLA.each(function(){
+        item= {};
+        item['numero']          = $(this).find('td').eq(0).text(),
+        item['emision']         = $(this).find('td').eq(1).text(),
+        item['descripcion']     = $(this).find('td').eq(2).text(),
+        item['costos']          = $(this).find('td').eq(3).text(),
+        item['area']            = $(this).find('td').eq(4).text(),
+        item['proveedor']       = $(this).find('td').eq(5).text(),
+        item['soles']           = $(this).find('td').eq(6).text(),
+        item['dolares']         = $(this).find('td').eq(7).text(),
+
+        DATA.push(item);
+    })
+
+    return DATA;
+}

@@ -168,7 +168,7 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="graficoEstadistico">
+                <div id="graficoEstadistico">
                     
                 </div>
             </div>

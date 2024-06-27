@@ -138,7 +138,6 @@ $(function() {
         return false;
     });
     
-
     $(".btn_cancelfilter").click(function(e){
         e.preventDefault();
 
