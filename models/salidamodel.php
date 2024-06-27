@@ -1260,7 +1260,7 @@
             sleep(5);//damos tiempo para que SUNAT procese y responda.
             $respuesta_ticket = $this->envio_ticket($path.'CDR/', $numero_ticket, $token_access, $header->destinatario_ruc, $nombre_archivo);
 
-            var_dump($respuesta_ticket);
+            //var_dump($respuesta_ticket);
             
             return array("archivo" => $nombre_archivo,"ticket" => $respuesta_ticket, "token" => $token_access);
         }
@@ -1645,11 +1645,6 @@
                                             </cac:DespatchAddress>
                                         </cac:Despatch>
                                     </cac:Delivery>
-                                    <cac:TransportHandlingUnit>
-                                    <cac:TransportEquipment>
-                                        <cbc:ID>'.$header->placa.'</cbc:ID>
-                                    </cac:TransportEquipment>
-                                    </cac:TransportHandlingUnit>
                                 </cac:Shipment>';
                 $i = 1;
 
