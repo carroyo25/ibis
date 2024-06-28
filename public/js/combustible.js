@@ -171,11 +171,21 @@ $(() => {
         return false;
     });
 
-    $("#excelFile").click(function (e) { 
+    $("#reportExport").click(function (e) { 
         e.preventDefault();
-        
+
+        $("#esperar").css("opacity","1").fadeIn();
+
+        $.post(RUTA+"combustible/exporta", {detalles:JSON.stringify(detalles())},
+            function (data, textStatus, jqXHR) {
+                window.location.href = data.documento;
+                $("#esperar").css("opacity","0").fadeOut();
+            },
+            "json"
+        );
 
         return false;
+        
     });
 })
 
@@ -216,18 +226,27 @@ barras = (seriesData) => {
 detalles = () => {
     let DATA = [];
         
-    let TABLA = $("#tablaPrincipalProveedor tbody >tr");
+    let TABLA = $("#tablaPrincipal tbody >tr");
     
     TABLA.each(function(){
         item= {};
+
         item['numero']          = $(this).find('td').eq(0).text(),
         item['emision']         = $(this).find('td').eq(1).text(),
-        item['descripcion']     = $(this).find('td').eq(2).text(),
-        item['costos']          = $(this).find('td').eq(3).text(),
-        item['area']            = $(this).find('td').eq(4).text(),
-        item['proveedor']       = $(this).find('td').eq(5).text(),
-        item['soles']           = $(this).find('td').eq(6).text(),
-        item['dolares']         = $(this).find('td').eq(7).text(),
+        item['almacen']         = $(this).find('td').eq(2).text(),
+        item['tipo']            = $(this).find('td').eq(3).text(),
+        item['codigo']          = $(this).find('td').eq(4).text(),
+        item['descripcion']     = $(this).find('td').eq(5).text(),
+        item['unidad']          = $(this).find('td').eq(6).text(),
+        item['cantidad']        = $(this).find('td').eq(7).text(),
+        item['trabajador']      = $(this).find('td').eq(8).text(),
+        item['usuario']         = $(this).find('td').eq(9).text(),
+        item['proyecto']        = $(this).find('td').eq(10).text(),
+        item['observaciones']   = $(this).find('td').eq(11).text(),
+        item['documento']       = $(this).find('td').eq(12).text(),
+        item['area']            = $(this).find('td').eq(13).text(),
+        item['referencia']      = $(this).find('td').eq(14).text(),
+        item['mes']             = $(this).find('td').eq(15).text()
 
         DATA.push(item);
     })

@@ -30,6 +30,10 @@
         function reporte(){
             echo json_encode($this->model->generarReporte($_POST['item']));
         }
+
+        function exporta() {
+            echo json_encode($this->model->exportarExcelCombustible($_POST['detalles']));
+        }
         
     }
 ?>

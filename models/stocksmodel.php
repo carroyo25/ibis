@@ -27,7 +27,10 @@
                                                         sal_trans.iditem,
                                                         ing_trans.ingreso_transferencia AS ingresos_transferencias,
                                                         minimo.cantidad_minima AS minimo,
-                                                        tb_unimed.cabrevia 
+                                                        tb_unimed.cabrevia,
+                                                        UPPER(tb_grupo.cdescrip) AS grupo,
+                                                        UPPER(tb_clase.cdescrip) AS clase,
+                                                        UPPER(tb_familia.cdescrip) AS familia
                                                     FROM
                                                         cm_producto
                                                         LEFT JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
@@ -116,7 +119,10 @@
                                                         GROUP BY
                                                             alm_minimo.idprod,
                                                             alm_minimo.dfecha 
-                                                        ) AS minimo ON minimo.idprod = cm_producto.id_cprod 
+                                                        ) AS minimo ON minimo.idprod = cm_producto.id_cprod
+                                                        LEFT JOIN tb_grupo ON cm_producto.ngrupo = tb_grupo.ncodgrupo
+                                                        LEFT JOIN tb_clase ON cm_producto.nclase = tb_clase.ncodclase
+                                                        LEFT JOIN tb_familia ON cm_producto.nfam = tb_familia.ncodfamilia
                                                     WHERE
                                                         cm_producto.flgActivo = 1 
                                                         AND cm_producto.ntipo = 37 
@@ -169,7 +175,10 @@
                             $salida.='<tr class="pointer" data-idprod="'.$rs['id_cprod'].'" 
                                                         data-costos="'.$rs['ingresos'].'" 
                                                         data-existencia="'.$rs['idreg'].'"
-                                                        data-transferencia="'.$rs['iditem'].'">
+                                                        data-transferencia="'.$rs['iditem'].'"
+                                                        data-grupo="'.$rs['grupo'].'"
+                                                        data-clase="'.$rs['clase'].'"
+                                                        data-familia="'.$rs['familia'].'">
                                             <td class="textoCentro"><a href="'.$rs['id_cprod'].'">'.str_pad($item++,4,0,STR_PAD_LEFT).'</a></td>
                                             <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                             <td class="pl20px">'.$rs['cdesprod'].'</td>
@@ -635,31 +644,34 @@
                 $objPHPExcel->getActiveSheet()->setTitle("Inventario");
 
                 //combinar celdas
-                $objPHPExcel->getActiveSheet()->mergeCells('A1:Q1');
+                $objPHPExcel->getActiveSheet()->mergeCells('A1:T1');
                 $objPHPExcel->getActiveSheet()->mergeCells('K3:Q3');
 
                 //alineacion
-                $objPHPExcel->getActiveSheet()->getStyle('A1:Q4')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                $objPHPExcel->getActiveSheet()->getStyle('A1:Q4')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('A1:T4')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('A1:T4')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
 
                 //ancho de columnas
                 $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(10);
-                $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(40);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(20);
                 $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
-                $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(27);
-                $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(30);
-                $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(20);
-                $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(20);
-                $objPHPExcel->getActiveSheet()->getColumnDimension('H')->setWidth(20);
-                $objPHPExcel->getActiveSheet()->getColumnDimension('I')->setWidth(20);
-                $objPHPExcel->getActiveSheet()->getColumnDimension('J')->setWidth(20);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(10);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(15);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(15);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(15);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('H')->setWidth(15);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('I')->setWidth(15);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('J')->setWidth(15);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('R')->setWidth(25);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('S')->setWidth(25);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('T')->setWidth(25);
                         
                 //Titulo 
                 $objPHPExcel->getActiveSheet()->setCellValue('A1','Control de Almacén');
 
                 $objPHPExcel->getActiveSheet()
-                    ->getStyle('A1:Q4')
+                    ->getStyle('A1:T4')
                     ->getFill()
                     ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
                     ->getStartColor()
@@ -676,8 +688,9 @@
                 $objPHPExcel->getActiveSheet()->setCellValue('I3','TRANSFERENCIAS'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('J3','SALDO');
                 $objPHPExcel->getActiveSheet()->setCellValue('K3','CONDICION'); // esto cambia
-
-                
+                $objPHPExcel->getActiveSheet()->setCellValue('R3','GRUPO'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('S3','CLASE'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('T3','FAMILIA'); // esto cambia
 
                 $objPHPExcel->getActiveSheet()->setCellValue('K4','1A');
                 $objPHPExcel->getActiveSheet()->setCellValue('L4','1B');
@@ -687,6 +700,7 @@
                 $objPHPExcel->getActiveSheet()->setCellValue('P4','3B');
                 $objPHPExcel->getActiveSheet()->setCellValue('Q4','3C');
 
+                $objPHPExcel->getActiveSheet()->getStyle('A3:T3')->getAlignment()->setWrapText(true);
        
                 $fila = 5;
                 $datos = json_decode($registros);
@@ -711,6 +725,10 @@
                     $objPHPExcel->getActiveSheet()->setCellValue('O'.$fila,$datos[$i]->a3);
                     $objPHPExcel->getActiveSheet()->setCellValue('P'.$fila,$datos[$i]->b3);
                     $objPHPExcel->getActiveSheet()->setCellValue('Q'.$fila,$datos[$i]->c3);
+
+                    $objPHPExcel->getActiveSheet()->setCellValue('R'.$fila,$datos[$i]->grupo);
+                    $objPHPExcel->getActiveSheet()->setCellValue('S'.$fila,$datos[$i]->clase);
+                    $objPHPExcel->getActiveSheet()->setCellValue('T'.$fila,$datos[$i]->familia);
                     
                     $fila++;
                 }

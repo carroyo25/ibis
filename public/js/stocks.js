@@ -244,6 +244,9 @@ detalles = () =>{
         item['devuelto']        = $(this).find('td').eq(7).text();
         item['transferencias']  = $(this).find('td').eq(8).text();
         item['saldo']           = $(this).find('td').eq(10).text();
+        item['grupo']           = $(this).data("grupo");
+        item['clase']           = $(this).data("clase");
+        item['familia']         = $(this).data("familia");
 
         item['a1']           = $(this).find('td').eq(11).text();
         item['a2']           = $(this).find('td').eq(12).text();

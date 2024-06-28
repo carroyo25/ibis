@@ -146,7 +146,7 @@
                     "nrodoc"=>$datos['documento'],
                     "usuario"=>$datos['usuario'],
                     "proyecto"=>$datos['proyecto'],
-                    "guia"=>$datos['guia'],
+                    "guia"=>null,
                     "obserdoc"=>strtoupper($datos['observacionesDocumento']),
                     "referencia"=>$datos['referencia'],
                     "area"=>$datos['area']]);
@@ -197,6 +197,121 @@
                          "ingreso_mes_actual"=>$ingreso_mes_actual,
                          "consumo_mes_actual"=>$consumo_mes_actual,
                          "consolidado_anual"=>$consolidado_anual);
+        }
+
+        public function exportarExcelCombustible($registros){
+            try {
+                require_once('public/PHPExcel/PHPExcel.php');
+                $objPHPExcel = new PHPExcel();
+                $objPHPExcel->getProperties()
+                    ->setCreator("Sical")
+                    ->setLastModifiedBy("Sical")
+                    ->setTitle("Control Combustible")
+                    ->setSubject("Template excel")
+                    ->setDescription("Control Combustible")
+                    ->setKeywords("Template excel");
+
+                $objWorkSheet = $objPHPExcel->createSheet(1);
+
+                $objPHPExcel->setActiveSheetIndex(0);
+                $objPHPExcel->getActiveSheet()->setTitle("Combustible");
+
+                //combinar celdas
+                $objPHPExcel->getActiveSheet()->mergeCells('A1:P1');
+
+                //alineacion
+                $objPHPExcel->getActiveSheet()->getStyle('A1:R4')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+
+                //Titulo 
+                $objPHPExcel->getActiveSheet()->setCellValue('A1','Kardex de Movimientos de Combustible');
+
+                $objPHPExcel->getActiveSheet()
+                    ->getStyle('A1:P3')
+                    ->getFill()
+                    ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
+                    ->getStartColor()
+                    ->setRGB('C0DCC0');
+
+                //ancho de columnas
+                $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(10);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(15);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(25);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setAutoSize(true);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(30);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(15);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('H')->setWidth(15);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('I')->setAutoSize(true);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('J')->setWidth(15);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('K')->setWidth(15);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('L')->setAutoSize(true);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('M')->setAutoSize(true);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('N')->setAutoSize(true);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('O')->setWidth(15);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('P')->setWidth(15);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('Q')->setWidth(15);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('R')->setWidth(25);
+
+
+                $objPHPExcel->getActiveSheet()->setCellValue('A3','ITEM'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('B3','FECHA REGISTRO'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('C3','ALMACEN'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('D3','TIPO DE MOVIMIENTO'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('E3','CODIGO'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('F3','DESCRIPCION'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('G3','UNIDAD'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('H3','CANTIDAD'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('I3','TRABAJADOR'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('J3','USUARIO REGISTRA');
+                $objPHPExcel->getActiveSheet()->setCellValue('K3','PROYECTO'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('L3','OBSERVACIONES DEL ITEM'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('M3','OBSERVACION DEL DOCUMENTO'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('N3','AREA'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('O3','REFERENCIA ADICIONAL'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('P3','MES'); // esto cambia
+
+                $objPHPExcel->getActiveSheet()->getStyle('A3:T3')->getAlignment()->setWrapText(true);
+
+                $objPHPExcel->getActiveSheet()->getStyle('B')->getNumberFormat()->setFormatCode('dd/mm/yyyy');
+                $objPHPExcel->getActiveSheet()->getStyle('H')->getNumberFormat()->setFormatCode('#,##0.00');
+                
+
+                $fila = 4;
+                $datos = json_decode($registros);
+                $nreg = count($datos);
+
+                for ($i=0; $i < $nreg; $i++) { 
+                    $objPHPExcel->getActiveSheet()->setCellValue('A'.$fila,$datos[$i]->numero);
+                    $objPHPExcel->getActiveSheet()->setCellValue('B'.$fila,PHPExcel_Shared_Date::PHPToExcel($datos[$i]->emision));
+                    $objPHPExcel->getActiveSheet()->setCellValue('C'.$fila,$datos[$i]->almacen);
+                    $objPHPExcel->getActiveSheet()->setCellValue('D'.$fila,$datos[$i]->tipo);
+                    $objPHPExcel->getActiveSheet()->setCellValue('E'.$fila,$datos[$i]->codigo);
+                    $objPHPExcel->getActiveSheet()->setCellValue('F'.$fila,$datos[$i]->descripcion);
+                    $objPHPExcel->getActiveSheet()->setCellValue('G'.$fila,$datos[$i]->unidad);
+                    $objPHPExcel->getActiveSheet()->setCellValue('H'.$fila,$datos[$i]->cantidad);
+                    $objPHPExcel->getActiveSheet()->setCellValue('I'.$fila,$datos[$i]->trabajador);
+                    $objPHPExcel->getActiveSheet()->setCellValue('J'.$fila,$datos[$i]->usuario);
+                    $objPHPExcel->getActiveSheet()->setCellValue('K'.$fila,$datos[$i]->proyecto);
+                    $objPHPExcel->getActiveSheet()->setCellValue('L'.$fila,$datos[$i]->observaciones);
+                    $objPHPExcel->getActiveSheet()->setCellValue('M'.$fila,$datos[$i]->documento);
+                    $objPHPExcel->getActiveSheet()->setCellValue('N'.$fila,$datos[$i]->area);
+                    $objPHPExcel->getActiveSheet()->setCellValue('O'.$fila,$datos[$i]->referencia);
+                    $objPHPExcel->getActiveSheet()->setCellValue('P'.$fila,$datos[$i]->mes);
+
+                    
+                    $fila++;
+                }
+
+                $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel,'Excel2007');
+                $objWriter->save('public/documentos/reportes/kardex.xlsx');
+    
+                return array("documento"=>'public/documentos/reportes/kardex.xlsx');
+    
+                exit();
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
         }
 
         private function stock_inicial($item){
@@ -306,6 +421,36 @@
 
             } catch (PDOException $th) {
                 echo $th->getMessage();
+                return false;
+            }
+        }
+
+        private function pivotIngresos($item){
+            try {
+                //este es la consulta para pivotear tablas
+                $sql = $this->db->connect()->prepare("SELECT
+                                                    SUM( CASE WHEN MONTH ( alm_recepdet.fregsys ) = 1 THEN alm_recepdet.ncantidad ELSE 0 END ) AS jan,
+                                                    SUM( CASE WHEN MONTH ( alm_recepdet.fregsys ) = 2 THEN alm_recepdet.ncantidad ELSE 0 END ) AS feb,
+                                                    SUM( CASE WHEN MONTH ( alm_recepdet.fregsys ) = 3 THEN alm_recepdet.ncantidad ELSE 0 END ) AS mar,
+                                                    SUM( CASE WHEN MONTH ( alm_recepdet.fregsys ) = 4 THEN alm_recepdet.ncantidad ELSE 0 END ) AS apr,
+                                                    SUM( CASE WHEN MONTH ( alm_recepdet.fregsys ) = 5 THEN alm_recepdet.ncantidad ELSE 0 END ) AS may,
+                                                    SUM( CASE WHEN MONTH ( alm_recepdet.fregsys ) = 6 THEN alm_recepdet.ncantidad ELSE 0 END ) AS jun,
+                                                    SUM( CASE WHEN MONTH ( alm_recepdet.fregsys ) = 7 THEN alm_recepdet.ncantidad ELSE 0 END ) AS jul,
+                                                    SUM( CASE WHEN MONTH ( alm_recepdet.fregsys ) = 8 THEN alm_recepdet.ncantidad ELSE 0 END ) AS aug,
+                                                    SUM( CASE WHEN MONTH ( alm_recepdet.fregsys ) = 9 THEN alm_recepdet.ncantidad ELSE 0 END ) AS sep,
+                                                    SUM( CASE WHEN MONTH ( alm_recepdet.fregsys ) = 10 THEN alm_recepdet.ncantidad ELSE 0 END ) AS oct,
+                                                    SUM( CASE WHEN MONTH ( alm_recepdet.fregsys ) = 11 THEN alm_recepdet.ncantidad ELSE 0 END ) AS nov,
+                                                    SUM( CASE WHEN MONTH ( alm_recepdet.fregsys ) = 12 THEN alm_recepdet.ncantidad ELSE 0 END ) AS dic 
+                                                FROM
+                                                    alm_recepdet 
+                                                WHERE
+                                                    alm_recepdet.nflgactivo = 1 
+                                                    AND YEAR ( alm_recepdet.fregsys ) = YEAR (NOW()) 
+                                                    AND alm_recepdet.id_cprod = :item");
+                $sql->execute(['item' => $item]);
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
                 return false;
             }
         }

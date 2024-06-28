@@ -39,8 +39,8 @@
                                 <label for="item">Tipo</label>
                                 <select name="tipo" id="tipo">
                                     <option value="-1">Elija opcion</option>
-                                    <option value="1">Ingreso</option>
-                                    <option value="2">Salida</option>
+                                    <option value="1" class="oculto">Ingreso</option>
+                                    <option value="2" selected>Salida</option>
                                 </select>
                             </div>
                         </div>
@@ -78,7 +78,7 @@
                                 <input type="text" id="trabajador" name="trabajador">
                             </div>
                         </div>
-                        <div class="grid3col">
+                        <div class="grid2col">
                             <div>
                                 <label for="usuario">Usuario</label>
                                 <input type="text" id="usuario" name="usuario" value ="<?php echo strtoupper($_SESSION['user']); ?>" readonly >
@@ -88,10 +88,6 @@
                                 <select name="proyecto" id="proyecto">
                                     <?php echo $this->listaCostosSelect ?>
                                 </select>
-                            </div>
-                            <div>
-                                <label for="guia">Guia de Remision :</label>
-                                <input type="text" id="guia" name="guia">
                             </div>
                         </div>
                         <div>
@@ -241,7 +237,6 @@
                     <th>Trabajador</th>
                     <th>Usuario</th>
                     <th>Proyecto</th>
-                    <th>Guia Remision</th>
                     <th>Observaciones</th>
                     <th>Observacion<br> del documento<br> de almacen</th>
                     <th>Area</th>
@@ -268,7 +263,6 @@
                             <td class="pl20px"><?php foreach($this->listaItemsCombustible['usuarios'] as $usuario ){if ( $usuario['dni'] == $registro['cdocumento'] ){ echo $usuario['usuario'];}}?></td>
                             <td class="textoCentro"><?php echo $registro['idusuario']; ?></td>
                             <td class="textoCentro"><?php echo $registro['ccodproy']; ?></td>
-                            <td class="textoCentro"><?php echo $registro['cguia']; ?></td>
                             <td class="pl20px"><?php echo $registro['tobseritem']; ?></td>
                             <td class="pl20px"><?php echo $registro['tobserdocum']; ?></td>
                             <td class="pl20px"><?php echo $registro['cdesarea']; ?></td>
