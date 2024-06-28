@@ -1047,6 +1047,7 @@
             }
         }
 
+        //OPCIONES PARA EXPORTAR TOTAL
         public function exportarTotal($estado){
             require_once('public/PHPExcel/PHPExcel.php');
             try {
@@ -1155,7 +1156,8 @@
                                                 GROUP BY
                                                     tb_pedidodet.iditem
                                                 ORDER BY 
-                                                    tb_pedidocab.anio DESC");
+                                                    tb_pedidocab.anio DESC
+                                                LIMIT 200");
                 $sql->execute();
                 $rowCount = $sql->rowCount();
 
@@ -1172,11 +1174,11 @@
                     }
                     else if ($estado == 2){
                         $this->crearCSV($docData);
-                        $archivo = 'public/documentos/reportes/cargoplan.csv';
+                        $archivo = 'public/documentos/temp/cargoplan.csv';
                     }
                     else if ($estado == 3){
                         $this->crearSpout($docData);
-                        $archivo = 'public/documentos/reportes/cargoplanspout.xlsx';
+                        $archivo = 'public/documentos/temp/cargoplan.xlsx';
                     }      
                 }
 
@@ -2350,18 +2352,20 @@
 
             $writer = WriterEntityFactory::createXLSXWriter();
             $writer->setTempFolder('public/documentos/temp/');
+            //$writer->setColumnsWidth(100);
 
             $writer->openToFile('public/documentos/temp/cargoplan.xlsx');
 
             /** Create a style with the StyleBuilder */
             $header = (new StyleBuilder())
-            ->setFontBold()
-            ->setFontSize(10)
-            ->setFontColor(Color::WHITE)
-            ->setShouldWrapText()
-            ->setCellAlignment(CellAlignment::CENTER)
-            ->setBackgroundColor(Color::BLUE)
-            ->build();
+                    ->setFontBold()
+                    ->setFontSize(10)
+                    ->setFontColor(Color::WHITE)
+                    ->setShouldWrapText()
+                    ->setCellAlignment(CellAlignment::CENTER)
+                    ->setBackgroundColor(Color::BLUE)
+                    ->setFormat(200)
+                    ->build();
 
             /** Shortcut: add a row from an array of values */
             $titulo = array('Items','Estado Actual','Codigo Proyecto','Area','Partida','Atención','Tipo','Año Pedido','N° Pedido', 'Creación Pedido',
@@ -2377,7 +2381,7 @@
 
             foreach($datos as $dato){
 
-                $tipo_orden = $dato['idtipomov'] == 37 ? 'BIENES' : 'SERVICIO';
+                $tipo_orden = $dato['idtipomov'] == 37 ? 'B' : 'S';
                 $clase_operacion = $dato['idtipomov'] == 37 ? 'bienes' : 'servicios';
                 
                 $saldoRecibir = $dato['cantidad_orden'] - $dato['ingreso'] > 0 ? $dato['cantidad_orden'] - $dato['ingreso'] : "-";
@@ -2395,6 +2399,8 @@
 
                 $estado_pedido =  $dato['estadoItem'] >= 54 ? "Atendido":"Pendiente";
                 $estado_item   =  $dato['estadoItem'] >= 54 ? "Atendido":"Pendiente";
+
+                $cantidad = $dato['cantidad_pedido'];
 
                 if ( $dato['estadoItem'] == 105 ) {
                     $porcentaje = "0%";
@@ -2499,7 +2505,12 @@
                     $color_mostrar = '00FF00';
                 }
 
-                $fila = array($i++,$porcentaje,$dato['ccodproy'],$dato['area'],$dato['partida'],$atencion);
+                $creacion_pedido = $dato['crea_pedido'] !== null ? $dato['crea_pedido'] : "";
+                $aprueba_pedido =  $dato['aprobacion_pedido'] !== null ? $dato['aprobacion_pedido'] : "";
+                $cantidad_aprobado = $dato['cantidad_aprobada'];
+                   
+                $fila = array($i++,$porcentaje,$dato['ccodproy'],$dato['area'],$dato['partida'],$atencion,$tipo_orden,$dato['anio_pedido'],$dato['pedido'],
+                                $creacion_pedido,$aprueba_pedido,$cantidad,$dato['cantidad_aprobada']);
                 $rowFromValues = WriterEntityFactory::createRowFromArray($fila);
                 $writer->addRow($rowFromValues);
             }
