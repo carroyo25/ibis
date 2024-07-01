@@ -12,62 +12,37 @@
             $salida = "";
 
             try {
-                $sql = $this->db->connect()->prepare("SELECT
-                                                    alm_despachocab.cmes,
-                                                    DATE_FORMAT(
-                                                            alm_despachocab.ffecdoc,
-                                                            '%d/%m/%Y'
-                                                        ) AS ffecdoc,
-                                                    YEAR(ffecdoc) AS anio,
-                                                    alm_despachodet.nropedido AS orden,
-                                                    alm_despachodet.nroorden AS pedido,
-                                                    UPPER(origen.cdesalm) AS origen,
-                                                    UPPER(origen.ctipovia) AS direccion_origen,
-                                                    UPPER(destino.cdesalm) AS destino,
-                                                    UPPER(destino.ctipovia) AS direccion_destino,
-                                                    alm_despachocab.cnumguia,
-                                                    alm_despachocab.nEstadoDoc,
-                                                    lg_ordencab.cnumero,
-                                                    UPPER(
-                                                            CONCAT_WS(
-                                                                ' ',
-                                                                tb_proyectos.ccodproy,
-                                                                tb_proyectos.cdesproy
-                                                                
-                                                            )
-                                                        ) AS costos,
-                                                    tb_costusu.nflgactivo,
-                                                    tb_parametros.cdescripcion,
-                                                    tb_parametros.cabrevia,
-                                                    alm_despachocab.id_regalm 
-                                                FROM
-                                                    alm_despachodet
-                                                    INNER JOIN alm_despachocab ON alm_despachodet.id_regalm = alm_despachocab.id_regalm
-                                                    INNER JOIN tb_almacen AS origen ON alm_despachocab.ncodalm1 = origen.ncodalm
-                                                    INNER JOIN tb_almacen AS destino ON alm_despachocab.ncodalm2 = destino.ncodalm
-                                                    INNER JOIN tb_proyectos ON alm_despachocab.ncodpry = tb_proyectos.nidreg
-                                                    INNER JOIN tb_costusu ON alm_despachocab.ncodpry = alm_despachocab.ncodpry
-                                                    INNER JOIN tb_parametros ON alm_despachocab.nEstadoDoc = tb_parametros.nidreg
-                                                    INNER JOIN lg_ordencab   ON lg_ordencab.id_regmov = alm_despachodet.nropedido
-                                                WHERE
-                                                    tb_costusu.nflgactivo = 1 
-                                                    AND tb_costusu.id_cuser = :usr
-                                                    AND ((alm_despachocab.cper = YEAR (NOW())- 1 
-                                                                AND alm_despachocab.cmes =
-                                                            IF
-                                                                (
-                                                                    MONTH (
-                                                                    NOW()) = 1,
-                                                                    12,
-                                                                    MONTH (
-                                                                    NOW())) 
-                                                                ) 
-                                                        OR ( alm_despachocab.cper = YEAR ( NOW()) AND alm_despachocab.cmes = MONTH ( NOW()) ))
-                                                    AND alm_despachocab.nEstadoDoc = 62
-                                                GROUP BY alm_despachocab.id_regalm
-                                                    ORDER BY alm_despachocab.ffecdoc DESC
-                                                LIMIT 50");
-                $sql->execute(["usr"=>$_SESSION['iduser']]);
+                $sql = $this->db->connect()->query("SELECT
+                                                        alm_despachocab.cmes,
+                                                        DATE_FORMAT( alm_despachocab.ffecdoc, '%d/%m/%Y' ) AS ffecdoc,
+                                                        YEAR ( alm_despachocab.ffecdoc ) AS anio,
+                                                        alm_despachodet.nropedido AS orden,
+                                                        alm_despachodet.nroorden AS pedido,
+                                                        alm_despachocab.cnumguia,
+                                                        alm_despachocab.nEstadoDoc,
+                                                        alm_despachocab.id_regalm,
+                                                        UPPER( origen.cdesalm ) AS origen,
+                                                        UPPER( origen.ctipovia ) AS direccion_origen,
+                                                        UPPER( destino.cdesalm ) AS destino,
+                                                        UPPER( destino.ctipovia ) AS direccion_destino,
+                                                        lg_ordencab.cnumero,
+                                                        UPPER( CONCAT_WS( ' ', tb_proyectos.ccodproy, tb_proyectos.cdesproy ) ) AS costos
+                                                    FROM
+                                                        alm_despachocab
+                                                        INNER JOIN alm_despachodet ON alm_despachodet.id_regalm = alm_despachocab.id_regalm
+                                                        INNER JOIN tb_almacen AS origen ON alm_despachocab.ncodalm1 = origen.ncodalm
+                                                        INNER JOIN tb_almacen AS destino ON alm_despachocab.ncodalm2 = destino.ncodalm
+                                                        INNER JOIN tb_proyectos ON alm_despachocab.ncodpry = tb_proyectos.nidreg
+                                                        INNER JOIN tb_parametros ON alm_despachocab.nEstadoDoc = tb_parametros.nidreg
+                                                        INNER JOIN lg_ordencab ON lg_ordencab.id_regmov = alm_despachodet.nropedido 
+                                                    WHERE 
+                                                        alm_despachocab.nEstadoDoc = 62
+                                                    GROUP BY
+                                                        alm_despachocab.id_regalm 
+                                                    ORDER BY
+                                                        alm_despachocab.ffecdoc DESC 
+                                                    LIMIT 150");
+                $sql->execute();
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0) {
