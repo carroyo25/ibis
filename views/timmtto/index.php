@@ -171,7 +171,7 @@
                 </tr>
             </thead>
             <tbody>
-                <?php   if ( count($this->listaItemsCombustible['datos']) > 0 ) {
+                <?php   //if ( count($this->listarMantenimientos['datos']) > 0 ) {
                             $item = 1; 
                             foreach($this->listaMantenimientos['datos'] as $registro) { ?> 
                 
@@ -204,7 +204,7 @@
                                     </a>
                                 </td>
                             </tr>
-                <?php }}; ?>
+                <?php }//}; ?>
             </tbody>
 
             

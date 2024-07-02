@@ -483,6 +483,7 @@
 
         public function grabarDespacho($cabecera,$detalles){
             try {
+
                 $mensaje = "Error al grabar el registro";
                 $clase = "mensaje_error";
                 $error = true;
@@ -661,7 +662,7 @@
                                                         tb_costusu.id_cuser = :usr
                                                         AND lg_ordencab.cnumero = :id 
                                                         AND tb_costusu.nflgactivo = 1 
-                                                        AND lg_ordencab.nEstadoDoc BETWEEN 60 AND 62
+                                                        AND lg_ordencab.nEstadoDoc BETWEEN 59 AND 62
                                                     ORDER BY id_regmov DESC");
                                                     
                 $sql->execute(["usr"=>$_SESSION['iduser'],"id"=>$id]);

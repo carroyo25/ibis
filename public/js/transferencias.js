@@ -200,7 +200,7 @@ $(function(){
         return false;
     });
 
-    $("#tablaDetalles tbody").on('blur','input', function (e) {
+    /*$("#tablaDetalles tbody").on('blur','input', function (e) {
         let ingreso     = parseFloat($(this).val()),
             atendida    = parseFloat($("#tablaDetalles tbody").find('td').eq(4).text());
             
@@ -209,7 +209,7 @@ $(function(){
         if ( atendido > ingreso ) {
             mostrarMensaje('Error en el ingreso','mensaje_error');
         }
-    });
+    });*/
 
     $("#tablaDetalles tbody").on('click','a', function (e) {
         e.preventDefault();
@@ -235,7 +235,7 @@ $(function(){
             result[this.name] = this.value;
         });
 
-        if  ( checkCantTables($("#tablaDetalles tbody > tr"),6) ) throw "Revise las cantidades ingresadas";//
+        //if  ( checkCantTables($("#tablaDetalles tbody > tr"),6) ) throw "Revise las cantidades ingresadas";//
 
         try {
             if ( accion == "n" ) {

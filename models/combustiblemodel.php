@@ -192,11 +192,14 @@
             $ingreso_mes_actual = $this->ingreso_mes_actual($item);
             $consumo_mes_actual = $this->consumo_mes_actual($item);
             $consolidado_anual = $this->consolidado_anual($item);
+            $pivot_ingresos = $this->pivot_ingresos($item);
+            //$pivot_salidas = $this->pivot_salidas($item);
 
             return array("stock_inicial"=>$stock_inicial,
                          "ingreso_mes_actual"=>$ingreso_mes_actual,
                          "consumo_mes_actual"=>$consumo_mes_actual,
-                         "consolidado_anual"=>$consolidado_anual);
+                         "consolidado_anual"=>$consolidado_anual,
+                         "valores_ingreso"=>$pivot_ingresos);
         }
 
         public function exportarExcelCombustible($registros){
@@ -426,6 +429,36 @@
         }
 
         private function pivotIngresos($item){
+            try {
+                //este es la consulta para pivotear tablas
+                $sql = $this->db->connect()->prepare("SELECT
+                                                    SUM( CASE WHEN MONTH ( alm_recepdet.fregsys ) = 1 THEN alm_recepdet.ncantidad ELSE 0 END ) AS jan,
+                                                    SUM( CASE WHEN MONTH ( alm_recepdet.fregsys ) = 2 THEN alm_recepdet.ncantidad ELSE 0 END ) AS feb,
+                                                    SUM( CASE WHEN MONTH ( alm_recepdet.fregsys ) = 3 THEN alm_recepdet.ncantidad ELSE 0 END ) AS mar,
+                                                    SUM( CASE WHEN MONTH ( alm_recepdet.fregsys ) = 4 THEN alm_recepdet.ncantidad ELSE 0 END ) AS apr,
+                                                    SUM( CASE WHEN MONTH ( alm_recepdet.fregsys ) = 5 THEN alm_recepdet.ncantidad ELSE 0 END ) AS may,
+                                                    SUM( CASE WHEN MONTH ( alm_recepdet.fregsys ) = 6 THEN alm_recepdet.ncantidad ELSE 0 END ) AS jun,
+                                                    SUM( CASE WHEN MONTH ( alm_recepdet.fregsys ) = 7 THEN alm_recepdet.ncantidad ELSE 0 END ) AS jul,
+                                                    SUM( CASE WHEN MONTH ( alm_recepdet.fregsys ) = 8 THEN alm_recepdet.ncantidad ELSE 0 END ) AS aug,
+                                                    SUM( CASE WHEN MONTH ( alm_recepdet.fregsys ) = 9 THEN alm_recepdet.ncantidad ELSE 0 END ) AS sep,
+                                                    SUM( CASE WHEN MONTH ( alm_recepdet.fregsys ) = 10 THEN alm_recepdet.ncantidad ELSE 0 END ) AS oct,
+                                                    SUM( CASE WHEN MONTH ( alm_recepdet.fregsys ) = 11 THEN alm_recepdet.ncantidad ELSE 0 END ) AS nov,
+                                                    SUM( CASE WHEN MONTH ( alm_recepdet.fregsys ) = 12 THEN alm_recepdet.ncantidad ELSE 0 END ) AS dic 
+                                                FROM
+                                                    alm_recepdet 
+                                                WHERE
+                                                    alm_recepdet.nflgactivo = 1 
+                                                    AND YEAR ( alm_recepdet.fregsys ) = YEAR (NOW()) 
+                                                    AND alm_recepdet.id_cprod = :item");
+                $sql->execute(['item' => $item]);
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function pivotSalidas($item){
             try {
                 //este es la consulta para pivotear tablas
                 $sql = $this->db->connect()->prepare("SELECT

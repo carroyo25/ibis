@@ -452,7 +452,6 @@ $(function(){
         let result = {};
 
         
-
         $.each($("#formProceso").serializeArray(),function(){
             result[this.name] = this.value;
         });
@@ -463,7 +462,6 @@ $(function(){
             if (result['guia'] == '') throw "Escriba el número de guia";
             if (verificarCantidadesInput()) throw "Verifque las cantidades ingresadas";
             if (detalles(tipoVista).length == 0) throw "No hay items que procesar";
-
 
             if (accion == "n") {
                 

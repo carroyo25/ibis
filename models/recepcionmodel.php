@@ -91,6 +91,7 @@
 
         public function insertar($cabecera,$detalles,$series){
             try {
+
                 $indice = $this->lastInsertId("SELECT MAX(id_regalm) AS id FROM alm_recepcab");
 
                 $fecha = explode("-",$cabecera['fecha']); 
@@ -810,7 +811,7 @@
                                                         AND lg_ordencab.cnumero = :id 
                                                         AND tb_costusu.nflgactivo = 1
                                                         AND lg_ordencab.ntipmov = 37 
-                                                        AND lg_ordencab.nEstadoDoc BETWEEN 60 AND 62 
+                                                        AND lg_ordencab.nEstadoDoc BETWEEN 59 AND 62 
                                                     ORDER BY
                                                         id_regmov DESC");
                 $sql->execute(["usr"=>$_SESSION['iduser'],"id"=>$id]);
