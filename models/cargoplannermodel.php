@@ -342,6 +342,7 @@
                             $aprobado=0;
 
                             $aprobado = $rs['cantidad_aprobada'] == 0 ? $rs['cantidad_pedido']:$rs['cantidad_aprobada'];
+                            $aprobado_final = $aprobado-$rs['cantidad_atendida'] < 0 ? 0 : $aprobado-$rs['cantidad_atendida'];
 
                             $salida.='<tr class="pointer" 
                                         data-itempedido="'.$rs['iditem'].'" 
@@ -365,7 +366,7 @@
                                         <td class="textoCentro">'.$rs['aprobacion_pedido'].'</td>
                                         <td class="textoDerecha">'.number_format($cantidad,2).'</td>
                                         <td class="textoDerecha">'.number_format($aprobado,2).'</td>
-                                        <td class="textoCentro">'.number_format($cantidad-$rs['cantidad_atendida'],2).'</td>
+                                        <td class="textoCentro">'.number_format($aprobado_final,2).'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="textoCentro">'.$rs['unidad'].'</td>
                                         <td class="pl10px">'.$rs['descripcion'].'</td>
@@ -774,8 +775,11 @@
                     if  ($datos[$i]->apro_pedido !== "")
                         $objPHPExcel->getActiveSheet()->setCellValue('K'.$fila,PHPExcel_Shared_Date::PHPToExcel($datos[$i]->apro_pedido));
 
+                    $aprobado = $datos[$i]->aprobado == 0 ? $datos[$i]->cantidad : $datos[$i]->aprobado;
+                    $aprobado_final =  $aprobado-$datos[$i]->cantidad < 0 ? 0 : $aprobado-$datos[$i]->cantidad;
+
                     $objPHPExcel->getActiveSheet()->setCellValue('L'.$fila,$datos[$i]->cantidad);
-                    $objPHPExcel->getActiveSheet()->setCellValue('M'.$fila,$datos[$i]->aprobado);
+                    $objPHPExcel->getActiveSheet()->setCellValue('M'.$fila,$datos[$i]->$aprobado_final);
                     $objPHPExcel->getActiveSheet()->setCellValue('N'.$fila,$datos[$i]->compra);
                     $objPHPExcel->getActiveSheet()->setCellValue('O'.$fila,$datos[$i]->codigo);
                     $objPHPExcel->getActiveSheet()->setCellValue('P'.$fila,$datos[$i]->unidad);
@@ -784,7 +788,7 @@
                     $objPHPExcel->getActiveSheet()->setCellValue('S'.$fila,$datos[$i]->anio_orden);
                     $objPHPExcel->getActiveSheet()->setCellValue('T'.$fila,$datos[$i]->nro_orden);
 
-                    $aprobado = $datos[$i]->aprobado == 0 ? $datos[$i]->cantidad : $datos[$i]->aprobado;
+                   
                    
                     if  ($datos[$i]->fecha_orden !== "")
                         $objPHPExcel->getActiveSheet()->setCellValue('U'.$fila,PHPExcel_Shared_Date::PHPToExcel($datos[$i]->fecha_orden));
@@ -1156,8 +1160,7 @@
                                                 GROUP BY
                                                     tb_pedidodet.iditem
                                                 ORDER BY 
-                                                    tb_pedidocab.anio DESC
-                                                LIMIT 200");
+                                                    tb_pedidocab.anio DESC");
                 $sql->execute();
                 $rowCount = $sql->rowCount();
 
@@ -2257,7 +2260,7 @@
                         ),
                     );
 
-                    $aprobado = $dato['cantidad_aprobada'] == 0 ? $cantidad : $dato['cantidad_aprobada'];
+                    $cantidad_compra = $dato['cantidad_aprobada'] - $dato['cantidad_atendida'] < 0 ? 0 : $dato['cantidad_aprobada'] - $dato['cantidad_atendida'];
 
                     $objPHPExcel->getActiveSheet()->setCellValue('A'.$fila,$item++);
                     $objPHPExcel->getActiveSheet()->setCellValue('B'.$fila,$porcentaje);
@@ -2281,7 +2284,7 @@
 
                     $objPHPExcel->getActiveSheet()->setCellValue('L'.$fila,$cantidad);
                     $objPHPExcel->getActiveSheet()->setCellValue('M'.$fila,$dato['cantidad_aprobada']);
-                    $objPHPExcel->getActiveSheet()->setCellValue('N'.$fila,$cantidad-$dato['cantidad_atendida']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('N'.$fila,$cantidad_compra);
 
                     $objPHPExcel->getActiveSheet()->setCellValue('O'.$fila,$dato['ccodprod']);
                     $objPHPExcel->getActiveSheet()->setCellValue('P'.$fila,$dato['unidad']);
