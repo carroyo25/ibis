@@ -2261,6 +2261,7 @@
                     );
 
                     $cantidad_compra = $dato['cantidad_aprobada'] - $dato['cantidad_atendida'] < 0 ? 0 : $dato['cantidad_aprobada'] - $dato['cantidad_atendida'];
+                    $cantidad_aprobada = $dato['cantidad_aprobada'] == 0 ? $cantidad : $dato['cantidad_aprobada'];
 
                     $objPHPExcel->getActiveSheet()->setCellValue('A'.$fila,$item++);
                     $objPHPExcel->getActiveSheet()->setCellValue('B'.$fila,$porcentaje);
@@ -2283,7 +2284,7 @@
                         $objPHPExcel->getActiveSheet()->setCellValue('K'.$fila,'');
 
                     $objPHPExcel->getActiveSheet()->setCellValue('L'.$fila,$cantidad);
-                    $objPHPExcel->getActiveSheet()->setCellValue('M'.$fila,$dato['cantidad_aprobada']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('M'.$fila,$cantidad_aprobada);
                     $objPHPExcel->getActiveSheet()->setCellValue('N'.$fila,$cantidad_compra);
 
                     $objPHPExcel->getActiveSheet()->setCellValue('O'.$fila,$dato['ccodprod']);
