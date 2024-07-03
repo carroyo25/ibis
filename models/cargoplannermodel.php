@@ -1058,6 +1058,27 @@
                 $salida = "";
                 $docData = [];
 
+                if (file_exists('public/documentos/reportes/cargoplan.xlsx')) {
+                    $archivo = 'public/documentos/reportes/cargoplan.xlsx';
+
+                    $fileCreationTime = filectime($archivo);
+
+                    // Obtener la fecha y hora actual
+                    $currentTime = time();
+
+                    // Calcular la diferencia en segundos
+                    $differenceInSeconds = $currentTime - $fileCreationTime;
+
+                    // Convertir la diferencia en días
+                    $differenceInDays = floor($differenceInSeconds / (60 * 60 * 24));
+
+                    // Convertir la diferencia en horas
+                    $differenceInHours = floor($differenceInSeconds / (60 * 60));
+
+                    if ( $differenceInHours < 4 )
+                        return array("documento"=>$archivo);
+                }
+
                 $sql = $this->db->connect()->query("SELECT
                                                     tb_pedidodet.iditem,
                                                     tb_pedidodet.idpedido,
