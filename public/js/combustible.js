@@ -26,6 +26,7 @@ $(() => {
             //if ($("#referencia").val() == -1) throw new Error("Seleccione una referencia adicional");
             if ($("#area").val() == -1) throw new Error("Seleccione una area");
 
+            //serializar los formulario en javascript
             const datos = new URLSearchParams(new FormData(document.getElementById("form__combustible")));
 
             fetch(RUTA+'combustible/registro',{
@@ -143,7 +144,9 @@ $(() => {
         e.preventDefault();
 
         if( $('select[name="tipo_item"] option:selected').val() !== "0"){
-            let formData = new FormData();
+            let formData = new FormData(),
+                seriesIngreso = [],
+                seriesSalida = [];
 
             formData.append("item",$('select[name="tipo_item"] option:selected').val());
 
@@ -158,13 +161,28 @@ $(() => {
                     consumo_mes_actual = data.consumo_mes_actual == null ? 0 : data.consumo_mes_actual,
                     consolidado_anual = data.consolidado_anual == null ? 0 : data.consolidado_anual;
 
+                //seriesIngreso = data.valores_ingreso;
+
                 $("#consolidadoAnual").text(consolidado_anual);
                 $("#stockInicial").text(stock_inicial);
                 $("#ingresomesactual").text(ingreso_mes_actual);
                 $("#cantidadconsumo").text(consumo_mes_actual);
                 $("#stockfinal").text((stock_inicial+ingreso_mes_actual)-consumo_mes_actual);
 
-                barras(seriesData);
+                /*data.valores[0].forEach(valor =>{
+                    seriesData.push({
+                        name: valor['nombre'],
+                        data: valor['series']
+                    });
+                })*/
+
+                data.valores_ingreso[0].forEach(valor => {
+                    seriesIngreso.push({
+                        
+                    })
+                });
+
+                barras(seriesIngreso);
             })
         };
         
@@ -214,7 +232,7 @@ barras = (seriesData) => {
         },
         series:[ 
             {   name:'Ingresos',
-                data: [1,2,3,4,5,6,7,8,9,10,11,12],
+                data: seriesData,
             },
             {   name:'Salidas',
                 data: [12,11,10,9,8,7,6,5,4,3,2,1]

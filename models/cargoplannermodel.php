@@ -779,7 +779,7 @@
                     $aprobado_final =  $aprobado-$datos[$i]->cantidad < 0 ? 0 : $aprobado-$datos[$i]->cantidad;
 
                     $objPHPExcel->getActiveSheet()->setCellValue('L'.$fila,$datos[$i]->cantidad);
-                    $objPHPExcel->getActiveSheet()->setCellValue('M'.$fila,$datos[$i]->$aprobado_final);
+                    $objPHPExcel->getActiveSheet()->setCellValue('M'.$fila,$aprobado_final);
                     $objPHPExcel->getActiveSheet()->setCellValue('N'.$fila,$datos[$i]->compra);
                     $objPHPExcel->getActiveSheet()->setCellValue('O'.$fila,$datos[$i]->codigo);
                     $objPHPExcel->getActiveSheet()->setCellValue('P'.$fila,$datos[$i]->unidad);
@@ -1058,7 +1058,7 @@
                 $salida = "";
                 $docData = [];
 
-                if (file_exists('public/documentos/reportes/cargoplan.xlsx')) {
+                /*if (file_exists('public/documentos/reportes/cargoplan.xlsx')) {
                     $archivo = 'public/documentos/reportes/cargoplan.xlsx';
 
                     $fileCreationTime = filectime($archivo);
@@ -1077,7 +1077,7 @@
 
                     if ( $differenceInHours < 4 )
                         return array("documento"=>$archivo);
-                }
+                }*/
 
                 $sql = $this->db->connect()->query("SELECT
                                                     tb_pedidodet.iditem,

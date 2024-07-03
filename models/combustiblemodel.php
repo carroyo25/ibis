@@ -192,14 +192,15 @@
             $ingreso_mes_actual = $this->ingreso_mes_actual($item);
             $consumo_mes_actual = $this->consumo_mes_actual($item);
             $consolidado_anual = $this->consolidado_anual($item);
-            $pivot_ingresos = $this->pivot_ingresos($item);
-            //$pivot_salidas = $this->pivot_salidas($item);
+            $pivot_ingresos =  $this->pivotingresos($item);
+            $pivot_salidas = "";
 
             return array("stock_inicial"=>$stock_inicial,
                          "ingreso_mes_actual"=>$ingreso_mes_actual,
                          "consumo_mes_actual"=>$consumo_mes_actual,
                          "consolidado_anual"=>$consolidado_anual,
-                         "valores_ingreso"=>$pivot_ingresos);
+                         "valores_ingreso"=>$pivot_ingresos,
+                         "valores_salidas"=>$pivot_salidas);
         }
 
         public function exportarExcelCombustible($registros){
@@ -430,6 +431,7 @@
 
         private function pivotIngresos($item){
             try {
+                $docData = [];
                 //este es la consulta para pivotear tablas
                 $sql = $this->db->connect()->prepare("SELECT
                                                     SUM( CASE WHEN MONTH ( alm_recepdet.fregsys ) = 1 THEN alm_recepdet.ncantidad ELSE 0 END ) AS jan,
@@ -451,6 +453,16 @@
                                                     AND YEAR ( alm_recepdet.fregsys ) = YEAR (NOW()) 
                                                     AND alm_recepdet.id_cprod = :item");
                 $sql->execute(['item' => $item]);
+
+                $rowCount = $sql->rowCount();
+                
+                if ($rowCount) {
+                    while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+                        $docData[] = $row;
+                    }
+                }
+
+                return $docData;
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
@@ -460,6 +472,8 @@
 
         private function pivotSalidas($item){
             try {
+                $docData = [];
+
                 //este es la consulta para pivotear tablas
                 $sql = $this->db->connect()->prepare("SELECT
                                                     SUM( CASE WHEN MONTH ( alm_recepdet.fregsys ) = 1 THEN alm_recepdet.ncantidad ELSE 0 END ) AS jan,
@@ -481,6 +495,17 @@
                                                     AND YEAR ( alm_recepdet.fregsys ) = YEAR (NOW()) 
                                                     AND alm_recepdet.id_cprod = :item");
                 $sql->execute(['item' => $item]);
+
+                $rowCount = $sql->rowCount();
+                
+                if ($rowCount) {
+                    while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+                        $docData[] = $row;
+                    }
+                }
+
+                return $docData;
+
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();

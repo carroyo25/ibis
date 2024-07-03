@@ -58,6 +58,9 @@
                                 <input type="text" id="unidad" name="unidad" readonly>
                             </div>
                         </div>
+                        <div>
+                            <span style="margin-left:.5rem;font-size:.7rem"><strong>B080400010001 - DIESEL / B080400010002 - GASOLINA</strong></span>
+                        </div>
                         <div class="grid2col">
                             <div>
                                 <label for="item">Cantidad</label>
