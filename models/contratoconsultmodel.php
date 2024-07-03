@@ -112,5 +112,39 @@
                 return false;
             }
         }
+
+        public function mostrarAdjuntosContratos($orden){
+            try {
+                $sql=$this->db->connect()->prepare("SELECT
+                                                        lg_regdocumento.id_regmov,
+                                                        lg_regdocumento.cdocumento,
+                                                        lg_regdocumento.creferencia 
+                                                    FROM
+                                                        lg_regdocumento 
+                                                    WHERE
+                                                        lg_regdocumento.nflgactivo = 1 
+                                                        AND lg_regdocumento.cmodulo = 'ORD' 
+                                                        AND lg_regdocumento.nidrefer = :orden");
+                
+                $sql->execute(["orden"=>$orden]);
+
+                $rowCount = $sql->rowCount();
+                
+                if ($rowCount) {
+                    $respuesta = true;
+                    $i = 0;
+                    
+                    while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+                        $docData[] = $row;
+                    }
+                }
+
+                return array("adjuntos"=>$docData);
+                
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
     }
 ?>

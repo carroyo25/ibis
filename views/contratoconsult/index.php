@@ -179,8 +179,8 @@
                     <div class="barraOpciones">
                         <span>Detalles</span>
                         <div>
-                            <button type="button" id="sendEntOrden" title="Descargar Orden" class="cerrarLista boton3">
-                                <i class="far fa-paper-plane"></i> Enviar Orden
+                            <button type="button" id="previewAtach" title="Descargar Orden" class="cerrarLista boton3">
+                                <i class="far fa-paper-plane"></i> Ver adjuntos
                             </button>
                         </div>
                     </div>
@@ -230,6 +230,18 @@
                 <h3>Vista Previa</h3>
                 <a href="#" id="closePreview" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
             </div>
+            <iframe src=""></iframe>
+        </div>
+    </div>
+    <div class="modal" id="vistaAdjuntos">
+        <div class="ventanaAdjuntos">
+            <div class="tituloAdjuntos">
+                <h3>Adjuntos Orden</h3>
+                <a href="#" id="closeAtach" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
+            </div>
+            <ul id="listaAdjuntos">
+
+            </ul>
             <iframe src=""></iframe>
         </div>
     </div>

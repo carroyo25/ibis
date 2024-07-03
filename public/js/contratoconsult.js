@@ -207,6 +207,53 @@ $(()=>{
 
         return false;
     });
+
+    $("#closeAtach").click(function (e) { 
+        e.preventDefault();
+
+        $(".ventanaAdjuntos iframe").attr("src","");
+        $("#vistaAdjuntos").fadeOut();
+
+        return false;
+    });
+
+    $("#previewAtach").click(function (e) { 
+        e.preventDefault();
+
+        $("#listaAdjuntos").empty();
+        
+        let codigoOrden = $("#codigo_orden").val(),
+            formData = new FormData();
+
+        formData.append("codigoOrden", codigoOrden);
+
+        fetch (RUTA+"contratoconsult/adjuntos",{
+            method: "POST",
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data =>{
+            data.adjuntos.forEach(element => {
+                let icono = getFileExtension1(element.cdocumento);
+
+                let adj = `<li class="icono_archivo"><a href="http://sicalsepcon.net/ibis/public/documentos/ordenes/adjuntos/${element.creferencia}">${icono}<p>${element.cdocumento}</p></a></li>`;
+
+                $("#listaAdjuntos").append(adj);
+            });
+        })
+
+        $("#vistaAdjuntos").fadeIn();
+
+        return false;
+    });
+
+    $("#listaAdjuntos").on("click","a", function(e) {
+        e.preventDefault();
+
+        $(".ventanaAdjuntos iframe").attr("src", $(this).attr("href"));
+
+        return false;
+    });
 })
 
 detalles = () => {
@@ -262,4 +309,53 @@ detalles = () => {
     });
 
     return DATA;
+}
+
+getFileExtension1 = (filename) => {
+    let ext = /[.]/.exec(filename) ? /[^.]+$/.exec(filename)[0] : undefined,
+        fileIcon = '<i class="far fa-file"></i>';
+
+    switch (ext) {
+        case 'pdf':
+            fileIcon = '<i class="fas fa-file-pdf" style="color: #dd5836;"></i>';
+            break;
+        case 'msg':
+            fileIcon = '<i class="fas fa-envelope-open-text" style="color: #63E6BE;"></i>'; 
+            break;
+        case 'xls':
+            fileIcon = '<i class="fas fa-file-excel" style="color: #04b983;"></i>'; 
+            break;
+        case 'xlsx':
+            fileIcon = '<i class="fas fa-file-excel" style="color: #04b983;"></i>'; 
+            break;
+        case 'doc':
+            fileIcon = '<i class="fas fa-file-word" style="color: #2b72ee;"></i>';
+            break;
+        case 'docx':
+            fileIcon = '<i class="fas fa-file-word" style="color: #2b72ee;"></i>'; 
+            break;
+        case 'rar':
+            fileIcon = '<i class="fas fa-file-archive" style="color: #f051c6;"></i>'; 
+            break;
+        case 'zip':
+            fileIcon = '<i class="fas fa-file-archive" style="color: #f051c6;"></i>'; 
+            break;
+        case 'xls':
+            fileIcon = '<i class="fas fa-file-excel" style="color: #04b983;"></i>'; 
+            break;
+        case 'jpg':
+            fileIcon = '<i class="far fa-images" style="color: #acb1b9;"></i>'; 
+            break;
+        case 'jpeg':
+            fileIcon = '<i class="far fa-images" style="color: #acb1b9;"></i>';
+            break;
+        case 'png':
+            fileIcon = '<i class="far fa-images" style="color: #acb1b9;"></i>'; 
+            break;
+        case 'gif':
+            fileIcon = '<i class="far fa-images" style="color: #acb1b9;"></i>'; 
+            break;
+    }
+
+    return fileIcon;
 }

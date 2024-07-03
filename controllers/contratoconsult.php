@@ -14,6 +14,10 @@
         function actualizaListado() {
             echo $this->model->listarContratosConsulta($_SESSION['iduser']);
         }
+
+        function adjuntos(){
+            echo json_encode($this->model->mostrarAdjuntosContratos($_POST['codigoOrden']));
+        }
         
     }
 ?>

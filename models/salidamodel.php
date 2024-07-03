@@ -1236,7 +1236,7 @@
             sleep(5);//damos tiempo para que SUNAT procese y responda.
             $respuesta_ticket = $this->envio_ticket($path.'CDR/', $numero_ticket, $token_access, $header->destinatario_ruc, $nombre_archivo);
 
-            //var_dump($respuesta_ticket);
+            var_dump($respuesta_ticket);exit;
             
             return array("archivo" => $nombre_archivo,"ticket" => $respuesta_ticket, "token" => $token_access);
         }
@@ -1259,6 +1259,8 @@
         }
 
         private function envio_ticket($ruta_archivo_cdr, $ticket, $token_access, $ruc, $nombre_file){
+            $mensaje['ruta_xml'] = '';
+            $mensaje['ruta_cdr'] = '';
             if(($ticket == "") || ($ticket == null)){
                 $mensaje['cdr_hash'] = '';
                 $mensaje['cdr_msj_sunat'] = 'Ticket vacio';
@@ -1318,7 +1320,7 @@
                         $zip->close();
                     }
                     //unlink($ruta_archivo_cdr . 'R-' . $nombre_file . '.ZIP');
-        
+                    $ruta_general = carpeta_actual()."/files/guia_electronica/";
                  //=============hash CDR=================
                     $doc_cdr = new DOMDocument();
                     $doc_cdr->load($ruta_archivo_cdr . 'R-' . $nombre_file . '.xml');
@@ -1327,6 +1329,9 @@
                     $mensaje['cdr_msj_sunat']       = $doc_cdr->getElementsByTagName('Description')->item(0)->nodeValue;
                     $mensaje['cdr_ResponseCode']    = $doc_cdr->getElementsByTagName('ResponseCode')->item(0)->nodeValue;        
                     $mensaje['numerror']            = '';
+                    $mensaje['DocumentDescription'] = $doc_cdr->getElementsByTagName('DocumentDescription')->item(0)->nodeValue;
+                    $mensaje['ruta_xml']            = $ruta_general.'FIRMA/'.$nombre_file.'.xml';
+                    $mensaje['ruta_cdr']            = $ruta_general.'CDR/R-' .$nombre_file.'.xml';
                 }else{
                     $mensaje['cdr_hash']            = '';
                     $mensaje['cdr_msj_sunat']       = 'SUNAT FUERA DE SERVICIO';
@@ -1335,6 +1340,25 @@
                 }
             }
             return $mensaje;
+        }
+
+        function GetImgQr($ruc, $serie, $numero, $DocumentDescription){
+                $textoQR = $DocumentDescription;
+                $nombreQR = $ruc.'-09-'.$serie.'-'.$numero;
+                
+                QRcode::png($textoQR, "files/guia_electronica/qr/".$nombreQR.".png", QR_ECLEVEL_L, 10, 2);
+                return "files/guia_electronica/qr/{$nombreQR}.png";
+        }
+        
+        function carpeta_actual(){
+            $archivo_actual = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
+            $dir = explode('/', $archivo_actual);
+            
+            $cadena = '';
+            for($i=0;  $i<(count($dir) - 2); $i++){
+                $cadena .= $dir[$i]."/";
+            }
+            return substr($cadena, 0, -1);
         }
 
         //entre_almacenes propios -- transporte propio
