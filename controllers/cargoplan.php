@@ -10,8 +10,8 @@
             $this->view->render('cargoplan/index');
         }
 
-        function filtroCargoPlan(){
-            echo $this->model->listarCargoPlan($_POST);
+        function filtroCargoPlanConPrecio(){
+            echo $this->model->listarCargoPlanPrecio($_POST);
         }
 
         function export() {
