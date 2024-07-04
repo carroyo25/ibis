@@ -320,7 +320,8 @@
                     <th style="background:#40D1FB; color:#000">Precio</br>Soles</th>
                     <th style="background:#40D1FB; color:#000">Importe</br>Total</th>
                     <th style="background:#40D1FB; color:#000">Forma</br>Pago</th>
-                    <th style="background:#40D1FB; color:#000">Referencia</br>Pago</th>
+                    <th width="150px" style="background:#40D1FB; color:#000">Referencia</br>Pago</th>
+                    <th style="background:#A6CAF0; color:#000">Familia</th>
 
                 </tr>
             </thead>

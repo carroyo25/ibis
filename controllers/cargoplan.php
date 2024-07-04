@@ -14,8 +14,8 @@
             echo $this->model->listarCargoPlanPrecio($_POST);
         }
 
-        function export() {
-            echo json_encode($this->model->exportExcel($_POST['registros']));
+        function crearExcel() {
+            echo json_encode($this->model->crearExcelPrecio($_POST['registros']));
         }
 
         function resumen() {

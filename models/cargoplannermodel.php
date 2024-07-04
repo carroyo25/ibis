@@ -364,9 +364,9 @@
                                         <td class="textoCentro">'.$rs['pedido'].'</td>
                                         <td class="textoCentro">'.$rs['crea_pedido'].'</td>
                                         <td class="textoCentro">'.$rs['aprobacion_pedido'].'</td>
-                                        <td class="textoDerecha">'.number_format($cantidad,2).'</td>
-                                        <td class="textoDerecha">'.number_format($aprobado,2).'</td>
-                                        <td class="textoCentro">'.number_format($aprobado_final,2).'</td>
+                                        <td class="textoDerecha">'.number_format($cantidad,2,'.', '').'</td>
+                                        <td class="textoDerecha">'.number_format($aprobado,2,'.', '').'</td>
+                                        <td class="textoCentro">'.number_format($aprobado_final,2,'.', '').'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="textoCentro">'.$rs['unidad'].'</td>
                                         <td class="pl10px">'.$rs['descripcion'].'</td>
@@ -776,7 +776,7 @@
                         $objPHPExcel->getActiveSheet()->setCellValue('K'.$fila,PHPExcel_Shared_Date::PHPToExcel($datos[$i]->apro_pedido));
 
                     $aprobado = $datos[$i]->aprobado == 0 ? $datos[$i]->cantidad : $datos[$i]->aprobado;
-                    $aprobado_final =  $aprobado-$datos[$i]->cantidad < 0 ? 0 : $aprobado-$datos[$i]->cantidad;
+                    $aprobado_final =  floatval($aprobado)-floatval($datos[$i]->cantidad) < 0 ? 0 : $aprobado-$datos[$i]->cantidad;
 
                     $objPHPExcel->getActiveSheet()->setCellValue('L'.$fila,$datos[$i]->cantidad);
                     $objPHPExcel->getActiveSheet()->setCellValue('M'.$fila,$aprobado_final);
@@ -1053,7 +1053,6 @@
 
         //OPCIONES PARA EXPORTAR TOTAL
         public function exportarTotal($estado){
-            require_once('public/PHPExcel/PHPExcel.php');
             try {
                 $salida = "";
                 $docData = [];
