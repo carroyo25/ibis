@@ -540,9 +540,9 @@
                     $docData[] = $row;
                 }
 
-
                 $this->crearExcelExport($docData);
-                $archivo = 'public/documentos/reportes/cargoplanprecio.xlsx';
+
+                return array("documento"=>'public/documentos/reportes/cargoplanprecio.xlsx');
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
@@ -573,11 +573,11 @@
                 $objPHPExcel->setActiveSheetIndex(0);
                 $objPHPExcel->getActiveSheet()->setTitle("Cargo Plan Valorizado");
 
-                $objPHPExcel->getActiveSheet()->mergeCells('A1:AW1');
+                $objPHPExcel->getActiveSheet()->mergeCells('A1:AJ1');
                 $objPHPExcel->getActiveSheet()->setCellValue('A1','CARGO PLAN VALORIZADO');
 
-                $objPHPExcel->getActiveSheet()->getStyle('A1:AW2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                $objPHPExcel->getActiveSheet()->getStyle('A1:AW2')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('A1:AJ2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('A1:AJ2')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
                 $objPHPExcel->getActiveSheet()->getRowDimension('2')->setRowHeight(60);
 
@@ -609,19 +609,7 @@
                 $objPHPExcel->getActiveSheet()->getColumnDimension("AH")->setWidth(12);
                 $objPHPExcel->getActiveSheet()->getColumnDimension("AI")->setWidth(12);
                 $objPHPExcel->getActiveSheet()->getColumnDimension("AJ")->setAutoSize(true);
-                $objPHPExcel->getActiveSheet()->getColumnDimension("AK")->setWidth(14);
-                $objPHPExcel->getActiveSheet()->getColumnDimension("AL")->setWidth(12);
-                $objPHPExcel->getActiveSheet()->getColumnDimension("AM")->setAutoSize(true);
-                $objPHPExcel->getActiveSheet()->getColumnDimension("AN")->setAutoSize(true);
-                $objPHPExcel->getActiveSheet()->getColumnDimension("AO")->setAutoSize(true);
-                $objPHPExcel->getActiveSheet()->getColumnDimension("AP")->setAutoSize(true);
-                $objPHPExcel->getActiveSheet()->getColumnDimension("AQ")->setAutoSize(true);
-                $objPHPExcel->getActiveSheet()->getColumnDimension("AR")->setAutoSize(true);
-                $objPHPExcel->getActiveSheet()->getColumnDimension("AS")->setAutoSize(true);
-                $objPHPExcel->getActiveSheet()->getColumnDimension("AT")->setAutoSize(true);
-                $objPHPExcel->getActiveSheet()->getColumnDimension("AU")->setAutoSize(true);
-                $objPHPExcel->getActiveSheet()->getColumnDimension("AV")->setWidth(50);
-                $objPHPExcel->getActiveSheet()->getColumnDimension("AW")->setAutoSize(true);
+               
 
                 $objPHPExcel->getActiveSheet()
                             ->getStyle('A2:K2')
@@ -659,20 +647,20 @@
                             ->setRGB('BFCDDB');
 
                 $objPHPExcel->getActiveSheet()
-                            ->getStyle('AE2:AM2')
+                            ->getStyle('AE2:AK2')
                             ->getFill()
                             ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
                             ->getStartColor()
                             ->setRGB('FFFF00');
 
-                $objPHPExcel->getActiveSheet()
+                /*$objPHPExcel->getActiveSheet()
                             ->getStyle('AN2:AW2')
                             ->getFill()
                             ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
                             ->getStartColor()
-                            ->setRGB('127BDD');
+                            ->setRGB('127BDD');*/
 
-                $objPHPExcel->getActiveSheet()->getStyle('A1:AW2')->getAlignment()->setWrapText(true);
+                $objPHPExcel->getActiveSheet()->getStyle('A1:AJ2')->getAlignment()->setWrapText(true);
 
                 $objPHPExcel->getActiveSheet()->setCellValue('A2','Items'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('B2','Estado Actual'); // esto cambia
@@ -738,10 +726,10 @@
                 $objPHPExcel->getActiveSheet()->getStyle('AH')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
                 $objPHPExcel->getActiveSheet()->getStyle('AH')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-                $objPHPExcel->getActiveSheet()->getStyle('AJ:AO')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                $objPHPExcel->getActiveSheet()->getStyle('AJ:AO')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('AJ:AK')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('AJ:AK')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-                $objPHPExcel->getActiveSheet()->getStyle('J')->getNumberFormat()->setFormatCode('dd/mm/yyyy');
+                /*$objPHPExcel->getActiveSheet()->getStyle('J')->getNumberFormat()->setFormatCode('dd/mm/yyyy');
                 $objPHPExcel->getActiveSheet()->getStyle('L')->getNumberFormat()->setFormatCode('#,##0.00');
                 $objPHPExcel->getActiveSheet()->getStyle('M')->getNumberFormat()->setFormatCode('#,##0.00');
                 $objPHPExcel->getActiveSheet()->getStyle('N')->getNumberFormat()->setFormatCode('#,##0.00');
@@ -755,7 +743,7 @@
                 $objPHPExcel->getActiveSheet()->getStyle('AB')->getNumberFormat()->setFormatCode('#,##0.00');
                 $objPHPExcel->getActiveSheet()->getStyle('AI')->getNumberFormat()->setFormatCode('#,##0.00');
                 $objPHPExcel->getActiveSheet()->getStyle('AK')->getNumberFormat()->setFormatCode('dd/mm/yyyy');
-                $objPHPExcel->getActiveSheet()->getStyle('AO')->getNumberFormat()->setFormatCode('#,##0.00');
+                $objPHPExcel->getActiveSheet()->getStyle('AO')->getNumberFormat()->setFormatCode('#,##0.00');*/
                
                 $fila = 3;
                 $estado = "";
@@ -775,7 +763,7 @@
                 $nro_orden = 0;
                 $item = 1;
 
-                /*forEach($datos AS $dato){
+                forEach($datos AS $dato){
 
                     $tipo_orden = $dato['idtipomov'] == 37 ? 'BIENES' : 'SERVICIO';
                     $clase_operacion = $dato['idtipomov'] == 37 ? 'bienes' : 'servicios';
@@ -788,7 +776,6 @@
                     $estado_pedido =  $dato['estadoItem'] >= 54 ? "Atendido":"Pendiente";
                     $estado_item   =  $dato['estadoItem'] >= 54 ? "Atendido":"Pendiente";
 
-                    $transporte = $dato['nidreg'] == 39 ? "TERRESTRE": $dato['transporte'];
                     $atencion = $dato['atencion'] == 47 ? "NORMAL" : "URGENTE"; 
 
                     $color_mostrar  = 'FFFFFF';
@@ -986,13 +973,13 @@
 
                     $objPHPExcel->getActiveSheet()->setCellValue('C'.$fila,$dato['ccodproy']);
                     $objPHPExcel->getActiveSheet()->setCellValue('D'.$fila,$dato['area']);
-                    $objPHPExcel->getActiveSheet()->setCellValue('E'.$fila,$dato['partida']);
+                    /*$objPHPExcel->getActiveSheet()->setCellValue('E'.$fila,$dato['partida']);
                     $objPHPExcel->getActiveSheet()->setCellValue('F'.$fila,$atencion);
                     $objPHPExcel->getActiveSheet()->setCellValue('G'.$fila,$tipo_orden);
                     $objPHPExcel->getActiveSheet()->setCellValue('H'.$fila,$dato['anio_pedido']);
                     $objPHPExcel->getActiveSheet()->setCellValue('I'.$fila,$dato['pedido']);
 
-                    if  ( $dato['crea_pedido'] !== "" && $dato['crea_pedido'] !== null )
+                    /*if  ( $dato['crea_pedido'] !== "" && $dato['crea_pedido'] !== null )
                             $objPHPExcel->getActiveSheet()->setCellValue('J'.$fila,PHPExcel_Shared_Date::PHPToExcel($dato['crea_pedido']));
                            
                     if  ( $dato['aprobacion_pedido'] !== null )
@@ -1056,10 +1043,10 @@
                     $objPHPExcel->getActiveSheet()->setCellValue('AU'.$fila,$transporte);
                     $objPHPExcel->getActiveSheet()->setCellValue('AV'.$fila,$dato['concepto']);
 
-                    $objPHPExcel->getActiveSheet()->setCellValue('AW'.$fila,$dato['nombre_elabora']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AW'.$fila,$dato['nombre_elabora']);*/
 
                     $fila++;
-                }*/
+                }
 
                 $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel,'Excel2007');
                 $objWriter->save('public/documentos/reportes/cargoplanprecio.xlsx');
