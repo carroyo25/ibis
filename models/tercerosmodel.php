@@ -80,14 +80,14 @@
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="pl5px">'.$rs['cdesprod'].'</td>
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
-                                        <td class="textoDerecha">'.$rs['cantsalida'].'</td>
-                                        <td class="textoCentro">'.$rs['fechasalida'].'</td>
-                                        <td class="textoCentro">'.$rs['nhoja'].'</td>
-                                        <td class="pl5px">'.$rs['cisometrico'].'</td>
-                                        <td class="pl5px">'.$rs['cobserentrega'].'</td>
-                                        <td class="pl5px">'.$rs['cserie'].'</td>
+                                        <td class="textoDerecha"><input value="'.$rs['cantsalida'].'" readonly></td>
+                                        <td class="textoCentro"><input value="'.$rs['fechasalida'].'" readonly></td>
+                                        <td class="textoCentro"><input value="'.$rs['nhoja'].'" readonly></td>
+                                        <td class="pl5px"><input value="'.$rs['cisometrico'].'" readonly></td>
+                                        <td class="pl5px"><input value="'.$rs['cobserentrega'].'" readonly></td>
+                                        <td class="pl5px"><input value="'.$rs['cserie'].'" readonly></td>
                                         <td class="textoCentro"><input type="checkbox" '.$marcado.'></td>
-                                        <td class="pl5px">'.$rs['cestado'].'</td>
+                                        <td class="pl5px"><input value="'.$rs['cestado'].'" readonly></td>
                                         <td class="textoCentro">
                                             <div style ="width:110px !important; text-align:center">
                                                 <img src = '.$firma.' style ="width:100% !important">
@@ -139,6 +139,116 @@
                 }
 
                 return $respuesta;
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function createExcelReport($nombre,$documento,$empresa,$detalles){
+            try {
+                require_once "public/PHPExcel/PHPExcel/IOFactory.php";
+
+                require_once('public/PHPExcel/PHPExcel.php');
+                $objPHPExcel = new PHPExcel();
+                $objPHPExcel->getProperties()
+                    ->setCreator("Sical")
+                    ->setLastModifiedBy("Sical")
+                    ->setTitle("Control Almacen")
+                    ->setSubject("Template excel")
+                    ->setDescription("Control Almacen")
+                    ->setKeywords("Template excel");
+
+                $objWorkSheet = $objPHPExcel->createSheet(1);
+
+                $objPHPExcel->setActiveSheetIndex(0);
+                $objPHPExcel->getActiveSheet()->setTitle("Kardex Terceros");
+
+                //combinar celdas
+                $objPHPExcel->getActiveSheet()->mergeCells('A1:K1');
+                $objPHPExcel->getActiveSheet()->getStyle('A7:K7')->getAlignment()->setWrapText(true);
+                $objPHPExcel->getActiveSheet()->getStyle('A1:K1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('A1:K1')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+
+                $objPHPExcel->getActiveSheet()->getStyle('A7:K7')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('A7:K7')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+
+                $objPHPExcel->getActiveSheet()->getStyle('C4')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+
+                $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(10);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(20);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(10);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(15);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(15);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(15);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('H')->setWidth(15);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('I')->setAutoSize(true);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('J')->setWidth(15);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('K')->setWidth(25);
+
+                //Titulo 
+                $objPHPExcel->getActiveSheet()->setCellValue('A1','KARDEX TERCEROS');
+
+                $objPHPExcel->getActiveSheet()->getStyle('B3:B5')->getFont()->setBold(true);
+                $objPHPExcel->getActiveSheet()->getStyle('A7:K7')->getFont()->setBold(true); 
+
+                $objPHPExcel->getActiveSheet()->setCellValue('B3','NOMBRES');
+                $objPHPExcel->getActiveSheet()->setCellValue('B4','N° DOCUMENTO');
+                $objPHPExcel->getActiveSheet()->setCellValue('B5','EMPRESA');
+
+                $objPHPExcel->getActiveSheet()->setCellValue('C3',$nombre);
+                $objPHPExcel->getActiveSheet()->setCellValue('C4',$documento);
+                $objPHPExcel->getActiveSheet()->setCellValue('C5',$empresa);
+
+                $objPHPExcel->getActiveSheet()->setCellValue('A7','ITEM');
+                $objPHPExcel->getActiveSheet()->setCellValue('B7','CODIGO');
+                $objPHPExcel->getActiveSheet()->setCellValue('C7','DESCRIPCION');
+                $objPHPExcel->getActiveSheet()->setCellValue('D7','UND.');
+                $objPHPExcel->getActiveSheet()->setCellValue('E7','CANT.');
+                $objPHPExcel->getActiveSheet()->setCellValue('F7','FECHA ENTREGA');
+                $objPHPExcel->getActiveSheet()->setCellValue('G7','N° HOJA');
+                $objPHPExcel->getActiveSheet()->setCellValue('H7','ISOMETRICOS');
+                $objPHPExcel->getActiveSheet()->setCellValue('I7','OBSERVACIONES');
+                $objPHPExcel->getActiveSheet()->setCellValue('J7','SERIE');
+                $objPHPExcel->getActiveSheet()->setCellValue('K7','ESTADO');
+
+                $objPHPExcel->getActiveSheet()
+                    ->getStyle('A7:K7')
+                    ->getFill()
+                    ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
+                    ->getStartColor()
+                    ->setRGB('0F73D6');
+
+                $fila = 8;
+                $datos = json_decode($detalles);
+                $nreg = count($datos);
+                $item = 1;
+                $fecha = "";
+
+                for ($i=0; $i < $nreg; $i++) { 
+                    $objPHPExcel->getActiveSheet()->setCellValue('A'.$fila,$item++);
+                    $objPHPExcel->getActiveSheet()->setCellValue('B'.$fila,$datos[$i]->codigo);
+                    $objPHPExcel->getActiveSheet()->setCellValue('C'.$fila,$datos[$i]->descripcion);
+                    $objPHPExcel->getActiveSheet()->setCellValue('D'.$fila,$datos[$i]->unidad);
+                    $objPHPExcel->getActiveSheet()->setCellValue('E'.$fila,$datos[$i]->cantidad);
+                    $objPHPExcel->getActiveSheet()->setCellValue('F'.$fila,$datos[$i]->fecha);
+                    $objPHPExcel->getActiveSheet()->setCellValue('G'.$fila,$datos[$i]->hoja);
+                    $objPHPExcel->getActiveSheet()->setCellValue('H'.$fila,$datos[$i]->isometrico);
+                    $objPHPExcel->getActiveSheet()->setCellValue('I'.$fila,$datos[$i]->observac);
+                    $objPHPExcel->getActiveSheet()->setCellValue('J'.$fila,$datos[$i]->serie);
+                    $objPHPExcel->getActiveSheet()->setCellValue('K'.$fila,$datos[$i]->estado);
+                    
+                    $fila++;
+                }
+
+                $fileName = $nombre.'_'.$empresa.'.xlsx';
+
+                $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel,'Excel2007');
+                $objWriter->save('public/documentos/temp/'.$fileName);
+   
+                return array("documento"=>'public/documentos/temp/'.$fileName);
+
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;

@@ -15,7 +15,7 @@
         }
 
         function crearExcel() {
-            echo json_encode($this->model->crearExcelPrecio($_POST['registros']));
+            echo json_encode($this->model->crearExcelPrecio($_POST));
         }
 
         function resumen() {

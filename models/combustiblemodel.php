@@ -307,9 +307,9 @@
                 }
 
                 $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel,'Excel2007');
-                $objWriter->save('public/documentos/reportes/kardex.xlsx');
+                $objWriter->save('public/documentos/reportes/combustible.xlsx');
     
-                return array("documento"=>'public/documentos/reportes/kardex.xlsx');
+                return array("documento"=>'public/documentos/reportes/combustible.xlsx');
     
                 exit();
             } catch (PDOException $th) {

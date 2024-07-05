@@ -212,7 +212,7 @@
     <div class="cabezaModulo">
         <h1>Cargo Plan</h1>
         <div>
-            <a href="#" id="filtrosAvanzados"><i class="fab fa-searchengin"></i><p>Filtros</p></a>
+            <a href="#" id="filtrosAvanzados" class="oculto"><i class="fab fa-searchengin"></i><p>Filtros</p></a>
             <a href="1" id="excelFile" class="exportReport"><i class="fas fa-file-excel"></i><p>Exportar Excel</p></a>
             <a href="2" id="csvFile" class="exportReport oculto"><i class="fas fa-file-csv"></i><p>Exportar CSV</p></a>
             <a href="3" id="excelSpoutFile" class="exportReport oculto"><i class="fas fa-file-excel"></i><p>Exportar Total Rapido</p></a>

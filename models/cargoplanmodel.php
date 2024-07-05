@@ -399,12 +399,26 @@
             }
         }
 
-        public function crearExcelPrecio(){
+        public function crearExcelPrecio($parametros){
             try {
                 $salida = "";
                 $docData = [];
 
-                $sql = $this->db->connect()->query("SELECT
+                $salida = "";
+
+                $tipo       = $parametros['tipoSearch'] == -1 ? "%" : $parametros['tipoSearch'];
+                $costo      = $parametros['costosSearch'] == -1 ? "%" : $parametros['costosSearch'];
+                $descrip    = $parametros['descripSearch'] == "" ? "%" : "%".$parametros['descripSearch']."%";
+                $codigo     = $parametros['codigoSearch'] == "" ? "%" : "%".$parametros['codigoSearch']."%";
+                $orden      = $parametros['ordenSearch'] == "" ? "%" : $parametros['ordenSearch'];
+                $pedido     = $parametros['pedidoSearch'] == "" ? "%" : $parametros['pedidoSearch'];
+                $concepto   = $parametros['conceptoSearch'] == "" ? "%" : "%".$parametros['conceptoSearch']."%";
+                $estadoItem = $parametros['estado_item'] == "" ? "%" : $parametros['estado_item'];
+                
+                $salida = "No hay registros";
+                $item = 1;
+
+                $sql = $this->db->connect()->prepare("SELECT
                                                         tb_pedidodet.iditem,
                                                         tb_pedidodet.idpedido,
                                                         tb_pedidodet.idprod,
@@ -510,12 +524,22 @@
                                                         tb_pedidodet.iditem 
                                                     ORDER BY
                                                         tb_pedidocab.emision DESC");
-                $sql->execute();
+                
+                $sql->execute(["orden"          =>$orden,
+                                "pedido"         =>$pedido,
+                                "costo"          =>$costo,
+                                "codigo"         =>$codigo,
+                                "concepto"       =>$concepto,
+                                "tipo"           =>$tipo,
+                                "estado"         =>$estadoItem,
+                                "descripcion"    =>$descrip]);
+                
                 $rowCount = $sql->rowCount();
 
                 while($row = $sql->fetch(PDO::FETCH_ASSOC)){
                     $docData[] = $row;
                 }
+
 
                 $this->crearExcelExport($docData);
                 $archivo = 'public/documentos/reportes/cargoplanprecio.xlsx';
@@ -684,6 +708,7 @@
                 $objPHPExcel->getActiveSheet()->setCellValue('AG2','Importe Total'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('AH2','Forma Pago'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('AI2','Referencia Pago'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AJ2','Familia'); // esto cambia
 
 
                 $objPHPExcel->getActiveSheet()->getStyle('B:C')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
@@ -1037,7 +1062,7 @@
                 }*/
 
                 $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel,'Excel2007');
-                $objWriter->save('public/documentos/reportes/cargoplan.xlsx');
+                $objWriter->save('public/documentos/reportes/cargoplanprecio.xlsx');
         }
     }
 ?>

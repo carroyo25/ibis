@@ -17,6 +17,10 @@
         function productos(){
             echo json_encode($this->model->buscarProductosTerceros($_POST['codigo']));
         }
+
+        function excelfile(){
+            echo json_encode($this->model->createExcelReport($_POST['nombre'],$_POST['documento'],$_POST['empresa'],$_POST['detalles']));
+        }
         
     }
 ?>
