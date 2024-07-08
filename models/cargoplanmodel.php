@@ -986,7 +986,7 @@
                     $objPHPExcel->getActiveSheet()->setCellValue('AI'.$fila,$dato['familia']);
 
                     //$objPHPExcel->getActiveSheet()->setCellValue('AJ'.$fila,$dato['ntotal']);
-                    $objPHPExcel->getActiveSheet()->setCellValue('AK'.$fila,$dato['cantidad_orden']);
+                    //$objPHPExcel->getActiveSheet()->setCellValue('AK'.$fila,$dato['cantidad_orden']);
 
 
                     $fila++;
