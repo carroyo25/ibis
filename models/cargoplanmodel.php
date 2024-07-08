@@ -128,8 +128,6 @@
                                                         AND tb_pedidocab.concepto LIKE :concepto
                                                         AND tb_pedidodet.estadoItem LIKE :estado
                                                         AND CONCAT_WS( ' ', cm_producto.cdesprod, tb_pedidodet.observaciones ) LIKE :descripcion
-                                                    GROUP BY
-                                                        tb_pedidodet.iditem 
                                                     ORDER BY
                                                         tb_pedidocab.emision DESC");
                                                                                                     
@@ -527,8 +525,6 @@
                                                         AND tb_pedidocab.concepto LIKE :concepto
                                                         AND tb_pedidodet.estadoItem LIKE :estado
                                                         AND CONCAT_WS( ' ', cm_producto.cdesprod, tb_pedidodet.observaciones ) LIKE :descripcion
-                                                    GROUP BY
-                                                        tb_pedidodet.iditem 
                                                     ORDER BY
                                                         tb_pedidocab.emision DESC");
                 
