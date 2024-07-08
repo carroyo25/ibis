@@ -117,6 +117,7 @@
                                                         LEFT JOIN alm_recepcab ON alm_recepdet.id_regalm = alm_recepcab.id_regalm 
                                                     WHERE
                                                         tb_pedidodet.nflgActivo
+                                                        AND tb_pedidodet.nflgOrden = 1
                                                         AND tb_pedidodet.estadoItem != 105
                                                         AND ISNULL( lg_ordendet.nflgactivo ) 
                                                         AND tb_pedidocab.nrodoc LIKE :pedido 
@@ -516,6 +517,7 @@
                                                     WHERE
                                                         tb_pedidodet.nflgActivo
                                                         AND tb_pedidodet.estadoItem != 105
+                                                        AND tb_pedidodet.nflgOrden = 1
                                                         AND ISNULL( lg_ordendet.nflgactivo ) 
                                                         AND tb_pedidocab.nrodoc LIKE :pedido 
                                                         AND IFNULL( lg_ordencab.cnumero, '' ) LIKE :orden
@@ -707,6 +709,7 @@
 
                 $objPHPExcel->getActiveSheet()->getStyle('F:H')->getNumberFormat()->setFormatCode('#,##0.00');
                 $objPHPExcel->getActiveSheet()->getStyle('O')->getNumberFormat()->setFormatCode('dd/mm/yyyy');
+                $objPHPExcel->getActiveSheet()->getStyle('R')->getNumberFormat()->setFormatCode('dd/mm/yyyy');
                 $objPHPExcel->getActiveSheet()->getStyle('S')->getNumberFormat()->setFormatCode('#,##0.00');
                 $objPHPExcel->getActiveSheet()->getStyle('AD:AF')->getNumberFormat()->setFormatCode('#,##0.00');
                
