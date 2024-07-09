@@ -711,6 +711,7 @@
 
                 $objPHPExcel->getActiveSheet()->getStyle('F:H')->getNumberFormat()->setFormatCode('#,##0.00');
                 $objPHPExcel->getActiveSheet()->getStyle('O')->getNumberFormat()->setFormatCode('dd/mm/yyyy');
+                $objPHPExcel->getActiveSheet()->getStyle('U')->getNumberFormat()->setFormatCode('dd/mm/yyyy');
                 $objPHPExcel->getActiveSheet()->getStyle('R')->getNumberFormat()->setFormatCode('dd/mm/yyyy');
                 $objPHPExcel->getActiveSheet()->getStyle('S')->getNumberFormat()->setFormatCode('#,##0.00');
                 $objPHPExcel->getActiveSheet()->getStyle('AD:AF')->getNumberFormat()->setFormatCode('#,##0.00');
@@ -967,6 +968,8 @@
                     
                     $objPHPExcel->getActiveSheet()->setCellValue('S'.$fila,$dato['ingreso']);
                     $objPHPExcel->getActiveSheet()->setCellValue('T'.$fila,$dato['nota_ingreso']);
+                    
+                    if ( $dato['fecha_recepcion_proveedor'] !== null )
                     $objPHPExcel->getActiveSheet()->setCellValue('U'.$fila,PHPExcel_Shared_Date::PHPToExcel($dato['fecha_recepcion_proveedor']));
                     $objPHPExcel->getActiveSheet()->setCellValue('V'.$fila,$saldoRecibir);
                         
