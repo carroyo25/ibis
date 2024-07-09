@@ -420,6 +420,32 @@
             }
         }
 
+        public function listarConductores() {
+            try {
+                $salida = "";
+                $query = $this->db->connect()->query("SELECT idreg,cnombres,licencia,nrodoc 
+                                                        FROM cm_conductores
+                                                        WHERE nflgactivo = 1
+                                                        ORDER BY cnombres");
+                $query->execute();
+                $rowcount = $query->rowcount();
+
+                if ($rowcount > 0) {
+                    while ($row = $query->fetch()) {
+                        $salida.='<li>
+                                    <a href="'.$row['idreg'].'" 
+                                              data-licencia="'.$row['licencia'].'"
+                                              data-dni="'.$row['nrodoc'].'"  >'.$row['cnombres'].'</a>
+                                 </li>';
+                    }
+                }
+                return $salida;
+            } catch (PDOException $e) {
+                echo $e->getMessage();
+                return false;
+            }
+        }
+
         public function rrhhCargo($codigo){
             try {
                 $sql = $this->db->connect()->prepare("SELECT

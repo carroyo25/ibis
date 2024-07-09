@@ -55,6 +55,8 @@ $(function() {
 
                 if (data.guias.length == 1) {
                     $("#id_guia").val(data.guias[0].idreg);
+                    $("#ubigeo_origen_guia").val(data.cabecera[0].ubigeo_origen);
+                    $("#ubigeo_destino_guia").val(data.cabecera[0].ubigeo_destino);
                     $("#numero_guia").val(data.guias[0].cnumguia);
                     $("#fgemision").val(data.cabecera[0].ffecdoc);
                     $("#ftraslado").val(data.cabecera[0].ffecenvio);
@@ -263,6 +265,12 @@ $(function() {
         }else if(contenedor_padre == "listaTransporte"){
             $("#codigo_transporte").val(codigo);
             $("#tipo_transporte").val($(this).text());
+        }else if(contenedor_padre == "listaConductores"){
+            $("#nombre_conductor").val($(this).text());
+            $("#licencia_conducir").val($(this).data('licencia'));
+            $("#conductor_dni").val($(this).data('dni'));
+        }else if(contenedor_padre == "listaPlacas"){
+            $("#placa").val($(this).text());
         }
 
         return false;

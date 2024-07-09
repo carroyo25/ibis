@@ -241,6 +241,11 @@
                 require_once("public/formatos/guiaremision.php");
                 
                 $archivo = "public/documentos/guias_remision/".$cabecera['numero_guia'].".pdf";
+                $qrsunat = "20504898173-09-T001-".$cabecera['numero_guia'].".png";
+                $qrprint = null;
+
+                   
+                
                 $datos = json_decode($detalles);
                 $nreg = count($datos);
                 $fecha_emision = date("d/m/Y", strtotime($cabecera['fgemision']));
@@ -292,6 +297,12 @@
                 $pdf->SetFont('Arial','',6);
                 $lc = 0;
                 $rc = 0;
+
+                if (file_exists("public/documentos/guia_electronica/qr/".$qrsunat)) {
+                    $qrprint =  "public/documentos/guia_electronica/qr/".$qrsunat;
+
+                    $pdf->Image($qrprint,165,210,35);
+                }
 
                 //aca podria sumar la orden
 
@@ -1377,11 +1388,12 @@
         }
 
         private function GetImgQr($ruc, $serie, $numero, $DocumentDescription){
-                $textoQR = $DocumentDescription;
-                $nombreQR = $ruc.'-09-'.$serie.'-'.$numero;
+            require_once 'public/phpqrcode/qrlib.php';
+            $textoQR = $DocumentDescription;
+            $nombreQR = $ruc.'-09-'.$serie.'-'.$numero;
                 
-                QRcode::png($textoQR, "public/documentos/guia_electronica/QR/".$nombreQR.".png", QR_ECLEVEL_L, 10, 2);
-                return "public/documentos/guia_electronica/QR/{$nombreQR}.png";
+            QRcode::png($textoQR, "public/documentos/guia_electronica/QR/".$nombreQR.".png", QR_ECLEVEL_L, 10, 2);
+            return "public/documentos/guia_electronica/QR/{$nombreQR}.png";
         }
         
         function carpeta_actual(){

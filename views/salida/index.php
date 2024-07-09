@@ -217,10 +217,13 @@
 
                 <div class="tituloDocumento">
                     <div>
-                        <p class="titulo_seccion"><strong> Guia de Remision y despacho : </strong></p>
-                        <input type="text" name="serie_guia" id="serie_guia" class="w10por" value="TC001">
-                        <input type="text" name="numero_guia" id="numero_guia">
-                            
+                        <p class="titulo_seccion"><strong> Guia de Remision Interna : </strong></p>
+                        <input type="text" name="serie_guia" id="serie_guia" class="w10por" value="T001">
+                        <input type="text" name="numero_guia" id="numero_guia" readonly>
+                        <br/><br/>
+                        <p class="titulo_seccion"><strong> Guia de   Remision Sunat : </strong></p>
+                        <input type="text" name="serie_guia" id="serie_guia" class="w10por" value="T001">
+                        <input type="text" name="numero_guia" id="numero_guia" readonly>
                     </div>
                     <div class="opciones_modal">
                         <a href="#" id="guiaSunat" title="Guia Sunat" class="oculto"><i class="fas fa-shipping-fast"></i><p>Sunat</p></a>
@@ -274,6 +277,9 @@
                                 </div>
                                 <label for="almacen_origen_direccion ">Dirección:</label>
                                 <input type="text" name="almacen_origen_direccion" id="almacen_origen_direccion">
+                                <br/>
+                                <label for="ubigeo_origen">Ubigeo :</label>
+                                <input type="text" name="ubigeo_origen_guia" id="ubigeo_origen_guia">
                             </div>
                             <p><strong>Domicilio de Llegada</strong></p>
                             <div class="tres_columnas_interna">
@@ -287,6 +293,9 @@
                                 </div>
                                 <label for="almacen_destino_direccion ">Dirección:</label>
                                 <input type="text" name="almacen_destino_direccion" id="almacen_destino_direccion">
+                                <br/>
+                                <label for="ubigeo_destino">Ubigeo :</label>
+                                <input type="text" name="ubigeo_destino_guia" id="ubigeo_destino_guia">
                             </div>
                             <p><strong>Empresa de Transporte</strong></p>
                             <div class="tres_columnas_interna">
@@ -356,7 +365,12 @@
                         <div class="tres_columnas_interna">
                             <label for="nombre_conductor">Nombre :</label>
                             <input type="text" name="nombre_conductor" id="nombre_conductor" class="cerrarLista">
-                            <span></span>
+                            <button type="button" id="btnConductor" class="btnCallMenu boton3">+</button>
+                            <div class="lista" id="listaConductores">
+                                <ul>
+                                    <?php echo $this->listaConductores?>
+                                </ul> 
+                            </div>
                             <label for="licencia_conducir">N° Licencia :</label>
                             <input type="text" name="licencia_conducir" id="licencia_conducir" class="cerrarLista">
                             <span></span>
@@ -365,11 +379,16 @@
                         </div>
                         <p><strong>Datos del Vehiculo</strong></p>
                         <div class="tres_columnas_interna">
-                            <label for="marca">Marca :</label>
-                            <input type="text" name="marca" id="marca">
-                            <span></span>
                             <label for="placa">Nro. Placa :</label>
                             <input type="text" name="placa" id="placa">
+                            <button type="button" id="btnPlaca" class="btnCallMenu boton3">+</button>
+                            <div class="lista" id="listaPlacas">
+                                <ul>
+                                    <?php echo $this->listaPlacas?>
+                                </ul> 
+                            </div>
+                            <label for="marca">Marca :</label>
+                            <input type="text" name="marca" id="marca">
                         </div>
                         <p><strong>Datos Adicionales</strong></p>
                         <div class="tres_columnas_interna">

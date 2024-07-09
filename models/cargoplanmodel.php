@@ -128,6 +128,9 @@
                                                         AND tb_pedidocab.concepto LIKE :concepto
                                                         AND tb_pedidodet.estadoItem LIKE :estado
                                                         AND CONCAT_WS( ' ', cm_producto.cdesprod, tb_pedidodet.observaciones ) LIKE :descripcion
+                                                    GROUP BY
+                                                        tb_pedidodet.iditem,
+                                                        lg_ordendet.id_regmov
                                                     ORDER BY
                                                         tb_pedidocab.emision DESC");
                                                                                                     
@@ -525,6 +528,9 @@
                                                         AND tb_pedidocab.concepto LIKE :concepto
                                                         AND tb_pedidodet.estadoItem LIKE :estado
                                                         AND CONCAT_WS( ' ', cm_producto.cdesprod, tb_pedidodet.observaciones ) LIKE :descripcion
+                                                    GROUP BY
+                                                        tb_pedidodet.iditem,
+                                                        lg_ordendet.id_regmov
                                                     ORDER BY
                                                         tb_pedidocab.emision DESC");
                 
@@ -961,7 +967,7 @@
                     
                     $objPHPExcel->getActiveSheet()->setCellValue('S'.$fila,$dato['ingreso']);
                     $objPHPExcel->getActiveSheet()->setCellValue('T'.$fila,$dato['nota_ingreso']);
-                    $objPHPExcel->getActiveSheet()->setCellValue('U'.$fila,$dato['fecha_recepcion_proveedor']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('U'.$fila,PHPExcel_Shared_Date::PHPToExcel($dato['fecha_recepcion_proveedor']));
                     $objPHPExcel->getActiveSheet()->setCellValue('V'.$fila,$saldoRecibir);
                         
                     $objPHPExcel->getActiveSheet()->setCellValue('W'.$fila,$dato['plazo']);
