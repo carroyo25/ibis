@@ -2925,6 +2925,27 @@
             }
         }
 
+        public function registrosAdiciones($id){
+            //**10304 */
+            try {
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        lg_ordenadic.ccdocumento,
+                                                        lg_ordenadic.nmonto
+                                                    FROM
+                                                        lg_ordenadic 
+                                                    WHERE
+                                                        lg_ordenadic.idorden = :id");
+                $sql->execute(['id'=>$id]);
+                $result = $sql->fetchAll();
+
+                return $result[0]['total_adicionales'];
+
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
         public function contarAdjuntos($id,$tipo){
             try {
                 $sql = $this->db->connect()->prepare("SELECT

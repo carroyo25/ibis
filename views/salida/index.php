@@ -431,6 +431,18 @@
             </div>
         </div>
     </div>
+    <div class="modal" id="aviso">
+        <div class="ventanaAdvertencia">
+            <h3>AVISO</h3>
+            <div>
+                 
+            </div>
+            <div>
+                <button type="button" id="btnAceptarAdvierte">Aceptar</button>
+                <button type="button" id="btnCancelarAddvierte">Cancelar</button>
+            </div>
+        </div>
+    </div>
     <div class="cabezaModulo">
         <h1>Notas de Salida</h1>
         <div>

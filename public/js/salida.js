@@ -709,6 +709,18 @@ $(function() {
     $("#guiaSunat").click(function(e){
         e.preventDefault();
 
+        $("#aviso").fadeIn();
+
+        return false;
+    });
+
+    $("#btnAceptarAdvierte").click(function(e){
+        
+    });
+
+    /*$("#guiaSunat").click(function(e){
+        e.preventDefault();
+
         let result = {};
     
         $.each($("#guiaremision").serializeArray(),function(){
@@ -749,7 +761,7 @@ $(function() {
         }
         
         return false;
-    });
+    });*/
 })
 
 
