@@ -118,6 +118,7 @@
                                                     WHERE
                                                         tb_pedidodet.nflgActivo
                                                         AND tb_pedidodet.nflgOrden = 1
+                                                        AND lg_ordendet.nestado != 0
                                                         AND tb_pedidodet.estadoItem != 105
                                                         AND ISNULL( lg_ordendet.nflgactivo ) 
                                                         AND tb_pedidocab.nrodoc LIKE :pedido 
@@ -517,8 +518,9 @@
                                                         LEFT JOIN alm_recepcab ON alm_recepdet.id_regalm = alm_recepcab.id_regalm 
                                                     WHERE
                                                         tb_pedidodet.nflgActivo
-                                                        AND tb_pedidodet.estadoItem != 105
                                                         AND tb_pedidodet.nflgOrden = 1
+                                                        AND lg_ordendet.nestado != 0
+                                                        AND tb_pedidodet.estadoItem != 105
                                                         AND ISNULL( lg_ordendet.nflgactivo ) 
                                                         AND tb_pedidocab.nrodoc LIKE :pedido 
                                                         AND IFNULL( lg_ordencab.cnumero, '' ) LIKE :orden
