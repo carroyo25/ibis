@@ -435,9 +435,13 @@
         <div class="ventanaAdvertencia">
             <h3>AVISO</h3>
             <div>
-                 
+                <span>Estimado Usuario, la emisión de la Guia de Remisión SUNAT
+                    es un proceso, irreversible y constituye un documento de 
+                    legal, por favor verificar los que los datos consignados 
+                    sena correctos.
+                </span> 
             </div>
-            <div>
+            <div class="btnOptions">
                 <button type="button" id="btnAceptarAdvierte">Aceptar</button>
                 <button type="button" id="btnCancelarAddvierte">Cancelar</button>
             </div>

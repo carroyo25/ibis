@@ -264,7 +264,7 @@
                 $mail->setFrom($origen,$nombre_envio);
                 $mail->addAddress('carroyo@sepcon.net','Cesar Arroyo');
                 $mail->addAddress('mvirreira@sepcon.net','Mauricio Virreira');
-                $mail->addAddress('jpaniagua@sepcon.net','Jose Paniagua');
+                $mail->addAddress('jopaniagua@sepcon.net','Jose Paniagua');
                 $mail->addAddress('asolari@sepcon.net','Alberto Solari');
                 
                 $mail->Subject = $subject;

@@ -2620,7 +2620,6 @@
             }
         }
 
-       
         public function creaComentario($orden){
             try {
                 $sql= $this->db->connect()->prepare("SELECT
@@ -2906,7 +2905,7 @@
             }
         }
 
-        private function totalAdicionales($id){
+        public function totalAdicionales($id){
             try {
                 $sql = $this->db->connect()->prepare("SELECT
                                                         SUM( lg_ordenadic.nmonto ) AS total_adicionales 
@@ -2925,20 +2924,24 @@
             }
         }
 
-        public function registrosAdiciones($id){
-            //**10304 */
+        public function detallesAdicionalesOrden($id){
             try {
+                $docData = [];
+
                 $sql = $this->db->connect()->prepare("SELECT
-                                                        lg_ordenadic.ccdocumento,
+                                                        UPPER(lg_ordenadic.cconcepto) AS cconcepto,
                                                         lg_ordenadic.nmonto
                                                     FROM
                                                         lg_ordenadic 
                                                     WHERE
                                                         lg_ordenadic.idorden = :id");
                 $sql->execute(['id'=>$id]);
-                $result = $sql->fetchAll();
+                
+                while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+                    $docData[] = $row;
+                }
 
-                return $result[0]['total_adicionales'];
+                return $docData;
 
             } catch (PDOException $th) {
                 echo $th->getMessage();
@@ -3137,13 +3140,11 @@
 
             $datos = json_decode($detalles);
             $nreg = count($datos);
-           
 
             for ($i=0; $i < $nreg; $i++) { 
                
                 $nparte = $datos[$i]->nroparte != "" ? "NP:". $datos[$i]->nroparte : "";
                 
-
                 $pdf->SetAligns(array("C","C","R","C","L","C","R","R"));
                 $pdf->Row(array($datos[$i]->item,
                                 $datos[$i]->codigo,
@@ -3162,8 +3163,6 @@
                     }
             }
             
-            
-           
             $pdf->Ln(2);
 
             $pdf->SetFillColor(229, 229, 229);
@@ -3172,7 +3171,10 @@
             
             $pdf->SetFont('Arial','B',7);
 
-            $total_adicional = $cabecera['total_adicional'] == ""  ? 0 :  $cabecera['total_adicional']; 
+            $total_adicional = $cabecera['total_adicional'] == ""  ? 0 :  $cabecera['total_adicional'];
+            
+            $detallesAdicionales = $this->detallesAdicionalesOrden($cabecera['codigo_orden']);
+            $totalAdicional = $cabecera['total_adicional'];
 
             if ($cabecera['radioIgv'] == 0){
                 $pdf->Cell(145,6,$this->convertir($cabecera['total_numero']+$total_adicional)." ".$cabecera['moneda'],"TBR",0,"L",true); 
@@ -3221,11 +3223,16 @@
                 $pdf->Cell(20,3,number_format($igv,2),0,1,"R");
             }
 
-            $pdf->SetX(146);
+            $linea = 7;
+            
+            if ( $totalAdicional ) {
+                foreach($detallesAdicionales as $detalle){
+                    $pdf->SetX(146);
+                    $pdf->Cell(33,6,$detalle['cconcepto'],0,0);
+                    $pdf->Cell(20,6,number_format($detalle['nmonto'],2),0,1,"R");
+                    $linea = 13;
+                }
 
-            if ( $cabecera['total_adicional'] ) {
-                $pdf->Cell(33,6,"CARGO(0)",0,0);
-                $pdf->Cell(20,6,number_format($cabecera['total_adicional'],2),0,1,"R");
             }else {
                 $pdf->Cell(43,6,"",0,0);
                 $pdf->Cell(30,6,"",0,1);
@@ -3235,7 +3242,6 @@
             $pdf->SetFont('Arial',"B","8");
             $pdf->Cell(20,4,"TOTAL",1,0,"L",true);
             $pdf->Cell(15,4,$cabecera['moneda'],1,0,"C",true);
-
 
             if ( $cabecera['radioIgv'] == 0 ){
                 $pdf->Cell(20,4,number_format($cabecera['total_numero'] +  $total_adicional ,2),1,1,"R",true);
@@ -3249,14 +3255,14 @@
             $x = $pdf->GetX();
             $y = $pdf->GetY();
 
-            $pdf->SetXY(10,$y-7);
+            $pdf->SetXY(10,$y-$linea);
             $pdf->SetFont('Arial',"","7");
             $pdf->Cell(10,6,$anio[0],1,0);
             $pdf->Cell(10,6,$tipo,1,0,"C");
             $pdf->Cell(10,6,str_pad($cabecera['nro_pedido'],6,0,STR_PAD_LEFT),1,0);
             $pdf->Cell(10,6,"",1,0);
             
-            $pdf->SetXY(55,$y-7);
+            $pdf->SetXY(55,$y-$linea);
             $pdf->SetFont('Arial',"","6");
 
             for ($i=0;$i<$nreg;$i++){
@@ -3287,8 +3293,8 @@
         public function generarVistaOrden($id){
             require_once("public/formatos/ordenes.php");
 
-            $datosOrden   = $this->cabeceraOrden($id);
-            $detalles     = $this->detallesOrden($id);
+            $datosOrden         = $this->cabeceraOrden($id);
+            $detalles           = $this->detallesOrden($id);
 
             if ($datosOrden[0]['ntipmov'] == "37") {
                 $titulo = "ORDEN DE COMPRA" ;
@@ -3411,16 +3417,7 @@
 
             $pdf->SetFont('Arial',"B","8");
 
-            /*if ($datosOrden[0]['nEstadoDoc'] == 59){
-                $filename = "public/documentos/ordenes/vistaprevia/".$file;
-            }else if ($datosOrden[0]['nEstadoDoc'] == 60){
-                $filename = "public/documentos/ordenes/emitidas/".$file;
-            }else if ($datosOrden[0]['nEstadoDoc'] == 61){
-                $filename = "public/documentos/ordenes/aprobadas/".$file;
-            }else if ($datosOrden[0]['nEstadoDoc'] == 49){
-                $filename = "public/documentos/ordenes/vistaprevia/".$file;
-            }*/
-
+            
             $filename = "public/documentos/ordenes/vistaprevia/".$file;
 
             $pdf->Output($filename,'F');

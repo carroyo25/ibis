@@ -840,7 +840,7 @@
                             "bocadillo"=>$ncomentarios,
                             "adjuntos"=>$adjuntos,
                             "adicionales"=>$adicionales,
-                            "total_adicionales"=>null,
+                            "total_adicionales"=>$this->totalAdicionales($id),
                             "total_adjuntos"=>$nro_adjuntos);
 
             } catch (PDOException $th) {
