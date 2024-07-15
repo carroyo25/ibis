@@ -1042,6 +1042,11 @@ $emitido:#F8CAAD;
 
         button{
             height: 2rem;
+            transition: box-shadow .5s;
+
+            &:hover{
+                box-shadow: 2px 4px 6px #000;
+            }
         }
     }
 }
@@ -2520,6 +2525,7 @@ $emitido:#F8CAAD;
     text-align: center;
     padding: 20px;
     line-height: 3rem;
+    color: #0000b7;
 
     select{
         border: 1px solid #ccc;
@@ -2543,6 +2549,12 @@ $emitido:#F8CAAD;
             color: $negro;
             background:$fondo_menus;
         }
+    }
+
+    .selectDiv{
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 1rem;
     }
 }
 

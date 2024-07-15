@@ -19,6 +19,8 @@
             $this->view->listaMovimiento = $this->model->listarParametros(12);
             $this->view->listaCostos = $this->model->costosPorUsuario($_SESSION['iduser']);
             $this->view->listaCostosSelect = $this->model->costosPorUsuarioSelect($_SESSION['iduser']);
+            $this->view->listaDepartamento = $this->model->getUbigeoSelect(1,"%");
+            
 
             $this->view->render('salida/index');
         }

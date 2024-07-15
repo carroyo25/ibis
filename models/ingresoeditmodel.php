@@ -51,7 +51,7 @@
                                                         AND alm_recepcab.nflgactivo = 1 
                                                         AND tb_costusu.nflgactivo = 1
                                                         AND alm_recepcab.nEstadoDoc = 60
-                                                        AND ((alm_recepcab.cper = YEAR (NOW())- 1 
+                                                        AND ((alm_recepcab.cper = YEAR (NOW()) - 1 
                                                                 AND alm_recepcab.cmes =
                                                             IF
                                                                 (

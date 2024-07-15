@@ -666,6 +666,24 @@ $(function() {
         return false
     });
 
+    $(".btnCallDialog").click(function(e){
+        e.preventDefault();
+
+        let control = e.target.id;
+
+        $("#ubigeo").fadeIn();
+        
+        return false
+    });
+
+    $("#btnCancelarUbigeo").click(function(e){
+        e.preventDefault();
+
+        $("#ubigeo").fadeOut();
+
+        return false;
+    });
+
     $("#btnAceptarPregunta").click(function (e) { 
         e.preventDefault();
 
@@ -709,59 +727,106 @@ $(function() {
     $("#guiaSunat").click(function(e){
         e.preventDefault();
 
-        $("#aviso").fadeIn();
-
-        return false;
-    });
-
-    $("#btnAceptarAdvierte").click(function(e){
-        
-    });
-
-    /*$("#guiaSunat").click(function(e){
-        e.preventDefault();
-
         let result = {};
-    
+
         $.each($("#guiaremision").serializeArray(),function(){
             result[this.name] = this.value;
         });
 
         try {
             if ( result['ftraslado'] == "") throw new Error("Indique la fecha de traslado");
+            if ( result['ubigeo_origen_guia'] == "") throw new Error("Ingrese el ubigeo origen");
+            if ( result['ubigeo_destino_guia'] == "") throw new Error("Ingrese el ubigeo destino");
+
+            if ( result['codigo_transporte'] == "" ) throw new Error("Indique el tipo de transporte");
+            if ( result['codigo_modalidad'] == "" ) throw new Error("Indique la modalidad de traslado");
+            
             if ( result['peso'] == "") throw new Error("Ingrese el peso");
-            if ( result['codigo_transporte'] == "") throw new Error("Indique el tipo de transporte");
-            if ( result['codigo_modalidad'] == "") throw new Error("Indique la modalidad de traslado");
 
-            if ( result['codigo_modalidad'] == 254 && result['nombre_conductor'] == "") throw new Error("Registre el nombre del conductor");
-            if ( result['codigo_modalidad'] == 254 && result['licencia_conducir'] == "") throw new Error("Registre la licencia del conductor");
-            if ( result['codigo_modalidad'] == 254 && result['licencia_conducir'] == "") throw new Error("Registre la placa del vehículo");
+            if ( result['codigo_transporte'] == 257 && result['nombre_conductor'] == "") throw new Error("Registre el nombre del conductor");
+            if ( result['codigo_transporte'] == 257 && result['licencia_conducir'] == "") throw new Error("Registre la licencia del conductor");
+            if ( result['codigo_transporte'] == 257 && result['placa'] == "") throw new Error("Registre la placa del vehículo");
 
-            if ( result['codigo_modalidad'] == 253 && result['ruc_proveedor'] == "") throw new Error("Indique el RUC del transportista");
+            if ( result['codigo_transporte'] == 258 && result['empresa_transporte_razon'] == "") throw new Error("Registre el nombre de la empresa de transportes");
+            if ( result['codigo_transporte'] == 258 && result['direccion_proveedor'] == "") throw new Error("Registre la direccion del transportista");
+            if ( result['codigo_transporte'] == 258 && result['ruc_proveedor'] == "") throw new Error("Registre el RUC del transportista");
 
-            let datosJSON = new FormData();
 
-            datosJSON.append("cabecera",JSON.stringify(result));
-            datosJSON.append("detalles",JSON.stringify(detallesVista(1)));
-
-            $.ajax({
-                type: "POST",
-                url: RUTA+"salida/guiaSunat",
-                data: datosJSON,
-                dataType: "json",
-                contentType:false,      
-                processData:false,
-                success: function (data) {
-                    console.log(data);
-                }
-            });
+            $("#aviso").fadeIn();
 
         } catch (error) {
             mostrarMensaje(error.message,"mensaje_error");
         }
+
+        return false;
+    });
+
+    $("#btnAceptarAdvierte").click(function(e){
+        e.preventDefault();
+
+        let datosJSON = new FormData();
+
+        datosJSON.append("cabecera",JSON.stringify(result));
+        datosJSON.append("detalles",JSON.stringify(detallesVista(1)));
+
+        $.ajax({
+            type: "POST",
+            url: RUTA+"salida/guiaSunat",
+            data: datosJSON,
+            dataType: "json",
+            contentType:false,      
+            processData:false,
+            success: function (data) {
+                console.log(data);
+            }
+        });
         
         return false;
-    });*/
+    });
+
+    $("#btnCancelarAdvierte").click(function(e){
+        e.preventDefault();
+
+        $("#aviso").fadeOut();
+
+        return false;
+    });
+
+    /*dpto
+        prov
+        dist*/
+
+    $("#dpto").change(function(e){
+        e.preventDefault();
+
+        $("#codigo_ubigeo").val(e.target.value);
+
+        return false;
+    });
+
+    $("#prov").change(function(e){
+        e.preventDefault();
+
+        try {
+            if ( $("#codigo_ubigeo").val().length !==2) throw new Error("Seleccione el Departamento");
+        } catch (error) {
+            console.log(error.mensaje);
+        }
+
+        return false;
+    });
+
+    $("#prov").change(function(e){
+        e.preventDefault();
+
+        try {
+            if ( $("#codigo_ubigeo").val().length !==2) throw new Error("Seleccione el Provincia");
+        } catch (error) {
+            console.log(error.mensaje);
+        }
+
+        return false;
+    });
 })
 
 

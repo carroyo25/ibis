@@ -214,6 +214,7 @@
                 <input type="hidden" name="registro_mtc" id="registro_mtc" value="">
                 <input type="hidden" name="cso" id="cso">
                 <input type="hidden" name="csd" id="csd">
+                <input type="hidden" name="codigo_ubigeo" id="codigo_ubigeo">
 
                 <div class="tituloDocumento">
                     <div>
@@ -243,7 +244,7 @@
                             </div>
                             <div>
                                 <label for="ftraslado">Fecha Traslado:</label>
-                                <input type="date" name="ftraslado" id="ftraslado">
+                                <input type="date" name="ftraslado" id="ftraslado" value="<?php echo date("Y-m-d")?>" min="<?php echo date("Y-m-d")?>">
                             </div>
                             <div>
                                 <label for="tipo_documento">Tipo Guia:</label>
@@ -280,6 +281,7 @@
                                 <br/>
                                 <label for="ubigeo_origen">Ubigeo :</label>
                                 <input type="text" name="ubigeo_origen_guia" id="ubigeo_origen_guia">
+                                <button type="button" class="btnCallDialog boton3">+</button>
                             </div>
                             <p><strong>Domicilio de Llegada</strong></p>
                             <div class="tres_columnas_interna">
@@ -296,12 +298,13 @@
                                 <br/>
                                 <label for="ubigeo_destino">Ubigeo :</label>
                                 <input type="text" name="ubigeo_destino_guia" id="ubigeo_destino_guia">
+                                <button type="button" class="btnCallDialog boton3" id="ubigeoBtnOrigen">+</button>
                             </div>
                             <p><strong>Empresa de Transporte</strong></p>
                             <div class="tres_columnas_interna">
                                 <label for="empresa_transporte_razon">Razón Social</label>
                                 <input type="text" name="empresa_transporte_razon" id="empresa_transporte_razon" class="buscaGuia">
-                                <button type="button" class="btnCallMenu boton3">+</button>
+                                <button type="button" class="btnCallMenu boton3" id="ubigeoBtnDestino">+</button>
                                 <div class="lista" id="listaEntidad">
                                    <ul>
                                        <?php echo $this->listaEntidad?>
@@ -437,13 +440,35 @@
             <div>
                 <span>Estimado Usuario, la emisión de la Guia de Remisión SUNAT
                     es un proceso, irreversible y constituye un documento de 
-                    legal, por favor verificar los que los datos consignados 
-                    sena correctos.
+                    legal, por favor verificar los que los datos indicados 
+                    sean correctos.
                 </span> 
             </div>
             <div class="btnOptions">
                 <button type="button" id="btnAceptarAdvierte">Aceptar</button>
-                <button type="button" id="btnCancelarAddvierte">Cancelar</button>
+                <button type="button" id="btnCancelarAdvierte">Cancelar</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="ubigeo">
+        <div class="ventanaDialogo">
+            <div class="selectDiv">
+                <label for="dpto">Departamento</label>
+                <select name="dpto" id="dpto">
+                    <?php echo $this->listaDepartamento;?>
+                </select>
+                <label for="prov">Provincia</label>
+                <select name="prov" id="prov">
+                    
+                </select>
+                <label for="dist">Provincia</label>
+                <select name="dist" id="dist">
+                    
+                </select>
+            </div>
+            <div class="btnOptions">
+                <button type="button3" id="btnAceptarUbigeo">Aceptar</button>
+                <button type="button3" id="btnCancelarUbigeo">Cancelar</button>
             </div>
         </div>
     </div>
