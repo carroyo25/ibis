@@ -211,20 +211,19 @@
                 <input type="hidden" name="id_guia" id="id_guia" value=0>
                 <input type="hidden" name="ubig_origen" id="ubig_origen">
                 <input type="hidden" name="ubig_destino" id="ubig_destino">
-                <input type="hidden" name="registro_mtc" id="registro_mtc" value="">
                 <input type="hidden" name="cso" id="cso">
                 <input type="hidden" name="csd" id="csd">
-                <input type="hidden" name="codigo_ubigeo" id="codigo_ubigeo" value="25">
+                <input type="hidden" name="codigo_ubigeo" id="codigo_ubigeo" value="01">
 
                 <div class="tituloDocumento">
                     <div>
                         <p class="titulo_seccion"><strong> Guia de Remision Interna : </strong></p>
-                        <input type="text" name="serie_guia" id="serie_guia" class="w10por" value="T001">
+                        <input type="text" name="serie_guia" id="serie_guia" class="w10por" value="T001" readonly>
                         <input type="text" name="numero_guia" id="numero_guia" readonly>
                         <br/><br/>
-                        <p class="titulo_seccion"><strong> Guia de   Remision Sunat : </strong></p>
-                        <input type="text" name="serie_guia" id="serie_guia" class="w10por" value="T001">
-                        <input type="text" name="numero_guia" id="numero_guia" readonly>
+                        <p class="titulo_seccion"><strong> Guia de Remision Sunat : </strong></p>
+                        <input type="text" name="serie_guia_sunat" id="serie_guia_sunat" class="w10por" value="T001" readonly>
+                        <input type="text" name="numero_guia_sunat" id="numero_guia_sunat" readonly>
                     </div>
                     <div class="opciones_modal">
                         <a href="#" id="guiaSunat" title="Guia Sunat" class="oculto"><i class="fas fa-shipping-fast"></i><p>Sunat</p></a>
@@ -315,6 +314,9 @@
                                 <span></span>
                                 <label for="ruc_proveedor">R.U.C.</label>
                                 <input type="text" name="ruc_proveedor" id="ruc_proveedor" class="datosEntidad">
+                                <span></span>
+                                <label for="registro_mtc">Registro MTC</label>
+                                <input type="text" name="registro_mtc" id="registro_mtc" class="datosEntidad">
                             </div>
                         </div>
                     </div>

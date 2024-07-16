@@ -263,6 +263,7 @@ $(function() {
             $("#empresa_transporte_razon").val($(this).text());
             $("#ruc_proveedor").val($(this).data("ruc"));
             $("#direccion_proveedor").val($(this).data("direccion"));
+            $("#registro_mtc").val($(this).data("mtc"));
         }else if(contenedor_padre == "listaTransporte"){
             $("#codigo_transporte").val(codigo);
             $("#tipo_transporte").val($(this).text());
@@ -767,8 +768,12 @@ $(function() {
             if ( result['codigo_transporte'] == 258 && result['direccion_proveedor'] == "") throw new Error("Registre la direccion del transportista");
             if ( result['codigo_transporte'] == 258 && result['ruc_proveedor'] == "") throw new Error("Registre el RUC del transportista");
 
-
-            $("#aviso").fadeIn();
+            fetch(RUTA+"salida/numeroSunat")
+            .then(response => response.text())
+            .then(data =>{
+                $("#numero_guia_sunat").val(data);
+                $("#aviso").fadeIn();
+            });
 
         } catch (error) {
             mostrarMensaje(error.message,"mensaje_error");
@@ -779,6 +784,12 @@ $(function() {
 
     $("#btnAceptarAdvierte").click(function(e){
         e.preventDefault();
+
+        let result = {};
+
+        $.each($("#guiaremision").serializeArray(),function(){
+            result[this.name] = this.value;
+        });
 
         let datosJSON = new FormData();
 

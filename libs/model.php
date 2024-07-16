@@ -434,8 +434,8 @@
                     while ($row = $query->fetch()) {
                         $salida.='<li>
                                     <a href="'.$row['idreg'].'" 
-                                              data-licencia="'.$row['licencia'].'"
-                                              data-dni="'.$row['nrodoc'].'"  >'.$row['cnombres'].'</a>
+                                              data-licencia="'.$row['clicencia'].'"
+                                              data-dni="'.$row['cnrodoc'].'"  >'.$row['cnombres'].'</a>
                                  </li>';
                     }
                 }
@@ -902,7 +902,8 @@
                                                     cm_entidad.id_centi, 
                                                     UPPER(cm_entidad.crazonsoc) AS crazonsoc, 
                                                     cm_entidad.cnumdoc,
-                                                    cm_entidad.cviadireccion
+                                                    cm_entidad.cviadireccion,
+                                                    cm_entidad.cdigcateg
                                                 FROM
                                                     cm_entidad
                                                 WHERE
@@ -914,7 +915,11 @@
 
                 if ($rowCount > 0){
                     while ($rs = $sql->fetch()){
-                        $salida .='<li><a href="'.$rs['id_centi'].'" data-direccion="'.$rs['cviadireccion'].'" data-ruc="'.$rs['cnumdoc'].'">'.$rs['crazonsoc'].'</a></li>';
+                        $salida .='<li>
+                                    <a href="'.$rs['id_centi'].'" 
+                                        data-direccion="'.$rs['cviadireccion'].'" 
+                                        data-ruc="'.$rs['cnumdoc'].'"
+                                        data-mtc="'.$rs['cdigcateg'].'">'.$rs['crazonsoc'].'</a></li>';
                     }
 
                     return $salida;
@@ -4489,6 +4494,27 @@
                 $result = $sql->fetchAll();
 
                 return str_pad($result[0]['nroguia']+$guiaInicial,7,0,STR_PAD_LEFT);
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        public function numeroGuiaSunat(){
+            try {
+                $guiaInicial = 35;
+
+                $sql = $this->db->connect()->query("SELECT
+                                                        COUNT( lg_guias.guiasunat ) AS nroguiasunat 
+                                                    FROM
+                                                        lg_guias 
+                                                    WHERE
+                                                        lg_guias.cserie IS NOT NULL");
+                $sql->execute();
+                $result = $sql->fetchAll();
+
+                return $result[0]['nroguiasunat']+$guiaInicial;
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();

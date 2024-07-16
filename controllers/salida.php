@@ -101,5 +101,9 @@
         function ubigeoGuias(){
             echo json_encode($this->model->getUbigeoSelect($_POST['nivel'],$_POST['prefijo']));
         }
+
+        function numeroSunat(){
+            echo json_encode($this->model-> numeroGuiaSunat());
+        }
     }
 ?>
