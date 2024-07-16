@@ -214,7 +214,7 @@
                 <input type="hidden" name="registro_mtc" id="registro_mtc" value="">
                 <input type="hidden" name="cso" id="cso">
                 <input type="hidden" name="csd" id="csd">
-                <input type="hidden" name="codigo_ubigeo" id="codigo_ubigeo">
+                <input type="hidden" name="codigo_ubigeo" id="codigo_ubigeo" value="25">
 
                 <div class="tituloDocumento">
                     <div>
@@ -281,7 +281,7 @@
                                 <br/>
                                 <label for="ubigeo_origen">Ubigeo :</label>
                                 <input type="text" name="ubigeo_origen_guia" id="ubigeo_origen_guia">
-                                <button type="button" class="btnCallDialog boton3">+</button>
+                                <button type="button" class="btnCallDialog boton3" id="ubigeoBtnOrigen">+</button>
                             </div>
                             <p><strong>Domicilio de Llegada</strong></p>
                             <div class="tres_columnas_interna">
@@ -298,7 +298,7 @@
                                 <br/>
                                 <label for="ubigeo_destino">Ubigeo :</label>
                                 <input type="text" name="ubigeo_destino_guia" id="ubigeo_destino_guia">
-                                <button type="button" class="btnCallDialog boton3" id="ubigeoBtnOrigen">+</button>
+                                <button type="button" class="btnCallDialog boton3" id="ubigeoBtnDestino">+</button>
                             </div>
                             <p><strong>Empresa de Transporte</strong></p>
                             <div class="tres_columnas_interna">
@@ -455,7 +455,9 @@
             <div class="selectDiv">
                 <label for="dpto">Departamento</label>
                 <select name="dpto" id="dpto">
-                    <?php echo $this->listaDepartamento;?>
+                    <?php foreach($this->listaDepartamento['datos'] as $dpto) { ?>
+                       <option value="<?php echo $dpto['ccubigeo'];?>"><?php echo $dpto['cdubigeo'];?></option> 
+                    <?php };?>
                 </select>
                 <label for="prov">Provincia</label>
                 <select name="prov" id="prov">

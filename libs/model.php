@@ -423,7 +423,7 @@
         public function listarConductores() {
             try {
                 $salida = "";
-                $query = $this->db->connect()->query("SELECT idreg,cnombres,licencia,nrodoc 
+                $query = $this->db->connect()->query("SELECT idreg,cnombres,clicencia,cnrodoc 
                                                         FROM cm_conductores
                                                         WHERE nflgactivo = 1
                                                         ORDER BY cnombres");
@@ -1335,24 +1335,24 @@
         //codigo de ubigeo
         public function getUbigeoSelect($nivel,$prefijo){
             try {
-                $salida = "";
+                $salida = null;
                 $query= $this->db->connect()->prepare("SELECT
                     tb_ubigeo.ccubigeo,
                     tb_ubigeo.cdubigeo
                 FROM
                     tb_ubigeo
                 WHERE
-                    tb_ubigeo.nnivel = :nivel AND
-                    tb_ubigeo.ccubigeo LIKE :prefijo");
-                $query->execute(['nivel'=>$nivel,'prefijo'=>$prefijo]);
+                    tb_ubigeo.nnivel = :nivel 
+                    AND tb_ubigeo.ccubigeo LIKE :prefijo");
+
+                $query->execute(['nivel'=>$nivel,'prefijo'=>$prefijo.'%']);
                 $rowcount = $query->rowCount();
-                if ($rowcount > 0 ){
-                    while ($row = $query->fetch()) {
-                        $salida.='<option value="'.$row['ccubigeo'].'">'.$row['cdubigeo'].'</option>';
-                    }
+
+                while($row = $query->fetch(PDO::FETCH_ASSOC)){
+                    $docData[] = $row;
                 }
 
-                return $salida;
+                return array("datos"=>$docData);
                 
             } catch (PDOException $e) {
                 echo $e->getMessage();

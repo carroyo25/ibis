@@ -97,5 +97,9 @@
         function generaNumero(){
             echo json_encode($this->model->numeroGuia());
         }
+
+        function ubigeoGuias(){
+            echo json_encode($this->model->getUbigeoSelect($_POST['nivel'],$_POST['prefijo']));
+        }
     }
 ?>

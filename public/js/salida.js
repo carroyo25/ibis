@@ -6,7 +6,8 @@ $(function() {
         idfila = "",
         ordenes = [],
         sw=0,
-        grabado = false;
+        grabado = false
+        controlUbigeo = null;
         
 
     $("#esperar").fadeOut();
@@ -669,7 +670,7 @@ $(function() {
     $(".btnCallDialog").click(function(e){
         e.preventDefault();
 
-        let control = e.target.id;
+        controlUbigeo = e.target.id;
 
         $("#ubigeo").fadeIn();
         
@@ -679,6 +680,21 @@ $(function() {
     $("#btnCancelarUbigeo").click(function(e){
         e.preventDefault();
 
+        $("#ubigeo").fadeOut();
+
+        return false;
+    });
+
+    $("#btnAceptarUbigeo").click(function(e){
+        e.preventDefault();
+
+        if ( controlUbigeo == "ubigeoBtnOrigen"){
+            $("#ubigeo_origen_guia").val($("#dist").val());
+        }else{
+            $("#ubigeo_destino_guia").val($("#dist").val());
+        }
+
+        $("#dist,#prov").empty();
         $("#ubigeo").fadeOut();
 
         return false;
@@ -792,11 +808,26 @@ $(function() {
         return false;
     });
 
-    /*dpto
-        prov
-        dist*/
-
     $("#dpto").change(function(e){
+        e.preventDefault();
+
+        $("#codigo_ubigeo").val(e.target.value);
+        $("#prov").empty();
+        $("#dist").empty();
+
+        return false;
+    });
+
+    $("#prov").change(function(e){
+        e.preventDefault();
+
+        $("#codigo_ubigeo").val(e.target.value);
+        $("#dist").empty();
+
+        return false;
+    });
+
+    $("#dist").change(function(e){
         e.preventDefault();
 
         $("#codigo_ubigeo").val(e.target.value);
@@ -804,26 +835,42 @@ $(function() {
         return false;
     });
 
-    $("#prov").change(function(e){
+    $("#prov").click(function (e) { 
         e.preventDefault();
 
-        try {
-            if ( $("#codigo_ubigeo").val().length !==2) throw new Error("Seleccione el Departamento");
-        } catch (error) {
-            console.log(error.mensaje);
-        }
+        let row = null;
+
+        $(this).empty();
+
+        $.post(RUTA+"salida/ubigeoGuias", {nivel:2,prefijo:$("#dpto").val()},
+            function (data, textStatus, jqXHR) {
+               data.datos.forEach(element => {
+                    row = `<option value="${element.ccubigeo}">${element.cdubigeo}</option>`;
+                    $("#prov").append(row);
+               });  
+            },
+            "json"
+        );
 
         return false;
     });
 
-    $("#prov").change(function(e){
+    $("#dist").click(function (e) { 
         e.preventDefault();
 
-        try {
-            if ( $("#codigo_ubigeo").val().length !==2) throw new Error("Seleccione el Provincia");
-        } catch (error) {
-            console.log(error.mensaje);
-        }
+        let row = null;
+
+        $(this).empty();
+
+        $.post(RUTA+"salida/ubigeoGuias", {nivel:3,prefijo:$("#prov").val()},
+            function (data, textStatus, jqXHR) {
+               data.datos.forEach(element => {
+                    row = `<option value="${element.ccubigeo}">${element.cdubigeo}</option>`;
+                    $("#dist").append(row);
+               });  
+            },
+            "json"
+        );
 
         return false;
     });
