@@ -1239,23 +1239,23 @@
             $token_access = $this->token('d12d8bf5-4b57-4c57-9569-9072b3e1bfcd', 'iLMGwQBEehJMXQ+Z/LR2KA==', '20504898173SISTEMA1', 'Lima123');
 
             $firma = $this->crear_files($path, $nombre_archivo, $header, $body );
-            //$respuesta = $this->envio_xml($path.'FIRMA/', $nombre_archivo, $token_access);
-            //$numero_ticket = $respuesta->numTicket;
+            $respuesta = $this->envio_xml($path.'FIRMA/', $nombre_archivo, $token_access);
+            $numero_ticket = $respuesta->numTicket;
 
             $this->actualizarTicketNumeroSunat($header->numero_guia,$numero_ticket,$header->numero_guia_sunat);
 
             var_dump($respuesta);
 
-            /*sleep(3);//damos tiempo para que SUNAT procese y responda.
+            sleep(3);//damos tiempo para que SUNAT procese y responda.
             $respuesta_ticket = $this->envio_ticket($path.'CDR/', $numero_ticket, $token_access, $header->destinatario_ruc, $nombre_archivo);
 
             var_dump($respuesta_ticket);
             
             exit;
             
-            return array("archivo" => $nombre_archivo,"ticket" => $respuesta_ticket, "token" => $token_access);*/
+            return array("archivo" => $nombre_archivo,"ticket" => $respuesta_ticket, "token" => $token_access);
 
-            //$this->crearArchivoHash($path.'CDR/',$nombre_archivo,"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");
+            //$this->crearArchivoHash($path.'CDR/',$nombre_archivo,"");
         }
 
         private function crearArchivoHash($ruta_archivo_cdr,$nombre_archivo,$hash){
@@ -1294,14 +1294,14 @@
             fwrite($archivo, utf8_decode($xml));
             fclose($archivo);
 
-            /*$this->firmar_xml($nombre_archivo.".xml", "1");
+            $this->firmar_xml($nombre_archivo.".xml", "1");
 
             $zip = new ZipArchive();
             if($zip->open($path."FIRMA/".$nombre_archivo.".zip", ZipArchive::CREATE) === true){
                 $zip->addFile($path."FIRMA/".$nombre_archivo.".xml", $nombre_archivo.".xml");
             }
 
-            return $nombre_archivo;*/
+            return $nombre_archivo;
         }
 
         private function envio_ticket($ruta_archivo_cdr, $ticket, $token_access, $ruc, $nombre_file){
@@ -1431,7 +1431,7 @@
                                     </ext:UBLExtensions>
                                     <cbc:UBLVersionID>2.1</cbc:UBLVersionID>
                                     <cbc:CustomizationID>2.0</cbc:CustomizationID>
-                                    <cbc:ID>'.$serie.'-'.$header->numero_guia.'</cbc:ID>
+                                    <cbc:ID>'.$serie.'-'.$header->serie_guia_sunat.'</cbc:ID>
                                     <!--  FECHA Y HORA DE EMISION  -->
                                     <cbc:IssueDate>'.$header->fgemision.'</cbc:IssueDate>
                                     <cbc:IssueTime>'.date("H:i:s").'</cbc:IssueTime>
@@ -1596,7 +1596,7 @@
                                     </ext:UBLExtensions>
                                     <cbc:UBLVersionID>2.1</cbc:UBLVersionID>
                                     <cbc:CustomizationID>2.0</cbc:CustomizationID>
-                                    <cbc:ID>'.$serie.'-'.$header->numero_guia.'</cbc:ID>
+                                    <cbc:ID>'.$serie.'-'.$header->serie_guia_sunat.'</cbc:ID>
                                     <!--  FECHA Y HORA DE EMISION  -->
                                     <cbc:IssueDate>'.$header->fgemision.'</cbc:IssueDate>
                                     <cbc:IssueTime>'.date("H:i:s").'</cbc:IssueTime>
