@@ -240,8 +240,8 @@
             try {
                 require_once("public/formatos/guiaremision.php");
                 
-                $archivo = "public/documentos/guias_remision/".$cabecera['numero_guia'].".pdf";
-                $qrsunat = "20504898173-09-T001-".$cabecera['numero_guia'].".png";
+                $archivo = "public/documentos/guias_remision/".$cabecera['numero_guia_sunat'].".pdf";
+                $qrsunat = "20504898173-09-T001-".$cabecera['numero_guia_sunat'].".png";
                 $qrprint = null;
 
                    
@@ -1255,32 +1255,7 @@
             
             return array("archivo" => $nombre_archivo,"ticket" => $respuesta_ticket, "token" => $token_access);
 
-            //$this->crearArchivoHash($path.'CDR/',$nombre_archivo,"");
-        }
-
-        private function crearArchivoHash($ruta_archivo_cdr,$nombre_archivo,$hash){
-            file_put_contents($ruta_archivo_cdr . 'R-' . $nombre_archivo . '.ZIP', base64_decode($hash));
-
-            $zip = new ZipArchive;
-            if ($zip->open($ruta_archivo_cdr . 'R-' . $nombre_archivo . '.ZIP') === TRUE) {
-                $zip->extractTo($ruta_archivo_cdr);
-                $zip->close();
-            }
-
-            $doc_cdr = new DOMDocument();
-            $doc_cdr->load($ruta_archivo_cdr . 'R-' . $nombre_archivo . '.xml');
-                    
-            $mensaje['cdr_hash']            = $doc_cdr->getElementsByTagName('DigestValue')->item(0)->nodeValue;
-            $mensaje['cdr_msj_sunat']       = $doc_cdr->getElementsByTagName('Description')->item(0)->nodeValue;
-            $mensaje['cdr_ResponseCode']    = $doc_cdr->getElementsByTagName('ResponseCode')->item(0)->nodeValue;        
-            $mensaje['numerror']            = '';
-            $mensaje['DocumentDescription'] = $doc_cdr->getElementsByTagName('DocumentDescription')->item(0)->nodeValue;
-            $mensaje['ruta_xml']            = $ruta_archivo_cdr.'FIRMA/'.$nombre_archivo.'.xml';
-            $mensaje['ruta_cdr']            = $ruta_archivo_cdr.'CDR/R-' .$nombre_archivo.'.xml';
-
-            $this->GetImgQr("20504898173","T001","21",$mensaje['DocumentDescription']);
-
-            var_dump($mensaje);
+            $this->crearArchivoHash($path.'CDR/',$nombre_archivo,"");
         }
 
         private function crear_files($path,$nombre_archivo,$header,$body){
@@ -1341,8 +1316,6 @@
 
                 var_dump($response3);
                 
-                exit;
-                
                 $mensaje['ticket_rpta'] = $codRespuesta;
 
                 if($codRespuesta == '99'){
@@ -1383,6 +1356,9 @@
                     $mensaje['DocumentDescription'] = $doc_cdr->getElementsByTagName('DocumentDescription')->item(0)->nodeValue;
                     $mensaje['ruta_xml']            = $ruta_general.'FIRMA/'.$nombre_file.'.xml';
                     $mensaje['ruta_cdr']            = $ruta_general.'CDR/R-' .$nombre_file.'.xml';
+
+                    $this->GetImgQr($ruc, $nombre_file, $mensaje['DocumentDescription']);
+
                 }else{
                     $mensaje['cdr_hash']            = '';
                     $mensaje['cdr_msj_sunat']       = 'SUNAT FUERA DE SERVICIO';
@@ -1393,12 +1369,13 @@
             return $mensaje;
         }
 
-        private function GetImgQr($ruc, $serie, $numero, $DocumentDescription){
+        private function GetImgQr($ruc, $nombre_file, $DocumentDescription){
             require_once 'public/phpqrcode/qrlib.php';
             $textoQR = $DocumentDescription;
-            $nombreQR = $ruc.'-09-'.$serie.'-'.$numero;
+            $nombreQR = $nombre_file;
                 
             QRcode::png($textoQR, "public/documentos/guia_electronica/QR/".$nombreQR.".png", QR_ECLEVEL_L, 10, 2);
+
             return "public/documentos/guia_electronica/QR/{$nombreQR}.png";
         }
         
@@ -1596,7 +1573,7 @@
                                     </ext:UBLExtensions>
                                     <cbc:UBLVersionID>2.1</cbc:UBLVersionID>
                                     <cbc:CustomizationID>2.0</cbc:CustomizationID>
-                                    <cbc:ID>'.$serie.'-'.$header->serie_guia_sunat.'</cbc:ID>
+                                    <cbc:ID>'.$serie.'-'.$header->numero_guia_sunat.'</cbc:ID>
                                     <!--  FECHA Y HORA DE EMISION  -->
                                     <cbc:IssueDate>'.$header->fgemision.'</cbc:IssueDate>
                                     <cbc:IssueTime>'.date("H:i:s").'</cbc:IssueTime>
@@ -1847,6 +1824,31 @@
                 return false;
             }
         }
+
+         /*private function crearArchivoHash($ruta_archivo_cdr,$nombre_archivo,$hash){
+            file_put_contents($ruta_archivo_cdr . 'R-' . $nombre_archivo . '.ZIP', base64_decode($hash));
+
+            $zip = new ZipArchive;
+            if ($zip->open($ruta_archivo_cdr . 'R-' . $nombre_archivo . '.ZIP') === TRUE) {
+                $zip->extractTo($ruta_archivo_cdr);
+                $zip->close();
+            }
+
+            $doc_cdr = new DOMDocument();
+            $doc_cdr->load($ruta_archivo_cdr . 'R-' . $nombre_archivo . '.xml');
+                    
+            $mensaje['cdr_hash']            = $doc_cdr->getElementsByTagName('DigestValue')->item(0)->nodeValue;
+            $mensaje['cdr_msj_sunat']       = $doc_cdr->getElementsByTagName('Description')->item(0)->nodeValue;
+            $mensaje['cdr_ResponseCode']    = $doc_cdr->getElementsByTagName('ResponseCode')->item(0)->nodeValue;        
+            $mensaje['numerror']            = '';
+            $mensaje['DocumentDescription'] = $doc_cdr->getElementsByTagName('DocumentDescription')->item(0)->nodeValue;
+            $mensaje['ruta_xml']            = $ruta_archivo_cdr.'FIRMA/'.$nombre_archivo.'.xml';
+            $mensaje['ruta_cdr']            = $ruta_archivo_cdr.'CDR/R-' .$nombre_archivo.'.xml';
+
+            $this->GetImgQr("20504898173","T001","21",$mensaje['DocumentDescription']);
+
+            var_dump($mensaje);
+        }*/
 
     } 
 ?>
