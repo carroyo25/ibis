@@ -13,40 +13,46 @@
 
             try {
                 $sql = $this->db->connect()->query("SELECT
-                                                        alm_despachocab.cmes,
-                                                        DATE_FORMAT( alm_despachocab.ffecdoc, '%d/%m/%Y' ) AS ffecdoc,
-                                                        YEAR ( alm_despachocab.ffecdoc ) AS anio,
-                                                        alm_despachodet.nropedido AS orden,
-                                                        alm_despachodet.nroorden AS pedido,
-                                                        alm_despachocab.cnumguia,
-                                                        alm_despachocab.nEstadoDoc,
-                                                        alm_despachocab.id_regalm,
-                                                        UPPER( origen.cdesalm ) AS origen,
-                                                        UPPER( origen.ctipovia ) AS direccion_origen,
-                                                        UPPER( destino.cdesalm ) AS destino,
-                                                        UPPER( destino.ctipovia ) AS direccion_destino,
-                                                        lg_ordencab.cnumero,
-                                                        UPPER( CONCAT_WS( ' ', tb_proyectos.ccodproy, tb_proyectos.cdesproy ) ) AS costos
-                                                    FROM
-                                                        alm_despachocab
-                                                        INNER JOIN alm_despachodet ON alm_despachodet.id_regalm = alm_despachocab.id_regalm
-                                                        INNER JOIN tb_almacen AS origen ON alm_despachocab.ncodalm1 = origen.ncodalm
-                                                        INNER JOIN tb_almacen AS destino ON alm_despachocab.ncodalm2 = destino.ncodalm
-                                                        INNER JOIN tb_proyectos ON alm_despachocab.ncodpry = tb_proyectos.nidreg
-                                                        INNER JOIN tb_parametros ON alm_despachocab.nEstadoDoc = tb_parametros.nidreg
-                                                        INNER JOIN lg_ordencab ON lg_ordencab.id_regmov = alm_despachodet.nropedido 
-                                                    WHERE 
-                                                        alm_despachocab.nEstadoDoc = 62
-                                                    GROUP BY
-                                                        alm_despachocab.id_regalm 
-                                                    ORDER BY
-                                                        alm_despachocab.ffecdoc DESC 
-                                                    LIMIT 150");
+                                                    alm_despachocab.cmes,
+                                                    DATE_FORMAT( alm_despachocab.ffecdoc, '%d/%m/%Y' ) AS ffecdoc,
+                                                    YEAR ( alm_despachocab.ffecdoc ) AS anio,
+                                                    alm_despachodet.nropedido AS orden,
+                                                    alm_despachodet.nroorden AS pedido,
+                                                    alm_despachocab.cnumguia,
+                                                    alm_despachocab.nEstadoDoc,
+                                                    alm_despachocab.id_regalm,
+                                                    UPPER( origen.cdesalm ) AS origen,
+                                                    UPPER( origen.ctipovia ) AS direccion_origen,
+                                                    UPPER( destino.cdesalm ) AS destino,
+                                                    UPPER( destino.ctipovia ) AS direccion_destino,
+                                                    lg_ordencab.cnumero,
+                                                    UPPER( CONCAT_WS( ' ', tb_proyectos.ccodproy, tb_proyectos.cdesproy ) ) AS costos,
+                                                    lg_guias.ticketsunat,
+                                                    lg_guias.guiasunat,
+                                                    lg_guias.estadoSunat 
+                                                FROM
+                                                    alm_despachocab
+                                                    INNER JOIN alm_despachodet ON alm_despachodet.id_regalm = alm_despachocab.id_regalm
+                                                    INNER JOIN tb_almacen AS origen ON alm_despachocab.ncodalm1 = origen.ncodalm
+                                                    INNER JOIN tb_almacen AS destino ON alm_despachocab.ncodalm2 = destino.ncodalm
+                                                    INNER JOIN tb_proyectos ON alm_despachocab.ncodpry = tb_proyectos.nidreg
+                                                    INNER JOIN tb_parametros ON alm_despachocab.nEstadoDoc = tb_parametros.nidreg
+                                                    INNER JOIN lg_ordencab ON lg_ordencab.id_regmov = alm_despachodet.nropedido
+                                                    INNER JOIN lg_guias ON alm_despachocab.id_regalm = lg_guias.id_regalm 
+                                                WHERE
+                                                    alm_despachocab.nEstadoDoc = 62 
+                                                GROUP BY
+                                                    alm_despachocab.id_regalm 
+                                                ORDER BY
+                                                    alm_despachocab.ffecdoc DESC 
+                                                    LIMIT 300");
                 $sql->execute();
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()){
+                        $icono = $rs['estadoSunat'] !== null ? '<i class="far fa-check-circle"></i>' : "";
+
                         $salida .='<tr data-indice="'.$rs['id_regalm'].'" class="pointer">
                                         <td class="textoCentro">'.str_pad($rs['id_regalm'],6,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$rs['ffecdoc'].'</td>
@@ -57,6 +63,7 @@
                                         <td class="textoCentro">'.$rs['cnumguia'].'</td>
                                         <td class="textoCentro ">'.str_pad($rs['cnumero'],6,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro ">'.str_pad($rs['pedido'],6,0,STR_PAD_LEFT).'</td>
+                                        <td class="textoCentro" style="color:green;font-weight: bolder;font-size: 1rem;vertical-align: middle;">'.$icono.'</td>
                                     </tr>';
                     }
                 }
@@ -724,25 +731,17 @@
                                                     alm_despachocab.id_regalm,
                                                     alm_despachocab.ncodalm1,
                                                     alm_despachocab.ncodalm2,
-                                                    DATE_FORMAT(
-                                                        alm_despachocab.ffecdoc,
-                                                        '%d/%m/%Y'
-                                                    ) AS fecha_despacho,
+                                                    DATE_FORMAT( alm_despachocab.ffecdoc, '%d/%m/%Y' ) AS fecha_despacho,
                                                     alm_despachocab.ffecdoc,
+                                                    alm_despachocab.ffecenvio,
                                                     alm_despachocab.cnumguia,
                                                     alm_despachocab.ncodpry,
                                                     alm_despachocab.nEstadoDoc,
-                                                    UPPER(origen.cdesalm) AS origen,
-                                                    UPPER(origen.ctipovia) AS direccion_origen,
-                                                    UPPER(destino.cdesalm) AS destino,
-                                                    UPPER(destino.ctipovia) AS direccion_destino,
-                                                    UPPER(
-                                                        CONCAT_WS(
-                                                            ' ',
-                                                            tb_proyectos.ccodproy,
-                                                            tb_proyectos.cdesproy
-                                                        )
-                                                    ) AS costos,
+                                                    UPPER( origen.cdesalm ) AS origen,
+                                                    UPPER( origen.ctipovia ) AS direccion_origen,
+                                                    UPPER( destino.cdesalm ) AS destino,
+                                                    UPPER( destino.ctipovia ) AS direccion_destino,
+                                                    UPPER( CONCAT_WS( ' ', tb_proyectos.ccodproy, tb_proyectos.cdesproy ) ) AS costos,
                                                     alm_despachocab.id_userAprob,
                                                     tb_user.cnombres,
                                                     movimientos.nidreg,
@@ -751,16 +750,21 @@
                                                     origen.ncubigeo AS ubigeo_origen,
                                                     destino.ncubigeo AS ubigeo_destino,
                                                     origen.csunatalm AS sunat_origen,
-	                                                destino.csunatalm AS sunat_destino
+                                                    destino.csunatalm AS sunat_destino,
+                                                    origen.razonEnti AS nombre_entidad_origen,
+                                                    origen.rucEnti AS ruc_entidad_origen,
+                                                    destino.rucEnti AS ruc_entidad_destino,
+                                                    destino.razonEnti AS nombre_entidad_destino
                                                 FROM
                                                     alm_despachocab
-                                                INNER JOIN tb_almacen AS origen ON alm_despachocab.ncodalm1 = origen.ncodalm
-                                                INNER JOIN tb_almacen AS destino ON alm_despachocab.ncodalm2 = destino.ncodalm
-                                                INNER JOIN tb_proyectos ON alm_despachocab.ncodpry = tb_proyectos.nidreg
-                                                INNER JOIN tb_user ON alm_despachocab.id_userAprob = tb_user.iduser
-                                                INNER JOIN tb_parametros AS movimientos ON alm_despachocab.ntipmov = movimientos.nidreg
-                                                INNER JOIN tb_parametros AS estado ON alm_despachocab.nEstadoDoc = estado.nidreg
-                                                WHERE id_regalm = :indice");
+                                                    INNER JOIN tb_almacen AS origen ON alm_despachocab.ncodalm1 = origen.ncodalm
+                                                    INNER JOIN tb_almacen AS destino ON alm_despachocab.ncodalm2 = destino.ncodalm
+                                                    INNER JOIN tb_proyectos ON alm_despachocab.ncodpry = tb_proyectos.nidreg
+                                                    INNER JOIN tb_user ON alm_despachocab.id_userAprob = tb_user.iduser
+                                                    INNER JOIN tb_parametros AS movimientos ON alm_despachocab.ntipmov = movimientos.nidreg
+                                                    INNER JOIN tb_parametros AS estado ON alm_despachocab.nEstadoDoc = estado.nidreg 
+                                                WHERE
+                                                    id_regalm = :indice");
                 $sql->execute(["indice"=>$indice]);
                 $docData = array();
                 while($row=$sql->fetch(PDO::FETCH_ASSOC)){
@@ -1163,7 +1167,10 @@
                                                         lg_guias.fguia,
                                                         lg_guias.cobserva,
                                                         lg_guias.cdestinatario,
-                                                        lg_guias.cmotivo 
+                                                        lg_guias.cmotivo,
+                                                        lg_guias.guiasunat,
+                                                        lg_guias.ticketsunat,
+                                                        lg_guias.estadoSunat
                                                 FROM
                                                     lg_guias 
                                                 WHERE
@@ -1230,7 +1237,11 @@
 
             $path = "public/documentos/guia_electronica/";
 
-            $nombre_archivo = $header->destinatario_ruc.'-09-'.$header->serie_guia_sunat.'-'.$header->numero_guia_sunat;
+            if ( $header->tipo_documento == 1 ) {
+                $nombre_archivo = $header->destinatario_ruc.'-09-'.$header->serie_guia_sunat.'-'.$header->numero_guia_sunat;
+            }else {
+                $nombre_archivo = $header->destinatario_ruc.'-31-'.$header->serie_guia_sunat.'-'.$header->numero_guia_sunat;
+            }
 
             if(file_exists($path."XML/".$nombre_archivo.".xml")){
                 unlink($path."XML/".$nombre_archivo.".xml");  
@@ -1239,10 +1250,9 @@
             $token_access = $this->token('d12d8bf5-4b57-4c57-9569-9072b3e1bfcd', 'iLMGwQBEehJMXQ+Z/LR2KA==', '20504898173SISTEMA1', 'Lima123');
 
             $firma = $this->crear_files($path, $nombre_archivo, $header, $body );
+            
             $respuesta = $this->envio_xml($path.'FIRMA/', $nombre_archivo, $token_access);
             $numero_ticket = $respuesta->numTicket;
-
-            $this->actualizarTicketNumeroSunat($header->numero_guia,$numero_ticket,$header->numero_guia_sunat);
 
             var_dump($respuesta);
 
@@ -1250,20 +1260,30 @@
             $respuesta_ticket = $this->envio_ticket($path.'CDR/', $numero_ticket, $token_access, $header->destinatario_ruc, $nombre_archivo);
 
             var_dump($respuesta_ticket);
-            
-            exit;
-            
+
+            if ( $header->tipo_documento == 1 ) {
+                $this->actualizarTicketNumeroSunat($header->numero_guia,$numero_ticket,$header->numero_guia_sunat,$respuesta_ticket->cdr_ResponseCode);
+            }
+
             return array("archivo" => $nombre_archivo,"ticket" => $respuesta_ticket, "token" => $token_access);
 
-            $this->crearArchivoHash($path.'CDR/',$nombre_archivo,"");
         }
 
         private function crear_files($path,$nombre_archivo,$header,$body){
 
-            if ( $header->codigo_transporte == 257 && $header->codigo_modalidad == 255 )
-                $xml = $this->caso1($header, $body);
-            else if ( $header->codigo_transporte == 258 && $header->codigo_modalidad == 254 )
-                $xml = $this->caso2($header, $body);
+            if ($header->tipo_documento == 1) {
+                if ( $header->codigo_transporte == 257 && $header->codigo_modalidad == 254 ) //caso 1 TRASLADO ENTRE ALMACENES -TRANSPORTE PROPIO
+                    $xml = $this->caso1($header, $body);
+                else if ( $header->codigo_transporte == 258 && $header->codigo_modalidad == 254 ) //caso 2 TRASLADO ENTRE ALMACENES -TRANSPORTE TERCEROS
+                    $xml = $this->caso2($header, $body);
+                else if ( $header->codigo_transporte == 257 && $header->codigo_modalidad == 108 ) //caso 3 TRANSPORTE OBRA - TRANSPORTE PROPIO
+                    $xml = $this->caso3($header, $body);
+                else if ( $header->codigo_transporte == 257 && $header->codigo_modalidad == 255 ) //caso 3 TRANSPORTE OBRA - TRANSPORTE PROPIO
+                    $xml = $this->caso4($header, $body);
+            }else {
+                $xml = $this->guiaTransportista($header, $body);
+            }    
+           
 
             $archivo = fopen($path."XML/".$nombre_archivo.".xml", "w+");
             fwrite($archivo, utf8_decode($xml));
@@ -1390,7 +1410,7 @@
             return substr($cadena, 0, -1);
         }
 
-        //entre_almacenes propios -- transporte propio (PUCALLPA - LURIN - LIMA - PISCO)
+        //entre_almacenes propios -- transporte propio (PUCALLPA - LURIN - LIMA - PISCO)  
         private function caso1($header,$detalles){
             try {
                 $serie  = 'T001';
@@ -1555,7 +1575,7 @@
             }
         }
 
-        //entre_almacenes propios -- transporte transporte terceros (PUCALLPA - LURIN - LIMA - PISCO)
+        //entre_almacenes propios -- transporte transporte terceros (PUCALLPA - LURIN - LIMA - PISCO) ***OK
         private function caso2($header,$detalles){
             try {
                 $serie  = 'T001';
@@ -1706,10 +1726,496 @@
             }
         }
 
-        //otros motivos SEPCON - otras direcciones con RUC
+        //otros motivos SEPCON - otras direcciones con UBIGEO //KINTERONI //MIPAYA //MALVINAS - TRANSPORTE PROPIO OK
+        private function caso3($header,$detalles){
+            try {
+                $serie  = 'T001';
 
-        //otros motivos SEPCON - otras direcciones con UBIGEO
+                $xml =  '<?xml version="1.0" encoding="UTF-8"?>';
+                $xml .= '<DespatchAdvice xmlns="urn:oasis:names:specification:ubl:schema:xsd:DespatchAdvice-2" 
+                                    xmlns:ds="http://www.w3.org/2000/09/xmldsig#" 
+                                    xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" 
+                                    xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" 
+                                    xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2">
+                                    <ext:UBLExtensions>
+                                        <ext:UBLExtension>
+                                            <ext:ExtensionContent></ext:ExtensionContent>
+                                        </ext:UBLExtension>
+                                    </ext:UBLExtensions>
+                                    <cbc:UBLVersionID>2.1</cbc:UBLVersionID>
+                                    <cbc:CustomizationID>2.0</cbc:CustomizationID>
+                                    <cbc:ID>'.$serie.'-'.$header->numero_guia_sunat.'</cbc:ID>
+                                    <!--  FECHA Y HORA DE EMISION  -->
+                                    <cbc:IssueDate>'.$header->fgemision.'</cbc:IssueDate>
+                                    <cbc:IssueTime>'.date("H:i:s").'</cbc:IssueTime>
+                                    <cbc:DespatchAdviceTypeCode listAgencyName="PE:SUNAT" listName="Tipo de Documento" listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo01">09</cbc:DespatchAdviceTypeCode>
+                                    <cbc:Note>'.$header->observaciones.'</cbc:Note>
+                                    <!--  DOCUMENTOS ADICIONALES (Catalogo 41) -->
+                                    <cac:Signature>
+                                    <cbc:ID>'.$header->destinatario_ruc.'</cbc:ID>
+                                    <cac:SignatoryParty>
+                                        <cac:PartyIdentification>
+                                        <cbc:ID>'.$header->destinatario_ruc.'</cbc:ID>
+                                        </cac:PartyIdentification>
+                                    </cac:SignatoryParty>
+                                    <cac:DigitalSignatureAttachment>
+                                        <cac:ExternalReference>
+                                        <cbc:URI>'.$header->destinatario_ruc.'</cbc:URI>
+                                        </cac:ExternalReference>
+                                    </cac:DigitalSignatureAttachment>
+                                </cac:Signature>
+                                <!--  DATOS DEL EMISOR (REMITENTE)  -->
+                                <cac:DespatchSupplierParty>
+                                    <cac:Party>
+                                            <cac:PartyIdentification>
+                                                <cbc:ID schemeID="6" schemeName="Documento de Identidad" 
+                                                    schemeAgencyName="PE:SUNAT" 
+                                                    schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">'.$header->destinatario_ruc.'</cbc:ID>
+                                            </cac:PartyIdentification>
+                                            <cac:PartyLegalEntity>
+                                                <cbc:RegistrationName><![CDATA['.$header->destinatario_razon.']]></cbc:RegistrationName>
+                                            </cac:PartyLegalEntity>
+                                    </cac:Party>
+                                </cac:DespatchSupplierParty>
+                                <!--  DATOS DEL RECEPTOR (DESTINATARIO)  -->
+                                <cac:DeliveryCustomerParty>
+                                    <cac:Party>
+                                        <cac:PartyIdentification>
+                                            <cbc:ID schemeID="6" schemeName="Documento de Identidad" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">'.$header->destinatario_ruc.'</cbc:ID>
+                                        </cac:PartyIdentification>
+                                        <cac:PartyLegalEntity>
+                                            <cbc:RegistrationName><![CDATA['.$header->destinatario_razon.']]></cbc:RegistrationName>
+                                        </cac:PartyLegalEntity>
+                                    </cac:Party>
+                                </cac:DeliveryCustomerParty>
+                                <!-- DATOS DEL PROVEEDOR -->
+                                <!-- DATOS DEL TRASLADO -->
+                                <cac:Shipment>
+                                    <!-- ID OBLIGATORIO POR UBL -->
+                                    <cbc:ID>SUNAT_Envio</cbc:ID>
+                                    <!-- MOTIVO DEL TRASLADO -->
+                                        <cbc:HandlingCode 
+                                        listAgencyName="PE:SUNAT" 
+                                        listName="Motivo de traslado" 
+                                        listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo20">13</cbc:HandlingCode>
+                                        <cbc:HandlingInstructions>Otros (no especificados en los anteriores)</cbc:HandlingInstructions>
+                                    <!-- PESO BRUTO TOTAL DE LA CARGA-->
+                                    <cbc:GrossWeightMeasure unitCode="KGM">'.$header->peso.'</cbc:GrossWeightMeasure>
+                                    <cac:ShipmentStage>
+                                        <!-- MODALIDAD DE TRASLADO  -->
+                                        <cbc:TransportModeCode listName="Modalidad de traslado" listAgencyName="PE:SUNAT" listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo18">02</cbc:TransportModeCode>
+                                        <!-- FECHA DE INICIO DEL TRASLADO o FECHA DE ENTREGA DE BIENES AL TRANSPORTISTA -->
+                                        <cac:TransitPeriod>
+                                            <cbc:StartDate>'.$header->ftraslado.'</cbc:StartDate>
+                                        </cac:TransitPeriod>
+                                         <!-- PLACA DEL VEHICULO -->
+                                        <cac:TransportMeans>
+                                            <cac:RoadTransport>
+                                            <cbc:LicensePlateID>'.$header->placa.'</cbc:LicensePlateID>
+                                            </cac:RoadTransport>
+                                        </cac:TransportMeans>
+                                        <!-- CONDUCTOR PRINCIPAL -->
+                                        <cac:DriverPerson>
+                                            <!-- TIPO Y NUMERO DE DOCUMENTO DE IDENTIDAD -->
+                                            <cbc:ID schemeID="1" schemeName="Documento de Identidad" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">'.$header->conductor_dni.'</cbc:ID>
+                                            <!-- NOMBRES -->
+                                            <cbc:FirstName>'.$header->nombre_conductor.'</cbc:FirstName>
+                                            <!-- APELLIDOS -->
+                                            <cbc:FamilyName>'.$header->nombre_conductor.'</cbc:FamilyName>
+                                            <!-- TIPO DE CONDUCTOR: PRINCIPAL -->
+                                            <cbc:JobTitle>Principal</cbc:JobTitle>
+                                            <cac:IdentityDocumentReference>
+                                                <!-- LICENCIA DE CONDUCIR -->
+                                                <cbc:ID>'.$header->licencia_conducir.'</cbc:ID>
+                                            </cac:IdentityDocumentReference>
+                                        </cac:DriverPerson>
+                                    </cac:ShipmentStage>
+                                    <cac:Delivery>
+                                        <!-- DIRECCION DEL PUNTO DE LLEGADA -->
+                                        <cac:DeliveryAddress>
+                                            <!--  UBIGEO DE LLEGADA  -->
+                                            <cbc:ID schemeName="Ubigeos" schemeAgencyName="PE:INEI">'.$header->ubig_destino.'</cbc:ID>
+                                            <!--  DIRECCION COMPLETA Y DETALLADA DE LLEGADA  -->
+                                            <cac:AddressLine>
+                                                <cbc:Line>'.utf8_encode($header->almacen_destino_direccion).'</cbc:Line>
+                                            </cac:AddressLine>
+                                        </cac:DeliveryAddress>
+                                        <cac:Despatch>
+                                            <!-- DIRECCION DEL PUNTO DE PARTIDA -->
+                                            <cac:DespatchAddress>
+                                                <!-- UBIGEO DE PARTIDA -->
+                                                <cbc:ID schemeName="Ubigeos" schemeAgencyName="PE:INEI">'.$header->ubig_origen.'</cbc:ID>
+                                                <!-- CODIGO DE ESTABLECIMIENTO ANEXO DE PARTIDA -->
+                                                <cbc:AddressTypeCode listID="20504898173" listAgencyName="PE:SUNAT" listName="Establecimientos anexos">'.$header->cso.'</cbc:AddressTypeCode>
+                                                <!-- DIRECCION COMPLETA Y DETALLADA DE PARTIDA -->
+                                                <cac:AddressLine>
+                                                    <cbc:Line>'.utf8_encode($header->almacen_origen_direccion).'</cbc:Line>
+                                                </cac:AddressLine>
+                                            </cac:DespatchAddress>
+                                        </cac:Despatch>
+                                    </cac:Delivery>
+                                    <cac:TransportHandlingUnit>
+                                    <cac:TransportEquipment>
+                                    <!--  VEHICULO PRINCIPAL  -->
+                                    <!--  PLACA - VEHICULO PRINCIPAL  -->
+                                        <cbc:ID>'.$header->placa.'</cbc:ID>
+                                    </cac:TransportEquipment>
+                                    </cac:TransportHandlingUnit>
+                                </cac:Shipment>';
+                $i = 1;
 
+                foreach($detalles as $detalle){
+                    $xml.='<!-- DETALLES DE BIENES A TRASLADAR -->
+                               <cac:DespatchLine>
+                                    <cbc:ID>'.$i.'</cbc:ID>
+                                    <cbc:DeliveredQuantity unitCode="'.$detalle->unidad.'" unitCodeListID="UN/ECE rec 20" unitCodeListAgencyName="United Nations Economic Commission for Europe">'.$detalle->cantidad.'</cbc:DeliveredQuantity>
+                                    <cac:OrderLineReference>
+                                        <cbc:LineID>'.$i.'</cbc:LineID>
+                                    </cac:OrderLineReference>
+                                    <cac:Item>
+                                    <cbc:Description>'.utf8_encode($detalle->descripcion).'</cbc:Description>
+                                    <cac:SellersItemIdentification>
+                                        <cbc:ID>'.$detalle->codigo.'</cbc:ID>
+                                    </cac:SellersItemIdentification>
+                                    </cac:Item>
+                                </cac:DespatchLine>';
+                    $i++;
+                }
+           
+                $xml.=  '</DespatchAdvice>';
+
+                return $xml;
+
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        //otros motivos SEPCON - OTROS ALMACENES - TRANSPORTE TRANSPORTE TERCEROS
+        private function caso4($header,$detalles){
+            try {
+                $serie  = 'T001';
+
+                $xml =  '<?xml version="1.0" encoding="UTF-8"?>';
+                $xml .= '<DespatchAdvice xmlns="urn:oasis:names:specification:ubl:schema:xsd:DespatchAdvice-2" 
+                                    xmlns:ds="http://www.w3.org/2000/09/xmldsig#" 
+                                    xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" 
+                                    xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" 
+                                    xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2">
+                                    <ext:UBLExtensions>
+                                        <ext:UBLExtension>
+                                            <ext:ExtensionContent></ext:ExtensionContent>
+                                        </ext:UBLExtension>
+                                    </ext:UBLExtensions>
+                                    <cbc:UBLVersionID>2.1</cbc:UBLVersionID>
+                                    <cbc:CustomizationID>2.0</cbc:CustomizationID>
+                                    <cbc:ID>'.$serie.'-'.$header->numero_guia_sunat.'</cbc:ID>
+                                    <!--  FECHA Y HORA DE EMISION  -->
+                                    <cbc:IssueDate>'.$header->fgemision.'</cbc:IssueDate>
+                                    <cbc:IssueTime>'.date("H:i:s").'</cbc:IssueTime>
+                                    <cbc:DespatchAdviceTypeCode listAgencyName="PE:SUNAT" listName="Tipo de Documento" listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo01">09</cbc:DespatchAdviceTypeCode>
+                                    <cbc:Note>'.$header->observaciones.'</cbc:Note>
+                                    <!--  DOCUMENTOS ADICIONALES (Catalogo 41) -->
+                                    <cac:Signature>
+                                    <cbc:ID>'.$header->destinatario_ruc.'</cbc:ID>
+                                    <cac:SignatoryParty>
+                                        <cac:PartyIdentification>
+                                        <cbc:ID>'.$header->destinatario_ruc.'</cbc:ID>
+                                        </cac:PartyIdentification>
+                                    </cac:SignatoryParty>
+                                    <cac:DigitalSignatureAttachment>
+                                        <cac:ExternalReference>
+                                        <cbc:URI>'.$header->destinatario_ruc.'</cbc:URI>
+                                        </cac:ExternalReference>
+                                    </cac:DigitalSignatureAttachment>
+                                </cac:Signature>
+                                <!--  DATOS DEL EMISOR (REMITENTE)  -->
+                                <cac:DespatchSupplierParty>
+                                    <cac:Party>
+                                            <cac:PartyIdentification>
+                                                <cbc:ID schemeID="6" schemeName="Documento de Identidad" 
+                                                    schemeAgencyName="PE:SUNAT" 
+                                                    schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">'.$header->destinatario_ruc.'</cbc:ID>
+                                            </cac:PartyIdentification>
+                                            <cac:PartyLegalEntity>
+                                                <cbc:RegistrationName><![CDATA['.$header->destinatario_razon.']]></cbc:RegistrationName>
+                                            </cac:PartyLegalEntity>
+                                    </cac:Party>
+                                </cac:DespatchSupplierParty>
+                                <!--  DATOS DEL RECEPTOR (DESTINATARIO)  -->
+                                <cac:DeliveryCustomerParty>
+                                    <cac:Party>
+                                        <cac:PartyIdentification>
+                                            <cbc:ID schemeID="6" schemeName="Documento de Identidad" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">'.$header->ruc_entidad_destino.'</cbc:ID>
+                                        </cac:PartyIdentification>
+                                        <cac:PartyLegalEntity>
+                                            <cbc:RegistrationName><![CDATA['.$header->ruc_entidad_destino.']]></cbc:RegistrationName>
+                                        </cac:PartyLegalEntity>
+                                    </cac:Party>
+                                </cac:DeliveryCustomerParty>
+                                <!-- DATOS DEL PROVEEDOR -->
+                                <!-- DATOS DEL TRASLADO -->
+                                <cac:Shipment>
+                                    <!-- ID OBLIGATORIO POR UBL -->
+                                    <cbc:ID>SUNAT_Envio</cbc:ID>
+                                    <!-- MOTIVO DEL TRASLADO -->
+                                        <cbc:HandlingCode 
+                                        listAgencyName="PE:SUNAT" 
+                                        listName="Motivo de traslado" 
+                                        listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo20">13</cbc:HandlingCode>
+                                        <cbc:HandlingInstructions>Otros (no especificados en los anteriores)</cbc:HandlingInstructions>
+                                    <!-- PESO BRUTO TOTAL DE LA CARGA-->
+                                    <cbc:GrossWeightMeasure unitCode="KGM">'.$header->peso.'</cbc:GrossWeightMeasure>
+                                    <cac:ShipmentStage>
+                                        <!-- MODALIDAD DE TRASLADO  -->
+                                        <cbc:TransportModeCode listName="Modalidad de traslado" listAgencyName="PE:SUNAT" listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo18">02</cbc:TransportModeCode>
+                                        <!-- FECHA DE INICIO DEL TRASLADO o FECHA DE ENTREGA DE BIENES AL TRANSPORTISTA -->
+                                        <cac:TransitPeriod>
+                                            <cbc:StartDate>'.$header->ftraslado.'</cbc:StartDate>
+                                        </cac:TransitPeriod>
+                                         <!-- PLACA DEL VEHICULO -->
+                                        <cac:TransportMeans>
+                                            <cac:RoadTransport>
+                                            <cbc:LicensePlateID>'.$header->placa.'</cbc:LicensePlateID>
+                                            </cac:RoadTransport>
+                                        </cac:TransportMeans>
+                                        <!-- CONDUCTOR PRINCIPAL -->
+                                        <cac:DriverPerson>
+                                            <!-- TIPO Y NUMERO DE DOCUMENTO DE IDENTIDAD -->
+                                            <cbc:ID schemeID="1" schemeName="Documento de Identidad" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">'.$header->conductor_dni.'</cbc:ID>
+                                            <!-- NOMBRES -->
+                                            <cbc:FirstName>'.$header->nombre_conductor.'</cbc:FirstName>
+                                            <!-- APELLIDOS -->
+                                            <cbc:FamilyName>'.$header->nombre_conductor.'</cbc:FamilyName>
+                                            <!-- TIPO DE CONDUCTOR: PRINCIPAL -->
+                                            <cbc:JobTitle>Principal</cbc:JobTitle>
+                                            <cac:IdentityDocumentReference>
+                                                <!-- LICENCIA DE CONDUCIR -->
+                                                <cbc:ID>'.$header->licencia_conducir.'</cbc:ID>
+                                            </cac:IdentityDocumentReference>
+                                        </cac:DriverPerson>
+                                    </cac:ShipmentStage>
+                                    <cac:Delivery>
+                                        <!-- DIRECCION DEL PUNTO DE LLEGADA -->
+                                        <cac:DeliveryAddress>
+                                            <!--  UBIGEO DE LLEGADA  -->
+                                            <cbc:ID schemeName="Ubigeos" schemeAgencyName="PE:INEI">'.$header->ubig_destino.'</cbc:ID>
+                                            <!--  CODIGO DE ESTABLECIMIENTO ANEXO DE LLEGADA  -->
+                                            <cbc:AddressTypeCode listID="'.$header->ruc_entidad_destino.'" listAgencyName="PE:SUNAT" listName="Establecimientos anexos">22</cbc:AddressTypeCode>
+                                            <!--  DIRECCION COMPLETA Y DETALLADA DE LLEGADA  -->
+                                            <cac:AddressLine>
+                                                <cbc:Line>'.utf8_encode($header->almacen_destino_direccion).'</cbc:Line>
+                                            </cac:AddressLine>
+                                        </cac:DeliveryAddress>
+                                        <cac:Despatch>
+                                            <!-- DIRECCION DEL PUNTO DE PARTIDA -->
+                                            <cac:DespatchAddress>
+                                                <!-- UBIGEO DE PARTIDA -->
+                                                <cbc:ID schemeName="Ubigeos" schemeAgencyName="PE:INEI">'.$header->ubig_origen.'</cbc:ID>
+                                                <!-- CODIGO DE ESTABLECIMIENTO ANEXO DE PARTIDA -->
+                                                <cbc:AddressTypeCode listID="20504898173" listAgencyName="PE:SUNAT" listName="Establecimientos anexos">'.$header->cso.'</cbc:AddressTypeCode>
+                                                <!-- DIRECCION COMPLETA Y DETALLADA DE PARTIDA -->
+                                                <cac:AddressLine>
+                                                    <cbc:Line>'.utf8_encode($header->almacen_origen_direccion).'</cbc:Line>
+                                                </cac:AddressLine>
+                                            </cac:DespatchAddress>
+                                        </cac:Despatch>
+                                    </cac:Delivery>
+                                    <cac:TransportHandlingUnit>
+                                    <cac:TransportEquipment>
+                                    <!--  VEHICULO PRINCIPAL  -->
+                                    <!--  PLACA - VEHICULO PRINCIPAL  -->
+                                        <cbc:ID>'.$header->placa.'</cbc:ID>
+                                    </cac:TransportEquipment>
+                                    </cac:TransportHandlingUnit>
+                                </cac:Shipment>';
+                $i = 1;
+
+                foreach($detalles as $detalle){
+                    $xml.='<!-- DETALLES DE BIENES A TRASLADAR -->
+                               <cac:DespatchLine>
+                                    <cbc:ID>'.$i.'</cbc:ID>
+                                    <cbc:DeliveredQuantity unitCode="'.$detalle->unidad.'" unitCodeListID="UN/ECE rec 20" unitCodeListAgencyName="United Nations Economic Commission for Europe">'.$detalle->cantidad.'</cbc:DeliveredQuantity>
+                                    <cac:OrderLineReference>
+                                        <cbc:LineID>'.$i.'</cbc:LineID>
+                                    </cac:OrderLineReference>
+                                    <cac:Item>
+                                    <cbc:Description>'.utf8_encode($detalle->descripcion).'</cbc:Description>
+                                    <cac:SellersItemIdentification>
+                                        <cbc:ID>'.$detalle->codigo.'</cbc:ID>
+                                    </cac:SellersItemIdentification>
+                                    </cac:Item>
+                                </cac:DespatchLine>';
+                    $i++;
+                }
+           
+                $xml.=  '</DespatchAdvice>';
+
+                return $xml;
+
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        private function guiaTransportista($header,$detalles){
+            try {
+                $serie  = 'T001';
+
+                $xml =  '<?xml version="1.0" encoding="UTF-8"?>';
+                $xml .= '<DespatchAdvice xmlns="urn:oasis:names:specification:ubl:schema:xsd:DespatchAdvice-2" 
+                                    xmlns:ds="http://www.w3.org/2000/09/xmldsig#" 
+                                    xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" 
+                                    xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" 
+                                    xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2">
+                                    <ext:UBLExtensions>
+                                        <ext:UBLExtension>
+                                            <ext:ExtensionContent></ext:ExtensionContent>
+                                        </ext:UBLExtension>
+                                    </ext:UBLExtensions>
+                                    <cbc:UBLVersionID>2.1</cbc:UBLVersionID>
+                                    <cbc:CustomizationID>2.0</cbc:CustomizationID>
+                                    <cbc:ID>'.$serie.'-'.$header->numero_guia_sunat.'</cbc:ID>
+                                    <!--  FECHA Y HORA DE EMISION  -->
+                                    <cbc:IssueDate>'.$header->fgemision.'</cbc:IssueDate>
+                                    <cbc:IssueTime>'.date("H:i:s").'</cbc:IssueTime>
+                                    <cbc:DespatchAdviceTypeCode listAgencyName="PE:SUNAT" listName="Tipo de Documento" listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo01">31</cbc:DespatchAdviceTypeCode>
+                                    <cbc:Note>'.$header->observaciones.'</cbc:Note>
+                                    <!--  DOCUMENTOS ADICIONALES (Catalogo D41) -->
+                                    <cac:AdditionalDocumentReference>
+                                        <cbc:ID>'.$serie.'-'.$header->numero_guia_sunat.'</cbc:ID>
+                                        <cbc:DocumentTypeCode listAgencyName="PE:SUNAT" listName="Documento relacionado al transporte" listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo61">09</cbc:DocumentTypeCode>
+                                        <cbc:DocumentType>'.utf8_encode("Guía de Remisión Remitente").'</cbc:DocumentType>
+                                        <cac:IssuerParty>
+                                        <cac:PartyIdentification>
+                                        <cbc:ID schemeID="6" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">'.$header->destinatario_ruc.'</cbc:ID>
+                                        </cac:PartyIdentification>
+                                        </cac:IssuerParty>
+                                    </cac:AdditionalDocumentReference>
+                                    <cac:Signature>
+                                    <cbc:ID>'.$header->destinatario_ruc.'</cbc:ID>
+                                    <cac:SignatoryParty>
+                                        <cac:PartyIdentification>
+                                        <cbc:ID>'.$header->destinatario_ruc.'</cbc:ID>
+                                        </cac:PartyIdentification>
+                                    </cac:SignatoryParty>
+                                    <cac:DigitalSignatureAttachment>
+                                        <cac:ExternalReference>
+                                        <cbc:URI>'.$header->destinatario_ruc.'</cbc:URI>
+                                        </cac:ExternalReference>
+                                    </cac:DigitalSignatureAttachment>
+                                </cac:Signature>
+                                <!--  DATOS DEL EMISOR (TRANSPORTISTA)  -->
+                                <cac:DespatchSupplierParty>
+                                    <cac:Party>
+                                        <cac:PartyIdentification>
+                                            <cbc:ID schemeID="6" schemeName="Documento de Identidad" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">'.$header->destinatario_ruc.'</cbc:ID>
+                                        </cac:PartyIdentification>
+                                        <cac:PartyLegalEntity>
+                                            <cbc:RegistrationName><![CDATA['.$header->destinatario_razon.']]></cbc:RegistrationName>
+                                        </cac:PartyLegalEntity>
+                                    </cac:Party>
+                                </cac:DespatchSupplierParty>
+                                <!--  DATOS DEL RECEPTOR (DESTINATARIO)  -->
+                                <cac:DeliveryCustomerParty>
+                                    <cac:Party>
+                                        <cac:PartyIdentification>
+                                            <cbc:ID schemeID="6" schemeName="Documento de Identidad" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">'.$header->ruc_entidad_destino.'</cbc:ID>
+                                        </cac:PartyIdentification>
+                                        <cac:PartyLegalEntity>
+                                            <cbc:RegistrationName><![CDATA['.$header->nombre_entidad_destino.']]></cbc:RegistrationName>
+                                        </cac:PartyLegalEntity>
+                                    </cac:Party>
+                                </cac:DeliveryCustomerParty>
+                                <!-- DATOS DEL PROVEEDOR -->
+                                <!-- DATOS DEL TRASLADO -->
+                                <cac:Shipment>
+                                    <!-- ID OBLIGATORIO POR UBL -->
+                                    <cbc:ID>SUNAT_Envio</cbc:ID>
+                                    <!-- MOTIVO DEL TRASLADO -->
+                                    <!-- PESO BRUTO TOTAL DE LA CARGA-->
+                                    <cbc:GrossWeightMeasure unitCode="KGM">'.$header->peso.'</cbc:GrossWeightMeasure>
+                                    <cac:ShipmentStage>
+                                        <!-- MODALIDAD DE TRASLADO  -->
+                                        <!-- FECHA DE INICIO DEL TRASLADO o FECHA DE ENTREGA DE BIENES AL TRANSPORTISTA -->
+                                        <cac:TransitPeriod>
+                                            <cbc:StartDate>'.$header->ftraslado.'</cbc:StartDate>
+                                        </cac:TransitPeriod>
+                                        <!--  DATOS DEL TRANSPORTISTA  -->
+                                        <cac:CarrierParty>
+                                            <!--  AUTORIZACIONES ESPECIALES  -->
+                                                <cac:PartyLegalEntity>
+                                            <!--  NUMERO DE REGISTRO DEL MTC  -->
+                                                <cbc:CompanyID>1530139CNG</cbc:CompanyID>
+                                            </cac:PartyLegalEntity>
+                                        </cac:CarrierParty>
+                                        <!-- CONDUCTOR PRINCIPAL -->
+                                        <cac:DriverPerson>
+                                            <!-- TIPO Y NUMERO DE DOCUMENTO DE IDENTIDAD -->
+                                            <cbc:ID schemeID="1" schemeName="Documento de Identidad" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">'.$header->conductor_dni.'</cbc:ID>
+                                            <!-- NOMBRES -->
+                                            <cbc:FirstName>'.$header->nombre_conductor.'</cbc:FirstName>
+                                            <!-- APELLIDOS -->
+                                            <cbc:FamilyName>'.$header->nombre_conductor.'</cbc:FamilyName>
+                                            <!-- TIPO DE CONDUCTOR: PRINCIPAL -->
+                                            <cbc:JobTitle>Principal</cbc:JobTitle>
+                                            <cac:IdentityDocumentReference>
+                                                <!-- LICENCIA DE CONDUCIR -->
+                                                <cbc:ID>'.$header->licencia_conducir.'</cbc:ID>
+                                            </cac:IdentityDocumentReference>
+                                        </cac:DriverPerson>
+                                    </cac:ShipmentStage>
+                                    <cac:Delivery>
+                                        <!-- DIRECCION DEL PUNTO DE LLEGADA -->
+                                        <cac:DeliveryAddress>
+                                            <!--  UBIGEO DE LLEGADA  -->
+                                            <cbc:ID schemeName="Ubigeos" schemeAgencyName="PE:INEI">'.$header->ubig_destino.'</cbc:ID>
+                                            <!--  DIRECCION COMPLETA Y DETALLADA DE LLEGADA  -->
+                                            <cac:AddressLine>
+                                                <cbc:Line>'.utf8_encode($header->almacen_destino_direccion).'</cbc:Line>
+                                            </cac:AddressLine>
+                                        </cac:DeliveryAddress>
+                                        <cac:Despatch>
+                                            <!-- DIRECCION DEL PUNTO DE PARTIDA -->
+                                            <cac:DespatchAddress>
+                                                <!-- UBIGEO DE PARTIDA -->
+                                                <cbc:ID schemeName="Ubigeos" schemeAgencyName="PE:INEI">'.$header->ubig_origen.'</cbc:ID>
+                                                <!-- DIRECCION COMPLETA Y DETALLADA DE PARTIDA -->
+                                                <cac:AddressLine>
+                                                    <cbc:Line>'.utf8_encode($header->almacen_origen_direccion).'</cbc:Line>
+                                                </cac:AddressLine>
+                                            </cac:DespatchAddress>
+                                            <!--  DATOS DEL REMITENTE  -->
+                                                    <cac:DespatchParty>
+                                                    <cac:PartyIdentification>
+                                                    <cbc:ID schemeID="6" schemeName="Documento de Identidad" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">20504898173</cbc:ID>
+                                                    </cac:PartyIdentification>
+                                                    <cac:PartyLegalEntity>
+                                                    <cbc:RegistrationName>SERVICIOS PETROLEROS Y CONSTRUCCIONES SEPCON S.A.C.</cbc:RegistrationName>
+                                                    </cac:PartyLegalEntity>
+                                                    </cac:DespatchParty>
+                                        </cac:Despatch>
+                                    </cac:Delivery>
+                                    <cac:TransportHandlingUnit>
+                                    <cac:TransportEquipment>
+                                    <!--  VEHICULO PRINCIPAL  -->
+                                    <!--  PLACA - VEHICULO PRINCIPAL  -->
+                                        <cbc:ID>'.$header->placa.'</cbc:ID>
+                                    </cac:TransportEquipment>
+                                    </cac:TransportHandlingUnit>
+                                </cac:Shipment>';
+               
+                $xml.=  '</DespatchAdvice>';
+
+                return $xml;
+
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
 
         private function token($client_id, $client_secret, $usuario_secundario, $usuario_password){
             $url = "https://api-seguridad.sunat.gob.pe/v1/clientessol/".$client_id."/oauth2/token/";
@@ -1810,45 +2316,20 @@
             }
         }
 
-        private function actualizarTicketNumeroSunat($guiainterna,$ticket,$guiaSunat){
+        private function actualizarTicketNumeroSunat($guiainterna,$ticket,$guiaSunat,$codigo_respuesta){
             try {
                 $sql = $this->db->connect()->prepare("UPDATE lg_guias 
                                                       SET lg_guias.ticketsunat = :ticket, 
-                                                          lg_guias.guiasunat = :guiaSunat
+                                                          lg_guias.guiasunat = :guiaSunat,
+
                                                       WHERE lg_guias.cnumguia = :guiainterna");
 
-                $sql->execute(["guiainterna"=>$guiainterna,"ticket"=>$ticket,"guiaSunat"=>$guiaSunat]);
+                $sql->execute(["guiainterna"=>$guiainterna,"ticket"=>$ticket,"guiaSunat"=>$guiaSunat,"codigo"=>$codigo_respuesta]);
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;
             }
         }
-
-         /*private function crearArchivoHash($ruta_archivo_cdr,$nombre_archivo,$hash){
-            file_put_contents($ruta_archivo_cdr . 'R-' . $nombre_archivo . '.ZIP', base64_decode($hash));
-
-            $zip = new ZipArchive;
-            if ($zip->open($ruta_archivo_cdr . 'R-' . $nombre_archivo . '.ZIP') === TRUE) {
-                $zip->extractTo($ruta_archivo_cdr);
-                $zip->close();
-            }
-
-            $doc_cdr = new DOMDocument();
-            $doc_cdr->load($ruta_archivo_cdr . 'R-' . $nombre_archivo . '.xml');
-                    
-            $mensaje['cdr_hash']            = $doc_cdr->getElementsByTagName('DigestValue')->item(0)->nodeValue;
-            $mensaje['cdr_msj_sunat']       = $doc_cdr->getElementsByTagName('Description')->item(0)->nodeValue;
-            $mensaje['cdr_ResponseCode']    = $doc_cdr->getElementsByTagName('ResponseCode')->item(0)->nodeValue;        
-            $mensaje['numerror']            = '';
-            $mensaje['DocumentDescription'] = $doc_cdr->getElementsByTagName('DocumentDescription')->item(0)->nodeValue;
-            $mensaje['ruta_xml']            = $ruta_archivo_cdr.'FIRMA/'.$nombre_archivo.'.xml';
-            $mensaje['ruta_cdr']            = $ruta_archivo_cdr.'CDR/R-' .$nombre_archivo.'.xml';
-
-            $this->GetImgQr("20504898173","T001","21",$mensaje['DocumentDescription']);
-
-            var_dump($mensaje);
-        }*/
-
     } 
 ?>

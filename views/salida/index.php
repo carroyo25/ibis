@@ -213,8 +213,12 @@
                 <input type="hidden" name="ubig_destino" id="ubig_destino">
                 <input type="hidden" name="cso" id="cso">
                 <input type="hidden" name="csd" id="csd">
-                <input type="hidden" name="codigo_ubigeo" id="codigo_ubigeo" value="01">
-
+                <input type="hidden" name="codigo_ubigeo" id="codigo_ubigeo">
+                <input type="hidden" name="nombre_entidad_origen" id="nombre_entidad_origen">
+                <input type="hidden" name="ruc_entidad_origen" id="ruc_entidad_origen">
+                <input type="hidden" name="nombre_entidad_destino" id="nombre_entidad_destino">
+                <input type="hidden" name="ruc_entidad_destino" id="ruc_entidad_destino">
+                <input type="hidden" name="ticket_sunat" id="ticket_sunat">
                 <div class="tituloDocumento">
                     <div>
                         <p class="titulo_seccion"><strong> Guia de Remision Interna : </strong></p>
@@ -249,9 +253,9 @@
                                 <label for="tipo_documento">Tipo Guia:</label>
                                 <select name="tipo_documento" id="tipo_documento">
                                     <option value="1">DESTINATARIO</option>
-                                    <option value="2">REMITENTE</option>
+                                    <option value="2" style="display:none;">REMITENTE</option>
                                     <option value="3">TRANSPORTISTA</option>
-                                    <option value="4">SUNAT</option>
+                                    <option value="4" style="display:none;">SUNAT</option>
                                 </select>
                             </div>
                         </div>
@@ -535,6 +539,7 @@
                     <th>Guia</br>Remision</th>
                     <th>Orden</th>
                     <th>Pedido</th>
+                    <th>Envio Sunat</th>
                 </tr>
             </thead>
             <tbody>

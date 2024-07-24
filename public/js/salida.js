@@ -33,6 +33,7 @@ $(function() {
                 $("#almacen_origen_despacho,#almacen_origen").val(data.cabecera[0].origen);
                 $("#almacen_destino_despacho,#almacen_destino").val(data.cabecera[0].destino);
                 $("#fecha").val(data.cabecera[0].ffecdoc);
+                $("#ftraslado").val(data.cabecera[0].ffecenvio);
                 $("#numero").val(numero);
                 $("#costos").val(data.cabecera[0].costos);
                 $("#ruc").val(data.cabecera[0].cnumdoc);
@@ -48,6 +49,12 @@ $(function() {
                 $("#ubigeo_destino").val(data.cabecera[0].ubigeo_destino);
                 $("#codigo_origen_sunat").val(data.cabecera[0].sunat_origen);
                 $("#codigo_destino_sunat").val(data.cabecera[0].sunat_destino);
+
+                $("#nombre_entidad_origen").val(data.cabecera[0].nombre_entidad_origen);
+                $("#ruc_entidad_origen").val(data.cabecera[0].ruc_entidad_origen);
+
+                $("#nombre_entidad_destino").val(data.cabecera[0].nombre_entidad_destino);
+                $("#ruc_entidad_destino").val(data.cabecera[0].ruc_entidad_destino);
 
                 $("#ubig_origen").val(data.cabecera[0].ubigeo_origen);
                 $("#ubig_destino").val(data.cabecera[0].ubigeo_destino);
@@ -79,7 +86,8 @@ $(function() {
                     $("#placa").val(data.guias[0].cplaca);
                     $("#cso").val(data.cabecera[0].sunat_origen);
                     $("#csd").val(data.cabecera[0].sunat_destino);
-                    
+                    $("#numero_guia_sunat").val(data.guias[0].guiasunat); 
+                    $("#ticket_sunat").val(data.guias[0].ticketsunat);
                 }
                 
                 $("#estado")
@@ -768,12 +776,18 @@ $(function() {
             if ( result['codigo_transporte'] == 258 && result['direccion_proveedor'] == "") throw new Error("Registre la direccion del transportista");
             if ( result['codigo_transporte'] == 258 && result['ruc_proveedor'] == "") throw new Error("Registre el RUC del transportista");
 
-            fetch(RUTA+"salida/numeroSunat")
-            .then(response => response.text())
-            .then(data =>{
-                $("#numero_guia_sunat").val(data);
+            if ( $("#ticket_sunat" ).val() === "" ) {
+                fetch(RUTA+"salida/numeroSunat")
+                .then(response => response.text())
+                .then(data =>{
+                    $("#numero_guia_sunat").val(data);
+                    $("#aviso").fadeIn();
+                });
+            }else{
                 $("#aviso").fadeIn();
-            });
+            }
+
+           
 
         } catch (error) {
             mostrarMensaje(error.message,"mensaje_error");
@@ -804,7 +818,7 @@ $(function() {
             contentType:false,      
             processData:false,
             success: function (data) {
-                console.log(data);
+                $("#aviso").fadeOut();
             }
         });
         
