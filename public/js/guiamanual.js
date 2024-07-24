@@ -148,7 +148,7 @@ $(function() {
         return false;
     });
 
-    $(".lista").on("click",'a', function (e) {
+    /*$(".lista").on("click",'a', function (e) {
         e.preventDefault();
 
         let control = $(this).parent().parent().parent();
@@ -204,6 +204,74 @@ $(function() {
             $("#direccion_proveedor").val($(this).data("direccion"));
         }else if(contenedor_padre == "listaCostos"){
             $("#codigo_costos").val(codigo);
+        }
+
+        return false;
+    });*/
+
+    $(".lista").on("click",'a', function (e) {
+        e.preventDefault();
+
+        let control = $(this).parent().parent().parent();
+        let destino = $(this).parent().parent().parent().prev();
+        let contenedor_padre = $(this).parent().parent().parent().attr("id");
+        let id = "";
+        let codigo = $(this).attr("href");
+        
+        control.slideUp()
+
+        destino.val($(this).text());
+        id = destino.attr("id");
+
+        if(contenedor_padre == "listaMovimiento"){
+            $("#codigo_movimiento").val(codigo);
+        }else if(contenedor_padre == "listaAprueba"){
+            $("#codigo_aprueba").val(codigo);
+            $("#autoriza").val($(this).text());
+        }else if(contenedor_padre == "listaOrigen"){
+            $("#codigo_almacen_origen").val(codigo);
+            $("#codigo_origen").val(codigo);
+            $("#almacen_origen").val($(this).text());
+            $("#almacen_origen_direccion").val($(this).data('direccion'));
+            $("#codigo_origen_sunat").val($(this).data('sunat'));
+            $("#ubigeo_origen_guia").val($(this).data('ubigeo'));
+            $("#cso").val($(this).data('sunat'));
+        }else if(contenedor_padre == "listaDestino"){
+            $("#codigo_almacen_destino").val(codigo);
+            $("#almacen_destino").val($(this).text());
+            $("#almacen_destino_direccion").val($(this).data('direccion'));
+            $("#codigo_destino_sunat").val($(this).data('sunat'));
+            $("#ubigeo_destino_guia").val($(this).data('ubigeo'));
+            $("#csd").val($(this).data('sunat'));
+        }else if(contenedor_padre == "listaAutoriza"){
+            $("#autoriza").val($(this).text());
+            $("#codigo_autoriza").val(codigo);
+        }else if(contenedor_padre == "listaDespacha"){
+            $("#codigo_despacha").val(codigo);
+        }else if(contenedor_padre == "listaDestinatario"){
+            $("#destinatario").val($(this).text());
+            $("#codigo_destinatario").val(codigo);
+        }else if(contenedor_padre == "listaModalidad"){
+            $("#modalidad_traslado").val($(this).text());
+            $("#codigo_modalidad").val(codigo);
+        }else if(contenedor_padre == "listaEnvio"){
+            $("#tipo_envio").val($(this).text());
+            $("#codigo_tipo").val(codigo);
+        }else if(contenedor_padre == "listaEntidad"){
+            $("#codigo_entidad_transporte").val(codigo);
+            $("#empresa_transporte_razon").val($(this).text());
+            $("#ruc_proveedor").val($(this).data("ruc"));
+            $("#direccion_proveedor").val($(this).data("direccion"));
+            $("#registro_mtc").val($(this).data("mtc"));
+        }else if(contenedor_padre == "listaTransporte"){
+            $("#codigo_transporte").val(codigo);
+            $("#tipo_transporte").val($(this).text());
+        }else if(contenedor_padre == "listaConductores"){
+            $("#nombre_conductor").val($(this).text());
+            $("#licencia_conducir").val($(this).data('licencia'));
+            $("#conductor_dni").val($(this).data('dni'));
+        }else if(contenedor_padre == "listaPlacas"){
+            $("#placa").val($(this).text());
         }
 
         return false;

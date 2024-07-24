@@ -164,24 +164,32 @@
                 <input type="hidden" name="direccion_entidad_transporte" id="direccion_entidad_transporte">
                 <input type="hidden" name="ruc_entidad_transporte" id="ruc_entidad_transporte">
                 <input type="hidden" name="codigo_modalidad" id="codigo_modalidad">
+                <input type="hidden" name="codigo_transporte" id="codigo_transporte">
                 <input type="hidden" name="codigo_tipo" id="codigo_tipo">
                 <input type="hidden" name="motivo_traslado" id="motivo_traslado">
                 <input type="hidden" name="id_guia" id="id_guia" value=0>
                 <input type="hidden" name="ubig_origen" id="ubig_origen">
                 <input type="hidden" name="ubig_destino" id="ubig_destino">
-                <input type="hidden" name="registro_mtc" id="registro_mtc" value="">
                 <input type="hidden" name="cso" id="cso">
                 <input type="hidden" name="csd" id="csd">
-
+                <input type="hidden" name="codigo_ubigeo" id="codigo_ubigeo">
+                <input type="hidden" name="nombre_entidad_origen" id="nombre_entidad_origen">
+                <input type="hidden" name="ruc_entidad_origen" id="ruc_entidad_origen">
+                <input type="hidden" name="nombre_entidad_destino" id="nombre_entidad_destino">
+                <input type="hidden" name="ruc_entidad_destino" id="ruc_entidad_destino">
+                <input type="hidden" name="ticket_sunat" id="ticket_sunat">
                 <div class="tituloDocumento">
                     <div>
-                        <p class="titulo_seccion"><strong> Guia de Remision y despacho : </strong></p>
-                        <input type="text" name="serie_guia" id="serie_guia" class="w10por" value="F001" readonly>
+                        <p class="titulo_seccion"><strong> Guia de Remision Interna : </strong></p>
+                        <input type="text" name="serie_guia" id="serie_guia" class="w10por" value="T001" readonly>
                         <input type="text" name="numero_guia" id="numero_guia" readonly>
-                            
+                        <br/><br/>
+                        <p class="titulo_seccion"><strong> Guia de Remision Sunat : </strong></p>
+                        <input type="text" name="serie_guia_sunat" id="serie_guia_sunat" class="w10por" value="T001" readonly>
+                        <input type="text" name="numero_guia_sunat" id="numero_guia_sunat" readonly>
                     </div>
                     <div class="opciones_modal">
-                        <!-- <a href="#" id="guiaSunat" title="Guia Sunat" ><i class="fas fa-shipping-fast"></i><p>Sunat</p></a> -->
+                        <a href="#" id="guiaSunat" title="Guia Sunat" class="oculto"><i class="fas fa-shipping-fast"></i><p>Sunat</p></a>
                         <a href="#" id="saveDocument" title="Grabar Guia"><i class="fas fa-save"></i><p>Grabar</p></a>
                         <a href="#" id="printDocument" title="Imprimir Guia"><i class="fas fa-print"></i><p>Imprimir</p></a>
                         <a href="#" id="previewDocument" title="Vista previa"><i class="fas fa-eye"></i><p>Vista Previa</p></a>
@@ -198,15 +206,15 @@
                             </div>
                             <div>
                                 <label for="ftraslado">Fecha Traslado:</label>
-                                <input type="date" name="ftraslado" id="ftraslado">
+                                <input type="date" name="ftraslado" id="ftraslado" value="<?php echo date("Y-m-d")?>" min="<?php echo date("Y-m-d")?>">
                             </div>
                             <div>
                                 <label for="tipo_documento">Tipo Guia:</label>
                                 <select name="tipo_documento" id="tipo_documento">
                                     <option value="1">DESTINATARIO</option>
-                                    <option value="2">REMITENTE</option>
+                                    <option value="2" style="display:none;">REMITENTE</option>
                                     <option value="3">TRANSPORTISTA</option>
-                                    <option value="4">SUNAT</option>
+                                    <option value="4" style="display:none;">SUNAT</option>
                                 </select>
                             </div>
                         </div>
@@ -214,11 +222,11 @@
                             <p class="titulo_seccion"><strong>Datos del destinatario</strong></p>
                             <div class="dos_columnas_interna">
                                 <label>R.U.C.</label>
-                                <input type="text" name="destinatario_ruc" id="destinatario_ruc">
+                                <input type="text" name="destinatario_ruc" id="destinatario_ruc" value="20504898173" readonly>
                                 <label>Razón Social :</label>
-                                <input type="text" name="destinatario_razon" id="destinatario_razon">
+                                <input type="text" name="destinatario_razon" id="destinatario_razon" value="SERVICIOS PETROLEROS Y CONSTRUCCIONES SEPCON S.A.C" readonly>
                                 <label>Dirección:</label>
-                                <input type="text" name="destinatario_direccion" id="destinatario_direccion">
+                                <input type="text" name="destinatario_direccion" id="destinatario_direccion" value="AV. SAN BORJA NORTE N° 445 - SAN BORJA-LIMA-PERU." readonly>
                             </div>
                             <p><strong>Domicilio de partida</strong></p>
                             <div class="tres_columnas_interna">
@@ -232,6 +240,10 @@
                                 </div>
                                 <label for="almacen_origen_direccion ">Dirección:</label>
                                 <input type="text" name="almacen_origen_direccion" id="almacen_origen_direccion">
+                                <br/>
+                                <label for="ubigeo_origen">Ubigeo :</label>
+                                <input type="text" name="ubigeo_origen_guia" id="ubigeo_origen_guia">
+                                <button type="button" class="btnCallDialog boton3" id="ubigeoBtnOrigen">+</button>
                             </div>
                             <p><strong>Domicilio de Llegada</strong></p>
                             <div class="tres_columnas_interna">
@@ -245,12 +257,16 @@
                                 </div>
                                 <label for="almacen_destino_direccion ">Dirección:</label>
                                 <input type="text" name="almacen_destino_direccion" id="almacen_destino_direccion">
+                                <br/>
+                                <label for="ubigeo_destino">Ubigeo :</label>
+                                <input type="text" name="ubigeo_destino_guia" id="ubigeo_destino_guia">
+                                <button type="button" class="btnCallDialog boton3" id="ubigeoBtnDestino">+</button>
                             </div>
                             <p><strong>Empresa de Transporte</strong></p>
                             <div class="tres_columnas_interna">
                                 <label for="empresa_transporte_razon">Razón Social</label>
                                 <input type="text" name="empresa_transporte_razon" id="empresa_transporte_razon" class="buscaGuia">
-                                <button type="button" class="btnCallMenu boton3">+</button>
+                                <button type="button" class="btnCallMenu boton3" id="ubigeoBtnDestino">+</button>
                                 <div class="lista" id="listaEntidad">
                                    <ul>
                                        <?php echo $this->listaEntidad?>
@@ -261,12 +277,23 @@
                                 <span></span>
                                 <label for="ruc_proveedor">R.U.C.</label>
                                 <input type="text" name="ruc_proveedor" id="ruc_proveedor" class="datosEntidad">
+                                <span></span>
+                                <label for="registro_mtc">Registro MTC</label>
+                                <input type="text" name="registro_mtc" id="registro_mtc" class="datosEntidad">
                             </div>
                         </div>
                     </div>
                     <div class="columna_derecha">
                         <p><strong>Motivo</strong></p>
                         <div class="tres_columnas_interna">
+                            <label for="tipo_transporte" class="uno">Tipo Transporte :</label>
+                            <input type="text" name="tipo_transporte" id="tipo_transporte" class="dos mostrarListaInterna busqueda">
+                            <button type="button" class="btnCallMenu boton3">+</button>
+                            <div class="lista rowOne uno" id="listaTransporte">
+                                <ul>
+                                    <?php echo $this->listaTransporte?>
+                                </ul> 
+                            </div>
                             <label for="modalidad_traslado" class="uno">Modalidad Traslado :</label>
                             <input type="text" name="modalidad_traslado" id="modalidad_traslado" class="dos mostrarListaInterna busqueda">
                             <button type="button" class="btnCallMenu boton3">+</button>
@@ -306,7 +333,12 @@
                         <div class="tres_columnas_interna">
                             <label for="nombre_conductor">Nombre :</label>
                             <input type="text" name="nombre_conductor" id="nombre_conductor" class="cerrarLista">
-                            <span></span>
+                            <button type="button" id="btnConductor" class="btnCallMenu boton3">+</button>
+                            <div class="lista" id="listaConductores">
+                                <ul>
+                                    <?php echo $this->listaConductores?>
+                                </ul> 
+                            </div>
                             <label for="licencia_conducir">N° Licencia :</label>
                             <input type="text" name="licencia_conducir" id="licencia_conducir" class="cerrarLista">
                             <span></span>
@@ -315,11 +347,16 @@
                         </div>
                         <p><strong>Datos del Vehiculo</strong></p>
                         <div class="tres_columnas_interna">
-                            <label for="marca">Marca :</label>
-                            <input type="text" name="marca" id="marca">
-                            <span></span>
                             <label for="placa">Nro. Placa :</label>
                             <input type="text" name="placa" id="placa">
+                            <button type="button" id="btnPlaca" class="btnCallMenu boton3">+</button>
+                            <div class="lista" id="listaPlacas">
+                                <ul>
+                                    <?php echo $this->listaPlacas?>
+                                </ul> 
+                            </div>
+                            <label for="marca">Marca :</label>
+                            <input type="text" name="marca" id="marca">
                         </div>
                         <p><strong>Datos Adicionales</strong></p>
                         <div class="tres_columnas_interna">
@@ -425,12 +462,13 @@
         <table id="tablaPrincipal">
             <thead class="stickytop">
                 <tr>
-                    <th>Item</th>
+                    <th>Num. Guia</th>
                     <th>F.Emisión</th>
                     <th>Almacen Origen</th>
                     <th>Almacen Destino</th>
                     <th>Centro de Costos</th>
-                    <th>Num. Guia</th>
+                    <th>Guia</br>Remision</th>
+                    <th>Envio Sunat</th>
                 </tr>
             </thead>
             <tbody>

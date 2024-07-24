@@ -16,6 +16,9 @@
             $this->view->listaMovimiento = $this->model->listarParametros(12);
             $this->view->listaCostos = $this->model->costosPorUsuario($_SESSION['iduser']);
             $this->view->listaCostosSelect = $this->model->costosPorUsuarioSelect($_SESSION['iduser']);
+            $this->view->listaPlacas = $this->model->listarParametros('24');
+            $this->view->listaConductores = $this->model->listarConductores();
+            $this->view->listaTransporte = $this->model->listarParametros(23);
             $this->view->render('guiamanual/index');
         }
 

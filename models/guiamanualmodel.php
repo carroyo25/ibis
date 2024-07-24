@@ -26,12 +26,16 @@
                                                         UPPER( entidad_origen.crazonsoc ) AS razon_origen,
                                                         entidad_destino.id_centi AS id_destino,
                                                         UPPER(tb_proyectos.cdesproy) AS costos,
-                                                        tb_proyectos.ccodproy 
+                                                        tb_proyectos.ccodproy,
+                                                        lg_guias.ticketsunat,
+                                                        lg_guias.guiasunat,
+                                                        lg_guias.estadoSunat  
                                                     FROM
                                                         alm_desplibrescab
                                                         LEFT JOIN cm_entidad AS entidad_origen ON alm_desplibrescab.ncodalm1 = entidad_origen.id_centi
                                                         LEFT JOIN cm_entidad AS entidad_destino ON alm_desplibrescab.ncodalm2 = entidad_destino.id_centi
-                                                        LEFT JOIN tb_proyectos ON alm_desplibrescab.ncodpry = tb_proyectos.nidreg 
+                                                        LEFT JOIN tb_proyectos ON alm_desplibrescab.ncodpry = tb_proyectos.nidreg
+                                                        LEFT JOIN lg_guias ON alm_desplibrescab.cnumguia = lg_guias.cnumguia  
                                                     WHERE
                                                         alm_desplibrescab.nflgactivo = 1
                                                         AND alm_desplibrescab.cnumguia LIKE :guia
@@ -43,6 +47,8 @@
                 if ($rowCount > 0) {
                 
                     while ($rs = $sql->fetch()){
+                        $icono = $rs['estadoSunat'] !== null ? '<i class="far fa-check-circle"></i>' : "";
+                        
                         $salida .='<tr data-indice="'.$rs['id_regalm'].'" data-guia="cnumguia" class="pointer">
                                         <td class="textoCentro">'.str_pad($rs['id_regalm'],6,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$rs['fechaDocumento'].'</td>
@@ -50,6 +56,7 @@
                                         <td class="pl20px">'.$rs['razon_destino'].'</td>
                                         <td class="pl20px">'.$rs['costos'].'</td>
                                         <td class="textoCentro">'.$rs['cnumguia'].'</td>
+                                        <td class="textoCentro" style="color:green;font-weight: bolder;font-size: 1rem;vertical-align: middle;">'.$icono.'</td>
                                     </tr>';
                     }
                 }
