@@ -941,7 +941,8 @@
                                                         provincias.cdubigeo AS prov,
                                                         dptos.cdubigeo AS dpto,
                                                         tb_almacen.csunatalm,
-                                                        tb_almacen.ncubigeo
+                                                        tb_almacen.ncubigeo,
+                                                        tb_almacen.rucEnti
                                                     FROM
                                                         tb_almacen
                                                         LEFT JOIN tb_ubigeo AS distritos ON tb_almacen.ncubigeo = distritos.ccubigeo
@@ -960,6 +961,7 @@
                                         data-dpto="'.$rs['dpto'].'"
                                         data-prov="'.$rs['prov'].'"
                                         data-ubigeo="'.$rs['ncubigeo'].'"
+                                        data-ruc="'.$rs['rucEnti'].'"
                                         data-dist="'.$rs['dist'].'">'.$rs['almacen'].'</a></li>';
                     }
 
@@ -4503,7 +4505,7 @@
 
         public function numeroGuiaSunat(){
             try {
-                $guiaInicial = 111; //produccion
+                $guiaInicial = 112; //produccion
                 //$guiaInicial = 35; //pruebas
 
                 $sql = $this->db->connect()->query("SELECT

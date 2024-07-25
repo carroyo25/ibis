@@ -173,17 +173,19 @@ $(function() {
         }else if(contenedor_padre == "listaOrigen"){
             $("#codigo_almacen_origen").val(codigo);
             $("#codigo_origen").val(codigo);
-            $("#almacen_origen").val($(this).text());
+            $("#almacen_origen,#nombre_entidad_origen").val($(this).text());
             $("#almacen_origen_direccion").val($(this).data('direccion'));
             $("#codigo_origen_sunat").val($(this).data('sunat'));
+            $("#ruc_entidad_origen").val($(this).data('ruc'));
             $("#ubigeo_origen_guia,#ubig_origen").val($(this).data('ubigeo'));
             $("#cso").val($(this).data('sunat'));
         }else if(contenedor_padre == "listaDestino"){
             $("#codigo_almacen_destino").val(codigo);
-            $("#almacen_destino").val($(this).text());
+            $("#almacen_destino,#nombre_entidad_destino").val($(this).text());
             $("#almacen_destino_direccion").val($(this).data('direccion'));
             $("#codigo_destino_sunat").val($(this).data('sunat'));
             $("#ubigeo_destino_guia,#ubig_destino").val($(this).data('ubigeo'));
+            $("#ruc_entidad_destino").val($(this).data('ruc'));
             $("#csd").val($(this).data('sunat'));
         }else if(contenedor_padre == "listaAutoriza"){
             $("#autoriza").val($(this).text());

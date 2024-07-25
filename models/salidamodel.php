@@ -1265,7 +1265,7 @@
                 $this->actualizarTicketNumeroSunat($header->numero_guia,$numero_ticket,$header->numero_guia_sunat,$respuesta_ticket['ticket_rpta']);
             }
 
-            return array("archivo" =>$nombre_archivo,"ticket" =>$numero_ticket, "respuesta"=>$respuesta_ticket['ticket_rpta']);
+            return array("archivo" =>$nombre_archivo,"ticket" =>$numero_ticket, "respuesta"=>$respuesta_ticket['ticket_rpta'], "mensaje"=>$respuesta_ticket['cdr_msj_sunat']);
 
         }
 
