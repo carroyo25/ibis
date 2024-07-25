@@ -47,7 +47,19 @@
                 if ($rowCount > 0) {
                 
                     while ($rs = $sql->fetch()){
-                        $icono = $rs['estadoSunat'] !== null ? '<i class="far fa-check-circle"></i>' : "";
+                        $icono = null;
+                        $color = null;
+
+                        if ( $rs['estadoSunat'] === 0 ) {
+                            $icono = '<i class="far fa-check-circle"></i>';
+                            $color = 'green';
+                        }else if ($rs['estadoSunat'] === 98){
+                            $icono = '<i class="far fa-clock"></i>';
+                            $color = 'gold';
+                        }else if ($rs['estadoSunat'] === 99) {
+                            $icono = '<i class="fas fa-wrench"></i>';
+                            $color = 'red';
+                        }
                         
                         $salida .='<tr data-indice="'.$rs['id_regalm'].'" data-guia="cnumguia" class="pointer">
                                         <td class="textoCentro">'.str_pad($rs['id_regalm'],6,0,STR_PAD_LEFT).'</td>
@@ -56,7 +68,7 @@
                                         <td class="pl20px">'.$rs['razon_destino'].'</td>
                                         <td class="pl20px">'.$rs['costos'].'</td>
                                         <td class="textoCentro">'.$rs['cnumguia'].'</td>
-                                        <td class="textoCentro" style="color:green;font-weight: bolder;font-size: 1rem;vertical-align: middle;">'.$icono.'</td>
+                                        <td class="textoCentro" style="color:'.$color.';font-weight: bolder;font-size: 1rem;vertical-align: middle;">'.$icono.'</td>
                                     </tr>';
                     }
                 }
@@ -243,10 +255,11 @@
         public function generarGuiaPdf($cabecera,$detalles,$proyecto){
             try {
                 require_once("public/formatos/guiaremision.php");
-
-                require_once("public/formatos/guiaremision.php");
                 
-                $archivo = "public/documentos/guias_remision/".$cabecera['numero_guia'].".pdf";
+                $archivo = "public/documentos/guias_remision/20504898173-09-T001-".$cabecera['numero_guia_sunat'].".pdf";
+                $qrsunat = "20504898173-09-T001-".$cabecera['numero_guia_sunat'].".png";
+                $qrprint = null;
+
                 $datos = json_decode($detalles);
                 $nreg = count($datos);
                 $fecha_emision = date("d/m/Y", strtotime($cabecera['fgemision']));
@@ -258,7 +271,7 @@
                 else 
                     $fecha_traslado = "";
 
-                    $pdf = new PDF($cabecera['numero_guia'],
+                    $pdf = new PDF($cabecera['numero_guia_sunat'],
                     $fecha_emision,
                     $cabecera['destinatario_ruc'],
                     $cabecera['destinatario_razon'],
@@ -299,6 +312,12 @@
                 $lc = 0;
                 $rc = 0;
                 $item = 1;
+
+                if (file_exists("public/documentos/guia_electronica/qr/".$qrsunat)) {
+                    $qrprint =  "public/documentos/guia_electronica/qr/".$qrsunat;
+
+                    $pdf->Image($qrprint,165,210,35);
+                }
 
                 for($i=1;$i<=$nreg;$i++){
 
@@ -371,6 +390,9 @@
                                                     lg_guias.nDniConductor,
                                                     lg_guias.nPeso,
                                                     lg_guias.nBultos,
+                                                    lg_guias.ticketsunat,
+                                                    lg_guias.guiasunat,
+                                                    lg_guias.estadoSunat, 
                                                     UPPER(lg_guias.centidir) AS centidir,
                                                     lg_guias.centiruc,
                                                     lg_guias.cenvio,

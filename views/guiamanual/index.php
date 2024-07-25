@@ -412,6 +412,46 @@
             <iframe src="" id="pdfPreview"></iframe>
         </div>
     </div>
+    <div class="modal" id="aviso">
+        <div class="ventanaAdvertencia">
+            <h3>AVISO</h3>
+            <div>
+                <span>Estimado Usuario, la emisión de la Guia de Remisión SUNAT
+                    es un proceso, irreversible y constituye un documento de 
+                    legal, por favor verificar los que los datos indicados 
+                    sean correctos.
+                </span> 
+            </div>
+            <div class="btnOptions">
+                <button type="button" id="btnAceptarAdvierte">Aceptar</button>
+                <button type="button" id="btnCancelarAdvierte">Cancelar</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="ubigeo">
+        <div class="ventanaDialogo">
+            <div class="selectDiv">
+                <label for="dpto">Departamento</label>
+                <select name="dpto" id="dpto">
+                    <?php foreach($this->listaDepartamento['datos'] as $dpto) { ?>
+                       <option value="<?php echo $dpto['ccubigeo'];?>"><?php echo $dpto['cdubigeo'];?></option> 
+                    <?php };?>
+                </select>
+                <label for="prov">Provincia</label>
+                <select name="prov" id="prov">
+                    
+                </select>
+                <label for="dist">Provincia</label>
+                <select name="dist" id="dist">
+                    
+                </select>
+            </div>
+            <div class="btnOptions">
+                <button type="button3" id="btnAceptarUbigeo">Aceptar</button>
+                <button type="button3" id="btnCancelarUbigeo">Cancelar</button>
+            </div>
+        </div>
+    </div>
     <div class="cabezaModulo">
         <h1>Guias Manuales</h1>
         <div>

@@ -6,8 +6,9 @@ $(function() {
         idfila = "",
         ordenes = [],
         sw=0,
-        grabado = false
-        controlUbigeo = null;
+        grabado = false,
+        controlUbigeo = null,
+        ubigeo = null;
         
 
     $("#esperar").fadeOut();
@@ -247,11 +248,13 @@ $(function() {
             $("#almacen_origen").val($(this).text());
             $("#almacen_origen_direccion").val($(this).data('direccion'));
             $("#codigo_origen_sunat").val($(this).data('sunat'));
+            $("#ubigeo_origen_guia,#ubig_origen").val($(this).data('ubigeo'));
         }else if(contenedor_padre == "listaDestino"){
             $("#codigo_almacen_destino").val(codigo);
             $("#almacen_destino").val($(this).text());
             $("#almacen_destino_direccion").val($(this).data('direccion'));
             $("#codigo_destino_sunat").val($(this).data('sunat'));
+            $("#ubigeo_destino_guia,#ubig_destino").val($(this).data('ubigeo'));
         }else if(contenedor_padre == "listaAutoriza"){
             $("#autoriza").val($(this).text());
             $("#codigo_autoriza").val(codigo);
@@ -686,28 +689,7 @@ $(function() {
         return false
     });
 
-    $("#btnCancelarUbigeo").click(function(e){
-        e.preventDefault();
-
-        $("#ubigeo").fadeOut();
-
-        return false;
-    });
-
-    $("#btnAceptarUbigeo").click(function(e){
-        e.preventDefault();
-
-        if ( controlUbigeo == "ubigeoBtnOrigen"){
-            $("#ubigeo_origen_guia").val($("#dist").val());
-        }else{
-            $("#ubigeo_destino_guia").val($("#dist").val());
-        }
-
-        $("#dist,#prov").empty();
-        $("#ubigeo").fadeOut();
-
-        return false;
-    });
+    
 
     $("#btnAceptarPregunta").click(function (e) { 
         e.preventDefault();
@@ -836,36 +818,8 @@ $(function() {
     $("#dpto").change(function(e){
         e.preventDefault();
 
-        $("#codigo_ubigeo").val(e.target.value);
         $("#prov").empty();
         $("#dist").empty();
-
-        return false;
-    });
-
-    $("#prov").change(function(e){
-        e.preventDefault();
-
-        $("#codigo_ubigeo").val(e.target.value);
-        $("#dist").empty();
-
-        return false;
-    });
-
-    $("#dist").change(function(e){
-        e.preventDefault();
-
-        $("#codigo_ubigeo").val(e.target.value);
-
-        return false;
-    });
-
-    $("#prov").click(function (e) { 
-        e.preventDefault();
-
-        let row = null;
-
-        $(this).empty();
 
         $.post(RUTA+"salida/ubigeoGuias", {nivel:2,prefijo:$("#dpto").val()},
             function (data, textStatus, jqXHR) {
@@ -880,12 +834,10 @@ $(function() {
         return false;
     });
 
-    $("#dist").click(function (e) { 
+    $("#prov").change(function(e){
         e.preventDefault();
 
-        let row = null;
-
-        $(this).empty();
+        $("#dist").empty();
 
         $.post(RUTA+"salida/ubigeoGuias", {nivel:3,prefijo:$("#prov").val()},
             function (data, textStatus, jqXHR) {
@@ -896,6 +848,37 @@ $(function() {
             },
             "json"
         );
+
+        return false;
+    });
+
+    $("#dist").change(function(e){
+        e.preventDefault();
+
+        ubigeo = e.target.value;
+
+        return false;
+    });
+
+    $("#btnCancelarUbigeo").click(function(e){
+        e.preventDefault();
+
+        $("#ubigeo").fadeOut();
+
+        return false;
+    });
+
+    $("#btnAceptarUbigeo").click(function(e){
+        e.preventDefault();
+
+        if ( controlUbigeo == "ubigeoBtnOrigen"){
+            $("#ubigeo_origen_guia,#ubig_origen").val(ubigeo);
+        }else{
+            $("#ubigeo_destino_guia,#ubig_destino").val(ubigeo);
+        }
+
+        $("#dist,#prov").empty();
+        $("#ubigeo").fadeOut();
 
         return false;
     });

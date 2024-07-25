@@ -1254,7 +1254,7 @@
             $respuesta = $this->envio_xml($path.'FIRMA/', $nombre_archivo, $token_access);
             $numero_ticket = $respuesta->numTicket;
 
-            var_dump($respuesta);
+            //var_dump($respuesta);
 
             sleep(3);//damos tiempo para que SUNAT procese y responda.
             $respuesta_ticket = $this->envio_ticket($path.'CDR/', $numero_ticket, $token_access, $header->destinatario_ruc, $nombre_archivo);
@@ -1262,10 +1262,10 @@
             var_dump($respuesta_ticket);
 
             if ( $header->tipo_documento == 1 ) {
-                $this->actualizarTicketNumeroSunat($header->numero_guia,$numero_ticket,$header->numero_guia_sunat,0);
+                $this->actualizarTicketNumeroSunat($header->numero_guia,$numero_ticket,$header->numero_guia_sunat,$respuesta_ticket['ticket_rpta']);
             }
 
-            return array("archivo" => $nombre_archivo,"ticket" => $respuesta_ticket, "token" => $token_access);
+            return array("archivo" =>$nombre_archivo,"ticket" =>$numero_ticket, "respuesta"=>$respuesta_ticket['ticket_rpta']);
 
         }
 
@@ -1362,9 +1362,6 @@
                         $zip->extractTo($ruta_archivo_cdr);
                         $zip->close();
                     }
-
-                    //unlink($ruta_archivo_cdr . 'R-' . $nombre_file . '.ZIP');
-                    //$ruta_general = carpeta_actual()."/files/guia_electronica/";
 
                     $ruta_general = "public/documentos/guia_electronica/";
                  //=============hash CDR=================
@@ -1893,7 +1890,6 @@
                 return false;
             }
         }
-
 
         //otros motivos SEPCON - OTROS ALMACENES - TRANSPORTE TRANSPORTE TERCEROS
         private function caso4($header,$detalles){
@@ -2476,10 +2472,10 @@
                 $sql = $this->db->connect()->prepare("UPDATE lg_guias 
                                                       SET lg_guias.ticketsunat = :ticket, 
                                                           lg_guias.guiasunat = :guiaSunat,
-                                                          lg_guias.estadoSunat = 0
+                                                          lg_guias.estadoSunat = :respuesta
                                                       WHERE lg_guias.cnumguia = :guiainterna");
 
-                $sql->execute(["guiainterna"=>$guiainterna,"ticket"=>$ticket,"guiaSunat"=>$guiaSunat]);
+                $sql->execute(["guiainterna"=>$guiainterna,"ticket"=>$ticket,"guiaSunat"=>$guiaSunat,"respuesta"=>$codigo_respuesta]);
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();

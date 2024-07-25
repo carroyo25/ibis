@@ -3,7 +3,8 @@ $(function() {
         tipoVista = null,
         cc = "",
         fila = "",
-        grabado = 1;
+        grabado = 1,
+        ubigeo = null;
         
 
     $("#esperar").fadeOut();
@@ -61,6 +62,8 @@ $(function() {
                 $("#placa").val(data.cabecera[0].cplaca);
                 $("#peso").val(data.cabecera[0].nPeso);
                 $("#bultos").val(data.cabecera[0].nBultos);
+
+                $("#numero_guia_sunat").val(data.cabecera[0].guiasunat);
 
                 $("#tablaDetalles tbody")
                     .empty()
@@ -148,67 +151,6 @@ $(function() {
         return false;
     });
 
-    /*$(".lista").on("click",'a', function (e) {
-        e.preventDefault();
-
-        let control = $(this).parent().parent().parent();
-        let destino = $(this).parent().parent().parent().prev();
-        let contenedor_padre = $(this).parent().parent().parent().attr("id");
-        let id = "";
-        let codigo = $(this).attr("href");
-        
-        control.slideUp()
-
-        destino.val($(this).text());
-        id = destino.attr("id");
-
-        if(contenedor_padre == "listaMovimiento"){
-            $("#codigo_movimiento").val(codigo);
-        }else if(contenedor_padre == "listaAprueba"){
-            $("#codigo_aprueba").val(codigo);
-            $("#autoriza").val($(this).text());
-        }else if(contenedor_padre == "listaOrigen"){
-            $("#codigo_almacen_origen").val(codigo);
-            $("#codigo_origen").val(codigo);
-            $("#almacen_origen").val($(this).text());
-            $("#almacen_origen_direccion").val($(this).data('direccion'));
-            $("#codigo_origen_sunat").val($(this).data('sunat'));
-
-        }else if(contenedor_padre == "listaDestino"){
-            $("#codigo_almacen_destino").val(codigo);
-            $("#almacen_destino").val($(this).text());
-            $("#almacen_destino_direccion").val($(this).data('direccion'));
-            $("#codigo_destino_sunat").val($(this).data('sunat'));
-
-            $("#destinatario_ruc").val($(this).data('ruc'));
-            $("#destinatario_razon").val($(this).text());
-            $("#destinatario_direccion").val($(this).data('direccion'));
-        }else if(contenedor_padre == "listaAutoriza"){
-            $("#autoriza").val($(this).text());
-            $("#codigo_autoriza").val(codigo);
-        }else if(contenedor_padre == "listaDespacha"){
-            $("#codigo_despacha").val(codigo);
-        }else if(contenedor_padre == "listaDestinatario"){
-            $("#destinatario").val($(this).text());
-            $("#codigo_destinatario").val(codigo);
-        }else if(contenedor_padre == "listaModalidad"){
-            $("#modalidad_traslado").val($(this).text());
-            $("#codigo_modalidad").val(codigo);
-        }else if(contenedor_padre == "listaEnvio"){
-            $("#tipo_envio").val($(this).text());
-            $("#codigo_tipo").val(codigo);
-        }else if(contenedor_padre == "listaEntidad"){
-            $("#codigo_entidad_transporte").val(codigo);
-            $("#empresa_transporte_razon").val($(this).text());
-            $("#ruc_proveedor").val($(this).data("ruc"));
-            $("#direccion_proveedor").val($(this).data("direccion"));
-        }else if(contenedor_padre == "listaCostos"){
-            $("#codigo_costos").val(codigo);
-        }
-
-        return false;
-    });*/
-
     $(".lista").on("click",'a', function (e) {
         e.preventDefault();
 
@@ -234,14 +176,14 @@ $(function() {
             $("#almacen_origen").val($(this).text());
             $("#almacen_origen_direccion").val($(this).data('direccion'));
             $("#codigo_origen_sunat").val($(this).data('sunat'));
-            $("#ubigeo_origen_guia").val($(this).data('ubigeo'));
+            $("#ubigeo_origen_guia,#ubig_origen").val($(this).data('ubigeo'));
             $("#cso").val($(this).data('sunat'));
         }else if(contenedor_padre == "listaDestino"){
             $("#codigo_almacen_destino").val(codigo);
             $("#almacen_destino").val($(this).text());
             $("#almacen_destino_direccion").val($(this).data('direccion'));
             $("#codigo_destino_sunat").val($(this).data('sunat'));
-            $("#ubigeo_destino_guia").val($(this).data('ubigeo'));
+            $("#ubigeo_destino_guia,#ubig_destino").val($(this).data('ubigeo'));
             $("#csd").val($(this).data('sunat'));
         }else if(contenedor_padre == "listaAutoriza"){
             $("#autoriza").val($(this).text());
@@ -518,6 +460,168 @@ $(function() {
         return false;
     });
 
+    $("#guiaSunat").click(function(e){
+        e.preventDefault();
+
+        let result = {};
+
+        $.each($("#guiaremision").serializeArray(),function(){
+            result[this.name] = this.value;
+        });
+
+        try {
+            if ( result['ftraslado'] == "") throw new Error("Indique la fecha de traslado");
+            if ( result['ubigeo_origen_guia'] == "") throw new Error("Ingrese el ubigeo origen");
+            if ( result['ubigeo_destino_guia'] == "") throw new Error("Ingrese el ubigeo destino");
+
+            if ( result['codigo_transporte'] == "" ) throw new Error("Indique el tipo de transporte");
+            if ( result['codigo_modalidad'] == "" ) throw new Error("Indique la modalidad de traslado");
+            
+            if ( result['peso'] == "") throw new Error("Ingrese el peso");
+
+            if ( result['codigo_transporte'] == 257 && result['nombre_conductor'] == "") throw new Error("Registre el nombre del conductor");
+            if ( result['codigo_transporte'] == 257 && result['licencia_conducir'] == "") throw new Error("Registre la licencia del conductor");
+            if ( result['codigo_transporte'] == 257 && result['placa'] == "") throw new Error("Registre la placa del vehículo");
+
+            if ( result['codigo_transporte'] == 258 && result['empresa_transporte_razon'] == "") throw new Error("Registre el nombre de la empresa de transportes");
+            if ( result['codigo_transporte'] == 258 && result['direccion_proveedor'] == "") throw new Error("Registre la direccion del transportista");
+            if ( result['codigo_transporte'] == 258 && result['ruc_proveedor'] == "") throw new Error("Registre el RUC del transportista");
+
+            if ( $("#ticket_sunat" ).val() === "" ) {
+                fetch(RUTA+"salida/numeroSunat")
+                .then(response => response.text())
+                .then(data =>{
+                    $("#numero_guia_sunat").val(data);
+                    $("#aviso").fadeIn();
+                });
+            }else{
+                $("#aviso").fadeIn();
+            }
+
+           
+
+        } catch (error) {
+            mostrarMensaje(error.message,"mensaje_error");
+        }
+
+        return false;
+    });
+
+    $("#btnAceptarAdvierte").click(function(e){
+        e.preventDefault();
+
+        let result = {};
+
+        $.each($("#guiaremision").serializeArray(),function(){
+            result[this.name] = this.value;
+        });
+
+        let datosJSON = new FormData();
+
+        datosJSON.append("cabecera",JSON.stringify(result));
+        datosJSON.append("detalles",JSON.stringify(detalles(1)));
+
+        $.ajax({
+            type: "POST",
+            url: RUTA+"salida/guiaSunat",
+            data: datosJSON,
+            dataType: "json",
+            contentType:false,      
+            processData:false,
+            success: function (data) {
+                $("#aviso").fadeOut();
+            }
+        });
+        
+        return false;
+    });
+
+    $("#btnCancelarAdvierte").click(function(e){
+        e.preventDefault();
+
+        $("#aviso").fadeOut();
+
+        return false;
+    });
+
+    $(".btnCallDialog").click(function(e){
+        e.preventDefault();
+
+        controlUbigeo = e.target.id;
+
+        $("#ubigeo").fadeIn();
+        
+        return false
+    });
+
+    $("#dpto").change(function(e){
+        e.preventDefault();
+
+        $("#prov").empty();
+        $("#dist").empty();
+
+        $.post(RUTA+"salida/ubigeoGuias", {nivel:2,prefijo:$("#dpto").val()},
+            function (data, textStatus, jqXHR) {
+               data.datos.forEach(element => {
+                    row = `<option value="${element.ccubigeo}">${element.cdubigeo}</option>`;
+                    $("#prov").append(row);
+               });  
+            },
+            "json"
+        );
+
+        return false;
+    });
+
+    $("#prov").change(function(e){
+        e.preventDefault();
+
+        $("#dist").empty();
+
+        $.post(RUTA+"salida/ubigeoGuias", {nivel:3,prefijo:$("#prov").val()},
+            function (data, textStatus, jqXHR) {
+               data.datos.forEach(element => {
+                    row = `<option value="${element.ccubigeo}">${element.cdubigeo}</option>`;
+                    $("#dist").append(row);
+               });  
+            },
+            "json"
+        );
+
+        return false;
+    });
+
+    $("#dist").change(function(e){
+        e.preventDefault();
+
+        ubigeo = e.target.value;
+
+        return false;
+    });
+
+    $("#btnCancelarUbigeo").click(function(e){
+        e.preventDefault();
+
+        $("#ubigeo").fadeOut();
+
+        return false;
+    });
+
+    $("#btnAceptarUbigeo").click(function(e){
+        e.preventDefault();
+
+        if ( controlUbigeo == "ubigeoBtnOrigen"){
+            $("#ubigeo_origen_guia,#ubig_origen").val(ubigeo);
+        }else{
+            $("#ubigeo_destino_guia,#ubig_destino").val(ubigeo);
+        }
+
+        $("#dist,#prov").empty();
+        $("#ubigeo").fadeOut();
+
+        return false;
+    });
+
 })
 
 
@@ -540,7 +644,7 @@ detalles = (sw) =>{
             item['orden']        = null;
             item['ingreso']      = null
             item['almacen']      = $("#codigo_almacen_origen").val();
-            item['cantidad']     = null;
+            item['cantidad']     = $(this).find('td').eq(6).children().val();
             item['cantdesp']     = $(this).find('td').eq(6).children().val();
             item['obser']        = $(this).find('td').eq(7).children().val();
             item['codigo']       = $(this).find('td').eq(3).children().val();

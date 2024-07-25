@@ -19,6 +19,7 @@
             $this->view->listaPlacas = $this->model->listarParametros('24');
             $this->view->listaConductores = $this->model->listarConductores();
             $this->view->listaTransporte = $this->model->listarParametros(23);
+            $this->view->listaDepartamento = $this->model->getUbigeoSelect(1,"%");
             $this->view->render('guiamanual/index');
         }
 
