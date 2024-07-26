@@ -396,16 +396,16 @@
                                     <?php echo $this->listaPlacas?>
                                 </ul> 
                             </div>
-                            <label for="marca">Marca :</label>
-                            <input type="text" name="marca" id="marca">
+                            <label for="marca" class="oculto">Marca :</label>
+                            <input type="text" name="marca" id="marca" class="oculto">
                         </div>
                         <p><strong>Datos Adicionales</strong></p>
                         <div class="tres_columnas_interna">
                             <label for="marca">Peso :</label>
                             <input type="text" name="peso" id="peso">
                             <span></span>
-                            <label for="bultos">Nro. Bultos :</label>
-                            <input type="text" name="bultos" id="bultos">
+                            <label for="bultos" class="oculto">Nro. Bultos :</label>
+                            <input type="text" name="bultos" id="bultos" class="oculto">
                         </div>
                     </div>
                 </div>

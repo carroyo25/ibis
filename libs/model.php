@@ -4506,7 +4506,7 @@
         public function numeroGuiaSunat(){
             try {
                 $guiaInicial = 112; //produccion
-                //$guiaInicial = 35; //pruebas
+                //$guiaInicial = 36; //pruebas
 
                 $sql = $this->db->connect()->query("SELECT
                                                         COUNT( lg_guias.guiasunat ) AS nroguiasunat 

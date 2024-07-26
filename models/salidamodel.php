@@ -1259,10 +1259,10 @@
             sleep(3);//damos tiempo para que SUNAT procese y responda.
             $respuesta_ticket = $this->envio_ticket($path.'CDR/', $numero_ticket, $token_access, $header->destinatario_ruc, $nombre_archivo);
 
-            var_dump($respuesta_ticket);
+            //var_dump($respuesta_ticket);
 
             if ( $header->tipo_documento == 1 ) {
-                $this->actualizarTicketNumeroSunat($header->numero_guia,$numero_ticket,$header->numero_guia_sunat,$respuesta_ticket['ticket_rpta']);
+                $this->actualizarTicketNumeroSunat($header->numero_guia,$numero_ticket,$header->numero_guia_sunat,$respuesta_ticket['ticket_rpta'],$respuesta_ticket['cdr_msj_sunat']);
             }
 
             return array("archivo" =>$nombre_archivo,"ticket" =>$numero_ticket, "respuesta"=>$respuesta_ticket['ticket_rpta'], "mensaje"=>$respuesta_ticket['cdr_msj_sunat']);
@@ -1336,7 +1336,7 @@
                 $codRespuesta = $response3->codRespuesta;
                 curl_close($curl); 
 
-                var_dump($response3);
+                //var_dump($response3);
                 
                 $mensaje['ticket_rpta'] = $codRespuesta;
 
@@ -2467,15 +2467,15 @@
             }
         }
 
-        private function actualizarTicketNumeroSunat($guiainterna,$ticket,$guiaSunat,$codigo_respuesta){
+        private function actualizarTicketNumeroSunat($guiainterna,$ticket,$guiaSunat,$codigo_respuesta,$mensaje){
             try {
                 $sql = $this->db->connect()->prepare("UPDATE lg_guias 
                                                       SET lg_guias.ticketsunat = :ticket, 
                                                           lg_guias.guiasunat = :guiaSunat,
-                                                          lg_guias.estadoSunat = :respuesta
+                                                          lg_guias.cmotivo = :mensaje
                                                       WHERE lg_guias.cnumguia = :guiainterna");
 
-                $sql->execute(["guiainterna"=>$guiainterna,"ticket"=>$ticket,"guiaSunat"=>$guiaSunat,"respuesta"=>$codigo_respuesta]);
+                $sql->execute(["guiainterna"=>$guiainterna,"ticket"=>$ticket,"guiaSunat"=>$guiaSunat,"respuesta"=>$codigo_respuesta,"mensaje"=>$mensaje]);
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
