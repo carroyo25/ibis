@@ -408,7 +408,7 @@ $(function(){
         try {
             if ( pedido  != $(this).data("pedido")) throw "El item esta en otro pedido";
             if ( entidad != $(this).data("entidad")) throw "No se puede asignar una orden a dos proveedores";
-            if ( moneda  != $(this).data("moneda")) throw "Los items en el pedido tiene monedas distintas"; 
+            if ( moneda  != $(this).data("moneda")) throw "Los items en  pedido tiene monedas distintas"; 
 
             let nFilas      = $.strPad($("#tablaDetalles tr").length,3),
                 codigo      = $(this).children('td:eq(5)').text(),
@@ -611,7 +611,7 @@ $(function(){
             if (result['fentrega'] == "") throw "Elija la fecha de entrega";
             if (result['codigo_moneda'] == "") throw "Elija la moneda";
             if (result['codigo_pago'] == "") throw "Elija el tipo de pago";
-            if (result['correo_entidad'] == "") throw "Elija el proveedor";
+            //if (result['correo_entidad'] == "") throw "Elija el proveedor";
             if (result['codigo_almacen'] == "") throw "Indique el lugar de entrega";
             if (result['total'] == "") throw "No se registro el total de la orden";
             if ($("#tablaDetalles tbody tr") .length <= 0) throw "No tiene items cargados"
