@@ -2472,6 +2472,7 @@
                 $sql = $this->db->connect()->prepare("UPDATE lg_guias 
                                                       SET lg_guias.ticketsunat = :ticket, 
                                                           lg_guias.guiasunat = :guiaSunat,
+                                                          lg_guias.estadoSunat = :respuesta,
                                                           lg_guias.cmotivo = :mensaje
                                                       WHERE lg_guias.cnumguia = :guiainterna");
 

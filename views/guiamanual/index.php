@@ -77,7 +77,7 @@
                             <div class="column2">
                                 <label for="almacen_origen_despacho">Origen:</label>
                                 <input type="text" name="almacen_origen_despacho" id="almacen_origen_despacho" class="mostrarLista busqueda">
-                                <div class="lista" id="listaOrigen">
+                                <div class="lista" id="listaOrigenCabecera">
                                    <ul>
                                        <?php echo $this->listaEntidad?>
                                    </ul> 
@@ -86,7 +86,7 @@
                             <div class="column2">
                                 <label for="almacen_destino_despacho">Destino:</label>
                                 <input type="text" name="almacen_destino_despacho" id="almacen_destino_despacho" class="mostrarLista busqueda">
-                                <div class="lista" id="listaDestino">
+                                <div class="lista" id="listaDestinoCabecera">
                                    <ul>
                                        <?php echo $this->listaEntidad?>
                                    </ul> 

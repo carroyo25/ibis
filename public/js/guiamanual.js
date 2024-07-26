@@ -173,7 +173,7 @@ $(function() {
         }else if(contenedor_padre == "listaOrigen"){
             $("#codigo_almacen_origen").val(codigo);
             $("#codigo_origen").val(codigo);
-            $("#almacen_origen,#nombre_entidad_origen").val($(this).text());
+            $("#almacen_origen").val($(this).text());
             $("#almacen_origen_direccion").val($(this).data('direccion'));
             $("#codigo_origen_sunat").val($(this).data('sunat'));
             $("#ruc_entidad_origen").val($(this).data('ruc'));
@@ -181,7 +181,7 @@ $(function() {
             $("#cso").val($(this).data('sunat'));
         }else if(contenedor_padre == "listaDestino"){
             $("#codigo_almacen_destino").val(codigo);
-            $("#almacen_destino,#nombre_entidad_destino").val($(this).text());
+            $("#almacen_destino").val($(this).text());
             $("#almacen_destino_direccion").val($(this).data('direccion'));
             $("#codigo_destino_sunat").val($(this).data('sunat'));
             $("#ubigeo_destino_guia,#ubig_destino").val($(this).data('ubigeo'));
@@ -216,6 +216,12 @@ $(function() {
             $("#conductor_dni").val($(this).data('dni'));
         }else if(contenedor_padre == "listaPlacas"){
             $("#placa").val($(this).text());
+        }else if(contenedor_padre == "listaOrigenCabecera"){
+            $("#codigo_almacen_origen").val(codigo);
+            $("#codigo_origen").val(codigo);
+        }else if(contenedor_padre == "listaDestinoCabecera"){
+            $("#codigo_almacen_destino").val(codigo);
+            $("#almacen_destino").val($(this).text());
         }
 
         return false;
@@ -499,9 +505,6 @@ $(function() {
             }else{
                 $("#aviso").fadeIn();
             }
-
-           
-
         } catch (error) {
             mostrarMensaje(error.message,"mensaje_error");
         }
@@ -531,6 +534,10 @@ $(function() {
             contentType:false,      
             processData:false,
             success: function (data) {
+                if (data.respesta == 0)
+                    mostrarMensaje(data.mensaje,"mensaje_correcto");
+                else
+                    mostrarMensaje(data.mensaje,"mensaje_error");
                 $("#aviso").fadeOut();
             }
         });
