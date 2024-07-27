@@ -204,7 +204,7 @@
                 }else if ($condicion == 1){
                     $filename = "public/documentos/notas_salida/emitidas/".$file;
                 }
-                
+
                 $pdf = new PDF($cabecera['numero'],$condicion,$dia,$mes,$anio,$cabecera['costos'],
                             $cabecera['almacen_origen_despacho'],$cabecera['almacen_destino_despacho'],
                             $cabecera['tipo'],$cabecera['guia'],$cabecera['aprueba'],$cargo);
@@ -233,6 +233,9 @@
                         $lc = 0;
                     }	
                 }
+            
+            $pdf->SetXY(167,237);
+            $pdf->Cell(6,20,'NRO.GUIA INTERNA: '.$cabecera['numero_guia'],0,1);
                 
             $pdf->Output($filename,'F');
                 
@@ -331,6 +334,9 @@
                         $lc = 0;
                     }
                 }
+
+                $pdf->SetXY(167,237);
+                $pdf->Cell(6,20,'NRO.GUIA INTERNA: '.$cabecera['numero_guia'],0,1);
 
                 $pdf->Ln(1);
                 $pdf->SetX(13);
@@ -1427,12 +1433,12 @@
                                     </ext:UBLExtensions>
                                     <cbc:UBLVersionID>2.1</cbc:UBLVersionID>
                                     <cbc:CustomizationID>2.0</cbc:CustomizationID>
-                                    <cbc:ID>'.$serie.'-'.$header->serie_guia_sunat.'</cbc:ID>
+                                    <cbc:ID>'.$serie.'-'.$header->numero_guia_sunat.'</cbc:ID>
                                     <!--  FECHA Y HORA DE EMISION  -->
                                     <cbc:IssueDate>'.$header->fgemision.'</cbc:IssueDate>
                                     <cbc:IssueTime>'.date("H:i:s").'</cbc:IssueTime>
                                     <cbc:DespatchAdviceTypeCode listAgencyName="PE:SUNAT" listName="Tipo de Documento" listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo01">09</cbc:DespatchAdviceTypeCode>
-                                    <cbc:Note>'.$header->observaciones.'</cbc:Note>
+                                    <cbc:Note>'.utf8_encode($header->observaciones).'</cbc:Note>
                                     <!--  DOCUMENTOS ADICIONALES (Catalogo 41) -->
                                     <cac:Signature>
                                     <cbc:ID>'.$header->destinatario_ruc.'</cbc:ID>
@@ -1597,7 +1603,7 @@
                                     <cbc:IssueDate>'.$header->fgemision.'</cbc:IssueDate>
                                     <cbc:IssueTime>'.date("H:i:s").'</cbc:IssueTime>
                                     <cbc:DespatchAdviceTypeCode listAgencyName="PE:SUNAT" listName="Tipo de Documento" listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo01">09</cbc:DespatchAdviceTypeCode>
-                                    <cbc:Note>'.$header->observaciones.'</cbc:Note>
+                                    <cbc:Note>'.utf8_encode($header->observaciones).'</cbc:Note>
                                     <!--  DOCUMENTOS ADICIONALES (Catalogo 41) -->
                                     <cac:Signature>
                                     <cbc:ID>'.$header->destinatario_ruc.'</cbc:ID>
@@ -1748,7 +1754,7 @@
                                     <cbc:IssueDate>'.$header->fgemision.'</cbc:IssueDate>
                                     <cbc:IssueTime>'.date("H:i:s").'</cbc:IssueTime>
                                     <cbc:DespatchAdviceTypeCode listAgencyName="PE:SUNAT" listName="Tipo de Documento" listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo01">09</cbc:DespatchAdviceTypeCode>
-                                    <cbc:Note>'.$header->observaciones.'</cbc:Note>
+                                    <cbc:Note>'.utf8_encode($header->observaciones).'</cbc:Note>
                                     <!--  DOCUMENTOS ADICIONALES (Catalogo 41) -->
                                     <cac:Signature>
                                     <cbc:ID>'.$header->destinatario_ruc.'</cbc:ID>
@@ -1914,7 +1920,7 @@
                                     <cbc:IssueDate>'.$header->fgemision.'</cbc:IssueDate>
                                     <cbc:IssueTime>'.date("H:i:s").'</cbc:IssueTime>
                                     <cbc:DespatchAdviceTypeCode listAgencyName="PE:SUNAT" listName="Tipo de Documento" listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo01">09</cbc:DespatchAdviceTypeCode>
-                                    <cbc:Note>'.$header->observaciones.'</cbc:Note>
+                                    <cbc:Note>'.utf8_encode($header->observaciones).'</cbc:Note>
                                     <!--  DOCUMENTOS ADICIONALES (Catalogo 41) -->
                                     <cac:Signature>
                                     <cbc:ID>'.$header->destinatario_ruc.'</cbc:ID>
@@ -2082,7 +2088,7 @@
                                     <cbc:IssueDate>'.$header->fgemision.'</cbc:IssueDate>
                                     <cbc:IssueTime>'.date("H:i:s").'</cbc:IssueTime>
                                     <cbc:DespatchAdviceTypeCode listAgencyName="PE:SUNAT" listName="Tipo de Documento" listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo01">09</cbc:DespatchAdviceTypeCode>
-                                    <cbc:Note>'.$header->observaciones.'</cbc:Note>
+                                    <cbc:Note>'.utf8_encode($header->observaciones).'</cbc:Note>
                                     <!--  DOCUMENTOS ADICIONALES (Catalogo 41) -->
                                     <cac:Signature>
                                     <cbc:ID>'.$header->destinatario_ruc.'</cbc:ID>

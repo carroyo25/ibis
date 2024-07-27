@@ -342,6 +342,9 @@
                     }
                 }
 
+                $pdf->SetXY(167,237);
+                $pdf->Cell(6,20,'NRO.GUIA INTERNA: '.$cabecera['numero_guia'],0,1);
+
                 $pdf->Ln(1);
                 $pdf->SetX(13);
                 $pdf->Ln(2);

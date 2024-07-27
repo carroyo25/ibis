@@ -171,7 +171,6 @@ $(function() {
             $("#codigo_aprueba").val(codigo);
             $("#autoriza").val($(this).text());
         }else if(contenedor_padre == "listaOrigen"){
-            $("#codigo_almacen_origen").val(codigo);
             $("#codigo_origen").val(codigo);
             $("#almacen_origen").val($(this).text());
             $("#almacen_origen_direccion").val($(this).data('direccion'));
@@ -180,7 +179,6 @@ $(function() {
             $("#ubigeo_origen_guia,#ubig_origen").val($(this).data('ubigeo'));
             $("#cso").val($(this).data('sunat'));
         }else if(contenedor_padre == "listaDestino"){
-            $("#codigo_almacen_destino").val(codigo);
             $("#almacen_destino").val($(this).text());
             $("#almacen_destino_direccion").val($(this).data('direccion'));
             $("#codigo_destino_sunat").val($(this).data('sunat'));
@@ -218,10 +216,8 @@ $(function() {
             $("#placa").val($(this).text());
         }else if(contenedor_padre == "listaOrigenCabecera"){
             $("#codigo_almacen_origen").val(codigo);
-            $("#codigo_origen").val(codigo);
         }else if(contenedor_padre == "listaDestinoCabecera"){
             $("#codigo_almacen_destino").val(codigo);
-            $("#almacen_destino").val($(this).text());
         }
 
         return false;
