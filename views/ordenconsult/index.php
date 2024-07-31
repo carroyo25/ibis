@@ -47,6 +47,7 @@
                     <input type="hidden" name="proforma" id="proforma">
                     <input type="hidden" name="retencion" id="retencion">
                     <input type="hidden" name="nivel_atencion" id="nivel_atencion">
+                    <input type="hidden" name="nivel_autorizacion" id="nivel_autorizacion">
                     <input type="hidden" name="codigo_pago" id="codigo_pago">
                     <input type="hidden" name="sw" id="sw" value="0">
                     <input type="hidden" name="detalle" id="detalle">

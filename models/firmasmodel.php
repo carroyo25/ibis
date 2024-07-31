@@ -173,7 +173,7 @@
             }
         }
 
-        public function firmarExpress($id,$numero) {
+        public function firmarExpress($id,$numero,$proveedor,$pago) {
             $fecha =  date("Y-m-d");
             
             try {
@@ -197,7 +197,7 @@
                 $rowCount = $sql->rowCount();
                 
                 if ($rowCount > 0){
-                    $this->enviarCorreoAviso($numero);
+                    $this->enviarCorreoAviso($numero,$proveedor,$pago);
 
                     return array("mensaje"=>"Se autorizo la orden",
                                 "clase"=>"mensaje_correcto",
@@ -216,27 +216,26 @@
             }
         }
 
-        public function enviarCorreoAviso($id){
+        public function enviarCorreoAviso($id,$proveedor,$pago){
             try {
                 require_once("public/PHPMailer/PHPMailerAutoload.php");
-
             
                 $subject    = utf8_decode("Aprobación de orden urgente");
-                
 
                 $messaje= '<div style="width:100%;display: flex;flex-direction: column;justify-content: center;align-items: center;
                                     font-family: Futura, Arial, sans-serif;">
                             <div style="width: 45%;border: 1px solid #c2c2c2;background: gold">
-                                <h1 style="text-align: center;">Alerta del sistema</h1>
+                                <h3 style="text-align: left;padding-left:20px">Alerta del sistema</h3>
                             </div>
                             <div style="width: 45%;
                                         border-left: 1px solid #c2c2c2;
                                         border-right: 1px solid #c2c2c2;
                                         border-bottom: 1px solid #c2c2c2;">
-                                <p style="padding:.5rem"><strong style="font-style: italic;">Ing:</strong></p>
                                 <p style="padding:.5rem;line-height: 1rem;">El presente correo es para informar que se ha aprobado la orden Nro. '.$id.' en forma urgente.</p>
-                                <p style="padding:.5rem">Realizado por : '. $_SESSION['nombres'].'</p>
+                                <p style="padding:.5rem">Realizado por       : '. $_SESSION['nombres'].'</p>
                                 <p style="padding:.5rem">Fecha de Aprobación : '. date("d/m/Y h:i:s") .'</p>
+                                <p style="padding:.5rem">Proveedor           : '.$proveedor.'</p>
+                                <p style="padding:.5rem">Forma de Pago       : '.$pago.'</p>
                             </div>
                         </div>';
 
@@ -266,6 +265,9 @@
                 $mail->addAddress('mvirreira@sepcon.net','Mauricio Virreira');
                 $mail->addAddress('jopaniagua@sepcon.net','Jose Paniagua');
                 $mail->addAddress('asolari@sepcon.net','Alberto Solari');
+                $mail->addAddress('recepcion_factelec@sepcon.net','Recepción Facturas');
+                $mail->addAddress('rgarcia@sepcon.net','Roger García');
+                $mail->addAddress('lavellaneda@sepcon.net','Luis Avellaneda');
                 
                 $mail->Subject = $subject;
                 $mail->msgHTML(utf8_decode($messaje));

@@ -132,6 +132,7 @@ $(() => {
                 $("#proforma").val(data.cabecera[0].cnumcot);
                 $("#retencion").val(data.cabecera[0].nagenret);
                 $("#nivel_atencion").val(data.cabecera[0].nivelAten);
+                $("#nivel_autorizacion").val(data.cabecera[0].autorizado);
                 $("#numero").val(data.cabecera[0].cnumero);
                 $("#emision").val(data.cabecera[0].ffechadoc);
                 $("#costos").val(data.cabecera[0].costos);

@@ -8,7 +8,7 @@
                                     $info,$detalle,$usuario,$razon_social,
                                     $ruc,$direccion,$telefono,$correo,$retencion,
                                     $contacto,$tel_contacto,$cor_contacto,$direccion_almacen,$referencia,
-                                    $procura,$finanzas,$operaciones,$tipo)
+                                    $procura,$finanzas,$operaciones,$tipo,$prioridad)
         {
             parent::__construct();
             $this->titulo           = $titulo;
@@ -39,6 +39,7 @@
             $this->finanzas         = $finanzas;
             $this->operaciones      = $operaciones;
             $this->tipo             = $tipo;
+            $this->prioridad        = $prioridad;
         }
 
         function header(){
@@ -58,6 +59,8 @@
                 $condicion = "APROBADO";
             }
 
+            $condicion = $this->prioridad == "46" && $this->condicion != 0 ? $condicion." ".'PRIORITARIO' : $condicion;
+
             $fecha = explode("-",$this->fecha);
 
         	$this->SetFillColor(229, 229, 229);
@@ -69,7 +72,14 @@
 	        $this->Cell(190,7,utf8_decode($this->titulo),0,1,'C'); //envia de parametro
 	        $this->SetFont('Arial','B',7);
             $this->Cell(190,6,utf8_decode($this->info),0,1,'C'); //envia proyecto
+            
+            if ($this->prioridad == "46" && $this->condicion != 0) {
+                $this->SetTextColor(252, 67, 56);
+            }
+
 	        $this->Cell(190,7,$condicion,0,0,'C');
+            
+            $this->SetTextColor(0,0,0);
 	        $this->SetXY(170,11);
 	        $this->SetFont('Arial','',6);
 	        $this->MultiCell(30,5,utf8_decode('PSPC-410-X-PR-001-FR-002 Revisión: 01 Emisión: 13/05/2024 '),0,'L',false);

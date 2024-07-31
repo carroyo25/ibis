@@ -308,7 +308,7 @@ $(function() {
 
         $("#esperar").css("opacity","1").fadeIn();
 
-        $.post(RUTA+"firmas/autorizaExpress", {id:$("#codigo_orden").val(),numero:$("#numero").val()},
+        $.post(RUTA+"firmas/autorizaExpress", {id:$("#codigo_orden").val(),numero:$("#numero").val(),proveedor:$("#entidad").val(),pago:$("#cpago").val()},
             function (data, textStatus, jqXHR) {
                 mostrarMensaje(data.mensaje,data.clase);
 

@@ -3102,6 +3102,7 @@
             }
         }
 
+        //cuando se quita lel item de la orden y sigue sumando
         private function quitarItemOrden($io) {
             try {
                 $sql = $this->db->connect()->prepare("UPDATE lg_ordendet 
@@ -3147,6 +3148,7 @@
                 $prefix = "OS";
                 $tipo = "S";
             }
+            
 
             $anio = explode("-",$cabecera['emision']);
 
@@ -3162,7 +3164,7 @@
                             $cabecera['direccion_entidad'],$cabecera['telefono_entidad'],$cabecera['correo_entidad'],$cabecera['retencion'],
                             $cabecera['atencion'],$cabecera['telefono_contacto'],$cabecera['correo_contacto'],
                             $cabecera['direccion_almacen'],$cabecera['referencia'],$cabecera['procura'],$cabecera['finanzas'],$cabecera['operaciones'],
-                            $cabecera['codigo_tipo']);
+                            $cabecera['codigo_tipo'],$cabecera['nivel_autorizacion']);
 
             $pdf->AddPage();
             $pdf->AliasNbPages();
@@ -4505,8 +4507,8 @@
 
         public function numeroGuiaSunat(){
             try {
-                //$guiaInicial = 112; //produccion
-                $guiaInicial = 9; //pruebas
+                $guiaInicial = 126; //produccion
+                //$guiaInicial = 9; //pruebas
 
                 $sql = $this->db->connect()->query("SELECT
                                                         COUNT( lg_guias.guiasunat ) AS nroguiasunat 
