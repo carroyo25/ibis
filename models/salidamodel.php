@@ -1556,7 +1556,7 @@
                     $xml.='<!-- DETALLES DE BIENES A TRASLADAR -->
                                <cac:DespatchLine>
                                     <cbc:ID>'.$i.'</cbc:ID>
-                                    <cbc:DeliveredQuantity unitCode="'.$detalle->unidad.'" unitCodeListID="UN/ECE rec 20" unitCodeListAgencyName="United Nations Economic Commission for Europe">'.$detalle->cantidad.'</cbc:DeliveredQuantity>
+                                    <cbc:DeliveredQuantity unitCode="'.$detalle->unidad.'" unitCodeListID="UN/ECE rec 20" unitCodeListAgencyName="United Nations Economic Commission for Europe">'.$detalle->cantdesp.'</cbc:DeliveredQuantity>
                                     <cac:OrderLineReference>
                                         <cbc:LineID>'.$i.'</cbc:LineID>
                                     </cac:OrderLineReference>
@@ -1707,7 +1707,7 @@
                     $xml.='<!-- DETALLES DE BIENES A TRASLADAR -->
                                <cac:DespatchLine>
                                     <cbc:ID>'.$i.'</cbc:ID>
-                                    <cbc:DeliveredQuantity unitCode="'.$detalle->unidad.'" unitCodeListID="UN/ECE rec 20" unitCodeListAgencyName="United Nations Economic Commission for Europe">'.$detalle->cantidad.'</cbc:DeliveredQuantity>
+                                    <cbc:DeliveredQuantity unitCode="'.$detalle->unidad.'" unitCodeListID="UN/ECE rec 20" unitCodeListAgencyName="United Nations Economic Commission for Europe">'.$detalle->cantdesp.'</cbc:DeliveredQuantity>
                                     <cac:OrderLineReference>
                                         <cbc:LineID>'.$i.'</cbc:LineID>
                                     </cac:OrderLineReference>
@@ -1873,7 +1873,7 @@
                     $xml.='<!-- DETALLES DE BIENES A TRASLADAR -->
                                <cac:DespatchLine>
                                     <cbc:ID>'.$i.'</cbc:ID>
-                                    <cbc:DeliveredQuantity unitCode="'.$detalle->unidad.'" unitCodeListID="UN/ECE rec 20" unitCodeListAgencyName="United Nations Economic Commission for Europe">'.$detalle->cantidad.'</cbc:DeliveredQuantity>
+                                    <cbc:DeliveredQuantity unitCode="'.$detalle->unidad.'" unitCodeListID="UN/ECE rec 20" unitCodeListAgencyName="United Nations Economic Commission for Europe">'.$detalle->cantdesp.'</cbc:DeliveredQuantity>
                                     <cac:OrderLineReference>
                                         <cbc:LineID>'.$i.'</cbc:LineID>
                                     </cac:OrderLineReference>
@@ -2041,7 +2041,7 @@
                     $xml.='<!-- DETALLES DE BIENES A TRASLADAR -->
                                <cac:DespatchLine>
                                     <cbc:ID>'.$i.'</cbc:ID>
-                                    <cbc:DeliveredQuantity unitCode="'.$detalle->unidad.'" unitCodeListID="UN/ECE rec 20" unitCodeListAgencyName="United Nations Economic Commission for Europe">'.$detalle->cantidad.'</cbc:DeliveredQuantity>
+                                    <cbc:DeliveredQuantity unitCode="'.$detalle->unidad.'" unitCodeListID="UN/ECE rec 20" unitCodeListAgencyName="United Nations Economic Commission for Europe">'.$detalle->cantdesp.'</cbc:DeliveredQuantity>
                                     <cac:OrderLineReference>
                                         <cbc:LineID>'.$i.'</cbc:LineID>
                                     </cac:OrderLineReference>
@@ -2193,7 +2193,7 @@
                     $xml.='<!-- DETALLES DE BIENES A TRASLADAR -->
                                <cac:DespatchLine>
                                     <cbc:ID>'.$i.'</cbc:ID>
-                                    <cbc:DeliveredQuantity unitCode="'.$detalle->unidad.'" unitCodeListID="UN/ECE rec 20" unitCodeListAgencyName="United Nations Economic Commission for Europe">'.$detalle->cantidad.'</cbc:DeliveredQuantity>
+                                    <cbc:DeliveredQuantity unitCode="'.$detalle->unidad.'" unitCodeListID="UN/ECE rec 20" unitCodeListAgencyName="United Nations Economic Commission for Europe">'.$detalle->cantdesp.'</cbc:DeliveredQuantity>
                                     <cac:OrderLineReference>
                                         <cbc:LineID>'.$i.'</cbc:LineID>
                                     </cac:OrderLineReference>

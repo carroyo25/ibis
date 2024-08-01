@@ -1061,15 +1061,15 @@
                 for($i=1;$i<=$nreg;$i++){
                     if ( $datos[$rc]->cantidad > 0 ){
                         $pdf->SetX(4);
-                        $pdf->Cell(10,5,str_pad($item++,3,0,STR_PAD_LEFT),'BL',0,'R');
-                        $pdf->Cell(20,5,$datos[$rc]->codigo,'BLR',0,'C');
+                        $pdf->Cell(10,13,str_pad($item++,3,0,STR_PAD_LEFT),'BL',0,'R');
+                        $pdf->Cell(20,13,$datos[$rc]->codigo,'BLR',0,'C');
                         $y = $pdf->GetY();
                         $pdf->SetXY(35,$y+1);
                         $pdf->Multicell(88,2,utf8_decode($datos[$rc]->descripcion)." P:".$datos[$rc]->nropedido,0,'L');
-                        $pdf->Line(34,$y+5,122,$y+5);
+                        $pdf->Line(34,$y+13,122,$y+13);
                         $pdf->SetXY(122,$y);
-                        $pdf->Cell(10,5,$datos[$rc]->unidad,'BL',0,'C');
-                        $pdf->Cell(13,5,$datos[$rc]->cantidad,'BRL',1,'R');
+                        $pdf->Cell(10,13,$datos[$rc]->unidad,'BL',0,'C');
+                        $pdf->Cell(13,13,$datos[$rc]->cantidad,'BRL',1,'R');
 
                         if ( $pdf->GetY() > 164 ) {
                             $pdf->AddPage('P','A5');
