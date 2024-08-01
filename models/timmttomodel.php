@@ -20,20 +20,20 @@
                                                         UPPER( ibis.cm_producto.cdesprod ) AS cdesprod,
                                                         ibis.tb_proyectos.ccodproy,
                                                         ibis.tb_proyectos.nidreg,
-                                                        UPPER(ibis.ti_mmttos.cserie) AS cserie,
+                                                        UPPER( ibis.ti_mmttos.cserie ) AS cserie,
                                                         ibis.ti_mmttos.nrodoc,
-                                                        DATEDIFF(
-                                                            ibis.ti_mmttos.fmtto,
-                                                        NOW()) AS periodo,
+                                                        DATEDIFF(ibis.ti_mmttos.fmtto,NOW()) AS periodo,
                                                         DATE_FORMAT( ibis.ti_mmttos.fmtto, '%d/%m/%Y' ) AS fmtto1,
                                                         DATE_FORMAT( ibis.ti_mmttos.fentrega, '%d/%m/%Y' ) AS fentrega,
                                                         ibis.ti_mmttos.flgestado AS est1,
-                                                        DATE_FORMAT( m2.fmtto, '%d/%m/%Y' ) AS fmtto2,
-                                                        m2.flgestado AS est2,
+                                                        DATE_FORMAT( m2.fmtto, '%d/%m/%Y' ) AS fmtto2,m2.flgestado AS est2,
+                                                        DATEDIFF(m2.fmtto,NOW()) AS periodo2,
                                                         DATE_FORMAT( m3.fmtto, '%d/%m/%Y' ) AS fmtto3,
                                                         m3.flgestado AS est3,
+                                                        DATEDIFF(m3.fmtto,NOW()) AS periodo3,
                                                         DATE_FORMAT( m4.fmtto, '%d/%m/%Y' ) AS fmtto4,
                                                         m4.flgestado AS est4,
+                                                        DATEDIFF(m4.fmtto,NOW()) AS periodo4,
                                                         ibis.tb_tiespec.cprocesador,
                                                         ibis.tb_tiespec.cram,
                                                         ibis.tb_tiespec.chdd,
@@ -298,25 +298,25 @@
 
                 $subject    = utf8_decode("Notificación de Mantenimiento de Preventivo");
 
-                $messaje= '<div style="width:100%;display: flex;flex-direction: column;justify-content: center;align-items: center;
-                                    font-family: Futura, Arial, sans-serif;">
-                            <div style="width: 70%;border: 1px solid #c2c2c2;background: #0078D4">
-                                <h3 style="text-align: center;font-size:12px">MANTENIMIENTO PREVENTIVO DE EQUIPOS INFORMÁTICOS</h3>
-                            </div>
-                            <div style="width: 70%;
-                                        border-left: 1px solid #c2c2c2;
-                                        border-right: 1px solid #c2c2c2;
-                                        border-bottom: 1px solid #c2c2c2;">
-                                <p style="padding:.5rem"><strong style="font-style: italic;">Estimado(a):</strong>'.$parametros['usuario'].'</p>
-                                <p style="padding:.5rem;line-height: 1rem;">Acorde a la programación semestral de mantenimientos preventivos, su equipo asignado debe ser puesto a disposición del área de T&I para su respectiva atención. </p>
-                                <p style="padding:.5rem">El equipo de T&I se estará contactando para programar la fecha exacta del mantenimiento acorde a su disponibilidad.</p>
-                                <p style="padding:.5rem">Recordar que es responsabilidad del usuario conservar en buen estado las herramientas, el equipo de oficina, útiles y demás bienes de la organización- En caso de que la pérdida o deterioro de tales bienes hubiera sido causada por negligencia debidamente comprobada de parte del trabajador, este deberá reponerlos, sin perjuicio de las sanciones disciplinarias que puedan corresponder. (PSPC-900-X-RG-002 Reglamento Interno de Trabajo).</p>
-                                <br><br>
-                                <p style="padding:.5rem">Se agradece su colaboración</p>
-                                <br><br>
-                                <p style="padding:.5rem">Saludos Cordiales.</p>
-                            </div>
-                        </div>';
+                $messaje= '<div style="width:80%;display: flex;flex-direction: column;justify-content: center;align-items: center;
+                                    font-family: Futura, Arial, sans-serif;margin: 0 auto">
+                                <div style="width: 70%;border: 1px solid #c2c2c2;background: #0078D4; padding:15px">
+                                    <h3 style="text-align: center;font-size:12px">MANTENIMIENTO PREVENTIVO DE EQUIPOS INFORMÁTICOS</h3>
+                                </div>
+                                <div style="width: 70%;
+                                            border-left: 1px solid #c2c2c2;
+                                            border-right: 1px solid #c2c2c2;
+                                            border-bottom: 1px solid #c2c2c2;
+                                            padding:15px">
+                                    <p style="padding:5px"><strong style="font-style: italic;">Estimado(a) : </strong>'.$parametros['usuario'].'</p>
+                                    <p style="padding:5px"><strong style="font-style: italic;">Fecha de Mantenimiento programado : </strong>'.$parametros['fecha'].'</p>
+
+                                    <p style="padding:5px;line-height: 1rem;">Acorde a la programación semestral de mantenimientos preventivos, su equipo asignado debe ser puesto a disposición del área de T&I para su respectiva atención. </p>
+                                    <p style="padding:5px">Recordar que es responsabilidad del usuario conservar en buen estado las herramientas, el equipo de oficina, útiles y demás bienes de la organización- En caso de que la pérdida o deterioro de tales bienes hubiera sido causada por negligencia debidamente comprobada de parte del trabajador, este deberá reponerlos, sin perjuicio de las sanciones disciplinarias que puedan corresponder. (PSPC-900-X-RG-002 Reglamento Interno de Trabajo).</p>
+                                    <p>Se agradece su colaboración</p>
+                                    <p>Saludos Cordiales.</p>
+                                </div>
+                            </div>';
                 
 
                 $mail = new PHPMailer;
@@ -340,7 +340,7 @@
                 $mail->setFrom("ti@sepcon.net",utf8_encode("Dpto. Tecnologia Informatica"));
                 $mail->addAddress($parametros['correo'],$parametros['usuario']);
                 $mail->addAddress($parametros['correo_tecnico'],$parametros['tecnico']);
-                $mail->addAddress('fichas@sepcon.net','Correo de Notificación de Mantenimiento');
+                $mail->addAddress('fichas@sepcon.net',utf8_decode('Correo de Notificación de Mantenimiento'));
 
                 $mail->Subject = $subject;
                 $mail->msgHTML(utf8_decode($messaje));

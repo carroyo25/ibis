@@ -138,6 +138,7 @@ $(() => {
                 formData.append('correo_tecnico',$("#mail_user").val());
                 formData.append('serie_producto',$("#serie").val());
                 formData.append('usuario',$("#usuario").val());
+                formData.append('fecha',$("#fecha_sugerida").val());
 
             fetch(RUTA+'timmtto/notificar',{
                 method: 'POST',
@@ -219,7 +220,42 @@ $(() => {
                         nombre = usuario.usuario;
                         correo = usuario.correo;
                     }
-                })
+                });
+
+                let estado1,semaforo1,estado2,semaforo2,estado3,semaforo3,estado4,semaforo4 = null;
+
+                if ( element.est1 == 1 ){
+                    estado1 = 'Realizado';
+                    semaforo1 = 'semaforoVerde';
+                }else {
+                    estado1  =  element.periodo > 0 ? 'Pendiente':'Vencido';
+                    semaforo1 = element.periodo > 0 ? 'semaforoNaranja':'semaforoRojo';
+                }
+
+                if ( element.est2 == 1 ){
+                    estado2 = 'Realizado';
+                    semaforo2 = 'semaforoVerde';
+                }else {
+                    estado2  =  element.periodo2 > 0 ? 'Pendiente':'Vencido';
+                    semaforo2 = element.periodo2 > 0 ? 'semaforoNaranja':'semaforoRojo';
+                } 
+
+                if ( element.est3 == 1 ){
+                    estado3 = 'Realizado';
+                    semaforo3 = 'semaforoVerde';
+                }else {
+                    estado3  =  element.periodo3 > 0 ? 'Pendiente':'Vencido';
+                    semaforo3 = element.periodo3 > 0 ? 'semaforoNaranja':'semaforoRojo';
+                } 
+
+                if ( element.est4 == 1 ){
+                    estado4 = 'Realizado';
+                    semaforo4 = 'semaforoVerde';
+                }else {
+                    estado4  =  element.periodo4 > 0 ? 'Pendiente':'Vencido';
+                    semaforo4 = element.periodo4 > 0 ? 'semaforoNaranja':'semaforoRojo';
+                } 
+               
 
                 let fila = `<tr class="pointer click_tr" 
                                     data-id         ="${element.idreg}" 
@@ -238,13 +274,13 @@ $(() => {
                                 <td class="textoCentro">${element.fentrega}</td>
                                 <td class="textoCentro">${element.ccodproy}</td>
                                 <td class="textoCentro">${element.fmtto1}</td>
-                                <td class="textoCentro ${element.est1 == 0 ? 'semaforoNaranja':'semaforoVerde'}">${element.est1 == 0 ? 'Pendiente':'Realizado'}</td>
+                                <td class="textoCentro ${semaforo1}">${estado1}</td>
                                 <td class="textoCentro">${element.fmtto2}</td>
-                                <td class="textoCentro ${element.est2 == 0 ? 'semaforoNaranja':'semaforoVerde'}">${element.est2 == 0 ? 'Pendiente':'Realizado'}</td>
+                                <td class="textoCentro ${semaforo2}">${estado2}</td>
                                 <td class="textoCentro">${element.fmtto3}</td>
-                                <td class="textoCentro ${element.est3 == 0 ? 'semaforoNaranja':'semaforoVerde'}">${element.est3 == 0 ? 'Pendiente':'Realizado'}</td>
+                                <td class="textoCentro ${semaforo3}">${estado3}</td>
                                 <td class="textoCentro">${element.fmtto4}</td>
-                                <td class="textoCentro ${element.est4 == 0 ? 'semaforoNaranja':'semaforoVerde'}">${element.est4 == 0 ? 'Pendiente':'Realizado'}</td>
+                                <td class="textoCentro ${semaforo4}">${estado4}</td>
                                 <td class="textoCentro click_link">
                                     <a href="${element.cserie}" data-fecha ="${element.entrega}" data-documento ="${element.nrodoc}">
                                         <i class="fas fa-calendar-alt"></i>

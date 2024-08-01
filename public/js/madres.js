@@ -374,7 +374,7 @@ $(() =>{
                                             },
                 function (data, textStatus, jqXHR) {
                     mostrarMensaje(data.mensaje,"mensaje_correcto");
-                    $("#guia,#numero_guia").val(data.guia);
+                    $("#guia,#numero_guia,#numero_guia_sunat").val(data.guia);
 
                     $(".primeraBarra").css("background","#819830");
                     $(".primeraBarra span").text('Datos Generales ... Grabado');
