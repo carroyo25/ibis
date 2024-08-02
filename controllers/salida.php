@@ -11,7 +11,7 @@
             $this->view->listaPlacas = $this->model->listarParametros('24');
             $this->view->listaAprueba = $this->model->apruebaRecepción();
             $this->view->listaAlmacen = $this->model->listarAlmacenGuia();
-            $this->view->listaEntidad = $this->model->listarEntidades();
+            $this->view->listaEntidad = $this->model->listarEntidadesMTC();
             $this->view->listaConductores = $this->model->listarConductores();
             $this->view->listaModalidad = $this->model->listarParametros(14);
             $this->view->listaTransporte = $this->model->listarParametros(23);
@@ -103,7 +103,7 @@
         }
 
         function numeroSunat(){
-            echo json_encode($this->model-> numeroGuiaSunat());
+            echo json_encode($this->model-> numeroGuiaSunat($_POST['guia_interna'],$_POST['peso']));
         }
     }
 ?>

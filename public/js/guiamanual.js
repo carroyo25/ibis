@@ -530,7 +530,7 @@ $(function() {
             contentType:false,      
             processData:false,
             success: function (data) {
-                if (data.respesta == 0)
+                if (data.respuesta == 0)
                     mostrarMensaje(data.mensaje,"mensaje_correcto");
                 else
                     mostrarMensaje(data.mensaje,"mensaje_error");

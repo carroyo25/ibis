@@ -401,7 +401,8 @@
                 $query = $this->db->connect()->prepare("SELECT nidreg,cdescripcion 
                                                         FROM tb_parametros
                                                         WHERE cclase=:clase
-                                                        AND ccod != '00' 
+                                                            AND ccod != '00'
+                                                            AND ( nactivo = 1 OR nactivo IS NULL)
                                                         ORDER BY cdescripcion");
                 $query->execute(["clase" => $clase]);
                 $rowcount = $query->rowcount();
@@ -908,6 +909,42 @@
                                                     cm_entidad
                                                 WHERE
                                                     cm_entidad.nflgactivo = 7
+                                                ORDER BY 
+                                                    cm_entidad.crazonsoc");
+                $sql->execute();
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0){
+                    while ($rs = $sql->fetch()){
+                        $salida .='<li>
+                                    <a href="'.$rs['id_centi'].'" 
+                                        data-direccion="'.$rs['cviadireccion'].'" 
+                                        data-ruc="'.$rs['cnumdoc'].'"
+                                        data-mtc="'.$rs['cdigcateg'].'">'.$rs['crazonsoc'].'</a></li>';
+                    }
+
+                    return $salida;
+                } 
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function listarEntidadesMTC(){
+            try {
+                $salida = "";
+                $sql = $this->db->connect()->query("SELECT
+                                                    cm_entidad.id_centi, 
+                                                    UPPER(cm_entidad.crazonsoc) AS crazonsoc, 
+                                                    cm_entidad.cnumdoc,
+                                                    cm_entidad.cviadireccion,
+                                                    cm_entidad.cdigcateg
+                                                FROM
+                                                    cm_entidad
+                                                WHERE
+                                                    cm_entidad.nflgactivo = 7
+                                                    AND cm_entidad.cdigcateg IS NOT NULL
                                                 ORDER BY 
                                                     cm_entidad.crazonsoc");
                 $sql->execute();
@@ -4505,21 +4542,33 @@
             }
         }
 
-        public function numeroGuiaSunat(){
+        public function numeroGuiaSunat($nroGuia,$peso){
             try {
-                $guiaInicial = 126; //produccion
-                //$guiaInicial = 9; //pruebas
-
                 $sql = $this->db->connect()->query("SELECT
-                                                        COUNT( lg_guias.guiasunat ) AS nroguiasunat 
+	                                                    MAX( lg_guias.guiasunat ) AS nroguiasunat 
                                                     FROM
-                                                        lg_guias 
-                                                    WHERE
-                                                        lg_guias.cserie IS NOT NULL");
+                                                        lg_guias ");
                 $sql->execute();
                 $result = $sql->fetchAll();
 
-                return $result[0]['nroguiasunat']+$guiaInicial;
+                $this->actualizaNroSunat($result[0]['nroguiasunat'] + 1,$nroGuia,$peso);
+
+                return $result[0]['nroguiasunat'] + 1;
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function actualizaNroSunat($numero,$guia,$peso){
+            try {
+                $sql = $this->db->connect()->prepare("UPDATE lg_guias 
+                                                            SET lg_guias.guiasunat=:numero,
+                                                                lg_guias.nPeso=:peso
+                                                            WHERE lg_guias.cnumguia =:guia");
+
+                $sql->execute(['numero'=>$numero,'guia'=>$guia,'peso'=>$peso]);
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();

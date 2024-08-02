@@ -29,7 +29,7 @@
                                                     UPPER( CONCAT_WS( ' ', tb_proyectos.ccodproy, tb_proyectos.cdesproy ) ) AS costos,
                                                     lg_guias.ticketsunat,
                                                     lg_guias.guiasunat,
-                                                    lg_guias.estadoSunat 
+                                                    lg_guias.estadoSunat
                                                 FROM
                                                     alm_despachocab
                                                     INNER JOIN alm_despachodet ON alm_despachodet.id_regalm = alm_despachocab.id_regalm
@@ -51,7 +51,19 @@
 
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()){
-                        $icono = $rs['estadoSunat'] !== null ? '<i class="far fa-check-circle"></i>' : "";
+                        $icono = null;
+                        $color = null;
+
+                        if ( $rs['estadoSunat'] === 0 ) {
+                            $icono = '<i class="fas fa-check-circle"></i>';
+                            $color = 'green';
+                        }else if ($rs['estadoSunat'] === 98){
+                            $icono = '<i class="far fa-clock"></i>';
+                            $color = 'gold';
+                        }else if ($rs['estadoSunat'] === 99) {
+                            $icono = '<i class="fas fa-wrench"></i>';
+                            $color = 'red';
+                        }
 
                         $salida .='<tr data-indice="'.$rs['id_regalm'].'" class="pointer">
                                         <td class="textoCentro">'.str_pad($rs['id_regalm'],6,0,STR_PAD_LEFT).'</td>
@@ -63,7 +75,7 @@
                                         <td class="textoCentro">'.$rs['cnumguia'].'</td>
                                         <td class="textoCentro ">'.str_pad($rs['cnumero'],6,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro ">'.str_pad($rs['pedido'],6,0,STR_PAD_LEFT).'</td>
-                                        <td class="textoCentro" style="color:green;font-weight: bolder;font-size: 1rem;vertical-align: middle;">'.$icono.'</td>
+                                        <td class="textoCentro" style="color:'.$color.';font-weight: bolder;font-size: 1.2rem;vertical-align: middle;">'.$icono.'</td>
                                     </tr>';
                     }
                 }
@@ -1176,7 +1188,8 @@
                                                         lg_guias.cmotivo,
                                                         lg_guias.guiasunat,
                                                         lg_guias.ticketsunat,
-                                                        lg_guias.estadoSunat
+                                                        lg_guias.estadoSunat,
+                                                        lg_guias.nPeso 
                                                 FROM
                                                     lg_guias 
                                                 WHERE

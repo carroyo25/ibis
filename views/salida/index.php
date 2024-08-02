@@ -227,12 +227,10 @@
                         <br/><br/>
                         <p class="titulo_seccion"><strong> Guia de Remision Sunat : </strong></p>
                         <input type="text" name="serie_guia_sunat" id="serie_guia_sunat" class="w10por" value="T001" readonly>
-                        <input type="text" name="numero_guia_sunat" id="numero_guia_sunat" readonly>
+                        <input type="text" name="numero_guia_sunat" id="numero_guia_sunat" readonly>    
                     </div>
                     <div class="opciones_modal">
-                        
                         <a href="#" id="saveDocument" title="Grabar Guia"><i class="fas fa-save"></i><p>Grabar</p></a>
-                        <!--<a href="#" id="printDocument" title="Imprimir Guia" class="oculto"><i class="fas fa-print"></i><p>Imprimir</p></a>-->
                         <a href="#" id="previewDocument" title="Vista previa"><i class="fas fa-eye"></i><p>Vista Previa</p></a>
                         <a href="#" id="guiaSunat" title="Guia Sunat" class="oculto"><i class="fas fa-shipping-fast"></i><p>Sunat</p></a>
                         <a href="#" id="closeDocument" title="Cerrar Ventana"><i class="fas fa-window-close"></i><p>Cerrar</p></a>
@@ -241,6 +239,7 @@
                 <hr>
                 <div class="dos_columnas">
                     <div class="columna_izquierda">
+                        
                         <div class="fechas">
                             <div>
                                 <label for="fgemision">Fecha Emisión:</label>
@@ -326,6 +325,12 @@
                         </div>
                     </div>
                     <div class="columna_derecha">
+                        <label id="mensaje_sunat" style="width: 100%;
+                                    display: block;
+                                    height: 1rem;
+                                    text-align: right;
+                                    padding: .5rem;"></label>
+                        <br/>
                         <p><strong>Motivo</strong></p>
                         <div class="tres_columnas_interna">
                             <label for="tipo_transporte" class="uno">Tipo Transporte :</label>
