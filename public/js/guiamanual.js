@@ -94,7 +94,10 @@ $(function() {
         $('input[type="hidden"]').val('');
 
         $("#tipo").val("SALIDA X OC");
-        $("#codigo_movimiento").val(144);
+        $("#codigo_almacen_origen,#codigo_almacen_destino").val("859");
+        $("#almacen_origen_despacho,#almacen_destino_despacho").val("SERVICIOS PETROLEROS Y CONSTRUCCIONES SEPCON SAC");
+
+        $("#")
         
         accion = 'n';
         cc = "";
