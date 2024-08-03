@@ -1968,7 +1968,7 @@
                                             <cbc:ID schemeID="6" schemeName="Documento de Identidad" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">'.$header->ruc_entidad_destino.'</cbc:ID>
                                         </cac:PartyIdentification>
                                         <cac:PartyLegalEntity>
-                                            <cbc:RegistrationName><![CDATA['.$header->ruc_entidad_destino.']]></cbc:RegistrationName>
+                                            <cbc:RegistrationName><![CDATA['.$header->nombre_entidad_destino.']]></cbc:RegistrationName>
                                         </cac:PartyLegalEntity>
                                     </cac:Party>
                                 </cac:DeliveryCustomerParty>
