@@ -284,6 +284,12 @@
                         </div>
                     </div>
                     <div class="columna_derecha">
+                        <label id="mensaje_sunat" style="width: 100%;
+                                    display: block;
+                                    height: 1rem;
+                                    text-align: right;
+                                    padding: .5rem;"></label>
+                        <br/>
                         <p><strong>Motivo</strong></p>
                         <div class="tres_columnas_interna">
                             <label for="tipo_transporte" class="uno">Tipo Transporte :</label>

@@ -979,7 +979,8 @@
                                                         dptos.cdubigeo AS dpto,
                                                         tb_almacen.csunatalm,
                                                         tb_almacen.ncubigeo,
-                                                        tb_almacen.rucEnti
+                                                        tb_almacen.rucEnti,
+                                                         tb_almacen.razonEnti
                                                     FROM
                                                         tb_almacen
                                                         LEFT JOIN tb_ubigeo AS distritos ON tb_almacen.ncubigeo = distritos.ccubigeo
@@ -999,6 +1000,7 @@
                                         data-prov="'.$rs['prov'].'"
                                         data-ubigeo="'.$rs['ncubigeo'].'"
                                         data-ruc="'.$rs['rucEnti'].'"
+                                        data-razon="'.$rs['razonEnti'].'"
                                         data-dist="'.$rs['dist'].'">'.$rs['almacen'].'</a></li>';
                     }
 

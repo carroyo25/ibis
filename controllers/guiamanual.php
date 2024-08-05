@@ -10,7 +10,7 @@
             $this->view->listaEnvio = $this->model->listarParametros('08');
             $this->view->listaAprueba = $this->model->apruebaRecepción();
             $this->view->listaAlmacen = $this->model->listarAlmacenGuia();
-            $this->view->listaEntidad = $this->model->listarEntidades();
+            $this->view->listaEntidad = $this->model->listarEntidadesMTC();
             $this->view->listaModalidad = $this->model->listarParametros(14);
             $this->view->listaPersonal = $this->model->listarPersonalRol(4);
             $this->view->listaMovimiento = $this->model->listarParametros(12);

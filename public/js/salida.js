@@ -484,7 +484,6 @@ $(function() {
                 $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
             });
         }
-
     });
 
     $("#previewDocument").click(function (e) { 
@@ -762,7 +761,7 @@ $(function() {
                 formdata.append("guia_interna",result['numero_guia']);
                 formdata.append("peso",result['peso']);
 
-            if ( $("#ticket_sunat" ).val() === "" ) {
+            if ( $("#numero_guia_sunat" ).val() === "" ) {
                 fetch(RUTA+"salida/numeroSunat",{
                     method:'POST',
                     body:formdata

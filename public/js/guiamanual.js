@@ -179,6 +179,7 @@ $(function() {
             $("#almacen_origen_direccion").val($(this).data('direccion'));
             $("#codigo_origen_sunat").val($(this).data('sunat'));
             $("#ruc_entidad_origen").val($(this).data('ruc'));
+            $("#nombre_entidad_origen").val($(this).data('razon'));
             $("#ubigeo_origen_guia,#ubig_origen").val($(this).data('ubigeo'));
             $("#cso").val($(this).data('sunat'));
         }else if(contenedor_padre == "listaDestino"){
@@ -187,6 +188,7 @@ $(function() {
             $("#codigo_destino_sunat").val($(this).data('sunat'));
             $("#ubigeo_destino_guia,#ubig_destino").val($(this).data('ubigeo'));
             $("#ruc_entidad_destino").val($(this).data('ruc'));
+            $("#nombre_entidad_destino").val($(this).data('razon'));
             $("#csd").val($(this).data('sunat'));
         }else if(contenedor_padre == "listaAutoriza"){
             $("#autoriza").val($(this).text());
@@ -494,8 +496,15 @@ $(function() {
             if ( result['codigo_transporte'] == 258 && result['direccion_proveedor'] == "") throw new Error("Registre la direccion del transportista");
             if ( result['codigo_transporte'] == 258 && result['ruc_proveedor'] == "") throw new Error("Registre el RUC del transportista");
 
-            if ( $("#ticket_sunat" ).val() === "" ) {
-                fetch(RUTA+"salida/numeroSunat")
+            let formdata = new FormData();
+            formdata.append("guia_interna",result['numero_guia']);
+            formdata.append("peso",result['peso']);
+
+            if ( $("#numero_guia_sunat" ).val() === "" ) {
+                fetch(RUTA+"salida/numeroSunat",{
+                    method:'POST',
+                    body:formdata
+                })
                 .then(response => response.text())
                 .then(data =>{
                     $("#numero_guia_sunat").val(data);
@@ -504,6 +513,7 @@ $(function() {
             }else{
                 $("#aviso").fadeIn();
             }
+
         } catch (error) {
             mostrarMensaje(error.message,"mensaje_error");
         }
@@ -533,10 +543,13 @@ $(function() {
             contentType:false,      
             processData:false,
             success: function (data) {
-                if (data.respuesta == 0)
-                    mostrarMensaje(data.mensaje,"mensaje_correcto");
-                else
-                    mostrarMensaje(data.mensaje,"mensaje_error");
+                if (data.respuesta == 0){
+                    mostrarMensaje("Comprobante aceptado","mensaje_correcto");
+                }else{
+                    mostrarMensaje("Comprobante no aceptado","mensaje_error");
+                }
+
+                $("#mensaje_sunat").text(data.mensaje);
                 $("#aviso").fadeOut();
             }
         });
