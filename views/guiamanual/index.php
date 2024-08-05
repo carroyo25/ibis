@@ -219,7 +219,7 @@
                             </div>
                         </div>
                         <div>
-                            <p class="titulo_seccion"><strong>Datos del destinatario</strong></p>
+                            <p class="titulo_seccion"><strong>Datos del Remitente</strong></p>
                             <div class="dos_columnas_interna">
                                 <label>R.U.C.</label>
                                 <input type="text" name="destinatario_ruc" id="destinatario_ruc" value="20504898173" readonly>
