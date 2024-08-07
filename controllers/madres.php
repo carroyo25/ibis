@@ -11,11 +11,14 @@
             $this->view->listaAprueba = $this->model->apruebaRecepción();
             $this->view->listaAlmacen = $this->model->listarAlmacenGuia();
             $this->view->listaMovimiento = $this->model->listarParametros(12);
-            $this->view->listaEntidad = $this->model->listarEntidades();
+            $this->view->listaEntidad = $this->model->listarEntidadesMTC();
             $this->view->listaModalidad = $this->model->listarParametros(14);
             $this->view->listaEnvio = $this->model->listarParametros('08');
             $this->view->listaTipoGuia = $this->model->listarParametros('20');
             $this->view->listaPersonal = $this->model->listarPersonalRol(4);
+            $this->view->listaTransporte = $this->model->listarParametros(23);
+            $this->view->listaConductores = $this->model->listarConductores();
+            $this->view->listaPlacas = $this->model->listarParametros('24');
             $this->view->render('madres/index');
         }
 

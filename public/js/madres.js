@@ -116,7 +116,7 @@ $(() =>{
         return false;
     });
 
-    $(".lista").on("click",'a', function (e) {
+    /*$(".lista").on("click",'a', function (e) {
         e.preventDefault();
 
         let control = $(this).parent().parent().parent();
@@ -173,6 +173,80 @@ $(() =>{
         }else if(contenedor_padre == "listaTipoGuia"){
             $("#codigo_tipo_guia").val(codigo);
             $("#tipo_guia").val($(this).text());
+        }
+
+        return false;
+    });*/
+
+    $(".lista").on("click",'a', function (e) {
+        e.preventDefault();
+
+        let control = $(this).parent().parent().parent();
+        let destino = $(this).parent().parent().parent().prev();
+        let contenedor_padre = $(this).parent().parent().parent().attr("id");
+        let id = "";
+        let codigo = $(this).attr("href");
+        
+        control.slideUp()
+
+        destino.val($(this).text());
+        id = destino.attr("id");
+
+        if(contenedor_padre == "listaMovimiento"){
+            $("#codigo_movimiento").val(codigo);
+        }else if(contenedor_padre == "listaAprueba"){
+            $("#codigo_aprueba").val(codigo);
+            $("#autoriza").val($(this).text());
+        }else if(contenedor_padre == "listaOrigen"){
+            $("#codigo_origen").val(codigo);
+            $("#almacen_origen").val($(this).text());
+            $("#almacen_origen_direccion").val($(this).data('direccion'));
+            $("#codigo_origen_sunat").val($(this).data('sunat'));
+            $("#ruc_entidad_origen").val($(this).data('ruc'));
+            $("#nombre_entidad_origen").val($(this).data('razon'));
+            $("#ubigeo_origen_guia,#ubig_origen").val($(this).data('ubigeo'));
+            $("#cso").val($(this).data('sunat'));
+        }else if(contenedor_padre == "listaDestino"){
+            $("#almacen_destino").val($(this).text());
+            $("#almacen_destino_direccion").val($(this).data('direccion'));
+            $("#codigo_destino_sunat").val($(this).data('sunat'));
+            $("#ubigeo_destino_guia,#ubig_destino").val($(this).data('ubigeo'));
+            $("#ruc_entidad_destino").val($(this).data('ruc'));
+            $("#nombre_entidad_destino").val($(this).data('razon'));
+            $("#csd").val($(this).data('sunat'));
+        }else if(contenedor_padre == "listaAutoriza"){
+            $("#autoriza").val($(this).text());
+            $("#codigo_autoriza").val(codigo);
+        }else if(contenedor_padre == "listaDespacha"){
+            $("#codigo_despacha").val(codigo);
+        }else if(contenedor_padre == "listaDestinatario"){
+            $("#destinatario").val($(this).text());
+            $("#codigo_destinatario").val(codigo);
+        }else if(contenedor_padre == "listaModalidad"){
+            $("#modalidad_traslado").val($(this).text());
+            $("#codigo_modalidad").val(codigo);
+        }else if(contenedor_padre == "listaEnvio"){
+            $("#tipo_envio").val($(this).text());
+            $("#codigo_tipo").val(codigo);
+        }else if(contenedor_padre == "listaEntidad"){
+            $("#codigo_entidad_transporte").val(codigo);
+            $("#empresa_transporte_razon").val($(this).text());
+            $("#ruc_proveedor").val($(this).data("ruc"));
+            $("#direccion_proveedor").val($(this).data("direccion"));
+            $("#registro_mtc").val($(this).data("mtc"));
+        }else if(contenedor_padre == "listaTransporte"){
+            $("#codigo_transporte").val(codigo);
+            $("#tipo_transporte").val($(this).text());
+        }else if(contenedor_padre == "listaConductores"){
+            $("#nombre_conductor").val($(this).text());
+            $("#licencia_conducir").val($(this).data('licencia'));
+            $("#conductor_dni").val($(this).data('dni'));
+        }else if(contenedor_padre == "listaPlacas"){
+            $("#placa").val($(this).text());
+        }else if(contenedor_padre == "listaOrigenCabecera"){
+            $("#codigo_almacen_origen").val(codigo);
+        }else if(contenedor_padre == "listaDestinoCabecera"){
+            $("#codigo_almacen_destino").val(codigo);
         }
 
         return false;
@@ -452,24 +526,173 @@ $(() =>{
     $("#guiaSunat").click(function(e){
         e.preventDefault();
 
-        let datosGuia = {},datosFormulario = {};
-    
+        let result = {};
+
         $.each($("#guiaremision").serializeArray(),function(){
-            datosGuia[this.name] = this.value;
-        })
+            result[this.name] = this.value;
+        });
 
-        $.each($("#formProceso").serializeArray(),function(){
-            datosFormulario[this.name] = this.value;
-        })
+        try {
+            if ( result['ftraslado'] == "") throw new Error("Indique la fecha de traslado");
+            if ( result['ubigeo_origen_guia'] == "") throw new Error("Ingrese el ubigeo origen");
+            if ( result['ubigeo_destino_guia'] == "") throw new Error("Ingrese el ubigeo destino");
 
-        $.post(RUTA+"madres/envioSunat", {datosGuia:JSON.stringify(datosGuia),
-                                          datosFormulario:JSON.stringify(datosFormulario),
-                                          detalles:JSON.stringify(detalles())},
-            function (data, text, requestXHR) {
-                //console.log(data);
+            if ( result['codigo_transporte'] == "" ) throw new Error("Indique el tipo de transporte");
+            if ( result['codigo_modalidad'] == "" ) throw new Error("Indique la modalidad de traslado");
+            
+            if ( result['peso'] == "") throw new Error("Ingrese el peso");
+
+            if ( result['codigo_transporte'] == 257 && result['nombre_conductor'] == "") throw new Error("Registre el nombre del conductor");
+            if ( result['codigo_transporte'] == 257 && result['licencia_conducir'] == "") throw new Error("Registre la licencia del conductor");
+            if ( result['codigo_transporte'] == 257 && result['placa'] == "") throw new Error("Registre la placa del vehículo");
+
+            if ( result['codigo_transporte'] == 258 && result['empresa_transporte_razon'] == "") throw new Error("Registre el nombre de la empresa de transportes");
+            if ( result['codigo_transporte'] == 258 && result['direccion_proveedor'] == "") throw new Error("Registre la direccion del transportista");
+            if ( result['codigo_transporte'] == 258 && result['ruc_proveedor'] == "") throw new Error("Registre el RUC del transportista");
+
+            let formdata = new FormData();
+            formdata.append("guia_interna",result['numero_guia']);
+            formdata.append("peso",result['peso']);
+
+            if ( $("#numero_guia_sunat" ).val() === "" ) {
+                fetch(RUTA+"salida/numeroSunat",{
+                    method:'POST',
+                    body:formdata
+                })
+                .then(response => response.text())
+                .then(data =>{
+                    $("#numero_guia_sunat").val(data);
+                    $("#aviso").fadeIn();
+                });
+            }else{
+                $("#aviso").fadeIn();
+            }
+
+        } catch (error) {
+            mostrarMensaje(error.message,"mensaje_error");
+        }
+
+        return false;
+    });
+
+    $("#btnAceptarAdvierte").click(function(e){
+        e.preventDefault();
+
+        let result = {};
+
+        $.each($("#guiaremision").serializeArray(),function(){
+            result[this.name] = this.value;
+        });
+
+        let datosJSON = new FormData();
+
+        datosJSON.append("cabecera",JSON.stringify(result));
+        datosJSON.append("detalles",JSON.stringify(detalles(1)));
+
+        $.ajax({
+            type: "POST",
+            url: RUTA+"salida/guiaSunat",
+            data: datosJSON,
+            dataType: "json",
+            contentType:false,      
+            processData:false,
+            success: function (data) {
+                if (data.respuesta == 0){
+                    mostrarMensaje("Comprobante aceptado","mensaje_correcto");
+                }else{
+                    mostrarMensaje("Comprobante no aceptado","mensaje_error");
+                }
+
+                $("#mensaje_sunat").text(data.mensaje);
+                $("#aviso").fadeOut();
+            }
+        });
+        
+        return false;
+    });
+
+    $("#btnCancelarAdvierte").click(function(e){
+        e.preventDefault();
+
+        $("#aviso").fadeOut();
+
+        return false;
+    });
+
+    $(".btnCallDialog").click(function(e){
+        e.preventDefault();
+
+        controlUbigeo = e.target.id;
+
+        $("#ubigeo").fadeIn();
+        
+        return false
+    });
+
+    $("#dpto").change(function(e){
+        e.preventDefault();
+
+        $("#prov").empty();
+        $("#dist").empty();
+
+        $.post(RUTA+"salida/ubigeoGuias", {nivel:2,prefijo:$("#dpto").val()},
+            function (data, textStatus, jqXHR) {
+               data.datos.forEach(element => {
+                    row = `<option value="${element.ccubigeo}">${element.cdubigeo}</option>`;
+                    $("#prov").append(row);
+               });  
             },
             "json"
         );
+
+        return false;
+    });
+
+    $("#prov").change(function(e){
+        e.preventDefault();
+
+        $("#dist").empty();
+
+        $.post(RUTA+"salida/ubigeoGuias", {nivel:3,prefijo:$("#prov").val()},
+            function (data, textStatus, jqXHR) {
+               data.datos.forEach(element => {
+                    row = `<option value="${element.ccubigeo}">${element.cdubigeo}</option>`;
+                    $("#dist").append(row);
+               });  
+            },
+            "json"
+        );
+
+        return false;
+    });
+
+    $("#dist").change(function(e){
+        e.preventDefault();
+
+        ubigeo = e.target.value;
+
+        return false;
+    });
+
+    $("#btnCancelarUbigeo").click(function(e){
+        e.preventDefault();
+
+        $("#ubigeo").fadeOut();
+
+        return false;
+    });
+
+    $("#btnAceptarUbigeo").click(function(e){
+        e.preventDefault();
+
+        if ( controlUbigeo == "ubigeoBtnOrigen"){
+            $("#ubigeo_origen_guia,#ubig_origen").val(ubigeo);
+        }else{
+            $("#ubigeo_destino_guia,#ubig_destino").val(ubigeo);
+        }
+
+        $("#dist,#prov").empty();
+        $("#ubigeo").fadeOut();
 
         return false;
     });
