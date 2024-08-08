@@ -300,7 +300,10 @@
                                                         UPPER( destinos.crazonsoc ) AS nombre_destino,
                                                         UPPER( destinos.cviadireccion ) AS direccion_destino,
                                                         DATE_FORMAT( alm_madrescab.ffecdoc, '%d/%m7/%Y' ) AS emitido,
-                                                        DATE_FORMAT( lg_guias.ftraslado, '%d/%m7/%Y' ) AS traslado 
+                                                        DATE_FORMAT( lg_guias.ftraslado, '%d/%m7/%Y' ) AS traslado,
+                                                        lg_guias.ticketsunat,
+                                                        lg_guias.guiasunat,
+                                                        lg_guias.estadoSunat  
                                                     FROM
                                                         alm_madrescab
                                                         INNER JOIN cm_entidad AS origenes ON alm_madrescab.ncodalm1 = origenes.id_centi
@@ -314,13 +317,29 @@
 
                 if( $sql->rowCount() > 0 ){
                     while($rs = $sql->fetch()){
-                        $salida .= '<tr class="pointer" data-indice="'.$rs['id_regalm'].'">
+
+                        $icono = null;
+                        $color = null;
+
+                        if ( $rs['estadoSunat'] === 0 ) {
+                            $icono = '<i class="far fa-check-circle"></i>';
+                            $color = 'green';
+                        }else if ($rs['estadoSunat'] === 98){
+                            $icono = '<i class="far fa-clock"></i>';
+                            $color = 'gold';
+                        }else if ($rs['estadoSunat'] === 99) {
+                            $icono = '<i class="fas fa-wrench"></i>';
+                            $color = 'red';
+                        }
+
+                        $salida .= '<tr class="pointer" data-indice="'.$rs['id_regalm'].'" data-guiasunat="'.$rs['guiasunat'].'">
                                         <td class="textoCentro">'.str_pad($item++,4,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$rs['emitido'].'</td>
                                         <td class="textoCentro">'.$rs['traslado'].'</td>
                                         <td class="pl20px">'.$rs['nombre_origen'].'</td>
                                         <td class="pl20px">'.$rs['nombre_destino'].'</td>
                                         <td class="textoCentro">'.$rs['cnumguia'].'</td>
+                                        <td class="textoCentro" style="color:'.$color.';font-weight: bolder;font-size: 1rem;vertical-align: middle;">'.$icono.'</td>
                                     </tr>';
                     }
                 }
@@ -350,11 +369,15 @@
                                                             DATE_FORMAT( lg_guiamadre.ffecdoc, '%d/%m/%Y' ) AS emision,
                                                             DATE_FORMAT( lg_guiamadre.ffectraslado, '%d/%m/%Y' ) AS traslado,
                                                             UPPER( origen.cdesalm ) AS almacen_origen,
-                                                            UPPER( destino.cdesalm ) AS almacen_destino 
+                                                            UPPER( destino.cdesalm ) AS almacen_destino,
+                                                            lg_guias.ticketsunat,
+                                                            lg_guias.guiasunat,
+                                                            lg_guias.estadoSunat  
                                                         FROM
                                                             lg_guiamadre
                                                             LEFT JOIN tb_almacen AS origen ON lg_guiamadre.nlamorigen = origen.ncodalm
                                                             LEFT JOIN tb_almacen AS destino ON lg_guiamadre.nalmdestino = destino.ncodalm
+                                                            LEFT JOIN lg_guias ON lg_guiamadre.cnumguia = lg_guias.cnumguia 
                                                         WHERE lg_guiamadre.nflgActivo = 1
                                                         LIMIT 1,1");
                 
@@ -435,6 +458,9 @@
                                                         lg_guias.nBultos,
                                                         lg_guias.cenvio,
                                                         lg_guias.cobserva,
+                                                        lg_guias.ticketsunat,
+                                                        lg_guias.guiasunat,
+                                                        lg_guias.estadoSunat,
                                                         lg_guias.centi AS nombre_proveedor,
                                                         lg_guias.centiruc AS ruc_proveedor,
                                                         lg_guias.centidir AS direccion_proveedor,

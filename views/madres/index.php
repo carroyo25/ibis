@@ -692,6 +692,7 @@
                     <th>Almacen Origen</th>
                     <th>Almacen Destino</th>
                     <th>N° Guia</th>
+                    <th>Estado Sunat</th>
                 </tr>
             </thead>
             <tbody>

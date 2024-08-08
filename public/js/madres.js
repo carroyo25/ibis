@@ -51,7 +51,8 @@ $(() =>{
                             <td class="textoCentro">${i.traslado}</td>
                             <td class="textoCentro">${i.almacen_origen}</td>
                             <td class="pl20px">${i.almacen_destino}</td>
-                            <td class="textoCentro ${indicador}">${estado}</td>`;
+                            <td class="textoCentro ${indicador}">${estado}</td>;
+                            <td class="textoCentro>${estado}</td>`;
             tr.classList.add("pointer");
             tr.dataset.indice = i.idreg;
             body.appendChild(tr);
@@ -116,67 +117,6 @@ $(() =>{
         return false;
     });
 
-    /*$(".lista").on("click",'a', function (e) {
-        e.preventDefault();
-
-        let control = $(this).parent().parent().parent();
-        let destino = $(this).parent().parent().parent().prev();
-        let contenedor_padre = $(this).parent().parent().parent().attr("id");
-        let id = "";
-        let codigo = $(this).attr("href");
-        let almacen = $(this).data("almacen");
-        
-        control.slideUp()
-        destino.val($(this).text());
-        id = destino.attr("id");
-
-        if(contenedor_padre == "listaCostosDestino"){
-            $("#codigo_costos_origen").val(codigo);
-            //$("#codigo_almacen_destino").val(almacen);
-        }else if(contenedor_padre == "listaAprueba"){
-            $("#codigo_aprueba").val(codigo);
-        }else if(contenedor_padre == "listaOrigen"){
-            $("#codigo_almacen_origen").val(codigo);
-            $("#codigo_origen").val(codigo);
-            $("#almacen_origen").val($(this).text());
-            $("#almacen_origen_direccion").val($(this).data('direccion'));
-            $("#ubig_origen").val($(this).data('ubigeo'));
-            $("#cso").val($(this).data('sunat'));
-        }else if(contenedor_padre == "listaDestino"){
-            $("#codigo_almacen_destino").val(codigo);
-            $("#almacen_destino").val($(this).text());
-            $("#almacen_destino_direccion").val($(this).data('direccion'));
-            $("#ubig_destino").val($(this).data('ubigeo'));
-            $("#csd").val($(this).data('sunat'));
-        }else if(contenedor_padre == "listaModalidad"){
-            $("#modalidad_traslado").val($(this).text());
-            $("#codigo_modalidad").val(codigo);
-        }else if(contenedor_padre == "listaEnvio"){
-            $("#tipo_envio").val($(this).text());
-            $("#codigo_tipo").val(codigo);
-        }else if(contenedor_padre == "listaEntidad"){
-            $("#codigo_entidad_transporte").val(codigo);
-            $("#empresa_transporte_razon").val($(this).text());
-            $("#ruc_proveedor").val($(this).data("ruc"));
-            $("#direccion_proveedor").val($(this).data("direccion"));
-        }else if(contenedor_padre == "listaAutoriza"){
-            $("#autoriza").val($(this).text());
-            $("#codigo_autoriza").val(codigo);
-        }else if(contenedor_padre == "listaDespacha"){
-            $("#codigo_despacha").val(codigo);
-        }else if(contenedor_padre == "listaDestinatario"){
-            $("#destinatario").val($(this).text());
-            $("#codigo_destinatario").val(codigo);
-        }else if(contenedor_padre == "listaMovimiento"){
-            $("#codigo_movimiento").val(codigo);
-            $("#tipo_envio").val($(this).text());
-        }else if(contenedor_padre == "listaTipoGuia"){
-            $("#codigo_tipo_guia").val(codigo);
-            $("#tipo_guia").val($(this).text());
-        }
-
-        return false;
-    });*/
 
     $(".lista").on("click",'a', function (e) {
         e.preventDefault();
@@ -480,6 +420,7 @@ $(() =>{
                 $("#tipo_envio").val(data.cabecera[0].cenvio);
 
                 $("#numero_guia").val(data.cabecera[0].cnumguia);
+                $("#numero_guia_sunat").val(data.cabecera[0].guiasunat); 
                 $("#fgemision").val(data.cabecera[0].emision);
                 $("#ftraslado").val(data.cabecera[0].traslado);
                 $("#almacen_origen").val(data.cabecera[0].origen);

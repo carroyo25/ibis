@@ -21,6 +21,7 @@ $(function() {
                 $("#codigo_almacen_origen").val(data.cabecera[0].id_origen);
                 $("#codigo_almacen_destino").val(data.cabecera[0].id_destino);
                 $("#guia").val(data.cabecera[0].cnumguia);
+                $("#numero_guia_sunat").val(data.cabecera[0].guiasunat); 
                 $("#aprueba").val(data.cabecera[0].cnombres);
                 $("#almacen_origen_despacho").val(data.cabecera[0].razon_origen);
                 $("#almacen_destino_despacho").val(data.cabecera[0].razon_destino);

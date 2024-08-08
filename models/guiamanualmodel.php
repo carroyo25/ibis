@@ -411,8 +411,8 @@
                                                     LEFT JOIN tb_proyectos ON alm_desplibrescab.ncodpry = tb_proyectos.nidreg
                                                     LEFT JOIN lg_guias ON alm_desplibrescab.cnumguia = lg_guias.cnumguia
                                                     LEFT JOIN tb_user ON alm_desplibrescab.id_userAprob = tb_user.iduser
-                                                    INNER JOIN tb_parametros AS tipos ON alm_desplibrescab.ntipmov = tipos.nidreg
-	                                                INNER JOIN tb_parametros AS estados ON alm_desplibrescab.nEstadoDoc = estados.nidreg 
+                                                    LEFT JOIN tb_parametros AS tipos ON alm_desplibrescab.ntipmov = tipos.nidreg
+	                                                LEFT JOIN tb_parametros AS estados ON alm_desplibrescab.nEstadoDoc = estados.nidreg 
                                                 WHERE
                                                     alm_desplibrescab.nflgactivo = 1 
                                                     AND alm_desplibrescab.id_regalm =:indice");
