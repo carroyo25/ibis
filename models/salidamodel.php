@@ -1291,17 +1291,17 @@
         private function crear_files($path,$nombre_archivo,$header,$body){
 
             if ($header->tipo_documento == 1) {
-                if ( $header->codigo_transporte == 257 && $header->codigo_modalidad == 254 ) //caso 1 TRASLADO ENTRE ALMACENES -TRANSPORTE PROPIO
+                if ( $header->codigo_transporte == 257 && $header->codigo_modalidad == 254 ) //caso 1 TRASLADO ENTRE ALMACENES -TRANSPORTE PROPIO OK
                     $xml = $this->caso1($header, $body);
                 else if ( $header->codigo_transporte == 258 && $header->codigo_modalidad == 254 ) //caso 2 TRASLADO ENTRE ALMACENES -TRANSPORTE TERCEROS
                     $xml = $this->caso2($header, $body);
-                else if ( $header->codigo_transporte == 257 && $header->codigo_modalidad == 108 ) //caso 3 TRANSPORTE OBRA - TRANSPORTE PROPIO
+                else if ( $header->codigo_transporte == 257 && $header->codigo_modalidad == 108 ) //caso 3 TRANSPORTE OBRA - TRANSPORTE PROPIO OK
                     $xml = $this->caso3($header, $body);
-                else if ( $header->codigo_transporte == 258 && $header->codigo_modalidad == 108 ) //caso 3 TRANSPORTE OBRA - TRANSPORTE TERCEROS
+                else if ( $header->codigo_transporte == 258 && $header->codigo_modalidad == 108 ) //caso 4 TRANSPORTE OBRA - TRANSPORTE TERCEROS OK
                     $xml = $this->caso5($header, $body);
-                else if ( $header->codigo_transporte == 257 && $header->codigo_modalidad == 255 ) //caso 3 TRANSPORTE OBRA - TRANSPORTE PROPIO
+                else if ( $header->codigo_transporte == 257 && $header->codigo_modalidad == 255 ) //caso 5 TRANSPORTE ALMACEN TERCERO - TRANSPORTE PROPIO 
                     $xml = $this->caso4($header, $body);
-                else if ( $header->codigo_transporte == 258 && $header->codigo_modalidad == 255 ) //caso 3 TRANSPORTE TERCEROS - ALMCENES TERCEROS
+                else if ( $header->codigo_transporte == 258 && $header->codigo_modalidad == 255 ) //caso 6 TRANSPORTE TERCEROS - ALMACENES TERCEROS OK
                     $xml = $this->caso6($header, $body);
             }else {
                 $xml = $this->guiaTransportista($header, $body);
