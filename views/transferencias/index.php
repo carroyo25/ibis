@@ -592,6 +592,7 @@
                             <th data-idcol="4">Centro de Costos Origen</th>
                             <th data-idcol="4">Centro de Costos Destino</th>
                             <th data-idcol="5">Nro. Guia</th>
+                            <th data-idcol="5">Nro. Pedido</th>
                         </tr>
                     </thead>
                     <tbody>

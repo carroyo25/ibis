@@ -44,6 +44,7 @@
                                         <td class="pl20px">'.$rs['origen_cc'].'</td>
                                         <td class="pl20px">'.$rs['destino_cc'].'</td>
                                         <td class="pl20px">'.$rs['cnumguia'].'</td>
+                                         <td class="pl20px"></td>
                                     </tr>';
                     }
                 }
