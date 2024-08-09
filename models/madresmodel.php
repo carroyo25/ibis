@@ -93,7 +93,7 @@
                                         <td class="textoCentro">'.$rs['cccodprod'].'</td>
                                         <td class="pl10px">'.$rs['cdesprod'].'</td>
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
-                                        <td class="textoDerecha">'.$rs['ndespacho'].'</td>
+                                        <td class="textoDerecha"><input type="number" value="'.$rs['ndespacho'].'"></td>
                                         <td class="textoDerecha">'.$rs['cnumguia'].'</td>
                                         <td class="textoCentro"><a href="#"><i class="fas fa-trash-alt"></i></a></td>
                                     </tr>';
@@ -299,8 +299,8 @@
                                                         UPPER( origenes.cviadireccion ) AS direccion_origen,
                                                         UPPER( destinos.crazonsoc ) AS nombre_destino,
                                                         UPPER( destinos.cviadireccion ) AS direccion_destino,
-                                                        DATE_FORMAT( alm_madrescab.ffecdoc, '%d/%m7/%Y' ) AS emitido,
-                                                        DATE_FORMAT( lg_guias.ftraslado, '%d/%m7/%Y' ) AS traslado,
+                                                        DATE_FORMAT( alm_madrescab.ffecdoc, '%d/%m/%Y' ) AS emitido,
+                                                        DATE_FORMAT( lg_guias.ftraslado, '%d/%m/%Y' ) AS traslado,
                                                         lg_guias.ticketsunat,
                                                         lg_guias.guiasunat,
                                                         lg_guias.estadoSunat  
@@ -310,7 +310,8 @@
                                                         INNER JOIN cm_entidad AS destinos ON alm_madrescab.ncodalm2 = destinos.id_centi
                                                         INNER JOIN lg_guias ON alm_madrescab.cnumguia = lg_guias.cnumguia 
                                                     WHERE
-                                                        alm_madrescab.nflgactivo = 1");
+                                                        alm_madrescab.nflgactivo = 1
+                                                    ORDER BY alm_madrescab.ffecdoc DESC");
 
                 $sql->execute();
                 $item = 1;
@@ -534,7 +535,7 @@
                                     <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                     <td class="pl20px">'.$rs['producto'].'</td>
                                     <td class="textoCentro">'.$rs['cabrevia'].'</td>
-                                    <td class="textoDerecha">'.$rs['ncantidad'].'</td>
+                                    <td><input type="num" value="'.$rs['ncantidad'].'" class="textoDerecha" readonly></td>
                                     <td class="textoCentro">'.$rs['nGuia'].'</td>
                                     <td></td>
                                 </tr>';

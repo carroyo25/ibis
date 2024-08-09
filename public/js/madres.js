@@ -187,6 +187,8 @@ $(() =>{
             $("#codigo_almacen_origen").val(codigo);
         }else if(contenedor_padre == "listaDestinoCabecera"){
             $("#codigo_almacen_destino").val(codigo);
+        }else if(contenedor_padre == "listaCostosDestinoCabecera"){
+            $("#codigo_costos_origen").val(codigo);
         }
 
         return false;
@@ -388,7 +390,7 @@ $(() =>{
                                             },
                 function (data, textStatus, jqXHR) {
                     mostrarMensaje(data.mensaje,"mensaje_correcto");
-                    $("#guia,#numero_guia,#numero_guia_sunat").val(data.guia);
+                    $("#guia,#numero_guia").val(data.guia);
 
                     $(".primeraBarra").css("background","#819830");
                     $(".primeraBarra span").text('Datos Generales ... Grabado');
@@ -697,13 +699,13 @@ detalles = () =>{
             ORDEN       = $(this).data('orden'),
             INGRESO     = "",
             ALMACEN     = "",
-            CANTDESP    = $(this).find('td').eq(4).text(),
+            CANTDESP    = $(this).find('td').eq(4).children().val(),
             OBSER       = "",
             CODIGO      = $(this).find('td').eq(1).text(),//codigo
             DESCRIPCION = $(this).find('td').eq(2).text(),//descripcion
             UNIDAD      = $(this).find('td').eq(3).text(),//unidad
             DESTINO     = $("#codigo_almacen_destino").val(),
-            CANTIDAD    = $(this).find('td').eq(4).text(),
+            CANTIDAD    = $(this).find('td').eq(4).children().val();
             GUIA        = $(this).find('td').eq(5).text();
     
         let item = {};
