@@ -12,27 +12,34 @@
             try {
                 $salida = "";
                 $sql = $this->db->connect()->prepare("SELECT
-                                                        tb_costusu.id_cuser,
-                                                        alm_transfercab.almorigen,
-                                                        alm_transfercab.almdestino,
-                                                        alm_transfercab.idreg,
-                                                        alm_transfercab.ftraslado,
-                                                        alm_transfercab.cnumguia,
-                                                        UPPER( c_origen.cdesproy ) AS origen_cc,
-                                                        UPPER( c_destino.cdesproy ) AS destino_cc 
-                                                    FROM
-                                                        tb_costusu
-                                                        INNER JOIN alm_transfercab ON tb_costusu.ncodproy = alm_transfercab.idcc
-                                                        INNER JOIN tb_almacen AS origen ON alm_transfercab.almorigen = origen.ncodalm
-                                                        INNER JOIN tb_almacen AS destino ON alm_transfercab.almdestino = destino.ncodalm
-                                                        INNER JOIN tb_proyectos AS c_origen ON alm_transfercab.idcc = c_origen.nidreg
-                                                        INNER JOIN tb_proyectos AS c_destino ON alm_transfercab.idcd = c_destino.nidreg 
-                                                    WHERE
-                                                        tb_costusu.nflgactivo = 1 
-                                                        AND alm_transfercab.nflgactivo = 1 
-                                                        AND tb_costusu.id_cuser = :user 
-            ORDER BY
-                alm_transfercab.idreg DESC  ");
+                                                            tb_costusu.id_cuser,
+                                                            alm_transfercab.almorigen,
+                                                            alm_transfercab.almdestino,
+                                                            alm_transfercab.idreg,
+                                                            alm_transfercab.ftraslado,
+                                                            alm_transfercab.cnumguia,
+                                                            UPPER( c_origen.cdesproy ) AS origen_cc,
+                                                            UPPER( c_destino.cdesproy ) AS destino_cc,
+                                                            tb_pedidocab.nrodoc 
+                                                        FROM
+                                                            tb_costusu
+                                                            INNER JOIN alm_transfercab ON tb_costusu.ncodproy = alm_transfercab.idcc
+                                                            INNER JOIN tb_almacen AS origen ON alm_transfercab.almorigen = origen.ncodalm
+                                                            INNER JOIN tb_almacen AS destino ON alm_transfercab.almdestino = destino.ncodalm
+                                                            INNER JOIN tb_proyectos AS c_origen ON alm_transfercab.idcc = c_origen.nidreg
+                                                            INNER JOIN tb_proyectos AS c_destino ON alm_transfercab.idcd = c_destino.nidreg
+                                                            LEFT JOIN alm_transferdet ON alm_transfercab.idreg = alm_transferdet.idtransfer
+                                                            INNER JOIN tb_pedidodet ON alm_transferdet.iddetped = tb_pedidodet.iditem
+                                                            INNER JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg 
+                                                        WHERE
+                                                            tb_costusu.nflgactivo = 1 
+                                                            AND alm_transfercab.nflgactivo = 1 
+                                                            AND tb_costusu.id_cuser = :user
+                                                        AND tb_pedidocab.nrodoc LIKE '%'
+                                                        GROUP BY
+                                                            idreg
+                                                        ORDER BY
+                                                            alm_transfercab.idreg DESC ");
                 $sql->execute(["user"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowCount();
 
@@ -44,7 +51,7 @@
                                         <td class="pl20px">'.$rs['origen_cc'].'</td>
                                         <td class="pl20px">'.$rs['destino_cc'].'</td>
                                         <td class="pl20px">'.$rs['cnumguia'].'</td>
-                                         <td class="pl20px"></td>
+                                        <td class="pl20px">'.str_pad($rs['nrodoc'],6,0,STR_PAD_LEFT).'</td>
                                     </tr>';
                     }
                 }
