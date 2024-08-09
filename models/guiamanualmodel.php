@@ -37,7 +37,7 @@
                                                         LEFT JOIN tb_proyectos ON alm_desplibrescab.ncodpry = tb_proyectos.nidreg
                                                         LEFT JOIN lg_guias ON alm_desplibrescab.cnumguia = lg_guias.cnumguia  
                                                     WHERE
-                                                        alm_desplibrescab.nflgactivo = 1
+                                                        alm_desplibrescab.nflgactivo != 0
                                                         AND alm_desplibrescab.cnumguia LIKE :guia
                                                         AND YEAR(alm_desplibrescab.ffecdoc) LIKE :anio
                                                     ORDER BY alm_desplibrescab.ffecdoc DESC");

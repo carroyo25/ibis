@@ -3147,7 +3147,8 @@
                 $sql = $this->db->connect()->prepare("UPDATE lg_ordendet 
                                                         SET nflgactivo = NULL,
                                                             id_regmov = NULL,
-                                                            nEstadoReg = 105
+                                                            nEstadoReg = 105,
+                                                            cant_orden = 0
                                                         WHERE nitemord =:id");
                 $sql->execute(["id" => $io]);
             } catch (PDOException $th) {

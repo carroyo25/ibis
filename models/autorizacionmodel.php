@@ -24,8 +24,8 @@
                                                         ibis.tb_costusu
                                                         INNER JOIN ibis.alm_autorizacab ON tb_costusu.ncodproy = alm_autorizacab.ncostos
                                                         INNER JOIN ibis.tb_proyectos ON alm_autorizacab.ncostos = tb_proyectos.nidreg
-                                                        INNER JOIN ibis.tb_almacen AS origen ON alm_autorizacab.corigen = origen.ncodalm
-                                                        INNER JOIN ibis.tb_almacen AS destino ON alm_autorizacab.cdestino = destino.ncodalm
+                                                        INNER JOIN ibis.tb_almacen AS origen ON alm_autorizacab.norigen = origen.ncodalm
+                                                        INNER JOIN ibis.tb_almacen AS destino ON alm_autorizacab.ndestino = destino.ncodalm
                                                         INNER JOIN ibis.tb_area ON alm_autorizacab.narea = tb_area.ncodarea
                                                         INNER JOIN rrhh.tabla_aquarius ON ibis.alm_autorizacab.csolicita = rrhh.tabla_aquarius.internal
                                                         INNER JOIN ibis.tb_parametros AS tipos_autorizacion ON ibis.alm_autorizacab.ctransferencia = tipos_autorizacion.nidreg 
@@ -68,8 +68,8 @@
                                                         alm_autorizacab.ncostos=:costos,
                                                         alm_autorizacab.narea=:area,
                                                         alm_autorizacab.csolicita=:solicita,
-                                                        alm_autorizacab.corigen=:origen,
-                                                        alm_autorizacab.cdestino=:destino,
+                                                        alm_autorizacab.norigen=:origen,
+                                                        alm_autorizacab.ndestino=:destino,
                                                         alm_autorizacab.ctransferencia=:tipo,
                                                         alm_autorizacab.observac=:observacion,
                                                         alm_autorizacab.celabora=:elabora");
