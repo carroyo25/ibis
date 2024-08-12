@@ -1587,6 +1587,18 @@ $emitido:#F8CAAD;
             }
         }
     }
+
+    .firmas{
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        background: #fff;
+        
+        div {
+            height: 3rem;
+            border: 1px dotted #c3c3c3;
+            text-align: center;
+        }
+    }
 }
 
 .ventanaAdjuntos{

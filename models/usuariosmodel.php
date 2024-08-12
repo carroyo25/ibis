@@ -70,7 +70,21 @@
 
         public function listarModulos() {
             try {
-                $sql= $this->db->connect()->query("SELECT ncodmenu,cclasmenu,copcion,cdescripcion,cicono FROM sysmenu");
+                $sql= $this->db->connect()->query("SELECT
+                                                        sysmenu.ncodmenu,
+                                                        sysmenu.cclasmenu,
+                                                        sysmenu.copcion,
+                                                        sysmenu.cdescripcion,
+                                                        sysmenu.cicono,
+                                                        sysmenu.nflgactivo 
+                                                    FROM
+                                                        sysmenu 
+                                                    WHERE
+                                                        sysmenu.nflgactivo = 1 
+                                                    ORDER BY
+                                                        cclasmenu ASC,
+                                                        copcion ASC,
+                                                        cdescripcion ASC");
                 $sql->execute();
                 $rc = $sql->rowcount();
                 $salida = "";

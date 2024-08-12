@@ -1858,6 +1858,18 @@
 .ventanaProceso .opcionesProceso a i {
   margin-right: 10px;
 }
+.ventanaProceso .firmas {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: (1fr)[4];
+  grid-template-columns: repeat(4, 1fr);
+  background: #fff;
+}
+.ventanaProceso .firmas div {
+  height: 3rem;
+  border: 1px dotted #c3c3c3;
+  text-align: center;
+}
 
 .ventanaAdjuntos {
   width: 45%;
