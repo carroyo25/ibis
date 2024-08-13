@@ -14,7 +14,7 @@
             $this->view->listaAutorizaciones = $this->model->listarParametros("25");
             $this->view->listaAquarius  = $this->model->listarAquarius();
             $this->view->listaTraslados = $this->model->listarTraslados();
-            $this->view->listaAlmacen = $this->model->listarAlmacenGuia();
+            $this->view->listaAlmacen = $this->model->listarAlmacenSepcon();
             $this->view->listaTraslados = $this->model->listarTraslados();
             $this->view->render('autorizacion/index');
         }
@@ -33,6 +33,10 @@
 
         function actualizaListado(){
             echo ($this->model->listarTraslados());
+        }
+
+        function documentoId(){
+            echo json_encode($this->model->autorizacionId($_POST['id']));
         }
         
     }

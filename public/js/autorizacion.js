@@ -8,7 +8,18 @@ $(function(){
     $("#tablaPrincipal tbody").on("click","tr", function (e) {
         e.preventDefault();
 
-        $("#proceso").fadeIn();
+        let indice  = $(this).data("indice"),
+            formData = new FormData();
+            formData.append('indice', indice);
+
+        fetch(RUTA+'autorizacion/documentoId',{
+            method: "POST",
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+        })
 
         return false;
     });
@@ -124,6 +135,25 @@ $(function(){
         $(l).filter(function() {
             $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
         });
+    });
+
+    //filtrar Item del pedido
+    $("#txtBuscarCodigo, #txtBuscarDescrip").on("keypress", function (e) {
+        if(e.which == 13) {
+            $("#esperar").fadeIn();
+            
+            $.post(RUTA+"pedidos/filtraItems", {codigo:$("#txtBuscarCodigo").val(),
+                                                descripcion:$("#txtBuscarDescrip").val(),
+                                                tipo:37},
+                    function (data, textStatus, jqXHR) {
+                        $("#tablaModulos tbody")
+                            .empty()
+                            .append(data);
+                        $("#esperar").fadeOut();
+                    },
+                    "text"
+                );
+        }
     });
 
     //cuando cambia algo en la tabla de detalles

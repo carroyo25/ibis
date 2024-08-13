@@ -142,5 +142,47 @@
                 return false;
             } 
         }
+
+        public function autorizacionId($id){
+            try {
+                $docData = [];
+                $sql = $this->db->connect()->prepare("SELECT alm_autorizacab.idreg,
+                                                             alm_autorizacab.femision,
+                                                             alm_autorizacab.ncostos,
+                                                             alm_autorizacab.narea,
+                                                             alm_autorizacab.csolicita,
+                                                             alm_autorizacab.norigen,
+                                                             alm_autorizacab.ndestino,
+                                                             alm_autorizacab.ctransferencia,
+                                                             alm_autorizacab.observac,
+                                                             alm_autorizacab.celabora
+                                                        FROM alm_autorizacab
+                                                        WHERE alm_autorizacab.nflgactivo = 1
+                                                            AND alm_autorizacab.idreg = :id");
+                $slq->execute(["id"=>$id]);
+                $docData = $slq->fetchAll();
+
+                $rowCount = $sql->rowCount();
+                
+                if ($rowCount) {
+                    $respuesta = true;
+                    $i = 0;
+                    
+                    while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+                        $docData[] = $row;
+                    }
+                }
+
+                return array("datos"=>$docData);
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function detallesAutorizacion($id){
+
+        }
     }
 ?>

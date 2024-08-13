@@ -38,11 +38,9 @@
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
                         <div>
+                            
                             <button type="button" id="saveItem" title="Grabar Proceso" class="boton3">
-                                <p><i class="far fa-save"></i> Dar Conformidad</p> 
-                            </button>
-                            <button type="button" id="saveItem" title="Grabar Proceso" class="boton3">
-                                <p><i class="far fa-save"></i> Grabar Proceso</p> 
+                                <p><i class="far fa-save"></i> Grabar Registro</p> 
                             </button>
                             <button type="button" id="preview" title="Vista Previa" class="boton3">
                                 <i class="fab fa-wpexplorer"></i> Vista Previa
@@ -161,18 +159,6 @@
 
                             </tbody>
                         </table>
-                    </div>
-                    <div class="barraOpciones">
-                        <span>Detalles</span>
-                        <button type="button" id="addItem" title="Añadir Item" class="cerrarLista boton3">
-                            <i class="far fa-plus-square"></i> Agregar
-                        </button>
-                    </div>
-                    <div class="firmas">
-                            <div><h1>MMTTO</h1></div>
-                            <div><h1>Almacen</h1></div>
-                            <div><h1>DESTINO</h1></div>
-                            <div><h1>LLEGADA</h1></div>
                     </div>
                 </form>
             </div>

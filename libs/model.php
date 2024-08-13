@@ -1012,6 +1012,52 @@
             }
         }
 
+        public function listarAlmacenSepcon(){
+            try {
+                $salida = "";
+                $sql = $this->db->connect()->query("SELECT
+                                                    tb_almacen.ncodalm,
+                                                    UPPER( cdesalm ) AS almacen,
+                                                    UPPER( ctipovia ) AS direccion,
+                                                    distritos.cdubigeo AS dist,
+                                                    provincias.cdubigeo AS prov,
+                                                    dptos.cdubigeo AS dpto,
+                                                    tb_almacen.csunatalm,
+                                                    tb_almacen.ncubigeo,
+                                                    tb_almacen.rucEnti,
+                                                    tb_almacen.razonEnti 
+                                                FROM
+                                                    tb_almacen
+                                                    LEFT JOIN tb_ubigeo AS distritos ON tb_almacen.ncubigeo = distritos.ccubigeo
+                                                    LEFT JOIN tb_ubigeo AS provincias ON SUBSTR( tb_almacen.ncubigeo, 1, 4 ) = provincias.ccubigeo
+                                                    LEFT JOIN tb_ubigeo AS dptos ON SUBSTR( tb_almacen.ncubigeo, 1, 2 ) = dptos.ccubigeo 
+                                                WHERE
+                                                    tb_almacen.nflgactivo = 1
+                                                    AND tb_almacen.rucEnti = '20504898173'");
+                $sql->execute();
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0){
+                    while ($rs = $sql->fetch()){
+                        $salida .='<li><a href="'.$rs['ncodalm'].'" 
+                                        data-direccion="'.$rs['direccion'].'"
+                                        data-sunat="'.$rs['csunatalm'].'"
+                                        data-dpto="'.$rs['dpto'].'"
+                                        data-prov="'.$rs['prov'].'"
+                                        data-ubigeo="'.$rs['ncubigeo'].'"
+                                        data-ruc="'.$rs['rucEnti'].'"
+                                        data-razon="'.$rs['razonEnti'].'"
+                                        data-dist="'.$rs['dist'].'">'.$rs['almacen'].'</a></li>';
+                    }
+
+                    return $salida;
+                } 
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
         public function listarPersonalRol($nrol){
             try {
                 $salida = "";

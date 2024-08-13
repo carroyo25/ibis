@@ -97,11 +97,11 @@ $(function() {
                 grabado     = true;
                 ingresos    = 0
                 swcoment    = false;
+
+                $("#proceso").fadeIn();
             },
             "json"
         );
-    
-        $("#proceso").fadeIn();
     
         return false;
     });
