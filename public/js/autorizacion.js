@@ -18,7 +18,25 @@ $(function(){
         })
         .then(response => response.json())
         .then(data => {
-            console.log(data);
+            $("#codigo_costos").val(data.datos[0].ncostos);
+            $("#codigo_area").val(data.datos[0].narea);
+            $("#codigo_tipo").val(data.datos[0].ctransferencia);
+            $("#codigo_solicitante").val(data.datos[0].ncostos);
+            $("#codigo_origen").val(data.datos[0].norigen);
+            $("#codigo_destino").val(data.datos[0].ndestino);
+            $("#codigo_usuario").val(data.datos[0].celabora);
+            $("#emitido").val(data.datos[0].emision);
+            $("#numero").val(data.datos[0].idreg);
+            $("#emision").val(data.datos[0].emision);
+            $("#costos").val(data.datos[0].ncostos);
+            $("#area").val(data.datos[0].ncostos);
+            $("#solicitante").val(data.datos[0].ncostos);
+            $("#origen").val(data.datos[0].ncostos);
+            $("#destino").val(data.datos[0].ncostos);
+            $("#tipo").val(data.datos[0].ncostos);
+            $("#observaciones").val(data.datos[0].ncostos);
+
+            $("#proceso").fadeIn();
         })
 
         return false;

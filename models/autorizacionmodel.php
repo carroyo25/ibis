@@ -146,7 +146,7 @@
         public function autorizacionId($id){
             try {
                 $docData = [];
-                $sql = $this->db->connect()->prepare("SELECT alm_autorizacab.idreg,
+                $sql = $this->db->connect()->prepare("SELECT LPAD(alm_autorizacab.idreg,6,0) AS idreg,
                                                              alm_autorizacab.femision,
                                                              alm_autorizacab.ncostos,
                                                              alm_autorizacab.narea,
@@ -159,8 +159,8 @@
                                                         FROM alm_autorizacab
                                                         WHERE alm_autorizacab.nflgactivo = 1
                                                             AND alm_autorizacab.idreg = :id");
-                $slq->execute(["id"=>$id]);
-                $docData = $slq->fetchAll();
+                $sql->execute(["id"=>$id]);
+                $docData = $sql->fetchAll();
 
                 $rowCount = $sql->rowCount();
                 

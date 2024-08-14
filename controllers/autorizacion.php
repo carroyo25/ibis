@@ -36,7 +36,7 @@
         }
 
         function documentoId(){
-            echo json_encode($this->model->autorizacionId($_POST['id']));
+            echo json_encode($this->model->autorizacionId($_POST['indice']));
         }
         
     }
