@@ -146,19 +146,35 @@
         public function autorizacionId($id){
             try {
                 $docData = [];
-                $sql = $this->db->connect()->prepare("SELECT LPAD(alm_autorizacab.idreg,6,0) AS idreg,
-                                                             alm_autorizacab.femision,
-                                                             alm_autorizacab.ncostos,
-                                                             alm_autorizacab.narea,
-                                                             alm_autorizacab.csolicita,
-                                                             alm_autorizacab.norigen,
-                                                             alm_autorizacab.ndestino,
-                                                             alm_autorizacab.ctransferencia,
-                                                             alm_autorizacab.observac,
-                                                             alm_autorizacab.celabora
-                                                        FROM alm_autorizacab
-                                                        WHERE alm_autorizacab.nflgactivo = 1
-                                                            AND alm_autorizacab.idreg = :id");
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        LPAD( alm_autorizacab.idreg, 6, 0 ) AS idreg,
+                                                        DATE_FORMAT( alm_autorizacab.fregsys, '%Y-%m-%d' ) AS emision,
+                                                        ibis.alm_autorizacab.ncostos,
+                                                        ibis.alm_autorizacab.narea,
+                                                        ibis.alm_autorizacab.csolicita,
+                                                        ibis.alm_autorizacab.norigen,
+                                                        ibis.alm_autorizacab.ndestino,
+                                                        ibis.alm_autorizacab.ctransferencia,
+                                                        ibis.alm_autorizacab.observac,
+                                                        ibis.alm_autorizacab.celabora,
+                                                        ibis.tb_proyectos.ccodproy,
+                                                        ibis.tb_proyectos.cdesproy,
+                                                        UPPER(ibis.tb_area.cdesarea) AS area,
+                                                        CONCAT_WS(' ', rrhh.tabla_aquarius.apellidos, rrhh.tabla_aquarius.nombres ) AS solicita,
+                                                        almacenorigen.cdesalm AS almacenorigen,
+                                                        almacendestino.cdesalm AS almacendestino,
+                                                        ibis.tb_parametros.cdescripcion AS transferencia 
+                                                    FROM
+                                                        ibis.alm_autorizacab
+                                                        LEFT JOIN ibis.tb_proyectos ON alm_autorizacab.ncostos = tb_proyectos.nidreg
+                                                        LEFT JOIN ibis.tb_area ON alm_autorizacab.narea = tb_area.ncodarea
+                                                        LEFT JOIN rrhh.tabla_aquarius ON ibis.alm_autorizacab.csolicita = rrhh.tabla_aquarius.internal
+                                                        LEFT JOIN ibis.tb_almacen AS almacenorigen ON ibis.alm_autorizacab.norigen = almacenorigen.ncodalm
+                                                        LEFT JOIN ibis.tb_almacen AS almacendestino ON ibis.alm_autorizacab.ndestino = almacendestino.ncodalm
+                                                        LEFT JOIN ibis.tb_parametros ON ibis.alm_autorizacab.ctransferencia = ibis.tb_parametros.nidreg 
+                                                    WHERE
+                                                        alm_autorizacab.nflgactivo = 1 
+                                                        AND alm_autorizacab.idreg = :id");
                 $sql->execute(["id"=>$id]);
                 $docData = $sql->fetchAll();
 
@@ -171,9 +187,11 @@
                     while($row = $sql->fetch(PDO::FETCH_ASSOC)){
                         $docData[] = $row;
                     }
+
+                    $detalles = $this->detallesAutorizacion($id);
                 }
 
-                return array("datos"=>$docData);
+                return array("datos"=>$docData, "detalles"=>$detalles);
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
@@ -182,7 +200,38 @@
         }
 
         private function detallesAutorizacion($id){
+            try {
+                $docData = [];
 
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        alm_autorizadet.ncantidad,
+                                                        alm_autorizadet.cserie,
+                                                        alm_autorizadet.cdestino,
+                                                        alm_autorizadet.cobserva,
+                                                        alm_autorizadet.idcodprod,
+                                                        cm_producto.ccodprod,
+                                                        cm_producto.cdesprod,
+                                                        tb_unimed.cabrevia 
+                                                    FROM
+                                                        alm_autorizadet
+                                                        INNER JOIN cm_producto ON alm_autorizadet.idcodprod = cm_producto.id_cprod
+                                                        INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                    WHERE 
+                                                    alm_autorizadet.nflgactivo = 1
+                                                    AND alm_autorizadet.idautoriza = :id");
+                $sql->execute(["id"=>$id]);
+
+                if ($sql->rowCount() > 0)
+                    while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+                        $docData[] = $row;
+                    }
+
+                return $docData;
+                
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
         }
     }
 ?>

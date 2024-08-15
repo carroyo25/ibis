@@ -25,16 +25,33 @@ $(function(){
             $("#codigo_origen").val(data.datos[0].norigen);
             $("#codigo_destino").val(data.datos[0].ndestino);
             $("#codigo_usuario").val(data.datos[0].celabora);
-            $("#emitido").val(data.datos[0].emision);
             $("#numero").val(data.datos[0].idreg);
             $("#emision").val(data.datos[0].emision);
-            $("#costos").val(data.datos[0].ncostos);
-            $("#area").val(data.datos[0].ncostos);
-            $("#solicitante").val(data.datos[0].ncostos);
-            $("#origen").val(data.datos[0].ncostos);
-            $("#destino").val(data.datos[0].ncostos);
-            $("#tipo").val(data.datos[0].ncostos);
-            $("#observaciones").val(data.datos[0].ncostos);
+            $("#costos").val(data.datos[0].cdesproy);
+            $("#area").val(data.datos[0].area);
+            $("#solicitante").val(data.datos[0].solicita);
+            $("#origen").val(data.datos[0].almacenorigen);
+            $("#destino").val(data.datos[0].almacendestino);
+            $("#tipo").val(data.datos[0].transferencia);
+            $("#observaciones").val(data.datos[0].observac);
+
+            let fila = 1;
+
+            data.detalles.forEach(element => {
+                let row = `<tr>
+                                <td></td>
+                                <td>${fila++}</td>
+                                <td>${element.ccodprod}</td>
+                                <td>${element.cdesprod}</td>
+                                <td>${element.cabrevia}</td>
+                                <td>${element.ncantidad}</td>
+                                <td>${element.cserie}</td>
+                                <td>${element.cdestino}</td>
+                                <td>${element.cobserva}</td>
+                            </tr>`;
+                
+                $("#tablaDetalles tbody").append(row);
+            });
 
             $("#proceso").fadeIn();
         })
