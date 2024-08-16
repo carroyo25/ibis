@@ -16,6 +16,7 @@
             $this->view->listaTraslados = $this->model->listarTraslados();
             $this->view->listaAlmacen = $this->model->listarAlmacenSepcon();
             $this->view->listaTraslados = $this->model->listarTraslados();
+            $this->view->listaPersonal = $this->model->listarPersonalRol(4);
             $this->view->render('autorizacion/index');
         }
 
@@ -37,6 +38,10 @@
 
         function documentoId(){
             echo json_encode($this->model->autorizacionId($_POST['indice']));
+        }
+
+        function vistaPrevia(){
+            echo json_encode($this->model->vistaPreviaAutorizacion($_POST['cabecera'],$_POST['detalles']));
         }
         
     }

@@ -72,7 +72,8 @@
                                                         alm_autorizacab.ndestino=:destino,
                                                         alm_autorizacab.ctransferencia=:tipo,
                                                         alm_autorizacab.observac=:observacion,
-                                                        alm_autorizacab.celabora=:elabora");
+                                                        alm_autorizacab.celabora=:elabora,
+                                                        alm_autorizacab.cautoriza=:autoriza");
 
                 $sql->execute(["emision"=>$cabecera['emitido'],
                                 "costos"=>$cabecera['codigo_costos'],
@@ -82,7 +83,8 @@
                                 "destino"=>$cabecera['codigo_destino'],
                                 "tipo"=>$cabecera['codigo_tipo'],
                                 "observacion"=>$cabecera['observaciones'],
-                                "elabora"=>$cabecera['codigo_usuario']]);
+                                "elabora"=>$cabecera['codigo_usuario'],
+                                "autoriza"=>$cabecera['codigo_autoriza']]);
                                 
                 if ($sql->rowCount() > 0) {
                     $numero = $this->numeroDocumento();
@@ -163,7 +165,9 @@
                                                         CONCAT_WS(' ', rrhh.tabla_aquarius.apellidos, rrhh.tabla_aquarius.nombres ) AS solicita,
                                                         almacenorigen.cdesalm AS almacenorigen,
                                                         almacendestino.cdesalm AS almacendestino,
-                                                        ibis.tb_parametros.cdescripcion AS transferencia 
+                                                        ibis.tb_parametros.cdescripcion AS transferencia,
+                                                        ibis.alm_autorizacab.cautoriza,
+	                                                    UPPER(ibis.tb_user.cnombres) AS autoriza 
                                                     FROM
                                                         ibis.alm_autorizacab
                                                         LEFT JOIN ibis.tb_proyectos ON alm_autorizacab.ncostos = tb_proyectos.nidreg
@@ -171,7 +175,8 @@
                                                         LEFT JOIN rrhh.tabla_aquarius ON ibis.alm_autorizacab.csolicita = rrhh.tabla_aquarius.internal
                                                         LEFT JOIN ibis.tb_almacen AS almacenorigen ON ibis.alm_autorizacab.norigen = almacenorigen.ncodalm
                                                         LEFT JOIN ibis.tb_almacen AS almacendestino ON ibis.alm_autorizacab.ndestino = almacendestino.ncodalm
-                                                        LEFT JOIN ibis.tb_parametros ON ibis.alm_autorizacab.ctransferencia = ibis.tb_parametros.nidreg 
+                                                        LEFT JOIN ibis.tb_parametros ON ibis.alm_autorizacab.ctransferencia = ibis.tb_parametros.nidreg
+                                                        LEFT JOIN ibis.tb_user ON ibis.alm_autorizacab.cautoriza = ibis.tb_user.iduser 
                                                     WHERE
                                                         alm_autorizacab.nflgactivo = 1 
                                                         AND alm_autorizacab.idreg = :id");
@@ -232,6 +237,10 @@
                 echo "Error: ".$th->getMessage();
                 return false;
             }
+        }
+
+        public function vistaPreviaAutorizacion($cabecera,$detalles){
+            
         }
     }
 ?>

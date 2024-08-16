@@ -34,6 +34,8 @@
                     <input type="hidden" name="vista_previa" id="vista_previa">
                     <input type="hidden" name="emitido" id="emitido">
                     <input type="hidden" name="codigo_usuario" id="codigo_usuario">
+                    <input type="hidden" name="codigo_autoriza" id="codigo_autoriza">
+
 
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
@@ -119,10 +121,19 @@
                                     <label for="tipo">Transferencia:</label>
                                     <input type="text" name="tipo" id="tipo" class="mostrarLista busqueda" placeholder="Elija una opcion">
                                     <div class="lista" id="listaTipos">
-                                   <ul>
+                                    <ul>
                                        <?php echo $this->listaAutorizaciones?>
-                                   </ul>
+                                    </ul>
                                 </div>
+                                </div>
+                            </div>
+                            <div class="column2">
+                                <label for="autoriza">Autoriza:</label>
+                                <input type="text" name="autoriza" id="autoriza" class="mostrarLista" placeholder="Elija una opcion">
+                                <div class="lista" id="listaAutoriza">
+                                   <ul>
+                                        <?php echo $this->listaPersonal?>
+                                   </ul>
                                 </div>
                             </div>
                             <div class="column2">

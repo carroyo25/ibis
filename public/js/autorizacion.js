@@ -1,12 +1,13 @@
 $(function(){
-    var accion = "";
-    var grabado = false;
-    var aprobacion = 0;
+    let accion = "";
+    let grabado = false;
 
     $("#esperar").fadeOut();
 
     $("#tablaPrincipal tbody").on("click","tr", function (e) {
         e.preventDefault();
+
+        accion = "";
 
         let indice  = $(this).data("indice"),
             formData = new FormData();
@@ -25,6 +26,7 @@ $(function(){
             $("#codigo_origen").val(data.datos[0].norigen);
             $("#codigo_destino").val(data.datos[0].ndestino);
             $("#codigo_usuario").val(data.datos[0].celabora);
+            $("#codigo_autoriza").val(data.datos[0].cautoriza);
             $("#numero").val(data.datos[0].idreg);
             $("#emision").val(data.datos[0].emision);
             $("#costos").val(data.datos[0].cdesproy);
@@ -33,6 +35,7 @@ $(function(){
             $("#origen").val(data.datos[0].almacenorigen);
             $("#destino").val(data.datos[0].almacendestino);
             $("#tipo").val(data.datos[0].transferencia);
+            $("#autoriza").val(data.datos[0].autoriza);
             $("#observaciones").val(data.datos[0].observac);
 
             let fila = 1;
@@ -40,14 +43,14 @@ $(function(){
             data.detalles.forEach(element => {
                 let row = `<tr>
                                 <td></td>
-                                <td>${fila++}</td>
-                                <td>${element.ccodprod}</td>
-                                <td>${element.cdesprod}</td>
-                                <td>${element.cabrevia}</td>
-                                <td>${element.ncantidad}</td>
-                                <td>${element.cserie}</td>
-                                <td>${element.cdestino}</td>
-                                <td>${element.cobserva}</td>
+                                <td class="textoCentro">${fila++}</td>
+                                <td class="textoCentro">${element.ccodprod}</td>
+                                <td class="pl20px">${element.cdesprod}</td>
+                                <td class="textoCentro">${element.cabrevia}</td>
+                                <td class="textoDerecha">${element.ncantidad}</td>
+                                <td class="pl20px">${element.cserie}</td>
+                                <td class="pl20px">${element.cdestino}</td>
+                                <td class="pl20px">${element.cobserva}</td>
                             </tr>`;
                 
                 $("#tablaDetalles tbody").append(row);
@@ -154,6 +157,8 @@ $(function(){
             $("#codigo_destino").val(codigo);
         }else if(contenedor_padre == "listaTipos"){
             $("#codigo_tipo").val(codigo);
+        }else if(contenedor_padre == "listaAutoriza"){
+            $("#codigo_autoriza").val(codigo);
         }
 
         return false;
@@ -331,9 +336,10 @@ $(function(){
             if ($("#tablaDetalles tbody tr").length <= 0) throw "El pedido no tienes items";
             if (checkCantTables($("#tablaDetalles tbody > tr"),5)) throw "No ingreso cantidad en un item";
             
-            $("#esperar").css("opacity","1").fadeIn();
-
             if ( accion == 'n' ){
+
+                $("#esperar").css("opacity","1").fadeIn();
+
                 $.post(RUTA+"autorizacion/nuevoDocumento", {cabecera:result,detalles:JSON.stringify(itemsSave())},
                     function (data, textStatus, jqXHR) {
                         mostrarMensaje(data.mensaje,data.clase);
@@ -351,6 +357,9 @@ $(function(){
                     "json"
                 );
             }else if(accion == 'u'){
+
+                $("#esperar").css("opacity","1").fadeIn();
+
                 $.post(RUTA+"autorizacion/modificaDocumento", {cabecera:result,detalles:JSON.stringify(itemsSave())},
                     function (data, textStatus, jqXHR) {
                         mostrarMensaje(data.mensaje,data.clase);
@@ -366,6 +375,38 @@ $(function(){
 
         } catch (error) {
             mostrarMensaje(error,'mensaje_error');
+        }
+
+        return false;
+    });
+
+    $("#preview").click(function (e) { 
+        e.preventDefault();
+        
+        try {
+            if ( accion == n ) throw new Error('Debe grabar el documento');
+
+            let result = {};
+
+            $.each($("#formProceso").serializeArray(),function(){
+                result[this.name] = this.value;
+            });
+
+            let formData = new FormData();
+            formData.append("cabecera",result);
+            formData.append("detalles",JSON.stringify(itemsSave()));
+
+            fetch(RUTA+'autorizacion/vistaPrevia',{
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+            })
+
+        } catch (error) {
+            mostrarMensaje(error.message,"mensaje_error");
         }
 
         return false;
