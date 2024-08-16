@@ -240,7 +240,43 @@
         }
 
         public function vistaPreviaAutorizacion($cabecera,$detalles){
-            
+            try {
+                require_once("public/formatos/autorizaciones.php");
+
+                $archivo = "public/documentos/autorizaciones/".uniqid().".pdf";
+                $datos = json_decode($detalles);
+                $nreg = count($datos);
+
+                $fecha_emision = date("d/m/Y", strtotime($cabecera['emision']));
+
+                //$numero,$costos,$area,$solicitante,$origen,$destino,$tipo,$autoriza,$observaciones,$emision
+
+                $pdf = new PDF($cabecera['numero'],
+                                $cabecera['numero'],
+                                $cabecera['numero'],
+                                $cabecera['numero'],
+                                $cabecera['numero'],
+                                $cabecera['numero'],
+                                $cabecera['numero'],
+                                $cabecera['numero'],
+                                $cabecera['numero'],
+                                $cabecera['numero']);
+                
+                
+                for($i=1;$i<=$nreg;$i++){
+
+                }
+
+                $pdf->Ln(1);
+                    
+                $pdf->Output($archivo,'F');
+                    
+                return array("archivo"=>$archivo);
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
         }
     }
 ?>

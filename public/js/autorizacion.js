@@ -384,7 +384,7 @@ $(function(){
         e.preventDefault();
         
         try {
-            if ( accion == n ) throw new Error('Debe grabar el documento');
+            if ( accion == "n" ) throw new Error('Debe grabar el documento');
 
             let result = {};
 
@@ -396,14 +396,12 @@ $(function(){
             formData.append("cabecera",result);
             formData.append("detalles",JSON.stringify(itemsSave()));
 
-            fetch(RUTA+'autorizacion/vistaPrevia',{
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
-            })
+            $.post(RUTA+'autorizacion/vistaPrevia',{"cabecera":result,"detalles":JSON.stringify(itemsPreview())},
+                function (data, text, requestXHR) {
+                    console.log(data);
+                },
+                "json"
+            );
 
         } catch (error) {
             mostrarMensaje(error.message,"mensaje_error");
@@ -443,6 +441,41 @@ itemsSave = () =>{
 
             DATA.push(item);
         } 
+    })
+
+    return DATA;
+}
+
+itemsPreview = () =>{
+    DATA = [];
+    let TABLA = $("#tablaDetalles tbody >tr");
+
+    TABLA.each(function(){
+        let IDPROD      = $(this).data('idprod'),
+            ITEM        = $(this).find('td').eq(1).text(),
+            CODIGO      = $(this).find('td').eq(2).text(),
+            DESCRIPCION = $(this).find('td').eq(3).text(),
+            UNIDAD      = $(this).find('td').eq(4).text(),
+            CANTIDAD    = $(this).find('td').eq(5).text(),
+            SERIE       = $(this).find('td').eq(6).text(),
+            DESTINO     = $(this).find('td').eq(7).text(),
+            OBSERVAC    = $(this).find('td').eq(8).text(),
+
+        item= {};
+        
+            item['idprod']      = IDPROD;
+            item['item']        = ITEM;
+            item['codigo']      = CODIGO;
+            item['descripcion'] = DESCRIPCION;
+            item['unidad']      = UNIDAD;
+            item['cantidad']    = CANTIDAD;
+            item['serie']       = SERIE;
+            item['destino']     = DESTINO;
+            item['observac']    = OBSERVAC;
+
+            $(this).attr('data-grabado',1);
+
+            DATA.push(item);
     })
 
     return DATA;

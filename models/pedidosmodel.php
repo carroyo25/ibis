@@ -131,7 +131,7 @@
                 $mensaje = "Error en el registro";
                 $clase = "mensaje_error";
 
-                if ( $datos['codigo_usuario'] != ""){
+                if ( $datos['codigo_usuario'] != "" ){
                     $numero = $this->generarNumero($datos['codigo_costos'],"SELECT COUNT(idreg) AS numero FROM tb_pedidocab WHERE tb_pedidocab.idcostos =:cod");
                
                     $cmes = date("m",strtotime($datos['emision']));
