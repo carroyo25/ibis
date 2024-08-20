@@ -243,13 +243,13 @@
             try {
                 require_once("public/formatos/autorizaciones.php");
 
-                $archivo = "public/documentos/autorizaciones/".uniqid().".pdf";
+                $archivo = uniqid().".pdf";
                 $datos = json_decode($detalles);
                 $nreg = count($datos);
 
-                $fecha_emision = date("d/m/Y", strtotime($cabecera['emision']));
+                $ruta = "public/documentos/autorizaciones/".$archivo;
 
-                //$numero,$costos,$area,$solicitante,$origen,$destino,$tipo,$autoriza,$observaciones,$emision
+                $fecha_emision = date("d/m/Y", strtotime($cabecera['emision']));
 
                 $pdf = new PDF($cabecera['numero'],
                                 $cabecera['numero'],
@@ -269,7 +269,7 @@
 
                 $pdf->Ln(1);
                     
-                $pdf->Output($archivo,'F');
+                $pdf->Output($ruta,'F');
                     
                 return array("archivo"=>$archivo);
 

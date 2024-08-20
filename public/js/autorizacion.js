@@ -398,7 +398,13 @@ $(function(){
 
             $.post(RUTA+'autorizacion/vistaPrevia',{"cabecera":result,"detalles":JSON.stringify(itemsPreview())},
                 function (data, text, requestXHR) {
-                    console.log(data);
+                    $(".ventanaVistaPrevia iframe")
+                    .attr("src","")
+                    .attr("src","public/documentos/autorizaciones/"+data.archivo);
+
+                    $("#vista_previa").val(data);
+
+                    $("#vistaprevia").fadeIn();
                 },
                 "json"
             );
@@ -406,6 +412,15 @@ $(function(){
         } catch (error) {
             mostrarMensaje(error.message,"mensaje_error");
         }
+
+        return false;
+    });
+
+    $("#closePreview").click(function (e) { 
+        e.preventDefault();
+
+        $(".ventanaVistaPrevia iframe").attr("src","");
+        $("#vistaprevia").fadeOut();
 
         return false;
     });
