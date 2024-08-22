@@ -110,8 +110,6 @@
 		   	$this->Cell(64,4,"Autorizado",0,0,"C");
 		    $this->Cell(64,4,"Recibido",0,0,"C");
 		    $this->Cell(64,4,"Expeditado",0,1,"C");
-
-
 		}
 	}
 ?>

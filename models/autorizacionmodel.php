@@ -14,9 +14,9 @@
                                                         ibis.alm_autorizacab.idreg,
                                                         ibis.tb_costusu.ncodproy,
                                                         ibis.alm_autorizacab.fregsys,
-                                                        ibis.tb_proyectos.cdesproy,
-                                                        origen.cdesalm AS origen,
-                                                        destino.cdesalm AS destino,
+                                                        UPPER(ibis.tb_proyectos.cdesproy) AS cdesproy,
+                                                        UPPER(origen.cdesalm) AS origen,
+                                                        UPPER(destino.cdesalm) AS destino,
                                                         UPPER( tb_area.cdesarea ) AS area,
                                                         CONCAT_WS(' ',rrhh.tabla_aquarius.apellidos,rrhh.tabla_aquarius.nombres) AS asigna,
                                                         tipos_autorizacion.cdescripcion 
@@ -160,7 +160,7 @@
                                                         ibis.alm_autorizacab.observac,
                                                         ibis.alm_autorizacab.celabora,
                                                         ibis.tb_proyectos.ccodproy,
-                                                        ibis.tb_proyectos.cdesproy,
+                                                        UPPER(ibis.tb_proyectos.cdesproy) AS cdesproy,
                                                         UPPER(ibis.tb_area.cdesarea) AS area,
                                                         CONCAT_WS(' ', rrhh.tabla_aquarius.apellidos, rrhh.tabla_aquarius.nombres ) AS solicita,
                                                         almacenorigen.cdesalm AS almacenorigen,
@@ -247,24 +247,65 @@
                 $datos = json_decode($detalles);
                 $nreg = count($datos);
 
+                $valor_maximo_lineas  = 24;
+                $contador_linea = 0;
+
                 $ruta = "public/documentos/autorizaciones/".$archivo;
 
                 $fecha_emision = date("d/m/Y", strtotime($cabecera['emision']));
 
-                $pdf = new PDF($cabecera['numero'],
-                                $cabecera['numero'],
-                                $cabecera['numero'],
-                                $cabecera['numero'],
-                                $cabecera['numero'],
-                                $cabecera['numero'],
-                                $cabecera['numero'],
-                                $cabecera['numero'],
-                                $cabecera['numero'],
-                                $cabecera['numero']);
                 
+                $pdf = new PDF($cabecera['numero'],
+                                $cabecera['costos'],
+                                $cabecera['area'],
+                                $cabecera['solicitante'],
+                                $cabecera['origen'],
+                                $cabecera['destino'],
+                                $cabecera['codigo_tipo'],
+                                $cabecera['autoriza'],
+                                $cabecera['emision'],
+                                $cabecera['observaciones'],);
+
+                $pdf->AliasNbPages();
+                //$pdf->AddPage('P','A5');
+                $pdf->AddPage('P','A4');
+                $pdf->SetFont('Arial','',6);
+                
+                $x = 4;
+                $y = $pdf->GetY();
+                $rc = 0;
+                $item = 1;
+                $pdf->SetFont('Arial','',5);
+                $alto_linea = 3;
                 
                 for($i=1;$i<=$nreg;$i++){
+                    if ( $datos[$rc]->cantidad > 0 ){
+                        $pdf->SetX(4);
+                        $pdf->Multicell(8,$alto_linea,str_pad($item++,3,0,STR_PAD_LEFT),0,'R');
+                        $pdf->SetXY(12,$pdf->GetY()-$alto_linea);
+                        $pdf->Multicell(15,$alto_linea,$datos[$rc]->codigo,0,'C');
+                        $pdf->SetXY(27,$pdf->GetY()-$alto_linea);
+                        $pdf->Multicell(70,$alto_linea,utf8_decode($datos[$rc]->descripcion),0,'L');
+                        $pdf->SetXY(97,$pdf->GetY()-$alto_linea);
+                        $pdf->Multicell(10,$alto_linea,$datos[$rc]->unidad,'0','C');
+                        $pdf->SetXY(107,$pdf->GetY()-$alto_linea);
+                        $pdf->Multicell(15,$alto_linea,$datos[$rc]->cantidad,0,'C');
+                        $pdf->SetXY(122,$pdf->GetY()-$alto_linea);
+                        $pdf->Multicell(22,$alto_linea,$datos[$rc]->serie,0,'C');
+                        $pdf->SetXY(144,$pdf->GetY()-$alto_linea);
+                        $pdf->Multicell(25,$alto_linea,$datos[$rc]->destino,0,'R');
+                        $pdf->SetXY(169,$pdf->GetY()-$alto_linea);
+                        $pdf->Multicell(35,$alto_linea,utf8_decode($datos[$rc]->observac),0,'L');
 
+                        $pdf->Line(5,$pdf->GetY(),204,$pdf->GetY());
+                
+                        if ( $pdf->GetY() > 164 ) {
+                            $pdf->AddPage('P','A4');
+                        }
+                    }
+
+                    $rc++;
+                    $contador_linea++;
                 }
 
                 $pdf->Ln(1);
