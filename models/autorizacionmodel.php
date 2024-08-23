@@ -19,7 +19,9 @@
                                                         UPPER(destino.cdesalm) AS destino,
                                                         UPPER( tb_area.cdesarea ) AS area,
                                                         CONCAT_WS(' ',rrhh.tabla_aquarius.apellidos,rrhh.tabla_aquarius.nombres) AS asigna,
-                                                        tipos_autorizacion.cdescripcion 
+                                                        ibis.alm_autorizacab.nestado,
+                                                        tipos_autorizacion.cdescripcion,
+                                                        estados.cdescripcion AS estado 
                                                     FROM
                                                         ibis.tb_costusu
                                                         INNER JOIN ibis.alm_autorizacab ON tb_costusu.ncodproy = alm_autorizacab.ncostos
@@ -28,6 +30,7 @@
                                                         INNER JOIN ibis.tb_almacen AS destino ON alm_autorizacab.ndestino = destino.ncodalm
                                                         INNER JOIN ibis.tb_area ON alm_autorizacab.narea = tb_area.ncodarea
                                                         INNER JOIN rrhh.tabla_aquarius ON ibis.alm_autorizacab.csolicita = rrhh.tabla_aquarius.internal
+                                                        INNER JOIN ibis.tb_parametros AS estados ON ibis.alm_autorizacab.nestado = estados.nidreg 
                                                         INNER JOIN ibis.tb_parametros AS tipos_autorizacion ON ibis.alm_autorizacab.ctransferencia = tipos_autorizacion.nidreg 
                                                     WHERE
                                                         tb_costusu.id_cuser =:user 
@@ -48,6 +51,7 @@
                                         <td class="pl20px">'.$rs['destino'].'</td>
                                         <td class="pl20px">'.$rs['area'].'</td>
                                         <td class="pl20px">'.$rs['asigna'].'</td>
+                                        <td class="textoCentro '.strtolower($rs['estado']).'">'.$rs['estado'].'</td>
                                         <td class="textoCentro"><a href="'.$rs['idreg'].'"><i class="fa fa-trash-alt"></i></a></td>
                                     </tr>';
                     }
@@ -149,6 +153,7 @@
             try {
                 $docData = [];
                 $sql = $this->db->connect()->prepare("SELECT
+                                                        alm_autorizacab.idreg AS indice,
                                                         LPAD( alm_autorizacab.idreg, 6, 0 ) AS idreg,
                                                         DATE_FORMAT( alm_autorizacab.fregsys, '%Y-%m-%d' ) AS emision,
                                                         ibis.alm_autorizacab.ncostos,
@@ -314,6 +319,30 @@
                     
                 return array("archivo"=>$archivo);
 
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        public function recepcionCliente($id,$estado){
+            try {
+                $mensaje = "Error en la actualización";
+                $fecha = date("Y-m-d");
+
+                $sql = $this->db->connect()->prepare("UPDATE alm_autorizacab 
+                                                        SET alm_autorizacab.nestado =:estado,
+                                                            alm_autorizacab.urecepcli =:user,
+                                                            alm_autorizacab.frecepcion =: fecha
+                                                        WHERE alm_autorizacab.idreg =:id");
+                                                        
+                $sql->execute(["id"=>$id, "estado"=>$estado, "user"=>$_SESSION['iduser'], "fecha"=>$fecha]);
+
+                if ($sql->rowCount() > 0){
+                    $mensaje = "Registro actualizado";
+                }
+
+                return array("mensaje"=>$mensaje);
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;

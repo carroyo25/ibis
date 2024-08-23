@@ -37,6 +37,7 @@ $(function(){
             $("#tipo").val(data.datos[0].transferencia);
             $("#autoriza").val(data.datos[0].autoriza);
             $("#observaciones").val(data.datos[0].observac);
+            $("#codigo_traslado").val(data.datos[0].indice);
 
             let fila = 1;
 
@@ -129,6 +130,16 @@ $(function(){
         return false;
     });
 
+    $(".btnCallMenu").click(function (e) { 
+        e.preventDefault();
+        
+        let callButtom = e.target.id;
+
+        $(this).next().fadeToggle();
+
+        return false
+    });
+
     $(".lista").on("click",'a', function (e) {
         e.preventDefault();
 
@@ -159,6 +170,61 @@ $(function(){
             $("#codigo_tipo").val(codigo);
         }else if(contenedor_padre == "listaAutoriza"){
             $("#codigo_autoriza").val(codigo);
+        }else if(contenedor_padre == "listaMovimiento"){
+            $("#codigo_movimiento").val(codigo);
+        }else if(contenedor_padre == "listaAprueba"){
+            $("#codigo_aprueba").val(codigo);
+            $("#autoriza").val($(this).text());
+        }else if(contenedor_padre == "listaOrigenGuia"){
+            $("#codigo_origen").val(codigo);
+            $("#almacen_origen").val($(this).text());
+            $("#almacen_origen_direccion").val($(this).data('direccion'));
+            $("#codigo_origen_sunat").val($(this).data('sunat'));
+            $("#ruc_entidad_origen").val($(this).data('ruc'));
+            $("#nombre_entidad_origen").val($(this).data('razon'));
+            $("#ubigeo_origen_guia,#ubig_origen").val($(this).data('ubigeo'));
+            $("#cso").val($(this).data('sunat'));
+        }else if(contenedor_padre == "listaDestinoGuia"){
+            $("#almacen_destino").val($(this).text());
+            $("#almacen_destino_direccion").val($(this).data('direccion'));
+            $("#codigo_destino_sunat").val($(this).data('sunat'));
+            $("#ubigeo_destino_guia,#ubig_destino").val($(this).data('ubigeo'));
+            $("#ruc_entidad_destino").val($(this).data('ruc'));
+            $("#nombre_entidad_destino").val($(this).data('razon'));
+            $("#csd").val($(this).data('sunat'));
+        }else if(contenedor_padre == "listaAutorizaGuia"){
+            $("#autorizaguia").val($(this).text());
+            $("#codigo_autoriza").val(codigo);
+        }else if(contenedor_padre == "listaDespacha"){
+            $("#codigo_despacha").val(codigo);
+        }else if(contenedor_padre == "listaDestinatario"){
+            $("#destinatario").val($(this).text());
+            $("#codigo_destinatario").val(codigo);
+        }else if(contenedor_padre == "listaModalidad"){
+            $("#modalidad_traslado").val($(this).text());
+            $("#codigo_modalidad").val(codigo);
+        }else if(contenedor_padre == "listaEnvio"){
+            $("#tipo_envio").val($(this).text());
+            $("#codigo_tipo").val(codigo);
+        }else if(contenedor_padre == "listaEntidad"){
+            $("#codigo_entidad_transporte").val(codigo);
+            $("#empresa_transporte_razon").val($(this).text());
+            $("#ruc_proveedor").val($(this).data("ruc"));
+            $("#direccion_proveedor").val($(this).data("direccion"));
+            $("#registro_mtc").val($(this).data("mtc"));
+        }else if(contenedor_padre == "listaTransporte"){
+            $("#codigo_transporte").val(codigo);
+            $("#tipo_transporte").val($(this).text());
+        }else if(contenedor_padre == "listaConductores"){
+            $("#nombre_conductor").val($(this).text());
+            $("#licencia_conducir").val($(this).data('licencia'));
+            $("#conductor_dni").val($(this).data('dni'));
+        }else if(contenedor_padre == "listaPlacas"){
+            $("#placa").val($(this).text());
+        }else if(contenedor_padre == "listaOrigenCabecera"){
+            $("#codigo_almacen_origen").val(codigo);
+        }else if(contenedor_padre == "listaDestinoCabecera"){
+            $("#codigo_almacen_destino").val(codigo);
         }
 
         return false;
@@ -342,7 +408,7 @@ $(function(){
 
                 $.post(RUTA+"autorizacion/nuevoDocumento", {cabecera:result,detalles:JSON.stringify(itemsSave())},
                     function (data, textStatus, jqXHR) {
-                        mostrarMensaje(data.mensaje,data.clase);
+                        mostrarMensaje("Registro grabado","msj_correcto");
 
                         grabado = true;
                         accion = "u";
@@ -421,6 +487,54 @@ $(function(){
 
         $(".ventanaVistaPrevia iframe").attr("src","");
         $("#vistaprevia").fadeOut();
+
+        return false;
+    });
+
+    $("#guiaRemision").click(function(e){
+        e.preventDefault();
+
+        try {
+            if ( $("#rol_user").val() == 2 && $("#rol_user").val() == 4 ) throw new Error("No esta habilitado para generar guias");
+            if ( accion == "n" ) throw new Error('Debe grabar el documento');
+
+            $("#vistadocumento").fadeIn();
+        } catch (error) {
+            mostrarMensaje(error.message,"mensaje_error")
+        }
+        
+        return false;
+    });
+
+    $("#recepcionCarga").click(function(e){
+        e.preventDefault();
+
+        try {
+            if ( $("#rol_user").val() == 2 && $("#rol_user").val() == 4 ) throw new Error("No esta habilitado para este proceso");
+
+            let formData = new FormData;
+            formData.append("id", $("#codigo_traslado").val);
+            formData.append("estado",275);
+
+            fetch(RUTA+"autorizacion/recepcionCliente",{
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+            })
+        } catch (error) {
+            mostrarMensaje(error.message,"mensaje_error")
+        }
+        
+        return false;
+    });
+
+    $(".tituloDocumento").on("click","#closeDocument", function (e) {
+        e.preventDefault();
+
+        $(this).parent().parent().parent().parent().parent().fadeOut();
 
         return false;
     });

@@ -35,6 +35,7 @@ $culminado:#55A5E2;
 $anulado:#c2c2c2;
 $comprado:#B461A3;
 $emitido:#F8CAAD;
+$almacen:#27798F;
 
 
 .bienes {
@@ -3026,7 +3027,7 @@ $emitido:#F8CAAD;
     background: $comprado;
 }
 
-.aprobado{
+.aprobado,.almacen{
     background: $aprobado;
 }
 
