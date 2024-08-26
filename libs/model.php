@@ -1396,6 +1396,46 @@
             }
         }
 
+        public function listarProductosSoporte($tipo){
+            try {
+                $salida = "No existen productos en el catalogo";
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        cm_producto.id_cprod,
+                                                        cm_producto.ccodprod,
+                                                        UPPER(cm_producto.cdesprod) AS cdesprod,
+                                                        tb_unimed.ncodmed,
+                                                        tb_unimed.cabrevia,
+                                                        tb_unimed.nfactor,
+                                                        tb_parametros.cdescripcion 
+                                                    FROM
+                                                        cm_producto
+                                                        INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                        INNER JOIN tb_parametros ON cm_producto.ntipo = tb_parametros.nidreg
+                                                    WHERE ntipo = :tipo
+                                                    AND cm_producto.flgActivo = 1
+                                                    AND ( cm_producto.ccodprod LIKE '%B05010002%' 
+                                                          OR cm_producto.ccodprod LIKE '%B05010006%'
+                                                          OR cm_producto.ccodprod LIKE '%B05010005%')
+                                                    LIMIT 100");
+               $sql->execute(["tipo"=>$tipo]);
+               $rowCount = $sql->rowCount();
+               if ($rowCount > 0){
+                   while ($rs = $sql->fetch()) {
+                       $salida .='<tr class="pointer" data-idprod="'.$rs['id_cprod'].'" data-ncomed="'.$rs['ncodmed'].'" data-unidad="'.$rs['cabrevia'].'">
+                                       <td class="textoCentro">'.$rs['ccodprod'].'</td>
+                                       <td class="pl20px">'.$rs['cdesprod'].'</td>
+                                       <td class="textoCentro">'.$rs['cabrevia'].'</td>
+                                   </tr>';
+                   }
+               }
+
+               return $salida;
+            } catch (PDOException $th) {
+               echo "Error: ".$th->getMessage;
+               return false;
+           }
+        }
+
         //codigo de ubigeo
         public function getUbigeo($nivel,$prefijo){
             try {
@@ -1452,7 +1492,7 @@
             }
         }
 
-        //filtrar para que no vean los correos deben poner le centro de costos
+        //filtrar para que no vean los correos deben poner el centro de costos
         public function buscarRol($rol,$cc){
             try {
                 $salida = "";

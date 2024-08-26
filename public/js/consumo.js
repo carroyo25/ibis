@@ -230,8 +230,6 @@ $(function(){
                             <td class="textoCentro"><a href=""><i class="far fa-trash-alt"></i></a></td>
                     </tr>`;
 
-            console.log(row);
-                         
             //codigos para mantenimiento        
             let arraymtto = ['B05010002','B05010006'],
                 codmmtto = codigo.substring(0,9),
@@ -474,7 +472,6 @@ $(function(){
         und = $(this).find('td').eq(2).text();
 
         $(this).toggleClass('semaforoNaranja');
-
 
         return false;
     });

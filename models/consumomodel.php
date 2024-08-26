@@ -727,33 +727,39 @@
                 $fechaActual = date('Y-m-d');
                 $fechas = array("+6 month","+12 month","+18 month","+24 month","+30 month","+36 month");
                 $numero = 1;
+                $respuesta = false;
 
-                for ($i=0; $i < 4; $i++) { 
-                    $respuesta = false;
-                    $fechaMtto = $this->calcularProximos($fechas[$i]);
-                    $sql = $this->db->connect()->prepare("INSERT INTO ti_mmttos 
-                                                            SET ti_mmttos.nrodoc =:doc,
-                                                                ti_mmttos.fentrega =:entrega,
-                                                                ti_mmttos.fmtto =:fecmmtto,
-                                                                ti_mmttos.idprod=:idprod,
-                                                                ti_mmttos.nmtto=:numero,
-                                                                ti_mmttos.idcostos=:costos,
-                                                                ti_mmttos.cserie=:serie");
-                    $sql->execute(["doc"=>$parametros['documento'],
-                                    "entrega"=>$fechaActual,
-                                    "fecmmtto"=>$fechaMtto,
-                                    "idprod"=>$parametros['codigo'],
-                                    "numero"=>$numero++,
-                                    "costos"=>$parametros['costos'],
-                                    "serie"=>$parametros['serie']]);
-                    $rowCount = $sql->rowCount();
+                $existe = $this->verificarSerie($parametros['serie']);
 
-                    if($rowCount){
-                        $respuesta = true;
-                    } 
+                if ($existe == 0){
+
+                    for ($i=0; $i < 4; $i++) { 
+                        $respuesta = false;
+                        $fechaMtto = $this->calcularProximos($fechas[$i]);
+                        $sql = $this->db->connect()->prepare("INSERT INTO ti_mmttos 
+                                                                SET ti_mmttos.nrodoc =:doc,
+                                                                    ti_mmttos.fentrega =:entrega,
+                                                                    ti_mmttos.fmtto =:fecmmtto,
+                                                                    ti_mmttos.idprod=:idprod,
+                                                                    ti_mmttos.nmtto=:numero,
+                                                                    ti_mmttos.idcostos=:costos,
+                                                                    ti_mmttos.cserie=:serie");
+                        $sql->execute(["doc"=>$parametros['documento'],
+                                        "entrega"=>$fechaActual,
+                                        "fecmmtto"=>$fechaMtto,
+                                        "idprod"=>$parametros['codigo'],
+                                        "numero"=>$numero++,
+                                        "costos"=>$parametros['costos'],
+                                        "serie"=>$parametros['serie']]);
+                        $rowCount = $sql->rowCount();
+                    }
+
+                }else {
+                    $respuesta = true;
                 }
+                    
 
-                return array("respuesta"=>$respuesta);
+                return array("respuesta"=>$respuesta,"existe"=>$existe);
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
@@ -765,6 +771,27 @@
             $nuevafecha = date("Y-m-d",strtotime($fecha_actual.$meses));
 	 
 		    return $nuevafecha;
+        }
+
+        private function verificarSerie($serie){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        COUNT( alm_consumo.idreg )  AS serie
+                                                    FROM
+                                                        alm_consumo 
+                                                    WHERE
+                                                        alm_consumo.cserie = :serie
+                                                    AND ISNULL(alm_consumo.cantdevolucion) ");
+
+                $sql -> execute(["serie"=>$serie]);
+                $result = $sql->fetchAll();
+
+                return $result[0]['serie'];
+
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            } 
         }
     }
 ?>

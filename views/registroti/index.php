@@ -68,33 +68,18 @@
                     <div class="datos_cuerpo">
                         <label for="patrimonio">Patrimonio</label>
                         <input type="checkbox" name="patrimonio" id="patrimonio">
-                        <label for="cambio_epp">Motivo de Cambio</label>
-                        <select name="cambio_epp" id="cambio_epp">
-                            <option value="-1">Seleccione una opcion</option>
-                            <option value="239">PRIMERA ENTREGA </option>
-                            <option value="240">CAMBIO EPP</option>
-                            <option value="241">ROTURA</option>
-                            <option value="242">PERDIDA</option>
-                            <option value="243">DEFORMADO</option>
-                            <option value="244">FALTA PARTES</option>
-                            <option value="245">DESGASTE POR PROPIO USO</option>
-                            <option value="246">OTROS</option>
-                        </select>
                         <label for="cantidad_dialogo">Cantidad</label>
                         <input type="number" name="cantidad_dialogo" id="cantidad_dialogo" placeholder="Cantidad">
                         <label for="serie_dialogo">N° Serie</label>
                         <input type="text" name="serie_dialogo" id="serie_dialogo" placeholder="Serie">
-                        <label for="nhoja_dialogo">N° Hoja</label>
-                        <input type="text" name="nhoja_dialogo" id="nhoja_dialogo" placeholder="N° Hoja">
-                        <label for="isometricos_dialogo">Isometrico</label>
-                        <input type="text" name="isometricos_dialogo" id="isometricos_dialogo" placeholder="Isometricos">
-                        <label for="estado_dialogo">Estado</label>
-                        <input type="text" name="estado_dialogo" id="estado_dialogo" placeholder="Estado">
                     </div>
                     <div class="datos_cuerpo_observaciones">
                         <label for="observaciones_dialogo">Observaciones</label>
                         <textarea name="observaciones_dialogo" id="observaciones_dialogo" placeholder="Observaciones"></textarea>
                     </div>
+                    <!--<div class="firma">
+                        <img src="public/img/sepcon_firma.png" alt="">
+                    </div>-->
                 </div>
                 <div class="opciones_dialogo">
                     <button type="button" id="btnAceptarDialogoKardex">Aceptar</button>
@@ -165,12 +150,9 @@
         </div>
     </div>
     <div class="cabezaModulo">
-        <h1>Kardex Personal</h1>
+        <h1>Registro de Equipos</h1>
         <div>
             <a href="#" id="btnRegister"><i class="fas fa-project-diagram"></i><p>Kardex</p></a>
-            <a href="#" id="btnKardex"><i class="fas fa-file-pdf"></i><p>Kardex</p></a>
-            <a href="#" id="excelFile"><i class="fas fa-file-excel"></i><p>Reporte</p></a>
-            <a href="#" id="btnBuscar"><i class="fas fa-search-location"></i><p>Buscar</p></a>
             <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
         </div>
     </div>
