@@ -29,7 +29,7 @@ $(function(){
                 let adicionales = 0;
                 let adicionales_format = '0.00';
                 
-                if  ( data.total_adicionales > 0 ){
+                if  ( data.total_adicionales !== null ){
                     adicionales = parseFloat(data.total_adicionales).toFixed(2);
                     adicionales_format = formatoNumeroConComas(adicionales,2,'.',',');
                 }
@@ -78,7 +78,7 @@ $(function(){
                 $("#user_modifica").val(data.cabecera[0].userModifica);
                 $("#nro_pedido").val(data.cabecera[0].nrodoc);
                 $("#total_adicional").val(data.total_adicionales);
-                $("#oa").val(adicionales_format);
+                $("#oa").val(adicionales);
                 $("#referencia").val(data.cabecera[0].cReferencia);
                 $("#dias").val(data.cabecera[0].nplazo);
                 $("#nivel_autorizacion").val(data.cabecera[0].autorizado);
