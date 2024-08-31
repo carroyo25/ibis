@@ -968,6 +968,26 @@
           box-shadow: 2px 3px 6px #005D84;
   color: #000;
 }
+.barraTrabajo .selectConsulta {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 1fr 1rem 10%;
+  grid-template-columns: 1fr 10%;
+  padding: 1rem;
+  color: #fff;
+  gap: 1rem;
+}
+.barraTrabajo .selectConsulta label {
+  line-height: 2rem;
+}
+.barraTrabajo .selectConsulta input, .barraTrabajo .selectConsulta select {
+  height: 2rem;
+  outline: none;
+  border: none;
+  padding-left: 20px;
+  border-radius: 8px;
+  width: 100%;
+}
 
 .tituloGrupo, .tituloClase {
   color: #fff;

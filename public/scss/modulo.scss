@@ -695,6 +695,27 @@ $almacen:#27798F;
             }
         }
     }
+
+    .selectConsulta{
+        display: grid;
+        grid-template-columns: 1fr 10%;
+        padding: 1rem;
+        color: $blanco;
+        gap: 1rem;
+
+        label{
+            line-height: 2rem;
+        }
+
+        input,select{
+            height: 2rem;
+            outline: none;
+            border:none;
+            padding-left: 20px;
+            border-radius: 8px;
+            width: 100%;
+        }
+    }
 }
 
 .tituloGrupo,.tituloClase{

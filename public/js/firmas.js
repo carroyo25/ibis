@@ -14,10 +14,7 @@ $(function() {
             function (data, textStatus, jqXHR) {
 
                 let estado = "textoCentro " + data.cabecera[0].estado;
-                let total = parseFloat(data.cabecera[0].total_multiplicado).toFixed(2);
-                let adicionales = data.total_adicionales;
-
-                console.log(adicionales);
+                let total = parseFloat(data.cabecera[0].total_multiplicado);
 
                 total = formatoNumeroConComas(total,2,'.',',');
 
