@@ -412,8 +412,6 @@ $(function(){
 
                 $.post(RUTA+"autorizacion/nuevoDocumento", {cabecera:result,detalles:JSON.stringify(itemsSave())},
                     function (data, textStatus, jqXHR) {
-                        mostrarMensaje("Registro grabado","msj_correcto");
-
                         grabado = true;
                         accion = "u";
                         
@@ -422,6 +420,8 @@ $(function(){
 
                         $("#numero").val(data.numero);
                         $("#esperar").css("opacity","0").fadeOut();
+
+                        mostrarMensaje("Registro grabado","mensaje_correcto");
 
                     },
                     "json"

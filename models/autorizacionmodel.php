@@ -94,9 +94,11 @@
                     $numero = $this->numeroDocumento();
                     $this->grabarDetallesTransferencia($cabecera,$detalles,$numero);
                     $this->vistaPreviaAutorizacion($cabecera,$detalles,$numero);
+                    $correo = $this->enviarCorreo($numero,$cabecera['codigo_area']);
                 }
                 
-                return array("numero"=>$numero);
+                return array("numero"=>$numero,"correo"=>$correo);
+
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;
@@ -152,12 +154,32 @@
             } 
         }
 
-        private function enviarCorreo(){
+        private function enviarCorreo($numero,$area){
             try {
                 require_once("public/PHPMailer/PHPMailerAutoload.php");
 
+                $estadoEnvio = true;
+
                 $destino = $_SESSION['user']."@sepcon.net";
                 $nombre_destino = $_SESSION['nombres'];
+
+                $adjunto = $numero.'.pdf';
+
+                $subject    = utf8_decode("Autorización de traslado");
+
+                $messaje= '<div style="width:100%;display: flex;flex-direction: column;justify-content: center;align-items: center;
+                                    font-family: Futura, Arial, sans-serif;">
+                            <div style="width: 45%;border: 1px solid #c2c2c2;background: #518FFB">
+                                <h3 style="text-align: left;padding-left:20px">Aviso Solicitud de Autorización</h3>
+                            </div>
+                            <div style="width: 45%;
+                                        border-left: 1px solid #c2c2c2;
+                                        border-right: 1px solid #c2c2c2;
+                                        border-bottom: 1px solid #c2c2c2;">
+                                <p style="padding:.5rem;line-height: 1rem;">Se informa Ud. que se ha generado la solicitud de autorización de transporte Nro. '.$numero.'</p>
+                                <p style="padding:.5rem">Fecha de Solicitud : '. date("d/m/Y h:i:s") .'</p>
+                            </div>
+                        </div>';
 
                 $mail = new PHPMailer;
                 $mail->isSMTP();
@@ -180,6 +202,23 @@
                 $mail->setFrom("sistema_ibis@sepcon.net","Autorizacion de Traslado");
                 $mail->addAddress($destino,$nombre_destino);
 
+                if ($area == 19) {
+                    $mail->addAddress("tgonzales@sepcon.net",utf8_decode("Teddy Gonzáles"));
+                }
+
+                $mail->Subject = $subject;
+                $mail->msgHTML(utf8_decode($messaje));
+              
+                $mail->AddAttachment('public/documentos/autorizaciones/'.$adjunto);
+
+                if (!$mail->send()) {
+                    $estadoEnvio = false;
+                    echo 'Mailer Error: ' . $mail->ErrorInfo; 
+                }else {
+                    $estadoEnvio = true; 
+                }
+
+                return $estadoEnvio;
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
