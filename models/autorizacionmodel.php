@@ -18,10 +18,10 @@
                                                         UPPER(origen.cdesalm) AS origen,
                                                         UPPER(destino.cdesalm) AS destino,
                                                         UPPER( tb_area.cdesarea ) AS area,
-                                                        CONCAT_WS(' ',rrhh.tabla_aquarius.apellidos,rrhh.tabla_aquarius.nombres) AS asigna,
                                                         ibis.alm_autorizacab.nestado,
                                                         tipos_autorizacion.cdescripcion,
-                                                        estados.cdescripcion AS estado 
+                                                        estados.cdescripcion AS estado,
+                                                        usuario.cnombres AS asigna 
                                                     FROM
                                                         ibis.tb_costusu
                                                         INNER JOIN ibis.alm_autorizacab ON tb_costusu.ncodproy = alm_autorizacab.ncostos
@@ -29,9 +29,9 @@
                                                         INNER JOIN ibis.tb_almacen AS origen ON alm_autorizacab.norigen = origen.ncodalm
                                                         INNER JOIN ibis.tb_almacen AS destino ON alm_autorizacab.ndestino = destino.ncodalm
                                                         INNER JOIN ibis.tb_area ON alm_autorizacab.narea = tb_area.ncodarea
-                                                        INNER JOIN rrhh.tabla_aquarius ON ibis.alm_autorizacab.csolicita = rrhh.tabla_aquarius.internal
                                                         INNER JOIN ibis.tb_parametros AS estados ON ibis.alm_autorizacab.nestado = estados.nidreg 
                                                         INNER JOIN ibis.tb_parametros AS tipos_autorizacion ON ibis.alm_autorizacab.ctransferencia = tipos_autorizacion.nidreg 
+                                                        INNER JOIN ibis.tb_user AS usuario ON ibis.alm_autorizacab.csolicita = usuario.iduser
                                                     WHERE
                                                         tb_costusu.id_cuser =:user 
                                                         AND tb_costusu.nflgactivo = 1
@@ -82,7 +82,7 @@
                 $sql->execute(["emision"=>$cabecera['emitido'],
                                 "costos"=>$cabecera['codigo_costos'],
                                 "area"=>$cabecera['codigo_area'],
-                                "solicita"=>$cabecera['codigo_solicitante'],
+                                "solicita"=>$cabecera['codigo_usuario'],
                                 "origen"=>$cabecera['codigo_origen'],
                                 "destino"=>$cabecera['codigo_destino'],
                                 "tipo"=>$cabecera['codigo_tipo'],
@@ -93,6 +93,7 @@
                 if ($sql->rowCount() > 0) {
                     $numero = $this->numeroDocumento();
                     $this->grabarDetallesTransferencia($cabecera,$detalles,$numero);
+                    $this->vistaPreviaAutorizacion($cabecera,$detalles,$numero);
                 }
                 
                 return array("numero"=>$numero);
@@ -127,6 +128,7 @@
                                                                 alm_autorizadet.cdestino=:area,
                                                                 alm_autorizadet.cobserva=:observa,
                                                                 alm_autorizadet.norigen=:origen,
+                                                                alm_autorizadet.nparte=:parte,
                                                                 alm_autorizadet.ndestino=:destino");
 
                         $sql->execute(["numero"=>$numero,
@@ -136,6 +138,7 @@
                                         "serie"=>$datos[$i]->serie,
                                         "area"=>$datos[$i]->destino,
                                         "observa"=>$datos[$i]->observac,
+                                        "parte"=>$datos[$i]->parte,
                                         "origen"=>$cabecera['codigo_origen'],
                                         "destino"=>$cabecera['codigo_destino']]);
                     } catch (PDOException $th) {
@@ -143,6 +146,41 @@
                         return false;
                     }
                 }
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            } 
+        }
+
+        private function enviarCorreo(){
+            try {
+                require_once("public/PHPMailer/PHPMailerAutoload.php");
+
+                $destino = $_SESSION['user']."@sepcon.net";
+                $nombre_destino = $_SESSION['nombres'];
+
+                $mail = new PHPMailer;
+                $mail->isSMTP();
+                $mail->SMTPDebug = 0;
+                $mail->Debugoutput = 'html';
+                $mail->Host = 'mail.sepcon.net';
+                $mail->SMTPAuth = true;
+                $mail->Username = 'sistema_ibis@sepcon.net';
+                $mail->Password = $_SESSION['password'];
+                $mail->Port = 465;
+                $mail->SMTPSecure = "ssl";
+                $mail->SMTPOptions = array(
+                    'ssl' => array(
+                        'verify_peer' => false,
+                        'verify_peer_name' => false,
+                        'allow_self_signed' => false
+                    )
+                );
+
+                $mail->setFrom("sistema_ibis@sepcon.net","Autorizacion de Traslado");
+                $mail->addAddress($destino,$nombre_destino);
+
+
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;
@@ -167,7 +205,7 @@
                                                         ibis.tb_proyectos.ccodproy,
                                                         UPPER(ibis.tb_proyectos.cdesproy) AS cdesproy,
                                                         UPPER(ibis.tb_area.cdesarea) AS area,
-                                                        CONCAT_WS(' ', rrhh.tabla_aquarius.apellidos, rrhh.tabla_aquarius.nombres ) AS solicita,
+                                                        usuario.cnombres AS solicita,
                                                         almacenorigen.cdesalm AS almacenorigen,
                                                         almacendestino.cdesalm AS almacendestino,
                                                         ibis.tb_parametros.cdescripcion AS transferencia,
@@ -177,7 +215,7 @@
                                                         ibis.alm_autorizacab
                                                         LEFT JOIN ibis.tb_proyectos ON alm_autorizacab.ncostos = tb_proyectos.nidreg
                                                         LEFT JOIN ibis.tb_area ON alm_autorizacab.narea = tb_area.ncodarea
-                                                        LEFT JOIN rrhh.tabla_aquarius ON ibis.alm_autorizacab.csolicita = rrhh.tabla_aquarius.internal
+                                                        LEFT JOIN ibis.tb_user AS usuario ON ibis.alm_autorizacab.csolicita = usuario.iduser
                                                         LEFT JOIN ibis.tb_almacen AS almacenorigen ON ibis.alm_autorizacab.norigen = almacenorigen.ncodalm
                                                         LEFT JOIN ibis.tb_almacen AS almacendestino ON ibis.alm_autorizacab.ndestino = almacendestino.ncodalm
                                                         LEFT JOIN ibis.tb_parametros ON ibis.alm_autorizacab.ctransferencia = ibis.tb_parametros.nidreg
@@ -218,6 +256,7 @@
                                                         alm_autorizadet.cserie,
                                                         alm_autorizadet.cdestino,
                                                         alm_autorizadet.cobserva,
+                                                        alm_autorizadet.nparte,
                                                         alm_autorizadet.idcodprod,
                                                         cm_producto.ccodprod,
                                                         cm_producto.cdesprod,
@@ -244,23 +283,23 @@
             }
         }
 
-        public function vistaPreviaAutorizacion($cabecera,$detalles){
+        public function vistaPreviaAutorizacion($cabecera,$detalles,$numero){
             try {
                 require_once("public/formatos/autorizaciones.php");
-
-                $archivo = uniqid().".pdf";
+                
                 $datos = json_decode($detalles);
                 $nreg = count($datos);
 
                 $valor_maximo_lineas  = 24;
                 $contador_linea = 0;
 
-                $ruta = "public/documentos/autorizaciones/".$archivo;
-
                 $fecha_emision = date("d/m/Y", strtotime($cabecera['emision']));
+                $numero_autorizacion = $numero == null ? $cabecera['numero'] : $numero;
 
+                $archivo = $numero.".pdf";
+                $ruta = "public/documentos/autorizaciones/".$archivo;
                 
-                $pdf = new PDF($cabecera['numero'],
+                $pdf = new PDF($numero,
                                 $cabecera['costos'],
                                 $cabecera['area'],
                                 $cabecera['solicitante'],

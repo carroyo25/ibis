@@ -53,7 +53,7 @@
         }
 
         function vistaPrevia(){
-            echo json_encode($this->model->vistaPreviaAutorizacion($_POST['cabecera'],$_POST['detalles']));
+            echo json_encode($this->model->vistaPreviaAutorizacion($_POST['cabecera'],$_POST['detalles'],null));
         }
 
         function recepcionCliente(){

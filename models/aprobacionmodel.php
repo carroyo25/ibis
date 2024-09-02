@@ -198,8 +198,8 @@
                                                                 obsAprueba=:obaprueba,
                                                                 faprobado=:fecaprob 
                                                             WHERE iditem=:id");
-                    
-                    $estado = $datos[$i]->atendida == $datos[$i]->cantidad ? 52:54;
+                    //agregar un parse float
+                    $estado = $datos[$i]->atendida === $datos[$i]->cantidad ? 52:54;
 
                     $sql->execute(["est"=>$estado,
                                     "id"=>$datos[$i]->itempedido,

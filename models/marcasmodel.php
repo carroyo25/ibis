@@ -84,7 +84,8 @@
             $estadoCabecera = 54;
 
             foreach($datos as $dato){
-                $estado = $dato->cantidad == $dato->atendida ? 52 : 54;
+                //agregar un parse float
+                $estado = $dato->cantidad === $dato->atendida ? 52 : 54;
 
                 $total_atendido =  $total_atendido+$dato->atendida;
                 $total_cantidad =  $total_cantidad+$dato->cantidad;

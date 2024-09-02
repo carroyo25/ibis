@@ -51,6 +51,7 @@ $(function(){
                                 <td class="textoDerecha">${element.ncantidad}</td>
                                 <td class="pl20px">${element.cserie}</td>
                                 <td class="pl20px">${element.cdestino}</td>
+                                <td class="pl20px">${element.nparte}</td>
                                 <td class="pl20px">${element.cobserva}</td>
                             </tr>`;
                 
@@ -77,7 +78,9 @@ $(function(){
                 accion = 'n';
                 grabado = false;
 
-                $("#codigo_usuario").val($("#id_user").val());
+                $("#codigo_usuario,#codigo_solicitante").val($("#id_user").val());
+                $("#solicitante").val($("#name_user").val());
+                $("#correo_usuario").val($("#mail_user").val());
 
                 $(".primeraBarra").css("background","#0078D4");
                 $(".primeraBarra span").text('Datos Generales');
@@ -353,6 +356,7 @@ $(function(){
                     </td>
                     <td class="textoCentro"><input type="text"></td>
                     <td class="textoCentro"><input type="text"></td>
+                    <td class="textoCentro"><input type="text"></td>
                     <td><textarea></textarea></td>
                 </tr>`;
 
@@ -546,11 +550,14 @@ itemsSave = () =>{
 
     TABLA.each(function(){
         let IDPROD      = $(this).data('idprod'),
-            UNIDAD      = $(this).data('codund'),
+            CODIGO      = $(this).find('td').eq(2).text(),
+            DESCRIPCION = $(this).find('td').eq(3).text(),
+            UNIDAD      = $(this).find('td').eq(4).text(),
             CANTIDAD    = $(this).find('td').eq(5).children().val(),
             SERIE       = $(this).find('td').eq(6).children().val(),
             DESTINO     = $(this).find('td').eq(7).children().val(),
-            OBSERVAC    = $(this).find('td').eq(8).children().val(),
+            PARTE       = $(this).find('td').eq(8).children().val(),
+            OBSERVAC    = $(this).find('td').eq(9).children().val(),
             ESTADO      = $(this).attr('data-grabado'),
             ITEM        = $(this).find('td').eq(1).text();
 
@@ -558,10 +565,13 @@ itemsSave = () =>{
         
         if ( ESTADO == 0 ) {
             item['idprod']      = IDPROD;
+            item['codigo']      = CODIGO;
+            item['descripcion'] = DESCRIPCION;
             item['unidad']      = UNIDAD;
             item['cantidad']    = CANTIDAD;
             item['serie']       = SERIE;
             item['destino']     = DESTINO;
+            item['parte']       = PARTE;
             item['observac']    = OBSERVAC;
             item['estado']      = ESTADO;
             item['item']        = ITEM;
@@ -588,7 +598,8 @@ itemsPreview = () =>{
             CANTIDAD    = $(this).find('td').eq(5).text(),
             SERIE       = $(this).find('td').eq(6).text(),
             DESTINO     = $(this).find('td').eq(7).text(),
-            OBSERVAC    = $(this).find('td').eq(8).text(),
+            PARTE       = $(this).find('td').eq(8).text(),
+            OBSERVAC    = $(this).find('td').eq(9).text(),
 
         item= {};
         
@@ -600,6 +611,7 @@ itemsPreview = () =>{
             item['cantidad']    = CANTIDAD;
             item['serie']       = SERIE;
             item['destino']     = DESTINO;
+            item['parte']       = PARTE;
             item['observac']    = OBSERVAC;
 
             $(this).attr('data-grabado',1);

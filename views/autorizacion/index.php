@@ -36,6 +36,7 @@
                     <input type="hidden" name="codigo_usuario" id="codigo_usuario">
                     <input type="hidden" name="codigo_autoriza" id="codigo_autoriza">
                     <input type="hidden" name="codigo_traslado" id="codigo_traslado">
+                    <input type="hidden" name="correo_usuario" id="correo_usuario">
 
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
@@ -89,12 +90,7 @@
                         <div class="seccion_medio">
                             <div class="column2">
                                 <label for="solicitante">Solicitante:</label>
-                                <input type="text" name="solicitante" id="solicitante" class="mostrarLista busqueda" placeholder="Elija una opcion">
-                                <div class="lista" id="listaSolicitantes">
-                                   <ul>
-                                       <?php echo $this->listaAquarius?>
-                                   </ul>
-                                </div>
+                                <input type="text" name="solicitante" id="solicitante">
                             </div>
                             <div class="column2">
                                     <label for="origen">Origen:</label>
@@ -179,6 +175,7 @@
                                     <th width="6%">Cant.</th>
                                     <th width="6%">Serie.</th>
                                     <th width="6%">Destino</th>
+                                    <th width="10%">Nro. Parte</th>
                                     <th width="30%">Observaciones</th>
                                 </tr>
                             </thead>

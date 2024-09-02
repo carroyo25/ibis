@@ -223,7 +223,8 @@
                 
                 for ($i=0; $i < $nreg; $i++) { 
                     
-                    $estado = $datos[$i]->cantidad == $datos[$i]->atendida ? 52:53;
+                    //agregar un parse float
+                    $estado = $datos[$i]->cantidad === $datos[$i]->atendida ? 52:53;
 
                     $p = $datos[$i]->itempedido;
                     $c = $datos[$i]->atendida;
