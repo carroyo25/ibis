@@ -56,8 +56,20 @@
             echo json_encode($this->model->vistaPreviaAutorizacion($_POST['cabecera'],$_POST['detalles'],null));
         }
 
-        function recepcionCliente(){
-            $this->model->recepcionCliente($_POST['id'],$_POST['estado']);
+        function recepcionAlmacen(){
+            echo json_encode($this->model->recepcionAlmacen($_POST['id'],$_POST['estado']));
+        }
+
+        function entregaLogistica(){
+            echo json_encode($this->model->entregarLogistica($_POST['id'],$_POST['estado']));
+        }
+
+        function recepcionLogistica(){
+            echo json_encode($this->model->recepcionLogistica($_POST['id'],$_POST['estado']));
+        }
+
+        function entregaFinal(){
+            echo json_encode($this->model->entregarUsuario($_POST['id'],$_POST['estado']));
         }
         
     }

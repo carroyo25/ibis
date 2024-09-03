@@ -4,6 +4,18 @@ $(function(){
 
     $("#esperar").fadeOut();
 
+    $("#tablaPrincipal tbody").on("click","a", function (e) {
+        e.preventDefault();
+
+        if($(this).data("accion") == 'status'){
+            $("#status").fadeIn();
+        }else{
+            console.log("Vamos a anular el traslado");
+        };
+
+        return false;
+    });
+
     $("#tablaPrincipal tbody").on("click","tr", function (e) {
         e.preventDefault();
 
@@ -25,6 +37,7 @@ $(function(){
             $("#codigo_solicitante").val(data.datos[0].ncostos);
             $("#codigo_origen").val(data.datos[0].norigen);
             $("#codigo_destino").val(data.datos[0].ndestino);
+            $("#codigo_estado").val(data.datos[0].nestado);
             $("#codigo_usuario").val(data.datos[0].celabora);
             $("#codigo_autoriza").val(data.datos[0].cautoriza);
             $("#numero").val(data.datos[0].idreg);
@@ -64,6 +77,7 @@ $(function(){
         return false;
     });
 
+
     $("#nuevoRegistro").click(function (e) { 
         e.preventDefault();
 
@@ -81,6 +95,7 @@ $(function(){
                 $("#codigo_usuario,#codigo_solicitante").val($("#id_user").val());
                 $("#solicitante").val($("#name_user").val());
                 $("#correo_usuario").val($("#mail_user").val());
+                $("#codigo_estado").val(49);
 
                 $(".primeraBarra").css("background","#0078D4");
                 $(".primeraBarra span").text('Datos Generales');
@@ -510,28 +525,170 @@ $(function(){
         return false;
     });
 
-    $("#recepcionCarga").click(function(e){
+    $("#recepcionCarga,#entregaLogistica").click(function(e){
         e.preventDefault();
 
         try {
             if ( $("#rol_user").val() == 2 && $("#rol_user").val() == 4 ) throw new Error("No esta habilitado para este proceso");
+            if ( $("#codigo_estado").val() != 49 ) throw new Error("El formato ya ha sido recepcionado");
 
-            let formData = new FormData;
-            formData.append("id", $("#codigo_traslado").val);
-            formData.append("estado",275);
+            $("#recepcionAlmacenModal").fadeIn();
+        } catch (error) {
+            mostrarMensaje(error.message,"mensaje_error")
+        }
 
-            fetch(RUTA+"autorizacion/recepcionCliente",{
+        return false;
+    });
+
+    $("#entregaLogistica").click(function(e){
+        e.preventDefault();
+
+        try {
+            if ( $("#rol_user").val() == 2 && $("#rol_user").val() == 4 ) throw new Error("No esta habilitado para este proceso");
+            if ( $("#codigo_estado").val() != 60 ) throw new Error("No se permite la accion");
+
+            $("#entregaLogisticaModal").fadeIn();
+        } catch (error) {
+            mostrarMensaje(error.message,"mensaje_error")
+        }
+
+        return false;
+    });
+
+    $("#recepcionLogistica").click(function(e){
+        e.preventDefault();
+
+        try {
+            if ( $("#rol_user").val() == 2 && $("#rol_user").val() == 4 ) throw new Error("No esta habilitado para este proceso");
+            if ( $("#codigo_estado").val() != 62 ) throw new Error("No se puede recepcionar el documento");
+
+            $("#recepcionLogisticaModal").fadeIn();
+        } catch (error) {
+            mostrarMensaje(error.message,"mensaje_error")
+        }
+
+        return false;
+    });
+
+    $("#entregaUsuario").click(function(e){
+        e.preventDefault();
+
+        try {
+            if ( $("#rol_user").val() == 2 && $("#rol_user").val() == 4 ) throw new Error("No esta habilitado para este proceso");
+            if ( $("#codigo_estado").val() != 63 ) throw new Error("No se recepcionó de logística");
+
+            $("#entregaDestinoModal").fadeIn();
+        } catch (error) {
+            mostrarMensaje(error.message,"mensaje_error")
+        }
+
+        return false;
+    });
+
+    $("#btnAceptarRecepcion").click(function (e) { 
+        e.preventDefault();
+
+        try {
+            let formData = new FormData();
+            formData.append("id", $("#codigo_traslado").val());
+            formData.append("estado",60);
+
+            fetch(RUTA+"autorizacion/recepcionAlmacen",{
                 method: "POST",
                 body: formData
             })
             .then(response => response.json())
             .then(data => {
-                console.log(data);
+                mostrarMensaje("Registrado Correctamente","mensaje_correcto");
+            })
+            .catch(error => {
+                if (error instanceof TypeError && error.message.includes('API key')) {
+                  console.error('Invalid API key:', error);
+                } else {
+                  console.error('There was a problem with the Fetch operation:', error);
+                }
+            });
+        } catch (error) {
+            mostrarMensaje(error.message,"mensaje_error");
+        }
+
+        return false;
+    });
+
+    $("#btnAceptarEntregaLogistica").click(function (e) { 
+        e.preventDefault();
+
+        try {
+            let formData = new FormData();
+            formData.append("id", $("#codigo_traslado").val());
+            formData.append("estado",62);
+
+            fetch(RUTA+"autorizacion/entregaLogistica",{
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                mostrarMensaje("Traslado actualizado","mensaje_correcto");
             })
         } catch (error) {
-            mostrarMensaje(error.message,"mensaje_error")
+            mostrarMensaje(error.message,"mensaje_error");
         }
+
+        return false;
+    });
+
+    $("#btnAceptarRecepcionLogistica").click(function (e) { 
+        e.preventDefault();
+
+        try {
+            let formData = new FormData();
+            formData.append("id", $("#codigo_traslado").val());
+            formData.append("estado",63);
+
+            fetch(RUTA+"autorizacion/recepcionLogistica",{
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                mostrarMensaje("Recepcionado en almacen","mensaje_correcto");
+            })
+        } catch (error) {
+            mostrarMensaje(error.message,"mensaje_error");
+        }
+
+        return false;
+    });
+
+    $("#btnAceptarEntregaDestino").click(function (e) { 
+        e.preventDefault();
+
+        try {
+            let formData = new FormData();
+            formData.append("id", $("#codigo_traslado").val());
+            formData.append("estado",140);
+
+            fetch(RUTA+"autorizacion/entregaFinal",{
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                mostrarMensaje("Traslado Culminado","mensaje_correcto");
+            })
+        } catch (error) {
+            mostrarMensaje(error.message,"mensaje_error");
+        }
+
+        return false;
+    });
+
+    $("#btnCancelarRecepcion,#btnCancelarEntregaLogistica,#btnCancelarRecepcionLogistica,#btnCancelarEntregaDestino,#closeInform").click(function (e) { 
+        e.preventDefault();
         
+        $(this).closest(".modal").fadeOut();
+
         return false;
     });
 

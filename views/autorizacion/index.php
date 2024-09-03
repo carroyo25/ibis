@@ -12,15 +12,6 @@
     </div>
     <div class="modal" id="esperar">
     </div>
-    <div class="modal" id="pregunta">
-        <div class="ventanaPregunta">
-            <h3>Desea anular el registro?</h3>
-            <div>
-                <button type="button" id="btnAceptarPregunta">Aceptar</button>
-                <button type="button" id="btnCancelarPregunta">Cancelar</button>
-            </div>
-        </div>
-    </div>
     <div class="modal" id="proceso">
         <div class="ventanaProceso tamanioProceso">
             <div class="cabezaProceso">
@@ -37,6 +28,7 @@
                     <input type="hidden" name="codigo_autoriza" id="codigo_autoriza">
                     <input type="hidden" name="codigo_traslado" id="codigo_traslado">
                     <input type="hidden" name="correo_usuario" id="correo_usuario">
+                    <input type="hidden" name="codigo_estado" id="codigo_estado">
 
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
@@ -144,16 +136,16 @@
                     <div class="barraOpciones">
                         <span>Detalles</span>
                         <div>
-                            <button type="button" id="recepcionCarga" title="Recepción Almacén" class="boton3 accion">
+                            <button type="button" id="recepcionCarga" title="Recepción Almacén" class="boton3 accion" data-estado="recepcionAlmacen">
                                 <i class="fas fa-truck-loading"></i> Recepción Almacén
                             </button>
-                            <button type="button" id="entregaLogistica" title="Entrega Logística" class="boton3 accion">
+                            <button type="button" id="entregaLogistica" title="Entrega Logística" class="boton3 accion" data-estado="entregaLogistica">
                                 <i class="fas fa-truck-moving"></i> Entrega Logistica
                             </button>
-                            <button type="button" id="recepcionLogistica" title="Recepción Logística" class="boton3 accion">
+                            <button type="button" id="recepcionLogistica" title="Recepción Logística" class="boton3 accion" data-estado="recepcionLogistica">
                                 <i class="fas fa-share"></i> Recepción Logística
                             </button>
-                            <button type="button" id="entregaUsuario" title="Entrega Usuario" class="boton3 accion">
+                            <button type="button" id="entregaUsuario" title="Entrega Usuario" class="boton3 accion" data-estado="entregaUsuario">
                                 <i class="fas fa-user-secret"></i> Entrega Usuario
                             </button>
 
@@ -187,6 +179,50 @@
                 </form>
             </div>
         </div>
+    </div>
+    <div class="modal" id="recepcionAlmacenModal">
+        <div class="ventanaPregunta">
+            <h3>¿Recepcionar los items?</h3>
+            <div>
+                <button type="button" id="btnAceptarRecepcion">Aceptar</button>
+                <button type="button" id="btnCancelarRecepcion">Cancelar</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="entregaLogisticaModal">
+        <div class="ventanaPregunta">
+            <h3>¿Entregar Autorización para su despacho?</h3>
+            <div>
+                <button type="button" id="btnAceptarEntregaLogistica">Aceptar</button>
+                <button type="button" id="btnCancelarEntregaLogistica">Cancelar</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="recepcionLogisticaModal">
+        <div class="ventanaPregunta">
+            <h3>¿Recepcionar el traslado?</h3>
+            <div>
+                <button type="button" id="btnAceptarRecepcionLogistica">Aceptar</button>
+                <button type="button" id="btnCancelarRecepcionLogistica">Cancelar</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="entregaDestinoModal">
+        <div class="ventanaPregunta">
+            <h3>¿Culminar el traslado?</h3>
+            <div>
+                <button type="button" id="btnAceptarEntregaDestino">Aceptar</button>
+                <button type="button" id="btnCancelarEntregaDestino">Cancelar</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="status">
+        <div class="ventanaInformes">
+            <div class="title__informe">
+                    <h3>Estado del Traslado</h3>
+                    <a href="#" id="closeInform"><i class="far fa-window-close"></i></a>
+                </div>
+            </div>
     </div>
     <div class="modal" id="busqueda">
         <div class="ventanaBusqueda w50por">
@@ -568,6 +604,7 @@
                     <th>Area</th>
                     <th>Asigna</th>
                     <th>Estado</th>
+                    <th>...</th>
                     <th>...</th>
                 </tr>
             </thead>

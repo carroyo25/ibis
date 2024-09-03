@@ -52,7 +52,8 @@
                                         <td class="pl20px">'.$rs['area'].'</td>
                                         <td class="pl20px">'.$rs['asigna'].'</td>
                                         <td class="textoCentro '.strtolower($rs['estado']).'">'.$rs['estado'].'</td>
-                                        <td class="textoCentro"><a href="'.$rs['idreg'].'"><i class="fa fa-trash-alt"></i></a></td>
+                                        <td class="textoCentro"><a href="'.$rs['idreg'].'" data-accion="status"><i class="fas fa-chart-line"></i></a></td>
+                                        <td class="textoCentro"><a href="'.$rs['idreg'].'" data-accion="delete"><i class="fa fa-trash-alt"></i></a></td>
                                     </tr>';
                     }
                 }
@@ -203,7 +204,8 @@
                 $mail->addAddress($destino,$nombre_destino);
 
                 if ($area == 19) {
-                    $mail->addAddress("tgonzales@sepcon.net",utf8_decode("Teddy Gonzáles"));
+                    //$mail->addAddress("tgonzales@sepcon.net",utf8_decode("Teddy Gonzáles"));
+                    $mail->addAddress("caarroyo@hotmail.com",utf8_decode("Teddy Gonzáles"));
                 }
 
                 $mail->Subject = $subject;
@@ -241,6 +243,7 @@
                                                         ibis.alm_autorizacab.ctransferencia,
                                                         ibis.alm_autorizacab.observac,
                                                         ibis.alm_autorizacab.celabora,
+                                                        ibis.alm_autorizacab.nestado,
                                                         ibis.tb_proyectos.ccodproy,
                                                         UPPER(ibis.tb_proyectos.cdesproy) AS cdesproy,
                                                         UPPER(ibis.tb_area.cdesarea) AS area,
@@ -403,7 +406,7 @@
             }
         }
 
-        public function recepcionCliente($id,$estado){
+        public function recepcionAlmacen($id,$estado){
             try {
                 $mensaje = "Error en la actualización";
                 $fecha = date("Y-m-d");
@@ -411,13 +414,86 @@
                 $sql = $this->db->connect()->prepare("UPDATE alm_autorizacab 
                                                         SET alm_autorizacab.nestado =:estado,
                                                             alm_autorizacab.urecepcli =:user,
-                                                            alm_autorizacab.frecepcion =: fecha
+                                                            alm_autorizacab.frecepcion =:fecha
                                                         WHERE alm_autorizacab.idreg =:id");
                                                         
                 $sql->execute(["id"=>$id, "estado"=>$estado, "user"=>$_SESSION['iduser'], "fecha"=>$fecha]);
 
                 if ($sql->rowCount() > 0){
-                    $mensaje = "Registro actualizado";
+                    $mensaje = "Recepcionado por almacen";
+                }
+
+                return array("mensaje"=>"Registro correcto");
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        public function entregarLogistica($id,$estado){
+            try {
+                $mensaje = "Error en la actualización";
+                $fecha = date("Y-m-d");
+
+                $sql = $this->db->connect()->prepare("UPDATE alm_autorizacab 
+                                                        SET alm_autorizacab.nestado =:estado,
+                                                            alm_autorizacab.uenvlog =:user,
+                                                            alm_autorizacab.fentrelog =:fecha
+                                                        WHERE alm_autorizacab.idreg =:id");
+                                                        
+                $sql->execute(["id"=>$id, "estado"=>$estado, "user"=>$_SESSION['iduser'], "fecha"=>$fecha]);
+
+                if ( $sql->rowCount() > 0 ){
+                    $mensaje = "Entregado para su traslado";
+                }
+
+                return array("mensaje"=>$mensaje);
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+
+        public function recepcionLogistica($id,$estado){
+            try {
+                $mensaje = "Error en la actualización";
+                $fecha = date("Y-m-d");
+
+                $sql = $this->db->connect()->prepare("UPDATE alm_autorizacab 
+                                                        SET alm_autorizacab.nestado =:estado,
+                                                            alm_autorizacab.ureceplog =:user,
+                                                            alm_autorizacab.freceplog =:fecha
+                                                        WHERE alm_autorizacab.idreg =:id");
+                                                        
+                $sql->execute(["id"=>$id, "estado"=>$estado, "user"=>$_SESSION['iduser'], "fecha"=>$fecha]);
+
+                if ( $sql->rowCount() > 0 ){
+                    $mensaje = "Entregado para su traslado";
+                }
+
+                return array("mensaje"=>$mensaje);
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        public function entregarUsuario($id,$estado){
+            try {
+                $mensaje = "Error en la actualización";
+                $fecha = date("Y-m-d");
+
+                $sql = $this->db->connect()->prepare("UPDATE alm_autorizacab 
+                                                        SET alm_autorizacab.nestado =:estado,
+                                                            alm_autorizacab.uentrecli =:user,
+                                                            alm_autorizacab.fentreuser =:fecha
+                                                        WHERE alm_autorizacab.idreg =:id");
+                                                        
+                $sql->execute(["id"=>$id, "estado"=>$estado, "user"=>$_SESSION['iduser'], "fecha"=>$fecha]);
+
+                if ( $sql->rowCount() > 0 ){
+                    $mensaje = "Traslado Finalizado";
                 }
 
                 return array("mensaje"=>$mensaje);
