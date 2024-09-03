@@ -224,12 +224,11 @@
                                                         tb_pedidodet.cant_atend,
                                                         tb_pedidodet.idprod,
                                                         tb_pedidodet.idtipo,
-                                                        tb_pedidodet.estadoItem,
+                                                        tb_pedidodet.estadoItem AS estado,
                                                         tb_pedidodet.nroparte,
                                                         tb_pedidodet.unid,
                                                         UPPER(tb_pedidodet.observaciones) AS observaciones,
                                                         REPLACE(FORMAT(tb_pedidodet.cant_pedida,2),',','') AS cant_pedida,
-                                                        tb_pedidodet.estadoItem,
                                                         cm_producto.ccodprod,
                                                         UPPER(cm_producto.cdesprod) AS cdesprod,
                                                         tb_unimed.cabrevia,
@@ -253,11 +252,12 @@
 
                         $checked = $rs['nflgqaqc'] == 1 ? "checked ": " ";
                         
-                        $salida .='<tr data-grabado="1" data-idprod="'.$rs['idprod'].'" 
+                        $salida .='<tr data-grabado="1" 
+                                        data-idprod="'.$rs['idprod'].'" 
                                         data-codund="'.$rs['unid'].'" 
                                         data-idx="'.$rs['iditem'].'"
-                                        data-registro="'.$rs['cregistro'].'"
-                                        data-estado="'.$rs['estadoItem'].'">
+                                        data-registro="'.$rs['idpedido'].'"
+                                        data-estadoitem="'.$rs['estado'].'">
                                         <td class="textoCentro"><a href="'.$rs['iditem'].'" data-accion="eliminar" title="'.$rs['iditem'].'"><i class="fas fa-eraser"></i></a></td>
                                         <td class="textoCentro">'.str_pad($filas++,3,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>

@@ -219,10 +219,50 @@
     <div class="modal" id="status">
         <div class="ventanaInformes">
             <div class="title__informe">
-                    <h3>Estado del Traslado</h3>
-                    <a href="#" id="closeInform"><i class="far fa-window-close"></i></a>
+                <h3>Estado del Traslado</h3>
+                <a href="#" id="closeInform"><i class="far fa-window-close"></i></a>
+            </div>
+            <div class="statusTraslado">
+                <div class="estados">
+                    <div class="etapas" id="etapa1">
+                        <div>
+                            <p class="descripcionEtapa">Recepción Almacén</p>
+                            <p id="fecha1">03/09/2024</p>
+                        </div>
+                        <div class="circle" id="circle1">
+                        </div>
+                    </div>
+                    <div class="etapas" id="etapa2">
+                        <div>
+                            <p class="descripcionEtapa">Entrega Logística</p>
+                            <p id="fecha2">03/09/2024</p>
+                        </div>
+                        <div class="circle" id="circle2">
+                            
+                        </div>
+                    </div>
+                    <div class="etapas" id="etapa3">
+                        <div>
+                            <p class="descripcionEtapa">Recepción Logística</p>
+                            <p id="fecha3">03/09/2024</p>
+                        </div>
+                        <div class="circle" id="circle2">
+                            
+                        </div>
+                    </div>
+                    <div class="etapas" id="etapa4">
+                        <div>
+                            <p class="descripcionEtapa">Entrega Usuario</p>
+                            <p id="fecha4">03/09/2024</p>
+                        </div>
+                        <div class="circle" id="circle4">
+                            
+                        </div>
+                    </div>
                 </div>
             </div>
+        </div>
+
     </div>
     <div class="modal" id="busqueda">
         <div class="ventanaBusqueda w50por">

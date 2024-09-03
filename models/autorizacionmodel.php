@@ -35,7 +35,8 @@
                                                     WHERE
                                                         tb_costusu.id_cuser =:user 
                                                         AND tb_costusu.nflgactivo = 1
-                                                        AND alm_autorizacab.nflgactivo = 1");
+                                                        AND alm_autorizacab.nflgactivo = 1
+                                                    ORDER BY ibis.alm_autorizacab.fregsys DESC");
 
                 $sql->execute(["user"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowCount();
@@ -45,7 +46,7 @@
                         $salida .='<tr class="pointer" data-indice="'.$rs['idreg'].'">
                                         <td class="textoCentro">'.str_pad($rs['idreg'],4,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.date("d/m/Y", strtotime($rs['fregsys'])).'</td>
-                                        <td class="textoCentro">'.$rs['cdescripcion'].'</td>
+                                        <td class="pl20px">'.$rs['cdescripcion'].'</td>
                                         <td class="pl20px">'.$rs['cdesproy'].'</td>
                                         <td class="pl20px">'.$rs['origen'].'</td>
                                         <td class="pl20px">'.$rs['destino'].'</td>

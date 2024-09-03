@@ -228,7 +228,8 @@ $(function(){
             item_accion = fila_reemplazar.data('estado');
 
             try {
-                if ( item_accion == 60 || item_accion == 62 || item_accion == 52 ) throw new Error('El item no puede ser cambiado');
+                //if ( item_accion == 60 || item_accion == 62 || item_accion == 52 ) throw new Error('El item no puede ser cambiado');
+                if ( item_accion == 60 || item_accion == 62 ) throw new Error('El item no puede ser cambiado');
 
                 listarItems($("#codigo_tipo").val());
             } catch (error) {

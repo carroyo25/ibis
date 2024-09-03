@@ -525,7 +525,7 @@ $(function(){
         return false;
     });
 
-    $("#recepcionCarga,#entregaLogistica").click(function(e){
+    $("#recepcionCarga").click(function(e){
         e.preventDefault();
 
         try {
