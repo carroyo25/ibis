@@ -227,36 +227,37 @@
                     <div class="etapas" id="etapa1">
                         <div>
                             <p class="descripcionEtapa">Recepción Almacén</p>
-                            <p id="fecha1">03/09/2024</p>
+                            <p id="fecha1"></p>
                         </div>
-                        <div class="circle" id="circle1">
+                        <div class="circle etapa_falta" id="circle1">
+                            <p class="faltante"><i class="fas fa-times"></i></p>
                         </div>
                     </div>
                     <div class="etapas" id="etapa2">
                         <div>
                             <p class="descripcionEtapa">Entrega Logística</p>
-                            <p id="fecha2">03/09/2024</p>
+                            <p id="fecha2"</p>
                         </div>
-                        <div class="circle" id="circle2">
-                            
+                        <div class="circle etapa_falta" id="circle2">
+                            <p class="faltante"><i class="fas fa-times"></i></p>
                         </div>
                     </div>
                     <div class="etapas" id="etapa3">
                         <div>
                             <p class="descripcionEtapa">Recepción Logística</p>
-                            <p id="fecha3">03/09/2024</p>
+                            <p id="fecha3"></p>
                         </div>
-                        <div class="circle" id="circle2">
-                            
+                        <div class="circle etapa_falta" id="circle3">
+                            <p class="faltante"><i class="fas fa-times"></i></p>
                         </div>
                     </div>
                     <div class="etapas" id="etapa4">
                         <div>
                             <p class="descripcionEtapa">Entrega Usuario</p>
-                            <p id="fecha4">03/09/2024</p>
+                            <p id="fecha4"></p>
                         </div>
-                        <div class="circle" id="circle4">
-                            
+                        <div class="circle etapa_falta" id="circle4">
+                            <p class="faltante"><i class="fas fa-times"></i></p>
                         </div>
                     </div>
                 </div>

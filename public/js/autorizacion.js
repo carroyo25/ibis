@@ -7,10 +7,87 @@ $(function(){
     $("#tablaPrincipal tbody").on("click","a", function (e) {
         e.preventDefault();
 
+        let id = $(this).attr("href");
+
         if($(this).data("accion") == 'status'){
-            $("#status").fadeIn();
+            let formData = new FormData();
+            
+            formData.append("id",id);
+
+            fetch(RUTA+'autorizacion/status',{
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data =>{
+                if (data[0].frecepcion !== null) {
+                    $("#fecha1").text(data[0].frecepcion);
+                    $("#circle1")
+                        .removeClass('etapa_falta')
+                        .addClass('etapa_completa');
+
+                    $("#circle1 p")
+                        .removeClass('faltante')
+                        .addClass('completado');
+
+                    $("#circle1 p i")
+                        .removeClass('fa-times')
+                        .addClass('fa-check');
+                }else{
+                    $("#circle1")
+                        .removeClass('etapa_completa')
+                        .addClass('etapa_falta');
+
+                    $("#circle1 p")
+                        .removeClass('completado')
+                        .addClass('faltante');
+
+                    $("#circle1 p i")
+                        .removeClass('fa-check')
+                        .addClass('fa-times');
+                };
+
+                if (data[0].fentrelog !== null) {
+                    $("#fecha2").text(data[0].fentrelog);
+
+                    $("#circle2")
+                        .removeClass('etapa_falta')
+                        .addClass('etapa_completa');
+
+                    $("#circle2 p")
+                        .removeClass('faltante')
+                        .addClass('completado');
+
+                    $("#circle2 p i")
+                        .removeClass('fa-times')
+                        .addClass('fa-check');
+                }else{
+                    $("#circle2")
+                        .removeClass('etapa_completa')
+                        .addClass('etapa_falta');
+
+                    $("#circle2 p")
+                        .removeClass('completado')
+                        .addClass('faltante');
+
+                    $("#circle2 p i")
+                        .removeClass('fa-check')
+                        .addClass('fa-times');
+                };
+
+                if (data[0].freceplog !== null) {
+                    $("#fecha3").text(data[0].freceplog);
+                };
+
+                if (data[0].fentreuser !== null) {
+                    $("#fecha4").text(data[0].fentreuser);
+                };
+
+                $("#status").fadeIn();
+             })
+
         }else{
-            console.log("Vamos a anular el traslado");
+            console.log(id); 
         };
 
         return false;
@@ -76,7 +153,6 @@ $(function(){
 
         return false;
     });
-
 
     $("#nuevoRegistro").click(function (e) { 
         e.preventDefault();

@@ -71,6 +71,10 @@
         function entregaFinal(){
             echo json_encode($this->model->entregarUsuario($_POST['id'],$_POST['estado']));
         }
+
+        function status(){
+            echo json_encode($this->model->obtenerEstado($_POST['id']));
+        }
         
     }
 ?>

@@ -455,7 +455,6 @@
             }
         }
 
-
         public function recepcionLogistica($id,$estado){
             try {
                 $mensaje = "Error en la actualización";
@@ -498,6 +497,33 @@
                 }
 
                 return array("mensaje"=>$mensaje);
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        public function obtenerEstado($id){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        alm_autorizacab.frecepcion, 
+                                                        alm_autorizacab.fentrelog, 
+                                                        alm_autorizacab.freceplog, 
+                                                        alm_autorizacab.fentreuser
+                                                    FROM
+                                                        alm_autorizacab
+                                                    WHERE
+                                                        alm_autorizacab.idreg = :id");
+                
+                $sql->execute(["id"=>$id]);
+
+                if ($sql->rowCount() > 0)
+                    while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+                        $docData[] = $row;
+                    }
+
+                return $docData;
+
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;

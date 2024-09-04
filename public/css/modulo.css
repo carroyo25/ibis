@@ -1404,7 +1404,7 @@
 .ventanaInformes .statusTraslado {
   width: 100%;
   height: 80%;
-  padding: 1rem;
+  padding: 0.5rem;
 }
 .ventanaInformes .statusTraslado .estados {
   display: -ms-grid;
@@ -1413,6 +1413,7 @@
   grid-template-columns: repeat(4, 1fr);
   border: 1px dotted #ccc;
   width: 100%;
+  height: 100%;
 }
 .ventanaInformes .statusTraslado .estados .etapas {
   text-align: center;
@@ -1435,12 +1436,52 @@
 .ventanaInformes .statusTraslado .estados .etapas p {
   margin-bottom: 1rem;
   font-size: 0.9rem;
+  font-weight: bold;
+}
+.ventanaInformes .statusTraslado .estados .etapas .etapa_completa {
+  border-color: #50f767;
+}
+.ventanaInformes .statusTraslado .estados .etapas .completado {
+  background-color: #50f767;
+}
+.ventanaInformes .statusTraslado .estados .etapas .etapa_falta {
+  border-color: #1E88E5;
+}
+.ventanaInformes .statusTraslado .estados .etapas .faltante {
+  background-color: #1E88E5;
 }
 .ventanaInformes .statusTraslado .estados .etapas .circle {
-  width: 6rem;
-  height: 6rem;
-  background-color: #00b718;
+  width: 10rem;
+  height: 10rem;
+  border-width: 0.1rem;
   border-radius: 50%;
+  border-style: solid;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+.ventanaInformes .statusTraslado .estados .etapas .circle p {
+  width: 7rem;
+  height: 7rem;
+  border-radius: 50%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  font-size: 3.5rem;
+  margin-top: 20px;
+  color: #fff;
 }
 
 .ventanaConsumo {
