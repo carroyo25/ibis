@@ -26,7 +26,7 @@
                             <button type="button" id="atachDocs" title="Adjuntar documentos" class="boton3">
                                 <i class="fas fa-paperclip"></i> Adjuntar Documentos
                             </button>
-                            <button type="button" id="updateDocument" title="Cerrar Salida" class="boton3">
+                            <button type="button" id="updateDocument" title="Grabar Ingreso" class="boton3">
                                 <i class="far fa-save"></i> Grabar Ingreso
                             </button>
                             <button type="button" id="closeProcess" title="Cerrar" class="boton3">

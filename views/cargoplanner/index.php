@@ -323,7 +323,7 @@
                     <th>Semaforo</th>
                     <th style="background:#25AFF3; color:#000">Cantidad</br>Enviada</th>
                     <th style="background:#25AFF3; color:#000" data-idcol="31" class="datafiltro">Nro. Guia</th>
-                    <th style="background:#127BDD; color:#000">N°. Guia</br>Transferencia</th>
+                    <th style="background:#127BDD; color:#000">N°. Nota</br>Transferencia</th>
                     <th style="background:#127BDD; color:#000">Fecha</br>Traslado</th>
                     <th style="background:#DA500B; color:#000">Registro</br>Almacen</th>
                     <th style="background:#DA500B; color:#000">Fecha</br>Ingreso Almacen</th>

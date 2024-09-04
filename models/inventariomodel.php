@@ -20,8 +20,9 @@
                                         alm_inventariocab
                                         INNER JOIN tb_proyectos ON alm_inventariocab.idcostos = tb_proyectos.nidreg
                                         INNER JOIN tb_user ON alm_inventariocab.idautoriza = tb_user.iduser
-                                        INNER JOIN tb_almacen ON alm_inventariocab.ncodalm2 = tb_almacen.ncodalm");
-                                        $sql->execute();
+                                        INNER JOIN tb_almacen ON alm_inventariocab.ncodalm2 = tb_almacen.ncodalm
+                                    ORDER BY alm_inventariocab.ffechadoc DESC");
+                $sql->execute();
                 $rowCount = $sql->rowCount();
                 $item = 1;
                 if ($rowCount > 0) {
