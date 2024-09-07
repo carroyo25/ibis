@@ -658,7 +658,7 @@
                 $objPHPExcel->getActiveSheet()->setCellValue('AI2','Cantidad Despachada'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('AJ2','Nro. Guia'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('AK2','Fecha Traslado'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AL2','Nro. Guia Transferencia'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AL2','Nro. Nota Transferencia'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('AM2','Registro Almacen'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('AN2','Fecha Ingreso Almacen'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('AO2','Cantidad en Obra'); // esto cambia
@@ -1133,6 +1133,7 @@
                                                     DATE_FORMAT( alm_recepcab.ffecdoc, '%d/%m/%Y' ) AS fecha_recepcion_proveedor,
                                                     DATE_FORMAT( alm_cabexist.ffechadoc, '%d/%m/%Y' ) AS fecha_registro_almacen,
                                                     alm_transfercab.cnumguia AS guia_transferencia,
+                                                    LPAD(alm_transfercab.idreg,6,0) AS nota_transferencia,
                                                     DATE_FORMAT( alm_transfercab.ftraslado, '%d/%m/%Y' ) AS fecha_traslado,
                                                     DATE_FORMAT(
                                                         GREATEST( COALESCE ( lg_ordencab.fechaLog, '' ), COALESCE ( lg_ordencab.fechaOpe, '' ), COALESCE ( lg_ordencab.FechaFin, '' ) ),
@@ -2001,8 +2002,8 @@
                 $objPHPExcel->getActiveSheet()->setCellValue('AH2','Semáforo'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('AI2','Cantidad Despachada'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('AJ2','Nro. Guia'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AK2','Fecha Traslado'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('AL2','Nro. Nota Transferencia'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AK2','Nro. Guia Transferencia'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AL2','Fecha Traslado'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('AM2','Registro Almacen'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('AN2','Fecha Ingreso Almacen'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('AO2','Cantidad en Obra'); // esto cambia
@@ -2346,8 +2347,8 @@
                     $objPHPExcel->getActiveSheet()->setCellValue('AI'.$fila,$dato['despachos']);
                     $objPHPExcel->getActiveSheet()->setCellValue('AJ'.$fila,$dato['cnumguia']);
 
-                    $objPHPExcel->getActiveSheet()->setCellValue('AK'.$fila,$dato['nota_transferencia']);
-                    $objPHPExcel->getActiveSheet()->setCellValue('AL'.$fila,$dato['fecha_traslado']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AK'.$fila,$dato['fecha_traslado']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AL'.$fila,$dato['nota_transferencia']);
                         
                     $objPHPExcel->getActiveSheet()->setCellValue('AM'.$fila,$dato['nota_obra']);
                     $objPHPExcel->getActiveSheet()->setCellValue('AN'.$fila,$dato['fecha_registro_almacen']);
