@@ -400,6 +400,8 @@ $(function(){
         if ( $("#codigo_tipo").val() === ""){
             mostrarMensaje("Selecione el tipo de movimiento","mensaje_error");
         }else{
+
+            
             $.post(RUTA+"pedidos/llamaProductos", {tipo:37},
                 function (data, textStatus, jqXHR) {
                     $("#tablaModulos tbody")
