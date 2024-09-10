@@ -248,14 +248,16 @@ $(function(){
         destino.val($(this).text());
         id = destino.attr("id");
 
-        if(contenedor_padre == "listaCostos"){
-            $("#codigo_costos").val(codigo);
+        if(contenedor_padre == "listaCostosOrigen"){
+            $("#codigo_costos_origen").val(codigo);
+        }else if(contenedor_padre == "listaCostosDestino") {
+            $("#codigo_costos_destino").val(codigo);
         }else if(contenedor_padre == "listaAreas"){
             $("#codigo_area").val(codigo);
         }else if(contenedor_padre == "listaSolicitantes"){
             $("#codigo_solicitante").val(codigo);
-        }else if(contenedor_padre == "listaTipo"){
-            $("#codigo_tipo").val(codigo);
+        }else if(contenedor_padre == "listaTiposTransferencia"){
+            $("#codigo_tipo_transferencia").val(codigo);
         }else if(contenedor_padre == "listaOrigen"){
             $("#codigo_origen").val(codigo);
         }else if(contenedor_padre == "listaDestino"){

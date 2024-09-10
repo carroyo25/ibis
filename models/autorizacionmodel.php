@@ -72,6 +72,7 @@
                 $sql=$this->db->connect()->prepare("INSERT INTO alm_autorizacab 
                                                     SET alm_autorizacab.femision=:emision,
                                                         alm_autorizacab.ncostos=:costos,
+                                                        alm_autorizacab.ncostosd=:costosd,
                                                         alm_autorizacab.narea=:area,
                                                         alm_autorizacab.csolicita=:solicita,
                                                         alm_autorizacab.norigen=:origen,
@@ -82,7 +83,8 @@
                                                         alm_autorizacab.cautoriza=:autoriza");
 
                 $sql->execute(["emision"=>$cabecera['emitido'],
-                                "costos"=>$cabecera['codigo_costos'],
+                                "costos"=>$cabecera['codigo_costos_origen'],
+                                "costos"=>$cabecera['codigo_costos_destino'],
                                 "area"=>$cabecera['codigo_area'],
                                 "solicita"=>$cabecera['codigo_usuario'],
                                 "origen"=>$cabecera['codigo_origen'],
