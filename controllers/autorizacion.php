@@ -75,6 +75,10 @@
         function status(){
             echo json_encode($this->model->obtenerEstado($_POST['id']));
         }
+
+        function equipos(){
+            echo $this->model->llamarEquipos($_POST['codigo'],$_POST['descripcion']);
+        }
         
     }
 ?>

@@ -344,9 +344,10 @@ $(function(){
         if(e.which == 13) {
             $("#esperar").fadeIn();
             
-            $.post(RUTA+"pedidos/filtraItems", {codigo:$("#txtBuscarCodigo").val(),
-                                                descripcion:$("#txtBuscarDescrip").val(),
-                                                tipo:37},
+            if ( $("#codigo_tipo").val() === "277" ){
+                $.post(RUTA+"pedidos/filtraItems", {codigo:$("#txtBuscarCodigo").val(),
+                                            descripcion:$("#txtBuscarDescrip").val(),
+                                            tipo:37},
                     function (data, textStatus, jqXHR) {
                         $("#tablaModulos tbody")
                             .empty()
@@ -355,6 +356,20 @@ $(function(){
                     },
                     "text"
                 );
+            }
+            else {
+                $.post(RUTA+"autorizacion/equipos", {codigo:$("#txtBuscarCodigo").val(),
+                                                    descripcion:$("#txtBuscarDescrip").val()},
+                    function (data, textStatus, jqXHR) {
+                        $("#tablaModulos tbody")
+                            .empty()
+                            .append(data);
+                        $("#esperar").fadeOut();
+                    },
+                    "text"
+                );
+            }
+            
         }
     });
 
@@ -400,18 +415,29 @@ $(function(){
         if ( $("#codigo_tipo").val() === ""){
             mostrarMensaje("Selecione el tipo de movimiento","mensaje_error");
         }else{
+            if ( $("#codigo_tipo").val() === "277")
+                $.post(RUTA+"pedidos/llamaProductos", {tipo:37},
+                    function (data, textStatus, jqXHR) {
+                        $("#tablaModulos tbody")
+                            .empty()
+                            .append(data);
 
-            
-            $.post(RUTA+"pedidos/llamaProductos", {tipo:37},
-                function (data, textStatus, jqXHR) {
-                    $("#tablaModulos tbody")
-                        .empty()
-                        .append(data);
+                        $("#busqueda").fadeIn();
+                    },
+                    "text"
+                );
+            else {
+                $.post(RUTA+"autorizacion/equipos", {codigo:"-1",descripcion:"-1"},
+                    function (data, textStatus, jqXHR) {
+                        $("#tablaModulos tbody")
+                            .empty()
+                            .append(data);
 
-                    $("#busqueda").fadeIn();
-                },
-                "text"
-            );
+                        $("#busqueda").fadeIn();
+                    },
+                    "text"
+                );
+            }
         }
 
         return false;
