@@ -177,8 +177,6 @@
 
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()) {
-
-                        
                         
                         $cant   = floatval($rs['cant_aprob']) -  floatval($rs['stock_almacen']);
                         $aten   = $rs['stock_almacen'] == NULL ? 0 : $rs['stock_almacen'];

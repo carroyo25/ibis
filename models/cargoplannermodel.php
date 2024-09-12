@@ -782,15 +782,16 @@
                     $objPHPExcel->getActiveSheet()->setCellValue('L'.$fila,$datos[$i]->cantidad);
                     $objPHPExcel->getActiveSheet()->setCellValue('M'.$fila,$aprobado_final);
                     $objPHPExcel->getActiveSheet()->setCellValue('N'.$fila,$datos[$i]->compra);
-                    $objPHPExcel->getActiveSheet()->setCellValue('O'.$fila,$datos[$i]->codigo);
+                    $objPHPExcel->getActiveSheet()
+                        ->setCellValue('O'.$fila,$datos[$i]->codigo)
+                        ->getNumberFormat()
+                        ->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_TEXT);
                     $objPHPExcel->getActiveSheet()->setCellValue('P'.$fila,$datos[$i]->unidad);
                     $objPHPExcel->getActiveSheet()->setCellValue('Q'.$fila,$datos[$i]->descripcion);
                     $objPHPExcel->getActiveSheet()->setCellValue('R'.$fila,$datos[$i]->tipo_orden);
                     $objPHPExcel->getActiveSheet()->setCellValue('S'.$fila,$datos[$i]->anio_orden);
                     $objPHPExcel->getActiveSheet()->setCellValue('T'.$fila,$datos[$i]->nro_orden);
 
-                   
-                   
                     if  ($datos[$i]->fecha_orden !== "")
                         $objPHPExcel->getActiveSheet()->setCellValue('U'.$fila,PHPExcel_Shared_Date::PHPToExcel($datos[$i]->fecha_orden));
                         
@@ -1434,6 +1435,37 @@
                 $nreg = count($detalles);
 
 
+                /*$cabecera['numero_guia_sunat'],
+                                $fecha_emision,
+                                $cabecera['destinatario_ruc'],
+                                $cabecera['destinatario_razon'],
+                                $cabecera['destinatario_direccion'],
+                                $cabecera['empresa_transporte_razon'],
+                                $cabecera['ruc_proveedor'],
+                                $cabecera['direccion_proveedor'],
+                                $cabecera['almacen_origen_direccion'],
+                                null,
+                                null,
+                                null,
+                                $fecha_traslado,
+                                $cabecera['modalidad_traslado'],
+                                $cabecera['almacen_destino_direccion'],
+                                null,
+                                null,
+                                null,
+                                $cabecera['marca'],
+                                $cabecera['placa'],
+                                $cabecera['nombre_conductor'],
+                                $cabecera['licencia_conducir'],
+                                $cabecera['tipo_envio'],
+                                $referido,
+                                $proyecto,
+                                $anio[0],
+                                $cabecera["observaciones"],
+                                $cabecera["destinatario"],
+                                $cabecera["tipo_documento"],
+                                'A4'*/
+
                 $pdf = new PDF($cabecera[0]['cnumguia'],
                                     $cabecera[0]['ffecdoc'],
                                     "20504898173",
@@ -1461,7 +1493,8 @@
                                     $cabecera[0]['cdesproy'],
                                     $cabecera[0]['cper'],
                                     $cabecera[0]["cobserva"],
-                                    $cabecera[0]["cdestinatario"],'A4');
+                                    $cabecera[0]["cdestinatario"],
+                                    'A4');
 
                 $pdf->AliasNbPages();
                 $pdf->AddPage();
