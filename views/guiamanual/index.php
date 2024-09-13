@@ -211,8 +211,8 @@
                             <div>
                                 <label for="tipo_documento">Tipo Guia:</label>
                                 <select name="tipo_documento" id="tipo_documento">
-                                    <option value="1">DESTINATARIO</option>
-                                    <option value="2" style="display:none;">REMITENTE</option>
+                                    <option value="1" style="display:none;">DESTINATARIO</option>
+                                    <option value="2" >REMITENTE</option>
                                     <option value="3">TRANSPORTISTA</option>
                                     <option value="4" style="display:none;">SUNAT</option>
                                 </select>

@@ -1434,38 +1434,6 @@
                 $detalles = $this->detallesGuiaRemision($id);
                 $nreg = count($detalles);
 
-
-                /*$cabecera['numero_guia_sunat'],
-                                $fecha_emision,
-                                $cabecera['destinatario_ruc'],
-                                $cabecera['destinatario_razon'],
-                                $cabecera['destinatario_direccion'],
-                                $cabecera['empresa_transporte_razon'],
-                                $cabecera['ruc_proveedor'],
-                                $cabecera['direccion_proveedor'],
-                                $cabecera['almacen_origen_direccion'],
-                                null,
-                                null,
-                                null,
-                                $fecha_traslado,
-                                $cabecera['modalidad_traslado'],
-                                $cabecera['almacen_destino_direccion'],
-                                null,
-                                null,
-                                null,
-                                $cabecera['marca'],
-                                $cabecera['placa'],
-                                $cabecera['nombre_conductor'],
-                                $cabecera['licencia_conducir'],
-                                $cabecera['tipo_envio'],
-                                $referido,
-                                $proyecto,
-                                $anio[0],
-                                $cabecera["observaciones"],
-                                $cabecera["destinatario"],
-                                $cabecera["tipo_documento"],
-                                'A4'*/
-
                 $pdf = new PDF($cabecera[0]['cnumguia'],
                                     $cabecera[0]['ffecdoc'],
                                     "20504898173",
@@ -1494,6 +1462,7 @@
                                     $cabecera[0]['cper'],
                                     $cabecera[0]["cobserva"],
                                     $cabecera[0]["cdestinatario"],
+                                    1,
                                     'A4');
 
                 $pdf->AliasNbPages();
@@ -1518,7 +1487,7 @@
                     $pdf->Row(array(str_pad($i,3,"0",STR_PAD_LEFT),
                                     $detalles[$rc]['ncantidad'],
                                     $detalles[$rc]['cabrevia'],
-                                    utf8_decode($detalles[$rc]['ccodprod'] .' '. $detalles[$rc]['cdesprod']  .' '.'O : '.$detalles[$rc]['pedido'].' P : '.$detalles[$rc]['orden'])));
+                                    utf8_decode($detalles[$rc]['ccodprod'] .' '. $detalles[$rc]['cdesprod']  .' '.' P : '.$detalles[$rc]['pedido'].' O : '.$detalles[$rc]['orden'])));
                     $lc++;
                     $rc++;
 
