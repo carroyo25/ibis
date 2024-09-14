@@ -49,7 +49,7 @@
         }
 
         function documentoId(){
-            echo json_encode($this->model->autorizacionId($_POST['indice']));
+            echo json_encode($this->model->autorizacionId($_POST['indice'],$_POST['transferencia']));
         }
 
         function vistaPrevia(){

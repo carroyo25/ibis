@@ -420,7 +420,7 @@
                                                     lg_ordendet.id_cprod,
                                                     lg_ordendet.id_orden,
                                                     cm_producto.ccodprod,
-                                                    UPPER( CONCAT_WS( ' ', cm_producto.cdesprod, tb_pedidodet.observaciones, tb_pedidodet.docEspec ) ) AS cdesprod,
+                                                    UPPER( CONCAT_WS( ' ', cm_producto.cdesprod, lg_ordendet.cobserva ) ) AS cdesprod,
                                                     cm_producto.nund,
                                                     tb_unimed.cabrevia,
                                                     tb_pedidodet.idpedido,

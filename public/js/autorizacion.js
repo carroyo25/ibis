@@ -13,6 +13,7 @@ $(function(){
             let formData = new FormData();
             
             formData.append("id",id);
+            formData.append("transferencia",id);
 
             fetch(RUTA+'autorizacion/status',{
                 method: "POST",
@@ -99,8 +100,10 @@ $(function(){
         accion = "";
 
         let indice  = $(this).data("indice"),
+            transferencia = $(this).data("transferencia"),
             formData = new FormData();
             formData.append('indice', indice);
+            formData.append('transferencia', transferencia);
 
         fetch(RUTA+'autorizacion/documentoId',{
             method: "POST",
@@ -131,22 +134,40 @@ $(function(){
 
             let fila = 1;
 
-            data.detalles.forEach(element => {
-                let row = `<tr>
-                                <td></td>
-                                <td class="textoCentro">${fila++}</td>
-                                <td class="textoCentro">${element.ccodprod}</td>
-                                <td class="pl20px">${element.cdesprod}</td>
-                                <td class="textoCentro">${element.cabrevia}</td>
-                                <td class="textoDerecha">${element.ncantidad}</td>
-                                <td class="pl20px">${element.cserie}</td>
-                                <td class="pl20px">${element.cdestino}</td>
-                                <td class="pl20px">${element.nparte}</td>
-                                <td class="pl20px">${element.cobserva}</td>
-                            </tr>`;
-                
-                $("#tablaDetalles tbody").append(row);
-            });
+            if (data.datos[0].ntipo == "277")
+                data.detalles.forEach(element => {
+                    let row = `<tr>
+                                    <td></td>
+                                    <td class="textoCentro">${fila++}</td>
+                                    <td class="textoCentro">${element.ccodprod}</td>
+                                    <td class="pl20px">${element.cdesprod}</td>
+                                    <td class="textoCentro">${element.cabrevia}</td>
+                                    <td class="textoDerecha">${element.ncantidad}</td>
+                                    <td class="pl20px">${element.cserie}</td>
+                                    <td class="pl20px">${element.cdestino}</td>
+                                    <td class="pl20px">${element.nparte}</td>
+                                    <td class="pl20px">${element.cobserva}</td>
+                                </tr>`;
+                    
+                    $("#tablaDetalles tbody").append(row);
+                });
+            else
+                data.detalles.forEach(element => {
+                    let row = `<tr>
+                                    <td></td>
+                                    <td class="textoCentro">${fila++}</td>
+                                    <td class="textoCentro">${element.cregistro}</td>
+                                    <td class="pl20px">${element.cdescripcion}</td>
+                                    <td class="textoCentro">UND</td>
+                                    <td class="textoDerecha">${element.ncantidad}</td>
+                                    <td class="pl20px">${element.serie_equipo}</td>
+                                    <td class="pl20px">${element.cdestino}</td>
+                                    <td class="pl20px">${element.nparte}</td>
+                                    <td class="pl20px">${element.cobserva}</td>
+                                </tr>`;
+                    
+                    $("#tablaDetalles tbody").append(row);
+                });
 
             $("#proceso").fadeIn();
         })

@@ -128,7 +128,7 @@
                             <div class="column4_55">
                                 <div class="column2_3457">
                                     <label for="tipo">Transferencia:</label>
-                                    <input type="text" name="tipo" id="tipo" class="mostrarLista busqueda" placeholder="Elija una opcion">
+                                    <input type="text" name="transferencia" id="transferencia" class="mostrarLista busqueda" placeholder="Elija una opcion">
                                     <div class="lista" id="listaTiposTransferencia">
                                         <ul>
                                         <?php echo $this->listaTiposTransferencia?>

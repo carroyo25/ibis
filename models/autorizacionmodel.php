@@ -14,6 +14,7 @@
                                                         ibis.alm_autorizacab.idreg,
                                                         ibis.tb_costusu.ncodproy,
                                                         ibis.alm_autorizacab.fregsys,
+                                                        ibis.alm_autorizacab.ctransferencia,
                                                         UPPER(ibis.tb_proyectos.cdesproy) AS cdesproy,
                                                         UPPER(origen.cdesalm) AS origen,
                                                         UPPER(destino.cdesalm) AS destino,
@@ -43,7 +44,7 @@
 
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()) {
-                        $salida .='<tr class="pointer" data-indice="'.$rs['idreg'].'">
+                        $salida .='<tr class="pointer" data-indice="'.$rs['idreg'].'" data-transferencia="'.$rs['ctransferencia'].'">
                                         <td class="textoCentro">'.str_pad($rs['idreg'],4,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.date("d/m/Y", strtotime($rs['fregsys'])).'</td>
                                         <td class="pl20px">'.$rs['cdescripcion'].'</td>
@@ -77,22 +78,25 @@
                                                         alm_autorizacab.csolicita=:solicita,
                                                         alm_autorizacab.norigen=:origen,
                                                         alm_autorizacab.ndestino=:destino,
-                                                        alm_autorizacab.ctransferencia=:tipo,
+                                                        alm_autorizacab.ctransferencia=:transferencia,
                                                         alm_autorizacab.observac=:observacion,
                                                         alm_autorizacab.celabora=:elabora,
-                                                        alm_autorizacab.cautoriza=:autoriza");
+                                                        alm_autorizacab.cautoriza=:autoriza,
+                                                        alm_autorizacab.ntipo=:tipo");
 
                 $sql->execute(["emision"=>$cabecera['emitido'],
                                 "costos"=>$cabecera['codigo_costos_origen'],
-                                "costos"=>$cabecera['codigo_costos_destino'],
+                                "costosd"=>$cabecera['codigo_costos_destino'],
                                 "area"=>$cabecera['codigo_area'],
                                 "solicita"=>$cabecera['codigo_usuario'],
                                 "origen"=>$cabecera['codigo_origen'],
                                 "destino"=>$cabecera['codigo_destino'],
+                                "transferencia"=>$cabecera['codigo_tipo_transferencia'],
                                 "tipo"=>$cabecera['codigo_tipo'],
                                 "observacion"=>$cabecera['observaciones'],
                                 "elabora"=>$cabecera['codigo_usuario'],
-                                "autoriza"=>$cabecera['codigo_autoriza']]);
+                                "autoriza"=>$cabecera['codigo_autoriza'],
+                                "tipo"=>$cabecera['codigo_tipo']]);
                                 
                 if ($sql->rowCount() > 0) {
                     $numero = $this->numeroDocumento();
@@ -231,7 +235,7 @@
             } 
         }
 
-        public function autorizacionId($id){
+        public function autorizacionId($id,$tipo){
             try {
                 $docData = [];
                 $sql = $this->db->connect()->prepare("SELECT
@@ -247,6 +251,7 @@
                                                         ibis.alm_autorizacab.observac,
                                                         ibis.alm_autorizacab.celabora,
                                                         ibis.alm_autorizacab.nestado,
+                                                        ibis.alm_autorizacab.ntipo,
                                                         ibis.tb_proyectos.ccodproy,
                                                         UPPER(ibis.tb_proyectos.cdesproy) AS cdesproy,
                                                         UPPER(ibis.tb_area.cdesarea) AS area,
@@ -281,7 +286,10 @@
                         $docData[] = $row;
                     }
 
-                    $detalles = $this->detallesAutorizacion($id);
+                    if ( $tipo == 277 )
+                        $detalles = $this->detallesAutorizacionBienes($id);
+                    else
+                        $detalles = $this->detallesAutorizacionEquipos($id);
                 }
 
                 return array("datos"=>$docData, "detalles"=>$detalles);
@@ -292,7 +300,7 @@
             }
         }
 
-        private function detallesAutorizacion($id){
+        private function detallesAutorizacionBienes($id){
             try {
                 $docData = [];
 
@@ -313,6 +321,41 @@
                                                     WHERE 
                                                     alm_autorizadet.nflgactivo = 1
                                                     AND alm_autorizadet.idautoriza = :id");
+                $sql->execute(["id"=>$id]);
+
+                if ($sql->rowCount() > 0)
+                    while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+                        $docData[] = $row;
+                    }
+
+                return $docData;
+                
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function detallesAutorizacionEquipos($id){
+            try {
+                $docData = [];
+
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        alm_autorizadet.ncantidad,
+                                                        alm_autorizadet.cserie,
+                                                        alm_autorizadet.cdestino,
+                                                        alm_autorizadet.cobserva,
+                                                        alm_autorizadet.nparte,
+                                                        alm_autorizadet.idcodprod,
+                                                        tb_equipmtto.cregistro,
+                                                        tb_equipmtto.cdescripcion,
+                                                        tb_equipmtto.cserie AS serie_equipo 
+                                                    FROM
+                                                        alm_autorizadet
+                                                        INNER JOIN tb_equipmtto ON alm_autorizadet.idcodprod = tb_equipmtto.idreg 
+                                                    WHERE
+                                                        alm_autorizadet.nflgactivo = 1 
+                                                        AND alm_autorizadet.idautoriza = :id");
                 $sql->execute(["id"=>$id]);
 
                 if ($sql->rowCount() > 0)
@@ -542,7 +585,8 @@
                 $sql =  $this->db->connect()->prepare("SELECT
                                     tb_equipmtto.idreg,
                                     tb_equipmtto.cregistro,
-                                    tb_equipmtto.cdescripcion 
+                                    tb_equipmtto.cdescripcion,
+                                    tb_equipmtto.cserie
                                 FROM
                                     tb_equipmtto 
                                 WHERE
@@ -555,7 +599,7 @@
                 $rowCount = $sql->rowCount();
                 if ($rowCount > 0){
                     while ($rs = $sql->fetch()) {
-                        $salida .='<tr class="pointer" data-idprod="'.$rs['idreg'].'" data-ncomed="UND" data-unidad="UND">
+                        $salida .='<tr class="pointer" data-idprod="'.$rs['idreg'].'" data-serie="'.$rs['cserie'].'" data-unidad="UND">
                                         <td class="textoCentro">'.$rs['cregistro'].'</td>
                                         <td class="pl20px">'.$rs['cdescripcion'].'</td>
                                         <td class="textoCentro">UND</td>
