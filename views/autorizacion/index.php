@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="<?php echo constant('URL')?>public/css/ibis.css?<?php echo constant('VERSION')?>">
 </head>
 <body>
     <div class="mensaje">
@@ -31,6 +30,7 @@
                     <input type="hidden" name="codigo_traslado" id="codigo_traslado">
                     <input type="hidden" name="correo_usuario" id="correo_usuario">
                     <input type="hidden" name="codigo_estado" id="codigo_estado">
+                    <input type="hidden" name="estado_autorizacion" id="estado_autorizacion">
 
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
@@ -63,8 +63,8 @@
                                 </div>
                             </div>
                             <div class="column2">
-                                <label for="costos">CCostos Origen:</label>
-                                <input type="text" name="costos" id="costos" class="mostrarLista busqueda" placeholder="Elija una opcion">
+                                <label for="costosOrigen">CCostos Origen:</label>
+                                <input type="text" name="costosOrigen" id="costosOrigen" class="mostrarLista busqueda" placeholder="Elija una opcion">
                                 <div class="lista" id="listaCostosOrigen">
                                    <ul>
                                        <?php echo $this->listaCostos?>
@@ -72,8 +72,8 @@
                                 </div>
                             </div>
                             <div class="column2">
-                                <label for="costos">CCostos Destino:</label>
-                                <input type="text" name="costosdestino" id="costosdestino" class="mostrarLista busqueda" placeholder="Elija una opcion">
+                                <label for="costosDestino">CCostos Destino:</label>
+                                <input type="text" name="costosDestino" id="costosDestino" class="mostrarLista busqueda" placeholder="Elija una opcion">
                                 <div class="lista" id="listaCostosDestino">
                                    <ul>
                                        <?php echo $this->listaCostos?>

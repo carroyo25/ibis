@@ -14,6 +14,7 @@
                                                         ibis.alm_autorizacab.idreg,
                                                         ibis.tb_costusu.ncodproy,
                                                         ibis.alm_autorizacab.fregsys,
+                                                        ibis.alm_autorizacab.ntipo,
                                                         ibis.alm_autorizacab.ctransferencia,
                                                         UPPER(ibis.tb_proyectos.cdesproy) AS cdesproy,
                                                         UPPER(origen.cdesalm) AS origen,
@@ -44,7 +45,9 @@
 
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()) {
-                        $salida .='<tr class="pointer" data-indice="'.$rs['idreg'].'" data-transferencia="'.$rs['ctransferencia'].'">
+                        $salida .='<tr class="pointer" data-indice="'.$rs['idreg'].'" 
+                                                        data-transferencia="'.$rs['ctransferencia'].'"
+                                                        data-tipo ="'.$rs['ntipo'].'">
                                         <td class="textoCentro">'.str_pad($rs['idreg'],4,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.date("d/m/Y", strtotime($rs['fregsys'])).'</td>
                                         <td class="pl20px">'.$rs['cdescripcion'].'</td>
@@ -239,40 +242,47 @@
             try {
                 $docData = [];
                 $sql = $this->db->connect()->prepare("SELECT
-                                                        alm_autorizacab.idreg AS indice,
-                                                        LPAD( alm_autorizacab.idreg, 6, 0 ) AS idreg,
-                                                        DATE_FORMAT( alm_autorizacab.fregsys, '%Y-%m-%d' ) AS emision,
-                                                        ibis.alm_autorizacab.ncostos,
-                                                        ibis.alm_autorizacab.narea,
-                                                        ibis.alm_autorizacab.csolicita,
-                                                        ibis.alm_autorizacab.norigen,
-                                                        ibis.alm_autorizacab.ndestino,
-                                                        ibis.alm_autorizacab.ctransferencia,
-                                                        ibis.alm_autorizacab.observac,
-                                                        ibis.alm_autorizacab.celabora,
-                                                        ibis.alm_autorizacab.nestado,
-                                                        ibis.alm_autorizacab.ntipo,
-                                                        ibis.tb_proyectos.ccodproy,
-                                                        UPPER(ibis.tb_proyectos.cdesproy) AS cdesproy,
-                                                        UPPER(ibis.tb_area.cdesarea) AS area,
-                                                        usuario.cnombres AS solicita,
-                                                        almacenorigen.cdesalm AS almacenorigen,
-                                                        almacendestino.cdesalm AS almacendestino,
-                                                        ibis.tb_parametros.cdescripcion AS transferencia,
-                                                        ibis.alm_autorizacab.cautoriza,
-	                                                    UPPER(ibis.tb_user.cnombres) AS autoriza 
-                                                    FROM
-                                                        ibis.alm_autorizacab
-                                                        LEFT JOIN ibis.tb_proyectos ON alm_autorizacab.ncostos = tb_proyectos.nidreg
-                                                        LEFT JOIN ibis.tb_area ON alm_autorizacab.narea = tb_area.ncodarea
-                                                        LEFT JOIN ibis.tb_user AS usuario ON ibis.alm_autorizacab.csolicita = usuario.iduser
-                                                        LEFT JOIN ibis.tb_almacen AS almacenorigen ON ibis.alm_autorizacab.norigen = almacenorigen.ncodalm
-                                                        LEFT JOIN ibis.tb_almacen AS almacendestino ON ibis.alm_autorizacab.ndestino = almacendestino.ncodalm
-                                                        LEFT JOIN ibis.tb_parametros ON ibis.alm_autorizacab.ctransferencia = ibis.tb_parametros.nidreg
-                                                        LEFT JOIN ibis.tb_user ON ibis.alm_autorizacab.cautoriza = ibis.tb_user.iduser 
-                                                    WHERE
-                                                        alm_autorizacab.nflgactivo = 1 
-                                                        AND alm_autorizacab.idreg = :id");
+                                                    alm_autorizacab.idreg AS indice,
+                                                    LPAD( alm_autorizacab.idreg, 6, 0 ) AS idreg,
+                                                    DATE_FORMAT( alm_autorizacab.fregsys, '%Y-%m-%d' ) AS emision,
+                                                    alm_autorizacab.ncostos,
+                                                    alm_autorizacab.narea,
+                                                    alm_autorizacab.csolicita,
+                                                    alm_autorizacab.norigen,
+                                                    alm_autorizacab.ndestino,
+                                                    alm_autorizacab.ctransferencia,
+                                                    alm_autorizacab.observac,
+                                                    alm_autorizacab.celabora,
+                                                    alm_autorizacab.nestado,
+                                                    alm_autorizacab.nflgautoriza,
+                                                    alm_autorizacab.ntipo,
+                                                    costos_origen.ccodproy AS cc_codigo_origen,
+                                                    UPPER( costos_origen.cdesproy ) AS cc_descripcion_origen,
+                                                    UPPER( ibis.tb_area.cdesarea ) AS area,
+                                                    usuario.cnombres AS solicita,
+                                                    almacenorigen.cdesalm AS almacenorigen,
+                                                    almacendestino.cdesalm AS almacendestino,
+                                                    tb_parametros.cdescripcion AS transferencia,
+                                                    alm_autorizacab.cautoriza,
+                                                    UPPER( ibis.tb_user.cnombres ) AS autoriza,
+                                                    tipos.cdescripcion AS tipo,
+                                                    alm_autorizacab.ncostosd,
+                                                    cc_destino.ccodproy,
+                                                    UPPER(cc_destino.cdesproy) AS cc_descripcion_destino 
+                                                FROM
+                                                    alm_autorizacab
+                                                    LEFT JOIN tb_proyectos AS costos_origen ON alm_autorizacab.ncostos = costos_origen.nidreg
+                                                    LEFT JOIN tb_area ON alm_autorizacab.narea = tb_area.ncodarea
+                                                    LEFT JOIN tb_user AS usuario ON alm_autorizacab.csolicita = usuario.iduser
+                                                    LEFT JOIN tb_almacen AS almacenorigen ON alm_autorizacab.norigen = almacenorigen.ncodalm
+                                                    LEFT JOIN tb_almacen AS almacendestino ON alm_autorizacab.ndestino = almacendestino.ncodalm
+                                                    LEFT JOIN tb_parametros ON alm_autorizacab.ctransferencia = tb_parametros.nidreg
+                                                    LEFT JOIN tb_user ON alm_autorizacab.cautoriza = tb_user.iduser
+                                                    LEFT JOIN tb_parametros AS tipos ON alm_autorizacab.ntipo = tipos.nidreg
+                                                    INNER JOIN tb_proyectos AS cc_destino ON alm_autorizacab.ncostosd = cc_destino.nidreg 
+                                                WHERE
+                                                    alm_autorizacab.nflgactivo = 1 
+                                                    AND alm_autorizacab.idreg = :id");
                 $sql->execute(["id"=>$id]);
                 $docData = $sql->fetchAll();
 
@@ -388,7 +398,7 @@
                 $ruta = "public/documentos/autorizaciones/".$archivo;
                 
                 $pdf = new PDF($numero,
-                                $cabecera['costos'],
+                                $cabecera['costosOrigen'],
                                 $cabecera['area'],
                                 $cabecera['solicitante'],
                                 $cabecera['origen'],

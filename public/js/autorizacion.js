@@ -100,10 +100,10 @@ $(function(){
         accion = "";
 
         let indice  = $(this).data("indice"),
-            transferencia = $(this).data("transferencia"),
+            tipo = $(this).data("tipo"),
             formData = new FormData();
             formData.append('indice', indice);
-            formData.append('transferencia', transferencia);
+            formData.append('tipo', tipo);
 
         fetch(RUTA+'autorizacion/documentoId',{
             method: "POST",
@@ -111,10 +111,11 @@ $(function(){
         })
         .then(response => response.json())
         .then(data => {
-            $("#codigo_costos").val(data.datos[0].ncostos);
+            $("#codigo_costos_origen").val(data.datos[0].cc_codigo_origen);
+            $("#codigo_costos_destino").val(data.datos[0].cc_codigo_destino);
             $("#codigo_area").val(data.datos[0].narea);
-            $("#codigo_tipo").val(data.datos[0].ctransferencia);
-            $("#codigo_solicitante").val(data.datos[0].ncostos);
+            $("#codigo_tipo").val(data.datos[0].ntipo);
+            $("#codigo_solicitante").val(data.datos[0].celabora);
             $("#codigo_origen").val(data.datos[0].norigen);
             $("#codigo_destino").val(data.datos[0].ndestino);
             $("#codigo_estado").val(data.datos[0].nestado);
@@ -122,19 +123,22 @@ $(function(){
             $("#codigo_autoriza").val(data.datos[0].cautoriza);
             $("#numero").val(data.datos[0].idreg);
             $("#emision").val(data.datos[0].emision);
-            $("#costos").val(data.datos[0].cdesproy);
+            $("#costosOrigen").val(data.datos[0].cc_descripcion_origen);
+            $("#costosDestino").val(data.datos[0].cc_descripcion_destino);
             $("#area").val(data.datos[0].area);
             $("#solicitante").val(data.datos[0].solicita);
             $("#origen").val(data.datos[0].almacenorigen);
             $("#destino").val(data.datos[0].almacendestino);
-            $("#tipo").val(data.datos[0].transferencia);
+            $("#transferencia").val(data.datos[0].transferencia);
             $("#autoriza").val(data.datos[0].autoriza);
             $("#observaciones").val(data.datos[0].observac);
             $("#codigo_traslado").val(data.datos[0].indice);
+            $("#tipo").val(data.datos[0].tipo);
+            $("#estado_autorizacion").val(data.datos[0].nflgautoriza);
 
             let fila = 1;
 
-            if (data.datos[0].ntipo == "277")
+            if (data.datos[0].ntipo == 277)
                 data.detalles.forEach(element => {
                     let row = `<tr>
                                     <td></td>
@@ -646,7 +650,7 @@ $(function(){
 
             $("#vistadocumento").fadeIn();
         } catch (error) {
-            mostrarMensaje(error.message,"mensaje_error")
+            mostrarMensaje(error.message,"mensaje_error");
         }
         
         return false;
@@ -656,6 +660,7 @@ $(function(){
         e.preventDefault();
 
         try {
+            if ( $("#codigo_area").val() == 19 && $("#estado_autorizacion").val() == 0 )  throw new Error("El traslado no ha sido autorizado");
             if ( $("#rol_user").val() == 2 && $("#rol_user").val() == 4 ) throw new Error("No esta habilitado para este proceso");
             if ( $("#codigo_estado").val() != 49 ) throw new Error("El formato ya ha sido recepcionado");
 
