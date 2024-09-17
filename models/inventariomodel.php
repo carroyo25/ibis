@@ -749,7 +749,7 @@
                 $item = 1;
 
                 for ($i=0; $i < $nreg; $i++) {
-                    if ($datos[$i]->idprod == 0){
+                    if ($datos[$i]->idprod != 0){
                         $objPHPExcel->getActiveSheet()->setCellValue('A'.$fila,str_pad($item++,3,0,STR_PAD_LEFT));
                         $objPHPExcel->getActiveSheet()->setCellValue('B'.$fila,$datos[$i]->codigo);
                         $objPHPExcel->getActiveSheet()->setCellValue('C'.$fila,$datos[$i]->descripcion);
