@@ -13,20 +13,20 @@
                 $costo = $costos == "-1" ? "%" : $costos;
 
                 $sql = $this->db->connect()->prepare("SELECT
-                                        tb_proyectos.cdesproy,
-                                        alm_ajustecab.idreg,
-                                        DATE_FORMAT( alm_ajustecab.ffechadoc, '%d/%m%/%Y' ) AS fecha_documento,
-                                        DATE_FORMAT( alm_ajustecab.ffechaInv, '%d/%m%/%Y' ) AS fecha_inventario,
-                                        tb_user.cnombres,
-                                        UPPER( tb_almacen.cdesalm ) AS almacen,
-                                        tb_proyectos.ccodproy 
-                                    FROM
-                                        alm_ajustecab
-                                        INNER JOIN tb_proyectos ON alm_ajustecab.idcostos = tb_proyectos.nidreg
-                                        INNER JOIN tb_user ON alm_ajustecab.idautoriza = tb_user.iduser
-                                        INNER JOIN tb_almacen ON alm_ajustecab.ncodalm2 = tb_almacen.ncodalm
-                                    WHERE
-	                                    alm_ajustecab.idcostos LIKE :costo");
+                                                        tb_proyectos.cdesproy,
+                                                        alm_ajustecab.idreg,
+                                                        DATE_FORMAT( alm_ajustecab.ffechadoc, '%d/%m%/%Y' ) AS fecha_documento,
+                                                        DATE_FORMAT( alm_ajustecab.ffechaInv, '%d/%m%/%Y' ) AS fecha_inventario,
+                                                        tb_user.cnombres,
+                                                        UPPER( tb_almacen.cdesalm ) AS almacen,
+                                                        tb_proyectos.ccodproy 
+                                                    FROM
+                                                        alm_ajustecab
+                                                        INNER JOIN tb_proyectos ON alm_ajustecab.idcostos = tb_proyectos.nidreg
+                                                        INNER JOIN tb_user ON alm_ajustecab.idautoriza = tb_user.iduser
+                                                        INNER JOIN tb_almacen ON alm_ajustecab.ncodalm2 = tb_almacen.ncodalm
+                                                    WHERE
+                                                        alm_ajustecab.idcostos LIKE :costo");
                 
                 $sql->execute(["costo" => $costo]);
 

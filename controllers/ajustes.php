@@ -11,6 +11,7 @@
             $this->view->listaAlmacen = $this->model->listarAlmacenGuia();
             $this->view->listaMovimiento = $this->model->listarParametros(12);
             $this->view->listaSalidas = $this->model->listarAjustes("-1");
+            $this->view->listaCostos = $this->model->costosPorUsuario($_SESSION['iduser']);
             $this->view->render('ajustes/index');
         }
 

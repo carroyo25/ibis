@@ -163,8 +163,9 @@ $(() => {
 
             if (result['codigo_costos'] == '') throw "Elija Centro de Costos";
             if (result['codigo_almacen'] == '') throw "Elija un almacen";
-            if (result['codigo_tipo'] == '') throw "Elija el concepto de ingreso";
-            if ($("#tablaDetalles tbody tr").length <= 0) throw "El pedido no tienes items";
+            if (result['registra'] == '') throw "Elija la persona que autoriza";
+            if (result['codigo_tipo'] == '') throw "Elija el concepto de ajuste";
+            if ($("#tablaDetalles tbody tr").length <= 0) throw "El registro no tienes items";
             if (checkCantTables($("#tablaDetalles tbody > tr"),5)) throw "No ingreso cantidad en un item";
 
             $("#proceso").fadeIn();
