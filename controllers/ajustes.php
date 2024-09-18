@@ -24,7 +24,7 @@
         }
 
         function filtroAjustes(){
-               echo $this->model->listarAjustes($_POST['costosSearch']);
+            echo $this->model->listarAjustes($_POST['costosSearch']);
         }
 
         function consulta(){
