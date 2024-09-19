@@ -101,7 +101,7 @@
                                                     WHERE
                                                         ibis.tb_pedidocab.estadodoc = 54 
                                                         AND ibis.tb_pedidocab.nflgactivo = 1 
-                                                        AND ibis.tb_pedidocab.idtipomov = 37 
+                                                        /*AND ibis.tb_pedidocab.idtipomov = 37*/
                                                         AND tb_pedidocab.nrodoc LIKE :pedido
                                                         AND tb_pedidocab.idcostos = :cc
                                                     ORDER BY

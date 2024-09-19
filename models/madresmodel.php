@@ -66,6 +66,8 @@
                                                         alm_despachodet.niddeta,
                                                         alm_despachodet.niddetaOrd,
                                                         alm_despachodet.niddetaPed,
+                                                        alm_despachodet.nroorden,
+                                                        alm_despachodet.nropedido,
                                                         alm_despachocab.cnumguia,
                                                         cm_producto.id_cprod  
                                                     FROM
@@ -87,8 +89,8 @@
                         $salida .='<tr data-despacho="'.$rs['id_regalm'].'" 
                                         data-itemdespacho="'.$rs['niddeta'].'" 
                                         data-idprod="'.$rs['id_cprod'].'"
-                                        data-orden="'.$rs['niddetaOrd'].'"
-                                        data-pedido="'.$rs['niddetaPed'].'">
+                                        data-orden="'.$rs['nropedido'].'"
+                                        data-pedido="'.$rs['nroorden'].'">
                                         <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$rs['cccodprod'].'</td>
                                         <td class="pl10px">'.$rs['cdesprod'].'</td>

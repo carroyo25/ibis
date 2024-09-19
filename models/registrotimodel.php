@@ -107,7 +107,7 @@
                                                                         cserie=:serie,
                                                                         ncostos=:cc,
                                                                         ncambioepp=:cambio,
-                                                                        cempresa='TI'");
+                                                                        cempresa=:area");
                         $sql->execute(["user"=>$_SESSION['iduser'],
                                         "documento"=>$datos[$i]->nrodoc,
                                         "producto"=>$datos[$i]->idprod,
@@ -122,7 +122,8 @@
                                         "firma"=>$namefile,
                                         "serie"=>$datos[$i]->serie,
                                         "cc"=>$datos[$i]->costos,
-                                        "cambio"=>$datos[$i]->cambio]);
+                                        "cambio"=>$datos[$i]->cambio,
+                                        "area"=>'TI']);
                     }
                 }            
             }

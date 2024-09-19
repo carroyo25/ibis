@@ -38,14 +38,14 @@
                                                     INNER JOIN tb_proyectos ON alm_despachocab.ncodpry = tb_proyectos.nidreg
                                                     INNER JOIN tb_parametros ON alm_despachocab.nEstadoDoc = tb_parametros.nidreg
                                                     INNER JOIN lg_ordencab ON lg_ordencab.id_regmov = alm_despachodet.nropedido
-                                                    INNER JOIN lg_guias ON alm_despachocab.id_regalm = lg_guias.id_regalm 
+                                                    LEFT JOIN lg_guias ON alm_despachocab.id_regalm = lg_guias.id_regalm 
                                                 WHERE
                                                     alm_despachocab.nEstadoDoc = 62 
                                                 GROUP BY
                                                     alm_despachocab.id_regalm 
                                                 ORDER BY
                                                     alm_despachocab.ffecdoc DESC 
-                                                    LIMIT 300");
+                                                    LIMIT 100");
                 $sql->execute();
                 $rowCount = $sql->rowCount();
 
@@ -73,7 +73,7 @@
                                         <td class="pl20px">'.$rs['costos'].'</td>
                                         <td class="textoCentro">'.$rs['anio'].'</td>
                                         <td class="textoCentro">'.$rs['cnumguia'].'</td>
-                                        <td class="textoCentro ">'.str_pad($rs['cnumero'],6,0,STR_PAD_LEFT).'</td>
+                                        <td class="textoCentro ">'.str_pad($rs['orden'],6,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro ">'.str_pad($rs['pedido'],6,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro" style="color:'.$color.';font-weight: bolder;font-size: 1.2rem;vertical-align: middle;">'.$icono.'</td>
                                     </tr>';
@@ -137,7 +137,7 @@
                                                         INNER JOIN tb_pedidocab ON tb_pedidocab.idreg = tb_pedidodet.idpedido
                                                         INNER JOIN lg_ordencab ON lg_ordendet.id_regmov = lg_ordencab.id_regmov
                                                     WHERE
-                                                        lg_ordendet.id_orden = :id");
+                                                        lg_ordendet.id_regmov = :id");
                 $sql->execute(["id"=>$id]);
                 
                 $rowCount = $sql->rowCount();
@@ -833,7 +833,7 @@
                                                     LEFT JOIN tb_pedidodet ON alm_despachodet.niddetaPed = tb_pedidodet.iditem
                                                     LEFT JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
                                                     LEFT JOIN tb_pedidocab ON alm_despachodet.nropedido = tb_pedidocab.idreg
-                                                    LEFT JOIN lg_ordencab  ON lg_ordencab.id_regmov = alm_despachodet.nropedido
+                                                    LEFT JOIN lg_ordencab  ON lg_ordencab.cnumero = alm_despachodet.nropedido
                                                 WHERE
                                                     alm_despachodet.id_regalm = :id
                                                     AND alm_despachodet.nflgactivo = 1");
