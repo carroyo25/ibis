@@ -18,5 +18,12 @@
             echo json_encode($this->model->registrarEquipo($_POST));
         }
         
+        function filtraItemsTi() {
+            echo $this->model->filtrarItemsTi($_POST['codigo'],$_POST['descripcion'],$_POST['tipo']);
+        }
+
+        function firmaTi(){
+            echo $this->model->subirFirmaTi($_POST['detalles'],$_POST['correo'],$_POST['nombre'],$_POST['cc']);
+        }
     }
 ?>

@@ -143,7 +143,7 @@ $(function(){
             if(e.which == 13) {
                 $("#esperar").fadeIn();
                 
-                $.post(RUTA+"pedidos/filtraItems", {codigo:$("#codigoSearch").val(),
+                $.post(RUTA+"registroti/filtraItemsTi", {codigo:$("#codigoSearch").val(),
                                                     descripcion:$("#descripSearch").val(),
                                                     tipo:37},
                         function (data, textStatus, jqXHR) {
@@ -197,7 +197,7 @@ $(function(){
     
             let canvas = document.getElementById("cnv");
     
-            $.post(RUTA+'consumo/firma', {img:canvas.toDataURL(),
+            $.post(RUTA+'registroti/firmaTi', {img:canvas.toDataURL(),
                                           detalles:JSON.stringify(detalles()),
                                           correo:$("#correo").val(),
                                           nombre:$("#nombre").val(),

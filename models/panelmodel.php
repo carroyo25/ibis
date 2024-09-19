@@ -404,6 +404,8 @@
                                                         tb_costusu.id_cuser = :user
                                                     AND tb_pedidocab.estadodoc BETWEEN 49 AND 54
                                                     AND tb_costusu.nflgactivo = 1
+                                                    AND tb_pedidocab.anio = YEAR(NOW())
+                                                    AND tb_pedidocab.mes = MONTH(NOW())
                                                     ORDER BY tb_pedidocab.emision DESC");
                 $sql->execute(["user"=>$_SESSION['iduser']]);
                 $rowcount = $sql->rowcount();
@@ -511,10 +513,60 @@
                 $ingresos = $this->ingresosAlmacen();
                 $ordenes = $this->ordenesCompraCulminadas();
                 $pedidos = $this->pedidosAprobados();
+                $asignados = $this->registroskardex();
 
                 return array("ingresos"=>$ingresos,
                              "ordenes"=>$ordenes,
-                            "pedidos"=>$pedidos);
+                             "pedidos"=>$pedidos,
+                             "asignados"=>$asignados);
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        private function registroskardex(){
+            try {
+                $salida = "";
+                $item = 1;
+
+                $sql = $this->db->connect()->prepare("SELECT
+                                                alm_consumo.nrodoc,
+                                                alm_consumo.cserie,
+                                                alm_consumo.cantsalida,
+                                                tb_proyectos.ccodproy,
+                                                UPPER( cm_producto.cdesprod ) AS cdesprod,
+                                                alm_consumo.fechasalida,
+                                                alm_consumo.idreg
+                                            FROM
+                                                tb_costusu
+                                                LEFT JOIN alm_consumo ON tb_costusu.ncodproy = alm_consumo.ncostos
+                                                LEFT JOIN tb_proyectos ON tb_costusu.ncodproy = tb_proyectos.nidreg
+                                                INNER JOIN cm_producto ON alm_consumo.idprod = cm_producto.id_cprod 
+                                            WHERE
+                                                tb_costusu.id_cuser = :user 
+                                                AND tb_costusu.nflgactivo = 1 
+                                                AND alm_consumo.cempresa = 'TI' 
+                                                AND alm_consumo.flgverificado = 0");
+                $sql->execute(["user"=>$_SESSION['iduser']]);
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0){
+                    while ($rs = $sql->fetch()) {
+
+                        $salida .='<tr class="pointer">
+                                        <td class="textoCentro">'.str_pad($item,4,0,STR_PAD_LEFT).'</td>
+                                        <td class="pl20px">'.$rs['ccodproy'].'</td>
+                                        <td class="pl20px">'.$rs['nrodoc'].'</td>
+                                        <td class="pl20px">'.$rs['cdesprod'].'</td>
+                                        <td class="pl20px">'.$rs['cserie'].'</td>
+                                        <td class="textoCentro">'.date("d/m/Y", strtotime($rs['fechasalida'])).'</td>
+                                        <td class="textoCentro"><a href="'.$rs['idreg'].'"><i class="far fa-calendar-check"></i></a></td>
+                                    </tr>';
+                    }
+                }
+
+                return $salida;
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
@@ -557,7 +609,10 @@
                                                     WHERE
                                                         tb_costusu.id_cuser = :user 
                                                         AND tb_costusu.nflgactivo = 1
-                                                        AND lg_ordencab.nEstadoDoc = 59");
+                                                        AND lg_ordencab.nEstadoDoc = 59
+                                                        AND lg_ordencab.cmes = MONTH(NOW())
+                                                        AND lg_ordencab.cper = YEAR(NOW())
+                                                    ORDER BY lg_ordencab.ffechadoc DESC");
                 $sql->execute(["user"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowCount();
 

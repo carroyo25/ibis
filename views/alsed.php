@@ -16,7 +16,7 @@
             <iframe src=""></iframe>
         </div>
     </div>
-    <div class="dashBoard">
+    <div class="dashBoardJefeAlmacen">
         <div class="area1">
             <div class="titulo">
                 <p>Resumen General</p>
@@ -37,7 +37,7 @@
                         <span><i class="far fa-edit"></i></span>
                     </div>
                     <div>
-                        <p>Notas de Ingreso</p>
+                        <p>Transferencia</p>
                         <p>0</p>
                         <p>ultimo registrada: 3</p>
                     </div>
@@ -47,23 +47,42 @@
                         <span><i class="fas fa-file-signature"></i></span>
                     </div>
                     <div>
-                        <p>Notas de Salida</p>
+                        <p>Registros de Ingreso</p>
                         <p>0</p>
                         <p>ultimo emitida: 15/04/2022</p>
                     </div>
                 </div>
             </div>
-            <div class="area1_command">
-                <button type="button"><i class="fas fa-list-ol"></i>  Ver Resumen</button>
-            </div>
         </div>
         <div class="area2">
             <div class="titulo">
+                <p>Equipos Asignados</p>
+            </div>
+            <div class="dashboard_table">
+                <table class="tabla" id="tablaPanelAsignaciones">
+                   <thead>
+                       <tr>
+                           <th>Item</th>
+                           <th>Proyecto</th>
+                           <th>Nro.Documento</th>
+                           <th>Equipo</th>
+                           <th>Serie</th>
+                           <th>Fecha Salida</th>
+                           <th>...</th>
+                       </tr>
+                   </thead>
+                   <tbody>
+                   </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="area3">
+            <div class="titulo">
                 <p>Listado Ordenes</p>
             </div>
-            <div id="dashboard_table">
+            <div class="dashboard_table">
                 <table class="tabla" id="tablaPanelOrdenes">
-                   <thead>
+                   <thead class="stickytop">
                        <tr>
                            <th>Nro</th>
                            <th>Concepto</th>
@@ -77,13 +96,13 @@
                 </table>
             </div>
         </div>
-        <div class="area3">
+        <div class="area4">
             <div class="titulo">
                 <p>Listado Pedidos</p>
             </div>
-            <div id="dashboard_table">
+            <div class="dashboard_table">
                 <table class="tabla" id="tablaPanelPedidos">
-                   <thead>
+                   <thead class="stickytop">
                        <tr>
                            <th>Nro. Pedido</th>
                            <th>Concepto</th>

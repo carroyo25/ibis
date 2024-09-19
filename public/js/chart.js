@@ -230,6 +230,10 @@ $(function () {
                 $("#tablaPanelPedidos tbody")
                   .empty()
                   .append(response.pedidos);
+
+                $("#tablaPanelAsignaciones tbody")
+                  .empty()
+                  .append(response.asignados);
             }
         });
     }
@@ -261,7 +265,13 @@ $(function () {
       $("#vistaprevia").fadeOut();
 
       return false;
-  });
+    });
+
+    $("#tablaPanelAsignaciones tbody").on("click","a", function (e) {
+      e.preventDefault();
+
+      return false;
+    });
 });
 
 const validarSeries = (valor) => {
