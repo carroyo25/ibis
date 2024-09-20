@@ -128,7 +128,7 @@
                 }            
             }
 
-            $this->correoMovimientoTi($detalles,$nombre,$correo,$kardex,$cc);
+            //$this->correoMovimientoTi($detalles,$nombre,$correo,$kardex,$cc);
         
             return  $respuesta;
         }

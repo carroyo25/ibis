@@ -47,6 +47,15 @@
             </div>
         </div>
     </div>
+    <div class="modal" id="preguntaVerifica">
+        <div class="ventanaPregunta">
+            <h3>¿Verificar Registro?</h3>
+            <div>
+                <button type="button" id="btnAceptarVerifica">Aceptar</button>
+                <button type="button" id="btnCancelarVerifica">Cancelar</button>
+            </div>
+        </div>
+    </div>
     <div class="wrap">
         <div class="cabecera">
             <img src="<?php echo constant('URL')?>public/img/ibis.png" alt="">

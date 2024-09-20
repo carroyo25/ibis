@@ -1,4 +1,6 @@
 $(function(){
+
+	let nroRegistro = 0;
 	
     $(".acordeon .submenu").on("click","a", function (e) {
         e.preventDefault();
@@ -102,4 +104,46 @@ $(function(){
 
 		return false;
 	});
+
+	$("#tablaPanelAsignaciones tbody").on("click","a", function (e) {
+		e.preventDefault();
+  
+		nroRegistro = $(this).attr("href");
+
+		$("#preguntaVerifica").fadeIn();
+  
+		return false;
+	  });
+  
+
+	$("#btnAceptarVerifica").click(function(e) {
+		e.preventDefault();
+
+		let formData = new FormData();
+		formData.append("id",nroRegistro);
+		formData.append("user",$("#id_user").val());
+
+		fetch(RUTA+"panel/marcaRegistro",{
+			method: "POST",
+			body: formData
+		})
+		.then(response => response.text())
+		.then(data => {
+			$("#tablaPanelAsignaciones tbody")
+				.empty()
+				.append(data);
+			$("#preguntaVerifica").fadeOut();
+		})
+	
+		return false;
+	})
+	
+	
+	$("#btnCancelarVerifica").click(function(e) {
+		e.preventDefault();
+	
+		$("#pregunta").fadeOut();
+	
+		return false;
+	})
 })

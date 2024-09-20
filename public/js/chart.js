@@ -266,12 +266,6 @@ $(function () {
 
       return false;
     });
-
-    $("#tablaPanelAsignaciones tbody").on("click","a", function (e) {
-      e.preventDefault();
-
-      return false;
-    });
 });
 
 const validarSeries = (valor) => {

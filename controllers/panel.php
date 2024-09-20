@@ -56,5 +56,9 @@
         function pdfPedido() {
             echo $this->model->generateRequestPDF($_POST['pedido']);
         }
+
+        function marcaRegistro() {
+            echo $this->model->marcarAsignacion($_POST['user'],$_POST['id']);
+        }
     }
 ?>

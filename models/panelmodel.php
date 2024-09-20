@@ -555,7 +555,7 @@
                     while ($rs = $sql->fetch()) {
 
                         $salida .='<tr class="pointer">
-                                        <td class="textoCentro">'.str_pad($item,4,0,STR_PAD_LEFT).'</td>
+                                        <td class="textoCentro">'.str_pad($item++,4,0,STR_PAD_LEFT).'</td>
                                         <td class="pl20px">'.$rs['ccodproy'].'</td>
                                         <td class="pl20px">'.$rs['nrodoc'].'</td>
                                         <td class="pl20px">'.$rs['cdesprod'].'</td>
@@ -790,6 +790,26 @@
                 }
 
                 return $docData;
+            } catch (PDOException $th) {
+                echo "Error: " . $th->getMessage();
+                return false;
+            }
+        }
+
+        public function marcarAsignacion($user,$id) {
+            try {
+                $salida = "";
+
+                $sql = $this->db->connect()->prepare("UPDATE alm_consumo
+                                                        SET alm_consumo.userverifica = :user,
+                                                            alm_consumo.flgverificado = :flag
+                                                        WHERE alm_consumo.idreg = :idreg");
+                $sql->execute(["user"=>$user,"flag"=>1,"idreg"=>$id]);
+
+                $salida = $this->registroskardex();
+
+                return $salida;
+
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();
                 return false;
