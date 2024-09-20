@@ -72,9 +72,14 @@
     
                     for ($i=8; $i < 300; $i++) { 
                         if ( $activeSheetData[$i]["B"] && $activeSheetData[$i]["B"]!="CODIGO"){
+
+                            $codigo_sical = $this->compareCode(RTRIM($activeSheetData[$i]["B"]));
+                            $estado = 1;
+
+                            if ( $codigo_sical == 0 ){
+                                $codigo_sical = 0;
+                            }
                             
-                            $estado         = 1;
-                            $codigo_sical   = 1;
                             $fondo_fila     = $codigo_sical  != 0 ? "rgba(56,132,192,0.2)" : "rgba(255,0,57,0.2)";
                             $descripcion    = $codigo_sical  != 0 ? $activeSheetData[$i]["C"] : '<a href="#">'.$activeSheetData[$i]["C"].'</a>';
                             $observaciones  =  $codigo_sical  != 0 ? $activeSheetData[$i]["U"]: $activeSheetData[$i]["C"];
@@ -172,6 +177,7 @@
             try {
                 $datos = json_decode($detalles);
                 $nreg = count($datos);
+
 
                 for ($i=0; $i < $nreg; $i++) {
                     $sql = $this->db->connect()->prepare("INSERT INTO alm_ajustedet 
@@ -355,6 +361,28 @@
                 }
 
                 return $salida;
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function compareCode($codigo){
+            try {
+                $sql=$this->db->connect()->prepare("SELECT
+                                                       cm_producto.id_cprod AS codigo 
+                                                    FROM
+                                                        cm_producto 
+                                                    WHERE
+                                                        cm_producto.ccodprod = :codigo");
+                $sql->execute(["codigo" => $codigo]);
+
+                $result = $sql->fetchAll();
+
+                $codigo = isset($result[0]['codigo'])  ? $result[0]['codigo'] : 0;
+
+                return $codigo;
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
