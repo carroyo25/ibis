@@ -31,6 +31,10 @@
                     <input type="hidden" name="correo_usuario" id="correo_usuario">
                     <input type="hidden" name="codigo_estado" id="codigo_estado">
                     <input type="hidden" name="estado_autorizacion" id="estado_autorizacion">
+                    
+                    <!--este campo es para uniformizar las guias-->
+                    <input type="hidden" name="nota" id="nota">
+
 
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>

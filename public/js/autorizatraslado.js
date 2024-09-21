@@ -1,6 +1,6 @@
 $(function(){
     let accion = "";
-    let grabado = false;
+    let grabado = false,indice,tipo;
 
     $("#esperar").fadeOut();
 
@@ -147,8 +147,8 @@ $(function(){
 
         accion = "";
 
-        let indice  = $(this).data("indice"),
-            tipo = $(this).data("tipo"),
+        indice  = $(this).data("indice");
+        tipo = $(this).data("tipo"),
             formData = new FormData();
             formData.append('indice', indice);
             formData.append('tipo', tipo);

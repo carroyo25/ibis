@@ -17,7 +17,7 @@
                                                     WHERE 
                                                         alm_autorizacab.idreg = :indice");
 
-                $sql->execute(["user"=>$user,"indice"=>$indice,"flag"=>1]);
+                $sql->execute(["user"=>$user,"indice"=>$id,"flag"=>1]);
 
                 if ($sql->rowCount() > 0) {
                     $respuesta = true;

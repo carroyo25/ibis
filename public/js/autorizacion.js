@@ -169,7 +169,7 @@ $(function(){
             $("#codigo_estado").val(data.datos[0].nestado);
             $("#codigo_usuario").val(data.datos[0].celabora);
             $("#codigo_autoriza").val(data.datos[0].cautoriza);
-            $("#numero").val(data.datos[0].idreg);
+            $("#numero,#nota").val(data.datos[0].idreg);
             $("#emision").val(data.datos[0].emision);
             $("#costosOrigen").val(data.datos[0].cc_descripcion_origen);
             $("#costosDestino").val(data.datos[0].cc_descripcion_destino);
@@ -612,7 +612,7 @@ $(function(){
                         $(".primeraBarra").css("background","#819830");
                         $(".primeraBarra span").text('Datos Generales ... Grabado');
 
-                        $("#numero").val(data.numero);
+                        $("#numero,#nota").val(data.numero);
                         $("#esperar").css("opacity","0").fadeOut();
 
                         mostrarMensaje("Registro grabado","mensaje_correcto");
@@ -876,6 +876,34 @@ $(function(){
         e.preventDefault();
 
         $(this).parent().parent().parent().parent().parent().fadeOut();
+
+        return false;
+    });
+
+    $("#saveDocument").click(function(e){
+        e.preventDefault();
+
+        let result = {};
+
+        if ($("#numero_guia").val() == "") {
+            accion = "n";
+        }
+
+        $.each($("#guiaremision").serializeArray(),function(){
+            result[this.name] = this.value;
+        });
+
+        $.post(RUTA+"transferencias/GrabaGuia", {cabecera:result,
+                                                nota: $("#codigo_transferencia").val(),
+                                                operacion:accion},
+            function (data, textStatus, jqXHR) {
+                mostrarMensaje(data.mensaje,"mensaje_correcto");
+                $("#guia,#numero_guia").val(data.guia);
+
+                accion = "u";
+            },
+            "json"
+        );
 
         return false;
     });

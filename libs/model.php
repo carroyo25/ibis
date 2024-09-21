@@ -4755,7 +4755,7 @@
                                                         tb_costusu.id_cuser =:user 
                                                         AND tb_costusu.nflgactivo = 1
                                                         AND alm_autorizacab.nflgactivo = 1
-                                                        AND alm_autorizacab.ctransferencia LIKE :tipo
+                                                        AND alm_autorizacab.ntipo LIKE :tipo
                                                     ORDER BY ibis.alm_autorizacab.fregsys DESC");
 
                 $sql->execute(["user"=>$_SESSION['iduser'],"tipo"=>$tipo]);
