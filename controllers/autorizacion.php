@@ -13,9 +13,8 @@
             $this->view->listaTransportes = $this->model->listarParametros("08");
             $this->view->listaTipos = $this->model->listarParametros("26");
             $this->view->listaAquarius  = $this->model->listarAquarius();
-            $this->view->listaTraslados = $this->model->listarTraslados();
+            $this->view->listaTraslados = $this->model->listarTraslados("%");
             $this->view->listaAlmacen = $this->model->listarAlmacenSepcon();
-            $this->view->listaTraslados = $this->model->listarTraslados();
             $this->view->listaPersonal = $this->model->listarPersonalRol(4);
 
             $this->view->listaEnvio = $this->model->listarParametros('08');
@@ -45,7 +44,7 @@
         }
 
         function actualizaListado(){
-            echo ($this->model->listarTraslados());
+            echo ($this->model->listarTraslados("%"));
         }
 
         function documentoId(){

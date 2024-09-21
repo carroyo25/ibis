@@ -78,10 +78,58 @@ $(function(){
 
                 if (data[0].freceplog !== null) {
                     $("#fecha3").text(data[0].freceplog);
+
+                    $("#circle3")
+                    .removeClass('etapa_falta')
+                    .addClass('etapa_completa');
+
+                    $("#circle3 p")
+                        .removeClass('faltante')
+                        .addClass('completado');
+
+                    $("#circle3 p i")
+                        .removeClass('fa-times')
+                        .addClass('fa-check');
+                }else{
+                    $("#circle3")
+                        .removeClass('etapa_completa')
+                        .addClass('etapa_falta');
+
+                    $("#circle3 p")
+                        .removeClass('completado')
+                        .addClass('faltante');
+
+                    $("#circle3 p i")
+                        .removeClass('fa-check')
+                        .addClass('fa-times');
                 };
 
                 if (data[0].fentreuser !== null) {
                     $("#fecha4").text(data[0].fentreuser);
+
+                    $("#circle4")
+                    .removeClass('etapa_falta')
+                    .addClass('etapa_completa');
+
+                    $("#circle4 p")
+                        .removeClass('faltante')
+                        .addClass('completado');
+
+                    $("#circle4 p i")
+                        .removeClass('fa-times')
+                        .addClass('fa-check');
+                }else{
+                    $("#circle4")
+                        .removeClass('etapa_completa')
+                        .addClass('etapa_falta');
+
+                    $("#circle4 p")
+                        .removeClass('completado')
+                        .addClass('faltante');
+
+                    $("#circle4 p i")
+                        .removeClass('fa-check')
+                        .addClass('fa-times');
                 };
 
                 $("#status").fadeIn();
