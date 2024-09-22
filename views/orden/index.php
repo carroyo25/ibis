@@ -537,6 +537,7 @@
                     <th rowspan="2">Atencion</th>
                     <th width="10%" colspan="3" width="16%">Firmas</th>
                     <th rowspan="2" width="3%">Comentarios</th>
+                    <th rowspan="2" width="3%">...</th>
                     <tr>
                         <th>Procura</th>
                         <th>Finanzas</th>
