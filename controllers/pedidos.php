@@ -66,7 +66,7 @@
         }
 
         function filtraItems(){
-            echo $this->model->filtrarItemsTi($_POST['codigo'],$_POST['descripcion'],$_POST['tipo']);
+            echo $this->model->filtrarItemsPedido($_POST['codigo'],$_POST['descripcion'],$_POST['tipo']);
         }
 
         function quitarItem(){
