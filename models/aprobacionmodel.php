@@ -199,7 +199,7 @@
                                                                 faprobado=:fecaprob 
                                                             WHERE iditem=:id");
                     //agregar un parse float
-                    $estado = $datos[$i]->atendida === $datos[$i]->cantidad ? 52:54;
+                    $estado = $datos[$i]->atendida == $datos[$i]->cantidad ? 52:54;
 
                     $sql->execute(["est"=>$estado,
                                     "id"=>$datos[$i]->itempedido,
