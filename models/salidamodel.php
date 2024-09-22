@@ -45,7 +45,7 @@
                                                     alm_despachocab.id_regalm 
                                                 ORDER BY
                                                     alm_despachocab.ffecdoc DESC 
-                                                    LIMIT 100");
+                                                    LIMIT 300");
                 $sql->execute();
                 $rowCount = $sql->rowCount();
 
@@ -137,7 +137,7 @@
                                                         INNER JOIN tb_pedidocab ON tb_pedidocab.idreg = tb_pedidodet.idpedido
                                                         INNER JOIN lg_ordencab ON lg_ordendet.id_regmov = lg_ordencab.id_regmov
                                                     WHERE
-                                                        lg_ordendet.id_regmov = :id");
+                                                        lg_ordendet.id_orden = :id");
                 $sql->execute(["id"=>$id]);
                 
                 $rowCount = $sql->rowCount();
@@ -833,7 +833,7 @@
                                                     LEFT JOIN tb_pedidodet ON alm_despachodet.niddetaPed = tb_pedidodet.iditem
                                                     LEFT JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
                                                     LEFT JOIN tb_pedidocab ON alm_despachodet.nropedido = tb_pedidocab.idreg
-                                                    LEFT JOIN lg_ordencab  ON lg_ordencab.cnumero = alm_despachodet.nropedido
+                                                    LEFT JOIN lg_ordencab  ON lg_ordencab.id_regmov = alm_despachodet.nropedido
                                                 WHERE
                                                     alm_despachodet.id_regalm = :id
                                                     AND alm_despachodet.nflgactivo = 1");
