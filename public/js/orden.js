@@ -148,6 +148,17 @@ $(function(){
         return false;
     });
 
+    $("#tablaPrincipal tbody").on("click","a", function (e) {
+        e.preventDefault();
+
+        let id = $(this).attr("href");
+
+        console.log(id);
+
+        return false;
+    });
+
+
     $("#nuevoRegistro").click(function (e) { 
         e.preventDefault();
 

@@ -91,19 +91,20 @@
                                                         data-finanzas="'.$ffin.'"
                                                         data-logistica="'.$flog.'"
                                                         data-operaciones="'.$fope.'">
-                                    <td class="textoCentro">'.str_pad($rs['cnumero'],6,0,STR_PAD_LEFT).'</td>
-                                    <td class="textoCentro">'.date("d/m/Y", strtotime($rs['ffechadoc'])).'</td>
-                                    <td class="pl20px">'.$rs['concepto'].'</td>
-                                    <td class="pl20px">'.utf8_decode($rs['ccodproy']).'</td>
-                                    <td class="pl20px">'.$rs['area'].'</td>
-                                    <td class="pl20px">'.$rs['crazonsoc'].'</td>
-                                    <td class="pl5px">'.$rs['cnameuser'].'</td>
-                                    <td class="textoDerecha">'.$rs['cabrevia'].' '. $rs['ntotal'].'</td>
-                                    <td class="textoCentro '.strtolower($rs['atencion']).'">'.$rs['atencion'].'</td>
-                                    <td class="textoCentro '.$alerta_logistica.'">'.$log.'</td>
-                                    <td class="textoCentro '.$alerta_finanzas.'">'.$fin.'</td>
-                                    <td class="textoCentro '.$alerta_operaciones.'">'.$ope.'</td>
-                                    <td class="textoCentro '.$obs_alerta.'" >'.$observado.'</td>
+                                        <td class="textoCentro">'.str_pad($rs['cnumero'],6,0,STR_PAD_LEFT).'</td>
+                                        <td class="textoCentro">'.date("d/m/Y", strtotime($rs['ffechadoc'])).'</td>
+                                        <td class="pl20px">'.$rs['concepto'].'</td>
+                                        <td class="pl20px">'.utf8_decode($rs['ccodproy']).'</td>
+                                        <td class="pl20px">'.$rs['area'].'</td>
+                                        <td class="pl20px">'.$rs['crazonsoc'].'</td>
+                                        <td class="pl5px">'.$rs['cnameuser'].'</td>
+                                        <td class="textoDerecha">'.$rs['cabrevia'].' '. $rs['ntotal'].'</td>
+                                        <td class="textoCentro '.strtolower($rs['atencion']).'">'.$rs['atencion'].'</td>
+                                        <td class="textoCentro '.$alerta_logistica.'">'.$log.'</td>
+                                        <td class="textoCentro '.$alerta_finanzas.'">'.$fin.'</td>
+                                        <td class="textoCentro '.$alerta_operaciones.'">'.$ope.'</td>
+                                        <td class="textoCentro '.$obs_alerta.'" >'.$observado.'</td>
+                                        <td class="textoCentro"><a href="'.$rs['id_regmov'].'" title="descargar Orden"><i class="fas fa-file-download"></i></a></td>
                                     </tr>';
                     }
                 }
