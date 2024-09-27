@@ -42,6 +42,7 @@
                     <input type="hidden" name="items_atendidos" id="items_atendidos">
                     <input type="hidden" name="motivo_transferencia" id="motivo_transferencia">
                     <input type="hidden" name="usuario_genera" id="usuario_genera">
+                    
 
                     <div class="barraOpciones primeraBarra" id="barra_notifica">
                         <span>Datos Generales</span>
@@ -326,6 +327,7 @@
                 <input type="hidden" name="codigo_tipo" id="codigo_tipo">
                 <input type="hidden" name="motivo_traslado" id="motivo_traslado">
                 <input type="hidden" name="id_guia" id="id_guia" value=0>
+                <input type="hidden" name="motivo_guia" id="motivo_guia" value="94">
 
                 <div class="tituloDocumento">
                     <div>

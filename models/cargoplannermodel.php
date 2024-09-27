@@ -782,10 +782,11 @@
                     $objPHPExcel->getActiveSheet()->setCellValue('L'.$fila,$datos[$i]->cantidad);
                     $objPHPExcel->getActiveSheet()->setCellValue('M'.$fila,$aprobado_final);
                     $objPHPExcel->getActiveSheet()->setCellValue('N'.$fila,$datos[$i]->compra);
-                    $objPHPExcel->getActiveSheet()
+                    /*$objPHPExcel->getActiveSheet()
                         ->setCellValue('O'.$fila,$datos[$i]->codigo)
                         ->getNumberFormat()
-                        ->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_TEXT);
+                        ->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_TEXT);*/
+                    $objPHPExcel->getActiveSheet()->setCellValue('O'.$fila,$datos[$i]->codigo);
                     $objPHPExcel->getActiveSheet()->setCellValue('P'.$fila,$datos[$i]->unidad);
                     $objPHPExcel->getActiveSheet()->setCellValue('Q'.$fila,$datos[$i]->descripcion);
                     $objPHPExcel->getActiveSheet()->setCellValue('R'.$fila,$datos[$i]->tipo_orden);

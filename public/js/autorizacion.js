@@ -169,7 +169,8 @@ $(function(){
             $("#codigo_estado").val(data.datos[0].nestado);
             $("#codigo_usuario").val(data.datos[0].celabora);
             $("#codigo_autoriza").val(data.datos[0].cautoriza);
-            $("#numero,#nota").val(data.datos[0].idreg);
+            $("#numero").val(data.datos[0].numero);
+            $("#id_guia").val(data.datos[0].idreg);
             $("#emision").val(data.datos[0].emision);
             $("#costosOrigen").val(data.datos[0].cc_descripcion_origen);
             $("#costosDestino").val(data.datos[0].cc_descripcion_destino);
@@ -178,11 +179,14 @@ $(function(){
             $("#origen").val(data.datos[0].almacenorigen);
             $("#destino").val(data.datos[0].almacendestino);
             $("#transferencia").val(data.datos[0].transferencia);
-            $("#autoriza").val(data.datos[0].autoriza);
+            $("#autoriza,#autorizacion").val(data.datos[0].autoriza);
             $("#observaciones").val(data.datos[0].observac);
             $("#codigo_traslado").val(data.datos[0].indice);
             $("#tipo").val(data.datos[0].tipo);
             $("#estado_autorizacion").val(data.datos[0].nflgautoriza);
+
+            $("#numero_guia").val(data.datos[0].cnumguia)
+
 
             let fila = 1;
 
@@ -194,11 +198,11 @@ $(function(){
                                     <td class="textoCentro">${element.ccodprod}</td>
                                     <td class="pl20px">${element.cdesprod}</td>
                                     <td class="textoCentro">${element.cabrevia}</td>
-                                    <td class="textoDerecha">${element.ncantidad}</td>
-                                    <td class="pl20px">${element.cserie}</td>
-                                    <td class="pl20px">${element.cdestino}</td>
-                                    <td class="pl20px">${element.nparte}</td>
-                                    <td class="pl20px">${element.cobserva}</td>
+                                    <td class="textoDerecha"><input type="text" value="${element.ncantidad}" readonly></td>
+                                    <td class="pl20px"><input type="text" value="${element.serie_equipo}" readonly></td>
+                                    <td class="pl20px"><input type="text" value="${element.cdestino}" readonly></td>
+                                    <td class="pl20px"><input type="text" value="${element.nparte}" readonly></td>
+                                    <td class="pl20px"><input type="text" value="${element.cobserva}" readonly></td>
                                 </tr>`;
                     
                     $("#tablaDetalles tbody").append(row);
@@ -211,11 +215,11 @@ $(function(){
                                     <td class="textoCentro">${element.cregistro}</td>
                                     <td class="pl20px">${element.cdescripcion}</td>
                                     <td class="textoCentro">UND</td>
-                                    <td class="textoDerecha">${element.ncantidad}</td>
-                                    <td class="pl20px">${element.serie_equipo}</td>
-                                    <td class="pl20px">${element.cdestino}</td>
-                                    <td class="pl20px">${element.nparte}</td>
-                                    <td class="pl20px">${element.cobserva}</td>
+                                    <td class="textoDerecha"><input type="text" value="${element.ncantidad}" readonly></td>
+                                    <td class="pl20px"><input type="text" value="${element.serie_equipo}" readonly></td>
+                                    <td class="pl20px"><input type="text" value="${element.cdestino}" readonly></td>
+                                    <td class="pl20px"><input type="text" value="${element.nparte}" readonly></td>
+                                    <td class="pl20px"><input type="text" value="${element.cobserva}" readonly></td>
                                 </tr>`;
                     
                     $("#tablaDetalles tbody").append(row);
@@ -343,7 +347,7 @@ $(function(){
             $("#codigo_movimiento").val(codigo);
         }else if(contenedor_padre == "listaAprueba"){
             $("#codigo_aprueba").val(codigo);
-            $("#autoriza").val($(this).text());
+            $("#autoriza,#autorizacion").val($(this).text());
         }else if(contenedor_padre == "listaOrigenGuia"){
             $("#codigo_origen").val(codigo);
             $("#almacen_origen").val($(this).text());
@@ -612,7 +616,8 @@ $(function(){
                         $(".primeraBarra").css("background","#819830");
                         $(".primeraBarra span").text('Datos Generales ... Grabado');
 
-                        $("#numero,#nota").val(data.numero);
+                        $("#numero,#id_guia").val(data.numero);
+
                         $("#esperar").css("opacity","0").fadeOut();
 
                         mostrarMensaje("Registro grabado","mensaje_correcto");
@@ -894,7 +899,7 @@ $(function(){
         });
 
         $.post(RUTA+"transferencias/GrabaGuia", {cabecera:result,
-                                                nota: $("#codigo_transferencia").val(),
+                                                nota: $("#numero").val(),
                                                 operacion:accion},
             function (data, textStatus, jqXHR) {
                 mostrarMensaje(data.mensaje,"mensaje_correcto");
@@ -906,6 +911,43 @@ $(function(){
         );
 
         return false;
+    });
+
+    $("#previewDocument").click(function (e) { 
+        e.preventDefault();
+        
+        try {
+            let result = {};
+
+            $.each($("#guiaremision").serializeArray(),function(){
+                result[this.name] = this.value;
+            });
+
+            if (result['numero_guia'] == "") throw new Error("Ingrese el Nro. de Guia");
+            //if (result['codigo_entidad'] == "") throw new Error("Seleccione la empresa de transportes");
+            //if (result['codigo_traslado'] == "") throw new Error("Seleccione la modalidad de traslado");
+            
+            
+            $.post(RUTA+"transferencias/vistaPreviaGuiaRemisioNotas", {cabecera:result,
+                                                            detalles:JSON.stringify(itemsPreview(false)),
+                                                            proyecto: $("#costosOrigen").val()},
+                function (data, textStatus, jqXHR) {
+                        
+                       if (data.archivo !== ""){
+                            $(".ventanaVistaPrevia iframe")
+                            .attr("src","")
+                            .attr("src",data.archivo);
+        
+                            $("#vistaprevia").fadeIn();
+                       }
+                    },
+                    "json"
+            );
+        } catch (error) {
+            mostrarMensaje(error,'mensaje_error');
+        }
+        
+        return false
     });
 })
 
@@ -960,11 +1002,11 @@ itemsPreview = () =>{
             CODIGO      = $(this).find('td').eq(2).text(),
             DESCRIPCION = $(this).find('td').eq(3).text(),
             UNIDAD      = $(this).find('td').eq(4).text(),
-            CANTIDAD    = $(this).find('td').eq(5).text(),
-            SERIE       = $(this).find('td').eq(6).text(),
-            DESTINO     = $(this).find('td').eq(7).text(),
-            PARTE       = $(this).find('td').eq(8).text(),
-            OBSERVAC    = $(this).find('td').eq(9).text(),
+            CANTIDAD    = $(this).find('td').eq(5).children().val(),
+            SERIE       = $(this).find('td').eq(6).children().val(),
+            DESTINO     = $(this).find('td').eq(7).children().val(),
+            PARTE       = $(this).find('td').eq(8).children().val(),
+            OBSERVAC    = $(this).find('td').eq(9).children().val(),
 
         item= {};
         
@@ -978,6 +1020,7 @@ itemsPreview = () =>{
             item['destino']     = DESTINO;
             item['parte']       = PARTE;
             item['observac']    = OBSERVAC;
+            item['nropedido']   = null;
 
             $(this).attr('data-grabado',1);
 

@@ -32,6 +32,7 @@
                     <input type="hidden" name="codigo_estado" id="codigo_estado">
                     <input type="hidden" name="estado_autorizacion" id="estado_autorizacion">
                     <input type="hidden" name="codigo_traslado" id="codigo_traslado">
+                    <input type="hidden" name="motivo_guia" id="motivo_guia" value="95">
 
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>

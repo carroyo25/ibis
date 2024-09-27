@@ -33,8 +33,6 @@
                     <input type="hidden" name="estado_autorizacion" id="estado_autorizacion">
                     
                     <!--este campo es para uniformizar las guias-->
-                    <input type="hidden" name="nota" id="nota">
-
 
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
@@ -119,8 +117,8 @@
                                 <input type="text" name="solicitante" id="solicitante">
                             </div>
                             <div class="column2">
-                                <label for="autoriza">Autoriza:</label>
-                                <input type="text" name="autoriza" id="autoriza" class="mostrarLista" placeholder="Elija una opcion">
+                                <label for="autorizacion">Autoriza:</label>
+                                <input type="text" name="autorizacion" id="autorizacion" class="mostrarLista" placeholder="Elija una opcion">
                                 <div class="lista" id="listaAutoriza">
                                    <ul>
                                         <?php echo $this->listaPersonal?>
@@ -323,15 +321,6 @@
             </div>
         </div>
     </div>
-    <div class="modal" id="vistaprevia">
-        <div class="ventanaVistaPrevia">
-            <div class="tituloVista">
-                <h3>Vista Previa</h3>
-                <a href="#" id="closePreview" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
-            </div>
-            <iframe src=""></iframe>
-        </div>
-    </div>
     <div class="modal" id="sendMail">
         <form action="#" method="post" id="formMails">
             <input type="hidden" name="estadoPedido" id="estadoPedido">
@@ -413,20 +402,22 @@
                 <input type="hidden" name="nombre_entidad_destino" id="nombre_entidad_destino">
                 <input type="hidden" name="ruc_entidad_destino" id="ruc_entidad_destino">
                 <input type="hidden" name="ticket_sunat" id="ticket_sunat">
+                <input type="hidden" name="motivo_guia" id="motivo_guia" value="95">
+                
                 <div class="tituloDocumento">
                     <div>
                         <p class="titulo_seccion"><strong> Guia de Remision Interna : </strong></p>
                         <input type="text" name="serie_guia" id="serie_guia" class="w10por" value="T001" readonly>
                         <input type="text" name="numero_guia" id="numero_guia" readonly>
-                        <br/><br/>
+                        <!-- <br/><br/>
                         <p class="titulo_seccion"><strong> Guia de Remision Sunat : </strong></p>
                         <input type="text" name="serie_guia_sunat" id="serie_guia_sunat" class="w10por" value="T001" readonly>
-                        <input type="text" name="numero_guia_sunat" id="numero_guia_sunat" readonly>
+                        <input type="text" name="numero_guia_sunat" id="numero_guia_sunat" readonly> -->
                     </div>
                     <div class="opciones_modal">
                         <a href="#" id="saveDocument" title="Grabar Guia"><i class="fas fa-save"></i><p>Grabar</p></a>
                         <a href="#" id="previewDocument" title="Vista previa"><i class="fas fa-eye"></i><p>Vista Previa</p></a>
-                        <a href="#" id="guiaSunat" title="Guia Sunat" class="oculto"><i class="fas fa-shipping-fast"></i><p>Sunat</p></a>
+                        <!-- <a href="#" id="guiaSunat" title="Guia Sunat" class="oculto"><i class="fas fa-shipping-fast"></i><p>Sunat</p></a> -->
                         <a href="#" id="closeDocument" title="Cerrar Ventana"><i class="fas fa-window-close"></i><p>Cerrar</p></a>
                     </div>
                 </div>
@@ -551,7 +542,7 @@
                                 </ul> 
                             </div>
                             <label for="autoriza">Autoriza:</label>
-                            <input type="text" name="autorizaguia" id="autorizaguia" class="dos mostrarListaInterna busqueda" placeholder="Elija opción">
+                            <input type="text" name="autoriza" id="autoriza" class="dos mostrarListaInterna busqueda" placeholder="Elija opción">
                             <button type="button" class="btnCallMenu boton3">+</button>
                             <div class="lista uno rowThree" id="listaAutorizaGuia">
                                 <ul>
@@ -610,6 +601,15 @@
                 </div>
             </form>
             
+        </div>
+    </div>
+    <div class="modal" id="vistaprevia">
+        <div class="ventanaVistaPrevia">
+            <div class="tituloVista">
+                <h3>Vista Previa</h3>
+                <a href="#" id="closePreview" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
+            </div>
+            <iframe src=""></iframe>
         </div>
     </div>
     <div class="cabezaModulo">

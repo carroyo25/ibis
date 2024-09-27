@@ -655,7 +655,7 @@
                                         "placa"=>$cabeceraGuia['placa'],
                                         "fecha_traslado"=>$cabeceraGuia['ftraslado'],
                                         "fecha_guia"=>$cabeceraGuia['fgemision'],
-                                        "motivo"=>94,
+                                        "motivo"=>$cabeceraGuia['motivo_guia'],
                                         "serie"=>"F001"]);
                         
                         $rowCount = $sql->rowcount();
