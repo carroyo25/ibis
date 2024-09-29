@@ -423,7 +423,8 @@
                                                         LEFT JOIN lg_ordendet ON tb_pedidodet.iditem = lg_ordendet.niddeta
                                                         LEFT JOIN lg_ordencab ON lg_ordendet.id_regmov = lg_ordencab.id_regmov   
                                                     WHERE
-                                                        alm_existencia.idregistro = :id");
+                                                        alm_existencia.idregistro = :id
+                                                        AND (ISNULL(lg_ordendet.nEstadoReg) OR lg_ordendet.nEstadoReg != 105)");
                 $sql->execute(["id"=>$indice]);
 
                 $rowCount = $sql->rowCount();
@@ -434,7 +435,7 @@
                         $adjunto    = $rs['docEspec'] == NULL ? '#' : $rs['docEspec'];
                         $icono      = $rs['docEspec'] == NULL ? '<i class="fas fa-paperclip"></i>' : '<i class="far fa-file"></i>';
 
-                        $salida .= '<tr>
+                        $salida .= '<tr data-idreg="'.$rs['idreg'].'">
                                         <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="pl20px">'.$rs['descripcion'].'</td>

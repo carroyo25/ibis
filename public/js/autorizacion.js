@@ -199,7 +199,7 @@ $(function(){
                                     <td class="pl20px">${element.cdesprod}</td>
                                     <td class="textoCentro">${element.cabrevia}</td>
                                     <td class="textoDerecha"><input type="text" value="${element.ncantidad}" readonly></td>
-                                    <td class="pl20px"><input type="text" value="${element.serie_equipo}" readonly></td>
+                                    <td class="pl20px"><input type="text" value="${element.cserie}" readonly></td>
                                     <td class="pl20px"><input type="text" value="${element.cdestino}" readonly></td>
                                     <td class="pl20px"><input type="text" value="${element.nparte}" readonly></td>
                                     <td class="pl20px"><input type="text" value="${element.cobserva}" readonly></td>
@@ -216,7 +216,7 @@ $(function(){
                                     <td class="pl20px">${element.cdescripcion}</td>
                                     <td class="textoCentro">UND</td>
                                     <td class="textoDerecha"><input type="text" value="${element.ncantidad}" readonly></td>
-                                    <td class="pl20px"><input type="text" value="${element.serie_equipo}" readonly></td>
+                                    <td class="pl20px"><input type="text" value="${element.cserie}" readonly></td>
                                     <td class="pl20px"><input type="text" value="${element.cdestino}" readonly></td>
                                     <td class="pl20px"><input type="text" value="${element.nparte}" readonly></td>
                                     <td class="pl20px"><input type="text" value="${element.cobserva}" readonly></td>
