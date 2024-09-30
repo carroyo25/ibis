@@ -221,6 +221,8 @@
                     <th rowspan="2">Cantidad<br>Salida</th>
                     <th rowspan="2">Cantidad<br>Devolucion</th>
                     <th rowspan="2">Salida Transfer.</th>
+                    <th rowspan="2">Ajuste</th>
+                    
                     <th rowspan="2">Cantidad<br>Minima</th>
                     <th rowspan="2">Saldo</th>
                     <th colspan="9">Condicion</th>

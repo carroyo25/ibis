@@ -6,53 +6,6 @@
             parent::__construct();
         }
 
-        public function listarAjustes($costos){
-            try {
-                $salida = "";
-
-                $costo = $costos == "-1" ? "%" : $costos;
-
-                $sql = $this->db->connect()->prepare("SELECT
-                                                        tb_proyectos.cdesproy,
-                                                        alm_ajustecab.idreg,
-                                                        DATE_FORMAT( alm_ajustecab.ffechadoc, '%d/%m%/%Y' ) AS fecha_documento,
-                                                        DATE_FORMAT( alm_ajustecab.ffechaInv, '%d/%m%/%Y' ) AS fecha_inventario,
-                                                        tb_user.cnombres,
-                                                        UPPER( tb_almacen.cdesalm ) AS almacen,
-                                                        tb_proyectos.ccodproy 
-                                                    FROM
-                                                        alm_ajustecab
-                                                        INNER JOIN tb_proyectos ON alm_ajustecab.idcostos = tb_proyectos.nidreg
-                                                        INNER JOIN tb_user ON alm_ajustecab.idautoriza = tb_user.iduser
-                                                        INNER JOIN tb_almacen ON alm_ajustecab.ncodalm2 = tb_almacen.ncodalm
-                                                    WHERE
-                                                        alm_ajustecab.idcostos LIKE :costo");
-                
-                $sql->execute(["costo" => $costo]);
-
-                $rowCount = $sql->rowCount();
-                $item = 1;
-                if ($rowCount > 0) {
-                    while ($rs = $sql->fetch()){
-                        $salida.='<tr class="pointer" data-doc="'.$rs['idreg'].'">
-                                        <td class="textoCentro">'.str_pad($rs['idreg'],4,0,STR_PAD_LEFT).'</td>
-                                        <td class="textoCentro">'.$rs['fecha_documento'].'</td>
-                                        <td class="textoCentro">'.$rs['fecha_inventario'].'</td>
-                                        <td class="pl20px">'.$rs['cnombres'].'</td>
-                                        <td class="pl20px">'.$rs['almacen'].'</td>
-                                        <td class="pl20px">'.$rs['ccodproy'].'</td>
-                                  </tr>';
-                    }
-                }
-
-                return $salida;
-
-            } catch (PDOException $th) {
-                echo "Error: ".$th->getMessage;
-                return false;
-            }
-        }
-
         public function importFromXslAjustes(){
             require_once "public/PHPExcel/PHPExcel/IOFactory.php";
     
@@ -308,7 +261,7 @@
                                                         alm_ajustedet.nreglib,
                                                         alm_ajustedet.cestado,
                                                         alm_ajustedet.codprod,
-                                                        cm_producto.cdesprod,
+                                                        UPPER(cm_producto.cdesprod) AS cdesprod,
                                                         cm_producto.ccodprod,
                                                         tb_unimed.cabrevia,
                                                         alm_ajustedet.idregistro,

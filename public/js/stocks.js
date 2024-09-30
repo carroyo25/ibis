@@ -243,18 +243,20 @@ detalles = () =>{
         item['salida']          = $(this).find('td').eq(6).text();
         item['devuelto']        = $(this).find('td').eq(7).text();
         item['transferencias']  = $(this).find('td').eq(8).text();
-        item['saldo']           = $(this).find('td').eq(10).text();
+        item['ajustes']         = $(this).find('td').eq(9).text();
+        item['minimos']         = $(this).find('td').eq(10).text();
+        item['saldo']           = $(this).find('td').eq(11).text();
         item['grupo']           = $(this).data("grupo");
         item['clase']           = $(this).data("clase");
         item['familia']         = $(this).data("familia");
 
-        item['a1']           = $(this).find('td').eq(11).text();
-        item['a2']           = $(this).find('td').eq(12).text();
-        item['b1']           = $(this).find('td').eq(13).text();
-        item['b2']           = $(this).find('td').eq(14).text();
-        item['a3']           = $(this).find('td').eq(15).text();
-        item['b3']           = $(this).find('td').eq(16).text();
-        item['c3']           = $(this).find('td').eq(17).text();
+        item['a1']           = $(this).find('td').eq(12).text();
+        item['a2']           = $(this).find('td').eq(13).text();
+        item['b1']           = $(this).find('td').eq(14).text();
+        item['b2']           = $(this).find('td').eq(15).text();
+        item['a3']           = $(this).find('td').eq(16).text();
+        item['b3']           = $(this).find('td').eq(17).text();
+        item['c3']           = $(this).find('td').eq(18).text();
             
         DATA.push(item);
     })

@@ -14,130 +14,149 @@
 
             
                 $sql = $this->db->connect()->prepare("SELECT
-                                                        cm_producto.id_cprod,
-                                                        cm_producto.ccodprod,
-                                                        UPPER( cm_producto.cdesprod ) AS cdesprod,
-                                                        recepcion.cantidad_obra AS ingresos,
-                                                        recepcion.idreg,
-                                                        inventarios.condicion,
-                                                        inventarios.inventarios_cantidad AS inventarios,
-                                                        SUM( consumo.cantsalida ) AS consumos,
-                                                        SUM( consumo.cantdevolucion ) AS devoluciones,
-                                                        sal_trans.salida_transferencia AS salidas_transferencia,
-                                                        sal_trans.iditem,
-                                                        ing_trans.ingreso_transferencia AS ingresos_transferencias,
-                                                        minimo.cantidad_minima AS minimo,
-                                                        tb_unimed.cabrevia,
-                                                        UPPER(tb_grupo.cdescrip) AS grupo,
-                                                        UPPER(tb_clase.cdescrip) AS clase,
-                                                        UPPER(tb_familia.cdescrip) AS familia
-                                                    FROM
-                                                        cm_producto
-                                                        LEFT JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
-                                                        LEFT JOIN (
-                                                        SELECT
-                                                            COUNT( alm_existencia.cant_ingr ) AS ingresos_obra,
-                                                            SUM( alm_existencia.cant_ingr ) AS cantidad_obra,
-                                                            alm_existencia.codprod,
-                                                            alm_existencia.idreg 
-                                                        FROM
-                                                            alm_existencia
-                                                            LEFT JOIN alm_cabexist ON alm_cabexist.idreg = alm_existencia.idregistro 
-                                                        WHERE
-                                                            alm_existencia.nflgActivo = 1 
-                                                            AND alm_cabexist.idcostos = :cingreso 
-                                                        GROUP BY
-                                                            alm_existencia.codprod 
-                                                        ) AS recepcion ON recepcion.codprod = cm_producto.id_cprod
-                                                        LEFT JOIN (
-                                                        SELECT
-                                                            COUNT( alm_inventariodet.cant_ingr ) AS inventarios_registros,
-                                                            SUM( alm_inventariodet.cant_ingr ) AS inventarios_cantidad,
-                                                            alm_inventariocab.idcostos,
-                                                            alm_inventariodet.codprod,
-                                                            alm_inventariodet.condicion 
-                                                        FROM
-                                                            alm_inventariodet
-                                                            INNER JOIN alm_inventariocab ON alm_inventariodet.idregistro = alm_inventariocab.idreg 
-                                                        WHERE
-                                                            alm_inventariodet.nflgActivo = 1 
-                                                            AND alm_inventariocab.idcostos = :cinventario 
-                                                        GROUP BY
-                                                            alm_inventariodet.codprod 
-                                                        ) AS inventarios ON inventarios.codprod = cm_producto.id_cprod
-                                                        LEFT JOIN (
-                                                        SELECT
-                                                            SUM(alm_consumo.cantsalida) AS cantsalida,
-                                                            alm_consumo.cantdevolucion,
-                                                            alm_consumo.idprod 
-                                                        FROM
-                                                            alm_consumo 
-                                                        WHERE
-                                                            alm_consumo.ncostos = :csalida 
-                                                            AND alm_consumo.flgactivo = 1 
-                                                        GROUP BY
-                                                            alm_consumo.fechasalida,
-                                                            alm_consumo.nrodoc,
-                                                            alm_consumo.idprod 
-                                                        ) AS consumo ON consumo.idprod = cm_producto.id_cprod
-                                                        LEFT JOIN (
-                                                        SELECT
-                                                            SUM( alm_transferdet.ncanti ) AS salida_transferencia,
-                                                            alm_transferdet.idcprod,
-                                                            alm_transferdet.iditem
-                                                        FROM
-                                                            alm_transferdet
-                                                            LEFT JOIN alm_transfercab ON alm_transferdet.idtransfer = alm_transfercab.idreg 
-                                                        WHERE
-                                                            alm_transferdet.nflgactivo = 1 
-                                                            AND alm_transfercab.idcc = :ctransfsalida 
-                                                        GROUP BY
-                                                            alm_transferdet.idcprod 
-                                                        ) AS sal_trans ON sal_trans.idcprod = cm_producto.id_cprod
-                                                        LEFT JOIN (
-                                                        SELECT
-                                                            SUM( alm_transferdet.ncanti ) AS ingreso_transferencia,
-                                                            alm_transferdet.idcprod 
-                                                        FROM
-                                                            alm_transferdet
-                                                            LEFT JOIN alm_transfercab ON alm_transferdet.idtransfer = alm_transfercab.idreg 
-                                                        WHERE
-                                                            alm_transferdet.nflgactivo = 1 
-                                                            AND alm_transfercab.idcd = :ctransfingreso 
-                                                        GROUP BY
-                                                            alm_transferdet.idcprod 
-                                                        ) AS ing_trans ON ing_trans.idcprod = cm_producto.id_cprod
-                                                        LEFT JOIN (
-                                                        SELECT
-                                                            alm_minimo.dfecha,
-                                                            alm_minimo.idprod,
-                                                            alm_minimo.ncantidad AS cantidad_minima 
-                                                        FROM
-                                                            alm_minimo 
-                                                        WHERE
-                                                            alm_minimo.ncostos = :cminimo 
-                                                        GROUP BY
-                                                            alm_minimo.idprod,
-                                                            alm_minimo.dfecha 
-                                                        ) AS minimo ON minimo.idprod = cm_producto.id_cprod
-                                                        LEFT JOIN tb_grupo ON cm_producto.ngrupo = tb_grupo.ncodgrupo
-                                                        LEFT JOIN tb_clase ON cm_producto.nclase = tb_clase.ncodclase
-                                                        LEFT JOIN tb_familia ON cm_producto.nfam = tb_familia.ncodfamilia
-                                                    WHERE
-                                                        cm_producto.flgActivo = 1 
-                                                        AND cm_producto.ntipo = 37 
-                                                        AND cm_producto.ccodprod LIKE :codigo 
-                                                        AND cm_producto.cdesprod LIKE :descripcion 
-                                                        AND ( NOT ISNULL( recepcion.cantidad_obra ) OR NOT ISNULL( inventarios.inventarios_cantidad ) OR NOT ISNULL( sal_trans.salida_transferencia ) ) 
-                                                    GROUP BY
-                                                        cm_producto.id_cprod 
-                                                    ORDER BY
-                                                        cm_producto.cdesprod ASC");
+                                            cm_producto.id_cprod,
+                                            cm_producto.ccodprod,
+                                            UPPER( cm_producto.cdesprod ) AS cdesprod,
+                                            recepcion.cantidad_obra AS ingresos,
+                                            recepcion.idreg,
+                                            inventarios.condicion,
+                                            inventarios.inventarios_cantidad AS inventarios,
+                                            SUM( consumo.cantsalida ) AS consumos,
+                                            SUM( consumo.cantdevolucion ) AS devoluciones,
+                                            sal_trans.salida_transferencia AS salidas_transferencia,
+                                            sal_trans.iditem,
+                                            ing_trans.ingreso_transferencia AS ingresos_transferencias,
+                                            minimo.cantidad_minima AS minimo,
+                                            tb_unimed.cabrevia,
+                                            ajustes.ajustes_cantidad AS ajustes,
+                                            UPPER( tb_grupo.cdescrip ) AS grupo,
+                                            UPPER( tb_clase.cdescrip ) AS clase,
+                                            UPPER( tb_familia.cdescrip ) AS familia 
+                                        FROM
+                                            cm_producto
+                                            LEFT JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                            LEFT JOIN (
+                                            SELECT
+                                                COUNT( alm_existencia.cant_ingr ) AS ingresos_obra,
+                                                SUM( alm_existencia.cant_ingr ) AS cantidad_obra,
+                                                alm_existencia.codprod,
+                                                alm_existencia.idreg 
+                                            FROM
+                                                alm_existencia
+                                                LEFT JOIN alm_cabexist ON alm_cabexist.idreg = alm_existencia.idregistro 
+                                            WHERE
+                                                alm_existencia.nflgActivo = 1 
+                                                AND alm_cabexist.idcostos = :cingreso  
+                                            GROUP BY
+                                                alm_existencia.codprod 
+                                            ) AS recepcion ON recepcion.codprod = cm_producto.id_cprod
+                                            LEFT JOIN (
+                                            SELECT
+                                                COUNT( alm_inventariodet.cant_ingr ) AS inventarios_registros,
+                                                SUM( alm_inventariodet.cant_ingr ) AS inventarios_cantidad,
+                                                alm_inventariocab.idcostos,
+                                                alm_inventariodet.codprod,
+                                                alm_inventariodet.condicion 
+                                            FROM
+                                                alm_inventariodet
+                                                INNER JOIN alm_inventariocab ON alm_inventariodet.idregistro = alm_inventariocab.idreg 
+                                            WHERE
+                                                alm_inventariodet.nflgActivo = 1 
+                                                AND alm_inventariocab.idcostos = :cinventario 
+                                            GROUP BY
+                                                alm_inventariodet.codprod 
+                                            ) AS inventarios ON inventarios.codprod = cm_producto.id_cprod
+                                            LEFT JOIN (
+                                            SELECT
+                                                SUM( alm_consumo.cantsalida ) AS cantsalida,
+                                                alm_consumo.cantdevolucion,
+                                                alm_consumo.idprod 
+                                            FROM
+                                                alm_consumo 
+                                            WHERE
+                                                alm_consumo.ncostos = :csalida
+                                                AND alm_consumo.flgactivo = 1 
+                                            GROUP BY
+                                                alm_consumo.fechasalida,
+                                                alm_consumo.nrodoc,
+                                                alm_consumo.idprod 
+                                            ) AS consumo ON consumo.idprod = cm_producto.id_cprod
+                                            LEFT JOIN (
+                                            SELECT
+                                                SUM( alm_transferdet.ncanti ) AS salida_transferencia,
+                                                alm_transferdet.idcprod,
+                                                alm_transferdet.iditem 
+                                            FROM
+                                                alm_transferdet
+                                                LEFT JOIN alm_transfercab ON alm_transferdet.idtransfer = alm_transfercab.idreg 
+                                            WHERE
+                                                alm_transferdet.nflgactivo = 1 
+                                                AND alm_transfercab.idcc = :ctransfsalida 
+                                            GROUP BY
+                                                alm_transferdet.idcprod 
+                                            ) AS sal_trans ON sal_trans.idcprod = cm_producto.id_cprod
+                                            LEFT JOIN (
+                                            SELECT
+                                                SUM( alm_transferdet.ncanti ) AS ingreso_transferencia,
+                                                alm_transferdet.idcprod 
+                                            FROM
+                                                alm_transferdet
+                                                LEFT JOIN alm_transfercab ON alm_transferdet.idtransfer = alm_transfercab.idreg 
+                                            WHERE
+                                                alm_transferdet.nflgactivo = 1 
+                                                AND alm_transfercab.idcd = :ctransfingreso 
+                                            GROUP BY
+                                                alm_transferdet.idcprod 
+                                            ) AS ing_trans ON ing_trans.idcprod = cm_producto.id_cprod
+                                            LEFT JOIN (
+                                            SELECT
+                                                alm_minimo.dfecha,
+                                                alm_minimo.idprod,
+                                                alm_minimo.ncantidad AS cantidad_minima 
+                                            FROM
+                                                alm_minimo 
+                                            WHERE
+                                                alm_minimo.ncostos = :cminimo  
+                                            GROUP BY
+                                                alm_minimo.idprod,
+                                                alm_minimo.dfecha 
+                                            ) AS minimo ON minimo.idprod = cm_producto.id_cprod
+                                            LEFT JOIN (
+                                            SELECT
+                                                COUNT( alm_ajustedet.cant_ingr ) AS ajustes_registros,
+                                                SUM( alm_ajustedet.cant_ingr ) AS ajustes_cantidad,
+                                                alm_ajustecab.idcostos,
+                                                alm_ajustedet.codprod,
+                                                alm_ajustedet.condicion 
+                                            FROM
+                                                alm_ajustedet
+                                                INNER JOIN alm_ajustecab ON alm_ajustedet.idregistro = alm_ajustecab.idreg 
+                                            WHERE
+                                                alm_ajustedet.nflgActivo = 1 
+                                                AND alm_ajustecab.idcostos = :cajuste 
+                                                AND NOT ISNULL( alm_ajustecab.idrecepciona ) 
+                                            GROUP BY
+                                                alm_ajustedet.codprod 
+                                            ) AS ajustes ON ajustes.codprod = cm_producto.id_cprod
+                                            LEFT JOIN tb_grupo ON cm_producto.ngrupo = tb_grupo.ncodgrupo
+                                            LEFT JOIN tb_clase ON cm_producto.nclase = tb_clase.ncodclase
+                                            LEFT JOIN tb_familia ON cm_producto.nfam = tb_familia.ncodfamilia 
+                                        WHERE
+                                            cm_producto.flgActivo = 1 
+                                            AND cm_producto.ntipo = 37 
+                                            AND cm_producto.ccodprod LIKE :codigo 
+                                            AND cm_producto.cdesprod LIKE :descripcion 
+                                            AND ( NOT ISNULL( recepcion.cantidad_obra ) OR NOT ISNULL( inventarios.inventarios_cantidad ) OR NOT ISNULL( sal_trans.salida_transferencia ) ) 
+                                        GROUP BY
+                                            cm_producto.id_cprod 
+                                        ORDER BY
+                                            cm_producto.cdesprod ASC");
                 $sql->execute(["cingreso" =>$cc,
                                 "cinventario" =>$cc,
                                 "csalida" =>$cc,
                                 "ctransfsalida" =>$cc,
                                 "ctransfingreso" =>$cc,
+                                "cajuste" =>$cc,
                                 "cminimo" =>$cc,
                                 "codigo" =>$cp,
                                 "descripcion" =>$de]);
@@ -157,8 +176,10 @@
                         session_write_close();
                         //sleep(1);
 
-                        $saldo = ( $rs['ingresos']+$rs['inventarios']+$rs['devoluciones'] )-($rs['consumos']+$rs['salidas_transferencia']);
+                        $saldo = ( $rs['ingresos']+$rs['inventarios']+$rs['devoluciones'] )-($rs['consumos']+$rs['salidas_transferencia'] ) + $rs['ajustes'];
+                        
                         $saldo = $saldo > -1 ? $saldo : $saldo;
+                        
                         $estado = $saldo > -1 ? "semaforoVerde":"semaforoRojo";
 
                         $alerta_minimo = ( $rs['minimo']*.7 ) > $saldo ? "semaforoRojo":"";
@@ -188,6 +209,7 @@
                                             <td class="textoDerecha">'.number_format($rs['consumos'],2).'</td>
                                             <td class="textoDerecha">'.number_format($rs['devoluciones'],2).'</td>
                                             <td class="textoDerecha">'.number_format($rs['salidas_transferencia'],2).'</td>
+                                            <td class="textoDerecha">'.number_format($rs['ajustes'],2).'</td>
                                             <td class="textoDerecha '.$alerta_minimo.'">'.number_format($rs['minimo'],2).'</td>
                                             <td class="textoDerecha '.$estado.'"><div>'.number_format($saldo,2).'</div></td>
                                             <td class="textoCentro">'.$c1.'</td>
@@ -645,11 +667,11 @@
 
                 //combinar celdas
                 $objPHPExcel->getActiveSheet()->mergeCells('A1:T1');
-                $objPHPExcel->getActiveSheet()->mergeCells('K3:Q3');
+                $objPHPExcel->getActiveSheet()->mergeCells('M3:S3');
 
                 //alineacion
-                $objPHPExcel->getActiveSheet()->getStyle('A1:T4')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                $objPHPExcel->getActiveSheet()->getStyle('A1:T4')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('A1:V4')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('A1:V4')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
 
                 //ancho de columnas
@@ -663,15 +685,20 @@
                 $objPHPExcel->getActiveSheet()->getColumnDimension('H')->setWidth(15);
                 $objPHPExcel->getActiveSheet()->getColumnDimension('I')->setWidth(15);
                 $objPHPExcel->getActiveSheet()->getColumnDimension('J')->setWidth(15);
-                $objPHPExcel->getActiveSheet()->getColumnDimension('R')->setWidth(25);
-                $objPHPExcel->getActiveSheet()->getColumnDimension('S')->setWidth(25);
-                $objPHPExcel->getActiveSheet()->getColumnDimension('T')->setWidth(25);
+
+                $objPHPExcel->getActiveSheet()->getColumnDimension('M')->setWidth(15);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('N')->setWidth(15);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('O')->setWidth(15);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('P')->setWidth(15);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('Q')->setWidth(15);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('R')->setWidth(15);
+                $objPHPExcel->getActiveSheet()->getColumnDimension('S')->setWidth(15);
                         
                 //Titulo 
                 $objPHPExcel->getActiveSheet()->setCellValue('A1','Control de Almacén');
 
                 $objPHPExcel->getActiveSheet()
-                    ->getStyle('A1:T4')
+                    ->getStyle('A1:v4')
                     ->getFill()
                     ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
                     ->getStartColor()
@@ -686,19 +713,21 @@
                 $objPHPExcel->getActiveSheet()->setCellValue('G3','CANTIDAD SALIDAS'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('H3','CANTIDAD DEVUELTO'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('I3','TRANSFERENCIAS'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('J3','SALDO');
-                $objPHPExcel->getActiveSheet()->setCellValue('K3','CONDICION'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('R3','GRUPO'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('S3','CLASE'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('T3','FAMILIA'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('J3','AJUSTE'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('K3','MINIMOS'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('L3','SALDO');
+                $objPHPExcel->getActiveSheet()->setCellValue('M3','CONDICION'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('T3','GRUPO'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('U3','CLASE'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('V3','FAMILIA'); // esto cambia
 
-                $objPHPExcel->getActiveSheet()->setCellValue('K4','1A');
-                $objPHPExcel->getActiveSheet()->setCellValue('L4','1B');
-                $objPHPExcel->getActiveSheet()->setCellValue('M4','2A');
-                $objPHPExcel->getActiveSheet()->setCellValue('N4','2B');
-                $objPHPExcel->getActiveSheet()->setCellValue('O4','3A');
-                $objPHPExcel->getActiveSheet()->setCellValue('P4','3B');
-                $objPHPExcel->getActiveSheet()->setCellValue('Q4','3C');
+                $objPHPExcel->getActiveSheet()->setCellValue('M4','1A');
+                $objPHPExcel->getActiveSheet()->setCellValue('N4','1B');
+                $objPHPExcel->getActiveSheet()->setCellValue('O4','2A');
+                $objPHPExcel->getActiveSheet()->setCellValue('P4','2B');
+                $objPHPExcel->getActiveSheet()->setCellValue('Q4','3A');
+                $objPHPExcel->getActiveSheet()->setCellValue('R4','3B');
+                $objPHPExcel->getActiveSheet()->setCellValue('S4','3C');
 
                 $objPHPExcel->getActiveSheet()->getStyle('A3:T3')->getAlignment()->setWrapText(true);
        
@@ -716,19 +745,21 @@
                     $objPHPExcel->getActiveSheet()->setCellValue('G'.$fila,$datos[$i]->salida);
                     $objPHPExcel->getActiveSheet()->setCellValue('H'.$fila,$datos[$i]->devuelto);
                     $objPHPExcel->getActiveSheet()->setCellValue('I'.$fila,$datos[$i]->transferencias);
-                    $objPHPExcel->getActiveSheet()->setCellValue('J'.$fila,$datos[$i]->saldo);
+                    $objPHPExcel->getActiveSheet()->setCellValue('J'.$fila,$datos[$i]->ajustes);
+                    $objPHPExcel->getActiveSheet()->setCellValue('K'.$fila,$datos[$i]->minimos);
+                    $objPHPExcel->getActiveSheet()->setCellValue('L'.$fila,$datos[$i]->saldo);
 
-                    $objPHPExcel->getActiveSheet()->setCellValue('K'.$fila,$datos[$i]->a1);
-                    $objPHPExcel->getActiveSheet()->setCellValue('L'.$fila,$datos[$i]->a2);
-                    $objPHPExcel->getActiveSheet()->setCellValue('M'.$fila,$datos[$i]->b1);
-                    $objPHPExcel->getActiveSheet()->setCellValue('N'.$fila,$datos[$i]->b2);
-                    $objPHPExcel->getActiveSheet()->setCellValue('O'.$fila,$datos[$i]->a3);
-                    $objPHPExcel->getActiveSheet()->setCellValue('P'.$fila,$datos[$i]->b3);
-                    $objPHPExcel->getActiveSheet()->setCellValue('Q'.$fila,$datos[$i]->c3);
+                    $objPHPExcel->getActiveSheet()->setCellValue('M'.$fila,$datos[$i]->a1);
+                    $objPHPExcel->getActiveSheet()->setCellValue('N'.$fila,$datos[$i]->a2);
+                    $objPHPExcel->getActiveSheet()->setCellValue('O'.$fila,$datos[$i]->b1);
+                    $objPHPExcel->getActiveSheet()->setCellValue('P'.$fila,$datos[$i]->b2);
+                    $objPHPExcel->getActiveSheet()->setCellValue('Q'.$fila,$datos[$i]->a3);
+                    $objPHPExcel->getActiveSheet()->setCellValue('R'.$fila,$datos[$i]->b3);
+                    $objPHPExcel->getActiveSheet()->setCellValue('S'.$fila,$datos[$i]->c3);
 
-                    $objPHPExcel->getActiveSheet()->setCellValue('R'.$fila,$datos[$i]->grupo);
-                    $objPHPExcel->getActiveSheet()->setCellValue('S'.$fila,$datos[$i]->clase);
-                    $objPHPExcel->getActiveSheet()->setCellValue('T'.$fila,$datos[$i]->familia);
+                    $objPHPExcel->getActiveSheet()->setCellValue('T'.$fila,$datos[$i]->grupo);
+                    $objPHPExcel->getActiveSheet()->setCellValue('U'.$fila,$datos[$i]->clase);
+                    $objPHPExcel->getActiveSheet()->setCellValue('V'.$fila,$datos[$i]->familia);
                     
                     $fila++;
                 }
