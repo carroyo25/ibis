@@ -50,5 +50,9 @@
         function adjuntos(){
             echo json_encode($this->model->subirAdjuntos($_POST['codigo'],$_FILES));
         }
+
+        function buscaGuia(){
+            echo json_encode($this->model->buscarGuiaTotal($_POST['guia']));
+        }
     }
 ?>

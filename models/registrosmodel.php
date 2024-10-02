@@ -44,7 +44,8 @@
                                                         AND alm_despachocab.nEstadoDoc = 62 
                                                         AND alm_despachocab.cnumguia LIKE :guia 
                                                     ORDER BY
-                                                        alm_despachocab.ffecdoc DESC");
+                                                        alm_despachocab.ffecdoc DESC
+                                                    LIMIT 50");
                 $sql->execute(["usr"=>$_SESSION['iduser'],"guia"=>$nguia]);
                 $rowCount = $sql->rowCount();
 
@@ -661,6 +662,42 @@
                 $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet SET tb_pedidodet.docEspec = :archivo WHERE iditem = :item");
                 $sql->execute(["archivo"=>$filename,"item"=>$codigo]);
             }catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        public function buscarGuiaTotal($guia){
+            try {
+
+                $docData = [];
+
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        lg_guias.cnumguia,
+                                                        lg_guias.corigen,
+                                                        lg_guias.cdestino,
+                                                        despachos.id_regalm AS iddespacho,
+                                                        despachos.cdesproy,
+                                                        madres.id_regalm AS idmadre,
+                                                        lg_guias.freg 
+                                                    FROM
+                                                        lg_guias
+                                                        LEFT JOIN ( SELECT alm_despachocab.id_regalm, alm_despachocab.cnumguia, tb_proyectos.cdesproy FROM alm_despachocab LEFT JOIN tb_proyectos ON tb_proyectos.nidreg = alm_despachocab.ncodpry ) AS despachos ON lg_guias.cnumguia = despachos.cnumguia
+                                                        LEFT JOIN ( SELECT alm_madrescab.id_regalm, alm_madrescab.cnumguia FROM alm_madrescab LEFT JOIN tb_proyectos ON tb_proyectos.nidreg = alm_madrescab.ncodcos ) AS madres ON lg_guias.cnumguia = madres.cnumguia 
+                                                    WHERE
+                                                        lg_guias.cnumguia = :guia");
+                
+                
+                $sql->execute(["guia"=>$guia]);
+
+                $docData = array();
+
+                while($row=$sql->fetch(PDO::FETCH_ASSOC)){
+                    $docData[] = $row;
+                }
+                
+                return array("cabecera"=>$docData);
+            } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;
             }

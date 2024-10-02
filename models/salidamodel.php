@@ -870,7 +870,7 @@
                                         <td class="textoDerecha pr20px">'.$pendiente.'</td>
                                         <td class="pr20px"><input type="text" value="'.$rs['cobserva'].'"></td>
                                         <td class="textoCentro">'.str_pad($rs['pedido'],6,0,STR_PAD_LEFT).'</td>
-                                        <td class="textoCentro">'.str_pad($rs['cnumero'],6,0,STR_PAD_LEFT).'</td>
+                                        <td class="textoCentro">'.str_pad($rs['orden'],6,0,STR_PAD_LEFT).'</td>
                                     </tr>';
                         }
 
@@ -963,7 +963,7 @@
                                                         LEFT JOIN tb_proyectos ON alm_despachocab.ncodpry = tb_proyectos.nidreg
                                                         LEFT JOIN tb_costusu ON alm_despachocab.ncodpry = alm_despachocab.ncodpry
                                                         LEFT JOIN tb_parametros ON alm_despachocab.nEstadoDoc = tb_parametros.nidreg 
-                                                        LEFT JOIN lg_ordencab ON lg_ordencab.id_regmov = alm_despachodet.nropedido
+                                                        LEFT JOIN lg_ordencab ON lg_ordencab.cnumero = alm_despachodet.nropedido
                                                     WHERE
                                                         tb_costusu.nflgactivo = 1 
                                                         AND alm_despachocab.nEstadoDoc = 62

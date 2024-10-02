@@ -218,16 +218,22 @@ $(function(){
         return false
     });
 
-    $("#txtBuscar,#txtBuscarTrans").keyup(function(){
-        let _this = this;
+    $("#txtBuscar").keyup(function(){
+        let keycode = (event.keyCode ? event.keyCode : event.which);
+        if(keycode == '13'){
+            let formData = new FormData();
+            formData.append("guia",$(this).val()); 
 
-        $.each($("#despachos tbody > tr"), function() {
-            if($(this).text().toLowerCase().indexOf($(_this).val().toLowerCase()) === -1)
-                $(this).hide();
-            else
-                $(this).show();
-        });
+            fetch(RUTA+"registros/buscaGuia",{
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+            })
 
+        }
     });
 
     $("#txtBuscarTrans").keyup(function(){

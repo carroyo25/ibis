@@ -3,9 +3,8 @@ $(function(){
         co = 1,
         fila = "",
         idfila = "",
-        grabado = false;
-    
-    let tipoVista = null;
+        grabado = false,
+        tipoVista = null;
        
     $("#esperar").fadeOut();
 
@@ -128,10 +127,6 @@ $(function(){
     $(".mostrarLista").focus(function (e) { 
         e.preventDefault();
 
-        /*if (accion !="n") {
-            return false;
-        }*/
-        
         $(this).next().slideDown();
 
         return false;
@@ -363,7 +358,7 @@ $(function(){
         });
 
         try {
-            if ( tipoVista == null ) throw "Debe grabar el documento...";
+            if ( tipoVista == "" ) throw "Debe grabar el documento...";
             if ( !grabado ) throw "Debe grabar el documento";
 
             $.post(RUTA+"recepcion/documentopdf",{cabecera:result,
@@ -451,7 +446,6 @@ $(function(){
 
         let result = {};
 
-        
         $.each($("#formProceso").serializeArray(),function(){
             result[this.name] = this.value;
         });
@@ -460,11 +454,10 @@ $(function(){
             if (result['codigo_almacen'] == '') throw "Elija el Almacen";
             if (result['codigo_aprueba'] == '') throw "Elija la persona que aprueba";
             if (result['guia'] == '') throw "Escriba el número de guia";
-            if (verificarCantidadesInput()) throw "Verifque las cantidades ingresadas";
+            if (verificarCantidadesInput()) throw "Verifique las cantidades ingresadas";
             if (detalles(tipoVista).length == 0) throw "No hay items que procesar";
 
             if (accion == "n") {
-                
                 $.post(RUTA+"recepcion/nuevoIngreso", {cabecera:result,
                     detalles:JSON.stringify(detalles(tipoVista)),
                     series:JSON.stringify(series())},
@@ -477,6 +470,7 @@ $(function(){
                             
                             accion = "";
                             grabado = true;
+                            tipoVista = "";
 
                             $(".primeraBarra").css("background","#819830");
                             $(".primeraBarra span").text('Datos Generales ... Grabado');
@@ -491,10 +485,13 @@ $(function(){
                         
                         accion = "";
                         grabado = true;
+                        tipoVista = "";
                     },
                     "json"
                 );
             }
+
+            accion = "";
 
         } catch (error) {
             mostrarMensaje(error,'mensaje_error');
@@ -510,7 +507,7 @@ $(function(){
             let stock = parseInt($(this).parent().parent().find("td").eq(6).text());
 
             if(ingreso > stock) {
-                mostrarMensaje('La cantidad ingresada, es mayor al stock','mensaje_error')
+                mostrarMensaje('La cantidad ingresada, es mayor a la de la orden de compra','mensaje_error')
                 return false;
             }
 
