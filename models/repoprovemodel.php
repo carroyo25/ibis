@@ -288,7 +288,9 @@
                     $respuesta = true;
                     $i = 0;
                     
-                    $rows = $sql->fetch();
+                    $rows = $sql->fetchAll(PDO::FETCH_ASSOC);
+                    
+
                     
                     foreach($rows as $row) {
                         $docData[] = $row;

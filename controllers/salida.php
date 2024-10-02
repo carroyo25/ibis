@@ -20,7 +20,6 @@
             $this->view->listaCostos = $this->model->costosPorUsuario($_SESSION['iduser']);
             $this->view->listaCostosSelect = $this->model->costosPorUsuarioSelect($_SESSION['iduser']);
             $this->view->listaDepartamento = $this->model->getUbigeoSelect(1,"%");
-            
 
             $this->view->render('salida/index');
         }
@@ -47,11 +46,11 @@
 
         function GrabaGuia(){
             echo json_encode($this->model->grabarGuia($_POST['cabecera'],
-                                                    $_POST['detalles'],
-                                                    $_POST['proyecto'],
-                                                    $_POST['despacho'],
-                                                    $_POST['operacion'],
-                                                    $_POST['guia']));
+                                                      $_POST['detalles'],
+                                                      $_POST['proyecto'],
+                                                      $_POST['despacho'],
+                                                      $_POST['operacion'],
+                                                      $_POST['guia']));
         }
 
         function nuevasalida(){

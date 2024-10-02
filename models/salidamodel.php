@@ -1242,6 +1242,9 @@
         /////*------------------PROCESOS SUNAT--------------------*///////
 
         public function enviarSunatSalida($cabecera,$detalles) {
+            var_dump($cabecera);
+            exit;
+
             require 'public/libraries/efactura.php';
 
             $header = json_decode($cabecera);
@@ -1271,7 +1274,12 @@
             $firma = $this->crear_files($path, $nombre_archivo, $header, $body );
             
             $respuesta = $this->envio_xml($path.'FIRMA/', $nombre_archivo, $token_access);
-            $numero_ticket = $respuesta->numTicket;
+
+            //aca verificamos si tiene ticket
+            if ( $header->ticket_sunat == "" )
+                $numero_ticket = $header->ticket_sunat;
+            else
+                $numero_ticket = $respuesta->numTicket;
 
             //var_dump($respuesta);
 
@@ -1280,7 +1288,7 @@
 
             //var_dump($respuesta_ticket);
 
-            if ( $header->tipo_documento == 1 ) {
+            if ( $header->tipo_documento == 1 && $header->ticket_sunat == "" ) {
                 $this->actualizarTicketNumeroSunat($header->numero_guia,$numero_ticket,$header->numero_guia_sunat,$respuesta_ticket['ticket_rpta'],$respuesta_ticket['cdr_msj_sunat']);
             }
 
@@ -1531,11 +1539,11 @@
         private function actualizarTicketNumeroSunat($guiainterna,$ticket,$guiaSunat,$codigo_respuesta,$mensaje){
             try {
                 $sql = $this->db->connect()->prepare("UPDATE lg_guias 
-                                                      SET lg_guias.ticketsunat = :ticket, 
-                                                          lg_guias.guiasunat = :guiaSunat,
-                                                          lg_guias.estadoSunat = :respuesta,
-                                                          lg_guias.cmotivo = :mensaje
-                                                      WHERE lg_guias.cnumguia = :guiainterna");
+                                                      SET lg_guias.ticketsunat  = :ticket, 
+                                                          lg_guias.guiasunat    = :guiaSunat,
+                                                          lg_guias.estadoSunat  = :respuesta,
+                                                          lg_guias.cmotivo      = :mensaje
+                                                      WHERE lg_guias.cnumguia   = :guiainterna");
 
                 $sql->execute(["guiainterna"=>$guiainterna,"ticket"=>$ticket,"guiaSunat"=>$guiaSunat,"respuesta"=>$codigo_respuesta,"mensaje"=>$mensaje]);
 
@@ -2685,6 +2693,10 @@
                 echo "Error: " . $th->getMessage();
                 return false;
             }
+        }
+
+        private function verificarTicket(){
+
         }
     } 
 ?>
