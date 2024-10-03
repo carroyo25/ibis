@@ -673,20 +673,43 @@
                 $docData = [];
 
                 $sql = $this->db->connect()->prepare("SELECT
-                                                        lg_guias.cnumguia,
-                                                        lg_guias.corigen,
-                                                        lg_guias.cdestino,
-                                                        despachos.id_regalm AS iddespacho,
-                                                        despachos.cdesproy,
-                                                        madres.id_regalm AS idmadre,
-                                                        lg_guias.freg 
-                                                    FROM
-                                                        lg_guias
-                                                        LEFT JOIN ( SELECT alm_despachocab.id_regalm, alm_despachocab.cnumguia, tb_proyectos.cdesproy FROM alm_despachocab LEFT JOIN tb_proyectos ON tb_proyectos.nidreg = alm_despachocab.ncodpry ) AS despachos ON lg_guias.cnumguia = despachos.cnumguia
-                                                        LEFT JOIN ( SELECT alm_madrescab.id_regalm, alm_madrescab.cnumguia FROM alm_madrescab LEFT JOIN tb_proyectos ON tb_proyectos.nidreg = alm_madrescab.ncodcos ) AS madres ON lg_guias.cnumguia = madres.cnumguia 
-                                                    WHERE
-                                                        lg_guias.cnumguia = :guia");
-                
+                                                            lg_guias.cnumguia,
+                                                            lg_guias.corigen,
+                                                            lg_guias.cdestino,
+                                                            YEAR ( lg_guias.freg ) AS anio,
+                                                        IF
+                                                            ( ISNULL( despachos.id_regalm ), madres.id_regalm, despachos.id_regalm ) AS iddespacho,
+                                                        IF
+                                                            ( ISNULL( despachos.cdesproy ), madres.cdesproy, despachos.cdesproy ) AS proyectoGuias,
+                                                            madres.id_regalm AS indice_madre,
+                                                            despachos.id_regalm AS indice_despacho,
+                                                            lg_guias.freg,
+                                                            DATE( lg_guias.freg ) AS fecha,
+                                                        IF ( ISNULL(despachos.nReferido),'-',despachos.nReferido ) AS referido 
+                                                        FROM
+                                                            lg_guias
+                                                            LEFT JOIN (
+                                                            SELECT
+                                                                alm_despachocab.id_regalm,
+                                                                alm_despachocab.cnumguia,
+                                                                alm_despachocab.nReferido,
+                                                                CONCAT_WS( '', tb_proyectos.ccodproy, tb_proyectos.cdesproy ) AS cdesproy 
+                                                            FROM
+                                                                alm_despachocab
+                                                                LEFT JOIN tb_proyectos ON tb_proyectos.nidreg = alm_despachocab.ncodpry 
+                                                            ) AS despachos ON lg_guias.cnumguia = despachos.cnumguia
+                                                            LEFT JOIN (
+                                                            SELECT
+                                                                alm_madrescab.id_regalm,
+                                                                alm_madrescab.cnumguia,
+                                                                CONCAT_WS( ' ', tb_proyectos.ccodproy, tb_proyectos.cdesproy ) AS cdesproy 
+                                                            FROM
+                                                                alm_madrescab
+                                                                LEFT JOIN tb_proyectos ON tb_proyectos.nidreg = alm_madrescab.ncodcos 
+                                                            ) AS madres ON lg_guias.cnumguia = madres.cnumguia 
+                                                        WHERE
+                                                            lg_guias.cnumguia = :guia");
+                                                                        
                 
                 $sql->execute(["guia"=>$guia]);
 

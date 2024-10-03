@@ -175,8 +175,6 @@ $(function(){
             console.log(error);
         }
 
-        
-        
         return false;
     });
 
@@ -230,7 +228,23 @@ $(function(){
             })
             .then(response => response.json())
             .then(data => {
-                console.log(data);
+                console.log(data.cabecera[0]);
+                
+                let row = `<tr data-indice="${data.cabecera[0].iddespacho}" class="pointer" data-guia="${data.cabecera[0].cnumguia}">
+                                <td class="textoCentro">${data.cabecera[0].iddespacho}</td>
+                                <td class="textoCentro">${data.cabecera[0].fecha}</td>
+                                <td class="pl20px">${data.cabecera[0].corigen}</td>
+                                <td class="pl20px">${data.cabecera[0].cdestino}</td>
+                                <td class="pl20px">${data.cabecera[0].proyectoGuias}</td>
+                                <td class="textoCentro">${data.cabecera[0].anio}</td>
+                                <td class="textoCentro">${data.cabecera[0].cnumguia}</td>
+                                <td class="textoCentro">${data.cabecera[0].referido}</td>
+                                <td></td>
+                            </tr>`
+
+                $("#despachos tbody")
+                .empty()
+                .append(row);
             })
 
         }
