@@ -14,7 +14,10 @@
         }
 
         function consultaID(){
-            echo json_encode($this->model->importarDespacho($_POST['indice']));
+            if ($_POST['tipo'] == 'S')
+                echo json_encode($this->model->importarDespachoSalidas($_POST['indice']));
+            else if ($_POST['tipo'] == 'M')
+                echo json_encode($this->model->importarDespachoMadres($_POST['indice']));
         }
         
         function nuevoRegistro(){

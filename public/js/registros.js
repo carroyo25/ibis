@@ -189,7 +189,9 @@ $(function(){
     $("#despachos tbody").on("click","tr", function (e) {
         e.preventDefault();
 
-        $.post(RUTA+"registros/consultaID", {indice:$(this).data("indice")},
+        let tipo_guia = $(this).data("salida") != null ? "S" : "M"; 
+
+        $.post(RUTA+"registros/consultaID", { indice:$(this).data("indice"), tipo:tipo_guia },
             function (data, textStatus, jqXHR) {
 
                 $("#numero").val(data.numero);
@@ -228,9 +230,12 @@ $(function(){
             })
             .then(response => response.json())
             .then(data => {
-                console.log(data.cabecera[0]);
                 
-                let row = `<tr data-indice="${data.cabecera[0].iddespacho}" class="pointer" data-guia="${data.cabecera[0].cnumguia}">
+                let row = `<tr class="pointer" 
+                                data-indice ="${data.cabecera[0].iddespacho}"  
+                                data-guia   ="${data.cabecera[0].cnumguia}"
+                                data-salida ="${data.cabecera[0].salida}"
+                                data-madre  ="${data.cabecera[0].madre}">
                                 <td class="textoCentro">${data.cabecera[0].iddespacho}</td>
                                 <td class="textoCentro">${data.cabecera[0].fecha}</td>
                                 <td class="pl20px">${data.cabecera[0].corigen}</td>
@@ -243,8 +248,8 @@ $(function(){
                             </tr>`
 
                 $("#despachos tbody")
-                .empty()
-                .append(row);
+                    .empty()
+                    .append(row);
             })
 
         }
@@ -481,8 +486,6 @@ $(function(){
 
         return false;
     });
-
-
 })
 
 detalles = () =>{

@@ -25,9 +25,9 @@
                                                         tb_parametros.cabrevia,
                                                         alm_despachocab.nEstadoDoc,
                                                         alm_despachocab.cnumguia,
-                                                        tb_costusu.id_cuser,
+                                                        tb_costusu.id_cuser/*,
                                                         d.despachos,
-                                                        i.ingresos 
+                                                        i.ingresos*/ 
                                                     FROM
                                                         alm_despachocab
                                                         INNER JOIN tb_almacen AS origen ON alm_despachocab.ncodalm1 = origen.ncodalm
@@ -35,8 +35,8 @@
                                                         INNER JOIN tb_proyectos ON alm_despachocab.ncodpry = tb_proyectos.nidreg
                                                         INNER JOIN tb_parametros ON alm_despachocab.nEstadoDoc = tb_parametros.nidreg
                                                         INNER JOIN tb_costusu ON alm_despachocab.ncodpry = tb_costusu.ncodproy
-                                                        LEFT JOIN ( SELECT SUM( alm_despachodet.ndespacho ) AS despachos, alm_despachodet.id_regalm FROM alm_despachodet GROUP BY alm_despachodet.id_regalm ) AS d ON alm_despachocab.id_regalm = d.id_regalm
-                                                        LEFT JOIN ( SELECT SUM( alm_existencia.cant_ingr ) AS ingresos, alm_existencia.iddespacho FROM alm_existencia GROUP BY alm_existencia.iddespacho ) AS i ON alm_despachocab.id_regalm = i.iddespacho 
+                                                        /*LEFT JOIN ( SELECT SUM( alm_despachodet.ndespacho ) AS despachos, alm_despachodet.id_regalm FROM alm_despachodet GROUP BY alm_despachodet.id_regalm ) AS d ON alm_despachocab.id_regalm = d.id_regalm
+                                                        LEFT JOIN ( SELECT SUM( alm_existencia.cant_ingr ) AS ingresos, alm_existencia.iddespacho FROM alm_existencia GROUP BY alm_existencia.iddespacho ) AS i ON alm_despachocab.id_regalm = i.iddespacho */
                                                     WHERE
                                                         alm_despachocab.nflgactivo = 1 
                                                         AND tb_costusu.nflgactivo = 1 
@@ -51,9 +51,9 @@
 
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()){
-                        $resto  = $rs['despachos'] - $rs['ingresos'];
+                        //$resto  = $rs['despachos'] - $rs['ingresos'];
                         
-                        if ( $resto != 0 ) {
+                        //if ( $resto != 0 ) {
                             $salida .='<tr data-indice="'.$rs['id_regalm'].'" class="pointer" data-guia="'.$rs['cnumguia'].'">                                        
                                     <td class="textoCentro">'.str_pad($rs['id_regalm'],6,0,STR_PAD_LEFT).'</td>
                                     <td class="pl20px">'.$rs['ffecdoc'].'</td>
@@ -65,7 +65,7 @@
                                     <td class="textoCentro">'.$rs['nReferido'].'</td>
                                     <td></td>
                                 </tr>';
-                        }
+                        //}
                        
                     }
                 }
@@ -77,7 +77,8 @@
             }
         }
 
-        public function importarDespacho($indice){
+        /*importa desde las guias de Lurin*/
+        public function importarDespachoSalidas($indice){
             try {
                 $sql = $this->db->connect()->prepare("SELECT
                                                         alm_despachocab.id_regalm,
@@ -108,7 +109,7 @@
                         $docData[] = $row;
                     }
 
-                    $detalles = $this->detallesDespacho($indice);
+                    $detalles = $this->detallesDespachoSalidas($indice);
                 }
                 
                 $indice = $this->ultimoIndice() + 1;
@@ -121,7 +122,7 @@
             }
         }
 
-        private function detallesDespacho($indice){
+        private function detallesDespachoSalidas($indice){
             try {
                 $salida = "";
                 $item = 1;
@@ -195,6 +196,81 @@
                 return false;
             }
         }
+
+        /*importa desde las guias madre */
+        public function importarDespachoMadres($indice){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        alm_madrescab.id_regalm,
+                                                        alm_madrescab.ncodcos,
+                                                        alm_madrescab.cnumguia,
+                                                        UPPER( CONCAT_WS( ' ', tb_proyectos.ccodproy, tb_proyectos.cdesproy ) ) AS costos,
+                                                        lg_guias.corigen AS origen,
+                                                        lg_guias.cdestino AS destino,
+                                                        origen.ncodalm AS ncodalm1,
+                                                        destino.ncodalm AS ncodalm2 
+                                                    FROM
+                                                        alm_madrescab
+                                                        INNER JOIN tb_proyectos ON alm_madrescab.ncodcos = tb_proyectos.nidreg
+                                                        INNER JOIN lg_guias ON alm_madrescab.cnumguia = lg_guias.cnumguia
+                                                        INNER JOIN tb_almacen AS origen ON lg_guias.corigen = origen.cdesalm
+                                                        INNER JOIN tb_almacen AS destino ON lg_guias.cdestino = destino.cdesalm 
+                                                    WHERE
+                                                        alm_madrescab.id_regalm =:indice");
+                $sql->execute(["indice"=>$indice]);
+
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0) {
+                    $docData = array();
+                    while($row=$sql->fetch(PDO::FETCH_ASSOC)){
+                        $docData[] = $row;
+                    }
+
+                    //$detalles = $this->detallesDespachoMadres($indice);
+                    $detalles = "";
+                }
+                
+                $indice = $this->ultimoIndice() + 1;
+                return array("cabecera"=>$docData,
+                             "numero"=>str_pad($indice,6,0,STR_PAD_LEFT),
+                             "detalles"=>$detalles);
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function detallesDespachosMadres($indice){
+            try {
+                /*SELECT
+	alm_madresdet.niddeta,
+	alm_madresdet.id_regalm,
+	alm_madresdet.id_cprod,
+	alm_madresdet.ncantidad,
+	cm_producto.ccodprod,
+	tb_unimed.cabrevia,
+	lg_guias.id_regalm AS registro_despacho,
+	UPPER(
+	CONCAT_WS( ' ', cm_producto.cdesprod )) AS descripcion,
+	alm_despachodet.niddetaPed 
+FROM
+	alm_madresdet
+	INNER JOIN alm_madrescab ON alm_madresdet.id_regalm = alm_madrescab.id_regalm
+	INNER JOIN cm_producto ON alm_madresdet.id_cprod = cm_producto.id_cprod
+	INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+	INNER JOIN lg_guias ON alm_madresdet.nGuia = lg_guias.cnumguia
+	INNER JOIN alm_despachodet ON alm_despachodet.id_regalm = lg_guias.id_regalm 
+	AND cm_producto.id_cprod = alm_despachodet.id_cprod 
+	INNER JOIN tb_pedidodet ON alm_despachodet.niddetaPed = tb_pedidodet.iditem
+WHERE
+	alm_madrescab.id_regalm = 202*/
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
 
         private function ultimoIndice(){
             $indice = $this->lastInsertId("SELECT MAX(idreg) AS id FROM alm_cabexist");
@@ -676,6 +752,8 @@
                                                             lg_guias.cnumguia,
                                                             lg_guias.corigen,
                                                             lg_guias.cdestino,
+                                                            despachos.id_regalm AS salida,
+                                                            madres.id_regalm AS madre,
                                                             YEAR ( lg_guias.freg ) AS anio,
                                                         IF
                                                             ( ISNULL( despachos.id_regalm ), madres.id_regalm, despachos.id_regalm ) AS iddespacho,
