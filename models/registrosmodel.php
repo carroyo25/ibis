@@ -227,8 +227,7 @@
                         $docData[] = $row;
                     }
 
-                    //$detalles = $this->detallesDespachoMadres($indice);
-                    $detalles = "";
+                    $detalles = $this->detallesDespachosMadres($indice);
                 }
                 
                 $indice = $this->ultimoIndice() + 1;
@@ -243,34 +242,83 @@
 
         private function detallesDespachosMadres($indice){
             try {
-                /*SELECT
-	alm_madresdet.niddeta,
-	alm_madresdet.id_regalm,
-	alm_madresdet.id_cprod,
-	alm_madresdet.ncantidad,
-	cm_producto.ccodprod,
-	tb_unimed.cabrevia,
-	lg_guias.id_regalm AS registro_despacho,
-	UPPER(
-	CONCAT_WS( ' ', cm_producto.cdesprod )) AS descripcion,
-	alm_despachodet.niddetaPed 
-FROM
-	alm_madresdet
-	INNER JOIN alm_madrescab ON alm_madresdet.id_regalm = alm_madrescab.id_regalm
-	INNER JOIN cm_producto ON alm_madresdet.id_cprod = cm_producto.id_cprod
-	INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
-	INNER JOIN lg_guias ON alm_madresdet.nGuia = lg_guias.cnumguia
-	INNER JOIN alm_despachodet ON alm_despachodet.id_regalm = lg_guias.id_regalm 
-	AND cm_producto.id_cprod = alm_despachodet.id_cprod 
-	INNER JOIN tb_pedidodet ON alm_despachodet.niddetaPed = tb_pedidodet.iditem
-WHERE
-	alm_madrescab.id_regalm = 202*/
+                $salida = "";
+                $item = 1;
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        alm_madresdet.niddeta,
+                                                        alm_madresdet.id_regalm,
+                                                        alm_madresdet.id_cprod,
+                                                        alm_madresdet.ncantidad,
+                                                        cm_producto.ccodprod,
+                                                        tb_unimed.cabrevia,
+                                                        guias.id_regalm AS registro_despacho,
+                                                        UPPER(
+                                                        CONCAT_WS( ' ', cm_producto.cdesprod )) AS descripcion,
+                                                        alm_despachodet.niddetaPed,
+                                                        tb_pedidocab.nrodoc AS pedido,
+                                                        tb_pedidocab.idreg,
+                                                        lg_ordencab.cnumero AS orden,
+                                                        lg_ordencab.ncodcos AS idcostos,
+                                                        tb_area.ncodarea,
+                                                        tb_pedidocab.idarea,
+                                                        UPPER(tb_area.cdesarea) AS cdesarea,
+                                                        madres.cdestino,
+                                                        madres.cnumguia,
+                                                        tb_almacen.ncodalm AS ncodalm2
+                                                    FROM
+                                                        alm_madresdet
+                                                        LEFT JOIN alm_madrescab ON alm_madresdet.id_regalm = alm_madrescab.id_regalm
+                                                        LEFT JOIN cm_producto ON alm_madresdet.id_cprod = cm_producto.id_cprod
+                                                        LEFT JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                        LEFT JOIN lg_guias AS guias ON alm_madresdet.nGuia = guias.cnumguia
+                                                        LEFT JOIN alm_despachodet ON alm_despachodet.id_regalm = guias.id_regalm 
+                                                        AND cm_producto.id_cprod = alm_despachodet.id_cprod
+                                                        LEFT JOIN tb_pedidodet ON alm_despachodet.niddetaPed = tb_pedidodet.iditem
+                                                        LEFT JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
+                                                        LEFT JOIN lg_ordendet ON alm_despachodet.niddetaPed = lg_ordendet.niddeta
+                                                        LEFT JOIN lg_ordencab ON lg_ordendet.id_orden = lg_ordencab.id_regmov
+                                                        LEFT JOIN tb_area ON tb_pedidocab.idarea = tb_area.ncodarea
+                                                        LEFT JOIN lg_guias AS madres ON alm_madresdet.nGuiaMadre = madres.cnumguia
+                                                        LEFT JOIN tb_almacen ON tb_almacen.cdesalm = madres.cdestino
+                                                    WHERE
+                                                        alm_madrescab.id_regalm = :indice");
+                
+                $sql->execute(["indice"=>$indice]);
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0){
+                    while ($rs = $sql->fetch()){
+                        $salida .='<tr class="pointer" data-idpet="'.$rs['niddetaPed'].'"
+                                                        data-area="'.$rs['ncodarea'].'"
+                                                        data-almacen = "'.$rs['ncodalm2'].'"
+                                                        data-codprod = "'.$rs['id_cprod'].'"
+                                                        data-costos = "'.$rs['idcostos'].'">
+                                        <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
+                                        <td class="textoCentro"> '.$rs['ccodprod'].'</td>
+                                        <td class="pl20px">'.$rs['descripcion'].'</td>
+                                        <td class="textoCentro">'.$rs['cabrevia'].'</td>
+                                        <td class="textoDerecha pr5px">'.$rs['ncantidad'].'</td>
+                                        <td class="textoDerecha"><input type="number" min="1" value="'.$rs['ncantidad'].'"></td>
+                                        <td><input type="text"></td>
+                                        <td class="pl20px">'.$rs['cdesarea'].'</td>
+                                        <td><input type="date"></td>
+                                        <td><input type="text"></td>
+                                        <td><input type="text"></td>
+                                        <td class="textoCentro">'.$rs['pedido'].'</td>
+                                        <td class="textoCentro">'.$rs['orden'].'</td>
+                                        <td class="textoCentro">'.$rs['cnumguia'].'</td>
+                                        <td class="textoCentro"><a href="'.$rs['niddetaPed'].'" ><i class="fas fa-paperclip"></i></a></td>
+                                    </tr>';
+                    } 
+                }
+
+                return $salida;
+                
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;
             }
         }
-
 
         private function ultimoIndice(){
             $indice = $this->lastInsertId("SELECT MAX(idreg) AS id FROM alm_cabexist");
