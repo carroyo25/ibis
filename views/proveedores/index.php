@@ -22,7 +22,7 @@
         </div>
     </div>
     <div class="modal" id="proceso">
-        <div class="ventanaProceso w65por">
+        <div class="ventanaProceso">
             <div class="cabezaProceso">
                 <form action="#" id="formProceso" autocomplete="off">
                     <input type="hidden" name="codigo_entidad" id="codigo_entidad">

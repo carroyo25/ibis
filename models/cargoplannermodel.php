@@ -1570,12 +1570,12 @@
         private function detallesGuiaRemision($id) {
             try {
                 $sql=$this->db->connect()->prepare("SELECT
-                                            alm_despachodet.ncantidad,
+                                            alm_despachodet.ncantidad AS cantidad,
                                             alm_despachodet.niddetaPed,
                                             LPAD( alm_despachodet.nropedido, 6, 0 ) AS orden,
                                             LPAD( alm_despachodet.nroorden, 6, 0 ) AS pedido,
                                             cm_producto.ccodprod,
-                                            REPLACE ( FORMAT( alm_despachodet.ncantidad, 2 ), ',', '' ) AS cantidad,
+                                            REPLACE ( FORMAT( alm_despachodet.ndespacho, 2 ), ',', '' ) AS ncantidad,
                                             UPPER( CONCAT_WS( ' ', cm_producto.cdesprod, tb_pedidodet.observaciones ) ) AS cdesprod,
                                             tb_unimed.cabrevia
                                         FROM

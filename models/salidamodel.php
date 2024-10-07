@@ -1242,8 +1242,8 @@
         /////*------------------PROCESOS SUNAT--------------------*///////
 
         public function enviarSunatSalida($cabecera,$detalles) {
-            var_dump($cabecera);
-            exit;
+            /*var_dump($cabecera);
+            exit;*/
 
             require 'public/libraries/efactura.php';
 
