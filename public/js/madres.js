@@ -425,6 +425,7 @@ $(() =>{
                 $("#numero_guia_sunat").val(data.cabecera[0].guiasunat); 
                 $("#fgemision").val(data.cabecera[0].emision);
                 $("#ftraslado").val(data.cabecera[0].traslado);
+                $("#ticket_sunat").val(data.cabecera[0].ticketsunat);
                 $("#almacen_origen").val(data.cabecera[0].origen);
                 $("#almacen_origen_direccion").val(data.cabecera[0].cdirorigen);
                 $("#almacen_destino").val(data.cabecera[0].destino);

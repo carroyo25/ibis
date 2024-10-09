@@ -1242,9 +1242,6 @@
         /////*------------------PROCESOS SUNAT--------------------*///////
 
         public function enviarSunatSalida($cabecera,$detalles) {
-            /*var_dump($cabecera);
-            exit;*/
-
             require 'public/libraries/efactura.php';
 
             $header = json_decode($cabecera);
@@ -1265,24 +1262,28 @@
                 $nombre_archivo = $header->destinatario_ruc.'-31-V001-'.$header->numero_guia_sunat;
             }
 
-            if(file_exists($path."XML/".$nombre_archivo.".xml")){
-                unlink($path."XML/".$nombre_archivo.".xml");  
-            }
+            
 
             $token_access = $this->token('d12d8bf5-4b57-4c57-9569-9072b3e1bfcd', 'iLMGwQBEehJMXQ+Z/LR2KA==', '20504898173SISTEMA1', 'Lima123');
 
-            $firma = $this->crear_files($path, $nombre_archivo, $header, $body );
-            
-            $respuesta = $this->envio_xml($path.'FIRMA/', $nombre_archivo, $token_access);
-
             //aca verificamos si tiene ticket
-            if ( $header->ticket_sunat == "" )
-                $numero_ticket = $header->ticket_sunat;
-            else
+            if ( $header->ticket_sunat == "" ){
+
+                if(file_exists($path."XML/".$nombre_archivo.".xml")){
+                    unlink($path."XML/".$nombre_archivo.".xml");  
+                }
+                
+                $firma = $this->crear_files($path, $nombre_archivo, $header, $body );
+                $respuesta = $this->envio_xml($path.'FIRMA/', $nombre_archivo, $token_access);
+
+                //var_dump($respuesta);
+
                 $numero_ticket = $respuesta->numTicket;
-
-            //var_dump($respuesta);
-
+            }   
+            else{
+                $numero_ticket = $header->ticket_sunat;
+            }
+        
             sleep(3);//damos tiempo para que SUNAT procese y responda.
             $respuesta_ticket = $this->envio_ticket($path.'CDR/', $numero_ticket, $token_access, $header->destinatario_ruc, $nombre_archivo);
 
