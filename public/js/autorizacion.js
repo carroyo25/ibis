@@ -928,7 +928,7 @@ $(function(){
             //if (result['codigo_traslado'] == "") throw new Error("Seleccione la modalidad de traslado");
             
             
-            $.post(RUTA+"transferencias/vistaPreviaGuiaRemisioNotas", {cabecera:result,
+            $.post(RUTA+"autorizacion/vistaPreviaGuiaRemisionTraslados", {cabecera:result,
                                                             detalles:JSON.stringify(itemsPreview(false)),
                                                             proyecto: $("#costosOrigen").val()},
                 function (data, textStatus, jqXHR) {

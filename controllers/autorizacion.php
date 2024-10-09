@@ -78,6 +78,10 @@
         function equipos(){
             echo $this->model->llamarEquipos($_POST['codigo'],$_POST['descripcion']);
         }
+
+        function vistaPreviaGuiaRemisionTraslados(){
+            echo json_encode($this->model->generarVistaPreviaGuiaTraslado($_POST['cabecera'],$_POST['detalles'],$_POST['proyecto']));
+        }
         
     }
 ?>

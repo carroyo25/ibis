@@ -563,5 +563,103 @@
                 return false;
             }
         }
+
+        public function generarVistaPreviaGuiaTraslado($cabecera,$detalles,$proyecto){
+            try {
+                require_once("public/formatos/guiaremision.php");
+                
+                $archivo = "public/documentos/guias_remision/".$cabecera['numero_guia'].".pdf";
+                $datos = json_decode($detalles);
+                $nreg = count($datos);
+                $fecha_emision = date("d/m/Y", strtotime($cabecera['fgemision']));
+                $fecha_traslado = date("d/m/Y", strtotime($cabecera['ftraslado']));
+                $anio = explode('-',$cabecera['fgemision']);
+
+                if ($cabecera['ftraslado'] !== "")
+                    $fecha_traslado = date("d/m/Y", strtotime($cabecera['ftraslado']));
+                else 
+                    $fecha_traslado = "";
+
+                $pdf = new PDF($cabecera['numero_guia'],
+                                $fecha_emision,
+                                $cabecera['destinatario_ruc'],
+                                $cabecera['destinatario_razon'],
+                                $cabecera['destinatario_direccion'],
+                                $cabecera['empresa_transporte_razon'],
+                                $cabecera['ruc_proveedor'],
+                                $cabecera['direccion_proveedor'],
+                                $cabecera['almacen_origen_direccion'],
+                                null,
+                                null,
+                                null,
+                                $fecha_traslado,
+                                $cabecera['modalidad_traslado'],
+                                $cabecera['almacen_destino_direccion'],
+                                null,
+                                null,
+                                null,
+                                $cabecera['marca'],
+                                $cabecera['placa'],
+                                $cabecera['nombre_conductor'],
+                                $cabecera['licencia_conducir'],
+                                $cabecera['tipo_envio'],
+                                '',
+                                $proyecto,
+                                $anio[0],
+                                $cabecera["observaciones"],
+                                $cabecera["destinatario"],
+                                $cabecera["tipo_documento"],
+                                'A4');
+                $pdf->AliasNbPages();
+                $pdf->AddPage();
+                $pdf->SetWidths(array(10,15,15,147));
+                $pdf->SetFillColor(255,255,255);
+                $pdf->SetTextColor(0,0,0);
+                
+                $pdf->SetFont('Arial','',6);
+                $lc = 0;
+                $rc = 0;
+                $item = 1;
+
+                //aca podria sumar la orden
+
+                for($i=1;$i<=$nreg;$i++){
+
+                    $cantidad = intval($datos[$rc]->cantidad);
+                    
+                    $pdf->SetX(13);
+
+                    $serie = $datos[$rc]->serie == "" ? "" : ' S/N : '.$datos[$rc]->serie;
+
+                    $pdf->SetAligns(array("R","R","C","L"));
+                    if ($cantidad > 0){
+                         $pdf->Row(array(str_pad($item++,3,"0",STR_PAD_LEFT),
+                                        $cantidad,
+                                        $datos[$rc]->unidad,
+                                        utf8_decode($datos[$rc]->codigo .' '. $datos[$rc]->descripcion  . $serie)));
+                    }
+                   
+                    $lc++;
+                    $rc++;
+
+                    if ($lc == 26) {
+                        $pdf->AddPage();
+                        $lc = 0;
+                    }
+                }
+
+                $pdf->Ln(1);
+                $pdf->SetX(13);
+                $pdf->Ln(2);
+                $pdf->SetX(13);
+                $pdf->Output($archivo,'F');
+                    
+                return array("archivo"=>$archivo);
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
     }
 ?>
