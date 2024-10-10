@@ -346,8 +346,8 @@ $(function() {
         cc = $(this).data("idcosto");
 
         try {
-            if ( $("#codigo_costos").val() != cc && $("#codigo_costos").val() != "" ) throw "Los orden es de otro centro de costos";
-            if (buscarOrden($(this).data("orden"))) throw "La orden se esta duplicada";
+            if ( $("#codigo_costos").val() != cc && $("#codigo_costos").val() != "" ) throw new Error("Los orden es de otro centro de costos");
+            if (buscarOrden($(this).data("orden"))) throw new Error("La orden se esta duplicada");
 
             $.post(RUTA+"salida/ordenId", {id:$(this).data("orden"),costo:$(this).data("idcosto")},
             function (data, textStatus, jqXHR) {
