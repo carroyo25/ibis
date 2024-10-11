@@ -345,9 +345,13 @@ $(function() {
 
         cc = $(this).data("idcosto");
 
+        let orden = $(this).find('td').eq(0).text();
+
+        console.log(orden);
+
         try {
             if ( $("#codigo_costos").val() != cc && $("#codigo_costos").val() != "" ) throw new Error("Los orden es de otro centro de costos");
-            if (buscarOrden('006609')) throw new Error("La orden se esta duplicada");
+            if (buscarOrden(orden)) throw new Error("La orden ya se esta procesando");
 
             $.post(RUTA+"salida/ordenId", {id:$(this).data("orden"),costo:$(this).data("idcosto")},
             function (data, textStatus, jqXHR) {
@@ -363,11 +367,13 @@ $(function() {
                 fillTables($("#tablaDetalles tbody > tr"),2);
 
                 $("#busqueda").fadeOut();
+                
+                orden = "";
             },
             "json"
         );
         } catch (error) {
-            mostrarMensaje(error,"mensaje_error");
+            mostrarMensaje(error.message,"mensaje_error");
         }
 
         return false; 
@@ -1006,7 +1012,7 @@ buscarOrden = (orden) => {
     let TABLA = $("#tablaDetalles tbody >tr");
 
     TABLA.each(function(){
-        ingresada  = '006609';
+        ingresada  = $(this).find('td').eq(12).text();
 
         if ( ingresada == orden ) {
             existe = true;
