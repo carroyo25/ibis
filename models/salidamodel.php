@@ -128,7 +128,7 @@
                                                             AND alm_recepdet.nflgActivo = 1) AS ingresos,
                                                         ( SELECT SUM( alm_despachodet.ndespacho ) FROM alm_despachodet WHERE alm_despachodet.niddetaOrd = lg_ordendet.nitemord 
                                                         AND alm_despachodet.nflgActivo = 1) AS despachos,
-                                                        lg_ordencab.cnumero
+                                                        LPAD(lg_ordencab.cnumero,6,0) AS cnumero
                                                     FROM
                                                         lg_ordendet
                                                         INNER JOIN cm_producto ON lg_ordendet.id_cprod = cm_producto.id_cprod
@@ -160,6 +160,7 @@
                                             data-saldo    ="'.$saldo.'"
                                             data-pedido   ="'.$rs['nidpedi'].'"
                                             data-orden    ="'.$rs['id_orden'].'"
+                                            data-numero   ="'.$rs['cnumero'].'"
                                             data-estado   ="0">
                                         <td class="textoCentro"><a href="'.$rs['id_orden'].'" data-accion="deleteItem" class="eliminarItem"><i class="fas fa-minus"></i></a></td>
                                         <td class="textoCentro"><input type="checkbox"></td>
@@ -1261,8 +1262,6 @@
             }else {
                 $nombre_archivo = $header->destinatario_ruc.'-31-V001-'.$header->numero_guia_sunat;
             }
-
-            
 
             $token_access = $this->token('d12d8bf5-4b57-4c57-9569-9072b3e1bfcd', 'iLMGwQBEehJMXQ+Z/LR2KA==', '20504898173SISTEMA1', 'Lima123');
 

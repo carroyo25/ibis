@@ -347,7 +347,7 @@ $(function() {
 
         try {
             if ( $("#codigo_costos").val() != cc && $("#codigo_costos").val() != "" ) throw new Error("Los orden es de otro centro de costos");
-            if (buscarOrden($(this).data("orden"))) throw new Error("La orden se esta duplicada");
+            if (buscarOrden('006609')) throw new Error("La orden se esta duplicada");
 
             $.post(RUTA+"salida/ordenId", {id:$(this).data("orden"),costo:$(this).data("idcosto")},
             function (data, textStatus, jqXHR) {
@@ -1006,9 +1006,9 @@ buscarOrden = (orden) => {
     let TABLA = $("#tablaDetalles tbody >tr");
 
     TABLA.each(function(){
-            ingresada    = $(this).find('td').eq(12).text()
+        ingresada  = '006609';
 
-        if (ingresada == orden) {
+        if ( ingresada == orden ) {
             existe = true;
         }
     })
