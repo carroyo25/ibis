@@ -90,6 +90,8 @@ $(function() {
                     $("#numero_guia_sunat").val(data.guias[0].guiasunat); 
                     $("#ticket_sunat").val(data.guias[0].ticketsunat);
                     $("#peso").val(data.guias[0].nPeso);
+                    $("#registro_mtc").val(data.guias[0].cdigcateg);
+                    $("#conductor_dni").val(data.guias[0].cnrodoc);
                 }
                 
                 $("#estado")

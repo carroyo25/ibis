@@ -320,11 +320,11 @@
                 $lc = 0;
                 $rc = 0;
 
-                if (file_exists("public/documentos/guia_electronica/qr/".$qrsunat)) {
+                /*if (file_exists("public/documentos/guia_electronica/qr/".$qrsunat)) {
                     $qrprint =  "public/documentos/guia_electronica/qr/".$qrsunat;
 
                     $pdf->Image($qrprint,165,210,35);
-                }
+                }*/
 
                 //aca podria sumar la orden
 
@@ -348,8 +348,8 @@
                     }
                 }
 
-                $pdf->SetXY(167,237);
-                $pdf->Cell(6,20,'NRO.GUIA INTERNA: '.$cabecera['numero_guia'],0,1);
+                /*$pdf->SetXY(167,237);
+                $pdf->Cell(6,20,'NRO.GUIA INTERNA: '.$cabecera['numero_guia'],0,1);*/
 
                 $pdf->Ln(1);
                 $pdf->SetX(13);
@@ -1173,7 +1173,7 @@
                                                         lg_guias.cdestino,
                                                         lg_guias.cdirdest,
                                                         lg_guias.centi,
-                                                        lg_guias.centidir,
+                                                        UPPER(lg_guias.centidir) AS centidir,
                                                         lg_guias.centiruc,
                                                         lg_guias.ctraslado,
                                                         lg_guias.cenvio,
@@ -1190,9 +1190,13 @@
                                                         lg_guias.guiasunat,
                                                         lg_guias.ticketsunat,
                                                         lg_guias.estadoSunat,
-                                                        lg_guias.nPeso 
+                                                        lg_guias.nPeso,
+                                                        cm_entidad.cdigcateg,
+                                                        cm_conductores.cnrodoc
                                                 FROM
-                                                    lg_guias 
+                                                    lg_guias
+                                                    LEFT JOIN cm_entidad ON lg_guias.centiruc = cm_entidad.cnumdoc
+                                                    LEFT JOIN cm_conductores ON lg_guias.clicencia = cm_conductores.clicencia COLLATE utf8_bin 
                                                 WHERE
                                                     lg_guias.id_regalm =:despacho");
                 $sql->execute(["despacho"=>$despacho]);

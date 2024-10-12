@@ -166,6 +166,16 @@
                 $this->SetFillColor(229, 229, 229);
                 $this->SetY(-65);
                 //$this->SetXY(30,230);
+
+                if (file_exists("public/documentos/guia_electronica/qr/".$qrsunat)) {
+                    $qrprint =  "public/documentos/guia_electronica/qr/".$qrsunat;
+
+                    $this->Image($qrprint,165,210,35);
+                }
+
+                $this->SetXY(167,237);
+                $this->Cell(6,20,'NRO.GUIA INTERNA: '.$cabecera['numero_guia'],0,1);
+
                 $this->SetX(30);
                 $this->SetFont('Arial','',9);
                 $this->Cell(90,4,utf8_decode("Atención : ").$this->atencion,0,1);
