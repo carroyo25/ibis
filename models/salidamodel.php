@@ -1190,13 +1190,13 @@
                                                         lg_guias.guiasunat,
                                                         lg_guias.ticketsunat,
                                                         lg_guias.estadoSunat,
-                                                        lg_guias.nPeso,
+                                                        lg_guias.nPeso/*,
                                                         cm_entidad.cdigcateg,
-                                                        cm_conductores.cnrodoc
+                                                        cm_conductores.cnrodoc*/
                                                 FROM
                                                     lg_guias
-                                                    LEFT JOIN cm_entidad ON lg_guias.centiruc = cm_entidad.cnumdoc
-                                                    LEFT JOIN cm_conductores ON lg_guias.clicencia = cm_conductores.clicencia COLLATE utf8_bin 
+                                                    /*LEFT JOIN cm_entidad ON lg_guias.centiruc = cm_entidad.cnumdoc
+                                                    LEFT JOIN cm_conductores ON lg_guias.clicencia = cm_conductores.clicencia COLLATE utf8_bin */
                                                 WHERE
                                                     lg_guias.id_regalm =:despacho");
                 $sql->execute(["despacho"=>$despacho]);
@@ -1557,8 +1557,8 @@
             }
         }
 
-         //entre_almacenes propios -- transporte propio (PUCALLPA - LURIN - LIMA - PISCO)  
-         private function caso1($header,$detalles){
+        //entre_almacenes propios -- transporte propio (PUCALLPA - LURIN - LIMA - PISCO)  
+        private function caso1($header,$detalles){
             try {
                 $serie  = 'T001';
 

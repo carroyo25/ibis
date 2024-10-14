@@ -49,7 +49,7 @@
 			$this->Cell(5,4,$this->tipo == 273 ? "": "X",1,0,"C");
 			$this->SetX(40);
 			$this->Cell(10,4,"DESTINO",0,0);
-			$this->Cell(25,4,"PAGORENI B",0,0);
+			$this->Cell(25,4,utf8_decode($this->destino),0,0);
 			$this->SetX(135);
 			$this->Cell(25,5,"Persona asignada:",'LRB',0);
 			$this->Cell(44,5,utf8_decode($this->solicitante),'B',1);
