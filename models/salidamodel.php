@@ -309,7 +309,9 @@
                                 $cabecera["observaciones"],
                                 $cabecera["destinatario"],
                                 $cabecera["tipo_documento"],
-                                'A4');
+                                $cabecera['numero_guia'],
+                                'A4',
+                                );
                 $pdf->AliasNbPages();
                 $pdf->AddPage();
                 $pdf->SetWidths(array(10,15,15,147));
@@ -320,7 +322,13 @@
                 $lc = 0;
                 $rc = 0;
 
-                /*if (file_exists("public/documentos/guia_electronica/qr/".$qrsunat)) {
+                /*$qrsunat = "20504898173-09-T001-711.pdf";
+
+                if ($_SESSION["iduser"] == '62145bbb5a092') {
+                    $pdf->Image('/public/documentos/img/diegoguias.jpg',165,210,35);
+                }
+
+                if (file_exists("public/documentos/guia_electronica/qr/".$qrsunat)) {
                     $qrprint =  "public/documentos/guia_electronica/qr/".$qrsunat;
 
                     $pdf->Image($qrprint,165,210,35);
@@ -1165,40 +1173,42 @@
             try {
                 $docData="";
                 $sql=$this->db->connect()->prepare("SELECT
-                                                        lg_guias.idreg,
-                                                        lg_guias.id_regalm,
-                                                        lg_guias.cnumguia,
-                                                        lg_guias.corigen,
-                                                        lg_guias.cdirorigen,
-                                                        lg_guias.cdestino,
-                                                        lg_guias.cdirdest,
-                                                        lg_guias.centi,
-                                                        UPPER(lg_guias.centidir) AS centidir,
-                                                        lg_guias.centiruc,
-                                                        lg_guias.ctraslado,
-                                                        lg_guias.cenvio,
-                                                        lg_guias.cautoriza,
-                                                        lg_guias.cmarca,
-                                                        lg_guias.cplaca,
-                                                        lg_guias.cnombre,
-                                                        lg_guias.clicencia,
-                                                        lg_guias.ftraslado,
-                                                        lg_guias.fguia,
-                                                        lg_guias.cobserva,
-                                                        lg_guias.cdestinatario,
-                                                        lg_guias.cmotivo,
-                                                        lg_guias.guiasunat,
-                                                        lg_guias.ticketsunat,
-                                                        lg_guias.estadoSunat,
-                                                        lg_guias.nPeso/*,
-                                                        cm_entidad.cdigcateg,
-                                                        cm_conductores.cnrodoc*/
+                                                    lg_guias.idreg,
+                                                    lg_guias.id_regalm,
+                                                    lg_guias.cnumguia,
+                                                    lg_guias.corigen,
+                                                    lg_guias.cdirorigen,
+                                                    lg_guias.cdestino,
+                                                    lg_guias.cdirdest,
+                                                    lg_guias.centi,
+                                                    UPPER( lg_guias.centidir ) AS centidir,
+                                                    lg_guias.centiruc,
+                                                    lg_guias.ctraslado,
+                                                    lg_guias.cenvio,
+                                                    lg_guias.cautoriza,
+                                                    lg_guias.cmarca,
+                                                    lg_guias.cplaca,
+                                                    lg_guias.cnombre,
+                                                    lg_guias.clicencia,
+                                                    lg_guias.ftraslado,
+                                                    lg_guias.fguia,
+                                                    lg_guias.cobserva,
+                                                    lg_guias.cdestinatario,
+                                                    lg_guias.cmotivo,
+                                                    lg_guias.guiasunat,
+                                                    lg_guias.ticketsunat,
+                                                    lg_guias.estadoSunat,
+                                                    lg_guias.nPeso,
+                                                    cm_entidad.cdigcateg,
+                                                    cm_conductores.cnrodoc 
                                                 FROM
                                                     lg_guias
-                                                    /*LEFT JOIN cm_entidad ON lg_guias.centiruc = cm_entidad.cnumdoc
-                                                    LEFT JOIN cm_conductores ON lg_guias.clicencia = cm_conductores.clicencia COLLATE utf8_bin */
+                                                    LEFT JOIN cm_entidad ON lg_guias.centiruc = cm_entidad.cnumdoc
+                                                    LEFT JOIN cm_conductores ON lg_guias.clicencia = cm_conductores.clicencia COLLATE utf8_bin 
                                                 WHERE
-                                                    lg_guias.id_regalm =:despacho");
+                                                    lg_guias.id_regalm = :despacho 
+                                                GROUP BY
+                                                    lg_guias.centiruc");
                 $sql->execute(["despacho"=>$despacho]);
 
                 $rowCount = $sql->rowCount();

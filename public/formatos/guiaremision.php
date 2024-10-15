@@ -5,7 +5,8 @@
         // Cabecera de página
             public function __construct($nguia,$fecha_emision,$ruc,$razondest,$direccdest,$raztransp,$ructransp,$dirtransp,
                                         $vianomorg,$nroorg,$distorg,$zonaorg,$feenttrans,$modtras,$vianomodest,$nrodest,$zondest,$depdest,
-                                        $marca,$placa,$detcond,$licencia,$tipoEnvio,$referido,$origen,$anio,$observaciones,$atencion,$tipo){
+                                        $marca,$placa,$detcond,$licencia,$tipoEnvio,$referido,$origen,$anio,$observaciones,$atencion,$tipo,
+                                        $interna){
                 parent::__construct();
                 $this->nguia = $nguia;
                 $this->fecha_emision = $fecha_emision;
@@ -37,6 +38,7 @@
                 $this->atencion = $atencion;
                 $this->tipo = $tipo;
                 $this->tipo_guia = ["","DESTINATARIO","REMITENTE","TRANSPORTISTA","SUNAT"];
+                $this->interna = $interna;
             }
 
             function Header(){
@@ -164,27 +166,35 @@
     
             function Footer(){
                 $this->SetFillColor(229, 229, 229);
-                $this->SetY(-65);
+                
                 //$this->SetXY(30,230);
 
-                if (file_exists("public/documentos/guia_electronica/qr/".$qrsunat)) {
+                $qrsunat = "20504898173-09-T001-".$this->nguia.".png";
+
+                if ($_SESSION["iduser"] == '628c5d20e3173') {
+                    $this->Image('public/img/diegoguias.jpg',130,225,35);
+                }
+
+                if ( file_exists("public/documentos/guia_electronica/qr/".$qrsunat) ) {
                     $qrprint =  "public/documentos/guia_electronica/qr/".$qrsunat;
 
                     $this->Image($qrprint,165,210,35);
                 }
 
                 $this->SetXY(167,237);
-                $this->Cell(6,20,'NRO.GUIA INTERNA: '.$cabecera['numero_guia'],0,1);
+                $this->Cell(6,20,'NRO.GUIA INTERNA: '.$this->interna,0,1);
 
-                $this->SetX(30);
-                $this->SetFont('Arial','',9);
+                $this->SetY(-65);
+                $this->SetX(20);
+                $this->SetFont('Arial','',7);
                 $this->Cell(90,4,utf8_decode("Atención : ").$this->atencion,0,1);
-                $this->SetX(30);
+                $this->SetX(20);
+                $this->SetFont('Arial','',6);
                 $this->MultiCell(180,4,utf8_decode($this->observaciones),0,1);
 
                 $this->RoundedRect(13, 250, 187, 30, 1, '1234', 'D');
                 $this->SetXY(13,250);
-                $this->SetFont('Arial','',8);
+                $this->SetFont('Arial','',7);
                 $this->Cell(140,6,"MOTIVO DEL TRASLADO",0,1,"C");
                 $this->SetFont('Arial','',6);
                 $this->SetXY(15,256);
@@ -248,7 +258,7 @@
                 $this->Cell(187,6,"** SOMOS AGENTE DE RETENCION DEL IGV DE ACUERDO A R.S. 225 2000",0,1,"C");
                 
                 $this->setTextColor(255,0,0);
-                $this->Cell(187,6,$this->tipo_guia[$this->tipo],0,1,"R");
+                $this->Cell(187,6,$this->tipo_guia[2],0,1,"R");
             }
         }
     
