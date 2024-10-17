@@ -166,8 +166,6 @@
     
             function Footer(){
                 $this->SetFillColor(229, 229, 229);
-                
-                //$this->SetXY(30,230);
 
                 $qrsunat = "20504898173-09-T001-".$this->nguia.".png";
 

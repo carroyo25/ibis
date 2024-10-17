@@ -537,19 +537,19 @@
                                                         alm_existencia.condicion,
                                                         alm_existencia.vence,
                                                         alm_existencia.idreg,
-                                                        tb_pedidodet.docEspec,
-	                                                    lg_ordencab.cnumero 
+                                                        tb_pedidodet.docEspec/*,
+	                                                    lg_ordencab.cnumero */
                                                     FROM
                                                         alm_existencia
                                                         LEFT JOIN cm_producto ON alm_existencia.codprod = cm_producto.id_cprod
                                                         LEFT JOIN tb_pedidodet ON alm_existencia.idpedido = tb_pedidodet.iditem
                                                         LEFT JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
                                                         LEFT JOIN tb_area ON alm_existencia.area_solicita = tb_area.ncodarea
-                                                        LEFT JOIN lg_ordendet ON tb_pedidodet.iditem = lg_ordendet.niddeta
-                                                        LEFT JOIN lg_ordencab ON lg_ordendet.id_regmov = lg_ordencab.id_regmov   
+                                                        /*LEFT JOIN lg_ordendet ON tb_pedidodet.iditem = lg_ordendet.niddeta
+                                                        LEFT JOIN lg_ordencab ON lg_ordendet.id_regmov = lg_ordencab.id_regmov */  
                                                     WHERE
                                                         alm_existencia.idregistro = :id
-                                                        AND (ISNULL(lg_ordendet.nEstadoReg) OR lg_ordendet.nEstadoReg != 105)");
+                                                        /*AND (ISNULL(lg_ordendet.nEstadoReg) OR lg_ordendet.nEstadoReg != 105)*/");
                 $sql->execute(["id"=>$indice]);
 
                 $rowCount = $sql->rowCount();
@@ -573,7 +573,7 @@
                                         <td class="textoCentro">'.$rs['condicion'].'</td>
                                         <td class="pl20px">'.$rs['ubicacion'].'</td>
                                         <td class="textoCentro">'.$rs['pedido'].'</td>
-                                        <td class="textoCentro">'.$rs['cnumero'].'</td>
+                                        <td class="textoCentro"></td>
                                         <td class="textoCentro"></td>
                                         <td class="textoCentro"><a href="'.$rs['docEspec'].'">'.$icono.'</a></td>
                                     </tr>';

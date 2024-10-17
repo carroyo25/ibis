@@ -2159,7 +2159,7 @@
                                             <!--  UBIGEO DE LLEGADA  -->
                                             <cbc:ID schemeName="Ubigeos" schemeAgencyName="PE:INEI">'.$header->ubig_destino.'</cbc:ID>
                                             <!--  CODIGO DE ESTABLECIMIENTO ANEXO DE LLEGADA  -->
-                                            <cbc:AddressTypeCode listID="'.$header->ruc_entidad_destino.'" listAgencyName="PE:SUNAT" listName="Establecimientos anexos">22</cbc:AddressTypeCode>
+                                            <cbc:AddressTypeCode listID="'.$header->ruc_entidad_destino.'" listAgencyName="PE:SUNAT" listName="Establecimientos anexos">0</cbc:AddressTypeCode>
                                             <!--  DIRECCION COMPLETA Y DETALLADA DE LLEGADA  -->
                                             <cac:AddressLine>
                                                 <cbc:Line>'.utf8_encode($header->almacen_destino_direccion).'</cbc:Line>
@@ -2171,7 +2171,7 @@
                                                 <!-- UBIGEO DE PARTIDA -->
                                                 <cbc:ID schemeName="Ubigeos" schemeAgencyName="PE:INEI">'.$header->ubig_origen.'</cbc:ID>
                                                 <!-- CODIGO DE ESTABLECIMIENTO ANEXO DE PARTIDA -->
-                                                <cbc:AddressTypeCode listID="20504898173" listAgencyName="PE:SUNAT" listName="Establecimientos anexos">'.$header->cso.'</cbc:AddressTypeCode>
+                                                <cbc:AddressTypeCode listID="20504898173" listAgencyName="PE:SUNAT" listName="Establecimientos anexos">8</cbc:AddressTypeCode>
                                                 <!-- DIRECCION COMPLETA Y DETALLADA DE PARTIDA -->
                                                 <cac:AddressLine>
                                                     <cbc:Line>'.utf8_encode($header->almacen_origen_direccion).'</cbc:Line>
