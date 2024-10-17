@@ -437,6 +437,7 @@ $(function(){
         }
     });
 
+    //aca modificamos para que confirme el ingreso 
     $("#btnPendientes, #btnTotales").click(function (e) { 
         e.preventDefault();
 
