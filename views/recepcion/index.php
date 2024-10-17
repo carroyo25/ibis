@@ -248,6 +248,15 @@
             </div>
         </div>
     </div>
+    <div class="modal" id="preguntaGraba">
+        <div class="ventanaPregunta">
+            <h3>¿Los datos ingresados son correctos?</h3>
+            <div>
+                <button type="button" id="btnAceptarGrabar">Aceptar</button>
+                <button type="button" id="btnCancelarGrabar">Cancelar</button>
+            </div>
+        </div>
+    </div>
     <div class="modal" id="vistaAdjuntos">
         <div class="ventanaAdjuntos">
             <div class="tituloAdjuntos">
