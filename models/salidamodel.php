@@ -695,7 +695,7 @@
                                                             ' ',
                                                             tb_area.ccodarea,
                                                         UPPER( tb_area.cdesarea )) AS area,
-                                                        cm_entidad.crazonsoc 
+                                                        UPPER( cm_entidad.crazonsoc ) AS crazonsoc 
                                                     FROM
                                                         tb_costusu
                                                         INNER JOIN lg_ordencab ON tb_costusu.ncodproy = lg_ordencab.ncodpry

@@ -455,49 +455,37 @@ $(function(){
             if (result['codigo_almacen'] == '') throw "Elija el Almacen";
             if (result['codigo_aprueba'] == '') throw "Elija la persona que aprueba";
             if (result['guia'] == '') throw "Escriba el número de guia";
+
             if (verificarCantidadesInput()) throw "Verifique las cantidades ingresadas";
             if (detalles(tipoVista).length == 0) throw "No hay items que procesar";
 
-            if (accion == "n") {
-                $.post(RUTA+"recepcion/nuevoIngreso", {cabecera:result,
-                    detalles:JSON.stringify(detalles(tipoVista)),
-                    series:JSON.stringify(series())},
-                        function (data, textStatus, jqXHR) {
-                            $("#codigo_ingreso").val(data.indice);
-                            mostrarMensaje("Nota Grabada","mensaje_correcto");
-                            $("#tablaPrincipal tbody")
-                                .empty()
-                                .append(data.listado);
-                            
-                            accion = "";
-                            grabado = true;
-                            tipoVista = "";
+            $("#itemSeleccion").text( detalles(tipoVista).length );
 
-                            $(".primeraBarra").css("background","#819830");
-                            $(".primeraBarra span").text('Datos Generales ... Grabado');
-                        },
-                        "json"
-                    );
-            }else if(accion == "u"){
-                $.post(RUTA+"recepcion/modificarRegistro",  {cabecera:result,
-                    detalles:JSON.stringify(detalles(true))},
-                    function (data, textStatus, jqXHR) {
-                        mostrarMensaje("Nota Modificada","mensaje_correcto");
-                        
-                        accion = "";
-                        grabado = true;
-                        tipoVista = "";
-                    },
-                    "json"
-                );
-            }
-
-            accion = "";
+            $("#preguntaGraba").fadeIn();
 
         } catch (error) {
-            mostrarMensaje(error,'mensaje_error');
+             mostrarMensaje(error,'mensaje_error');
         }
+
+        return false;
+    });
+
+    $("#btnAceptarGrabar").click(function (e) { 
+        e.preventDefault();
+
+       
+        $("#preguntaGraba").fadeOut();
         
+        grabarDetalles(tipoVista,accion);
+
+        return false;
+    });
+
+    $("#btnCancelarGrabar").click(function (e) { 
+        e.preventDefault();
+
+        $("#preguntaGraba").fadeOut();
+
         return false;
     });
 
@@ -760,4 +748,53 @@ verificarCantidadesInput = () =>{
     })
 
     return errorCantidad;
+}
+
+grabarDetalles = (tipoVista,accion) => {
+    try {
+
+        let result = {};
+
+        $.each($("#formProceso").serializeArray(),function(){
+            result[this.name] = this.value;
+        });
+
+        if (accion == "n") {
+            $.post(RUTA+"recepcion/nuevoIngreso", {cabecera:result,
+                detalles:JSON.stringify(detalles(tipoVista)),
+                series:JSON.stringify(series())},
+                    function (data, textStatus, jqXHR) {
+                        $("#codigo_ingreso").val(data.indice);
+                        mostrarMensaje("Nota Grabada","mensaje_correcto");
+                        $("#tablaPrincipal tbody")
+                            .empty()
+                            .append(data.listado);
+                        
+                        accion = "";
+                        grabado = true;
+                        tipoVista = "";
+                        $(".primeraBarra").css("background","#819830");
+                        $(".primeraBarra span").text('Datos Generales ... Grabado');
+                    },
+                    "json"
+                );
+        }else if(accion == "u"){
+                $.post(RUTA+"recepcion/modificarRegistro",  {cabecera:result,
+                    detalles:JSON.stringify(detalles(true))},
+                    function (data, textStatus, jqXHR) {
+                        mostrarMensaje("Nota Modificada","mensaje_correcto");
+                        
+                        accion = "";
+                        grabado = true;
+                        tipoVista = "";
+                    },
+                    "json"
+                );
+            }
+
+            accion = "";
+
+        } catch (error) {
+            mostrarMensaje(error,'mensaje_error');
+    }
 }

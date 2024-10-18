@@ -250,7 +250,8 @@
     </div>
     <div class="modal" id="preguntaGraba">
         <div class="ventanaPregunta">
-            <h3>¿Los datos ingresados son correctos?</h3>
+            <h3>¿Los items seleccionados son correctos?</h3>
+            <h4 id="itemSeleccion"></h4>
             <div>
                 <button type="button" id="btnAceptarGrabar">Aceptar</button>
                 <button type="button" id="btnCancelarGrabar">Cancelar</button>
