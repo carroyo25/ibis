@@ -50,6 +50,24 @@ $(function() {
 
         return false;
     });
+
+    $("#excelFile").click(function(e){
+        e.preventDefault();
+
+        $("#esperar").css("opacity","1").fadeIn();
+
+        $.post(RUTA+"cargoplan/crearExcelPrecio",
+            function (data, textStatus, jqXHR) {
+
+                $("#esperar").css("opacity","0").fadeOut();
+                window.location.href = data.documento;
+                
+            },
+            "json"
+        );
+
+        return false;
+    });
 })
 
 detalles = () =>{

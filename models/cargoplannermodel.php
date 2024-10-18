@@ -193,6 +193,13 @@
                             $transporte = $rs['nidreg'] == 39 ? "TERRESTRE": $rs['transporte'];
 
                             $atencion = $rs['atencion'] == 47 ? "NORMAL" : "URGENTE"; 
+
+                            $aprobado=0;
+
+                            $aprobado = $rs['cantidad_aprobada'] == 0 ? $rs['cantidad_pedido']:$rs['cantidad_aprobada'];
+                            $aprobado_final = $aprobado-$rs['cantidad_atendida'] < 0 ? 0 : $aprobado-$rs['cantidad_atendida'];
+
+                            $equal = round($suma_atendido,2) === round($aprobado,2) ? true : false;
                            
                             if ( $rs['estadoItem'] == 105 ) {
                                 $porcentaje = "0%";
@@ -269,7 +276,7 @@
                                 $estadofila = "item_ingreso_parcial";
                                 $estado_item = "atendido";
                                 $estado_pedido = "atendido";
-                            }else if ( $rs['ingreso_obra'] && round($suma_atendido,2) === round($rs['cantidad_aprobada'],2)) {
+                            }else if ( $rs['ingreso_obra'] && round($suma_atendido,2) === round($aprobado,2)) {
                                 $porcentaje = "100%";
                                 $estadofila = "entregado";
                                 $estado_item = "atendido";
@@ -340,10 +347,7 @@
                                 $semaforo = "Anulado";
                             }
 
-                            $aprobado=0;
-
-                            $aprobado = $rs['cantidad_aprobada'] == 0 ? $rs['cantidad_pedido']:$rs['cantidad_aprobada'];
-                            $aprobado_final = $aprobado-$rs['cantidad_atendida'] < 0 ? 0 : $aprobado-$rs['cantidad_atendida'];
+                           
 
                             $salida.='<tr class="pointer" 
                                         data-itempedido="'.$rs['iditem'].'" 
@@ -353,8 +357,8 @@
                                         data-producto="'.$rs['idprod'].'"
                                         data-aprueba="'.$rs['cnombres'].'"
                                         data-despacho="'.$rs['id_regalm'].'"
-                                        data-porcentaje="'.$porcentaje.'">
-                                        <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
+                                        data-porcentaje="'.$rs['ingreso_obra'].'">
+                                        <td class="textoCentro">'.$equal.'</td>
                                         <td class="textoCentro '.$estadofila.'">'.$porcentaje.'</td>
                                         <td class="textoDerecha pr15px">'.$rs['ccodproy'].'</td>
                                         <td class="pl20px">'.$rs['area'].'</td>
