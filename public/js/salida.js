@@ -60,12 +60,13 @@ $(function() {
                 $("#ubig_origen").val(data.cabecera[0].ubigeo_origen);
                 $("#ubig_destino").val(data.cabecera[0].ubigeo_destino);
 
+                $("#ubigeo_origen_guia").val(data.cabecera[0].ubigeo_origen);
+                $("#ubigeo_destino_guia").val(data.cabecera[0].ubigeo_destino);
+
                 //guias
 
                 if (data.guias.length == 1) {
                     $("#id_guia").val(data.guias[0].idreg);
-                    $("#ubigeo_origen_guia").val(data.cabecera[0].ubigeo_origen);
-                    $("#ubigeo_destino_guia").val(data.cabecera[0].ubigeo_destino);
                     $("#numero_guia").val(data.guias[0].cnumguia);
                     $("#fgemision").val(data.cabecera[0].ffecdoc);
                     $("#ftraslado").val(data.cabecera[0].ffecenvio);
@@ -348,8 +349,6 @@ $(function() {
         cc = $(this).data("idcosto");
 
         let orden = $(this).find('td').eq(0).text();
-
-        console.log(orden);
 
         try {
             if ( $("#codigo_costos").val() != cc && $("#codigo_costos").val() != "" ) throw new Error("Los orden es de otro centro de costos");

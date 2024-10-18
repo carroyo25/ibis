@@ -35,8 +35,8 @@
                                                         UPPER( tb_proyectos.cdesproy ) AS proyecto,
                                                         UPPER( tb_area.cdesarea ) AS area,
                                                         LPAD(lg_ordencab.cnumero,6,0) AS orden,
-                                                        LPAD(tb_pedidocab.nrodoc,6,0 ) pedido,
-                                                        cm_entidad.crazonsoc
+                                                        LPAD(tb_pedidocab.nrodoc,6,0 ) AS pedido,
+                                                        UPPER(cm_entidad.crazonsoc) AS crazonsoc 
                                                     FROM
                                                         tb_costusu
                                                         INNER JOIN alm_recepcab ON tb_costusu.ncodproy = alm_recepcab.ncodpry
