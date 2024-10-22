@@ -938,7 +938,7 @@
                                                     cm_entidad.id_centi, 
                                                     UPPER(cm_entidad.crazonsoc) AS crazonsoc, 
                                                     cm_entidad.cnumdoc,
-                                                    cm_entidad.cviadireccion,
+                                                    UPPER(cm_entidad.cviadireccion) AS cviadireccion,
                                                     cm_entidad.cdigcateg
                                                 FROM
                                                     cm_entidad

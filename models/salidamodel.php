@@ -1303,7 +1303,28 @@
             //var_dump($respuesta_ticket);
 
             if ( $header->tipo_documento == 1 && $header->ticket_sunat == "" ) {
-                $this->actualizarTicketNumeroSunat($header->numero_guia,$numero_ticket,$header->numero_guia_sunat,$respuesta_ticket['ticket_rpta'],$respuesta_ticket['cdr_msj_sunat']);
+                $this->actualizarTicketNumeroSunat($header->numero_guia,
+                                                    $numero_ticket,
+                                                    $header->numero_guia_sunat,
+                                                    $respuesta_ticket['ticket_rpta'],
+                                                    $respuesta_ticket['cdr_msj_sunat'],
+                                                    $header->placa,
+                                                    $licencia_conducir,
+                                                    $header->observaciones,
+                                                    $header->codigo_entidad_transporte,
+                                                    $header->codigo_modalidad,
+                                                    $header->codigo_transporte,
+                                                    $header->conductor_dni);
+            }elseif( $header->tipo_documento == 1 && $header->ticket_sunat != "" ) {
+                $this->completarDatosGuia($header->numero_guia,
+                                          $header->placa,
+                                          $header->licencia_conducir,
+                                          $header->observaciones,
+                                          $header->codigo_entidad_transporte,
+                                          $header->codigo_modalidad,
+                                          $header->codigo_transporte,
+                                          $header->conductor_dni
+                                        );
             }
 
             return array("archivo" =>$nombre_archivo,"ticket" =>$numero_ticket, "respuesta"=>$respuesta_ticket['ticket_rpta'], "mensaje"=>$respuesta_ticket['cdr_msj_sunat']);
@@ -1550,16 +1571,50 @@
             }
         }
 
-        private function actualizarTicketNumeroSunat($guiainterna,$ticket,$guiaSunat,$codigo_respuesta,$mensaje){
+        private function actualizarTicketNumeroSunat($guiainterna,$ticket,$guiaSunat,$codigo_respuesta,$mensaje,$placa,$licencia,$observaciones,$entidad,$modalidad,$transporte,$dni){
             try {
                 $sql = $this->db->connect()->prepare("UPDATE lg_guias 
                                                       SET lg_guias.ticketsunat  = :ticket, 
                                                           lg_guias.guiasunat    = :guiaSunat,
                                                           lg_guias.estadoSunat  = :respuesta,
-                                                          lg_guias.cmotivo      = :mensaje
+                                                          lg_guias.cmotivo      = :mensaje,
+                                                          lg_guias.cplaca       = :placa
                                                       WHERE lg_guias.cnumguia   = :guiainterna");
 
-                $sql->execute(["guiainterna"=>$guiainterna,"ticket"=>$ticket,"guiaSunat"=>$guiaSunat,"respuesta"=>$codigo_respuesta,"mensaje"=>$mensaje]);
+                $sql->execute(["guiainterna"    =>$guiainterna,
+                                "ticket"        =>$ticket,
+                                "guiaSunat"     =>$guiaSunat,
+                                "respuesta"     =>$codigo_respuesta,
+                                "mensaje"       =>$mensaje,
+                                "cplaca"        =>$placa]);
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function completarDatosGuia($guiainterna,$placa,$licencia,$observaciones,$entidad,$modalidad,$transporte,$dni){
+            try {
+                $sql = $this->db->connect()->prepare("UPDATE lg_guias 
+                                                      SET   lg_guias.cplaca         = :placa,
+                                                            lg_guias.clicencia      = :licencia,
+                                                            lg_guias.cobserva       = :observaciones,
+                                                            lg_guias.identi         = :entidad,
+                                                            lg_guias.tipotranspo    = :transporte,
+                                                            lg_guias.tipomovil      = :modalidad,
+                                                            lg_guias.nDniConductor  = :dni
+
+                                                      WHERE  lg_guias.cnumguia  = :guiainterna");
+
+                $sql->execute(["guiainterna"    =>$guiainterna,
+                                "placa"         =>$placa,
+                                "licencia"      =>$licencia,
+                                "observaciones" =>$observaciones,
+                                "entidad"       =>$entidad,
+                                "modalidad"     =>$modalidad,
+                                "transporte"    =>$transporte,
+                                "dni"           =>$dni]);
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
