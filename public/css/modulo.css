@@ -2356,8 +2356,31 @@
           justify-content: space-between;
   padding: 1rem;
 }
+.ventanaDocumento .tituloDocumento div:first-child {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 1fr 0.3rem 1fr 0.3rem 1fr;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.3rem;
+  border: 1px solid;
+  padding: 0.5rem;
+  -webkit-box-shadow: 2px 3px 5px #c2c2c2;
+          box-shadow: 2px 3px 5px #c2c2c2;
+  border-radius: 0.5rem;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+.ventanaDocumento .tituloDocumento div:first-child input {
+  width: 100%;
+}
 .ventanaDocumento .tituloDocumento p {
   display: inline-block;
+}
+.ventanaDocumento .tituloDocumento a {
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
 }
 .ventanaDocumento .dos_columnas {
   padding: 1rem;

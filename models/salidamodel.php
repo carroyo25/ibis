@@ -1274,7 +1274,7 @@
             if ( $header->tipo_documento == 1 ) {
                 $nombre_archivo = $header->destinatario_ruc.'-09-T001-'.$header->numero_guia_sunat;
             }else {
-                $nombre_archivo = $header->destinatario_ruc.'-31-V001-'.$header->numero_guia_sunat;
+                $nombre_archivo = $header->destinatario_ruc.'-31-V001-'.$header->numero_guia_transporte;
             }
 
             $token_access = $this->token('d12d8bf5-4b57-4c57-9569-9072b3e1bfcd', 'iLMGwQBEehJMXQ+Z/LR2KA==', '20504898173SISTEMA1', 'Lima123');
@@ -2626,7 +2626,6 @@
             try {
                 $serie  = 'T001';
                 $serie_transporte   = 'V001';
-                $numero_transporte  = '0001';
 
                 $xml =  '<?xml version="1.0" encoding="UTF-8"?>';
                 $xml .= '<DespatchAdvice xmlns="urn:oasis:names:specification:ubl:schema:xsd:DespatchAdvice-2" 
@@ -2641,7 +2640,7 @@
                                     </ext:UBLExtensions>
                                     <cbc:UBLVersionID>2.1</cbc:UBLVersionID>
                                     <cbc:CustomizationID>2.0</cbc:CustomizationID>
-                                    <cbc:ID>'.$serie_transporte.'-'.$numero_transporte.'</cbc:ID>
+                                    <cbc:ID>'.$serie_transporte.'-'.$header->numero_guia_transporte.'</cbc:ID>
                                     <!--  FECHA Y HORA DE EMISION  -->
                                     <cbc:IssueDate>'.$header->fgemision.'</cbc:IssueDate>
                                     <cbc:IssueTime>'.date("H:i:s").'</cbc:IssueTime>
@@ -2649,12 +2648,12 @@
                                     <cbc:Note>'.$header->observaciones.'</cbc:Note>
                                     <!--  DOCUMENTOS ADICIONALES (Catalogo D41) -->
                                     <cac:AdditionalDocumentReference>
-                                        <cbc:ID></cbc:ID>
+                                        <cbc:ID>'.$serie.'-'.$header->numero_guia_sunat.'</cbc:ID>
                                         <cbc:DocumentTypeCode listAgencyName="PE:SUNAT" listName="Documento relacionado al transporte" listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo61">09</cbc:DocumentTypeCode>
                                         <cbc:DocumentType></cbc:DocumentType>
                                         <cac:IssuerParty>
                                         <cac:PartyIdentification>
-                                        <cbc:ID schemeID="6" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06"></cbc:ID>
+                                        <cbc:ID schemeID="6" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">20504898173</cbc:ID>
                                         </cac:PartyIdentification>
                                         </cac:IssuerParty>
                                     </cac:AdditionalDocumentReference>

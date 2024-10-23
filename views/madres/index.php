@@ -196,7 +196,6 @@
                         <p class="titulo_seccion"><strong> Guia de Remision Interna : </strong></p>
                         <input type="text" name="serie_guia" id="serie_guia" class="w10por" value="T001" readonly>
                         <input type="text" name="numero_guia" id="numero_guia" readonly>
-                        <br/><br/>
                         <p class="titulo_seccion"><strong> Guia de Remision Sunat : </strong></p>
                         <input type="text" name="serie_guia_sunat" id="serie_guia_sunat" class="w10por" value="T001" readonly>
                         <input type="text" name="numero_guia_sunat" id="numero_guia_sunat" readonly>

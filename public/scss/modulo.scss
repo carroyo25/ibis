@@ -2052,10 +2052,29 @@ $almacen:#27798F;
         display: flex;
         justify-content: space-between;
         padding: 1rem;
+        
+        div:first-child {
+            display: grid;
+            grid-template-columns: repeat(3 ,1fr);
+            gap: .3rem;
+            border: 1px solid;
+            padding: .5rem;
+            box-shadow: 2px 3px 5px #c2c2c2;
+            border-radius: .5rem;
+            align-items: center;
+
+            input{
+                width: 100%;
+            }
+        }
 
         p {
             display:inline-block;
-        }  
+        }
+        
+        a{
+            height: fit-content;
+        }
     }
 
     .dos_columnas{
