@@ -630,13 +630,16 @@
                     $pdf->SetX(13);
 
                     $serie = $datos[$rc]->serie == "" ? "" : ' S/N : '.$datos[$rc]->serie;
+                    $parte = $datos[$rc]->parte == "" ? "" : ' PARTE : '.$datos[$rc]->parte;
+                    $observa = $datos[$rc]->observac == "" ? "" : ' OBSERVACIONES : '.$datos[$rc]->observac;
+                    $destino = $datos[$rc]->destino == "" ? "" : 'DESTINO : '.$datos[$rc]->destino;
 
                     $pdf->SetAligns(array("R","R","C","L"));
                     if ($cantidad > 0){
                          $pdf->Row(array(str_pad($item++,3,"0",STR_PAD_LEFT),
                                         $cantidad,
                                         $datos[$rc]->unidad,
-                                        utf8_decode($datos[$rc]->codigo .' '. $datos[$rc]->descripcion  . $serie)));
+                                        utf8_decode($datos[$rc]->codigo .' '. $datos[$rc]->descripcion  . $serie .' '.$parte.' '. $observa .' '. $destino)));
                     }
                    
                     $lc++;
