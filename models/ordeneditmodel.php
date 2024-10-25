@@ -795,7 +795,8 @@
                                                         lg_ordencab.nfirmaOpe,
                                                         LPAD( tb_pedidocab.nrodoc, 6, 0 ) AS nrodoc,
                                                         ( SELECT SUM( lg_ordendet.nunitario * lg_ordendet.ncanti ) FROM lg_ordendet WHERE lg_ordendet.id_orden = lg_ordencab.id_regmov ) AS total_multiplicado,
-                                                        UPPER(lg_ordenextras.cdescription) AS condiciones
+                                                        UPPER(lg_ordenextras.cdescription) AS condiciones,
+                                                        UPPER( tb_user.cnameuser ) AS usuario
                                                     FROM
                                                         lg_ordencab
                                                         INNER JOIN tb_pedidocab ON lg_ordencab.id_refpedi = tb_pedidocab.idreg
@@ -811,6 +812,7 @@
                                                         INNER JOIN tb_almacen ON lg_ordencab.ncodalm = tb_almacen.ncodalm
                                                         INNER JOIN lg_ordendet ON lg_ordencab.id_regmov = lg_ordendet.id_regmov
                                                         LEFT JOIN lg_ordenextras ON lg_ordencab.id_regmov = lg_ordenextras.idorden
+                                                        LEFT JOIN tb_user ON lg_ordencab.id_cuser = tb_user.iduser 
                                                     WHERE
                                                         lg_ordencab.id_regmov = :id 
                                                         AND lg_ordencab.nflgactivo = 1 

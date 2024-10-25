@@ -8,6 +8,7 @@ $(function(){
         autorizado = 0,
         costos = "",
         fp = 0,
+        idorden = 0,
         datafiltro = "";
 
     var grabado  = false;
@@ -76,6 +77,7 @@ $(function(){
                 $("#ncotiz").val(data.cabecera[0].cnumcot);
                 $("#tcambio").val(data.cabecera[0].ntcambio);
                 $("#user_modifica").val(data.cabecera[0].userModifica);
+                $("#user_genera").val(data.cabecera[0].usuario);
                 $("#nro_pedido").val(data.cabecera[0].nrodoc);
                 $("#total_adicional").val(data.total_adicionales);
                 $("#oa").val(adicionales);
@@ -152,25 +154,16 @@ $(function(){
         e.preventDefault();
 
         try {
-            let formData  = new FormData(),
-            atencion    = $(this).closest('tr').attr("data-atencion"),
-            procura     = $(this).closest('tr').attr("data-logistica"),
-            operaciones = $(this).closest('tr').attr("data-operaciones"),
-            finanzas    = $(this).closest('tr').attr("data-finanzas"),
-            firmas      = procura == 1 && operaciones == 1 && finanzas == 1;
+            let atencion    = $(this).closest('tr').attr("data-atencion"),
+                procura     = $(this).closest('tr').attr("data-logistica"),
+                operaciones = $(this).closest('tr').attr("data-operaciones"),
+                finanzas    = $(this).closest('tr').attr("data-finanzas"),
+                firmas      = procura == 0 || operaciones == 0 || finanzas == 0;
 
-            if ( atencion == 47 || firmas ) throw new Error("La orden esta en firmas"); 
-
-            formData.append("id",$(this).attr("href"));
-
-            fetch(RUTA+'orden/descargaRapida',{
-                method: "POST",
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                DownloadFromUrl(data.ruta, data.archivo);
-            });
+            if ( atencion == 47 && firmas ) throw new Error("La orden esta en firmas");
+            
+            idorden = $(this).attr("href");
+            $("#preguntaDescarga").fadeIn();
 
         } catch (error) {
             mostrarMensaje(error.message,"mensaje_error");
@@ -179,6 +172,20 @@ $(function(){
         return false;
     });
 
+    $("#btnAceptarDescarga").click(function(e){
+        e.preventDefault();
+
+        $("#preguntaDescarga").fadeOut();
+        createPdf(idorden)
+        
+        return false;
+    });
+
+    $("#btnCancelarDescarga").click(function(e){
+        e.preventDefault();
+        $("#preguntaDescarga").fadeOut();
+        return false;
+    });
 
     $("#nuevoRegistro").click(function (e) { 
         e.preventDefault();
@@ -1280,7 +1287,23 @@ function DownloadFromUrl(fileURL, fileName) {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-  } 
+}
+
+
+function createPdf(id){
+    let formData = new FormData();
+    
+    formData.append("id",id);
+
+    fetch(RUTA+'orden/descargaRapida',{
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        DownloadFromUrl(data.ruta, data.archivo);
+    });
+}
 
 
 

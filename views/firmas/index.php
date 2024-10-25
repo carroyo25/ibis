@@ -44,6 +44,7 @@
                     <input type="hidden" name="transporte" id="transporte">
                     <input type="hidden" name="nro_pedido" id="nro_pedido">
                     <input type="hidden" name="user_modifica" id="user_modifica">
+                    <input type="hidden" name="user_genera" id="user_genera">
                     <input type="hidden" name="ncotiz" id="ncotiz">
                     <input type="hidden" name="direccion_almacen" id="direccion_almacen">
                     <input type="hidden" name="radioIgv" id="radioIgv">

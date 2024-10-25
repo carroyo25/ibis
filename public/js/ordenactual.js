@@ -81,6 +81,7 @@ $(() => {
             tr.dataset.finanzas = i.finanzas;
             tr.dataset.logistica = i.logistica;
             tr.dataset.operaciones = i.operaciones;
+            tr.dataset.usuario = i.usuario;
 
             body.appendChild(tr);
         })
@@ -156,6 +157,7 @@ $(() => {
                 $("#referencia").val(data.cabecera[0].cReferencia);
                 $("#dias").val(data.cabecera[0].nplazo);
                 $("#user_modifica").val(data.cabecera[0].userModifica);
+                $("#user_genera").val(data.cabecera[0].usuario);
 
                 $("#estado")
                     .removeClass()
@@ -220,7 +222,7 @@ $(() => {
                     $("#vistaprevia").fadeIn();
                 },
                 "text"
-            );
+        );
 
         return false;
     });

@@ -65,6 +65,8 @@ $(function() {
                 $("#total_numero").val(data.cabecera[0].total_multiplicado);
                 $("#pedidopdf").val(data.cabecera[0].docPdfAprob);
                 $("#total_adicional").val(data.total_adicionales);
+
+                $("#user_genera").val(data.cabecera[0].usuario);
                 
                 if (data.bocadillo != 0) {
                     $(".button__comment")

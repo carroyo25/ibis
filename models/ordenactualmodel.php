@@ -41,7 +41,8 @@
                                                         IF(ISNULL(lg_ordencab.nfirmaFin),0,1) AS finanzas,
                                                         IF(ISNULL(lg_ordencab.nfirmaOpe),0,1) AS operaciones,
                                                         IF(lg_ordencab.nEstadoDoc = 59,'resaltado_firma','-') AS resaltado,
-                                                        estados.cdescripcion AS estado 
+                                                        estados.cdescripcion AS estado,
+                                                        UPPER( tb_user.cnameuser ) AS usuario 
                                                     FROM
                                                         tb_costusu
                                                         INNER JOIN lg_ordencab ON tb_costusu.ncodproy = lg_ordencab.ncodpry
@@ -50,7 +51,8 @@
                                                         INNER JOIN tb_proyectos ON lg_ordencab.ncodpry = tb_proyectos.nidreg
                                                         INNER JOIN tb_parametros ON lg_ordencab.nNivAten = tb_parametros.nidreg
                                                         INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
-                                                        INNER JOIN tb_parametros AS estados ON lg_ordencab.nEstadoDoc = estados.nidreg 
+                                                        INNER JOIN tb_parametros AS estados ON lg_ordencab.nEstadoDoc = estados.nidreg
+                                                        LEFT JOIN tb_user ON lg_ordencab.id_cuser = tb_user.iduser 
                                                     WHERE
                                                         tb_costusu.id_cuser = :user 
                                                         AND tb_costusu.nflgactivo = 1

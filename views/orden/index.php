@@ -19,6 +19,15 @@
             </div>
         </div>
     </div>
+    <div class="modal" id="preguntaDescarga">
+        <div class="ventanaPregunta">
+            <h3>¿Descargar Orden?</h3>
+            <div>
+                <button type="button" id="btnAceptarDescarga">Aceptar</button>
+                <button type="button" id="btnCancelarDescarga">Cancelar</button>
+            </div>
+        </div>
+    </div>
     <div class="modal" id="proceso">
         <div class="ventanaProceso w75por">
             <div class="cabezaProceso">
@@ -54,6 +63,7 @@
                     <input type="hidden" name="detalle" id="detalle">
                     <input type="hidden" name="total_numero" id="total_numero">
                     <input type="hidden" name="user_modifica" id="user_modifica">
+                    <input type="hidden" name="user_genera" id="user_genera">
                     <input type="hidden" name="nro_pedido" id="nro_pedido">
                     <input type="hidden" name="total_adicional" id="total_adicional" value=0>
                     <input type="hidden" name="total" id="total">

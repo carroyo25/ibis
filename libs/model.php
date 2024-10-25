@@ -2663,7 +2663,8 @@
                                                         lg_ordencab.nfirmaOpe,
                                                         LPAD( tb_pedidocab.nrodoc, 6, 0 ) AS nrodoc,
                                                         ( SELECT SUM( lg_ordendet.nunitario * lg_ordendet.ncanti ) FROM lg_ordendet WHERE lg_ordendet.id_orden = lg_ordencab.id_regmov ) AS total_multiplicado,
-                                                        UPPER(lg_ordenextras.cdescription) AS condiciones
+                                                        UPPER(lg_ordenextras.cdescription) AS condiciones,
+                                                        UPPER( tb_user.cnameuser ) AS usuario 
                                                     FROM
                                                         lg_ordencab
                                                         INNER JOIN tb_pedidocab ON lg_ordencab.id_refpedi = tb_pedidocab.idreg
@@ -2674,11 +2675,12 @@
                                                         INNER JOIN tb_parametros AS pagos ON lg_ordencab.ncodpago = pagos.nidreg
                                                         INNER JOIN tb_parametros AS estados ON lg_ordencab.nEstadoDoc = estados.nidreg
                                                         INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
-                                                        INNER JOIN cm_entidadcon ON cm_entidad.id_centi = cm_entidadcon.id_centi
+                                                        LEFT JOIN cm_entidadcon ON cm_entidad.id_centi = cm_entidadcon.id_centi
                                                         INNER JOIN tb_parametros AS transportes ON lg_ordencab.ctiptransp = transportes.nidreg
                                                         INNER JOIN tb_almacen ON lg_ordencab.ncodalm = tb_almacen.ncodalm
                                                         INNER JOIN lg_ordendet ON lg_ordencab.id_regmov = lg_ordendet.id_regmov
                                                         LEFT JOIN lg_ordenextras ON lg_ordencab.id_regmov = lg_ordenextras.idorden
+                                                        LEFT JOIN tb_user ON lg_ordencab.id_cuser = tb_user.iduser 
                                                     WHERE
                                                         lg_ordencab.id_regmov = :id 
                                                         AND lg_ordencab.nflgactivo = 1 
@@ -3287,7 +3289,7 @@
 
             $pdf = new PDF($titulo,$condicion,$cabecera['emision'],$cabecera['moneda'],$cabecera['dias'] ." dias",
                             $cabecera['lentrega'],$cabecera['ncotiz'],$cabecera['fentrega'],$cabecera['cpago'],$cabecera['total'],
-                            $cabecera['costos'],$cabecera['concepto'],$_SESSION['nombres'],$cabecera['entidad'],$cabecera['ruc_entidad'],
+                            $cabecera['costos'],$cabecera['concepto'],$cabecera['user_genera'],$cabecera['entidad'],$cabecera['ruc_entidad'],
                             $cabecera['direccion_entidad'],$cabecera['telefono_entidad'],$cabecera['correo_entidad'],$cabecera['retencion'],
                             $cabecera['atencion'],$cabecera['telefono_contacto'],$cabecera['correo_contacto'],
                             $cabecera['direccion_almacen'],$cabecera['referencia'],$cabecera['procura'],$cabecera['finanzas'],$cabecera['operaciones'],
@@ -3797,22 +3799,36 @@
 
             $pdf->Output($filename,'F');
 
+            $firmas = intval($datosOrden[0]['nfirmaLog'])+intval($datosOrden[0]['nfirmaFin'])+intval($datosOrden[0]['nfirmaOpe']);
+            $id = $datosOrden[0]['id_regmov'];
+            $cambio = 60;
+
+            if ( $datosOrden[0]['nNivAten'] == 46 && $firmas == 3 ){
+                $cambio = 60;
+            }else {
+                $cambio = 59;
+            }
+            
+            if ( $datosOrden[0]['nNivAten'] == 47 && $firmas == 3 ){
+                $cambio = 60;
+            }
+
             return array("ruta"=>$filename,"archivo"=>$file);
         }
 
-        private function ordenCabeceraActualiza($id){
+        private function ordenCabeceraActualiza($id,$estado){
 
         }
 
-        private function detallesOrdenActualiza($id){
+        private function detallesOrdenActualiza($id,$estado){
 
         }
 
-        private function pedidoCabeceraActualiza($pedido){
+        private function pedidoCabeceraActualiza($pedido,$estado){
 
         }
 
-        private function detallesPedidoActualiza($pedido){
+        private function detallesPedidoActualiza($pedido,$estado){
 
         }
 
