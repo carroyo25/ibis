@@ -93,5 +93,9 @@
         function archivos(){
             echo json_encode($this->model->subirArchivos($_POST['codigo'],$_FILES));
         }
+
+        function descargaRapida(){
+            echo json_encode($this->model->descargarOrdenPrincipal($_POST['id']));
+        }
     }
 ?>

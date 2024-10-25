@@ -3515,6 +3515,7 @@
                 $detalles[$i]['pedido'],
                 "",
                 ""));
+
                 $lc++;
                 $rc++;
                                 
@@ -3587,6 +3588,232 @@
             $pdf->Output($filename,'F');
 
             return $filename;
+        }
+
+        /*ordenes de compradirectas*/
+        public function descargarOrdenPrincipal($id){
+            require_once("public/formatos/ordenes.php");
+
+            $datosOrden         = $this->cabeceraOrden($id);
+            $detalles           = $this->detallesOrden($id);
+
+            $bancos = $this->bancosProveedor($datosOrden[0]['id_centi']);
+
+            //verificar para el numero de orden
+            $sql = "SELECT COUNT(lg_ordencab.id_regmov) AS numero FROM lg_ordencab WHERE lg_ordencab.ncodcos =:cod";
+
+            $noc = $datosOrden[0]['cnumero'];
+            
+            if ($datosOrden[0]['ntipmov'] == "37") {
+                $titulo = "ORDEN DE COMPRA" ;
+
+                if ( $datosOrden[0]['userModifica'] != "" ) {
+                    $titulo = "ORDEN DE COMPRA - R1" ;
+                }
+
+                $prefix = "OC";
+                $tipo = "B";
+            }else{
+                $titulo = "ORDEN DE SERVICIO";
+
+                if ( $datosOrden[0]['userModifica'] != "" ) {
+                    $titulo = "ORDEN DE SERVICIO - R1" ;
+                }
+
+                $prefix = "OS";
+                $tipo = "S";
+            }
+            
+            $anio = explode("-",$datosOrden[0]['ffechadoc']);
+
+            $titulo = $titulo . " " .$anio[0]. " - " . $noc;
+            
+            $file = $datosOrden[0]['crazonsoc']."_".$prefix.$noc."_".$anio[0].".pdf";
+
+            $condicion = 3;
+
+            $pdf = new PDF($titulo,$condicion,$datosOrden[0]['ffechadoc'],$datosOrden[0]['nombre_moneda'],$datosOrden[0]['nplazo'] ." dias",
+                            $datosOrden[0]['cdesalm'],$datosOrden[0]['cnumcot'],$datosOrden[0]['ffechaent'],$datosOrden[0]['pagos'],$datosOrden[0]['ctotal'],
+                            $datosOrden[0]['costos'],$datosOrden[0]['concepto'],$datosOrden[0]['cnameuser'],$datosOrden[0]['crazonsoc'],$datosOrden[0]['cnumdoc'],
+                            $datosOrden[0]['cviadireccion'],$datosOrden[0]['ctelefono1'],$datosOrden[0]['mail_entidad'],$datosOrden[0]['nagenret'],
+                            $datosOrden[0]['cnombres'],$datosOrden[0]['ctelefono1'],$datosOrden[0]['mail_entidad'],
+                            $datosOrden[0]['direccion'],$datosOrden[0]['cReferencia'],$datosOrden[0]['nfirmaLog'],$datosOrden[0]['nfirmaFin'],$datosOrden[0]['nfirmaOpe'],
+                            $datosOrden[0]['ntipmov'],$datosOrden[0]['nNivAten']);
+
+            $pdf->AddPage();
+            $pdf->AliasNbPages();
+            $pdf->SetWidths(array(10,15,15,10,93,17,15,15));
+            $pdf->SetFont('Arial','',4.8);
+            
+            $lc = 0;
+            $rc = 0;
+            $do = false; //para imprimir los detalles de la oc
+
+            $nreg = count($detalles);
+
+            for ($i=0; $i < $nreg; $i++) { 
+              
+               
+                $nparte = $detalles[$i]["nroparte"] != "" ? "NP:". $detalles[$i]["nroparte"] : "";
+                
+                $pdf->SetAligns(array("C","C","R","C","L","C","R","R"));
+                $pdf->Row(array($detalles[$i]["item"],
+                                $detalles[$i]['ccodprod'],
+                                $detalles[$i]['cantidad'],
+                                $detalles[$i]['unidad'],
+                                utf8_decode($detalles[$i]['cdesprod']),
+                                $detalles[$i]['pedido'],
+                                $detalles[$i]['nunitario'],
+                                $detalles[$i]['ntotal']));
+                    $lc++;
+
+                    //aca controla la linea de impresion 
+                    if ($pdf->getY() >= 181) {
+                        $pdf->AddPage();
+                        $lc = 0;
+                    }
+            }
+            
+            $pdf->Ln(2);
+
+            $pdf->SetFillColor(229, 229, 229);
+            $pdf->SetFont('Arial','B',8);
+            $pdf->Cell(15,6,"TOTAL :","LTB",0,"C",true);
+            
+            $pdf->SetFont('Arial','B',7);
+
+            $total_adicional = $datosOrden[0]['nAdicional'] == ""  ? 0 : $datosOrden[0]['nAdicional'];
+            
+            $detallesAdicionales = $this->detallesAdicionalesOrden($datosOrden[0]['id_regmov']);
+            $totalAdicional = $datosOrden[0]['nAdicional'];
+
+            if ($datosOrden[0]['nigv'] == 0){
+                $pdf->Cell(145,6,$this->convertir($datosOrden[0]['ntotal']+$total_adicional)." ".$datosOrden[0]['nombre_moneda'],"TBR",0,"L",true); 
+                $pdf->Cell(30,6,number_format($datosOrden[0]['ntotal']+$total_adicional,2),"1",1,"R",true);
+            }
+            else {
+                $pdf->Cell(145,6,$this->convertir(($datosOrden[0]['ntotal']*1.18)+$total_adicional)." ".$datosOrden[0]['nombre_moneda'],"TBR",0,"L",true);
+                $pdf->Cell(30,6,number_format(($datosOrden[0]['ntotal']*1.18)+$total_adicional,2),"1",1,"R",true);
+            }
+
+            $pdf->Ln(1);
+            $pdf->SetFont('Arial',"","7");
+            $pdf->Cell(40,6,"Pedidos Asociados",1,0,"C",true);
+            $pdf->Cell(5,6,"",0,0);
+            $pdf->Cell(80,6,utf8_decode("Información Bancaria del Proveedor"),1,0,"C",true);
+            $pdf->Cell(10,6,"",0,0);
+
+            $pdf->SetX(146);
+
+            $pdf->Cell(33,6,"Valor Venta",0,0);
+            $pdf->Cell(20,6,number_format($datosOrden[0]['ntotal'],2),0,1,"R");
+            
+
+            $pdf->Cell(10,6,utf8_decode("Año"),1,0);   
+            $pdf->Cell(10,6,"Tipo",1,0);
+            $pdf->Cell(10,6,"Pedido",1,0);
+            $pdf->Cell(10,6,"Mantto",1,0);
+            $pdf->Cell(5,6,"",0,0);
+            $pdf->Cell(35,6,"Detalle del Banco",1,0);
+            $pdf->Cell(15,6,"Moneda",1,0);
+            $pdf->Cell(30,6,"Nro. Cuenta Bancaria",1,0);
+
+            $pdf->SetX(146);
+
+            if($datosOrden[0]['nigv'] ==  0) {
+                $pdf->SetX(146);
+                $pdf->Cell(8,3,"",0,0);
+                $pdf->Cell(20,3,"",0,0);
+                $pdf->SetX(185);
+                $pdf->Cell(20,3,"",0,1); 
+            }else{
+                $igv = round((floatval($datosOrden[0]['ntotal'])*0.18),2);
+                $pdf->SetX(146);
+                $pdf->Cell(13,3,"IGV",0,0);
+                $pdf->Cell(20,3,"(18%)",0,0);
+                $pdf->Cell(20,3,number_format($igv,2),0,1,"R");
+            }
+
+            $linea = 7;
+            
+            if ( $totalAdicional ) {
+                foreach($detallesAdicionales as $detalle){
+                    $pdf->SetX(146);
+                    $pdf->Cell(33,6,$detalle['cconcepto'],0,0);
+                    $pdf->Cell(20,6,number_format($detalle['nmonto'],2),0,1,"R");
+                    $linea = 13;
+                }
+
+            }else {
+                $pdf->Cell(43,6,"",0,0);
+                $pdf->Cell(30,6,"",0,1);
+            }
+            
+            $pdf->SetX(146);
+            $pdf->SetFont('Arial',"B","8");
+            $pdf->Cell(20,4,"TOTAL",1,0,"L",true);
+            $pdf->Cell(15,4,$datosOrden[0]['nombre_moneda'],1,0,"C",true);
+
+            if ( $datosOrden[0]['nigv'] == 0 ){
+                $pdf->Cell(20,4,number_format($datosOrden[0]['ntotal'] +  $total_adicional ,2),1,1,"R",true);
+            }        
+            else {
+                $pdf->Cell(20,4,number_format((($datosOrden[0]['ntotal']*1.18)+ $total_adicional ),2),1,1,"R",true);
+            }
+           
+            $nreg = count($bancos);
+
+            $x = $pdf->GetX();
+            $y = $pdf->GetY();
+
+            $pdf->SetXY(10,$y-$linea);
+            $pdf->SetFont('Arial',"","7");
+            $pdf->Cell(10,6,$anio[0],1,0);
+            $pdf->Cell(10,6,$tipo,1,0,"C");
+            $pdf->Cell(10,6,str_pad($datosOrden[0]['nrodoc'],6,0,STR_PAD_LEFT),1,0);
+            $pdf->Cell(10,6,"",1,0);
+            
+            $pdf->SetXY(55,$y-$linea);
+            $pdf->SetFont('Arial',"","6");
+
+            for ($i=0;$i<$nreg;$i++){
+                $pdf->Cell(35,4,$bancos[$i]['banco'],1,0);
+                $pdf->Cell(15,4,$bancos[$i]['moneda'],1,0);
+                $pdf->Cell(30,4,$bancos[$i]['cuenta'],1,1);
+                $pdf->Cell(45,4,"",0,0);
+            }
+
+            if ($condicion == 0){
+                $filename = "public/documentos/ordenes/vistaprevia/".$file;
+            }else if ($condicion == 1){
+                $filename = "public/documentos/ordenes/emitidas/".$file;
+            }else if ($condicion == 2){
+                $filename = "public/documentos/ordenes/aprobadas/".$file;
+            }else if ($condicion == 3){
+                $filename = "public/documentos/ordenes/descargadas/".$file;
+            }else if ($condicion == 4){
+                $filename = "public/documentos/ordenes/modificadas/".$file;
+            }
+
+            $pdf->Output($filename,'F');
+
+            return array("ruta"=>$filename,"archivo"=>$file);
+        }
+
+        private function ordenCabeceraActualiza($id){
+
+        }
+
+        private function detallesOrdenActualiza($id){
+
+        }
+
+        private function pedidoCabeceraActualiza($pedido){
+
+        }
+
+        private function detallesPedidoActualiza($pedido){
+
         }
 
         public function generarNotaIngreso(){
@@ -3921,7 +4148,11 @@
                                                                 FORMAT(lg_ordencab.ntotal, 2) AS ctotal,
                                                                 tb_pedidocab.nivelAten,
                                                                 tb_pedidocab.nrodoc,
-                                                                tb_user.cnameuser
+                                                                tb_user.cnameuser,
+                                                                lg_ordencab.nfirmaLog,
+                                                                lg_ordencab.nfirmaFin,
+                                                                lg_ordencab.nfirmaOpe,
+	                                                            lg_ordencab.nNivAten
                                                             FROM
                                                                 lg_ordencab
                                                             INNER JOIN tb_pedidocab ON lg_ordencab.id_refpedi = tb_pedidocab.idreg
@@ -4014,7 +4245,10 @@
                                      "cantidad" => $rs['ncanti'],
                                      "cdesprod" => $rs['cdesprod'],
                                      "unidad"   => $rs['cabrevia'],
-                                     "pedido"   => $rs['pedido']);
+                                     "pedido"   => $rs['pedido'],
+                                     "nroparte" => $rs['nroparte'],
+                                     "nunitario"=> $rs['nunitario'],
+                                     "ntotal"   => $rs['ntotal']);
 
                         array_push($detalles,$row);
                     }

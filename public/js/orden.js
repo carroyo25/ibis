@@ -151,9 +151,30 @@ $(function(){
     $("#tablaPrincipal tbody").on("click","a", function (e) {
         e.preventDefault();
 
-        let id = $(this).attr("href");
+        try {
+            let formData  = new FormData(),
+            atencion    = $(this).closest('tr').attr("data-atencion"),
+            procura     = $(this).closest('tr').attr("data-logistica"),
+            operaciones = $(this).closest('tr').attr("data-operaciones"),
+            finanzas    = $(this).closest('tr').attr("data-finanzas"),
+            firmas      = procura == 1 && operaciones == 1 && finanzas == 1;
 
-        console.log(id);
+            if ( atencion == 47 || firmas ) throw new Error("La orden esta en firmas"); 
+
+            formData.append("id",$(this).attr("href"));
+
+            fetch(RUTA+'orden/descargaRapida',{
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                DownloadFromUrl(data.ruta, data.archivo);
+            });
+
+        } catch (error) {
+            mostrarMensaje(error.message,"mensaje_error");
+        }
 
         return false;
     });
@@ -1251,6 +1272,15 @@ sumardias = () => {
     $("#fentrega").val(fecha);
 
 }
+
+function DownloadFromUrl(fileURL, fileName) {
+    var link = document.createElement('a');
+    link.href = fileURL;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  } 
 
 
 
