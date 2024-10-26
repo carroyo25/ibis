@@ -73,6 +73,7 @@
                                         <td class="pl20px">'.$rs['costos'].'</td>
                                         <td class="textoCentro">'.$rs['anio'].'</td>
                                         <td class="textoCentro">'.$rs['cnumguia'].'</td>
+                                        <td class="textoCentro">'.$rs['guiasunat'].'</td>
                                         <td class="textoCentro ">'.str_pad($rs['orden'],6,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro ">'.str_pad($rs['pedido'],6,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro" style="color:'.$color.';font-weight: bolder;font-size: 1.2rem;vertical-align: middle;">'.$icono.'</td>
