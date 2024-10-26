@@ -3813,23 +3813,59 @@
                 $cambio = 60;
             }
 
+            $this->ordenCabeceraActualiza($id,$cambio);
+            $this->pedidoCabeceraActualiza($datosOrden[0]['idreg'],$cambio,$id);
+            $this->detallesPedidoActualiza($detalles,$cambio);
+
             return array("ruta"=>$filename,"archivo"=>$file);
         }
 
-        private function ordenCabeceraActualiza($id,$estado){
-
+        private function ordenCabeceraActualiza($orden,$estado){
+            try {
+                $fecha = date('Y-m-d');
+                $sql = $this->db->connect()->prepare("UPDATE lg_ordencab 
+                                                        SET lg_ordencab.nEstadoDoc=:est,
+                                                            lg_ordencab.ffechades=:descarga  
+                                                        WHERE id_regmov=:id");
+                $sql->execute(["est"=>$estado,
+                                "id"=>$orden,
+                                "descarga"=>$fecha]);
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
         }
 
-        private function detallesOrdenActualiza($id,$estado){
+        private function pedidoCabeceraActualiza($pedido,$estado,$orden){
+            try {
+            
+                $sql = $this->db->connect()->prepare("UPDATE tb_pedidocab SET estadodoc=:est,idorden=:orden WHERE idreg=:id");
+                $sql->execute(["est"=>$estado,
+                                "id"=>$pedido,
+                                "orden"=>$orden]);
 
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
         }
 
-        private function pedidoCabeceraActualiza($pedido,$estado){
+        private function detallesPedidoActualiza($detalles,$estado){
+            try {
+                $nreg = count($detalles);
 
-        }
+                for ($i=0; $i <$nreg ; $i++) { 
+                    $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet SET 
+                                                        estadoItem=:est WHERE iditem=:item");
 
-        private function detallesPedidoActualiza($pedido,$estado){
-
+                    $sql->execute(["item"=>$detalles[$i]['niddeta'],
+                                    "est"=>$estado]);
+                }
+                
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
         }
 
         public function generarNotaIngreso(){
@@ -4111,7 +4147,6 @@
                                                                 lg_ordencab.ncodpago,
                                                                 lg_ordencab.nplazo,
                                                                 lg_ordencab.ncodcot,
-                                                                lg_ordencab.cnumcot,
                                                                 lg_ordencab.nEstadoDoc,
                                                                 lg_ordencab.id_refpedi,
                                                                 lg_ordencab.ntcambio,
@@ -4148,7 +4183,6 @@
                                                                 estados.cdescripcion AS descripcion_estado,
                                                                 cm_entidad.crazonsoc,
                                                                 cm_entidad.cnumdoc,
-                                                                cm_entidad.cnumdoc,
                                                                 UPPER(contacto.cnombres) AS cnombres,
                                                                 contacto.cemail,
                                                                 contacto.ctelefono1,
@@ -4164,6 +4198,7 @@
                                                                 FORMAT(lg_ordencab.ntotal, 2) AS ctotal,
                                                                 tb_pedidocab.nivelAten,
                                                                 tb_pedidocab.nrodoc,
+                                                                tb_pedidocab.idreg,
                                                                 tb_user.cnameuser,
                                                                 lg_ordencab.nfirmaLog,
                                                                 lg_ordencab.nfirmaFin,
@@ -4264,7 +4299,8 @@
                                      "pedido"   => $rs['pedido'],
                                      "nroparte" => $rs['nroparte'],
                                      "nunitario"=> $rs['nunitario'],
-                                     "ntotal"   => $rs['ntotal']);
+                                     "ntotal"   => $rs['ntotal'],
+                                     "niddeta"  => $rs['niddeta']);
 
                         array_push($detalles,$row);
                     }

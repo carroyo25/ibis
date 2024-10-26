@@ -183,14 +183,12 @@
                         <p class="titulo_seccion"><strong> Guia de Remision Interna : </strong></p>
                         <input type="text" name="serie_guia" id="serie_guia" class="w10por" value="T001" readonly>
                         <input type="text" name="numero_guia" id="numero_guia" readonly>
-                        <br/><br/>
                         <p class="titulo_seccion"><strong> Guia de Remision Sunat : </strong></p>
                         <input type="text" name="serie_guia_sunat" id="serie_guia_sunat" class="w10por" value="T001" readonly>
                         <input type="text" name="numero_guia_sunat" id="numero_guia_sunat" readonly>
                     </div>
                     <div class="opciones_modal">
                         <a href="#" id="saveDocument" title="Grabar Guia"><i class="fas fa-save"></i><p>Grabar</p></a>
-                        <!--<a href="#" id="printDocument" title="Imprimir Guia" class="oculto"><i class="fas fa-print"></i><p>Imprimir</p></a>-->
                         <a href="#" id="previewDocument" title="Vista previa"><i class="fas fa-eye"></i><p>Vista Previa</p></a>
                         <a href="#" id="guiaSunat" title="Guia Sunat" class="oculto"><i class="fas fa-shipping-fast"></i><p>Sunat</p></a>
                         <a href="#" id="closeDocument" title="Cerrar Ventana"><i class="fas fa-window-close"></i><p>Cerrar</p></a>
@@ -211,7 +209,7 @@
                             <div>
                                 <label for="tipo_documento">Tipo Guia:</label>
                                 <select name="tipo_documento" id="tipo_documento">
-                                    <option value="1" style="display:none;">DESTINATARIO</option>
+                                    <option value="1" style="display:none;">REMITENTE</option>
                                     <option value="2" >REMITENTE</option>
                                     <option value="3">TRANSPORTISTA</option>
                                     <option value="4" style="display:none;">SUNAT</option>

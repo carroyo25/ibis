@@ -9,7 +9,8 @@ $(function(){
         costos = "",
         fp = 0,
         idorden = 0,
-        datafiltro = "";
+        datafiltro = "",
+        fila="";
 
     var grabado  = false;
 
@@ -163,6 +164,8 @@ $(function(){
             if ( atencion == 47 && firmas ) throw new Error("La orden esta en firmas");
             
             idorden = $(this).attr("href");
+            fila =  $(this).parent().parent();
+
             $("#preguntaDescarga").fadeIn();
 
         } catch (error) {
@@ -176,7 +179,9 @@ $(function(){
         e.preventDefault();
 
         $("#preguntaDescarga").fadeOut();
-        createPdf(idorden)
+        
+        createPdf(idorden,fila);
+        
         
         return false;
     });
@@ -1290,10 +1295,11 @@ function DownloadFromUrl(fileURL, fileName) {
 }
 
 
-function createPdf(id){
+function createPdf(id,fila){
     let formData = new FormData();
-    
     formData.append("id",id);
+
+    $("#esperar").css("opacity","1").fadeOut();
 
     fetch(RUTA+'orden/descargaRapida',{
         method: "POST",
@@ -1301,7 +1307,9 @@ function createPdf(id){
     })
     .then(response => response.json())
     .then(data => {
+        $("#esperar").css("opacity","0").fadeOut();
         DownloadFromUrl(data.ruta, data.archivo);
+        fila.remove();
     });
 }
 
