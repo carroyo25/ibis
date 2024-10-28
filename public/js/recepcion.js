@@ -358,8 +358,8 @@ $(function(){
         });
 
         try {
-            if ( tipoVista == "" ) throw "Debe grabar el documento...";
-            if ( !grabado ) throw "Debe grabar el documento";
+            //if ( tipoVista == "" ) throw "Debe grabar el documento...";
+            //if ( !grabado ) throw "Debe grabar el documento";
 
             $.post(RUTA+"recepcion/documentopdf",{cabecera:result,
                                                     detalles:JSON.stringify(detalles(tipoVista)),
@@ -473,10 +473,10 @@ $(function(){
     $("#btnAceptarGrabar").click(function (e) { 
         e.preventDefault();
 
-       
         $("#preguntaGraba").fadeOut();
         
         grabarDetalles(tipoVista,accion);
+        grabado = true;
 
         return false;
     });
