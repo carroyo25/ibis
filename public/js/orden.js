@@ -5,7 +5,7 @@ $(function(){
         proforma = "",
         ingresos = 0,
         swcoment = false,
-        autorizado = 0,
+        atencion = '',
         costos = "",
         fp = 0,
         idorden = 0,
@@ -155,11 +155,12 @@ $(function(){
         e.preventDefault();
 
         try {
-            let atencion    = $(this).closest('tr').attr("data-atencion"),
-                procura     = $(this).closest('tr').attr("data-logistica"),
+            let procura     = $(this).closest('tr').attr("data-logistica"),
                 operaciones = $(this).closest('tr').attr("data-operaciones"),
                 finanzas    = $(this).closest('tr').attr("data-finanzas"),
                 firmas      = procura == 0 || operaciones == 0 || finanzas == 0;
+
+            atencion    = $(this).closest('tr').attr("data-atencion");    
 
             if ( atencion == 47 && firmas ) throw new Error("La orden esta en firmas");
             
@@ -180,7 +181,7 @@ $(function(){
 
         $("#preguntaDescarga").fadeOut();
         
-        createPdf(idorden,fila);
+        createPdf(idorden,fila,atencion);
         
         
         return false;
@@ -1295,7 +1296,7 @@ function DownloadFromUrl(fileURL, fileName) {
 }
 
 
-function createPdf(id,fila){
+function createPdf(id,fila,atencion){
     let formData = new FormData();
     formData.append("id",id);
 
@@ -1309,7 +1310,8 @@ function createPdf(id,fila){
     .then(data => {
         $("#esperar").css("opacity","0").fadeOut();
         DownloadFromUrl(data.ruta, data.archivo);
-        fila.remove();
+        if (atencion == 47)
+            fila.remove();
     });
 }
 
