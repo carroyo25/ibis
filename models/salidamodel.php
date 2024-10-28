@@ -1313,7 +1313,7 @@
                                                     $respuesta_ticket['ticket_rpta'],
                                                     $respuesta_ticket['cdr_msj_sunat'],
                                                     $header->placa,
-                                                    $licencia_conducir,
+                                                    $header->licencia_conducir,
                                                     $header->observaciones,
                                                     $header->codigo_entidad_transporte,
                                                     $header->codigo_modalidad,
@@ -1575,14 +1575,30 @@
             }
         }
 
-        private function actualizarTicketNumeroSunat($guiainterna,$ticket,$guiaSunat,$codigo_respuesta,$mensaje,$placa,$licencia,$observaciones,$entidad,$modalidad,$transporte,$dni){
+        private function actualizarTicketNumeroSunat($guiainterna,
+                                                    $ticket,
+                                                    $guiaSunat,
+                                                    $codigo_respuesta,
+                                                    $mensaje,
+                                                    $placa,
+                                                    $licencia,
+                                                    $observaciones,
+                                                    $entidad,
+                                                    $modalidad,
+                                                    $transporte,
+                                                    $dni){
             try {
                 $sql = $this->db->connect()->prepare("UPDATE lg_guias 
                                                       SET lg_guias.ticketsunat  = :ticket, 
                                                           lg_guias.guiasunat    = :guiaSunat,
                                                           lg_guias.estadoSunat  = :respuesta,
                                                           lg_guias.cmotivo      = :mensaje,
-                                                          lg_guias.cplaca       = :placa
+                                                          lg_guias.cplaca       = :placa,
+                                                          lg_guias.cobserva     = :observaciones,
+                                                          lg_guias.identi       = :entidad,
+                                                          lg_guias.tipotranspo  = :transporte,
+                                                          lg_guias.tipomovil    = :modalidad,
+                                                          lg_guias.nDniConductor= :dni
                                                       WHERE lg_guias.cnumguia   = :guiainterna");
 
                 $sql->execute(["guiainterna"    =>$guiainterna,
@@ -1590,7 +1606,12 @@
                                 "guiaSunat"     =>$guiaSunat,
                                 "respuesta"     =>$codigo_respuesta,
                                 "mensaje"       =>$mensaje,
-                                "cplaca"        =>$placa]);
+                                "placa"         =>$placa,
+                                "observaciones" =>$observaciones,
+                                "entidad"       =>$entidad,
+                                "modalidad"     =>$modalidad,
+                                "transporte"    =>$transporte,
+                                "dni"           =>$dni]);
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
@@ -1608,8 +1629,7 @@
                                                             lg_guias.tipotranspo    = :transporte,
                                                             lg_guias.tipomovil      = :modalidad,
                                                             lg_guias.nDniConductor  = :dni
-
-                                                      WHERE  lg_guias.cnumguia  = :guiainterna");
+                                                      WHERE  lg_guias.cnumguia      = :guiainterna");
 
                 $sql->execute(["guiainterna"    =>$guiainterna,
                                 "placa"         =>$placa,
