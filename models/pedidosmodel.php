@@ -613,5 +613,45 @@
                 return false;
             }
         }
+
+        public function anularPedido($id){
+            try {
+                $mensaje = "Error al actualizar";
+                $clase = "mensaje_error";
+                $respuesta = false;
+
+                $sql = $this->db->connect()->prepare("UPDATE tb_pedidocab 
+                                                        SET tb_pedidocab.estadodoc = 105 
+                                                        WHERE tb_pedidocab.idreg = :id");
+                
+                $sql->execute(["id"=>$id]);
+                
+                if($sql->rowCount() > 0){
+                    $this->anularItemsPedido($id);
+                    $mensaje = "registro anulado...";
+                    $clase = "mensaje_correcto";
+                    $respuesta = true;
+                };
+
+                return array("mensaje"=>$mensaje,"clase"=>$clase,"respuesta"=>$respuesta);
+
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        private function anularItemsPedido($id){
+            try {
+                $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet 
+                                                        SET tb_pedidodet.estadoItem = 105 
+                                                        WHERE tb_pedidodet.idpedido = :id");
+                
+                $sql->execute(["id"=>$id]);
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
     }    
 ?>

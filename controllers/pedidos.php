@@ -88,5 +88,9 @@
         function borraAdjunto(){
             echo json_encode($this->model->borraAdjuntos($_POST['codigo']));
         }
+
+        function anulaPedido(){
+            echo json_encode($this->model->anularPedido($_POST['id']));
+        }
     }
 ?>

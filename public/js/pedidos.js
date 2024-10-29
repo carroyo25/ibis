@@ -1,7 +1,9 @@
 $(function(){
-    var accion = "";
-    var grabado = false;
-    var aprobacion = 0;
+    let accion = "",
+        grabado = false,
+        aprobacion = 0,
+        fila = "",
+        id = 0;
 
     $("#esperar").fadeOut();
 
@@ -20,9 +22,11 @@ $(function(){
                 grabado = false;
 
                 $("#codigo_usuario").val($("#id_user").val());
+                $("#listaArchivos").empty();
+                $("#atach_counter").text(0);
 
         } catch (error) {
-            mostrarMensaje(error,"mensaje_error");
+            mostrarMensaje(error.message,"mensaje_error");
         }
        
         return false;
@@ -394,6 +398,32 @@ $(function(){
         return false;
     });
 
+    $("#tablaPrincipal tbody").on("click","a", function (e) {
+        e.preventDefault();
+
+        $("#anular").fadeIn();
+        fila = $(this).parent().parent();
+        id = $(this).attr("href");
+
+        anularRequerimiento(fila,id);
+
+        return false;
+    });
+
+    $("#btnAceptarAnular").click(function (e) { 
+        e.preventDefault();
+
+        $("#anular").fadeOut();
+        
+        return false;
+    });
+
+    $("#btnCancelarAnular").click(function (e) { 
+        e.preventDefault();
+        
+        return false;
+    });
+
     $("#upAttach").click(function (e) { 
        e.preventDefault();
 
@@ -519,6 +549,7 @@ $(function(){
                 $("#atach_counter").text(response.adjuntos);
                 $("#archivos").fadeOut();
                 $("#fileAtachs")[0].reset();
+                $("#listaArchivos").empty();
             }
         });
 
@@ -925,4 +956,20 @@ hadfledFiles = (files) =>{
     filesvar = files;
     
     return filesvar;
+}
+
+anularRequerimiento = (fila,id) => {
+    fila.remove();
+
+    let formData = new FormData();
+    formData.append("id",id);
+
+    fetch(RUTA+"pedidos/anulaPedido",{
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        mostrarMensaje(data.mensaje,data.clase);
+    })
 }

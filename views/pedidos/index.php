@@ -21,6 +21,15 @@
             </div>
         </div>
     </div>
+    <div class="modal" id="anular">
+        <div class="ventanaPregunta">
+            <h3>¿Anular el requerimiento?</h3>
+            <div>
+                <button type="button" id="btnAceptarAnular">Aceptar</button>
+                <button type="button" id="btnCancelarAnular">Cancelar</button>
+            </div>
+        </div>
+    </div>
     <div class="modal" id="proceso">
         <div class="ventanaProceso tamanioProceso">
             <div class="cabezaProceso">
