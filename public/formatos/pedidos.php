@@ -118,8 +118,8 @@ class PDF extends PDF_MC_Table{
 		    $this->Cell(64,4,utf8_decode($this->cargoaprob),0,1,"C");
 		    $this->Cell(32,4,date("Y-m-d H:i:s"),"BL",0,"C");
 		    $this->Cell(32,4,utf8_decode('Página ').$this->PageNo()." de ".'/{nb}',"BR",0);
-		    $this->Rect(74,250.5,64,28);
-		    $this->Rect(138,250.5,62,28);
+		    $this->Rect(74,250,64,27.5);
+		    $this->Rect(138,250,62,27.5);
     }
 }
 ?>

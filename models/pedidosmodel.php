@@ -113,7 +113,7 @@
                 $lc++;
                 $rc++;
 
-                if ($lc == 17) {
+                if ($lc == 54) {
 				    $pdf->AddPage();
 				    $lc = 0;
 			    }	
@@ -614,17 +614,18 @@
             }
         }
 
-        public function anularPedido($id){
+        public function anularPedido($id,$usuario){
             try {
                 $mensaje = "Error al actualizar";
                 $clase = "mensaje_error";
                 $respuesta = false;
 
                 $sql = $this->db->connect()->prepare("UPDATE tb_pedidocab 
-                                                        SET tb_pedidocab.estadodoc = 105 
+                                                        SET tb_pedidocab.estadodoc = 105,
+                                                            tb_pedidocab.anula = :usuario
                                                         WHERE tb_pedidocab.idreg = :id");
                 
-                $sql->execute(["id"=>$id]);
+                $sql->execute(["id"=>$id,"usuario"=>$usuario]);
                 
                 if($sql->rowCount() > 0){
                     $this->anularItemsPedido($id);

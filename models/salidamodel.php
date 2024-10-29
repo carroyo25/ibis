@@ -1282,7 +1282,7 @@
 
             if ($header->tipo_documento == 1) {
                 //aca verificamos si tiene ticket
-                if ( $header->ticket_sunat == "" ){
+                if ( $header->ticket_sunat == ""  ){
 
                     if(file_exists($path."XML/".$nombre_archivo.".xml")){
                         unlink($path."XML/".$nombre_archivo.".xml");  

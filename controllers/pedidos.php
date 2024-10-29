@@ -90,7 +90,7 @@
         }
 
         function anulaPedido(){
-            echo json_encode($this->model->anularPedido($_POST['id']));
+            echo json_encode($this->model->anularPedido($_POST['id'],$_POST['usuario']));
         }
     }
 ?>

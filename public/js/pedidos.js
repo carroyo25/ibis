@@ -405,8 +405,6 @@ $(function(){
         fila = $(this).parent().parent();
         id = $(this).attr("href");
 
-        anularRequerimiento(fila,id);
-
         return false;
     });
 
@@ -414,6 +412,7 @@ $(function(){
         e.preventDefault();
 
         $("#anular").fadeOut();
+        anularRequerimiento(fila,id,$("#id_user").val());
         
         return false;
     });
@@ -958,11 +957,10 @@ hadfledFiles = (files) =>{
     return filesvar;
 }
 
-anularRequerimiento = (fila,id) => {
-    fila.remove();
-
+anularRequerimiento = (fila,id,usuario) => {
     let formData = new FormData();
     formData.append("id",id);
+    formData.append("usuario",usuario);
 
     fetch(RUTA+"pedidos/anulaPedido",{
         method: "POST",
@@ -971,5 +969,6 @@ anularRequerimiento = (fila,id) => {
     .then(response => response.json())
     .then(data => {
         mostrarMensaje(data.mensaje,data.clase);
+        fila.remove();
     })
 }
