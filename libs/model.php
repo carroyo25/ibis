@@ -568,14 +568,14 @@
             try {
                 for ($i=0; $i < $nreg; $i++) { 
 
-                    if ( $valor == 53 ){
+                    //if ( $valor == 51 ){
                         $sql = $this->db->connect()->prepare("UPDATE $tabla SET estadoItem=:est,
                                                                                 observAlmacen=:obs
                                                                             WHERE iditem=:id");
                         $sql->execute(["est"=>$valor,
                                         "id"=>$datos[$i]->itempedido,
                                         "obs"=>$datos[$i]->observac]);
-                    }
+                    //}
                 }
                 
             } catch (PDOException $th) {
@@ -3236,6 +3236,8 @@
                 $sql = $this->db->connect()->prepare("UPDATE lg_ordendet 
                                                         SET nflgactivo = NULL,
                                                             id_regmov = NULL,
+                                                            id_orden = NULL,
+                                                            niddeta = NULL,
                                                             nEstadoReg = 105,
                                                             ncanti = 0
                                                         WHERE nitemord =:id");
@@ -3604,7 +3606,7 @@
             //verificar para el numero de orden
             $sql = "SELECT COUNT(lg_ordencab.id_regmov) AS numero FROM lg_ordencab WHERE lg_ordencab.ncodcos =:cod";
 
-            $noc = $datosOrden[0]['cnumero'];
+            $noc = str_pad($datosOrden[0]['cnumero'],6,0,STR_PAD_LEFT);
             
             if ($datosOrden[0]['ntipmov'] == "37") {
                 $titulo = "ORDEN DE COMPRA" ;

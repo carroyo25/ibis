@@ -314,7 +314,7 @@
             $clase = "mensaje_error";
             $salida = "";
             
-            $origen = $_SESSION['user']."@sepcon.net";
+            $origen = $_SESSION['correo'];
             $nombre_envio = $_SESSION['nombres'];
 
             $mail = new PHPMailer;

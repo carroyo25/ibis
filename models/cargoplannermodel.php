@@ -211,6 +211,11 @@
                                 $estadofila = "stock";
                                 $estado_item = "item_stock";
                                 $estado_pedido = "stock";
+                            }else if( $rs['estadoItem'] == 51 ) {
+                                $porcentaje = "12%";
+                                $estadofila = "emitido";
+                                $estado_item = "Emitido";
+                                $estado_pedido = "Pedido Emitido";
                             }else if( $rs['estadoItem'] == 53 ) {
                                 $porcentaje = "10%";
                                 $estadofila = "emitido";
@@ -346,8 +351,6 @@
                                 $estadoSemaforo = "anulado";
                                 $semaforo = "Anulado";
                             }
-
-                           
 
                             $salida.='<tr class="pointer" 
                                         data-itempedido="'.$rs['iditem'].'" 
