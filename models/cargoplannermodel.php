@@ -197,7 +197,14 @@
                             $aprobado=0;
 
                             $aprobado = $rs['cantidad_aprobada'] == 0 ? $rs['cantidad_pedido']:$rs['cantidad_aprobada'];
-                            $aprobado_final = $aprobado-$rs['cantidad_atendida'] < 0 ? 0 : $aprobado-$rs['cantidad_atendida'];
+
+
+                            $aprobado_final = $rs['cantidad_pedido'] - $rs['cantidad_atendida'];
+
+                            if ( $aprobado_final != $rs['cantidad_aprobada'] ) {
+                                $aprobado_final = $rs['cantidad_aprobada'];
+                            } 
+                            
 
                             $equal = round($suma_atendido,2) === round($aprobado,2) ? true : false;
                            
@@ -2295,8 +2302,11 @@
                         ),
                     );
 
-                    $cantidad_compra = $dato['cantidad_aprobada'] - $dato['cantidad_atendida'] < 0 ? 0 : $dato['cantidad_aprobada'] - $dato['cantidad_atendida'];
-                    $cantidad_aprobada = $dato['cantidad_aprobada'] == 0 ? $cantidad : $dato['cantidad_aprobada'];
+                    $cantidad_compra = $dato['cantidad_pedido'] - $dato['cantidad_atendida'];
+
+                    if ( $cantidad_compra != $dato['cantidad_aprobada'] ) {
+                        $cantidad_compra = $dato['cantidad_aprobada'];
+                    } 
 
                     $objPHPExcel->getActiveSheet()->setCellValue('A'.$fila,$item++);
                     $objPHPExcel->getActiveSheet()->setCellValue('B'.$fila,$porcentaje);
@@ -2319,7 +2329,7 @@
                         $objPHPExcel->getActiveSheet()->setCellValue('K'.$fila,'');
 
                     $objPHPExcel->getActiveSheet()->setCellValue('L'.$fila,$cantidad);
-                    $objPHPExcel->getActiveSheet()->setCellValue('M'.$fila,$cantidad_aprobada);
+                    $objPHPExcel->getActiveSheet()->setCellValue('M'.$fila,$dato['cantidad_aprobada']);
                     $objPHPExcel->getActiveSheet()->setCellValue('N'.$fila,$cantidad_compra);
 
                     $objPHPExcel->getActiveSheet()->setCellValue('O'.$fila,$dato['ccodprod']);

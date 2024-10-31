@@ -138,8 +138,8 @@
             $clase = "mensaje_error";
             $salida = "";
             
-            $origen = $_SESSION['user']."@sepcon.net";
-            $nombre_envio = $_SESSION['user'];
+            $origen = $_SESSION['correo'];
+            $nombre_envio = $_SESSION['nombres'];
 
             $mail = new PHPMailer;
             $mail->isSMTP();

@@ -138,10 +138,8 @@ $(function(){
     $("#requestAprob").click(function (e) { 
         e.preventDefault();
         
-
         $("#pregunta").fadeIn();
         
-
         return false;
     });
 

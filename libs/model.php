@@ -526,7 +526,9 @@
                                                         nombres AS nomb,
                                                         apellidos AS apell
                                                         FROM tabla_aquarius 
-                                                        WHERE estado = 'AC' ORDER BY apellidos ASC");
+                                                        WHERE estado = 'AC' 
+                                                        GROUP BY dni
+                                                        ORDER BY apellidos ASC");
                 $query->execute();
                 $rowcount = $query->rowcount();
 
@@ -1283,6 +1285,7 @@
 
                 $inicial = 0;
 
+                //PARA LOS PEDIDOS DE MMTTO
                 if( $id == 3){
                     $inicial = 880;
                 }else if ( $id ==  18) {
@@ -1644,7 +1647,7 @@
                                                         ibis.tb_pedidocab.estadodoc, 
                                                         ibis.tb_pedidocab.nrodoc, 
                                                         ibis.tb_pedidocab.usuario, 
-                                                        ibis.tb_pedidocab.concepto, 
+                                                        UPPER(ibis.tb_pedidocab.concepto)  AS concepto, 
                                                         ibis.tb_pedidocab.detalle, 
                                                         ibis.tb_pedidocab.nivelAten, 
                                                         ibis.tb_pedidocab.docfPdfPrev, 
@@ -1700,7 +1703,7 @@
 
                 if ( $proceso == 49){
                     $detalles = $this->consultarDetallesProceso($id);
-                }else if ( $proceso == 51){
+                }else if ( $proceso == 51 ){
                     $detalles = $this->consultarDetallesStock($id);
                 }else if ( $proceso == 53 ){
                     $detalles = $this->consultarDetallesAprobacion($id);
@@ -2091,6 +2094,7 @@
                         if ( $rs['estadoItem'] ==  53 || $rs['estadoItem'] ==  52) {
 
                             $atendida = $rs['cant_atendida'] == NULL ? 0 : $rs['cant_atendida'];
+                           
                             $aprobar =  number_format($rs['cant_pedida'] - $rs['cant_atendida'],2,'.','');
 
                             $estado_aprobar = $aprobar == 0 ? "desactivado" : "";

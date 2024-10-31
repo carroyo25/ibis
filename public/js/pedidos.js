@@ -24,7 +24,7 @@ $(function(){
                 $("#codigo_usuario").val($("#id_user").val());
                 $("#listaArchivos").empty();
                 $("#atach_counter").text(0);
-                $("#codigo_estado").val("");
+                $("#codigo_estado").val(49);
 
         } catch (error) {
             mostrarMensaje(error.message,"mensaje_error");
@@ -413,6 +413,7 @@ $(function(){
         e.preventDefault();
 
         $("#anular").fadeOut();
+
         anularRequerimiento(fila,id,$("#id_user").val());
         
         return false;
@@ -420,6 +421,8 @@ $(function(){
 
     $("#btnCancelarAnular").click(function (e) { 
         e.preventDefault();
+
+        $("#anular").fadeOut();
         
         return false;
     });
