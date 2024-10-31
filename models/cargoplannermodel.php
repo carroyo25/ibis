@@ -5,6 +5,9 @@
     use Box\Spout\Common\Entity\Style\Color;
 	use Box\Spout\Common\Type;
 
+    use PhpOffice\PhpSpreadsheet\Spreadsheet;
+	use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
     class CargoPlannerModel extends Model{
 
         public function __construct()
@@ -1220,6 +1223,10 @@
                     else if ($estado == 3){
                         $this->crearSpout($docData);
                         $archivo = 'public/documentos/temp/cargoplan.xlsx';
+                    }
+                    else if ($estado == 4){
+                        $this->crearSpreadSheet($docData);
+                        $archivo = 'public/documentos/temp/cargoplanSpreedSheet.xlsx';
                     }      
                 }
 
@@ -1859,11 +1866,347 @@
             }
         }
 
+        private function crearSpreadSheet($datos){
+            try {
+                require_once('public/phpSpreadSheet/vendor/autoload.php');
+
+                $spread = new Spreadsheet();
+                $spread
+                    ->getProperties()
+                    ->setCreator("Sical")
+                    ->setLastModifiedBy('Sical Sepcon')
+                    ->setTitle('Cargo Plan')
+                    ->setSubject('Cargo Plan')
+                    ->setDescription('Cargo Plan SpreadSheet Documentation')
+                    ->setKeywords('PHPSpreadsheet')
+                    ->setCategory('Categoría Excel');
+
+                $sheet = $spread->getActiveSheet();
+                $sheet->setTitle("Cargo Plan");
+
+                $sheet->setCellValue('A2','Items'); // esto cambia
+                $sheet->setCellValue('B2','Estado Actual'); // esto cambia
+                $sheet->setCellValue('C2','Codigo Proyecto'); // esto cambia
+                $sheet->setCellValue('D2','Area'); // esto cambia
+                $sheet->setCellValue('E2','Partida'); // esto cambia
+                $sheet->setCellValue('F2','Atención'); // esto cambia
+                $sheet->setCellValue('G2','Tipo'); // esto cambia
+                $sheet->setCellValue('H2','Año Pedido'); // esto cambia
+                $sheet->setCellValue('I2','N° Pedido'); // esto cambia
+                $sheet->setCellValue('J2','Creación Pedido'); // esto cambia
+                $sheet->setCellValue('K2','Aprobación del Pedido'); // esto cambia
+                $sheet->setCellValue('L2','Cantidad Pedida'); // esto cambia
+                $sheet->setCellValue('M2','Cantidad Aprobada'); // esto cambia
+                $sheet->setCellValue('N2','Cantidad Compra'); // esto cambia
+                $sheet->setCellValue('O2','Codigo del Bien/Servicio'); // esto cambia
+                $sheet->setCellValue('P2','Unidad Medida'); // esto cambia
+                $sheet->setCellValue('Q2','Descripcion del Bien/Servicio'); // esto cambia
+                $sheet->setCellValue('R2','Tipo Orden'); // esto cambia
+                $sheet->setCellValue('S2','Año Orden'); // esto cambia
+                $sheet->setCellValue('T2','Nro Orden'); // esto cambia
+                $sheet->setCellValue('U2','Fecha Orden'); // esto cambia
+                $sheet->setCellValue('V2','Cantidad Orden'); // esto cambia
+                $sheet->setCellValue('W2','Item Orden'); // esto cambia
+                $sheet->setCellValue('X2','Fecha Autorizacion'); // esto cambia
+                $sheet->setCellValue('Y2','Atencion Almacen'); // esto cambia
+                $sheet->setCellValue('Z2','Descripcion del proveedor'); // esto cambia
+                $sheet->setCellValue('AA2','Fecha Entrega Proveedor'); // esto cambia
+                $sheet->setCellValue('AB2','Cant. Recibida'); // esto cambia
+                $sheet->setCellValue('AC2','Nota de Ingreso'); // esto cambia
+                $sheet->setCellValue('AD2','Fecha Recepcion Proveedor'); // esto cambia
+                $sheet->setCellValue('AE2','Saldo por Recibir'); // esto cambia
+                $sheet->setCellValue('AF2','Dias Entrega'); // esto cambia
+                $sheet->setCellValue('AG2','Días Atrazo'); // esto cambia
+                $sheet->setCellValue('AH2','Semáforo'); // esto cambia
+                $sheet->setCellValue('AI2','Cantidad Despachada'); // esto cambia
+                $sheet->setCellValue('AJ2','Nro. Guia'); // esto cambia
+                $sheet->setCellValue('AK2','Nro. Guia Transferencia'); // esto cambia
+                $sheet->setCellValue('AL2','Fecha Traslado'); // esto cambia
+                $sheet->setCellValue('AM2','Registro Almacen'); // esto cambia
+                $sheet->setCellValue('AN2','Fecha Ingreso Almacen'); // esto cambia
+                $sheet->setCellValue('AO2','Cantidad en Obra'); // esto cambia
+                $sheet->setCellValue('AP2','Estado Pedido'); // esto cambia
+                $sheet->setCellValue('AQ2','Estado Item'); // esto cambia
+                $sheet->setCellValue('AR2','N° Parte'); // esto cambia
+                $sheet->setCellValue('AS2','Codigo Activo'); // esto cambia
+                $sheet->setCellValue('AT2','Operador Logístico'); // esto cambia
+                $sheet->setCellValue('AU2','Tipo Transporte'); // esto cambia
+                $sheet->setCellValue('AV2','Observaciones/Concepto'); // esto cambia
+                $sheet->setCellValue('AW2','Solicitante'); // esto cambia
+
+                $fila = 3;
+                $estado = "";
+                $porcentaje = "100%";
+                $estadofila = 0;
+                $estadoSemaforo = "";
+                $semaforo = "";
+                $saldoRecibir = "";
+                $saldo = "";
+                $dias_atraso = "";
+                $estado_pedido = "pendiente";
+                $clase_operacion = "";
+                $tipo_pedido = "";
+                $estado_item = "";
+                $transporte = "";
+                $itemOrden = 1;
+                $nro_orden = 0;
+                $item = 1;
+
+                forEach($datos AS $dato){
+                    $tipo_orden = $dato['idtipomov'] == 37 ? 'BIENES' : 'SERVICIO';
+                    $clase_operacion = $dato['idtipomov'] == 37 ? 'bienes' : 'servicios';
+                    $saldoRecibir = $dato['cantidad_orden'] - $dato['ingreso'] > 0 ? $dato['cantidad_orden'] - $dato['ingreso'] : "-";
+                    $dias_atraso  =  $saldoRecibir > 0 && $dato['dias_atraso'] < 1 ? $dato['dias_atraso'] : "-" ;
+                    $suma_atendido = number_format($dato['cantidad_orden'] + $dato['cantidad_atendida'],2);
+
+                    $cantidad = $dato['cantidad_pedido'];
+
+                    $estado_pedido =  $dato['estadoItem'] >= 54 ? "Atendido":"Pendiente";
+                    $estado_item   =  $dato['estadoItem'] >= 54 ? "Atendido":"Pendiente";
+
+                    $transporte = $dato['nidreg'] == 39 ? "TERRESTRE": $dato['transporte'];
+                    $atencion = $dato['atencion'] == 47 ? "NORMAL" : "URGENTE"; 
+
+                    $color_mostrar  = 'FFFFFF';
+                    $color_semaforo = 'FFFFFF';
+                    $porcentaje = '';
+
+                    $fecha_entrega = null;
+                    $fecha_autoriza = null;
+
+                    $dias_plazo = intVal( $dato['plazo'] )+1 .' days';
+
+                    if( $dato['fechaLog'] !== null && $dato['fechaOpe'] !== null && $dato['FechaFin'] !== null ) {
+                        $fecha_autoriza = $dato['fecha_autorizacion'];
+                        $fecha_entrega = $dato['fecha_entrega_final'];
+                    }
+
+                    //formatos
+                    //porcentajes
+                    if ( $dato['estadoItem'] == 105 ) {
+                        $porcentaje = "0%";
+                        $estadofila = "anulado";
+                        $estado_item = "anulado";
+                        $estado_pedido = "anulado";
+                        $color_mostrar = 'C8C8C8';
+                    }else if( $dato['estadoItem'] == 49 ) {
+                        $porcentaje = "10%";
+                        $estadofila = "Procesando";
+                        $estado_item = "item_stock";
+                        $estado_pedido = "Procesando";
+                        $color_mostrar = 'F8CAAD';
+                    }else if( $dato['estadoItem'] == 53 ) {
+                        $porcentaje = "10%";
+                        $estadofila = "emitido";
+                        $estado_item = "Emitido";
+                        $estado_pedido = "Pedido Emitido";
+                    }else if( $dato['estadoItem'] == 230 ) {
+                        $porcentaje = "100%";
+                        $estadofila = "comprado";
+                        $estado_item = "Compra Local";
+                        $estado_pedido = "Compra Local";
+                        $color_mostrar = 'FF0000';
+                    }else if( $dato['estadoItem'] == 54) {
+                        $porcentaje = "15%";
+                        $estadofila = "aprobado";
+                        $estado_item = "aprobado";
+                        $estado_pedido = "aprobado";
+                        $color_mostrar = 'FC4236';
+                    }else if( $dato['estadoItem'] == 52  && $dato['ingreso_obra'] == $dato['cantidad_pedido'] ) {
+                        $porcentaje = "100%";
+                        $estadofila = "entregado";
+                        $estado_item = "atendido";
+                        $estado_pedido = "atendido";
+                        $color_mostrar = 'B3C5E6';
+                    }else if( $dato['estadoItem'] == 52  && $dato['ingreso_obra'] == $dato['cantidad_aprobada'] && $dato['cantidad_aprobada'] > 0) {
+                        $porcentaje = "100%";
+                        $estadofila = "entregado";
+                        $estado_item = "atendido";
+                        $estado_pedido = "atendido";
+                        $color_mostrar = 'B3C5E6';
+                    }else if( $dato['estadoItem'] == 52 ) {
+                        $porcentaje = "20%";
+                        $estadofila = "stock";
+                        $estado_item = "item_stock";
+                        $estado_pedido = "stock";
+                        $color_mostrar = 'B3C5E6';
+                    }else if (!$dato['orden'] ) {
+                        $porcentaje = "15%";
+                        $estadofila = "item_aprobado";
+                        $estado_item = "aprobado";
+                        $estado_pedido = "aprobado";
+                        $color_mostrar = 'FC4236';   
+                    }else if ( $dato['orden'] && !$dato['proveedor']) {
+                        $porcentaje = "25%";
+                        $estadofila = "item_orden";
+                        $estado_item = "aprobado";
+                        $estado_pedido = "aprobado";   
+                    }else if ( $dato['proveedor'] && !$dato['ingreso'] ) {
+                        $porcentaje = "30%";
+                        $estadofila = "item_enviado";
+                        $estado_item = "atendido";
+                        $estado_pedido = "atendido";
+                        $color_mostrar = 'C0DCC0';
+                    }else if( $dato['ingreso'] && $dato['ingreso'] < $dato['cantidad_orden'] ) {
+                        $porcentaje = "40%";
+                        $estadofila = "item_ingreso_parcial";
+                        $estado_item = "atendido";
+                        $estado_pedido = "atendido";
+                        $color_mostrar = 'C0DCC0';
+                    }else  if( !$dato['despachos'] && $dato['ingreso'] && $dato['ingreso'] == $dato['cantidad_orden'] ) {
+                        $porcentaje = "50%";
+                        $estadofila = "item_ingreso_total";
+                        $estado_item = "atendido";
+                        $estado_pedido = "atendido";
+                        $color_mostrar = 'A9D08F';
+                    }else if ( $dato['despachos'] && !$dato['ingreso_obra'] ) {
+                        $porcentaje = "75%";
+                        $estadofila = "item_transito";
+                        $estado_item = "atendido";
+                        $estado_pedido = "atendido";
+                        $color_mostrar = '00FFFF';
+                    }else if ( round($dato['ingreso_obra'],2) < round($dato['cantidad_orden'],2 )) {
+                        $porcentaje = "85%";
+                        $estadofila = "item_ingreso_parcial";
+                        $estado_item = "atendido";
+                        $estado_pedido = "atendido";
+                        $color_mostrar = 'FFFFE1';
+                    }else if ( $dato['ingreso_obra'] && round($suma_atendido,2) === round($dato['cantidad_aprobada'],2)) {
+                        $porcentaje = "100%";
+                        $estadofila = "entregado";
+                        $estado_item = "atendido";
+                        $estado_pedido = "atendido";
+                        $semaforo = "Entregado";
+                        $color_mostrar = '00FF00';
+                    }else if ( $dato['ingreso_obra'] && round($dato['ingreso_obra'],2) === round($dato['cantidad_orden'],2)) {
+                        $porcentaje = "100%";
+                        $estadofila = "entregado";
+                        $estado_item = "atendido";
+                        $estado_pedido = "atendido";
+                        $color_mostrar = '00FF00';
+                    }
+
+                    /*datos para el semaforo */
+                    if ( $dato['estadoItem'] !== 105 ) {
+
+                        if  ($fecha_entrega !== null){
+                            $dias_atraso  =  $dato['dias_atraso'];
+
+                            if ( $dato['ingreso_obra'] == $dato['cantidad_orden'] ){
+                                $semaforoEstado = "Entregado";
+                                $color_semaforo = '90EE90';
+                                $dias_atraso  = "";
+                            }else if ( $dias_atraso > 7 ) {
+                                $semaforoEstado = "Verde";
+                                $color_semaforo = '90EE90';
+                                $dias_atraso  = "";
+                            }else if ( $dias_atraso >= 0 && $dias_atraso <= 7){
+                                $semaforoEstado = "Naranja";
+                                $color_semaforo = 'FFD700';
+                                $dias_atraso  = "";
+                            }
+                            else if ($dias_atraso < 0) {
+                                $semaforoEstado = "Rojo";
+                                $color_semaforo = 'FF0000';
+                                $dias_atraso  =  $dato['dias_atraso']*-1;  //para que no salga negativo
+                            } 
+                        }else {
+                            $dias_atraso  =  "";
+                            $semaforoEstado = "Procesando";
+                            $color_semaforo = "FFFF00";
+
+                            if ( $dato['ingreso_obra'] > 0 && $dato['ingreso_obra'] === $dato['cantidad_atendida'] ){
+                                $semaforoEstado = "Entregado";
+                                $color_semaforo = '90EE90';
+                                $dias_atraso  = "";
+                            }else if ( $dato['cantidad_atendida'] > 0) {
+                                $semaforoEstado = "Stock";
+                                $color_semaforo = '90EE90';
+                                $dias_atraso  = "";
+                            }
+                        }
+                    }else {
+                        $color_semaforo = 'CDCDCD';
+                        $semaforoEstado = "Anulado";
+                    }
+                    //
+
+                    $cantidad_compra = $dato['cantidad_pedido'] - $dato['cantidad_atendida'];
+
+                    if ( $cantidad_compra != $dato['cantidad_aprobada'] ) {
+                        $cantidad_compra = $dato['cantidad_aprobada'];
+                    } 
+
+                    $sheet->setCellValue('A'.$fila,$item++);
+                    $sheet->setCellValue('B'.$fila,$porcentaje);
+
+                    $sheet->setCellValue('C'.$fila,$dato['ccodproy']);
+                    $sheet->setCellValue('D'.$fila,$dato['area']);
+                    $sheet->setCellValue('E'.$fila,$dato['partida']);
+                    $sheet->setCellValue('F'.$fila,$atencion);
+                    $sheet->setCellValue('G'.$fila,$tipo_orden);
+                    $sheet->setCellValue('H'.$fila,$dato['anio_pedido']);
+                    $sheet->setCellValue('I'.$fila,$dato['pedido']);
+
+                    $sheet->setCellValue('L'.$fila,$cantidad);
+                    $sheet->setCellValue('M'.$fila,$dato['cantidad_aprobada']);
+                    $sheet->setCellValue('N'.$fila,$cantidad_compra);
+
+                    $sheet->setCellValue('O'.$fila,$dato['ccodprod']);
+                    $sheet->setCellValue('P'.$fila,$dato['unidad']);
+                    $sheet->setCellValue('Q'.$fila,$dato['descripcion']);
+                    $sheet->setCellValue('R'.$fila,$tipo_orden);
+                    $sheet->setCellValue('S'.$fila,$dato['anio_orden']);
+                    $sheet->setCellValue('T'.$fila,$dato['cnumero']);
+
+                    $sheet->setCellValue('AB'.$fila,$dato['ingreso']);
+                    $sheet->setCellValue('AC'.$fila,$dato['nota_ingreso']);
+                    $sheet->setCellValue('AD'.$fila,$dato['fecha_recepcion_proveedor']);
+                    $sheet->setCellValue('AE'.$fila,$saldoRecibir);
+                        
+                    $sheet->setCellValue('AF'.$fila,$dato['plazo']);
+                    $sheet->setCellValue('AG'.$fila,$dias_atraso);
+                        
+                    $sheet->setCellValue('AH'.$fila,strtoupper($semaforoEstado));
+                        
+                    $sheet->setCellValue('AI'.$fila,$dato['despachos']);
+                    $sheet->setCellValue('AJ'.$fila,$dato['cnumguia']);
+
+                    $sheet->setCellValue('AK'.$fila,$dato['fecha_traslado']);
+                    $sheet->setCellValue('AL'.$fila,$dato['nota_transferencia']);
+                        
+                    $sheet->setCellValue('AM'.$fila,$dato['nota_obra']);
+                    $sheet->setCellValue('AN'.$fila,$dato['fecha_registro_almacen']);
+                    $sheet->setCellValue('AO'.$fila,$dato['ingreso_obra']);
+
+                    $sheet->setCellValue('AP'.$fila,$estado_pedido);
+                    $sheet->setCellValue('AQ'.$fila,$estado_item);
+                    $sheet->setCellValue('AR'.$fila,$dato['nroparte']);
+                    $sheet->setCellValue('AS'.$fila,$dato['cregistro']);
+                    $sheet->setCellValue('AT'.$fila,$dato['operador']);
+                    $sheet->setCellValue('AU'.$fila,$transporte);
+                    $sheet->setCellValue('AV'.$fila,$dato['concepto']);
+
+                    $sheet->setCellValue('AW'.$fila,$dato['nombre_elabora']);
+
+                    $fila++;
+                }
+                
+                $writer = new Xlsx($spread);
+                $writer->save('public/documentos/temp/cargoplanSpreedSheet.xlsx');
+
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
         private function crearExcel($datos){
             require_once('public/PHPExcel/PHPExcel.php');
 
             $objPHPExcel = new PHPExcel();
-                $objPHPExcel->getProperties()
+            $objPHPExcel->getProperties()
                     ->setCreator("Sical")
                     ->setLastModifiedBy("Sical")
                     ->setTitle("Cargo Plan")

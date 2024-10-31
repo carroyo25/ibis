@@ -86,7 +86,6 @@ $(function() {
     $("#pdfpedido").click(function (e) { 
         e.preventDefault();
 
-
         $.post(RUTA+"panel/pdfPedido",{"pedido":idpedido},
             function (data, textStatus, jqXHR) {
               $(".ventanaVistaPrevia iframe")
