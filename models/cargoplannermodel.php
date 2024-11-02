@@ -1,4 +1,8 @@
 <?php
+    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    header('Content-Disposition: attachment;filename="cargoplan.xlxs"');
+    header('Cache-Control: max-age=0');
+    
     use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
     use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
     use Box\Spout\Common\Entity\Style\CellAlignment;
@@ -1201,7 +1205,8 @@
                                                 GROUP BY
                                                     tb_pedidodet.iditem
                                                 ORDER BY 
-                                                    tb_pedidocab.anio DESC");
+                                                    tb_pedidocab.anio DESC
+                                                LIMIT 500");
                 $sql->execute();
                 $rowCount = $sql->rowCount();
 
@@ -1870,6 +1875,8 @@
             try {
                 require_once('public/phpSpreadSheet/vendor/autoload.php');
 
+                ob_end_clean();
+
                 $spread = new Spreadsheet();
                 $spread
                     ->getProperties()
@@ -1882,57 +1889,110 @@
                     ->setCategory('Categoría Excel');
 
                 $sheet = $spread->getActiveSheet();
-                $sheet->setTitle("Cargo Plan");
 
-                $sheet->setCellValue('A2','Items'); // esto cambia
-                $sheet->setCellValue('B2','Estado Actual'); // esto cambia
-                $sheet->setCellValue('C2','Codigo Proyecto'); // esto cambia
-                $sheet->setCellValue('D2','Area'); // esto cambia
-                $sheet->setCellValue('E2','Partida'); // esto cambia
-                $sheet->setCellValue('F2','Atención'); // esto cambia
-                $sheet->setCellValue('G2','Tipo'); // esto cambia
-                $sheet->setCellValue('H2','Año Pedido'); // esto cambia
-                $sheet->setCellValue('I2','N° Pedido'); // esto cambia
-                $sheet->setCellValue('J2','Creación Pedido'); // esto cambia
-                $sheet->setCellValue('K2','Aprobación del Pedido'); // esto cambia
-                $sheet->setCellValue('L2','Cantidad Pedida'); // esto cambia
-                $sheet->setCellValue('M2','Cantidad Aprobada'); // esto cambia
-                $sheet->setCellValue('N2','Cantidad Compra'); // esto cambia
-                $sheet->setCellValue('O2','Codigo del Bien/Servicio'); // esto cambia
-                $sheet->setCellValue('P2','Unidad Medida'); // esto cambia
-                $sheet->setCellValue('Q2','Descripcion del Bien/Servicio'); // esto cambia
-                $sheet->setCellValue('R2','Tipo Orden'); // esto cambia
-                $sheet->setCellValue('S2','Año Orden'); // esto cambia
-                $sheet->setCellValue('T2','Nro Orden'); // esto cambia
-                $sheet->setCellValue('U2','Fecha Orden'); // esto cambia
-                $sheet->setCellValue('V2','Cantidad Orden'); // esto cambia
-                $sheet->setCellValue('W2','Item Orden'); // esto cambia
-                $sheet->setCellValue('X2','Fecha Autorizacion'); // esto cambia
-                $sheet->setCellValue('Y2','Atencion Almacen'); // esto cambia
-                $sheet->setCellValue('Z2','Descripcion del proveedor'); // esto cambia
-                $sheet->setCellValue('AA2','Fecha Entrega Proveedor'); // esto cambia
-                $sheet->setCellValue('AB2','Cant. Recibida'); // esto cambia
-                $sheet->setCellValue('AC2','Nota de Ingreso'); // esto cambia
-                $sheet->setCellValue('AD2','Fecha Recepcion Proveedor'); // esto cambia
-                $sheet->setCellValue('AE2','Saldo por Recibir'); // esto cambia
-                $sheet->setCellValue('AF2','Dias Entrega'); // esto cambia
-                $sheet->setCellValue('AG2','Días Atrazo'); // esto cambia
-                $sheet->setCellValue('AH2','Semáforo'); // esto cambia
-                $sheet->setCellValue('AI2','Cantidad Despachada'); // esto cambia
-                $sheet->setCellValue('AJ2','Nro. Guia'); // esto cambia
-                $sheet->setCellValue('AK2','Nro. Guia Transferencia'); // esto cambia
-                $sheet->setCellValue('AL2','Fecha Traslado'); // esto cambia
-                $sheet->setCellValue('AM2','Registro Almacen'); // esto cambia
-                $sheet->setCellValue('AN2','Fecha Ingreso Almacen'); // esto cambia
-                $sheet->setCellValue('AO2','Cantidad en Obra'); // esto cambia
-                $sheet->setCellValue('AP2','Estado Pedido'); // esto cambia
-                $sheet->setCellValue('AQ2','Estado Item'); // esto cambia
-                $sheet->setCellValue('AR2','N° Parte'); // esto cambia
-                $sheet->setCellValue('AS2','Codigo Activo'); // esto cambia
-                $sheet->setCellValue('AT2','Operador Logístico'); // esto cambia
-                $sheet->setCellValue('AU2','Tipo Transporte'); // esto cambia
-                $sheet->setCellValue('AV2','Observaciones/Concepto'); // esto cambia
-                $sheet->setCellValue('AW2','Solicitante'); // esto cambia
+                $sheet->getColumnDimension("D")->setAutoSize(true);
+                $sheet->getColumnDimension("E")->setWidth(50);
+                $sheet->getColumnDimension("J")->setAutoSize(true);
+                $sheet->getColumnDimension("K")->setWidth(10);
+                $sheet->getColumnDimension("L")->setWidth(15);
+                $sheet->getColumnDimension("M")->setWidth(15);
+                $sheet->getColumnDimension("N")->setWidth(15);
+                $sheet->getColumnDimension("O")->setWidth(24);
+                $sheet->getColumnDimension("Q")->setWidth(100);
+                $sheet->getColumnDimension("S")->setAutoSize(true);
+                $sheet->getColumnDimension("T")->setWidth(10);
+                $sheet->getColumnDimension("U")->setAutoSize(true);
+                $sheet->getColumnDimension("V")->setWidth(15);
+                $sheet->getColumnDimension("W")->setAutoSize(true);
+                $sheet->getColumnDimension("X")->setAutoSize(true);
+                $sheet->getColumnDimension("Y")->setWidth(9);
+                $sheet->getColumnDimension("Z")->setWidth(100);
+                $sheet->getColumnDimension("Y")->setAutoSize(true);
+                $sheet->getColumnDimension("AA")->setWidth(10);
+                $sheet->getColumnDimension("AB")->setWidth(10);
+                $sheet->getColumnDimension("AC")->setWidth(13);
+                $sheet->getColumnDimension("AD")->setWidth(15);
+                $sheet->getColumnDimension("AE")->setWidth(12);
+                $sheet->getColumnDimension("AF")->setAutoSize(true);
+                $sheet->getColumnDimension("AG")->setAutoSize(true);
+                $sheet->getColumnDimension("AH")->setWidth(12);
+                $sheet->getColumnDimension("AI")->setWidth(12);
+                $sheet->getColumnDimension("AJ")->setAutoSize(true);
+                $sheet->getColumnDimension("AK")->setWidth(14);
+                $sheet->getColumnDimension("AL")->setWidth(12);
+                $sheet->getColumnDimension("AM")->setAutoSize(true);
+                $sheet->getColumnDimension("AN")->setAutoSize(true);
+                $sheet->getColumnDimension("AO")->setAutoSize(true);
+                $sheet->getColumnDimension("AP")->setAutoSize(true);
+                $sheet->getColumnDimension("AQ")->setAutoSize(true);
+                $sheet->getColumnDimension("AR")->setAutoSize(true);
+                $sheet->getColumnDimension("AS")->setAutoSize(true);
+                $sheet->getColumnDimension("AT")->setAutoSize(true);
+                $sheet->getColumnDimension("AU")->setAutoSize(true);
+                $sheet->getColumnDimension("AV")->setWidth(50);
+                $sheet->getColumnDimension("AW")->setAutoSize(true);
+
+                $sheet->mergeCells('A1:AW1');
+
+                $sheet->getStyle('A1:AW2')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                $sheet->getStyle('A1:AW2')->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_TOP);
+
+                $sheet->getRowDimension('2')->setRowHeight(60);
+
+                $sheet->getStyle('A1:AW2')->getAlignment()->setWrapText(true);
+
+                $sheet
+                    ->setTitle("Cargo Plan")
+                    ->setCellValue('A1','CARGO PLAN')
+                    ->setCellValue('A2','Items')
+                    ->setCellValue('B2','Estado Actual')
+                    ->setCellValue('C2','Codigo Proyecto')
+                    ->setCellValue('D2','Area')
+                    ->setCellValue('E2','Partida')
+                    ->setCellValue('F2','Atención')
+                    ->setCellValue('G2','Tipo')
+                    ->setCellValue('H2','Año Pedido')
+                    ->setCellValue('I2','N° Pedido')
+                    ->setCellValue('J2','Creación Pedido')
+                    ->setCellValue('K2','Aprobación del Pedido')
+                    ->setCellValue('L2','Cantidad Pedida')
+                    ->setCellValue('M2','Cantidad Aprobada')
+                    ->setCellValue('N2','Cantidad Compra')
+                    ->setCellValue('O2','Codigo del Bien/Servicio')
+                    ->setCellValue('P2','Unidad Medida')
+                    ->setCellValue('Q2','Descripcion del Bien/Servicio')
+                    ->setCellValue('R2','Tipo Orden')
+                    ->setCellValue('S2','Año Orden')
+                    ->setCellValue('T2','Nro Orden')
+                    ->setCellValue('U2','Fecha Orden')
+                    ->setCellValue('V2','Cantidad Orden')
+                    ->setCellValue('W2','Item Orden')
+                    ->setCellValue('X2','Fecha Autorizacion')
+                    ->setCellValue('Y2','Atencion Almacen')
+                    ->setCellValue('Z2','Descripcion del proveedor')
+                    ->setCellValue('AA2','Fecha Entrega Proveedor')
+                    ->setCellValue('AB2','Cant. Recibida')
+                    ->setCellValue('AC2','Nota de Ingreso')
+                    ->setCellValue('AD2','Fecha Recepcion Proveedor')
+                    ->setCellValue('AE2','Saldo por Recibir')
+                    ->setCellValue('AF2','Dias Entrega')
+                    ->setCellValue('AG2','Días Atrazo')
+                    ->setCellValue('AH2','Semáforo')
+                    ->setCellValue('AI2','Cantidad Despachada')
+                    ->setCellValue('AJ2','Nro. Guia')
+                    ->setCellValue('AK2','Nro. Guia Transferencia')
+                    ->setCellValue('AL2','Fecha Traslado')
+                    ->setCellValue('AM2','Registro Almacen')
+                    ->setCellValue('AN2','Fecha Ingreso Almacen')
+                    ->setCellValue('AO2','Cantidad en Obra')
+                    ->setCellValue('AP2','Estado Pedido')
+                    ->setCellValue('AQ2','Estado Item')
+                    ->setCellValue('AR2','N° Parte')
+                    ->setCellValue('AS2','Codigo Activo')
+                    ->setCellValue('AT2','Operador Logístico')
+                    ->setCellValue('AU2','Tipo Transporte')
+                    ->setCellValue('AV2','Observaciones/Concepto')
+                    ->setCellValue('AW2','Solicitante');
 
                 $fila = 3;
                 $estado = "";
