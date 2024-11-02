@@ -5089,7 +5089,7 @@
                 $costo = $costos == "-1" ? "%" : $costos;
 
                 $sql = $this->db->connect()->prepare("SELECT
-                                                        tb_proyectos.cdesproy,
+                                                        UPPER(tb_proyectos.cdesproy) AS cdesproy,
                                                         alm_ajustecab.idreg,
                                                         DATE_FORMAT( alm_ajustecab.ffechadoc, '%d/%m%/%Y' ) AS fecha_documento,
                                                         DATE_FORMAT( alm_ajustecab.ffechaInv, '%d/%m%/%Y' ) AS fecha_inventario,
@@ -5137,7 +5137,7 @@
                 $costo = $costos == "-1" ? "%" : $costos;
 
                 $sql = $this->db->connect()->prepare("SELECT
-                                                        tb_proyectos.cdesproy,
+                                                        UPPER(tb_proyectos.cdesproy) AS cdesproy,
                                                         alm_ajustecab.idreg,
                                                         DATE_FORMAT( alm_ajustecab.ffechadoc, '%d/%m%/%Y' ) AS fecha_documento,
                                                         DATE_FORMAT( alm_ajustecab.ffechaInv, '%d/%m%/%Y' ) AS fecha_inventario,
