@@ -281,7 +281,8 @@
                                                         LEFT JOIN lg_guias AS madres ON alm_madresdet.nGuiaMadre = madres.cnumguia
                                                         LEFT JOIN tb_almacen ON tb_almacen.cdesalm = madres.cdestino
                                                     WHERE
-                                                        alm_madrescab.id_regalm = :indice");
+                                                        alm_madrescab.id_regalm = :indice
+                                                    GROUP BY alm_despachodet.niddetaPed");
                 
                 $sql->execute(["indice"=>$indice]);
                 $rowCount = $sql->rowCount();
