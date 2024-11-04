@@ -6,7 +6,7 @@
         }
 
         function render(){
-            $this->view->listaNotasSalidas = $this->model->listarGuiasManuales(null,-1,2024);
+            $this->view->listaNotasSalidas = $this->model->listarGuiasManuales(null,-1,2024,50);
             $this->view->listaEnvio = $this->model->listarParametros('08');
             $this->view->listaAprueba = $this->model->apruebaRecepción();
             $this->view->listaAlmacen = $this->model->listarAlmacenGuia();

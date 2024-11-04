@@ -15,6 +15,9 @@ $(function(){
         $("form")[1].reset();
         $("#tablaDetalles tbody").empty();
 
+        $(".primeraBarra").css("background","#0078D4");
+        $(".primeraBarra span").text("Datos Generales");
+
         $("#formProceso input[type='hidden']").each(function(){
             $(this).val("");
         });
@@ -51,6 +54,9 @@ $(function(){
                     .append(data.detalles);
 
                 $("#atach_counter").text(data.total_adjuntos);
+
+                $(".primeraBarra").css("background","#0078D4");
+                $(".primeraBarra span").text("Datos Generales");
             },
             "json"
         );
@@ -137,6 +143,10 @@ $(function(){
                 function (data, textStatus, jqXHR) {
                     if (data.estado){
                         mostrarMensaje("Ingreso correcto","mensaje_correcto");
+                        
+                        $(".primeraBarra").css("background","#819830");
+                        $(".primeraBarra span").text('Datos Generales ... Grabado');
+
                     }else {
                         mostrarMensaje("Hubo un problema con el registro","mensaje_error");
                     }

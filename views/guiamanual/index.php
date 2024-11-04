@@ -520,6 +520,9 @@
             </tbody>
         </table>
     </div>
+    <div class="paginacion">
+        <h1>Paginacion</h1>
+    </div>
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
     <script src="<?php echo constant('URL');?>public/js/funciones.js?<?php echo constant('VERSION')?>"></script>
     <script src="<?php echo constant('URL');?>public/js/guiamanual.js?<?php echo constant('VERSION')?>"></script>

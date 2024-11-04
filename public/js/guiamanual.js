@@ -223,6 +223,8 @@ $(function() {
             $("#codigo_almacen_origen").val(codigo);
         }else if(contenedor_padre == "listaDestinoCabecera"){
             $("#codigo_almacen_destino").val(codigo);
+        }else if(contenedor_padre == "listaCostos"){
+            $("#codigo_costos").val(codigo);
         }
 
         return false;
@@ -347,11 +349,18 @@ $(function() {
             form[this.name] = this.value;
         });
 
-        $.post(RUTA+"guiaManual/grabaGuiaManual",{guiaCab:guia,
-                                                formCab:form,
-                                                detalles:JSON.stringify(detalles(false)),
-                                                operacion:"n"
-                                            },
+        try {
+
+            if ($("#codigo_costos").val() == "") throw new Error("Elija el centro de costos");
+            if ($("#codigo_aprueba").val() == "") throw new Error("Elija la persona que aprueba");
+            if ($("#codigo_almacen_origen").val() == "") throw new Error("Elija almacen origen");
+            if ($("#codigo_almacen_destino").val() == "") throw new Error("Elija almacen destino");
+                
+            $.post(RUTA+"guiaManual/grabaGuiaManual",{guiaCab:guia,
+                formCab:form,
+                detalles:JSON.stringify(detalles(false)),
+                operacion:"n"
+            },
             function (data, textStatus, jqXHR) {
                 mostrarMensaje(data.mensaje,"mensaje_correcto");
                 $("#guia,#numero_guia").val(data.guia);
@@ -363,7 +372,10 @@ $(function() {
                 grabado = 0;
             },
             "json"
-        );
+            );
+        } catch (error) {
+            mostrarMensaje(error.mensaje, "mensaje_error");
+        }
 
         return false;
     });

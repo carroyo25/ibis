@@ -6,13 +6,13 @@
             parent::__construct();
         }
 
-        public function listarGuiasManuales($g,$c,$a){
+        public function listarGuiasManuales($g,$c,$a,$limite){
             try {
                 $salida = ""; 
 
                 $guia = $g == null ? "%" : "%".$g."%";
                 $costo = $c == -1  ? "%" : "%".$g."%";
-                $anio = $a == "" ? 2024 : $a; 
+                $anio = $a == "" ? 2024 : $a;
 
                 $sql = $this->db->connect()->prepare("SELECT
                                                         alm_desplibrescab.id_regalm,
@@ -29,7 +29,9 @@
                                                         tb_proyectos.ccodproy,
                                                         lg_guias.ticketsunat,
                                                         lg_guias.guiasunat,
-                                                        lg_guias.estadoSunat  
+                                                        lg_guias.estadoSunat,
+                                                        lg_guias.corigen,
+                                                        lg_guias.cdestino  
                                                     FROM
                                                         alm_desplibrescab
                                                         LEFT JOIN cm_entidad AS entidad_origen ON alm_desplibrescab.ncodalm1 = entidad_origen.id_centi
@@ -40,7 +42,9 @@
                                                         alm_desplibrescab.nflgactivo != 0
                                                         AND alm_desplibrescab.cnumguia LIKE :guia
                                                         AND YEAR(alm_desplibrescab.ffecdoc) LIKE :anio
-                                                    ORDER BY alm_desplibrescab.ffecdoc DESC");
+                                                    ORDER BY alm_desplibrescab.ffecdoc DESC
+                                                    LIMIT 50");
+
                 $sql->execute(["guia"=>$guia,"anio"=>$anio]);
                 $rowCount = $sql->rowCount();
 
