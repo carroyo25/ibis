@@ -10,6 +10,7 @@
             $this->view->listaRecepciona = $this->model->listarPersonalRol(4);
             $this->view->listaIngresos = $this->model->listarIngresos("");
             $this->view->listaCostos = $this->model->costosPorUsuario($_SESSION['iduser']);
+            $this->view->registros = $this->model->numeroRegistros();
             $this->view->render('registros/index');
         }
 

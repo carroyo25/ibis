@@ -447,7 +447,7 @@
                                                         AND alm_cabexist.numguia LIKE :guia
                                                         AND alm_cabexist.idcostos LIKE :cc
                                                     ORDER BY  alm_cabexist.idreg DESC
-                                                    LIMIT 200");
+                                                    LIMIT 0,50");
                 $sql->execute(["usr"=>$_SESSION["iduser"],
                                 "guia"=>$guia,
                                 "cc"=>$cc]);
@@ -848,6 +848,21 @@
                 }
                 
                 return array("cabecera"=>$docData);
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        public function numeroRegistros(){
+            try {
+                $sql = $this->db->connect()->query("SELECT COUNT(*) AS records FROM alm_cabexist WHERE ISNULL(alm_cabexist.flgActivo)");
+                $sql->execute();
+
+                $records = $sql->fetchAll();
+
+                return $records[0]['records'];
+
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;

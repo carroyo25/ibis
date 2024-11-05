@@ -306,6 +306,19 @@
             </tbody>
         </table>
     </div>
+    <div class="paginador">
+        <div class="botonesPaginador">
+            <button>|<</button>
+            <button><</button>
+            <div class="paginas">
+                <?php for ($i = 1; $i < intval($this->registros/50)+1 ; $i++) { ?>
+                    <button><?php echo $i; ?></button>
+                <?php } ?>
+            </div>
+            <button>></button>
+            <button>>|</button>
+        </div>
+    </div>
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
     <script src="<?php echo constant('URL');?>public/js/funciones.js?<?php echo constant('VERSION')?>"></script>
     <script src="<?php echo constant('URL');?>public/js/registros.js?<?php echo constant('VERSION')?>"></script>

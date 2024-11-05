@@ -918,6 +918,30 @@ $almacen:#27798F;
     }
 }
 
+.paginador{
+    width: 100%;
+    margin-top: 30px;
+
+    button{
+        padding: 0.5rem;
+        font-size: .7rem;
+        width: 2rem;
+    }
+
+    .botonesPaginador {
+        width: 100%;
+        display: flex;
+        gap: 5px;
+
+        .paginas {
+            display: flex;
+            gap: 5px;
+            overflow: hidden;
+        }
+
+    }
+}
+
 .itemsTablaVertical{
     overflow: hidden;
 
