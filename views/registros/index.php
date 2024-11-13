@@ -26,6 +26,9 @@
                             <button type="button" id="atachDocs" title="Adjuntar documentos" class="boton3">
                                 <i class="fas fa-paperclip"></i> Adjuntar Documentos
                             </button>
+                            <button type="button" id="printLabels" title="Imprimir etiquetas" class="boton3 oculto">
+                                <i class="fas fa-tags"></i> Imprimir etiquetas
+                            </button>
                             <button type="button" id="updateDocument" title="Grabar Ingreso" class="boton3">
                                 <i class="far fa-save"></i> Grabar Ingreso
                             </button>
@@ -306,17 +309,17 @@
             </tbody>
         </table>
     </div>
-    <div class="paginador">
+    <div class="paginador oculto">
         <div class="botonesPaginador">
-            <button>|<</button>
-            <button><</button>
+            <button><i class="fas fa-step-backward"></i></button>
+            <button><i class="fas fa-caret-left"></i></button>
             <div class="paginas">
-                <?php for ($i = 1; $i < intval($this->registros/50)+1 ; $i++) { ?>
-                    <button><?php echo $i; ?></button>
-                <?php } ?>
+                <?php $inicial= 0;for ($i = 1; $i < intval($this->registros/50)+1 ; $i++) { ?>
+                    <button class="boton_pagina" data-limite="<?php echo $inicial?>"><?php echo $i; ?></button>
+                <?php $inicial+=50;} ?>
             </div>
-            <button>></button>
-            <button>>|</button>
+            <button><i class="fas fa-caret-right"></i></button>
+            <button><i class="fas fa-step-forward"></i></button>
         </div>
     </div>
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>

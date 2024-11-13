@@ -164,6 +164,14 @@ $(() => {
 
         $(tab).fadeIn();
     });
+
+    $(".report_process").on('click', function(e) {
+        e.preventDefault();
+
+        $("#vistraTrazable").fadeIn();
+
+        return false;
+    });
 })
 
 resumen = (codigo_producto) => {

@@ -139,55 +139,6 @@
             return  $respuesta;
         }
 
-        /* este es sin biometrico //
-        public function subirFirma($detalles,$correo,$nombre,$cc) {
-           
-                    $respuesta = true;
-                    $namefile = "";
-
-                    $datos = json_decode($detalles);
-                    $nreg = count($datos);
-                    $kardex = time();
-
-                    for ($i=0; $i<$nreg; $i++){
-                        $sql = $this->db->connect()->prepare("INSERT INTO alm_consumo 
-                                                                    SET reguser=:user,
-                                                                        nrodoc=:documento,
-                                                                        idprod=:producto,
-                                                                        cantsalida=:cantidad,
-                                                                        fechasalida=:salida,
-                                                                        nhoja=:hoja,
-                                                                        cisometrico=:isometrico,
-                                                                        cobserentrega=:observaciones,
-                                                                        flgdevolver=:patrimonio,
-                                                                        cestado=:estado,
-                                                                        nkardex=:kardex,
-                                                                        cfirma=:firma,
-                                                                        cserie=:serie,
-                                                                        ncostos=:cc,
-                                                                        ncambioepp=:cambio");
-                        $sql->execute(["user"=>$_SESSION['iduser'],
-                                        "documento"=>$datos[$i]->nrodoc,
-                                        "producto"=>$datos[$i]->idprod,
-                                        "cantidad"=>$datos[$i]->cantidad,
-                                        "salida"=>$datos[$i]->fecha,
-                                        "hoja"=>$datos[$i]->hoja,
-                                        "isometrico"=>$datos[$i]->isometrico,
-                                        "observaciones"=>$datos[$i]->observac,
-                                        "patrimonio"=>$datos[$i]->patrimonio,
-                                        "estado"=>$datos[$i]->estado,
-                                        "kardex"=>$kardex,
-                                        "firma"=>$namefile,
-                                        "serie"=>$datos[$i]->serie,
-                                        "cc"=>$datos[$i]->costos,
-                                        "cambio"=>$datos[$i]->cambio]);
-                    }
-            
-            //$this->correoMovimiento($detalles,$nombre,$correo,$kardex,$cc);
-
-            return  $respuesta;
-        }*/
-
         private function correoMovimiento($detalles,$nombre,$correo,$kardex,$cc){
             require_once("public/PHPMailer/PHPMailerAutoload.php");
 
@@ -789,6 +740,105 @@
 
                 return $result[0]['serie'];
 
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            } 
+        }
+
+        public function buscarProductosStocks($cc,$desc,$cod){
+            try {
+                $salida = "";
+
+                $descripcion = $desc == "" ?  '%' : $desc;
+                $codigo = $cod == "" ? '%' : $cod;
+
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        cm_producto.id_cprod,
+                                                        cm_producto.ccodprod,
+                                                        UPPER( cm_producto.cdesprod ) AS cdesprod,
+                                                        tb_unimed.cabrevia,
+                                                        tb_unimed.ncodmed,
+                                                        recepcion.ingresos,
+                                                        inventarios.inventarios_cantidad,
+                                                        consumo.cantidad_consumo,
+                                                        consumo.cantidad_devuelto,
+                                                        recepcion.cc 
+                                                    FROM
+                                                        cm_producto
+                                                        LEFT JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                        INNER JOIN (
+                                                        SELECT
+                                                            SUM( alm_existencia.cant_ingr ) AS ingresos,
+                                                            alm_existencia.codprod,
+                                                            alm_cabexist.idcostos AS cc 
+                                                        FROM
+                                                            alm_existencia
+                                                            LEFT JOIN alm_cabexist ON alm_cabexist.idreg = alm_existencia.idregistro 
+                                                        WHERE
+                                                            alm_existencia.nflgActivo = 1 
+                                                            AND alm_cabexist.idcostos = :existencias 
+                                                        GROUP BY
+                                                            alm_existencia.codprod 
+                                                        ) AS recepcion ON recepcion.codprod = cm_producto.id_cprod
+                                                        LEFT JOIN (
+                                                        SELECT
+                                                            SUM( alm_inventariodet.cant_ingr ) AS inventarios_cantidad,
+                                                            alm_inventariocab.idcostos,
+                                                            alm_inventariodet.codprod 
+                                                        FROM
+                                                            alm_inventariodet
+                                                            INNER JOIN alm_inventariocab ON alm_inventariodet.idregistro = alm_inventariocab.idreg 
+                                                        WHERE
+                                                            alm_inventariodet.nflgActivo = 1 
+                                                            AND alm_inventariocab.idcostos = :inventario 
+                                                        GROUP BY
+                                                            alm_inventariodet.codprod 
+                                                        ) AS inventarios ON inventarios.codprod = cm_producto.id_cprod
+                                                        LEFT JOIN (
+                                                        SELECT
+                                                            SUM( alm_consumo.cantsalida ) AS cantidad_consumo,
+                                                            SUM( alm_consumo.cantdevolucion ) AS cantidad_devuelto,
+                                                            alm_consumo.idprod 
+                                                        FROM
+                                                            alm_consumo 
+                                                        WHERE
+                                                            alm_consumo.ncostos = :salidas 
+                                                            AND alm_consumo.flgactivo = 1 
+                                                        GROUP BY
+                                                            alm_consumo.idprod 
+                                                        ) AS consumo ON consumo.idprod = cm_producto.id_cprod
+                                                    WHERE
+                                                        cm_producto.flgActivo = 1 
+                                                        AND cm_producto.ntipo = 37
+                                                        AND cm_producto.ccodprod LIKE :codigo
+                                                        AND cm_producto.cdesprod LIKE :descripcion
+                                                    ORDER BY
+                                                        cm_producto.cdesprod ASC");
+               $sql->execute(["existencias" =>$cc,
+                                "inventario" =>$cc,
+                                "salidas"=>$cc,
+                                "descripcion"=>$descripcion,
+                                "codigo"=>$codigo]);
+
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0){
+                    while ($rs = $sql->fetch()) {
+                        $existencia_almacen = round(($rs['ingresos']+$rs['inventarios_cantidad']+$rs['cantidad_devuelto'])-$rs['cantidad_consumo'],2);
+
+                        if ( $existencia_almacen > 0 )
+                        
+                            $salida .='<tr class="pointer" data-idprod="'.$rs['id_cprod'].'" data-ncomed="'.$rs['ncodmed'].'" data-unidad="'.$rs['cabrevia'].'">
+                                            <td class="textoCentro">'.$rs['ccodprod'].'</td>
+                                            <td class="pl20px">'.$rs['cdesprod'].'</td>
+                                            <td class="textoCentro">'.$rs['cabrevia'].'</td>
+                                            <td class="textoDerecha">'.number_format($existencia_almacen,2).'</td>
+                                        </tr>';
+                    }
+                }
+                
+                return $salida;
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;

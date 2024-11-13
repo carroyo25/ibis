@@ -35,7 +35,7 @@
                                         FROM
                                             cm_producto
                                             LEFT JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
-                                            LEFT JOIN (
+                                            INNER JOIN (
                                             SELECT
                                                 COUNT( alm_existencia.cant_ingr ) AS ingresos_obra,
                                                 SUM( alm_existencia.cant_ingr ) AS cantidad_obra,

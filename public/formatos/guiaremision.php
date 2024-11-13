@@ -69,7 +69,7 @@
                 $this->Cell(65,6,"R.U.C. 20504898173",0,1,"C");
                 $this->SetXY(135,28);
                 $this->SetFont('Arial','B',9);
-                $this->Cell(65,8,"GUIA DE REMISION - ".$this->tipo_guia[$this->tipo],1,1,"C",true);
+                $this->Cell(65,8,"GUIA DE REMISION - REMITENTE",1,1,"C",true);
                 $this->SetXY(135,38);
                 $this->SetFont('Arial','B',12);
                 $this->Cell(65,6,"0001 - ".$this->nguia,0,1,"C"); //pasa parametro

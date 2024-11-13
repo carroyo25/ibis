@@ -1361,7 +1361,7 @@
             }
         }
 
-         //listado de productos
+        //listado de productos
         public function listarProductos($tipo){
              try {
                  $salida = "";

@@ -199,11 +199,12 @@
                                                                 faprobado=:fecaprob 
                                                             WHERE iditem=:id");
                     //agregar un parse float
-                    $estado = $datos[$i]->atendida == $datos[$i]->cantidad ? 52:54;
+                    $estado     = $datos[$i]->atendida == $datos[$i]->cantidad ? 52:54;
+                    $aprobada   = $datos[$i]->aprobada == 0 ? $datos[$i]->cantidad : $datos[$i]->aprobada;
 
                     $sql->execute(["est"=>$estado,
                                     "id"=>$datos[$i]->itempedido,
-                                    "cantaprob"=>$datos[$i]->aprobada,
+                                    "cantaprob"=>$aprobada,
                                     "swaprob"=>$datos[$i]->verifica,
                                     "usraprob"=>$_SESSION['iduser'],
                                     "obaprueba"=>$datos[$i]->observa,

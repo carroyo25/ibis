@@ -45,27 +45,27 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
+                                        <tr data-categoria="pedidos" class="report_process">
                                             <td>Pedidos</td>
                                             <td class="textoDerecha"></td>
                                             <td class="textoDerecha"></td>
                                         </tr>
-                                        <tr>
+                                        <tr data-categoria="ordenes">
                                             <td>Ordenes</td>
                                             <td class="textoDerecha">0</td>
                                             <td class="textoDerecha">0</td>
                                         </tr>
-                                        <tr>
+                                        <tr data-categoria="ingresos">
                                             <td>Ingresos</td>
                                             <td class="textoDerecha">0</td>
                                             <td class="textoDerecha">0</td>
                                         </tr>
-                                        <tr>
+                                        <tr data-categoria="despachos">
                                             <td>Despachos</td>
                                             <td class="textoDerecha">0</td>
                                             <td class="textoDerecha">0</td>
                                         </tr>
-                                        <tr>
+                                        <tr data-categoria="registros">
                                             <td>Registro Obra</td>
                                             <td class="textoDerecha">0</td>
                                             <td class="textoDerecha">0</td>
@@ -83,7 +83,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
+                                        <tr data-categoria="consumos">
                                             <td>Consumos</td>
                                             <td class="textoDerecha"></td>
                                             <td class="textoDerecha"></td>
@@ -93,12 +93,12 @@
                                             <td class="textoDerecha"></td>
                                             <td class="textoDerecha"></td>
                                         </tr>
-                                        <tr>
+                                        <tr data-categoria="inventarios">
                                             <td>Registro Inventario</td>
                                             <td class="textoDerecha"></td>
                                             <td class="textoDerecha"></td>
                                         </tr>
-                                        <tr>
+                                        <tr data-categoria="transferencias">
                                             <td>Transferencias</td>
                                             <td class="textoDerecha"></td>
                                             <td class="textoDerecha"></td>
@@ -163,6 +163,11 @@
                 <div></div>
                 <div></div>
             </div>
+        </div>
+    </div>
+    <div class="modal" id="vistraTrazable">
+        <div class="ventanaResumen">
+            <h1>Hola</h1>
         </div>
     </div>
     <div class="modal" id="registroStock">

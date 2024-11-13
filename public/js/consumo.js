@@ -194,6 +194,7 @@ $(function(){
         try {
             if(idprod === "") throw new Error("Elija un producto para registrar");
             if($("#cantidad_dialogo").val() =="") throw new Error("Ingrese una cantidad para registrar");
+            if(parseFloat($("#cantidad_dialogo").val()) > parseFloat($("#maximo_stock").val())) throw new Error("Verificar la cantidad para registrar");
 
             let 
                 cant            = $("#cantidad_dialogo").val(),
@@ -265,7 +266,7 @@ $(function(){
             idprod="";
            
         } catch (error) {
-            mostrarMensaje(error,"mensaje_error")
+            mostrarMensaje(error.message,"mensaje_error")
         }
 
         return false;
@@ -428,7 +429,10 @@ $(function(){
     $("#btnRegister").click(function(e){
         e.preventDefault();
 
-            $.post(RUTA+"pedidos/llamaProductos", {tipo:37},
+        try {
+            if ($("#costosSearch").val() == " ") throw new Error("Elija el centro de costos");
+
+            $.post(RUTA+"consumo/llamarStocks", {cc:$("#costosSearch").val(),desc:"",cod:""},
                 function (data, textStatus, jqXHR) {
                     $("#tabla_detalles_productos tbody")
                         .empty()
@@ -439,6 +443,9 @@ $(function(){
                 },
                 "text"
             );
+        } catch (error) {
+            mostrarMensaje(e.message,"mensaje_error");
+        }
 
         
         return false;
@@ -449,9 +456,9 @@ $(function(){
         if(e.which == 13) {
             $("#esperar").fadeIn();
             
-            $.post(RUTA+"pedidos/filtraItems", {codigo:$("#codigoSearch").val(),
-                                                descripcion:$("#descripSearch").val(),
-                                                tipo:37},
+            $.post(RUTA+"consumo/llamarStocks", {cod:$("#codigoSearch").val(),
+                                                desc:$("#descripSearch").val(),
+                                                cc:$("#costosSearch").val()},
                     function (data, textStatus, jqXHR) {
                         $("#tabla_detalles_productos tbody")
                             .empty()
@@ -470,6 +477,8 @@ $(function(){
         codigo = $(this).find('td').eq(0).text();
         descripcion = $(this).find('td').eq(1).text();
         und = $(this).find('td').eq(2).text();
+
+        $("#maximo_stock").val($(this).find('td').eq(3).text());
 
         $(this).toggleClass('semaforoNaranja');
 

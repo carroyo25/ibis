@@ -8,12 +8,12 @@
         function render(){
             $this->view->listaCostos = $this->model->costosPorUsuario($_SESSION['iduser']);
             $this->view->listaCostosSelect = $this->model->costosPorUsuarioSelect($_SESSION['iduser']);
-            $this->view->listaTraslados = $this->model->listarTraslados(278);
+            $this->view->listaTraslados = $this->model->listarTrasladosAprobados(278);
             $this->view->render('autorizatraslado/index');
         }
 
         function actualizaListado(){
-            echo ($this->model->listarTraslados(278));
+            echo ($this->model->listarTrasladosAprobados(278));
         }
 
         function aprueba(){

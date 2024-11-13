@@ -346,6 +346,7 @@
                                                             OR ibis.tb_pedidocab.estadodoc = 62
                                                             OR ibis.tb_pedidocab.estadodoc = 58
                                                             OR ibis.tb_pedidocab.estadodoc = 52
+                                                            OR ibis.tb_pedidocab.estadodoc = 84
                                                             OR ibis.tb_pedidocab.estadodoc = 230) 
                                                         AND ibis.tb_pedidocab.nflgactivo = 1 
                                                         AND ibis.tb_pedidocab.idtipomov = 37 
@@ -410,7 +411,10 @@
                                                         tb_pedidodet.idpedido = :indice 
                                                         AND tb_pedidodet.nflgActivo = 1 
                                                         AND tb_pedidodet.cant_atend > 0
-                                                        AND ( tb_pedidodet.estadoItem = 54 OR tb_pedidodet.estadoItem = 230 OR tb_pedidodet.estadoItem = 52 ) 
+                                                        AND ( tb_pedidodet.estadoItem = 54 
+                                                                OR tb_pedidodet.estadoItem = 230 
+                                                                OR tb_pedidodet.estadoItem = 52 
+                                                                OR tb_pedidodet.estadoItem = 84) 
                                                     GROUP BY
                                                         tb_pedidodet.iditem");
                 $sql -> execute(['indice'=>$indice]);

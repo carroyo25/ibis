@@ -496,6 +496,16 @@ $(function(){
 
         return false;
     });
+
+    $(".boton_pagina").click(function(e){
+        e.preventDefault();
+
+        let valorInicial = $(this).text();
+    
+        $("#inicio_consulta").val(valorInicial+1);
+
+        return false;
+    });
 })
 
 detalles = () =>{

@@ -205,13 +205,15 @@
 
                             $aprobado = $rs['cantidad_aprobada'] == 0 ? $rs['cantidad_pedido']:$rs['cantidad_aprobada'];
 
-
                             $aprobado_final = $rs['cantidad_pedido'] - $rs['cantidad_atendida'];
 
                             if ( $aprobado_final != $rs['cantidad_aprobada'] ) {
-                                $aprobado_final = $rs['cantidad_aprobada'];
+                                $aprobado_final = $rs['cantidad_pedido'] - $rs['cantidad_atendida'];
                             } 
-                            
+
+                            if ( $aprobado_final < 0){
+                                $aprobado_final = $rs['cantidad_aprobada'];
+                            }
 
                             $equal = round($suma_atendido,2) === round($aprobado,2) ? true : false;
                            
@@ -241,11 +243,18 @@
                                 $estado_item = "Compra Local";
                                 $estado_pedido = "Compra Local";
                             }else if( $rs['estadoItem'] == 54) {
-                                $porcentaje = "15%";
-                                $estadofila = "item_aprobado";
-                                $estado_item = "emitido";
-                                $estado_pedido = "emitido";
-                            }else if( $rs['estadoItem'] == 52  && $rs['ingreso_obra'] == $rs['cantidad_pedido'] ) {
+                                if ($rs['cantidad_pedido'] == $rs['cantidad_atendida']){
+                                    $porcentaje = "12%";
+                                    $estadofila = "consulta";
+                                    $estado_item = "emitido";
+                                    $estado_pedido = "emitido";
+                                }else{
+                                    $porcentaje = "15%";
+                                    $estadofila = "item_aprobado";
+                                    $estado_item = "emitido";
+                                    $estado_pedido = "emitido";
+                                }
+                            }else if( $rs['estadoItem'] == 52 && $rs['ingreso_obra'] == $rs['cantidad_pedido'] ) {
                                 $porcentaje = "100%";
                                 $estadofila = "entregado";
                                 $estado_item = "atendido";
@@ -309,7 +318,6 @@
                             }
 
                             $cantidad = $rs['cantidad_pedido'];
-
 
                             $fecha_entrega = "";
                             $fecha_descarga = "";
@@ -1081,27 +1089,6 @@
                 $salida = "";
                 $docData = [];
 
-                /*if (file_exists('public/documentos/reportes/cargoplan.xlsx')) {
-                    $archivo = 'public/documentos/reportes/cargoplan.xlsx';
-
-                    $fileCreationTime = filectime($archivo);
-
-                    // Obtener la fecha y hora actual
-                    $currentTime = time();
-
-                    // Calcular la diferencia en segundos
-                    $differenceInSeconds = $currentTime - $fileCreationTime;
-
-                    // Convertir la diferencia en días
-                    $differenceInDays = floor($differenceInSeconds / (60 * 60 * 24));
-
-                    // Convertir la diferencia en horas
-                    $differenceInHours = floor($differenceInSeconds / (60 * 60));
-
-                    if ( $differenceInHours < 4 )
-                        return array("documento"=>$archivo);
-                }*/
-
                 $sql = $this->db->connect()->query("SELECT
                                                     tb_pedidodet.iditem,
                                                     tb_pedidodet.idpedido,
@@ -1205,8 +1192,7 @@
                                                 GROUP BY
                                                     tb_pedidodet.iditem
                                                 ORDER BY 
-                                                    tb_pedidocab.anio DESC
-                                                LIMIT 500");
+                                                    tb_pedidocab.anio DESC");
                 $sql->execute();
                 $rowCount = $sql->rowCount();
 
@@ -1315,7 +1301,6 @@
                     $lc = 0;
                 }
             }
-            
 
             $file = uniqid("NI").".pdf";
             $filename = "public/documentos/temp/".$file;
@@ -2602,11 +2587,19 @@
                         $estado_pedido = "Compra Local";
                         $color_mostrar = 'FF0000';
                     }else if( $dato['estadoItem'] == 54) {
-                        $porcentaje = "15%";
-                        $estadofila = "aprobado";
-                        $estado_item = "aprobado";
-                        $estado_pedido = "aprobado";
-                        $color_mostrar = 'FC4236';
+                        if ($dato['cantidad_pedido'] == $dato['cantidad_atendida']){
+                            $porcentaje = "12%";
+                            $estadofila = "consulta";
+                            $estado_item = "emitido";
+                            $estado_pedido = "consulta";
+                            $color_mostrar = 'FC4225';
+                        }else{
+                            $porcentaje = "15%";
+                            $estadofila = "aprobado";
+                            $estado_item = "aprobado";
+                            $estado_pedido = "aprobado";
+                            $color_mostrar = 'FC4236';
+                        }
                     }else if( $dato['estadoItem'] == 52  && $dato['ingreso_obra'] == $dato['cantidad_pedido'] ) {
                         $porcentaje = "100%";
                         $estadofila = "entregado";
@@ -2705,11 +2698,17 @@
                         ),
                     );
 
-                    $cantidad_compra = $dato['cantidad_pedido'] - $dato['cantidad_atendida'];
+
+                    $aprobado = $dato['cantidad_aprobada'] == 0 ?  $dato['cantidad_pedido'] : $dato['cantidad_aprobada'];
+                    $cantidad_compra = $aprobado - $dato['cantidad_atendida'];
 
                     if ( $cantidad_compra != $dato['cantidad_aprobada'] ) {
+                        $cantidad_compra = $aprobado - $dato['cantidad_atendida'];
+                    }
+
+                    if ( $cantidad_compra < 0 ) {
                         $cantidad_compra = $dato['cantidad_aprobada'];
-                    } 
+                    }
 
                     $objPHPExcel->getActiveSheet()->setCellValue('A'.$fila,$item++);
                     $objPHPExcel->getActiveSheet()->setCellValue('B'.$fila,$porcentaje);
@@ -2732,7 +2731,7 @@
                         $objPHPExcel->getActiveSheet()->setCellValue('K'.$fila,'');
 
                     $objPHPExcel->getActiveSheet()->setCellValue('L'.$fila,$cantidad);
-                    $objPHPExcel->getActiveSheet()->setCellValue('M'.$fila,$dato['cantidad_aprobada']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('M'.$fila,$aprobado);
                     $objPHPExcel->getActiveSheet()->setCellValue('N'.$fila,$cantidad_compra);
 
                     $objPHPExcel->getActiveSheet()->setCellValue('O'.$fila,$dato['ccodprod']);

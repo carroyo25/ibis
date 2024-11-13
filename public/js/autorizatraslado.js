@@ -262,7 +262,7 @@ $(function(){
         })
         .then(response => response.json())
         .then(data => {
-            console.log(data);
+            mostrarMensaje("Operacion Autorizada","mensaje_correcto");
         })
 
         return false;

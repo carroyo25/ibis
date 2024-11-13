@@ -49,6 +49,7 @@
                     <input type="text" name="codigoSearch" id="codigoSearch" placeholder="Ingrese codigo">
                     <label for="descripSearch">Descripcion</label>
                     <input type="text" name="descripSearch" id="descripSearch" placeholder="Ingrese Descripcion">
+                    <input type="hidden" name="maximo_stock" id="maximo_stock">
                 </div>
                 <div class="tabla_dialogo">
                     <table id="tabla_detalles_productos" class="tabla">
@@ -57,6 +58,7 @@
                                 <th>Codigo</th>
                                 <th>Descripcion</th>
                                 <th>Und</th>
+                                <th>Existencias</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -167,7 +169,7 @@
     <div class="cabezaModulo">
         <h1>Kardex Personal</h1>
         <div>
-            <a href="#" id="btnRegister"><i class="fas fa-project-diagram"></i><p>Kardex</p></a>
+            <a href="#" id="btnRegister"><i class="fas fa-project-diagram"></i><p>Registrar</p></a>
             <a href="#" id="btnKardex"><i class="fas fa-file-pdf"></i><p>Kardex</p></a>
             <a href="#" id="excelFile"><i class="fas fa-file-excel"></i><p>Reporte</p></a>
             <a href="#" id="btnBuscar"><i class="fas fa-search-location"></i><p>Buscar</p></a>

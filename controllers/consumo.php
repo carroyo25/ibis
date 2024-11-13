@@ -50,5 +50,8 @@
             echo json_encode($this->model->registrarMantenimientos($_POST));
         }
         
+        function llamarStocks(){
+            echo $this->model->buscarProductosStocks($_POST['cc'],$_POST['desc'],$_POST['cod']);
+        }
     }
 ?>
