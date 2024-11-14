@@ -45,6 +45,10 @@
         function vueltas() {
             echo $this->model->nrovueltas($_POST);
         }
+
+        function pedidos() {
+            echo json_encode($this->model->registroPedidos($_POST['cc'],$_POST['id']));
+        }
         
     }
 ?>

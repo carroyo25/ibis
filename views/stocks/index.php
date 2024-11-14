@@ -166,8 +166,34 @@
         </div>
     </div>
     <div class="modal" id="vistraTrazable">
-        <div class="ventanaResumen">
-            <h1>Hola</h1>
+        <div class="ventanaBusqueda w50por">
+            <div class="tituloVentana">
+                    <span id="tituloBusqueda">Seguimiento</span>
+                    <div>
+                        <a href="#" id="closeTrazable">
+                            <i class="fas fa-window-close"></i>
+                        <span>Cerrar</span>
+                    </a>
+                </div>
+            </div>
+            <div class="datosResumen">
+                <table id="tbl_pedidos" class="tabla">
+                    <thead>
+                        <tr>
+                            <th>Nro.</th>
+                            <th>Cant.Aprobada</th>
+                            <th>Cant.Pedida</th>
+                            <th>Fecha Pedido</th>
+                            <th>Aprobado</th>
+                            <th>Area</th>
+                            <th>Fecha Emision</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
     <div class="modal" id="registroStock">

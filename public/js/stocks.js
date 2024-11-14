@@ -128,9 +128,9 @@ $(() => {
     $("#btnAceptarStock").click(function(e){
         e.preventDefault();
 
-        $.post(RUTA+"stocks/minimo", { cc:$(costosSearch).val(),
+        $.post(RUTA+"stocks/minimo", { cc:$("#costosSearch").val(),
                                         prod:idprod,
-                                        cantidad:$(stockMin).val()},
+                                        cantidad:$("#stockMin").val()},
             function (data, text, requestXHR) {
                 $("#registroStock").fadeOut();
             },
@@ -168,8 +168,53 @@ $(() => {
     $(".report_process").on('click', function(e) {
         e.preventDefault();
 
+        // TODO: poner las tablas en la ventana principal
+
+        let tableContent = "",
+            formData = new FormData(),
+            row = "";
+
+        formData.append('cc',$("#costosSearch").val());
+        formData.append('id',idprod);
+
+        if ($(this).data("categoria") == "pedidos"){
+
+            fetch(RUTA+'stocks/pedidos',{
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                data.registros.forEach((e)=>{
+                    row = `<tr>
+                        <td>${e.pedido}</td>
+                        <td>${e.cant_pedida}</td>
+                        <td>${e.cant_aprob}</td>
+                        <td>${e.elabora}</td>
+                        <td>${e.aprueba}</td>
+                        <td>${e.cdesarea}</td>
+                        <td>${e.emision}</td>
+                    </tr>`
+
+                    $("#tbl_pedidos tbody").append(row);
+                })            
+                
+                $("#tbl_pedidos").show();
+            })
+        }
+        
         $("#vistraTrazable").fadeIn();
 
+        return false;
+    });
+
+    $("#closeTrazable").click(function(e){
+        e.preventDefault();
+
+        $("#vistraTrazable").fadeOut(function(){
+            $(".datosResumen").empty();
+        });
+        
         return false;
     });
 })

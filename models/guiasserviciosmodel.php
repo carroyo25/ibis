@@ -532,12 +532,11 @@
                                                     LEFT JOIN tb_parametros AS estados ON tb_pedidocab.estadodoc = estados.nidreg
                                                     LEFT JOIN tb_area ON tb_pedidocab.idarea = tb_area.ncodarea 
                                                 WHERE
-                                                    tb_pedidocab.estadodoc = 54 
-                                                    AND tb_pedidocab.idtipomov = 38 
-                                                    AND tb_pedidocab.idcostos LIKE '%' 
+                                                    tb_pedidocab.idtipomov = 38 
+                                                    AND tb_pedidocab.idcostos = :costos 
                                                     AND tb_pedidocab.nrodoc = :numero");
 
-                $sql->execute(["numero"=>$id]);
+                $sql->execute(["numero"=>$id,"costos"=>$costos]);
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0) {
@@ -547,7 +546,7 @@
                                 <td class="textoCentro">'.$rs['nrodoc'].'</td>
                                 <td class="textoCentro">'.$rs['emision'].'</td>
                                 <td class="pl20px">'.$rs['concepto'].'</td>
-                                <td class="textoDerecha pr5px">'.$rs['costos'].'</td>
+                                <td class="pl20px">'.$rs['costos'].'</td>
                          </tr>';
                     }
 

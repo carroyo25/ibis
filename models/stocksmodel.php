@@ -9,7 +9,7 @@
             try {
                 $salida = '';
                 $cc = $parametros['costosSearch'];
-                $cp = $parametros['codigoBusqueda'] == "" ? "%" : $parametros['codigoBusqueda'];
+                $cp = $parametros['codigoBusqueda'] == "" ? "%" : "%".$parametros['codigoBusqueda']."%";
                 $de = $parametros['descripcionSearch'] == "" ? "%" : "%".$parametros['descripcionSearch']."%";
 
             
@@ -35,7 +35,7 @@
                                         FROM
                                             cm_producto
                                             LEFT JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
-                                            INNER JOIN (
+                                            LEFT JOIN (
                                             SELECT
                                                 COUNT( alm_existencia.cant_ingr ) AS ingresos_obra,
                                                 SUM( alm_existencia.cant_ingr ) AS cantidad_obra,
@@ -826,6 +826,51 @@
                 $result = $sql->fetchAll();
 
                 return $result[0]['registros'];
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        public function registroPedidos($cc,$id){
+            try {
+                
+                $docData = [];
+                
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        LPAD(tb_pedidocab.nrodoc,6,0) AS pedido,
+                                                        tb_pedidodet.cant_pedida,
+                                                        tb_pedidodet.cant_aprob,
+                                                        emite.cnombres AS elabora,
+                                                        aprueba.cnombres AS aprueba,
+                                                        tb_area.cdesarea,
+                                                        tb_pedidocab.emision 
+                                                    FROM
+                                                        tb_pedidodet
+                                                        INNER JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
+                                                        INNER JOIN tb_user AS emite ON tb_pedidocab.usuario = emite.iduser
+                                                        INNER JOIN tb_user AS aprueba ON tb_pedidocab.aprueba = aprueba.iduser
+                                                        INNER JOIN tb_area ON tb_pedidocab.idarea = tb_area.ncodarea 
+                                                    WHERE
+                                                        tb_pedidodet.idprod =:id
+                                                        AND tb_pedidodet.nflgActivo = 1 
+                                                        AND tb_pedidodet.idcostos = :costo
+                                                    ORDER BY tb_pedidocab.emision ASC");
+                
+                $sql->execute(["costo" =>$cc,
+                                "id"    =>$id]);
+
+                $rowCount = $sql->rowCount();
+                
+                if ($rowCount) {
+                    while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+                        $docData[] = $row;
+                    }
+                }
+
+                return array("registros"=>$docData);
+
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();

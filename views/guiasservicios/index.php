@@ -233,7 +233,7 @@
                                 <label for="almacen_origen">Almacen Origen: </label>
                                 <input type="text" name="almacen_origen" id="almacen_origen" class="cerrarLista" >
                                 <button type="button" id="btnAlmacenOrigen" class="btnCallMenu boton3">+</button>
-                                <div class="lista" id="listaOrigen">
+                                <div class="lista" id="listaOrigenGuia">
                                    <ul>
                                        <?php echo $this->listaAlmacen?>
                                    </ul> 
@@ -246,7 +246,7 @@
                                 <label for="almacen_destino">Almacen Destino: </label>
                                 <input type="text" name="almacen_destino" id="almacen_destino">
                                 <button type="button" class="btnCallMenu boton3">+</button>
-                                <div class="lista" id="listaDestino">
+                                <div class="lista" id="listaDestinoGuia">
                                    <ul>
                                        <?php echo $this->listaAlmacen?>
                                    </ul> 

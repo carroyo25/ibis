@@ -750,7 +750,7 @@
             try {
                 $salida = "";
 
-                $descripcion = $desc == "" ?  '%' : $desc;
+                $descripcion = $desc == "" ?  '%' : '%'.$desc.'%';
                 $codigo = $cod == "" ? '%' : $cod;
 
                 $sql = $this->db->connect()->prepare("SELECT
@@ -767,7 +767,7 @@
                                                     FROM
                                                         cm_producto
                                                         LEFT JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
-                                                        INNER JOIN (
+                                                        LEFT JOIN (
                                                         SELECT
                                                             SUM( alm_existencia.cant_ingr ) AS ingresos,
                                                             alm_existencia.codprod,
@@ -833,7 +833,7 @@
                                             <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                             <td class="pl20px">'.$rs['cdesprod'].'</td>
                                             <td class="textoCentro">'.$rs['cabrevia'].'</td>
-                                            <td class="textoDerecha">'.number_format($existencia_almacen,2).'</td>
+                                            <td class="textoDerecha">'.round($existencia_almacen,2).'</td>
                                         </tr>';
                     }
                 }

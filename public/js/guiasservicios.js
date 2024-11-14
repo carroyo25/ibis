@@ -171,16 +171,10 @@ $(function() {
         }else if(contenedor_padre == "listaOrigen"){
             $("#codigo_almacen_origen").val(codigo);
             $("#codigo_origen").val(codigo);
-            $("#almacen_origen").val($(this).text());
-            $("#almacen_origen_direccion").val($(this).data('direccion'));
             $("#codigo_origen_sunat").val($(this).data('sunat'));
-
         }else if(contenedor_padre == "listaDestino"){
             $("#codigo_almacen_destino").val(codigo);
-            $("#almacen_destino").val($(this).text());
-            $("#almacen_destino_direccion").val($(this).data('direccion'));
             $("#codigo_destino_sunat").val($(this).data('sunat'));
-
             $("#destinatario_ruc").val($(this).data('ruc'));
             $("#destinatario_razon").val($(this).text());
             $("#destinatario_direccion").val($(this).data('direccion'));
@@ -205,6 +199,12 @@ $(function() {
             $("#direccion_proveedor").val($(this).data("direccion"));
         }else if(contenedor_padre == "listaCostos"){
             $("#codigo_costos").val(codigo);
+        }else if(contenedor_padre == "listaOrigenGuia"){
+            $("#almacen_origen").val($(this).text());
+            $("#almacen_origen_direccion").val($(this).data('direccion'));
+        }else if(contenedor_padre == "listaDestinoGuia"){
+            $("#almacen_destino").val($(this).text());
+            $("#almacen_destino_direccion").val($(this).data('direccion'));
         }
 
         return false;
@@ -508,7 +508,7 @@ $(function() {
         if(e.which == 13) {
             $("#esperar").fadeIn();
             
-            $.post(RUTA+"guiasservicios/filtraPedido", {id:$(this).val(),costos:$("#itemCostos").val()},
+            $.post(RUTA+"guiasservicios/filtraPedido", {id:$(this).val(),costos:$("#codigo_costos").val()},
                 function (data, textStatus, jqXHR) {
                     $("#pedidos tbody")
                         .empty()
