@@ -187,19 +187,39 @@ $(() => {
             .then(data => {
                 data.registros.forEach((e)=>{
                     row = `<tr>
-                        <td>${e.pedido}</td>
-                        <td>${e.cant_pedida}</td>
-                        <td>${e.cant_aprob}</td>
-                        <td>${e.elabora}</td>
-                        <td>${e.aprueba}</td>
-                        <td>${e.cdesarea}</td>
-                        <td>${e.emision}</td>
+                        <td class="textoCentro">${e.pedido}</td>
+                        <td class="textoDerecha">${e.cant_pedida}</td>
+                        <td class="textoDerecha">${e.cant_aprob}</td>
+                        <td class="pl20px">${e.elabora}</td>
+                        <td class="pl20px">${e.aprueba}</td>
+                        <td class="pl20px">${e.cdesarea}</td>
+                        <td class="textoCentro">${e.emision}</td>
                     </tr>`
 
                     $("#tbl_pedidos tbody").append(row);
-                })            
+                });            
                 
                 $("#tbl_pedidos").show();
+            })
+        }else if($(this).data("categoria") == "ordenes"){
+            fetch(RUTA+'stocks/ordenes',{
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                data.registros.forEach((e)=>{
+                    row = `<tr>
+                        <td class="textoCentro">${e.numero}</td>
+                        <td class="textoDerecha">${e.emision}</td>
+                        <td class="textoDerecha">${e.ncanti}</td>
+                        <td class="pl20px">${e.cdesarea}</td>
+                    </tr>`
+
+                    $("#tbl_ordenes tbody").append(row);
+                });            
+                
+                $("#tbl_ordenes").show();
             })
         }
         
@@ -212,7 +232,8 @@ $(() => {
         e.preventDefault();
 
         $("#vistraTrazable").fadeOut(function(){
-            $(".datosResumen").empty();
+            $(".tabla tbody").empty();
+            $(".tabla").hide();
         });
         
         return false;

@@ -844,8 +844,8 @@
                                                         tb_pedidodet.cant_aprob,
                                                         emite.cnombres AS elabora,
                                                         aprueba.cnombres AS aprueba,
-                                                        tb_area.cdesarea,
-                                                        tb_pedidocab.emision 
+                                                        UPPER(tb_area.cdesarea) AS cdesarea,
+                                                        DATE_FORMAT(tb_pedidocab.emision,'%d/%m/%Y') AS emision 
                                                     FROM
                                                         tb_pedidodet
                                                         INNER JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
@@ -872,6 +872,44 @@
                 return array("registros"=>$docData);
 
 
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        public function registroOrdenes($cc,$id){
+            try {
+                
+                $docData = [];
+                
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        lg_ordendet.nitemord,
+                                                        LPAD( lg_ordencab.cnumero, 6, 0 ) AS numero,
+                                                        DATE_FORMAT( lg_ordencab.ffechadoc, '%d/%m/%Y' ) AS emision,
+                                                        lg_ordendet.ncanti,
+                                                        UPPER( tb_area.cdesarea ) AS cdesarea 
+                                                    FROM
+                                                        lg_ordendet
+                                                        INNER JOIN lg_ordencab ON lg_ordendet.id_regmov = lg_ordencab.id_regmov
+                                                        INNER JOIN tb_area ON lg_ordencab.ncodarea = tb_area.ncodarea 
+                                                    WHERE
+                                                        lg_ordendet.id_cprod = :id 
+                                                        AND lg_ordendet.ncodcos = :costo");
+                
+                $sql->execute(["costo" =>$cc,
+                                "id"    =>$id]);
+
+                $rowCount = $sql->rowCount();
+                
+                if ($rowCount) {
+                    while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+                        $docData[] = $row;
+                    }
+                }
+
+                return array("registros"=>$docData);
+                
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;

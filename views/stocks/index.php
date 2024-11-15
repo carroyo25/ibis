@@ -50,22 +50,22 @@
                                             <td class="textoDerecha"></td>
                                             <td class="textoDerecha"></td>
                                         </tr>
-                                        <tr data-categoria="ordenes">
+                                        <tr data-categoria="ordenes" class="report_process">
                                             <td>Ordenes</td>
                                             <td class="textoDerecha">0</td>
                                             <td class="textoDerecha">0</td>
                                         </tr>
-                                        <tr data-categoria="ingresos">
+                                        <tr data-categoria="ingresos" class="report_process">
                                             <td>Ingresos</td>
                                             <td class="textoDerecha">0</td>
                                             <td class="textoDerecha">0</td>
                                         </tr>
-                                        <tr data-categoria="despachos">
+                                        <tr data-categoria="despachos" class="report_process">
                                             <td>Despachos</td>
                                             <td class="textoDerecha">0</td>
                                             <td class="textoDerecha">0</td>
                                         </tr>
-                                        <tr data-categoria="registros">
+                                        <tr data-categoria="registros" class="report_process">
                                             <td>Registro Obra</td>
                                             <td class="textoDerecha">0</td>
                                             <td class="textoDerecha">0</td>
@@ -83,7 +83,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr data-categoria="consumos">
+                                        <tr data-categoria="consumos" class="report_process">
                                             <td>Consumos</td>
                                             <td class="textoDerecha"></td>
                                             <td class="textoDerecha"></td>
@@ -93,12 +93,12 @@
                                             <td class="textoDerecha"></td>
                                             <td class="textoDerecha"></td>
                                         </tr>
-                                        <tr data-categoria="inventarios">
+                                        <tr data-categoria="inventarios" class="report_process">
                                             <td>Registro Inventario</td>
                                             <td class="textoDerecha"></td>
                                             <td class="textoDerecha"></td>
                                         </tr>
-                                        <tr data-categoria="transferencias">
+                                        <tr data-categoria="transferencias" class="report_process">
                                             <td>Transferencias</td>
                                             <td class="textoDerecha"></td>
                                             <td class="textoDerecha"></td>
@@ -177,13 +177,13 @@
                 </div>
             </div>
             <div class="datosResumen">
-                <table id="tbl_pedidos" class="tabla">
+                <table id="tbl_pedidos" class="tabla oculto">
                     <thead>
                         <tr>
                             <th>Nro.</th>
                             <th>Cant.Aprobada</th>
                             <th>Cant.Pedida</th>
-                            <th>Fecha Pedido</th>
+                            <th>Elaborado</th>
                             <th>Aprobado</th>
                             <th>Area</th>
                             <th>Fecha Emision</th>
@@ -192,6 +192,17 @@
                     <tbody>
 
                     </tbody>
+                </table>
+                <table id="tbl_ordenes" class="tabla oculto">
+                    <thead>
+                        <tr>
+                            <th>Numero</th>
+                            <th>Fecha Emisión</th>
+                            <th>Cantidad</th>
+                            <th>Area</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
                 </table>
             </div>
         </div>

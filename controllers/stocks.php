@@ -49,6 +49,10 @@
         function pedidos() {
             echo json_encode($this->model->registroPedidos($_POST['cc'],$_POST['id']));
         }
+
+        function ordenes() {
+            echo json_encode($this->model->registroOrdenes($_POST['cc'],$_POST['id']));
+        }
         
     }
 ?>
