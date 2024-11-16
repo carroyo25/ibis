@@ -178,7 +178,7 @@ $(() => {
         formData.append('id',idprod);
 
         if ($(this).data("categoria") == "pedidos"){
-
+            //pedidos
             fetch(RUTA+'stocks/pedidos',{
                 method: 'POST',
                 body: formData
@@ -202,6 +202,7 @@ $(() => {
                 $("#tbl_pedidos").show();
             })
         }else if($(this).data("categoria") == "ordenes"){
+            //ordenes
             fetch(RUTA+'stocks/ordenes',{
                 method: 'POST',
                 body: formData
@@ -220,6 +221,80 @@ $(() => {
                 });            
                 
                 $("#tbl_ordenes").show();
+            })
+        }else if($(this).data("categoria") == "ingresos"){
+            //recepcion almacenes
+            fetch(RUTA+'stocks/ingresos',{
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                data.registros.forEach((e)=>{
+                    row = `<tr>
+                        <td class="textoCentro">${e.nnronota}</td>
+                        <td class="textoCentro">${e.cnumguia}</td>
+                        <td class="pl20px">${e.crazonsoc}</td>
+                        <td class="textoDerecha">${e.ncantidad}</td>
+                        <td class="textoCentro">${e.emision}</td>
+                    </tr>`
+
+                    $("#tbl_ingresos tbody").append(row);
+                });            
+                
+                $("#tbl_ingresos").show();
+            })
+        }else if($(this).data("categoria") == "despachos"){
+            fetch(RUTA+'stocks/despachos',{
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                data.registros.forEach((e)=>{
+
+                    let guia = e.cnumguia == null ? "": e.cnumguia,
+                        guiasunat = e.guiasunat == null ? "" : e.guiasunat;
+
+                    row = `<tr>
+                        <td class="textoCentro">${e.nnronota}</td>
+                        <td class="textoCentro">${e.ffecdoc}</td>
+                        <td class="pl20px">${e.ffecenvio}</td>
+                        <td class="textoCentro">${guia}</td>
+                        <td class="textoCentro">${guiasunat}</td>
+                        <td class="textoDerecha">${e.ndespacho}</td>
+                    </tr>`
+
+                    $("#tbl_despachos tbody").append(row);
+                });            
+                
+                $("#tbl_despachos").show();
+            })
+        }else if($(this).data("categoria") == "registros"){
+            fetch(RUTA+'stocks/ingresoAlmacen',{
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                data.registros.forEach((e)=>{
+
+                    let nombres = e.cnombres == null ? "" : e.cnombres,
+                        guiasunat = e.guiasunat == null ? "" : e.guiasunat;
+
+                    row = `<tr>
+                        <td class="textoCentro">${e.idreg}</td>
+                        <td class="textoCentro">${e.ffechadoc}</td>
+                        <td class="pl20px">${e.numguia}</td>
+                        <td class="pl20px">${nombres}</td>
+                        <td class="textoDerecha">${e.cant_ingr}</td>
+                        <td class="textoCentro">${guiasunat}</td>
+                    </tr>`
+
+                    $("#tbl_almacen tbody").append(row);
+                });            
+                
+                $("#tbl_almacen").show();
             })
         }
         

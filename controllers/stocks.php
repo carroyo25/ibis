@@ -53,6 +53,18 @@
         function ordenes() {
             echo json_encode($this->model->registroOrdenes($_POST['cc'],$_POST['id']));
         }
+
+        function ingresos() {
+            echo json_encode($this->model->registroIngresos($_POST['cc'],$_POST['id']));
+        }
+
+        function despachos() {
+            echo json_encode($this->model->registroDespachos($_POST['cc'],$_POST['id']));
+        }
+
+        function ingresoAlmacen() {
+            echo json_encode($this->model->registroIngresosAlmacen($_POST['cc'],$_POST['id']));
+        }
         
     }
 ?>

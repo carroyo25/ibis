@@ -22,6 +22,8 @@ $(function(){
             $(this).val("");
         });
 
+        $("#codigo_recepcion").val($("#id_user").val());
+
         accion = 'n';
 
         return false;

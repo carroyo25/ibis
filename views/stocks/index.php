@@ -98,7 +98,7 @@
                                             <td class="textoDerecha"></td>
                                             <td class="textoDerecha"></td>
                                         </tr>
-                                        <tr data-categoria="transferencias" class="report_process">
+                                        <tr data-categoria="transferencias">
                                             <td>Transferencias</td>
                                             <td class="textoDerecha"></td>
                                             <td class="textoDerecha"></td>
@@ -203,6 +203,50 @@
                         </tr>
                     </thead>
                     <tbody></tbody>
+                </table>
+                <table id="tbl_ingresos" class="tabla oculto">
+                    <thead>
+                        <tr>
+                            <th>Nro.Nota</th>
+                            <th>Guia. Proveedor</th>
+                            <th>Proveedor</th>
+                            <th>Cantidad</th>
+                            <th>Emisión</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+                <table id="tbl_despachos" class="tabla oculto">
+                    <thead>
+                        <tr>
+                            <th>Nro.Nota</th>
+                            <th>Emisión</th>
+                            <th>Envio</th>
+                            <th>Guia.Interna</th>
+                            <th>Guia.Sunat</th>
+                            <th>Cantidad</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+                <table id="tbl_almacen" class="tabla oculto">
+                    <thead>
+                        <tr>
+                            <th>Nro.Nota</th>
+                            <th>Emisión</th>
+                            <th>Guia.Interna</th>
+                            <th>Recepciona</th>
+                            <th>Cantidad</th>
+                            <th>Guia.Sunat</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
                 </table>
             </div>
         </div>

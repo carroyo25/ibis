@@ -915,5 +915,124 @@
                 return false;
             }
         }
+
+        public function registroIngresos($cc,$id){
+            try {
+                
+                $docData = [];
+                
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        alm_recepcab.nnronota,
+                                                        alm_recepcab.cnumguia,
+                                                        cm_entidad.crazonsoc,
+                                                        alm_recepdet.ncantidad,
+                                                        DATE_FORMAT( alm_recepcab.ffecdoc, '%d/%m/%Y' ) AS emision 
+                                                    FROM
+                                                        alm_recepdet
+                                                        INNER JOIN alm_recepcab ON alm_recepdet.id_regalm = alm_recepcab.id_regalm
+                                                        INNER JOIN cm_entidad ON alm_recepcab.id_centi = cm_entidad.id_centi 
+                                                    WHERE
+                                                        alm_recepdet.id_cprod = :id 
+                                                        AND alm_recepcab.ncodpry = :costo");
+                
+                $sql->execute(["costo" =>$cc,
+                                "id"    =>$id]);
+
+                $rowCount = $sql->rowCount();
+                
+                if ($rowCount) {
+                    while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+                        $docData[] = $row;
+                    }
+                }
+
+                return array("registros"=>$docData);
+                
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        public function registroDespachos($cc,$id){
+            try {
+                
+                $docData = [];
+                
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        alm_despachocab.nnronota,
+                                                        DATE_FORMAT( alm_despachocab.ffecdoc, '%d/%m/%Y' ) AS ffecdoc,
+                                                        DATE_FORMAT( alm_despachocab.ffecenvio, '%d/%m/%Y' ) AS ffecenvio,
+                                                        alm_despachocab.cnumguia,
+                                                        lg_guias.guiasunat,
+                                                        alm_despachodet.ndespacho 
+                                                    FROM
+                                                        alm_despachodet
+                                                        LEFT JOIN alm_despachocab ON alm_despachodet.id_regalm = alm_despachocab.id_regalm
+                                                        LEFT JOIN lg_guias ON alm_despachocab.cnumguia = lg_guias.cnumguia 
+                                                    WHERE
+                                                        alm_despachodet.id_cprod = :id
+                                                        AND alm_despachocab.ncodpry = :costo 
+                                                    ORDER BY
+                                                        alm_despachocab.ffecdoc ASC");
+                
+                $sql->execute(["costo" =>$cc,
+                                "id"    =>$id]);
+
+                $rowCount = $sql->rowCount();
+                
+                if ($rowCount) {
+                    while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+                        $docData[] = $row;
+                    }
+                }
+
+                return array("registros"=>$docData);
+                
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        public function registroIngresosAlmacen($cc,$id){
+            try {
+                
+                $docData = [];
+                
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        alm_cabexist.idreg,
+                                                        DATE_FORMAT(  alm_cabexist.ffechadoc, '%d/%m/%Y' ) AS ffechadoc,
+                                                        alm_cabexist.numguia,
+                                                        tb_user.cnombres,
+                                                        alm_existencia.cant_ingr,
+                                                        lg_guias.guiasunat 
+                                                    FROM
+                                                        alm_existencia
+                                                        LEFT JOIN alm_cabexist ON alm_existencia.idregistro = alm_cabexist.idreg
+                                                        LEFT JOIN tb_user ON alm_cabexist.idrecepciona = tb_user.iduser
+                                                        LEFT JOIN lg_guias ON alm_cabexist.numguia = lg_guias.cnumguia COLLATE utf8_spanish2_ci
+                                                    WHERE
+                                                        alm_existencia.codprod =:id 
+                                                        AND alm_cabexist.idcostos = :costo");
+                
+                $sql->execute(["costo" =>$cc,
+                                "id"    =>$id]);
+
+                $rowCount = $sql->rowCount();
+                
+                if ($rowCount) {
+                    while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+                        $docData[] = $row;
+                    }
+                }
+
+                return array("registros"=>$docData);
+                
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
     }
 ?>
