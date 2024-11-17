@@ -347,15 +347,26 @@
         private function numeroDespacho($codigo,$cc){
             try {
                 $sql = $this->db->connect()->prepare("SELECT
-                                                        FORMAT(SUM(alm_despachodet.ncantidad),2) AS cantidad,
-                                                        FORMAT(COUNT(alm_despachodet.id_cprod),2) AS numero 
-                                                    FROM
-                                                        alm_despachodet
-                                                        INNER JOIN alm_despachocab ON alm_despachodet.id_regalm = alm_despachocab.id_regalm 
-                                                    WHERE
-                                                        alm_despachodet.nflgactivo = 1 
-                                                        AND alm_despachocab.ncodpry = :cc
-                                                        AND alm_despachodet.id_cprod = :codigo");
+                                                            FORMAT(COUNT( r.cantidad ),2) AS cantidad,
+                                                            SUM( r.numero ) AS numero 
+                                                        FROM
+                                                            (
+                                                            SELECT DISTINCT
+                                                                alm_despachodet.niddetaPed AS cantidad,
+                                                                alm_despachodet.ndespacho AS numero 
+                                                            FROM
+                                                                alm_despachodet
+                                                                INNER JOIN alm_despachocab ON alm_despachodet.id_regalm = alm_despachocab.id_regalm 
+                                                            WHERE
+                                                                alm_despachodet.nflgactivo = 1 
+                                                                AND alm_despachocab.nflgactivo = 1 
+                                                                AND alm_despachocab.ncodpry = :cc 
+                                                                AND alm_despachodet.id_cprod = :codigo 
+                                                            GROUP BY
+                                                                alm_despachocab.ncodpry,
+                                                                alm_despachodet.id_cprod,
+                                                            alm_despachodet.id_regalm 
+                                                            ) AS r");
 
                 $sql->execute(["codigo"=>$codigo,"cc"=>$cc]);
                 $result = $sql->fetchAll();
@@ -364,8 +375,8 @@
                 $cantidad = 0;
 
                 if ($numeros >= 0){
-                    $numeros = $result[0]['numero'];
-                    $cantidad = $result[0]['cantidad'];
+                    $numeros = $result[0]['cantidad'];
+                    $cantidad = $result[0]['numero'];
                 }
 
                 return array("numeros"=>$numeros,
@@ -854,7 +865,7 @@
                                                         INNER JOIN tb_area ON tb_pedidocab.idarea = tb_area.ncodarea 
                                                     WHERE
                                                         tb_pedidodet.idprod =:id
-                                                        AND tb_pedidodet.nflgActivo = 1 
+                                                        AND tb_pedidodet.nflgActivo = 1  
                                                         AND tb_pedidodet.idcostos = :costo
                                                     ORDER BY tb_pedidocab.emision ASC");
                 
@@ -960,6 +971,7 @@
                 $docData = [];
                 
                 $sql = $this->db->connect()->prepare("SELECT
+                                                        alm_despachodet.niddeta,
                                                         alm_despachocab.nnronota,
                                                         DATE_FORMAT( alm_despachocab.ffecdoc, '%d/%m/%Y' ) AS ffecdoc,
                                                         DATE_FORMAT( alm_despachocab.ffecenvio, '%d/%m/%Y' ) AS ffecenvio,
@@ -972,7 +984,9 @@
                                                         LEFT JOIN lg_guias ON alm_despachocab.cnumguia = lg_guias.cnumguia 
                                                     WHERE
                                                         alm_despachodet.id_cprod = :id
-                                                        AND alm_despachocab.ncodpry = :costo 
+                                                        AND alm_despachocab.ncodpry = :costo
+                                                    GROUP BY 
+	                                                    alm_despachodet.niddetaPed 
                                                     ORDER BY
                                                         alm_despachocab.ffecdoc ASC");
                 
@@ -1018,6 +1032,169 @@
                 
                 $sql->execute(["costo" =>$cc,
                                 "id"    =>$id]);
+
+                $rowCount = $sql->rowCount();
+                
+                if ($rowCount) {
+                    while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+                        $docData[] = $row;
+                    }
+                }
+
+                return array("registros"=>$docData);
+                
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        public function salidaConsumos($cc,$id){
+            try {
+                
+                $docData = [];
+                
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        alm_consumo.nkardex,
+                                                        alm_consumo.cantsalida,
+                                                        alm_consumo.fechasalida,
+                                                        alm_consumo.reguser,
+                                                        tb_user.cnombres 
+                                                    FROM
+                                                        alm_consumo
+                                                        INNER JOIN tb_user ON alm_consumo.reguser = tb_user.iduser 
+                                                    WHERE
+                                                        alm_consumo.cantsalida > 0
+                                                        AND alm_consumo.flgactivo != 0
+                                                        AND alm_consumo.ncostos = :costo 
+                                                        AND alm_consumo.idprod = :id");
+                
+                $sql->execute(["costo" =>$cc,
+                                "id"    =>$id]);
+
+                $rowCount = $sql->rowCount();
+                
+                if ($rowCount) {
+                    while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+                        $docData[] = $row;
+                    }
+                }
+
+                return array("registros"=>$docData);
+                
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        public function ingresoDevolucion($cc,$id){
+            try {
+                
+                $docData = [];
+                
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        alm_consumo.nkardex,
+                                                        alm_consumo.cantdevolucion,
+                                                        alm_consumo.fechadevolucion,
+                                                        alm_consumo.calmacen,
+                                                        tb_user.cnombres 
+                                                    FROM
+                                                        alm_consumo
+                                                        INNER JOIN tb_user ON alm_consumo.reguser = tb_user.iduser 
+                                                    WHERE
+                                                        alm_consumo.cantdevolucion > 0
+                                                        AND alm_consumo.flgactivo != 0
+                                                        AND alm_consumo.ncostos = :costo 
+                                                        AND alm_consumo.idprod = :id");
+                
+                $sql->execute(["costo" =>$cc,
+                                "id"    =>$id]);
+
+                $rowCount = $sql->rowCount();
+                
+                if ($rowCount) {
+                    while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+                        $docData[] = $row;
+                    }
+                }
+
+                return array("registros"=>$docData);
+                
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        public function ingresoInventarios($cc,$id) {
+            try {
+                
+                $docData = [];
+                
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        alm_inventariodet.idreg,
+                                                        alm_inventariocab.idcostos,
+                                                        DATE_FORMAT(alm_inventariocab.ffechadoc,'%d/%m/%Y') AS ffechadoc,
+                                                        alm_inventariocab.idautoriza,
+                                                        tb_user.cnombres,
+                                                        alm_inventariodet.cant_ingr 
+                                                    FROM
+                                                        alm_inventariodet
+                                                        LEFT JOIN alm_inventariocab ON alm_inventariodet.idregistro = alm_inventariocab.idreg
+                                                        INNER JOIN tb_user ON alm_inventariocab.idautoriza = tb_user.iduser 
+                                                    WHERE
+                                                        alm_inventariodet.cant_ingr > 0 
+                                                        AND alm_inventariodet.nflgActivo !=0
+                                                        AND alm_inventariodet.codprod = :id 
+                                                        AND alm_inventariocab.idcostos = :costo");
+                
+                $sql->execute(["costo" =>$cc,
+                                "id"    =>$id]);
+
+                $rowCount = $sql->rowCount();
+                
+                if ($rowCount) {
+                    while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+                        $docData[] = $row;
+                    }
+                }
+
+                return array("registros"=>$docData);
+                
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }   
+        }
+
+        public function movimientoTransferencias($cc,$id){
+            try {
+                
+                $docData = [];
+                
+                $sql = $this->db->connect()->prepare("SELECT
+                        alm_transfercab.cnumguia,
+                        alm_transfercab.ftraslado,
+                        alm_transferdet.idtransfer,
+                        alm_transferdet.ncanti,
+                        UPPER(CONCAT_WS(' ',destino.ccodproy,destino.cdesproy)) AS costoDestino,
+	                    UPPER(CONCAT_WS(' ',origen.ccodproy,origen.cdesproy)) AS costoOrigen,
+                        alm_transfercab.idcd
+                    FROM
+                        alm_transferdet
+                        INNER JOIN alm_transfercab ON alm_transferdet.idtransfer = alm_transfercab.idreg
+                        INNER JOIN tb_proyectos AS origen ON alm_transfercab.idcc = origen.nidreg
+                        INNER JOIN tb_proyectos AS destino ON alm_transfercab.idcd = destino.nidreg 
+                    WHERE
+                        alm_transferdet.ncanti > 0 
+                        AND alm_transferdet.nflgactivo <> 0 
+                        AND ( alm_transfercab.idcd  = :costodestino OR alm_transfercab.idcc = :costoorigen ) 
+                        AND alm_transferdet.idcprod = :id");
+                                    
+                $sql->execute(["costodestino" =>$cc,
+                               "costoorigen" => $cc,
+                               "id"    =>$id]);
 
                 $rowCount = $sql->rowCount();
                 

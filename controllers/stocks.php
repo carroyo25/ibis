@@ -65,6 +65,22 @@
         function ingresoAlmacen() {
             echo json_encode($this->model->registroIngresosAlmacen($_POST['cc'],$_POST['id']));
         }
+
+        function consumos() {
+            echo json_encode($this->model->salidaConsumos($_POST['cc'],$_POST['id']));
+        }
+
+        function devoluciones() {
+            echo json_encode($this->model->ingresoDevolucion($_POST['cc'],$_POST['id']));
+        }
+
+        function inventarios() {
+            echo json_encode($this->model->ingresoInventarios($_POST['cc'],$_POST['id']));
+        }
+
+        function transferencias() {
+            echo json_encode($this->model->movimientoTransferencias($_POST['cc'],$_POST['id']));
+        }
         
     }
 ?>

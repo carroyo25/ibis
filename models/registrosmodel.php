@@ -44,8 +44,7 @@
                                                         AND alm_despachocab.nEstadoDoc = 62 
                                                         AND alm_despachocab.cnumguia LIKE :guia 
                                                     ORDER BY
-                                                        alm_despachocab.ffecdoc DESC
-                                                    LIMIT 50");
+                                                        alm_despachocab.ffecdoc DESC");
                 $sql->execute(["usr"=>$_SESSION['iduser'],"guia"=>$nguia]);
                 $rowCount = $sql->rowCount();
 

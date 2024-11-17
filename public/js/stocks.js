@@ -30,7 +30,7 @@ $(() => {
         return false;
     });
 
-    $("#tablaPrincipal tbody").on("dblclick","tr", function (e) {
+    $("#tablaPrincipal tbody").on("click","tr", function (e) {
         e.preventDefault();
 
         idprod = $(this).data("idprod"); 
@@ -39,14 +39,6 @@ $(() => {
         $("#descripcion_item").text( $(this).find('td').eq(2).text() );
 
         resumen(idprod);
-
-        return false;
-    });
-
-    $("#tablaPrincipal tbody").on('click','tr', function(e) {
-        e.preventDefault();
-
-        $(this).toggleClass('semaforoNaranja');
 
         return false;
     });
@@ -186,10 +178,12 @@ $(() => {
             .then(response => response.json())
             .then(data => {
                 data.registros.forEach((e)=>{
+
+                    let estado = e.cant_aprob > 0 ? '' : 'semaforoRojo';
                     row = `<tr>
                         <td class="textoCentro">${e.pedido}</td>
                         <td class="textoDerecha">${e.cant_pedida}</td>
-                        <td class="textoDerecha">${e.cant_aprob}</td>
+                        <td class="textoDerecha ${estado}">${e.cant_aprob}</td>
                         <td class="pl20px">${e.elabora}</td>
                         <td class="pl20px">${e.aprueba}</td>
                         <td class="pl20px">${e.cdesarea}</td>
@@ -256,7 +250,7 @@ $(() => {
                     let guia = e.cnumguia == null ? "": e.cnumguia,
                         guiasunat = e.guiasunat == null ? "" : e.guiasunat;
 
-                    row = `<tr>
+                    row = `<tr data-iddespacho="${e.niddeta}">
                         <td class="textoCentro">${e.nnronota}</td>
                         <td class="textoCentro">${e.ffecdoc}</td>
                         <td class="pl20px">${e.ffecenvio}</td>
@@ -295,6 +289,91 @@ $(() => {
                 });            
                 
                 $("#tbl_almacen").show();
+            })
+        }else if($(this).data("categoria") == "consumos"){
+            fetch(RUTA+'stocks/consumos',{
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                data.registros.forEach((e)=>{
+                    row = `<tr>
+                        <td class="textoCentro">${e.nkardex}</td>
+                        <td class="textoCentro">${e.fechasalida}</td>
+                        <td class="pl20px">${e.cantsalida}</td>
+                        <td class="pl20px">${e.cnombres}</td>
+                    </tr>`
+
+                    $("#tbl_consumos tbody").append(row);
+                });            
+                
+                $("#tbl_consumos").show();
+            })
+        }else if($(this).data("categoria") == "devoluciones"){
+            fetch(RUTA+'stocks/devoluciones',{
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                data.registros.forEach((e)=>{
+                    row = `<tr>
+                        <td class="textoCentro">${e.nkardex}</td>
+                        <td class="textoCentro">${e.fechadevolucion}</td>
+                        <td class="pl20px">${e.cantdevolucion}</td>
+                        <td class="pl20px">${e.cnombres}</td>
+                    </tr>`
+
+                    $("#tbl_devolucion tbody").append(row);
+                });            
+                
+                $("#tbl_devolucion").show();
+            })
+        }else if($(this).data("categoria") == "inventarios"){
+            fetch(RUTA+'stocks/inventarios',{
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                data.registros.forEach((e)=>{
+                    row = `<tr>
+                        <td class="textoCentro">${e.idreg}</td>
+                        <td class="textoCentro">${e.ffechadoc}</td>
+                        <td class="pl20px">${e.cant_ingr}</td>
+                        <td class="pl20px">${e.cnombres}</td>
+                    </tr>`
+
+                    $("#tbl_inventario tbody").append(row);
+                });            
+                
+                $("#tbl_inventario").show();
+            })
+        }else if($(this).data("categoria") == "transferencias"){
+            fetch(RUTA+'stocks/transferencias',{
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                data.registros.forEach((e)=>{
+                    let direccion = e.idcd = $("#costosSearch").val() ? '<i class="fas fa-long-arrow-alt-left"></i>':'<i class="fas fa-long-arrow-alt-right"></i>';
+                        guia = e.cnumguia == null ? "" : e.cnumguia;
+
+                    row = `<tr>
+                        <td class="textoCentro">${e.idtransfer}</td>
+                        <td class="textoCentro">${guia}</td>
+                        <td class="textoCentro">${e.costoOrigen}</td>
+                        <td class="textoCentro">${e.costoDestino}</td>
+                        <td class="textoDerecha">${e.ncanti}</td>
+                        <td class="textoDerecha">${direccion}</td>
+                    </tr>`
+
+                    $("#tbl_transferencias tbody").append(row);
+                });            
+                
+                $("#tbl_transferencias").show();
             })
         }
         

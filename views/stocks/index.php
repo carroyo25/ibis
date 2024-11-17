@@ -32,6 +32,7 @@
                         <button type="button" class="tab_button" data-tab="tab1">Detalles</button>
                         <button type="button" class="tab_button tab_inactivo" data-tab="tab2">Stocks Minimos</button>
                         <button type="button" class="tab_button tab_inactivo" data-tab="tab3">Precios</button>
+                        <button type="button" class="tab_button tab_inactivo" data-tab="tab4">Kardex</button>
                    </div>
                    <div class="body_tab">
                         <div class="tab" id="tab1">
@@ -88,7 +89,7 @@
                                             <td class="textoDerecha"></td>
                                             <td class="textoDerecha"></td>
                                         </tr>
-                                        <tr>
+                                        <tr data-categoria="devoluciones" class="report_process">
                                             <td>Devoluciones</td>
                                             <td class="textoDerecha"></td>
                                             <td class="textoDerecha"></td>
@@ -98,7 +99,7 @@
                                             <td class="textoDerecha"></td>
                                             <td class="textoDerecha"></td>
                                         </tr>
-                                        <tr data-categoria="transferencias">
+                                        <tr data-categoria="transferencias" class="report_process">
                                             <td>Transferencias</td>
                                             <td class="textoDerecha"></td>
                                             <td class="textoDerecha"></td>
@@ -141,6 +142,9 @@
 
                                 </tbody>
                             </table>
+                        </div>
+                        <div class="tab oculto" id="tab4">
+
                         </div>
                    </div>
                 </div>
@@ -238,10 +242,64 @@
                         <tr>
                             <th>Nro.Nota</th>
                             <th>Emisión</th>
-                            <th>Guia.Interna</th>
+                            <th>Guia.Interna/Nota Transferencia</th>
                             <th>Recepciona</th>
                             <th>Cantidad</th>
                             <th>Guia.Sunat</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+                <table id="tbl_consumos" class="tabla oculto">
+                    <thead>
+                        <tr class="stickytop">
+                            <th>Nro.Kardex</th>
+                            <th>Emitido</th>
+                            <th>Cantidad</th>
+                            <th>Despacho</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+                <table id="tbl_devolucion" class="tabla oculto">
+                    <thead>
+                        <tr>
+                            <th>Nro.Kardex</th>
+                            <th>Emitido</th>
+                            <th>Cantidad</th>
+                            <th>Despacho</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+                <table id="tbl_inventario" class="tabla oculto">
+                    <thead>
+                        <tr>
+                            <th>Nro. Operacion</th>
+                            <th>Emitido</th>
+                            <th>Cantidad</th>
+                            <th>Registrado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+                <table id="tbl_transferencias" class="tabla oculto">
+                    <thead>
+                        <tr>
+                            <th>Nota Transferencia</th>
+                            <th>Guia Interna</th>
+                            <th>Origen</th>
+                            <th>Destino</th>
+                            <th>Cantidad</th>
+                            <th>...</th>
                         </tr>
                     </thead>
                     <tbody>

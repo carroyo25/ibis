@@ -3072,6 +3072,11 @@
   gap: 10px;
   padding: 10px;
 }
+.ventanaBusqueda .datosResumen {
+  height: 22rem;
+  padding: 0.5rem;
+  overflow: auto;
+}
 
 .ventanaDialogo {
   width: 20%;
