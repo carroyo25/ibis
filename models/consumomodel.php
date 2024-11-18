@@ -763,7 +763,8 @@
                                                         inventarios.inventarios_cantidad,
                                                         consumo.cantidad_consumo,
                                                         consumo.cantidad_devuelto,
-                                                        recepcion.cc 
+                                                        recepcion.cc,
+                                                        sal_trans.salida_transferencia
                                                     FROM
                                                         cm_producto
                                                         LEFT JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
@@ -808,6 +809,20 @@
                                                         GROUP BY
                                                             alm_consumo.idprod 
                                                         ) AS consumo ON consumo.idprod = cm_producto.id_cprod
+                                                         LEFT JOIN (
+                                                            SELECT
+                                                                SUM( alm_transferdet.ncanti ) AS salida_transferencia,
+                                                                alm_transferdet.idcprod,
+                                                                alm_transferdet.iditem 
+                                                            FROM
+                                                                alm_transferdet
+                                                                LEFT JOIN alm_transfercab ON alm_transferdet.idtransfer = alm_transfercab.idreg 
+                                                            WHERE
+                                                                alm_transferdet.nflgactivo = 1 
+                                                                AND alm_transfercab.idcc = :ctransfsalida 
+                                                            GROUP BY
+                                                                alm_transferdet.idcprod 
+                                                            ) AS sal_trans ON sal_trans.idcprod = cm_producto.id_cprod
                                                     WHERE
                                                         cm_producto.flgActivo = 1 
                                                         AND cm_producto.ntipo = 37
@@ -818,6 +833,7 @@
                $sql->execute(["existencias" =>$cc,
                                 "inventario" =>$cc,
                                 "salidas"=>$cc,
+                                "ctransfsalida"=>$cc, 
                                 "descripcion"=>$descripcion,
                                 "codigo"=>$codigo]);
 
@@ -825,7 +841,8 @@
 
                 if ($rowCount > 0){
                     while ($rs = $sql->fetch()) {
-                        $existencia_almacen = round(($rs['ingresos']+$rs['inventarios_cantidad']+$rs['cantidad_devuelto'])-$rs['cantidad_consumo'],2);
+                        $existencia_almacen = round(($rs['ingresos']+$rs['inventarios_cantidad']+$rs['cantidad_devuelto'])
+                                                        -($rs['cantidad_consumo']+$rs['salida_transferencia']),2);
 
                         if ( $existencia_almacen > 0 )
                         

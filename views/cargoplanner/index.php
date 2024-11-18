@@ -6,6 +6,59 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="content-type" content="application/vnd.ms-excel; charset=UTF-8">
     <title>Document</title>
+    <style>
+        :root {
+            /* Primary Colors */
+            --color-primary-main: #5A3FE1;
+            --color-primary-hover: #3314C7;
+            --color-primary-pressed: #200F70;
+            --color-primary-focus: #AC9FF0;
+            --color-primary-border: #C4BAF5;
+            --color-primary-secondary: #EFEDFA;
+        
+            /* Gray Colors */
+            --color-gray-100: #ECECEC;
+            --color-gray-200: #D8D8D8;
+            --color-gray-300: #C5C5C5;
+            --color-gray-400: #B1B1B1;
+            --color-gray-500: #9E9E9E;
+            --color-gray-600: #7E7E7E;
+            --color-gray-700: #5F5F5F;
+            --color-gray-800: #3F3F3F;
+            --color-gray-900: #202020;
+        }
+        .pagination {
+            text-align: center;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .pagination button {
+            padding: 5px 10px;
+            margin: 5px 5px;
+            cursor: pointer;
+            outline: 1px solid var(--color-primary-main);
+            color: var(--color-primary-main);
+            border-radius: 4px;
+            border: none;
+            background-color: var(--color-primary-secondary);
+        }
+        
+        .hidden {
+            clip: rect(0 0 0 0);
+            clip-path: inset(50%);
+            height: 1px;
+            overflow: hidden;
+            position: absolute;
+            white-space: nowrap;
+            width: 1px;
+        }
+        
+        .pagination button.active {
+            background-color: var(--color-primary-main);
+            color: white;
+        }
+    </style>
 </head>
 <body>
     <div class="mensaje">
@@ -216,7 +269,6 @@
             <a href="1" id="excelFile" class="exportReport"><i class="fas fa-file-excel"></i><p>Exportar Excel</p></a>
             <a href="2" id="csvFile" class="exportReport oculto"><i class="fas fa-file-csv"></i><p>Exportar CSV</p></a>
             <a href="3" id="excelSpoutFile" class="exportReport oculto"><i class="fas fa-file-excel"></i><p>Exportar Total Rapido</p></a>
-            <a href="4" id="excelSpreadSheet" class="exportReport oculto"><i class="fas fa-file-excel"></i><p>SpeedSheet</p></a>
             <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
         </div>
     </div>
@@ -284,7 +336,7 @@
             </div>
         </form>
     </div>
-    <div class="itemsCargoPlanner" id="demo">
+    <div class="itemsCargoPlanner" id="demo" style="overflow: scroll;">
         <table id="cargoPlanDescrip">
             <thead>
                 <tr class="stickytop">
@@ -344,6 +396,16 @@
             </tbody>
         </table>
     </div>
+    <div class="modal" id="ventanaProgreso">
+        <div class="ventanaPregunta">
+            <h3>Procesando...</h3>
+            <h3 id="valorPorcentaje">0%</h3>
+            <div>
+                <progress id="progress" max="100" value="0">70%</progress>
+            </div>
+        </div>
+    </div>
+    
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
     <script src="<?php echo constant('URL');?>public/js/funciones.js?<?php echo constant('VERSION')?>"></script>
     <script src="<?php echo constant('URL');?>public/js/cargoplanner.js?<?php echo constant('VERSION')?>"></script>

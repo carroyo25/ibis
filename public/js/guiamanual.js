@@ -469,7 +469,7 @@ $(function() {
 
         $("#esperar").css({"display":"block","opacity":"1"});
         
-        $.post(RUTA+"guiamanual/listaFiltrada", {guia:$("#ordenSearch").val(),costos:$("#costosSearch").val(),anio:$("#anioSearch").val()},
+        $.post(RUTA+"guiamanual/listaFiltrada", {guia:$("#ordenSearch").val(),costos:$("#costosSearch").val(),anio:$("#anioSearch").val(),limite:150},
             function (data, textStatus, jqXHR) {
                 $("#tablaPrincipal tbody").empty().append(data);
 

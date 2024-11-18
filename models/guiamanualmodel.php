@@ -43,7 +43,7 @@
                                                         AND alm_desplibrescab.cnumguia LIKE :guia
                                                         AND YEAR(alm_desplibrescab.ffecdoc) LIKE :anio
                                                     ORDER BY alm_desplibrescab.ffecdoc DESC
-                                                    LIMIT 50");
+                                                    LIMIT 150");
 
                 $sql->execute(["guia"=>$guia,"anio"=>$anio]);
                 $rowCount = $sql->rowCount();

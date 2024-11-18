@@ -432,7 +432,11 @@ $(function(){
         try {
             if ($("#costosSearch").val() == " ") throw new Error("Elija el centro de costos");
 
-            $.post(RUTA+"consumo/llamarStocks", {cc:$("#costosSearch").val(),desc:"",cod:""},
+            $("#dialogo_registro").fadeIn();
+
+            return
+
+            /*$.post(RUTA+"consumo/llamarStocks", {cc:$("#costosSearch").val(),desc:"",cod:""},
                 function (data, textStatus, jqXHR) {
                     $("#tabla_detalles_productos tbody")
                         .empty()
@@ -442,7 +446,8 @@ $(function(){
 
                 },
                 "text"
-            );
+            );*/
+            
         } catch (error) {
             mostrarMensaje(e.message,"mensaje_error");
         }
