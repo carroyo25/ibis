@@ -178,6 +178,7 @@
                 <input type="hidden" name="nombre_entidad_destino" id="nombre_entidad_destino">
                 <input type="hidden" name="ruc_entidad_destino" id="ruc_entidad_destino">
                 <input type="hidden" name="ticket_sunat" id="ticket_sunat">
+                <input type="hidden" name="estado_sunat" id="estado_sunat">
                 <div class="tituloDocumento">
                     <div>
                         <p class="titulo_seccion"><strong> Guia de Remision Interna : </strong></p>

@@ -369,12 +369,12 @@ $(function() {
                 $(".primeraBarra span").text('Datos Generales ... Grabado');
 
                 accion = "u";
-                grabado = 0;
+                grabado = 1;
             },
             "json"
             );
         } catch (error) {
-            mostrarMensaje(error.mensaje, "mensaje_error");
+            mostrarMensaje(error.message, "mensaje_error");
         }
 
         return false;
@@ -686,7 +686,8 @@ detalles = (sw) =>{
             item['destino']      = $("#codigo_almacen_destino").val();
             item['estado']       = $(this).data("estado");
 
-            
+            $(this).attr('data-grabado',1);
+
             DETALLES.push(item);
         }
     })

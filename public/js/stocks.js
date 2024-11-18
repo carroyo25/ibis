@@ -30,7 +30,7 @@ $(() => {
         return false;
     });
 
-    $("#tablaPrincipal tbody").on("click","tr", function (e) {
+    $("#tablaPrincipal tbody").on("dblclick","tr", function (e) {
         e.preventDefault();
 
         idprod = $(this).data("idprod"); 
