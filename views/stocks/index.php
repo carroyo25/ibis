@@ -105,8 +105,8 @@
                                             <td class="textoDerecha"></td>
                                         </tr>
                                         <tr>
-                                            <td colspan="2"><strong>Saldo</strong></td>
-                                            <td class="textoDerecha"></td>
+                                            <!--<td colspan="2"><strong>Saldo</strong></td>
+                                            <td class="textoDerecha"></td>-->
                                         </tr>
                                     </tbody>
                                 </table>
