@@ -40,7 +40,7 @@
         }
 
         function listaFiltrada() {
-            echo $this->model->listarGuiasManuales($_POST['guia'],$_POST['costos'],$_POST['anio'],);
+            echo $this->model->listarGuiasManuales($_POST['guia'],$_POST['costos'],$_POST['anio'],500);
         }
         
     }

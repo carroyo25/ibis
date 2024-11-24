@@ -44,7 +44,8 @@
                                                         AND alm_despachocab.nEstadoDoc = 62 
                                                         AND alm_despachocab.cnumguia LIKE :guia 
                                                     ORDER BY
-                                                        alm_despachocab.ffecdoc DESC");
+                                                        alm_despachocab.ffecdoc DESC
+                                                    LIMIT 20");
                 $sql->execute(["usr"=>$_SESSION['iduser'],"guia"=>$nguia]);
                 $rowCount = $sql->rowCount();
 
@@ -446,7 +447,7 @@
                                                         AND alm_cabexist.numguia LIKE :guia
                                                         AND alm_cabexist.idcostos LIKE :cc
                                                     ORDER BY  alm_cabexist.idreg DESC
-                                                    LIMIT 0,50");
+                                                    LIMIT 0,2500");
                 $sql->execute(["usr"=>$_SESSION["iduser"],
                                 "guia"=>$guia,
                                 "cc"=>$cc]);
@@ -861,6 +862,27 @@
                 $records = $sql->fetchAll();
 
                 return $records[0]['records'];
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        public function buscarIngresadas($guia){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        COUNT( alm_cabexist.numguia ) AS records 
+                                                    FROM
+                                                        alm_cabexist 
+                                                    WHERE
+                                                        alm_cabexist.numguia = :guia 
+                                                        AND ISNULL(alm_cabexist.flgActivo)");
+                $sql->execute(["guia" => $guia]);
+
+                $records = $sql->fetchAll();
+
+                return array( "respuesta" => $records[0]['records'] );
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();

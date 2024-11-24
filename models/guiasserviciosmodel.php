@@ -542,7 +542,7 @@
                 if ($rowCount > 0) {
 
                     while ($rs = $sql->fetch()) {
-                        $salida.='<tr data-orden="delete">
+                        $salida.='<tr data-orden="'.$rs['idreg'].'">
                                 <td class="textoCentro">'.$rs['nrodoc'].'</td>
                                 <td class="textoCentro">'.$rs['emision'].'</td>
                                 <td class="pl20px">'.$rs['concepto'].'</td>

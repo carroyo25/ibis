@@ -69,7 +69,7 @@
                                             LEFT JOIN (
                                             SELECT
                                                 SUM( alm_consumo.cantsalida ) AS cantsalida,
-                                                alm_consumo.cantdevolucion,
+                                                IF (alm_consumo.flgdevolver = 1,SUM(alm_consumo.cantdevolucion),0) AS cantdevolucion,
                                                 alm_consumo.idprod 
                                             FROM
                                                 alm_consumo 
@@ -77,9 +77,7 @@
                                                 alm_consumo.ncostos = :csalida
                                                 AND alm_consumo.flgactivo = 1 
                                             GROUP BY
-                                                alm_consumo.fechasalida,
-                                                alm_consumo.nrodoc,
-                                                alm_consumo.idprod 
+                                                alm_consumo.idprod
                                             ) AS consumo ON consumo.idprod = cm_producto.id_cprod
                                             LEFT JOIN (
                                             SELECT

@@ -17,35 +17,31 @@
             try {
                 $sql = $this->db->connect()->prepare("SELECT
                                                         ibis.cm_producto.ccodprod,
-                                                        UPPER(ibis.cm_producto.cdesprod) AS producto,
+                                                        UPPER( ibis.cm_producto.cdesprod ) AS producto,
                                                         ibis.tb_proyectos.ccodproy,
                                                         ibis.tb_proyectos.nidreg,
                                                         ibis.alm_consumo.cantsalida AS salida,
-                                                        DATE_FORMAT(ibis.alm_consumo.fechasalida,'%d/%m/%Y') AS fechasalida,
+                                                        DATE_FORMAT( ibis.alm_consumo.fechasalida, '%d/%m/%Y' ) AS fechasalida,
                                                         ibis.alm_consumo.nrodoc,
-                                                        CONCAT_WS( ' ', rrhh.tabla_aquarius.apellidos, rrhh.tabla_aquarius.nombres ) AS usuario,
+                                                        CONCAT_WS( ' ', a.apellidos, a.nombres ) AS usuario,
                                                         ibis.tb_unimed.cabrevia,
                                                         ibis.alm_consumo.idreg,
                                                         ibis.cm_producto.ngrupo,
                                                         ibis.cm_producto.nclase,
-                                                        ibis.cm_producto.nfam  
+                                                        ibis.cm_producto.nfam 
                                                     FROM
                                                         ibis.alm_consumo
-                                                    LEFT JOIN ibis.cm_producto ON alm_consumo.idprod = cm_producto.id_cprod
-                                                    LEFT JOIN ibis.tb_proyectos ON alm_consumo.ncostos = tb_proyectos.nidreg
-                                                    LEFT JOIN rrhh.tabla_aquarius ON ibis.alm_consumo.nrodoc = rrhh.tabla_aquarius.dni
-                                                    INNER JOIN ibis.tb_unimed ON ibis.cm_producto.nund = ibis.tb_unimed.ncodmed 
+                                                        LEFT JOIN ibis.cm_producto ON alm_consumo.idprod = cm_producto.id_cprod
+                                                        LEFT JOIN ibis.tb_proyectos ON alm_consumo.ncostos = tb_proyectos.nidreg
+                                                        LEFT JOIN ( SELECT DISTINCT rrhh.tabla_aquarius.dni, rrhh.tabla_aquarius.apellidos, rrhh.tabla_aquarius.nombres FROM rrhh.tabla_aquarius ) AS a ON ibis.alm_consumo.nrodoc = a.dni
+                                                        LEFT JOIN ibis.tb_unimed ON ibis.cm_producto.nund = ibis.tb_unimed.ncodmed 
                                                     WHERE
-                                                        tb_proyectos.nflgactivo = 1 
-                                                    AND alm_consumo.flgactivo = 1 
-                                                    AND cm_producto.cdesprod LIKE :descripcion  
-                                                    AND cm_producto.ccodprod LIKE :codigo 
-                                                    AND alm_consumo.ncostos LIKE :cc
-                                                    GROUP BY
-                                                        ibis.alm_consumo.fechasalida,
-                                                        ibis.alm_consumo.cantsalida,
-                                                        ibis.alm_consumo.nrodoc
-                                                    ORDER BY ibis.tb_proyectos.ccodproy ASC");
+                                                        alm_consumo.flgactivo = 1 
+                                                        AND cm_producto.cdesprod LIKE :descripcion  
+                                                        AND cm_producto.ccodprod LIKE :codigo 
+                                                        AND alm_consumo.ncostos LIKE :cc 
+                                                    ORDER BY
+                                                        ibis.tb_proyectos.ccodproy ASC");
 
                 $sql->execute(["cc" => $cc,"codigo"=>$cod,"descripcion"=>$descrip]);
 
