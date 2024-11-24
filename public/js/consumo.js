@@ -434,20 +434,7 @@ $(function(){
 
             $("#dialogo_registro").fadeIn();
 
-            return
-
-            /*$.post(RUTA+"consumo/llamarStocks", {cc:$("#costosSearch").val(),desc:"",cod:""},
-                function (data, textStatus, jqXHR) {
-                    $("#tabla_detalles_productos tbody")
-                        .empty()
-                        .append(data);
-
-                        $("#dialogo_registro").fadeIn();
-
-                },
-                "text"
-            );*/
-            
+            return false
         } catch (error) {
             mostrarMensaje(e.message,"mensaje_error");
         }

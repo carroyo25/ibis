@@ -226,6 +226,7 @@
                                                         tb_pedidodet.idtipo,
                                                         tb_pedidodet.estadoItem AS estado,
                                                         tb_pedidodet.nroparte,
+                                                        tb_pedidodet.idorden,
                                                         tb_pedidodet.unid,
                                                         UPPER(tb_pedidodet.observaciones) AS observaciones,
                                                         REPLACE(FORMAT(tb_pedidodet.cant_pedida,2),',','') AS cant_pedida,
@@ -251,6 +252,8 @@
                     while ( $rs = $sql->fetch() ) {
 
                         $checked = $rs['nflgqaqc'] == 1 ? "checked ": " ";
+                        $anulado = $rs['estado'] == 105 ? "tituloClase": "";
+                        $orden   = $rs['idorden'] == null ? "" : "tituloGrupo";
                         
                         $salida .='<tr data-grabado="1" 
                                         data-idprod="'.$rs['idprod'].'" 
@@ -260,7 +263,7 @@
                                         data-estadoitem="'.$rs['estado'].'">
                                         <td class="textoCentro"><a href="'.$rs['iditem'].'" data-accion="eliminar" title="'.$rs['iditem'].'"><i class="fas fa-eraser"></i></a></td>
                                         <td class="textoCentro">'.str_pad($filas++,3,0,STR_PAD_LEFT).'</td>
-                                        <td class="textoCentro">'.$rs['ccodprod'].'</td>
+                                        <td class="textoCentro '.$anulado.' '.$orden.'">'.$rs['ccodprod'].'</td>
                                         <td class="pl20px">'.$rs['cdesprod'].'</td>
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                         <td>
@@ -378,7 +381,6 @@
                     $mensaje = "Error al actualizar";
                     $sw = false;
                 }
-
 
                 return array("mensaje"=>$mensaje,
                             "condicion"=>$sw);
@@ -536,7 +538,8 @@
                                                                         observaciones   =:espec,
                                                                         nroparte        =:parte,
                                                                         nregistro       =:nreg,
-                                                                        idprod          =:prod
+                                                                        idprod          =:prod,
+                                                                        unid            =:und
                                                                 WHERE iditem = :id");
                         
                         $sql->execute(["cant"=>$details[$i]->cantidad,
@@ -548,8 +551,12 @@
                                         "nreg"=>$details[$i]->registro,
                                         "prod"=>$details[$i]->idprod,
                                         "id"=>$details[$i]->itempedido,
-                                        "aprob"=>$details[$i]->cantidad]);
+                                        "aprob"=>$details[$i]->cantidad,
+                                        "und"=>$details[$i]->unidad]);
                         $rowCount = $sql->rowCount();
+
+                        $this->cambiarItemOrden($details[$i]->itempedido,$details[$i]->idprod);
+
                     } catch (PDOException $th) {
                         echo $th->getMessage();
                         return false;
@@ -571,6 +578,19 @@
                                 "valor"=>$valor,
                                 "estado"=>$estado,
                                 "activo"=>$valor]);
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        private function cambiarItemOrden($id,$idprod){
+            try {
+                $sql = $this->db->connect()->prepare("UPDATE lg_ordendet 
+                                                        SET lg_ordendet.id_cprod =:idprod
+                                                        WHERE lg_ordendet.niddeta =:id");
+                $sql->execute(["id"=>$id,
+                              "idprod"=>$idprod]);
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
