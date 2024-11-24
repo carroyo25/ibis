@@ -303,6 +303,7 @@
                                                         tb_proyectos.ccodproy,
                                                         UPPER( tb_proyectos.cdesproy ) AS cdesproy,
                                                         DATE_FORMAT( lg_ordencab.ffechadoc, '%d/%m/%Y' ) AS fecha,
+                                                        UPPER(cm_entidad.crazonsoc) AS entidad,
                                                     IF
                                                         ( lg_ordencab.ncodmon != 20, FORMAT( lg_ordencab.ntcambio, 2 ), 1 ) AS tipo_cambio
                                                     FROM
@@ -340,9 +341,9 @@
                                         <td class="pl10px">'.$rs['cobserva'].'</td>
                                         <td class="textoDerecha pr20px">'.$tipo_cambio.'</td>
                                         <td class="textoCentro">'.$rs['fecha'].'</td>
+                                        <td class="pl10px">'.$rs['entidad'].'</td>
                                     </tr>';
                     }
-
                 }
 
                 return $salida;

@@ -250,6 +250,7 @@
                             <th>Observaciones</th>
                             <th>Tipo </br> Cambio</th>
                             <th>Fecha</th>
+                            <th>Proveedor</th>
                         </tr>
                     </thead>
                     <tbody>
