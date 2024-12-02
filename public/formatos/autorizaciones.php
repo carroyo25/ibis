@@ -25,34 +25,38 @@
 			$this->SetXY(25,5);
 			$this->SetFont('Arial','B',12);
 			// Título
-			$this->Cell(179,12,"AUTORIZACION DE TRASLADO DE EQUIPOS / MATERIALES",'TR',0,'C');
+			$this->Cell(159,12,"AUTORIZACION DE TRASLADO DE EQUIPOS / MATERIALES",'TR',0,'C');
+			$this->Cell(20,12,$this->numero,'TR',0,'C');
 			// Salto de línea// Movernos a la derecha
 			$this->SetFont('Arial','B',6);
 			$this->SetXY(10,17);
-			$this->SetX(135);
+			$this->SetX(90);
 			$this->Cell(25,5,"Centro de Costo: ",'LBR',0);
-			$this->Cell(44,5,utf8_decode($this->costos),'B',1);
+			$this->Cell(89,5,utf8_decode($this->costos),'B',1);
 			$this->Cell(20,4,"TRANSFERENCIA",0,0);
 			$this->Cell(5,4,$this->tipo == 274 ? "X":"",1,0,"C");
 			$this->SetX(40);
 			$this->Cell(10,4,"ORIGEN",0,0);
 			$this->Cell(25,4,utf8_decode($this->origen),0,0);
-			$this->Cell(18,4,"IDA Y VUELTA",0,0);
+			
+			
+			/*$this->Cell(18,4,"IDA Y VUELTA",0,0);
 			$this->Cell(5,4,"SI",0,0);
 			$this->Cell(5,4,"",1,0);
 			$this->Cell(5,4,"NO",0,0);
-			$this->Cell(5,4,"",1,0);
-			$this->SetX(135);
+			$this->Cell(5,4,"",1,0);*/
+
+			$this->SetX(90);
 			$this->Cell(25,5,"Area Solicitante:",'LRB',0);
-			$this->Cell(44,5,utf8_decode($this->area),'B',1);
+			$this->Cell(89,5,utf8_decode($this->area),'B',1);
 			$this->Cell(20,4,"REPARACION",0,0);
 			$this->Cell(5,4,$this->tipo == 273 ? "": "X",1,0,"C");
 			$this->SetX(40);
 			$this->Cell(10,4,"DESTINO",0,0);
 			$this->Cell(25,4,utf8_decode($this->destino),0,0);
-			$this->SetX(135);
+			$this->SetX(90);
 			$this->Cell(25,5,"Persona asignada:",'LRB',0);
-			$this->Cell(44,5,utf8_decode($this->solicitante),'B',1);
+			$this->Cell(89,5,utf8_decode($this->solicitante),'B',1);
 
 			$this->SetXY(4,35);
 			$this->Cell(8,6,"ITEM",1,0,'C');

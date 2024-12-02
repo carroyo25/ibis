@@ -125,7 +125,7 @@ $(function(){
     $("#btnAceptarGrabar").click(function (e) { 
         e.preventDefault();
 
-        //para deasctivar el doble click de mouse
+        //para desactivar el doble click de mouse
         let boton = $(this);
         
         boton.css("pointer-events","none");

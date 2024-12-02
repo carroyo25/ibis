@@ -58,5 +58,9 @@
         function buscaGuia(){
             echo json_encode($this->model->buscarGuiaTotal($_POST['guia']));
         }
+
+        function buscaGuiaIngresada(){
+            echo json_encode($this->model->buscarIngresadas($_POST['guia']));
+        }
     }
 ?>

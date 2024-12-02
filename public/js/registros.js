@@ -168,8 +168,6 @@ $(function(){
         tipoMovimiento = 1;
 
         try {
-            if (guias()) throw "La guia ya esta registrada";
-
             $("#txtBuscar").val('');
 
             $.post(RUTA+"registros/despachos",{guia:$("#txtBuscar").val()},
@@ -201,31 +199,36 @@ $(function(){
     $("#despachos tbody").on("click","tr", function (e) {
         e.preventDefault();
 
-        let tipo_guia = $(this).data("salida") != null ? "S" : "M"; 
+        try {
 
-        $.post(RUTA+"registros/consultaID", { indice:$(this).data("indice"), tipo:tipo_guia },
-            function (data, textStatus, jqXHR) {
+            let tipo_guia = $(this).data("salida") != null ? "S" : "M"; 
 
-                $("#numero").val(data.numero);
-                $("#costos").val(data.cabecera[0].costos);
-                $("#almacen_destino_ingreso").val(data.cabecera[0].destino);
-                $("#almacen_origen_ingreso").val(data.cabecera[0].origen);
-                $("#guia").val(data.cabecera[0].cnumguia);
-                $("#referido").val(data.cabecera[0].nReferido);
-                $("#codigo_almacen_origen").val(data.cabecera[0].ncodalm1);
-                $("#codigo_almacen_destino").val(data.cabecera[0].ncodalm2);
-                $("#codigo_costos").val(data.cabecera[0].ncodpry);
-                $("#codigo_despacho").val(data.cabecera[0].id_regalm);
-                
-                $("#tablaDetalles tbody")
-                    .empty()
-                    .append(data.detalles);
+            $.post(RUTA+"registros/consultaID", { indice:$(this).data("indice"), tipo:tipo_guia },
+                function (data, textStatus, jqXHR) {
 
-                $("#busqueda").fadeOut();
-            },
-            "json"
-        );
-       
+                    $("#numero").val(data.numero);
+                    $("#costos").val(data.cabecera[0].costos);
+                    $("#almacen_destino_ingreso").val(data.cabecera[0].destino);
+                    $("#almacen_origen_ingreso").val(data.cabecera[0].origen);
+                    $("#guia").val(data.cabecera[0].cnumguia);
+                    $("#referido").val(data.cabecera[0].nReferido);
+                    $("#codigo_almacen_origen").val(data.cabecera[0].ncodalm1);
+                    $("#codigo_almacen_destino").val(data.cabecera[0].ncodalm2);
+                    $("#codigo_costos").val(data.cabecera[0].ncodpry);
+                    $("#codigo_despacho").val(data.cabecera[0].id_regalm);
+                    
+                    $("#tablaDetalles tbody")
+                        .empty()
+                        .append(data.detalles);
+
+                    $("#busqueda").fadeOut();
+                },
+                "json"
+            );
+
+        } catch (error) {
+            mostrarMensaje(error.message,'mensaje_error');
+        }
 
         return false
     });
@@ -233,37 +236,11 @@ $(function(){
     $("#txtBuscar").keyup(function(){
         let keycode = (event.keyCode ? event.keyCode : event.which);
         if(keycode == '13'){
-            let formData = new FormData();
-            formData.append("guia",$(this).val()); 
-
-            fetch(RUTA+"registros/buscaGuia",{
-                method: "POST",
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                
-                let row = `<tr class="pointer" 
-                                data-indice ="${data.cabecera[0].iddespacho}"  
-                                data-guia   ="${data.cabecera[0].cnumguia}"
-                                data-salida ="${data.cabecera[0].salida}"
-                                data-madre  ="${data.cabecera[0].madre}">
-                                <td class="textoCentro">${data.cabecera[0].iddespacho}</td>
-                                <td class="textoCentro">${data.cabecera[0].fecha}</td>
-                                <td class="pl20px">${data.cabecera[0].corigen}</td>
-                                <td class="pl20px">${data.cabecera[0].cdestino}</td>
-                                <td class="pl20px">${data.cabecera[0].proyectoGuias}</td>
-                                <td class="textoCentro">${data.cabecera[0].anio}</td>
-                                <td class="textoCentro">${data.cabecera[0].cnumguia}</td>
-                                <td class="textoCentro">${data.cabecera[0].referido}</td>
-                                <td></td>
-                            </tr>`
-
-                $("#despachos tbody")
-                    .empty()
-                    .append(row);
-            })
-
+            try {
+                buscarGuia($("#txtBuscar").val());                
+            } catch (error) {
+                mostrarMensaje(error.message,',mensaje error');
+            }
         }
     });
 
@@ -292,8 +269,6 @@ $(function(){
             },
             "text"
         );
-
-
 
         return false;
     });
@@ -553,18 +528,54 @@ detalles = () =>{
     return DETALLES
 }
 
-guias = (guia) => {
-    existe = false;
+buscarGuia = (guia) => {
 
-    let TABLA = $("#tablaDetalles tbody >tr");
+    let formData = new FormData(),
+        existe = true;
+    formData.append("guia", guia);
 
-    TABLA.each(function(){
-            ingresada    = $(this).find('td').eq(12).text()
-
-        if (ingresada == guia) {
-            existe = true;
-        }
+    fetch(RUTA+'registros/buscaGuiaIngresada',{
+        method: 'POST',
+        body: formData
     })
+    .then(response => response.json())
+    .then(data => {
+        if(data.respuesta > 0){
+            mostrarMensaje("La guia ya se proceso","mensaje_error");
+        }else{
+            llamarDatosGuia(guia);
+        };
+    });
+}
 
-    return existe;
+llamarDatosGuia = (guia) => {
+    let formData = new FormData();
+        formData.append("guia",guia); 
+
+    fetch(RUTA+"registros/buscaGuia",{
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        
+        let row = `<tr class="pointer" 
+                        data-indice ="${data.cabecera[0].iddespacho}"  
+                        data-guia   ="${data.cabecera[0].cnumguia}"
+                        data-salida ="${data.cabecera[0].salida}"
+                        data-madre  ="${data.cabecera[0].madre}">
+                        <td class="textoCentro">${data.cabecera[0].iddespacho}</td>
+                        <td class="textoCentro">${data.cabecera[0].fecha}</td>
+                        <td class="pl20px">${data.cabecera[0].corigen}</td>
+                        <td class="pl20px">${data.cabecera[0].cdestino}</td>
+                        <td class="pl20px">${data.cabecera[0].proyectoGuias}</td>
+                        <td class="textoCentro">${data.cabecera[0].anio}</td>
+                        <td class="textoCentro">${data.cabecera[0].cnumguia}</td>
+                        <td class="textoCentro">${data.cabecera[0].referido}</td>
+                        <td></td>
+                    </tr>`
+        $("#despachos tbody")
+            .empty()
+            .append(row);
+    })
 }

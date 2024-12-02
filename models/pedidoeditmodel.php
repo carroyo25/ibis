@@ -596,5 +596,23 @@
                 return false;
             }
         }
+
+        private function actualizarItemTransferencia($id,$idprod){
+            try {
+                //code...
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        private function actualizarItemExistencia($id,$idprod){
+            try {
+                //code...
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
     }    
 ?>

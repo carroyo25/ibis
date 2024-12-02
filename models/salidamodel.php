@@ -2426,7 +2426,7 @@
                                                 <!-- UBIGEO DE PARTIDA -->
                                                 <cbc:ID schemeName="Ubigeos" schemeAgencyName="PE:INEI">'.$header->ubig_origen.'</cbc:ID>
                                                 <!-- CODIGO DE ESTABLECIMIENTO ANEXO DE PARTIDA -->
-                                                <cbc:AddressTypeCode listID="20504898173" listAgencyName="PE:SUNAT" listName="Establecimientos anexos">'.$header->cso.'</cbc:AddressTypeCode>
+                                                <cbc:AddressTypeCode listID="20504898173" listAgencyName="PE:SUNAT" listName="Establecimientos anexos">10</cbc:AddressTypeCode>
                                                 <!-- DIRECCION COMPLETA Y DETALLADA DE PARTIDA -->
                                                 <cac:AddressLine>
                                                     <cbc:Line>'.utf8_encode($header->almacen_origen_direccion).'</cbc:Line>

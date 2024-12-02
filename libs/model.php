@@ -5024,6 +5024,7 @@
                                                         ibis.alm_autorizacab.idreg,
                                                         ibis.tb_costusu.ncodproy,
                                                         ibis.alm_autorizacab.fregsys,
+                                                        ibis.alm_autorizacab.nflgautoriza,
                                                         ibis.alm_autorizacab.ntipo,
                                                         ibis.alm_autorizacab.ctransferencia,
                                                         UPPER(ibis.tb_proyectos.cdesproy) AS cdesproy,
@@ -5056,6 +5057,8 @@
 
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()) {
+
+                        $icono = $rs['nflgautoriza'] == 0 ? '<i class="far fa-clock"></i>': '<i class="fas fa-thumbs-up"></i>';
                         $salida .='<tr class="pointer" data-indice="'.$rs['idreg'].'" 
                                                         data-transferencia="'.$rs['ctransferencia'].'"
                                                         data-tipo ="'.$rs['ntipo'].'">
@@ -5068,6 +5071,7 @@
                                         <td class="pl20px">'.$rs['area'].'</td>
                                         <td class="pl20px">'.$rs['asigna'].'</td>
                                         <td class="textoCentro '.strtolower($rs['estado']).'">'.$rs['estado'].'</td>
+                                        <td class="textoCentro ">'.$icono.'</td>
                                         <td class="textoCentro"><a href="'.$rs['idreg'].'" data-accion="status"><i class="fas fa-chart-line"></i></a></td>
                                         <td class="textoCentro"><a href="'.$rs['idreg'].'" data-accion="delete"><i class="fa fa-trash-alt"></i></a></td>
                                     </tr>';

@@ -732,7 +732,10 @@ $(function(){
             if ( $("#rol_user").val() == 2 && $("#rol_user").val() == 4 ) throw new Error("No esta habilitado para este proceso");
             if ( $("#codigo_estado").val() != 60 ) throw new Error("No se permite la accion");
 
-            $("#entregaLogisticaModal").fadeIn();
+            $("#estado_operacion").val(62)  //entregado logistica;
+
+            StartSign();
+
         } catch (error) {
             mostrarMensaje(error.message,"mensaje_error")
         }
@@ -785,36 +788,6 @@ $(function(){
             .then(response => response.json())
             .then(data => {
                 mostrarMensaje("Registrado Correctamente","mensaje_correcto");
-            })
-            .catch(error => {
-                if (error instanceof TypeError && error.message.includes('API key')) {
-                  console.error('Invalid API key:', error);
-                } else {
-                  console.error('There was a problem with the Fetch operation:', error);
-                }
-            });
-        } catch (error) {
-            mostrarMensaje(error.message,"mensaje_error");
-        }
-
-        return false;
-    });
-
-    $("#btnAceptarEntregaLogistica").click(function (e) { 
-        e.preventDefault();
-
-        try {
-            let formData = new FormData();
-            formData.append("id", $("#codigo_traslado").val());
-            formData.append("estado",62);
-
-            fetch(RUTA+"autorizacion/entregaLogistica",{
-                method: "POST",
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                mostrarMensaje("Traslado actualizado","mensaje_correcto");
             })
         } catch (error) {
             mostrarMensaje(error.message,"mensaje_error");

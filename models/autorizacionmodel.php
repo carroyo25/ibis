@@ -41,7 +41,7 @@
                     $numero = $this->numeroDocumento();
                     $this->grabarDetallesTransferencia($cabecera,$detalles,$numero);
                     //$this->vistaPreviaAutorizacion($cabecera,$detalles,$numero);
-                    //$correo = $this->enviarCorreo($numero,$cabecera['codigo_area']);
+                    $correo = $this->enviarCorreo($numero,$cabecera['codigo_area'],$cabecera['codigo_area']);
                 }
                 
                 return array("numero"=>$numero,"correo"=>null);
@@ -101,7 +101,7 @@
             } 
         }
 
-        private function enviarCorreo($numero,$area){
+        private function enviarCorreo($numero,$area,$tipo){
             try {
                 require_once("public/PHPMailer/PHPMailerAutoload.php");
 
@@ -149,15 +149,15 @@
                 $mail->setFrom("sistema_ibis@sepcon.net","Autorizacion de Traslado");
                 $mail->addAddress($destino,$nombre_destino);
 
-                if ($area == 19) {
-                    $mail->addAddress("tgonzales@sepcon.net",utf8_decode("Teddy Gonzáles"));
-                    //$mail->addAddress("caarroyo@hotmail.com",utf8_decode("Teddy Gonzáles"));
+                if ($area == 19 || $tipo == 278 ) {
+                    //$mail->addAddress("tgonzales@sepcon.net",utf8_decode("Teddy Gonzáles"));
+                    $mail->addAddress("caarroyo@hotmail.com",utf8_decode("Teddy Gonzáles"));
                 }
 
                 $mail->Subject = $subject;
                 $mail->msgHTML(utf8_decode($messaje));
               
-                $mail->AddAttachment('public/documentos/autorizaciones/'.$adjunto);
+                //$mail->AddAttachment('public/documentos/autorizaciones/'.$adjunto);
 
                 if (!$mail->send()) {
                     $estadoEnvio = false;
@@ -429,17 +429,44 @@
             try {
                 $mensaje = "Error en la actualización";
                 $fecha = date("Y-m-d");
+                $namefileLogistic = "";
+                $file = "";
 
-                $sql = $this->db->connect()->prepare("UPDATE alm_autorizacab 
+                if (array_key_exists('img',$_REQUEST)) { 
+                    // convierte la imagen recibida en base64
+                    // Eliminamos los 22 primeros caracteres, que 
+                    // contienen el substring "data:image/png;base64,"
+                    $imgData = base64_decode(substr($_REQUEST['img'],22));
+
+                    $namefileLogistic = uniqid();
+                    $file = 'public/documentos/autorizaciones/firmas_logistica/'.$namefileLogistic.'.png';
+
+                    // borrar primero la imagen si existía previamente
+                    if (file_exists($file)) { unlink($file); }
+                
+                    // guarda en el fichero la imagen contenida en $imgData
+                    $fp = fopen($file, 'w');
+                    fwrite($fp, $imgData);
+                    fclose($fp);
+
+                    if ( file_exists($file) ){
+                        $sql = $this->db->connect()->prepare("UPDATE alm_autorizacab 
                                                         SET alm_autorizacab.nestado =:estado,
                                                             alm_autorizacab.uenvlog =:user,
-                                                            alm_autorizacab.fentrelog =:fecha
+                                                            alm_autorizacab.fentrelog =:fecha,
+                                                            alm_autorizacab.firma_logistica =:logistico
                                                         WHERE alm_autorizacab.idreg =:id");
                                                         
-                $sql->execute(["id"=>$id, "estado"=>$estado, "user"=>$_SESSION['iduser'], "fecha"=>$fecha]);
+                        $sql->execute(["id"=>$id, 
+                                        "estado"=>$estado, 
+                                        "user"=>$_SESSION['iduser'], 
+                                        "fecha"=>$fecha,
+                                        "logistico"=>$namefileLogistic]);
 
-                if ( $sql->rowCount() > 0 ){
-                    $mensaje = "Entregado para su traslado";
+                        if ( $sql->rowCount() > 0 ){
+                            $mensaje = "Entregado para su traslado";
+                        }
+                    }  
                 }
 
                 return array("mensaje"=>$mensaje);
@@ -477,18 +504,49 @@
             try {
                 $mensaje = "Error en la actualización";
                 $fecha = date("Y-m-d");
+                $namefileFinalUser = "";
+                $file = "";
 
-                $sql = $this->db->connect()->prepare("UPDATE alm_autorizacab 
+                if (array_key_exists('img',$_REQUEST)) { 
+                    // convierte la imagen recibida en base64
+                    // Eliminamos los 22 primeros caracteres, que 
+                    // contienen el substring "data:image/png;base64,"
+                    $imgData = base64_decode(substr($_REQUEST['img'],22));
+                    
+                    $namefileUser = uniqid();
+                    $file = 'public/documentos/autorizaciones/firmas_entrega/'.$namefileFinalUser.'.png';
+
+                    // borrar primero la imagen si existía previamente
+                    if (file_exists($file)) { unlink($file); }
+                
+                    // guarda en el fichero la imagen contenida en $imgData
+                    $fp = fopen($file, 'w');
+                    fwrite($fp, $imgData);
+                    fclose($fp);
+
+                    if ( file_exists($file) ){
+                        $sql = $this->db->connect()->prepare("UPDATE alm_autorizacab 
                                                         SET alm_autorizacab.nestado =:estado,
-                                                            alm_autorizacab.uentrecli =:user,
-                                                            alm_autorizacab.fentreuser =:fecha
+                                                             alm_autorizacab.uentrecli =:user,
+                                                            alm_autorizacab.fentreuser =:fecha,
+                                                            alm_autorizacab.firma_usuario =:cliente
                                                         WHERE alm_autorizacab.idreg =:id");
                                                         
-                $sql->execute(["id"=>$id, "estado"=>$estado, "user"=>$_SESSION['iduser'], "fecha"=>$fecha]);
+                        $sql->execute(["id"=>$id, 
+                                        "estado"=>$estado, 
+                                        "user"=>$_SESSION['iduser'], 
+                                        "fecha"=>$fecha,
+                                        "cliente"=>$namefileFinalUser]);
 
-                if ( $sql->rowCount() > 0 ){
-                    $mensaje = "Traslado Finalizado";
+                        if ( $sql->rowCount() > 0 ){
+                            $mensaje = "Entregado para su traslado";
+                        }
+                    } 
                 }
+
+                
+
+                
 
                 return array("mensaje"=>$mensaje);
             } catch (PDOException $th) {
@@ -534,7 +592,7 @@
                 $sql =  $this->db->connect()->prepare("SELECT
                                     tb_equipmtto.idreg,
                                     tb_equipmtto.cregistro,
-                                    tb_equipmtto.cdescripcion,
+                                    CONCAT_WS(' ',tb_equipmtto.cdescripcion,tb_equipmtto.cserie)  AS cdescripcion,
                                     tb_equipmtto.cserie
                                 FROM
                                     tb_equipmtto 

@@ -40,7 +40,7 @@
                                                 COUNT( alm_existencia.cant_ingr ) AS ingresos_obra,
                                                 SUM( alm_existencia.cant_ingr ) AS cantidad_obra,
                                                 alm_existencia.codprod,
-                                                alm_existencia.idreg 
+                                                alm_existencia.idreg
                                             FROM
                                                 alm_existencia
                                                 LEFT JOIN alm_cabexist ON alm_cabexist.idreg = alm_existencia.idregistro 
@@ -69,7 +69,7 @@
                                             LEFT JOIN (
                                             SELECT
                                                 SUM( alm_consumo.cantsalida ) AS cantsalida,
-                                                IF (alm_consumo.flgdevolver = 1,SUM(alm_consumo.cantdevolucion),0) AS cantdevolucion,
+                                                SUM(alm_consumo.cantdevolucion) AS cantdevolucion,
                                                 alm_consumo.idprod 
                                             FROM
                                                 alm_consumo 

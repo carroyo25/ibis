@@ -446,8 +446,7 @@
                                                         AND tb_costusu.nflgactivo = 1
                                                         AND alm_cabexist.numguia LIKE :guia
                                                         AND alm_cabexist.idcostos LIKE :cc
-                                                    ORDER BY  alm_cabexist.idreg DESC
-                                                    LIMIT 0,2500");
+                                                    ORDER BY  alm_cabexist.idreg DESC");
                 $sql->execute(["usr"=>$_SESSION["iduser"],
                                 "guia"=>$guia,
                                 "cc"=>$cc]);
