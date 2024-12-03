@@ -446,6 +446,7 @@
                                                         AND tb_costusu.nflgactivo = 1
                                                         AND alm_cabexist.numguia LIKE :guia
                                                         AND alm_cabexist.idcostos LIKE :cc
+                                                        AND ISNULL(alm_cabexist.flgActivo) 
                                                     ORDER BY  alm_cabexist.idreg DESC");
                 $sql->execute(["usr"=>$_SESSION["iduser"],
                                 "guia"=>$guia,
@@ -882,6 +883,45 @@
                 $records = $sql->fetchAll();
 
                 return array( "respuesta" => $records[0]['records'] );
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        public function anularIngreso($id){
+            try {
+                $respuesta = "No se realizo ninguna accion";
+                $sql = $this->db->connect()->prepare("UPDATE alm_cabexist 
+                                                        SET alm_cabexist.flgActivo = 0
+                                                        WHERE alm_cabexist.idreg =:guia");
+
+                $sql->execute(["guia" =>$id]);
+
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0){
+                    $this->anularDetalles($id);
+                    $respuesta = "Registro anulado";    
+                }
+
+                return array( "respuesta" => $respuesta );
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function anularDetalles($id){ 
+            try {
+                $sql = $this->db->connect()->prepare("UPDATE alm_existencia 
+                                                        SET alm_existencia.cant_ingr = 0,
+                                                            alm_existencia.idpedido = null,
+                                                            alm_existencia.nflgActivo = 0
+                                                        WHERE alm_existencia.idregistro =:guia");
+
+                $sql->execute(["guia" =>$id]);
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();

@@ -32,6 +32,9 @@
                             <button type="button" id="updateDocument" title="Grabar Ingreso" class="boton3">
                                 <i class="far fa-save"></i> Grabar Ingreso
                             </button>
+                            <button type="button" id="cancelDocument" title="Anular Ingreso" class="boton4">
+                                <i class="fas fa-ban"></i> Anular Ingreso
+                            </button>
                             <button type="button" id="closeProcess" title="Cerrar" class="boton3">
                                 <i class="fas fa-window-close"></i>
                             </button>

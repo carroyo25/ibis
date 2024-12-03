@@ -62,5 +62,9 @@
         function buscaGuiaIngresada(){
             echo json_encode($this->model->buscarIngresadas($_POST['guia']));
         }
+
+        function anula(){
+            echo json_encode($this->model->anularIngreso($_POST['id']));
+        }
     }
 ?>

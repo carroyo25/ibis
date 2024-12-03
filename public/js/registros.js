@@ -483,6 +483,32 @@ $(function(){
 
         return false;
     });
+
+    $("#cancelDocument").click(function(e){
+        e.preventDefault();
+
+        try {
+            if ($("#rol_user").val() != 2) throw new Error("No esta autorizado para esta accion");
+
+            let formData = new FormData();
+            formData.append("id",$("#codigo_ingreso").val());
+
+            fetch(RUTA+"registros/anula",{
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                mostrarMensaje(data.respuesta,"mensaje_correcto");
+            })
+            
+            
+        } catch (error) {
+            mostrarMensaje(error.message,"mensaje_error");
+        }
+
+        return false;
+    });
 })
 
 detalles = () =>{
