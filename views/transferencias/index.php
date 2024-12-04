@@ -151,7 +151,7 @@
                                     <th class="">Unidad</th>
                                     <th width="7%" class="">Cantidad</br>Referida<br>Almacen</th>
                                     <th width="7%">Cantidad</br>Atendida</th>
-                                    <th width="7%">Cantidad por</br>Atender</th>
+                                    <th width="7%">Cantidad </br>Transferida</th>
                                     <th width="7%">Fecha</br>Vencimiento</th>
                                     <th width="7%">Condicion</th>
                                     <th width="7%">Stock</th>
@@ -169,7 +169,7 @@
         </div>
     </div>
     <div class="modal" id="vistaPedido">
-        <div class="ventanaProceso tamanioProceso">
+        <div class="ventanaProceso">
             <div class="cabezaProceso">
                 <form action="#" id="formProceso" autocomplete="off">
                     <input type="hidden" name="codigo_costos" id="codigo_costos"> 

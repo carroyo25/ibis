@@ -153,7 +153,8 @@
                                                     INNER JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg  
                                                 WHERE
                                                     alm_transferdet.idtransfer = :id 
-                                                    AND alm_transferdet.nflgactivo = 1");
+                                                    AND alm_transferdet.nflgactivo = 1
+                                                    AND alm_transferdet.ncanti > 0");
                 $sql->execute(["id"=>$id]);
 
                 $rowCount = $sql->rowCount();

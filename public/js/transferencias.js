@@ -235,7 +235,9 @@ $(function(){
             result[this.name] = this.value;
         });
 
-        //if  ( checkCantTables($("#tablaDetalles tbody > tr"),6) ) throw "Revise las cantidades ingresadas";//
+        if  ( $("#codigo_costos_origen").val() == "" ) throw new Error("Ingrese el centro de costos origen");
+        if  ( $("#codigo_costos_destino").val() == "" ) throw new Error("Ingrese el centro de costos destino");
+        //if  ( checkCantTables($("#tablaDetalles tbody > tr"),6) ) Error("Revise las cantidades ingresadas");
 
         try {
             if ( accion == "n" ) {

@@ -1912,7 +1912,7 @@
                                         <!-- DATOS DEL TRANSPORTISTA -->
                                         <cac:CarrierParty>
                                             <cac:PartyIdentification>
-                                            <cbc:ID schemeID="6" schemeName="Documento de Identidad" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">20512524380</cbc:ID>
+                                            <cbc:ID schemeID="6" schemeName="Documento de Identidad" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">'.$header->ruc_proveedor.'</cbc:ID>
                                             </cac:PartyIdentification>
                                             <cac:PartyLegalEntity>
                                             <!-- NOMBRE/RAZON SOCIAL DEL TRANSPORTISTA-->
@@ -2398,7 +2398,7 @@
                                         <!-- DATOS DEL TRANSPORTISTA -->
                                         <cac:CarrierParty>
                                             <cac:PartyIdentification>
-                                            <cbc:ID schemeID="6" schemeName="Documento de Identidad" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">20512524380</cbc:ID>
+                                            <cbc:ID schemeID="6" schemeName="Documento de Identidad" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">'.$header->ruc_proveedor.'</cbc:ID>
                                             </cac:PartyIdentification>
                                             <cac:PartyLegalEntity>
                                             <!-- NOMBRE/RAZON SOCIAL DEL TRANSPORTISTA-->
@@ -2550,7 +2550,7 @@
                                         <!-- DATOS DEL TRANSPORTISTA -->
                                         <cac:CarrierParty>
                                             <cac:PartyIdentification>
-                                            <cbc:ID schemeID="6" schemeName="Documento de Identidad" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">20512524380</cbc:ID>
+                                            <cbc:ID schemeID="6" schemeName="Documento de Identidad" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">'.$header->ruc_proveedor.'</cbc:ID>
                                             </cac:PartyIdentification>
                                             <cac:PartyLegalEntity>
                                             <!-- NOMBRE/RAZON SOCIAL DEL TRANSPORTISTA-->
