@@ -5,7 +5,6 @@ const tabla_bancos_body = $.getElementById("tabla_bancos_body");
 const btn_guardar = $.getElementById("btn_guardar");
 const requerido = $.querySelectorAll(".requerido");
 
-
 ruc = $.getElementById("ruc");
 
 bancos.onclick = (e) => {

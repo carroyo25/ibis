@@ -46,6 +46,7 @@ body {
 	letter-spacing: 1px;
 	transition: all 0.6s ease;
 	z-index: 2;
+    cursor: pointer;
 }
 
 .btn-1{
@@ -85,12 +86,16 @@ body {
         align-items: center;
         border-bottom: 4px solid var(--colorlinea);
         padding-bottom: 1rem;
-        
+
         span{
             font-weight: 800;
             font-size: 1.5rem;
             letter-spacing: 1px;
         }
+    }
+
+    .wrap__options{
+      background: #03cc57;
     }
 
     .seccion_pagina:not(:last-child){
@@ -180,3 +185,170 @@ body {
     top: 0;
     left: 0;
 }
+
+.container-input {
+    padding-top: 13px;
+    padding-bottom: 13px;
+    position: relative;
+    overflow: hidden;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.container-input a {
+    margin-top: 1em;
+}
+.inputfile{
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+.btn-container {
+    margin: 0 auto;
+}
+.btn-container:before{
+    margin-top: 4em;
+    content:'';
+    display:inline-block;
+    vertical-align:middle;
+  }
+  .btn-download{
+    width: 100%;
+    background:var(--fondoboton);
+    color:#000;
+    border:none;
+    position:relative;
+    font-size:1em;
+    /* padding:0 2em; */
+    padding: 1em;
+    cursor:pointer;
+    transition:800ms ease all;
+    outline:none;
+  }
+  .btn-download:hover{
+    background:#fff;
+    color:var(--fondoboton);
+  }
+  .btn-download:before,.btn-download:after{
+    content:'';
+    position:absolute;
+    top:0;
+    right:0;
+    height:2px;
+    width:0;
+    background: var(--fondoboton);
+    transition:400ms ease all;
+  }
+  .btn-download:after{
+    right:inherit;
+    top:inherit;
+    left:0;
+    bottom:0;
+  }
+  .btn-download:hover:before,.btn-download:hover:after{
+    width:100%;
+    transition:800ms ease all;
+  }
+
+  .modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  }
+  
+  /* Modal Content/Box */
+  .modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 40%; /* Could be more or less, depending on screen size */
+  }
+
+  .container-form-pass {
+    width: 40%;
+    margin: 0 auto;
+  }
+
+  .modal-content .container-form-pass form .password {
+    background: white;
+    box-shadow: 0 0 2em #e6e9f9;
+    padding: 1em;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    border-radius: 20px;
+    color: #4d4d4d;
+    margin-bottom: 1em;
+  }
+
+  .modal-content .container-form-pass form .password input {
+    width: 100%;
+    outline: none;
+    border: none;
+    font-size: 1em;
+  }
+
+  .modal-content .container-form-pass form .password input::-moz-placeholder {
+    color: gray;
+    font-size: 1em;
+  }
+  .modal-content .container-form-pass form .password input:-ms-input-placeholder {
+    color: gray;
+    font-size: 1em;
+  }
+  .modal-content .container-form-pass form .password input::placeholder {
+    color: gray;
+    font-size: 1em;
+  }
+  .modal-content .container-form-pass form .password ion-icon {
+    color: #4d4d4d;
+    margin-bottom: -0.2em;
+  }
+
+  .modal-content .container-form-pass form .buttons {
+    width: 80%;
+    margin: 0 auto;
+    margin-top: 2em;
+  }
+  .modal-content .container-form-pass form .buttons .change-pass {
+    display: block;
+    padding: 1em;
+    background: #3211FF;;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 1em;
+    text-decoration: none;
+    text-align: center;
+  }
+  
+  /* The Close Button */
+  .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    transition: 1s;
+  }
+  
+  .close:hover,
+  .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+    transition: 1s;
+  }

@@ -1945,7 +1945,8 @@
                                                         LEFT JOIN tb_unimed ON tb_pedidodet.unid = tb_unimed.ncodmed
                                                         LEFT JOIN tb_equipmtto ON tb_pedidodet.nregistro = tb_equipmtto.idreg 
                                                     WHERE
-                                                        tb_pedidodet.idpedido = :id 
+                                                        tb_pedidodet.idpedido = :id
+                                                        AND tb_pedidodet.estadoItem != 105
                                                         AND tb_pedidodet.nflgActivo = 1");
                 $sql->execute(["id"=>$id]);
                 $rowCount = $sql->rowCount();

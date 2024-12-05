@@ -129,8 +129,16 @@ a{
                 height: 20%;
                 position: absolute;
                 bottom: 0;
+            }
 
-                
+            .entdata{
+                display: flex;
+                flex-direction: column;
+
+                input{
+                    line-height: 2rem;
+                    gap: 1rem;
+                }
             }
         }
     }

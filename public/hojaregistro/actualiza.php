@@ -1,10 +1,14 @@
 <?php
     require_once('consultas.php');
 
+    session_start();
+
     $paises = getCountries($pdo);
     $pagos = getPaymentList($pdo);
     $actividades = getEconomicActivity($pdo);
+    $proveedor = getEntiByRuc($pdo,$_SESSION['ruc']);
 
+    var_dump($proveedor[0]["cnumdoc"]);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -15,11 +19,7 @@
     <link rel="stylesheet" href="../css/hojaregistro.css?<?php echo $version = rand(0, 9999); ?>">
 </head>
 <body>
-    <!-- <div class="modal">
-        <dialog open>
-            <p>Esto es un ejemplo de mensaje de diálogo.</p>
-        </dialog>
-    </div> -->
+    
     <div class="wrap">
         <form id="datos_entidad" method="POST" enctype="multipart/form-data">
             <input type="file" class="oculto" name="uploadruc" id="uploadruc">
@@ -27,7 +27,7 @@
 
             <section class="wrap__header">
                 <img src="../img/logo.png" alt="logo_sepcon">
-                <span>FORMULARIO DE REGISTRO DE PROVEEDORES</span>
+                <span>ACTUALIZACION DE REGISTRO DE PROVEEDORES</span>
                 <a href="#" class="btn btn-1" id="btn_guardar">Grabar Datos</a>
             </section>
             <section class="seccion_pagina">
@@ -36,22 +36,22 @@
                 </div>
                 <div class="seccion_data">
                     <label for="ruc">R.U.C/RUT</label>
-                    <input type="text" name="ruc" id="ruc" class="requerido">
+                    <input type="text" name="ruc" id="ruc" class="requerido" value="<?php echo $proveedor[0]["cnumdoc"]?>">
 
                     <label for="razon_social">Razón Social</label>
-                    <input type="text" name="razon_social" id="razon_social" class="requerido">
+                    <input type="text" name="razon_social" id="razon_social" class="requerido" value="<?php echo $proveedor[0]["crazonsoc"]?>">
 
                     <label for="direccion">Dirección</label>
-                    <input type="text" name="direccion" id="direccion" class="requerido">
+                    <input type="text" name="direccion" id="direccion" class="requerido" value="<?php echo $proveedor[0]["cviadireccion"]?>">
 
                     <label for="correo_electronico">Correo Electrónico</label>
-                    <input type="email" name="correo_electronico" id="correo_electronico">
+                    <input type="email" name="correo_electronico" id="correo_electronico" value="<?php echo $proveedor[0]["cemail"]?>">
 
                     <label for="pagina_web">Página Web</label>
                     <input type="text" name="pagina_web" id="pagina_web">
 
                     <label for="telefono">Teléfono</label>
-                    <input type="text" name="telefono" id="telefono" class="requerido">
+                    <input type="text" name="telefono" id="telefono" class="requerido" value="<?php echo $proveedor[0]["ctelefono"]?>">
 
                     <label for="pais">Pais</label>
                     <select name="pais" id="pais">
