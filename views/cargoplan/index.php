@@ -322,7 +322,6 @@
                     <th style="background:#40D1FB; color:#000">Forma</br>Pago</th>
                     <th width="150px" style="background:#40D1FB; color:#000">Referencia</br>Pago</th>
                     <th style="background:#A6CAF0; color:#000">Familia</th>
-
                 </tr>
             </thead>
             <tbody>
@@ -330,16 +329,6 @@
             </tbody>
         </table>
     </div>
-    <div class="modal" id="ventanaProgreso">
-        <div class="ventanaPregunta">
-            <h3>Procesando...</h3>
-            <h3 id="valorPorcentaje">0%</h3>
-            <div>
-                <progress id="progress" max="100" value="0">70%</progress>
-            </div>
-        </div>
-    </div>
-    
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
     <script src="<?php echo constant('URL');?>public/js/funciones.js?<?php echo constant('VERSION')?>"></script>
     <script src="<?php echo constant('URL');?>public/js/cargoplan.js?<?php echo constant('VERSION')?>"></script>

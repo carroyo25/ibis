@@ -1,70 +1,20 @@
-$(function(){
-    const body = document.querySelector("#tablaPrincipal tbody");
+$(function(){  
+    $("#esperar").css({"display":"block","opacity":"1"});
 
-    let listItemFinal = null,estoyPidiendo = false,iditempedido = "",fila=0,estadoItem=0,accion = "";
+    let str = $("#formConsulta").serialize();
 
-    //LISTA PARA EL SCROLL
+    $.post(RUTA+"pedidoedit/actualizaListado",str,
+        function (data, text, requestXHR) {
+            $(".tablaPrincipal tbody")
+                .empty()
+                .append(data);
 
-    const observandoListItem = listItem => {
-        if ( listItem[0].isIntersecting ) {
-            query();
-        }
-    }
+                $("#esperar").fadeOut().promise().done(function(){
+                    iniciarPaginador();
+                });
 
-    const settings = {
-        threshold: 1
-    }
-
-    let observador = new IntersectionObserver(
-        observandoListItem,
-        settings
-    );
-
-    const query = async () => {
-        if (estoyPidiendo) return;
-        estoyPidiendo = true;
-        let pagina = parseInt(body.dataset.p) || 1;
-        const FD = new FormData();
-        FD.append('pagina',pagina);
-
-        const r = await fetch(RUTA+'pedidoedit/listaScroll',{
-            method: 'POST',
-            body:FD
-        });
-
-        const j  = await r.json();
-        j[0].pedidos.forEach(i => {
-            const tr = document.createElement('tr');
-            
-            tr.innerHTML = `<td class="textoCentro">${i.nrodoc}</td>
-                            <td class="textoCentro">${i.idreg}</td>
-                            <td class="textoCentro">${i.emision}</td>
-                            <td class="textoCentro">${i.idtipomov}</td>
-                            <td class="pl20px">${i.concepto}</td>
-                            <td class="pl20px">${i.costos}</td>
-                            <td class="pl20px">${i.nombres}</td>
-                            <td class="textoCentro ${i.cabrevia.toLowerCase()}">${i.cabrevia}</td>
-                            <td class="textoCentro ${i.atencion.toLowerCase()}">${i.atencion}</td>`;
-            tr.classList.add("pointer");
-            tr.dataset.indice = i.idreg;
-            body.appendChild(tr);
-        })
-
-        if (listItemFinal){
-            observador.unobserve(listItemFinal);
-        }
-
-        if (j[0].quedan) { //devuelve falso si ya no quedan mas registros
-            listItemFinal = body.lastElementChild.previousElementSibling;
-            observador.observe( listItemFinal);
-            estoyPidiendo = false;
-            body.dataset.p = ++pagina;
-        }
-    }
-
-    query();
-
-    ///FIN DEL SCROLL
+        "text"
+    });
 
     $("#tablaPrincipal tbody").on("click","tr", function (e) {
         e.preventDefault();
@@ -502,3 +452,139 @@ listarItems = (tipoPedido) => {
         "text"
     );
 }
+
+// Función para realizar paginación después de la carga de datos
+    function iniciarPaginador() {
+        const content = document.querySelector('.itemsTabla'); 
+        let itemsPerPage = 100; // Valor por defecto
+        let currentPage = 0;
+        const maxVisiblePages = 10; // Número máximo de botones visibles
+        const items = Array.from(content.getElementsByTagName('tr')).slice(1); // Tomar todos los <tr>, excepto el primero (encabezado)
+    
+        // Mostrar una página específica
+        function showPage(page) {
+            const startIndex = page * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            items.forEach((item, index) => {
+                item.classList.toggle('hidden', index < startIndex || index >= endIndex);
+            });
+            updateActiveButtonStates();
+            createPageButtons();
+        }
+    
+        // Crear los botones de paginación y el selector de elementos por página
+        function createPageButtons() {
+            const totalPages = Math.ceil(items.length / itemsPerPage);
+            let paginationContainer = document.querySelector('.pagination');
+    
+            // Si el contenedor de paginación no existe, crearlo
+            if (!paginationContainer) {
+                paginationContainer = document.createElement('div');
+                paginationContainer.classList.add('pagination');
+                content.appendChild(paginationContainer);
+            } else {
+                // Limpiar el contenedor existente
+                paginationContainer.innerHTML = '';
+            }
+    
+            // Crear el selector para elementos por página
+            const itemsPerPageSelect = document.createElement('select');
+            const options = [25, 50, 100, 150, 200, 250, 300];
+    
+            options.forEach(option => {
+                const opt = document.createElement('option');
+                opt.value = option;
+                opt.textContent = option;
+                if (option === itemsPerPage) opt.selected = true; // Establecer 100 como seleccionado por defecto
+                itemsPerPageSelect.appendChild(opt);
+            });
+    
+            // Agregar evento al selector
+            itemsPerPageSelect.addEventListener("change", function() {
+                itemsPerPage = parseInt(this.value); // Actualizar el número de elementos por página
+                currentPage = 0; // Reiniciar a la primera página
+                createPageButtons();
+                showPage(currentPage);
+            });
+    
+            paginationContainer.appendChild(itemsPerPageSelect); // Agregar el selector al contenedor de paginación
+    
+            // Botón "Primera"
+            const firstButton = document.createElement('button');
+            firstButton.textContent = 'Primera';
+            firstButton.disabled = currentPage === 0;
+            firstButton.addEventListener('click', () => {
+                currentPage = 0;
+                showPage(currentPage);
+            });
+            paginationContainer.appendChild(firstButton);
+    
+            // Botón "Anterior"
+            const prevButton = document.createElement('button');
+            prevButton.textContent = 'Anterior';
+            prevButton.disabled = currentPage === 0;
+            prevButton.addEventListener('click', () => {
+                if (currentPage > 0) {
+                    currentPage--;
+                    showPage(currentPage);
+                }
+            });
+            paginationContainer.appendChild(prevButton);
+    
+            // Mostrar botones limitados
+            const startPage = Math.max(0, currentPage - Math.floor(maxVisiblePages / 2));
+            const endPage = Math.min(totalPages, startPage + maxVisiblePages);
+    
+            for (let i = startPage; i < endPage; i++) {
+                const pageButton = document.createElement('button');
+                pageButton.textContent = i + 1;
+                pageButton.disabled = i === currentPage; // Deshabilitar botón si es la página actual
+                pageButton.classList.toggle('active', i === currentPage); // Agregar la clase 'active' si es la página actual
+                pageButton.addEventListener('click', () => {
+                    currentPage = i;
+                    showPage(currentPage);
+                });
+    
+                paginationContainer.appendChild(pageButton);
+            }
+    
+            // Botón "Siguiente"
+            const nextButton = document.createElement('button');
+            nextButton.textContent = 'Siguiente';
+            nextButton.disabled = currentPage === totalPages - 1;
+            nextButton.addEventListener('click', () => {
+                if (currentPage < totalPages - 1) {
+                    currentPage++;
+                    showPage(currentPage);
+                }
+            });
+            paginationContainer.appendChild(nextButton);
+    
+            // Botón "Última"
+            const lastButton = document.createElement('button');
+            lastButton.textContent = 'Última';
+            lastButton.disabled = currentPage === totalPages - 1;
+            lastButton.addEventListener('click', () => {
+                currentPage = totalPages - 1;
+                showPage(currentPage);
+            });
+            paginationContainer.appendChild(lastButton);
+        }
+    
+        // Actualizar los estados activos de los botones de paginación
+        function updateActiveButtonStates() {
+            const pageButtons = document.querySelectorAll('.pagination button');
+            pageButtons.forEach((button, index) => {
+                // Remover clase 'active' de todos los botones
+                button.classList.remove('active');
+                // Si el botón es el de la página actual, agregar la clase 'active'
+                if (parseInt(button.textContent) === currentPage + 1) {
+                    button.classList.add('active');
+                }
+            });
+        }
+    
+        // Inicializar la paginación
+        createPageButtons();
+        showPage(currentPage); // Mostrar la primera página
+    }

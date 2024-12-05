@@ -395,7 +395,7 @@ $(function() {
             if (result['codigo_almacen_origen'] == '') throw "Elija el Almacen";
             if (result['codigo_almacen_destino'] == '') throw "Elija el Almacen";
             if (result['codigo_aprueba'] == '') throw "Elija la persona que aprueba";
-            if (verificarCantidadesInput()) throw "Verifque las cantidades ingresadas";
+            if (verificarCantidadesInput()) throw "Verifique las cantidades ingresadas";
             if (detalles(tipoVista,0).length == 0) throw "No hay items que procesar";
 
             if (accion == "n") {

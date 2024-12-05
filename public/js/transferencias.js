@@ -235,11 +235,13 @@ $(function(){
             result[this.name] = this.value;
         });
 
-        if  ( $("#codigo_costos_origen").val() == "" ) throw new Error("Ingrese el centro de costos origen");
-        if  ( $("#codigo_costos_destino").val() == "" ) throw new Error("Ingrese el centro de costos destino");
-        //if  ( checkCantTables($("#tablaDetalles tbody > tr"),6) ) Error("Revise las cantidades ingresadas");
-
         try {
+            
+            if ( $("#codigo_costos_origen").val() == "" ) throw new Error("ingrese el centro de costos origen");
+            if ( $("#codigo_costos_destino").val() == "" ) throw new Error("Ingrese el centro de costos destino");
+            if ( $("#tablaDetalles tbody tr").length == 0) throw new Error("Seleccione el pedido para transferir");
+            if (verificarCantidadesInput()) throw  new Error("Verifique las cantidades ingresadas");
+
             if ( accion == "n" ) {
                 
                 $("#esperar").css("opacity","1").fadeIn();
@@ -709,5 +711,21 @@ detalles = (flag) =>{
     })
 
     return DETALLES; 
+}
+
+verificarCantidadesInput = () =>{
+    let TABLA = $("#tablaDetalles tbody >tr"),
+        errorCantidad = false;
+
+    TABLA.each(function(){
+        let cantidad    = parseInt($(this).find("td").eq(4).text()),// cantidad
+            cantdesp    = parseInt($(this).find('td').eq(6).children().val());
+
+        if( cantidad < cantdesp) {
+            errorCantidad = true
+        }       
+    })
+
+    return errorCantidad;
 }
 
