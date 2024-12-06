@@ -58,9 +58,12 @@
             </div>
         </div>
         <div class="area2">
+            <div class="titulo">
+                <p>Listado Ordenes</p>
+            </div>
             <div id="dashboard_table">
                 <table class="tabla" id="tablaPanelOrdenes">
-                    <thead>
+                    <thead class="stickytop">
                         <tr>
                             <th>N°. Orden</th>
                             <th>Concepto</th>
@@ -78,9 +81,12 @@
             </div>
         </div>
         <div class="area3">
+            <div class="titulo">
+                <p>Listado Pedidos</p>
+            </div>
             <div id="dashboard_table">
                 <table class="tabla" id="tablaPanelPedidos">
-                   <thead>
+                   <thead class="stickytop">
                        <tr>
                            <th>Nro. Pedido</th>
                            <th>Concepto</th>
@@ -96,7 +102,6 @@
         </div>
     </div>
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
     <script src="<?php echo constant('URL');?>public/js/chart.js"></script>
 
 </body>

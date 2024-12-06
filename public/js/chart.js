@@ -7,6 +7,7 @@ $(function () {
     const anioActual = fecha.getFullYear();
     const mesActual = fecha.getMonth() + 1;
 
+
     if ( $("#rol_user").val() == 9 || $("#rol_user").val() == 2 || $("#rol_user").val() == 110) {
         $.ajax({
             type: "POST",
@@ -203,20 +204,17 @@ $(function () {
             }
         });
     }else if ( $("#rol_user").val() == 68 ) {
-        $.ajax({
-            type: "POST",
-            url: RUTA+"panel/compras",
-            dataType: "JSON",
-            success: function (response) {
-                $("#tablaPanelPedidos tbody")
+        fetch(RUTA+"panel/compras")
+        .then(response => response.json())
+        .then(data =>{
+            $("#tablaPanelPedidos tbody")
                   .empty()
-                  .append(response.aprobados);
+                  .append(data.pedidos);
 
-                $("#tablaPanelOrdenes tbody")
+            $("#tablaPanelOrdenes tbody")
                   .empty()
                   .append(response.ordenes);
-            }
-        });
+        })
     }else if ( $("#rol_user").val() == 4 ) {
         $.ajax({
             type: "POST",

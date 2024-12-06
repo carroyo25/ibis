@@ -1,5 +1,6 @@
 $(function(){
 
+
 	let nroRegistro = 0;
 	
     $(".acordeon .submenu").on("click","a", function (e) {

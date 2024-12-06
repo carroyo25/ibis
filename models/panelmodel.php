@@ -357,11 +357,7 @@
 
         public function resumenCompras() {
             try {
-                $compras = $this->pedidosAprobados();
-                $ordenes = $this->ordenesCompra();
-
-                return array("aprobados"=>$compras,
-                            "ordenes"=>$ordenes);
+                return array("pedidos"=>$this->pedidosAprobados(),"ordenes"=>$this->ordenesCompra());
 
             } catch (PDOException $th) {
                 echo $th->getMessage();
@@ -371,45 +367,36 @@
 
         private function pedidosAprobados(){
             try {
-                $salida = "";
-                $sql = $this->db->connect()->prepare("SELECT
-                                                        tb_costusu.id_cuser,
-                                                        tb_costusu.ncodproy,
-                                                        LPAD(tb_pedidocab.nrodoc, 6, 0) AS pedido,
-                                                        UPPER(tb_pedidocab.concepto) AS concepto,
-                                                        UPPER(tb_proyectos.cdesproy) AS proyecto,
+                $salida = '';
+
+                $sql = $this->db->connect()->query("SELECT
+                                                        LPAD( tb_pedidocab.nrodoc, 6, 0 ) AS pedido,
+                                                        UPPER( tb_pedidocab.concepto ) AS concepto,
                                                         tb_pedidocab.idreg,
                                                         tb_pedidocab.estadodoc,
                                                         tb_pedidocab.emision,
                                                         tb_pedidocab.vence,
-                                                        UPPER(
-                                                            CONCAT_WS(
-                                                                ' ',
-                                                                ibis.tb_proyectos.ccodproy,
-                                                                ibis.tb_proyectos.cdesproy
-                                                            )
-                                                        ) AS costos,
-                                                        tb_pedidocab.nivelAten,
+                                                        tb_proyectos.ccodproy,
                                                         estados.cdescripcion AS estado,
                                                         atencion.cdescripcion AS atencion,
-                                                        ibis.tb_proyectos.ccodproy,
-                                                        estados.cabrevia
+                                                        estados.cabrevia 
                                                     FROM
-                                                        tb_costusu
-                                                    INNER JOIN tb_pedidocab ON tb_costusu.ncodproy = tb_pedidocab.idcostos
-                                                    INNER JOIN tb_proyectos ON tb_costusu.ncodproy = tb_proyectos.nidreg
-                                                    INNER JOIN tb_parametros AS estados ON tb_pedidocab.estadodoc = estados.nidreg
-                                                    INNER JOIN tb_parametros AS atencion ON tb_pedidocab.nivelAten = atencion.nidreg
+                                                        tb_pedidocab
+                                                        LEFT JOIN tb_proyectos ON tb_pedidocab.idcostos = tb_proyectos.nidreg
+                                                        LEFT JOIN tb_parametros AS estados ON tb_pedidocab.estadodoc = estados.nidreg
+                                                        LEFT JOIN tb_parametros AS atencion ON tb_pedidocab.nivelAten = atencion.nidreg 
                                                     WHERE
-                                                        tb_costusu.id_cuser = :user
-                                                    AND tb_pedidocab.estadodoc BETWEEN 49 AND 54
-                                                    AND tb_costusu.nflgactivo = 1
-                                                    AND tb_pedidocab.anio = YEAR(NOW())
-                                                    AND tb_pedidocab.mes = MONTH(NOW())
-                                                    ORDER BY tb_pedidocab.emision DESC");
-                $sql->execute(["user"=>$_SESSION['iduser']]);
+                                                        (tb_pedidocab.estadodoc = 49 OR tb_pedidocab.estadodoc = 54)
+                                                        AND (YEAR(tb_pedidocab.emision) = YEAR(NOW() ) OR YEAR(tb_pedidocab.emision) = YEAR(NOW() )-1)
+                                                    ORDER BY
+                                                        tb_pedidocab.emision DESC");
+                
+                $sql->execute();
+                
                 $rowcount = $sql->rowcount();
+
                 if ($rowcount > 0) {
+                    
                     while ($rs = $sql->fetch()) {
                         $salida .= '<tr data-id="'.$rs['idreg'].'">
                                         <td class="textoCentro">'.$rs['pedido'].'</td>
@@ -430,7 +417,8 @@
 
         private function ordenesCompra(){
             try {
-                $salida = "";
+                $salida = '<tr><td colspan="5">No hay registros</td></tr>';
+
                 $sql = $this->db->connect()->prepare("SELECT
                                                         tb_costusu.ncodcos,
                                                         tb_costusu.ncodproy,
@@ -463,7 +451,7 @@
                                                     WHERE
                                                         tb_costusu.id_cuser = :user 
                                                         AND tb_costusu.nflgactivo = 1
-                                                        AND lg_ordencab.nEstadoDoc BETWEEN 49 AND 59
+                                                        AND lg_ordencab.nEstadoDoc = 59
                                                     ORDER BY id_regmov DESC");
                                                     
                 $sql->execute(["user"=>$_SESSION['iduser']]);

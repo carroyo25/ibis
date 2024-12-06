@@ -86,17 +86,17 @@
             <div class="ventana">
                 <div class="cargaModulo">
                     <?php if ($_SESSION['rol'] == 2 || $_SESSION['rol'] == 9 || $_SESSION['rol'] == 110)
-                            require 'views/adm.php'; 
-                        else if ($_SESSION['rol'] == 5 )
-                            require 'views/aprob.php';
-                        else if ($_SESSION['rol'] == 3 || $_SESSION['rol'] == 228)
-                            require 'views/aped.php';
-                        else if ($_SESSION['rol'] == 68 )
-                            require 'views/comp.php';
-                        else if ($_SESSION['rol'] == 4 )
-                            require 'views/alsed.php';
-                        else if ($_SESSION['rol'] == 109 )
-                            require 'views/alobr.php';  
+                                require 'views/adm.php'; 
+                            else if ($_SESSION['rol'] == 5 )
+                                require 'views/aprob.php';
+                            else if ($_SESSION['rol'] == 3 || $_SESSION['rol'] == 228)
+                                require 'views/aped.php';
+                            else if ($_SESSION['rol'] == 68 )
+                                require 'views/comp.php';
+                            else if ($_SESSION['rol'] == 4 )
+                                require 'views/alsed.php';
+                            else if ($_SESSION['rol'] == 109 )
+                                require 'views/alobr.php';  
                         ?>
                 </div>
             </div>
