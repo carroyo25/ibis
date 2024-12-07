@@ -392,8 +392,8 @@ $almacen:#27798F;
     .area5 { 
         grid-area: 2 / 1 / 3 / 2;
         max-height: 45vh;
-        overflow: hidden;
-        height: 42vh;
+        overflow: auto;
+        height: 42vh; 
         
         #dashboard_table{
             margin-top: 13px;

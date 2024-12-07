@@ -13,17 +13,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alta Proveedores SEPCON - SICAL</title>
     <link rel="stylesheet" href="../css/hojaregistro.css?<?php echo $version = rand(0, 9999); ?>">
+    <link rel="stylesheet" href="../css/all.css">
 </head>
 <body>
-    <!-- <div class="modal">
-        <dialog open>
-            <p>Esto es un ejemplo de mensaje de diálogo.</p>
-        </dialog>
-    </div> -->
     <div class="wrap">
         <form id="datos_entidad" method="POST" enctype="multipart/form-data">
             <input type="file" class="oculto" name="uploadruc" id="uploadruc">
             <input type="file" class="oculto" name="uploadcatalogo" id="uploadcatalogo">
+            <input type="hidden" name="ubigeo" id="ubigeo">
 
             <section class="wrap__header">
                 <img src="../img/logo.png" alt="logo_sepcon">
@@ -76,6 +73,9 @@
                                 <option value="<?php echo $actividad['nidreg'] ?>"><?php echo $actividad['cdescripcion']?></option>
                         <?php } ?>
                     </select>
+
+                    <label for="registro_mtc">Registro MTC</label>
+                    <input type="text" name="registro_mtc" id="registro_mtc" placeholder="Registre el numero solo si el actividad económica es transporte">
                 </div>
             </section>
             <section class="seccion_pagina">
@@ -87,8 +87,6 @@
                 <div class="seccion_data">
                     <label for="gerente_comercial">Nombres</label>
                     <input type="text" name="gerente_comercial" id="gerente_comercial">
-                    <label for="documento_gerente">Documento de Identidad</label>
-                    <input type="text" name="documento_gerente" id="documento_gerente">
                     <label for="telefono_gerente">Telefono</label>
                     <input type="text" name="telefono_gerente" id="telefono_gerente">
                     <label for="correo_gerente">Correo Electrónico</label>
@@ -98,8 +96,6 @@
                 <div class="seccion_data">
                     <label for="contacto">Nombres</label>
                     <input type="text" name="contacto" id="contacto" class="requerido">
-                    <label for="documento_contacto">Documento de Identidad</label>
-                    <input type="text" name="documento_contacto" id="documento_contacto">
                     <label for="telefono_contacto">Telefono</label>
                     <input type="text" name="telefono_contacto" id="telefono_contacto" class="requerido">
                     <label for="correo_contacto">Correo Electrónico</label>
@@ -109,8 +105,6 @@
                 <div class="seccion_data">
                     <label for="contacto_detraccion">Nombres</label>
                     <input type="text" name="contacto_detraccion" id="contacto_detraccion">
-                    <label for="documento_contacto_detraccion">Documento de Identidad</label>
-                    <input type="text" name="documento_contacto_detraccion" id="documento_contacto_detraccion">
                     <label for="telefono_contacto">Telefono</label>
                     <input type="text" name="telefono_contacto_detraccion" id="telefono_contacto_detraccion" >
                     <label for="correo_contacto_detraccion">Correo Electrónico</label>

@@ -5,19 +5,59 @@ const tabla_bancos_body = $.getElementById("tabla_bancos_body");
 const btn_guardar = $.getElementById("btn_guardar");
 const requerido = $.querySelectorAll(".requerido");
 
-ruc = $.getElementById("ruc");
+const ruc = $.getElementById("ruc");
+const razon_alta = $.getElementById("razon_social");
+const direccion_alta = $.getElementById("direccion");
+const ubigeo_alta = $.getElementById("ubigeo");
+
 
 bancos.onclick = (e) => {
   e.preventDefault();
 
   let row = `<tr>
                 <td>
-                  <select>
-                    <option value="-1">Seleccione una opcion</option>
-                    <option value="11">BANCO DE CREDITO</option>
-                    <option value="12">INTERBANK</option>
-                    <option value="13">SCOTIA BANK</option>
-                    <option value="15">BANCO CONTINENTAL</option>
+                  <select name="entidadedFinancieras" id="entidadedFinancieras">
+                      <optgroup label="Empresas Bancarias">
+                        <option value="volvo">Banco de Comercio</option>
+                        <option value="volvo">Banco de Crédito del Perú</option>
+                        <option value="saab">Banco Interamericano de Finanzas (BanBif)</option>
+                        <option value="volvo">Banco Pichincha</option>
+                        <option value="volvo">BBVA</option>
+                        <option value="saab">Interbank</option>
+                        <option value="volvo">MiBanco</option>
+                        <option value="volvo">Scotiabank Perú</option>
+                        <option value="volvo">Banco Falabella</option>
+                        <option value="volvo">Banco Ripley</option>
+                        <option value="saab">Banco Santander Perú</option>
+                        <option value="saab">ICBC PERU BANK</option>
+                      </optgroup>
+                      <optgroup label="Empresas Financieras">
+                        <option value="volvo">Crediscotia</option>
+                        <option value="volvo">Confianza</option>
+                        <option value="volvo">Credinka</option>
+                        <option value="volvo">Mitsui Auto Finance</option>
+                        <option value="volvo">Oh!</option>
+                      </optgroup>
+                      <optgroup label="Cajas Municipales de Ahorro y Crédito (CMAC)">
+                        <option value="volvo">Arequipa</option>
+                        <option value="volvo">Cusco</option>
+                        <option value="volvo">Del Santa</option>
+                        <option value="volvo">Trujillo</option>
+                        <option value="volvo">Huancayo</option>
+                        <option value="volvo">Ica</option>
+                        <option value="volvo">Cusco</option>
+                        <option value="volvo">Piura</option>
+                        <option value="volvo">Tacna</option>
+                      </optgroup>
+                      <optgroup label="Cajas Municipales de Crédito y Popular (CMCP)">
+                        <option value="volvo">Caja Metropolitana de Lima</option>
+                      </optgroup>
+                      <optgroup label="Empresas de Crédito">
+                         <option value="volvo">Volvo Financial Services</option>
+                         <option value="volvo">Inversiones La Cruz</option>
+                         <option value="volvo">Santander Consumer Perú</option>
+                         <option value="volvo">TOTAL, Servicios Financieros</option>
+                      </optgroup>
                   </select>
                 </td>
                 <td>
@@ -73,14 +113,8 @@ $.addEventListener("change", (e)=>{
   }
 })
 
-/*entrada.addEventListener("keydown", (e) => {
-  if ( e.target.value != "" ){
-      e.target.classList.remove("obligatorio");
-  }
-})*/
 
-
-/*ruc.onkeypress = (e) => {
+ruc.onkeypress = (e) => {
     if (e.key === "Enter") {
       let ruc_valor = ruc.value;
 
@@ -88,14 +122,17 @@ $.addEventListener("change", (e)=>{
         method: "GET",
         redirect: "follow"
       };
-
+      
       fetch("https://dniruc.apisperu.com/api/v1/ruc/"+ruc_valor+"?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImNhYXJyb3lvQGhvdG1haWwuY29tIn0.8qOPsmbIXb6G5eTo1OQ8CJXKDisde7LItI2faTRSeoE", requestOptions)
         .then((response) => response.json())
         .then((result) => {
-            $.getElementById('razon_social').value = result.razonSocial;
-            $.getElementById('direccion').value = result.direccion;
+            //console.log(result);
+
+            razon_alta.value = result.razonSocial;
+            direccion_alta.value = result.direccion;
+            ubigeo_alta.value = result.ubigeo;
         })
-        .catch((error) => console.error("error getting"));
+        .catch((error) => console.error(error));
 
     }
-}*/
+}

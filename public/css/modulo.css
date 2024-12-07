@@ -431,7 +431,7 @@
   -ms-grid-column-span: 1;
   grid-area: 2/1/3/2;
   max-height: 45vh;
-  overflow: hidden;
+  overflow: auto;
   height: 42vh;
 }
 .dashBoard .area5 #dashboard_table {
