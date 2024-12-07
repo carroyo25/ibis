@@ -357,7 +357,8 @@
 
         public function resumenCompras() {
             try {
-                return array("pedidos"=>$this->pedidosAprobados(),"ordenes"=>$this->ordenesCompra());
+                return array("pedidos"=>$this->pedidosAprobados(),
+                             "ordenes"=>$this->ordenesCompra());
 
             } catch (PDOException $th) {
                 echo $th->getMessage();
@@ -367,14 +368,14 @@
 
         private function pedidosAprobados(){
             try {
-                $salida = '';
+                $docData = [];
 
                 $sql = $this->db->connect()->query("SELECT
                                                         LPAD( tb_pedidocab.nrodoc, 6, 0 ) AS pedido,
                                                         UPPER( tb_pedidocab.concepto ) AS concepto,
                                                         tb_pedidocab.idreg,
                                                         tb_pedidocab.estadodoc,
-                                                        tb_pedidocab.emision,
+                                                        DATE_FORMAT(tb_pedidocab.emision,'%d/%m/%Y') AS emision,
                                                         tb_pedidocab.vence,
                                                         tb_proyectos.ccodproy,
                                                         estados.cdescripcion AS estado,
@@ -393,22 +394,11 @@
                 
                 $sql->execute();
                 
-                $rowcount = $sql->rowcount();
-
-                if ($rowcount > 0) {
-                    
-                    while ($rs = $sql->fetch()) {
-                        $salida .= '<tr data-id="'.$rs['idreg'].'">
-                                        <td class="textoCentro">'.$rs['pedido'].'</td>
-                                        <td class="pl20px">'.$rs['concepto'].'</td>
-                                        <td class="textoCentro">'.date("d/m/Y", strtotime($rs['emision'])).'</td>
-                                        <td class="pl20px">'.$rs['ccodproy'].'</td>
-                                        <td class="textoCentro '.$rs['cabrevia'].'">'.$rs['estado'].'</td>
-                                    </tr>';
-                    }
+                while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+                    $docData[] = $row;
                 }
 
-                return $salida;
+                return  $docData;
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
@@ -419,43 +409,33 @@
             try {
                 $salida = '<tr><td colspan="5">No hay registros</td></tr>';
 
-                $sql = $this->db->connect()->prepare("SELECT
-                                                        tb_costusu.ncodcos,
-                                                        tb_costusu.ncodproy,
-                                                        tb_costusu.id_cuser,
-                                                        lg_ordencab.id_regmov,
-                                                        LPAD(lg_ordencab.cnumero,6,0) as cnumero,
-                                                        lg_ordencab.ffechadoc,
-                                                        lg_ordencab.nNivAten,
-                                                        lg_ordencab.nEstadoDoc,
-                                                        lg_ordencab.ncodpago,
-                                                        lg_ordencab.nplazo,
-                                                        lg_ordencab.cdocPDF,
-                                                        UPPER( tb_pedidocab.concepto ) AS concepto,
-                                                        UPPER( tb_pedidocab.detalle ) AS detalle,
-                                                        UPPER(
-                                                        CONCAT_WS( tb_area.ccodarea, tb_area.cdesarea )) AS area,
-                                                        UPPER(
-                                                        CONCAT_WS( tb_proyectos.ccodproy, tb_proyectos.cdesproy )) AS costos,
-                                                        lg_ordencab.nfirmaLog,
-                                                        lg_ordencab.nfirmaFin,
-                                                        lg_ordencab.nfirmaOpe,
-                                                        tb_parametros.cdescripcion AS atencion 
-                                                    FROM
-                                                        tb_costusu
-                                                        INNER JOIN lg_ordencab ON tb_costusu.ncodproy = lg_ordencab.ncodpry
-                                                        INNER JOIN tb_pedidocab ON lg_ordencab.id_refpedi = tb_pedidocab.idreg
-                                                        INNER JOIN tb_area ON lg_ordencab.ncodarea = tb_area.ncodarea
-                                                        INNER JOIN tb_proyectos ON lg_ordencab.ncodpry = tb_proyectos.nidreg
-                                                        INNER JOIN tb_parametros ON lg_ordencab.nNivAten = tb_parametros.nidreg 
-                                                    WHERE
-                                                        tb_costusu.id_cuser = :user 
-                                                        AND tb_costusu.nflgactivo = 1
-                                                        AND lg_ordencab.nEstadoDoc = 59
-                                                    ORDER BY id_regmov DESC");
-                                                    
-                $sql->execute(["user"=>$_SESSION['iduser']]);
-                $rowCount = $sql->rowCount();
+                $sql = $this->db->connect()->query("SELECT
+                                                    lg_ordencab.id_regmov,
+                                                    LPAD( lg_ordencab.cnumero, 6, 0 ) AS cnumero,
+                                                    DATE_FORMAT(lg_ordencab.ffechadoc,'%d/%m/%Y') AS emision,
+                                                    lg_ordencab.nNivAten,
+                                                    lg_ordencab.nEstadoDoc,
+                                                    lg_ordencab.ncodpago,
+                                                    lg_ordencab.nfirmaLog,
+                                                    lg_ordencab.nfirmaFin,
+                                                    lg_ordencab.nfirmaOpe,
+                                                    lg_ordencab.cObservacion,
+                                                    tb_proyectos.ccodproy AS costos,
+                                                    tb_parametros.cdescripcion AS atencion 
+                                                FROM
+                                                    lg_ordencab
+                                                    LEFT JOIN tb_proyectos ON lg_ordencab.ncodcos = tb_proyectos.nidreg
+                                                    LEFT JOIN tb_parametros ON lg_ordencab.nNivAten = tb_parametros.nidreg 
+                                                WHERE
+                                                    lg_ordencab.nEstadoDoc = 59
+                                                    AND ( lg_ordencab.cper = YEAR(NOW())-1 OR lg_ordencab.cper = YEAR(NOW()))
+                                                    AND ISNULL(lg_ordencab.ntipdoc)
+                                                ORDER BY
+                                                    lg_ordencab.id_regmov DESC");
+                                                                                                    
+                $sql->execute();
+
+                /*$rowCount = $sql->rowCount();
 
                 if ($rowCount > 0){
                     while ($rs = $sql->fetch()) {
@@ -474,11 +454,11 @@
                          $alerta_logistica = $this-> buscarUserComentario($rs['id_regmov'],'633ae7e588a52') > 0 && $flog == 0 ? "urgente":" ";  //logistica
                          $alerta_finanzas = $this-> buscarUserComentario($rs['id_regmov'],'6288328f58068')> 0 && $ffin == 0 ? "urgente":" ";  //Finanzas
                          $alerta_operaciones = $this-> buscarUserComentario($rs['id_regmov'],'62883306d1cd3') > 0 && $fope == 0? "urgente":" ";  //operaciones
-                         /*por ahora qued asi*/
+                         /*por ahora qued asi
 
                         $salida .='<tr class="pointer '.$estado.'" data-estado="'.$rs['nEstadoDoc'].'">
                                         <td class="textoCentro">'.str_pad($rs['cnumero'],4,0,STR_PAD_LEFT).'</td>
-                                        <td class="pl20px">'.$rs['concepto'].'</td>
+                                        <td class="pl20px">'.$rs['cObservacion'].'</td>
                                         <td class="textoCentro">'.date("d/m/Y", strtotime($rs['ffechadoc'])).'</td>
                                         <td class="pl20px">'.utf8_decode($rs['costos']).'</td>
                                         <td class="textoCentro '.strtolower($rs['atencion']).'">'.$rs['atencion'].'</td>
@@ -489,7 +469,15 @@
                     }
                 }
 
-                return $salida;
+                return $salida;*/
+
+                $sql->execute();
+                
+                while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+                    $docData[] = $row;
+                }
+
+                return  $docData;
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;

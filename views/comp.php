@@ -57,7 +57,7 @@
                 <button type="button"><i class="fas fa-list-ol"></i>  Ver Resumen</button>
             </div>
         </div>
-        <div class="area2">
+        <div class="area5">
             <div class="titulo">
                 <p>Listado Ordenes</p>
             </div>

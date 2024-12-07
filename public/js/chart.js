@@ -207,13 +207,42 @@ $(function () {
         fetch(RUTA+"panel/compras")
         .then(response => response.json())
         .then(data =>{
-            $("#tablaPanelPedidos tbody")
-                  .empty()
-                  .append(data.pedidos);
+            data.pedidos.forEach(e => {
+              let row = `<tr data-id="${e.idreg}">
+                            <td class="textoCentro">${e.pedido}</td>
+                            <td class="pl20px">${e.concepto}</td>
+                            <td class="textoCentro">${e.emision}</td>
+                            <td class="textoDerecha">${e.ccodproy}</td>
+                            <td class="textoCentro ${e.cabrevia}">${e.estado}</td>
+                          </tr>`;
+              
+              $("#tablaPanelPedidos tbody").append(row);
+            });
 
-            $("#tablaPanelOrdenes tbody")
-                  .empty()
-                  .append(response.ordenes);
+            data.ordenes.forEach(e => {
+              let log = e.nfirmaLog == null ? '<i class="far fa-square"></i>' : '<i class="far fa-check-square"></i>',
+                  ope = e.nfirmaOpe == null ? '<i class="far fa-square"></i>' : '<i class="far fa-check-square"></i>',
+                  fin = e.nfirmaFin == null ? '<i class="far fa-square"></i>' : '<i class="far fa-check-square"></i>';
+
+              let flog = e.nfirmaLog == null ? 0 : 1,
+                  fope = e.nfirmaOpe == null ? 0 : 1,
+                  ffin = e.nfirmaFin == null ? 0 : 1;
+
+              let estado = e.nEstadoDoc == 59 ? "resaltado_firma" : "";    
+
+              let row = `<tr>
+                            <td class="textoCentro">${e.cnumero}</td>
+                            <td class="pl20px">${e.cObservacion}</td>
+                            <td class="textoCentro">${e.emision}</td>
+                            <td class="textoDerecha">${e.costos}</td>
+                            <td class="textoCentro ${e.atencion.toLowerCase()} " >${e.atencion}</td>
+                            <td class="textoCentro">${log}</td>
+                            <td class="textoCentro">${ope}</td>
+                            <td class="textoCentro">${fin}</td>
+                        </tr>`;
+
+              $("#tablaPanelOrdenes tbody").append(row);
+            })
         })
     }else if ( $("#rol_user").val() == 4 ) {
         $.ajax({
