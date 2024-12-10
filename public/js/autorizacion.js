@@ -725,7 +725,7 @@ $(function(){
         return false;
     });
 
-    $("#entregaLogistica").click(function(e){
+    /*$("#entregaLogistica").click(function(e){
         e.preventDefault();
 
         try {
@@ -736,6 +736,21 @@ $(function(){
 
             StartSign();
 
+        } catch (error) {
+            mostrarMensaje(error.message,"mensaje_error")
+        }
+
+        return false;
+    });*/
+
+    $("#entregaLogistica").click(function(e){
+        e.preventDefault();
+
+        try {
+            if ( $("#rol_user").val() == 2 && $("#rol_user").val() == 4 ) throw new Error("No esta habilitado para este proceso");
+            if ( $("#codigo_estado").val() != 60 ) throw new Error("No se permite la accion");
+
+            $("#entregaLogisticaModal").fadeIn();
         } catch (error) {
             mostrarMensaje(error.message,"mensaje_error")
         }
@@ -772,6 +787,23 @@ $(function(){
 
         return false;
     });
+
+    /*$("#entregaUsuario").click(function(e){
+        e.preventDefault();
+
+        try {
+            if ( $("#rol_user").val() == 2 && $("#rol_user").val() == 4 ) throw new Error("No esta habilitado para este proceso");
+            if ( $("#codigo_estado").val() != 63 ) throw new Error("No se recepcionó de logística");
+
+            $("#entregaDestinoModal").fadeIn();
+
+
+        } catch (error) {
+            mostrarMensaje(error.message,"mensaje_error")
+        }
+
+        return false;
+    });*/
 
     $("#btnAceptarRecepcion").click(function (e) { 
         e.preventDefault();
