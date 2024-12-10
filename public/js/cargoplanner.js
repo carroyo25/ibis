@@ -389,6 +389,117 @@ $(function() {
 
         return false;
     });
+
+    $(".exportFast").click(function(e){
+        e.preventDefault();
+
+        fetch(RUTA+"cargoplanner/exceljs")
+        .then(response => response.json())
+        .then(async (json)=> {
+            $("#esperarCargo").css("opacity","1").fadeIn();
+            await excelJson(json);
+        });
+
+        return false;
+    });
+
+    async function excelJson(datos)   {
+        const workbook = new ExcelJS.Workbook();
+    
+        workbook.creator = 'Sical';
+        workbook.lastModifiedBy = 'Sical';
+        workbook.created = new Date();
+        workbook.modified = new Date();
+    
+        const worksheet = workbook.addWorksheet('Cargo Plan');
+
+        const columns = [
+            { width: 10 },
+            { width: 15 },
+            { width: 15 },
+            { width: 20 },
+            { width: 50 },
+            { width: 12 },
+            { width: 15 },
+            { width: 12 },
+            { width: 15 },
+            { width: 20 },
+            { width: 20 },
+            { width: 15 },
+            { width: 15 },
+            { width: 15 },
+            { width: 20 },
+            { width: 15 },
+            { width: 40 },
+            { width: 15 },
+            { width: 12 },
+            { width: 15 },
+            { width: 15 },
+            { width: 15 },
+            { width: 15 },
+            { width: 15 },
+            { width: 50 },
+            { width: 20 },
+            { width: 15 },
+            { width: 15 },
+            { width: 15 },
+            { width: 15 },
+            { width: 15 },
+            { width: 15 },
+            { width: 15 },
+            { width: 15 },
+            { width: 15 },
+            { width: 50 },
+            { width: 15 },
+        ];
+
+         // Establecer propiedades del título
+         worksheet.mergeCells('A1:AW1');
+         worksheet.getCell('A1').value = 'CARGO PLAN';
+         worksheet.getCell('A1').alignment = { horizontal: 'center', vertical: 'center' };
+         worksheet.getRow(2).height = 60;
+     
+         worksheet.columns = columns;
+     
+         // Establecer valores de cabecera
+         const headers = [
+             'Items', 'Estado Actual', 'Codigo Proyecto', 'Area', 'Partida', 'Atención', 'Tipo', 'Año Pedido', 'N° Pedido', 
+             'Creación Pedido', 'Aprobación del Pedido', 'Cantidad Pedida', 'Cantidad Aprobada', 'Cantidad Compra',
+             'Codigo del Bien/Servicio', 'Unidad Medida', 'Descripcion del Bien/Servicio', 'Tipo Orden', 'Año Orden',
+             'Nro Orden', 'Fecha Orden', 'Cantidad Orden', 'Item Orden', 'Fecha Autorizacion', 'Atencion Almacen',
+             'Descripcion del proveedor', 'Fecha Entrega Proveedor', 'Cant. Recibida', 'Nota de Ingreso', 'Fecha Recepcion Proveedor',
+             'Saldo por Recibir', 'Dias Entrega', 'Días Atrazo', 'Semáforo', 'Cantidad Despachada', 'Nro. Guia',
+             'Nro. Guia Transferencia', 'Fecha Traslado', 'Registro Almacen', 'Fecha Ingreso Almacen', 'Cantidad en Obra',
+             'Estado Pedido', 'Estado Item', 'N° Parte', 'Codigo Activo', 'Operador Logístico', 'Tipo Transporte',
+             'Observaciones/Concepto', 'Solicitante'
+         ];
+ 
+         /* worksheet.addRow(headers); */
+         worksheet.getRow(2).values=headers;
+ 
+         // Configurar wrapText para cada columna
+         headers.forEach((header, index) => {
+             const columnIndex = index + 1; // Las columnas en ExcelJS comienzan en 1
+             worksheet.getColumn(columnIndex).alignment = { wrapText: true };  // Aplicar wrapText a toda la columna
+         });
+     
+         let fila = 3;
+
+           // Rellenar los datos en el archivo
+        console.log(datos); //
+
+         // Exportar como archivo Blob
+        const buffer = await workbook.xlsx.writeBuffer();
+        const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+  
+        // Descargar archivo
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'datos_personalizados.xlsx';
+        a.click();
+        URL.revokeObjectURL(url);
+    }
     
     $("#cargoPlanDescrip tbody").on('click','tr', function(e) {
         e.preventDefault();

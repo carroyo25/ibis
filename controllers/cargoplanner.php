@@ -59,5 +59,9 @@
         function filtroCargoPlanExporta(){
             echo json_encode($this->model->filtrarExportarTotal($_POST));
         }
+
+        function exceljs() {
+            echo json_encode($this->model->exportarRapido());
+        }
     }
 ?>

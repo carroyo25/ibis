@@ -725,7 +725,7 @@ $(function(){
         return false;
     });
 
-    /*$("#entregaLogistica").click(function(e){
+    $("#entregaLogistica").click(function(e){
         e.preventDefault();
 
         try {
@@ -741,9 +741,9 @@ $(function(){
         }
 
         return false;
-    });*/
+    });
 
-    $("#entregaLogistica").click(function(e){
+    /*$("#entregaLogistica").click(function(e){
         e.preventDefault();
 
         try {
@@ -756,7 +756,7 @@ $(function(){
         }
 
         return false;
-    });
+    });*/
 
     $("#recepcionLogistica").click(function(e){
         e.preventDefault();

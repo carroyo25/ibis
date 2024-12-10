@@ -268,7 +268,8 @@
             <a href="#" id="filtrosAvanzados"><i class="fab fa-searchengin"></i><p>Filtros</p></a>
             <a href="1" id="excelFile" class="exportReport"><i class="fas fa-file-excel"></i><p>Exportar Excel</p></a>
             <a href="2" id="csvFile" class="exportReport oculto"><i class="fas fa-file-csv"></i><p>Exportar CSV</p></a>
-            <a href="3" id="excelSpoutFile" class="exportReport oculto"><i class="fas fa-file-excel"></i><p>Exportar Total Rapido</p></a>
+            <a href="3" id="excelJS" class="exportFast"><i class="fas fa-file-excel"></i><p>Exportar Total Rapido</p></a>
+            <a href="4" id="excelSpoutFile" class="exportReport oculto"><i class="fas fa-file-excel"></i><p>Exportar Total Rapido</p></a>
             <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
         </div>
     </div>
@@ -396,8 +397,10 @@
             </tbody>
         </table>
     </div>
+    <script src="<?php echo constant('URL');?>public/js/exceljs.min.js"></script>
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
     <script src="<?php echo constant('URL');?>public/js/funciones.js?<?php echo constant('VERSION')?>"></script>
     <script src="<?php echo constant('URL');?>public/js/cargoplanner.js?<?php echo constant('VERSION')?>"></script>
+
 </body>
 </html>
