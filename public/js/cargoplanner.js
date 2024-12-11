@@ -393,11 +393,13 @@ $(function() {
     $(".exportFast").click(function(e){
         e.preventDefault();
 
+        $("#esperarCargo").css("opacity","1").fadeIn();
+
         fetch(RUTA+"cargoplanner/exceljs")
         .then(response => response.json())
         .then(async (json)=> {
-            $("#esperarCargo").css("opacity","1").fadeIn();
-            await excelJson(json);
+            $("#esperarCargo").css("opacity","0").fadeOut();
+            await excelJson(json.datos);
         });
 
         return false;
@@ -414,43 +416,55 @@ $(function() {
         const worksheet = workbook.addWorksheet('Cargo Plan');
 
         const columns = [
-            { width: 10 },
-            { width: 15 },
-            { width: 15 },
-            { width: 20 },
-            { width: 50 },
-            { width: 12 },
-            { width: 15 },
-            { width: 12 },
-            { width: 15 },
-            { width: 20 },
-            { width: 20 },
-            { width: 15 },
-            { width: 15 },
-            { width: 15 },
-            { width: 20 },
-            { width: 15 },
-            { width: 40 },
-            { width: 15 },
-            { width: 12 },
-            { width: 15 },
-            { width: 15 },
-            { width: 15 },
-            { width: 15 },
-            { width: 15 },
-            { width: 50 },
-            { width: 20 },
-            { width: 15 },
-            { width: 15 },
-            { width: 15 },
-            { width: 15 },
-            { width: 15 },
-            { width: 15 },
-            { width: 15 },
-            { width: 15 },
-            { width: 15 },
-            { width: 50 },
-            { width: 15 },
+            { width: 10 }, //A
+            { width: 10 }, //B
+            { width: 15 }, //C
+            { width: 50 }, //D
+            { width: 30 }, //E
+            { width: 12 }, //F
+            { width: 15 }, //G
+            { width: 12 }, //H
+            { width: 15 }, //I
+            { width: 20 }, //J
+            { width: 20 }, //K
+            { width: 15 }, //L
+            { width: 15 }, //M
+            { width: 15 }, //N
+            { width: 20 }, //O
+            { width: 15 }, //P
+            { width: 70 }, //Q
+            { width: 15 }, //R
+            { width: 12 }, //S
+            { width: 15 }, //T
+            { width: 15 }, //U
+            { width: 15 }, //V
+            { width: 15 }, //W
+            { width: 15 }, //X
+            { width: 15 }, //Y
+            { width: 70 }, //Z
+            { width: 15 }, //AA
+            { width: 15 }, //AB
+            { width: 15 }, //AC
+            { width: 15 }, //AD
+            { width: 15 }, //AE
+            { width: 15 }, //AF
+            { width: 15 }, //AG
+            { width: 15 }, //AH
+            { width: 15 }, //AI
+            { width: 50 }, //AJ
+            { width: 15 }, //AK
+            { width: 15 }, //AL
+            { width: 15 }, //AM
+            { width: 15 }, //AN
+            { width: 15 }, //AO
+            { width: 15 }, //AP
+            { width: 15 }, //AQ
+            { width: 15 }, //AR
+            { width: 15 }, //AS
+            { width: 15 }, //AT
+            { width: 15 }, //AU
+            { width: 70 }, //AV
+            { width: 50 }, //AW
         ];
 
          // Establecer propiedades del título
@@ -483,12 +497,281 @@ $(function() {
              worksheet.getColumn(columnIndex).alignment = { wrapText: true };  // Aplicar wrapText a toda la columna
          });
      
-         let fila = 3;
+        let fila = 3;
 
-           // Rellenar los datos en el archivo
-        console.log(datos); //
+        // Rellenar los datos en el archivo
+        datos.forEach((dato, index) => {
 
-         // Exportar como archivo Blob
+                let tipo_orden = dato.idtipomov === 37 ? 'BIENES' : 'SERVICIO';
+                let clase_operacion = dato.idtipomov === 37 ? 'B' : 'S';
+            
+                let saldoRecibir = dato.cantidad_orden - dato.ingreso > 0 ? dato.cantidad_orden - dato.ingreso : "-";
+            
+                let dias_atraso = saldoRecibir > 0 && dato.dias_atraso < 1 ? dato.dias_atraso : "-";
+            
+                let suma_atendido = (Number(dato.cantidad_orden) + Number(dato.cantidad_atendida)).toFixed(2);
+            
+                let cantidad = dato.cantidad_pedido;
+            
+                let estado_pedido = dato.estadoItem >= 54 ? "Atendido" : "Pendiente";
+                let estado_item = dato.estadoItem >= 54 ? "Atendido" : "Pendiente";
+            
+                let transporte = dato.nidreg === 39 ? "TERRESTRE" : dato.transporte;
+                let atencion = dato.atencion === 47 ? "NORMAL" : "URGENTE";
+            
+                let color_mostrar = 'FFFFFF';
+                let color_semaforo = 'FFFFFF';
+                let porcentaje = '';
+            
+                let fecha_entrega = null;
+                let fecha_autoriza = null;
+            
+                let dias_plazo = (parseInt(dato.plazo) + 1) + ' days';
+            
+                if(dato.fechaLog != null && dato.fechaOpe != null && dato.fechaFin != null) {
+                    fecha_autoriza = dato.fecha_autorizacion;
+                    fecha_entrega = dato.fecha_entrega_final;
+                }
+            
+                /* Datos para el semáforo */
+                let semaforoEstado = '';
+                let dias_atraso_semaforo = '';
+
+                let contador = 0,
+                    total_items = datos.length;
+            
+                if (dato.estadoItem !== 105) {
+                    if (fecha_entrega !== null) {
+                        dias_atraso_semaforo = dato.dias_atraso;
+
+                        if (dato.ingreso_obra === dato.cantidad_orden) {
+                            semaforoEstado = "Entregado";
+                            color_semaforo = '90EE90';
+                            dias_atraso_semaforo = "";
+                        } else if (dias_atraso_semaforo > 7) {
+                            semaforoEstado = "Verde";
+                            color_semaforo = '90EE90';
+                            dias_atraso_semaforo = "";
+                        } else if (dias_atraso_semaforo >= 0 && dias_atraso_semaforo <= 7) {
+                            semaforoEstado = "Naranja";
+                            color_semaforo = 'FFD700';
+                            dias_atraso_semaforo = "";
+                        } else if (dias_atraso_semaforo < 0) {
+                            semaforoEstado = "Rojo";
+                            color_semaforo = 'FF0000';
+                            dias_atraso_semaforo = dato.dias_atraso * -1; // Para que no salga negativo
+                        }
+                    } else {
+                        dias_atraso_semaforo = "";
+                        semaforoEstado = "Procesando";
+                        color_semaforo = "FFFF00";
+
+                        if (dato.ingreso_obra > 0 && dato.ingreso_obra === dato.cantidad_atendida) {
+                            semaforoEstado = "Entregado";
+                            color_semaforo = '90EE90';
+                            dias_atraso_semaforo = "";
+                        } else if (dato.cantidad_atendida > 0) {
+                            semaforoEstado = "Stock";
+                            color_semaforo = '90EE90';
+                            dias_atraso_semaforo = "";
+                        }
+                    }
+                } else {
+                    color_semaforo = 'CDCDCD';
+                    semaforoEstado = "Anulado";
+                }
+            
+                if (dato.estadoItem === 105) {
+                    porcentaje = "0%";
+                    estadofila = "anulado";
+                    estado_item = "anulado";
+                    estado_pedido = "anulado";
+                    color_mostrar = 'C8C8C8';
+                } else if (dato.estadoItem === 49) {
+                    porcentaje = "10%";
+                    estadofila = "Procesando";
+                    estado_item = "item_stock";
+                    estado_pedido = "Procesando";
+                    color_mostrar = 'F8CAAD';
+                } else if (dato.estadoItem === 53) {
+                    porcentaje = "10%";
+                    estadofila = "emitido";
+                    estado_item = "Emitido";
+                    estado_pedido = "Pedido Emitido";
+                } else if (dato.estadoItem === 230) {
+                    porcentaje = "100%";
+                    estadofila = "comprado";
+                    estado_item = "Compra Local";
+                    estado_pedido = "Compra Local";
+                    color_mostrar = 'FF0000';
+                } else if (dato.estadoItem === 54) {
+                    porcentaje = "15%";
+                    estadofila = "aprobado";
+                    estado_item = "aprobado";
+                    estado_pedido = "aprobado";
+                    color_mostrar = 'FC4236';
+                } else if (dato.estadoItem === 52 && dato.ingreso_obra === dato.cantidad_pedido) {
+                    porcentaje = "100%";
+                    estadofila = "entregado";
+                    estado_item = "atendido";
+                    estado_pedido = "atendido";
+                    color_mostrar = '00FF00';
+                } else if (dato.estadoItem === 52 && dato.ingreso_obra === dato.cantidad_aprobada && dato.cantidad_aprobada > 0) {
+                    porcentaje = "100%";
+                    estadofila = "entregado";
+                    estado_item = "atendido";
+                    estado_pedido = "atendido";
+                    color_mostrar = '00FF00';
+                } else if (dato.estadoItem === 52) {
+                    porcentaje = "20%";
+                    estadofila = "stock";
+                    estado_item = "item_stock";
+                    estado_pedido = "stock";
+                    color_mostrar = 'B3C5E6';
+                } else if (!dato.orden) {
+                    porcentaje = "15%";
+                    estadofila = "item_aprobado";
+                    estado_item = "aprobado";
+                    estado_pedido = "aprobado";
+                    color_mostrar = 'FC4236';
+                } else if (dato.orden && !dato.proveedor) {
+                    porcentaje = "25%";
+                    estadofila = "item_orden";
+                    estado_item = "aprobado";
+                    estado_pedido = "aprobado";
+                } else if (dato.proveedor && !dato.ingreso) {
+                    porcentaje = "30%";
+                    estadofila = "item_enviado";
+                    estado_item = "atendido";
+                    estado_pedido = "atendido";
+                    color_mostrar = 'C0DCC0';
+                } else if (dato.ingreso && dato.ingreso < dato.cantidad_orden) {
+                    porcentaje = "40%";
+                    estadofila = "item_ingreso_parcial";
+                    estado_item = "atendido";
+                    estado_pedido = "atendido";
+                    color_mostrar = 'C0DCC0';
+                } else if (!dato.despachos && dato.ingreso && dato.ingreso === dato.cantidad_orden) {
+                    porcentaje = "50%";
+                    estadofila = "item_ingreso_total";
+                    estado_item = "atendido";
+                    estado_pedido = "atendido";
+                    color_mostrar = 'A9D08F';
+                } else if (dato.despachos && !dato.ingreso_obra) {
+                    porcentaje = "75%";
+                    estadofila = "item_transito";
+                    estado_item = "atendido";
+                    estado_pedido = "atendido";
+                    color_mostrar = '00FFFF';
+                } else if (Math.round(dato.ingreso_obra) < Math.round(dato.cantidad_orden)) {
+                    porcentaje = "85%";
+                    estadofila = "item_ingreso_parcial";
+                    estado_item = "atendido";
+                    estado_pedido = "atendido";
+                    color_mostrar = 'FFFFE1';
+                } else if (dato.ingreso_obra && Math.round(suma_atendido, 2) === Math.round(dato.cantidad_aprobada, 2)) {
+                    porcentaje = "100%";
+                    estadofila = "entregado";
+                    estado_item = "atendido";
+                    estado_pedido = "atendido";
+                    semaforo = "Entregado";
+                    color_mostrar = '00FF00';
+                } else if (dato.ingreso_obra && Math.round(dato.ingreso_obra, 2) === Math.round(dato.cantidad_orden, 2)) {
+                    porcentaje = "100%";
+                    estadofila = "entregado";
+                    estado_item = "atendido";
+                    estado_pedido = "atendido";
+                    color_mostrar = '00FF00';
+                }
+
+                let color = {
+                    type: 'pattern',
+                    pattern: 'solid',
+                    fgColor: { argb: color_mostrar }, // Color de fondo
+                    bgColor: { argb: color_mostrar }  // Color de fondo
+                };
+            
+                //añadir a los datos          
+                worksheet.addRow([
+                    index + 1,
+                    porcentaje,
+                    dato.ccodproy,
+                    dato.area,
+                    dato.partida,
+                    atencion,
+                    clase_operacion,
+                    dato.anio_pedido,
+                    dato.pedido,
+                    dato.crea_pedido ? new Date(dato.crea_pedido) : null,
+                    dato.aprobacion_pedido ? new Date(dato.aprobacion_pedido) : null,
+                    dato.cantidad_pedido,
+                    dato.cantidad_aprobada,
+                    dato.cantidad_compra,
+                    dato.ccodprod,
+                    dato.unidad,
+                    dato.descripcion,
+                    dato.tipo_orden,
+                    dato.anio_orden,
+                    dato.cnumero,
+                    dato.fecha_orden ? new Date(dato.fecha_orden) : null,
+                    dato.cantidad_orden,
+                    dato.item_orden,
+                    dato.fecha_autorizacion ? new Date(dato.fecha_autorizacion) : null,
+                    dato.cantidad_atendida,
+                    dato.proveedor,
+                    dato.fecha_entrega ? new Date(dato.fecha_entrega) : null,
+                    dato.ingreso, dato.nota_ingreso,
+                    dato.fecha_recepcion_proveedor ? new Date(dato.fecha_recepcion_proveedor) : null,
+                    dato.saldo_recibir,
+                    dato.plazo,
+                    dato.dias_atraso,
+                    dato.semaforo_estado,
+                    dato.despachos,
+                    dato.cnumguia,
+                    dato.fecha_traslado ? new Date(dato.fecha_traslado) : null,
+                    dato.nota_transferencia,
+                    dato.nota_obra,
+                    dato.fecha_registro_almacen ? new Date(dato.fecha_registro_almacen) : null,
+                    dato.ingreso_obra,
+                    dato.estado_pedido,
+                    dato.estado_item,
+                    dato.nroparte,
+                    dato.cregistro,
+                    dato.operador,
+                    dato.transporte,
+                    dato.concepto,
+                    dato.nombre_elabora
+            ]);
+            
+            worksheet.getCell(`B${fila}`).fill = color;
+                            
+            fila++;
+
+            console.log(fila);
+        });
+
+        // Rango A2:K2 con color 'BFCDDB'
+        applyBackgroundColor(worksheet, 2, 2, 1, 11, 'BFCDDB');
+
+        // Rango L2:N2 con color 'FC4236'
+        applyBackgroundColor(worksheet, 2, 2, 12, 14, 'FC4236');
+
+        // Rango O2:P2 con color 'BFCDDB'
+        applyBackgroundColor(worksheet, 2, 2, 15, 16, 'BFCDDB');
+
+        // Rango Q2:V2 con color '00FFFF'
+        applyBackgroundColor(worksheet, 2, 2, 17, 22, '00FFFF');
+
+        // Rango W2:AD2 con color 'BFCDDB'
+        applyBackgroundColor(worksheet, 2, 2, 23, 30, 'BFCDDB');
+
+        // Rango AE2:AM2 con color 'FFFF00'
+        applyBackgroundColor(worksheet, 2, 2, 31, 39, 'FFFF00');
+
+        // Rango AN2:AW2 con color '127BDD'
+        applyBackgroundColor(worksheet, 2, 2, 40, 49, '127BDD');
+
+        // Exportar como archivo Blob
         const buffer = await workbook.xlsx.writeBuffer();
         const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
   
@@ -737,4 +1020,26 @@ function myTimer() {
   
 function myStopFunction() {
     clearInterval(myInterval);
+}
+
+function applyBackgroundColor(worksheet, startRow, endRow, startCol, endCol, color) {
+    for (let row = startRow; row <= endRow; row++) {
+        for (let col = startCol; col <= endCol; col++) {
+            // Convertir el índice de columna numérico a su letra correspondiente (por ejemplo, 1 => 'A', 2 => 'B', etc.)
+            const cellRef = worksheet.getColumn(col).letter + row;
+            console.log(cellRef)
+            worksheet.getCell(cellRef).style = {
+                fill : {
+                type: 'pattern',  // Tipo de relleno
+                pattern: 'solid', // Tipo sólido
+                fgColor: { argb: color },  // Color de fondo en formato ARGB
+                bgColor: { argb: color }
+            },
+            alignment : {
+                horizontal: 'center',
+                vertical: 'middle',
+                wrapText: true
+            }
+        }}
+    }
 }

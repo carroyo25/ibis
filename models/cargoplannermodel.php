@@ -3078,7 +3078,7 @@
                                                     tb_pedidodet.iditem
                                                 ORDER BY 
                                                     tb_pedidocab.anio DESC
-                                                LIMIT 10000");
+                                                LIMIT 100");
                 $sql->execute();
                 $rowCount = $sql->rowCount();
 
