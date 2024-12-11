@@ -66,21 +66,8 @@
     </div>
     <div class="modal" id="esperarCargo">
         <div class="loadingio-spinner-spinner-5ulcsi06hlf">
-            <div class="ldio-fifgg00y5y">
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-            </div>
-            <h1>Espere... Este proceso demora unos minutos</h1>
+            <h2 id="waitMessage">Espere... Procesando consulta</h2>
+            <progress id="excelProcces" value="0"> 50 </progress>
         </div>
     </div>
     <div class="modal" id="vistadocumento">

@@ -398,7 +398,7 @@ $(function() {
         fetch(RUTA+"cargoplanner/exceljs")
         .then(response => response.json())
         .then(async (json)=> {
-            $("#esperarCargo").css("opacity","0").fadeOut();
+            document.getElementById("waitMessage").innerHTML = "Exportado a hoja de calculo..."
             await excelJson(json.datos);
         });
 
@@ -416,55 +416,55 @@ $(function() {
         const worksheet = workbook.addWorksheet('Cargo Plan');
 
         const columns = [
-            { width: 10 }, //A
-            { width: 10 }, //B
-            { width: 15 }, //C
-            { width: 50 }, //D
-            { width: 30 }, //E
-            { width: 12 }, //F
-            { width: 15 }, //G
-            { width: 12 }, //H
-            { width: 15 }, //I
-            { width: 20 }, //J
-            { width: 20 }, //K
-            { width: 15 }, //L
-            { width: 15 }, //M
-            { width: 15 }, //N
-            { width: 20 }, //O
-            { width: 15 }, //P
-            { width: 70 }, //Q
-            { width: 15 }, //R
-            { width: 12 }, //S
-            { width: 15 }, //T
-            { width: 15 }, //U
-            { width: 15 }, //V
-            { width: 15 }, //W
-            { width: 15 }, //X
-            { width: 15 }, //Y
-            { width: 70 }, //Z
-            { width: 15 }, //AA
-            { width: 15 }, //AB
-            { width: 15 }, //AC
-            { width: 15 }, //AD
-            { width: 15 }, //AE
-            { width: 15 }, //AF
-            { width: 15 }, //AG
-            { width: 15 }, //AH
-            { width: 15 }, //AI
-            { width: 50 }, //AJ
-            { width: 15 }, //AK
-            { width: 15 }, //AL
-            { width: 15 }, //AM
-            { width: 15 }, //AN
-            { width: 15 }, //AO
-            { width: 15 }, //AP
-            { width: 15 }, //AQ
-            { width: 15 }, //AR
-            { width: 15 }, //AS
-            { width: 15 }, //AT
-            { width: 15 }, //AU
-            { width: 70 }, //AV
-            { width: 50 }, //AW
+            { width: 10 },
+            { width: 10 },
+            { width: 15 },
+            { width: 50 },
+            { width: 30 },
+            { width: 12 },
+            { width: 15 },
+            { width: 12 },
+            { width: 15 },
+            { width: 20 },
+            { width: 20 },
+            { width: 15 },
+            { width: 15 },
+            { width: 15 },
+            { width: 20 },
+            { width: 15 },
+            { width: 70 },
+            { width: 15 },
+            { width: 12 },
+            { width: 15 },
+            { width: 15 },
+            { width: 15 },
+            { width: 15 },
+            { width: 15 },
+            { width: 15 },
+            { width: 70 },
+            { width: 15 },
+            { width: 15 },
+            { width: 15 },
+            { width: 15 },
+            { width: 15 },
+            { width: 15 },
+            { width: 15 },
+            { width: 15 },
+            { width: 15 },
+            { width: 15 },
+            { width: 15 },
+            { width: 15 },
+            { width: 15 },
+            { width: 15 },
+            { width: 15 },
+            { width: 15 },
+            { width: 15 },
+            { width: 15 },
+            { width: 15 },
+            { width: 15 },
+            { width: 15 },
+            { width: 70 },
+            { width: 50 },
         ];
 
          // Establecer propiedades del título
@@ -499,8 +499,12 @@ $(function() {
      
         let fila = 3;
 
+        const progress = document.getElementById("excelProcces");
+
         // Rellenar los datos en el archivo
         datos.forEach((dato, index) => {
+
+                progress.value = 50;
 
                 let tipo_orden = dato.idtipomov === 37 ? 'BIENES' : 'SERVICIO';
                 let clase_operacion = dato.idtipomov === 37 ? 'B' : 'S';
@@ -525,7 +529,7 @@ $(function() {
             
                 let fecha_entrega = null;
                 let fecha_autoriza = null;
-            
+
                 let dias_plazo = (parseInt(dato.plazo) + 1) + ' days';
             
                 if(dato.fechaLog != null && dato.fechaOpe != null && dato.fechaFin != null) {
@@ -746,8 +750,6 @@ $(function() {
             worksheet.getCell(`B${fila}`).fill = color;
                             
             fila++;
-
-            console.log(fila);
         });
 
         // Rango A2:K2 con color 'BFCDDB'
@@ -776,12 +778,15 @@ $(function() {
         const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
   
         // Descargar archivo
+
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
         a.download = 'datos_personalizados.xlsx';
         a.click();
         URL.revokeObjectURL(url);
+
+        $("#esperarCargo").css("opacity","0").fadeOut();
     }
     
     $("#cargoPlanDescrip tbody").on('click','tr', function(e) {
@@ -1027,7 +1032,7 @@ function applyBackgroundColor(worksheet, startRow, endRow, startCol, endCol, col
         for (let col = startCol; col <= endCol; col++) {
             // Convertir el índice de columna numérico a su letra correspondiente (por ejemplo, 1 => 'A', 2 => 'B', etc.)
             const cellRef = worksheet.getColumn(col).letter + row;
-            console.log(cellRef)
+            //console.log(cellRef)
             worksheet.getCell(cellRef).style = {
                 fill : {
                 type: 'pattern',  // Tipo de relleno
