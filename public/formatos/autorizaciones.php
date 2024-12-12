@@ -34,7 +34,7 @@
 			$this->Cell(25,5,"Centro de Costo: ",'LBR',0);
 			$this->Cell(89,5,utf8_decode($this->costos),'B',1);
 			$this->Cell(20,4,"TRANSFERENCIA",0,0);
-			$this->Cell(5,4,$this->tipo == 274 ? "X":"",1,0,"C");
+			$this->Cell(5,4,$this->tipo == 277 ? "X": "",1,0,"C");
 			$this->SetX(40);
 			$this->Cell(10,4,"ORIGEN",0,0);
 			$this->Cell(25,4,utf8_decode($this->origen),0,0);
@@ -50,7 +50,7 @@
 			$this->Cell(25,5,"Area Solicitante:",'LRB',0);
 			$this->Cell(89,5,utf8_decode($this->area),'B',1);
 			$this->Cell(20,4,"REPARACION",0,0);
-			$this->Cell(5,4,$this->tipo == 273 ? "": "X",1,0,"C");
+			$this->Cell(5,4,$this->tipo == 273 ? "X": "",1,0,"C");
 			$this->SetX(40);
 			$this->Cell(10,4,"DESTINO",0,0);
 			$this->Cell(25,4,utf8_decode($this->destino),0,0);
