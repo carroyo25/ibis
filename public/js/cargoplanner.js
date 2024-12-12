@@ -398,7 +398,8 @@ $(function() {
         fetch(RUTA+"cargoplanner/exceljs")
         .then(response => response.json())
         .then(async (json)=> {
-            document.getElementById("waitMessage").innerHTML = "Exportado a hoja de calculo..."
+            document.getElementById("waitMessage").innerHTML = "Exportado a hoja de calculo...";
+            document.getElementById("excelProcces").value = 50;
             await excelJson(json.datos);
         });
 
@@ -490,6 +491,7 @@ $(function() {
  
          /* worksheet.addRow(headers); */
          worksheet.getRow(2).values=headers;
+        
  
          // Configurar wrapText para cada columna
          headers.forEach((header, index) => {
@@ -499,12 +501,12 @@ $(function() {
      
         let fila = 3;
 
-        const progress = document.getElementById("excelProcces");
+        //const progress = document.getElementById("excelProcces");
 
         // Rellenar los datos en el archivo
         datos.forEach((dato, index) => {
 
-                progress.value = 50;
+                document.getElementById("waitMessage").innerHTML = "Insertando items...";
 
                 let tipo_orden = dato.idtipomov === 37 ? 'BIENES' : 'SERVICIO';
                 let clase_operacion = dato.idtipomov === 37 ? 'B' : 'S';
@@ -779,6 +781,8 @@ $(function() {
   
         // Descargar archivo
 
+        document.getElementById("waitMessage").innerHTML = "Descargar cargo plan...";
+
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -1032,6 +1036,9 @@ function applyBackgroundColor(worksheet, startRow, endRow, startCol, endCol, col
         for (let col = startCol; col <= endCol; col++) {
             // Convertir el índice de columna numérico a su letra correspondiente (por ejemplo, 1 => 'A', 2 => 'B', etc.)
             const cellRef = worksheet.getColumn(col).letter + row;
+
+            document.getElementById("excelProcces").value = 100;
+
             //console.log(cellRef)
             worksheet.getCell(cellRef).style = {
                 fill : {

@@ -65,9 +65,9 @@
         <p></p>
     </div>
     <div class="modal" id="esperarCargo">
-        <div class="loadingio-spinner-spinner-5ulcsi06hlf">
+        <div class="ventanaEsperaCargoPlan">
             <h2 id="waitMessage">Espere... Procesando consulta</h2>
-            <progress id="excelProcces" value="0"> 50 </progress>
+            <progress id="excelProcces" value="0">50%</progress>
         </div>
     </div>
     <div class="modal" id="vistadocumento">
