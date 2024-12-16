@@ -732,13 +732,52 @@ $(function(){
             if ( $("#rol_user").val() == 2 && $("#rol_user").val() == 4 ) throw new Error("No esta habilitado para este proceso");
             if ( $("#codigo_estado").val() != 60 ) throw new Error("No se permite la accion");
 
-            $("#estado_operacion").val(62)  //entregado logistica;
+            //$("#estado_operacion").val(62)  //entregado logistica;
 
-            StartSign();
+            //StartSign();
+
+            $("#registroFirma").fadeIn();
 
         } catch (error) {
             mostrarMensaje(error.message,"mensaje_error")
         }
+
+        return false;
+    });
+
+
+    $("#save-SheetBtn").click(function(e){
+        e.preventDefault();
+
+        let cnv = document.getElementById("firma"),
+            img = cnv.toDataURL(),
+            traslado = document.getElementById("numero"),
+            estado = $("#codigo_estado").val(),
+            formData = new FormData();
+
+        formData.append("estado",estado);
+        formData.append("id",traslado.value);
+        formData.append("img",img);
+
+        if ( estado == 62 ) {
+            fetch(RUTA+"autorizacion/entregaLogistica",{
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                mostrarMensaje("Traslado actualizado","mensaje_correcto");
+            })
+        }
+        
+        return false;
+
+    });
+
+    $("#draw-clearBtn").click(function(e){
+        e.preventDefault();
+
+        document.getElementById("firma").width = document.getElementById("firma").width;
 
         return false;
     });

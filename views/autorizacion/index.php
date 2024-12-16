@@ -218,7 +218,7 @@
             </div>
         </div>
     </div>
-    <div class="modal" id="entregaLogisticaModal">
+    <!-- <div class="modal" id="entregaLogisticaModal"> 
         <div class="ventanaPregunta">
             <h3>¿Entregar Autorización para su despacho?</h3>
             <div>
@@ -226,7 +226,7 @@
                 <button type="button" id="btnCancelarEntregaLogistica">Cancelar</button>
             </div>
         </div>
-    </div>
+    </div> -->
     <div class="modal" id="recepcionLogisticaModal">
         <div class="ventanaPregunta">
             <h3>¿Recepcionar el traslado?</h3>
@@ -686,13 +686,26 @@
             </tbody>
         </table>
     </div>
+    <div class="modal" id="registroFirma">
+        <div class="ventanaPregunta">
+            <span id="firmado" class="oculto">0</span>
+            <canvas id="firma" width="310" height="200">
+                Tu navegador no soporta las firmas
+            </canvas>
+            <div>
+                <button type="button" id="save-SheetBtn" data-proceso="logistica">Aceptar</button>
+                <button type="button" id="draw-clearBtn" data-proceso="logistica">Cancelar</button>
+            </div>
+        </div>
+    </div>
     <canvas id="cnv" name="cnv" width="500" height="100" ></canvas>
     <form action="" name="FORM1">
         <input type="hidden" name="firmado" id="firmado">
 	</form>
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
     <script src="<?php echo constant('URL');?>public/js/funciones.js?<?php echo constant('VERSION')?>"></script>
-    <script src="<?php echo constant('URL');?>public/js/firmaTraslado.js"></script>
+    <!--<script src="<?php echo constant('URL');?>public/js/firmaTraslado.js"></script>-->
+    <script src="<?php echo constant('URL');?>public/js/firmasAutorizacion.js"></script>
     <script src="<?php echo constant('URL');?>public/js/autorizacion.js?<?php echo constant('VERSION')?>"></script>
 </body>
 </html>
