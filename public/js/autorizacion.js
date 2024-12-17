@@ -732,7 +732,7 @@ $(function(){
             if ( $("#rol_user").val() == 2 && $("#rol_user").val() == 4 ) throw new Error("No esta habilitado para este proceso");
             if ( $("#codigo_estado").val() != 60 ) throw new Error("No se permite la accion");
 
-            //$("#estado_operacion").val(62)  //entregado logistica;
+            $("#codigo_estado").val(62)  //entregado logistica;
 
             //StartSign();
 
@@ -745,7 +745,7 @@ $(function(){
         return false;
     });
 
-
+    //PARA LLAMAR AL CUADRO DE FIRMAS 
     $("#save-SheetBtn").click(function(e){
         e.preventDefault();
 
@@ -768,6 +768,15 @@ $(function(){
             .then(data => {
                 mostrarMensaje("Traslado actualizado","mensaje_correcto");
             })
+        }else if (estado == 140){
+            fetch(RUTA+"autorizacion/entregaLogistica",{
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                mostrarMensaje("Entrega Realizada","mensaje_correcto");
+            })
         }
         
         return false;
@@ -778,24 +787,11 @@ $(function(){
         e.preventDefault();
 
         document.getElementById("firma").width = document.getElementById("firma").width;
+        $("#registroFirma").fadeOut();
 
         return false;
     });
 
-    /*$("#entregaLogistica").click(function(e){
-        e.preventDefault();
-
-        try {
-            if ( $("#rol_user").val() == 2 && $("#rol_user").val() == 4 ) throw new Error("No esta habilitado para este proceso");
-            if ( $("#codigo_estado").val() != 60 ) throw new Error("No se permite la accion");
-
-            $("#entregaLogisticaModal").fadeIn();
-        } catch (error) {
-            mostrarMensaje(error.message,"mensaje_error")
-        }
-
-        return false;
-    });*/
 
     $("#recepcionLogistica").click(function(e){
         e.preventDefault();
@@ -819,7 +815,12 @@ $(function(){
             if ( $("#rol_user").val() == 2 && $("#rol_user").val() == 4 ) throw new Error("No esta habilitado para este proceso");
             if ( $("#codigo_estado").val() != 63 ) throw new Error("No se recepcionó de logística");
 
-            $("#entregaDestinoModal").fadeIn();
+            $("#codigo_estado").val(140)  //entregado;
+
+            //StartSign();
+
+            $("#registroFirma").fadeIn();
+
         } catch (error) {
             mostrarMensaje(error.message,"mensaje_error")
         }
