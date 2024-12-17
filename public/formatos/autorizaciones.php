@@ -2,7 +2,7 @@
     require_once "public/fpdf/fpdf.php";
 
     class PDF extends FPDF{
-        public function __construct($numero,$costos,$area,$solicitante,$origen,$destino,$tipo,$autoriza,$observaciones,$emision) {
+        public function __construct($numero,$costos,$area,$solicitante,$origen,$destino,$tipo,$autoriza,$observaciones,$emision,$logistica,$usuario) {
 			parent::__construct();
 			$this->numero = $numero;
 			$this->costos = $costos;
@@ -13,7 +13,9 @@
 			$this->tipo = $tipo;
 			$this->autoriza = $autoriza;
 			$this->observaciones = $observaciones;
-            $this->observaciones = $emision;
+            $this->emision = $emision;
+			$this->logistica = $logistica;
+			$this->usuario = $usuario;
         }
 
         function Header() {
@@ -38,13 +40,6 @@
 			$this->SetX(40);
 			$this->Cell(10,4,"ORIGEN",0,0);
 			$this->Cell(25,4,utf8_decode($this->origen),0,0);
-			
-			
-			/*$this->Cell(18,4,"IDA Y VUELTA",0,0);
-			$this->Cell(5,4,"SI",0,0);
-			$this->Cell(5,4,"",1,0);
-			$this->Cell(5,4,"NO",0,0);
-			$this->Cell(5,4,"",1,0);*/
 
 			$this->SetX(90);
 			$this->Cell(25,5,"Area Solicitante:",'LRB',0);
@@ -73,6 +68,17 @@
         // Pie de página
 		function Footer(){
 		    $this->SetXY(4,-60);
+
+			/*$firma_logistica = $this->logistica.'.png';
+			$firma_usuario = $this->usuario.'.png';*/
+
+			if (file_exists('public/documentos/autorizaciones/firmas_logistica/'.$this->logistica.'.png')) {
+				$this->Image('public/documentos/autorizaciones/firmas_logistica/'.$this->logistica.'.png',5,6,20);
+			}
+
+			if (file_exists('public/documentos/autorizaciones/firmas_entrega/'.$this->usuario.'.png')) {
+				$this->Image('public/documentos/autorizaciones/firmas_entrega/'.$this->usuario.'.png',5,6,20);
+			}
 			
 			$this->Line(5, 236, 204, 236);
 			$this->Line(5, 247, 204, 247);

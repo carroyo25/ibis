@@ -192,6 +192,8 @@
                                                         alm_autorizacab.celabora,
                                                         alm_autorizacab.nestado,
                                                         alm_autorizacab.nflgautoriza,
+                                                        alm_autorizacab.firma_usuario,
+                                                        alm_autorizacab.firma_logistica,
                                                         alm_autorizacab.ntipo,
                                                         costos_origen.ccodproy AS cc_codigo_origen,
                                                         UPPER( costos_origen.cdesproy ) AS cc_descripcion_origen,
@@ -345,7 +347,9 @@
                                 $cabecera['codigo_tipo'],
                                 $cabecera['autorizacion'],
                                 $cabecera['emision'],
-                                $cabecera['observaciones'],);
+                                $cabecera['observaciones'],
+                                $cabecera['firma_logistica'],
+                                $cabecera['firma_usuario'],);
 
                 $pdf->AliasNbPages();
                 //$pdf->AddPage('P','A5');
@@ -504,7 +508,7 @@
             try {
                 $mensaje = "Error en la actualización";
                 $fecha = date("Y-m-d");
-                $namefileFinalUser = "";
+                $namefileUser = "";
                 $file = "";
 
                 if (array_key_exists('img',$_REQUEST)) { 
@@ -514,7 +518,7 @@
                     $imgData = base64_decode(substr($_REQUEST['img'],22));
                     
                     $namefileUser = uniqid();
-                    $file = 'public/documentos/autorizaciones/firmas_entrega/'.$namefileFinalUser.'.png';
+                    $file = 'public/documentos/autorizaciones/firmas_entrega/'.$namefileUser.'.png';
 
                     // borrar primero la imagen si existía previamente
                     if (file_exists($file)) { unlink($file); }
@@ -525,6 +529,7 @@
                     fclose($fp);
 
                     if ( file_exists($file) ){
+
                         $sql = $this->db->connect()->prepare("UPDATE alm_autorizacab 
                                                         SET alm_autorizacab.nestado =:estado,
                                                              alm_autorizacab.uentrecli =:user,
@@ -536,7 +541,7 @@
                                         "estado"=>$estado, 
                                         "user"=>$_SESSION['iduser'], 
                                         "fecha"=>$fecha,
-                                        "cliente"=>$namefileFinalUser]);
+                                        "cliente"=>$namefileUser]);
 
                         if ( $sql->rowCount() > 0 ){
                             $mensaje = "Entregado para su traslado";

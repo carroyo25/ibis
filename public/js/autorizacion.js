@@ -184,6 +184,8 @@ $(function(){
             $("#codigo_traslado").val(data.datos[0].indice);
             $("#tipo").val(data.datos[0].tipo);
             $("#estado_autorizacion").val(data.datos[0].nflgautoriza);
+            $("#firma_logistica").val(data.datos[0].firma_logistica);
+            $("#firma_usuario").val(data.datos[0].firma_usuario);
 
             $("#numero_guia").val(data.datos[0].cnumguia)
 
@@ -769,7 +771,7 @@ $(function(){
                 mostrarMensaje("Traslado actualizado","mensaje_correcto");
             })
         }else if (estado == 140){
-            fetch(RUTA+"autorizacion/entregaLogistica",{
+            fetch(RUTA+"autorizacion/entregaFinal",{
                 method: "POST",
                 body: formData
             })
@@ -791,8 +793,6 @@ $(function(){
 
         return false;
     });
-
-
     $("#recepcionLogistica").click(function(e){
         e.preventDefault();
 
@@ -827,23 +827,6 @@ $(function(){
 
         return false;
     });
-
-    /*$("#entregaUsuario").click(function(e){
-        e.preventDefault();
-
-        try {
-            if ( $("#rol_user").val() == 2 && $("#rol_user").val() == 4 ) throw new Error("No esta habilitado para este proceso");
-            if ( $("#codigo_estado").val() != 63 ) throw new Error("No se recepcionó de logística");
-
-            $("#entregaDestinoModal").fadeIn();
-
-
-        } catch (error) {
-            mostrarMensaje(error.message,"mensaje_error")
-        }
-
-        return false;
-    });*/
 
     $("#btnAceptarRecepcion").click(function (e) { 
         e.preventDefault();

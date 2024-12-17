@@ -32,6 +32,8 @@
                     <input type="hidden" name="codigo_estado" id="codigo_estado">
                     <input type="hidden" name="estado_autorizacion" id="estado_autorizacion">
                     <input type="hidden" name="estado_operacion" id="estado_operacion">
+                    <input type="hidden" name="firma_logistica" id="firma_logistica">
+                    <input type="hidden" name="firma_usuario" id="firma_usuario">
                     
                     <!--este campo es para uniformizar las guias-->
 
@@ -218,15 +220,6 @@
             </div>
         </div>
     </div>
-    <!-- <div class="modal" id="entregaLogisticaModal"> 
-        <div class="ventanaPregunta">
-            <h3>¿Entregar Autorización para su despacho?</h3>
-            <div>
-                <button type="button" id="btnAceptarEntregaLogistica">Aceptar</button>
-                <button type="button" id="btnCancelarEntregaLogistica">Cancelar</button>
-            </div>
-        </div>
-    </div> -->
     <div class="modal" id="recepcionLogisticaModal">
         <div class="ventanaPregunta">
             <h3>¿Recepcionar el traslado?</h3>
