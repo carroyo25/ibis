@@ -1,6 +1,14 @@
 <?php
+
+    date_default_timezone_set('America/Lima');
+
     require_once('connect.php');
     
+    if ( isset($_POST) ) {
+        if ( isset($_POST['funcion']) && $_POST['funcion'] === "getEntiByRuc") {
+            echo json_encode(getEntiByRuc($pdo,$_POST['ruc'])); 
+        }
+    }
 
     function getCountries($pdo) {
         $datos = [];

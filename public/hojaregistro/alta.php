@@ -1,9 +1,9 @@
 <?php
     require_once('consultas.php');
 
-    $paises = getCountries($pdo);
-    $pagos = getPaymentList($pdo);
-    $actividades = getEconomicActivity($pdo);
+    $paises         = getCountries($pdo);
+    $pagos          = getPaymentList($pdo);
+    $actividades    = getEconomicActivity($pdo);
 
 ?>
 <!DOCTYPE html>
@@ -75,7 +75,7 @@
                     </select>
 
                     <label for="registro_mtc">Registro MTC</label>
-                    <input type="text" name="registro_mtc" id="registro_mtc" placeholder="Registre el numero solo si el actividad económica es transporte">
+                    <input type="text" name="registro_mtc" id="registro_mtc" placeholder="Solo si la actividad económica es TRANSPORTE">
                 </div>
             </section>
             <section class="seccion_pagina">

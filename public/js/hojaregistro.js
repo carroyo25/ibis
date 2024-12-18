@@ -116,23 +116,53 @@ $.addEventListener("change", (e)=>{
 
 ruc.onkeypress = (e) => {
     if (e.key === "Enter") {
-      let ruc_valor = ruc.value;
+      let ruc_valor = ruc.value,
+        formData = new FormData();
 
-      const requestOptions = {
-        method: "GET",
-        redirect: "follow"
-      };
-      
-      fetch("https://dniruc.apisperu.com/api/v1/ruc/"+ruc_valor+"?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImNhYXJyb3lvQGhvdG1haWwuY29tIn0.8qOPsmbIXb6G5eTo1OQ8CJXKDisde7LItI2faTRSeoE", requestOptions)
-        .then((response) => response.json())
-        .then((result) => {
-            //console.log(result);
+      formData.append('ruc',ruc_valor);
+      formData.append('funcion','getEntiByRuc');
 
-            razon_alta.value = result.razonSocial;
-            direccion_alta.value = result.direccion;
-            ubigeo_alta.value = result.ubigeo;
-        })
-        .catch((error) => console.error(error));
+      try {
+          if ( !validar(ruc) ) throw new Error("El RUC ingresado es incorrecto..."); 
 
+          fetch('consultas.php',{
+            method: 'POST',
+            body: formData
+          })
+          .then(response=>response.json())
+          .then(data=>{
+            console.log(data);
+          })
+      } catch (error) {
+        console.log(error.message);
+      }
     }
+}
+
+
+/***funciones ****/
+const validar = (input) =>{
+  let ruc = input.value.replace(/[-.,[\]()\s]+/g,""),
+      valido = false;
+  
+  //Es entero? 
+  if ((ruc = Number(ruc)) && ruc % 1 === 0	&& rucValido(ruc)) { // ⬅️ Acá se comprueba
+  	valido = true;
+  }
+
+  return valido;
+}
+
+const rucValido =(ruc) =>{
+   //11 dígitos y empieza en 10,15,16,17 o 20
+   if (!(ruc >= 1e10 && ruc < 11e9
+    || ruc >= 15e9 && ruc < 18e9
+    || ruc >= 2e10 && ruc < 21e9))
+
+     return false;
+ 
+  for (var suma = -(ruc%10<2), i = 0; i<11; i++, ruc = ruc/10|0)
+      suma += (ruc % 10) * (i % 7 + (i/7|0) + 1);
+
+  return suma % 11 === 0;
 }
