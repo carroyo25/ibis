@@ -69,15 +69,12 @@
 		function Footer(){
 		    $this->SetXY(4,-60);
 
-			/*$firma_logistica = $this->logistica.'.png';
-			$firma_usuario = $this->usuario.'.png';*/
-
 			if (file_exists('public/documentos/autorizaciones/firmas_logistica/'.$this->logistica.'.png')) {
-				$this->Image('public/documentos/autorizaciones/firmas_logistica/'.$this->logistica.'.png',5,6,20);
+				$this->Image('public/documentos/autorizaciones/firmas_logistica/'.$this->logistica.'.png',90,252,25);
 			}
 
 			if (file_exists('public/documentos/autorizaciones/firmas_entrega/'.$this->usuario.'.png')) {
-				$this->Image('public/documentos/autorizaciones/firmas_entrega/'.$this->usuario.'.png',5,6,20);
+				$this->Image('public/documentos/autorizaciones/firmas_entrega/'.$this->usuario.'.png',160,252,25);
 			}
 			
 			$this->Line(5, 236, 204, 236);
@@ -110,6 +107,9 @@
 			$this->Cell(67,4,"FECHA :",'LBR',0,"L");
 			$this->Cell(67,4,"FECHA :",'LBR',0,"L");
 			$this->Cell(66,4,"FECHA :",'LBR',1,"L");
+
+			/*$this->Cell(66,4,$this->logistica,'LBR',1,"L");
+			$this->Cell(66,4,$this->usuario,'LBR',1,"L");*/
 		}
     }
 ?>
