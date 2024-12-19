@@ -245,45 +245,44 @@
                 $salida = "";
                 $item = 1;
                 $sql = $this->db->connect()->prepare("SELECT
-                                                        alm_madresdet.niddeta,
-                                                        alm_madresdet.id_regalm,
-                                                        alm_madresdet.id_cprod,
-                                                        alm_madresdet.ncantidad,
-                                                        cm_producto.ccodprod,
-                                                        tb_unimed.cabrevia,
-                                                        guias.id_regalm AS registro_despacho,
-                                                        UPPER(
-                                                        CONCAT_WS( ' ', cm_producto.cdesprod )) AS descripcion,
-                                                        alm_despachodet.niddetaPed,
-                                                        tb_pedidocab.nrodoc AS pedido,
-                                                        tb_pedidocab.idreg,
-                                                        lg_ordencab.cnumero AS orden,
-                                                        lg_ordencab.ncodcos AS idcostos,
-                                                        tb_area.ncodarea,
-                                                        tb_pedidocab.idarea,
-                                                        UPPER(tb_area.cdesarea) AS cdesarea,
-                                                        madres.cdestino,
-                                                        madres.cnumguia,
-                                                        tb_almacen.ncodalm AS ncodalm2
-                                                    FROM
-                                                        alm_madresdet
-                                                        LEFT JOIN alm_madrescab ON alm_madresdet.id_regalm = alm_madrescab.id_regalm
-                                                        LEFT JOIN cm_producto ON alm_madresdet.id_cprod = cm_producto.id_cprod
-                                                        LEFT JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
-                                                        LEFT JOIN lg_guias AS guias ON alm_madresdet.nGuia = guias.cnumguia
-                                                        LEFT JOIN alm_despachodet ON alm_despachodet.id_regalm = guias.id_regalm 
-                                                        AND cm_producto.id_cprod = alm_despachodet.id_cprod
-                                                        LEFT JOIN tb_pedidodet ON alm_despachodet.niddetaPed = tb_pedidodet.iditem
-                                                        LEFT JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
-                                                        LEFT JOIN lg_ordendet ON alm_despachodet.niddetaPed = lg_ordendet.niddeta
-                                                        LEFT JOIN lg_ordencab ON lg_ordendet.id_orden = lg_ordencab.id_regmov
-                                                        LEFT JOIN tb_area ON tb_pedidocab.idarea = tb_area.ncodarea
-                                                        LEFT JOIN lg_guias AS madres ON alm_madresdet.nGuiaMadre = madres.cnumguia
-                                                        LEFT JOIN tb_almacen ON tb_almacen.cdesalm = madres.cdestino
-                                                    WHERE
-                                                        alm_madrescab.id_regalm = :indice
-                                                    GROUP BY alm_despachodet.niddetaPed,
-                                                            alm_despachodet.niddeta");
+                                                            alm_madresdet.niddeta,
+                                                            alm_madresdet.id_regalm,
+                                                            alm_madresdet.id_cprod,
+                                                            alm_madresdet.ncantidad,
+                                                            cm_producto.ccodprod,
+                                                            tb_unimed.cabrevia,
+                                                            UPPER(
+                                                            CONCAT_WS( ' ', cm_producto.cdesprod )) AS descripcion,
+                                                            guias.id_regalm AS registro_despacho,
+                                                            alm_despachodet.niddetaPed,
+                                                            tb_pedidocab.nrodoc AS pedido,
+                                                            tb_pedidocab.idreg,
+                                                            lg_ordencab.cnumero AS orden,
+                                                            lg_ordencab.ncodcos AS idcostos,
+                                                            tb_area.ncodarea,
+                                                            tb_pedidocab.idarea,
+                                                            UPPER( tb_area.cdesarea ) AS cdesarea,
+                                                            madres.cdestino,
+                                                            madres.cnumguia,
+                                                            tb_almacen.ncodalm AS ncodalm2 
+                                                        FROM
+                                                            alm_madresdet
+                                                            LEFT JOIN alm_madrescab ON alm_madresdet.id_regalm = alm_madrescab.id_regalm
+                                                            LEFT JOIN cm_producto ON alm_madresdet.id_cprod = cm_producto.id_cprod
+                                                            LEFT JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                            LEFT JOIN lg_guias AS guias ON alm_madresdet.nGuia = guias.cnumguia
+                                                            LEFT JOIN alm_despachodet ON alm_despachodet.nroorden = alm_madresdet.niddetaPed
+                                                            LEFT JOIN tb_pedidodet ON alm_despachodet.niddetaPed = tb_pedidodet.iditem
+                                                            LEFT JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
+                                                            LEFT JOIN lg_ordendet ON alm_despachodet.niddetaPed = lg_ordendet.niddeta
+                                                            LEFT JOIN lg_ordencab ON lg_ordendet.id_orden = lg_ordencab.id_regmov
+                                                            LEFT JOIN tb_area ON tb_pedidocab.idarea = tb_area.ncodarea
+                                                            LEFT JOIN lg_guias AS madres ON alm_madresdet.nGuiaMadre = madres.cnumguia
+                                                            LEFT JOIN tb_almacen ON tb_almacen.cdesalm = madres.cdestino 
+                                                        WHERE
+                                                            alm_madrescab.id_regalm = :indice 
+                                                        GROUP BY
+                                                            alm_madresdet.niddeta");
                 
                 $sql->execute(["indice"=>$indice]);
                 $rowCount = $sql->rowCount();
