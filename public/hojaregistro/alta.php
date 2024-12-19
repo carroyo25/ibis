@@ -14,6 +14,7 @@
     <title>Alta Proveedores SEPCON - SICAL</title>
     <link rel="stylesheet" href="../css/hojaregistro.css?<?php echo $version = rand(0, 9999); ?>">
     <link rel="stylesheet" href="../css/all.css">
+    <link rel="stylesheet" href="../css/notify.css">
 </head>
 <body>
     <div class="wrap">
@@ -158,7 +159,8 @@
             </section>
         </form>
     </div>
+    <script src="../js/index.var.js"></script>
     <script src="../js/hojaregistro.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </body>
 </html>

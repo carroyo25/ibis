@@ -10,6 +10,10 @@ const razon_alta = $.getElementById("razon_social");
 const direccion_alta = $.getElementById("direccion");
 const ubigeo_alta = $.getElementById("ubigeo");
 
+//inicializa par la notificacion
+let notifier = new AWN(),
+    errorCantEnti = false;
+
 
 bancos.onclick = (e) => {
   e.preventDefault();
@@ -19,44 +23,43 @@ bancos.onclick = (e) => {
                   <select name="entidadedFinancieras" id="entidadedFinancieras">
                       <optgroup label="Empresas Bancarias">
                         <option value="volvo">Banco de Comercio</option>
-                        <option value="volvo">Banco de Crédito del Perú</option>
-                        <option value="saab">Banco Interamericano de Finanzas (BanBif)</option>
-                        <option value="volvo">Banco Pichincha</option>
-                        <option value="volvo">BBVA</option>
-                        <option value="saab">Interbank</option>
-                        <option value="volvo">MiBanco</option>
-                        <option value="volvo">Scotiabank Perú</option>
-                        <option value="volvo">Banco Falabella</option>
-                        <option value="volvo">Banco Ripley</option>
-                        <option value="saab">Banco Santander Perú</option>
-                        <option value="saab">ICBC PERU BANK</option>
+                        <option value="11">Banco de Crédito del Perú</option>
+                        <option value="">Banco Interamericano de Finanzas (BanBif)</option>
+                        <option value="">Banco Pichincha</option>
+                        <option value="15">BBVA</option>
+                        <option value="12">Interbank</option>
+                        <option value="">MiBanco</option>
+                        <option value="13">Scotiabank Perú</option>
+                        <option value="">Banco Falabella</option>
+                        <option value="">Banco Ripley</option>
+                        <option value="">Banco Santander Perú</option>
+                        <option value="">ICBC PERU BANK</option>
                       </optgroup>
                       <optgroup label="Empresas Financieras">
-                        <option value="volvo">Crediscotia</option>
-                        <option value="volvo">Confianza</option>
-                        <option value="volvo">Credinka</option>
-                        <option value="volvo">Mitsui Auto Finance</option>
-                        <option value="volvo">Oh!</option>
+                        <option value="">Crediscotia</option>
+                        <option value="">Confianza</option>
+                        <option value="">Credinka</option>
+                        <option value="">Mitsui Auto Finance</option>
+                        <option value="">Oh!</option>
                       </optgroup>
                       <optgroup label="Cajas Municipales de Ahorro y Crédito (CMAC)">
-                        <option value="volvo">Arequipa</option>
-                        <option value="volvo">Cusco</option>
-                        <option value="volvo">Del Santa</option>
-                        <option value="volvo">Trujillo</option>
-                        <option value="volvo">Huancayo</option>
-                        <option value="volvo">Ica</option>
-                        <option value="volvo">Cusco</option>
-                        <option value="volvo">Piura</option>
-                        <option value="volvo">Tacna</option>
+                        <option value="17">Arequipa</option>
+                        <option value="18">Cusco</option>
+                        <option value="">Del Santa</option>
+                        <option value="">Trujillo</option>
+                        <option value="16">Huancayo</option>
+                        <option value="">Ica</option>
+                        <option value="">Piura</option>
+                        <option value="">Tacna</option>
                       </optgroup>
                       <optgroup label="Cajas Municipales de Crédito y Popular (CMCP)">
-                        <option value="volvo">Caja Metropolitana de Lima</option>
+                        <option value="">Caja Metropolitana de Lima</option>
                       </optgroup>
                       <optgroup label="Empresas de Crédito">
-                         <option value="volvo">Volvo Financial Services</option>
-                         <option value="volvo">Inversiones La Cruz</option>
-                         <option value="volvo">Santander Consumer Perú</option>
-                         <option value="volvo">TOTAL, Servicios Financieros</option>
+                         <option value="">Volvo Financial Services</option>
+                         <option value="">Inversiones La Cruz</option>
+                         <option value="">Santander Consumer Perú</option>
+                         <option value="">TOTAL, Servicios Financieros</option>
                       </optgroup>
                   </select>
                 </td>
@@ -99,8 +102,28 @@ btn_guardar.onclick = (e) => {
 
   try {
     if ( contador > 0 ) throw new Error('Hay campos sin rellenar');
+
+    const datos = new URLSearchParams(new FormData(document.getElementById("datos_entidad")));
+    datos.append("funcion","grabar");
+
+    fetch ('inc/login.inc.php',{
+      method: 'POST',
+      body: datos
+    })
+    .then(response => response.json())
+    .then(data => {
+        /*if (data.respuesta) {
+            window.location = data.pagina;
+        }else{
+             mostrarMensaje(data.mensaje,data.clase);
+        }*/
+    })
+  .catch(error => {
+      console.error(error.message);
+  })
+
   } catch (error) {
-    console.log(error.message);
+    notifier.alert(error.message);
   }
 
   return false;
@@ -131,10 +154,13 @@ ruc.onkeypress = (e) => {
           })
           .then(response=>response.json())
           .then(data=>{
-            console.log(data);
+             if (data.length >= 1){
+              notifier.alert('Ya encuentra registrado...');
+              errorCantEnti = true;
+             };
           })
       } catch (error) {
-        console.log(error.message);
+        notifier.alert(error.message);
       }
     }
 }

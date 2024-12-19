@@ -37,7 +37,7 @@
     }
 
     function grabarProveedor($pdo, $datos, $files) {
-        try{
+        /*try{
             $pdo->beginTransaction();
 
             $fechaActual = date('Y-m-d');
@@ -141,7 +141,7 @@
         }catch(PDOException $e){
             echo "Error al guardar los datos: " . $e->getMessage();
             $pdo->rollBack();
-        }
+        }*/
     }
 
     function buscarRuc($pdo, $datos){
