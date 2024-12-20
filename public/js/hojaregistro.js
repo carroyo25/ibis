@@ -101,23 +101,27 @@ btn_guardar.onclick = (e) => {
   })
 
   try {
-    if ( contador > 0 ) throw new Error('Hay campos sin rellenar');
+    //if ( contador > 0 ) throw new Error('Hay campos sin rellenar');
 
     const datos = new URLSearchParams(new FormData(document.getElementById("datos_entidad")));
-    datos.append("funcion","grabar");
+    datos.append("funcion","grabarProveedor");
 
-    fetch ('inc/login.inc.php',{
-      method: 'POST',
-      body: datos
-    })
-    .then(response => response.json())
-    .then(data => {
-        /*if (data.respuesta) {
-            window.location = data.pagina;
-        }else{
-             mostrarMensaje(data.mensaje,data.clase);
-        }*/
-    })
+    notifier.async(
+      fetch ('procesos.php',{
+        method: 'POST',
+        body: datos
+      })
+      .then(response => response.json())
+      .then(data => {
+          /*if (data.respuesta) {
+              window.location = data.pagina;
+          }else{
+              mostrarMensaje(data.mensaje,data.clase);
+          }*/
+      }),'',undefined,'Procesando'
+    )
+
+
   .catch(error => {
       console.error(error.message);
   })
@@ -129,12 +133,12 @@ btn_guardar.onclick = (e) => {
   return false;
 }
 
-$.addEventListener("change", (e)=>{
+/*$.addEventListener("change", (e)=>{
   let item = e.target.getAttribute("id");
   if ( e.target.value != "" ){
     $.getElementById(item).classList.remove("obligatorio");
   }
-})
+})*/
 
 
 ruc.onkeypress = (e) => {

@@ -37,6 +37,8 @@
     }
 
     function grabarProveedor($pdo, $datos, $files) {
+        var_dump($datos);
+        
         /*try{
             $pdo->beginTransaction();
 
@@ -65,7 +67,16 @@
 
             $clave = generarClaveAleatoria(32);
             $hashClave = password_hash($clave, PASSWORD_DEFAULT);
-            $sql = "INSERT INTO cm_entidad SET cnumdoc=:ruc,crazonsoc=:razon_social,cviadireccion=:direccion,cemail=:correo_electronico,ctelefono=:telefono,ncodpais=:pais, cficharuc=:ficha_ruc, ccatalogo=:catalogo_prod, cpassword=:pass";
+            $sql = "INSERT INTO cm_entidad 
+                                    SET cnumdoc=:ruc,
+                                        crazonsoc=:razon_social,
+                                        cviadireccion=:direccion,
+                                        cemail=:correo_electronico,
+                                        ctelefono=:telefono,
+                                        ncodpais=:pais, 
+                                        cficharuc=:ficha_ruc, 
+                                        ccatalogo=:catalogo_prod, 
+                                        cpassword=:pass";
             $stmt = $pdo->prepare($sql);
             $stmt->execute([
                 ':ruc' => $datos['ruc'],
