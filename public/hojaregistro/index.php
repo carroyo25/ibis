@@ -15,6 +15,7 @@
     <title>Sepcon - Registro de Proveedores</title>
     <link rel="stylesheet" href="../css/all.css">
     <link rel="stylesheet" href="../css/registro.css?<?php echo $version?>">
+    <link rel="shortcut icon" type="image/png" href="../img/logo.png" />
 </head>
 <body>
     <div class="wrap">

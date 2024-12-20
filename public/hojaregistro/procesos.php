@@ -36,11 +36,9 @@
         }
     }
 
-    function grabarProveedor($pdo, $datos, $files) {
-        var_dump($datos);
-        
-        /*try{
-            $pdo->beginTransaction();
+    function grabarProveedor($pdo, $datos, $files) {   
+        try{
+            /*$pdo->beginTransaction();
 
             $fechaActual = date('Y-m-d');
             $uploadDir = '../documentos/'; 
@@ -63,11 +61,11 @@
                 $filePathCatalogo = $uploadDir .'catalogoproducto/'. basename($nameCatalogo);
                 
                 move_uploaded_file($fileCatalogo['tmp_name'], $filePathCatalogo);
-            }
+            }*/
 
             $clave = generarClaveAleatoria(32);
             $hashClave = password_hash($clave, PASSWORD_DEFAULT);
-            $sql = "INSERT INTO cm_entidad 
+            /*$sql = "INSERT INTO cm_entidad 
                                     SET cnumdoc=:ruc,
                                         crazonsoc=:razon_social,
                                         cviadireccion=:direccion,
@@ -144,15 +142,15 @@
             }
             
 
-            
             $pdo->commit();
 
-            enviarEmail($datos['correo_electronico'], $datos['razon_social'],$datos['ruc'] , $clave);
+            enviarEmail($datos['correo_electronico'], $datos['razon_social'],$datos['ruc'] , $clave);*/
+
             return ['status' => 'success', 'id' => $lastId, 'claveGenerada' => $clave];
         }catch(PDOException $e){
             echo "Error al guardar los datos: " . $e->getMessage();
             $pdo->rollBack();
-        }*/
+        }
     }
 
     function buscarRuc($pdo, $datos){

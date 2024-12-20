@@ -12,11 +12,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alta Proveedores SEPCON - SICAL</title>
+    <link rel="shortcut icon" type="image/png" href="../img/logo.png" />
     <link rel="stylesheet" href="../css/hojaregistro.css?<?php echo $version = rand(0, 9999); ?>">
     <link rel="stylesheet" href="../css/all.css">
     <link rel="stylesheet" href="../css/notify.css">
 </head>
 <body>
+    <div class="floating">
+        <a href="#" class="floatingOptions"><i class="fas fa-arrow-alt-circle-up"></i></a>
+        <a href="#" class="floatingOptions"><i class="fas fa-save"></i></a>
+    </div>
     <div class="wrap">
         <form id="datos_entidad" method="POST" enctype="multipart/form-data">
             <input type="file" class="oculto" name="uploadruc" id="uploadruc">
@@ -43,7 +48,7 @@
                     <input type="text" name="direccion" id="direccion" class="requerido">
 
                     <label for="correo_electronico">Correo Electrónico</label>
-                    <input type="email" name="correo_electronico" id="correo_electronico">
+                    <input type="email" name="correo_electronico" id="correo_electronico" class="correo">
 
                     <label for="pagina_web">Página Web</label>
                     <input type="text" name="pagina_web" id="pagina_web">
@@ -91,7 +96,7 @@
                     <label for="telefono_gerente">Telefono</label>
                     <input type="text" name="telefono_gerente" id="telefono_gerente">
                     <label for="correo_gerente">Correo Electrónico</label>
-                    <input type="text" name="correo_gerente" id="correo_gerente">
+                    <input type="text" name="correo_gerente" id="correo_gerente" class="correo">
                 </div>
                 <p class="detalle">Personal de contacto</p>
                 <div class="seccion_data">
@@ -100,7 +105,7 @@
                     <label for="telefono_contacto">Telefono</label>
                     <input type="text" name="telefono_contacto" id="telefono_contacto" class="requerido">
                     <label for="correo_contacto">Correo Electrónico</label>
-                    <input type="text" name="correo_contacto" id="correo_contacto" class="requerido">
+                    <input type="text" name="correo_contacto" id="correo_contacto" class="requerido correo">
                 </div>
                 <p class="detalle">Contacto Personal Detracción</p>
                 <div class="seccion_data">
@@ -109,7 +114,7 @@
                     <label for="telefono_contacto">Telefono</label>
                     <input type="text" name="telefono_contacto_detraccion" id="telefono_contacto_detraccion" >
                     <label for="correo_contacto_detraccion">Correo Electrónico</label>
-                    <input type="text" name="correo_contacto_detraccion" id="correo_contacto_detraccion">
+                    <input type="text" name="correo_contacto_detraccion" id="correo_contacto_detraccion" class="correo">
                 </div>
             </section>
             <section class="seccion_pagina">

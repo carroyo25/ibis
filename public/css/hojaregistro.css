@@ -37,6 +37,9 @@ body {
     border-color: red !important;
 }
 
+.valido{
+    border-color: rgb(136, 255, 0) !important;
+}
 
 .btn {
 	position: relative;
@@ -132,7 +135,7 @@ body {
 
             input,select{
                 border: 1px solid #c2c2c2;
-                height: 2rem;
+                height: 3rem;
                 border-radius: .5rem;
             }
 
@@ -166,7 +169,7 @@ body {
                             border: none;
                             width: 100%;
                             outline: none;
-                            height: 1.5rem;
+                            height: 2rem;
                         }
                     }
                };
@@ -351,4 +354,28 @@ body {
     text-decoration: none;
     cursor: pointer;
     transition: 1s;
+  }
+
+
+  /*botones flotantes */
+  .floating{
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    bottom: 100px;
+    right: 100px;
+    gap: 5px;
+
+    a {
+      color: #fff;
+      font-size: 1.8rem;
+      background: rgb(192, 192, 4);
+      clip-path: circle(45% at 50% 50%);
+      padding: 1rem;
+      transition: color .5s linear;
+
+      &:hover{
+        color: #000;
+      }
+    }
   }
