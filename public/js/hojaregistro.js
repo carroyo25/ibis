@@ -1,10 +1,14 @@
 const $ = document;
+const wrap = $.getElementById("wrap");
 const bancos = $.getElementById("agregar_bancos");
 const tabla_bancos = $.getElementById("tabla_bancos");
 const tabla_bancos_body = $.getElementById("tabla_bancos_body");
 const btn_guardar = $.getElementById("btn_guardar");
 const requerido = $.querySelectorAll(".requerido");
 const enlaceBancos = tabla_bancos_body.getElementsByTagName("a")
+const upFloat = $.getElementById("floatUp");
+const saveFloat = $.getElementById("floatSave");
+
 
 const ruc = $.getElementById("ruc");
 const razon_alta = $.getElementById("razon_social");
@@ -16,6 +20,24 @@ let notifier = new AWN(),
     errorCantEnti = false,
     errorMail = false;
 
+
+$.addEventListener("change", (e)=>{
+  let item = e.target.getAttribute("id");
+
+  if ( e.target.matches(".obligatorio") ){
+      //Para cambiar el estado de los campos obligatorios    
+      if ( e.target.value != ""){
+        $.getElementById(item).classList.remove("obligatorio");
+      }
+  }else if ( e.target.matches(".correo") ){
+      if ( !validarCorreo(e.target.value) ) {
+          notifier.alert("Formato de correo inválido");
+      }else{
+        e.target.classList.add("valido")
+      }
+  }
+})
+    
 
 bancos.onclick = (e) => {
   e.preventDefault();
@@ -133,22 +155,6 @@ btn_guardar.onclick = (e) => {
 
   return false;
 }
-$.addEventListener("change", (e)=>{
-  let item = e.target.getAttribute("id");
-
-  if ( e.target.matches(".obligatorio") ){
-      //Para cambiar el estado de los campos obligatorios    
-      if ( e.target.value != ""){
-        $.getElementById(item).classList.remove("obligatorio");
-      }
-  }else if ( e.target.matches(".correo") ){
-      if ( !validarCorreo(e.target.value) ) {
-          notifier.alert("Formato de correo inválido");
-      }else{
-        e.target.classList.add("valido")
-      }
-  }
-})
 
 tabla_bancos_body.addEventListener("click",(e)=>{
   e.preventDefault();
@@ -159,7 +165,6 @@ tabla_bancos_body.addEventListener("click",(e)=>{
   
   return false;
 });
-
 
 ruc.onkeypress = (e) => {
     if (e.key === "Enter") {
@@ -190,6 +195,10 @@ ruc.onkeypress = (e) => {
         notifier.alert(error.message);
       }
     }
+}
+
+upFloat.onclick = (e) => {
+  wrap.scrollTo(0, 0);
 }
 
 /***funciones ****/

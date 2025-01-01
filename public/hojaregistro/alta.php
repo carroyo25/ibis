@@ -19,10 +19,10 @@
 </head>
 <body>
     <div class="floating">
-        <a href="#" class="floatingOptions"><i class="fas fa-arrow-alt-circle-up"></i></a>
-        <a href="#" class="floatingOptions"><i class="fas fa-save"></i></a>
+        <a href="#" id="floatUp" class="floatingOptions"><i class="fas fa-arrow-alt-circle-up"></i></a>
+        <a href="#" id="floatSave" class="floatingOptions"><i class="fas fa-save"></i></a>
     </div>
-    <div class="wrap">
+    <div class="wrap" id="wrap">
         <form id="datos_entidad" method="POST" enctype="multipart/form-data">
             <input type="file" class="oculto" name="uploadruc" id="uploadruc">
             <input type="file" class="oculto" name="uploadcatalogo" id="uploadcatalogo">

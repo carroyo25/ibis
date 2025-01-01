@@ -82,6 +82,7 @@ body {
     height: 80vh;
     padding: 1rem;
     overflow: auto;
+    scroll-behavior: smooth;
 
     .wrap__header{
         display: flex;
