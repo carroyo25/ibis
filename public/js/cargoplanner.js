@@ -369,7 +369,6 @@ $(function() {
 
         formData.append('estado', estado);
 
-
         $("#esperarCargo").css("opacity","1").fadeIn();
         
         fetch(RUTA+"cargoplanner/dataExcelTotalCargoPlan",{

@@ -121,6 +121,7 @@ btn_guardar.onclick = (e) => {
     let item = campo.getAttribute("id");
     if ( campo.value == "" ){
       $.getElementById(item).classList.add("obligatorio");
+      notifier.alert("Existen campos en blanco...");
       contador++;
     }
   })
