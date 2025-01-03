@@ -39,7 +39,7 @@
                 </div>
                 <div class="seccion_data">
                     <label for="ruc">R.U.C/RUT</label>
-                    <input type="text" name="ruc" id="ruc" class="requerido">
+                    <input type="text" name="ruc" id="ruc" class="requerido" placeholder="registre un RUC válido">
 
                     <label for="razon_social">Razón Social</label>
                     <input type="text" name="razon_social" id="razon_social" class="requerido">

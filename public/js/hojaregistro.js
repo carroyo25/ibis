@@ -48,42 +48,43 @@ bancos.onclick = (e) => {
                       <optgroup label="Empresas Bancarias">
                         <option value="volvo">Banco de Comercio</option>
                         <option value="11">Banco de Crédito del Perú</option>
-                        <option value="">Banco Interamericano de Finanzas (BanBif)</option>
-                        <option value="">Banco Pichincha</option>
-                        <option value="15">BBVA</option>
                         <option value="12">Interbank</option>
-                        <option value="">MiBanco</option>
                         <option value="13">Scotiabank Perú</option>
-                        <option value="">Banco Falabella</option>
-                        <option value="">Banco Ripley</option>
-                        <option value="">Banco Santander Perú</option>
-                        <option value="">ICBC PERU BANK</option>
+                        <option value="14">Banco de la Nación</option>
+                        <option value="15">BBVA</option>
+                        <option value="281">Banco Interamericano de Finanzas (BanBif)</option>
+                        <option value="282">Banco Pichincha</option>
+                        <option value="283">MiBanco</option>
+                        <option value="284">Banco Falabella</option>
+                        <option value="285">Banco Ripley</option>
+                        <option value="286">Banco Santander Perú</option>
+                        <option value="287">ICBC PERU BANK</option>
                       </optgroup>
                       <optgroup label="Empresas Financieras">
-                        <option value="">Crediscotia</option>
-                        <option value="">Confianza</option>
-                        <option value="">Credinka</option>
-                        <option value="">Mitsui Auto Finance</option>
-                        <option value="">Oh!</option>
+                        <option value="288">Crediscotia</option>
+                        <option value="289">Confianza</option>
+                        <option value="290">Credinka</option>
+                        <option value="291">Mitsui Auto Finance</option>
+                        <option value="292">Oh!</option>
                       </optgroup>
                       <optgroup label="Cajas Municipales de Ahorro y Crédito (CMAC)">
+                        <option value="16">Huancayo</option>
                         <option value="17">Arequipa</option>
                         <option value="18">Cusco</option>
-                        <option value="">Del Santa</option>
-                        <option value="">Trujillo</option>
-                        <option value="16">Huancayo</option>
-                        <option value="">Ica</option>
-                        <option value="">Piura</option>
-                        <option value="">Tacna</option>
+                        <option value="293">Del Santa</option>
+                        <option value="294">Trujillo</option>
+                        <option value="295">Ica</option>
+                        <option value="296">Piura</option>
+                        <option value="297">Tacna</option>
                       </optgroup>
                       <optgroup label="Cajas Municipales de Crédito y Popular (CMCP)">
-                        <option value="">Caja Metropolitana de Lima</option>
+                        <option value="298">Caja Metropolitana de Lima</option>
                       </optgroup>
                       <optgroup label="Empresas de Crédito">
-                         <option value="">Volvo Financial Services</option>
-                         <option value="">Inversiones La Cruz</option>
-                         <option value="">Santander Consumer Perú</option>
-                         <option value="">TOTAL, Servicios Financieros</option>
+                         <option value="299">Volvo Financial Services</option>
+                         <option value="300">Inversiones La Cruz</option>
+                         <option value="301">Santander Consumer Perú</option>
+                         <option value="302">TOTAL, Servicios Financieros</option>
                       </optgroup>
                   </select>
                 </td>
@@ -119,18 +120,17 @@ btn_guardar.onclick = (e) => {
   //verificar los campos en blanco
   requerido.forEach((campo)=>{
     let item = campo.getAttribute("id");
+
     if ( campo.value == "" ){
       $.getElementById(item).classList.add("obligatorio");
-      notifier.alert("Existen campos en blanco...");
+      $.getElementById(item).setAttribute("placeholder", "Este campo debe ser rellenado");
       contador++;
     }
   })
 
-  try {
-
-      console.log(detalleBancos(tabla_bancos));
-
-      /*if ( contador > 0 ) throw new Error('Hay campos sin rellenar');
+    try {
+      
+      if ( contador > 0 ) throw new Error('Hay campos sin rellenar');
       if ( !validar(ruc) ) throw new Error("El RUC ingresado es incorrecto...");
 
       const datos = new URLSearchParams(new FormData(document.getElementById("datos_entidad")));
@@ -148,7 +148,7 @@ btn_guardar.onclick = (e) => {
       )
     .catch(error => {
         console.error(error.message);
-    })*/
+    })
 
     } catch (error) {
       notifier.alert(error.message);
