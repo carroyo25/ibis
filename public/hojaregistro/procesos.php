@@ -38,12 +38,13 @@
 
     function grabarProveedor($pdo, $datos, $files) {   
         try{
-            /*$pdo->beginTransaction();
+            $pdo->beginTransaction();
 
             $fechaActual = date('Y-m-d');
             $uploadDir = '../documentos/'; 
             $nameFichaRuc = '';
             $nameCatalogo = '';
+
             // Procesar archivo RUC
             if (isset($_FILES['file_ruc']) && $_FILES['file_ruc']['error'] === UPLOAD_ERR_OK) {
                 $fileRuc = $_FILES['file_ruc'];
@@ -61,11 +62,12 @@
                 $filePathCatalogo = $uploadDir .'catalogoproducto/'. basename($nameCatalogo);
                 
                 move_uploaded_file($fileCatalogo['tmp_name'], $filePathCatalogo);
-            }*/
+            }
 
             $clave = generarClaveAleatoria(32);
             $hashClave = password_hash($clave, PASSWORD_DEFAULT);
-            /*$sql = "INSERT INTO cm_entidad 
+
+            $sql = "INSERT INTO cm_entidad 
                                     SET cnumdoc=:ruc,
                                         crazonsoc=:razon_social,
                                         cviadireccion=:direccion,
@@ -90,61 +92,10 @@
 
             $lastId = $pdo->lastInsertId();
 
-            $cuentas = json_decode($datos['cuentas'], true);
-
-            $detalleSql = "INSERT INTO cm_detalle_entidad SET id_entidad=:id_entidad, cwebpage=:pagina_web, nformapago=:forma_pago, nacteconomica=:actividad_economica, cnomgerentec=:gerente_comercial, cnumdocgerentec=:documento_gerente, ctelgerentec=:telefono_gerente, cemailgerentec=:correo_gerente, cnomcontacto=:contacto,
-            cnumdoccontacto=:documento_contacto, ctelcontacto=:telefono_contacto, cemailcontacto=:correo_contacto, ccuentadetrac=:cta_detracciones, nentifinan=:nombre_banco, ntipomoneda=:tipo_moneda, ntipocuenta=:tipo_cuenta, cnumcuenta=:numero_cuenta";
-
-            $detalleStmt = $pdo->prepare($detalleSql);
-
-            if(count($cuentas)>0){
-                foreach($cuentas as $cuenta){
-                    $detalleStmt->execute([
-                        ':id_entidad' => $lastId,
-                        ':pagina_web' => $datos['pagina_web'],
-                        ':forma_pago' => $datos['forma_pago'],
-                        ':actividad_economica' => $datos['actividad_economica'],
-                        ':gerente_comercial' => $datos['gerente_comercial'],
-                        ':documento_gerente' => $datos['documento_gerente'],
-                        ':telefono_gerente' => $datos['telefono_gerente'],
-                        ':correo_gerente' => $datos['correo_gerente'],
-                        ':contacto' => $datos['contacto'],
-                        ':documento_contacto' => $datos['documento_contacto'],
-                        ':telefono_contacto' => $datos['telefono_contacto'],
-                        ':correo_contacto' => $datos['correo_contacto'],
-                        ':cta_detracciones' => $datos['cta_detracciones'],
-                        ':nombre_banco' => $cuenta['nombreBanco'],
-                        ':tipo_moneda' => $cuenta['tipoMoneda'],
-                        ':tipo_cuenta' => $cuenta['tipoCuenta'],
-                        ':numero_cuenta' => $cuenta['numeroCuenta']
-                    ]);
-                }
-            }else {
-                $detalleStmt->execute([
-                    ':id_entidad' => $lastId,
-                    ':pagina_web' => $datos['pagina_web'],
-                    ':forma_pago' => $datos['forma_pago'],
-                    ':actividad_economica' => $datos['actividad_economica'],
-                    ':gerente_comercial' => $datos['gerente_comercial'],
-                    ':documento_gerente' => $datos['documento_gerente'],
-                    ':telefono_gerente' => $datos['telefono_gerente'],
-                    ':correo_gerente' => $datos['correo_gerente'],
-                    ':contacto' => $datos['contacto'],
-                    ':documento_contacto' => $datos['documento_contacto'],
-                    ':telefono_contacto' => $datos['telefono_contacto'],
-                    ':correo_contacto' => $datos['correo_contacto'],
-                    ':cta_detracciones' => $datos['cta_detracciones'],
-                    ':nombre_banco' => -1,
-                    ':tipo_moneda' => -1,
-                    ':tipo_cuenta' => -1,
-                    ':numero_cuenta' => ''
-                ]);
-            }
-            
-
+           
             $pdo->commit();
 
-            enviarEmail($datos['correo_electronico'], $datos['razon_social'],$datos['ruc'] , $clave);*/
+            enviarEmail($datos['correo_electronico'], $datos['razon_social'],$datos['ruc'] , $clave);
 
             return ['status' => 'success', 'id' => $lastId, 'claveGenerada' => $clave];
         }catch(PDOException $e){

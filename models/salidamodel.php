@@ -1649,9 +1649,9 @@
         private function actualizarTicketTransportistaSunat($guiainterna,$ticket,$guiaSunat){
             try {
                 $sql = $this->db->connect()->prepare("UPDATE lg_guias 
-                                                      SET lg_guias.tickettranspo  = :ticket, 
-                                                          lg_guias.guiatranspo    = :guiaSunat
-                                                      WHERE lg_guias.cnumguia   = :guiainterna");
+                                                      SET lg_guias.tickettranspo    = :ticket, 
+                                                          lg_guias.guiatranspo      = :guiaSunat
+                                                      WHERE lg_guias.cnumguia       = :guiainterna");
 
                 $sql->execute(["guiainterna"    =>$guiainterna,
                                 "ticket"        =>$ticket,

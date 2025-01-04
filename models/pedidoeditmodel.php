@@ -8,7 +8,7 @@
 
         public function listarPedidosUsuario($parametros){
 
-            $anio = isset($parametros['anioSearch']) ? $parametros['anioSearch']:2023;
+            $anio = isset($parametros['anioSearch']) ? $parametros['anioSearch']:2025;
             $cc   = isset($parametros['costosSearch']) ? $parametros['costosSearch']: "%";
             $nu   = isset($parametros['numeroSearch']) ? $parametros['numeroSearch']: "%";
 
@@ -45,7 +45,7 @@
                                                         AND ibis.tb_pedidocab.nrodoc LIKE :num
                                                     ORDER BY  ibis.tb_pedidocab.nrodoc DESC");
                 
-                $sql->execute(["anio"=>2024,"cc"=>$c,"num"=>$n]);
+                $sql->execute(["anio"=>$anio,"cc"=>$c,"num"=>$n]);
 
                 $rowCount = $sql->rowCount();
 
