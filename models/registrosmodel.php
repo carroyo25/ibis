@@ -270,7 +270,8 @@
                                                         LEFT JOIN cm_producto ON alm_madresdet.id_cprod = cm_producto.id_cprod
                                                         LEFT JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
                                                         LEFT JOIN alm_despachodet ON alm_despachodet.nroorden = alm_madresdet.niddetaPed 
-                                                        AND alm_despachodet.nropedido = alm_madresdet.niddetaOrd
+                                                        AND alm_despachodet.nropedido = alm_madresdet.niddetaOrd 
+                                                        AND alm_despachodet.id_cprod = alm_madresdet.id_cprod
                                                         LEFT JOIN tb_pedidodet ON alm_despachodet.niddetaPed = tb_pedidodet.iditem
                                                         LEFT JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
                                                         LEFT JOIN lg_ordendet ON alm_despachodet.niddetaPed = lg_ordendet.niddeta
