@@ -606,13 +606,19 @@
             }
         }
 
-        private function actualizarItemExistencia($id,$idprod){
+        private function actualizarItemExistencia($id,$idprod,$pedido){
             try {
                 //code...
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
             }
+        }
+
+        private function actualizarIngreso($id,$idprod){}
+
+        private function actualizarDespacho($id,$idprod){
+
         }
     }    
 ?>

@@ -268,6 +268,10 @@
                 $mail->addAddress('recepcion_factelec@sepcon.net','Recepción Facturas');
                 $mail->addAddress('rgarcia@sepcon.net','Roger García');
                 $mail->addAddress('lavellaneda@sepcon.net','Luis Avellaneda');
+                $mail->addAddress('mtunoque@sepcon.net','Maria Tuñoque');
+                $mail->addAddress('csalazar@sepcon.net','Crisy Salazar');
+                $mail->addAddress('lrosales@sepcon.net','Lisbet Rosales');
+                $mail->addAddress('asalazar@sepcon.net','Angela Salazar');
                 
                 $mail->Subject = $subject;
                 $mail->msgHTML(utf8_decode($messaje));
