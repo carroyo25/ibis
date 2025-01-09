@@ -117,8 +117,6 @@ $(function(){
                     $("#listaPartidas ul")
                         .empty()
                         .append(data.partidas);
-
-
                 },
                 "json"
             );

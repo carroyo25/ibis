@@ -46,6 +46,7 @@
                                                      WHERE
                                                          tb_costusu.id_cuser = :user 
                                                          AND tb_costusu.nflgactivo = 1
+                                                         AND tb_proyectos.nflgactivo = 1
                                                          AND YEAR(lg_ordencab.ffechadoc) = YEAR(NOW())
                                                          ORDER BY id_regmov DESC");
                  $sql->execute(["user"=>$_SESSION['iduser']]);

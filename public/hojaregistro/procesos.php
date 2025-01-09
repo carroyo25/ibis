@@ -44,7 +44,7 @@
             $uploadDir = '../documentos/'; 
             $nameFichaRuc = '';
             $nameCatalogo = '';
-
+            
             // Procesar archivo RUC
             if (isset($_FILES['file_ruc']) && $_FILES['file_ruc']['error'] === UPLOAD_ERR_OK) {
                 $fileRuc = $_FILES['file_ruc'];
@@ -88,14 +88,24 @@
                 ':ficha_ruc' => $nameFichaRuc,
                 ':catalogo_prod' => $nameCatalogo,
                 ':pass' => $hashClave
-            ]); 
+            ]);
 
             $lastId = $pdo->lastInsertId();
 
-           
+            $sqlDet = "INSERT INTO cm_detallenti 
+                                SET idcenti = :idcenti,
+                                    nomgercomero = :gerente";
+            
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([
+                ':idcenti' => $lastId,
+                ':gerente' => $datos['gerente_comercial']
+            ]);
+
+
             $pdo->commit();
 
-            enviarEmail($datos['correo_electronico'], $datos['razon_social'],$datos['ruc'] , $clave);
+            //enviarEmail($datos['correo_electronico'],$datos['razon_social'],$datos['ruc'],$clave);
 
             return ['status' => 'success', 'id' => $lastId, 'claveGenerada' => $clave];
         }catch(PDOException $e){
@@ -279,7 +289,7 @@
 
          $mail = new PHPMailer;
          $mail->isSMTP();
-         $mail->SMTPDebug = 2;
+         $mail->SMTPDebug = 0;
          $mail->Debugoutput = 'html';
          $mail->Host = 'mail.sepcon.net';
          $mail->SMTPAuth = true;
@@ -299,7 +309,7 @@
          
          try {
              $mail->setFrom('sistema_ibis@sepcon.net','SEPCON');
-             $mail->addAddress($origen,$nombre_envio);
+             $mail->addAddress($origen,$nombre);
 
              $texto = "Registro Exitoso";
              $mail->Subject = $texto;
