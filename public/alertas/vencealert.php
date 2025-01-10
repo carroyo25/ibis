@@ -138,7 +138,7 @@
 		try {
 			$sql = "SELECT
 							alm_existencia.idreg,
-							alm_existencia.codprod,
+							alm_existencia.codprod AS codigo,
 							alm_existencia.freg,
 							DATE_FORMAT( alm_existencia.vence, '%d/%m/%Y' ) AS vence,
 							cm_producto.ccodprod,
@@ -148,7 +148,7 @@
 							alm_cabexist.idcostos,
 							tb_proyectos.ccodproy,
 							tb_unimed.cabrevia,
-							SUM( alm_existencia.cant_ingr ) AS cant_ingr,
+							( SELECT SUM( alm_existencia.cant_ingr )  FROM alm_existencia WHERE alm_existencia.codprod = codigo ) AS cant_ingr,
 							alm_existencia.cant_ord,
 							s.consumo 
 						FROM
