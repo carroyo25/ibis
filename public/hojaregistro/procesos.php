@@ -94,9 +94,18 @@
 
             $sqlDet = "INSERT INTO cm_detallenti 
                                 SET idcenti = :idcenti,
-                                    nomgercomero = :gerente";
+                                    nomgercomer = :gerente,
+                                    telgercomer,
+                                    corgercomer,
+                                    nomcontacto,
+                                    telcontacto,
+                                    corcontacto,
+                                    nomperdetra,
+                                    telperdetra,
+                                    corperdetra,
+                                    nctadetrac";
             
-            $stmt = $pdo->prepare($sql);
+            $stmt = $pdo->prepare($sqlDet);
             $stmt->execute([
                 ':idcenti' => $lastId,
                 ':gerente' => $datos['gerente_comercial']
