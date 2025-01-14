@@ -38,7 +38,7 @@
 
     function grabarProveedor($pdo, $datos, $files) {   
         try{
-            $pdo->beginTransaction();
+            /*$pdo->beginTransaction();
 
             $fechaActual = date('Y-m-d');
             $uploadDir = '../documentos/'; 
@@ -95,24 +95,33 @@
             $sqlDet = "INSERT INTO cm_detallenti 
                                 SET idcenti = :idcenti,
                                     nomgercomer = :gerente,
-                                    telgercomer,
-                                    corgercomer,
-                                    nomcontacto,
-                                    telcontacto,
-                                    corcontacto,
-                                    nomperdetra,
-                                    telperdetra,
-                                    corperdetra,
-                                    nctadetrac";
+                                    telgercomer = :telefonogerente,
+                                    corgercomer = :correogerente,
+                                    nomcontacto = :nombrecontacto,
+                                    telcontacto = :telefonocontacto,
+                                    corcontacto = :correocontacto,
+                                    nomperdetra = :nombredetraccion,
+                                    telperdetra = :telefonodetraccion,
+                                    corperdetra = :correodetraccion,
+                                    nctadetrac  = :cuentadetraccion";
             
             $stmt = $pdo->prepare($sqlDet);
             $stmt->execute([
-                ':idcenti' => $lastId,
-                ':gerente' => $datos['gerente_comercial']
+                ':idcenti'              =>$lastId,
+                ':gerente'              =>$datos['gerente_comercial'],
+                ':telefonogerente'      =>$datos['telefono_gerente'],
+                ':correogerente'        =>$datos['correo_gerente'],
+                ':nombrecontacto'       =>$datos['contacto'],
+                ':telefonocontacto'     =>$datos['telefono_contacto'],
+                ':correocontacto'       =>$datos['correo_contacto'],
+                ':nombredetraccion'     =>$datos['contacto_detraccion'],
+                ':telefonodetraccion'   =>$datos['telefono_contacto_detraccion'],
+                ':correodetraccion'     =>$datos['correo_contacto_detraccion'],
+                ':cuentadetraccion'     =>$datos['cta_detracciones'],
             ]);
 
 
-            $pdo->commit();
+            $pdo->commit();*/
 
             //enviarEmail($datos['correo_electronico'],$datos['razon_social'],$datos['ruc'],$clave);
 
