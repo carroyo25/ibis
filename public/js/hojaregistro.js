@@ -46,7 +46,7 @@ bancos.onclick = (e) => {
                 <td>
                   <select name="entidadedFinancieras" id="entidadedFinancieras">
                       <optgroup label="Empresas Bancarias">
-                        <option value="volvo">Banco de Comercio</option>
+                        <option value="303">Banco de Comercio</option>
                         <option value="11">Banco de Crédito del Perú</option>
                         <option value="12">Interbank</option>
                         <option value="13">Scotiabank Perú</option>

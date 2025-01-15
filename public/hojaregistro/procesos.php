@@ -39,7 +39,14 @@
     function grabarProveedor($pdo, $datos, $files) {   
         try{
 
-            var_dump($datos);
+            $bancos = json_decode($datos['bancos'], true);
+            
+
+            if (count($bancos) > 0 ){
+                foreach($bancos as $banco){
+                    echo $banco['idbanco'];
+                }
+            }
             
             /*$pdo->beginTransaction();
 
@@ -124,11 +131,11 @@
             ]);
 
 
-            $pdo->commit();*/
+            $pdo->commit();
 
             //enviarEmail($datos['correo_electronico'],$datos['razon_social'],$datos['ruc'],$clave);
 
-            return ['status' => 'success', 'id' => $lastId, 'claveGenerada' => $clave];
+            return ['status' => 'success', 'id' => $lastId, 'claveGenerada' => $clave];*/
         }catch(PDOException $e){
             echo "Error al guardar los datos: " . $e->getMessage();
             $pdo->rollBack();

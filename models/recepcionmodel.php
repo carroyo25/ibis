@@ -39,7 +39,7 @@
                                                         UPPER(cm_entidad.crazonsoc) AS crazonsoc 
                                                     FROM
                                                         tb_costusu
-                                                        INNER JOIN alm_recepcab ON tb_costusu.ncodproy = alm_recepcab.ncodpry
+                                                        LEFT JOIN alm_recepcab ON tb_costusu.ncodproy = alm_recepcab.ncodpry
                                                         INNER JOIN tb_almacen ON alm_recepcab.ncodalm1 = tb_almacen.ncodalm
                                                         INNER JOIN tb_proyectos ON alm_recepcab.ncodpry = tb_proyectos.nidreg
                                                         INNER JOIN tb_area ON alm_recepcab.ncodarea = tb_area.ncodarea
@@ -62,8 +62,8 @@
                                                                     NOW())) 
                                                                 ) 
                                                         OR ( alm_recepcab.cper = YEAR ( NOW()) AND alm_recepcab.cmes = MONTH ( NOW()) ))
-                                                    ORDER BY lg_ordencab.id_regmov DESC
-                                                    LIMIT 50");
+                                                    ORDER BY alm_recepcab.nnronota   DESC
+                                                    LIMIT 150");
                 $sql->execute(["usr"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowcount();
                 if ($rowCount > 0){
