@@ -135,7 +135,7 @@ btn_guardar.onclick = (e) => {
 
       const datos = new URLSearchParams(new FormData(document.getElementById("datos_entidad")));
       datos.append("funcion","grabarProveedor");
-      datos.append("bancos",detalleBancos());
+      datos.append("bancos",JSON.stringify(detalleBancos(tabla_bancos)));
 
       notifier.async(
         fetch ('procesos.php',{
@@ -242,7 +242,7 @@ const validarCorreo = (correo) => {
 	}
 }
 
-const detalleBancos = () => {
+const detalleBancos = (tabla) => {
   const fila = tabla.querySelector("#tabla_bancos_body").getElementsByTagName("tr");
 
   let nreg = fila.length,

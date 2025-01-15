@@ -38,6 +38,9 @@
 
     function grabarProveedor($pdo, $datos, $files) {   
         try{
+
+            var_dump($datos);
+            
             /*$pdo->beginTransaction();
 
             $fechaActual = date('Y-m-d');
