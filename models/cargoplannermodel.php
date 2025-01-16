@@ -1189,6 +1189,7 @@
                                                     tb_pedidodet.nflgActivo 
                                                     AND ISNULL( lg_ordendet.nflgactivo )
                                                     AND tb_proyectos.nflgactivo = 1
+                                                    AND tb_pedidocab.anio >= YEAR(NOW()) - 1
                                                 GROUP BY
                                                     tb_pedidodet.iditem
                                                 ORDER BY 

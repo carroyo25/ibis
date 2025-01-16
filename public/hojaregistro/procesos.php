@@ -41,14 +41,7 @@
 
             $bancos = json_decode($datos['bancos'], true);
             
-
-            if (count($bancos) > 0 ){
-                foreach($bancos as $banco){
-                    echo $banco['idbanco'];
-                }
-            }
-            
-            /*$pdo->beginTransaction();
+            $pdo->beginTransaction();
 
             $fechaActual = date('Y-m-d');
             $uploadDir = '../documentos/'; 
@@ -130,12 +123,32 @@
                 ':cuentadetraccion'     =>$datos['cta_detracciones'],
             ]);
 
+            $sqlBanco = "INSERT INTO cm_entidadbco 
+                            SET id_centi = :idcenti, 
+                                ncodbco  = :codigo_banco,
+                                cnrocta  = :nro_cuenta,
+                                ctipcta  = :tipo_cuenta,
+                                cmoneda  = :moneda";
 
+            if (count($bancos) > 0 ){
+                foreach($bancos as $banco){
+                    $stmt = $pdo->prepare($sqlBanco);
+
+                    $stmt->execute([
+                        ':idcenti'      =>$lastId,
+                        ':codigo_banco' =>$datos['idbanco'],
+                        ':nro_cuenta'   =>$datos['nrocuenta'],
+                        ':tipo_cuenta'  =>$datos['idcuenta'],
+                        ':moneda'       =>$datos['idmoneda']
+                    ]);
+                }
+            }
+            
             $pdo->commit();
 
             //enviarEmail($datos['correo_electronico'],$datos['razon_social'],$datos['ruc'],$clave);
 
-            return ['status' => 'success', 'id' => $lastId, 'claveGenerada' => $clave];*/
+            return ['status' => 'success', 'id' => $lastId, 'claveGenerada' => $clave];
         }catch(PDOException $e){
             echo "Error al guardar los datos: " . $e->getMessage();
             $pdo->rollBack();
