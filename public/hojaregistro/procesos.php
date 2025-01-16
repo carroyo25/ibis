@@ -79,7 +79,8 @@
                                         ncodpais=:pais, 
                                         cficharuc=:ficha_ruc, 
                                         ccatalogo=:catalogo_prod, 
-                                        cpassword=:pass";
+                                        cpassword=:pass,
+                                        nflag=:activo";
             $stmt = $pdo->prepare($sql);
             $stmt->execute([
                 ':ruc' => $datos['ruc'],
@@ -90,7 +91,8 @@
                 ':pais' => $datos['pais'],
                 ':ficha_ruc' => $nameFichaRuc,
                 ':catalogo_prod' => $nameCatalogo,
-                ':pass' => $hashClave
+                ':pass' => $hashClave,
+                ':activo' => 7
             ]);
 
             $lastId = $pdo->lastInsertId();
@@ -123,6 +125,24 @@
                 ':cuentadetraccion'     =>$datos['cta_detracciones'],
             ]);
 
+            $slqContacto = "INSERT INTO cm_entidadcon
+                            SET idcenti     = :idcenti,
+                                nombres     = :nombres,
+                                cdireccion  = :direccion,
+                                cemail      = :correo,
+                                ctelefono1  = :telefono,
+                                nflgactivo = :activo";
+
+            $stmt = $pdo->prepare($slqContacto);
+            $stmt->execute([
+                ':idcenti'    =>$lastId,
+                ':nombres'    =>$datos['contacto'],
+                ':direccion'  =>$datos['telefono_contacto'],
+                ':correo'     =>$datos['correo_contacto'],
+                ':telefono'   =>$datos['telefono_contacto'],
+                ':activo'     =>7
+            ]);
+
             $sqlBanco = "INSERT INTO cm_entidadbco 
                             SET id_centi = :idcenti, 
                                 ncodbco  = :codigo_banco,
@@ -136,10 +156,10 @@
 
                     $stmt->execute([
                         ':idcenti'      =>$lastId,
-                        ':codigo_banco' =>$datos['idbanco'],
-                        ':nro_cuenta'   =>$datos['nrocuenta'],
-                        ':tipo_cuenta'  =>$datos['idcuenta'],
-                        ':moneda'       =>$datos['idmoneda']
+                        ':codigo_banco' =>$banco['idbanco'],
+                        ':nro_cuenta'   =>$banco['nrocuenta'],
+                        ':tipo_cuenta'  =>$banco['idcuenta'],
+                        ':moneda'       =>$banco['idmoneda']
                     ]);
                 }
             }
