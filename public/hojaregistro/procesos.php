@@ -67,8 +67,10 @@
                 move_uploaded_file($fileCatalogo['tmp_name'], $filePathCatalogo);
             }
 
-            $clave = generarClaveAleatoria(32);
+            $clave = generarClaveAleatoria(8);
             $hashClave = password_hash($clave, PASSWORD_DEFAULT);
+
+            $retencion  = $datos['contacto_detraccion'] == "" ? 1 : 2;
 
             $sql = "INSERT INTO cm_entidad 
                                     SET cnumdoc=:ruc,
@@ -80,7 +82,8 @@
                                         cficharuc=:ficha_ruc, 
                                         ccatalogo=:catalogo_prod, 
                                         cpassword=:pass,
-                                        nflag=:activo";
+                                        nflgactivo=:activo,
+                                        nagenret=:retencion";
             $stmt = $pdo->prepare($sql);
             $stmt->execute([
                 ':ruc' => $datos['ruc'],
@@ -92,7 +95,8 @@
                 ':ficha_ruc' => $nameFichaRuc,
                 ':catalogo_prod' => $nameCatalogo,
                 ':pass' => $hashClave,
-                ':activo' => 7
+                ':activo' => 7,
+                ':retencion' => $retencion
             ]);
 
             $lastId = $pdo->lastInsertId();
@@ -127,11 +131,11 @@
 
             $slqContacto = "INSERT INTO cm_entidadcon
                             SET idcenti     = :idcenti,
-                                nombres     = :nombres,
+                                cnombres     = :nombres,
                                 cdireccion  = :direccion,
                                 cemail      = :correo,
                                 ctelefono1  = :telefono,
-                                nflgactivo = :activo";
+                                nflgactivo  = :activo";
 
             $stmt = $pdo->prepare($slqContacto);
             $stmt->execute([
@@ -188,7 +192,7 @@
         }
     }
 
-    function generarClaveAleatoria($longitud = 32) {
+    function generarClaveAleatoria($longitud = 8) {
         $bytesAleatorios = random_bytes($longitud / 2);
         return bin2hex($bytesAleatorios);
     }

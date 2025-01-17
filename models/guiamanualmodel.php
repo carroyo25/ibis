@@ -42,10 +42,9 @@
                                                         alm_desplibrescab.nflgactivo != 0
                                                         AND alm_desplibrescab.cnumguia LIKE :guia
                                                         AND YEAR(alm_desplibrescab.ffecdoc) LIKE :anio
-                                                    ORDER BY alm_desplibrescab.ffecdoc DESC
-                                                    LIMIT 150");
+                                                    ORDER BY alm_desplibrescab.ffecdoc ");
 
-                $sql->execute(["guia"=>$guia,"anio"=>$anio]);
+                $sql->execute(["guia"=>$guia,"anio"=>2025]);
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0) {
