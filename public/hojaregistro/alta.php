@@ -24,8 +24,6 @@
     </div>
     <div class="wrap" id="wrap">
         <form id="datos_entidad" method="POST" enctype="multipart/form-data">
-            <input type="file" class="oculto" name="uploadruc" id="uploadruc">
-            <input type="file" class="oculto" name="uploadcatalogo" id="uploadcatalogo">
             <input type="hidden" name="ubigeo" id="ubigeo">
 
             <section class="wrap__header">
@@ -142,30 +140,32 @@
                     <input type="text" name="cta_detracciones" id="cta_detracciones">
                 </div>
             </section>
-            <section class="seccion_pagina">
+        </form>
+        <section class="seccion_pagina">
                 <div class="contenedor_detalles">
                     <p class="detalle">SECCION 4: Adjuntos</p>
                 </div>
-                <div class="opciones">
-                    <div class="container-input">
-                        <input type="file" name="file_ruc" id="file_ruc" class="inputfile">
-                        <label for="file_ruc" class="btn btn-1">
-                            FICHA R.U.C
-                        </label>
-                    </div>
+                <form method="POST" enctype="multipart/form-data" id="form-Atachs">
+                    <div class="opciones">
+                        <div class="container-input">
+                            <input type="file" name="file_ruc" id="file_ruc" class="inputfile">
+                            <label for="file_ruc" class="btn btn-1">
+                                FICHA R.U.C
+                            </label>
+                        </div>
 
-                    <div class="container-input">
-                        <input type="file" name="file_catalogo" id="file_catalogo" class="inputfile">
-                        <label for="file_catalogo" class="btn btn-1">
-                            Catálogo Productos
-                        </label>
+                        <div class="container-input">
+                            <input type="file" name="file_catalogo" id="file_catalogo" class="inputfile">
+                            <label for="file_catalogo" class="btn btn-1">
+                                Catálogo Productos
+                            </label>
+                        </div>
                     </div>
-                </div>
-            </section>
-        </form>
+                </form>
+        </section>
     </div>
+    
     <script src="../js/index.var.js"></script>
     <script src="../js/hojaregistro.js"></script>
-
 </body>
 </html>

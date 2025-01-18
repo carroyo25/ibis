@@ -130,12 +130,16 @@ btn_guardar.onclick = (e) => {
 
     try {
       
-      if ( contador > 0 ) throw new Error('Hay campos sin rellenar');
-      if ( !validar(ruc) ) throw new Error("El RUC ingresado es incorrecto...");
+      //if ( contador > 0 ) throw new Error('Hay campos sin rellenar');
+      //if ( !validar(ruc) ) throw new Error("El RUC ingresado es incorrecto...");
 
       const datos = new URLSearchParams(new FormData(document.getElementById("datos_entidad")));
+      const form = document.querySelector('#form-Atachs');
+      const url = new URL(form.action);
+
       datos.append("funcion","grabarProveedor");
       datos.append("bancos",JSON.stringify(detalleBancos(tabla_bancos)));
+      datos.append("adjuntos",url);
 
       notifier.async(
         fetch ('procesos.php',{

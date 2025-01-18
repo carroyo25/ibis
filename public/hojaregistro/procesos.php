@@ -3,6 +3,8 @@
 
     session_start();
 
+    var_dump($_FILES);
+
     if(isset($_POST['funcion'])){
         if($_POST['funcion'] == "grabarProveedor"){
             echo json_encode(grabarProveedor($pdo, $_POST, $_FILES));
@@ -70,7 +72,7 @@
             $clave = generarClaveAleatoria(8);
             $hashClave = password_hash($clave, PASSWORD_DEFAULT);
 
-            $retencion  = $datos['contacto_detraccion'] == "" ? 1 : 2;
+            /*$retencion  = $datos['contacto_detraccion'] == "" ? 1 : 2;
 
             $sql = "INSERT INTO cm_entidad 
                                     SET cnumdoc=:ruc,
@@ -166,13 +168,13 @@
                         ':moneda'       =>$banco['idmoneda']
                     ]);
                 }
-            }
+            }*/
             
             $pdo->commit();
 
             //enviarEmail($datos['correo_electronico'],$datos['razon_social'],$datos['ruc'],$clave);
 
-            return ['status' => 'success', 'id' => $lastId, 'claveGenerada' => $clave];
+            //return ['status' => 'success', 'id' => $lastId, 'claveGenerada' => $clave];
         }catch(PDOException $e){
             echo "Error al guardar los datos: " . $e->getMessage();
             $pdo->rollBack();

@@ -204,6 +204,7 @@ body {
 .container-input a {
     margin-top: 1em;
 }
+
 .inputfile{
     width: 0.1px;
     height: 0.1px;
@@ -212,6 +213,7 @@ body {
     position: absolute;
     z-index: -1;
 }
+
 .btn-container {
     margin: 0 auto;
 }
