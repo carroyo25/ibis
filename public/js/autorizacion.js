@@ -184,8 +184,6 @@ $(function(){
             $("#codigo_traslado").val(data.datos[0].indice);
             $("#tipo").val(data.datos[0].tipo);
             $("#estado_autorizacion").val(data.datos[0].nflgautoriza);
-            $("#firma_logistica").val(data.datos[0].firma_logistica);
-            $("#firma_usuario").val(data.datos[0].firma_usuario);
 
             $("#numero_guia").val(data.datos[0].cnumguia)
 
@@ -734,12 +732,7 @@ $(function(){
             if ( $("#rol_user").val() == 2 && $("#rol_user").val() == 4 ) throw new Error("No esta habilitado para este proceso");
             if ( $("#codigo_estado").val() != 60 ) throw new Error("No se permite la accion");
 
-            $("#codigo_estado").val(62)  //entregado logistica;
-
-            //StartSign();
-
-            $("#registroFirma").fadeIn();
-
+            $("#entregaLogisticaModal").fadeIn();
         } catch (error) {
             mostrarMensaje(error.message,"mensaje_error")
         }
@@ -747,52 +740,6 @@ $(function(){
         return false;
     });
 
-    //PARA LLAMAR AL CUADRO DE FIRMAS 
-    $("#save-SheetBtn").click(function(e){
-        e.preventDefault();
-
-        let cnv = document.getElementById("firma"),
-            img = cnv.toDataURL(),
-            traslado = document.getElementById("numero"),
-            estado = $("#codigo_estado").val(),
-            formData = new FormData();
-
-        formData.append("estado",estado);
-        formData.append("id",traslado.value);
-        formData.append("img",img);
-
-        if ( estado == 62 ) {
-            fetch(RUTA+"autorizacion/entregaLogistica",{
-                method: "POST",
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                mostrarMensaje("Traslado actualizado","mensaje_correcto");
-            })
-        }else if (estado == 140){
-            fetch(RUTA+"autorizacion/entregaFinal",{
-                method: "POST",
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                mostrarMensaje("Entrega Realizada","mensaje_correcto");
-            })
-        }
-        
-        return false;
-
-    });
-
-    $("#draw-clearBtn").click(function(e){
-        e.preventDefault();
-
-        document.getElementById("firma").width = document.getElementById("firma").width;
-        $("#registroFirma").fadeOut();
-
-        return false;
-    });
     $("#recepcionLogistica").click(function(e){
         e.preventDefault();
 
@@ -815,12 +762,7 @@ $(function(){
             if ( $("#rol_user").val() == 2 && $("#rol_user").val() == 4 ) throw new Error("No esta habilitado para este proceso");
             if ( $("#codigo_estado").val() != 63 ) throw new Error("No se recepcionó de logística");
 
-            $("#codigo_estado").val(140)  //entregado;
-
-            //StartSign();
-
-            $("#registroFirma").fadeIn();
-
+            $("#entregaDestinoModal").fadeIn();
         } catch (error) {
             mostrarMensaje(error.message,"mensaje_error")
         }
@@ -843,6 +785,36 @@ $(function(){
             .then(response => response.json())
             .then(data => {
                 mostrarMensaje("Registrado Correctamente","mensaje_correcto");
+            })
+            .catch(error => {
+                if (error instanceof TypeError && error.message.includes('API key')) {
+                  console.error('Invalid API key:', error);
+                } else {
+                  console.error('There was a problem with the Fetch operation:', error);
+                }
+            });
+        } catch (error) {
+            mostrarMensaje(error.message,"mensaje_error");
+        }
+
+        return false;
+    });
+
+    $("#btnAceptarEntregaLogistica").click(function (e) { 
+        e.preventDefault();
+
+        try {
+            let formData = new FormData();
+            formData.append("id", $("#codigo_traslado").val());
+            formData.append("estado",62);
+
+            fetch(RUTA+"autorizacion/entregaLogistica",{
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                mostrarMensaje("Traslado actualizado","mensaje_correcto");
             })
         } catch (error) {
             mostrarMensaje(error.message,"mensaje_error");

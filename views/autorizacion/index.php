@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="es" sigplusextliteextension-installed="true" sigwebext-installed="true">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-<body onload="ClearFormData()">
+<body>
     <div class="mensaje">
         <p></p>
     </div>
@@ -31,9 +31,6 @@
                     <input type="hidden" name="correo_usuario" id="correo_usuario">
                     <input type="hidden" name="codigo_estado" id="codigo_estado">
                     <input type="hidden" name="estado_autorizacion" id="estado_autorizacion">
-                    <input type="hidden" name="estado_operacion" id="estado_operacion">
-                    <input type="hidden" name="firma_logistica" id="firma_logistica">
-                    <input type="hidden" name="firma_usuario" id="firma_usuario">
                     
                     <!--este campo es para uniformizar las guias-->
 
@@ -120,7 +117,7 @@
                                 <input type="text" name="solicitante" id="solicitante">
                             </div>
                             <div class="column2">
-                                <label for="autorizacion">Despacha:</label>
+                                <label for="autorizacion">Autoriza:</label>
                                 <input type="text" name="autorizacion" id="autorizacion" class="mostrarLista" placeholder="Elija una opcion">
                                 <div class="lista" id="listaAutoriza">
                                    <ul>
@@ -167,10 +164,7 @@
                             <button type="button" id="recepcionCarga" title="Recepción Almacén" class="boton3 accion" data-estado="recepcionAlmacen">
                                 <i class="fas fa-truck-loading"></i> Recepción Almacén
                             </button>
-                            <button type="button" id="entregaLogistica" 
-                                title="Entrega Logística" 
-                                class="boton3 accion" 
-                                data-estado="entregaLogistica">
+                            <button type="button" id="entregaLogistica" title="Entrega Logística" class="boton3 accion" data-estado="entregaLogistica">
                                 <i class="fas fa-truck-moving"></i> Entrega Logistica
                             </button>
                             <button type="button" id="recepcionLogistica" title="Recepción Logística" class="boton3 accion" data-estado="recepcionLogistica">
@@ -220,11 +214,20 @@
             </div>
         </div>
     </div>
+    <div class="modal" id="entregaLogisticaModal">
+        <div class="ventanaPregunta">
+            <h3>¿Entregar Autorización para su despacho?</h3>
+            <div>
+                <button type="button" id="btnAceptarEntregaLogistica">Aceptar</button>
+                <button type="button" id="btnCancelarEntregaLogistica">Cancelar</button>
+            </div>
+        </div>
+    </div>
     <div class="modal" id="recepcionLogisticaModal">
         <div class="ventanaPregunta">
             <h3>¿Recepcionar el traslado?</h3>
             <div>
-                <button type="button" id="btnAceptarRecepcionLogistica" >Aceptar</button>
+                <button type="button" id="btnAceptarRecepcionLogistica">Aceptar</button>
                 <button type="button" id="btnCancelarRecepcionLogistica">Cancelar</button>
             </div>
         </div>
@@ -258,7 +261,7 @@
                     <div class="etapas" id="etapa2">
                         <div>
                             <p class="descripcionEtapa">Entrega Logística</p>
-                            <p id="fecha2"></p>
+                            <p id="fecha2"</p>
                         </div>
                         <div class="circle etapa_falta" id="circle2">
                             <p class="faltante"><i class="fas fa-times"></i></p>
@@ -669,7 +672,6 @@
                     <th>Area</th>
                     <th>Asigna</th>
                     <th>Estado</th>
-                    <th>Autorizado</th>
                     <th>...</th>
                     <th>...</th>
                 </tr>
@@ -679,26 +681,8 @@
             </tbody>
         </table>
     </div>
-    <div class="modal" id="registroFirma">
-        <div class="ventanaPregunta">
-            <span id="firmado" class="oculto">0</span>
-            <canvas id="firma" width="310" height="200">
-                Tu navegador no soporta las firmas
-            </canvas>
-            <div>
-                <button type="button" id="save-SheetBtn" data-proceso="logistica">Aceptar</button>
-                <button type="button" id="draw-clearBtn" data-proceso="logistica">Cancelar</button>
-            </div>
-        </div>
-    </div>
-    <canvas id="cnv" name="cnv" width="500" height="100" ></canvas>
-    <form action="" name="FORM1">
-        <input type="hidden" name="firmado" id="firmado">
-	</form>
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
     <script src="<?php echo constant('URL');?>public/js/funciones.js?<?php echo constant('VERSION')?>"></script>
-    <!--<script src="<?php echo constant('URL');?>public/js/firmaTraslado.js"></script>-->
-    <script src="<?php echo constant('URL');?>public/js/firmasAutorizacion.js"></script>
     <script src="<?php echo constant('URL');?>public/js/autorizacion.js?<?php echo constant('VERSION')?>"></script>
 </body>
 </html>
