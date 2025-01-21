@@ -9,7 +9,7 @@
         public function grupoProyectosSerie($costos,$serie,$descripcion){
             $s = $serie == "" ? "" : "%".$serie."%";
             $d = $descripcion == "" ? "%" : "%".$descripcion."%";
-            $c = $costos == "-1" ? "%" : "%".$cost."%";
+            $c = $costos == "-1" ? "%" : "%".$costos."%";
 
             $salida = '<thead class="stickytop">
                             <tr>

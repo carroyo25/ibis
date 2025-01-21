@@ -9,7 +9,6 @@ const enlaceBancos = tabla_bancos_body.getElementsByTagName("a")
 const upFloat = $.getElementById("floatUp");
 const saveFloat = $.getElementById("floatSave");
 
-
 const ruc = $.getElementById("ruc");
 const razon_alta = $.getElementById("razon_social");
 const direccion_alta = $.getElementById("direccion");
@@ -133,13 +132,35 @@ btn_guardar.onclick = (e) => {
       //if ( contador > 0 ) throw new Error('Hay campos sin rellenar');
       //if ( !validar(ruc) ) throw new Error("El RUC ingresado es incorrecto...");
 
-      const datos = new URLSearchParams(new FormData(document.getElementById("datos_entidad")));
-      const form = document.querySelector('#form-Atachs');
-      const url = new URL(form.action);
+      //const datos = new URLSearchParams(new FormData($.getElementById("datos_entidad")));
+      //const form = document.querySelector('#form-Atachs');
+      //const url = new URL(form.action);
 
       datos.append("funcion","grabarProveedor");
       datos.append("bancos",JSON.stringify(detalleBancos(tabla_bancos)));
-      datos.append("adjuntos",url);
+      datos.append("ruc",$.getElementById('ruc').value);
+      datos.append("razon",$.getElementById('razon_social').value);
+      /*datos.append("ruc",$.getElementById(ruc).value);
+      datos.append("ruc",$.getElementById(ruc).value);
+      datos.append("ruc",$.getElementById(ruc).value);
+      datos.append("ruc",$.getElementById(ruc).value);
+      datos.append("ruc",$.getElementById(ruc).value);
+      datos.append("ruc",$.getElementById(ruc).value);
+      datos.append("ruc",$.getElementById(ruc).value);
+      datos.append("ruc",$.getElementById(ruc).value);
+      datos.append("ruc",$.getElementById(ruc).value);
+      datos.append("ruc",$.getElementById(ruc).value);
+      datos.append("ruc",$.getElementById(ruc).value);
+      datos.append("ruc",$.getElementById(ruc).value);
+      datos.append("ruc",$.getElementById(ruc).value);
+      datos.append("ruc",$.getElementById(ruc).value);
+      datos.append("ruc",$.getElementById(ruc).value);
+      datos.append("ruc",$.getElementById(ruc).value);
+      datos.append("ruc",$.getElementById(ruc).value);
+      datos.append("ruc",$.getElementById(ruc).value);
+      datos.append("ruc",$.getElementById(ruc).value);
+      datos.append("ruc",$.getElementById(ruc).value);
+      datos.append("ruc",$.getElementById(ruc).value);*/
 
       notifier.async(
         fetch ('procesos.php',{
