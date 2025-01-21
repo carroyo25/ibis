@@ -3,8 +3,6 @@
 
     session_start();
 
-    var_dump($_FILES);
-
     if(isset($_POST['funcion'])){
         if($_POST['funcion'] == "grabarProveedor"){
             echo json_encode(grabarProveedor($pdo, $_POST, $_FILES));
@@ -38,10 +36,12 @@
         }
     }
 
-    function grabarProveedor($pdo, $datos, $files) {   
+    function grabarProveedor($pdo, $data, $files) {   
         try{
 
-            $bancos = json_decode($datos['bancos'], true);
+            var_dump($data);
+
+            /*$bancos = json_decode($datos['bancos'], true);
             
             $pdo->beginTransaction();
 
@@ -170,7 +170,7 @@
                 }
             }*/
             
-            $pdo->commit();
+            //$pdo->commit();
 
             //enviarEmail($datos['correo_electronico'],$datos['razon_social'],$datos['ruc'],$clave);
 

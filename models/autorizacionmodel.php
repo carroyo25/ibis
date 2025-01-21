@@ -345,7 +345,7 @@
                                 $cabecera['codigo_tipo'],
                                 $cabecera['autorizacion'],
                                 $cabecera['emision'],
-                                $cabecera['observaciones'],);
+                                $cabecera['observaciones']);
 
                 $pdf->AliasNbPages();
                 //$pdf->AddPage('P','A5');
