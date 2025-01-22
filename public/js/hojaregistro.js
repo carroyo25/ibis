@@ -129,11 +129,9 @@ btn_guardar.onclick = (e) => {
 
     try {
       
-      //if ( contador > 0 ) throw new Error('Hay campos sin rellenar');
-      //if ( !validar(ruc) ) throw new Error("El RUC ingresado es incorrecto...");
+      if ( contador > 0 ) throw new Error('Hay campos sin rellenar');
+      if ( !validar(ruc) ) throw new Error("El RUC ingresado es incorrecto...");
 
-      //const datos = new URLSearchParams(new FormData($.getElementById("datos_entidad")));
- 
       const form = $.querySelector('#datos_entidad')
       const datos = new FormData(form);
 
@@ -184,7 +182,7 @@ ruc.onkeypress = (e) => {
 
           e.target.classList.add('valido');
 
-          /*fetch('consultas.php',{
+          fetch('consultas.php',{
             method: 'POST',
             body: formData
           })
@@ -194,7 +192,7 @@ ruc.onkeypress = (e) => {
               notifier.alert('Ya encuentra registrado...');
               errorCantEnti = true;
              };
-          })*/
+          })
 
       } catch (error) {
         notifier.alert(error.message);

@@ -42,13 +42,11 @@
             $bancos = json_decode($datos['bancos'], true);
             $retencion  = $datos['contacto_detraccion'] == "" ? 1 : 2;
 
-            
             $fechaActual = date('Y-m-d');
             $uploadDir = '../documentos/'; 
             $nameFichaRuc = '';
             $nameCatalogo = '';
 
-            
             // Procesar archivo RUC
             if (isset($_FILES['file_ruc']) && $_FILES['file_ruc']['error'] === UPLOAD_ERR_OK) {
                 $fileRuc = $_FILES['file_ruc'];
@@ -71,8 +69,10 @@
             $clave = generarClaveAleatoria(8);
             $hashClave = password_hash($clave, PASSWORD_DEFAULT);
 
-
             $pdo->beginTransaction();
+
+            //datos principales del proveedor
+            /*agregar el campo cpassword al servidor */
 
             $sql = "INSERT INTO cm_entidad 
                                     SET cnumdoc=:ruc,
@@ -103,7 +103,9 @@
 
             $lastId = $pdo->lastInsertId();
 
-            /*$sqlDet = "INSERT INTO cm_detallenti 
+
+            //detalles del proveedor
+            $sqlDet = "INSERT INTO cm_detallenti 
                                 SET idcenti = :idcenti,
                                     nomgercomer = :gerente,
                                     telgercomer = :telefonogerente,
@@ -132,7 +134,7 @@
             ]);
 
             $slqContacto = "INSERT INTO cm_entidadcon
-                            SET idcenti     = :idcenti,
+                            SET id_centi     = :idcenti,
                                 cnombres     = :nombres,
                                 cdireccion  = :direccion,
                                 cemail      = :correo,
@@ -149,6 +151,8 @@
                 ':activo'     =>7
             ]);
 
+
+            //bancos del proveedor
             $sqlBanco = "INSERT INTO cm_entidadbco 
                             SET id_centi = :idcenti, 
                                 ncodbco  = :codigo_banco,
@@ -168,11 +172,11 @@
                         ':moneda'       =>$banco['idmoneda']
                     ]);
                 }
-            }*/
+            }
             
             $pdo->commit();
 
-            //enviarEmail($datos['correo_electronico'],$datos['razon_social'],$datos['ruc'],$clave);
+            enviarEmail($datos['correo_electronico'],$datos['razon_social'],$datos['ruc'],$clave);
 
             return ['status' => 'success', 'id' => $lastId, 'claveGenerada' => $clave];
         }catch(PDOException $e){
@@ -353,6 +357,7 @@
          
          $origen = $correo;
          $nombre_envio = $nombre;
+         $password = 'aK8izG1WEQwwB1X';
 
          $mail = new PHPMailer;
          $mail->isSMTP();
@@ -361,7 +366,7 @@
          $mail->Host = 'mail.sepcon.net';
          $mail->SMTPAuth = true;
          $mail->Username = 'sistema_ibis@sepcon.net';
-         $mail->Password = 'aK8izG1WEQwwB1X';
+         $mail->Password = $password;
          $mail->Port = 465;
          $mail->SMTPSecure = "ssl";
          $mail->SMTPOptions = array(
@@ -375,22 +380,50 @@
          );
          
          try {
-             $mail->setFrom('sistema_ibis@sepcon.net','SEPCON');
-             $mail->addAddress($origen,$nombre);
+            $mail->setFrom('sistema_ibis@sepcon.net','SEPCON');
+            $mail->addAddress($origen,$nombre);
 
-             $texto = "Registro Exitoso";
-             $mail->Subject = $texto;
-             $mail->msgHTML(utf8_decode("Se ha registrado exitosamente al sistema, si desea modificar sus datos deberá ingresar con su RUC y la clave generada<br>
-             RUC: ".$ruc.
-             "<br>Clave Generada: ".$clave));
-            $mail->send();
-            $mail->ClearAddresses();
+            /*$texto = "Registro Exitoso";
+            $mail->Subject = $texto;
+            $mail->msgHTML(utf8_decode("Se ha registrado exitosamente al sistema, si desea modificar sus datos deberá ingresar con su RUC y la clave generada<br>
+            RUC: ".$ruc.
+            "<br>Clave Generada: ".$clave));*/
+
+            $subject    = utf8_decode("Registro Proveedores SEPCON");
+
+            $messaje= '<div style="width:100%;display: flex;flex-direction: column;justify-content: center;align-items: center;
+                        font-family: Futura, Arial, sans-serif;">
+                        <div style="width: 50%;border: 1px solid #c2c2c2;background: #005C84">
+                            <h3 style="text-align: left;padding-left:20px;color:#ffffff">Registro Proveedores SEPCON</h3>
+                        </div>
+                        <div style="width: 50%;
+                                        border-left: 1px solid #c2c2c2;
+                                        border-right: 1px solid #c2c2c2;
+                                        border-bottom: 1px solid #c2c2c2;">
+                                <p style="padding:.5rem;line-height: 1rem;">El presente correo es para informar que se ha realizado en el padron de proveedores SEPCON.</p>
+                                <p style="padding:.5rem">Nombre       : '. $nombre.'</p>
+                                <p style="padding:.5rem">RUC          : '. $ruc.'</p>
+                                <p style="padding:.5rem">Clave        : '. $clave .'</p>
+                            </div>
+                        </div>';
+            
+            $mail->Subject = $subject;
+            $mail->msgHTML(utf8_decode($messaje));
+
+
+            if (!$mail->send()) {
+                return array("mensaje"=>"Hubo un error, en el envio",
+                            "clase"=>"mensaje_error");
+            }
+                    
+            $mail->clearAddresses();
 
          } catch (PDOException $th) {
              echo $th->getMessage();
              return false;
          }
     }
+
     function cambiarPassword($pdo, $datos){
         try {
             $pdo->beginTransaction();
