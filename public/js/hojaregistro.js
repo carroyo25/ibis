@@ -133,34 +133,12 @@ btn_guardar.onclick = (e) => {
       //if ( !validar(ruc) ) throw new Error("El RUC ingresado es incorrecto...");
 
       //const datos = new URLSearchParams(new FormData($.getElementById("datos_entidad")));
-      //const form = document.querySelector('#form-Atachs');
-      //const url = new URL(form.action);
+ 
+      const form = $.querySelector('#datos_entidad')
+      const datos = new FormData(form);
 
       datos.append("funcion","grabarProveedor");
-      datos.append("bancos",JSON.stringify(detalleBancos(tabla_bancos)));
-      datos.append("ruc",$.getElementById('ruc').value);
-      datos.append("razon",$.getElementById('razon_social').value);
-      /*datos.append("ruc",$.getElementById(ruc).value);
-      datos.append("ruc",$.getElementById(ruc).value);
-      datos.append("ruc",$.getElementById(ruc).value);
-      datos.append("ruc",$.getElementById(ruc).value);
-      datos.append("ruc",$.getElementById(ruc).value);
-      datos.append("ruc",$.getElementById(ruc).value);
-      datos.append("ruc",$.getElementById(ruc).value);
-      datos.append("ruc",$.getElementById(ruc).value);
-      datos.append("ruc",$.getElementById(ruc).value);
-      datos.append("ruc",$.getElementById(ruc).value);
-      datos.append("ruc",$.getElementById(ruc).value);
-      datos.append("ruc",$.getElementById(ruc).value);
-      datos.append("ruc",$.getElementById(ruc).value);
-      datos.append("ruc",$.getElementById(ruc).value);
-      datos.append("ruc",$.getElementById(ruc).value);
-      datos.append("ruc",$.getElementById(ruc).value);
-      datos.append("ruc",$.getElementById(ruc).value);
-      datos.append("ruc",$.getElementById(ruc).value);
-      datos.append("ruc",$.getElementById(ruc).value);
-      datos.append("ruc",$.getElementById(ruc).value);
-      datos.append("ruc",$.getElementById(ruc).value);*/
+      datos.append("bancos",JSON.stringify(detalleBancos()));
 
       notifier.async(
         fetch ('procesos.php',{
@@ -267,8 +245,8 @@ const validarCorreo = (correo) => {
 	}
 }
 
-const detalleBancos = (tabla) => {
-  const fila = tabla.querySelector("#tabla_bancos_body").getElementsByTagName("tr");
+const detalleBancos = () => {
+  const fila = document.querySelector("#tabla_bancos_body").getElementsByTagName("tr");
 
   let nreg = fila.length,
         DATOS = [];

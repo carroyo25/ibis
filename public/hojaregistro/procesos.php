@@ -36,19 +36,18 @@
         }
     }
 
-    function grabarProveedor($pdo, $data, $files) {   
+    function grabarProveedor($pdo, $datos, $files) {   
         try{
 
-            var_dump($data);
+            $bancos = json_decode($datos['bancos'], true);
+            $retencion  = $datos['contacto_detraccion'] == "" ? 1 : 2;
 
-            /*$bancos = json_decode($datos['bancos'], true);
             
-            $pdo->beginTransaction();
-
             $fechaActual = date('Y-m-d');
             $uploadDir = '../documentos/'; 
             $nameFichaRuc = '';
             $nameCatalogo = '';
+
             
             // Procesar archivo RUC
             if (isset($_FILES['file_ruc']) && $_FILES['file_ruc']['error'] === UPLOAD_ERR_OK) {
@@ -72,7 +71,8 @@
             $clave = generarClaveAleatoria(8);
             $hashClave = password_hash($clave, PASSWORD_DEFAULT);
 
-            /*$retencion  = $datos['contacto_detraccion'] == "" ? 1 : 2;
+
+            $pdo->beginTransaction();
 
             $sql = "INSERT INTO cm_entidad 
                                     SET cnumdoc=:ruc,
@@ -103,7 +103,7 @@
 
             $lastId = $pdo->lastInsertId();
 
-            $sqlDet = "INSERT INTO cm_detallenti 
+            /*$sqlDet = "INSERT INTO cm_detallenti 
                                 SET idcenti = :idcenti,
                                     nomgercomer = :gerente,
                                     telgercomer = :telefonogerente,
@@ -170,11 +170,11 @@
                 }
             }*/
             
-            //$pdo->commit();
+            $pdo->commit();
 
             //enviarEmail($datos['correo_electronico'],$datos['razon_social'],$datos['ruc'],$clave);
 
-            //return ['status' => 'success', 'id' => $lastId, 'claveGenerada' => $clave];
+            return ['status' => 'success', 'id' => $lastId, 'claveGenerada' => $clave];
         }catch(PDOException $e){
             echo "Error al guardar los datos: " . $e->getMessage();
             $pdo->rollBack();

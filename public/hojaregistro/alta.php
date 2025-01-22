@@ -140,29 +140,27 @@
                     <input type="text" name="cta_detracciones" id="cta_detracciones">
                 </div>
             </section>
-        </form>
-        <section class="seccion_pagina">
+            <section class="seccion_pagina">
                 <div class="contenedor_detalles">
                     <p class="detalle">SECCION 4: Adjuntos</p>
                 </div>
-                <form method="POST" enctype="multipart/form-data" id="form-Atachs">
-                    <div class="opciones">
-                        <div class="container-input">
-                            <input type="file" name="file_ruc" id="file_ruc" class="inputfile">
-                            <label for="file_ruc" class="btn btn-1">
-                                FICHA R.U.C
-                            </label>
-                        </div>
-
-                        <div class="container-input">
-                            <input type="file" name="file_catalogo" id="file_catalogo" class="inputfile">
-                            <label for="file_catalogo" class="btn btn-1">
-                                Catálogo Productos
-                            </label>
-                        </div>
+                <div class="opciones">
+                    <div class="container-input">
+                        <input type="file" name="file_ruc" id="file_ruc" class="inputfile">
+                        <label for="file_ruc" class="btn btn-1">
+                            FICHA R.U.C
+                        </label>
                     </div>
-                </form>
+                    <div class="container-input">
+                        <input type="file" name="file_catalogo" id="file_catalogo" class="inputfile">
+                        <label for="file_catalogo" class="btn btn-1">
+                            Catálogo Productos
+                        </label>
+                    </div>
+                </div>
         </section>
+        </form>
+       
     </div>
     
     <script src="../js/index.var.js"></script>
