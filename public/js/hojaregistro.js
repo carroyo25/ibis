@@ -8,6 +8,7 @@ const requerido = $.querySelectorAll(".requerido");
 const enlaceBancos = tabla_bancos_body.getElementsByTagName("a")
 const upFloat = $.getElementById("floatUp");
 const saveFloat = $.getElementById("floatSave");
+const cancelReg = $.getElementById("cancelReg");
 
 const ruc = $.getElementById("ruc");
 const razon_alta = $.getElementById("razon_social");
@@ -204,6 +205,14 @@ upFloat.onclick = (e) => {
   wrap.scrollTo(0, 0);
 }
 
+cancelReg.onclick = (e) => {
+  e.preventDefault();
+
+  limpiarFormato();
+
+  return false;
+}
+
 /***funciones ****/
 const validar = (input) =>{
   let ruc = input.value.replace(/[-.,[\]()\s]+/g,""),
@@ -260,6 +269,10 @@ const detalleBancos = () => {
         DATOS.push(dato);
     }
 
-    return DATOS;
+    return DATOS;   
+}
 
+const limpiarFormato = () => {
+  document.getElementById("datos_entidad").reset();
+  document.getElementById("tabla_bancos_body").innerHTML = "";
 }

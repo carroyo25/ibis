@@ -20,6 +20,7 @@
 <body>
     <div class="floating">
         <a href="#" id="floatUp" class="floatingOptions"><i class="fas fa-arrow-alt-circle-up"></i></a>
+        <a href="#" id="cancelReg" class="floatingOptions"><i class="fas fa-ban"></i></a>
         <a href="#" id="floatSave" class="floatingOptions"><i class="fas fa-save"></i></a>
     </div>
     <div class="wrap" id="wrap">
