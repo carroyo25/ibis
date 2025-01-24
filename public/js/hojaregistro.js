@@ -146,7 +146,7 @@ btn_guardar.onclick = (e) => {
         })
         .then(response => response.json())
         .then(data => {
-            
+            limpiarFormato();
         }),'',undefined,'Procesando'
       )
     .catch(error => {
