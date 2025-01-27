@@ -72,7 +72,6 @@
             $pdo->beginTransaction();
 
             //datos principales del proveedor
-            /*agregar el campo cpassword al servidor */
 
             $sql = "INSERT INTO cm_entidad 
                                     SET cnumdoc=:ruc,
@@ -176,9 +175,9 @@
             
             $pdo->commit();
 
-            enviarEmail($datos['correo_electronico'],$datos['razon_social'],$datos['ruc'],$clave);
+            $email  = enviarEmail($datos['correo_electronico'],$datos['razon_social'],$datos['ruc'],$clave);
 
-            return ['status' => 'success', 'id' => $lastId, 'claveGenerada' => $clave];
+            return ['status' => 'success', 'id' => $lastId, 'claveGenerada' => $clave, 'email' => $email];
         }catch(PDOException $e){
             echo "Error al guardar los datos: " . $e->getMessage();
             $pdo->rollBack();
@@ -383,12 +382,6 @@
             $mail->setFrom('sistema_ibis@sepcon.net','SEPCON');
             $mail->addAddress($origen,$nombre);
 
-            /*$texto = "Registro Exitoso";
-            $mail->Subject = $texto;
-            $mail->msgHTML(utf8_decode("Se ha registrado exitosamente al sistema, si desea modificar sus datos deberá ingresar con su RUC y la clave generada<br>
-            RUC: ".$ruc.
-            "<br>Clave Generada: ".$clave));*/
-
             $subject    = utf8_decode("Registro Proveedores SEPCON");
 
             $messaje= '<div style="width:100%;display: flex;flex-direction: column;justify-content: center;align-items: center;
@@ -414,6 +407,8 @@
             if (!$mail->send()) {
                 return array("mensaje"=>"Hubo un error, en el envio",
                             "clase"=>"mensaje_error");
+            }else{
+                return array("mensaje"=>"Envio correcto");
             }
                     
             $mail->clearAddresses();

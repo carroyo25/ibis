@@ -37,7 +37,19 @@ $.addEventListener("change", (e)=>{
       }
   }
 })
+   
+$.addEventListener("click",(e)=>{
+  
+  console.log(e.target)
+  
+  if (e.target.matches(".bntSave")){
+    e.preventDefault();
+
+    console.log("Grabar Formato: ");
     
+    return false;
+  }
+})
 
 bancos.onclick = (e) => {
   e.preventDefault();
@@ -112,7 +124,7 @@ bancos.onclick = (e) => {
   return false;
 }
 
-btn_guardar.onclick = (e) => {
+/*btn_guardar.onclick = (e) => {
   e.preventDefault();
 
   let contador = 0;
@@ -158,7 +170,7 @@ btn_guardar.onclick = (e) => {
     }
 
   return false;
-}
+}*/
 
 tabla_bancos_body.addEventListener("click",(e)=>{
   e.preventDefault();
