@@ -21,6 +21,16 @@ let notifier = new AWN(),
     errorMail = false;
 
 
+$.addEventListener("click",(e)=>{
+  if (e.target.id == "btn_guardar"){
+    e.preventDefault();
+
+    console.log("Grabar Formato: ");
+    
+    return false;
+  }
+})
+
 $.addEventListener("change", (e)=>{
   let item = e.target.getAttribute("id");
 
@@ -38,18 +48,7 @@ $.addEventListener("change", (e)=>{
   }
 })
    
-$.addEventListener("click",(e)=>{
-  
-  console.log(e.target)
-  
-  if (e.target.matches(".bntSave")){
-    e.preventDefault();
 
-    console.log("Grabar Formato: ");
-    
-    return false;
-  }
-})
 
 bancos.onclick = (e) => {
   e.preventDefault();
