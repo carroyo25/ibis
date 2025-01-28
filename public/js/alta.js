@@ -1,7 +1,12 @@
 const $ = document;
 const btnActualiza  = $.getElementById("hojaActualiza");
-const rucprove      = $.getElementById("entruc");;
+const rucprove      = $.getElementById("entruc");
 const claveprove    = $.getElementById("entpass");
+
+//inicializar para la notificacion
+let notifier = new AWN(),
+    errorCantEnti = false,
+    errorMail = false;
 
 
 btnActualiza.onclick = (e) => {
@@ -22,18 +27,10 @@ btnActualiza.onclick = (e) => {
         })
         .then(response =>response.json())
         .then(data =>{
-            console.log('rediccionado');
             window.location.href = "http://localhost/ibis/public/hojaregistro/actualiza.php";    
-        })
-
-        
-           
+        })   
     } catch (error) {
-        Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: error.message,
-          });
+        notifier.alert("Ingrese sus datos par modificar");
     }
 
    

@@ -19,9 +19,9 @@
 </head>
 <body>
     <div class="floating">
-        <a href="#" id="floatUp" class="floatingOptions"><i class="fas fa-arrow-alt-circle-up btnSave"></i></a>
+        <a href="#" id="floatUp" class="floatingOptions"><i class="fas fa-arrow-alt-circle-up"></i></a>
         <a href="#" id="cancelReg" class="floatingOptions"><i class="fas fa-ban"></i></a>
-        <a href="#" id="floatSave" class="floatingOptions"><i class="fas fa-save"></i></a>
+        <a href="#" id="floatSave" class="floatingOptions btnSave"><i class="fas fa-save"></i></a>
     </div>
     <div class="wrap" id="wrap">
         <form id="datos_entidad" method="POST" enctype="multipart/form-data">
@@ -30,7 +30,7 @@
             <section class="wrap__header">
                 <img src="../img/logo.png" alt="logo_sepcon">
                 <span>FORMULARIO DE REGISTRO DE PROVEEDORES</span>
-                <a href="#" class="btn btn-1 btnSave" id="btn_guardar">Grabar Datos</a>
+                <a href="#" class="btn btn-1 btnSave" id="btn_guardar"><p>Grabar Datos</p></a>
             </section>
             <section class="seccion_pagina">
                 <div class="contenedor_detalles">
@@ -165,6 +165,6 @@
     </div>
     
     <script src="../js/index.var.js"></script>
-    <script src="../js/hojaregistro.js"></script>
+    <script src="../js/hojaregistro.js?<?php echo $version = rand(0, 9999); ?>"></script>
 </body>
 </html>

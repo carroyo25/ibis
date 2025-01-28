@@ -14,6 +14,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sepcon - Registro de Proveedores</title>
     <link rel="stylesheet" href="../css/all.css">
+    <link rel="stylesheet" href="../css/notify.css">
     <link rel="stylesheet" href="../css/registro.css?<?php echo $version?>">
     <link rel="shortcut icon" type="image/png" href="../img/logo.png" />
 </head>
@@ -56,7 +57,7 @@
             </div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="../js/index.var.js"></script>
     <script src="../js/alta.js"></script>
 </body>
 </html>
