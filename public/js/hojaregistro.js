@@ -43,7 +43,11 @@ $.addEventListener("click",(e)=>{
 
         const form = $.querySelector('#datos_entidad')
         const datos = new FormData(form);
+
+
         datos.append("funcion","grabarProveedor");
+
+        
         datos.append("bancos",JSON.stringify(detalleBancos()));
 
         notifier.async(

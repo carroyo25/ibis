@@ -17,9 +17,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alta Proveedores SEPCON - SICAL</title>
     <link rel="stylesheet" href="../css/hojaregistro.css?<?php echo $version = rand(0, 9999); ?>">
+    <link rel="stylesheet" href="../css/notify.css">
+    <link rel="stylesheet" href="../css/all.css">
 </head>
 <body>
-    
+    <div class="floating">
+        <a href="#" id="floatUp" class="floatingOptions"><i class="fas fa-arrow-alt-circle-up"></i></a>
+        <a href="#" id="cancelReg" class="floatingOptions"><i class="fas fa-ban"></i></a>
+        <a href="#" id="floatSave" class="floatingOptions btnSave"><i class="fas fa-save"></i></a>
+    </div>
     <div class="wrap">
         <form id="datos_entidad" method="POST" enctype="multipart/form-data">
             <input type="file" class="oculto" name="uploadruc" id="uploadruc">
@@ -164,7 +170,7 @@
             </section>
         </form>
     </div>
-    <script src="../js/hojaregistro.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="../js/index.var.js"></script>
+    <script src="../js/hojaregistro.js?<?php echo $version = rand(0, 9999); ?>"></script>
 </body>
 </html>
