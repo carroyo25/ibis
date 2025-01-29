@@ -84,9 +84,9 @@
                                         ccatalogo=:catalogo_prod, 
                                         cpassword=:pass,
                                         nflgactivo=:activo,
-                                        nagenret=:retencion
+                                        nagenret=:retencion,
                                         ncondpag=:forma_pago,
-                                        nrubro=:actividad_economica";
+                                        nrubro=:actividad";
             $stmt = $pdo->prepare($sql);
             $stmt->execute([
                 ':ruc' => $datos['ruc'],
@@ -101,81 +101,83 @@
                 ':activo' => 7,
                 ':retencion' => $retencion,
                 ':forma_pago' => $datos['forma_pago'],
-                ':actividad_economica' => $datos['actividad_economica']
+                ':actividad' => $datos['actividad_economica']
             ]);
 
             $lastId = $pdo->lastInsertId();
 
-
-            //detalles del proveedor
-            $sqlDet = "INSERT INTO cm_detallenti 
-                                SET idcenti = :idcenti,
-                                    nomgercomer = :gerente,
-                                    telgercomer = :telefonogerente,
-                                    corgercomer = :correogerente,
-                                    nomcontacto = :nombrecontacto,
-                                    telcontacto = :telefonocontacto,
-                                    corcontacto = :correocontacto,
-                                    nomperdetra = :nombredetraccion,
-                                    telperdetra = :telefonodetraccion,
-                                    corperdetra = :correodetraccion,
-                                    nctadetrac  = :cuentadetraccion";
+            if ($lastId > 0) {
+                    //detalles del proveedor
+                    $sqlDet = "INSERT INTO cm_detallenti 
+                                    SET idcenti = :idcenti,
+                                        nomgercomer = :gerente,
+                                        telgercomer = :telefonogerente,
+                                        corgercomer = :correogerente,
+                                        nomcontacto = :nombrecontacto,
+                                        telcontacto = :telefonocontacto,
+                                        corcontacto = :correocontacto,
+                                        nomperdetra = :nombredetraccion,
+                                        telperdetra = :telefonodetraccion,
+                                        corperdetra = :correodetraccion,
+                                        nctadetrac  = :cuentadetraccion";
             
-            $stmt = $pdo->prepare($sqlDet);
-            $stmt->execute([
-                ':idcenti'              =>$lastId,
-                ':gerente'              =>$datos['gerente_comercial'],
-                ':telefonogerente'      =>$datos['telefono_gerente'],
-                ':correogerente'        =>$datos['correo_gerente'],
-                ':nombrecontacto'       =>$datos['contacto'],
-                ':telefonocontacto'     =>$datos['telefono_contacto'],
-                ':correocontacto'       =>$datos['correo_contacto'],
-                ':nombredetraccion'     =>$datos['contacto_detraccion'],
-                ':telefonodetraccion'   =>$datos['telefono_contacto_detraccion'],
-                ':correodetraccion'     =>$datos['correo_contacto_detraccion'],
-                ':cuentadetraccion'     =>$datos['cta_detracciones'],
-            ]);
-
-            $slqContacto = "INSERT INTO cm_entidadcon
-                            SET id_centi     = :idcenti,
-                                cnombres     = :nombres,
-                                cdireccion  = :direccion,
-                                cemail      = :correo,
-                                ctelefono1  = :telefono,
-                                nflgactivo  = :activo";
-
-            $stmt = $pdo->prepare($slqContacto);
-            $stmt->execute([
-                ':idcenti'    =>$lastId,
-                ':nombres'    =>$datos['contacto'],
-                ':direccion'  =>$datos['telefono_contacto'],
-                ':correo'     =>$datos['correo_contacto'],
-                ':telefono'   =>$datos['telefono_contacto'],
-                ':activo'     =>7
-            ]);
-
-
-            //bancos del proveedor
-            $sqlBanco = "INSERT INTO cm_entidadbco 
-                            SET id_centi = :idcenti, 
-                                ncodbco  = :codigo_banco,
-                                cnrocta  = :nro_cuenta,
-                                ctipcta  = :tipo_cuenta,
-                                cmoneda  = :moneda";
-
-            if (count($bancos) > 0 ){
-                foreach($bancos as $banco){
-                    $stmt = $pdo->prepare($sqlBanco);
-
+                    $stmt = $pdo->prepare($sqlDet);
                     $stmt->execute([
-                        ':idcenti'      =>$lastId,
-                        ':codigo_banco' =>$banco['idbanco'],
-                        ':nro_cuenta'   =>$banco['nrocuenta'],
-                        ':tipo_cuenta'  =>$banco['idcuenta'],
-                        ':moneda'       =>$banco['idmoneda']
+                        ':idcenti'              =>$lastId,
+                        ':gerente'              =>$datos['gerente_comercial'],
+                        ':telefonogerente'      =>$datos['telefono_gerente'],
+                        ':correogerente'        =>$datos['correo_gerente'],
+                        ':nombrecontacto'       =>$datos['contacto'],
+                        ':telefonocontacto'     =>$datos['telefono_contacto'],
+                        ':correocontacto'       =>$datos['correo_contacto'],
+                        ':nombredetraccion'     =>$datos['contacto_detraccion'],
+                        ':telefonodetraccion'   =>$datos['telefono_contacto_detraccion'],
+                        ':correodetraccion'     =>$datos['correo_contacto_detraccion'],
+                        ':cuentadetraccion'     =>$datos['cta_detracciones'],
                     ]);
-                }
+
+                    $slqContacto = "INSERT INTO cm_entidadcon
+                                    SET id_centi     = :idcenti,
+                                        cnombres     = :nombres,
+                                        cdireccion  = :direccion,
+                                        cemail      = :correo,
+                                        ctelefono1  = :telefono,
+                                        nflgactivo  = :activo";
+
+                    $stmt = $pdo->prepare($slqContacto);
+                    $stmt->execute([
+                        ':idcenti'    =>$lastId,
+                        ':nombres'    =>$datos['contacto'],
+                        ':direccion'  =>$datos['telefono_contacto'],
+                        ':correo'     =>$datos['correo_contacto'],
+                        ':telefono'   =>$datos['telefono_contacto'],
+                        ':activo'     =>7
+                    ]);
+
+                    //bancos del proveedor
+                    $sqlBanco = "INSERT INTO cm_entidadbco 
+                                    SET id_centi = :idcenti, 
+                                        ncodbco  = :codigo_banco,
+                                        cnrocta  = :nro_cuenta,
+                                        ctipcta  = :tipo_cuenta,
+                                        cmoneda  = :moneda";
+
+                    if (count($bancos) > 0 ){
+                        foreach($bancos as $banco){
+                            $stmt = $pdo->prepare($sqlBanco);
+
+                            $stmt->execute([
+                                ':idcenti'      =>$lastId,
+                                ':codigo_banco' =>$banco['idbanco'],
+                                ':nro_cuenta'   =>$banco['nrocuenta'],
+                                ':tipo_cuenta'  =>$banco['idcuenta'],
+                                ':moneda'       =>$banco['idmoneda']
+                            ]);
+                        }
+                    }
             }
+           
+           
             
             $pdo->commit();
 

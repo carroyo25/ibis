@@ -8,11 +8,8 @@
         public function listarOrdenes($user){
            try {
                 $salida = "";
+                
                 $sql = $this->db->connect()->prepare("SELECT
-                                                        tb_costusu.ncodcos,
-                                                        tb_costusu.ncodproy,
-                                                        tb_costusu.id_cuser,
-                                                        lg_ordencab.id_regmov,
                                                         lg_ordencab.cnumero,
                                                         lg_ordencab.ffechadoc,
                                                         lg_ordencab.nNivAten,
@@ -21,39 +18,40 @@
                                                         lg_ordencab.nplazo,
                                                         lg_ordencab.cdocPDF,
                                                         lg_ordencab.ntipdoc,
-                                                        FORMAT(lg_ordencab.ntotal,2) AS ntotal,
-                                                        tb_proyectos.ccodproy,
+                                                        lg_ordencab.id_regmov,
+                                                        FORMAT( lg_ordencab.ntotal, 2 ) AS ntotal,
                                                         UPPER( lg_ordencab.cObservacion ) AS concepto,
+                                                        lg_ordencab.nfirmaLog,
+                                                        lg_ordencab.nfirmaFin,
+                                                        lg_ordencab.nfirmaOpe,
+                                                        ( SELECT COUNT( lg_ordencomenta.id_regmov ) FROM lg_ordencomenta WHERE lg_ordencomenta.id_regmov = lg_ordencab.id_regmov ) AS comentario,
+                                                        tb_proyectos.ccodproy,
                                                         UPPER( tb_pedidocab.detalle ) AS detalle,
                                                         UPPER(
                                                         CONCAT_WS( tb_area.ccodarea, tb_area.cdesarea )) AS area,
                                                         UPPER(
                                                         CONCAT_WS( tb_proyectos.ccodproy, tb_proyectos.cdesproy )) AS costos,
-                                                        lg_ordencab.nfirmaLog,
-                                                        lg_ordencab.nfirmaFin,
-                                                        lg_ordencab.nfirmaOpe,
                                                         tb_parametros.cdescripcion AS atencion,
-                                                        UPPER(cm_entidad.crazonsoc) AS crazonsoc,
+                                                        UPPER( cm_entidad.crazonsoc ) AS crazonsoc,
                                                         UPPER( tb_user.cnameuser ) AS cnameuser,
-                                                        monedas.cabrevia,
-                                                        ( SELECT COUNT( lg_ordencomenta.id_regmov ) FROM lg_ordencomenta WHERE lg_ordencomenta.id_regmov = lg_ordencab.id_regmov ) AS comentario 
+                                                        monedas.cabrevia 
                                                     FROM
-                                                        tb_costusu
-                                                        INNER JOIN lg_ordencab ON tb_costusu.ncodproy = lg_ordencab.ncodpry
-                                                        INNER JOIN tb_pedidocab ON lg_ordencab.id_refpedi = tb_pedidocab.idreg
-                                                        INNER JOIN tb_area ON lg_ordencab.ncodarea = tb_area.ncodarea
-                                                        INNER JOIN tb_proyectos ON lg_ordencab.ncodpry = tb_proyectos.nidreg
-                                                        INNER JOIN tb_parametros ON lg_ordencab.nNivAten = tb_parametros.nidreg
-                                                        INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
-                                                        INNER JOIN tb_user ON lg_ordencab.id_cuser = tb_user.iduser
-                                                        INNER JOIN tb_parametros AS monedas ON lg_ordencab.ncodmon = monedas.nidreg  
+                                                        lg_ordencab
+                                                        LEFT JOIN tb_costusu ON tb_costusu.ncodproy = lg_ordencab.ncodpry
+                                                        LEFT JOIN tb_pedidocab ON lg_ordencab.id_refpedi = tb_pedidocab.idreg
+                                                        LEFT JOIN tb_area ON lg_ordencab.ncodarea = tb_area.ncodarea
+                                                        LEFT JOIN tb_proyectos ON lg_ordencab.ncodpry = tb_proyectos.nidreg
+                                                        LEFT JOIN tb_parametros ON lg_ordencab.nNivAten = tb_parametros.nidreg
+                                                        LEFT JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
+                                                        LEFT JOIN tb_user ON lg_ordencab.id_cuser = tb_user.iduser
+                                                        LEFT JOIN tb_parametros AS monedas ON lg_ordencab.ncodmon = monedas.nidreg 
                                                     WHERE
-                                                        tb_costusu.id_cuser = :user
-                                                        AND tb_costusu.nflgactivo = 1
-                                                        AND tb_proyectos.nflgactivo = 1
-                                                        AND lg_ordencab.nEstadoDoc BETWEEN 49 AND 59
-                                                        AND lg_ordencab.ntipdoc IS NULL
-                                                    ORDER BY  lg_ordencab.id_regmov DESC");
+                                                        lg_ordencab.nEstadoDoc BETWEEN 49 AND 59 
+                                                        AND lg_ordencab.ntipdoc IS NULL 
+                                                        AND tb_costusu.id_cuser = :user
+                                                        AND tb_costusu.nflgactivo = 1 
+                                                    ORDER BY
+                                                        lg_ordencab.id_regmov DESC");
 
                 $sql->execute(["user"=>$_SESSION['iduser']]);
 
