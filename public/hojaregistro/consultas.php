@@ -14,7 +14,7 @@
         $datos = [];
 
         try{
-            $sql = "SELECT tb_pais.ccodpais,tb_pais.cdespais FROM tb_pais ORDER BY tb_pais.cdespais";
+            $sql = "SELECT tb_pais.ccodpais,tb_pais.cdespais,tb_pais.ncodpais FROM tb_pais ORDER BY tb_pais.cdespais";
             $statement = $pdo->query($sql);
             $rowaffect = $statement->rowCount($sql);
 
@@ -112,69 +112,35 @@
         }
     }
 
-    function getProveedorById($pdo, $id){
+    function getDetailsById($pdo,$id){
         try {
-            $sql = "SELECT
-                        *
+
+            $docData = [];
+
+            $id = 2;
+
+            $sql = "SELECT cm_detallenti.nomgercomer,
+                            cm_detallenti.telgercomer,
+                            cm_detallenti.corgercomer,
+                            cm_detallenti.nomcontacto,
+                            cm_detallenti.telcontacto,
+                            cm_detallenti.corcontacto,
+                            cm_detallenti.nomperdetra,
+                            cm_detallenti.telperdetra,
+                            cm_detallenti.corperdetra,
+                            cm_detallenti.nctadetrac
                     FROM
-                        cm_entidad
-                    WHERE
-                        id_centi = :id";
+                        cm_detallenti
+                    WHERE 
+                        cm_detallenti.idcenti = :id
+                        AND cm_detallenti.nflgActivo = 1";
 
             $stmt = $pdo->prepare($sql);
             $stmt->execute([':id' => $id]);
-            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            $rowdetalle = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            $sqldetalle = "SELECT
-                        *
-                    FROM
-                        cm_detalle_entidad
-                    WHERE
-                        id_entidad = :id";
+            return $rowdetalle;
 
-            $stmtd = $pdo->prepare($sqldetalle);
-            $stmtd->execute([':id' => $id]);
-            $rowdetalle = $stmtd->fetchAll(PDO::FETCH_ASSOC);
-            /* while($rowdetalle = $stmtd->fetch(PDO::FETCH_ASSOC)){
-                $detalle[] = $row;
-            } */
-
-            $proveedor = [
-                'id_centi' => $row['id_centi'],
-                'cnumdoc' => $row['cnumdoc'],
-                'crazonsoc' => $row['crazonsoc'],
-                'cviadireccion' => $row['cviadireccion'],
-                'cemail' => $row['cemail'],
-                'ctelefono' => $row['ctelefono'],
-                'ncodpais' => $row['ncodpais'],
-                'cwebpage' => $rowdetalle[0]['cwebpage'],
-                'cnomgerentec' => $rowdetalle[0]['cnomgerentec'],
-                'cnumdocgerentec' => $rowdetalle[0]['cnumdocgerentec'],
-                'ctelgerentec' => $rowdetalle[0]['ctelgerentec'],
-                'cemailgerentec' => $rowdetalle[0]['cemailgerentec'],
-                'cnomcontacto' => $rowdetalle[0]['cnomcontacto'],
-                'cnumdoccontacto' => $rowdetalle[0]['cnumdoccontacto'],
-                'ctelcontacto' => $rowdetalle[0]['ctelcontacto'],
-                'cemailcontacto' => $rowdetalle[0]['cemailcontacto'],
-                'ccuentadetrac' => $rowdetalle[0]['ccuentadetrac'],
-                'nformapago' => $rowdetalle[0]['nformapago'],
-                'nacteconomica' => $rowdetalle[0]['nacteconomica'],
-                'nnumcuentas' => count($rowdetalle),
-                'cficharuc' => $row['cficharuc'],
-                'ccatalogo' => $row['ccatalogo'],
-                'detalle' => $rowdetalle
-                /* 'cnomgerentec' => rowdetalle[0]['cnomgerentec'],
-                'cnumdocgerentec' => rowdetalle[0]['cnumdocgerentec'],
-                'ctelgerentec' => rowdetalle[0]['ctelgerentec'], */
-                /* 'cemailgerentec' => rowdetalle[0]['cemailgerentec'],
-                'cnomcontacto' => rowdetalle[0]['cnomcontacto'],
-                'cnumdoccontacto' => rowdetalle[0]['cnumdoccontacto'],
-                'ctelcontacto' => rowdetalle[0]['ctelcontacto'],
-                'cemailcontacto' => rowdetalle[0]['cemailcontacto'] */
-            ];
-
-
-            return $proveedor;
         } catch(PDOException $e){
             echo $th->getMessage();
             return false;
@@ -187,7 +153,11 @@
                             cm_entidad.crazonsoc,
                             cm_entidad.cviadireccion,
                             cm_entidad.ctelefono,
-                            cm_entidad.cemail
+                            cm_entidad.cemail,
+                            cm_entidad.ncodpais,
+                            cm_entidad.ncondpag,
+                            cm_entidad.nrubro,
+                            cm_entidad.id_centi
                         FROM cm_entidad 
                         WHERE cm_entidad.cnumdoc = :ruc";
 

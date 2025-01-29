@@ -18,27 +18,6 @@ if (isset($_SESSION['loggedin'])) {
     <link rel="stylesheet" href="../css/hojaregistro.css?<?php echo $version = rand(0, 9999); ?>">
 </head>
 <body>
-    <!-- <div class="wrap">
-        <section class="wrap__header">
-            <div>
-                <img src="../img/logo.png" alt="logo_sepcon">
-                <p>FORMULARIO DE REGISTRO DE PROVEEDORES</p>
-                <a href="#">Grabar Datos</a>
-            </div>
-        </section>
-        <section class="seccion_pagina">
-
-        </section>
-        <section class="seccion_pagina">
-
-        </section>
-        <section class="seccion_pagina">
-
-        </section>
-        <section class="seccion_pagina">
-
-        </section>
-    </div> -->
     <div class="wrap">
         <form id="datos_entidad" method="POST" enctype="multipart/form-data">
             <input type="file" class="oculto" name="uploadruc" id="uploadruc">

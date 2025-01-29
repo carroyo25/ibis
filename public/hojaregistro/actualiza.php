@@ -7,15 +7,18 @@
     $pagos = getPaymentList($pdo);
     $actividades = getEconomicActivity($pdo);
     $proveedor = getEntiByRuc($pdo,$_SESSION['ruc']);
+    $detalles = getDetailsById($pdo,$proveedor[0]["id_centi"]);
+    $bancos = null;
 
-    var_dump($proveedor[0]["cnumdoc"]);
+    //var_dump($detalles);
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alta Proveedores SEPCON - SICAL</title>
+    <title>Hoja de actualización de Datos - SEPCON - SICAL</title>
     <link rel="stylesheet" href="../css/hojaregistro.css?<?php echo $version = rand(0, 9999); ?>">
     <link rel="stylesheet" href="../css/notify.css">
     <link rel="stylesheet" href="../css/all.css">
@@ -24,7 +27,7 @@
     <div class="floating">
         <a href="#" id="floatUp" class="floatingOptions"><i class="fas fa-arrow-alt-circle-up"></i></a>
         <a href="#" id="cancelReg" class="floatingOptions"><i class="fas fa-ban"></i></a>
-        <a href="#" id="floatSave" class="floatingOptions btnSave"><i class="fas fa-save"></i></a>
+        <a href="#" id="floatSave" class="floatingOptions btnSave" data-accion="modify"><i class="fas fa-save"></i></a>
     </div>
     <div class="wrap">
         <form id="datos_entidad" method="POST" enctype="multipart/form-data">
@@ -33,8 +36,8 @@
 
             <section class="wrap__header">
                 <img src="../img/logo.png" alt="logo_sepcon">
-                <span>ACTUALIZACION DE REGISTRO DE PROVEEDORES</span>
-                <a href="#" class="btn btn-1" id="btn_guardar">Grabar Datos</a>
+                <span>ACTUALIZACION DE DATOS DE PROVEEDORES</span>
+                <a href="#" class="btn btn-1 btnSave" id="btn_guardar" data-accion="modify"><span>Grabar Datos</span></a>
             </section>
             <section class="seccion_pagina">
                 <div class="contenedor_detalles">
@@ -61,25 +64,30 @@
 
                     <label for="pais">Pais</label>
                     <select name="pais" id="pais">
-                        <?php
-                            foreach ($paises as $pais) { ?>
-                                <option value="<?php echo $pais['ccodpais'] ?>"><?php echo $pais['cdespais']?></option>
+                        <?php foreach ($paises as $pais) { 
+                            $selected = $pais['ccodpais'] == $proveedor[0]['ncodpais'] ? 'selected':'';
+                        ?>
+                            <option value="<?php echo $pais['ccodpais']?>" <?php echo $selected ?>><?php echo $pais['cdespais']?></option>
                         <?php } ?>
                     </select>
 
                     <label for="forma_pago">Forma de Pago</label>
                     <select name="forma_pago" id="forma_pago">
                         <?php
-                            foreach ($pagos as $pago) { ?>
-                                <option value="<?php echo $pago['nidreg'] ?>"><?php echo $pago['cdescripcion']?></option>
+                            foreach ($pagos as $pago) { 
+                                $selected = $pago['nidreg'] == $proveedor[0]['ncondpag'] ? 'selected':'';
+                            ?>
+                                <option value="<?php echo $pago['nidreg'] ?>" <?php echo $selected ?>><?php echo $pago['cdescripcion']?></option>
                         <?php } ?>
                     </select>
                     
                     <label for="actividad_economica">Actividad Económica</label>
                     <select name="actividad_economica" id="actividad_economica">
                         <?php
-                            foreach ($actividades as $actividad) { ?>
-                                <option value="<?php echo $actividad['nidreg'] ?>"><?php echo $actividad['cdescripcion']?></option>
+                            foreach ($actividades as $actividad) { 
+                                $selected = $actividad['nidreg'] == $proveedor[0]['nrubro'] ? 'selected':'';
+                            ?>
+                                <option value="<?php echo $actividad['nidreg'] ?>" <?php echo $selected ?>><?php echo $actividad['cdescripcion']?></option>
                         <?php } ?>
                     </select>
                 </div>
@@ -92,35 +100,29 @@
                 <p class="detalle">Gerente Comercial</p>
                 <div class="seccion_data">
                     <label for="gerente_comercial">Nombres</label>
-                    <input type="text" name="gerente_comercial" id="gerente_comercial">
-                    <label for="documento_gerente">Documento de Identidad</label>
-                    <input type="text" name="documento_gerente" id="documento_gerente">
+                    <input type="text" name="gerente_comercial" id="gerente_comercial" value="<?php echo $detalles['nomgercomer']?>">
                     <label for="telefono_gerente">Telefono</label>
-                    <input type="text" name="telefono_gerente" id="telefono_gerente">
+                    <input type="text" name="telefono_gerente" id="telefono_gerente" value="<?php echo $detalles['telgercomer']?>">
                     <label for="correo_gerente">Correo Electrónico</label>
-                    <input type="text" name="correo_gerente" id="correo_gerente">
+                    <input type="text" name="correo_gerente" id="correo_gerente" value="<?php echo $detalles['corgercomer']?>">
                 </div>
                 <p class="detalle">Personal de contacto</p>
                 <div class="seccion_data">
                     <label for="contacto">Nombres</label>
-                    <input type="text" name="contacto" id="contacto" class="requerido">
-                    <label for="documento_contacto">Documento de Identidad</label>
-                    <input type="text" name="documento_contacto" id="documento_contacto">
+                    <input type="text" name="contacto" id="contacto" class="requerido" value="<?php echo $detalles['nomcontacto']?>">
                     <label for="telefono_contacto">Telefono</label>
-                    <input type="text" name="telefono_contacto" id="telefono_contacto" class="requerido">
+                    <input type="text" name="telefono_contacto" id="telefono_contacto" class="requerido" value="<?php echo $detalles['telcontacto']?>">
                     <label for="correo_contacto">Correo Electrónico</label>
-                    <input type="text" name="correo_contacto" id="correo_contacto" class="requerido">
+                    <input type="text" name="correo_contacto" id="correo_contacto" class="requerido" value="<?php echo $detalles['corcontacto']?>">
                 </div>
                 <p class="detalle">Contacto Personal Detracción</p>
                 <div class="seccion_data">
                     <label for="contacto_detraccion">Nombres</label>
-                    <input type="text" name="contacto_detraccion" id="contacto_detraccion">
-                    <label for="documento_contacto_detraccion">Documento de Identidad</label>
-                    <input type="text" name="documento_contacto_detraccion" id="documento_contacto_detraccion">
+                    <input type="text" name="contacto_detraccion" id="contacto_detraccion" value="<?php echo $detalles['nomperdetra']?>">
                     <label for="telefono_contacto">Telefono</label>
-                    <input type="text" name="telefono_contacto_detraccion" id="telefono_contacto_detraccion" >
+                    <input type="text" name="telefono_contacto_detraccion" id="telefono_contacto_detraccion" value="<?php echo $detalles['telperdetra']?>">
                     <label for="correo_contacto_detraccion">Correo Electrónico</label>
-                    <input type="text" name="correo_contacto_detraccion" id="correo_contacto_detraccion">
+                    <input type="text" name="correo_contacto_detraccion" id="correo_contacto_detraccion" value="<?php echo $detalles['corperdetra']?>">
                 </div>
             </section>
             <section class="seccion_pagina">
@@ -145,7 +147,7 @@
                 </table>
                 <div class="seccion_data">
                     <label for="cta_detracciones">N° de cuenta detracciones</label>
-                    <input type="text" name="cta_detracciones" id="cta_detracciones">
+                    <input type="text" name="cta_detracciones" id="cta_detracciones" value="<?php echo $detalles['nctadetrac']?>">
                 </div>
             </section>
             <section class="seccion_pagina">

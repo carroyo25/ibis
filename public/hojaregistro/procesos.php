@@ -84,7 +84,9 @@
                                         ccatalogo=:catalogo_prod, 
                                         cpassword=:pass,
                                         nflgactivo=:activo,
-                                        nagenret=:retencion";
+                                        nagenret=:retencion
+                                        ncondpag=:forma_pago,
+                                        nrubro=:actividad_economica";
             $stmt = $pdo->prepare($sql);
             $stmt->execute([
                 ':ruc' => $datos['ruc'],
@@ -97,7 +99,9 @@
                 ':catalogo_prod' => $nameCatalogo,
                 ':pass' => $hashClave,
                 ':activo' => 7,
-                ':retencion' => $retencion
+                ':retencion' => $retencion,
+                ':forma_pago' => $datos['forma_pago'],
+                ':actividad_economica' => $datos['actividad_economica']
             ]);
 
             $lastId = $pdo->lastInsertId();

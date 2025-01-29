@@ -6,6 +6,7 @@ const tabla_bancos_body = $.getElementById("tabla_bancos_body");
 const btn_guardar = $.getElementById("btn_guardar");
 const requerido = $.querySelectorAll(".requerido");
 const enlaceBancos = tabla_bancos_body.getElementsByTagName("a")
+
 const upFloat = $.getElementById("floatUp");
 const saveFloat = $.getElementById("floatSave");
 const cancelReg = $.getElementById("cancelReg");
