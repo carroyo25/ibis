@@ -253,7 +253,7 @@
                                             style = background:'.$fondo_fila.'>
                                         <td class="textoCentro">'.str_pad($fila++,6,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$activeSheetData[$i]["B"].'</td>
-                                        <td class="pl20px">'.$descripcion.'</td>
+                                        <td class="pl20px">'.htmlentities($descripcion).'</td>
                                         <td class="textoCentro">'.$activeSheetData[$i]["D"].'</td>
                                         <td><input type="text" value="'.$activeSheetData[$i]["E"].'"></td>
                                         <td><input type="number" value="'.$activeSheetData[$i]["F"].'"></td>

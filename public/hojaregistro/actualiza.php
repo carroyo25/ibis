@@ -8,9 +8,9 @@
     $actividades = getEconomicActivity($pdo);
     $proveedor = getEntiByRuc($pdo,$_SESSION['ruc']);
     $detalles = getDetailsById($pdo,$proveedor[0]["id_centi"]);
-    $bancos = null;
+    $bancos = getEntityBancs($pdo,$proveedor[0]["id_centi"]);
 
-    //var_dump($detalles);
+    var_dump($bancos);
 
 ?>
 <!DOCTYPE html>

@@ -112,12 +112,35 @@
         }
     }
 
+
+    function getEntiByRuc($pdo,$ruc){
+        try {
+            $sql  = "SELECT cm_entidad.cnumdoc,
+                            cm_entidad.crazonsoc,
+                            cm_entidad.cviadireccion,
+                            cm_entidad.ctelefono,
+                            cm_entidad.cemail,
+                            cm_entidad.ncodpais,
+                            cm_entidad.ncondpag,
+                            cm_entidad.nrubro,
+                            cm_entidad.id_centi
+                        FROM cm_entidad 
+                        WHERE cm_entidad.cnumdoc = :ruc";
+
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([':ruc' => $ruc]);
+            $rowdetalle = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            return $rowdetalle;
+
+        } catch(PDOException $e){
+            echo $e->getMessage();
+            return false;
+        }
+    }
+
     function getDetailsById($pdo,$id){
         try {
-
-            $docData = [];
-
-            $id = 2;
 
             $sql = "SELECT cm_detallenti.nomgercomer,
                             cm_detallenti.telgercomer,
@@ -147,28 +170,25 @@
         }
     }
 
-    function getEntiByRuc($pdo,$ruc){
+    function getEntityBancs($pdo,$id){
         try {
-            $sql  = "SELECT cm_entidad.cnumdoc,
-                            cm_entidad.crazonsoc,
-                            cm_entidad.cviadireccion,
-                            cm_entidad.ctelefono,
-                            cm_entidad.cemail,
-                            cm_entidad.ncodpais,
-                            cm_entidad.ncondpag,
-                            cm_entidad.nrubro,
-                            cm_entidad.id_centi
-                        FROM cm_entidad 
-                        WHERE cm_entidad.cnumdoc = :ruc";
+            $sql = "SELECT cm_entidadbco.ncodbco,
+                            cm_entidadbco.cnrocta,
+                            cm_entidadbco.cmoneda,
+                            cm_entidadbco.ctipcta
+                    FROM 
+                        cm_entidadbco
+                    WHERE
+                        cm_entidadbco.nflgactivo = 7
+                    AND cm_entidadbco.id_centi = :id";
 
             $stmt = $pdo->prepare($sql);
-            $stmt->execute([':ruc' => $ruc]);
-            $rowdetalle = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $stmt->execute([':id' => $id]);
+            $rowdetalle = $stmt->fetch(PDO::FETCH_ASSOC);
 
             return $rowdetalle;
-
-        } catch(PDOException $e){
-            echo $th->getMessage();
+        } catch (PDOException $e) {
+            echo $e->getMessage();
             return false;
         }
     }
