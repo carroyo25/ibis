@@ -172,6 +172,9 @@
 
     function getEntityBancs($pdo,$id){
         try {
+
+            $bancos = [];
+
             $sql = "SELECT cm_entidadbco.ncodbco,
                             cm_entidadbco.cnrocta,
                             cm_entidadbco.cmoneda,
@@ -184,9 +187,12 @@
 
             $stmt = $pdo->prepare($sql);
             $stmt->execute([':id' => $id]);
-            $rowdetalle = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            return $rowdetalle;
+            while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+                $bancos[] = $row;
+            }
+
+            return $bancos;
         } catch (PDOException $e) {
             echo $e->getMessage();
             return false;
