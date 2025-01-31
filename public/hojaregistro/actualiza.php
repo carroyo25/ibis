@@ -9,6 +9,7 @@
     $proveedor = getEntiByRuc($pdo,$_SESSION['ruc']);
     $detalles = getDetailsById($pdo,$proveedor[0]["id_centi"]);
     $bancos = getEntityBancs($pdo,$proveedor[0]["id_centi"]);
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
