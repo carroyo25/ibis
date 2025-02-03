@@ -175,14 +175,21 @@
 
             $bancos = [];
 
-            $sql = "SELECT cm_entidadbco.ncodbco,
-                            cm_entidadbco.cnrocta,
-                            cm_entidadbco.cmoneda,
-                            cm_entidadbco.ctipcta
-                    FROM 
-                        cm_entidadbco
-                    WHERE
-                        cm_entidadbco.nflgactivo = 7
+            $sql = "SELECT
+                    cm_entidadbco.ncodbco,
+                    cm_entidadbco.cnrocta,
+                    cm_entidadbco.cmoneda,
+                    cm_entidadbco.ctipcta,
+                    bancos.cdescripcion AS banco,
+                    monedas.cdescripcion AS moneda,
+                    cuentas.cdescripcion AS cuenta
+                FROM
+                    cm_entidadbco
+                    LEFT JOIN tb_parametros AS bancos ON bancos.nidreg = cm_entidadbco.ncodbco
+                    LEFT JOIN tb_parametros AS monedas ON monedas.nidreg = cm_entidadbco.cmoneda
+                    LEFT JOIN tb_parametros AS cuentas ON cuentas.nidreg = cm_entidadbco.ctipcta
+                WHERE
+                    cm_entidadbco.nflgactivo = 7 
                     AND cm_entidadbco.id_centi = :id";
 
             $stmt = $pdo->prepare($sql);

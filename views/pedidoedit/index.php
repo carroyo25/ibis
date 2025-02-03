@@ -5,59 +5,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <style>
-        :root {
-            /* Primary Colors */
-            --color-primary-main: #5A3FE1;
-            --color-primary-hover: #3314C7;
-            --color-primary-pressed: #200F70;
-            --color-primary-focus: #AC9FF0;
-            --color-primary-border: #C4BAF5;
-            --color-primary-secondary: #EFEDFA;
-        
-            /* Gray Colors */
-            --color-gray-100: #ECECEC;
-            --color-gray-200: #D8D8D8;
-            --color-gray-300: #C5C5C5;
-            --color-gray-400: #B1B1B1;
-            --color-gray-500: #9E9E9E;
-            --color-gray-600: #7E7E7E;
-            --color-gray-700: #5F5F5F;
-            --color-gray-800: #3F3F3F;
-            --color-gray-900: #202020;
-        }
-        .pagination {
-            text-align: center;
-            margin-top: 20px;
-            margin-bottom: 20px;
-        }
-        
-        .pagination button {
-            padding: 5px 10px;
-            margin: 5px 5px;
-            cursor: pointer;
-            outline: 1px solid var(--color-primary-main);
-            color: var(--color-primary-main);
-            border-radius: 4px;
-            border: none;
-            background-color: var(--color-primary-secondary);
-        }
-        
-        .hidden {
-            clip: rect(0 0 0 0);
-            clip-path: inset(50%);
-            height: 1px;
-            overflow: hidden;
-            position: absolute;
-            white-space: nowrap;
-            width: 1px;
-        }
-        
-        .pagination button.active {
-            background-color: var(--color-primary-main);
-            color: white;
-        }
-    </style>
 </head>
 <body>
     <div class="modal" id="proceso">

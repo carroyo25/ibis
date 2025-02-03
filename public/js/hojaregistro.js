@@ -89,8 +89,6 @@ $.addEventListener("change", (e)=>{
   }
 })
    
-
-
 bancos.onclick = (e) => {
   e.preventDefault();
 
@@ -150,9 +148,9 @@ bancos.onclick = (e) => {
                 <td>
                   <select>
                     <option value="-1">Seleccione una opcion</option>
-                    <option value="01">AHORROS</option>
-                    <option value="02">CUENTA CORRIENTE</option>
-                    <option value="02">INTERBANCARIA</option>
+                    <option value="282">AHORROS</option>
+                    <option value="283">CUENTA CORRIENTE</option>
+                    <option value="284">INTERBANCARIA</option>
                   </select>
                 </td>
                 <td><input type="text"></td>
