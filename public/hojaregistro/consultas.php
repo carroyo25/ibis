@@ -112,7 +112,6 @@
         }
     }
 
-
     function getEntiByRuc($pdo,$ruc){
         try {
             $sql  = "SELECT cm_entidad.cnumdoc,
@@ -176,6 +175,7 @@
             $bancos = [];
 
             $sql = "SELECT
+                    cm_entidadbco.nitem,
                     cm_entidadbco.ncodbco,
                     cm_entidadbco.cnrocta,
                     cm_entidadbco.cmoneda,

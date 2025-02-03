@@ -140,7 +140,15 @@
                         </tr>
                     </thead>
                     <tbody id="tabla_bancos_body">
-
+                        <?php foreach ($bancos as $banco) {?>
+                            <tr data-grabado="<?php echo $banco['nitem']?>">
+                                <td><input type="text" value="<?php echo $banco['banco']?>"></td>
+                                <td><input type="text" value="<?php echo $banco['moneda']?>"></td>
+                                <td><input type="text" value="<?php echo $banco['cuenta']?>"></td>
+                                <td><input type="text" value="<?php echo $banco['cnrocta']?>"></td>
+                                <td><a href="#" data-grabado="1" data-idx=""><i class="fas fa-trash-alt lnkTrash"></i></a></td>
+                            </tr>
+                        <?php }?>
                     </tbody>
                 </table>
                 <div class="seccion_data">
