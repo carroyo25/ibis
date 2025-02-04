@@ -49,6 +49,10 @@
         function procesado() {
             echo $this->model->buscarProcesado($_POST['a']);
         }
+
+        function anula(){
+            echo json_encode($this->model->anularIngreso($_POST['id']));
+        }
         
     }
 ?>

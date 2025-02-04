@@ -76,7 +76,7 @@ $(function(){
         $("#proceso").fadeOut();
         
         //llama la funcion para recargar la tabla
-        query();
+        //query();
         
         return false;
     });

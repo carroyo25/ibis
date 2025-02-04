@@ -419,6 +419,8 @@
                 $pedido     = $parametros['pedidoSearch'] == "" ? "%" : $parametros['pedidoSearch'];
                 $concepto   = $parametros['conceptoSearch'] == "" ? "%" : "%".$parametros['conceptoSearch']."%";
                 $estadoItem = $parametros['estado_item'] == "" ? "%" : $parametros['estado_item'];
+
+                $opcion_exporta = $parametros['opcion_exporta'];
                 
                 $salida = "No hay registros";
                 $item = 1;
@@ -551,9 +553,18 @@
                     $docData[] = $row;
                 }
 
-                $this->crearExcelExport($docData);
+                if ($opcion_exporta == "excel"){
+                    $this->crearExcelExport($docData);
 
-                return array("documento"=>'public/documentos/reportes/cargoplanprecio.xlsx');
+                    return array("documento"=>'public/documentos/reportes/cargoplanprecio.xlsx');
+
+                }else if ($opcion_exporta == "csv"){
+                    $this->crearCSVExport($docData);
+
+                    return array("documento"=>'public/documentos/reportes/valorizado.csv');
+                }
+                
+                
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
@@ -1004,6 +1015,21 @@
 
                 $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel,'Excel2007');
                 $objWriter->save('public/documentos/reportes/cargoplanprecio.xlsx');
+        }
+
+        private function crearCSVExport($datos){
+            $archivo_csv = fopen('public/documentos/reportes/valorizado.csv', 'w');
+
+            $csv = fopen($archivo_csv, 'x+');
+
+            fputcsv($csv,array ('ncanti','nunitario','orden','tipo','tipo_pago','centro_costos','nombre_proyecto','area','codigo','descripcion','unidad',
+                        'tipo_cambio','observacion','anio','fecha_registro','entidad','direccion','pedido','tipo_moneda','FechaFin','cotizacion',
+                        'nro_parte','ruc','grupo','clase','operaciones','finanzas','procura','cantidad_recepcion',
+                        'total','fecha_entrega','dolares','soles'));
+
+            fclose($csv);
+
+            
         }
     }
 ?>

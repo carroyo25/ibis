@@ -787,5 +787,41 @@
                 return false;
             }
         }
+
+        public function anularIngreso($id){
+            try {
+                $mensaje = "Error al anular el registro";
+                $sql = $this->db->connect()->prepare("UPDATE alm_inventariocab 
+                                                        SET flgActivo = :activo,
+                                                            idcostos = null
+                                                        WHERE idreg = :id");
+                $sql->execute(["activo" => 0,"id"=>$id]);
+
+                if ( $sql->rowCount() > 0){
+                    $mensaje = "Registro Anulado";
+                    $this->anularDetalles($id);
+                }
+
+                return array("mensaje" => $mensaje);
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function anularDetalles($id){
+            try {
+                $sql = $this->db->connect()->prepare("UPDATE alm_inventariodet 
+                                                        SET nflgActivo = :activo,
+                                                            cant_ingr = :cantidad
+                                                        WHERE idregistro = :id");
+
+                $sql->execute(["activo" => 0,"id"=>$id,"cantidad"=>0]);
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
     }
 ?>

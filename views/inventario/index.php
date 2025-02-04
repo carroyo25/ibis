@@ -14,6 +14,7 @@
                     <input type="hidden" name="codigo_costos" id="codigo_costos"> 
                     <input type="hidden" name="codigo_almacen" id="codigo_almacen">
                     <input type="hidden" name="codigo_estado" id="codigo_estado">
+                    <input type="hidden" name="codigo_inventario" id="codigo_inventario">
                     <input type="hidden" name="codigo_autoriza" id="codigo_autoriza">
                     <input type="hidden" name="codigo_stock" id="codigo_stock">
                     <input type="hidden" name="codigo_tipo" id="codigo_tipo">
@@ -26,6 +27,9 @@
                         <div>
                             <button type="button" id="saveDocument" title="Cerrar Salida" class="boton3">
                                 <i class="far fa-save"></i> Grabar Registro
+                            </button>
+                            <button type="button" id="cancelDocument" title="Anular Ingreso" class="boton4">
+                                <i class="fas fa-ban"></i> Anular Ingreso
                             </button>
                             <button type="button" id="closeProcess" title="Cerrar" class="boton3">
                                 <i class="fas fa-window-close"></i>

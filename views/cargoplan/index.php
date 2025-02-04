@@ -214,7 +214,7 @@
         <div>
             <a href="#" id="filtrosAvanzados" class="oculto"><i class="fab fa-searchengin"></i><p>Filtros</p></a>
             <a href="1" id="excelFile" class="exportReport"><i class="fas fa-file-excel"></i><p>Exportar Excel</p></a>
-            <a href="2" id="csvFile" class="exportReport oculto"><i class="fas fa-file-csv"></i><p>Exportar CSV</p></a>
+            <a href="2" id="csvFile" class="exportReport"><i class="fas fa-file-csv"></i><p>Exportar CSV</p></a>
             <a href="3" id="excelSpoutFile" class="exportReport oculto"><i class="fas fa-file-excel"></i><p>Exportar Total Rapido</p></a>
             <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
         </div>
@@ -222,6 +222,7 @@
     <div class="barraTrabajo">
         <form action="#" id="formConsulta">
             <input type="hidden" name="estado_item" id="estado_item">
+            <input type="hidden" name="opcion_exporta" id="opcion_exporta">
             <div class="variasConsultasColumna">
                 <div class="datosConsultaCargoPlan">
                     <div class="parametrosConsulta">

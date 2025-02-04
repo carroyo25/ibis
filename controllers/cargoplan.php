@@ -18,6 +18,10 @@
             echo json_encode($this->model->crearExcelPrecio($_POST));
         }
 
+        function crearCSV() {
+            echo json_encode($this->model->crearExcelPrecio($_POST));
+        }
+
         function resumen() {
             echo json_encode($this->model->consultaResumen($_POST['orden'],$_POST['refpedido']));
         }

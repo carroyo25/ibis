@@ -259,6 +259,7 @@ $(() => {
 
         $.post(RUTA+"inventario/consulta", {id:$(this).data('doc')},
             function (data, text, requestXHR) {
+                $("#codigo_inventario").val(data.cabecera[0].idreg);
                 $("#codigo_costos").val(data.cabecera[0].idcostos);
                 $("#codigo_almacen").val(data.cabecera[0].ncodalm);
                 $("#codigo_autoriza").val(data.cabecera[0].iduser);
@@ -304,6 +305,32 @@ $(() => {
        );
 
        return false;
+    });
+
+    $("#cancelDocument").click(function(e){
+        e.preventDefault();
+
+        try {
+            if ($("#rol_user").val() != 2) throw new Error("No esta autorizado para esta accion");
+
+            let formData = new FormData();
+            formData.append("id",$("#codigo_inventario").val());
+
+            fetch(RUTA+"inventario/anula",{
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                mostrarMensaje(data.mensaje,"mensaje_correcto");
+            })
+            
+            
+        } catch (error) {
+            mostrarMensaje(error.message,"mensaje_error");
+        }
+
+        return false;
     });
 
     

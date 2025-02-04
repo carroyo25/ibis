@@ -55,8 +55,32 @@ $(function() {
         e.preventDefault();
 
         $("#esperar").css("opacity","1").fadeIn();
+        $("#opcion_exporta").val("excel");
 
-        $.post(RUTA+"cargoplan/crearExcelPrecio",
+        let str = $("#formConsulta").serialize();
+
+        $.post(RUTA+"cargoplan/crearExcel",str,
+            function (data, textStatus, jqXHR) {
+
+                $("#esperar").css("opacity","0").fadeOut();
+                window.location.href = data.documento;
+                
+            },
+            "json"
+        );
+
+        return false;
+    });
+
+    $("#csvFile").click(function(e){
+        e.preventDefault();
+
+        $("#esperar").css("opacity","1").fadeIn();
+        $("#opcion_exporta").val("csv");
+
+        let str = $("#formConsulta").serialize();
+
+        $.post(RUTA+"cargoplan/crearCsv",str,
             function (data, textStatus, jqXHR) {
 
                 $("#esperar").css("opacity","0").fadeOut();

@@ -556,6 +556,10 @@
                         $rowCount = $sql->rowCount();
 
                         $this->cambiarItemOrden($details[$i]->itempedido,$details[$i]->idprod);
+                        $this->actualizarItemIngreso($details[$i]->itempedido,$details[$i]->idprod);
+                        $this->actualizarItemDespacho($details[$i]->itempedido,$details[$i]->idprod);
+                        $this->actualizarItemTransferencia($details[$i]->itempedido,$details[$i]->idprod);
+                        $this->actualizarItemExistencia($details[$i]->itempedido,$details[$i]->idprod);
 
                     } catch (PDOException $th) {
                         echo $th->getMessage();
@@ -597,28 +601,53 @@
             }
         }
 
+        private function actualizarItemIngreso($id,$idprod){
+            try {
+                $sql = $this->db->connect()->prepare("UPDATE alm_recepdet 
+                                                        SET alm_recepdet.id_cprod =:idprod
+                                                        WHERE alm_recepdet.niddetaPed =:id");
+                $sql->execute(["id"=>$id,
+                              "idprod"=>$idprod]);
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        private function actualizarItemDespacho($id,$idprod){
+            try {
+                $sql = $this->db->connect()->prepare("UPDATE alm_despachodet 
+                                                        SET alm_despachodet.id_cprod =:idprod
+                                                        WHERE alm_despachodet.niddetaPed =:id");
+                $sql->execute(["id"=>$id,"idprod"=>$idprod]);
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
         private function actualizarItemTransferencia($id,$idprod){
             try {
-                //code...
+                $sql = $this->db->connect()->prepare("UPDATE alm_transferdet 
+                                                        SET alm_transferdet.idcprod =:idprod
+                                                        WHERE alm_transferdet.iddetped =:id");
+                $sql->execute(["id"=>$id,"idprod"=>$idprod]);
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
             }
         }
 
-        private function actualizarItemExistencia($id,$idprod,$pedido){
+        private function actualizarItemExistencia($id,$idprod){
             try {
-                //code...
+                $sql = $this->db->connect()->prepare("UPDATE alm_existencia 
+                                                        SET alm_existencia.codprod =:idprod
+                                                        WHERE alm_existencia.idpedido =:id");
+                $sql->execute(["id"=>$id,"idprod"=>$idprod]);
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
             }
-        }
-
-        private function actualizarIngreso($id,$idprod){}
-
-        private function actualizarDespacho($id,$idprod){
-
         }
     }    
 ?>
