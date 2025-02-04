@@ -10,10 +10,12 @@
             echo json_encode(buscarRuc($pdo, $_POST));
         }else if($_POST['funcion'] == "login"){
             echo json_encode(login($pdo, $_POST));
-        }else if($_POST['funcion'] == "actualizar"){
+        }else if($_POST['funcion'] == "actualizarProveedor"){
             echo json_encode(actualizarProveedor($pdo, $_POST, $_FILES));
         }else if($_POST['funcion'] == "cambiarPass"){
             echo json_encode(cambiarPassword($pdo, $_POST));
+        }else if($_POST['funcion'] =="verificar"){
+            echo json_encode(verificar($pdo, $_POST));
         }else if($_POST['funcion'] =="verificar"){
             echo json_encode(verificar($pdo, $_POST));
         }
@@ -38,7 +40,6 @@
 
     function grabarProveedor($pdo, $datos, $files) {   
         try{
-
             $bancos = json_decode($datos['bancos'], true);
             $retencion  = $datos['contacto_detraccion'] == "" ? 1 : 2;
 
@@ -86,7 +87,8 @@
                                         nflgactivo=:activo,
                                         nagenret=:retencion,
                                         ncondpag=:forma_pago,
-                                        nrubro=:actividad";
+                                        nrubro=:actividad
+                                        nflgactualizado = 1";
             $stmt = $pdo->prepare($sql);
             $stmt->execute([
                 ':ruc' => $datos['ruc'],
@@ -177,8 +179,6 @@
                     }
             }
            
-           
-            
             $pdo->commit();
 
             $email  = enviarEmail($datos['correo_electronico'],$datos['razon_social'],$datos['ruc'],$clave);
@@ -248,15 +248,13 @@
 
     function actualizarProveedor($pdo, $datos, $files){
         try{
-            $pdo->beginTransaction();
-            $nameFichaRuc=$datos['cficharuc'];
-            $nameCatalogo=$datos['ccatalogo'];
             $fechaActual = date('Y-m-d');
             
-            
-            $uploadDir = '../documentos/'; 
+            $uploadDir = '../documentos/';
+            $nameFichaRuc = '';
+            $nameCatalogo = '';
+            $retencion  = $datos['contacto_detraccion'] == "" ? 1 : 2;
 
-            //$sql = "UPDATE cm_entidad SET cnumdoc=:ruc,crazonsoc=:razon_social,cviadireccion=:direccion,cemail=:correo_electronico,ctelefono=:telefono,ncodpais=:pais, cficharuc=:ficha_ruc, ccatalogo=:catalogo_prod WHERE id_centi=:id";
             if (isset($_FILES['file_ruc']) && $_FILES['file_ruc']['error'] === UPLOAD_ERR_OK) {
                 $nameFichaRuc = 'ficha_'.$datos['ruc'].'_'.$fechaActual.'.'.pathinfo($_FILES['file_ruc']['name'], PATHINFO_EXTENSION);
                 $fileRuc = $_FILES['file_ruc'];
@@ -275,8 +273,29 @@
                 move_uploaded_file($fileCatalogo['tmp_name'], $filePathCatalogo);
             }
 
-            $sql = "UPDATE cm_entidad SET cnumdoc=:ruc,crazonsoc=:razon_social,cviadireccion=:direccion,cemail=:correo_electronico,ctelefono=:telefono,ncodpais=:pais, cficharuc=:ficha_ruc, ccatalogo=:catalogo_prod WHERE id_centi=:id";
+            $clave = generarClaveAleatoria(8);
+            $hashClave = password_hash($clave, PASSWORD_DEFAULT);
+
+            $pdo->beginTransaction();
+
+            $sql = "UPDATE cm_entidad 
+                    SET crazonsoc=:razon_social,
+                        cviadireccion=:direccion,
+                        cemail=:correo_electronico,
+                        ctelefono=:telefono,
+                        ncodpais=:pais, 
+                        cficharuc=:ficha_ruc, 
+                        ccatalogo=:catalogo_prod, 
+                        cpassword=:pass,
+                        nflgactivo=:activo,
+                        nagenret=:retencion,
+                        ncondpag=:forma_pago,
+                        nrubro=:actividad,
+                        nflgactualizado = 1
+                    WHERE cnumdoc=:ruc";
+
             $stmt = $pdo->prepare($sql);
+
             $stmt->execute([
                 ':ruc' => $datos['ruc'],
                 ':razon_social' => $datos['razon_social'],
@@ -286,67 +305,64 @@
                 ':pais' => $datos['pais'],
                 ':ficha_ruc' => $nameFichaRuc,
                 ':catalogo_prod' => $nameCatalogo,
-                ':id' => $datos['id_centi']
-            ]); 
+                ':pass' => $hashClave,
+                ':activo' => 7,
+                ':retencion' => $retencion,
+                ':forma_pago' => $datos['forma_pago'],
+                ':actividad' => $datos['actividad_economica']
+            ]);
 
-            
+            if ($datos['actualiza'] == 0 ){
 
-            // Procesar archivo RUC
+                $id = $datos['id'];
+                
+                $sqlDet = "INSERT INTO cm_detallenti 
+                                    SET idcenti = :idcenti,
+                                        nomgercomer = :gerente,
+                                        telgercomer = :telefonogerente,
+                                        corgercomer = :correogerente,
+                                        nomcontacto = :nombrecontacto,
+                                        telcontacto = :telefonocontacto,
+                                        corcontacto = :correocontacto,
+                                        nomperdetra = :nombredetraccion,
+                                        telperdetra = :telefonodetraccion,
+                                        corperdetra = :correodetraccion,
+                                        nctadetrac  = :cuentadetraccion";
             
-            
-            $cuentas = json_decode($datos['cuentas'], true);
-
-            $detalleSql = "UPDATE cm_detalle_entidad SET id_entidad=:id_entidad, cwebpage=:pagina_web, nformapago=:forma_pago, nacteconomica=:actividad_economica, cnomgerentec=:gerente_comercial, cnumdocgerentec=:documento_gerente, ctelgerentec=:telefono_gerente, cemailgerentec=:correo_gerente, cnomcontacto=:contacto,
-            cnumdoccontacto=:documento_contacto, ctelcontacto=:telefono_contacto, cemailcontacto=:correo_contacto, ccuentadetrac=:cta_detracciones, nentifinan=:nombre_banco, ntipomoneda=:tipo_moneda, ntipocuenta=:tipo_cuenta, cnumcuenta=:numero_cuenta WHERE id_entidad=:id_entidad";
-
-            $detalleStmt = $pdo->prepare($detalleSql);
-            
-            if(count($cuentas)>0){
-                foreach($cuentas as $cuenta){
-                    $detalleStmt->execute([
-                        ':id_entidad' => $datos['id_centi'],
-                        ':pagina_web' => $datos['pagina_web'],
-                        ':forma_pago' => $datos['forma_pago'],
-                        ':actividad_economica' => $datos['actividad_economica'],
-                        ':gerente_comercial' => $datos['gerente_comercial'],
-                        ':documento_gerente' => $datos['documento_gerente'],
-                        ':telefono_gerente' => $datos['telefono_gerente'],
-                        ':correo_gerente' => $datos['correo_gerente'],
-                        ':contacto' => $datos['contacto'],
-                        ':documento_contacto' => $datos['documento_contacto'],
-                        ':telefono_contacto' => $datos['telefono_contacto'],
-                        ':correo_contacto' => $datos['correo_contacto'],
-                        ':cta_detracciones' => $datos['cta_detracciones'],
-                        ':nombre_banco' => $cuenta['nombreBanco'],
-                        ':tipo_moneda' => $cuenta['tipoMoneda'],
-                        ':tipo_cuenta' => $cuenta['tipoCuenta'],
-                        ':numero_cuenta' => $cuenta['numeroCuenta']
+                    $stmt = $pdo->prepare($sqlDet);
+                    $stmt->execute([
+                        ':idcenti'              =>$id,
+                        ':gerente'              =>$datos['gerente_comercial'],
+                        ':telefonogerente'      =>$datos['telefono_gerente'],
+                        ':correogerente'        =>$datos['correo_gerente'],
+                        ':nombrecontacto'       =>$datos['contacto'],
+                        ':telefonocontacto'     =>$datos['telefono_contacto'],
+                        ':correocontacto'       =>$datos['correo_contacto'],
+                        ':nombredetraccion'     =>$datos['contacto_detraccion'],
+                        ':telefonodetraccion'   =>$datos['telefono_contacto_detraccion'],
+                        ':correodetraccion'     =>$datos['correo_contacto_detraccion'],
+                        ':cuentadetraccion'     =>$datos['cta_detracciones'],
                     ]);
-                }
-            }else{
-                $detalleStmt->execute([
-                    ':id_entidad' => $id,
-                    ':pagina_web' => $datos['pagina_web'],
-                    ':forma_pago' => $datos['forma_pago'],
-                    ':actividad_economica' => $datos['actividad_economica'],
-                    ':gerente_comercial' => $datos['gerente_comercial'],
-                    ':documento_gerente' => $datos['documento_gerente'],
-                    ':telefono_gerente' => $datos['telefono_gerente'],
-                    ':correo_gerente' => $datos['correo_gerente'],
-                    ':contacto' => $datos['contacto'],
-                    ':documento_contacto' => $datos['documento_contacto'],
-                    ':telefono_contacto' => $datos['telefono_contacto'],
-                    ':correo_contacto' => $datos['correo_contacto'],
-                    ':cta_detracciones' => $datos['cta_detracciones'],
-                    ':nombre_banco' => -1,
-                    ':tipo_moneda' => -1,
-                    ':tipo_cuenta' => -1,
-                    ':numero_cuenta' => ''
-                ]);
-            }
-            
 
-            
+                    $slqContacto = "INSERT INTO cm_entidadcon
+                                    SET id_centi     = :idcenti,
+                                        cnombres     = :nombres,
+                                        cdireccion  = :direccion,
+                                        cemail      = :correo,
+                                        ctelefono1  = :telefono,
+                                        nflgactivo  = :activo";
+
+                    $stmt = $pdo->prepare($slqContacto);
+                    $stmt->execute([
+                        ':idcenti'    =>$lastId,
+                        ':nombres'    =>$datos['contacto'],
+                        ':direccion'  =>$datos['telefono_contacto'],
+                        ':correo'     =>$datos['correo_contacto'],
+                        ':telefono'   =>$datos['telefono_contacto'],
+                        ':activo'     =>7
+                    ]);
+            }
+
             $pdo->commit();
             return ['status' => 'success'];
         }catch(PDOException $e){

@@ -122,7 +122,8 @@
                             cm_entidad.ncodpais,
                             cm_entidad.ncondpag,
                             cm_entidad.nrubro,
-                            cm_entidad.id_centi
+                            cm_entidad.id_centi,
+                            cm_entidad.nflgactualizado
                         FROM cm_entidad 
                         WHERE cm_entidad.cnumdoc = :ruc";
 
@@ -140,6 +141,8 @@
 
     function getDetailsById($pdo,$id){
         try {
+
+            $rowdetalle = [];
 
             $sql = "SELECT cm_detallenti.nomgercomer,
                             cm_detallenti.telgercomer,

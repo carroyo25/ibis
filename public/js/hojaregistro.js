@@ -39,31 +39,31 @@ $.addEventListener("click",(e)=>{
 
       try {
         
-        if ( contador > 0 ) throw new Error('Hay campos sin rellenar');
+        //if ( contador > 0 ) throw new Error('Hay campos sin rellenar');
         /*if ( !validar(ruc) ) throw new Error("El RUC ingresado es incorrecto...");*/
 
-        const form = $.querySelector('#datos_entidad')
-        const datos = new FormData(form);
+          const form = $.querySelector('#datos_entidad')
+          const datos = new FormData(form);
 
+          let accion = e.target.closest('a').dataset.accion,
+              funcion = accion == "modify" ? "actualizarProveedor":"grabarProveedor";
 
-        datos.append("funcion","grabarProveedor");
+          datos.append("funcion",funcion);
+          datos.append("bancos",JSON.stringify(detalleBancos()));
 
-        
-        datos.append("bancos",JSON.stringify(detalleBancos()));
-
-        notifier.async(
-          fetch ('procesos.php',{
-            method: 'POST',
-            body: datos
-          })
-          .then(response => response.json())
-          .then(data => {
-              limpiarFormato();
-          }),'',undefined,'Procesando'
-        )
-      .catch(error => {
-          console.error(error.message);
-      })
+          notifier.async(
+            fetch ('procesos.php',{
+              method: 'POST',
+              body: datos
+            })
+            .then(response => response.json())
+            .then(data => {
+                limpiarFormato();
+            }),'',undefined,'Procesando'
+          )
+        .catch(error => {
+            console.error(error.message);
+        })
       } catch (error) {
         notifier.alert(error.message);
       }
@@ -161,7 +161,6 @@ bancos.onclick = (e) => {
 
   return false;
 }
-
 
 tabla_bancos_body.addEventListener("click",(e)=>{
   e.preventDefault();
