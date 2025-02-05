@@ -405,7 +405,11 @@
         }
 
         public function crearExcelPrecio($parametros){
-            try {
+
+            $this->crearCSVExport('data');
+            return false;
+
+            /*try {
                 $salida = "";
                 $docData = [];
 
@@ -569,7 +573,7 @@
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;
-            }
+            }*/
         }
 
         private function crearExcelExport($datos){
@@ -1018,16 +1022,15 @@
         }
 
         private function crearCSVExport($datos){
-            $archivo_csv = fopen('public/documentos/reportes/valorizado.csv', 'w');
+            $path = $_SERVER['DOCUMENT_ROOT'];  
+            $archivo_csv = fopen($path.'\ibis\public\documentos\temp\valorizado.csv', 'x+');
 
-            $csv = fopen($archivo_csv, 'x+');
-
-            fputcsv($csv,array ('ncanti','nunitario','orden','tipo','tipo_pago','centro_costos','nombre_proyecto','area','codigo','descripcion','unidad',
+            fputcsv($archivo_csv,array ('ncanti','nunitario','orden','tipo','tipo_pago','centro_costos','nombre_proyecto','area','codigo','descripcion','unidad',
                         'tipo_cambio','observacion','anio','fecha_registro','entidad','direccion','pedido','tipo_moneda','FechaFin','cotizacion',
                         'nro_parte','ruc','grupo','clase','operaciones','finanzas','procura','cantidad_recepcion',
                         'total','fecha_entrega','dolares','soles'));
 
-            fclose($csv);
+            fclose($archivo_csv);
 
             
         }

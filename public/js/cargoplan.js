@@ -83,8 +83,8 @@ $(function() {
         $.post(RUTA+"cargoplan/crearCsv",str,
             function (data, textStatus, jqXHR) {
 
-                $("#esperar").css("opacity","0").fadeOut();
-                window.location.href = data.documento;
+                //$("#esperar").css("opacity","0").fadeOut();
+                //window.location.href = data.documento;
                 
             },
             "json"
