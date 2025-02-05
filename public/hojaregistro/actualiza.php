@@ -10,6 +10,8 @@
     $detalles = getDetailsById($pdo,$proveedor[0]["id_centi"]);
     $bancos = getEntityBancs($pdo,$proveedor[0]["id_centi"]);
 
+    print_r($_SESSION['ruc']);
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -32,8 +34,8 @@
             <input type="file" class="oculto" name="uploadruc" id="uploadruc">
             <input type="file" class="oculto" name="uploadcatalogo" id="uploadcatalogo">
 
-            <input type="hidden" name="actualiza" id="actualiza" value="<?php echo $proveedor[0]["nflgactualizado"]?>">
-            <input type="hidden" name="id" id="id" value="<?php echo $proveedor[0]["id_centi"]?>">
+            <input type="text" name="actualiza" id="actualiza" value="<?php echo $proveedor[0]["nflgactualizado"]?>">
+            <input type="text" name="id" id="id" value="<?php echo $proveedor[0]["id_centi"]?>">
 
             <section class="wrap__header">
                 <img src="../img/logo.png" alt="logo_sepcon">
@@ -101,7 +103,7 @@
                 <p class="detalle">Gerente Comercial</p>
                 <div class="seccion_data">
                     <label for="gerente_comercial">Nombres</label>
-                    <input type="text" name="gerente_comercial" id="gerente_comercial" value="<?php echo isset($detalles['nomgercomer']) ? $detalles['nomgercomer']:""?>">
+                    <input type="text" name="gerente_comercial" id="gerente_comercial" value="<?php echo isset($detalles['nomgercomer']) ? $detalles['nomgercomer']:"" ?>">
                     <label for="telefono_gerente">Telefono</label>
                     <input type="text" name="telefono_gerente" id="telefono_gerente" value="<?php echo isset($detalles['telgercomer']) ? $detalles['telgercomer']:""?>">
                     <label for="correo_gerente">Correo Electrónico</label>
@@ -110,20 +112,20 @@
                 <p class="detalle">Personal de contacto</p>
                 <div class="seccion_data">
                     <label for="contacto">Nombres</label>
-                    <input type="text" name="contacto" id="contacto" class="requerido" value="<?php echo isset($detalles['nomcontacto'])?>">
+                    <input type="text" name="contacto" id="contacto" class="requerido" value="<?php echo isset($detalles['nomcontacto']) ? $detalles['nomcontacto'] : ""?>">
                     <label for="telefono_contacto">Telefono</label>
-                    <input type="text" name="telefono_contacto" id="telefono_contacto" class="requerido" value="<?php echo isset($detalles['telcontacto'])?>">
+                    <input type="text" name="telefono_contacto" id="telefono_contacto" class="requerido" value="<?php echo isset($detalles['telcontacto']) ? $detalles['telcontacto'] : "" ?>">
                     <label for="correo_contacto">Correo Electrónico</label>
-                    <input type="text" name="correo_contacto" id="correo_contacto" class="requerido" value="<?php echo isset($detalles['corcontacto'])?>">
+                    <input type="text" name="correo_contacto" id="correo_contacto" class="requerido" value="<?php echo isset($detalles['corcontacto']) ? $detalles['corcontacto'] :"" ?>">
                 </div>
                 <p class="detalle">Contacto Personal Detracción</p>
                 <div class="seccion_data">
                     <label for="contacto_detraccion">Nombres</label>
-                    <input type="text" name="contacto_detraccion" id="contacto_detraccion" value="<?php echo isset($detalles['nomperdetra'])?>">
+                    <input type="text" name="contacto_detraccion" id="contacto_detraccion" value="<?php echo isset($detalles['nomperdetra']) ? $detalles['nomperdetra'] :""?>">
                     <label for="telefono_contacto">Telefono</label>
-                    <input type="text" name="telefono_contacto_detraccion" id="telefono_contacto_detraccion" value="<?php echo isset($detalles['telperdetra'])?>">
+                    <input type="text" name="telefono_contacto_detraccion" id="telefono_contacto_detraccion" value="<?php echo isset($detalles['telperdetra']) ? $detalles['telperdetra'] :""?>">
                     <label for="correo_contacto_detraccion">Correo Electrónico</label>
-                    <input type="text" name="correo_contacto_detraccion" id="correo_contacto_detraccion" value="<?php echo isset($detalles['corperdetra'])?>">
+                    <input type="text" name="correo_contacto_detraccion" id="correo_contacto_detraccion" value="<?php echo isset($detalles['corperdetra']) ? $detalles['corperdetra'] :""?>">
                 </div>
             </section>
             <section class="seccion_pagina">
@@ -156,7 +158,7 @@
                 </table>
                 <div class="seccion_data">
                     <label for="cta_detracciones">N° de cuenta detracciones</label>
-                    <input type="text" name="cta_detracciones" id="cta_detracciones" value="<?php echo isset($detalles['nctadetrac'])?>">
+                    <input type="text" name="cta_detracciones" id="cta_detracciones" value="<?php echo isset($detalles['nctadetrac']) ? $detalles['nctadetrac'] : ""?>">
                 </div>
             </section>
             <section class="seccion_pagina">

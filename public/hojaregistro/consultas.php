@@ -190,10 +190,11 @@
                     cm_entidadbco
                     LEFT JOIN tb_parametros AS bancos ON bancos.nidreg = cm_entidadbco.ncodbco
                     LEFT JOIN tb_parametros AS monedas ON monedas.nidreg = cm_entidadbco.cmoneda
-                    LEFT JOIN tb_parametros AS cuentas ON cuentas.nidreg = cm_entidadbco.ctipcta
+                    LEFT JOIN tb_parametros AS cuentas ON cuentas.nidreg = cm_entidadbco.ntipcta
                 WHERE
                     cm_entidadbco.nflgactivo = 7 
-                    AND cm_entidadbco.id_centi = :id";
+                    AND cm_entidadbco.id_centi = :id
+                    AND NOT ISNULL(cm_entidadbco.ntipcta)";
 
             $stmt = $pdo->prepare($sql);
             $stmt->execute([':id' => $id]);

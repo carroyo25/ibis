@@ -23,8 +23,6 @@
 
     function verificar($pdo,$datos){
         try {
-            $_SESSION['ruc'] = $datos['ruc'];
-            
             $sql = "SELECT cm_entidad.cnumdoc FROM cm_entidad WHERE cm_entidad.cnumdoc = :ruc";
             $stmt = $pdo->prepare($sql);
             $stmt->execute([':ruc' => $datos['ruc']]);
@@ -161,7 +159,7 @@
                                     SET id_centi = :idcenti, 
                                         ncodbco  = :codigo_banco,
                                         cnrocta  = :nro_cuenta,
-                                        ctipcta  = :tipo_cuenta,
+                                        ntipcta  = :tipo_cuenta,
                                         cmoneda  = :moneda";
 
                     if (count($bancos) > 0 ){
@@ -210,36 +208,26 @@
     
     function login($pdo, $datos){
         try{
-
-            $sql = 'SELECT id_centi, cnumdoc, cpassword FROM cm_entidad WHERE cnumdoc = :ruc';
+            $sql = "SELECT cm_entidad.cnumdoc,cm_entidad.cpassword,cm_entidad.id_centi FROM cm_entidad WHERE cm_entidad.cnumdoc = :ruc";
             $stmt = $pdo->prepare($sql);
             $stmt->execute([':ruc' => $datos['ruc']]);
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $count = $stmt->rowCount();
 
-            // Obtiene la fila completa
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            //print_r() ;
 
-            /* if ($result) {
-                $_SESSION['loggedin'] = TRUE;
-                $_SESSION['name'] = $datos['ruc'];
-                $_SESSION['id_centi'] = $result['id_centi'];
-            } */
-            if ($result) {
-                // Verificar si la contraseña ingresada coincide con el hash almacenado
-                if (password_verify($datos['password'], $result['cpassword'])) {
-                    // Contraseña válida, crear sesión
-                    $_SESSION['loggedin'] = TRUE;
-                    $_SESSION['name'] = $datos['ruc'];
-                    $_SESSION['id_centi'] = $result['id_centi'];
-                    
-                    return ['status' => 'success', 'logged' => $result];
-                } else {
-                    // Contraseña incorrecta
-                    return ['status' => 'error', 'message' => 'Contraseña incorrecta'];
+            if ($count) {
+                if ( $result[0]['cpassword'] == ""){
+                    return ['status' => 'success', 'message' => 'Ingreso sin password','ruc_exist'=>true];
+                }else{
+                    return ['status' => 'success', 'message' => 'Ingreso con password','ruc_exist'=>true];
                 }
-            } else {
-                // El usuario no existe
-                return ['status' => 'error', 'message' => 'Usuario no encontrado'];
+
+                
+            }else{
+                return ['status' => 'error', 'message' => 'Entidad no registrada','ruc_exist'=>false];
             }
+            
         }catch(PDOException $e){
             /* echo "Error al ingresar los datos: " . $e->getMessage(); */
             return ['status' => 'error', 'message' => $e->getMessage()];
@@ -254,6 +242,8 @@
             $nameFichaRuc = '';
             $nameCatalogo = '';
             $retencion  = $datos['contacto_detraccion'] == "" ? 1 : 2;
+
+            $bancos = json_decode($datos['bancos'], true);
 
             if (isset($_FILES['file_ruc']) && $_FILES['file_ruc']['error'] === UPLOAD_ERR_OK) {
                 $nameFichaRuc = 'ficha_'.$datos['ruc'].'_'.$fechaActual.'.'.pathinfo($_FILES['file_ruc']['name'], PATHINFO_EXTENSION);
@@ -347,23 +337,46 @@
                     $slqContacto = "INSERT INTO cm_entidadcon
                                     SET id_centi     = :idcenti,
                                         cnombres     = :nombres,
-                                        cdireccion  = :direccion,
                                         cemail      = :correo,
                                         ctelefono1  = :telefono,
                                         nflgactivo  = :activo";
 
                     $stmt = $pdo->prepare($slqContacto);
                     $stmt->execute([
-                        ':idcenti'    =>$lastId,
+                        ':idcenti'    =>$id,
                         ':nombres'    =>$datos['contacto'],
-                        ':direccion'  =>$datos['telefono_contacto'],
                         ':correo'     =>$datos['correo_contacto'],
                         ':telefono'   =>$datos['telefono_contacto'],
                         ':activo'     =>7
                     ]);
+
+                    //bancos del proveedor
+                    $sqlBanco = "INSERT INTO cm_entidadbco 
+                                    SET id_centi = :idcenti, 
+                                        ncodbco  = :codigo_banco,
+                                        cnrocta  = :nro_cuenta,
+                                        ntipcta  = :tipo_cuenta,
+                                        cmoneda  = :moneda";
+
+                    if (count($bancos) > 0 ){
+                        foreach($bancos as $banco){
+                            $stmt = $pdo->prepare($sqlBanco);
+
+                            $stmt->execute([
+                                ':idcenti'      =>$id,
+                                ':codigo_banco' =>$banco['idbanco'],
+                                ':nro_cuenta'   =>$banco['nrocuenta'],
+                                ':tipo_cuenta'  =>$banco['idcuenta'],
+                                ':moneda'       =>$banco['idmoneda']
+                            ]);
+                        }
+                    }
             }
 
             $pdo->commit();
+
+            $email  = enviarEmail($datos['correo_electronico'],$datos['razon_social'],$datos['ruc'],$clave);
+
             return ['status' => 'success'];
         }catch(PDOException $e){
             echo "Error al guardar los datos: " . $e->getMessage();

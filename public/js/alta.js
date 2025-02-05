@@ -17,9 +17,9 @@ btnActualiza.onclick = (e) => {
         if (claveprove.value == "") throw new Error("Ingrese clave del proveedor");
 
         let formData = new FormData();
-        formData.append("ruc",rucprove.value);
-        formData.append("clave",claveprove.value);
-        formData.append("funcion","verificar");
+            formData.append("ruc",rucprove.value);
+            formData.append("clave",claveprove.value);
+            formData.append("funcion","login");
 
         fetch("procesos.php",{
             method: "POST",
@@ -27,10 +27,15 @@ btnActualiza.onclick = (e) => {
         })
         .then(response =>response.json())
         .then(data =>{
-            window.location.href = "http://localhost/ibis/public/hojaregistro/actualiza.php";    
+            if ( data.ruc_exist == true)
+                console.log(data);
+                //window.location.href = "http://localhost/ibis/public/hojaregistro/actualiza.php";
+            else
+                notifier.alert("No esta registrado como proveedor");
+                
         })   
     } catch (error) {
-        notifier.alert("Ingrese sus datos par modificar");
+        notifier.alert("Ingrese sus datos para modificar");
     }
 
    
