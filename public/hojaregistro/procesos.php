@@ -65,8 +65,8 @@
                 move_uploaded_file($fileCatalogo['tmp_name'], $filePathCatalogo);
             }
 
-            $clave = generarClaveAleatoria(8);
-            $hashClave = password_hash($clave, PASSWORD_DEFAULT);
+            $clave = generarClaveAleatoria(10);
+            $hashClave = sha1($clave);
 
             $pdo->beginTransaction();
 
@@ -201,9 +201,17 @@
         }
     }
 
-    function generarClaveAleatoria($longitud = 8) {
-        $bytesAleatorios = random_bytes($longitud / 2);
-        return bin2hex($bytesAleatorios);
+    function generarClaveAleatoria($longitud) {
+        $key = '';
+
+        $pattern = '1234567890abcdefghijklmnopqrstuvwxyz';
+        
+        $max = strlen($pattern)-1;
+
+        for($i=0;$i < $longitud;$i++) 
+            $key .= $pattern{mt_rand(0,$max)};
+
+        return $key;
     }
     
     function login($pdo, $datos){
@@ -214,13 +222,28 @@
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
             $count = $stmt->rowCount();
 
-            //print_r() ;
-
             if ($count) {
-                if ( $result[0]['cpassword'] == ""){
-                    return ['status' => 'success', 'message' => 'Ingreso sin password','ruc_exist'=>true];
+                $_SESSION['ruc'] = $datos['ruc'];
+                
+                if ( $result[0]['cpassword'] == "" ){
+                    $_SESSION['log'] = true;
+                    $_SESSION{'haspassword'} = false;
+                    $messaje = "Actualizar Registro";
+                    $ruc_exist = true;
                 }else{
-                    return ['status' => 'success', 'message' => 'Ingreso con password','ruc_exist'=>true];
+                    if ( sha1($datos['clave']) == $result[0]['cpassword'] ){
+                        $_SESSION['log'] = true;
+                        $_SESSION{'haspassword'} = true;
+                        $messaje = "Ingreso correcto";
+                        $ruc_exist = true;
+                    }else{
+                        $_SESSION['log'] = false;
+                        $_SESSION{'haspassword'} = false;
+                        $messaje = "Error contraseña incorrecta";
+                        $ruc_exist = false;
+                    }
+
+                    return ['status' => 'success', 'message' => $messaje,'ruc_exist'=>$ruc_exist];
                 }
 
                 
@@ -263,8 +286,8 @@
                 move_uploaded_file($fileCatalogo['tmp_name'], $filePathCatalogo);
             }
 
-            $clave = generarClaveAleatoria(8);
-            $hashClave = password_hash($clave, PASSWORD_DEFAULT);
+            $clave = generarClaveAleatoria(10);
+            $hashClave = sha1($clave);
 
             $pdo->beginTransaction();
 

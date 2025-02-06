@@ -4,6 +4,7 @@
     session_start();
 
     $_SESSION['ruc'] = "";
+    $_SESSION['log'] = false;
 
     $version = rand(0, 9999);
 ?>

@@ -3,15 +3,16 @@
 
     session_start();
 
-    $paises = getCountries($pdo);
-    $pagos = getPaymentList($pdo);
-    $actividades = getEconomicActivity($pdo);
-    $proveedor = getEntiByRuc($pdo,$_SESSION['ruc']);
-    $detalles = getDetailsById($pdo,$proveedor[0]["id_centi"]);
-    $bancos = getEntityBancs($pdo,$proveedor[0]["id_centi"]);
-
-    print_r($_SESSION['ruc']);
-
+    if ($_SESSION['log'] == true) {
+        $paises = getCountries($pdo);
+        $pagos = getPaymentList($pdo);
+        $actividades = getEconomicActivity($pdo);
+        $proveedor = getEntiByRuc($pdo,$_SESSION['ruc']);
+        $detalles = getDetailsById($pdo,$proveedor[0]["id_centi"]);
+        $bancos = getEntityBancs($pdo,$proveedor[0]["id_centi"]);
+    }else{
+        header("Location: http://localhost/ibis/public/hojaregistro/");
+    }
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -34,8 +35,8 @@
             <input type="file" class="oculto" name="uploadruc" id="uploadruc">
             <input type="file" class="oculto" name="uploadcatalogo" id="uploadcatalogo">
 
-            <input type="text" name="actualiza" id="actualiza" value="<?php echo $proveedor[0]["nflgactualizado"]?>">
-            <input type="text" name="id" id="id" value="<?php echo $proveedor[0]["id_centi"]?>">
+            <input type="hidden" name="actualiza" id="actualiza" value="<?php echo $proveedor[0]["nflgactualizado"]?>">
+            <input type="hidden" name="id" id="id" value="<?php echo $proveedor[0]["id_centi"]?>">
 
             <section class="wrap__header">
                 <img src="../img/logo.png" alt="logo_sepcon">

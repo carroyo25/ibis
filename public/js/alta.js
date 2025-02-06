@@ -28,10 +28,9 @@ btnActualiza.onclick = (e) => {
         .then(response =>response.json())
         .then(data =>{
             if ( data.ruc_exist == true)
-                console.log(data);
-                //window.location.href = "http://localhost/ibis/public/hojaregistro/actualiza.php";
+                window.location.href = "http://localhost/ibis/public/hojaregistro/actualiza.php";
             else
-                notifier.alert("No esta registrado como proveedor");
+                notifier.alert(data.message);
                 
         })   
     } catch (error) {
