@@ -254,12 +254,12 @@
                                     $estado_item = "emitido";
                                     $estado_pedido = "emitido";
                                 }
-                            }else if( $rs['estadoItem'] == 52 && $rs['ingreso_obra'] == $rs['cantidad_pedido'] ) {
+                            }else if( $rs['estadoItem'] == 52 && round($rs['ingreso_obra'],2) == round($rs['cantidad_pedido'],2) ) {
                                 $porcentaje = "100%";
                                 $estadofila = "entregado";
                                 $estado_item = "atendido";
                                 $estado_pedido = "atendido";
-                            }else if( $rs['estadoItem'] == 52  && $rs['ingreso_obra'] == $rs['cantidad_aprobada'] && $rs['cantidad_aprobada'] > 0) {
+                            }else if( $rs['estadoItem'] == 52  && round($rs['ingreso_obra'],2) == round($rs['cantidad_pedido'],2) && $rs['cantidad_aprobada'] > 0) {
                                 $porcentaje = "100%";
                                 $estadofila = "entregado";
                                 $estado_item = "atendido";

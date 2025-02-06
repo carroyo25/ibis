@@ -405,15 +405,11 @@
         }
 
         public function crearExcelPrecio($parametros){
-
-            $this->crearCSVExport('data');
-            return false;
-
-            /*try {
+            try {
                 $salida = "";
                 $docData = [];
 
-                $salida = "";
+                $salida = "No hay registros";
 
                 $tipo       = $parametros['tipoSearch'] == -1 ? "%" : $parametros['tipoSearch'];
                 $costo      = $parametros['costosSearch'] == -1 ? "%" : $parametros['costosSearch'];
@@ -426,7 +422,6 @@
 
                 $opcion_exporta = $parametros['opcion_exporta'];
                 
-                $salida = "No hay registros";
                 $item = 1;
 
                 $sql = $this->db->connect()->prepare("SELECT
@@ -563,9 +558,7 @@
                     return array("documento"=>'public/documentos/reportes/cargoplanprecio.xlsx');
 
                 }else if ($opcion_exporta == "csv"){
-                    $this->crearCSVExport($docData);
-
-                    return array("documento"=>'public/documentos/reportes/valorizado.csv');
+                    return $docData;
                 }
                 
                 
@@ -573,7 +566,7 @@
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;
-            }*/
+            }
         }
 
         private function crearExcelExport($datos){
@@ -854,13 +847,13 @@
                         $estado_item = "aprobado";
                         $estado_pedido = "aprobado";
                         $color_mostrar = 'FC4236';
-                    }else if( $dato['estadoItem'] == 52  && $dato['ingreso_obra'] == $dato['cantidad_pedido'] ) {
+                    }else if( $dato['estadoItem'] == 52  && round($suma_atendido,2) === round($dato['cantidad_aprobada'],2) ) {
                         $porcentaje = "100%";
                         $estadofila = "entregado";
                         $estado_item = "atendido";
                         $estado_pedido = "atendido";
                         $color_mostrar = 'B3C5E6';
-                    }else if( $dato['estadoItem'] == 52  && $dato['ingreso_obra'] == $dato['cantidad_aprobada'] && $dato['cantidad_aprobada'] > 0) {
+                    }else if( $dato['estadoItem'] == 52  && round($suma_atendido,2) === round($dato['cantidad_aprobada'],2) && $dato['cantidad_aprobada'] > 0) {
                         $porcentaje = "100%";
                         $estadofila = "entregado";
                         $estado_item = "atendido";
@@ -1010,10 +1003,6 @@
                     $objPHPExcel->getActiveSheet()->setCellValue('AH'.$fila,$dato['cReferencia']);
                     $objPHPExcel->getActiveSheet()->setCellValue('AI'.$fila,$dato['familia']);
 
-                    //$objPHPExcel->getActiveSheet()->setCellValue('AJ'.$fila,$dato['ntotal']);
-                    //$objPHPExcel->getActiveSheet()->setCellValue('AK'.$fila,$dato['cantidad_orden']);
-
-
                     $fila++;
                 }
 
@@ -1025,14 +1014,17 @@
             $path = $_SERVER['DOCUMENT_ROOT'];  
             $archivo_csv = fopen($path.'\ibis\public\documentos\temp\valorizado.csv', 'x+');
 
-            fputcsv($archivo_csv,array ('ncanti','nunitario','orden','tipo','tipo_pago','centro_costos','nombre_proyecto','area','codigo','descripcion','unidad',
-                        'tipo_cambio','observacion','anio','fecha_registro','entidad','direccion','pedido','tipo_moneda','FechaFin','cotizacion',
-                        'nro_parte','ruc','grupo','clase','operaciones','finanzas','procura','cantidad_recepcion',
-                        'total','fecha_entrega','dolares','soles'));
+            fputcsv($archivo_csv,array ('items','estado','proyecto','area','tipo','Cantidad Pedida','Cantida Aprobada','codigo','Unidad','Descripcion','Tipo Orden',
+                        'Año Orden','Fecha Orden','Cant.Orden','Descripcion del Proveedor','Fecha Entrega','Cantida Recibida','Nro. Nota Ingreso','Fecha Recepcion Proveedor','Saldo por Recibir',
+                        'Dias Entrega','Días Atrazo','Semáforo','Operador Logístico','Observaciones/Concepto','Tipo Moneda','Tipo Cambio','Precio Dolares','Precio Soles',
+                        'Importe Total Dolares','Forma Pago','Familia'));
 
-            fclose($archivo_csv);
+            foreach ($datos as $dato) {
+                fputcsv($archivo_csv, $dato);
+            }
 
-            
+        
+            fclose($archivo_csv); 
         }
     }
 ?>

@@ -75,6 +75,9 @@ $(function() {
     $("#csvFile").click(function(e){
         e.preventDefault();
 
+        let cabecera = "items,estado,proyecto,area,tipo,Cantidad_Pedida,Cantidad_Aprobada,codigo,Unidad,Descripcion,Tipo_Orden,Orden,Fecha,Cant.Orden,Descripcion,Entrega,Recibida,Nota,Recepcion,Saldo,Dias,Atrazo,Semáforo,Operador_Logístico,Observaciones/Concepto,Moneda,Tipo_Cambio,Precio_Dolares,Precio_Soles,Importe_Total_Dolares,Forma_Pago,Familia"+ '\n';
+            csvData = [];
+
         $("#esperar").css("opacity","1").fadeIn();
         $("#opcion_exporta").val("csv");
 
@@ -83,12 +86,21 @@ $(function() {
         $.post(RUTA+"cargoplan/crearCsv",str,
             function (data, textStatus, jqXHR) {
 
-                //$("#esperar").css("opacity","0").fadeOut();
-                //window.location.href = data.documento;
+                $("#esperar").css("opacity","0").fadeOut();
+
+                data.forEach(row => {
+                    cabecera += row.iditem+','+row.ccodproy+','+row.estadoItem+'\n';
+                });
                 
+                console.log(cabecera);
             },
             "json"
         );
+
+        
+
+        //csvData.push(cabecera);
+        //getCSVFile(csvData.join(','))
 
         return false;
     });
@@ -181,4 +193,13 @@ detalles = () =>{
 
     return DATA;
 }
+
+function getCSVFile(csvData) {
+    let anchor = document.createElement('a');
+    anchor.href = 'data:text/csv;charset=utf-8,' + encodeURI(csvData);
+    anchor.target = '_blank';
+    anchor.download = 'test.csv';
+    anchor.click();
+ }
+
 
