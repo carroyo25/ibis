@@ -116,6 +116,7 @@
         try {
             $sql  = "SELECT cm_entidad.cnumdoc,
                             cm_entidad.crazonsoc,
+                            cm_entidad.cpassword,
                             cm_entidad.cviadireccion,
                             cm_entidad.ctelefono,
                             cm_entidad.cemail,

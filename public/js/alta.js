@@ -27,7 +27,8 @@ btnActualiza.onclick = (e) => {
         })
         .then(response =>response.json())
         .then(data =>{
-            if ( data.ruc_exist == true)
+
+            if ( data.ruc_exist == true )
                 window.location.href = "http://localhost/ibis/public/hojaregistro/actualiza.php";
             else
                 notifier.alert(data.message);

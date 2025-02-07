@@ -58,7 +58,8 @@ $.addEventListener("click",(e)=>{
             })
             .then(response => response.json())
             .then(data => {
-                limpiarFormato();
+                //limpiarFormato();
+                //window.location.href = "http://localhost/ibis/public/hojaregistro";
             }),'',undefined,'Procesando'
           )
         .catch(error => {
@@ -263,6 +264,7 @@ const detalleBancos = () => {
     for (let i = 0; i < nreg; i++) {
         let dato = {}
 
+        dato['grabado']   = fila[i].dataset.grabado;
         dato['idbanco']   = fila[i].cells[0].children[0].value;
         dato['idmoneda']  = fila[i].cells[1].children[0].value;
         dato['idcuenta']  = fila[i].cells[2].children[0].value;

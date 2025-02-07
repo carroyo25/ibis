@@ -85,7 +85,7 @@
                                         nflgactivo=:activo,
                                         nagenret=:retencion,
                                         ncondpag=:forma_pago,
-                                        nrubro=:actividad
+                                        nrubro=:actividad,
                                         nflgactualizado = 1";
             $stmt = $pdo->prepare($sql);
             $stmt->execute([
@@ -106,7 +106,7 @@
 
             $lastId = $pdo->lastInsertId();
 
-            if ($lastId > 0) {
+            if ( $lastId > 0 ) {
                     //detalles del proveedor
                     $sqlDet = "INSERT INTO cm_detallenti 
                                     SET idcenti = :idcenti,
@@ -216,16 +216,24 @@
     
     function login($pdo, $datos){
         try{
-            $sql = "SELECT cm_entidad.cnumdoc,cm_entidad.cpassword,cm_entidad.id_centi FROM cm_entidad WHERE cm_entidad.cnumdoc = :ruc";
+            $sql = "SELECT 
+                        cm_entidad.cnumdoc,
+                        cm_entidad.cpassword,
+                        cm_entidad.id_centi 
+                    FROM cm_entidad 
+                    WHERE cm_entidad.cnumdoc = :ruc
+                    AND cm_entidad.nflgactivo = 7";
             $stmt = $pdo->prepare($sql);
             $stmt->execute([':ruc' => $datos['ruc']]);
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
             $count = $stmt->rowCount();
+            
+            $ruc_exist = false;
 
-            if ($count) {
+            if ( $count > 0 ) {
                 $_SESSION['ruc'] = $datos['ruc'];
                 
-                if ( $result[0]['cpassword'] == "" ){
+                if ( $result[0]['cpassword'] == null ){
                     $_SESSION['log'] = true;
                     $_SESSION{'haspassword'} = false;
                     $messaje = "Actualizar Registro";
@@ -242,17 +250,12 @@
                         $messaje = "Error contraseña incorrecta";
                         $ruc_exist = false;
                     }
-
-                    return ['status' => 'success', 'message' => $messaje,'ruc_exist'=>$ruc_exist];
-                }
-
-                
+                } 
+                return ['status' => 'success', 'message' => $messaje,'ruc_exist'=>$ruc_exist];
             }else{
                 return ['status' => 'error', 'message' => 'Entidad no registrada','ruc_exist'=>false];
             }
-            
         }catch(PDOException $e){
-            /* echo "Error al ingresar los datos: " . $e->getMessage(); */
             return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }
@@ -325,10 +328,10 @@
                 ':actividad' => $datos['actividad_economica']
             ]);
 
-            if ($datos['actualiza'] == 0 ){
+            $id = $datos['id'];
 
-                $id = $datos['id'];
-                
+            if ( $datos['actualiza'] == 0 ){
+
                 $sqlDet = "INSERT INTO cm_detallenti 
                                     SET idcenti = :idcenti,
                                         nomgercomer = :gerente,
@@ -394,6 +397,77 @@
                             ]);
                         }
                     }
+            }else{
+                $id = $datos['id'];
+                
+                $sqlDet = "INSERT INTO cm_detallenti 
+                                    SET nomgercomer = :gerente,
+                                        telgercomer = :telefonogerente,
+                                        corgercomer = :correogerente,
+                                        nomcontacto = :nombrecontacto,
+                                        telcontacto = :telefonocontacto,
+                                        corcontacto = :correocontacto,
+                                        nomperdetra = :nombredetraccion,
+                                        telperdetra = :telefonodetraccion,
+                                        corperdetra = :correodetraccion,
+                                        nctadetrac  = :cuentadetraccion
+                                    WHERE  idcenti = :idcenti";
+            
+                    $stmt = $pdo->prepare($sqlDet);
+                    $stmt->execute([
+                        ':idcenti'              =>$id,
+                        ':gerente'              =>$datos['gerente_comercial'],
+                        ':telefonogerente'      =>$datos['telefono_gerente'],
+                        ':correogerente'        =>$datos['correo_gerente'],
+                        ':nombrecontacto'       =>$datos['contacto'],
+                        ':telefonocontacto'     =>$datos['telefono_contacto'],
+                        ':correocontacto'       =>$datos['correo_contacto'],
+                        ':nombredetraccion'     =>$datos['contacto_detraccion'],
+                        ':telefonodetraccion'   =>$datos['telefono_contacto_detraccion'],
+                        ':correodetraccion'     =>$datos['correo_contacto_detraccion'],
+                        ':cuentadetraccion'     =>$datos['cta_detracciones'],
+                    ]);
+
+                    $slqContacto = "INSERT INTO cm_entidadcon
+                                    SET cnombres     = :nombres,
+                                        cemail      = :correo,
+                                        ctelefono1  = :telefono,
+                                        nflgactivo  = :activo
+                                    WHERE id_centi  = :idcenti";
+
+                    $stmt = $pdo->prepare($slqContacto);
+                    $stmt->execute([
+                        ':idcenti'    =>$id,
+                        ':nombres'    =>$datos['contacto'],
+                        ':correo'     =>$datos['correo_contacto'],
+                        ':telefono'   =>$datos['telefono_contacto'],
+                        ':activo'     =>7
+                    ]);
+                    
+
+                     //bancos del proveedor
+                     $sqlBanco = "INSERT INTO cm_entidadbco 
+                                    SET id_centi = :idcenti, 
+                                        ncodbco  = :codigo_banco,
+                                        cnrocta  = :nro_cuenta,
+                                        ntipcta  = :tipo_cuenta,
+                                        cmoneda  = :moneda";
+
+                        if (count($bancos) > 0 ){
+                            foreach($bancos as $banco){ 
+                                if ($banco['grabado'] == '0') {
+                                     $stmt = $pdo->prepare($sqlBanco);
+
+                                    $stmt->execute([
+                                        ':idcenti'      =>$id,
+                                        ':codigo_banco' =>$banco['idbanco'],
+                                        ':nro_cuenta'   =>$banco['nrocuenta'],
+                                        ':tipo_cuenta'  =>$banco['idcuenta'],
+                                        ':moneda'       =>$banco['idmoneda']
+                                    ]);
+                                }
+                            }
+                        }
             }
 
             $pdo->commit();

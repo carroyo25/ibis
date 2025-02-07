@@ -430,16 +430,16 @@
 
             $datos = json_decode($detalles);
             $nreg = count($datos);
-
-            for ($i=0; $i < $nreg; $i++) { 
-                try {
-
-                        //if ( $existe == 0) {
-                            $sql = $this->db->connect()->prepare("INSERT INTO tb_pedidodet 
+            
+            $sql = $this->db->connect()->prepare("INSERT INTO tb_pedidodet 
                                                                     SET idpedido=:ped,idprod=:prod,idtipo=:tipo,unid=:und,
                                                                         cant_pedida=:cant,cant_aprob=:aprob,estadoItem=:est,tipoAten=:aten,
                                                                         verificacion=:ver,nflgqaqc=:qaqc,idcostos=:costos,idarea=:area,
                                                                         observaciones=:espec,item=:nropos");
+
+            for ($i=0; $i < $nreg; $i++) { 
+                try {
+                        //if ( $existe == 0) {
                             $sql ->execute([
                                 "ped"=>$indice,
                                 "prod"=>$datos[$i]->idprod,

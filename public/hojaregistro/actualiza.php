@@ -27,10 +27,11 @@
 <body>
     <div class="floating">
         <a href="#" id="floatUp" class="floatingOptions"><i class="fas fa-arrow-alt-circle-up"></i></a>
+        <a href="#" id="changePass" class="floatingOptions"><i class="fas fa-key"></i></a>
         <a href="#" id="cancelReg" class="floatingOptions"><i class="fas fa-ban"></i></a>
         <a href="#" id="floatSave" class="floatingOptions btnSave" data-accion="modify"><i class="fas fa-save"></i></a>
     </div>
-    <div class="wrap">
+    <div class="wrap" id="wrap">
         <form id="datos_entidad" method="POST" enctype="multipart/form-data">
             <input type="file" class="oculto" name="uploadruc" id="uploadruc">
             <input type="file" class="oculto" name="uploadcatalogo" id="uploadcatalogo">
@@ -147,12 +148,12 @@
                     </thead>
                     <tbody id="tabla_bancos_body">
                         <?php foreach ($bancos as $banco) {?>
-                            <tr data-grabado="<?php echo $banco['nitem']?>">
+                            <tr data-grabado="1">
                                 <td><input type="text" value="<?php echo $banco['banco']?>"></td>
                                 <td><input type="text" value="<?php echo $banco['moneda']?>"></td>
                                 <td><input type="text" value="<?php echo $banco['cuenta']?>"></td>
                                 <td><input type="text" value="<?php echo $banco['cnrocta']?>"></td>
-                                <td><a href="#" data-grabado="1" data-idx=""><i class="fas fa-trash-alt lnkTrash"></i></a></td>
+                                <td><a href="<?php echo $banco['nitem']?>" data-grabado="1" data-idx=""><i class="fas fa-trash-alt lnkTrash"></i></a></td>
                             </tr>
                         <?php }?>
                     </tbody>
