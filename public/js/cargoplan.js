@@ -75,7 +75,7 @@ $(function() {
     $("#csvFile").click(function(e){
         e.preventDefault();
 
-        let cabecera = "items,estado,proyecto,area,tipo,Cantidad_Pedida,Cantidad_Aprobada,codigo,Unidad,Descripcion,Tipo_Orden,Orden,Fecha,Cant.Orden,Descripcion,Entrega,Recibida,Nota,Recepcion,Saldo,Dias,Atrazo,Semáforo,Operador_Logístico,Observaciones/Concepto,Moneda,Tipo_Cambio,Precio_Dolares,Precio_Soles,Importe_Total_Dolares,Forma_Pago,Familia"+ '\n';
+        let cabecera = "items;estado;proyecto;area;tipo;Cantidad_Pedida;Cantidad_Aprobada;codigo;Unidad;Descripcion;Tipo_Orden;Orden;Fecha;Cant.Orden;Descripcion;Entrega;Recibida;Nota;Recepcion;Saldo;Dias;Atrazo;Semáforo;Operador_Logístico;Observaciones/Concepto;Moneda;Tipo_Cambio;Precio_Dolares;Precio_Soles;Importe_Total_Dolares;Forma_Pago;Familia"+'\n';
             csvData = [];
 
         $("#esperar").css("opacity","1").fadeIn();
@@ -88,20 +88,21 @@ $(function() {
 
                 $("#esperar").css("opacity","0").fadeOut();
 
+                let item = 0;
+
                 data.forEach(row => {
-                    cabecera += row.iditem+','+row.ccodproy+','+row.estadoItem+'\n';
+                    item++;
+        
+                    let tipo = row.idtipomov  == 37 ? "BIENES" : "SERVICIOS";
+                    cabecera += item +';'+row.ccodproy+';'+row.estadoItem+';'+row.area+';'+tipo+';'+row.cantidad_pedido+';'+row.cantidad_pedido+';'+row.ccodprod+';'+row.unidad+';'+row.descripcionItem+'\n';
                 });
                 
-                console.log(cabecera);
+
+                csvData.push(cabecera);
+                getCSVFile(csvData.join(','))
             },
             "json"
         );
-
-        
-
-        //csvData.push(cabecera);
-        //getCSVFile(csvData.join(','))
-
         return false;
     });
 })

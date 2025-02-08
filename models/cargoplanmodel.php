@@ -435,6 +435,8 @@
                                                         lg_ordendet.id_orden AS orden,
                                                         cm_producto.ccodprod,
                                                         UPPER( CONCAT_WS( ' ', cm_producto.cdesprod, tb_pedidodet.observaciones ) ) AS descripcion,
+                                                        UPPER( cm_producto.cdesprod ) AS descripcionItem,
+                                                        UPPER( tb_pedidodet.observaciones ) AS observacioPedidoIem,
                                                         tb_pedidodet.estadoItem,
                                                         tb_proyectos.ccodproy,
                                                         tb_proyectos.nidreg AS idproyecto,
