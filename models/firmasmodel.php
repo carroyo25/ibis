@@ -114,7 +114,8 @@
                                                          data-finanzas="'.$ffin.'"
                                                          data-logistica="'.$flog.'"
                                                          data-operaciones="'.$fope.'"
-                                                         data-firmas="'.$rs['estado_firmas'].'">
+                                                         data-firmas="'.$rs['estado_firmas'].'"
+                                                         id ="'.$rs['id_regmov'].'">
                                         <td class="textoCentro">'.str_pad($rs['cnumero'],4,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.date("d/m/Y", strtotime($rs['ffechadoc'])).'</td>
                                         <td class="pl20px">'.$rs['concepto'].'</td>

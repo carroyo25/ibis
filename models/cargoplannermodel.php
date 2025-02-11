@@ -102,7 +102,8 @@
                                                         DATE_FORMAT(DATE_ADD(GREATEST( COALESCE ( lg_ordencab.fechaLog, '' ), COALESCE ( lg_ordencab.fechaOpe, '' ), COALESCE ( lg_ordencab.FechaFin, '' ) ), INTERVAL lg_ordencab.nplazo DAY),'%d/%m/%Y') AS fecha_entrega_final,
                                                         alm_transfercab.cnumguia AS guia_transferencia,
                                                         LPAD(alm_transfercab.idreg,6,0) AS nota_transferencia,
-                                                        DATE_FORMAT(alm_transfercab.ftraslado,'%d/%m/%Y') AS fecha_traslado
+                                                        DATE_FORMAT(alm_transfercab.ftraslado,'%d/%m/%Y') AS fecha_traslado,
+                                                        asignacion.cnombres AS asigna 
                                                     FROM
                                                         tb_pedidodet
                                                         LEFT JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
@@ -126,7 +127,8 @@
                                                         LEFT JOIN tb_equipmtto ON tb_pedidodet.nregistro = tb_equipmtto.idreg
                                                         LEFT JOIN tb_user AS usuarios ON tb_pedidocab.usuario = usuarios.iduser
                                                         LEFT JOIN alm_transferdet ON alm_transferdet.iddetped = tb_pedidodet.iditem
-	                                                    LEFT JOIN alm_transfercab ON alm_transfercab.idreg = alm_transferdet.idtransfer	 
+	                                                    LEFT JOIN alm_transfercab ON alm_transfercab.idreg = alm_transferdet.idtransfer
+                                                        LEFT JOIN tb_user AS asignacion ON tb_pedidodet.idasigna = asignacion.iduser 	 
                                             WHERE
                                                 tb_pedidodet.nflgActivo
                                                 AND ISNULL( lg_ordendet.nflgactivo ) 
@@ -434,6 +436,7 @@
                                         <td class="textoCentro">'.$transporte.'</td>
                                         <td class="pl10px">'.$rs['concepto'].'</td>
                                         <td class="pl10px">'.$rs['usuario'].'</td>
+                                        <td class="pl10px">'.$rs['asigna'].'</td>
                                 </tr>';
                                 
                                 $nro_orden = $rs['orden'];

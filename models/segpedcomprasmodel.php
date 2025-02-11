@@ -41,7 +41,7 @@
                                                         LEFT JOIN ibis.tb_user ON ibis.tb_pedidocab.asigna = ibis.tb_user.iduser
                                                         LEFT JOIN ibis.tb_parametros AS compras ON ibis.tb_pedidocab.estadoCompra = compras.nidreg 
                                                     WHERE
-                                                        ibis.tb_pedidocab.estadodoc = 54 
+                                                        ibis.tb_pedidocab.estadodoc = 54
                                                         AND ibis.tb_pedidocab.nflgactivo = 1
                                                     ORDER BY
                                                         ibis.tb_pedidocab.emision DESC");
@@ -176,55 +176,7 @@
             }
         }
 
-        public function modificarAsignacion($pedido,$usuario) {
-            try {
-                $sw = $this->validarItems($pedido);
-
-                if (!$sw) {
-                    $sql = $this->db->connect()->prepare("UPDATE tb_pedidocab 
-                                                        SET tb_pedidocab.asigna=:asignado,
-                                                            tb_pedidocab.libera=:usuario
-                                                        WHERE tb_pedidocab.idreg =:pedido");
-                    $sql->execute(["asignado"=>NULL,
-                                    "pedido"=>$pedido,
-                                    "usuario"=>$usuario]);
-
-                    $rowCount = $sql->rowCount();
-
-                    if ($rowCount > 0){
-                        $this->liberarDetalles($pedido);
-                    }
-                }
-
-                return array("existe" => $sw);
-            } catch (PDOException $th) {
-                echo $th->getMessage();
-                return false;
-            }
-        }
-
-        private function validarItems($pedido){
-            try {
-                $sql = $this->db->connect()->prepare("SELECT COUNT(*) AS existe FROM lg_ordendet WHERE lg_ordendet.nidpedi=:pedido");
-                $sql->execute(["pedido" => $pedido]);
-
-                $result = $sql->fetchAll();
-
-                return $result[0]['existe'];
-
-            } catch (PDOException $th) {
-                echo $th->getMessage();
-                return false;
-            }
-        }
-
-        private function liberarDetalles($pedido){
-            $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet 
-                                                        SET tb_pedidodet.idasigna = NULL
-                                                        WHERE tb_pedidodet.idpedido = :pedido");
-            $sql->execute(["pedido" => $pedido]);
-        }
-
+    
         private function estadosCompras() {
             try {
                 $sql  = $this->db->connect()->query("SELECT tb_parametros.nidreg, 
@@ -238,6 +190,160 @@
                 $result = $sql->fetchAll();
 
                 return $result;
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function consultarReqId($id,$min,$max,$proceso){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        ibis.tb_pedidocab.idreg, 
+                                                        ibis.tb_pedidocab.idcostos, 
+                                                        ibis.tb_pedidocab.idarea, 
+                                                        ibis.tb_pedidocab.idtrans, 
+                                                        ibis.tb_pedidocab.idsolicita, 
+                                                        ibis.tb_pedidocab.idtipomov, 
+                                                        ibis.tb_pedidocab.emision, 
+                                                        ibis.tb_pedidocab.vence, 
+                                                        ibis.tb_pedidocab.estadodoc, 
+                                                        ibis.tb_pedidocab.nrodoc, 
+                                                        ibis.tb_pedidocab.usuario, 
+                                                        UPPER(ibis.tb_pedidocab.concepto)  AS concepto, 
+                                                        ibis.tb_pedidocab.detalle, 
+                                                        ibis.tb_pedidocab.nivelAten, 
+                                                        ibis.tb_pedidocab.docfPdfPrev, 
+                                                        ibis.tb_pedidocab.docPdfEmit, 
+                                                        ibis.tb_pedidocab.docPdfAprob, 
+                                                        ibis.tb_pedidocab.verificacion,
+                                                        ibis.tb_pedidocab.nmtto,
+                                                        ibis.tb_pedidocab.asigna,
+                                                        CONCAT( rrhh.tabla_aquarius.apellidos, ' ', rrhh.tabla_aquarius.nombres ) AS nombres, 
+                                                        UPPER(
+                                                        CONCAT( ibis.tb_proyectos.ccodproy, ' ', ibis.tb_proyectos.cdesproy )) AS proyecto, 
+                                                        UPPER(
+                                                        CONCAT( ibis.tb_area.ccodarea, ' ', ibis.tb_area.cdesarea )) AS area, 
+                                                        UPPER(
+                                                        CONCAT( ibis.tb_parametros.nidreg, ' ', ibis.tb_parametros.cdescripcion )) AS transporte,
+                                                        tb_parametros.cobservacion, 
+                                                        estados.cdescripcion AS estado, 
+                                                        estados.cabrevia, 
+                                                        UPPER(
+                                                        CONCAT_WS( ' ', tipos.nidreg, tipos.cdescripcion )) AS tipo, 
+                                                        ibis.tb_proyectos.veralm, 
+                                                        ibis.tb_user.cnombres,
+                                                        ibis.tb_partidas.cdescripcion,
+                                                        ibis.tb_pedidocab.idpartida
+                                                    FROM
+                                                        ibis.tb_pedidocab
+                                                        INNER JOIN
+                                                        rrhh.tabla_aquarius
+                                                        ON 
+                                                            ibis.tb_pedidocab.idsolicita = rrhh.tabla_aquarius.internal
+                                                        INNER JOIN
+                                                    ibis.tb_proyectos ON ibis.tb_pedidocab.idcostos = ibis.tb_proyectos.nidreg
+                                                    INNER JOIN ibis.tb_area ON ibis.tb_pedidocab.idarea = ibis.tb_area.ncodarea
+                                                    INNER JOIN ibis.tb_parametros ON ibis.tb_pedidocab.idtrans = ibis.tb_parametros.nidreg
+                                                    INNER JOIN ibis.tb_parametros AS transportes ON ibis.tb_pedidocab.idtrans = transportes.nidreg
+                                                    INNER JOIN ibis.tb_parametros AS estados ON ibis.tb_pedidocab.estadodoc = estados.nidreg
+                                                    INNER JOIN ibis.tb_parametros AS tipos ON ibis.tb_pedidocab.idtipomov = tipos.nidreg
+                                                    INNER JOIN ibis.tb_user ON ibis.tb_pedidocab.usuario = ibis.tb_user.iduser
+                                                    LEFT JOIN ibis.tb_partidas ON ibis.tb_pedidocab.idpartida = ibis.tb_partidas.idreg 
+                                                    WHERE
+                                                        tb_pedidocab.idreg = :id 
+                                                    AND tb_pedidocab.estadodoc BETWEEN :min 
+                                                    AND :max");
+                $sql->execute(['id'=>$id, 'min'=>$min, 'max'=>$max]);
+                $rowCount = $sql->rowCount();
+                
+                if ($rowCount > 0) {
+                    $docData = array();
+                    while($row=$sql->fetch(PDO::FETCH_ASSOC)){
+                        $docData[] = $row;
+                    }
+                }
+
+                $detalles = $this->consultarDetallesSeguimiento($id);
+
+                return array("cabecera"=>$docData,
+                            "detalles"=>$detalles,
+                            "total_adjuntos"=>$this->contarAdjuntos($id,"PED"));
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        private function consultarDetallesSeguimiento($id){
+            try {
+                $salida ="";
+
+                $sql=$this->db->connect()->prepare("SELECT
+                                                    tb_pedidodet.iditem,
+                                                    tb_pedidodet.idpedido,
+                                                    tb_pedidodet.idprod,
+                                                    tb_pedidodet.idtipo,
+                                                    tb_pedidodet.nroparte,
+                                                    tb_pedidodet.unid,
+                                                    UPPER(tb_pedidodet.obsAprueba) AS observaAprueba,
+                                                    REPLACE ( FORMAT( tb_pedidodet.cant_pedida, 2 ), ',', '' ) AS cant_pedida,
+                                                    REPLACE ( FORMAT( tb_pedidodet.cant_resto, 2 ), ',', '' ) AS cant_pendiente,
+                                                    REPLACE ( FORMAT( tb_pedidodet.cant_atend, 2 ), ',', '' ) AS cant_atendida,
+                                                    REPLACE ( FORMAT( tb_pedidodet.cant_aprob, 2 ), ',', '' ) AS cant_aprob,
+                                                    tb_pedidodet.estadoItem,
+                                                    cm_producto.ccodprod,
+                                                    UPPER(CONCAT_WS( ' ', cm_producto.cdesprod, tb_pedidodet.observaciones )) AS cdesprod,
+                                                    tb_unimed.cabrevia,
+                                                    tb_pedidodet.nflgqaqc,
+                                                    tb_pedidodet.especificaciones,
+                                                    CONCAT_WS('/', tb_equipmtto.cregistro, tb_equipmtto.cdescripcion ) AS registro 
+                                                FROM
+                                                    tb_pedidodet
+                                                    LEFT JOIN cm_producto ON tb_pedidodet.idprod = cm_producto.id_cprod
+                                                    LEFT JOIN tb_unimed ON tb_pedidodet.unid = tb_unimed.ncodmed
+                                                    LEFT JOIN tb_equipmtto ON tb_pedidodet.nregistro = tb_equipmtto.idreg 
+                                                WHERE
+                                                    tb_pedidodet.idpedido = :id 
+                                                    AND tb_pedidodet.nflgActivo = 1
+                                                    AND (tb_pedidodet.estadoItem = 54 OR tb_pedidodet.estadoItem = 230)");
+                $sql->execute(["id"=>$id]);
+                $rowCount = $sql->rowCount();
+                
+                if ($rowCount > 0){
+                    $filas = 1;
+                    while ($rs = $sql->fetch()) {
+
+                        $atendida = $rs['cant_atendida'] == NULL || $rs['cant_atendida'] == '' ? 0 : $rs['cant_atendida'];
+                        //$aprobar =  $rs['cant_pedida'] - $rs['cant_atendida'];
+                        $aprobar = $rs['cant_aprob'];
+
+                        $estado_aprobar = $aprobar == 0 ? "desactivado" : "";
+                        
+                        $salida .='<tr data-grabado="1" data-idprod="'.$rs['idprod'].'" data-codund="'.$rs['unid'].'" data-idx="'.$rs['iditem'].'" class="'.$estado_aprobar.'">
+                                        <td class="textoCentro">'.str_pad($filas++,3,0,STR_PAD_LEFT).'</td>
+                                        <td class="textoCentro">'.$rs['ccodprod'].'</td>
+                                        <td class="pl20px">'.$rs['cdesprod'].'</td>
+                                        <td class="textoCentro">'.$rs['cabrevia'].'</td>
+                                        <td class="textoCentro">'.$rs['cant_pedida'].'</td>
+                                        <td class="textoCentro">'.$rs['cant_atendida'].'</td>
+                                        <td>
+                                            <input type="text" 
+                                                        step="any" 
+                                                        placeholder="0.00" 
+                                                        onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"
+                                                        onclick="this.select()" 
+                                                        value="'.number_format($aprobar,2).'"
+                                                        class="textoDerecha">
+                                        </td>
+                                        <td class="textoCentro">'.$rs['nroparte'].'</td>
+                                        <td class="pl20px">'.$rs['observaAprueba'].'</td>
+                                        <td class="textoCentro">'.$rs['registro'].'</td>
+                                    </tr>';
+                    }
+                }
+                
+                return $salida;
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;

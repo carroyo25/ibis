@@ -1012,7 +1012,7 @@
                 $objWriter->save('public/documentos/reportes/cargoplanprecio.xlsx');
         }
 
-        /*private function crearCSVExport($datos){
+        private function crearCSVExport($datos){
             $path = $_SERVER['DOCUMENT_ROOT'];  
             $archivo_csv = fopen($path.'\ibis\public\documentos\temp\valorizado.csv', 'x+');
 
@@ -1027,6 +1027,6 @@
 
         
             fclose($archivo_csv); 
-        }*/
+        }
     }
 ?>

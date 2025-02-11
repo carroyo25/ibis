@@ -16,6 +16,10 @@
         function consultarPedidos(){
             echo json_encode($this->model->listarPedidosSeguimientoCompras());
         }
+
+        function consultaId(){
+            echo json_encode($this->model->consultarReqId($_POST['id'],54,230,54,null));
+        }
         
     }
 ?>

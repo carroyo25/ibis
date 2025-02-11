@@ -143,6 +143,22 @@
             </div>
         </div>
     </div>
+    <div class="modal" id="cambioestado">
+        <div class="ventanaOperador">
+            <h3>Asignar Operador</h3>
+            <input type="hidden" name="operador_asignado" id="operador_asignado">
+            <hr>
+            <div class="contenedor_operadores">
+                <ul id="operadores">
+                    <?php echo $this->listaOperadores ?>
+                </ul>
+            </div>
+            <div>
+                <button type="button" id="aceptaAsigna">Asignar</button>
+                <button type="button" id="cancelaAsigna">Cancelar</button>
+            </div>
+        </div>
+    </div>
     <div class="modal" id="vistaAdjuntos">
         <div class="ventanaAdjuntos">
             <div class="tituloAdjuntos">
@@ -215,6 +231,7 @@
                     <th>Atencion</th>
                     <th data-idcol="8" class="datafiltro">Asignado</th>
                     <th data-idcol="9" class="datafiltro" width="10%">Estado<br/>Compras</th>
+                    <th>...</th>
                 </tr>
             </thead>
             <tbody>

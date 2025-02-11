@@ -1,12 +1,17 @@
 $(function() {
 
     let ingresos = 0,
-        swcoment = false;
+        swcoment = false,
+        fila = "";
 
-    $("#esperar").fadeOut();
+    $("#esperar").css({"display":"none","opacity":"0"});
 
     $("#tablaPrincipal tbody").on("click","tr", function (e) {
         e.preventDefault();
+
+        fila = $(this).attr('id');
+
+        $("#esperar").css({"display":"block","opacity":"1"});
 
         $("#estado_firmas").val($(this).data('firmas'));
 
@@ -100,6 +105,7 @@ $(function() {
                 ingresos    = 0
                 swcoment    = false;
 
+                $("#esperar").css({"display":"none","opacity":"0"});
                 $("#proceso").fadeIn();
             },
             "json"
@@ -137,19 +143,11 @@ $(function() {
 
     $("#closeProcess").click(function (e) { 
         e.preventDefault();
+        
+        $("#proceso").fadeOut(function(){
+            $("form")[0].reset();
+        });
 
-        $.post(RUTA+"firmas/actualizaListado",
-            function (data, textStatus, jqXHR) {
-                $(".itemsTabla table tbody")
-                    .empty()
-                    .append(data);
-
-                $("#proceso").fadeOut(function(){
-                    $("form")[0].reset();
-                });
-            },
-            "text"
-        );
         return false;
     });
 
@@ -254,11 +252,23 @@ $(function() {
     $("#btnAceptarPregunta").click(function (e) { 
         e.preventDefault();
 
+        $("#pregunta,#proceso").fadeOut();
+
         $.post(RUTA+"firmas/autoriza", {id:$("#codigo_orden").val()},
             function (data, textStatus, jqXHR) {
                 $(".itemsTabla table tbody").empty().append(data.listado);
+                
                 mostrarMensaje(data.mensaje,data.clase);
-                $("#pregunta,#proceso").fadeOut();
+
+                $("#esperar").css({"display":"none","opacity":"0"});
+
+                if ($("#id_user").val() == "633ae7e588a52"){
+                    $('#'+fila+' td:first').parent().find('td').eq('9').children().remove().end().append('<i class="far fa-check-square"></i>');
+                }else if($("#id_user").val() == "6288328f58068"){
+                    $('#'+fila+' td:first').parent().find('td').eq('10').children().remove().end().append('<i class="far fa-check-square"></i>');
+                }else if($("#id_user").val() == "62883306d1cd3"){
+                    $('#'+fila+' td:first').parent().find('td').eq('11').children().remove().end().append('<i class="far fa-check-square"></i>');
+                }
             },
             "json"
         );

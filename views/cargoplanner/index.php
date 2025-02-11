@@ -377,6 +377,7 @@
                     <th>Tipo</br>Transporte</th>
                     <th data-idcol="40" class="datafiltro">Observaciones/Concepto</th>
                     <th data-idcol="41" class="datafiltro">Solicitante</th>
+                    <th data-idcol="41" class="datafiltro">Pedido Asignado</th>
                 </tr>
             </thead>
             <tbody>
