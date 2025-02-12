@@ -7,7 +7,7 @@
 
         function render(){
             $this->view->listaCostos = $this->model->costosPorUsuarioSelect($_SESSION['iduser']);
-            $this->view->listaPedidos = $this->model->listarPedidosSeguimientoCompras();
+            //$this->view->listaPedidos = $this->model->listarPedidosSeguimientoCompras();
             $this->view->listaOperadores = $this->model->listarOperadores();
             $this->view->estadosCompra = $this->model->estadosCompras();
             $this->view->listaCostosSelect = $this->model->costosPorUsuarioSelect($_SESSION['iduser']);
@@ -15,7 +15,7 @@
         }
 
         function consultarPedidos(){
-            echo json_encode($this->model->listarPedidosSeguimientoCompras());
+            echo json_encode($this->model->listarPedidosSeguimientoCompras($_POST));
         }
 
         function consultaId(){

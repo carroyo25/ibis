@@ -6,10 +6,13 @@
             parent::__construct();
         }
 
-        public function listarPedidosSeguimientoCompras(){
+        public function listarPedidosSeguimientoCompras($datos){
             try {
                 $salida = "";
-                $sql = $this->db->connect()->query("SELECT
+                $pedido = $datos['pedido'] === "" ? "%" : "%".$datos['pedido']."%";
+                $costos = $datos['costos'] === "-1" ? "%" : "%".$datos['costos']."%";
+
+                $sql = $this->db->connect()->prepare("SELECT
                                                         LPAD( ibis.tb_pedidocab.nrodoc, 6, 0 ) AS nrodoc,
                                                         UPPER( ibis.tb_pedidocab.concepto ) AS concepto,
                                                         ibis.tb_pedidocab.idreg AS idreg,
@@ -31,7 +34,8 @@
                                                         ibis.tb_pedidocab.estadoCompra,
                                                         ( SELECT COUNT( tb_pedidodet.estadoItem ) FROM tb_pedidodet WHERE tb_pedidodet.estadoItem != 52 AND tb_pedidodet.idpedido = idreg  AND tb_pedidodet.nflgActivo != 105) AS itemsFaltantes,
                                                     IF
-                                                        ( ibis.tb_pedidocab.estadoCompra = 1 OR ISNULL( ibis.tb_pedidocab.estadoCompra ), '--', compras.cdescripcion ) AS textoEstadoCompra 
+                                                        ( ibis.tb_pedidocab.estadoCompra = 1 OR ISNULL( ibis.tb_pedidocab.estadoCompra ), '--', compras.cdescripcion ) AS textoEstadoCompra,
+                                                        tb_pedidocab.comentariocompra
                                                     FROM
                                                         ibis.tb_pedidocab
                                                         LEFT JOIN rrhh.tabla_aquarius ON ibis.tb_pedidocab.idsolicita = rrhh.tabla_aquarius.internal
@@ -44,13 +48,15 @@
                                                         (ibis.tb_pedidocab.estadodoc >= 54
                                                         AND ibis.tb_pedidocab.estadodoc != 105)
                                                         AND ibis.tb_pedidocab.nflgactivo = 1
-                                                        AND ibis.tb_pedidocab.anio = 2025
+                                                        AND ibis.tb_pedidocab.anio = :anio
+                                                        AND ibis.tb_pedidocab.cnumero LIKE :pedido
+                                                        AND ibis.tb_pedidocab.idcostos LIKE :costo
                                                     ORDER BY
                                                         ibis.tb_pedidocab.emision DESC");
-                $sql->execute();
+                $sql->execute(["anio"=>$datos['anio'],"pedido"=>$pedido, "costo"=>$costos, ]);
+
                 $rowCount = $sql->rowCount();
                 
-
                 while($row = $sql->fetch(PDO::FETCH_ASSOC)){
                     $docData[] = $row;
                 }
@@ -179,6 +185,8 @@
 
         public function consultarReqId($id,$min,$max,$proceso){
             try {
+                $docData = [];
+
                 $sql = $this->db->connect()->prepare("SELECT
                                                         ibis.tb_pedidocab.idreg, 
                                                         ibis.tb_pedidocab.idcostos, 
@@ -286,8 +294,7 @@
                                                     LEFT JOIN tb_equipmtto ON tb_pedidodet.nregistro = tb_equipmtto.idreg 
                                                 WHERE
                                                     tb_pedidodet.idpedido = :id 
-                                                    AND tb_pedidodet.nflgActivo = 1
-                                                    AND (tb_pedidodet.estadoItem = 54 OR tb_pedidodet.estadoItem = 230)");
+                                                    AND tb_pedidodet.nflgActivo = 1");
                 $sql->execute(["id"=>$id]);
                 $rowCount = $sql->rowCount();
                 

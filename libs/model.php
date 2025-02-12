@@ -3643,7 +3643,7 @@
             $condicion = 3;
 
             $pdf = new PDF($titulo,$condicion,$datosOrden[0]['ffechadoc'],$datosOrden[0]['nombre_moneda'],$datosOrden[0]['nplazo'] ." dias",
-                            $datosOrden[0]['cdesalm'],$datosOrden[0]['cnumcot'],$datosOrden[0]['ffechaent'],$datosOrden[0]['pagos'],$datosOrden[0]['ctotal'],
+                            $datosOrden[0]['lentrega'],$datosOrden[0]['cnumcot'],$datosOrden[0]['ffechaent'],$datosOrden[0]['pagos'],$datosOrden[0]['ctotal'],
                             $datosOrden[0]['costos'],$datosOrden[0]['concepto'],$datosOrden[0]['cnameuser'],$datosOrden[0]['crazonsoc'],$datosOrden[0]['cnumdoc'],
                             $datosOrden[0]['cviadireccion'],$datosOrden[0]['ctelefono1'],$datosOrden[0]['mail_entidad'],$datosOrden[0]['nagenret'],
                             $datosOrden[0]['cnombres'],$datosOrden[0]['ctelefono1'],$datosOrden[0]['mail_entidad'],

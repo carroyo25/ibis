@@ -3,7 +3,7 @@ $(function(){
 
         $("#esperar").fadeOut();
 
-        cargaPrincipal();
+        cargaPrincipal($("#numeroSearch").val(),$("#costosSearch").val(),$("#mesSearch").val(),$("#anioSearch").val());
 
         $("#tablaPrincipal tbody").on("click","a", function (e) {
             e.preventDefault();
@@ -127,8 +127,12 @@ $(function(){
         });
     })
 
-    function cargaPrincipal() {
+    function cargaPrincipal(pedido,costos,mes,anio) {
         formData = new FormData();
+        formData.append("pedido",pedido);
+        formData.append("costos",costos);
+        formData.append("mes",mes);
+        formData.append("anio",anio);
 
         fetch(RUTA+'segpedcompras/consultarPedidos',{
             method: 'POST',
@@ -137,7 +141,6 @@ $(function(){
         .then(response => response.json())
         .then(data => {
             $("#tablaPrincipal tbody").empty();
-
 
             data.datos.forEach(element =>{
                 let tipo = element.idtipomov == 37 ? "B":"S",
@@ -152,10 +155,15 @@ $(function(){
                                             <td class="pl20px">${element.costos}</td>
                                             <td class="pl20px">${element.nombres}</td>
                                             <td class="textoCentro ${element.cabrevia}">${element.estado}</td>
-                                            <td class="textoCentro ${element.atencion.tolowercase}">${element.atencion}</td>
                                             <td class="textoCentro">${asignado}</td>
-                                            <td class="textoCentro" style="font-size:.6rem"><a href="${element.idreg}">${element.textoEstadoCompra}</a></td>
-                                            <td class="textoCentro"><a href="${element.idreg}"><i class="fas fa-exchange-alt"></i></a></td>
+                                            <td class="textoCentro" style="font-size:.6rem">
+                                                <a href="${element.idreg}" title="${element.comentariocompra}">${element.textoEstadoCompra}</a>
+                                            </td>
+                                            <td class="textoCentro">
+                                                <a href="${element.idreg}">
+                                                    <i class="fas fa-exchange-alt"></i>
+                                                </a>
+                                            </td>
                                         </tr>
                             </tr>`;
                 

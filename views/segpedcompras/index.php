@@ -209,7 +209,6 @@
                     <th data-idcol="4" class="datafiltro">Centro Costos</th>
                     <th data-idcol="5" class="datafiltro">Solicitante</th>
                     <th>Estado</th>
-                    <th>Atencion</th>
                     <th data-idcol="8" class="datafiltro">Asignado</th>
                     <th data-idcol="9" class="datafiltro" width="10%">Estado<br/>Compras</th>
                     <th>...</th>
