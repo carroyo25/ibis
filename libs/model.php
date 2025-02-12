@@ -4602,6 +4602,34 @@
             }
         }
 
+        public function estadosCompras() {
+            try {
+                $salida = "";
+                $sql  = $this->db->connect()->query("SELECT tb_parametros.nidreg, 
+                                                        tb_parametros.cdescripcion
+                                                     FROM tb_parametros
+                                                     WHERE tb_parametros.nactivo = 1
+                                                     AND tb_parametros.cclase = 28
+                                                     AND tb_parametros.ccod != 0
+                                                     ORDER BY tb_parametros.cdescripcion");
+
+                $sql->execute();
+                $rowcount = $sql->rowcount();
+
+                if($rowcount > 0){
+                    
+                    while($rs = $sql->fetch()){
+                        $salida .= '<li><a href="'.$rs['nidreg'].'">'.$rs['cdescripcion'].'</a></li>';
+                    }
+                }
+
+                return $salida;
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
         public function listarOperadores(){
             try {
                 $salida = "";

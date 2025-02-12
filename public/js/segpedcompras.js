@@ -1,10 +1,14 @@
 $(function(){
-    $("#esperar").fadeOut();
+        let pedido = "";
+
+        $("#esperar").fadeOut();
 
         cargaPrincipal();
 
         $("#tablaPrincipal tbody").on("click","a", function (e) {
             e.preventDefault();
+
+            pedido = $(this).attr("href");
 
             $("#cambioestado").fadeIn();
 
@@ -14,46 +18,46 @@ $(function(){
         $("#tablaPrincipal tbody").on("click","tr", function (e) {
             e.preventDefault();
 
-        $.post(RUTA+"segpedcompras/consultaId", {id:$(this).data("indice")},
-                function (data, textStatus, jqXHR) {
-                    
-                    let numero = $.strPad(data.cabecera[0].nrodoc,6);
-                    let estado = "textoCentro w50por estado " + data.cabecera[0].cabrevia;
-                    
-                    $("#codigo_costos").val(data.cabecera[0].idcostos);
-                    $("#codigo_area").val(data.cabecera[0].idarea);
-                    $("#codigo_transporte").val(data.cabecera[0].idtrans);
-                    $("#codigo_solicitante").val(data.cabecera[0].idsolicita);
-                    $("#codigo_tipo").val(data.cabecera[0].idtipomov);
-                    $("#codigo_pedido").val(data.cabecera[0].idreg);
-                    $("#codigo_estado").val(data.cabecera[0].estadodoc);
-                    $("#codigo_verificacion").val(data.cabecera[0].verificacion);
-                    $("#codigo_atencion").val(data.cabecera[0].nivelAten);
-                    $("#emitido").val(data.cabecera[0].docPdfEmit);
-                    $("#elabora").val(data.cabecera[0].cnombres);
-                    $("#numero").val(numero);
-                    $("#emision").val(data.cabecera[0].emision);
-                    $("#costos").val(data.cabecera[0].proyecto);
-                    $("#area").val(data.cabecera[0].area);
-                    $("#transporte").val(data.cabecera[0].transporte);
-                    $("#concepto").val(data.cabecera[0].concepto);
-                    $("#solicitante").val(data.cabecera[0].nombres);
-                    $("#tipo").val(data.cabecera[0].tipo);
-                    $("#vence").val(data.cabecera[0].vence);
-                    $("#estado").val(data.cabecera[0].estado);
-                    $("#espec_items").val(data.cabecera[0].detalle);
-                    $("#user_asigna").val(data.cabecera[0].asigna);
-                    
-                    $("#tablaDetalles tbody")
-                        .empty()
-                        .append(data.detalles);
+            $.post(RUTA+"segpedcompras/consultaId", {id:$(this).data("indice")},
+                    function (data, textStatus, jqXHR) {
+                        
+                        let numero = $.strPad(data.cabecera[0].nrodoc,6);
+                        let estado = "textoCentro w50por estado " + data.cabecera[0].cabrevia;
+                        
+                        $("#codigo_costos").val(data.cabecera[0].idcostos);
+                        $("#codigo_area").val(data.cabecera[0].idarea);
+                        $("#codigo_transporte").val(data.cabecera[0].idtrans);
+                        $("#codigo_solicitante").val(data.cabecera[0].idsolicita);
+                        $("#codigo_tipo").val(data.cabecera[0].idtipomov);
+                        $("#codigo_pedido").val(data.cabecera[0].idreg);
+                        $("#codigo_estado").val(data.cabecera[0].estadodoc);
+                        $("#codigo_verificacion").val(data.cabecera[0].verificacion);
+                        $("#codigo_atencion").val(data.cabecera[0].nivelAten);
+                        $("#emitido").val(data.cabecera[0].docPdfEmit);
+                        $("#elabora").val(data.cabecera[0].cnombres);
+                        $("#numero").val(numero);
+                        $("#emision").val(data.cabecera[0].emision);
+                        $("#costos").val(data.cabecera[0].proyecto);
+                        $("#area").val(data.cabecera[0].area);
+                        $("#transporte").val(data.cabecera[0].transporte);
+                        $("#concepto").val(data.cabecera[0].concepto);
+                        $("#solicitante").val(data.cabecera[0].nombres);
+                        $("#tipo").val(data.cabecera[0].tipo);
+                        $("#vence").val(data.cabecera[0].vence);
+                        $("#estado").val(data.cabecera[0].estado);
+                        $("#espec_items").val(data.cabecera[0].detalle);
+                        $("#user_asigna").val(data.cabecera[0].asigna);
+                        
+                        $("#tablaDetalles tbody")
+                            .empty()
+                            .append(data.detalles);
 
-                    $("#estado")
-                        .removeClass()
-                        .addClass(estado);
-                },
-                "json"
-            );
+                        $("#estado")
+                            .removeClass()
+                            .addClass(estado);
+                    },
+                    "json"
+                );
 
             $("#proceso").fadeIn();
 
@@ -66,6 +70,60 @@ $(function(){
             $("#proceso").fadeOut();
             
             return false;  
+        });
+
+        $("#operadores").on("click","a", function (e) {
+            e.preventDefault();
+    
+            $("#operadores *").removeClass("itemSeleccionado");
+            $(this).addClass("itemSeleccionado");
+            $("#estadoCompra").val($(this).attr("href"));
+
+    
+            return false;
+        });
+
+        $("#cancelaEstado").click(function (e) { 
+            e.preventDefault();
+    
+            $("#cambioestado").fadeOut();
+            
+            return false;
+        });
+    
+        $("#aceptaEstado").click(function (e) { 
+            e.preventDefault();
+    
+            try {
+                let formData = new FormData();
+                    formData.append("id",pedido);
+                    formData.append("estado",$("#estadoCompra").val());
+                    formData.append("comentario",$("#comentarioEstado").val());
+                    formData.append("user",$("#id_user").val());
+
+
+                if ($("#estadoCompra").val() =="" ) throw "Seleccione el estado para asignar al pedido";
+
+                fetch(RUTA+"segpedcompras/estadocompra",{
+                    method: "POST",
+                    body:formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.respuesta){
+                        mostrarMensaje(data.mensaje,"mensaje_correcto");
+                    }else{
+                        mostrarMensaje(data.mensaje,"mensaje_error");
+                    }
+
+                    $("#cambioestado").fadeOut();
+                    
+                })
+            } catch (error) {
+                mostrarMensaje(error,"mensaje_error")
+            }
+            
+            return false;
         });
     })
 
@@ -80,11 +138,6 @@ $(function(){
         .then(data => {
             $("#tablaPrincipal tbody").empty();
 
-            let opc = `<option value="-1">--</option>`;
-
-            data.opciones.forEach(element => {
-                opc += `<option value="${element.nidreg}">${element.cdescripcion}</option>`;
-            });
 
             data.datos.forEach(element =>{
                 let tipo = element.idtipomov == 37 ? "B":"S",
@@ -109,12 +162,11 @@ $(function(){
                 if (element.itemsFaltantes > 0) {
                     $("#tablaPrincipal tbody").append(row);
                 }
-
-                $("#esperar").fadeOut().promise().done(function(){
-                    iniciarPaginador();
-                });
-                
             })
+
+            $("#esperar").fadeOut().promise().done(function(){
+                iniciarPaginador();
+            });
         })
     }
     

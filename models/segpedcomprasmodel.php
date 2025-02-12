@@ -41,20 +41,21 @@
                                                         LEFT JOIN ibis.tb_user ON ibis.tb_pedidocab.asigna = ibis.tb_user.iduser
                                                         LEFT JOIN ibis.tb_parametros AS compras ON ibis.tb_pedidocab.estadoCompra = compras.nidreg 
                                                     WHERE
-                                                        ibis.tb_pedidocab.estadodoc = 54
+                                                        (ibis.tb_pedidocab.estadodoc >= 54
+                                                        AND ibis.tb_pedidocab.estadodoc != 105)
                                                         AND ibis.tb_pedidocab.nflgactivo = 1
+                                                        AND ibis.tb_pedidocab.anio = 2025
                                                     ORDER BY
                                                         ibis.tb_pedidocab.emision DESC");
                 $sql->execute();
                 $rowCount = $sql->rowCount();
-                $opciones = $this->estadosCompras();
                 
 
                 while($row = $sql->fetch(PDO::FETCH_ASSOC)){
                     $docData[] = $row;
                 }
 
-                return array("datos"=>$docData, "opciones"=>$opciones);
+                return array("datos"=>$docData);
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
@@ -170,26 +171,6 @@
                 }
 
                 return $salida;
-            } catch (PDOException $th) {
-                echo $th->getMessage();
-                return false;
-            }
-        }
-
-    
-        private function estadosCompras() {
-            try {
-                $sql  = $this->db->connect()->query("SELECT tb_parametros.nidreg, 
-                                                        tb_parametros.cdescripcion
-                                                     FROM tb_parametros
-                                                     WHERE tb_parametros.nactivo = 1
-                                                     AND tb_parametros.cclase = 28
-                                                     AND tb_parametros.ccod != 0");
-
-                $sql->execute();
-                $result = $sql->fetchAll();
-
-                return $result;
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
@@ -344,6 +325,34 @@
                 }
                 
                 return $salida;
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public  function actualizarEstado($datos){
+            try {
+                $mensaje = "No se registro el comentario";
+                $respuestaOK  = false;
+
+                $sql = $this->db->connect()->prepare("UPDATE tb_pedidocab
+                                                    SET tb_pedidocab.compras = :user,
+                                                        tb_pedidocab.estadoCompra = :estado,
+                                                        tb_pedidocab.comentariocompra = :comentario
+                                                    WHERE tb_pedidocab.idreg = :pedido");
+                
+                $sql->execute(["user"=>$datos['user'],
+                                "estado"=>$datos['estado'],
+                                "comentario"=>$datos['comentario'],
+                                "pedido"=>$datos['id']]);
+
+                if ($sql->rowCount() > 0){
+                    $mensaje = "Comentario actualizado...";
+                    $respuestaOK  = true;
+                }
+
+                return array("id"=>$datos['id'],"estado"=>$datos['estado'],"respuesta"=>$respuestaOK,"mensaje"=>$mensaje);
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;

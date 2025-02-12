@@ -27,16 +27,11 @@
                     <input type="hidden" name="emitido" id="emitido">
                     <input type="hidden" name="espec_items" id="espec_items">
                     <input type="hidden" name="user_asigna" id="user_asigna">
-                    
-
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
                         <div>
                             <button type="button" id="viewAtach" title="Ver Adjunto" class="boton3">
                                 <p><i class="fas fa-paperclip"></i> ver Adjuntos</p> 
-                            </button>
-                            <button type="button" id="asingRequest" title="Asignar Pedido" class="boton3">
-                                <p><i class="fas fa-wrench"></i> Asignar Operador</p> 
                             </button>
                             <button type="button" id="closeProcess" title="Cierra la ventana actual" class="boton3">
                                 <i class="fas fa-window-close"></i>
@@ -97,10 +92,6 @@
                     </div>
                     <div class="barraOpciones">
                         <span>Detalles</span>
-
-                        <button type="button" id="quitarAsigna" title="Libera el pedido" class="boton3">
-                            <p><i class="fas fa-street-view"></i>  Liberar Pedido</p> 
-                        </button>
                     </div>
                     <div class="tablaInterna mininoTablaInterna">
                         <table class="tabla" id="tablaDetalles">
@@ -127,35 +118,25 @@
             </div>
         </div>
     </div>
-    <div class="modal" id="comentarios">
-        <div class="ventanaOperador">
-            <h3>Asignar Operador</h3>
-            <input type="hidden" name="operador_asignado" id="operador_asignado">
-            <hr>
-            <div class="contenedor_operadores">
-                <ul id="operadores">
-                    <?php echo $this->listaOperadores ?>
-                </ul>
-            </div>
-            <div>
-                <button type="button" id="aceptaAsigna">Asignar</button>
-                <button type="button" id="cancelaAsigna">Cancelar</button>
-            </div>
-        </div>
-    </div>
     <div class="modal" id="cambioestado">
         <div class="ventanaOperador">
-            <h3>Asignar Operador</h3>
+            <input type="hidden" name="estadoCompra" id="estadoCompra" value="0">
+            <h3>Cambiar Estado</h3>
             <input type="hidden" name="operador_asignado" id="operador_asignado">
             <hr>
-            <div class="contenedor_operadores">
+            <div class="contenedor_estados">
                 <ul id="operadores">
-                    <?php echo $this->listaOperadores ?>
+                    <?php echo $this->estadosCompra ?>
                 </ul>
+
+                <div>
+                    <p>Observaciones</p>
+                    <textarea name="comentarioEstado" id="comentarioEstado"></textarea>
+                </div>
             </div>
-            <div>
-                <button type="button" id="aceptaAsigna">Asignar</button>
-                <button type="button" id="cancelaAsigna">Cancelar</button>
+            <div class="opciones">
+                <button type="button" id="aceptaEstado">Aceptar</button>
+                <button type="button" id="cancelaEstado">Cancelar</button>
             </div>
         </div>
     </div>

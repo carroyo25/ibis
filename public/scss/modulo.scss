@@ -2835,7 +2835,12 @@ $almacen:#27798F;
         text-align: center;
     }
 
-    .contenedor_operadores{
+    .opciones{
+        display: flex;
+        justify-content: space-around;
+    }
+
+    .contenedor_operadores,.contenedor_estados{
         border-top: 2px solid #000;
         border-bottom: 2px solid #000;
         font-size: .8rem;
@@ -2852,6 +2857,18 @@ $almacen:#27798F;
             &:hover{
                 background: rgba(128,128,255,0.5);
             }
+        }
+        
+    }
+
+    .contenedor_estados{
+        textarea {
+            width: 100%;
+            border: 1px solid #c2c2c2;
+            height: 5rem;
+            border-radius: 10px;
+            padding: .5rem;
+            margin-top: 0.5rem;
         }
     }
 
@@ -2961,7 +2978,7 @@ $almacen:#27798F;
         border-width: 0 0.3em 0.25em 0;
         height: 1em;
         top: 1.3em;
-        left: 0.6em;
+        left: 0.2em;
         margin-top: -1em;
         transform: rotate(45deg);
         width: 0.5em;

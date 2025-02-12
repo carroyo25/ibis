@@ -3150,14 +3150,21 @@
 .ventanaOperador h3 {
   text-align: center;
 }
-.ventanaOperador .contenedor_operadores {
+.ventanaOperador .opciones {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-pack: distribute;
+      justify-content: space-around;
+}
+.ventanaOperador .contenedor_operadores, .ventanaOperador .contenedor_estados {
   border-top: 2px solid #000;
   border-bottom: 2px solid #000;
   font-size: 0.8rem;
   line-height: 2rem;
   margin: 10px 0;
 }
-.ventanaOperador .contenedor_operadores a {
+.ventanaOperador .contenedor_operadores a, .ventanaOperador .contenedor_estados a {
   background: transparent;
   margin-left: 10px;
   display: block;
@@ -3165,8 +3172,16 @@
   -webkit-transition: 0.5s;
   transition: 0.5s;
 }
-.ventanaOperador .contenedor_operadores a:hover {
+.ventanaOperador .contenedor_operadores a:hover, .ventanaOperador .contenedor_estados a:hover {
   background: rgba(128, 128, 255, 0.5);
+}
+.ventanaOperador .contenedor_estados textarea {
+  width: 100%;
+  border: 1px solid #c2c2c2;
+  height: 5rem;
+  border-radius: 10px;
+  padding: 0.5rem;
+  margin-top: 0.5rem;
 }
 .ventanaOperador button {
   border: none;
@@ -3270,7 +3285,7 @@
   border-width: 0 0.3em 0.25em 0;
   height: 1em;
   top: 1.3em;
-  left: 0.6em;
+  left: 0.2em;
   margin-top: -1em;
   -webkit-transform: rotate(45deg);
           transform: rotate(45deg);
