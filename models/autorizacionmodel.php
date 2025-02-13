@@ -429,17 +429,39 @@
             try {
                 $mensaje = "Error en la actualización";
                 $fecha = date("Y-m-d");
+                $namefile = null;
+
+                if (array_key_exists('img',$_REQUEST)) {
+                    $imgData = base64_decode(substr($_REQUEST['img'],22));
+
+                    $namefile = uniqid();
+
+                    // Path en donde se va a guardar la imagen
+                    $file = 'public/documentos/autorizaciones/firmas_logistica/'.$namefile.'.png';
+
+                    if (file_exists($file)) { unlink($file); }
+            
+                    // guarda en el fichero la imagen contenida en $imgData
+                    $fp = fopen($file, 'w');
+                    fwrite($fp, $imgData);
+                    fclose($fp);
+                }
 
                 $sql = $this->db->connect()->prepare("UPDATE alm_autorizacab 
                                                         SET alm_autorizacab.nestado =:estado,
                                                             alm_autorizacab.uenvlog =:user,
-                                                            alm_autorizacab.fentrelog =:fecha
+                                                            alm_autorizacab.fentrelog =:fecha,
+                                                            alm_autorizacab.firma_logistica=:png
                                                         WHERE alm_autorizacab.idreg =:id");
                                                         
-                $sql->execute(["id"=>$id, "estado"=>$estado, "user"=>$_SESSION['iduser'], "fecha"=>$fecha]);
+                $sql->execute(["id"=>$id, 
+                                "estado"=>62, 
+                                "user"=>$_SESSION['iduser'], 
+                                "fecha"=>$fecha,
+                                "png"=>$namefile]);
 
                 if ( $sql->rowCount() > 0 ){
-                    $mensaje = "Entregado para su traslado";
+                    $mensaje = "Entrega para su traslado";
                 }
 
                 return array("mensaje"=>$mensaje);

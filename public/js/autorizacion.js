@@ -2,6 +2,9 @@ $(function(){
     let accion = "";
     let grabado = false;
 
+    var imgWidth;
+    var imgHeight;
+
     $("#esperar").fadeOut();
 
     $("#tablaPrincipal tbody").on("click","a", function (e) {
@@ -732,7 +735,8 @@ $(function(){
             if ( $("#rol_user").val() == 2 && $("#rol_user").val() == 4 ) throw new Error("No esta habilitado para este proceso");
             if ( $("#codigo_estado").val() != 60 ) throw new Error("No se permite la accion");
 
-            $("#entregaLogisticaModal").fadeIn();
+            //$("#entregaLogisticaModal").fadeIn();
+            StartSign();
         } catch (error) {
             mostrarMensaje(error.message,"mensaje_error")
         }

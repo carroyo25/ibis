@@ -142,8 +142,15 @@ $(function(){
             return false;
         })
 
-        $("reportExport").click((e) => {
+        $("#reportExport").click((e) => {
             e.preventDefault();
+
+            $("#esperar").css({"display":"block","opacity":"1"});
+
+            crearReporte(getDataTable());
+
+            $("#esperar").css({"display":"none","opacity":"0"});
+
             return false;
         })
     })
@@ -170,25 +177,23 @@ $(function(){
                     asignado = element.cnameuser == null ? "--" : element.cnameuser,
                     comentario = element.comentariocompra == null ? "--": element.comentariocompra;
 
-                let row = `<tr>
-                                <tr class="pointer" data-indice="${element.idreg}" data-compras="${element.estadoCompra}" id="${element.idreg}">
-                                            <td class="textoCentro">${element.nrodoc}</td>
-                                            <td class="textoCentro">${element.emision}</td>
-                                            <td class="textoCentro">${tipo}</td>
-                                            <td class="pl20px">${element.concepto}</td>
-                                            <td class="pl20px">${element.costos}</td>
-                                            <td class="pl20px">${element.nombres}</td>
-                                            <td class="textoCentro ${element.cabrevia}">${element.estado}</td>
-                                            <td class="textoCentro">${asignado}</td>
-                                            <td class="textoCentro" style="font-size:.6rem">
-                                                <a href="${element.idreg}" data-title="${comentario}" class="bocadillo">${element.textoEstadoCompra}</a>
-                                            </td>
-                                            <td class="textoCentro">
-                                                <a href="${element.idreg}">
-                                                    <i class="fas fa-exchange-alt"></i>
-                                                </a>
-                                            </td>
-                                        </tr>
+                let row = `<tr class="pointer" data-indice="${element.idreg}" data-compras="${element.estadoCompra}" id="${element.idreg}">
+                                <td class="textoCentro">${element.nrodoc}</td>
+                                <td class="textoCentro">${element.emision}</td>
+                                <td class="textoCentro">${tipo}</td>
+                                <td class="pl20px">${element.concepto}</td>
+                                <td class="pl20px">${element.costos}</td>
+                                <td class="pl20px">${element.nombres}</td>
+                                <td class="textoCentro ${element.cabrevia}">${element.estado}</td>
+                                <td class="textoCentro">${asignado}</td>
+                                <td class="textoCentro" style="font-size:.6rem">
+                                    <a href="${element.idreg}" data-title="${comentario}" class="bocadillo">${element.textoEstadoCompra}</a>
+                                </td>
+                                <td class="textoCentro">
+                                    <a href="${element.idreg}">
+                                        <i class="fas fa-exchange-alt"></i>
+                                    </a>
+                                </td>
                             </tr>`;
                 
                 if (element.itemsFaltantes > 0) {
@@ -203,4 +208,120 @@ $(function(){
             $("#esperar").css({"display":"none","opacity":"0"});
         })
     }
+
+    async function crearReporte(filas){
+        const workbook = new ExcelJS.Workbook();
+        workbook.creator = 'Sical';
+        workbook.lastModifiedBy = 'Sical';
+        workbook.created = new Date();
+        workbook.modified = new Date();
+    
+        const worksheet = workbook.addWorksheet('Estado de Pedidos - Compras');
+        const columns = [{ width: 10 },
+                         { width: 15 },
+                         { width: 8 },
+                         { width: 80 },
+                         { width: 85 },
+                         { width: 50 },
+                         { width: 20 },
+                         { width: 20 },
+                         { width: 20 }
+        ];
+
+        worksheet.mergeCells('A1:I1');
+        worksheet.getCell('A1').value = 'Reporte Pedidos';
+       
+        worksheet.getRow(2).height = 30;
+
+        worksheet.columns = columns;
+
+        const headers = ['Nro','Emision','Tipo','Descripcion','Proyecto','Solicitante','Estado','Asignado','Estado Compras'];
+
+        /*rellenar los datos*/
+         worksheet.getRow(2).values=headers;
+         
+         filas.forEach((fila,index) => {
+            worksheet.addRow([
+                fila.numero,
+                new Date(fila.emision),
+                fila.tipo,
+                fila.descripcion,
+                fila.proyecto,
+                fila.solicitante,
+                fila.estado,
+                fila.asignado,
+                fila.compras
+            ])
+         })
+         // Configurar wrapText para cada columna
+         headers.forEach((header, index) => {
+             const columnIndex = index + 1; // Las columnas en ExcelJS comienzan en 1
+             worksheet.getColumn(columnIndex).alignment = { wrapText: true };  // Aplicar wrapText a toda la columna
+         });
+        
+        worksheet.getCell('A1').alignment = { horizontal: 'center', vertical: 'center' };
+        worksheet.getCell('A2').alignment = { horizontal: 'center', vertical: 'center' };
+
+        applyBackgroundColor(worksheet, 2, 2, 1, 9, 'BFCDDB');
+
+        const buffer = await workbook.xlsx.writeBuffer();
+        const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+
+        // Descargar archivo
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'reporteprocura.xlsx';
+        a.click();
+        URL.revokeObjectURL(url);
+
+        $("#esperar").css({"display":"none","opacity":"0"});
+    }
+
+    getDataTable = () =>{
+        DATA = [];
+
+        let TABLA = $("#tablaPrincipal tbody >tr");
+
+        TABLA.each(function(){
+            item= {};
+            
+            item['numero']      = $(this).find('td').eq(0).text();
+            item['emision']     = $(this).find('td').eq(1).text();
+            item['tipo']        = $(this).find('td').eq(2).text();
+            item['descripcion'] = $(this).find('td').eq(3).text();
+            item['proyecto']    = $(this).find('td').eq(4).text();
+            item['solicitante'] = $(this).find('td').eq(5).text();
+            item['estado']      = $(this).find('td').eq(6).text();
+            item['asignado']    = $(this).find('td').eq(7).text();
+            item['compras']     = $(this).find('td').eq(8).children().text();
+
+            DATA.push(item);
+        })
+        return DATA;
+    }
+
+    function applyBackgroundColor(worksheet, startRow, endRow, startCol, endCol, color) {
+        for (let row = startRow; row <= endRow; row++) {
+            for (let col = startCol; col <= endCol; col++) {
+                // Convertir el índice de columna numérico a su letra correspondiente (por ejemplo, 1 => 'A', 2 => 'B', etc.)
+                const cellRef = worksheet.getColumn(col).letter + row;
+                console.log(cellRef)
+                worksheet.getCell(cellRef).style = {
+                    fill : {
+                    type: 'pattern',  // Tipo de relleno
+                    pattern: 'solid', // Tipo sólido
+                    fgColor: { argb: color },  // Color de fondo en formato ARGB
+                    bgColor: { argb: color }
+                },
+                alignment : {
+                    horizontal: 'center',
+                    vertical: 'middle',
+                    wrapText: true
+                }
+            }}
+        }
+    }
+
+    
     

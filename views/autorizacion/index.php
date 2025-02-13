@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" sigplusextliteextension-installed="true" sigwebext-installed="true">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-<body>
+<body onload="ClearFormData();">
     <div class="mensaje">
         <p></p>
     </div>
@@ -681,7 +681,15 @@
             </tbody>
         </table>
     </div>
+
+    <canvas id="cnv" name="cnv" width="500" height="100" ></canvas>
+    <canvas name="SigImg" id="SigImg" width="500" height="100"></canvas>
+    <form action="" name="FORM1">
+        <input type="hidden" name="firmado" id="firmado">
+	</form>
+
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
+    <script src="<?php echo constant('URL');?>public/js/firmaTraslado.js"></script>
     <script src="<?php echo constant('URL');?>public/js/funciones.js?<?php echo constant('VERSION')?>"></script>
     <script src="<?php echo constant('URL');?>public/js/autorizacion.js?<?php echo constant('VERSION')?>"></script>
 </body>

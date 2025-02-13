@@ -1,7 +1,5 @@
     var imgWidth;
     var imgHeight;
-    var btnFirmar = document.getElementById("btnFirmar");
-    var btnAceptar = document.getElementById("btnGrabarKardex");
 
 
     function StartSign()
@@ -61,17 +59,18 @@
                     img.src = "data:image/png;base64," + obj.imageData;
 
                     const traslado = document.getElementById("numero");
-                    const estado = document.getElementById("estado_operacion");
+                    const estado = document.getElementById("codigo_estado");
 
                     let canvas = document.getElementById("cnv");
                     let dataURL = canvas.toDataURL();
 
                     let formData = new FormData();
                         formData.append("id", traslado.value);
-                        formData.append("estado",estado);
+                        formData.append("estado",estado.value);
                         formData.append("img",img.src);
+
                     
-                    if (estado == 62)    
+                    if ( estado.value == 60 ){
                         fetch(RUTA+"autorizacion/entregaLogistica",{
                             method: "POST",
                             body: formData
@@ -80,6 +79,7 @@
                         .then(data => {
                             mostrarMensaje("Traslado actualizado","mensaje_correcto");
                         })
+                    }       
                     else{
                         fetch(RUTA+"autorizacion/entregaFinal",{
                             method: "POST",
