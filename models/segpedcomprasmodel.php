@@ -49,7 +49,7 @@
                                                         AND ibis.tb_pedidocab.estadodoc != 105)
                                                         AND ibis.tb_pedidocab.nflgactivo = 1
                                                         AND ibis.tb_pedidocab.anio = :anio
-                                                        AND ibis.tb_pedidocab.cnumero LIKE :pedido
+                                                        AND ibis.tb_pedidocab.nrodoc LIKE :pedido
                                                         AND ibis.tb_pedidocab.idcostos LIKE :costo
                                                     ORDER BY
                                                         ibis.tb_pedidocab.emision DESC");

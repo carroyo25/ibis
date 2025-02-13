@@ -213,7 +213,6 @@ $(function(){
 
         $("#cpago").val("CREDITO A 30 DIAS");
         $("#codigo_pago").val(73);
-        $("#codigo_almacen").val(7);
 
         $("#tablaAdicionales tbody").empty();
 
@@ -485,7 +484,7 @@ $(function(){
             if (!grabado) throw new Error ("Por favor grabe la orden");
             if (result['fentrega'] == "") throw "Elija la fecha de entrega";
             if (result['codigo_transporte'] == "") throw "Elija la forma de transporte";
-            if (result['codigo_almacen'] == "") throw "Indique el lugar de entrega";
+            //if (result['codigo_almacen'] == "") throw "Indique el lugar de entrega";
             if (!grabado) throw "Por favor grabar el documento";
             
 
@@ -589,7 +588,7 @@ $(function(){
             if (result['dias'] == "") throw "ingrese el numero de dias";
             if (result['codigo_moneda'] == "") throw "Elija la moneda";
             if (result['codigo_pago'] == "") throw "Elija el tipo de pago";
-            if (result['codigo_almacen'] == "") throw "Indique el lugar de entrega";
+            //if (result['codigo_almacen'] == "") throw "Indique el lugar de entrega";
             if (result['total'] == "") throw "No se registro el total de la orden";
             if ($("#tablaDetalles tbody tr") .length <= 0) throw "No tiene items cargados";
             if ($("#id_user").val() <= "") throw "Error General";

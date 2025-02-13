@@ -46,6 +46,34 @@ $almacen:#27798F;
     background:$servicios;
 }
 
+[data-title]:hover:after {
+    opacity: 1;
+    transition: all 0.1s ease 0.5s;
+    visibility: visible;
+}
+
+[data-title]:after {
+    content: attr(data-title);
+    background-color: #fafaf7;
+    color: #111;
+    font-size: 150%;
+    position: absolute;
+    padding: 1px 5px 2px 5px;
+    bottom: -1.6em;
+    left: 0;
+    white-space: nowrap;
+    box-shadow: 1px 1px 3px #222222;
+    opacity: 0;
+    border: 1px dotted #c2c2c2;
+    z-index: 99999;
+    visibility: hidden;
+}
+
+[data-title] {
+    position: relative;
+    display: block;
+}
+
 
 .cabezaModulo{
     display: flex;

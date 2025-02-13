@@ -1,7 +1,8 @@
 $(function(){
-        let pedido = "";
+        let pedido = "",
+            estadoTexto = "";
 
-        $("#esperar").fadeOut();
+        $("#esperar").css({"display":"block","opacity":"1"});
 
         cargaPrincipal($("#numeroSearch").val(),$("#costosSearch").val(),$("#mesSearch").val(),$("#anioSearch").val());
 
@@ -79,6 +80,8 @@ $(function(){
             $(this).addClass("itemSeleccionado");
             $("#estadoCompra").val($(this).attr("href"));
 
+            estadoTexto = $(this).text();
+            
     
             return false;
         });
@@ -112,6 +115,11 @@ $(function(){
                 .then(data => {
                     if (data.respuesta){
                         mostrarMensaje(data.mensaje,"mensaje_correcto");
+            
+                        $('#'+pedido+' td:first').parent().find('td').eq('8').children()
+                            .text(estadoTexto)
+                            .attr("data-title",$("#comentarioEstado").val());
+
                     }else{
                         mostrarMensaje(data.mensaje,"mensaje_error");
                     }
@@ -125,6 +133,19 @@ $(function(){
             
             return false;
         });
+
+        $("#btnConsulta").click((e) => {
+            e.preventDefault();
+
+            cargaPrincipal($("#numeroSearch").val(),$("#costosSearch").val(),$("#mesSearch").val(),$("#anioSearch").val());
+
+            return false;
+        })
+
+        $("reportExport").click((e) => {
+            e.preventDefault();
+            return false;
+        })
     })
 
     function cargaPrincipal(pedido,costos,mes,anio) {
@@ -133,6 +154,8 @@ $(function(){
         formData.append("costos",costos);
         formData.append("mes",mes);
         formData.append("anio",anio);
+
+        $("#esperar").css({"display":"block","opacity":"1"});
 
         fetch(RUTA+'segpedcompras/consultarPedidos',{
             method: 'POST',
@@ -144,10 +167,11 @@ $(function(){
 
             data.datos.forEach(element =>{
                 let tipo = element.idtipomov == 37 ? "B":"S",
-                    asignado = element.cnameuser == null ? "--" : element.cnameuser;
+                    asignado = element.cnameuser == null ? "--" : element.cnameuser,
+                    comentario = element.comentariocompra == null ? "--": element.comentariocompra;
 
                 let row = `<tr>
-                                <tr class="pointer" data-indice="${element.idreg}" data-compras="${element.estadoCompra}">
+                                <tr class="pointer" data-indice="${element.idreg}" data-compras="${element.estadoCompra}" id="${element.idreg}">
                                             <td class="textoCentro">${element.nrodoc}</td>
                                             <td class="textoCentro">${element.emision}</td>
                                             <td class="textoCentro">${tipo}</td>
@@ -157,7 +181,7 @@ $(function(){
                                             <td class="textoCentro ${element.cabrevia}">${element.estado}</td>
                                             <td class="textoCentro">${asignado}</td>
                                             <td class="textoCentro" style="font-size:.6rem">
-                                                <a href="${element.idreg}" title="${element.comentariocompra}">${element.textoEstadoCompra}</a>
+                                                <a href="${element.idreg}" data-title="${comentario}" class="bocadillo">${element.textoEstadoCompra}</a>
                                             </td>
                                             <td class="textoCentro">
                                                 <a href="${element.idreg}">
@@ -175,6 +199,8 @@ $(function(){
             $("#esperar").fadeOut().promise().done(function(){
                 iniciarPaginador();
             });
+
+            $("#esperar").css({"display":"none","opacity":"0"});
         })
     }
     

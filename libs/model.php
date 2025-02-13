@@ -2680,10 +2680,10 @@
                                                         INNER JOIN tb_parametros AS tipos ON lg_ordencab.ntipmov = tipos.nidreg
                                                         INNER JOIN tb_parametros AS pagos ON lg_ordencab.ncodpago = pagos.nidreg
                                                         INNER JOIN tb_parametros AS estados ON lg_ordencab.nEstadoDoc = estados.nidreg
-                                                        INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
+                                                        LEFT JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
                                                         LEFT JOIN cm_entidadcon ON cm_entidad.id_centi = cm_entidadcon.id_centi
                                                         INNER JOIN tb_parametros AS transportes ON lg_ordencab.ctiptransp = transportes.nidreg
-                                                        INNER JOIN tb_almacen ON lg_ordencab.ncodalm = tb_almacen.ncodalm
+                                                        LEFT JOIN tb_almacen ON lg_ordencab.ncodalm = tb_almacen.ncodalm
                                                         INNER JOIN lg_ordendet ON lg_ordencab.id_regmov = lg_ordendet.id_regmov
                                                         LEFT JOIN lg_ordenextras ON lg_ordencab.id_regmov = lg_ordenextras.idorden
                                                         LEFT JOIN tb_user ON lg_ordencab.id_cuser = tb_user.iduser 
@@ -4162,6 +4162,7 @@
                                                                 lg_ordencab.userModifica,
                                                                 lg_ordencab.nAdicional,
                                                                 lg_ordencab.cReferencia,
+                                                                lg_ordencab.lentrega,
                                                                 UPPER(tb_pedidocab.concepto) AS concepto,
                                                                 UPPER(tb_pedidocab.detalle) AS detalle,
                                                                 UPPER(
