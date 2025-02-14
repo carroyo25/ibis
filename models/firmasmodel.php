@@ -163,14 +163,12 @@
             if ($rowCount > 0){
                 return array("mensaje"=>"Se autorizo la orden",
                             "clase"=>"mensaje_correcto",
-                            "estado"=>true,
-                            "listado"=>$this->listarOrdenesFirmas());
+                            "estado"=>true);
             }else {
                 return array("mensaje"=>"Ya autorizo la orden",
                             "clase"=>"mensaje_error",
                             "operador"=>$operador,
-                            "estado"=>false,
-                            "listado"=>$this->listarOrdenesFirmas());
+                            "estado"=>false);
             }
         }
 
@@ -203,13 +201,13 @@
                     return array("mensaje"=>"Se autorizo la orden",
                                 "clase"=>"mensaje_correcto",
                                 "estado"=>true,
-                                "listado"=>$this->listarOrdenesFirmas());
+                                "listado"=>"");
                 }else {
                     return array("mensaje"=>"Ya autorizo la orden",
                                 "clase"=>"mensaje_error",
                                 "operador"=>$operador,
                                 "estado"=>false,
-                                "listado"=>$this->listarOrdenesFirmas());
+                                "listado"=>"");
             }
             } catch (PDOException $th) {
                 echo "Error: " . $th->getMessage();

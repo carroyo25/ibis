@@ -3,6 +3,7 @@ $(function() {
     let ingresos = 0,
         swcoment = false,
         fila = "";
+        nro_comentarios = 0;
 
     $("#esperar").css({"display":"none","opacity":"0"});
 
@@ -105,6 +106,9 @@ $(function() {
                 ingresos    = 0
                 swcoment    = false;
 
+                //inicia el conteo de los comentarios
+                nro_comentarios =  $('#'+fila+' td:first').parent().find('td').eq('12').children().text();
+
                 $("#esperar").css({"display":"none","opacity":"0"});
                 $("#proceso").fadeIn();
             },
@@ -192,6 +196,20 @@ $(function() {
                                                 usuario:$("#id_user").val()},
                 function (data, textStatus, jqXHR) {
                     swcoment = true;
+                    nro_comentarios++;
+
+                    $('#'+fila+' td:first').parent().find('td').eq('12')
+                        .children().text(nro_comentarios)
+                        .end()
+                        .addClass('semaforoNaranja');
+
+                    if ($("#id_user").val() == "633ae7e588a52"){
+                        $('#'+fila+' td:first').parent().find('td').eq('9').addClass('semaforoRojo');
+                    }else if($("#id_user").val() == "6288328f58068"){
+                        $('#'+fila+' td:first').parent().find('td').eq('10').addClass('semaforoRojo');
+                    }else if($("#id_user").val() == "62883306d1cd3"){
+                        $('#'+fila+' td:first').parent().find('td').eq('11').addClass('semaforoRojo');
+                    }
                 },
                 "text"
             );
@@ -256,7 +274,7 @@ $(function() {
 
         $.post(RUTA+"firmas/autoriza", {id:$("#codigo_orden").val()},
             function (data, textStatus, jqXHR) {
-                $(".itemsTabla table tbody").empty().append(data.listado);
+                //$(".itemsTabla table tbody").empty().append(data.listado);
                 
                 mostrarMensaje(data.mensaje,data.clase);
 
@@ -318,14 +336,19 @@ $(function() {
     $("#btnAceptarPreguntaExpress").click(function(e){
         e.preventDefault(e);
 
-        $("#esperar").css("opacity","1").fadeIn();
+        $("#esperar").css({"display":"block","opacity":"1"});
 
         $.post(RUTA+"firmas/autorizaExpress", {id:$("#codigo_orden").val(),numero:$("#numero").val(),proveedor:$("#entidad").val(),pago:$("#cpago").val()},
             function (data, textStatus, jqXHR) {
                 mostrarMensaje(data.mensaje,data.clase);
 
                 $("#preguntaExpress").fadeOut();
-                $("#esperar").css("opacity","0").fadeOut();  
+                $("#esperar").css("opacity","0").fadeOut(); 
+
+                $('#'+fila+' td:first').parent().find('td').eq('6')
+                        .text('Aprobado Urgente')
+                        .removeClass('normal')
+                        .addClass('urgente');
                 
             },
             "json"
