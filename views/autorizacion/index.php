@@ -682,8 +682,8 @@
         </table>
     </div>
 
-    <canvas id="cnv" name="cnv" width="500" height="100" ></canvas>
-    <canvas name="SigImg" id="SigImg" width="500" height="100"></canvas>
+    <canvas id="cnv" name="cnv" width="500" height="100"  class="oculto"></canvas>
+    <canvas name="SigImg" id="SigImg" width="500" height="100" class="oculto"></canvas>
     <form action="" name="FORM1">
         <input type="hidden" name="firmado" id="firmado">
 	</form>

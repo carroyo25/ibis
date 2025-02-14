@@ -207,7 +207,7 @@
                     <th>Tipo</th>
                     <th>Descripción</th>
                     <th data-idcol="4" class="datafiltro">Centro Costos</th>
-                    <th data-idcol="5" class="datafiltro">Solicitante</th>
+                    <th data-idcol="5" class="datafiltro">Usuario</th>
                     <th>Estado</th>
                     <th data-idcol="7" class="datafiltro">Asignado</th>
                     <th data-idcol="8" class="datafiltro" width="10%">Estado<br/>Compras</th>

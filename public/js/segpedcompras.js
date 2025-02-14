@@ -225,17 +225,18 @@ $(function(){
                          { width: 50 },
                          { width: 20 },
                          { width: 20 },
-                         { width: 20 }
+                         { width: 20 },
+                         { width: 80 }
         ];
 
-        worksheet.mergeCells('A1:I1');
+        worksheet.mergeCells('A1:J1');
         worksheet.getCell('A1').value = 'Reporte Pedidos';
        
         worksheet.getRow(2).height = 30;
 
         worksheet.columns = columns;
 
-        const headers = ['Nro','Emision','Tipo','Descripcion','Proyecto','Solicitante','Estado','Asignado','Estado Compras'];
+        const headers = ['Nro','Emision','Tipo','Descripcion','Proyecto','Usuario','Estado','Asignado','Estado Compras','Comentarios'];
 
         /*rellenar los datos*/
          worksheet.getRow(2).values=headers;
@@ -250,7 +251,8 @@ $(function(){
                 fila.solicitante,
                 fila.estado,
                 fila.asignado,
-                fila.compras
+                fila.compras,
+                fila.comentarios
             ])
          })
          // Configurar wrapText para cada columna
@@ -260,9 +262,8 @@ $(function(){
          });
         
         worksheet.getCell('A1').alignment = { horizontal: 'center', vertical: 'center' };
-        worksheet.getCell('A2').alignment = { horizontal: 'center', vertical: 'center' };
 
-        applyBackgroundColor(worksheet, 2, 2, 1, 9, 'BFCDDB');
+        applyBackgroundColor(worksheet, 2, 2, 1, 10, 'BFCDDB');
 
         const buffer = await workbook.xlsx.writeBuffer();
         const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
@@ -295,6 +296,7 @@ $(function(){
             item['estado']      = $(this).find('td').eq(6).text();
             item['asignado']    = $(this).find('td').eq(7).text();
             item['compras']     = $(this).find('td').eq(8).children().text();
+            item['comentarios'] = $(this).find('td').eq(8).children().data('title');
 
             DATA.push(item);
         })

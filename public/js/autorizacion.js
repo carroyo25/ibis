@@ -735,7 +735,6 @@ $(function(){
             if ( $("#rol_user").val() == 2 && $("#rol_user").val() == 4 ) throw new Error("No esta habilitado para este proceso");
             if ( $("#codigo_estado").val() != 60 ) throw new Error("No se permite la accion");
 
-            //$("#entregaLogisticaModal").fadeIn();
             StartSign();
         } catch (error) {
             mostrarMensaje(error.message,"mensaje_error")
@@ -766,7 +765,7 @@ $(function(){
             if ( $("#rol_user").val() == 2 && $("#rol_user").val() == 4 ) throw new Error("No esta habilitado para este proceso");
             if ( $("#codigo_estado").val() != 63 ) throw new Error("No se recepcionó de logística");
 
-            $("#entregaDestinoModal").fadeIn();
+            StartSign();
         } catch (error) {
             mostrarMensaje(error.message,"mensaje_error")
         }
@@ -818,6 +817,7 @@ $(function(){
             })
             .then(response => response.json())
             .then(data => {
+                $("#recepcionLogisticaModal").fadeOut();
                 mostrarMensaje("Traslado actualizado","mensaje_correcto");
             })
         } catch (error) {
@@ -841,6 +841,7 @@ $(function(){
             })
             .then(response => response.json())
             .then(data => {
+                $("#recepcionLogisticaModal").fadeOut();
                 mostrarMensaje("Recepcionado en almacen","mensaje_correcto");
             })
         } catch (error) {
@@ -868,6 +869,7 @@ $(function(){
             })
         } catch (error) {
             mostrarMensaje(error.message,"mensaje_error");
+            $("#entregaDestinoModal").fadeOut();
         }
 
         return false;

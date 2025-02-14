@@ -80,7 +80,7 @@
                             mostrarMensaje("Traslado actualizado","mensaje_correcto");
                         })
                     }       
-                    else{
+                    else if (estado.value === 63){
                         fetch(RUTA+"autorizacion/entregaFinal",{
                             method: "POST",
                             body: formData

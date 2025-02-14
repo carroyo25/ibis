@@ -23,7 +23,6 @@
                                                         UPPER(
                                                         CONCAT_WS( ' ', ibis.tb_proyectos.ccodproy, ibis.tb_proyectos.cdesproy )) AS costos,
                                                         ibis.tb_pedidocab.nivelAten,
-                                                        CONCAT_WS( ' ', rrhh.tabla_aquarius.apellidos, rrhh.tabla_aquarius.nombres ) AS nombres,
                                                         estados.cdescripcion AS estado,
                                                         atencion.cdescripcion AS atencion,
                                                         estados.cabrevia,
@@ -35,15 +34,16 @@
                                                         ( SELECT COUNT( tb_pedidodet.estadoItem ) FROM tb_pedidodet WHERE tb_pedidodet.estadoItem != 52 AND tb_pedidodet.idpedido = idreg  AND tb_pedidodet.nflgActivo != 105) AS itemsFaltantes,
                                                     IF
                                                         ( ibis.tb_pedidocab.estadoCompra = 1 OR ISNULL( ibis.tb_pedidocab.estadoCompra ), '--', compras.cdescripcion ) AS textoEstadoCompra,
-                                                        tb_pedidocab.comentariocompra
+                                                        tb_pedidocab.comentariocompra,
+                                                        UPPER(usuario.cnombres)	AS nombres
                                                     FROM
                                                         ibis.tb_pedidocab
-                                                        LEFT JOIN rrhh.tabla_aquarius ON ibis.tb_pedidocab.idsolicita = rrhh.tabla_aquarius.internal
                                                         LEFT JOIN ibis.tb_parametros AS estados ON ibis.tb_pedidocab.estadodoc = estados.nidreg
                                                         LEFT JOIN ibis.tb_parametros AS atencion ON ibis.tb_pedidocab.nivelAten = atencion.nidreg
                                                         LEFT JOIN ibis.tb_proyectos ON ibis.tb_pedidocab.idcostos = ibis.tb_proyectos.nidreg
                                                         LEFT JOIN ibis.tb_user ON ibis.tb_pedidocab.asigna = ibis.tb_user.iduser
-                                                        LEFT JOIN ibis.tb_parametros AS compras ON ibis.tb_pedidocab.estadoCompra = compras.nidreg 
+                                                        LEFT JOIN ibis.tb_parametros AS compras ON ibis.tb_pedidocab.estadoCompra = compras.nidreg
+                                                        LEFT JOIN ibis.tb_user AS usuario ON ibis.tb_pedidocab.usuario = usuario.iduser 
                                                     WHERE
                                                         (ibis.tb_pedidocab.estadodoc >= 54
                                                         AND ibis.tb_pedidocab.estadodoc != 105)

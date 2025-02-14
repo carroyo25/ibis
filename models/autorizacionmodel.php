@@ -506,7 +506,10 @@
                                                             alm_autorizacab.fentreuser =:fecha
                                                         WHERE alm_autorizacab.idreg =:id");
                                                         
-                $sql->execute(["id"=>$id, "estado"=>$estado, "user"=>$_SESSION['iduser'], "fecha"=>$fecha]);
+                $sql->execute(["id"=>$id, 
+                                "estado"=>140, 
+                                "user"=>$_SESSION['iduser'], 
+                                "fecha"=>$fecha]);
 
                 if ( $sql->rowCount() > 0 ){
                     $mensaje = "Traslado Finalizado";
