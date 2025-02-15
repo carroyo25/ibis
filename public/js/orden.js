@@ -9,8 +9,8 @@ $(function(){
         costos = "",
         fp = 0,
         idorden = 0,
-        datafiltro = "",
-        fila="";
+        fila="",
+        filaActualiza= "";
 
     var grabado  = false;
 
@@ -20,6 +20,8 @@ $(function(){
         e.preventDefault();
 
         autorizado = $(this).data('finanzas')+$(this).data('logistica')+$(this).data('operaciones');
+
+        filaActualiza = $(this).attr('id');
 
         $.post(RUTA+"orden/ordenId", {id:$(this).data("indice")},
             function (data, textStatus, jqXHR) {
@@ -288,7 +290,20 @@ $(function(){
     $("#closeProcess").click(function (e) { 
         e.preventDefault();
 
-        $.post(RUTA+"orden/actualizaListado",
+        if( accion = 'u' ){
+            if ( $("#codigo_estado").val() == 49 )
+                actualizarFila($("#codigo_moneda").val(),$("#entidad").val(),$("#concepto").val(),$('#in').val(),$("#codigo_moneda").val(),filaActualiza);
+        }
+            
+
+        $("#proceso").fadeOut(function(){
+            grabado = false;
+            $("form")[0].reset();
+            $("form")[1].reset();
+            $("#tablaDetalles tbody").empty();
+        });
+
+        /*$.post(RUTA+"orden/actualizaListado",
             function (data, textStatus, jqXHR) {
                 $(".itemsTabla table tbody")
                     .empty()
@@ -302,7 +317,7 @@ $(function(){
                 });
             },
             "text"
-        );
+        );*/
 
         return false;
     });
@@ -1104,7 +1119,6 @@ $(function(){
     $(".cabezaModulo,.barraTrabajo").on('click','*', function() {
         $(".filtro").fadeOut();
     });
-
 })
 
 
@@ -1236,6 +1250,15 @@ adicionales = () => {
 }
 
 
+actualizarFila = (numero,entidad,concepto,importe_neto,moneda,fila) => {
+    const simbolo_moneda = moneda == 20 ? 'S/. ': '$ ';
+
+
+    $('#'+fila).find('td').eq('2').text(concepto);
+    $('#'+fila).find('td').eq('5').text(entidad);
+    $('#'+fila).find('td').eq('7').text(simbolo_moneda+importe_neto);
+}
+
 //funcion para sumar eliminando el problema de las comas 
 sumarAdicionales = (TABLA,indice) =>{
     let sum = 0;
@@ -1285,6 +1308,8 @@ sumardias = () => {
 
 }
 
+
+
 function DownloadFromUrl(fileURL, fileName) {
     var link = document.createElement('a');
     link.href = fileURL;
@@ -1293,7 +1318,6 @@ function DownloadFromUrl(fileURL, fileName) {
     link.click();
     document.body.removeChild(link);
 }
-
 
 function createPdf(id,fila,atencion){
     let formData = new FormData();

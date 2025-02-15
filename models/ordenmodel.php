@@ -85,7 +85,8 @@
                         }
 
 
-                        $salida .='<tr class="pointer '.$resaltado.'" data-indice="'.$rs['id_regmov'].'" 
+                        $salida .='<tr class="pointer '.$resaltado.'" id="'.$rs['id_regmov'].'"
+                                                        data-indice="'.$rs['id_regmov'].'" 
                                                         data-estado     ="'.$rs['nEstadoDoc'].'"
                                                         data-finanzas   ="'.$ffin.'"
                                                         data-logistica  ="'.$flog.'"
@@ -421,10 +422,19 @@
                 $entrega = $cabecera['dias'];
 
                 $sql = $this->db->connect()->prepare("UPDATE lg_ordencab 
-                                                        SET  ffechaent=:entrega,ntotal=:total,ctiptransp=:transp,
-                                                             nplazo=:plazo,ncodalm=:alm,nigv =:igv,id_centi=:enti,
-                                                             ncodpago=:pago,cnumcot=:cotizacion,creferencia=:referencia,
-                                                             lentrega=:lugar,ncodmon=:moneda,cObservacion=:observacion
+                                                        SET  ffechaent=:entrega,
+                                                             ntotal=:total,
+                                                             ctiptransp=:transp,
+                                                             nplazo=:plazo,
+                                                             ncodalm=:alm,
+                                                             nigv =:igv,
+                                                             id_centi=:enti,
+                                                             ncodpago=:pago,
+                                                             cnumcot=:cotizacion,
+                                                             creferencia=:referencia,
+                                                             lentrega=:lugar,
+                                                             ncodmon=:moneda,
+                                                             cObservacion=:observacion
                                                         WHERE id_regmov = :id");
                 $sql->execute(['entrega'=>$cabecera['fentrega'],
                                 "total"=>$cabecera['total_numero'],
@@ -442,6 +452,7 @@
                                 "observacion"=>$cabecera['concepto']]);
                 
                 $this->grabarDetalles($cabecera['codigo_orden'],$detalles,$cabecera['codigo_costos'],$cabecera['codigo_orden']);
+                $this->actualizarDetallesPedido(84,$detalles,$cabecera['codigo_orden'],$cabecera['codigo_entidad']);
                 $this->grabarComentarios($cabecera['codigo_verificacion'],$comentarios,$usuario);
 
                 $salida = array("respuesta"=>true,
@@ -462,27 +473,25 @@
                 $datos = json_decode($detalles);
                 $nreg = count($datos);
 
-                for ($i=0; $i <$nreg ; $i++) { 
-                    if($datos[$i]->cantidad == $datos[$i]->cantped) {
-                        $estado = 84;
-                        $swOrden = 1;    
-                    }else{
-                        $estado = 54;
-                        $swOrden = 0;
-                    }
+                $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet 
+                                                        SET estadoItem=:est,
+                                                            idorden=:orden,
+                                                            nflgOrden=:swOrden, 
+                                                            cant_orden=:pendiente,
+                                                            cant_pedida=:pedido,
+                                                            cant_aprob=:aprobado 
+                                                        WHERE iditem=:item");
 
-                    $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet SET 
-                                                        estadoItem=:est,
-                                                        idorden=:orden,
-                                                        nflgOrden=:swOrden, 
-                                                        cant_orden=:pendiente WHERE iditem=:item");
-                    $sql->execute(["item"=>$datos[$i]->itped,
-                                    "est"=>$estado,
-                                    "orden"=>$orden,
-                                    "swOrden"=>$swOrden,
-                                    "pendiente"=>$datos[$i]->cantidad]);
+                for ($i=0; $i <$nreg ; $i++) { 
+                    $sql->execute(["item"       =>$datos[$i]->itped,
+                                    "est"       =>84,
+                                    "orden"     =>$orden,
+                                    "swOrden"   =>1,
+                                    "pendiente" =>$datos[$i]->cantidad,
+                                    "pedido"    =>$datos[$i]->cantidad,
+                                    "aprobado"  =>$datos[$i]->cantidad]);
                     
-                    $this->registrarOrdenesItems($datos[$i]->itped,$orden,$entidad);                
+                    //$this->registrarOrdenesItems($datos[$i]->itped,$orden,$entidad);                
                 }
                 
             } catch (PDOException $th) {
@@ -552,80 +561,7 @@
 
         public function enviarCorreo($cabecera,$detalles,$correos,$asunto,$mensaje){
             try {
-                //require_once("public/PHPMailer/PHPMailerAutoload.php");
-
-                /*$documento = $this->generarDocumento($cabecera,1,$detalles);
-
-                $data       = json_decode($correos);
-                $nreg       = count($data);
-                $subject    = utf8_decode($asunto);
-
-                $messaje    = '<div style="width:100%;display: flex;flex-direction: column;justify-content: center;align-items: center;
-                                    font-family: Futura, Arial, sans-serif;">
-                            <div style="width: 45%;border: 1px solid #c2c2c2;background: #0078D4; padding:1rem">
-                                <h1 style="text-align: center;">Aprobación</h1>
-                            </div>
-                            <div style="width: 45%;
-                                        border-left: 1px solid #c2c2c2;
-                                        border-right: 1px solid #c2c2c2;
-                                        border-bottom: 1px solid #c2c2c2;
-                                        padding:1rem">
-                                <p style="padding:.5rem"><strong style="font-style: italic;">Ing:</strong></p>
-                                <p style="padding:.5rem;line-height: 1rem;">  '.$mensaje.'</p>
-                                <p style="padding:.5rem;line-height: 1rem;">   Moneda   : '.$cabecera['moneda'].'</p>
-                                <p style="padding:.5rem;line-height: 1rem;">   Proveedor: '.$cabecera['entidad'].'</p>
-                                <p style="padding:.5rem">Fecha de Emisión : '. date("d/m/Y h:i:s") .'</p>
-                            </div>
-                        </div>';
-
-                $estadoEnvio= false;
-                $clase = "mensaje_error";
-                $salida = "";
-                
-                $origen = $_SESSION['user']."@sepcon.net";
-                $nombre_envio = $_SESSION['user'];
-
-                $mail = new PHPMailer;
-                $mail->isSMTP();
-                $mail->SMTPDebug = 0;
-                $mail->Debugoutput = 'html';
-                $mail->Host = 'mail.sepcon.net';
-                $mail->SMTPAuth = true;
-                $mail->Username = 'sistema_ibis@sepcon.net';
-                $mail->Password = $_SESSION['password'];
-                $mail->Port = 465;
-                $mail->SMTPSecure = "ssl";
-                $mail->SMTPOptions = array(
-                    'ssl' => array(
-                        'verify_peer' => false,
-                        'verify_peer_name' => false,
-                        'allow_self_signed' => false
-                    )
-                );
-                
-                $mail->setFrom($origen,$nombre_envio);
-
-                for ($i=0; $i < $nreg; $i++) {
-                    $mail->addAddress($data[$i]->correo,$data[$i]->nombre);
-        
-                    $mail->Subject = $subject;
-                    $mail->msgHTML(utf8_decode($messaje));
-
-                    if (file_exists( 'public/documentos/ordenes/emitidas/'.$documento)) {
-                        $mail->AddAttachment('public/documentos/ordenes/emitidas/'.$documento);
-                    }
-        
-                    if (!$mail->send()) {
-                        $mensaje = "Mensaje de correo no enviado";
-                        $estadoEnvio = false; 
-                    }else {
-                        $mensaje = "Mensaje de correo enviado";
-                        $estadoEnvio = true; 
-                    }
-                        
-                    $mail->clearAddresses();
-                }*/
-
+               
                 $estadoEnvio = true;
 
                 if ($estadoEnvio){
