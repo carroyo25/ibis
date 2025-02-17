@@ -301,7 +301,7 @@
                                 $estadofila = "item_transito";
                                 $estado_item = "atendido";
                                 $estado_pedido = "atendido";
-                            }else if ( round($rs['ingreso_obra'],2) < round($rs['cantidad_orden'],2 )) {
+                            }else if ( round($rs['ingreso_obra'],2) < round($rs['cantidad_pedido'],2 )) {
                                 $porcentaje = "85%";
                                 $estadofila = "item_ingreso_parcial";
                                 $estado_item = "atendido";
@@ -2657,7 +2657,7 @@
                         $estado_item = "atendido";
                         $estado_pedido = "atendido";
                         $color_mostrar = '00FFFF';
-                    }else if ( round($dato['ingreso_obra'],2) < round($dato['cantidad_orden'],2 )) {
+                    }else if ( round($dato['ingreso_obra'],2) < round($dato['cantidad_pedido'],2 )) {
                         $porcentaje = "85%";
                         $estadofila = "item_ingreso_parcial";
                         $estado_item = "atendido";
