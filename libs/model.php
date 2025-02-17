@@ -2739,6 +2739,8 @@
                                     "comentario"=>$datos[$i]->comentario]);
                 }
 
+                return $nreg;
+
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;

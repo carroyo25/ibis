@@ -72,6 +72,7 @@
                 <input type="hidden" id="id_user" name="id_user" value="<?php echo $_SESSION['iduser']?>">
                 <input type="hidden" id="mail_user" name="mail_user" value="<?php echo $_SESSION['correo']?>">
                 <input type="hidden" id="rol_user" name="rol_user" value="<?php echo $_SESSION['rol']?>">
+                <input type="hidden" id="rol_user" name="rol_user" value="<?php echo $_SESSION['usuario']?>">
             </div>
         </div>
         <div class="areaTrabajo">

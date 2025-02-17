@@ -196,12 +196,11 @@ $(function() {
                                                 usuario:$("#id_user").val()},
                 function (data, textStatus, jqXHR) {
                     swcoment = true;
-                    nro_comentarios++;
-
-                    $('#'+fila+' td:first').parent().find('td').eq('12')
-                        .children().text(nro_comentarios)
-                        .end()
-                        .addClass('semaforoNaranja');
+                    
+                    if ( data > 0 ){
+                        nro_comentarios++;
+                        $('#'+fila).find('td').eq('12').text(nro_comentarios);
+                    }
 
                     if ($("#id_user").val() == "633ae7e588a52"){
                         $('#'+fila+' td:first').parent().find('td').eq('9').addClass('semaforoRojo');

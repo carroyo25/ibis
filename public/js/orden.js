@@ -9,8 +9,9 @@ $(function(){
         costos = "",
         fp = 0,
         idorden = 0,
-        fila="",
-        filaActualiza= "";
+        fila ="",
+        filaActualiza = ""
+        nro_comentarios = 0;
 
     var grabado  = false;
 
@@ -22,6 +23,7 @@ $(function(){
         autorizado = $(this).data('finanzas')+$(this).data('logistica')+$(this).data('operaciones');
 
         filaActualiza = $(this).attr('id');
+        
 
         $.post(RUTA+"orden/ordenId", {id:$(this).data("indice")},
             function (data, textStatus, jqXHR) {
@@ -93,6 +95,7 @@ $(function(){
                 
                 $("#in").val(total_format);
 
+
                 let igv = 0;
 
                 if (data.cabecera[0].nigv != 0) {
@@ -130,13 +133,15 @@ $(function(){
 
                 $("#sw").val(1);
 
-                if ( data.bocadillo != 0) {
+                if ( data.bocadillo != 0 ) {
                     $(".button__comment")
                         .text(data.bocadillo)
                         .show();
                 }else{
                     $(".button__comment").hide();
                 }
+
+                nro_comentarios =  data.bocadillo;
 
                 $("#proceso").fadeIn();
 
@@ -292,32 +297,15 @@ $(function(){
 
         if( accion = 'u' ){
             if ( $("#codigo_estado").val() == 49 )
-                actualizarFila($("#codigo_moneda").val(),$("#entidad").val(),$("#concepto").val(),$('#in').val(),$("#codigo_moneda").val(),filaActualiza);
+                actualizarFila($("#entidad").val(),$("#concepto").val(),$('#in').val(),$("#codigo_moneda").val(),filaActualiza);
         }
             
-
         $("#proceso").fadeOut(function(){
             grabado = false;
             $("form")[0].reset();
             $("form")[1].reset();
             $("#tablaDetalles tbody").empty();
         });
-
-        /*$.post(RUTA+"orden/actualizaListado",
-            function (data, textStatus, jqXHR) {
-                $(".itemsTabla table tbody")
-                    .empty()
-                    .append(data);
-
-                $("#proceso").fadeOut(function(){
-                    grabado = false;
-                    $("form")[0].reset();
-                    $("form")[1].reset();
-                    $("#tablaDetalles tbody").empty();
-                });
-            },
-            "text"
-        );*/
 
         return false;
     });
@@ -571,7 +559,13 @@ $(function(){
                                               comentarios:JSON.stringify(comentarios()),
                                               usuario:$("#id_user").val()},
                 function (data, textStatus, jqXHR) {
-                    swcoment = true;
+                    
+                    if ( data > 0 ){
+                        nro_comentarios = nro_comentarios+1;
+                        $('#'+filaActualiza).find('td').eq('12').text(nro_comentarios);
+                    }
+
+                    swcoment = true;       
                 },
                 "text"
             );
@@ -583,8 +577,11 @@ $(function(){
     $("#saveOrden").click(function (e) { 
         e.preventDefault();
 
-        let result = {};
-    
+        let result = {},
+            usuario= null,
+            indice = 99999;
+        
+        
         $.each($("#formProceso").serializeArray(),function(){
             result[this.name] = this.value;
         })
@@ -603,7 +600,6 @@ $(function(){
             if (result['dias'] == "") throw "ingrese el numero de dias";
             if (result['codigo_moneda'] == "") throw "Elija la moneda";
             if (result['codigo_pago'] == "") throw "Elija el tipo de pago";
-            //if (result['codigo_almacen'] == "") throw "Indique el lugar de entrega";
             if (result['total'] == "") throw "No se registro el total de la orden";
             if ($("#tablaDetalles tbody tr") .length <= 0) throw "No tiene items cargados";
             if ($("#id_user").val() <= "") throw "Error General";
@@ -631,11 +627,20 @@ $(function(){
                         $("#esperar").fadeOut();
                         $("#tablaDetalles tbody tr").attr('data-grabado',1);
                         $("#codigo_orden").val(response.orden);
-                        $("#tablaPrincipal tbody")
-                            .empty()
-                            .append(response.pedidos);
+
+                        agregarFila($("#numero").val(),
+                                    $("#emision").val(),
+                                    $("#concepto").val(),
+                                    $("#costos").val(),
+                                    $("#area").val(),
+                                    $("#entidad").val(),
+                                    response.usuario,
+                                    $("#it").val(),
+                                    response.orden,
+                                    $("#codigo_moneda").val());
+
                             
-                            accion = ' ';
+                        accion = ' ';
                     }
                 });
             }else if ( accion == 'u' ){
@@ -715,6 +720,7 @@ $(function(){
                                                 
             function (data, textStatus, jqXHR) {
                 mostrarMensaje(data.mensaje,data.clase);
+                $('#'+filaActualiza).addClass('resaltado_firma');
                 $("#sendMail").fadeOut();
                 $("#esperar").css("opacity","0").fadeOut();
             },
@@ -1250,13 +1256,43 @@ adicionales = () => {
 }
 
 
-actualizarFila = (numero,entidad,concepto,importe_neto,moneda,fila) => {
+actualizarFila = (entidad,concepto,importe_neto,moneda,fila) => {
     const simbolo_moneda = moneda == 20 ? 'S/. ': '$ ';
 
 
     $('#'+fila).find('td').eq('2').text(concepto);
     $('#'+fila).find('td').eq('5').text(entidad);
     $('#'+fila).find('td').eq('7').text(simbolo_moneda+importe_neto);
+}
+
+agregarFila = (numero,emision,concepto,costos,area,proveedor,usuario,total,indice,moneda) =>{
+    const simbolo_moneda = moneda == 20 ? 'S/. ': '$ ',
+        cc = costos.split(" ");
+
+    row = `<tr class="pointer" id="${indice}" data-indice="${indice}" 
+                                    data-estado     ="49"
+                                    data-finanzas   ="0"
+                                    data-logistica  ="0"
+                                    data-operaciones="0"
+                                    data-atencion   ="47">
+                                <td class="textoCentro">${numero}</td>
+                                <td class="textoCentro">${new Date().toLocaleDateString()}</td>
+                                <td class="pl20px">${concepto}</td>
+                                <td class="pl20px">${cc[0]}</td>
+                                <td class="pl20px">${area}</td>
+                                <td class="pl20px">${proveedor}</td>
+                                <td class="pl5px">${usuario.toUpperCase()}</td>
+                                <td class="textoDerecha">${simbolo_moneda+total}</td>
+                                <td class="textoCentro normal">NORMAL</td>
+                                <td class="textoCentro"><i class="far fa-square"></i></td>
+                                <td class="textoCentro"><i class="far fa-square"></i></td>
+                                <td class="textoCentro"><i class="far fa-square"></i></td>
+                                <td class="textoCentro"></td>
+                                <td class="textoCentro"><a href="${indice}" title="descargar Orden"><i class="fas fa-file-download"></i></a></td>
+                            </tr>`;
+
+    $("#tablaPrincipal tbody").prepend(row);
+    
 }
 
 //funcion para sumar eliminando el problema de las comas 

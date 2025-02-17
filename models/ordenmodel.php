@@ -335,7 +335,8 @@
                 $salida = array("respuesta"=>$respuesta,
                                 "mensaje"=>$mensaje,
                                 "clase"=>$clase,
-                                "orden"=>$indice);
+                                "orden"=>$indice,
+                                "usuario"=>$_SESSION['user']);
 
             
                 return $salida;
