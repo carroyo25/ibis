@@ -82,32 +82,31 @@ $(function(){
         return false;
     });
 
-    $("#cancelaEstado").click(function (e) { 
+    $("#cancelaAsigna").click(function (e) { 
         e.preventDefault();
 
-        $("#cambioestado").fadeOut();
+        $("#comentarios").fadeOut();
         
         return false;
     });
 
-    $("#aceptaEstado").click(function (e) { 
+    $("#aceptaAsigna").click(function (e) { 
         e.preventDefault();
 
         try {
-            if ($("#operador_asignado").val() =="" ) throw Error("No selecciono operador");
+            if ($("#operador_asignado").val() =="" ) throw "No selecciono operador";
 
-            /*$.post(RUTA+"asigna/asignaOperador", {pedido:$("#codigo_pedido").val(),
+            $.post(RUTA+"asigna/asignaOperador", {pedido:$("#codigo_pedido").val(),
                                              detalles:JSON.stringify(itemsDetalles()),
                                              asignado:$("#operador_asignado").val()},
             function (data, textStatus, jqXHR) {
-                $("#cambioestado").fadeOut();
+                $("#comentarios").fadeOut();
                 mostrarMensaje("Pedido asignado","mensaje_correcto")
             },
-                "text"
-            );*/
-
+            "text"
+        );
         } catch (error) {
-            mostrarMensaje(error.message,"mensaje_error")
+            mostrarMensaje(error,"mensaje_error")
         }
         
         return false;

@@ -818,7 +818,7 @@ $(function() {
         return false;
     });
 
-    $("#closeFilters").click(function (e) { 
+    $("#closeFilters,#btnCancelarFiltro").click(function (e) { 
         e.preventDefault();
  
         $("#filtros").fadeOut();
@@ -837,7 +837,6 @@ $(function() {
             items[indice++] = $(this).attr("id");
         });
 
-
         try {
             if (items.length == 0) throw new Error("Debe seleccionar un centro de costos");
             if ($("#fecha_inicio").val() == "") throw new Error("Selecione una fecha de inicio");
@@ -847,19 +846,21 @@ $(function() {
             formData.append('fechaInicio',$("#fecha_inicio").val());
             formData.append('fechaFinal',$("#fecha_final").val());
 
+            $("#esperar").css({"display":"block","opacity":"1"});
+
             fetch(RUTA+'cargoplanner/filtroCargoPlanExporta',{
                 method:'POST',
                 body:formData,
             })
             .then(response =>response.json())
             .then(data => {
+                $("#esperar").css({"display":"none","opacity":"0"});
                 window.location.href = data.documento;
             })
         } catch (error) {
             mostrarMensaje(error,"mensaje_error");
         }
-
-            
+   
         return false;
     });
     

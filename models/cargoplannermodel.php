@@ -1159,7 +1159,8 @@
                                                         ),
                                                         '%d/%m/%Y' 
                                                     ) AS fecha_entrega_final,
-                                                    FORMAT( lg_ordencab.nplazo, 0 ) AS plazo
+                                                    FORMAT( lg_ordencab.nplazo, 0 ) AS plazo,
+                                                    asignacion.cnombres AS asigna
                                                 FROM
                                                     tb_pedidodet
                                                     LEFT JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
@@ -1187,7 +1188,8 @@
                                                     LEFT JOIN ( SELECT SUM( alm_existencia.cant_ingr ) AS ingreso_obra, alm_existencia.idpedido FROM alm_existencia WHERE alm_existencia.nflgActivo = 1 GROUP BY alm_existencia.idpedido ) AS a ON a.idpedido = tb_pedidodet.iditem
                                                     LEFT JOIN tb_user AS usuarios ON tb_pedidocab.usuario = usuarios.iduser
                                                     LEFT JOIN alm_transferdet ON alm_transferdet.iddetped = tb_pedidodet.iditem
-                                                    LEFT JOIN alm_transfercab ON alm_transfercab.idreg = alm_transferdet.idtransfer 
+                                                    LEFT JOIN alm_transfercab ON alm_transfercab.idreg = alm_transferdet.idtransfer
+                                                    LEFT JOIN tb_user AS asignacion ON tb_pedidodet.idasigna = asignacion.iduser 
                                                 WHERE
                                                     tb_pedidodet.nflgActivo 
                                                     AND ISNULL( lg_ordendet.nflgactivo )
@@ -1799,7 +1801,8 @@
                                                             ),
                                                             '%d/%m/%Y' 
                                                         ) AS fecha_entrega_final,
-                                                        FORMAT( lg_ordencab.nplazo, 0 ) AS plazo
+                                                        FORMAT( lg_ordencab.nplazo, 0 ) AS plazo,
+                                                        asignacion.cnombres AS asigna
                                                     FROM
                                                         tb_pedidodet
                                                         LEFT JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
@@ -1827,7 +1830,8 @@
                                                         LEFT JOIN ( SELECT SUM( alm_existencia.cant_ingr ) AS ingreso_obra, alm_existencia.idpedido FROM alm_existencia WHERE alm_existencia.nflgActivo = 1 GROUP BY alm_existencia.idpedido ) AS a ON a.idpedido = tb_pedidodet.iditem
                                                         LEFT JOIN tb_user AS usuarios ON tb_pedidocab.usuario = usuarios.iduser
                                                         LEFT JOIN alm_transferdet ON alm_transferdet.iddetped = tb_pedidodet.iditem
-                                                        LEFT JOIN alm_transfercab ON alm_transfercab.idreg = alm_transferdet.idtransfer 
+                                                        LEFT JOIN alm_transfercab ON alm_transfercab.idreg = alm_transferdet.idtransfer
+                                                        LEFT JOIN tb_user AS asignacion ON tb_pedidodet.idasigna = asignacion.iduser
                                                     WHERE
                                                         tb_pedidodet.nflgActivo 
                                                         AND ISNULL( lg_ordendet.nflgactivo )
@@ -2274,11 +2278,11 @@
                 $objPHPExcel->setActiveSheetIndex(0);
                 $objPHPExcel->getActiveSheet()->setTitle("Cargo Plan");
 
-                $objPHPExcel->getActiveSheet()->mergeCells('A1:AW1');
+                $objPHPExcel->getActiveSheet()->mergeCells('A1:AX1');
                 $objPHPExcel->getActiveSheet()->setCellValue('A1','CARGO PLAN');
 
-                $objPHPExcel->getActiveSheet()->getStyle('A1:AW2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                $objPHPExcel->getActiveSheet()->getStyle('A1:AW2')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('A1:AX2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $objPHPExcel->getActiveSheet()->getStyle('A1:AX2')->getAlignment()->setVertical(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
                 $objPHPExcel->getActiveSheet()->getRowDimension('2')->setRowHeight(60);
 
@@ -2323,6 +2327,7 @@
                 $objPHPExcel->getActiveSheet()->getColumnDimension("AU")->setAutoSize(true);
                 $objPHPExcel->getActiveSheet()->getColumnDimension("AV")->setWidth(50);
                 $objPHPExcel->getActiveSheet()->getColumnDimension("AW")->setAutoSize(true);
+                $objPHPExcel->getActiveSheet()->getColumnDimension("AX")->setAutoSize(true);
 
                 $objPHPExcel->getActiveSheet()
                             ->getStyle('A2:K2')
@@ -2367,13 +2372,13 @@
                             ->setRGB('FFFF00');
 
                 $objPHPExcel->getActiveSheet()
-                            ->getStyle('AN2:AW2')
+                            ->getStyle('AN2:AX2')
                             ->getFill()
                             ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
                             ->getStartColor()
                             ->setRGB('127BDD');
 
-                $objPHPExcel->getActiveSheet()->getStyle('A1:AW2')->getAlignment()->setWrapText(true);
+                $objPHPExcel->getActiveSheet()->getStyle('A1:AX2')->getAlignment()->setWrapText(true);
 
                 $objPHPExcel->getActiveSheet()->setCellValue('A2','Items'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('B2','Estado Actual'); // esto cambia
@@ -2424,6 +2429,7 @@
                 $objPHPExcel->getActiveSheet()->setCellValue('AU2','Tipo Transporte'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('AV2','Observaciones/Concepto'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('AW2','Solicitante'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('AX2','Pedido Asignado'); // esto cambia
 
 
                 $objPHPExcel->getActiveSheet()->getStyle('B:C')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
@@ -2791,6 +2797,7 @@
                     $objPHPExcel->getActiveSheet()->setCellValue('AV'.$fila,$dato['concepto']);
 
                     $objPHPExcel->getActiveSheet()->setCellValue('AW'.$fila,$dato['nombre_elabora']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AX'.$fila,$dato['asigna']);
 
                     $fila++;
                 }
