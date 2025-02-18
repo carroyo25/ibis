@@ -279,7 +279,7 @@ $(function(){
 
     $("#save").click(function (e) { 
         e.preventDefault();
-        
+
         let result = {};
 
         $.each($("#formProceso").serializeArray(),function(){

@@ -555,13 +555,13 @@
                                         "und"=>$details[$i]->unidad]);
                         $rowCount = $sql->rowCount();
 
-                        //if ( $details[$i]->estado == 1   ) {
+                        if ( $details[$i]->estado == 0   ) {
                             $this->cambiarItemOrden($details[$i]->itempedido,$details[$i]->idprod);
                             $this->actualizarItemIngreso($details[$i]->itempedido,$details[$i]->idprod);
                             $this->actualizarItemDespacho($details[$i]->itempedido,$details[$i]->idprod);
                             $this->actualizarItemTransferencia($details[$i]->itempedido,$details[$i]->idprod);
                             $this->actualizarItemExistencia($details[$i]->itempedido,$details[$i]->idprod);
-                        //}
+                        }
 
                     } catch (PDOException $th) {
                         echo $th->getMessage();
