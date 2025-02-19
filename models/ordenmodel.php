@@ -560,25 +560,22 @@
             return array("adjuntos"=>$this->contarAdjuntos($codigo,'ORD'));
         }
 
-        public function enviarCorreo($cabecera,$detalles,$correos,$asunto,$mensaje){
+        public function solicitarAprobacion($cabecera,$detalles){
             try {
-               
-                $estadoEnvio = true;
+                $this->actualizarCabeceraPedido(59,$cabecera['codigo_pedido'],$cabecera['codigo_orden']);
+                $this->actualizarDetallesPedido(59,$detalles,$cabecera['codigo_orden'],$cabecera['codigo_entidad']);
+                $this->actualizarCabeceraOrden(59,$cabecera['codigo_orden'],NULL);
 
-                if ($estadoEnvio){
-                    $clase = "mensaje_correcto";
-                    $mensaje = "Enviado para aprobacion";
-                    $this->actualizarCabeceraPedido(59,$cabecera['codigo_pedido'],$cabecera['codigo_orden']);
-                    $this->actualizarDetallesPedido(59,$detalles,$cabecera['codigo_orden'],$cabecera['codigo_entidad']);
-                    $this->actualizarCabeceraOrden(59,$cabecera['codigo_orden'],NULL);
-                }
+                $clase = "mensaje_correcto";
+                $mensaje = "Enviado para aprobación";
+                $estadoEnvio = true;
 
                 $salida= array("estado"=>$estadoEnvio,
                                 "mensaje"=>$mensaje,
                                 "clase"=>$clase );
 
                 return $salida;
-            
+
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;

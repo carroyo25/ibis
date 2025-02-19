@@ -202,7 +202,6 @@
             <div>
                 <img src="" id="vistafirma">
             </div> 
-            <!--no te olvides cambiar esto-->
             <button id="btnGrabarKardex" class="boton3 oculto">Aceptar</button>
             <button type="button" class="boton3"id="btnFirmar"  onclick="StartSign()">Firmar</button>
             <!--<div>

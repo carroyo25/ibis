@@ -303,6 +303,8 @@
         public function enviarMensajes($asunto,$mensaje,$correos,$archivos,$pedido,$detalles,$estado,$emitido){
             require_once("public/PHPMailer/PHPMailerAutoload.php");
 
+            $archivo = "public/documentos/pedidos/emitidos/".TRIM($emitido);
+       
             $this->subirAdjuntoCorreo($archivos);
             
             $data       = json_decode($correos);
@@ -347,7 +349,7 @@
                 $mail->Subject = $subject;
                 $mail->msgHTML(utf8_decode($messaje));
                     
-                $mail->AddAttachment('public/documentos/pedidos/emitidos/'.$emitido);
+                $mail->AddAttachment($archivo);
 
                 for($i=0;$i<$countfiles;$i++){
                     if (file_exists( 'public/documentos/correos/adjuntos/'.$archivos['name'][$i] )) {

@@ -57,6 +57,11 @@
                                                         $_POST['asunto'],
                                                         $_POST['mensaje']));
         }
+        
+        function aprobacion(){
+            echo json_encode($this->model->solicitarAprobacion($_POST['cabecera'],$_POST['detalles']));
+        }
+
 
         function comentarios(){
             echo $this->model->grabarComentarios($_POST['codigo'],$_POST['comentarios'],$_POST['usuario']);

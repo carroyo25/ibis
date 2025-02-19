@@ -244,7 +244,7 @@ $(function(){
          filas.forEach((fila,index) => {
             worksheet.addRow([
                 fila.numero,
-                new Date(fila.emision),
+                fila.emision,
                 fila.tipo,
                 fila.descripcion,
                 fila.proyecto,

@@ -106,7 +106,7 @@
                                                                                     id_centi=:entidad,cnumguia=:guia,idref_pedi=:pedido,id_userAprob=:aprueba,
                                                                                     nEstadoDoc=:estado,nflgactivo=:activo,nnronota=:nota,idref_abas=:orden,
                                                                                     ncodpry=:costos,ncodarea=:area,nflgCalidad=:calidad,nnromov=:movimiento,
-                                                                                    ncodmov=:codigo_movimiento");
+                                                                                    ncodmov=:codigo_movimiento,idUserElabora=:usuario");
 
                 $sql->execute(["mov"=>"I",
                                 "anio"=>$fecha[0],
@@ -125,7 +125,8 @@
                                 "area"=>$cabecera['codigo_area'],
                                 "calidad"=>$calidad,
                                 "movimiento"=>1,
-                                "codigo_movimiento"=>$cabecera['codigo_movimiento']]);
+                                "codigo_movimiento"=>$cabecera['codigo_movimiento'],
+                                "usuario"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowCount();
                 
                 if ($rowCount > 0) {

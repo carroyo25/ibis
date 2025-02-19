@@ -13,16 +13,18 @@ $(function(){
         if(e.which == 13) { 
             $.post(RUTA+"terceros/datosapi",{documento:$(this).val(),costos:$("#costosSearch").val()},
                 function (data, textStatus, jqXHR) {
-                    console.log(data);
                     if (data.datos) {
                         $("#nombre").val(data.datos.nombres);
                         $("#empresa").val(data.datos.empresa);
 
-                        $("#tablaPrincipal tbody")
-                            .empty()
-                            .append(data.anteriores);
-    
-                        $("#codeRead").focus();
+                        if ( data.datos.nombres != ""){
+                            $("#tablaPrincipal tbody")
+                                .empty()
+                                .append(data.anteriores);
+                        }else{
+                            mostrarMensaje('No se registro el personal','mensaje_error');
+                        }
+
                     }else{
                         $("#nombre, #cargo, #cut, #correo").val("");
                     }
@@ -177,6 +179,155 @@ $(function(){
         return false;
     });
 
+    $("#btnRegister").click(function(e){
+        e.preventDefault();
+
+        try {
+            if ($("#costosSearch").val() == " ") throw new Error("Elija el centro de costos");
+
+            $("#dialogo_registro").fadeIn();
+
+            return false
+        } catch (error) {
+            mostrarMensaje(e.message,"mensaje_error");
+        }
+
+        
+        return false;
+    });
+
+    /*----------------------*/
+
+    $("#btnAceptarDialogoKardex").click(function (e) { 
+        e.preventDefault();
+
+        try {
+            if(idprod === "") throw new Error("Elija un producto para registrar");
+            if($("#cantidad_dialogo").val() =="") throw new Error("Ingrese una cantidad para registrar");
+            if(parseFloat($("#cantidad_dialogo").val()) > parseFloat($("#maximo_stock").val())) throw new Error("Verificar la cantidad para registrar");
+
+            let 
+                cant            = $("#cantidad_dialogo").val(),
+                fsalida         = fechaActual(),
+                nhoja           = $("#nhoja_dialogo").val(),
+                isometricos     = $("#isometricos_dialogo").val(),
+                observaciones   = $("#observaciones_dialogo").val(),
+                serie           = $("#serie_dialogo").val(),
+                patrimonio      = $("#patrimonio").prop('checked'),
+                cambio          = $("#cambio_epp").val(),
+                nfilas          = $("#tablaPrincipal tr").length,
+                estado          = $("#estado_dialogo").val(),
+                textoSelect     = "",
+                pat             = "";
+
+                pat = patrimonio === true ? '<i class="far fa-check-square"></i>' : '<i class="far fa-square"></i>';
+                textoSelect = cambio !== "-1" ? $('select[name="cambio_epp"] option:selected').text() : "";
+
+            let row = `<tr data-registrado=0 class="pointer" data-idprod="${idprod}" data-cambio="${cambio}" data-patrimonio="${patrimonio}">
+                            <td class="textoDerecha">${nfilas}</td>
+                            <td class="textoCentro">${codigo}</td>
+                            <td class="pl20px">${descripcion}</td>
+                            <td class="textoCentro">${und}</td>
+                            <td class=""><input type="text" value="${cant}"></td>
+                            <td class=""><input type="date" class="unstyled textoCentro entrada" value="${fsalida}"></td>
+                            <td class=""><input type="text" class="entrada" value="${nhoja}"></td>
+                            <td class=""><input type="text" class="entrada" value='${isometricos.replace('"','¨')}'></td>
+                            <td class=""><input type="text" class="entrada" value="${observaciones}"></td>
+                            <td class=""><input type="text" class="entrada" value="${serie}"></td>
+                            <td class="textoCentro">${pat}</td>
+                            <td class="">${textoSelect}</td>
+                            <td class="">${estado}</td>
+                            <td class=""></td>
+                            <td class="textoCentro"><a href=""><i class="far fa-trash-alt"></i></a></td>
+                    </tr>`;
+
+            //codigos para mantenimiento        
+            let arraymtto = ['B05010002','B05010006'],
+                codmmtto = codigo.substring(0,9),
+                formData = new FormData(),
+                search = arraymtto.includes(codmmtto);
+
+                formData.append('codigo',idprod);
+                formData.append('serie',serie);
+                formData.append('documento',$("#docident").val());
+                formData.append("costos",$("#costosSearch").val());
+                
+            if ( search ) {
+                fetch(RUTA+'consumo/mantenimientos',{
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data=>{
+                   console.log(data.respuesta);
+                })
+            }
+
+            //$(row).insertBefore("#tablaPrincipal tbody tr:first");
+
+            if ( $("#tablaPrincipal tbody tr").length == 0)  {
+                $("#tablaPrincipal tbody").append(row);
+            }
+            else {
+                $(row).insertBefore("#tablaPrincipal tbody tr:first");
+            } 
+
+            cleanDialogControls();
+            idprod="";
+           
+        } catch (error) {
+            mostrarMensaje(error.message,"mensaje_error")
+        }
+
+        return false;
+    });
+
+    $("#btnCancelarDialogoKardex").click(function (e) { 
+        e.preventDefault();
+
+        $("#dialogo_registro").fadeOut();
+        
+        cleanDialogControls();
+        
+        idprod="";
+        
+        return false;
+    });
+
+    //filtrar Item del pedido
+    $("#codigoSearch, #descripSearch").on("keypress", function (e) {
+        if(e.which == 13) {
+            $("#esperar").fadeIn();
+            
+            $.post(RUTA+"consumo/llamarStocks", {cod:$("#codigoSearch").val(),
+                                                desc:$("#descripSearch").val(),
+                                                cc:$("#costosSearch").val()},
+                    function (data, textStatus, jqXHR) {
+                        $("#tabla_detalles_productos tbody")
+                            .empty()
+                            .append(data);
+                        $("#esperar").fadeOut();
+                    },
+                    "text"
+                );
+        }
+    });
+
+    $("#tabla_detalles_productos tbody").on('click','tr', function(e) {
+        e.preventDefault();
+
+        idprod = $(this).data("idprod");
+        codigo = $(this).find('td').eq(0).text();
+        descripcion = $(this).find('td').eq(1).text();
+        und = $(this).find('td').eq(2).text();
+
+        $("#maximo_stock").val($(this).find('td').eq(3).text());
+
+        $(this).toggleClass('semaforoNaranja');
+
+        return false;
+    });
+
 })
 
 detalles = () => {
@@ -275,4 +426,16 @@ detallesGrabados = () => {
     })
 
     return DATA;
+}
+
+cleanDialogControls = () => {
+    $("#codigoSearch").val("");
+    $("#descripSearch").val("");
+    $("#patrimonio").prop("checked", false);
+    $("#cambio_epp").val(-1);
+    $("#cantidad_dialogo").val("");
+    $("#serie_dialogo").val("");
+    $("#nhoja_dialogo").val("");
+    $("#isometricos_dialogo").val("");
+    $("#observaciones_dialogo").val("");
 }

@@ -670,21 +670,49 @@ $(function(){
             if ($("#codigo_estado").val() == 59) throw "La orden esta en firmas.";
             if (!grabado) throw "Por favor grabar la orden";
 
-            $("#subject").val($("#entidad").val() + ' - ' + $("#numero").val());
-
-            $.post(RUTA+"orden/buscaRol", {rol:$(this).data("rol"),documento:"o"},
-                function (data, textStatus, jqXHR) {
-                    $("#listaCorreos tbody").empty().append(data);
-                    $("#sendMail").fadeIn();
-                },
-                "text"
-            );
+            $("#aprobacion").fadeIn();
+            
         } catch (error) {
             mostrarMensaje(error,'mensaje_error'); 
         }
         
         return false;
     });
+
+
+    $("#btnAceptarAprueba").click( (e) => {
+        e.preventDefault();
+
+        let result = {};
+
+        $.each($("#formProceso").serializeArray(),function(){
+            result[this.name] = this.value;
+        })
+
+        $("#esperar").css("opacity","1").fadeIn();
+
+        $.post(RUTA+"orden/aprobacion", {cabecera:result,detalles:JSON.stringify(detalles())},
+            function (data, text, requestXHR) {
+                mostrarMensaje(data.mensaje,data.clase);
+                $('#'+filaActualiza).addClass('resaltado_firma');
+                $("#aprobacion").fadeOut();
+                $("#esperar").css("opacity","0").fadeOut();
+            },
+            "json"
+        );
+
+        return false;
+    })
+
+
+    $("#btnCancelarAprueba").click( (e) => {
+        e.preventDefault();
+
+        $("#aprobacion").fadeOut();
+
+        return false;
+    })
+
 
     $("#closeMail").click(function (e) { 
         e.preventDefault();
@@ -697,7 +725,7 @@ $(function(){
         return false;
     });
 
-    $("#btnConfirmSend").click(function (e) { 
+    /*$("#btnConfirmSend").click(function (e) { 
         e.preventDefault();
         
         try {
@@ -717,21 +745,21 @@ $(function(){
                                         correos:JSON.stringify(mailsList()),
                                         asunto:$("#subject").val(),
                                         mensaje:$(".messaje div").html()},
-                                                
-            function (data, textStatus, jqXHR) {
-                mostrarMensaje(data.mensaje,data.clase);
-                $('#'+filaActualiza).addClass('resaltado_firma');
-                $("#sendMail").fadeOut();
-                $("#esperar").css("opacity","0").fadeOut();
-            },
-            "json"
-        );
+                                                    
+                function (data, textStatus, jqXHR) {
+                    mostrarMensaje(data.mensaje,data.clase);
+                    $('#'+filaActualiza).addClass('resaltado_firma');
+                    $("#sendMail").fadeOut();
+                    $("#esperar").css("opacity","0").fadeOut();
+                },
+                "json"
+            );
         } catch (error) {
             mostrarMensaje(error,'mensaje_error');
         }
 
         return false;
-    });
+    });*/
 
     $("#sendEntOrden").click(function (e) { 
         e.preventDefault();

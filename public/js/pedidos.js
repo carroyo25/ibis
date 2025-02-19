@@ -571,7 +571,7 @@ $(function(){
         if (grabado){
 
             $("#estadoPedido,#codigo_estado").val($(this).data("estado"));
-            $("#subject").val("Pedido : "+$("#numero").val()+ " - " + $("#costos").val());
+            $("#subject").val("Pedido : "+$("#numero").val()+$("#costos").val());
 
             $.post(RUTA+"pedidos/buscaRol", {rol:$(this).data("rol"),cc:$("#codigo_costos").val()},
                 function (data, textStatus, jqXHR) {

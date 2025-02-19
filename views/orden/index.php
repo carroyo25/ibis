@@ -483,6 +483,15 @@
             </div>
         </div>
     </div>
+    <div class="modal" id="aprobacion">
+        <div class="ventanaPregunta">
+            <h3>¿Enviar la orden para su aprobación?</h3>
+            <div>
+                <button type="button" id="btnAceptarAprueba">Aceptar</button>
+                <button type="button" id="btnCancelarAprueba">Cancelar</button>
+            </div>
+        </div>
+    </div>
     <div class="cabezaModulo">
         <h1>Registro de ordenes</h1>
         <div>
