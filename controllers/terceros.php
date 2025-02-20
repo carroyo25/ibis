@@ -21,6 +21,10 @@
         function excelfile(){
             echo json_encode($this->model->createExcelReport($_POST['nombre'],$_POST['documento'],$_POST['empresa'],$_POST['detalles']));
         }
+
+        function firma(){
+            echo $this->model->subirFirmaTerceros($_POST['detalles']);
+        }
         
     }
 ?>

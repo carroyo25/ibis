@@ -170,8 +170,8 @@
                 <input type="text" id="nombre" name="nombre" class="ingreso">
             </div>
             <div>
-                <label for="cargo">Empresa</label>
-                <input type="cargo" id="empresa" name="empresa" class="ingreso">
+                <label for="empresa">Empresa</label>
+                <input type="text" id="empresa" name="empresa" class="ingreso">
             </div>
             <div>
                 <img src="" id="vistafirma">

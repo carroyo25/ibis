@@ -103,7 +103,7 @@ $(function(){
                     formData.append("estado",$("#estadoCompra").val());
                     formData.append("comentario",$("#comentarioEstado").val());
                     formData.append("user",$("#id_user").val());
-
+                    formData.append("fechaObra",$("#entregaObra").val());
 
                 if ($("#estadoCompra").val() =="" ) throw "Seleccione el estado para asignar al pedido";
 
@@ -115,10 +115,11 @@ $(function(){
                 .then(data => {
                     if (data.respuesta){
                         mostrarMensaje(data.mensaje,"mensaje_correcto");
-            
-                        $('#'+pedido+' td:first').parent().find('td').eq('8').children()
-                            .text(estadoTexto)
-                            .attr("data-title",$("#comentarioEstado").val());
+
+                        let entrega = $("#entregaObra").val().split("-");
+
+                        $('#'+pedido+' td:first').parent().find('td').eq('8').text(entrega[2]+'/'+entrega[1]+'/'+entrega[0]);
+                        $('#'+pedido+' td:first').parent().find('td').eq('9').children().text(estadoTexto).attr("data-title",$("#comentarioEstado").val());
 
                     }else{
                         mostrarMensaje(data.mensaje,"mensaje_error");
@@ -175,7 +176,9 @@ $(function(){
             data.datos.forEach(element =>{
                 let tipo = element.idtipomov == 37 ? "B":"S",
                     asignado = element.cnameuser == null ? "--" : element.cnameuser,
-                    comentario = element.comentariocompra == null ? "--": element.comentariocompra;
+                    comentario = element.comentariocompra == null ? "--": element.comentariocompra,
+                    entrega = element.entrega == null ? "" : element.entrega;
+
 
                 let row = `<tr class="pointer" data-indice="${element.idreg}" data-compras="${element.estadoCompra}" id="${element.idreg}">
                                 <td class="textoCentro">${element.nrodoc}</td>
@@ -186,6 +189,7 @@ $(function(){
                                 <td class="pl20px">${element.nombres}</td>
                                 <td class="textoCentro ${element.cabrevia}">${element.estado}</td>
                                 <td class="textoCentro">${asignado}</td>
+                                <td class="textoCentro">${entrega}</td>
                                 <td class="textoCentro" style="font-size:.6rem">
                                     <a href="${element.idreg}" data-title="${comentario}" class="bocadillo">${element.textoEstadoCompra}</a>
                                 </td>
@@ -225,18 +229,19 @@ $(function(){
                          { width: 50 },
                          { width: 20 },
                          { width: 20 },
+                         { width: 60 },
                          { width: 20 },
-                         { width: 80 }
+                         { width: 60 }
         ];
 
-        worksheet.mergeCells('A1:J1');
-        worksheet.getCell('A1').value = 'Reporte Pedidos';
+        worksheet.mergeCells('A1:K1');
+        worksheet.getCell('A1').value = 'Seguimiento de Pedidos Compras';
        
         worksheet.getRow(2).height = 30;
 
         worksheet.columns = columns;
 
-        const headers = ['Nro','Emision','Tipo','Descripcion','Proyecto','Usuario','Estado','Asignado','Estado Compras','Comentarios'];
+        const headers = ['Nro','Emision','Tipo','Descripcion','Proyecto','Usuario','Estado','Asignado','Estado Compras','Entrega Obra','Comentarios'];
 
         /*rellenar los datos*/
          worksheet.getRow(2).values=headers;
@@ -252,6 +257,7 @@ $(function(){
                 fila.estado,
                 fila.asignado,
                 fila.compras,
+                fila.entrega,
                 fila.comentarios
             ])
          })
@@ -263,7 +269,7 @@ $(function(){
         
         worksheet.getCell('A1').alignment = { horizontal: 'center', vertical: 'center' };
 
-        applyBackgroundColor(worksheet, 2, 2, 1, 10, 'BFCDDB');
+        applyBackgroundColor(worksheet, 2, 2, 1, 11, 'BFCDDB');
 
         const buffer = await workbook.xlsx.writeBuffer();
         const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
@@ -295,8 +301,10 @@ $(function(){
             item['solicitante'] = $(this).find('td').eq(5).text();
             item['estado']      = $(this).find('td').eq(6).text();
             item['asignado']    = $(this).find('td').eq(7).text();
-            item['compras']     = $(this).find('td').eq(8).children().text();
-            item['comentarios'] = $(this).find('td').eq(8).children().data('title');
+            item['entrega']     = $(this).find('td').eq(8).text();
+            item['compras']     = $(this).find('td').eq(9).children().text();
+            item['comentarios'] = $(this).find('td').eq(9).children().data('title');
+            
 
             DATA.push(item);
         })

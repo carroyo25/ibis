@@ -2898,6 +2898,17 @@ $almacen:#27798F;
             padding: .5rem;
             margin-top: 0.5rem;
         }
+
+        div:nth-child(3){
+            display: flex;
+            justify-content: space-evenly;
+            width: 100%;
+            margin-bottom: 1rem;
+
+            input{
+                border: 1px solid #c2c2c2;
+            }
+        }
     }
 
     button {

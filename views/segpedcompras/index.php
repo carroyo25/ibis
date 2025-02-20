@@ -128,10 +128,13 @@
                 <ul id="operadores">
                     <?php echo $this->estadosCompra ?>
                 </ul>
-
                 <div>
                     <p>Observaciones</p>
                     <textarea name="comentarioEstado" id="comentarioEstado"></textarea>
+                </div>
+                <div>
+                    <span>Fecha Entrega Obra</span>
+                    <input type="date" name="entregaObra" id="entregaObra">
                 </div>
             </div>
             <div class="opciones">
@@ -210,7 +213,8 @@
                     <th data-idcol="5" class="datafiltro">Usuario</th>
                     <th>Estado</th>
                     <th data-idcol="7" class="datafiltro">Asignado</th>
-                    <th data-idcol="8" class="datafiltro" width="10%">Estado<br/>Compras</th>
+                    <th data-idcol="8">Fecha Entrega <br/> Obra</th>
+                    <th data-idcol="9" class="datafiltro" width="10%">Estado Compras</th>
                     <th>...</th>
                 </tr>
             </thead>

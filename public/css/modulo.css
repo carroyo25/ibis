@@ -3213,6 +3213,19 @@
   padding: 0.5rem;
   margin-top: 0.5rem;
 }
+.ventanaOperador .contenedor_estados div:nth-child(3) {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: space-evenly;
+      -ms-flex-pack: space-evenly;
+          justify-content: space-evenly;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+.ventanaOperador .contenedor_estados div:nth-child(3) input {
+  border: 1px solid #c2c2c2;
+}
 .ventanaOperador button {
   border: none;
   width: 45%;

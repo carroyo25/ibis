@@ -40,26 +40,22 @@
                                                         alm_consumo.nkardex,
                                                         alm_consumo.calmacen,
                                                         UPPER(cm_producto.cdesprod) AS cdesprod,
-                                                        tb_unimed.cabrevia,COUNT(*) 
+                                                        tb_unimed.cabrevia,
+                                                        tb_parametros.cdescripcion  AS motivo_epp
                                                     FROM
                                                         alm_consumo
                                                         LEFT JOIN cm_producto ON alm_consumo.idprod = cm_producto.id_cprod
-                                                        LEFT JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed 
+                                                        LEFT JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                        LEFT JOIN tb_parametros ON alm_consumo.ncambioepp = tb_parametros.nidreg  
                                                     WHERE
-                                                            nrodoc = :documento 
+                                                        alm_consumo.nrodoc = :documento 
                                                         AND ncostos = :cc
-                                                    GROUP BY
-                                                            alm_consumo.idprod,
-                                                            alm_consumo.fechasalida,
-                                                            cm_producto.ccodprod,
-                                                            alm_consumo.cantsalida,
-                                                            alm_consumo.nhoja
-                                                    HAVING COUNT(*) >= 1
+                                                        AND alm_consumo.flgactivo = 1
                                                     ORDER BY alm_consumo.freg DESC" );
                 $sql->execute(["documento"=>$d,"cc"=>$c]);
                 $rowCount = $sql->rowCount();
                 $item = 1;
-                $salida ="No hay registros";
+                $salida ="";
                 $numero_item = $this->cantidadItems($d,$c);
 
 
@@ -80,14 +76,15 @@
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="pl5px">'.$rs['cdesprod'].'</td>
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
-                                        <td class="textoDerecha"><input value="'.$rs['cantsalida'].'" readonly></td>
-                                        <td class="textoCentro"><input value="'.$rs['fechasalida'].'" readonly></td>
-                                        <td class="textoCentro"><input value="'.$rs['nhoja'].'" readonly></td>
-                                        <td class="pl5px"><input value="'.$rs['cisometrico'].'" readonly></td>
-                                        <td class="pl5px"><input value="'.$rs['cobserentrega'].'" readonly></td>
-                                        <td class="pl5px"><input value="'.$rs['cserie'].'" readonly></td>
+                                        <td class="textoDerecha">'.$rs['cantsalida'].'</td>
+                                        <td class="textoCentro">'.$rs['fechasalida'].'</td>
+                                        <td class="textoCentro">'.$rs['nhoja'].'</td>
+                                        <td class="pl5px">'.$rs['cisometrico'].'</td>
+                                        <td class="pl5px">'.$rs['cobserentrega'].'</td>
+                                        <td class="pl5px">'.$rs['cserie'].'</td>
                                         <td class="textoCentro"><input type="checkbox" '.$marcado.'></td>
-                                        <td class="pl5px"><input value="'.$rs['cestado'].'" readonly></td>
+                                        <td class="pl5px">'.$rs['motivo_epp'].'</td>
+                                        <td class="pl5px">'.$rs['cestado'].'</td>
                                         <td class="textoCentro">
                                             <div style ="width:110px !important; text-align:center">
                                                 <img src = '.$firma.' style ="width:100% !important">
@@ -253,6 +250,77 @@
                 echo $th->getMessage();
                 return false;
             }
+        }
+
+        public function subirFirmaTerceros($detalles) {
+            if (array_key_exists('img',$_REQUEST)) {
+                // convierte la imagen recibida en base64
+                // Eliminamos los 22 primeros caracteres, que 
+                // contienen el substring "data:image/png;base64,"
+                $imgData = base64_decode(substr($_REQUEST['img'],22));
+                
+                $fechaActual = date('Y-m-d');
+                $respuesta = false;
+        
+                $namefile = uniqid();
+
+                // Path en donde se va a guardar la imagen
+                $file = 'public/documentos/firmas/'.$namefile.'.png';
+            
+                // borrar primero la imagen si existía previamente
+                if (file_exists($file)) { unlink($file); }
+            
+                // guarda en el fichero la imagen contenida en $imgData
+                $fp = fopen($file, 'w');
+                fwrite($fp, $imgData);
+                fclose($fp);
+                
+                if ( file_exists($file) ){
+                    $respuesta = true;
+
+                    $datos = json_decode($detalles);
+                    $nreg = count($datos);
+                    $kardex = time();
+
+                    for ($i=0; $i<$nreg; $i++){
+                        $sql = $this->db->connect()->prepare("INSERT INTO alm_consumo 
+                                                                    SET reguser=:user,
+                                                                        nrodoc=:documento,
+                                                                        idprod=:producto,
+                                                                        cantsalida=:cantidad,
+                                                                        fechasalida=:salida,
+                                                                        nhoja=:hoja,
+                                                                        cisometrico=:isometrico,
+                                                                        cobserentrega=:observaciones,
+                                                                        flgdevolver=:patrimonio,
+                                                                        cestado=:estado,
+                                                                        nkardex=:kardex,
+                                                                        cfirma=:firma,
+                                                                        cserie=:serie,
+                                                                        ncostos=:cc,
+                                                                        ncambioepp=:cambio,
+                                                                        cempresatercero=:empresa");
+                        $sql->execute(["user"=>$_SESSION['iduser'],
+                                        "documento"=>$datos[$i]->nrodoc,
+                                        "producto"=>$datos[$i]->idprod,
+                                        "cantidad"=>$datos[$i]->cantidad,
+                                        "salida"=>$datos[$i]->fecha,
+                                        "hoja"=>$datos[$i]->hoja,
+                                        "isometrico"=>$datos[$i]->isometrico,
+                                        "observaciones"=>$datos[$i]->observac,
+                                        "patrimonio"=>$datos[$i]->patrimonio,
+                                        "estado"=>$datos[$i]->estado,
+                                        "kardex"=>$kardex,
+                                        "firma"=>$namefile,
+                                        "serie"=>$datos[$i]->serie,
+                                        "cc"=>$datos[$i]->costos,
+                                        "cambio"=>$datos[$i]->cambio,
+                                        "empresa"=>$datos[$i]->empresa]);
+                    }
+                }            
+            }
+
+            return  $respuesta;
         }
     }
 ?>

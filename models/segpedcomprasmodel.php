@@ -35,7 +35,8 @@
                                                     IF
                                                         ( ibis.tb_pedidocab.estadoCompra = 1 OR ISNULL( ibis.tb_pedidocab.estadoCompra ), '--', compras.cdescripcion ) AS textoEstadoCompra,
                                                         tb_pedidocab.comentariocompra,
-                                                        UPPER(usuario.cnombres)	AS nombres
+                                                        UPPER(usuario.cnombres)	AS nombres,
+                                                        DATE_FORMAT( tb_pedidocab.fentregaPedido, '%d/%m/%Y' ) AS entrega
                                                     FROM
                                                         ibis.tb_pedidocab
                                                         LEFT JOIN ibis.tb_parametros AS estados ON ibis.tb_pedidocab.estadodoc = estados.nidreg
@@ -346,13 +347,15 @@
                 $sql = $this->db->connect()->prepare("UPDATE tb_pedidocab
                                                     SET tb_pedidocab.compras = :user,
                                                         tb_pedidocab.estadoCompra = :estado,
-                                                        tb_pedidocab.comentariocompra = :comentario
+                                                        tb_pedidocab.comentariocompra = :comentario,
+                                                        tb_pedidocab.fentregaPedido = :entrega
                                                     WHERE tb_pedidocab.idreg = :pedido");
                 
                 $sql->execute(["user"=>$datos['user'],
                                 "estado"=>$datos['estado'],
                                 "comentario"=>$datos['comentario'],
-                                "pedido"=>$datos['id']]);
+                                "pedido"=>$datos['id'],
+                                "entrega"=>$datos['fechaObra']]);
 
                 if ($sql->rowCount() > 0){
                     $mensaje = "Comentario actualizado...";
