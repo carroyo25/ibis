@@ -167,7 +167,8 @@
 
                 if ($rowCount > 0){
                     while ($rs = $sql->fetch()){
-                        $salida .='<tr class="pointer" data-idpet="'.$rs['niddetaPed'].'"
+                        if (!$this->buscarDetallesIngresados($rs['niddetaPed'])){
+                            $salida .='<tr class="pointer" data-idpet="'.$rs['niddetaPed'].'"
                                                         data-area="'.$rs['ncodarea'].'"
                                                         data-almacen = "'.$rs['ncodalm2'].'"
                                                         data-codprod = "'.$rs['id_cprod'].'"
@@ -188,6 +189,8 @@
                                         <td class="textoCentro">'.$rs['cnumguia'].'</td>
                                         <td class="textoCentro"><a href="'.$rs['niddetaPed'].'" ><i class="fas fa-paperclip"></i></a></td>
                                     </tr>';
+                        }
+                        
                     } 
                 }
                 return $salida;
@@ -922,6 +925,27 @@
                                                         WHERE alm_existencia.idregistro =:guia");
 
                 $sql->execute(["guia" =>$id]);
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function buscarDetallesIngresados($id){
+            try {
+                $ingresado = false;
+                $sql = $this->db->connect()->prepare("SELECT alm_existencia.idpedido 
+                                                        FROM alm_existencia
+                                                        WHERE alm_existencia.idpedido =:itemPedido");
+                $sql->execute(['itemPedido' =>$id]);
+                $rowCount = $sql->rowcount();
+
+                if ($rowCount > 0){
+                    $ingresado = true;
+                }
+
+                return $ingresado;
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();

@@ -177,7 +177,8 @@ $(function(){
                 let tipo = element.idtipomov == 37 ? "B":"S",
                     asignado = element.cnameuser == null ? "--" : element.cnameuser,
                     comentario = element.comentariocompra == null ? "--": element.comentariocompra,
-                    entrega = element.entrega == null ? "" : element.entrega;
+                    entrega = element.entrega == null ? "" : element.entrega,
+                    porcentaje = element.itemsConOrden == 0 ? 0 : element.itemsConOrden;
 
 
                 let row = `<tr class="pointer" data-indice="${element.idreg}" data-compras="${element.estadoCompra}" id="${element.idreg}">
@@ -193,7 +194,7 @@ $(function(){
                                 <td class="textoCentro" style="font-size:.6rem">
                                     <a href="${element.idreg}" data-title="${comentario}" class="bocadillo">${element.textoEstadoCompra}</a>
                                 </td>
-                                <td>${element.itemsFaltantes}/${element.itemsConOrden}</td>
+                                <td class="textoCentro" data-porcentaje="${porcentaje}"><span>${porcentaje}%</span></td>
                                 <td class="textoCentro">
                                     <a href="${element.idreg}">
                                         <i class="fas fa-exchange-alt"></i>

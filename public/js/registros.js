@@ -566,11 +566,13 @@ buscarGuia = (guia) => {
     })
     .then(response => response.json())
     .then(data => {
-        if(data.respuesta > 0){
+        /*if(data.respuesta > 0){
             mostrarMensaje("La guia ya se proceso","mensaje_error");
         }else{
             llamarDatosGuia(guia);
-        };
+        };*/
+
+        llamarDatosGuia(guia);
     });
 }
 
