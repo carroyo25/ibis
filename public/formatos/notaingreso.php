@@ -2,7 +2,7 @@
 	require_once "public/fpdf/mc_table.inc.php";
 
 	class PDF extends PDF_MC_Table{
-        public function __construct($ndoc,$condicion,$dia,$mes,$anio,$proyecto,$origen,$movimiento,$orden,$nped,$nguia,$nautoriza,$cautoriza,$tipo,$autoriza)
+        public function __construct($ndoc,$condicion,$dia,$mes,$anio,$proyecto,$origen,$movimiento,$orden,$nped,$nguia,$nautoriza,$cautoriza,$tipo,$autoriza,$usuarioelabora)
         {
             parent::__construct();
             $this->ndoc         = $ndoc;
@@ -20,6 +20,7 @@
             $this->cautoriza    = $cautoriza;
 			$this->tipo			= $tipo;
 			$this->autoriza 	= $autoriza;
+			$this->usuario 		= $usuarioelabora;
         }
 	// Cabecera de página
 		function Header(){
@@ -68,7 +69,9 @@
 	        $this->Cell(30,5,utf8_decode("Almacén Origen"),1,0);
 	        $this->Cell(160,5,utf8_decode($this->origen),1,1); //pasa dato
 	        $this->Cell(30,5,"Tipo Movimiento",1,0);
-	        $this->Cell(160,5,utf8_decode($this->movimiento),1,1); //pasa dato
+	        $this->Cell(60,5,utf8_decode($this->movimiento),1,0);
+			$this->Cell(30,5,"Elaborado por:",1,0);
+	        $this->Cell(70,5,utf8_decode($this->usuario),1,1); //pasa dato
 
 	        // Salto de línea
     		$this->Ln(1);

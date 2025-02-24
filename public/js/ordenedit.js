@@ -517,7 +517,7 @@ $(function(){
             if (result['numero'] == "") throw "No tiene numero de orden";
             if (result['fentrega'] == "") throw "Elija la fecha de entrega";
             if (result['codigo_transporte'] == "") throw "Elija la forma de transporte";
-            if (result['codigo_almacen'] == "") throw "Indique el lugar de entrega";
+            //if (result['codigo_almacen'] == "") throw "Indique el lugar de entrega";
 
             $.post(RUTA+"ordenedit/vistaPreliminar", {cabecera:result,condicion:4,detalles:JSON.stringify(detalles())},
                 function (data, textStatus, jqXHR) {
@@ -613,7 +613,7 @@ $(function(){
             if (result['codigo_moneda'] == "") throw "Elija la moneda";
             if (result['codigo_pago'] == "") throw "Elija el tipo de pago";
             //if (result['correo_entidad'] == "") throw "Elija el proveedor";
-            if (result['codigo_almacen'] == "") throw "Indique el lugar de entrega";
+            //if (result['codigo_almacen'] == "") throw "Indique el lugar de entrega";
             if (result['total'] == "") throw "No se registro el total de la orden";
             if ($("#tablaDetalles tbody tr") .length <= 0) throw "No tiene items cargados"
 

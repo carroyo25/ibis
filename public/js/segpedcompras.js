@@ -2,7 +2,7 @@ $(function(){
         let pedido = "",
             estadoTexto = "";
 
-        $("#esperar").css({"display":"block","opacity":"1"});
+        //$("#esperar").css({"display":"block","opacity":"1"});
 
         cargaPrincipal($("#numeroSearch").val(),$("#costosSearch").val(),$("#mesSearch").val(),$("#anioSearch").val());
 
@@ -193,6 +193,7 @@ $(function(){
                                 <td class="textoCentro" style="font-size:.6rem">
                                     <a href="${element.idreg}" data-title="${comentario}" class="bocadillo">${element.textoEstadoCompra}</a>
                                 </td>
+                                <td>${element.itemsFaltantes}/${element.itemsConOrden}</td>
                                 <td class="textoCentro">
                                     <a href="${element.idreg}">
                                         <i class="fas fa-exchange-alt"></i>

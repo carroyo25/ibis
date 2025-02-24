@@ -28,6 +28,7 @@
                     <input type="hidden" name="codigo_verificacion" id="codigo_verificacion">
                     <input type="hidden" name="codigo_recepcion" id="codigo_recepcion">
                     <input type="hidden" name="codigo_ingreso" id="codigo_ingreso" value="1">
+                    <input type="hidden" name="usuario_elabora" id="usuario_elabora">
                     <input type="hidden" name="detalle" id="detalle">
 
                     <div class="barraOpciones primeraBarra">

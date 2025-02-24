@@ -36,7 +36,7 @@
                                                         UPPER( tb_area.cdesarea ) AS area,
                                                         LPAD(lg_ordencab.cnumero,6,0) AS orden,
                                                         LPAD(tb_pedidocab.nrodoc,6,0 ) AS pedido,
-                                                        UPPER(cm_entidad.crazonsoc) AS crazonsoc 
+                                                        UPPER(cm_entidad.crazonsoc) AS crazonsoc
                                                     FROM
                                                         tb_costusu
                                                         LEFT JOIN alm_recepcab ON tb_costusu.ncodproy = alm_recepcab.ncodpry
@@ -45,7 +45,7 @@
                                                         INNER JOIN tb_area ON alm_recepcab.ncodarea = tb_area.ncodarea
                                                         INNER JOIN lg_ordencab ON alm_recepcab.idref_abas = lg_ordencab.id_regmov
                                                         INNER JOIN tb_pedidocab ON alm_recepcab.idref_pedi = tb_pedidocab.idreg
-                                                        INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi 
+                                                        INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
                                                     WHERE
                                                         tb_costusu.id_cuser = :usr
                                                         AND alm_recepcab.nflgactivo = 1 
@@ -89,7 +89,7 @@
             }
         }
 
-        public function insertar($cabecera,$detalles,$series){
+        public function insertar($cabecera,$detalles,$series,$usuario){
             try {
 
                 $indice = $this->lastInsertId("SELECT MAX(id_regalm) AS id FROM alm_recepcab");
@@ -126,7 +126,7 @@
                                 "calidad"=>$calidad,
                                 "movimiento"=>1,
                                 "codigo_movimiento"=>$cabecera['codigo_movimiento'],
-                                "usuario"=>$_SESSION['iduser']]);
+                                "usuario"=>$usuario]);
                 $rowCount = $sql->rowCount();
                 
                 if ($rowCount > 0) {
@@ -549,7 +549,8 @@
 
             $pdf = new PDF($cabecera['numero'],$condicion,$dia,$mes,$anio,
                             $cabecera['proyecto'],$cabecera['almacen'],$cabecera['tipo'],$cabecera['orden'],
-                            $cabecera['pedido'],$cabecera['guia'],$cabecera['aprueba'],$cargo,"I",$cabecera['codigo_aprueba']);
+                            $cabecera['pedido'],$cabecera['guia'],$cabecera['aprueba'],$cargo,"I",$cabecera['codigo_aprueba'],
+                            $cabecera['usuario_elabora']);
             
             $pdf->AliasNbPages();
             $pdf->AddPage();

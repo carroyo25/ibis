@@ -215,6 +215,7 @@
                     <th data-idcol="7" class="datafiltro">Asignado</th>
                     <th data-idcol="8">Fecha Entrega <br/> Obra</th>
                     <th data-idcol="9" class="datafiltro" width="10%">Estado Compras</th>
+                    <th>Avance</th>
                     <th>...</th>
                 </tr>
             </thead>

@@ -32,6 +32,7 @@
                                                         UPPER( ibis.tb_user.cnameuser ) AS cnameuser,
                                                         ibis.tb_pedidocab.estadoCompra,
                                                         ( SELECT COUNT( tb_pedidodet.estadoItem ) FROM tb_pedidodet WHERE tb_pedidodet.estadoItem != 52 AND tb_pedidodet.idpedido = idreg  AND tb_pedidodet.nflgActivo != 105) AS itemsFaltantes,
+                                                        ( SELECT COUNT( tb_pedidodet.estadoItem ) FROM tb_pedidodet WHERE tb_pedidodet.estadoItem >=59 AND tb_pedidodet.idpedido = idreg) AS itemsConOrden,
                                                     IF
                                                         ( ibis.tb_pedidocab.estadoCompra = 1 OR ISNULL( ibis.tb_pedidocab.estadoCompra ), '--', compras.cdescripcion ) AS textoEstadoCompra,
                                                         tb_pedidocab.comentariocompra,
@@ -46,8 +47,7 @@
                                                         LEFT JOIN ibis.tb_parametros AS compras ON ibis.tb_pedidocab.estadoCompra = compras.nidreg
                                                         LEFT JOIN ibis.tb_user AS usuario ON ibis.tb_pedidocab.usuario = usuario.iduser 
                                                     WHERE
-                                                        (ibis.tb_pedidocab.estadodoc >= 54
-                                                        AND ibis.tb_pedidocab.estadodoc != 105)
+                                                        (ibis.tb_pedidocab.estadodoc >= 54 AND ibis.tb_pedidocab.estadodoc != 105)
                                                         AND ibis.tb_pedidocab.nflgactivo = 1
                                                         AND ibis.tb_pedidocab.anio = :anio
                                                         AND ibis.tb_pedidocab.nrodoc LIKE :pedido

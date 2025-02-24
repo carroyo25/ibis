@@ -31,7 +31,7 @@
         }
 
         function nuevoIngreso(){
-            echo json_encode($this->model->insertar($_POST['cabecera'],$_POST['detalles'],$_POST['series']));
+            echo json_encode($this->model->insertar($_POST['cabecera'],$_POST['detalles'],$_POST['series'],$_POST['usuario']));
         }
 
         function modificarRegistro(){

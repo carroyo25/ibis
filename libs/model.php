@@ -4389,7 +4389,8 @@
                                                         UPPER( ibis.tb_pedidocab.concepto ) AS concepto,
                                                         UPPER( ibis.tb_pedidocab.detalle ) AS detalle,
                                                         estados.cabrevia AS estado,
-	                                                    ibis.alm_recepcab.nflgCalidad 
+	                                                    ibis.alm_recepcab.nflgCalidad,
+                                                        elabora.cnombres AS userelabora
                                                     FROM
                                                         ibis.alm_recepcab
                                                         INNER JOIN ibis.tb_proyectos ON alm_recepcab.ncodpry = tb_proyectos.nidreg
@@ -4402,6 +4403,7 @@
                                                         INNER JOIN ibis.cm_entidad ON ibis.alm_recepcab.id_centi = ibis.cm_entidad.id_centi
                                                         INNER JOIN ibis.lg_ordencab ON ibis.alm_recepcab.idref_abas = ibis.lg_ordencab.id_regmov
                                                         INNER JOIN ibis.tb_parametros AS estados ON ibis.alm_recepcab.nEstadoDoc = estados.nidreg 
+                                                        LEFT JOIN ibis.tb_user AS elabora ON ibis.alm_recepcab.idUserElabora = elabora.iduser 
                                                     WHERE
                                                         alm_recepcab.id_regalm = :id 
                                                         LIMIT 1");

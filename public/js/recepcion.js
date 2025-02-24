@@ -42,6 +42,7 @@ $(function(){
                 $("#aprueba").val(data.cabecera[0].cnombres);
                 $("#tipo").val(data.cabecera[0].cdescripcion);
                 $("#estado").val(data.cabecera[0].estado);
+                $("#usuario_elabora").val(data.cabecera[0].userelabora);
                 $("#movimiento").val(1);
                 
                 let swqaqc = data.cabecera[0].nflgCalidad == 1 ? true: false;
@@ -352,6 +353,10 @@ $(function(){
         e.preventDefault();
         
         let result = {};
+
+        if ( $("#usuario_elabora").val() == "" ){
+            $("#usuario_elabora").val($("#name_user").val());
+        }
 
         $.each($("#formProceso").serializeArray(),function(){
             result[this.name] = this.value;
@@ -762,7 +767,8 @@ grabarDetalles = (tipoVista,accion) => {
         if (accion == "n") {
             $.post(RUTA+"recepcion/nuevoIngreso", {cabecera:result,
                 detalles:JSON.stringify(detalles(tipoVista)),
-                series:JSON.stringify(series())},
+                series:JSON.stringify(series()),
+                usuario:$("#id_user").val()},
                     function (data, textStatus, jqXHR) {
                         $("#codigo_ingreso").val(data.indice);
                         mostrarMensaje("Nota Grabada","mensaje_correcto");

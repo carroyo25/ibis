@@ -374,14 +374,16 @@
                 
                 $nreg = count($datos);
 
-                for ($i=0; $i < $nreg; $i++) { 
-                    if(!$datos[$i]->grabado) {
-                        $total = $datos[$i]->cantidad * $datos[$i]->precio;
-                        $sql = $this->db->connect()->prepare("INSERT INTO lg_ordendet SET id_regmov=:id,niddeta=:nidp,id_cprod=:cprod,ncanti=:cant,
+                $sql = $this->db->connect()->prepare("INSERT INTO lg_ordendet SET id_regmov=:id,niddeta=:nidp,id_cprod=:cprod,ncanti=:cant,
                                                                                     nunitario=:unit,nigv=:igv,ntotal=:total,
                                                                                     nestado=:est,cverifica=:verif,nidpedi=:pedido,
                                                                                     nmonref=:moneda,ncodcos=:costos,id_orden=:ordenidx,
                                                                                     nSaldo=:saldo,cobserva=:detalles,item=:itemord");
+                                                                                    
+                for ($i=0; $i < $nreg; $i++) { 
+                    if(!$datos[$i]->grabado) {
+                        $total = $datos[$i]->cantidad * $datos[$i]->precio;
+                        
                         $sql->execute(["id"=>$indice,
                                         "nidp"=>$datos[$i]->itped,
                                         "pedido"=>$datos[$i]->refpedi,

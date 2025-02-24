@@ -800,18 +800,18 @@
                                                         UPPER( tb_user.cnameuser ) AS usuario
                                                     FROM
                                                         lg_ordencab
-                                                        INNER JOIN tb_pedidocab ON lg_ordencab.id_refpedi = tb_pedidocab.idreg
-                                                        INNER JOIN tb_proyectos ON lg_ordencab.ncodcos = tb_proyectos.nidreg
-                                                        INNER JOIN tb_area ON lg_ordencab.ncodarea = tb_area.ncodarea
-                                                        INNER JOIN tb_parametros AS monedas ON lg_ordencab.ncodmon = monedas.nidreg
-                                                        INNER JOIN tb_parametros AS tipos ON lg_ordencab.ntipmov = tipos.nidreg
-                                                        INNER JOIN tb_parametros AS pagos ON lg_ordencab.ncodpago = pagos.nidreg
-                                                        INNER JOIN tb_parametros AS estados ON lg_ordencab.nEstadoDoc = estados.nidreg
-                                                        INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
-                                                        INNER JOIN cm_entidadcon ON cm_entidad.id_centi = cm_entidadcon.id_centi
-                                                        INNER JOIN tb_parametros AS transportes ON lg_ordencab.ctiptransp = transportes.nidreg
-                                                        INNER JOIN tb_almacen ON lg_ordencab.ncodalm = tb_almacen.ncodalm
-                                                        INNER JOIN lg_ordendet ON lg_ordencab.id_regmov = lg_ordendet.id_regmov
+                                                        LEFT JOIN tb_pedidocab ON lg_ordencab.id_refpedi = tb_pedidocab.idreg
+                                                        LEFT JOIN tb_proyectos ON lg_ordencab.ncodcos = tb_proyectos.nidreg
+                                                        LEFT JOIN tb_area ON lg_ordencab.ncodarea = tb_area.ncodarea
+                                                        LEFT JOIN tb_parametros AS monedas ON lg_ordencab.ncodmon = monedas.nidreg
+                                                        LEFT JOIN tb_parametros AS tipos ON lg_ordencab.ntipmov = tipos.nidreg
+                                                        LEFT JOIN tb_parametros AS pagos ON lg_ordencab.ncodpago = pagos.nidreg
+                                                        LEFT JOIN tb_parametros AS estados ON lg_ordencab.nEstadoDoc = estados.nidreg
+                                                        LEFT JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
+                                                        LEFT JOIN cm_entidadcon ON cm_entidad.id_centi = cm_entidadcon.id_centi
+                                                        LEFT JOIN tb_parametros AS transportes ON lg_ordencab.ctiptransp = transportes.nidreg
+                                                        LEFT JOIN tb_almacen ON lg_ordencab.ncodalm = tb_almacen.ncodalm
+                                                        LEFT JOIN lg_ordendet ON lg_ordencab.id_regmov = lg_ordendet.id_regmov
                                                         LEFT JOIN lg_ordenextras ON lg_ordencab.id_regmov = lg_ordenextras.idorden
                                                         LEFT JOIN tb_user ON lg_ordencab.id_cuser = tb_user.iduser 
                                                     WHERE
