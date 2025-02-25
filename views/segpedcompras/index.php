@@ -104,7 +104,7 @@
                                     <th width="7%">Cant.Ped.</th>
                                     <th width="7%">Cant.Aten.</th>
                                     <th width="7%">Cant.</br>Aprobada</th>
-                                    <th>Nro.</br>Parte</th>
+                                    <th>Nro.</br>Orden</th>
                                     <th>Observaciones</th>
                                     <th>Bien/Activo</th>
                                 </tr>
@@ -211,11 +211,11 @@
                     <th>Descripción</th>
                     <th data-idcol="4" class="datafiltro">Centro Costos</th>
                     <th data-idcol="5" class="datafiltro">Usuario</th>
-                    <th>Estado</th>
+                    <th data-idcol="6" class="datafiltro">Estado</th>
                     <th data-idcol="7" class="datafiltro">Asignado</th>
                     <th data-idcol="8">Fecha Entrega <br/> Obra</th>
                     <th data-idcol="9" class="datafiltro" width="10%">Estado Compras</th>
-                    <th>Avance</th>
+                    <th width="5%">Avance</th>
                     <th>...</th>
                 </tr>
             </thead>

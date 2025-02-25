@@ -11,6 +11,9 @@
                 $salida = "";
                 $pedido = $datos['pedido'] === "" ? "%" : "%".$datos['pedido']."%";
                 $costos = $datos['costos'] === "-1" ? "%" : "%".$datos['costos']."%";
+                $mes    = $datos['mes'] === "-1" ? 1 : $datos['mes'];
+
+                $docData = [];
 
                 $sql = $this->db->connect()->prepare("SELECT
                                                         LPAD( ibis.tb_pedidocab.nrodoc, 6, 0 ) AS nrodoc,
@@ -50,11 +53,12 @@
                                                         (ibis.tb_pedidocab.estadodoc >= 54 AND ibis.tb_pedidocab.estadodoc != 105)
                                                         AND ibis.tb_pedidocab.nflgactivo = 1
                                                         AND ibis.tb_pedidocab.anio = :anio
+                                                        AND ibis.tb_pedidocab.mes = :mes
                                                         AND ibis.tb_pedidocab.nrodoc LIKE :pedido
                                                         AND ibis.tb_pedidocab.idcostos LIKE :costo
                                                     ORDER BY
                                                         ibis.tb_pedidocab.emision DESC");
-                $sql->execute(["anio"=>$datos['anio'],"pedido"=>$pedido, "costo"=>$costos, ]);
+                $sql->execute(["anio"=>$datos['anio'],"pedido"=>$pedido, "costo"=>$costos ,"mes"=>$mes]);
 
                 $rowCount = $sql->rowCount();
                 
@@ -276,6 +280,8 @@
                                                     tb_pedidodet.idtipo,
                                                     tb_pedidodet.nroparte,
                                                     tb_pedidodet.unid,
+                                                    tb_pedidodet.estadoItem AS estado,
+                                                    tb_pedidodet.idorden,
                                                     UPPER(tb_pedidodet.obsAprueba) AS observaAprueba,
                                                     REPLACE ( FORMAT( tb_pedidodet.cant_pedida, 2 ), ',', '' ) AS cant_pedida,
                                                     REPLACE ( FORMAT( tb_pedidodet.cant_resto, 2 ), ',', '' ) AS cant_pendiente,
@@ -287,12 +293,14 @@
                                                     tb_unimed.cabrevia,
                                                     tb_pedidodet.nflgqaqc,
                                                     tb_pedidodet.especificaciones,
-                                                    CONCAT_WS('/', tb_equipmtto.cregistro, tb_equipmtto.cdescripcion ) AS registro 
+                                                    CONCAT_WS('/', tb_equipmtto.cregistro, tb_equipmtto.cdescripcion ) AS registro,
+                                                    lg_ordencab.cnumero  
                                                 FROM
                                                     tb_pedidodet
                                                     LEFT JOIN cm_producto ON tb_pedidodet.idprod = cm_producto.id_cprod
                                                     LEFT JOIN tb_unimed ON tb_pedidodet.unid = tb_unimed.ncodmed
-                                                    LEFT JOIN tb_equipmtto ON tb_pedidodet.nregistro = tb_equipmtto.idreg 
+                                                    LEFT JOIN tb_equipmtto ON tb_pedidodet.nregistro = tb_equipmtto.idreg
+                                                    LEFT JOIN lg_ordencab ON tb_pedidodet.idorden = lg_ordencab.id_regmov 
                                                 WHERE
                                                     tb_pedidodet.idpedido = :id 
                                                     AND tb_pedidodet.nflgActivo = 1");
@@ -304,14 +312,16 @@
                     while ($rs = $sql->fetch()) {
 
                         $atendida = $rs['cant_atendida'] == NULL || $rs['cant_atendida'] == '' ? 0 : $rs['cant_atendida'];
-                        //$aprobar =  $rs['cant_pedida'] - $rs['cant_atendida'];
                         $aprobar = $rs['cant_aprob'];
 
                         $estado_aprobar = $aprobar == 0 ? "desactivado" : "";
+
+                        $anulado = $rs['estado'] == 105 ? "tituloClase": "";
+                        $orden   = $rs['idorden'] == null ? "" : "tituloGrupo";
                         
                         $salida .='<tr data-grabado="1" data-idprod="'.$rs['idprod'].'" data-codund="'.$rs['unid'].'" data-idx="'.$rs['iditem'].'" class="'.$estado_aprobar.'">
                                         <td class="textoCentro">'.str_pad($filas++,3,0,STR_PAD_LEFT).'</td>
-                                        <td class="textoCentro">'.$rs['ccodprod'].'</td>
+                                        <td class="textoCentro '.$anulado.' '.$orden.'" title="'.$rs['cnumero'].'">'.$rs['ccodprod'].'</td>
                                         <td class="pl20px">'.$rs['cdesprod'].'</td>
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                         <td class="textoCentro">'.$rs['cant_pedida'].'</td>
@@ -325,7 +335,7 @@
                                                         value="'.number_format($aprobar,2).'"
                                                         class="textoDerecha">
                                         </td>
-                                        <td class="textoCentro">'.$rs['nroparte'].'</td>
+                                        <td class="textoCentro">'.$rs['cnumero'].'</td>
                                         <td class="pl20px">'.$rs['observaAprueba'].'</td>
                                         <td class="textoCentro">'.$rs['registro'].'</td>
                                     </tr>';

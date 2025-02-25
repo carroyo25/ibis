@@ -178,7 +178,31 @@ $(function(){
                     asignado = element.cnameuser == null ? "--" : element.cnameuser,
                     comentario = element.comentariocompra == null ? "--": element.comentariocompra,
                     entrega = element.entrega == null ? "" : element.entrega,
-                    porcentaje = element.itemsConOrden == 0 ? 0 : element.itemsConOrden;
+                    porcentaje = element.itemsConOrden == 0 ? 0 : (element.itemsConOrden*100)/element.itemsFaltantes,
+                    ancho = 0,
+                    fondo = "#fff";
+                    texto = "#000";
+
+                    porcentaje = Math.round(porcentaje);
+
+                    if (porcentaje == 100){
+                        fondo =  "#41FC36";
+                        ancho = porcentaje+'%';
+                        texto = "#000";
+                    }else if (porcentaje >= 75 && porcentaje <= 99){
+                        fondo =  "#4136FC";
+                        ancho = porcentaje+'%'
+                        texto = "#fff";
+                    }else  if (porcentaje >= 50 && porcentaje <=74){
+                        fondo =  "#FD6236";
+                        ancho = porcentaje+'%';
+                        texto = "#fff";
+                    }else if (porcentaje > 0 && porcentaje <= 49){
+                        fondo =  "#FC4136";
+                        ancho = porcentaje+'%'
+                        texto = "#fff";
+                    }
+                    
 
 
                 let row = `<tr class="pointer" data-indice="${element.idreg}" data-compras="${element.estadoCompra}" id="${element.idreg}">
@@ -194,7 +218,17 @@ $(function(){
                                 <td class="textoCentro" style="font-size:.6rem">
                                     <a href="${element.idreg}" data-title="${comentario}" class="bocadillo">${element.textoEstadoCompra}</a>
                                 </td>
-                                <td class="textoCentro" data-porcentaje="${porcentaje}"><span>${porcentaje}%</span></td>
+                                <td data-porcentaje="${porcentaje}" style="position:relative">
+                                        <span style="width:${ancho};
+                                                    background:${fondo};
+                                                    display:block;
+                                                    color:${texto};
+                                                    text-align:center;
+                                                    position:absolute;
+                                                    top:3px;">
+                                                    ${porcentaje}%
+                                        </span>
+                                </td>
                                 <td class="textoCentro">
                                     <a href="${element.idreg}">
                                         <i class="fas fa-exchange-alt"></i>
