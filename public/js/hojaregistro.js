@@ -58,8 +58,8 @@ $.addEventListener("click",(e)=>{
             })
             .then(response => response.json())
             .then(data => {
-                //limpiarFormato();
-                //window.location.href = "http://localhost/ibis/public/hojaregistro";
+                limpiarFormato();
+                window.location.href = "http://localhost/ibis/public/hojaregistro";
             }),'',undefined,'Procesando'
           )
         .catch(error => {
@@ -93,7 +93,7 @@ $.addEventListener("change", (e)=>{
 bancos.onclick = (e) => {
   e.preventDefault();
 
-  let row = `<tr>
+  let row = `<tr data-grabado="0">
                 <td>
                   <select name="entidadedFinancieras" id="entidadedFinancieras">
                       <optgroup label="Empresas Bancarias">
@@ -166,8 +166,29 @@ bancos.onclick = (e) => {
 tabla_bancos_body.addEventListener("click",(e)=>{
   e.preventDefault();
 
-  if (e.target.matches (".lnkTrash")){
-    e.target.closest("tr").remove();
+  if ( e.target.matches(".lnkTrash")){
+
+    if (e.target.dataset.grabado === 1 ){
+      let formData = new FormData();
+      formData.append("id",e.target.attr('href'));
+      formData.append("funcion","eliminarRegistroBanco");
+
+      notifier.async(
+        fetch ('procesos.php',{
+          method: 'POST',
+          body: datos
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            e.target.closest("tr").remove(); 
+        }),'',undefined,'Procesando'
+      )
+    }else {
+       e.target.closest("tr").remove();  
+    }
+
+    
   }
   
   return false;
