@@ -18,9 +18,22 @@
             echo json_encode(verificar($pdo, $_POST));
         }else if($_POST['funcion'] =="verificar"){
             echo json_encode(verificar($pdo, $_POST));
+        }else if($_POST['funcion'] =="eliminarRegistroBanco"){
+            echo json_encode(eliminarRegistroBanco($pdo, $_POST));
         }
     }
 
+    function eliminarRegistroBanco($pdo, $datos){
+        $estadoOK = false;
+
+        $sql = "UPDATE cm_entidadbco 
+                SET cm_entidadbco.nflgactivo = 8
+                WHERE cm_entidadbco.nitem = :id";
+        $stmt->execute([':id' => $datos['id']]);
+        $rowCount = $stmt->rowCount();
+
+        return array("id"=>$id,"registros"=>$rowCount);
+    }
     function verificar($pdo,$datos){
         try {
             $sql = "SELECT cm_entidad.cnumdoc FROM cm_entidad WHERE cm_entidad.cnumdoc = :ruc";
