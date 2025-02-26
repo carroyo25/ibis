@@ -34,8 +34,17 @@
                                                         UPPER( ibis.tb_proyectos.cdesproy ) AS cdesproy,
                                                         UPPER( ibis.tb_user.cnameuser ) AS cnameuser,
                                                         ibis.tb_pedidocab.estadoCompra,
-                                                        ( SELECT COUNT( tb_pedidodet.estadoItem ) FROM tb_pedidodet WHERE tb_pedidodet.estadoItem != 52 AND tb_pedidodet.idpedido = idreg  AND tb_pedidodet.nflgActivo != 105) AS itemsFaltantes,
-                                                        ( SELECT COUNT( tb_pedidodet.estadoItem ) FROM tb_pedidodet WHERE tb_pedidodet.estadoItem >=59 AND tb_pedidodet.idpedido = idreg) AS itemsConOrden,
+                                                        ( SELECT COUNT( tb_pedidodet.estadoItem ) 
+                                                            FROM tb_pedidodet 
+                                                            WHERE ( tb_pedidodet.estadoItem != 52 AND tb_pedidodet.estadoItem != 105 ) 
+                                                                AND tb_pedidodet.idpedido = idreg  
+                                                                AND tb_pedidodet.nflgActivo = 1) AS itemsFaltantes,
+                                                        ( SELECT COUNT( tb_pedidodet.estadoItem ) 
+                                                            FROM tb_pedidodet 
+                                                            WHERE tb_pedidodet.estadoItem >=59 
+                                                                AND tb_pedidodet.nflgOrden = 1 
+                                                                AND tb_pedidodet.idpedido = idreg
+                                                                AND tb_pedidodet.nflgActivo = 1) AS itemsConOrden,
                                                     IF
                                                         ( ibis.tb_pedidocab.estadoCompra = 1 OR ISNULL( ibis.tb_pedidocab.estadoCompra ), '--', compras.cdescripcion ) AS textoEstadoCompra,
                                                         tb_pedidocab.comentariocompra,

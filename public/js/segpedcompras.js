@@ -22,7 +22,6 @@ $(function(){
             $.post(RUTA+"segpedcompras/consultaId", {id:$(this).data("indice")},
                     function (data, textStatus, jqXHR) {
                         
-                        let numero = $.strPad(data.cabecera[0].nrodoc,6);
                         let estado = "textoCentro w50por estado " + data.cabecera[0].cabrevia;
                         
                         $("#codigo_costos").val(data.cabecera[0].idcostos);
