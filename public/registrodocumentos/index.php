@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro Documentario Sepcon</title>
+    <link rel="shortcut icon" type="image/png" href="../img/logo.png" />
+    <link rel="stylesheet" href="../css/registroDocumentosIndex.css?<?php echo $version = rand(0, 9999); ?>">
+    <link rel="stylesheet" href="../css/notify.css">
+    <link rel="stylesheet" href="../css/all.css">
+    <link rel="shortcut icon" type="image/png" href="../img/logo.png" />
+</head>
+<body>
+    <div class="wrap">
+        <div class="wrap_header">
+            <div class="wrap_header_logo">
+                    
+            </div>
+            <div class="wrap_header_title">
+                <span>Registro Documentario Proveedores - Sepcon</span>
+            </div> 
+        </div>
+        <div class="wrap_body">
+            <div class="login_container">
+                <h1 class="login_title">Iniciar Sesion</h1>
+                <form action="">
+                <div class="group">      
+                        <input type="text" id="user_login" name="user_login" class="login_input" required>
+                        <span class="highlight"></span>
+                        <span class="bar"></span>
+                        <label class="place_label">R.U.C</label>
+                    </div>
+                    <div class="group">      
+                        <input type="password" id="user_password" name="user_password" class="login_input" required autocomplete>
+                        <span class="highlight"></span>
+                        <span class="bar"></span>
+                        <label class="place_label">Contraseña</label>
+                        <a href="#" class="icon_login" id="password_eye">
+                            <img src="img/eye-closed-svgrepo-com.svg" class="icon_img" id="eye_icon">
+                        </a>
+                    </div>
+                    
+                    <button id="boton_login" class="button_login">Ingresar</button>
+                </form>
+            </div>
+        </div>
+        <div class="wrap_footer">
+            <h4>RR.HH. Sepcon 2024</h4>
+        </div>
+    </div>
+    <script src="../js/index.var.js"></script>
+</body>
+</html>
