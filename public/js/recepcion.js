@@ -355,7 +355,7 @@ $(function(){
         let result = {};
 
         if ( $("#usuario_elabora").val() == "" ){
-            $("#usuario_elabora").val($("#name_user").val());
+            $("#usuario_elabora").val($("#user_log").val());
         }
 
         $.each($("#formProceso").serializeArray(),function(){

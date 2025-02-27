@@ -167,16 +167,15 @@ tabla_bancos_body.addEventListener("click",(e)=>{
   e.preventDefault();
 
   if ( e.target.matches(".lnkTrash")){
-
-    if (e.target.dataset.grabado === 1 ){
+    if ( e.target.parentElement.dataset.grabado === "1" ){
       let formData = new FormData();
-      formData.append("id",e.target.attr('href'));
+      formData.append("id",e.target.parentElement.getAttribute('href'));
       formData.append("funcion","eliminarRegistroBanco");
 
       notifier.async(
         fetch ('procesos.php',{
           method: 'POST',
-          body: datos
+          body: formData
         })
         .then(response => response.json())
         .then(data => {
@@ -187,7 +186,6 @@ tabla_bancos_body.addEventListener("click",(e)=>{
     }else {
        e.target.closest("tr").remove();  
     }
-
     
   }
   
@@ -233,6 +231,7 @@ cancelReg.onclick = (e) => {
   e.preventDefault();
 
   limpiarFormato();
+  window.location.href = "http://localhost/ibis/public/hojaregistro";
 
   return false;
 }

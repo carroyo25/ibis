@@ -23,11 +23,11 @@
     <link rel="stylesheet" href="../css/hojaregistro.css?<?php echo $version = rand(0, 9999); ?>">
     <link rel="stylesheet" href="../css/notify.css">
     <link rel="stylesheet" href="../css/all.css">
+    <link rel="shortcut icon" type="image/png" href="../img/logo.png" />
 </head>
 <body>
     <div class="floating">
         <a href="#" id="floatUp" class="floatingOptions"><i class="fas fa-arrow-alt-circle-up"></i></a>
-        <a href="#" id="changePass" class="floatingOptions"><i class="fas fa-key"></i></a>
         <a href="#" id="cancelReg" class="floatingOptions"><i class="fas fa-ban"></i></a>
         <a href="#" id="floatSave" class="floatingOptions btnSave" data-accion="modify"><i class="fas fa-save"></i></a>
     </div>

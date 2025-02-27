@@ -4390,19 +4390,19 @@
                                                         UPPER( ibis.tb_pedidocab.detalle ) AS detalle,
                                                         estados.cabrevia AS estado,
 	                                                    ibis.alm_recepcab.nflgCalidad,
-                                                        elabora.cnombres AS userelabora
+                                                        elabora.cnameuser AS userelabora
                                                     FROM
                                                         ibis.alm_recepcab
-                                                        INNER JOIN ibis.tb_proyectos ON alm_recepcab.ncodpry = tb_proyectos.nidreg
-                                                        INNER JOIN ibis.tb_area ON alm_recepcab.ncodarea = tb_area.ncodarea
-                                                        INNER JOIN ibis.tb_user ON alm_recepcab.id_userAprob = tb_user.iduser
-                                                        INNER JOIN ibis.tb_pedidocab ON ibis.alm_recepcab.idref_pedi = ibis.tb_pedidocab.idreg
-                                                        INNER JOIN rrhh.tabla_aquarius ON ibis.tb_pedidocab.idsolicita = rrhh.tabla_aquarius.internal
-                                                        INNER JOIN ibis.tb_almacen ON ibis.alm_recepcab.ncodalm1 = ibis.tb_almacen.ncodalm
-                                                        INNER JOIN ibis.tb_parametros ON ibis.alm_recepcab.ncodmov = ibis.tb_parametros.nidreg
-                                                        INNER JOIN ibis.cm_entidad ON ibis.alm_recepcab.id_centi = ibis.cm_entidad.id_centi
-                                                        INNER JOIN ibis.lg_ordencab ON ibis.alm_recepcab.idref_abas = ibis.lg_ordencab.id_regmov
-                                                        INNER JOIN ibis.tb_parametros AS estados ON ibis.alm_recepcab.nEstadoDoc = estados.nidreg 
+                                                        LEFT JOIN ibis.tb_proyectos ON alm_recepcab.ncodpry = tb_proyectos.nidreg
+                                                        LEFT JOIN ibis.tb_area ON alm_recepcab.ncodarea = tb_area.ncodarea
+                                                        LEFT JOIN ibis.tb_user ON alm_recepcab.id_userAprob = tb_user.iduser
+                                                        LEFT JOIN ibis.tb_pedidocab ON ibis.alm_recepcab.idref_pedi = ibis.tb_pedidocab.idreg
+                                                        LEFT JOIN rrhh.tabla_aquarius ON ibis.tb_pedidocab.idsolicita = rrhh.tabla_aquarius.internal
+                                                        LEFT JOIN ibis.tb_almacen ON ibis.alm_recepcab.ncodalm1 = ibis.tb_almacen.ncodalm
+                                                        LEFT JOIN ibis.tb_parametros ON ibis.alm_recepcab.ncodmov = ibis.tb_parametros.nidreg
+                                                        LEFT JOIN ibis.cm_entidad ON ibis.alm_recepcab.id_centi = ibis.cm_entidad.id_centi
+                                                        LEFT JOIN ibis.lg_ordencab ON ibis.alm_recepcab.idref_abas = ibis.lg_ordencab.id_regmov
+                                                        LEFT JOIN ibis.tb_parametros AS estados ON ibis.alm_recepcab.nEstadoDoc = estados.nidreg 
                                                         LEFT JOIN ibis.tb_user AS elabora ON ibis.alm_recepcab.idUserElabora = elabora.iduser 
                                                     WHERE
                                                         alm_recepcab.id_regalm = :id 
