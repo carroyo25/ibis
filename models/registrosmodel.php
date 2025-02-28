@@ -167,7 +167,7 @@
 
                 if ($rowCount > 0){
                     while ($rs = $sql->fetch()){
-                        if (!$this->buscarDetallesIngresados($rs['niddetaPed'])){
+                        if (!$this->buscarDetallesIngresados($rs['niddetaPed'],$rs['cnumguia'])){
                             $salida .='<tr class="pointer" data-idpet="'.$rs['niddetaPed'].'"
                                                         data-area="'.$rs['ncodarea'].'"
                                                         data-almacen = "'.$rs['ncodalm2'].'"
@@ -921,6 +921,7 @@
                 $sql = $this->db->connect()->prepare("UPDATE alm_existencia 
                                                         SET alm_existencia.cant_ingr = 0,
                                                             alm_existencia.idpedido = null,
+                                                            alm_existencia.nguia = null,
                                                             alm_existencia.nflgActivo = 0
                                                         WHERE alm_existencia.idregistro =:guia");
 
@@ -932,13 +933,24 @@
             }
         }
 
-        private function buscarDetallesIngresados($id){
+        private function buscarDetallesIngresados($id,$guia){
             try {
                 $ingresado = false;
-                $sql = $this->db->connect()->prepare("SELECT alm_existencia.idpedido 
-                                                        FROM alm_existencia
-                                                        WHERE alm_existencia.idpedido =:itemPedido");
-                $sql->execute(['itemPedido' =>$id]);
+                $rowCount = 0;
+
+
+                $sql = $this->db->connect()->prepare("SELECT
+                                                            alm_existencia.idpedido,
+                                                            SUM( alm_existencia.cant_ingr ) AS cantidad_obra,
+                                                            tb_pedidodet.cant_aprob,
+                                                            alm_existencia.nguia 
+                                                        FROM
+                                                            alm_existencia
+                                                            LEFT JOIN tb_pedidodet ON alm_existencia.idpedido = tb_pedidodet.iditem 
+                                                        WHERE
+                                                            alm_existencia.idpedido = :itemPedido
+                                                            AND alm_existencia.nguia = :guia");
+                $sql->execute(['itemPedido' =>$id,'guia' =>$guia]);
                 $rowCount = $sql->rowcount();
 
                 if ($rowCount > 0){

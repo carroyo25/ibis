@@ -2,7 +2,23 @@ $(function(){
     let accion = "";
     let tipoMovimiento = 0;  //guia remision  = 1, transferencias = 2
 
-    $("#esperar").fadeOut();
+    $("#esperar").css({"display":"block","opacity":"1"});
+
+    let str = $("#formConsulta").serialize();
+
+    $.post(RUTA+"registros/actualizarRegistros",
+        function (data, text, requestXHR) {
+            $("#tablaPrincipal tbody")
+                .empty()
+                .append(data);
+
+                $("#esperar").fadeOut().promise().done(function(){
+                    iniciarPaginador();
+                });
+
+        "text"
+    });
+
 
     $("#nuevoRegistro").click(function (e) { 
         e.preventDefault();
@@ -74,15 +90,6 @@ $(function(){
         e.preventDefault();
 
         $("#proceso").fadeOut();
-
-        $.post(RUTA+"registros/actualizarRegistros",
-            function (data, textStatus, jqXHR) {
-                $("#tablaPrincipal tbody")
-                    .empty()
-                    .append(data);
-            },
-            "text"
-        );
 
         return false;
     });
@@ -201,7 +208,9 @@ $(function(){
 
         try {
 
-            let tipo_guia = $(this).data("salida") != null ? "S" : "M"; 
+            let tipo_guia = $(this).data("salida") != null ? "S" : "M";
+
+            $("#esperar").css({"display":"block","opacity":"1"});
 
             $.post(RUTA+"registros/consultaID", { indice:$(this).data("indice"), tipo:tipo_guia },
                 function (data, textStatus, jqXHR) {
@@ -217,9 +226,16 @@ $(function(){
                     $("#codigo_costos").val(data.cabecera[0].ncodpry);
                     $("#codigo_despacho").val(data.cabecera[0].id_regalm);
                     
-                    $("#tablaDetalles tbody")
+                    if (data.detalles !=""){
+                        $("#tablaDetalles tbody")
                         .empty()
                         .append(data.detalles);
+                    }else{
+                        mostrarMensaje("Los items ya se ingresaron en su totalidad","mensaje_error");
+                    }
+                    
+
+                    $("#esperar").css({"display":"none","opacity":"0"});
 
                     $("#busqueda").fadeOut();
                 },
@@ -259,6 +275,8 @@ $(function(){
     $("#btnConsulta").click(function(e){
         e.preventDefault();
 
+        $("#esperar").css({"display":"block","opacity":"1"});
+
         let str = $("#formConsulta").serialize();
 
         $.post(RUTA+"registros/filtro", str,
@@ -266,6 +284,10 @@ $(function(){
                 $("#tablaPrincipal tbody")
                     .empty()
                     .append(data);
+
+                $("#esperar").fadeOut().promise().done(function(){
+                    iniciarPaginador();
+                });
             },
             "text"
         );
@@ -566,12 +588,6 @@ buscarGuia = (guia) => {
     })
     .then(response => response.json())
     .then(data => {
-        /*if(data.respuesta > 0){
-            mostrarMensaje("La guia ya se proceso","mensaje_error");
-        }else{
-            llamarDatosGuia(guia);
-        };*/
-
         llamarDatosGuia(guia);
     });
 }

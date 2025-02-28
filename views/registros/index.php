@@ -308,7 +308,7 @@
                 </tr>
             </thead>
             <tbody>
-                <?php echo $this->listaIngresos;?>
+                
             </tbody>
         </table>
     </div>

@@ -3,7 +3,7 @@ $(function(){
 
     let str = $("#formConsulta").serialize();
 
-    $.post(RUTA+"pedidoedit/actualizaListado",str,
+    $.post(RUTA+"pedidoedit/actualizaListado",
         function (data, text, requestXHR) {
             $(".tablaPrincipal tbody")
                 .empty()
