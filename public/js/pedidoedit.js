@@ -85,8 +85,8 @@ $(function(){
         e.preventDefault();
 
         try {
-            if ($("#codigo_estado").val() >= 54) throw "El pedido no puede ser anulado..";
-                $("#preguntaAnula").fadeIn();
+            //if ($("#codigo_estado").val() >= 54) throw "El pedido no puede ser anulado..";
+            $("#preguntaAnula").fadeIn();
         } catch (error) {
             mostrarMensaje(error,"mensaje_correcto");
         }
