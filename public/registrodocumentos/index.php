@@ -11,7 +11,6 @@
     <link rel="stylesheet" href="../css/registrodocumentosIndex.css?<?php echo $version = rand(0, 9999); ?>">
     <link rel="stylesheet" href="../css/notify.css">
     <link rel="stylesheet" href="../css/all.css">
-    <link rel="shortcut icon" type="image/png" href="../img/logo.png" />
 </head>
 <body>
     <div class="wrap">
