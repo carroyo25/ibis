@@ -21,7 +21,7 @@ $.addEventListener("click",(e) => {
             formData.append('ruc',input_ruc.value);
             formData.append('clave',input_pass.value);
 
-            fetch('../registrodocumentos/php/procesos.php',{
+            fetch('../registrodocumentos/inc/procesos.php',{
                 method: 'POST',
                 body: formData
             })
