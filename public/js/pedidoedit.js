@@ -280,6 +280,8 @@ $(function(){
     $("#save").click(function (e) { 
         e.preventDefault();
 
+        $("#esperar").css({"display":"block","opacity":"1"});
+
         let result = {};
 
         $.each($("#formProceso").serializeArray(),function(){
@@ -299,6 +301,8 @@ $(function(){
             $.post(RUTA+"pedidoedit/grabaPedidoAdmin",{cabecera:result,detalles:JSON.stringify(itemsSave())},
                 function (data, textStatus, jqXHR) {
                     mostrarMensaje(data.mensaje,data.clase);
+
+                    $("#esperar").css({"display":"none","opacity":"0"});
                     
                 },
                 "json"

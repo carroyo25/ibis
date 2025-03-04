@@ -1,3 +1,6 @@
+<?php
+    session_start();
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -5,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro Documentario Sepcon</title>
     <link rel="shortcut icon" type="image/png" href="../img/logo.png" />
-    <link rel="stylesheet" href="../css/registroDocumentosIndex.css?<?php echo $version = rand(0, 9999); ?>">
+    <link rel="stylesheet" href="../css/registrodocumentosIndex.css?<?php echo $version = rand(0, 9999); ?>">
     <link rel="stylesheet" href="../css/notify.css">
     <link rel="stylesheet" href="../css/all.css">
     <link rel="shortcut icon" type="image/png" href="../img/logo.png" />
@@ -22,25 +25,25 @@
         </div>
         <div class="wrap_body">
             <div class="login_container">
-                <h1 class="login_title">Iniciar Sesion</h1>
+                <h1 class="login_title">Iniciar Registro</h1>
                 <form action="">
                 <div class="group">      
-                        <input type="text" id="user_login" name="user_login" class="login_input" required>
+                        <input type="text" id="entidad_ruc" name="entidad_ruc" class="login_input" required>
                         <span class="highlight"></span>
                         <span class="bar"></span>
                         <label class="place_label">R.U.C</label>
                     </div>
                     <div class="group">      
-                        <input type="password" id="user_password" name="user_password" class="login_input" required autocomplete>
+                        <input type="password" id="entidad_clave" name="entidad_clave" class="login_input" required autocomplete>
                         <span class="highlight"></span>
                         <span class="bar"></span>
                         <label class="place_label">Contraseña</label>
                         <a href="#" class="icon_login" id="password_eye">
-                            <img src="img/eye-closed-svgrepo-com.svg" class="icon_img" id="eye_icon">
+                            <i class="far fa-eye-slash"></i>
                         </a>
                     </div>
                     
-                    <button id="boton_login" class="button_login">Ingresar</button>
+                    <button id="boton_login" class="button">Ingresar</button>
                 </form>
             </div>
         </div>
@@ -49,5 +52,6 @@
         </div>
     </div>
     <script src="../js/index.var.js"></script>
+    <script src="../js/registrodocumentoindex.js" type="module"></script>
 </body>
 </html>
