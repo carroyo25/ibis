@@ -11,6 +11,7 @@
     --colorlinea : #3211FF;
     --color: #17a2ff;
     --fondoboton:#03cc57;
+    --color-barra:#005B86;
 }
 
 a{
@@ -72,7 +73,7 @@ body {
         justify-content: space-between;
         padding: 1rem 1.5rem;
         background:#fff;
-        background: #005B86;
+        background: var(--color-barra);
 
         .wrap_header_logo{
             background-image: url("../img/logo.png");
