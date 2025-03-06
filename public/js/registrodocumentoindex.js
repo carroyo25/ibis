@@ -27,7 +27,20 @@ $.addEventListener("click",(e) => {
             })
             .then(response => response.json())
             .then(data => {
-                console.log(data);
+                if (data.status === 'success'){
+
+                    notifier.info(data.message);
+                    localStorage.setItem('logon',true);
+                    localStorage.setItem('ruc',data.ruc);
+                    localStorage.setItem('entidad',data.entidad);
+                    localStorage.setItem('id',data.id);
+
+                    window.location.href = "http://localhost/ibis/public/registrodocumentos/php/panel.php";
+
+                }else{
+                    notifier.alert(data.message);
+                    localStorage.clear();
+                }
             })
 
 

@@ -373,14 +373,15 @@
                 $datos = json_decode($detalles);
                 
                 $nreg = count($datos);
-
-                $sql = $this->db->connect()->prepare("INSERT INTO lg_ordendet SET id_regmov=:id,niddeta=:nidp,id_cprod=:cprod,ncanti=:cant,
-                                                                                    nunitario=:unit,nigv=:igv,ntotal=:total,
-                                                                                    nestado=:est,cverifica=:verif,nidpedi=:pedido,
-                                                                                    nmonref=:moneda,ncodcos=:costos,id_orden=:ordenidx,
-                                                                                    nSaldo=:saldo,cobserva=:detalles,item=:itemord");
                                                                                     
                 for ($i=0; $i < $nreg; $i++) { 
+                    $sql = $this->db->connect()->prepare("INSERT INTO lg_ordendet 
+                                                            SET id_regmov=:id,niddeta=:nidp,id_cprod=:cprod,ncanti=:cant,
+                                                                nunitario=:unit,nigv=:igv,ntotal=:total,
+                                                                nestado=:est,cverifica=:verif,nidpedi=:pedido,
+                                                                nmonref=:moneda,ncodcos=:costos,id_orden=:ordenidx,
+                                                                nSaldo=:saldo,cobserva=:detalles,item=:itemord");
+
                     if(!$datos[$i]->grabado) {
                         $total = $datos[$i]->cantidad * $datos[$i]->precio;
                         
