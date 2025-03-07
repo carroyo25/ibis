@@ -4274,7 +4274,7 @@
                                                     FORMAT( tb_pedidodet.total - lg_ordendet.nigv,2) AS subtotal,
                                                     FORMAT( lg_ordendet.ntotal,2) as ntotal,
                                                     cm_producto.ccodprod,
-                                                    UPPER(CONCAT_WS(' ',cm_producto.cdesprod,tb_pedidodet.observaciones,lg_ordendet.cobserva)) AS cdesprod,
+                                                    UPPER(CONCAT_WS(' ',cm_producto.cdesprod,lg_ordendet.cobserva)) AS cdesprod,
                                                     cm_producto.nund,
                                                     tb_unimed.cabrevia,
                                                     FORMAT( tb_pedidodet.total, 2 ) AS total,

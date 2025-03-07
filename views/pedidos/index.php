@@ -74,41 +74,36 @@
                         </div>
                     </div>
                     <div class="dataProceso_2">
-                        <div class="seccion_izquierda">
-                            <div class="column4_55">
-                                <div class="column2_3457">
-                                    <label for="numero">Número:</label>
-                                    <input type="text" name="numero" id="numero" class="cerrarLista" readonly>
-                                </div>
-                                <div class="column2_46">
-                                    <label for="emision">Emisión:</label>
-                                    <input type="date" name="emision" id="emision" class="cerrarLista" value="<?php echo date("Y-m-d");?>">
-                                </div>
-                            </div>
-                            <div class="column2">
-                                <label for="costos">CCostos:</label>
+                        <div class="seccion_izquierda_grid">
+                            <label for="numero" data-etiqueta="numero">Número:</label>
+                            <input type="text" name="numero" id="numero" class="cerrarLista" readonly>
+                            <label for="emision" data-etiqueta="emision">Emisión:</label>
+                            <input type="date" name="emision" id="emision" class="cerrarLista" value="<?php echo date("Y-m-d");?>">
+                            <label for="costos" data-etiqueta="costos">CCostos:</label>
+                            <div data-box="lista_costos">
                                 <input type="text" name="costos" id="costos" class="mostrarLista busqueda" placeholder="Elija una opcion">
-                                <div class="lista" id="listaCostos">
-                                   <ul>
-                                       <?php echo $this->listaCostos?>
-                                   </ul> 
+                                <div class="lista_grid" id="listaCostos">
+                                <ul>
+                                    <?php echo $this->listaCostos?>
+                                </ul> 
                                 </div>
                             </div>
-                            <div class="column2">
-                                <label for="area">Partida:</label>
+                            <label for="area" data-etiqueta="partida">Partida:</label>
+                            <div data-box="lista_partidas">
                                 <input type="text" name="partida" id="partida" class="mostrarLista busqueda" placeholder="Elija una opcion">
-                                <div class="lista" id="listaPartidas">
-                                   <ul>
-                                       
-                                   </ul>
+                                <div class="lista_grid" id="listaPartidas">
+                                    <ul>
+                                        
+                                    </ul>
                                 </div>
                             </div>
+                            
                         </div>
                         <div class="seccion_medio">
                             <div class="column2">
                                 <label for="area">Area:</label>
                                 <input type="text" name="area" id="area" class="mostrarLista busqueda" placeholder="Elija una opcion">
-                                <div class="lista" id="listaAreas">
+                                <div class="lista_grid" id="listaAreas">
                                    <ul>
                                        <?php echo $this->listaAreas?>
                                    </ul>
@@ -140,8 +135,8 @@
                                     </div>
                                 </div>
                                 <div class="column2_46">
-                                    <label for="vence">Vence :</label>
-                                    <input type="date" name="vence" id="vence" class="cerrarLista" value="<?php echo date("Y-m-d");?>">
+                                    <label for="vence">Fecha Entrega :</label>
+                                    <input type="date" name="fecha_entrega" id="fecha_entrega" class="cerrarLista">
                                 </div>
                             </div>
                             <div class="column4_55">

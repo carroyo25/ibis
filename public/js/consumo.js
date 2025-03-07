@@ -318,7 +318,7 @@ $(function(){
         sw = fila.data("registrado");
         registro = $(this).attr("href");
 
-        $("#borrarFila").fadeIn();
+        //$("#borrarFila").fadeIn();
 
         return false;
     });

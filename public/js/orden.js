@@ -725,41 +725,6 @@ $(function(){
         return false;
     });
 
-    /*$("#btnConfirmSend").click(function (e) { 
-        e.preventDefault();
-        
-        try {
-            if ($("#subject").val() =="") throw "Escriba el asunto";
-            if ($("messaje div").html() =="") throw "Escriba el asunto";
-
-            let result = {};
-    
-            $.each($("#formProceso").serializeArray(),function(){
-                result[this.name] = this.value;
-            })
-
-            $("#esperar").css("opacity","1").fadeIn();
-
-            $.post(RUTA+"orden/correo", {cabecera:result,
-                                        detalles:JSON.stringify(detalles()),
-                                        correos:JSON.stringify(mailsList()),
-                                        asunto:$("#subject").val(),
-                                        mensaje:$(".messaje div").html()},
-                                                    
-                function (data, textStatus, jqXHR) {
-                    mostrarMensaje(data.mensaje,data.clase);
-                    $('#'+filaActualiza).addClass('resaltado_firma');
-                    $("#sendMail").fadeOut();
-                    $("#esperar").css("opacity","0").fadeOut();
-                },
-                "json"
-            );
-        } catch (error) {
-            mostrarMensaje(error,'mensaje_error');
-        }
-
-        return false;
-    });*/
 
     $("#sendEntOrden").click(function (e) { 
         e.preventDefault();

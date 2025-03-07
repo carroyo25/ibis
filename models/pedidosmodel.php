@@ -138,7 +138,7 @@
                     $cper = date("Y",strtotime($datos['emision']));
 
                     $sql = $this->db->connect()->prepare("INSERT INTO tb_pedidocab SET idcostos=:cost,idarea=:area,idtrans=:trans,idsolicita=:soli,idtipomov=:mov,
-                                                                                    emision=:emis,vence=:vence,estadodoc=:estdoc,nrodoc=:nro,usuario=:user,
+                                                                                    emision=:emis,fentregaPedido=:entrega,estadodoc=:estdoc,nrodoc=:nro,usuario=:user,
                                                                                     anio=:ano,mes=:mes,concepto=:concep,detalle=:det,nivelAten=:aten,
                                                                                     docfPdfPrev=:dprev,nflgactivo=:est,verificacion=:ver,idpartida=:partida");
                     $sql->execute([
@@ -148,7 +148,7 @@
                         "soli"=>$datos['codigo_solicitante'],
                         "mov"=>$datos['codigo_tipo'],
                         "emis"=>$datos['emision'],
-                        "vence"=>$datos['vence'],
+                        "entrega"=>$datos['fecha_entrega'],
                         "estdoc"=>$datos['codigo_estado'],
                         "user"=>$datos['codigo_usuario'],
                         "nro"=>$numero['numero'],

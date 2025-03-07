@@ -84,7 +84,7 @@ $(function(){
         return false;
     });
 
-    $(".lista").on("click",'a', function (e) {
+    $(".lista,.lista_grid").on("click",'a', function (e) {
         e.preventDefault();
 
         let control = $(this).parent().parent().parent();
@@ -277,7 +277,7 @@ $(function(){
         return false;
     });
 
-    $("#vence").change(function (e) { 
+    /*$("#vence").change(function (e) { 
         e.preventDefault();
         let dias = diferenciadefechas($(this).val(),$("#emision").val());
         
@@ -292,7 +292,7 @@ $(function(){
         };
         
         return false;
-    });
+    });*/
     
     $("#tablaModulos tbody").on("click","tr", function (e) {
         e.preventDefault();
@@ -356,10 +356,11 @@ $(function(){
                 $("#concepto").val(data.cabecera[0].concepto);
                 $("#solicitante").val(data.cabecera[0].nombres);
                 $("#tipo").val(data.cabecera[0].tipo);
-                $("#vence").val(data.cabecera[0].vence);
+                //$("#vence").val(data.cabecera[0].vence);
                 $("#estado").val(data.cabecera[0].estado);
                 $("#espec_items").val(data.cabecera[0].detalle);
                 $("#partida").val(data.cabecera[0].cdescripcion);
+                ("#fecha_entrega").val(data.cabecera[0].entrega)
 
                
                 if (data.cabecera[0].idtipomov == 38) {

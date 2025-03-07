@@ -1221,17 +1221,15 @@ $almacen:#27798F;
     }
 }
 
-.lista{
+.lista,.lista_grid{
     width: 85%;
     position: absolute;
     background: $blanco;
-    left: 88px;
-    top: 39px;
     z-index: 99;
     border: 1px solid $sombra;
     font-size: .8rem;
     box-shadow: 3px 2px 6px;
-    line-height: 1.5rem;
+    line-height: 2rem;
     padding: 2px;
     transition: .3s;
     display: none;
@@ -1245,6 +1243,11 @@ $almacen:#27798F;
             background:$sobreElemento;
         }
     }
+}
+
+.lista {
+    left: 88px;
+    top: 39px;
 }
 
 .ventanaAdvertencia,
@@ -2607,6 +2610,64 @@ $almacen:#27798F;
 
     .seccion_izquierda{
         width: 100%;
+    }
+
+
+    /*Nueva distribucion para la ventana de procesos*/
+    .seccion_izquierda_grid{
+        display: grid;
+        padding: 1rem;
+        gap: 10px;
+        grid-template-columns: repeat(8, 1fr);
+        grid-template-rows: repeat(3, 1fr);
+
+        label[data-etiqueta="numero"]{
+            grid-column: 1;
+        }
+
+        label[data-etiqueta="emision"]{
+            grid-column: 5;
+        }
+
+        label[data-etiqueta="costos"]{
+            grid-column: 1;
+            grid-row: 2;
+        }
+
+        label[data-etiqueta="partida"]{
+            grid-column: 1;
+            grid-row: 3;
+        }
+
+        input[name="numero"]{
+           grid-column: 2 / span 3;
+           grid-row: 1;
+        }
+
+        input[name="emision"]{
+            grid-column: 6 / span 3;
+            grid-row: 1;
+        }
+
+        div[data-box="lista_costos"] {
+            position: relative;
+            grid-column: 2 / span 7;
+            grid-row: 2;
+
+            * {
+                width: 100%;
+            }
+        }
+
+        div[data-box="lista_partidas"] {
+            position: relative;
+            grid-column: 2 / span 7;
+            grid-row: 3;
+
+            * {
+                width: 100%;
+            }
+        }
     }
 
     .barraOpcionesNueva {
