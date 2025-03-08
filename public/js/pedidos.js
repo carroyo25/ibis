@@ -15,7 +15,7 @@ $(function(){
 
                 $("#estado")
                     .removeClass()
-                    .addClass("textoCentro w35por estado procesando");
+                    .addClass("textoCentro estado procesando");
                 $("#proceso").fadeIn();
                 
                 accion = 'n';
@@ -67,6 +67,8 @@ $(function(){
     $(".mostrarLista").focus(function (e) { 
         e.preventDefault();
 
+        $(".lista,.lista_grid").fadeOut();
+
         if (accion !="n") {
             return false;
         }
@@ -79,7 +81,7 @@ $(function(){
     $(".cerrarLista").focus(function (e) { 
         e.preventDefault();
         
-        $(".lista").fadeOut();
+        $(".lista,.lista_grid").fadeOut();
 
         return false;
     });
@@ -163,7 +165,8 @@ $(function(){
                     grabado = false;
                     $("form")[1].reset();
                     $("#tablaDetalles tbody,.listaArchivos").empty();
-                    $(".lista").fadeOut();
+                    $(".lista,.lista_grid").fadeOut();
+                    $("#atach_counter").text(0);
                 });
             },
             "text"
@@ -252,6 +255,7 @@ $(function(){
                             .append(data.items.detalles);
                         $("#codigo_pedido").val(data.indice);
                         $("#esperar").css("opacity","0").fadeOut();
+                        $("#numero").val(data.numero);
 
                     },
                     "json"
@@ -276,23 +280,6 @@ $(function(){
 
         return false;
     });
-
-    /*$("#vence").change(function (e) { 
-        e.preventDefault();
-        let dias = diferenciadefechas($(this).val(),$("#emision").val());
-        
-        $("#dias_atencion").val(dias);
-
-        if ( dias <= 0 ){
-            mostrarMensaje("Verifique la fecha de pedido","mensaje_error");
-        }else if(dias <= 7){
-            $("#codigo_atencion").val(46);
-        }else if(dias > 7){
-            $("#codigo_atencion").val(46);
-        };
-        
-        return false;
-    });*/
     
     $("#tablaModulos tbody").on("click","tr", function (e) {
         e.preventDefault();
@@ -335,7 +322,7 @@ $(function(){
             function (data, textStatus, jqXHR) {
                 
                 let numero = $.strPad(data.cabecera[0].nrodoc,6);
-                let estado = "textoCentro w35por estado " + data.cabecera[0].cabrevia;
+                let estado = "textoCentro  estado " + data.cabecera[0].cabrevia;
                 
                 $("#codigo_costos").val(data.cabecera[0].idcostos);
                 $("#codigo_area").val(data.cabecera[0].idarea);
@@ -356,11 +343,10 @@ $(function(){
                 $("#concepto").val(data.cabecera[0].concepto);
                 $("#solicitante").val(data.cabecera[0].nombres);
                 $("#tipo").val(data.cabecera[0].tipo);
-                //$("#vence").val(data.cabecera[0].vence);
                 $("#estado").val(data.cabecera[0].estado);
                 $("#espec_items").val(data.cabecera[0].detalle);
                 $("#partida").val(data.cabecera[0].cdescripcion);
-                ("#fecha_entrega").val(data.cabecera[0].entrega)
+                $("#fecha_entrega").val(data.cabecera[0].entrega)
 
                
                 if (data.cabecera[0].idtipomov == 38) {

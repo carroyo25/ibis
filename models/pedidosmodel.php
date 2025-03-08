@@ -168,6 +168,7 @@
 
                     if ($rowCount > 0){
                         $indice = $this->ultimoIndiceTabla("SELECT MAX(idreg) AS indice FROM tb_pedidocab");
+
                         $this->saveItems($datos['codigo_verificacion'],
                                         $datos['codigo_estado'],
                                         $datos['codigo_atencion'],
@@ -190,6 +191,7 @@
                                 "mensaje"   =>$mensaje,
                                 "clase"     =>$clase,
                                 "indice"    =>$indice,
+                                "numero"    =>$numero['numero'],
                                 "items"     =>$this->consultarReqId($indice,49,50,49,null));
                 
                 return $salida;

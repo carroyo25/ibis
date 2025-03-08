@@ -2614,13 +2614,15 @@ $almacen:#27798F;
 
 
     /*Nueva distribucion para la ventana de procesos*/
-    .seccion_izquierda_grid{
+    .seccion_izquierda_grid,.seccion_medio_grid,.seccion_derecha_grid {
         display: grid;
         padding: 1rem;
         gap: 10px;
         grid-template-columns: repeat(8, 1fr);
         grid-template-rows: repeat(3, 1fr);
+    }
 
+    .seccion_izquierda_grid{
         label[data-etiqueta="numero"]{
             grid-column: 1;
         }
@@ -2667,6 +2669,105 @@ $almacen:#27798F;
             * {
                 width: 100%;
             }
+        }
+    }
+
+    .seccion_medio_grid{
+        label[data-etiqueta="area"]{
+            grid-column: 1;
+        }
+
+        div[data-box="lista_areas"] {
+            position: relative;
+            grid-column: 2 / span 7;
+            grid-row: 1;
+
+            * {
+                width: 100%;
+            }
+        }
+
+        label[data-etiqueta="concepto"]{
+            grid-column: 1;
+            grid-row: 2;
+        }
+
+        input[name="concepto"]{
+            grid-column: 2 / span 7;
+            grid-row: 2;
+         }
+
+        label[data-etiqueta="solicitante"]{
+            grid-column: 1;
+            grid-row: 3;
+        }
+
+        div[data-box="lista_solicitante"] {
+            position: relative;
+            grid-column: 2 / span 7;
+            grid-row: 3;
+
+            * {
+                width: 100%;
+            }
+        }
+    }
+
+    .seccion_derecha_grid{
+        label[data-etiqueta="tipo"]{
+            grid-column: 1;
+        }
+
+        div[data-box="lista_tipo"] {
+            position: relative;
+            grid-column: 2 / span 3;
+
+            * {
+                width: 100%;
+            }
+        }
+
+        label[data-etiqueta="fecha_entrega"]{
+            grid-column: 5;
+        }
+
+        input[name="fecha_entrega"]{
+            grid-column: 6 / span 3;
+        }
+
+        label[data-etiqueta="pedido_mmtto"]{
+            grid-column: 1;
+            grid-row: 2;
+        }
+
+        input[name="pedidommto"]{
+            grid-column: 2 / span 3;
+            grid-row: 2;
+        }
+
+        label[data-etiqueta="transporte"]{
+            grid-column: 5;
+            grid-row: 2;
+        }
+
+        div[data-box="lista_transporte"] {
+            position: relative;
+            grid-column: 6 / span 3;
+            grid-row: 2;
+
+            * {
+                width: 100%;
+            }
+        }
+
+        label[data-etiqueta="estado"]{
+            grid-column: 1;
+            grid-row: 3;
+        }
+
+        input[name="estado"]{
+            grid-column: 2 / span 3;
+            grid-row: 3;
         }
     }
 

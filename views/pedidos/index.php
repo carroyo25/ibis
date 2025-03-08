@@ -99,65 +99,60 @@
                             </div>
                             
                         </div>
-                        <div class="seccion_medio">
-                            <div class="column2">
-                                <label for="area">Area:</label>
+                        <div class="seccion_medio_grid">
+                            <label for="area" data-etiqueta="area">Area:</label>
+                            <div data-box="lista_areas">
                                 <input type="text" name="area" id="area" class="mostrarLista busqueda" placeholder="Elija una opcion">
                                 <div class="lista_grid" id="listaAreas">
-                                   <ul>
-                                       <?php echo $this->listaAreas?>
-                                   </ul>
+                                <ul>
+                                    <?php echo $this->listaAreas?>
+                                </ul>
                                 </div>
                             </div>
-                            <div class="column2">
-                                <label for="concepto">Concepto:</label>
-                                <input type="text" name="concepto" id="concepto" class="cerrarLista mayusculas">
-                            </div>
-                            <div class="column2">
-                                <label for="solicitante">Solicitante:</label>
+                            <label for="concepto" data-etiqueta="concepto">Concepto:</label>
+                            <input type="text" name="concepto" id="concepto" class="cerrarLista mayusculas">
+                            
+                            <label for="solicitante" data-etiqueta="solicitante">Solicitante:</label>
+                            <div data-box="lista_solicitante">
                                 <input type="text" name="solicitante" id="solicitante" class="mostrarLista busqueda" placeholder="Elija una opcion">
-                                <div class="lista" id="listaSolicitantes">
-                                   <ul>
-                                       <?php echo $this->listaAquarius?>
-                                   </ul>
+                                <div class="lista_grid" id="listaSolicitantes">
+                                    <ul>
+                                        <?php echo $this->listaAquarius?>
+                                    </ul>
                                 </div>
                             </div>
                         </div>
-                        <div class="seccion_derecha">
-                            <div class="column4_55">
-                                <div class="column2_3957">
-                                    <label for="tipo">Tipo :</label>
-                                    <input type="text" name="tipo" id="tipo" class="mostrarLista" placeholder="Elija una opcion">
-                                    <div class="lista" id="listaTipo">
-                                        <ul>
-                                            <?php echo $this->listaTipos?>
-                                        </ul>
-                                    </div>
-                                </div>
-                                <div class="column2_46">
-                                    <label for="vence">Fecha Entrega :</label>
-                                    <input type="date" name="fecha_entrega" id="fecha_entrega" class="cerrarLista">
+                        <div class="seccion_derecha_grid">
+                            <label for="tipo" data-etiqueta="tipo">Tipo Pedido:</label>
+                            <div data-box="lista_tipo">
+                                <input type="text" name="tipo" id="tipo" class="mostrarLista" placeholder="Elija una opcion">
+                                <div class="lista_grid" id="listaTipo">
+                                    <ul>
+                                        <?php echo $this->listaTipos?>
+                                    </ul>
                                 </div>
                             </div>
-                            <div class="column4_55">
-                                <div class="column2_3957">
-                                    <label for="pedidommto">Ped. MMTO:</label>
-                                    <input type="text" name="pedidommto" id="pedidommto">
-                                </div>
-                                <div class="column2_46">
-                                    <label for="transporte">Transporte:</label>
-                                    <input type="text" name="transporte" id="transporte" class="mostrarLista" placeholder="Elija una opcion">
-                                    <div class="lista" id="listaTransportes">
-                                        <ul>
-                                            <?php echo $this->listaTransportes?>
-                                        </ul>
-                                    </div>
+                            
+
+                            <label for="vence" data-etiqueta="fecha_entrega">Fecha<br/>Entrega :</label>
+                            <input type="date" name="fecha_entrega" id="fecha_entrega" class="cerrarLista">
+                            
+                            <label for="pedidommto" data-etiqueta="pedido_mmtto">Ped. MMTO:</label>
+                            <input type="text" name="pedidommto" id="pedidommto">
+                            
+                            <label for="transporte" data-etiqueta="transporte">Transporte:</label>
+                            <div data-box="lista_transporte">
+                                <input type="text" name="transporte" id="transporte" class="mostrarLista" placeholder="Elija una opcion">
+                                <div class="lista_grid" id="listaTransportes">
+                                    <ul>
+                                        <?php echo $this->listaTransportes?>
+                                    </ul>
                                 </div>
                             </div>
-                            <div class="column2">
-                                <label for="estado">Estado:</label>
-                                <input type="text" name="estado" id="estado" class="textoCentro w35por estado procesando" readonly value="EN PROCESO">
-                            </div>
+                            
+                            
+                            <label for="estado" data-etiqueta="estado">Estado:</label>
+                            <input type="text" name="estado" id="estado" class="textoCentro estado procesando" readonly value="EN PROCESO">
                         </div>
                     </div>
                     <div class="textAreaEnter oculto">

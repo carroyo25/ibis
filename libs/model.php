@@ -1657,6 +1657,7 @@
                                                         ibis.tb_pedidocab.verificacion,
                                                         ibis.tb_pedidocab.nmtto,
                                                         ibis.tb_pedidocab.asigna,
+                                                        ibis.tb_pedidocab.fentregapedido AS entrega,
                                                         CONCAT( rrhh.tabla_aquarius.apellidos, ' ', rrhh.tabla_aquarius.nombres ) AS nombres, 
                                                         UPPER(
                                                         CONCAT( ibis.tb_proyectos.ccodproy, ' ', ibis.tb_proyectos.cdesproy )) AS proyecto, 
