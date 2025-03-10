@@ -108,6 +108,23 @@ checkCantTables = (table,idx) =>{
     return sw;
 }
 
+checkTypeItemsTables = (table,type) =>{
+    let itemDiferent = false,
+        critero = type == 37 ? 'B':'S';
+
+    table.each(function(){
+        let itemTable = $(this).find('td').eq(2).text();
+
+        console.log(itemTable.substr(1, 1));
+
+        if ( itemTable.substr(0, 1) === critero ) {
+            itemDiferent = true;
+        }
+    })
+
+    return itemDiferent;
+}
+
 checkCantTablesMinMax = (table,idx) =>{
     let sw = false;
 

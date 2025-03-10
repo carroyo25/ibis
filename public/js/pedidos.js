@@ -3,7 +3,8 @@ $(function(){
         grabado = false,
         aprobacion = 0,
         fila = "",
-        id = 0;
+        id = 0,
+        tipo_pedido = 0;
 
     $("#esperar").fadeOut();
 
@@ -26,12 +27,32 @@ $(function(){
                 $("#atach_counter").text(0);
                 $("#codigo_estado").val(49);
 
+                $("form")[1].reset();
+                $("#tablaDetalles tbody,.listaArchivos").empty();
+                $(".lista,.lista_grid").fadeOut();
+                $("#atach_counter").text(0);
+
         } catch (error) {
             mostrarMensaje(error.message,"mensaje_error");
         }
        
         return false;
     });
+
+    /*$("#cleanButton").click(function (e) { 
+        e.preventDefault();
+
+        $("#codigo_usuario").val($("#id_user").val());
+        $("#listaArchivos").empty();
+        $("#atach_counter").text(0);
+        $("#codigo_estado").val(49)
+        $("form")[1].reset();
+        $("#tablaDetalles tbody,.listaArchivos").empty();
+        $(".lista,.lista_grid").fadeOut();
+        $("#atach_counter").text(0);
+
+        return false;
+    });*/
 
     $("#addItem").click(function (e) { 
         e.preventDefault();
@@ -239,6 +260,11 @@ $(function(){
             if (result['codigo_tipo'] == '') throw "Elija el tipo de pedido";
             if ($("#tablaDetalles tbody tr").length <= 0) throw "El pedido no tienes items";
             if (checkCantTables($("#tablaDetalles tbody > tr"),5)) throw "No ingreso cantidad en un item";
+            if (checkTypeItemsTables($("#tablaDetalles tbody > tr"),result['codigo_tipo'])) throw "No se puede combinar el tipo de itmes";
+
+            console.log('paso el pedico correctamente');
+
+            return false;
             
             $("#esperar").css("opacity","1").fadeIn();
 
