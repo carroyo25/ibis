@@ -252,20 +252,17 @@ $(function(){
         });
 
         try {
-            if (result['codigo_costos'] == '') throw "Elija Centro de Costos";
-            if (result['codigo_area'] == '') throw "Elija Area";
-            if (result['codigo_transporte'] == '') throw "Elija Tipo de Transporte";
-            if (result['concepto'] == '') throw "Escriba el concepto";
-            if (result['codigo_solicitante'] == '') throw "Elija Solicitante";
-            if (result['codigo_tipo'] == '') throw "Elija el tipo de pedido";
-            if ($("#tablaDetalles tbody tr").length <= 0) throw "El pedido no tienes items";
-            if (checkCantTables($("#tablaDetalles tbody > tr"),5)) throw "No ingreso cantidad en un item";
-            if (checkTypeItemsTables($("#tablaDetalles tbody > tr"),result['codigo_tipo'])) throw "No se puede combinar el tipo de itmes";
 
-            console.log('paso el pedico correctamente');
+            if (result['codigo_costos'] == '') throw new Error("Elija Centro de Costos");
+            if (result['codigo_area'] == '') throw new Error("Elija Area");
+            if (result['codigo_transporte'] == '') throw new Error("Elija Tipo de Transporte");
+            if (result['concepto'] == '') throw new Error("Escriba el concepto");
+            if (result['codigo_solicitante'] == '') throw new Error("Elija Solicitante");
+            if (result['codigo_tipo'] == '') throw new Error("Elija el tipo de pedido");
+            if ($("#tablaDetalles tbody tr").length <= 0) throw new Error("El pedido no tienes items");
+            if (checkCantTables($("#tablaDetalles tbody > tr"),5)) throw new Error("No ingreso cantidad en un item");
+            if (checkTypeItemsTables($("#tablaDetalles tbody > tr"),result['codigo_tipo'])) throw new Error("No se puede combinar el tipo de pedidos");
 
-            return false;
-            
             $("#esperar").css("opacity","1").fadeIn();
 
             if ( accion == 'n' ){
@@ -301,7 +298,7 @@ $(function(){
             }
 
         } catch (error) {
-            mostrarMensaje(error,'mensaje_error');
+            mostrarMensaje(error.message,'mensaje_error');
         }
 
         return false;

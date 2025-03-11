@@ -82,7 +82,7 @@ fillTables = (table,idx) => {
 }
 
 checkExistTable = (table,item,indice) => {
-    var itenExist = false;
+    let itenExist = false;
 
     table.each(function(){
         let itemTable = $(this).find('td').eq(indice).text();
@@ -109,20 +109,28 @@ checkCantTables = (table,idx) =>{
 }
 
 checkTypeItemsTables = (table,type) =>{
-    let itemDiferent = false,
-        critero = type == 37 ? 'B':'S';
+    let critero = type == 37 ? 'B':'S',
+        bienes = 0,
+        servicios = 0,
+        existeItem = true;
 
     table.each(function(){
         let itemTable = $(this).find('td').eq(2).text();
 
-        console.log(itemTable.substr(1, 1));
-
         if ( itemTable.substr(0, 1) === critero ) {
-            itemDiferent = true;
+            bienes++;
+        }else{
+            servicios++;
         }
     })
 
-    return itemDiferent;
+    if ( type == 37 && servicios == 0 ){
+        existeItem = false;
+    }else if ( type == 38 && servicios == 0 ){
+        existeItem = false;
+    }
+
+    return existeItem;
 }
 
 checkCantTablesMinMax = (table,idx) =>{
