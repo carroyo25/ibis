@@ -2002,20 +2002,14 @@
                                                     REPLACE(FORMAT(tb_pedidodet.cant_pedida,2),',','') AS cant_pedida, 
                                                     tb_pedidodet.estadoItem, 
                                                     cm_producto.ccodprod, 
-                                                    CONCAT_WS(' ',cm_producto.cdesprod,tb_pedidodet.observaciones) AS cdesprod, 
+                                                    UPPER(CONCAT_WS(' ',cm_producto.cdesprod,tb_pedidodet.observaciones)) AS cdesprod, 
                                                     tb_unimed.cabrevia, 
                                                     tb_pedidodet.nflgqaqc, 
                                                     tb_pedidodet.especificaciones 
                                                 FROM
                                                     tb_pedidodet
-                                                    INNER JOIN
-                                                    cm_producto
-                                                    ON 
-                                                        tb_pedidodet.idprod = cm_producto.id_cprod
-                                                    INNER JOIN
-                                                    tb_unimed
-                                                    ON 
-                                                        tb_pedidodet.unid = tb_unimed.ncodmed
+                                                    LEFT JOIN cm_producto ON tb_pedidodet.idprod = cm_producto.id_cprod
+                                                    LEFT JOIN tb_unimed ON tb_pedidodet.unid = tb_unimed.ncodmed
                                                 WHERE
                                                     tb_pedidodet.idpedido = :id
                                                     AND tb_pedidodet.nflgActivo = 1
@@ -2030,7 +2024,7 @@
                                         <td class="textoCentro"><a href="'.$rs['idprod'].'"><i class="far fa-eye"></i></a></td>
                                         <td class="textoCentro">'.str_pad($filas++,3,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
-                                        <td class="pl20px">'.strtoupper($rs['cdesprod']).'</td>
+                                        <td class="pl20px">'.$rs['cdesprod'].'</td>
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                         <td class="textoCentro">'.$rs['cant_pedida'].'</td>
                                         <td>
@@ -2074,7 +2068,7 @@
                                                     REPLACE ( FORMAT( tb_pedidodet.cant_aprob, 2 ), ',', '' ) AS cant_aprob,
                                                     tb_pedidodet.estadoItem,
                                                     cm_producto.ccodprod,
-                                                    CONCAT_WS( ' ', cm_producto.cdesprod, tb_pedidodet.observaciones ) AS cdesprod,
+                                                    UPPER(CONCAT_WS( ' ', cm_producto.cdesprod, tb_pedidodet.observaciones )) AS cdesprod,
                                                     tb_unimed.cabrevia,
                                                     tb_pedidodet.nflgqaqc,
                                                     tb_pedidodet.especificaciones,
@@ -2105,7 +2099,7 @@
                             $salida .='<tr data-grabado="1" data-idprod="'.$rs['idprod'].'" data-codund="'.$rs['unid'].'" data-idx="'.$rs['iditem'].'" class="'.$estado_aprobar.'">
                                             <td class="textoCentro">'.str_pad($filas++,3,0,STR_PAD_LEFT).'</td>
                                             <td class="textoCentro">'.$rs['ccodprod'].'</td>
-                                            <td class="pl20px">'.strtoupper($rs['cdesprod']).'</td>
+                                            <td class="pl20px">'.$rs['cdesprod'].'</td>
                                             <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                             <td class="textoDerecha">'.$rs['cant_pedida'].'</td>
                                             <td class="textoCentro">'.number_format($atendida,2).'</td>
