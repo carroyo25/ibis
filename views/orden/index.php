@@ -96,29 +96,17 @@
                         </div>
                     </div>
                     <div class="dataProceso_2">
-                        <div class="seccion_izquierda">
-                            <div class="column4_55">
-                                <div class="column2_3957">
-                                    <label for="numero">Orden Nro:</label>
-                                    <input type="text" name="numero" id="numero" class="cerrarLista" readonly>
-                                </div>
-                                <div class="column2_46">
-                                    <label for="emision">Emisión:</label>
-                                    <input type="date" name="emision" id="emision" class="cerrarLista" value="<?php echo date("Y-m-d");?>" min="<?php echo date("Y-m-d")?>">
-                                </div>
-                            </div>
-                            <div class="column2">
-                                <label for="costos">CCostos:</label>
-                                <input type="text" name="costos" id="costos" readonly>
-                            </div>
-                            <div class="column2">
-                                <label for="area">Area:</label>
-                                <input type="text" name="area" id="area" readonly>
-                            </div>
-                            <div class="column2">
-                                <label for="concepto">Concepto:</label>
-                                <input type="text" name="concepto" id="concepto" class="cerrarLista mayusculas">
-                            </div>
+                        <div class="seccion_izquierda_4_grid">
+                            <label for="numero" data-etiqueta="numero">Orden Nro:</label>
+                            <input type="text" name="numero" id="numero" class="cerrarLista" readonly>
+                            <label for="emision" data-etiqueta="emision">Emisión:</label>
+                            <input type="date" name="emision" id="emision" class="cerrarLista" value="<?php echo date("Y-m-d");?>" min="<?php echo date("Y-m-d")?>">
+                            <label for="costos" data-etiqueta="costos">CCostos:</label>
+                            <input type="text" name="costos" id="costos" readonly>
+                            <label for="area" data-etiqueta="area">Area:</label>
+                            <input type="text" name="area" id="area" readonly>
+                            <label for="concepto" data-etiqueta="concepto">Concepto:</label>
+                            <input type="text" name="concepto" id="concepto" class="cerrarLista mayusculas">
                         </div>
                         <div class="seccion_medio">
                             <div class="column4_55">

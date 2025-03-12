@@ -353,14 +353,15 @@
 
                 $messaje= '<div style="width:100%;display: flex;flex-direction: column;justify-content: center;align-items: center;
                                     font-family: Futura, Arial, sans-serif;">
-                            <div style="width: 45%;border: 1px solid #c2c2c2;background: blue">
-                                <h3 style="text-align: left;padding-left:20px">Aprobación de Pedido</h3>
+                            <div style="width: 45%;border: 1px solid #c2c2c2;background: #BBDAFF">
+                                <h3 style="text-align: left;padding-left:20px">Bienes y Servicios Sical</h3>
                             </div>
                             <div style="width: 45%;
                                         border-left: 1px solid #c2c2c2;
                                         border-right: 1px solid #c2c2c2;
                                         border-bottom: 1px solid #c2c2c2;">
                                 <p style="padding:.5rem;line-height: 1rem;">'.$mensaje.'</p>
+                                <p style="padding:.5rem;line-height: 1rem;">'.$subject .'</p>
                             </div>
                         </div>';
                         
