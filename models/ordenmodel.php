@@ -494,9 +494,7 @@
                                     "swOrden"   =>1,
                                     "pendiente" =>$datos[$i]->cantidad,
                                     "pedido"    =>$datos[$i]->cantidad,
-                                    "aprobado"  =>$datos[$i]->cantidad]);
-                    
-                    //$this->registrarOrdenesItems($datos[$i]->itped,$orden,$entidad);                
+                                    "aprobado"  =>$datos[$i]->cantidad]);              
                 }
                 
             } catch (PDOException $th) {
@@ -789,7 +787,6 @@
         private function generarNumeroOrden(){
             try {
                 $sql = $this->db->connect()->query("SELECT COUNT(cnumero) AS numero FROM lg_ordencab WHERE YEAR(lg_ordencab.fregsys) = YEAR(NOW())");
-                //$sql = $this->db->connect()->query("SELECT MAX(id_regmov) AS numero FROM lg_ordencab WHERE YEAR(lg_ordencab.fregsys) = 2024");
 
                 $sql->execute();
 
