@@ -2951,13 +2951,13 @@
   display: -ms-grid;
   display: grid;
   padding: 1rem;
-  gap: 10px;
 }
 .ventanaProceso .seccion_izquierda_grid, .ventanaProceso .seccion_medio_grid, .ventanaProceso .seccion_derecha_grid {
-  -ms-grid-columns: (1fr)[8];
+  -ms-grid-columns: 1fr 10px 1fr 10px 1fr 10px 1fr 10px 1fr 10px 1fr 10px 1fr 10px 1fr;
   grid-template-columns: repeat(8, 1fr);
-  -ms-grid-rows: (1fr)[3];
+  -ms-grid-rows: 1fr 10px 1fr 10px 1fr;
   grid-template-rows: repeat(3, 1fr);
+  gap: 10px;
 }
 .ventanaProceso .seccion_izquierda_grid > *:nth-child(1), .ventanaProceso .seccion_medio_grid > *:nth-child(1), .ventanaProceso .seccion_derecha_grid > *:nth-child(1) {
   -ms-grid-row: 1;
@@ -2965,101 +2965,102 @@
 }
 .ventanaProceso .seccion_izquierda_grid > *:nth-child(2), .ventanaProceso .seccion_medio_grid > *:nth-child(2), .ventanaProceso .seccion_derecha_grid > *:nth-child(2) {
   -ms-grid-row: 1;
-  -ms-grid-column: 2;
+  -ms-grid-column: 3;
 }
 .ventanaProceso .seccion_izquierda_grid > *:nth-child(3), .ventanaProceso .seccion_medio_grid > *:nth-child(3), .ventanaProceso .seccion_derecha_grid > *:nth-child(3) {
   -ms-grid-row: 1;
-  -ms-grid-column: 3;
+  -ms-grid-column: 5;
 }
 .ventanaProceso .seccion_izquierda_grid > *:nth-child(4), .ventanaProceso .seccion_medio_grid > *:nth-child(4), .ventanaProceso .seccion_derecha_grid > *:nth-child(4) {
   -ms-grid-row: 1;
-  -ms-grid-column: 4;
+  -ms-grid-column: 7;
 }
 .ventanaProceso .seccion_izquierda_grid > *:nth-child(5), .ventanaProceso .seccion_medio_grid > *:nth-child(5), .ventanaProceso .seccion_derecha_grid > *:nth-child(5) {
   -ms-grid-row: 1;
-  -ms-grid-column: 5;
+  -ms-grid-column: 9;
 }
 .ventanaProceso .seccion_izquierda_grid > *:nth-child(6), .ventanaProceso .seccion_medio_grid > *:nth-child(6), .ventanaProceso .seccion_derecha_grid > *:nth-child(6) {
   -ms-grid-row: 1;
-  -ms-grid-column: 6;
+  -ms-grid-column: 11;
 }
 .ventanaProceso .seccion_izquierda_grid > *:nth-child(7), .ventanaProceso .seccion_medio_grid > *:nth-child(7), .ventanaProceso .seccion_derecha_grid > *:nth-child(7) {
   -ms-grid-row: 1;
-  -ms-grid-column: 7;
+  -ms-grid-column: 13;
 }
 .ventanaProceso .seccion_izquierda_grid > *:nth-child(8), .ventanaProceso .seccion_medio_grid > *:nth-child(8), .ventanaProceso .seccion_derecha_grid > *:nth-child(8) {
   -ms-grid-row: 1;
-  -ms-grid-column: 8;
+  -ms-grid-column: 15;
 }
 .ventanaProceso .seccion_izquierda_grid > *:nth-child(9), .ventanaProceso .seccion_medio_grid > *:nth-child(9), .ventanaProceso .seccion_derecha_grid > *:nth-child(9) {
-  -ms-grid-row: 2;
+  -ms-grid-row: 3;
   -ms-grid-column: 1;
 }
 .ventanaProceso .seccion_izquierda_grid > *:nth-child(10), .ventanaProceso .seccion_medio_grid > *:nth-child(10), .ventanaProceso .seccion_derecha_grid > *:nth-child(10) {
-  -ms-grid-row: 2;
-  -ms-grid-column: 2;
-}
-.ventanaProceso .seccion_izquierda_grid > *:nth-child(11), .ventanaProceso .seccion_medio_grid > *:nth-child(11), .ventanaProceso .seccion_derecha_grid > *:nth-child(11) {
-  -ms-grid-row: 2;
+  -ms-grid-row: 3;
   -ms-grid-column: 3;
 }
-.ventanaProceso .seccion_izquierda_grid > *:nth-child(12), .ventanaProceso .seccion_medio_grid > *:nth-child(12), .ventanaProceso .seccion_derecha_grid > *:nth-child(12) {
-  -ms-grid-row: 2;
-  -ms-grid-column: 4;
-}
-.ventanaProceso .seccion_izquierda_grid > *:nth-child(13), .ventanaProceso .seccion_medio_grid > *:nth-child(13), .ventanaProceso .seccion_derecha_grid > *:nth-child(13) {
-  -ms-grid-row: 2;
+.ventanaProceso .seccion_izquierda_grid > *:nth-child(11), .ventanaProceso .seccion_medio_grid > *:nth-child(11), .ventanaProceso .seccion_derecha_grid > *:nth-child(11) {
+  -ms-grid-row: 3;
   -ms-grid-column: 5;
 }
-.ventanaProceso .seccion_izquierda_grid > *:nth-child(14), .ventanaProceso .seccion_medio_grid > *:nth-child(14), .ventanaProceso .seccion_derecha_grid > *:nth-child(14) {
-  -ms-grid-row: 2;
-  -ms-grid-column: 6;
-}
-.ventanaProceso .seccion_izquierda_grid > *:nth-child(15), .ventanaProceso .seccion_medio_grid > *:nth-child(15), .ventanaProceso .seccion_derecha_grid > *:nth-child(15) {
-  -ms-grid-row: 2;
+.ventanaProceso .seccion_izquierda_grid > *:nth-child(12), .ventanaProceso .seccion_medio_grid > *:nth-child(12), .ventanaProceso .seccion_derecha_grid > *:nth-child(12) {
+  -ms-grid-row: 3;
   -ms-grid-column: 7;
 }
+.ventanaProceso .seccion_izquierda_grid > *:nth-child(13), .ventanaProceso .seccion_medio_grid > *:nth-child(13), .ventanaProceso .seccion_derecha_grid > *:nth-child(13) {
+  -ms-grid-row: 3;
+  -ms-grid-column: 9;
+}
+.ventanaProceso .seccion_izquierda_grid > *:nth-child(14), .ventanaProceso .seccion_medio_grid > *:nth-child(14), .ventanaProceso .seccion_derecha_grid > *:nth-child(14) {
+  -ms-grid-row: 3;
+  -ms-grid-column: 11;
+}
+.ventanaProceso .seccion_izquierda_grid > *:nth-child(15), .ventanaProceso .seccion_medio_grid > *:nth-child(15), .ventanaProceso .seccion_derecha_grid > *:nth-child(15) {
+  -ms-grid-row: 3;
+  -ms-grid-column: 13;
+}
 .ventanaProceso .seccion_izquierda_grid > *:nth-child(16), .ventanaProceso .seccion_medio_grid > *:nth-child(16), .ventanaProceso .seccion_derecha_grid > *:nth-child(16) {
-  -ms-grid-row: 2;
-  -ms-grid-column: 8;
+  -ms-grid-row: 3;
+  -ms-grid-column: 15;
 }
 .ventanaProceso .seccion_izquierda_grid > *:nth-child(17), .ventanaProceso .seccion_medio_grid > *:nth-child(17), .ventanaProceso .seccion_derecha_grid > *:nth-child(17) {
-  -ms-grid-row: 3;
+  -ms-grid-row: 5;
   -ms-grid-column: 1;
 }
 .ventanaProceso .seccion_izquierda_grid > *:nth-child(18), .ventanaProceso .seccion_medio_grid > *:nth-child(18), .ventanaProceso .seccion_derecha_grid > *:nth-child(18) {
-  -ms-grid-row: 3;
-  -ms-grid-column: 2;
-}
-.ventanaProceso .seccion_izquierda_grid > *:nth-child(19), .ventanaProceso .seccion_medio_grid > *:nth-child(19), .ventanaProceso .seccion_derecha_grid > *:nth-child(19) {
-  -ms-grid-row: 3;
+  -ms-grid-row: 5;
   -ms-grid-column: 3;
 }
-.ventanaProceso .seccion_izquierda_grid > *:nth-child(20), .ventanaProceso .seccion_medio_grid > *:nth-child(20), .ventanaProceso .seccion_derecha_grid > *:nth-child(20) {
-  -ms-grid-row: 3;
-  -ms-grid-column: 4;
-}
-.ventanaProceso .seccion_izquierda_grid > *:nth-child(21), .ventanaProceso .seccion_medio_grid > *:nth-child(21), .ventanaProceso .seccion_derecha_grid > *:nth-child(21) {
-  -ms-grid-row: 3;
+.ventanaProceso .seccion_izquierda_grid > *:nth-child(19), .ventanaProceso .seccion_medio_grid > *:nth-child(19), .ventanaProceso .seccion_derecha_grid > *:nth-child(19) {
+  -ms-grid-row: 5;
   -ms-grid-column: 5;
 }
-.ventanaProceso .seccion_izquierda_grid > *:nth-child(22), .ventanaProceso .seccion_medio_grid > *:nth-child(22), .ventanaProceso .seccion_derecha_grid > *:nth-child(22) {
-  -ms-grid-row: 3;
-  -ms-grid-column: 6;
-}
-.ventanaProceso .seccion_izquierda_grid > *:nth-child(23), .ventanaProceso .seccion_medio_grid > *:nth-child(23), .ventanaProceso .seccion_derecha_grid > *:nth-child(23) {
-  -ms-grid-row: 3;
+.ventanaProceso .seccion_izquierda_grid > *:nth-child(20), .ventanaProceso .seccion_medio_grid > *:nth-child(20), .ventanaProceso .seccion_derecha_grid > *:nth-child(20) {
+  -ms-grid-row: 5;
   -ms-grid-column: 7;
 }
+.ventanaProceso .seccion_izquierda_grid > *:nth-child(21), .ventanaProceso .seccion_medio_grid > *:nth-child(21), .ventanaProceso .seccion_derecha_grid > *:nth-child(21) {
+  -ms-grid-row: 5;
+  -ms-grid-column: 9;
+}
+.ventanaProceso .seccion_izquierda_grid > *:nth-child(22), .ventanaProceso .seccion_medio_grid > *:nth-child(22), .ventanaProceso .seccion_derecha_grid > *:nth-child(22) {
+  -ms-grid-row: 5;
+  -ms-grid-column: 11;
+}
+.ventanaProceso .seccion_izquierda_grid > *:nth-child(23), .ventanaProceso .seccion_medio_grid > *:nth-child(23), .ventanaProceso .seccion_derecha_grid > *:nth-child(23) {
+  -ms-grid-row: 5;
+  -ms-grid-column: 13;
+}
 .ventanaProceso .seccion_izquierda_grid > *:nth-child(24), .ventanaProceso .seccion_medio_grid > *:nth-child(24), .ventanaProceso .seccion_derecha_grid > *:nth-child(24) {
-  -ms-grid-row: 3;
-  -ms-grid-column: 8;
+  -ms-grid-row: 5;
+  -ms-grid-column: 15;
 }
 .ventanaProceso .seccion_izquierda_4_grid, .ventanaProceso .seccion_medio_4_grid, .ventanaProceso .seccion_derecha_4_grid {
-  -ms-grid-columns: (1fr)[8];
+  -ms-grid-columns: 1fr 9px 1fr 9px 1fr 9px 1fr 9px 1fr 9px 1fr 9px 1fr 9px 1fr;
   grid-template-columns: repeat(8, 1fr);
-  -ms-grid-rows: (1fr)[4];
+  -ms-grid-rows: 1fr 9px 1fr 9px 1fr 9px 1fr;
   grid-template-rows: repeat(4, 1fr);
+  gap: 9px;
 }
 .ventanaProceso .seccion_izquierda_4_grid > *:nth-child(1), .ventanaProceso .seccion_medio_4_grid > *:nth-child(1), .ventanaProceso .seccion_derecha_4_grid > *:nth-child(1) {
   -ms-grid-row: 1;
@@ -3067,127 +3068,127 @@
 }
 .ventanaProceso .seccion_izquierda_4_grid > *:nth-child(2), .ventanaProceso .seccion_medio_4_grid > *:nth-child(2), .ventanaProceso .seccion_derecha_4_grid > *:nth-child(2) {
   -ms-grid-row: 1;
-  -ms-grid-column: 2;
+  -ms-grid-column: 3;
 }
 .ventanaProceso .seccion_izquierda_4_grid > *:nth-child(3), .ventanaProceso .seccion_medio_4_grid > *:nth-child(3), .ventanaProceso .seccion_derecha_4_grid > *:nth-child(3) {
   -ms-grid-row: 1;
-  -ms-grid-column: 3;
+  -ms-grid-column: 5;
 }
 .ventanaProceso .seccion_izquierda_4_grid > *:nth-child(4), .ventanaProceso .seccion_medio_4_grid > *:nth-child(4), .ventanaProceso .seccion_derecha_4_grid > *:nth-child(4) {
   -ms-grid-row: 1;
-  -ms-grid-column: 4;
+  -ms-grid-column: 7;
 }
 .ventanaProceso .seccion_izquierda_4_grid > *:nth-child(5), .ventanaProceso .seccion_medio_4_grid > *:nth-child(5), .ventanaProceso .seccion_derecha_4_grid > *:nth-child(5) {
   -ms-grid-row: 1;
-  -ms-grid-column: 5;
+  -ms-grid-column: 9;
 }
 .ventanaProceso .seccion_izquierda_4_grid > *:nth-child(6), .ventanaProceso .seccion_medio_4_grid > *:nth-child(6), .ventanaProceso .seccion_derecha_4_grid > *:nth-child(6) {
   -ms-grid-row: 1;
-  -ms-grid-column: 6;
+  -ms-grid-column: 11;
 }
 .ventanaProceso .seccion_izquierda_4_grid > *:nth-child(7), .ventanaProceso .seccion_medio_4_grid > *:nth-child(7), .ventanaProceso .seccion_derecha_4_grid > *:nth-child(7) {
   -ms-grid-row: 1;
-  -ms-grid-column: 7;
+  -ms-grid-column: 13;
 }
 .ventanaProceso .seccion_izquierda_4_grid > *:nth-child(8), .ventanaProceso .seccion_medio_4_grid > *:nth-child(8), .ventanaProceso .seccion_derecha_4_grid > *:nth-child(8) {
   -ms-grid-row: 1;
-  -ms-grid-column: 8;
+  -ms-grid-column: 15;
 }
 .ventanaProceso .seccion_izquierda_4_grid > *:nth-child(9), .ventanaProceso .seccion_medio_4_grid > *:nth-child(9), .ventanaProceso .seccion_derecha_4_grid > *:nth-child(9) {
-  -ms-grid-row: 2;
+  -ms-grid-row: 3;
   -ms-grid-column: 1;
 }
 .ventanaProceso .seccion_izquierda_4_grid > *:nth-child(10), .ventanaProceso .seccion_medio_4_grid > *:nth-child(10), .ventanaProceso .seccion_derecha_4_grid > *:nth-child(10) {
-  -ms-grid-row: 2;
-  -ms-grid-column: 2;
-}
-.ventanaProceso .seccion_izquierda_4_grid > *:nth-child(11), .ventanaProceso .seccion_medio_4_grid > *:nth-child(11), .ventanaProceso .seccion_derecha_4_grid > *:nth-child(11) {
-  -ms-grid-row: 2;
+  -ms-grid-row: 3;
   -ms-grid-column: 3;
 }
-.ventanaProceso .seccion_izquierda_4_grid > *:nth-child(12), .ventanaProceso .seccion_medio_4_grid > *:nth-child(12), .ventanaProceso .seccion_derecha_4_grid > *:nth-child(12) {
-  -ms-grid-row: 2;
-  -ms-grid-column: 4;
-}
-.ventanaProceso .seccion_izquierda_4_grid > *:nth-child(13), .ventanaProceso .seccion_medio_4_grid > *:nth-child(13), .ventanaProceso .seccion_derecha_4_grid > *:nth-child(13) {
-  -ms-grid-row: 2;
+.ventanaProceso .seccion_izquierda_4_grid > *:nth-child(11), .ventanaProceso .seccion_medio_4_grid > *:nth-child(11), .ventanaProceso .seccion_derecha_4_grid > *:nth-child(11) {
+  -ms-grid-row: 3;
   -ms-grid-column: 5;
 }
-.ventanaProceso .seccion_izquierda_4_grid > *:nth-child(14), .ventanaProceso .seccion_medio_4_grid > *:nth-child(14), .ventanaProceso .seccion_derecha_4_grid > *:nth-child(14) {
-  -ms-grid-row: 2;
-  -ms-grid-column: 6;
-}
-.ventanaProceso .seccion_izquierda_4_grid > *:nth-child(15), .ventanaProceso .seccion_medio_4_grid > *:nth-child(15), .ventanaProceso .seccion_derecha_4_grid > *:nth-child(15) {
-  -ms-grid-row: 2;
+.ventanaProceso .seccion_izquierda_4_grid > *:nth-child(12), .ventanaProceso .seccion_medio_4_grid > *:nth-child(12), .ventanaProceso .seccion_derecha_4_grid > *:nth-child(12) {
+  -ms-grid-row: 3;
   -ms-grid-column: 7;
 }
+.ventanaProceso .seccion_izquierda_4_grid > *:nth-child(13), .ventanaProceso .seccion_medio_4_grid > *:nth-child(13), .ventanaProceso .seccion_derecha_4_grid > *:nth-child(13) {
+  -ms-grid-row: 3;
+  -ms-grid-column: 9;
+}
+.ventanaProceso .seccion_izquierda_4_grid > *:nth-child(14), .ventanaProceso .seccion_medio_4_grid > *:nth-child(14), .ventanaProceso .seccion_derecha_4_grid > *:nth-child(14) {
+  -ms-grid-row: 3;
+  -ms-grid-column: 11;
+}
+.ventanaProceso .seccion_izquierda_4_grid > *:nth-child(15), .ventanaProceso .seccion_medio_4_grid > *:nth-child(15), .ventanaProceso .seccion_derecha_4_grid > *:nth-child(15) {
+  -ms-grid-row: 3;
+  -ms-grid-column: 13;
+}
 .ventanaProceso .seccion_izquierda_4_grid > *:nth-child(16), .ventanaProceso .seccion_medio_4_grid > *:nth-child(16), .ventanaProceso .seccion_derecha_4_grid > *:nth-child(16) {
-  -ms-grid-row: 2;
-  -ms-grid-column: 8;
+  -ms-grid-row: 3;
+  -ms-grid-column: 15;
 }
 .ventanaProceso .seccion_izquierda_4_grid > *:nth-child(17), .ventanaProceso .seccion_medio_4_grid > *:nth-child(17), .ventanaProceso .seccion_derecha_4_grid > *:nth-child(17) {
-  -ms-grid-row: 3;
+  -ms-grid-row: 5;
   -ms-grid-column: 1;
 }
 .ventanaProceso .seccion_izquierda_4_grid > *:nth-child(18), .ventanaProceso .seccion_medio_4_grid > *:nth-child(18), .ventanaProceso .seccion_derecha_4_grid > *:nth-child(18) {
-  -ms-grid-row: 3;
-  -ms-grid-column: 2;
-}
-.ventanaProceso .seccion_izquierda_4_grid > *:nth-child(19), .ventanaProceso .seccion_medio_4_grid > *:nth-child(19), .ventanaProceso .seccion_derecha_4_grid > *:nth-child(19) {
-  -ms-grid-row: 3;
+  -ms-grid-row: 5;
   -ms-grid-column: 3;
 }
-.ventanaProceso .seccion_izquierda_4_grid > *:nth-child(20), .ventanaProceso .seccion_medio_4_grid > *:nth-child(20), .ventanaProceso .seccion_derecha_4_grid > *:nth-child(20) {
-  -ms-grid-row: 3;
-  -ms-grid-column: 4;
-}
-.ventanaProceso .seccion_izquierda_4_grid > *:nth-child(21), .ventanaProceso .seccion_medio_4_grid > *:nth-child(21), .ventanaProceso .seccion_derecha_4_grid > *:nth-child(21) {
-  -ms-grid-row: 3;
+.ventanaProceso .seccion_izquierda_4_grid > *:nth-child(19), .ventanaProceso .seccion_medio_4_grid > *:nth-child(19), .ventanaProceso .seccion_derecha_4_grid > *:nth-child(19) {
+  -ms-grid-row: 5;
   -ms-grid-column: 5;
 }
-.ventanaProceso .seccion_izquierda_4_grid > *:nth-child(22), .ventanaProceso .seccion_medio_4_grid > *:nth-child(22), .ventanaProceso .seccion_derecha_4_grid > *:nth-child(22) {
-  -ms-grid-row: 3;
-  -ms-grid-column: 6;
-}
-.ventanaProceso .seccion_izquierda_4_grid > *:nth-child(23), .ventanaProceso .seccion_medio_4_grid > *:nth-child(23), .ventanaProceso .seccion_derecha_4_grid > *:nth-child(23) {
-  -ms-grid-row: 3;
+.ventanaProceso .seccion_izquierda_4_grid > *:nth-child(20), .ventanaProceso .seccion_medio_4_grid > *:nth-child(20), .ventanaProceso .seccion_derecha_4_grid > *:nth-child(20) {
+  -ms-grid-row: 5;
   -ms-grid-column: 7;
 }
+.ventanaProceso .seccion_izquierda_4_grid > *:nth-child(21), .ventanaProceso .seccion_medio_4_grid > *:nth-child(21), .ventanaProceso .seccion_derecha_4_grid > *:nth-child(21) {
+  -ms-grid-row: 5;
+  -ms-grid-column: 9;
+}
+.ventanaProceso .seccion_izquierda_4_grid > *:nth-child(22), .ventanaProceso .seccion_medio_4_grid > *:nth-child(22), .ventanaProceso .seccion_derecha_4_grid > *:nth-child(22) {
+  -ms-grid-row: 5;
+  -ms-grid-column: 11;
+}
+.ventanaProceso .seccion_izquierda_4_grid > *:nth-child(23), .ventanaProceso .seccion_medio_4_grid > *:nth-child(23), .ventanaProceso .seccion_derecha_4_grid > *:nth-child(23) {
+  -ms-grid-row: 5;
+  -ms-grid-column: 13;
+}
 .ventanaProceso .seccion_izquierda_4_grid > *:nth-child(24), .ventanaProceso .seccion_medio_4_grid > *:nth-child(24), .ventanaProceso .seccion_derecha_4_grid > *:nth-child(24) {
-  -ms-grid-row: 3;
-  -ms-grid-column: 8;
+  -ms-grid-row: 5;
+  -ms-grid-column: 15;
 }
 .ventanaProceso .seccion_izquierda_4_grid > *:nth-child(25), .ventanaProceso .seccion_medio_4_grid > *:nth-child(25), .ventanaProceso .seccion_derecha_4_grid > *:nth-child(25) {
-  -ms-grid-row: 4;
+  -ms-grid-row: 7;
   -ms-grid-column: 1;
 }
 .ventanaProceso .seccion_izquierda_4_grid > *:nth-child(26), .ventanaProceso .seccion_medio_4_grid > *:nth-child(26), .ventanaProceso .seccion_derecha_4_grid > *:nth-child(26) {
-  -ms-grid-row: 4;
-  -ms-grid-column: 2;
-}
-.ventanaProceso .seccion_izquierda_4_grid > *:nth-child(27), .ventanaProceso .seccion_medio_4_grid > *:nth-child(27), .ventanaProceso .seccion_derecha_4_grid > *:nth-child(27) {
-  -ms-grid-row: 4;
+  -ms-grid-row: 7;
   -ms-grid-column: 3;
 }
-.ventanaProceso .seccion_izquierda_4_grid > *:nth-child(28), .ventanaProceso .seccion_medio_4_grid > *:nth-child(28), .ventanaProceso .seccion_derecha_4_grid > *:nth-child(28) {
-  -ms-grid-row: 4;
-  -ms-grid-column: 4;
-}
-.ventanaProceso .seccion_izquierda_4_grid > *:nth-child(29), .ventanaProceso .seccion_medio_4_grid > *:nth-child(29), .ventanaProceso .seccion_derecha_4_grid > *:nth-child(29) {
-  -ms-grid-row: 4;
+.ventanaProceso .seccion_izquierda_4_grid > *:nth-child(27), .ventanaProceso .seccion_medio_4_grid > *:nth-child(27), .ventanaProceso .seccion_derecha_4_grid > *:nth-child(27) {
+  -ms-grid-row: 7;
   -ms-grid-column: 5;
 }
-.ventanaProceso .seccion_izquierda_4_grid > *:nth-child(30), .ventanaProceso .seccion_medio_4_grid > *:nth-child(30), .ventanaProceso .seccion_derecha_4_grid > *:nth-child(30) {
-  -ms-grid-row: 4;
-  -ms-grid-column: 6;
-}
-.ventanaProceso .seccion_izquierda_4_grid > *:nth-child(31), .ventanaProceso .seccion_medio_4_grid > *:nth-child(31), .ventanaProceso .seccion_derecha_4_grid > *:nth-child(31) {
-  -ms-grid-row: 4;
+.ventanaProceso .seccion_izquierda_4_grid > *:nth-child(28), .ventanaProceso .seccion_medio_4_grid > *:nth-child(28), .ventanaProceso .seccion_derecha_4_grid > *:nth-child(28) {
+  -ms-grid-row: 7;
   -ms-grid-column: 7;
 }
+.ventanaProceso .seccion_izquierda_4_grid > *:nth-child(29), .ventanaProceso .seccion_medio_4_grid > *:nth-child(29), .ventanaProceso .seccion_derecha_4_grid > *:nth-child(29) {
+  -ms-grid-row: 7;
+  -ms-grid-column: 9;
+}
+.ventanaProceso .seccion_izquierda_4_grid > *:nth-child(30), .ventanaProceso .seccion_medio_4_grid > *:nth-child(30), .ventanaProceso .seccion_derecha_4_grid > *:nth-child(30) {
+  -ms-grid-row: 7;
+  -ms-grid-column: 11;
+}
+.ventanaProceso .seccion_izquierda_4_grid > *:nth-child(31), .ventanaProceso .seccion_medio_4_grid > *:nth-child(31), .ventanaProceso .seccion_derecha_4_grid > *:nth-child(31) {
+  -ms-grid-row: 7;
+  -ms-grid-column: 13;
+}
 .ventanaProceso .seccion_izquierda_4_grid > *:nth-child(32), .ventanaProceso .seccion_medio_4_grid > *:nth-child(32), .ventanaProceso .seccion_derecha_4_grid > *:nth-child(32) {
-  -ms-grid-row: 4;
-  -ms-grid-column: 8;
+  -ms-grid-row: 7;
+  -ms-grid-column: 15;
 }
 .ventanaProceso .seccion_izquierda_grid label[data-etiqueta=numero] {
   -ms-grid-column: 1;
@@ -3413,6 +3414,207 @@
   -ms-grid-column: 2;
   -ms-grid-column-span: 7;
   grid-column: 2/span 7;
+  -ms-grid-row: 4;
+  grid-row: 4;
+}
+.ventanaProceso .seccion_medio_4_grid label[data-etiqueta=moneda] {
+  -ms-grid-column: 1;
+  grid-column: 1;
+}
+.ventanaProceso .seccion_medio_4_grid div[data-box=lista_monedas] {
+  position: relative;
+  -ms-grid-column: 2;
+  -ms-grid-column-span: 3;
+  grid-column: 2/span 3;
+  -ms-grid-row: 1;
+  grid-row: 1;
+}
+.ventanaProceso .seccion_medio_4_grid div[data-box=lista_monedas] * {
+  width: 100%;
+}
+.ventanaProceso .seccion_medio_4_grid label[data-etiqueta=dias] {
+  -ms-grid-column: 5;
+  grid-column: 5;
+}
+.ventanaProceso .seccion_medio_4_grid input[name=dias] {
+  -ms-grid-column: 6;
+  -ms-grid-column-span: 4;
+  grid-column: 6/span 4;
+  -ms-grid-row: 1;
+  grid-row: 1;
+}
+.ventanaProceso .seccion_medio_4_grid label[data-etiqueta=tipo] {
+  -ms-grid-column: 1;
+  grid-column: 1;
+  -ms-grid-row: 2;
+  grid-row: 2;
+}
+.ventanaProceso .seccion_medio_4_grid input[name=tipo] {
+  -ms-grid-column: 2;
+  -ms-grid-column-span: 3;
+  grid-column: 2/span 3;
+  -ms-grid-row: 2;
+  grid-row: 2;
+}
+.ventanaProceso .seccion_medio_4_grid label[data-etiqueta=entrega] {
+  -ms-grid-column: 5;
+  grid-column: 5;
+  -ms-grid-row: 2;
+  grid-row: 2;
+}
+.ventanaProceso .seccion_medio_4_grid input[name=fentrega] {
+  -ms-grid-column: 6;
+  -ms-grid-column-span: 4;
+  grid-column: 6/span 4;
+  -ms-grid-row: 2;
+  grid-row: 2;
+}
+.ventanaProceso .seccion_medio_4_grid label[data-etiqueta=pago] {
+  -ms-grid-column: 1;
+  grid-column: 1;
+  -ms-grid-row: 3;
+  grid-row: 3;
+}
+.ventanaProceso .seccion_medio_4_grid div[data-box=lista_pagos] {
+  position: relative;
+  -ms-grid-column: 2;
+  -ms-grid-column-span: 3;
+  grid-column: 2/span 3;
+  -ms-grid-row: 3;
+  grid-row: 3;
+}
+.ventanaProceso .seccion_medio_4_grid div[data-box=lista_pagos] * {
+  width: 100%;
+}
+.ventanaProceso .seccion_medio_4_grid label[data-etiqueta=estado] {
+  -ms-grid-column: 5;
+  grid-column: 5;
+  -ms-grid-row: 3;
+  grid-row: 3;
+}
+.ventanaProceso .seccion_medio_4_grid input[name=estado] {
+  -ms-grid-column: 6;
+  -ms-grid-column-span: 4;
+  grid-column: 6/span 4;
+  -ms-grid-row: 3;
+  grid-row: 3;
+}
+.ventanaProceso .seccion_medio_4_grid label[data-etiqueta=igv] {
+  -ms-grid-column: 1;
+  grid-column: 1;
+  -ms-grid-row: 4;
+  grid-row: 4;
+}
+.ventanaProceso .seccion_medio_4_grid div[data-box=igv] {
+  position: relative;
+  -ms-grid-column: 2;
+  -ms-grid-column-span: 3;
+  grid-column: 2/span 3;
+  -ms-grid-row: 4;
+  grid-row: 4;
+  border: 1px solid #c2c2c2;
+  border-radius: 8px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: space-evenly;
+      -ms-flex-pack: space-evenly;
+          justify-content: space-evenly;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+.ventanaProceso .seccion_medio_4_grid div[data-box=igv] label {
+  margin-top: 0;
+  margin-left: -35px;
+}
+.ventanaProceso .seccion_medio_4_grid label[data-etiqueta=cambio] {
+  -ms-grid-column: 5;
+  grid-column: 5;
+  -ms-grid-row: 4;
+  grid-row: 4;
+}
+.ventanaProceso .seccion_medio_4_grid input[name=tcambio] {
+  -ms-grid-column: 6;
+  -ms-grid-column-span: 4;
+  grid-column: 6/span 4;
+  -ms-grid-row: 4;
+  grid-row: 4;
+}
+.ventanaProceso .seccion_derecha_4_grid label[data-etiqueta=entidad] {
+  -ms-grid-column: 1;
+  grid-column: 1;
+}
+.ventanaProceso .seccion_derecha_4_grid div[data-box=lista_entidades] {
+  position: relative;
+  -ms-grid-column: 2;
+  -ms-grid-column-span: 7;
+  grid-column: 2/span 7;
+  -ms-grid-row: 1;
+  grid-row: 1;
+}
+.ventanaProceso .seccion_derecha_4_grid div[data-box=lista_entidades] * {
+  width: 100%;
+}
+.ventanaProceso .seccion_derecha_4_grid label[data-etiqueta=atencion] {
+  -ms-grid-column: 1;
+  grid-column: 1;
+  -ms-grid-row: 2;
+  grid-row: 2;
+}
+.ventanaProceso .seccion_derecha_4_grid input[name=atencion] {
+  -ms-grid-column: 2;
+  -ms-grid-column-span: 7;
+  grid-column: 2/span 7;
+  -ms-grid-row: 2;
+  grid-row: 2;
+}
+.ventanaProceso .seccion_derecha_4_grid label[data-etiqueta=cotizacion] {
+  -ms-grid-column: 1;
+  grid-column: 1;
+  -ms-grid-row: 3;
+  grid-row: 3;
+}
+.ventanaProceso .seccion_derecha_4_grid input[name=ncotiz] {
+  -ms-grid-column: 2;
+  -ms-grid-column-span: 3;
+  grid-column: 2/span 3;
+  -ms-grid-row: 3;
+  grid-row: 3;
+}
+.ventanaProceso .seccion_derecha_4_grid label[data-etiqueta=referencia] {
+  -ms-grid-column: 5;
+  grid-column: 5;
+  -ms-grid-row: 3;
+  grid-row: 3;
+}
+.ventanaProceso .seccion_derecha_4_grid input[name=referencia] {
+  -ms-grid-column: 6;
+  -ms-grid-column-span: 3;
+  grid-column: 6/span 3;
+  -ms-grid-row: 3;
+  grid-row: 3;
+}
+.ventanaProceso .seccion_derecha_4_grid label[data-etiqueta=almacen] {
+  -ms-grid-column: 1;
+  grid-column: 1;
+  -ms-grid-row: 4;
+  grid-row: 4;
+}
+.ventanaProceso .seccion_derecha_4_grid div[data-box=lista_almacenes] {
+  position: relative;
+  -ms-grid-column: 2;
+  -ms-grid-column-span: 6;
+  grid-column: 2/span 6;
+  -ms-grid-row: 4;
+  grid-row: 4;
+}
+.ventanaProceso .seccion_derecha_4_grid div[data-box=lista_almacenes] * {
+  width: 100%;
+}
+.ventanaProceso .seccion_derecha_4_grid button[data-etiqueta=btn_almacen] {
+  -ms-grid-column: 8;
+  grid-column: 8;
   -ms-grid-row: 4;
   grid-row: 4;
 }

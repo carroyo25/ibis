@@ -2677,7 +2677,7 @@
                                         LEFT JOIN cm_entidadcon ON cm_entidad.id_centi = cm_entidadcon.id_centi
                                         LEFT JOIN tb_parametros AS transportes ON lg_ordencab.ctiptransp = transportes.nidreg
                                         LEFT JOIN tb_almacen ON lg_ordencab.ncodalm = tb_almacen.ncodalm
-                                    LEFT JOIN lg_ordenextras ON lg_ordencab.id_regmov = lg_ordenextras.idorden
+                                        LEFT JOIN lg_ordenextras ON lg_ordencab.id_regmov = lg_ordenextras.idorden
                                         LEFT JOIN tb_user ON lg_ordencab.id_cuser = tb_user.iduser 
                                     WHERE
                                         lg_ordencab.id_regmov = :id 

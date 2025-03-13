@@ -108,97 +108,70 @@
                             <label for="concepto" data-etiqueta="concepto">Concepto:</label>
                             <input type="text" name="concepto" id="concepto" class="cerrarLista mayusculas">
                         </div>
-                        <div class="seccion_medio">
-                            <div class="column4_55">
-                                <div class="column2_3957">
-                                    <label for="moneda">Moneda :</label>
-                                    <input type="text" name="moneda" id="moneda" class="mostrarLista busqueda" placeholder="Elija una opcion" readonly>
-                                    <div class="lista" id="listaMoneda">
-                                        <ul>
-                                            <?php echo $this->listaMonedas?>
-                                        </ul> 
-                                    </div>
-                                </div>
-                                <div class="column2_46">
-                                    <label for="dias">Dias Entrega :</label>
-                                    <input type="number" name="dias" id="dias" class="cerrarLista textoDerecha pr5px" value="3" onclick="this.select()">
+                        <div class="seccion_medio_4_grid">
+                            <label for="moneda" data-etiqueta="moneda">Moneda :</label>
+                            <div data-box="lista_monedas">
+                                <input type="text" name="moneda" id="moneda" class="mostrarLista busqueda" placeholder="Elija una opcion" readonly>
+                                <div class="lista_grid" id="listaMoneda">
+                                    <ul>
+                                        <?php echo $this->listaMonedas?>
+                                    </ul> 
                                 </div>
                             </div>
-                            <div class="column4_55">
-                                <div class="column2_3957">
-                                    <label for="tipo">Tipo :</label>
-                                    <input type="text" name="tipo" id="tipo" class="cerrarLista" readonly>
-                                </div>
-                                <div class="column2_46">
-                                    <label for="fentrega">Fec.Entrega :</label>
-                                    <input type="date" name="fentrega" id="fentrega" class="cerrarLista" min="<?php echo date("Y-m-d")?>" value="<?php echo $this->fechaOrden?>" readonly>
-                                </div>
-                            </div>
-                            <div class="column4_55">
-                                <div class="column2_3957">
-                                    <label for="cpago">Cond.Pago :</label>
-                                    <input type="text" name="cpago" id="cpago" class="mostrarLista busqueda" placeholder="Elija una opcion" readonly>
-                                    <div class="lista" id="listaPago">
-                                        <ul>
-                                            <?php echo $this->listaPagos?>
-                                        </ul> 
-                                    </div>
-                                </div>
-                                <div class="column2_46">
-                                    <label for="estado">Estado:</label>
-                                    <input type="text" name="estado" id="estado" class="textoCentro estado procesando" readonly value="EN PROCESO">
+                            <label for="dias" data-etiqueta="dias">Dias Entrega:</label>
+                            <input type="number" name="dias" id="dias" class="cerrarLista textoDerecha pr5px" value="3" onclick="this.select()">
+                            <label for="tipo" data-etiqueta="tipo">Tipo :</label>
+                            <input type="text" name="tipo" id="tipo" class="cerrarLista" readonly>
+                            <label for="fentrega" data-etiqueta="entrega">Fec.Entrega:</label>
+                            <input type="date" name="fentrega" id="fentrega" class="cerrarLista" min="<?php echo date("Y-m-d")?>" value="<?php echo $this->fechaOrden?>" readonly>
+                            <label for="cpago" data-etiqueta="pago">Cond.Pago :</label>
+                            <div data-box="lista_pagos">
+                                <input type="text" name="cpago" id="cpago" class="mostrarLista busqueda" placeholder="Elija una opcion" readonly>
+                                <div class="lista_grid" id="listaPago">
+                                    <ul>
+                                        <?php echo $this->listaPagos?>
+                                    </ul> 
                                 </div>
                             </div>
-                            <div class="column4_55">
-                                <div class="column2_46">
-                                    <label for="tcambio">Incluye IGV.</label>
-                                    <div class="igv">
-                                        <input type="radio" name="radioIgv" id="si" value="0.18">
-                                        <label for="si">Si</label>
-                                        <input type="radio" name="radioIgv" id="no" value="0.00" checked>
-                                        <label for="no">No</label>
-                                    </div>
-                                </div>
-                                <div class="column2_46">
-                                    <label for="tcambio">T. Cambio:</label>
-                                    <input type="text" name="tcambio" id="tcambio" class="textoDerecha pr20px">
-                                </div>
+                            <label for="estado" data-etiqueta="estado">Estado:</label>
+                            <input type="text" name="estado" id="estado" class="textoCentro estado procesando" readonly value="EN PROCESO">
+                            <label for="tcambio" data-etiqueta="igv">Incluye IGV.</label>
+                            <div data-box="igv">
+                                <input type="radio" name="radioIgv" id="si" value="0.18">
+                                <label for="si">Si</label>
+                                <input type="radio" name="radioIgv" id="no" value="0.00" checked>
+                                <label for="no">No</label>
                             </div>
+                            <label for="tcambio" data-etiqueta="cambio">T. Cambio:</label>
+                            <input type="text" name="tcambio" id="tcambio" class="textoDerecha pr20px">
                         </div>
-                        <div class="seccion_derecha">
-                            <div class="column2">
-                                <label for="entidad">Entidad:</label>
+                        <div class="seccion_derecha_4_grid">
+                            <label for="entidad" data-etiqueta="entidad">Entidad:</label>
+                            <div data-box="lista_entidades">
                                 <input type="text" name="entidad" id="entidad" class="mostrarLista busqueda" placeholder="Elija una opcion">
-                                <div class="lista" id="listaEntidad">
+                                <div class="lista_grid" id="listaEntidad">
                                     <ul>
                                         <?php echo $this->listaEntidades?>
                                     </ul> 
                                 </div>
                             </div>
-                            <div class="column2">
-                                <label for="atencion">Atención:</label>
-                                <input type="text" name="atencion" id="atencion" readonly>
-                            </div>
-                            <div class="column4_55">
-                                <div class="column2">
-                                    <label for="ncotiz">N° Cot.:</label>
-                                    <input type="text" name="ncotiz" id="ncotiz" class="cerrarLista">
-                                </div>
-                                <div class="column2">
-                                    <label for="dscto">Referencia</label>
-                                    <input type="text" name="referencia" id="referencia" class="cerrarLista">
-                                </div>
-                            </div>
-                            <div class="tres_columnas_combo">
-                                <label for="lentrega">Lugar Entrega:</label>
-                                <input type="text" name="lentrega" id="lentrega" class="mostrarLista busqueda">
-                                <button type="button" id="btnEntrega" class="btnCallMenu boton3">+</button>
-                                <div class="lista" id="listaAlmacen">
-                                   <ul>
-                                       <?php echo $this->listaAlmacenes?>
-                                   </ul> 
+                            
+                            <label for="atencion" data-etiqueta="atencion">Atención:</label>
+                            <input type="text" name="atencion" id="atencion" readonly>
+                            <label for="ncotiz" data-etiqueta="cotizacion">N° Cot.:</label>
+                            <input type="text" name="ncotiz" id="ncotiz" class="cerrarLista">
+                            <label for="dscto" data-etiqueta="referencia">Referencia</label>
+                            <input type="text" name="referencia" id="referencia" class="cerrarLista">
+                            <label for="lentrega" data-etiqueta="almacen">Lugar Entrega:</label>
+                            <div data-box="lista_almacenes">
+                                <input type="text" name="lentrega" id="lentrega" class="busqueda">
+                                <div class="lista_grid" id="listaAlmacen">
+                                    <ul>
+                                        <?php echo $this->listaAlmacenes?>
+                                    </ul> 
                                 </div>
                             </div>
+                            <button type="button" id="btnEntrega" class="btnCallMenu boton3" data-etiqueta="btn_almacen">+</button>
                         </div>
                     </div>
                     <div class="barraOpciones">
@@ -480,6 +453,15 @@
             </div>
         </div>
     </div>
+    <div class="modal" id="aprobacion_rapida">
+        <div class="ventanaPregunta">
+            <h3>¿Enviar la orden para su aprobación?</h3>
+            <div>
+                <button type="button" id="btnAceptarApruebaRapida">Aceptar</button>
+                <button type="button" id="btnCancelarApruebaRapida">Cancelar</button>
+            </div>
+        </div>
+    </div>
     <div class="cabezaModulo">
         <h1>Registro de ordenes</h1>
         <div>
@@ -545,6 +527,7 @@
                     <th rowspan="2">Atencion</th>
                     <th width="10%" colspan="3" width="16%">Firmas</th>
                     <th rowspan="2" width="3%">Comentarios</th>
+                    <th rowspan="2" width="3%">...</th>
                     <th rowspan="2" width="3%">...</th>
                     <tr>
                         <th>Procura</th>

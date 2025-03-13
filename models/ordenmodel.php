@@ -105,7 +105,8 @@
                                         <td class="textoCentro '.$alerta_finanzas.'">'.$fin.'</td>
                                         <td class="textoCentro '.$alerta_operaciones.'">'.$ope.'</td>
                                         <td class="textoCentro '.$obs_alerta.'" >'.$observado.'</td>
-                                        <td class="textoCentro"><a href="'.$rs['id_regmov'].'" title="descargar Orden"><i class="fas fa-file-download"></i></a></td>
+                                        <td class="textoCentro"><a href="'.$rs['id_regmov'].'" title="Descargar Orden" data-accion="descargar"><i class="fas fa-file-download"></i></a></td>
+                                        <td class="textoCentro"><a href="'.$rs['id_regmov'].'" title="Enviar Aprobacion" data-accion="aprobar"><i class="fas fa-inbox"></i></i></a></td>
                                     </tr>';
                     }
                 }
@@ -162,12 +163,12 @@
                                                         INNER JOIN tb_area ON tb_pedidodet.idarea = tb_area.ncodarea
                                                         INNER JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
                                                         LEFT JOIN tb_equipmtto ON tb_pedidodet.nregistro = tb_equipmtto.idreg
-                                                        LEFT JOIN alm_transferdet ON tb_pedidodet.iditem = alm_transferdet.iddetped 
                                                     WHERE
                                                         tb_pedidodet.nflgActivo = 1 
-                                                        AND tb_pedidodet.idasigna = :user_asigna 
-                                                        AND tb_pedidodet.cant_aprob <> tb_pedidodet.cant_orden
-                                                        AND tb_pedidodet.estadoItem = 54
+                                                        AND tb_pedidodet.idasigna = :user_asigna
+                                                        AND tb_pedidodet.cant_pedida <> tb_pedidodet.cant_atend 
+                                                        AND ( tb_pedidodet.estadoItem = 54 OR tb_pedidodet.estadoItem = 52) 
+                                                        AND tb_proyectos.nflgactivo = 1
                                                     GROUP BY
                                                         tb_pedidodet.iditem");
                 

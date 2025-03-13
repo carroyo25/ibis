@@ -83,9 +83,9 @@
                             <div data-box="lista_costos">
                                 <input type="text" name="costos" id="costos" class="mostrarLista busqueda" placeholder="Elija una opcion">
                                 <div class="lista_grid" id="listaCostos">
-                                <ul>
-                                    <?php echo $this->listaCostos?>
-                                </ul> 
+                                    <ul>
+                                        <?php echo $this->listaCostos?>
+                                    </ul> 
                                 </div>
                             </div>
                             <label for="area" data-etiqueta="partida">Partida:</label>

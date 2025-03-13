@@ -10,7 +10,7 @@ $(function(){
         fp = 0,
         idorden = 0,
         fila ="",
-        filaActualiza = ""
+        filaActualiza = "",
         nro_comentarios = 0;
 
     var grabado  = false;
@@ -160,25 +160,41 @@ $(function(){
 
     $("#tablaPrincipal tbody").on("click","a", function (e) {
         e.preventDefault();
+        let accion = $(this).attr("data-accion");
 
-        try {
-            let procura     = $(this).closest('tr').attr("data-logistica"),
-                operaciones = $(this).closest('tr').attr("data-operaciones"),
-                finanzas    = $(this).closest('tr').attr("data-finanzas"),
-                firmas      = procura == 0 || operaciones == 0 || finanzas == 0;
+        idorden = $(this).attr("href");
 
-            atencion    = $(this).closest('tr').attr("data-atencion");    
+        if (accion == "descarga"){
+             try {
+                let procura     = $(this).closest('tr').attr("data-logistica"),
+                    operaciones = $(this).closest('tr').attr("data-operaciones"),
+                    finanzas    = $(this).closest('tr').attr("data-finanzas"),
+                    firmas      = procura == 0 || operaciones == 0 || finanzas == 0;
 
-            if ( atencion == 47 && firmas ) throw new Error("La orden esta en firmas");
-            
-            idorden = $(this).attr("href");
-            fila =  $(this).parent().parent();
+                atencion    = $(this).closest('tr').attr("data-atencion");    
 
-            $("#preguntaDescarga").fadeIn();
+                if ( atencion == 47 && firmas ) throw new Error("La orden esta en firmas");
+                
+                
+                fila =  $(this).parent().parent();
 
-        } catch (error) {
-            mostrarMensaje(error.message,"mensaje_error");
+                $("#preguntaDescarga").fadeIn();
+
+            } catch (error) {
+                mostrarMensaje(error.message,"mensaje_error");
+            }
+        }else{
+            try {
+                if ($(this).parent().parent().data('estado') == 59) throw "La orden esta en firmas.";
+    
+                $("#aprobacion_rapida").fadeIn();
+                
+            } catch (error) {
+                mostrarMensaje(error,'mensaje_error'); 
+            }
         }
+
+       
 
         return false;
     });
@@ -233,6 +249,8 @@ $(function(){
     $(".mostrarLista").focus(function (e) { 
         e.preventDefault();
 
+        $(".lista,.lista_grid").slideUp();
+
         if ($("#codigo_estado").val() == 59)
             return false;
 
@@ -244,12 +262,12 @@ $(function(){
     $(".cerrarLista").focus(function (e) { 
         e.preventDefault();
         
-        $(".lista").fadeOut();
+        $(".lista,.lista_grid").fadeOut();
 
         return false;
     });
 
-    $(".lista").on("click",'a', function (e) {
+    $(".lista,.lista_grid").on("click",'a', function (e) {
         e.preventDefault();
 
         let control = $(this).parent().parent().parent();
@@ -679,7 +697,6 @@ $(function(){
         return false;
     });
 
-
     $("#btnAceptarAprueba").click( (e) => {
         e.preventDefault();
 
@@ -704,11 +721,38 @@ $(function(){
         return false;
     })
 
-
     $("#btnCancelarAprueba").click( (e) => {
         e.preventDefault();
 
         $("#aprobacion").fadeOut();
+
+        return false;
+    })
+
+    $("#btnAceptarApruebaRapida").click( (e) => {
+        e.preventDefault();
+
+        console.log(idorden);
+
+        /*$("#esperar").css("opacity","1").fadeIn();
+
+        $.post(RUTA+"orden/apruebaRapido", {cabecera:result,detalles:JSON.stringify(detalles())},
+            function (data, text, requestXHR) {
+                mostrarMensaje(data.mensaje,data.clase);
+                $('#'+filaActualiza).addClass('resaltado_firma');
+                $("#aprobacion").fadeOut();
+                $("#esperar").css("opacity","0").fadeOut();
+            },
+            "json"
+        );*/
+
+        return false;
+    })
+
+    $("#btnCancelarApruebaRapida").click( (e) => {
+        e.preventDefault();
+
+        $("#aprobacion_rapida").fadeOut();
 
         return false;
     })
@@ -1110,7 +1154,8 @@ $(function(){
     $("#btnEntrega").click(function (e) { 
         e.preventDefault();
         
-        $(this).next().slideDown();
+        //$(this).next().slideDown();
+        $('#listaAlmacen').slideDown();
 
         return false;
     });

@@ -39,20 +39,6 @@ $(function(){
         return false;
     });
 
-    /*$("#cleanButton").click(function (e) { 
-        e.preventDefault();
-
-        $("#codigo_usuario").val($("#id_user").val());
-        $("#listaArchivos").empty();
-        $("#atach_counter").text(0);
-        $("#codigo_estado").val(49)
-        $("form")[1].reset();
-        $("#tablaDetalles tbody,.listaArchivos").empty();
-        $(".lista,.lista_grid").fadeOut();
-        $("#atach_counter").text(0);
-
-        return false;
-    });*/
 
     $("#addItem").click(function (e) { 
         e.preventDefault();
@@ -88,7 +74,7 @@ $(function(){
     $(".mostrarLista").focus(function (e) { 
         e.preventDefault();
 
-        $(".lista,.lista_grid").fadeOut();
+        $(".lista,.lista_grid").slideUp();
 
         if (accion !="n") {
             return false;

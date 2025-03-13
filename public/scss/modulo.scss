@@ -2622,17 +2622,18 @@ $almacen:#27798F;
     .seccion_derecha_4_grid {
         display: grid;
         padding: 1rem;
-        gap: 10px;
     }
 
     .seccion_izquierda_grid,.seccion_medio_grid,.seccion_derecha_grid {
         grid-template-columns: repeat(8, 1fr);
         grid-template-rows: repeat(3, 1fr);
+        gap: 10px;
     }
 
     .seccion_izquierda_4_grid,.seccion_medio_4_grid,.seccion_derecha_4_grid {
         grid-template-columns: repeat(8, 1fr);
         grid-template-rows: repeat(4, 1fr);
+        gap: 9px;
     }
 
     .seccion_izquierda_grid{
@@ -2834,6 +2835,174 @@ $almacen:#27798F;
             grid-column: 2 / span 7;
             grid-row: 4;
         }
+    }
+
+    .seccion_medio_4_grid{
+        label[data-etiqueta="moneda"]{
+            grid-column: 1;
+        }
+
+        div[data-box="lista_monedas"] {
+            position: relative;
+            grid-column: 2 / span 3;
+            grid-row: 1;
+
+            * {
+                width: 100%;
+            }
+        }
+
+        label[data-etiqueta="dias"]{
+            grid-column: 5;
+        }
+
+        input[name="dias"]{
+            grid-column: 6 / span 4;
+            grid-row: 1;
+        }
+
+        label[data-etiqueta="tipo"]{
+            grid-column: 1;
+            grid-row: 2;
+        }
+
+        input[name="tipo"]{
+            grid-column: 2 / span 3;
+            grid-row: 2;
+        }
+
+        label[data-etiqueta="entrega"]{
+            grid-column: 5;
+            grid-row: 2;
+        }
+
+        input[name="fentrega"]{
+            grid-column: 6 / span 4;
+            grid-row: 2;
+        }
+
+        label[data-etiqueta="pago"]{
+            grid-column: 1;
+            grid-row: 3;
+        }
+
+        div[data-box="lista_pagos"] {
+            position: relative;
+            grid-column: 2 / span 3;
+            grid-row: 3;
+
+            * {
+                width: 100%;
+            }
+        }
+
+        label[data-etiqueta="estado"]{
+            grid-column: 5;
+            grid-row: 3;
+        }
+        
+        input[name="estado"]{
+            grid-column: 6 / span 4;
+            grid-row: 3;
+        }
+
+        label[data-etiqueta="igv"]{
+            grid-column: 1;
+            grid-row: 4;
+        }
+
+        div[data-box="igv"] {
+            position: relative;
+            grid-column: 2 / span 3;
+            grid-row: 4;
+            border: 1px solid #c2c2c2;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+
+            label {
+                margin-top: 0;
+                margin-left: -35px;
+            }
+        }
+
+        label[data-etiqueta="cambio"]{
+            grid-column: 5;
+            grid-row: 4;
+        }
+
+        input[name="tcambio"]{
+            grid-column: 6 / span 4;
+            grid-row: 4;
+        }
+    }
+
+    .seccion_derecha_4_grid{
+        label[data-etiqueta="entidad"]{
+            grid-column: 1;
+        }
+
+        div[data-box="lista_entidades"] {
+            position: relative;
+            grid-column: 2 / span 7;
+            grid-row: 1;
+
+            * {
+                width: 100%;
+            }
+        }
+
+        label[data-etiqueta="atencion"]{
+            grid-column: 1;
+            grid-row: 2;
+        }
+
+        input[name="atencion"]{
+            grid-column: 2 / span 7;
+            grid-row: 2;
+        }
+
+        label[data-etiqueta="cotizacion"]{
+            grid-column: 1;
+            grid-row: 3;
+        }
+
+        input[name="ncotiz"]{
+            grid-column: 2 / span 3;
+            grid-row: 3;
+        }
+
+        label[data-etiqueta="referencia"]{
+            grid-column: 5;
+            grid-row: 3;
+        }
+
+        input[name="referencia"]{
+            grid-column: 6 / span 3;
+            grid-row: 3;
+        }
+
+        label[data-etiqueta="almacen"]{
+            grid-column: 1;
+            grid-row: 4;
+        }
+
+        div[data-box="lista_almacenes"] {
+            position: relative;
+            grid-column: 2 / span 6;
+            grid-row: 4;
+
+            * {
+                width: 100%;
+            }
+        }
+
+        button[data-etiqueta="btn_almacen"]{
+            grid-column: 8;
+            grid-row: 4;
+        }
+
     }
 
     /**********************************************/
