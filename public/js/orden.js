@@ -885,6 +885,8 @@ $(function(){
             function (data, text, requestXHR) {
                 item.remove();
                 fillTables($("#tablaDetalles tbody > tr"),1);
+                
+                calcularTotales();
             },                        
             "text"
         );

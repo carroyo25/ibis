@@ -45,7 +45,7 @@
                                                     alm_despachocab.id_regalm 
                                                 ORDER BY
                                                     alm_despachocab.ffecdoc DESC 
-                                                    LIMIT 300");
+                                                    LIMIT 50");
                 $sql->execute();
                 $rowCount = $sql->rowCount();
 
