@@ -102,5 +102,9 @@
         function descargaRapida(){
             echo json_encode($this->model->descargarOrdenPrincipal($_POST['id']));
         }
+
+        function apruebaRapido(){
+            echo json_encode($this->model->aprobacionRapida($_POST['id']));
+        }
     }
 ?>

@@ -47,7 +47,7 @@ h3 {
 input[type=text], input[type=mail], input[type=password], input[type=date], input[type=number] {
   padding-left: 10px;
   padding-left: 10px;
-  border: none;
+  border: 1px dotted #c2c2c2;
   line-height: 1.5rem;
 }
 

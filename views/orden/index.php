@@ -19,6 +19,7 @@
             </div>
         </div>
     </div>
+    
     <div class="modal" id="preguntaDescarga">
         <div class="ventanaPregunta">
             <h3>¿Descargar Orden?</h3>
@@ -258,6 +259,8 @@
                             <th width="7%">Cantidad </br> para compra </th>
                             <th width="7%">Cantidad </br> Atendida</th>
                             <th data-idcol="8" class="datafiltro" >Descripción</th>
+                            <th>...</th>
+                            <th>...</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -459,6 +462,18 @@
             <div>
                 <button type="button" id="btnAceptarApruebaRapida">Aceptar</button>
                 <button type="button" id="btnCancelarApruebaRapida">Cancelar</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="cambiarCodigo">
+        <div class="ventanaPregunta">
+            <h3>¿Cambiar de código item?</h3>
+            <div>
+                <input type="text" name="codigoCambio" id="codigoCambio">
+            </div>
+            <div>
+                <button type="button" id="btnAceptarCambioCodigo">Aceptar</button>
+                <button type="button" id="btnCancelarCambioCodigo">Cancelar</button>
             </div>
         </div>
     </div>

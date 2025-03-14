@@ -188,21 +188,22 @@
 
                         //validar para las compras parciales
                        
-                        $salida .='<tr class="pointer" data-pedido="'.$rs['idpedido'].'"
-                                                       data-entidad="'.$rs['entidad'].'"
-                                                       data-unidad="'.$rs['unidad'].'"
-                                                       data-cantidad ="'.$rs['cantidad'].'"
-                                                       data-total="'.$rs['total_numero'].'"
-                                                       data-codprod="'.$rs['id_cprod'].'"
-                                                       data-iditem="'.$rs['iditem'].'"
-                                                       data-costos="'.$rs['idcostos'].'"
-                                                       data-compra="'.$cant.'"
-                                                       data-itord="-"
-                                                       data-nropedido=""
-                                                       data-nparte="'.$rs['nroparte'].'"
-                                                       data-estado="'.$rs['estadoItem'].'"
-                                                       data-atendida="'.$aten.'"
-                                                       data-detalle="'.htmlspecialchars($rs['detalle']).'">
+                        $salida .='<tr id="'.$rs['iditem'].'"
+                                        class="pointer" data-pedido="'.$rs['idpedido'].'"
+                                        data-entidad="'.$rs['entidad'].'"
+                                        data-unidad="'.$rs['unidad'].'"
+                                        data-cantidad ="'.$rs['cantidad'].'"
+                                        data-total="'.$rs['total_numero'].'"
+                                        data-codprod="'.$rs['id_cprod'].'"
+                                        data-iditem="'.$rs['iditem'].'"
+                                        data-costos="'.$rs['idcostos'].'"
+                                        data-compra="'.$cant.'"
+                                        data-itord="-"
+                                        data-nropedido=""
+                                        data-nparte="'.$rs['nroparte'].'"
+                                        data-estado="'.$rs['estadoItem'].'"
+                                        data-atendida="'.$aten.'"
+                                        data-detalle="'.htmlspecialchars($rs['detalle']).'">
                                         <td class="textoCentro">'.str_pad($rs['nrodoc'],6,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.date("d/m/Y", strtotime($rs['emision'])).'</td>
                                         <td class="pl5px">'.$rs['concepto'].'</td>
@@ -212,6 +213,8 @@
                                         <td class="textoDerecha">'.$cant.'</td>
                                         <td class="textoDerecha">'.$aten.'</td>
                                         <td class="pl5px">'.$rs['cdesprod'].'</td>
+                                        <td class="textoCentro"><a href="'.$rs['iditem'].'" data-accion="change"><i class="fas fa-wrench"></i></a></td>
+                                        <td class="textoCentro"><a href="'.$rs['iditem'].'" data-accion="delete"><i class="far fa-trash-alt"></i></a></td>
                                     </tr>';
                     }
                 }
@@ -1002,6 +1005,29 @@
                 }
 
                 return $salida;
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function aprobacionRapida($id){
+            try {
+                $mensaje = "Se envia la orden para aprobacion";
+                $rowCount = 0;
+                
+                $sql = $this->db->connect()->prepare("UPDATE lg_ordencab 
+                                                    SET lg_ordencab.nEstadoDoc=:est 
+                                                    WHERE lg_ordencab.id_regmov=:id");
+                $sql->execute(['est'=>59,'id'=>$id]);
+                $rowCount = $sql->rowcount();
+
+                if( $rowCount > 0){
+                    $mensaje = "Se envia la orden para aprobacion";
+                }
+
+                return array("mensaje"=>$mensaje,"registros"=>$rowCount);
+
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
