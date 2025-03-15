@@ -16,36 +16,32 @@
                                                     alm_despachocab.cmes,
                                                     DATE_FORMAT( alm_despachocab.ffecdoc, '%d/%m/%Y' ) AS ffecdoc,
                                                     YEAR ( alm_despachocab.ffecdoc ) AS anio,
-                                                    alm_despachodet.nropedido AS orden,
-                                                    alm_despachodet.nroorden AS pedido,
+                                                    alm_despachocab.id_regalm,
                                                     alm_despachocab.cnumguia,
                                                     alm_despachocab.nEstadoDoc,
-                                                    alm_despachocab.id_regalm,
                                                     UPPER( origen.cdesalm ) AS origen,
                                                     UPPER( origen.ctipovia ) AS direccion_origen,
                                                     UPPER( destino.cdesalm ) AS destino,
                                                     UPPER( destino.ctipovia ) AS direccion_destino,
-                                                    lg_ordencab.cnumero,
                                                     UPPER( CONCAT_WS( ' ', tb_proyectos.ccodproy, tb_proyectos.cdesproy ) ) AS costos,
                                                     lg_guias.ticketsunat,
                                                     lg_guias.guiasunat,
-                                                    lg_guias.estadoSunat
+                                                    lg_guias.estadoSunat,
+                                                    i.nroorden AS pedido,
+                                                    i.nropedido AS orden 
                                                 FROM
                                                     alm_despachocab
-                                                    INNER JOIN alm_despachodet ON alm_despachodet.id_regalm = alm_despachocab.id_regalm
-                                                    INNER JOIN tb_almacen AS origen ON alm_despachocab.ncodalm1 = origen.ncodalm
-                                                    INNER JOIN tb_almacen AS destino ON alm_despachocab.ncodalm2 = destino.ncodalm
-                                                    INNER JOIN tb_proyectos ON alm_despachocab.ncodpry = tb_proyectos.nidreg
-                                                    INNER JOIN tb_parametros ON alm_despachocab.nEstadoDoc = tb_parametros.nidreg
-                                                    INNER JOIN lg_ordencab ON lg_ordencab.id_regmov = alm_despachodet.nropedido
-                                                    LEFT JOIN lg_guias ON alm_despachocab.id_regalm = lg_guias.id_regalm 
+                                                    LEFT JOIN tb_almacen AS origen ON alm_despachocab.ncodalm1 = origen.ncodalm
+                                                    LEFT JOIN tb_almacen AS destino ON alm_despachocab.ncodalm2 = destino.ncodalm
+                                                    LEFT JOIN tb_proyectos ON alm_despachocab.ncodpry = tb_proyectos.nidreg
+                                                    LEFT JOIN tb_parametros ON alm_despachocab.nEstadoDoc = tb_parametros.nidreg
+                                                    LEFT JOIN lg_guias ON alm_despachocab.id_regalm = lg_guias.id_regalm
+                                                    LEFT JOIN ( SELECT alm_despachodet.id_regalm, alm_despachodet.nropedido, alm_despachodet.nroorden FROM alm_despachodet GROUP BY alm_despachodet.id_regalm ) AS i ON i.id_regalm = alm_despachocab.id_regalm 
                                                 WHERE
                                                     alm_despachocab.nEstadoDoc = 62 
-                                                GROUP BY
-                                                    alm_despachocab.id_regalm 
-                                                ORDER BY
-                                                    alm_despachocab.ffecdoc DESC 
-                                                    LIMIT 50");
+                                                    AND alm_despachocab.cper = YEAR (NOW()) 
+                                                    AND alm_despachocab.cmes = MONTH (NOW())
+                                                ORDER BY alm_despachocab.ffecdoc DESC ");
                 $sql->execute();
                 $rowCount = $sql->rowCount();
 

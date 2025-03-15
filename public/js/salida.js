@@ -154,7 +154,12 @@ $(function() {
 
         $("#proceso").fadeOut();
 
-        $.post(RUTA+"salida/actualizaDespachos",
+        $("#codigo_costos").val("");
+
+        document.getElementById("formProceso").reset();
+        document.getElementById("guiaremision").reset();
+
+        /*$.post(RUTA+"salida/actualizaDespachos",
             function (data, textStatus, jqXHR) {
                 $(".itemsTabla table tbody")
                     .empty()
@@ -168,7 +173,7 @@ $(function() {
                
             },
             "text"
-        );
+        );*/
 
         return false;
     });
