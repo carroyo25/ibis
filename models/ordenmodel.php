@@ -166,11 +166,13 @@
                                                     WHERE
                                                         tb_pedidodet.nflgActivo = 1 
                                                         AND tb_pedidodet.idasigna = :user_asigna
-                                                        AND tb_pedidodet.cant_pedida <> tb_pedidodet.cant_atend 
-                                                        AND ( tb_pedidodet.estadoItem = 54 OR tb_pedidodet.estadoItem = 52) 
+                                                        AND tb_pedidodet.cant_aprob <> tb_pedidodet.cant_orden
+                                                        AND tb_pedidodet.estadoItem = 54
                                                         AND tb_proyectos.nflgactivo = 1
+                                                        AND tb_pedidodet.nflgOrden = 0
                                                     GROUP BY
-                                                        tb_pedidodet.iditem");
+                                                        tb_pedidodet.iditem
+                                                    ORDER BY tb_pedidocab.emision DESC");
                 
                 //AND ISNULL(tb_pedidodet.idorden)
                 //se cambia el 58 para llama los items directo con aprobacion
@@ -187,35 +189,37 @@
                         $compra = ( floatval($rs['cantidad']) - floatval($rs['cant_aprob'])) - floatval($rs['stock_almacen']);
 
                         //validar para las compras parciales
-                       
-                        $salida .='<tr id="'.$rs['iditem'].'"
-                                        class="pointer" data-pedido="'.$rs['idpedido'].'"
-                                        data-entidad="'.$rs['entidad'].'"
-                                        data-unidad="'.$rs['unidad'].'"
-                                        data-cantidad ="'.$rs['cantidad'].'"
-                                        data-total="'.$rs['total_numero'].'"
-                                        data-codprod="'.$rs['id_cprod'].'"
-                                        data-iditem="'.$rs['iditem'].'"
-                                        data-costos="'.$rs['idcostos'].'"
-                                        data-compra="'.$cant.'"
-                                        data-itord="-"
-                                        data-nropedido=""
-                                        data-nparte="'.$rs['nroparte'].'"
-                                        data-estado="'.$rs['estadoItem'].'"
-                                        data-atendida="'.$aten.'"
-                                        data-detalle="'.htmlspecialchars($rs['detalle']).'">
-                                        <td class="textoCentro">'.str_pad($rs['nrodoc'],6,0,STR_PAD_LEFT).'</td>
-                                        <td class="textoCentro">'.date("d/m/Y", strtotime($rs['emision'])).'</td>
-                                        <td class="pl5px">'.$rs['concepto'].'</td>
-                                        <td class="pl5px">'.$rs['area'].'</td>
-                                        <td class="textoCentro">'.$rs['ccodproy'].'</td>
-                                        <td class="textoCentro" data-codigo="'.$rs['id_cprod'].'">'.$rs['ccodprod'].'</td>
-                                        <td class="textoDerecha">'.$cant.'</td>
-                                        <td class="textoDerecha">'.$aten.'</td>
-                                        <td class="pl5px">'.$rs['cdesprod'].'</td>
-                                        <td class="textoCentro"><a href="'.$rs['iditem'].'" data-accion="change"><i class="fas fa-wrench"></i></a></td>
-                                        <td class="textoCentro"><a href="'.$rs['iditem'].'" data-accion="delete"><i class="far fa-trash-alt"></i></a></td>
-                                    </tr>';
+                       if ( $compra >= 0 ) {
+                            $salida .='<tr id="'.$rs['iditem'].'"
+                                            class="pointer" data-pedido="'.$rs['idpedido'].'"
+                                            data-entidad="'.$rs['entidad'].'"
+                                            data-unidad="'.$rs['unidad'].'"
+                                            data-cantidad ="'.$rs['cantidad'].'"
+                                            data-total="'.$rs['total_numero'].'"
+                                            data-codprod="'.$rs['id_cprod'].'"
+                                            data-iditem="'.$rs['iditem'].'"
+                                            data-costos="'.$rs['idcostos'].'"
+                                            data-compra="'.$cant.'"
+                                            data-itord="-"
+                                            data-nropedido=""
+                                            data-nparte="'.$rs['nroparte'].'"
+                                            data-estado="'.$rs['estadoItem'].'"
+                                            data-atendida="'.$aten.'"
+                                            data-detalle="'.htmlspecialchars($rs['detalle']).'">
+                                            <td class="textoCentro">'.str_pad($rs['nrodoc'],6,0,STR_PAD_LEFT).'</td>
+                                            <td class="textoCentro">'.date("d/m/Y", strtotime($rs['emision'])).'</td>
+                                            <td class="pl5px">'.$rs['concepto'].'</td>
+                                            <td class="pl5px">'.$rs['area'].'</td>
+                                            <td class="textoCentro">'.$rs['ccodproy'].'</td>
+                                            <td class="textoCentro" data-codigo="'.$rs['id_cprod'].'">'.$rs['ccodprod'].'</td>
+                                            <td class="textoDerecha">'.$cant.'</td>
+                                            <td class="textoDerecha">'.$aten.'</td>
+                                            <td class="pl5px">'.$rs['cdesprod'].'</td>
+                                            <td class="textoCentro"><a href="'.$rs['iditem'].'" data-accion="change"><i class="fas fa-wrench"></i></a></td>
+                                            <td class="textoCentro"><a href="'.$rs['iditem'].'" data-accion="delete"><i class="far fa-trash-alt"></i></a></td>
+                                        </tr>';
+                       }
+                        
                     }
                 }
 
@@ -1027,6 +1031,90 @@
                 }
 
                 return array("mensaje"=>$mensaje,"registros"=>$rowCount);
+
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function anularItem($datos){
+            try {
+                $respuesta = false;
+
+                $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet 
+                                                    SET tb_pedidodet.estadoItem = 105,
+                                                        tb_pedidodet.idanula = :usuario
+                                                    WHERE 
+                                                        tb_pedidodet.iditem = :id
+                                                    LIMIT 1");
+                $sql->execute(['usuario'=>$datos['user'],'id'=>$datos['id']]);
+
+                if ($sql->rowCount() > 0){
+                    $respuesta = true;
+                }
+
+                return array("succes"=>$respuesta);
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function cambiarItem($datos){
+            try {
+                $respuesta = false;
+
+                $producto = $this->buscarCodigoProducto($datos['codigo']);
+
+
+                $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet 
+                                                    SET tb_pedidodet.idprod = :idprod,
+                                                        tb_pedidodet.unid = :und,
+                                                        tb_pedidodet.idmodifica = :usuario
+                                                    WHERE 
+                                                        tb_pedidodet.iditem = :id
+                                                    LIMIT 1");
+                                                    
+
+                $sql->execute(['usuario'=>$datos['user'],'id'=>$datos['id'],'idprod'=>$producto['id_cprod'],'und'=> $producto['nund']]);
+
+
+                if ($sql->rowCount() > 0){
+                    $respuesta = true;
+                }
+
+                return array("succes"=>$respuesta,"codigo"=>$producto['ccodprod'],"unidad"=>$producto['cabrevia'],"idprod"=>$producto['id_cprod'],"descripcion"=>$producto['descripcion']);
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+
+        private function buscarCodigoProducto($codigo){
+            try {
+                $docData = [];
+
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        cm_producto.id_cprod,
+                                                        cm_producto.ccodprod,
+                                                        UPPER( cm_producto.cdesprod ) AS descripcion,
+                                                        cm_producto.nund,
+                                                        tb_unimed.cabrevia 
+                                                    FROM
+                                                        cm_producto
+                                                        INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed 
+                                                    WHERE
+                                                        cm_producto.ccodprod = :codigo
+                                                        AND cm_producto.flgActivo = 1
+                                                    LIMIT 1");
+
+                $sql->execute(['codigo'=>$codigo]);
+
+                $docData = $sql->fetch();
+
+                return $docData;
 
             } catch (PDOException $th) {
                 echo $th->getMessage();

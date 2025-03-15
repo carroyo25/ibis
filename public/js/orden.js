@@ -362,9 +362,25 @@ $(function(){
         e.preventDefault();
 
         idItemPedido = $(this).attr('href');
+        let datos = new FormData();
+            datos.append('id',idItemPedido);
+            datos.append('user',$('#id_user').val());
 
         if ( $(this).attr('data-accion') == 'delete' ){
-            $(this).parent().parent().remove();
+            fetch(RUTA+'orden/anulaItemPedido',{
+                method:'POST',
+                body:datos
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.succes){
+                    mostrarMensaje('Item Anulado','mensaje_correcto');
+                    $(this).parent().parent().remove()
+                }else{
+                    mostrarMensaje('Error al anular el Item');
+                }
+            })
+
         }else if( $(this).attr('data-accion') == 'change' ){
             $("#cambiarCodigo").fadeIn();
         }
@@ -382,7 +398,6 @@ $(function(){
 
         try {
             if ( costos  != $(this).data("costos")) throw "El item esta otro centro de costos";
-            //if ( pedido  != $(this).data("pedido")) throw "El item esta en  un pedido diferente";
 
             let nFilas      = $.strPad($("#tablaDetalles tr").length,3),
                 codigo      = $(this).children('td:eq(5)').text(),
@@ -466,7 +481,34 @@ $(function(){
     $("#btnAceptarCambioCodigo").click(function (e) { 
         e.preventDefault();
 
-        console.log(eidItemPedido);
+        let datos = new FormData();
+            datos.append('id',idItemPedido);
+            datos.append('user',$('#id_user').val());
+            datos.append('codigo',$("#codigoCambio").val());
+
+        try {
+            fetch(RUTA+'orden/cambiaItemPedido',{
+                method:'POST',
+                body:datos
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.succes){
+                    mostrarMensaje('Item Cambiado','mensaje_correcto');
+                    $('#'+idItemPedido).find("td").eq(5).text(data.codigo);
+                    $('#'+idItemPedido).find("td").eq(8).text(data.descripcion);
+                    $('#'+idItemPedido).attr('data-codprod',data.idprod);
+                    $('#'+idItemPedido).attr('data-unidad',data.unidad);
+
+                    $("#cambiarCodigo").fadeOut();
+
+                }else{
+                    mostrarMensaje('No se cambio el codigo del producto');
+                }
+            })
+        } catch (error) {
+            mostrarMensaje('Error los codigo deben ser del mismo tipo')
+        }
 
         return false;
     });
@@ -878,6 +920,7 @@ $(function(){
 
         let item    = $(this).parent().parent().remove();
         let suma = 0;
+        
 
         $.post(RUTA+"orden/marcaItem", {id:$(this).parent().parent().data("itped"),
                                         io:$(this).parent().parent().data("itord"),
@@ -886,7 +929,6 @@ $(function(){
                 item.remove();
                 fillTables($("#tablaDetalles tbody > tr"),1);
                 
-                calcularTotales();
             },                        
             "text"
         );
@@ -898,7 +940,7 @@ $(function(){
         if(suma > 0) {
             $("#total").val(numberWithCommas(suma.toFixed(2)));
             $("#total_numero").val(suma.toFixed(2));
-
+            $("#in").val(numberWithCommas(suma.toFixed(2)));
         }
 
         return false;
@@ -1437,7 +1479,30 @@ function createPdf(id,fila,atencion){
     });
 }
 
+function actualizarTotal(control){
+    console.log(control)
 
+    let cant = control.parent().parent().find("td").eq(5).children().val();
+    let precio = control.parent().parent().find("td").eq(6).children().val();
+    let suma = 0;
+    let igv = parseFloat($('input[name="radioIgv"]:checked').val());
+                
+    let total = precio*cant;
+
+    $(this).parent().parent().find("td").eq(7).text(total.toFixed(2));
+
+    $("#tablaDetalles tbody  > tr").each(function () {
+        suma += parseFloat(control.find('td').eq(7).text()||0,10);
+    })
+
+    if(suma > 0) {
+        $("#total").val(numberWithCommas(suma.toFixed(2)));
+        $("#total_numero").val(suma.toFixed(2));
+        $("#in").val(numberWithCommas(suma.toFixed(2)));
+
+        calcularTotales();
+    }
+}
 
 
 

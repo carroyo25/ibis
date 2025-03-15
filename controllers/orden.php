@@ -106,5 +106,13 @@
         function apruebaRapido(){
             echo json_encode($this->model->aprobacionRapida($_POST['id']));
         }
-    }
+
+        function anulaItemPedido(){
+            echo json_encode($this->model->anularItem($_POST));
+        }
+        
+        function cambiaItemPedido(){
+            echo json_encode($this->model->cambiarItem($_POST));
+        }
+    }    
 ?>

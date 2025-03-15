@@ -6,7 +6,7 @@
         }
 
         function render(){
-            //$this->view->listaNotasSalidas = $this->model->listarNotasDespacho();
+            $this->view->listaNotasSalidas = $this->model->listarNotasDespacho();
             $this->view->listaEnvio = $this->model->listarParametros('08');
             $this->view->listaPlacas = $this->model->listarParametros('24');
             $this->view->listaAprueba = $this->model->apruebaRecepción();
@@ -20,8 +20,6 @@
             $this->view->listaCostos = $this->model->costosPorUsuario($_SESSION['iduser']);
             $this->view->listaCostosSelect = $this->model->costosPorUsuarioSelect($_SESSION['iduser']);
             $this->view->listaDepartamento = $this->model->getUbigeoSelect(1,"%");
-
-            $this->view->listaNotasSalidas = "";
 
             $this->view->render('salida/index');
         }
