@@ -8,7 +8,8 @@ $(function() {
         sw=0,
         grabado = false,
         controlUbigeo = null,
-        ubigeo = null;
+        ubigeo = null,
+        fila_actualiza;
         
 
     $("#esperar").fadeOut();
@@ -159,21 +160,6 @@ $(function() {
         document.getElementById("formProceso").reset();
         document.getElementById("guiaremision").reset();
 
-        /*$.post(RUTA+"salida/actualizaDespachos",
-            function (data, textStatus, jqXHR) {
-                $(".itemsTabla table tbody")
-                    .empty()
-                    .append(data);
-
-                
-                $("#codigo_costos").val("");
-
-                document.getElementById("formProceso").reset();
-                document.getElementById("guiaremision").reset();
-               
-            },
-            "text"
-        );*/
 
         return false;
     });
@@ -415,6 +401,10 @@ $(function() {
 
                             $(".primeraBarra").css("background","#819830");
                             $(".primeraBarra span").text('Datos Generales ... Grabado');
+
+                            /*proceso para actualizar la tabla*/
+
+                            
                             
                             grabado = true;
 
