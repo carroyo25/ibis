@@ -318,7 +318,8 @@ $(function(){
         sw = fila.data("registrado");
         registro = $(this).attr("href");
 
-        //$("#borrarFila").fadeIn();
+        if (!sw )
+            $("#borrarFila").fadeIn();
 
         return false;
     });
@@ -326,18 +327,9 @@ $(function(){
     $("#btnAceptarBorrar").click(function (e) { 
         e.preventDefault();
 
-       if (sw) {
-            $.post(RUTA+"consumo/borraFila",{id:registro},
-                function (data, textStatus, jqXHR) {
-                    mostrarMensaje(data.mensaje,"mensaje_correcto");
-                },
-                "json"
-            );
-       }
-
-       fila.remove();
-       $("#borrarFila").fadeOut();
-        
+        fila.remove();
+        $("#borrarFila").fadeOut();
+ 
         return false;
     });
 

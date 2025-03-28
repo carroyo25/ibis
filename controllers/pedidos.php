@@ -69,6 +69,10 @@
             echo $this->model->filtrarItemsPedido($_POST['codigo'],$_POST['descripcion'],$_POST['tipo']);
         }
 
+        function filtraItemsAlmacen(){
+            echo $this->model->filtrarItemsPedidoAlmacen($_POST['codigo'],$_POST['descripcion'],$_POST['tipo']);
+        }
+
         function quitarItem(){
             echo $this->model->desactivarItem($_POST,0);
         }

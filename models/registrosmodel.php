@@ -167,7 +167,7 @@
 
                 if ($rowCount > 0){
                     while ($rs = $sql->fetch()){
-                        if (!$this->buscarDetallesIngresados($rs['niddetaPed'],$rs['cnumguia'])){
+                        //if (!$this->buscarDetallesIngresados($rs['niddetaPed'],$rs['cnumguia'])){
                             $salida .='<tr class="pointer" data-idpet="'.$rs['niddetaPed'].'"
                                                         data-area="'.$rs['ncodarea'].'"
                                                         data-almacen = "'.$rs['ncodalm2'].'"
@@ -187,9 +187,11 @@
                                         <td class="textoCentro">'.$rs['pedido'].'</td>
                                         <td class="textoCentro">'.$rs['orden'].'</td>
                                         <td class="textoCentro">'.$rs['cnumguia'].'</td>
-                                        <td class="textoCentro"><a href="'.$rs['niddetaPed'].'" ><i class="fas fa-paperclip"></i></a></td>
+                                        <td class="textoCentro"><input type="text"></td>
+                                        <td class="textoCentro"><input type="date"></td>
+                                        <td class="textoCentro"><input type="text"></td>
                                     </tr>';
-                        }
+                        //}
                         
                     } 
                 }
@@ -311,7 +313,9 @@
                                         <td class="textoCentro">'.$rs['pedido'].'</td>
                                         <td class="textoCentro">'.$rs['orden'].'</td>
                                         <td class="textoCentro">'.$rs['cnumguia'].'</td>
-                                        <td class="textoCentro"><a href="'.$rs['niddetaPed'].'" ><i class="fas fa-paperclip"></i></a></td>
+                                        <td class="textoCentro"><input type="text"></td>
+                                        <td class="textoCentro"><input type="date"></td>
+                                        <td class="textoCentro"><input type="text"></td>
                                     </tr>';
                     } 
                 }
@@ -386,7 +390,11 @@
                                                                 vence=:fecha_vence,
                                                                 idpedido=:itempedido,
                                                                 nropedido=:pedido,
-                                                                nroorden=:orden");
+                                                                nroorden=:orden,
+                                                                ncertcal=:numero_certificado,
+                                                                ffeccalibra=:fecha_calibracion,
+                                                                condicion=:condicion_producto,
+                                                                serie=:serie_producto");
                     $sql->execute(["almacen" =>$datos[$i]->almacen, 
                                     "indice" =>$indice,
                                     "despacho"=>$despacho,
@@ -401,7 +409,11 @@
                                     "itempedido"=>$datos[$i]->iddepet,
                                     "pedido"=>$datos[$i]->pedido,
                                     "orden"=>$datos[$i]->orden,
-                                    "tipoMovimiento"=>$tipo]);
+                                    "tipoMovimiento"=>$tipo,
+                                    "numero_certificado"=>$datos[$i]->cercal,
+                                    "fecha_calibracion"=>$datos[$i]->feccal,
+                                    "condicion_producto"=>$datos[$i]->condic,
+                                    "serie_producto"=>$datos[$i]->serie]);
                 }
 
             } catch (PDOException $th) {
@@ -542,6 +554,9 @@
                                                         alm_existencia.condicion,
                                                         alm_existencia.vence,
                                                         alm_existencia.idreg,
+                                                        alm_existencia.serie,
+                                                        alm_existencia.ncertcal,
+                                                        alm_existencia.ffeccalibra,
                                                         tb_pedidodet.docEspec/*,
 	                                                    lg_ordencab.cnumero */
                                                     FROM
@@ -580,7 +595,9 @@
                                         <td class="textoCentro">'.$rs['pedido'].'</td>
                                         <td class="textoCentro"></td>
                                         <td class="textoCentro"></td>
-                                        <td class="textoCentro"><a href="'.$rs['docEspec'].'">'.$icono.'</a></td>
+                                        <td class="textoCentro">'.$rs['serie'].'</td>
+                                        <td class="textoCentro">'.$rs['ffeccalibra'].'</td>
+                                         <td class="textoCentro">'.$rs['ncertcal'].'</td>
                                     </tr>';
                     }
                 }
@@ -591,8 +608,6 @@
                  return false;
              }
         }
-
-        /*----*/
 
         public function listarTransferencias($nt){
             try {
@@ -741,7 +756,9 @@
                                         <td class="textoCentro">'.$rs['nrodoc'].'</td>
                                         <td class="textoCentro"></td>
                                         <td class="textoCentro">'.$rs['idtransfer'].'</td>
-                                        <td class="textoCentro"><a href="'.$rs['iddetped'].'" ><i class="fas fa-paperclip"></i></a></td>
+                                        <td class="textoCentro"><input type="text"></td>
+                                        <td class="textoCentro"><input type="date"></td>
+                                        <td class="textoCentro"><input type="text"></td>
                                     </tr>';
                         }
                     } 

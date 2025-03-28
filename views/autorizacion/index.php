@@ -31,13 +31,14 @@
                     <input type="hidden" name="correo_usuario" id="correo_usuario">
                     <input type="hidden" name="codigo_estado" id="codigo_estado">
                     <input type="hidden" name="estado_autorizacion" id="estado_autorizacion">
+                    <input type="hidden" name="firma_logistica" id="firma_logistica">
+                    <input type="hidden" name="firma_cliente" id="firma_cliente">
                     
                     <!--este campo es para uniformizar las guias-->
 
                     <div class="barraOpciones primeraBarra">
                         <span>Datos Generales</span>
                         <div>
-                            
                             <button type="button" id="saveItem" title="Grabar Proceso" class="boton3">
                                 <p><i class="far fa-save"></i> Grabar Registro</p> 
                             </button>
@@ -216,7 +217,15 @@
     </div>
     <div class="modal" id="entregaLogisticaModal">
         <div class="ventanaPregunta">
-            <h3>¿Entregar Autorización para su despacho?</h3>
+            <h3>Datos de entrega: Logistica</h3>
+            <div class="data_entry">
+                <label for="documento_logistica">Nro. Documento</label>
+                <input type="text" name="documento_logistica" id="documento_logistica">
+                <label for="nombre_logistica">Nombre</label>
+                <input type="text" name="nombre_logistica" id="nombre_logistica" readonly>
+                <label for="correo_logistica">Correo Logistica</label>
+                <input type="email" name="correo_logistica" id="correo_logistica">
+            </div>
             <div>
                 <button type="button" id="btnAceptarEntregaLogistica">Aceptar</button>
                 <button type="button" id="btnCancelarEntregaLogistica">Cancelar</button>
@@ -234,7 +243,15 @@
     </div>
     <div class="modal" id="entregaDestinoModal">
         <div class="ventanaPregunta">
-            <h3>¿Culminar el traslado?</h3>
+            <h3>Datos de entrega: Usuario</h3>
+            <div class="data_entry">
+                <label for="documento_usuario">Nro. Documento</label>
+                <input type="text" name="documento_usuario" id="documento_usuario">
+                <label for="nombre_usuario">Nombre</label>
+                <input type="text" name="nombre_usuario" id="nombre_usuario" readonly>
+                <!-- <label for="correo_usuario">Correo Usuario</label>
+                <input type="email" name="correo_usuario" id="correo_usuario"> -->
+            </div>
             <div>
                 <button type="button" id="btnAceptarEntregaDestino">Aceptar</button>
                 <button type="button" id="btnCancelarEntregaDestino">Cancelar</button>
@@ -261,7 +278,7 @@
                     <div class="etapas" id="etapa2">
                         <div>
                             <p class="descripcionEtapa">Entrega Logística</p>
-                            <p id="fecha2"</p>
+                            <p id="fecha2"></p>
                         </div>
                         <div class="circle etapa_falta" id="circle2">
                             <p class="faltante"><i class="fas fa-times"></i></p>
@@ -682,8 +699,7 @@
         </table>
     </div>
 
-    <canvas id="cnv" name="cnv" width="500" height="100"  class="oculto"></canvas>
-    <canvas name="SigImg" id="SigImg" width="500" height="100" class="oculto"></canvas>
+    <canvas id="cnv" name="cnv" width="500" height="100" class="oculto"></canvas>
     <form action="" name="FORM1">
         <input type="hidden" name="firmado" id="firmado">
 	</form>

@@ -441,7 +441,7 @@
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="pl20px">'.$rs['cdesprod'].'</td>
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
-                                        <td class="textoDerecha">'.number_format($rs['cant_atend'],2).'</td>
+                                        <td class="textoDerecha">'.$rs['cant_atend'].'</td>
                                         <td class="textoDerecha">'.$rs['total_atendido'].'</td>
                                         <td><input type="number" step="any" placeholder="0.00" 
                                                             onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)" 

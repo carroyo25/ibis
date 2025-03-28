@@ -193,6 +193,8 @@
                                                         alm_autorizacab.nestado,
                                                         alm_autorizacab.nflgautoriza,
                                                         alm_autorizacab.ntipo,
+                                                        alm_autorizacab.firma_logistica,
+                                                        alm_autorizacab.firma_usuario,
                                                         costos_origen.ccodproy AS cc_codigo_origen,
                                                         UPPER( costos_origen.cdesproy ) AS cc_descripcion_origen,
                                                         UPPER( ibis.tb_area.cdesarea ) AS area,
@@ -345,10 +347,12 @@
                                 $cabecera['codigo_tipo'],
                                 $cabecera['autorizacion'],
                                 $cabecera['emision'],
-                                $cabecera['observaciones']);
+                                $cabecera['observaciones'],
+                                $cabecera['codigo_tipo_transferencia'],
+                                $cabecera['firma_logistica'],
+                                $cabecera['firma_cliente']);
 
                 $pdf->AliasNbPages();
-                //$pdf->AddPage('P','A5');
                 $pdf->AddPage('P','A4');
                 $pdf->SetFont('Arial','',6);
                 
@@ -425,7 +429,7 @@
             }
         }
 
-        public function entregarLogistica($id,$estado){
+        public function entregarLogistica($id,$estado,$dni,$correo,$nombre){
             try {
                 $mensaje = "Error en la actualización";
                 $fecha = date("Y-m-d");
@@ -445,22 +449,26 @@
                     $fp = fopen($file, 'w');
                     fwrite($fp, $imgData);
                     fclose($fp);
+                    
                 }
 
                 $sql = $this->db->connect()->prepare("UPDATE alm_autorizacab 
                                                         SET alm_autorizacab.nestado =:estado,
                                                             alm_autorizacab.uenvlog =:user,
                                                             alm_autorizacab.fentrelog =:fecha,
-                                                            alm_autorizacab.firma_logistica=:png
+                                                            alm_autorizacab.firma_logistica=:png,
+                                                            alm_autorizacab.dni_logistica=:dni
                                                         WHERE alm_autorizacab.idreg =:id");
                                                         
                 $sql->execute(["id"=>$id, 
                                 "estado"=>62, 
                                 "user"=>$_SESSION['iduser'], 
                                 "fecha"=>$fecha,
-                                "png"=>$namefile]);
+                                "png"=>$namefile,
+                                "dni"=>$dni]);
 
                 if ( $sql->rowCount() > 0 ){
+                    $this->enviarCorreoLogistica($nombre,$correo,$id);
                     $mensaje = "Entrega para su traslado";
                 }
 
@@ -495,21 +503,44 @@
             }
         }
 
-        public function entregarUsuario($id,$estado){
+        public function entregarUsuario($id,$estado,$dni,$nombre){
             try {
                 $mensaje = "Error en la actualización";
                 $fecha = date("Y-m-d");
 
+                $namefile = null;
+
+                if (array_key_exists('img',$_REQUEST)) {
+                    $imgData = base64_decode(substr($_REQUEST['img'],22));
+
+                    $namefile = uniqid();
+
+                    // Path en donde se va a guardar la imagen
+                    $file = 'public/documentos/autorizaciones/firmas_entrega/'.$namefile.'.png';
+
+                    if (file_exists($file)) { unlink($file); }
+            
+                    // guarda en el fichero la imagen contenida en $imgData
+                    $fp = fopen($file, 'w');
+                    fwrite($fp, $imgData);
+                    fclose($fp);
+                    
+                }
+
                 $sql = $this->db->connect()->prepare("UPDATE alm_autorizacab 
                                                         SET alm_autorizacab.nestado =:estado,
                                                             alm_autorizacab.uentrecli =:user,
-                                                            alm_autorizacab.fentreuser =:fecha
+                                                            alm_autorizacab.fentreuser =:fecha,
+                                                            alm_autorizacab.firma_usuario=:png,
+                                                            alm_autorizacab.dni_cliente=:dni
                                                         WHERE alm_autorizacab.idreg =:id");
                                                         
                 $sql->execute(["id"=>$id, 
                                 "estado"=>140, 
                                 "user"=>$_SESSION['iduser'], 
-                                "fecha"=>$fecha]);
+                                "fecha"=>$fecha,
+                                "dni"=>$dni,
+                                "png"=>$namefile,]);
 
                 if ( $sql->rowCount() > 0 ){
                     $mensaje = "Traslado Finalizado";
@@ -688,6 +719,85 @@
                 echo "Error: ".$th->getMessage();
                 return false;
             }
+        }
+
+        public function buscarDatosTraslado($doc) {
+            $registrado = false;
+            $url = "http://sicalsepcon.net/api/activesapi.php?documento=".$doc;
+            
+            $api = file_get_contents($url);
+
+            $datos =  json_decode($api);
+            $nreg = count($datos);
+
+            $registrado = $nreg > 0 ? true: false;
+
+            return array("datos" => $datos,"registrado"=>$registrado);
+        }
+
+        private function enviarCorreoLogistica($nombre,$correo,$numero){
+            try {
+                require_once("public/PHPMailer/PHPMailerAutoload.php");
+
+                $estadoEnvio = true;
+
+                $destino = $correo;
+                $nombre_destino = $nombre;
+
+                $subject    = utf8_decode("entrega autorización de traslado area de logistica");
+
+                $messaje= '<div style="width:100%;display: flex;flex-direction: column;justify-content: center;align-items: center;
+                                    font-family: Futura, Arial, sans-serif;">
+                            <div style="width: 45%;border: 1px solid #c2c2c2;background: #518FFB">
+                                <h3 style="text-align: left;padding-left:20px">Aviso Solicitud de Autorización</h3>
+                            </div>
+                            <div style="width: 45%;
+                                        border-left: 1px solid #c2c2c2;
+                                        border-right: 1px solid #c2c2c2;
+                                        border-bottom: 1px solid #c2c2c2;">
+                                <p style="padding:.5rem;line-height: 1rem;">Se informa que se ha entregado los materiales indicados en la nota de traslado. '.$numero.'</p>
+                                <p style="padding:.5rem;line-height: 1rem;">al area de logística</p>
+                                <p style="padding:.5rem">Fecha de entrega : '. date("d/m/Y h:i:s") .'</p>
+                            </div>
+                        </div>';
+
+                $mail = new PHPMailer;
+                $mail->isSMTP();
+                $mail->SMTPDebug = 0;
+                $mail->Debugoutput = 'html';
+                $mail->Host = 'mail.sepcon.net';
+                $mail->SMTPAuth = true;
+                $mail->Username = 'sistema_ibis@sepcon.net';
+                $mail->Password = $_SESSION['password'];
+                $mail->Port = 465;
+                $mail->SMTPSecure = "ssl";
+                $mail->SMTPOptions = array(
+                    'ssl' => array(
+                        'verify_peer' => false,
+                        'verify_peer_name' => false,
+                        'allow_self_signed' => false
+                    )
+                );
+
+                $mail->setFrom("sistema_ibis@sepcon.net","Autorizacion de Traslado");
+                $mail->addAddress($destino,$nombre_destino);
+
+                $mail->Subject = $subject;
+                $mail->msgHTML(utf8_decode($messaje));
+
+                if (!$mail->send()) {
+                    $estadoEnvio = false;
+                    echo 'Mailer Error: ' . $mail->ErrorInfo; 
+                }else {
+                    $estadoEnvio = true; 
+                }
+
+                return $estadoEnvio;
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            } 
         }
     }
 ?>

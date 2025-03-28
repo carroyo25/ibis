@@ -226,15 +226,14 @@ $(function(){
                     $("#codigo_costos").val(data.cabecera[0].ncodpry);
                     $("#codigo_despacho").val(data.cabecera[0].id_regalm);
                     
-                    if (data.detalles !=""){
+                    //if (data.detalles !=""){
                         $("#tablaDetalles tbody")
                         .empty()
                         .append(data.detalles);
-                    }else{
-                        mostrarMensaje("Los items ya se ingresaron en su totalidad","mensaje_error");
-                    }
+                    //else{
+                        //mostrarMensaje("Los items ya se ingresaron en su totalidad","mensaje_error");
+                    //}
                     
-
                     $("#esperar").css({"display":"none","opacity":"0"});
 
                     $("#busqueda").fadeOut();
@@ -343,24 +342,6 @@ $(function(){
             },
             "json"
         );
-        return false;
-    });
-
-    $("#tablaDetalles tbody").on('click','a', function(e) {
-        e.preventDefault();
-
-        /*if ($(this).children().attr('class') == 'fas fa-paperclip' ) {
-            $("#certificadoAtach").val($(this).attr('href'));
-            $("#archivos").fadeIn();
-        }else {
-            $(".ventanaVistaPrevia iframe")
-                        .attr("src","")
-                        .attr("src","public/documentos/certificados/"+$(this).attr('href'));
-                    
-            $("#vistaCertificado").fadeIn();
-           
-        }*/
-
         return false;
     });
 
@@ -548,9 +529,13 @@ detalles = () =>{
             CANTRECEP   = $(this).find('td').eq(5).children().val(),
             OBSERVAC    = $(this).find('td').eq(6).children().val(),
             VENCE       = $(this).find('td').eq(8).children().val(),
-            UBICA       = $(this).find('td').eq(9).children().val(),
-            ORDEN       = $(this).find('td').eq(10).text(),
-            PEDIDO      = $(this).find('td').eq(11).text();
+            CONDIC      = $(this).find('td').eq(9).children().val(),
+            UBICA       = $(this).find('td').eq(10).children().val(),
+            PEDIDO      = $(this).find('td').eq(11).text(),
+            ORDEN       = $(this).find('td').eq(12).text(),
+            SERIE       = $(this).find('td').eq(14).children().val(),
+            FECCAL      = $(this).find('td').eq(15).children().val(),
+            CERCAL      = $(this).find('td').eq(16).children().val();
 
         item = {};
 
@@ -562,12 +547,17 @@ detalles = () =>{
             item['cantrecep']   = CANTRECEP;
             item['observac']    = OBSERVAC;
             item['vence']       = VENCE;
+            item['condic']      = CONDIC;
             item['ubica']       = UBICA;
             item['pedido']      = PEDIDO;
             item['orden']       = ORDEN;
             item['almacen']     = ALMACEN;
             item['costos']      = COSTOS;
             item['cantenv']     = CANTENV;
+            item['serie']       = SERIE;
+            item['feccal']      = FECCAL;
+            item['cercal']      = CERCAL;
+
             
             DETALLES.push(item);
         }

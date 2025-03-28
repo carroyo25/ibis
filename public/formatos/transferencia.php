@@ -10,7 +10,6 @@
 			$this->motivo = $motivo;
 			$this->responsable = $responsable;
 			$this->tipo = $tipo;
-
 		}
 
 		function Header() {

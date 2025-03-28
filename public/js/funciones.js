@@ -4,8 +4,8 @@ var HOST = $(location).attr('hostname');
 
 if (HOST ==  "localhost") {
     var RUTA = "http://localhost/ibis/";
-}else if (HOST ==  "192.168.110.16"){
-    var RUTA = "http://192.168.110.16/ibis/";
+}else if (HOST ==  "192.168.110.121"){
+    var RUTA = "http://192.168.110.121/ibis/";
 }else if (HOST ==  "200.41.86.58"){
     var RUTA = "http://200.41.86.58/ibis/";
 }else if (HOST ==  "sicalsepcon.net"){

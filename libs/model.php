@@ -1362,7 +1362,7 @@
             }
         }
 
-        //listado de productos
+        //listado de productos (USUARIOS COMUNES)
         public function listarProductos($tipo){
              try {
                  $salida = "";
@@ -1380,6 +1380,7 @@
                                                         INNER JOIN tb_parametros ON cm_producto.ntipo = tb_parametros.nidreg
                                                     WHERE ntipo = :tipo
                                                     AND cm_producto.flgActivo = 1
+                                                    AND cm_producto.ngrupo != 45
                                                     LIMIT 100");
                 $sql->execute(["tipo"=>$tipo]);
                 $rowCount = $sql->rowCount();
@@ -1399,6 +1400,43 @@
                 return false;
             }
         }
+
+        public function listarProductosAlmacen($tipo){
+            try {
+                $salida = "";
+                $sql = $this->db->connect()->prepare("SELECT
+                                                       cm_producto.id_cprod,
+                                                       cm_producto.ccodprod,
+                                                       UPPER(cm_producto.cdesprod) AS cdesprod,
+                                                       tb_unimed.ncodmed,
+                                                       tb_unimed.cabrevia,
+                                                       tb_unimed.nfactor,
+                                                       tb_parametros.cdescripcion 
+                                                   FROM
+                                                       cm_producto
+                                                       INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                       INNER JOIN tb_parametros ON cm_producto.ntipo = tb_parametros.nidreg
+                                                   WHERE ntipo = :tipo
+                                                   AND cm_producto.flgActivo = 1
+                                                   LIMIT 100");
+               $sql->execute(["tipo"=>$tipo]);
+               $rowCount = $sql->rowCount();
+               if ($rowCount > 0){
+                   while ($rs = $sql->fetch()) {
+                       $salida .='<tr class="pointer" data-idprod="'.$rs['id_cprod'].'" data-ncomed="'.$rs['ncodmed'].'" data-unidad="'.$rs['cabrevia'].'">
+                                       <td class="textoCentro">'.$rs['ccodprod'].'</td>
+                                       <td class="pl20px">'.$rs['cdesprod'].'</td>
+                                       <td class="textoCentro">'.$rs['cabrevia'].'</td>
+                                   </tr>';
+                   }
+               }
+
+               return $salida;
+            } catch (PDOException $th) {
+               echo "Error: ".$th->getMessage;
+               return false;
+           }
+       }
 
         public function listarProductosSoporte($tipo){
             try {
@@ -5234,6 +5272,110 @@
             // Datos de empresas según padron reducido
             $empresa = json_decode($response);
             var_dump($empresa);
+        }
+
+        public function filtrarItemsPedido($codigo,$descripcion,$tipo){
+            try {
+                $codigo = "%".$codigo."%";
+                $descripcion = "%".$descripcion."%";
+
+                $salida = '<tr><td class="textoCentro" colspan="3">No existe el producto buscado</tr>';
+                
+                $sql = $this->db->connect()->prepare("SELECT
+                                                    cm_producto.id_cprod,
+                                                    cm_producto.ccodprod,
+                                                    UPPER(cm_producto.cdesprod) AS cdesprod,
+                                                    cm_producto.flgActivo,
+                                                    tb_parametros.cdescripcion AS tipo,
+                                                    tb_unimed.cabrevia,
+                                                    tb_unimed.ncodmed 
+                                                FROM
+                                                    cm_producto
+                                                    INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                    INNER JOIN tb_parametros ON cm_producto.ntipo = tb_parametros.nidreg 
+                                                WHERE
+                                                    cm_producto.flgActivo = 1 AND
+                                                    cm_producto.cdesprod LIKE :descripcion AND
+                                                    cm_producto.ccodprod LIKE :codigo AND
+                                                    cm_producto.ntipo=:tipo
+                                                    AND cm_producto.ngrupo != 45
+                                                LIMIT 100");
+                $sql->execute(["descripcion"=>$descripcion,
+                                "tipo"=>$tipo,
+                                "codigo"=>$codigo]);
+                $rc = $sql->rowcount();
+                $item = 1;
+
+                if ($rc > 0){
+                    $salida = "";
+                    while( $rs = $sql->fetch()) {
+                        $salida .='<tr class="pointer" data-idprod="'.$rs['id_cprod'].'" data-ncomed="'.$rs['ncodmed'].'" data-unidad="'.$rs['cabrevia'].'">
+                                        <td class="textoCentro">'.$rs['ccodprod'].'</td>
+                                        <td class="pl20px">'.$rs['cdesprod'].'</td>
+                                        <td class="textoCentro">'.$rs['cabrevia'].'</td>
+                                    </tr>';
+                        $item++;
+                    }
+                }
+
+                return $salida;
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        /*ACTUALIZACION 240325*/ 
+        public function filtrarItemsPedidoAlmacen($codigo,$descripcion,$tipo){
+            try {
+                $codigo = "%".$codigo."%";
+                $descripcion = "%".$descripcion."%";
+
+                $salida = '<tr><td class="textoCentro" colspan="3">No existe el producto buscado</tr>';
+                
+                $sql = $this->db->connect()->prepare("SELECT
+                                                    cm_producto.id_cprod,
+                                                    cm_producto.ccodprod,
+                                                    UPPER(cm_producto.cdesprod) AS cdesprod,
+                                                    cm_producto.flgActivo,
+                                                    tb_parametros.cdescripcion AS tipo,
+                                                    tb_unimed.cabrevia,
+                                                    tb_unimed.ncodmed 
+                                                FROM
+                                                    cm_producto
+                                                    INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                    INNER JOIN tb_parametros ON cm_producto.ntipo = tb_parametros.nidreg 
+                                                WHERE
+                                                    cm_producto.flgActivo = 1 AND
+                                                    cm_producto.cdesprod LIKE :descripcion AND
+                                                    cm_producto.ccodprod LIKE :codigo AND
+                                                    cm_producto.ntipo=:tipo
+                                                LIMIT 100");
+                $sql->execute(["descripcion"=>$descripcion,
+                                "tipo"=>$tipo,
+                                "codigo"=>$codigo]);
+                $rc = $sql->rowcount();
+                $item = 1;
+
+                if ($rc > 0){
+                    $salida = "";
+                    while( $rs = $sql->fetch()) {
+                        $salida .='<tr class="pointer" data-idprod="'.$rs['id_cprod'].'" data-ncomed="'.$rs['ncodmed'].'" data-unidad="'.$rs['cabrevia'].'">
+                                        <td class="textoCentro">'.$rs['ccodprod'].'</td>
+                                        <td class="pl20px">'.$rs['cdesprod'].'</td>
+                                        <td class="textoCentro">'.$rs['cabrevia'].'</td>
+                                    </tr>';
+                        $item++;
+                    }
+                }
+
+                return $salida;
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
         }
     }
 ?>

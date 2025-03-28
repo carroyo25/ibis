@@ -707,12 +707,18 @@ $(function(){
         return false;
     });
 
-   //filtrar Item del pedido
+   //filtrar Item del pedido ** MODIFICADO PARA NUEVA ACTUALIZACION
     $("#txtBuscarCodigo, #txtBuscarDescrip").on("keypress", function (e) {
         if(e.which == 13) {
             $("#esperar").fadeIn();
+
+            let rutaConsulta = "pedidos/filtraItems";
+
+            if ($("#almacen").val() == 1){
+                rutaConsulta = "pedidos/filtraItemsAlmacen";
+            }
             
-            $.post(RUTA+"pedidos/filtraItems", {codigo:$("#txtBuscarCodigo").val(),
+            $.post(RUTA+rutaConsulta, {codigo:$("#txtBuscarCodigo").val(),
                                                 descripcion:$("#txtBuscarDescrip").val(),
                                                 tipo:$("#codigo_tipo").val()},
                     function (data, textStatus, jqXHR) {
@@ -722,7 +728,7 @@ $(function(){
                         $("#esperar").fadeOut();
                     },
                     "text"
-                );
+            );
         }
     });
 

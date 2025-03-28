@@ -8,7 +8,7 @@
 </head>
 <body>
     <div class="modal" id="proceso">
-        <div class="ventanaProceso tamanioProceso">
+        <div class="ventanaProceso">
             <div class="cabezaProceso">
                 <form action="#" id="formProceso" autocomplete="off">
                     <input type="hidden" name="codigo_costos" id="codigo_costos"> 
@@ -131,7 +131,9 @@
                                         <th class="">Pedido</th>
                                         <th class="">Orden</th>
                                         <th class="">G. Remision<br/>Nr.Trans.</th>
-                                        <th class="">Adjunto</th>
+                                        <th class="">Serie</th>
+                                        <th class="">Fecha<br/>Calibracion</th>
+                                        <th class="">Certificado<br/>Calibracion</th>
                                 </tr>
                             </thead>
                             <tbody>

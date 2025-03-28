@@ -73,6 +73,9 @@
                 <input type="hidden" id="user_log" name="user_log" value="<?php echo $_SESSION['user']?>">
                 <input type="hidden" id="mail_user" name="mail_user" value="<?php echo $_SESSION['correo']?>">
                 <input type="hidden" id="rol_user" name="rol_user" value="<?php echo $_SESSION['rol']?>">
+                <input type="hidden" id="almacen" name="almacen" value="<?php echo $_SESSION['almacen']?>">
+                <input type="hidden" id="medicos" name="medicos" value="<?php echo $_SESSION['medicos']?>">
+                <input type="hidden" id="mmtto" name="mmtto" value="<?php echo $_SESSION['mmtto']?>">
             </div>
         </div>
         <div class="areaTrabajo">

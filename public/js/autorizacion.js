@@ -167,6 +167,7 @@ $(function(){
             $("#codigo_area").val(data.datos[0].narea);
             $("#codigo_tipo").val(data.datos[0].ntipo);
             $("#codigo_solicitante").val(data.datos[0].celabora);
+            $("#codigo_tipo_transferencia").val(data.datos[0].ctransferencia)
             $("#codigo_origen").val(data.datos[0].norigen);
             $("#codigo_destino").val(data.datos[0].ndestino);
             $("#codigo_estado").val(data.datos[0].nestado);
@@ -179,6 +180,7 @@ $(function(){
             $("#costosDestino").val(data.datos[0].cc_descripcion_destino);
             $("#area").val(data.datos[0].area);
             $("#solicitante").val(data.datos[0].solicita);
+            $("#codigo_tipo_transferencia").val(data.datos[0].ctransferencia)
             $("#origen").val(data.datos[0].almacenorigen);
             $("#destino").val(data.datos[0].almacendestino);
             $("#transferencia").val(data.datos[0].transferencia);
@@ -186,7 +188,9 @@ $(function(){
             $("#observaciones").val(data.datos[0].observac);
             $("#codigo_traslado").val(data.datos[0].indice);
             $("#tipo").val(data.datos[0].tipo);
-            $("#estado_autorizacion").val(data.datos[0].nflgautoriza);
+            $("#estado_autorizacion").val();
+            $("#firma_logistica").val(data.datos[0].firma_logistica);
+            $("#firma_recepcion").val(data.datos[0].firma_cliente);
 
             $("#numero_guia").val(data.datos[0].cnumguia)
 
@@ -425,7 +429,14 @@ $(function(){
             $("#esperar").fadeIn();
             
             if ( $("#codigo_tipo").val() === "277" ){
-                $.post(RUTA+"pedidos/filtraItems", {codigo:$("#txtBuscarCodigo").val(),
+
+                let rutaConsulta = "pedidos/filtraItems";
+
+                if ( $("#almacen").val() === "1" ){
+                    rutaConsulta = "pedidos/filtraItemsAlmacen";
+                }
+
+                $.post(RUTA+rutaConsulta, {codigo:$("#txtBuscarCodigo").val(),
                                             descripcion:$("#txtBuscarDescrip").val(),
                                             tipo:37},
                     function (data, textStatus, jqXHR) {
@@ -657,6 +668,7 @@ $(function(){
         
         try {
             if ( accion == "n" ) throw new Error('Debe grabar el documento');
+            if ( $("#almacen").val() != 1) throw new Error('No esta autorizado para emitir este documento');
 
             let result = {};
 
@@ -701,8 +713,8 @@ $(function(){
         e.preventDefault();
 
         try {
-            if ( $("#rol_user").val() == 2 && $("#rol_user").val() == 4 ) throw new Error("No esta habilitado para generar guias");
             if ( accion == "n" ) throw new Error('Debe grabar el documento');
+            if ( $("#almacen").val() != 1) throw new Error('No esta autorizado para emitir este documento');
 
             $("#vistadocumento").fadeIn();
         } catch (error) {
@@ -807,17 +819,28 @@ $(function(){
         e.preventDefault();
 
         try {
-            let formData = new FormData();
-            formData.append("id", $("#codigo_traslado").val());
-            formData.append("estado",62);
+            const traslado = document.getElementById("numero");
+            const estado = document.getElementById("codigo_estado");
+            const dni_logistica = document.getElementById("documento_logistica");
+            const correo = document.getElementById("correo_logistica");
+            const nombres = document.getElementById("nombre_logistica")
 
+            let canvas = document.getElementById("cnv");
+            let formData = new FormData();
+                formData.append("id", traslado.value);
+                formData.append("estado",estado.value);
+                formData.append("img",canvas.toDataURL());
+                formData.append("dni",dni_logistica.value);
+                formData.append("correo",correo.value);
+                formData.append("nombre",nombres.value)
+                
             fetch(RUTA+"autorizacion/entregaLogistica",{
                 method: "POST",
                 body: formData
             })
             .then(response => response.json())
             .then(data => {
-                $("#recepcionLogisticaModal").fadeOut();
+                $(this).closest(".modal").fadeOut();
                 mostrarMensaje("Traslado actualizado","mensaje_correcto");
             })
         } catch (error) {
@@ -855,21 +878,31 @@ $(function(){
         e.preventDefault();
 
         try {
-            let formData = new FormData();
-            formData.append("id", $("#codigo_traslado").val());
-            formData.append("estado",140);
+            const traslado = document.getElementById("numero");
+            const estado = document.getElementById("codigo_estado");
+            const dni_logistica = document.getElementById("documento_usuario");
+            //const correo = document.getElementById("correo_usuario");
+            const nombres = document.getElementById("nombre_usuario");
 
-            fetch(RUTA+"autorizacion/entregaFinal",{
-                method: "POST",
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                mostrarMensaje("Traslado Culminado","mensaje_correcto");
-            })
+            let canvas = document.getElementById("cnv");
+            let formData = new FormData();
+                formData.append("id", traslado.value);
+                formData.append("estado",estado.value);
+                formData.append("img",canvas.toDataURL());
+                formData.append("dni",dni_logistica.value);
+                //formData.append("correo",correo.value);
+                formData.append("nombre",nombres.value);
+
+                fetch(RUTA+"autorizacion/entregaFinal",{
+                    method: "POST",
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    mostrarMensaje("Traslado Culminado","mensaje_correcto");
+                })
         } catch (error) {
             mostrarMensaje(error.message,"mensaje_error");
-            $("#entregaDestinoModal").fadeOut();
         }
 
         return false;
@@ -954,6 +987,74 @@ $(function(){
         }
         
         return false
+    });
+
+    $("#grabarFirma").click(function(e){
+        e.preventDefault();
+
+        const traslado = document.getElementById("numero");
+        const estado = document.getElementById("codigo_estado");
+
+        let canvas = document.getElementById("cnv");
+
+        if ( estado.value == 60 ){
+            let formData = new FormData();
+                formData.append("id", traslado.value);
+                formData.append("estado",estado.value);
+                formData.append("img",canvas.toDataURL())
+                
+            fetch(RUTA+"autorizacion/entregaLogistica",{
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                mostrarMensaje("Traslado actualizado","mensaje_correcto");
+            })
+           $.post(RUTA+"autorizacion/entregaLogistica", {
+                "id":traslado.value,
+                "estado":estado.value,
+                "img":canvas.toDataURL()
+           },
+            function (data, text, requestXHR) {
+
+            },
+            "json"
+           );
+        }     
+        return false
+    });
+
+    $("#documento_logistica").keypress(function(e){
+        if (e.which == 13) {
+            let data = new FormData();
+            data.append("documento",$(this).val());
+
+            fetch(RUTA+"autorizacion/consultaNombre",{
+                method:'POST',
+                body:data
+            })
+            .then(response => response.json())
+            .then(data =>{
+                $("#nombre_logistica").val(data.datos[0].paterno+' '+data.datos[0].materno+' '+data.datos[0].nombres)
+            })
+        }
+    });
+
+    $("#documento_usuario").keypress(function(e){
+        if (e.which == 13) {
+            let data = new FormData();
+            data.append("documento",$(this).val());
+
+            fetch(RUTA+"autorizacion/consultaNombre",{
+                method:'POST',
+                body:data
+            })
+            .then(response => response.json())
+            .then(data =>{
+                $("#nombre_usuario").val(data.datos[0].paterno+' '+data.datos[0].materno+' '+data.datos[0].nombres)
+            })
+        }
     });
 })
 

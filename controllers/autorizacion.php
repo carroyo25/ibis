@@ -60,15 +60,16 @@
         }
 
         function entregaLogistica(){
-            echo json_encode($this->model->entregarLogistica($_POST['id'],$_POST['estado']));
+            echo json_encode($this->model->entregarLogistica($_POST['id'],$_POST['estado'],$_POST['dni'],$_POST['correo'],$_POST['nombre']));
         }
+
 
         function recepcionLogistica(){
             echo json_encode($this->model->recepcionLogistica($_POST['id'],$_POST['estado']));
         }
 
         function entregaFinal(){
-            echo json_encode($this->model->entregarUsuario($_POST['id'],$_POST['estado']));
+            echo json_encode($this->model->entregarUsuario($_POST['id'],$_POST['estado'],$_POST['dni'],$_POST['nombre']));
         }
 
         function status(){
@@ -81,6 +82,10 @@
 
         function vistaPreviaGuiaRemisionTraslados(){
             echo json_encode($this->model->generarVistaPreviaGuiaTraslado($_POST['cabecera'],$_POST['detalles'],$_POST['proyecto']));
+        }
+
+        function consultaNombre(){
+            echo json_encode($this->model->buscarDatosTraslado($_POST['documento']));
         }
         
     }

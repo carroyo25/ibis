@@ -3962,6 +3962,16 @@
   margin-bottom: 1rem;
 }
 
+.ventanaPregunta .data_entry label {
+  display: block;
+}
+.ventanaPregunta .data_entry input {
+  width: 100%;
+  border: 1px solid #000;
+  height: 2rem;
+  padding-left: 10px;
+}
+
 .ventanaCambio {
   padding: 15px;
 }

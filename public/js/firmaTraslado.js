@@ -1,7 +1,6 @@
     var imgWidth;
     var imgHeight;
-
-
+    
     function StartSign()
     {   
         var isInstalled = document.documentElement.getAttribute('SigPlusExtLiteExtension-installed');  
@@ -24,12 +23,14 @@
         evt.initEvent("SignStartEvent", true, false);				
         element.dispatchEvent(evt);		
     }
+
     function SignResponse(event)
     {	
         var str = event.target.getAttribute("msgAttribute");
         var obj = JSON.parse(str);
         SetValues(obj, imgWidth, imgHeight);
     }
+
     function SetValues(objResponse, imageWidth, imageHeight)
     {
         var obj = null;
@@ -58,37 +59,14 @@
 
                     img.src = "data:image/png;base64," + obj.imageData;
 
-                    const traslado = document.getElementById("numero");
-                    const estado = document.getElementById("codigo_estado");
-
-                    let canvas = document.getElementById("cnv");
-                    let dataURL = canvas.toDataURL();
-
-                    let formData = new FormData();
-                        formData.append("id", traslado.value);
-                        formData.append("estado",estado.value);
-                        formData.append("img",img.src);
-
-                    
-                    if ( estado.value == 60 ){
-                        fetch(RUTA+"autorizacion/entregaLogistica",{
-                            method: "POST",
-                            body: formData
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            mostrarMensaje("Traslado actualizado","mensaje_correcto");
-                        })
-                    }       
-                    else if (estado.value === 63){
-                        fetch(RUTA+"autorizacion/entregaFinal",{
-                            method: "POST",
-                            body: formData
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            mostrarMensaje("Traslado culminado","mensaje_correcto");
-                        })
+                    if(  $("#codigo_estado").val() == 60 )
+                        $("#entregaLogisticaModal").fadeIn("slow",function(){
+                            $("#documento_logistica").focus;
+                        });
+                    else {
+                        $("#entregaDestinoModal").fadeIn("slow",function(){
+                            $("#documento_usuario").focus;
+                        });
                     }
                 }
             }

@@ -170,7 +170,10 @@
         private function actCabPedAprueba($estado,$pedido,$aprobado){
             try {
                 $sql = $this->db->connect()->prepare("UPDATE tb_pedidocab 
-                                                            SET estadodoc=:est,aprueba=:apr,faprueba=:fec,docPdfAprob=:doc 
+                                                            SET estadodoc=:est,
+                                                                aprueba=:apr,
+                                                                faprueba=:fec,
+                                                                docPdfAprob=:doc 
                                                             WHERE idreg=:id");
                 $sql->execute(['est'=>$estado,
                                 'id'=>$pedido,
