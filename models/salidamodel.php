@@ -36,12 +36,16 @@
                                                     LEFT JOIN tb_proyectos ON alm_despachocab.ncodpry = tb_proyectos.nidreg
                                                     LEFT JOIN tb_parametros ON alm_despachocab.nEstadoDoc = tb_parametros.nidreg
                                                     LEFT JOIN lg_guias ON alm_despachocab.id_regalm = lg_guias.id_regalm
-                                                    LEFT JOIN ( SELECT alm_despachodet.id_regalm, alm_despachodet.nropedido, alm_despachodet.nroorden FROM alm_despachodet GROUP BY alm_despachodet.id_regalm ) AS i ON i.id_regalm = alm_despachocab.id_regalm 
+                                                    LEFT JOIN ( 
+                                                        SELECT alm_despachodet.id_regalm, alm_despachodet.nropedido, alm_despachodet.nroorden 
+                                                            FROM alm_despachodet 
+                                                            GROUP BY alm_despachodet.id_regalm ) 
+                                                    AS i ON i.id_regalm = alm_despachocab.id_regalm 
                                                 WHERE
                                                     alm_despachocab.nEstadoDoc = 62 
                                                     AND alm_despachocab.cper = YEAR (NOW()) 
                                                     AND alm_despachocab.cmes = MONTH (NOW())
-                                                ORDER BY alm_despachocab.ffecdoc DESC ");
+                                                ORDER BY alm_despachocab.ffecdoc DESC");
                 $sql->execute();
                 $rowCount = $sql->rowCount();
 
