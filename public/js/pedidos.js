@@ -247,7 +247,7 @@ $(function(){
             if (result['codigo_tipo'] == '') throw new Error("Elija el tipo de pedido");
             if ($("#tablaDetalles tbody tr").length <= 0) throw new Error("El pedido no tienes items");
             if (checkCantTables($("#tablaDetalles tbody > tr"),5)) throw new Error("No ingreso cantidad en un item");
-            if (checkTypeItemsTables($("#tablaDetalles tbody > tr"),result['codigo_tipo'])) throw new Error("No se puede combinar el tipo de pedidos");
+            //if (checkTypeItemsTables($("#tablaDetalles tbody > tr"),result['codigo_tipo'])) throw new Error("No se puede combinar el tipo de pedidos");
 
             $("#esperar").css("opacity","1").fadeIn();
 

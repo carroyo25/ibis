@@ -182,8 +182,6 @@ h2{
 
             .lista_ul {
                 li{
-                    width: 120px;
-
                     &:hover{
                         border: 1px solid var(--color-boton-desactivado);
                         color: var(--colortexto);

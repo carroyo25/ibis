@@ -373,7 +373,7 @@ $(function(){
             $("#nombre_entidad_destino").val($(this).data('razon'));
             $("#csd").val($(this).data('sunat'));
         }else if(contenedor_padre == "listaAutorizaGuia"){
-            $("#autorizaguia").val($(this).text());
+            $("#autoriza").val($(this).text());
             $("#codigo_autoriza").val(codigo);
         }else if(contenedor_padre == "listaDespacha"){
             $("#codigo_despacha").val(codigo);

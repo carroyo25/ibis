@@ -44,7 +44,7 @@
                                                 WHERE
                                                     alm_despachocab.nEstadoDoc = 62 
                                                     AND alm_despachocab.cper = YEAR (NOW()) 
-                                                    AND alm_despachocab.cmes = MONTH (NOW())
+                                                    AND (alm_despachocab.cmes = MONTH (NOW()) OR alm_despachocab.cmes = MONTH (NOW())-2 )
                                                 ORDER BY alm_despachocab.ffecdoc DESC");
                 $sql->execute();
                 $rowCount = $sql->rowCount();

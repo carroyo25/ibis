@@ -47,7 +47,7 @@
             </div>
         </div>
         <div class="wrap_footer">
-            <h4>RR.HH. Sepcon 2024</h4>
+            <h4>Sepcon 2025</h4>
         </div>
     </div>
     <script src="../js/index.var.js"></script>

@@ -676,6 +676,7 @@ detalles = (flag) =>{
             IDITEM          = $(this).data("iditem"),
             APROBADO        = $(this).data("aprobado"),
             COMPRADO        = 0,
+            OBSERVACIONES   = $(this).find('td').eq(10).children().val(),
             NROPEDIDO       = $(this).find('td').eq(11).text(),
             SEPARADO        = $(this).data("separado"),
             VENCE           = $(this).find('td').eq(7).val(),
@@ -705,6 +706,7 @@ detalles = (flag) =>{
             item['atendido']     = ATENDIDO;
             item['vence']        = VENCE;
             item['condicion']    = CONDICION;
+            item['observaciones']= OBSERVACIONES;
                 
             DETALLES.push(item);
         //}     

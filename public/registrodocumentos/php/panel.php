@@ -33,15 +33,11 @@
         </nav>
         <div class="wrap_orders">
             <h2>Registro de Ordenes</h2>
-            <input type="search" placeholder="buscar N° de Orden">
+            <input type="hidden" name="id_ent" id="id_ent">
+            <input type="search" placeholder="buscar n° de Orden">
             <div class="contenedor_ordenes">
                 <ul id="listaOrdenes" class="lista_ul">
-                    <!-- <?php
-                        $numero_inicial=320;
-
-                        for ($i=0; $i < 13; $i++) { ?>
-                            <li><a href="#"><i class="far fa-file-alt"></i><p>OC-2025-<?php echo $numero_inicial++?></p></a></li>
-                    <?php   }  ?> -->
+                    
                 </ul>
             </div>
             
@@ -50,30 +46,14 @@
             <h2>Adjuntos</h2>
             <div class="contenedor_adjuntos">
                 <ul id="listaAdjuntos" class="lista_ul">
-                    <!-- <?php
-                        $numero_inicial=320;
-
-                        for ($i=0; $i < 3; $i++) { ?>
-                            <li><a href="#"><i class="fas fa-file-pdf"></i><p>FACTURA-2025-<?php echo $numero_inicial++?></p></a></li>
-                    <?php   } ?> -->
+                    
                 </ul>
             </div>
         </div>
         <div class="wrap_status">
             <h2>Estado del Documento</h2>
             <div class="contenedor_estado">
-                <p>Estado Documento</p>
-                <p>:</p>
-                <p class="enviado">Enviado</p>
-                <p>Fecha Envio</p>
-                <p>:</p>
-                <p>04/03/2025</p>
-                <p>Fecha Recepcion</p>
-                <p>:</p>
-                <p>04/03/2025</p>
-                <p>Fecha Ingreso</p>
-                <p>:</p>
-                <p>04/03/2025</p>
+               
             </div>
         </div>
         <div class="wrap_footer">

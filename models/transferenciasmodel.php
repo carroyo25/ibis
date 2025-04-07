@@ -178,7 +178,7 @@
                                         <td></td>
                                         <td></td>
                                         <td></td>
-                                        <td><textarea readonly></textarea>'.$rs['cobserva'].'</textarea></td>
+                                        <td><textarea readonly>'.$rs['cobserva'].'</textarea></td>
                                         <td class="textoCentro">'.$rs['pedido'].'</td>
                                     </tr>';
                     }
@@ -820,7 +820,7 @@
                          $pdf->Row(array(str_pad($item++,3,"0",STR_PAD_LEFT),
                                         $cantidad,
                                         $datos[$rc]->unidad,
-                                        utf8_decode($datos[$rc]->codigo .' '. $datos[$rc]->descripcion  .' P : '.$datos[$rc]->nropedido)));
+                                        utf8_decode($datos[$rc]->codigo .' '. $datos[$rc]->descripcion  .' P : '.$datos[$rc]->nropedido.' '.$datos[$rc]->observaciones)));
                     }
                    
                     $lc++;
@@ -914,7 +914,7 @@
                         $pdf->Row(array(str_pad($i,3,"0",STR_PAD_LEFT),
                                     $datos[$rc]->cantidad,
                                     $datos[$rc]->unidad,
-                                    utf8_decode($datos[$rc]->codigo .' '. $datos[$rc]->descripcion  .' P : '.$datos[$rc]->nropedido)));
+                                    utf8_decode($datos[$rc]->codigo .' '. $datos[$rc]->descripcion  .' P : '.$datos[$rc]->nropedido.' '.$datos[$rc]->observaciones)));
                         $lc++;
                         $rc++;
 

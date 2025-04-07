@@ -6,6 +6,8 @@
     if(isset($_POST['funcion'])){
         if($_POST['funcion'] == "login"){
             echo json_encode(login($pdo, $_POST));
+        }else if($_POST['funcion'] == "listarOrdenesEntidad"){
+            echo json_encode(listarOrdenesEntidad($pdo, $_POST));
         }
     }
 
@@ -51,5 +53,33 @@
         }catch(PDOException $e){
             return ['status' => 'error', 'message' => $e->getMessage()];
         }
-    } 
+    }
+
+    function listarOrdenesEntidad($pdo, $datos){
+        try {
+            $sql = "SELECT
+                        lg_ordencab.cnumero,
+                        lg_ordencab.cper,
+                        lg_ordencab.cmes,
+                        lg_ordencab.id_centi,
+                        lg_ordencab.ntipmov,
+                        lg_ordencab.nEstadoDoc,
+                        lg_ordencab.id_regmov
+                    FROM
+                        lg_ordencab 
+                    WHERE
+                        lg_ordencab.id_centi = :enti 
+                        AND lg_ordencab.nEstadoDoc = 60";
+            
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([':enti' => $datos['id']]);
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $count = $stmt->rowCount();
+
+            return $result;
+
+        } catch(PDOException $e){
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
 ?>

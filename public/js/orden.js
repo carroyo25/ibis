@@ -164,7 +164,7 @@ $(function(){
         idorden = $(this).attr("href");
         fila =  $(this).parent().parent();
 
-        if (accion == "descarga"){
+        if (accion == "descargar"){
              try {
                 let procura     = $(this).closest('tr').attr("data-logistica"),
                     operaciones = $(this).closest('tr').attr("data-operaciones"),
