@@ -2694,6 +2694,7 @@
                                         lg_ordencab.cReferencia,
                                         FORMAT( lg_ordencab.ntotal, 2 ) AS ctotal,
                                         tb_pedidocab.nivelAten,
+                                        tb_pedidocab.docPdfAprob,
                                         lg_ordencab.nNivAten AS autorizado,
                                         lg_ordencab.nfirmaLog,
                                         lg_ordencab.nfirmaFin,
@@ -2731,23 +2732,23 @@
                     }
                 }
 
-                $detalles = $this->consultarDetallesOrden($id);
-                $comentarios = $this->consultarComentarios($id);
-                $total = $this->calculaTotalOrden($id);
-                $ncomentarios = $this->consultarTotalComentarios($id);
-                $adjuntos = $this->verAdjuntosOrden($id);
-                $adicionales = $this->consultarAdicionales($id);
-                $nro_adjuntos = $this->contarAdjuntos($id,"ORD");
+                //$detalles       = $this->consultarDetallesOrden($id);
+                //$comentarios    = $this->consultarComentarios($id);
+                //$total          = $this->calculaTotalOrden($id);
+                //$ncomentarios   = $this->consultarTotalComentarios($id);
+                //$adjuntos       = $this->verAdjuntosOrden($id);
+                //$adicionales    = $this->consultarAdicionales($id);
+                //$nro_adjuntos   = $this->contarAdjuntos($id,"ORD");
 
-                return array("cabecera"=>$docData,
-                            "detalles"=>$detalles,
-                            "comentarios"=>$comentarios,
-                            "total"=>$total,
-                            "bocadillo"=>$ncomentarios,
-                            "adjuntos"=>$adjuntos,
-                            "adicionales"=>$adicionales,
-                            "total_adicionales"=>$this->totalAdicionales($id),
-                            "total_adjuntos"=>$nro_adjuntos);
+                return array("cabecera"         =>$docData,
+                            "detalles"          =>$this->consultarDetallesOrden($id),
+                            "comentarios"       =>$this->consultarComentarios($id),
+                            "total"             =>$this->calculaTotalOrden($id),
+                            "bocadillo"         =>$this->consultarTotalComentarios($id),
+                            "adjuntos"          =>$this->verAdjuntosOrden($id),
+                            "adicionales"       =>$this->consultarAdicionales($id),
+                            "total_adicionales" =>$this->totalAdicionales($id),
+                            "total_adjuntos"    =>$this->contarAdjuntos($id,"ORD"));
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
@@ -3031,7 +3032,6 @@
                 return false;
             }
         }
-
 
         private function consultarAdicionales($id){
             try {
@@ -3927,7 +3927,7 @@
         }
 
          //genera la vista de la orden
-         public function generarContrato($cabecera,$condicion,$detalles,$condiciones){
+        public function generarContrato($cabecera,$condicion,$detalles,$condiciones){
             //genera vista previa
             require_once("public/formatos/contratos.php");
 
