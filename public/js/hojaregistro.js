@@ -151,9 +151,9 @@ bancos.onclick = (e) => {
                     <option value="-1">Seleccione una opcion</option>
                     <option value="282">AHORROS</option>
                     <option value="283">CUENTA CORRIENTE</option>
-                    <option value="284">INTERBANCARIA</option>
                   </select>
                 </td>
+                <td><input type="text"></td>
                 <td><input type="text"></td>
                 <td><a href="#" data-grabado="0" data-idx=""><i class="fas fa-trash-alt lnkTrash"></i></a></td>
             </tr>`;
@@ -284,11 +284,12 @@ const detalleBancos = () => {
     for (let i = 0; i < nreg; i++) {
         let dato = {}
 
-        dato['grabado']   = fila[i].dataset.grabado;
-        dato['idbanco']   = fila[i].cells[0].children[0].value;
-        dato['idmoneda']  = fila[i].cells[1].children[0].value;
-        dato['idcuenta']  = fila[i].cells[2].children[0].value;
-        dato['nrocuenta'] = fila[i].cells[3].children[0].value;
+        dato['grabado']       = fila[i].dataset.grabado;
+        dato['idbanco']       = fila[i].cells[0].children[0].value;
+        dato['idmoneda']      = fila[i].cells[1].children[0].value;
+        dato['idcuenta']      = fila[i].cells[2].children[0].value;
+        dato['nrocuenta']     = fila[i].cells[3].children[0].value;
+        dato['nroctacci']     = fila[i].cells[4].children[0].value;
 
         DATOS.push(dato);
     }

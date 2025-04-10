@@ -182,6 +182,7 @@
                     cm_entidadbco.nitem,
                     cm_entidadbco.ncodbco,
                     cm_entidadbco.cnrocta,
+                    cm_entidadbco.cnrocci,
                     cm_entidadbco.cmoneda,
                     cm_entidadbco.ctipcta,
                     bancos.cdescripcion AS banco,

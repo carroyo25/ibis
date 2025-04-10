@@ -76,16 +76,6 @@
                         <?php } ?>
                     </select>
 
-                    <label for="forma_pago">Forma de Pago</label>
-                    <select name="forma_pago" id="forma_pago">
-                        <?php
-                            foreach ($pagos as $pago) { 
-                                $selected = $pago['nidreg'] == $proveedor[0]['ncondpag'] ? 'selected':'';
-                            ?>
-                                <option value="<?php echo $pago['nidreg'] ?>" <?php echo $selected ?>><?php echo $pago['cdescripcion']?></option>
-                        <?php } ?>
-                    </select>
-                    
                     <label for="actividad_economica">Actividad Económica</label>
                     <select name="actividad_economica" id="actividad_economica">
                         <?php
@@ -120,7 +110,7 @@
                     <label for="correo_contacto">Correo Electrónico</label>
                     <input type="text" name="correo_contacto" id="correo_contacto" class="requerido" value="<?php echo isset($detalles['corcontacto']) ? $detalles['corcontacto'] :"" ?>">
                 </div>
-                <p class="detalle">Contacto Personal Detracción</p>
+                <p class="detalle">Contacto Personal Retención</p>
                 <div class="seccion_data">
                     <label for="contacto_detraccion">Nombres</label>
                     <input type="text" name="contacto_detraccion" id="contacto_detraccion" value="<?php echo isset($detalles['nomperdetra']) ? $detalles['nomperdetra'] :""?>">
@@ -142,7 +132,8 @@
                             <th>Nombre Entidad Financieria</th>
                             <th>Moneda</th>
                             <th>Tipo de cuenta</th>
-                            <th>N° de cuenta</th>
+                            <th>N° CTA</th>
+                            <th>N° CCI</th>
                             <th>...</th>
                         </tr>
                     </thead>
@@ -153,6 +144,7 @@
                                 <td><input type="text" value="<?php echo $banco['moneda']?>"></td>
                                 <td><input type="text" value="<?php echo $banco['cuenta']?>"></td>
                                 <td><input type="text" value="<?php echo $banco['cnrocta']?>"></td>
+                                <td><input type="text" value="<?php echo $banco['cnrocci']?>"></td>
                                 <td><a href="<?php echo $banco['nitem']?>" data-grabado="1" data-idx=""><i class="fas fa-trash-alt lnkTrash"></i></a></td>
                             </tr>
                         <?php }?>

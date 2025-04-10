@@ -62,15 +62,6 @@
                                 <option value="<?php echo $pais['ccodpais'] ?>"><?php echo $pais['cdespais']?></option>
                         <?php } ?>
                     </select>
-
-                    <label for="forma_pago">Forma de Pago</label>
-                    <select name="forma_pago" id="forma_pago">
-                        <?php
-                            foreach ($pagos as $pago) { ?>
-                                <option value="<?php echo $pago['nidreg'] ?>"><?php echo $pago['cdescripcion']?></option>
-                        <?php } ?>
-                    </select>
-                    
                     <label for="actividad_economica">Actividad Económica</label>
                     <select name="actividad_economica" id="actividad_economica">
                         <?php
@@ -106,7 +97,7 @@
                     <label for="correo_contacto">Correo Electrónico</label>
                     <input type="text" name="correo_contacto" id="correo_contacto" class="requerido correo">
                 </div>
-                <p class="detalle">Contacto Personal Detracción</p>
+                <p class="detalle">Contacto Personal Retención</p>
                 <div class="seccion_data">
                     <label for="contacto_detraccion">Nombres</label>
                     <input type="text" name="contacto_detraccion" id="contacto_detraccion">
@@ -129,6 +120,7 @@
                             <th>Moneda</th>
                             <th>Tipo de cuenta</th>
                             <th>N° de cuenta</th>
+                            <th>N° CCI</th>
                             <th>...</th>
                         </tr>
                     </thead>

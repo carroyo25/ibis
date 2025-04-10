@@ -35,6 +35,7 @@
 
         return array("id"=>$id,"registros"=>$rowCount);
     }
+
     function verificar($pdo,$datos){
         try {
             $sql = "SELECT cm_entidad.cnumdoc FROM cm_entidad WHERE cm_entidad.cnumdoc = :ruc";
@@ -98,7 +99,6 @@
                                         cpassword=:pass,
                                         nflgactivo=:activo,
                                         nagenret=:retencion,
-                                        ncondpag=:forma_pago,
                                         nrubro=:actividad,
                                         nflgactualizado = 1";
             $stmt = $pdo->prepare($sql);
@@ -114,7 +114,6 @@
                 ':pass' => $hashClave,
                 ':activo' => 7,
                 ':retencion' => $retencion,
-                ':forma_pago' => $datos['forma_pago'],
                 ':actividad' => $datos['actividad_economica']
             ]);
 
@@ -173,6 +172,7 @@
                                     SET id_centi = :idcenti, 
                                         ncodbco  = :codigo_banco,
                                         cnrocta  = :nro_cuenta,
+                                        cnrocci  = :nro_cci,
                                         ntipcta  = :tipo_cuenta,
                                         cmoneda  = :moneda";
 
@@ -184,6 +184,7 @@
                                 ':idcenti'      =>$lastId,
                                 ':codigo_banco' =>$banco['idbanco'],
                                 ':nro_cuenta'   =>$banco['nrocuenta'],
+                                ':nro_cci'      =>$banco['nroctacci'],
                                 ':tipo_cuenta'  =>$banco['idcuenta'],
                                 ':moneda'       =>$banco['idmoneda']
                             ]);
