@@ -222,7 +222,7 @@ h2{
                 padding: 1rem;
                 width: 65%;
 
-                .atach_list{
+                .atach_list_empty{
                     display: flex;
                     justify-content: center;
                     flex-direction: column;

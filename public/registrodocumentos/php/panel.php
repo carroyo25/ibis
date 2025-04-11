@@ -49,9 +49,12 @@
             <h2>Adjuntos</h2>
             <div class="body_atachs">
                 <div class="contenedor_adjuntos">
-                    <div class="atach_list">
+                    <div class="atach_list_empty">
                         <h1 class="empty_documents">No se registraron documentos</h1>
                         <p>Seleccione el Nro de Orden y presione el icono de subir Doumentos o Arrastre los archivos Aqui</p>
+                    </div>
+                    <div class="atach_list_documents oculto">
+                        <h1>Lista de documentos</h1>
                     </div>
                 </div>
                 <div class="mensaje_adjuntos">

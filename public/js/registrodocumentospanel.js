@@ -9,6 +9,8 @@ const id = $.getElementById('id_ent');
 const ordenes = $.querySelector("#listaOrdenes");
 
 const inputUpload = $.getElementById("uploadAtach");
+const listaAdjuntoVacia = $.querySelector(".atach_list_empty");
+const listaAdjuntos = $.querySelector(".atach_list_documents");
 
 let colorsIcons = ['gray','brown','blueviolet','cornflowerblue','#cb2025'],
     indexOrden = 0,
@@ -119,17 +121,30 @@ $.addEventListener('change',(e) => {
     if (e.target.matches('#uploadAtach')){
         e.preventDefault();
 
+        /*const atach_fragment = $.createDocumentFragment();
+
+        listaAdjunto.style.flexDirection = "row";
+
         let fp = e.target.files,
             lg = fp.length;
 
         if ( lg > 0 ) {
+            listaAdjunto.innerHTML = "";
+
             for (let i = 0; i < lg; i++){
                 let fileName = fp[i].name;
-                console.log(fileName);
-            }
-        }
 
-        //console.log(lg);
+                const file = document.createElement("a");
+                file.dataset.indexOrden = indexOrden;
+                file.innerHTML = `<p><i class="far fa-file"></i></p><span>${fileName}</span>`;
+
+                atach_fragment.appendChild(file);
+            }
+
+            listaAdjunto.appendChild(atach_fragment);
+        }*/
+
+        return false;
     }
 })
 
