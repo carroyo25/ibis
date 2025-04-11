@@ -6,6 +6,7 @@
     <title>Registro de Documentos</title>
     <link rel="stylesheet" href="../../css/registrodocumentospanel.css?<?php echo $version = rand(0, 9999); ?>">
     <link rel="stylesheet" href="../../css/all.css">
+    <link rel="stylesheet" href="../../css/notify.css">
 </head>
 <body>
     <div class="modal oculto" id="loader">
@@ -14,6 +15,9 @@
         </div>
     </div>
     <div class="wrap">
+        <form action="#" id="fileAtachs" enctype='multipart/form-data'>
+            <input type="file" name="uploadAtach" id="uploadAtach" multiple class="oculto">
+        </form>
         <div class="wrap_header">
             <div class="logo"></div>
             <div class="entidad_datos">
@@ -23,9 +27,9 @@
         </div>
         <nav class="wrap_nav">
             <div class="acciones_archivo">
-                <a href="#" class="botones__click_accion"><i class="fas fa-upload"></i> <p>Subir Documentos</p></a>
-                <a href="#" class="botones__click_accion"><i class="fas fa-download"></i><p>Descargar Archivos</p></a>
-                <a href="#" class="botones__click_accion"><i class="fas fa-mail-bulk"></i><p>Enviar Archivos</p></a>
+                <a href="click_upload" class="botones__click_accion"><i class="fas fa-upload"></i> <p>Subir Documentos</p></a>
+                <a href="click_download" class="botones__click_accion"><i class="fas fa-download"></i><p>Descargar Archivos</p></a>
+                <a href="click_send" class="botones__click_accion"><i class="fas fa-mail-bulk"></i><p>Enviar Archivos</p></a>
             </div>
             <div class="acciones_sistema">
                 <a href="#" class="botones__click_accion"><i class="fas fa-sign-out-alt"></i><p>Cerrar Session</p></a>
@@ -40,14 +44,31 @@
                     
                 </ul>
             </div>
-            
         </div>
         <div class="wrap_atachs">
             <h2>Adjuntos</h2>
-            <div class="contenedor_adjuntos">
-                <ul id="listaAdjuntos" class="lista_ul">
-                    
-                </ul>
+            <div class="body_atachs">
+                <div class="contenedor_adjuntos">
+                    <div class="atach_list">
+                        <h1 class="empty_documents">No se registraron documentos</h1>
+                        <p>Seleccione el Nro de Orden y presione el icono de subir Doumentos o Arrastre los archivos Aqui</p>
+                    </div>
+                </div>
+                <div class="mensaje_adjuntos">
+                    <h3>Observaciones para la presentacion de la documentacion:</h3>
+                    <h4>Ordenes de compra se deberán presentar, los siguientes documentos:</h4>
+                    <p><i class="fas fa-pen-alt"></i> <span>Factura</span></p>
+                    <p><i class="fas fa-pen-alt"></i> <span>Guia de Remisión</span></p>
+                    <p><i class="fas fa-pen-alt"></i> <span>Nota de Ingreso</span></p>
+
+                    <h4>Ordenes de Servicio se deberán presentar,los siguientes documentos:</h4>
+                    <p><i class="fas fa-pen-alt"></i>  <span>Factura</span></p>
+                    <p><i class="fas fa-pen-alt"></i>  <span>Guia de Remisión</span></p>
+                    <p><i class="fas fa-pen-alt"></i>  <span>Nota de Ingreso</span></p>
+                    <p><i class="fas fa-pen-alt"></i>  <span>Valorización</span></p>
+
+                    <h4 class="parrafo_importante">Los documentos seran ingresados par su aprobacion de pago los días <strong>MARTES y JUEVES</strong></h4>
+                </div>
             </div>
         </div>
         <div class="wrap_status">

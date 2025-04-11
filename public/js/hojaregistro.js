@@ -59,7 +59,7 @@ $.addEventListener("click",(e)=>{
             .then(response => response.json())
             .then(data => {
                 limpiarFormato();
-                window.location.href = "http://localhost/ibis/public/hojaregistro";
+                //window.location.href = "http://localhost/ibis/public/hojaregistro";
             }),'',undefined,'Procesando'
           )
         .catch(error => {

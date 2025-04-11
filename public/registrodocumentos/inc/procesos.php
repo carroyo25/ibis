@@ -58,18 +58,21 @@
     function listarOrdenesEntidad($pdo, $datos){
         try {
             $sql = "SELECT
-                        lg_ordencab.cnumero,
+                        LPAD( lg_ordencab.cnumero,7, 0 ) AS cnumero,
                         lg_ordencab.cper,
                         lg_ordencab.cmes,
                         lg_ordencab.id_centi,
                         lg_ordencab.ntipmov,
                         lg_ordencab.nEstadoDoc,
-                        lg_ordencab.id_regmov
+                        lg_ordencab.id_regmov,
+                        lg_ordencab.nEstadoReg
                     FROM
                         lg_ordencab 
                     WHERE
                         lg_ordencab.id_centi = :enti 
-                        AND lg_ordencab.nEstadoDoc = 60";
+                        AND lg_ordencab.nEstadoDoc = 60
+                        AND lg_ordencab.cper = YEAR(NOW())
+                    ORDER BY lg_ordencab.cper DESC";
             
             $stmt = $pdo->prepare($sql);
             $stmt->execute([':enti' => $datos['id']]);

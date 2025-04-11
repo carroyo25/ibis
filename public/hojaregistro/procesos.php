@@ -169,12 +169,13 @@
 
                     //bancos del proveedor
                     $sqlBanco = "INSERT INTO cm_entidadbco 
-                                    SET id_centi = :idcenti, 
-                                        ncodbco  = :codigo_banco,
-                                        cnrocta  = :nro_cuenta,
-                                        cnrocci  = :nro_cci,
-                                        ntipcta  = :tipo_cuenta,
-                                        cmoneda  = :moneda";
+                                    SET id_centi  = :idcenti, 
+                                        ncodbco   = :codigo_banco,
+                                        cnrocta   = :nro_cuenta,
+                                        cnrocci   = :nro_cci,
+                                        ntipcta   = :tipo_cuenta,
+                                        cmoneda   = :moneda,
+                                        nflgprove = 1";
 
                     if (count($bancos) > 0 ){
                         foreach($bancos as $banco){
@@ -320,7 +321,6 @@
                         cpassword=:pass,
                         nflgactivo=:activo,
                         nagenret=:retencion,
-                        ncondpag=:forma_pago,
                         nrubro=:actividad,
                         nflgactualizado = 1
                     WHERE cnumdoc=:ruc";
@@ -339,7 +339,6 @@
                 ':pass' => $hashClave,
                 ':activo' => 7,
                 ':retencion' => $retencion,
-                ':forma_pago' => $datos['forma_pago'],
                 ':actividad' => $datos['actividad_economica']
             ]);
 
@@ -396,8 +395,10 @@
                                     SET id_centi = :idcenti, 
                                         ncodbco  = :codigo_banco,
                                         cnrocta  = :nro_cuenta,
+                                        cnrocci  = :nroctacci,
                                         ntipcta  = :tipo_cuenta,
-                                        cmoneda  = :moneda";
+                                        cmoneda  = :moneda,
+                                        nflgprove = 1";
 
                     if (count($bancos) > 0 ){
                         foreach($bancos as $banco){
@@ -407,6 +408,7 @@
                                 ':idcenti'      =>$id,
                                 ':codigo_banco' =>$banco['idbanco'],
                                 ':nro_cuenta'   =>$banco['nrocuenta'],
+                                ':nroctacci'    =>$banco['nroctacci'],
                                 ':tipo_cuenta'  =>$banco['idcuenta'],
                                 ':moneda'       =>$banco['idmoneda']
                             ]);
@@ -444,7 +446,7 @@
                     ]);
 
                     $slqContacto = "INSERT INTO cm_entidadcon
-                                    SET cnombres     = :nombres,
+                                    SET cnombres    = :nombres,
                                         cemail      = :correo,
                                         ctelefono1  = :telefono,
                                         nflgactivo  = :activo
