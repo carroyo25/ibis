@@ -221,14 +221,60 @@ h2{
             .contenedor_adjuntos{
                 padding: 1rem;
                 width: 65%;
+                position: relative;
+                gap: 10px;
+                margin-right: 20px;
+
+                .atach_list_documents{
+                    height: 100%;
+                    border: 1px dotted #005B86;
+                    position: absolute;
+                    width: 100%;
+                    background: #fff;
+                    z-index: 1;
+                    overflow: auto;
+
+                    ul {
+                        display: flex;
+                        flex-wrap: wrap;
+                        gap: rem;
+                        padding: 0.5rem;
+
+                        li {
+                            text-align: center;
+                            max-width: 20%;
+                            padding: .5rem;
+                            
+                            &:hover{
+                                border: 1px solid var(--color-boton-desactivado);
+                                color: var(--colortexto);
+                                border-radius: 8px;
+                            }
+
+                            i {
+                                font-size: 3rem;
+                            }
+
+                            span {
+                                font-size: clamp(.5rem, 1.5vw, .7rem);
+                                margin-top: 10px;
+                            }
+
+                        }
+                    }
+                }
 
                 .atach_list_empty{
                     display: flex;
                     justify-content: center;
                     flex-direction: column;
                     align-items: center;
+                    width: 100%;
                     height: 100%;
                     border: 1px dotted #005B86;
+                    position: absolute;
+                    background: #fff;
+                    z-index: 2;
 
                     h1{
                         font-size: 3rem;
@@ -275,19 +321,49 @@ h2{
     .wrap_status{
         grid-area: status;
         margin-right: 1rem;
+        height: 100%;
         
-        .contenedor_estado{
-            padding: 1rem;
-            display: grid;
-            grid-template-columns: 20% 2% 30%;
-            grid-auto-flow: auto;
-            font-size: 1.5rem;
-            row-gap: 1.5rem;
-            
-            p{
+        .body_status{
+            display: flex;
+            gap: 1rem;
+            width: 100%;
+            justify-content:space-around;
+
+            .tabla_estado{
+                width: 100%;
                 padding: 0.5rem;
-                border-radius: 8px;
-            }
+
+
+                table {
+                    table-layout: fixed;
+                    width: 100%;
+                    border: 1px solid var(--color-barra);
+                    border-collapse: collapse;
+
+                    caption {
+                        background: var(--color-barra);
+                        height: 2rem;
+                        color: #fff;
+                        margin-top: 5px;
+                    }
+
+                    tr,th,td{
+                        border: 1px dotted var(--color-barra);
+                        line-height: 2rem;
+                    }
+
+                    td {
+                        padding-left: 10px;
+
+                        div{
+                            width:50%; 
+                            display:block; 
+                            color:transparent;
+                            margin: 0 auto;
+                        }
+                    }
+                }
+            }            
         }
     }
 

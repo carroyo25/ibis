@@ -53,8 +53,10 @@
                         <h1 class="empty_documents">No se registraron documentos</h1>
                         <p>Seleccione el Nro de Orden y presione el icono de subir Doumentos o Arrastre los archivos Aqui</p>
                     </div>
-                    <div class="atach_list_documents oculto">
-                        <h1>Lista de documentos</h1>
+                    <div class="atach_list_documents">
+                        <ul id="list_files_atachs">
+
+                        </ul>
                     </div>
                 </div>
                 <div class="mensaje_adjuntos">
@@ -75,9 +77,91 @@
             </div>
         </div>
         <div class="wrap_status">
-            <h2>Estado del Documento</h2>
-            <div class="contenedor_estado">
-               
+            <h2>Estados del Documento</h2>
+            <div class="body_status">
+               <div class="legajo_estado tabla_estado">
+                    <table>
+                        <caption>Estado Presentacion</caption>
+                        <thead>
+                            <tr>
+                                <th>Descripcion</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Archivos Presentados</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Fecha Presentación</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Hora Presentación</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Fecha Revision</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Estado Revision</td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+               </div>
+               <div class="archivo_estado tabla_estado">
+                    <table>
+                        <caption>Estado Archivos</caption>
+                        <thead>
+                            <tr>
+                                <th>Descripcion</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Nombre Archivo</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Tipo Archivo</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Fecha Presentación</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Hora Presentación</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Fecha Revision</td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+               </div>
+               <div class="leyenda_estado tabla_estado">
+                    <table>
+                        <caption>Leyenda:</caption>
+                        <thead>
+                            <tr>
+                                <th>Estado</th>
+                                <th>Descripcion</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><div style="background:gray;">presentado</div></td>
+                                <td>presentado</td>
+                            </tr>
+                        </tbody>
+                    </table>
+               </div>
             </div>
         </div>
         <div class="wrap_footer">

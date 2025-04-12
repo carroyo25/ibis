@@ -10,7 +10,8 @@ const ordenes = $.querySelector("#listaOrdenes");
 
 const inputUpload = $.getElementById("uploadAtach");
 const listaAdjuntoVacia = $.querySelector(".atach_list_empty");
-const listaAdjuntos = $.querySelector(".atach_list_documents");
+const contenedorAdjuntos = $.querySelector(".atach_list_documents");
+const listaAdjuntos = $.getElementById("list_files_atachs");
 
 let colorsIcons = ['gray','brown','blueviolet','cornflowerblue','#cb2025'],
     indexOrden = 0,
@@ -121,28 +122,33 @@ $.addEventListener('change',(e) => {
     if (e.target.matches('#uploadAtach')){
         e.preventDefault();
 
-        /*const atach_fragment = $.createDocumentFragment();
-
-        listaAdjunto.style.flexDirection = "row";
+        const atach_fragment = $.createDocumentFragment();
 
         let fp = e.target.files,
             lg = fp.length;
 
         if ( lg > 0 ) {
-            listaAdjunto.innerHTML = "";
+            listaAdjuntoVacia.style.zIndex = "1";
+            contenedorAdjuntos.style.zIndex = "2";
+            listaAdjuntos.innerHTML = "";
 
             for (let i = 0; i < lg; i++){
                 let fileName = fp[i].name;
 
-                const file = document.createElement("a");
-                file.dataset.indexOrden = indexOrden;
-                file.innerHTML = `<p><i class="far fa-file"></i></p><span>${fileName}</span>`;
+                const li = $.createElement("li");
+                li.classList.add("atach_class");
 
-                atach_fragment.appendChild(file);
+                const link = $.createElement("a");
+                link.href = `#${indexOrden}-${i}`; // Using # for href if it's not a real URL
+                link.innerHTML = `<p><i class="fas fa-file-pdf" style="color: #a61111;"></i></p><span>${fileName}</span>`;
+                
+                li.appendChild(link);
+
+                atach_fragment.appendChild(li);
             }
 
-            listaAdjunto.appendChild(atach_fragment);
-        }*/
+            listaAdjuntos.appendChild(atach_fragment);
+        }
 
         return false;
     }
