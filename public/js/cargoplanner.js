@@ -921,20 +921,24 @@ detalles = () =>{
             SEMAFORO            = $(this).find('td').eq(33).text(),
             DESPACHO            = $(this).find('td').eq(34).text(),
             NUMERO_GUIA         = $(this).find('td').eq(35).text(),
-            GUIA_TRANSFER       = $(this).find('td').eq(36).text(),
-            FECHA_TRASLADO      = $(this).find('td').eq(37).text(),
+            GUIA_SUNAT          = $(this).find('td').eq(36).text(),
+            FECHA_ENVIO         = $(this).find('td').eq(37).text(),
+
+
+            GUIA_TRANSFER       = $(this).find('td').eq(38).text(),
+            FECHA_TRASLADO      = $(this).find('td').eq(39).text(),
             
-            REGISTRO_ALMACEN    = $(this).find('td').eq(38).text(),
-            FECHA_REGISTRO_OBRA = $(this).find('td').eq(39).text(),
-            CANTIDA_OBRA        = $(this).find('td').eq(40).text(),
-            ESTADO_PEDIDO       = $(this).find('td').eq(41).text(),
-            ESTADO_ITEM         = $(this).find('td').eq(42).text(),
-            NUMERO_PARTE        = $(this).find('td').eq(43).text(),
-            CODIGO_ACTIVO       = $(this).find('td').eq(44).text(),
-            OPERADOR            = $(this).find('td').eq(45).text(),
-            TRANSPORTE          = $(this).find('td').eq(46).text(),
-            OBSERVACIONES       = $(this).find('td').eq(47).text(),
-            SOLICITANTE         = $(this).find('td').eq(48).text();
+            REGISTRO_ALMACEN    = $(this).find('td').eq(40).text(),
+            FECHA_REGISTRO_OBRA = $(this).find('td').eq(41).text(),
+            CANTIDA_OBRA        = $(this).find('td').eq(42).text(),
+            ESTADO_PEDIDO       = $(this).find('td').eq(43).text(),
+            ESTADO_ITEM         = $(this).find('td').eq(44).text(),
+            NUMERO_PARTE        = $(this).find('td').eq(45).text(),
+            CODIGO_ACTIVO       = $(this).find('td').eq(46).text(),
+            OPERADOR            = $(this).find('td').eq(47).text(),
+            TRANSPORTE          = $(this).find('td').eq(48).text(),
+            OBSERVACIONES       = $(this).find('td').eq(49).text(),
+            SOLICITANTE         = $(this).find('td').eq(50).text();
 
         item = {};
 
@@ -976,8 +980,12 @@ detalles = () =>{
         item['dias_entrega']        = DIAS_ENTREGA;
         item['dias_atraso']         = DIAS_ATRASO;
         item['semaforo']            = SEMAFORO;
+       
         item['despacho']            = DESPACHO;
         item['numero_guia']         = NUMERO_GUIA;
+        item['guia_sunat']          = GUIA_SUNAT;
+        item['fecha_envio']         = FECHA_ENVIO;
+
 
         item['registro_almacen']    = REGISTRO_ALMACEN;
         item['fecha_registro_obra'] = FECHA_REGISTRO_OBRA;

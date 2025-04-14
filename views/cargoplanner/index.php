@@ -363,6 +363,8 @@
                     <th>Semaforo</th>
                     <th style="background:#25AFF3; color:#000">Cantidad</br>Enviada</th>
                     <th style="background:#25AFF3; color:#000" data-idcol="31" class="datafiltro">Nro. Guia</th>
+                    <th style="background:#25AFF3; color:#000" data-idcol="32" class="datafiltro">Nro. Guia Sunat</th>
+                    <th style="background:#25AFF3; color:#000" data-idcol="33" class="datafiltro">Fecha Envio</th>
                     <th style="background:#127BDD; color:#000">N°. Nota</br>Transferencia</th>
                     <th style="background:#127BDD; color:#000">Fecha</br>Traslado</th>
                     <th style="background:#DA500B; color:#000">Registro</br>Almacen</th>
@@ -370,13 +372,13 @@
                     <th style="background:#DA500B; color:#000">Cantidad</br>Recibida</br>Obra</th>
                     <th>Estado</br>Pedido</th>
                     <th>Estado</br>Item</th>
-                    <th data-idcol="36" class="datafiltro">N°</br>Parte</th>
+                    <th data-idcol="41" class="datafiltro">N°</br>Parte</th>
                     <th width="150px" data-idcol="37" class="datafiltro">Codigo</br>Activo</th>
                     <th>Operador</br>Logístico</th>
                     <th>Tipo</br>Transporte</th>
-                    <th data-idcol="40" class="datafiltro">Observaciones/Concepto</th>
-                    <th data-idcol="41" class="datafiltro">Solicitante</th>
-                    <th data-idcol="41" class="datafiltro">Pedido Asignado</th>
+                    <th data-idcol="42" class="datafiltro">Observaciones/Concepto</th>
+                    <th data-idcol="43" class="datafiltro">Solicitante</th>
+                    <th data-idcol="44" class="datafiltro">Pedido Asignado</th>
                 </tr>
             </thead>
             <tbody>
