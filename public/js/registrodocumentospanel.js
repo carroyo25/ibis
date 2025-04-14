@@ -88,6 +88,8 @@ const listarOrdenes = async (id) =>{
 listarOrdenes(id)
 
 $.addEventListener('click',(e)=>{
+    //console.log(e.target);
+
    if (e.target.matches('.orden_class *')){
         e.preventDefault();
 
@@ -112,7 +114,11 @@ $.addEventListener('click',(e)=>{
                 notifier.alert(error.message);
             }
         }
-   
+        return false;
+   }else if(e.target.matches('.atach_file')){
+        e.preventDefault();
+
+        $.getElementById("nombre_archivo").innerHTML = e.target.lastChild.textContent;
 
         return false;
    }
@@ -139,6 +145,8 @@ $.addEventListener('change',(e) => {
                 li.classList.add("atach_class");
 
                 const link = $.createElement("a");
+                link.classList.add("atach_file");
+                link.dataset.file_estatus = 0;
                 link.href = `#${indexOrden}-${i}`; // Using # for href if it's not a real URL
                 link.innerHTML = `<p><i class="fas fa-file-pdf" style="color: #a61111;"></i></p><span>${fileName}</span>`;
                 
@@ -148,12 +156,16 @@ $.addEventListener('change',(e) => {
             }
 
             listaAdjuntos.appendChild(atach_fragment);
+            $.getElementById("archivos_presentados").innerHTML = lg;
+            $.getElementById("fecha_presentacion_legajo").innerHTML = fechaActual()[0];
+            $.getElementById("hora_presentacion_legajo").innerHTML = fechaActual()[1];
+            $.getElementById("fecha_revision_legajo").innerHTML = '';
+            $.getElementById("estado_revision_legajo").innerHTML = "PRESENTADO";
         }
 
         return false;
     }
 })
-
 
 const toggleBorder = (element) => {
     if (element.style.border === '1px solid black') {
@@ -162,4 +174,11 @@ const toggleBorder = (element) => {
       element.style.border = '1px solid black';
       element.style.borderRadius = '8px';
     }
-  }
+}
+
+const fechaActual = () => {
+    const fecha_actual = new Date();
+    return Array(fecha_actual.getDate() + "/" + (fecha_actual.getMonth() + 1) + "/" + fecha_actual.getFullYear(),
+                fecha_actual.getHours() + ":" + fecha_actual.getMinutes() + ":" + fecha_actual.getSeconds())
+}
+

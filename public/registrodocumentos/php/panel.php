@@ -91,23 +91,23 @@
                         <tbody>
                             <tr>
                                 <td>Archivos Presentados</td>
-                                <td></td>
+                                <td><span id="archivos_presentados"></span></td>
                             </tr>
                             <tr>
                                 <td>Fecha Presentación</td>
-                                <td></td>
+                                <td><span id="fecha_presentacion_legajo"></span></td>
                             </tr>
                             <tr>
                                 <td>Hora Presentación</td>
-                                <td></td>
+                                <td><span id="hora_presentacion_legajo"></span></td>
                             </tr>
                             <tr>
                                 <td>Fecha Revision</td>
-                                <td></td>
+                                <td><span id="fecha_revision_legajo"></span></td>
                             </tr>
                             <tr>
                                 <td>Estado Revision</td>
-                                <td></td>
+                                <td><span id="estado_revision_legajo"></span></td>
                             </tr>
                         </tbody>
                     </table>
@@ -124,23 +124,23 @@
                         <tbody>
                             <tr>
                                 <td>Nombre Archivo</td>
-                                <td></td>
+                                <td><span id="nombre_archivo"></span></td>
                             </tr>
                             <tr>
                                 <td>Tipo Archivo</td>
-                                <td></td>
+                                <td><span id="tipo_archivo"></span></td>
                             </tr>
                             <tr>
                                 <td>Fecha Presentación</td>
-                                <td></td>
+                                <td><span id="fecha_presentación"></span></td>
                             </tr>
                             <tr>
                                 <td>Hora Presentación</td>
-                                <td></td>
+                                <td><span id="hora_presentación"></span></td>
                             </tr>
                             <tr>
-                                <td>Fecha Revision</td>
-                                <td></td>
+                                <td>Fecha Recepción</td>
+                                <td><span id="fecha_recepcion"></span></td>
                             </tr>
                         </tbody>
                     </table>
@@ -156,8 +156,20 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td><div style="background:gray;">presentado</div></td>
-                                <td>presentado</td>
+                                <td><div style="background:gray;">Presentado</div></td>
+                                <td>Presentado</td>
+                            </tr>
+                            <tr>
+                                <td><div style="background:orange;">Revision</div></td>
+                                <td>Revision</td>
+                            </tr>
+                            <tr>
+                                <td><div style="background:blue;">Aceptado</div></td>
+                                <td>Aceptado</td>
+                            </tr>
+                            <tr>
+                                <td><div style="background:red;">Rechazado</div></td>
+                                <td>Rechazado</td>
                             </tr>
                         </tbody>
                     </table>
@@ -169,6 +181,7 @@
         </div>
     </div>
     <script src="../../js/index.var.js"></script>
+    <script src="../../js/date-fns.js"></script>
     <script src="../../js/registrodocumentospanel.js?<?php echo $version = rand(0, 9999); ?>"" type="module"></script>
 </body>
 </html>

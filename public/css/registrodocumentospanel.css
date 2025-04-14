@@ -250,15 +250,26 @@ h2{
                                 color: var(--colortexto);
                                 border-radius: 8px;
                             }
+                            
+                            a{
+                                i {
+                                    font-size: 3rem;
+                                    pointer-events: none;
+                                }
+    
+                                span {
+                                    font-size: clamp(.5rem, 1.5vw, .7rem);
+                                    margin-top: 10px;
+                                    border-bottom: 10px solid #c2c2c2;
+                                    pointer-events: none;
+                                }
 
-                            i {
-                                font-size: 3rem;
+                                p {
+                                    pointer-events: none;
+                                }
                             }
 
-                            span {
-                                font-size: clamp(.5rem, 1.5vw, .7rem);
-                                margin-top: 10px;
-                            }
+                            
 
                         }
                     }
