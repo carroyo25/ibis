@@ -2067,12 +2067,6 @@
         private function crearExcel($datos){
             require_once('public/PHPExcel/PHPExcel.php');
 
-            /*forEach($datos AS $dato){
-                echo $dato['iditem'];
-            }
-
-            return false;*/
-
             try {
                 $objPHPExcel = new PHPExcel();
                 
@@ -2302,9 +2296,9 @@
                             $objPHPExcel->getActiveSheet()
                                 ->setCellValue($col.$fila, PHPExcel_Shared_Date::PHPToExcel($fecha));
                         }
-                    }
+                    }*/
                     
-                    $fila++;*/
+                    $fila++;
                 }
         
                 // Alineación de columnas
