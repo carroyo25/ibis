@@ -299,7 +299,7 @@
                                                                         cserie=:serie,
                                                                         ncostos=:cc,
                                                                         ncambioepp=:cambio,
-                                                                        cempresatercero=:empresa");
+                                                                        cemptercero=:empresa");
                         $sql->execute(["user"=>$_SESSION['iduser'],
                                         "documento"=>$datos[$i]->nrodoc,
                                         "producto"=>$datos[$i]->idprod,

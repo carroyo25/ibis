@@ -2279,16 +2279,16 @@
 
                     
                     // Formatear fechas
-                    /*$fechas = [
+                    $fechas = [
                         'J'     => $item['crea_pedido'],
-                        'K'     => $item['apro_pedido'],
+                        'K'     => $item['aprobacion_pedido'],
                         'U'     => $item['fecha_orden'],
-                        'X'     => $item['autoriza_orden'],
+                        'X'     => $item['fecha_autorizacion_orden'],
                         'AA'    => $item['fecha_entrega'],
-                        'AD'    => $item['fecha_recepcion'],
+                        'AD'    => $item['fecha_recepcion_proveedor'],
                         'AN'    => $item['fecha_traslado'],
-                        'AL'    => $item['fecha_envio'],
-                        'AP'    => $item['fecha_registro_obra'],
+                        'AL'    => $item['salida_lurin'],
+                        'AP'    => $item['fecha_ingreso_almacen_obra'],
                     ];
                     
                     foreach ($fechas as $col => $fecha) {
@@ -2296,7 +2296,7 @@
                             $objPHPExcel->getActiveSheet()
                                 ->setCellValue($col.$fila, PHPExcel_Shared_Date::PHPToExcel($fecha));
                         }
-                    }*/
+                    }
                     
                     $fila++;
                 }
