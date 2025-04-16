@@ -66,6 +66,7 @@
     </div>
     <div class="modal" id="esperarCargo">
         <div class="ventanaEsperaCargoPlan">
+            <div id="display">00:00:00</div>
             <h2 id="waitMessage">Espere... Procesando consulta</h2>
             <progress id="excelProcces" value="0">50%</progress>
         </div>

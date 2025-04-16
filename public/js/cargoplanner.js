@@ -1,5 +1,13 @@
+let hours = 0;
+    let minutes = 0;
+    let seconds = 0;
+    let timer;
+    let isRunning = false;
+
 $(function() {
     let idpedido = "",progreso = 0;
+
+    const display = document.getElementById('display');
 
     $("#esperar").fadeOut();
     
@@ -370,6 +378,7 @@ $(function() {
         formData.append('estado', estado);
 
         $("#esperarCargo").css("opacity","1").fadeIn();
+        startTimer();
         
         fetch(RUTA+"cargoplanner/dataExcelTotalCargoPlan",{
             method:'POST',
@@ -379,7 +388,8 @@ $(function() {
             return response.json();
         })
         .then((json)=> {
-            $("#esperarCargo").css("opacity","0").fadeOut();
+            //$("#esperarCargo").css("opacity","0").fadeOut();
+            resetTimer();
             window.location.href = json.documento;
         })
         .catch((err)=> {
@@ -1067,4 +1077,38 @@ function applyBackgroundColor(worksheet, startRow, endRow, startCol, endCol, col
             }
         }}
     }
+}
+
+function updateDisplay() {
+    const h = hours.toString().padStart(2, '0');
+    const m = minutes.toString().padStart(2, '0');
+    const s = seconds.toString().padStart(2, '0');
+    display.textContent = `${h}:${m}:${s}`;
+}
+
+function startTimer() {
+    if (!isRunning) {
+        isRunning = true;
+        timer = setInterval(() => {
+            seconds++;
+            if (seconds === 60) {
+                seconds = 0;
+                minutes++;
+            }
+            if (minutes === 60) {
+                minutes = 0;
+                hours++;
+            }
+            updateDisplay();
+        }, 1000);
+    }
+}
+
+function resetTimer() {
+    clearInterval(timer);
+    isRunning = false;
+    hours = 0;
+    minutes = 0;
+    seconds = 0;
+    updateDisplay();
 }

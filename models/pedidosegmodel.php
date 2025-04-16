@@ -33,7 +33,8 @@
                                                     INNER JOIN ibis.tb_parametros AS estados ON ibis.tb_pedidocab.estadodoc = estados.nidreg 
                                                 WHERE
                                                     ibis.tb_pedidocab.estadodoc BETWEEN 49 AND 89
-                                                    AND tb_pedidocab.usuario = :user");
+                                                    AND tb_pedidocab.usuario = :user
+                                                    ORDER BY ibis.tb_pedidocab.emision DESC");
                 $sql->execute(["user"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowCount();
 
