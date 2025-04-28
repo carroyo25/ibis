@@ -118,7 +118,7 @@
                                 <input type="text" name="solicitante" id="solicitante">
                             </div>
                             <div class="column2">
-                                <label for="autorizacion">Autoriza:</label>
+                                <label for="autorizacion">Despacha:</label>
                                 <input type="text" name="autorizacion" id="autorizacion" class="mostrarLista" placeholder="Elija una opcion">
                                 <div class="lista" id="listaAutoriza">
                                    <ul>
