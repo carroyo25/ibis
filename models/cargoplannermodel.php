@@ -466,264 +466,7 @@
             }
         }
 
-        public function exportExcel($registros) {
-            require_once('public/PHPExcel/PHPExcel.php');
-            
-            try {
-                $objPHPExcel = new PHPExcel();
-                
-                // Configuración básica del documento
-                $objPHPExcel->getProperties()
-                    ->setCreator("Sical")
-                    ->setLastModifiedBy("Sical")
-                    ->setTitle("Cargo Plan")
-                    ->setSubject("Template excel")
-                    ->setDescription("Cargo Plan")
-                    ->setKeywords("Template excel");
         
-                // Configuración de estilos
-                $estiloBase = [
-                    'font' => [
-                        'bold' => false,
-                        'size' => 7
-                    ],
-                    'alignment' => [
-                        'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
-                        'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
-                        'wrapText' => true
-                    ]
-                ];
-        
-                // Configurar hoja principal
-                $objPHPExcel->setActiveSheetIndex(0);
-                $objPHPExcel->getActiveSheet()->setTitle("Cargo Plan");
-                
-                // Encabezado principal
-                $objPHPExcel->getActiveSheet()->mergeCells('A1:AZ1');
-                $objPHPExcel->getActiveSheet()->setCellValue('A1', 'CARGO PLAN');
-                $objPHPExcel->getActiveSheet()->getStyle('A1:AZ2')->applyFromArray($estiloBase);
-                $objPHPExcel->getActiveSheet()->getRowDimension('2')->setRowHeight(60);
-        
-                // Configuración de columnas (optimizado)
-                $columnas = [
-                    'A' => 8, 'B' => 10, 'C' => 15, 'D' => 15, 'E' => 50, 
-                    'F' => 12, 'G' => 10, 'H' => 10, 'I' => 10, 'J' => 12,
-                    'K' => 12, 'L' => 15, 'M' => 15, 'N' => 15, 'O' => 24,
-                    'P' => 12, 'Q' => 100, 'R' => 12, 'S' => 10, 'T' => 10,
-                    'U' => 12, 'V' => 15, 'W' => 12, 'X' => 12, 'Y' => 12,
-                    'Z' => 100, 'AA' => 12, 'AB' => 12, 'AC' => 13, 'AD' => 15,
-                    'AE' => 12, 'AF' => 10, 'AG' => 10, 'AH' => 12, 'AI' => 12,
-                    'AJ' => 14, 'AK' => 12, 'AL' => 12, 'AM' => 15, 'AN' => 15,
-                    'AO' => 15, 'AP' => 15, 'AQ' => 15, 'AR' => 12, 'AS' => 15,
-                    'AT' => 20, 'AU' => 15, 'AV' => 20, 'AW' => 20, 'AX' => 20,
-                    'AY' => 20, 'AZ' => 20
-                ];
-                
-                foreach ($columnas as $col => $width) {
-                    $objPHPExcel->getActiveSheet()->getColumnDimension($col)->setWidth($width);
-                }
-        
-                // Configuración de formatos de número
-                $formatos = [
-                    'J' => 'dd/mm/yyyy','K' => 'dd/mm/yyyy',
-                    'L' => '#,##0.00', 'M' => '#,##0.00', 'N' => '#,##0.00',
-                    'U' => 'dd/mm/yyyy','V' => '#,##0.00', 'X' => 'dd/mm/yyyy',
-                    'Y' => '#,##0.00', 'AA' => 'dd/mm/yyyy', 'AB' => '#,##0.00','AD' => 'dd/mm/yyyy',
-                    'AE' =>'#,##0.00','AI' => '#,##0.00', 'AL' => 'dd/mm/yyyy', 'AN' => 'dd/mm/yyyy',
-                    'AL' => 'dd/mm/yyyy', 'AQ' => '#,##0.00'
-                ];
-                
-                foreach ($formatos as $col => $format) {
-                    $objPHPExcel->getActiveSheet()->getStyle($col)->getNumberFormat()->setFormatCode($format);
-                }
-        
-                // Encabezados de columnas
-                $encabezados = [
-                    'A' => 'Items', 'B' => 'Estado Actual', 'C' => 'Codigo Proyecto', 
-                    'D' => 'Area', 'E' => 'Partida', 'F' => 'Atención','G' => 'Tipo',
-                    'H' => 'Año Pedido','I' => 'N° Pedido','J' => 'Creación Pedido','K' => 'Aprobación del Pedido',
-                    'L' => 'Cantidad Pedida','M' => 'Cantidad Aprobada','N' => 'Cantidad Compra','O' => 'Codigo del Bien/Servicio',
-                    'P' => 'Unidad Medida', 'Q' => 'Descripcion del Bien/Servicio','R' => 'Tipo Orden','S' => 'Año Orden',
-                    'T' => 'Nro Orden','U' => 'Fecha Orden','V' => 'Cantidad Orden','W' => 'Item Orden',
-                    'X' => 'Fecha Autorizacion','Y' => 'Atencion Almacen','Z' => 'Descripcion del proveedor','AA' => 'Fecha Entrega Proveedor',
-                    'AB' => 'Cant. Recibida','AC' => 'Nota de Ingreso','AD' => 'Fecha Recepcion Proveedor','AE' => 'Saldo por Recibir',
-                    'AF' => 'Dias Entrega','AG' => 'Días Atrazo','AH' => 'Semáforo','AI' => 'Cantidad Enviada',
-                    'AJ' => 'Nro. Guia','AK' => 'Nro. Guia Sunat','AL' => 'Fecha Envio','AM' => 'Nro. Guia Transferencia',
-                    'AN' => 'Fecha Traslado','AO' => 'Registro Almacen','AP' => 'Fecha Ingreso Almacen','AQ' => 'Cantidad en Obra',
-                    'AR' => 'Estado Pedido','AS' => 'Estado Item','AT' => 'N° Parte','AU' => 'Codigo Activo',
-                    'AV' => 'Operador Logístico','AW' => 'Tipo Transporte','AX' => 'Observaciones/Concepto','AY' => 'Solicitante',
-                    'AZ' => 'Operador Asignado',
-                ];
-                
-                foreach ($encabezados as $col => $texto) {
-                    $objPHPExcel->getActiveSheet()->setCellValue($col.'2', $texto);
-                }
-        
-                // Colores de fondo para secciones
-                $coloresSecciones = [
-                    'A2:K2' => 'BFCDDB',
-                    'L2:N2' => 'FC4236',
-                    'O2:P2' => 'BFCDDB',
-                    'Q2:V2' => '00FFFF',
-                    'W2:AD2' => 'BFCDDB',
-                    'AE2:AM2' => 'FFFF00',
-                    'AN2:AZ2' => '127BDD'
-                ];
-                
-                foreach ($coloresSecciones as $rango => $color) {
-                    $objPHPExcel->getActiveSheet()
-                        ->getStyle($rango)
-                        ->getFill()
-                        ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
-                        ->getStartColor()
-                        ->setRGB($color);
-                }
-        
-                // Procesamiento de datos
-                $datos = json_decode($registros);
-                $fila = 3;
-                $items = 1;
-                
-                // Mapeo de colores para estados
-                $coloresEstado = [
-                    '0%' => 'C8C8C8', '10%' => 'F8CAAD', '15%' => 'FF0000',
-                    '20%' => 'B3C5E6', '25%' => 'FFFF00', '30%' => 'C0DCC0',
-                    '40%' => 'FFFFE1', '50%' => 'A9D08F', '60%' => 'FF00FF',
-                    '70%' => 'FFC000', '75%' => '00FFFF', '100%' => '00FF00'
-                ];
-                
-                // Mapeo de colores para semáforo
-                $coloresSemaforo = [
-                    'Verde' => '90EE90', 'Entregado' => '90EE90',
-                    'Naranja' => 'FFD700', 'Rojo' => 'FF0000'
-                ];
-        
-                foreach ($datos as $item) {
-                    // Aplicar color según estado
-                    $colorEstado = $coloresEstado[$item->estado] ?? 'FFFFFF';
-                    $objPHPExcel->getActiveSheet()
-                        ->getStyle('B'.$fila)
-                        ->getFill()
-                        ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
-                        ->getStartColor()
-                        ->setRGB($colorEstado);
-                    
-                    // Aplicar color según semáforo
-                    $colorSemaforo = $coloresSemaforo[$item->semaforo] ?? 'FFFFFF';
-                    $objPHPExcel->getActiveSheet()
-                        ->getStyle('AH'.$fila)
-                        ->getFill()
-                        ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
-                        ->getStartColor()
-                        ->setRGB($colorSemaforo);
-                    
-                    // Llenar datos
-                    $objPHPExcel->getActiveSheet()->setCellValue('A'.$fila, $items++);
-                    $objPHPExcel->getActiveSheet()->setCellValue('B'.$fila, $item->estado);
-                    // ... completar con el resto de celdas ...
-                    $objPHPExcel->getActiveSheet()->setCellValue('C'.$fila, $item->proyecto);
-                    $objPHPExcel->getActiveSheet()->setCellValue('D'.$fila, $item->area);
-                    $objPHPExcel->getActiveSheet()->setCellValue('E'.$fila, $item->partida);
-                    $objPHPExcel->getActiveSheet()->setCellValue('F'.$fila, $item->atencion);
-                    $objPHPExcel->getActiveSheet()->setCellValue('G'.$fila, $item->tipo);
-
-                    $objPHPExcel->getActiveSheet()->setCellValue('H'.$fila, $item->anio_pedido);
-                    $objPHPExcel->getActiveSheet()->setCellValue('I'.$fila, $item->num_pedido);
-                    $objPHPExcel->getActiveSheet()->setCellValue('J'.$fila, $item->crea_pedido);
-                    $objPHPExcel->getActiveSheet()->setCellValue('K'.$fila, $item->apro_pedido);
-                    $objPHPExcel->getActiveSheet()->setCellValue('L'.$fila, $item->cantidad);
-                    $objPHPExcel->getActiveSheet()->setCellValue('M'.$fila, $item->aprobado);
-                    $objPHPExcel->getActiveSheet()->setCellValue('N'.$fila, $item->compra);
-                    $objPHPExcel->getActiveSheet()->setCellValue('O'.$fila, $item->codigo);
-                    $objPHPExcel->getActiveSheet()->setCellValue('P'.$fila, $item->unidad);
-                    $objPHPExcel->getActiveSheet()->setCellValue('Q'.$fila, $item->descripcion);
-                    $objPHPExcel->getActiveSheet()->setCellValue('R'.$fila, $item->tipo_orden);
-                    $objPHPExcel->getActiveSheet()->setCellValue('S'.$fila, $item->anio_orden);
-                    $objPHPExcel->getActiveSheet()->setCellValue('T'.$fila, $item->nro_orden);
-                    $objPHPExcel->getActiveSheet()->setCellValue('U'.$fila, $item->fecha_orden);
-                    $objPHPExcel->getActiveSheet()->setCellValue('V'.$fila, $item->cantidad_orden);
-                    $objPHPExcel->getActiveSheet()->setCellValue('W'.$fila, $item->item_orden);
-                    $objPHPExcel->getActiveSheet()->setCellValue('X'.$fila, $item->autoriza_orden);
-                    $objPHPExcel->getActiveSheet()->setCellValue('Y'.$fila, $item->cantidad_almacen);
-                    $objPHPExcel->getActiveSheet()->setCellValue('Z'.$fila, $item->proveedor);
-
-                    $objPHPExcel->getActiveSheet()->setCellValue('AA'.$fila, $item->fecha_entrega);
-                    $objPHPExcel->getActiveSheet()->setCellValue('AB'.$fila, $item->cantidad_recibida);
-                    $objPHPExcel->getActiveSheet()->setCellValue('AC'.$fila, $item->nota_ingreso);
-                    $objPHPExcel->getActiveSheet()->setCellValue('AD'.$fila, $item->fecha_recepcion);
-                    $objPHPExcel->getActiveSheet()->setCellValue('AE'.$fila, $item->saldo_recibir);
-                    $objPHPExcel->getActiveSheet()->setCellValue('AF'.$fila, $item->dias_entrega);
-                    $objPHPExcel->getActiveSheet()->setCellValue('AG'.$fila, $item->dias_atraso);
-                    $objPHPExcel->getActiveSheet()->setCellValue('AH'.$fila, $item->semaforo);
-                    
-                    $objPHPExcel->getActiveSheet()->setCellValue('AI'.$fila, $item->despacho);
-                    $objPHPExcel->getActiveSheet()->setCellValue('AJ'.$fila, $item->numero_guia);
-                    $objPHPExcel->getActiveSheet()->setCellValue('AK'.$fila, $item->guia_sunat);
-                    $objPHPExcel->getActiveSheet()->setCellValue('AL'.$fila, $item->fecha_envio);
-
-                    $objPHPExcel->getActiveSheet()->setCellValue('AM'.$fila, $item->guia_transfer);
-                    $objPHPExcel->getActiveSheet()->setCellValue('AN'.$fila, $item->fecha_traslado);
-                    
-                    $objPHPExcel->getActiveSheet()->setCellValue('AO'.$fila, $item->registro_almacen);
-                    $objPHPExcel->getActiveSheet()->setCellValue('AP'.$fila, $item->fecha_registro_obra);
-                    $objPHPExcel->getActiveSheet()->setCellValue('AQ'.$fila, $item->cantidad_obra);
-                    
-                    $objPHPExcel->getActiveSheet()->setCellValue('AR'.$fila, $item->estado_pedido);
-                    $objPHPExcel->getActiveSheet()->setCellValue('AS'.$fila, $item->estado_item);
-                    $objPHPExcel->getActiveSheet()->setCellValue('AT'.$fila, $item->numero_parte);
-                    $objPHPExcel->getActiveSheet()->setCellValue('AU'.$fila, $item->codigo_activo);
-                    $objPHPExcel->getActiveSheet()->setCellValue('AV'.$fila, $item->operador);
-                    $objPHPExcel->getActiveSheet()->setCellValue('AW'.$fila, $item->transporte);
-                    $objPHPExcel->getActiveSheet()->setCellValue('AX'.$fila, $item->observaciones);
-                    $objPHPExcel->getActiveSheet()->setCellValue('AY'.$fila, $item->solicitante);
-                    $objPHPExcel->getActiveSheet()->setCellValue('AZ'.$fila, $item->operador);
-
-                    
-                    // Formatear fechas
-                    $fechas = [
-                        'J' => $item->crea_pedido,
-                        'K' => $item->apro_pedido,
-                        'U' => $item->fecha_orden,
-                        'X' => $item->autoriza_orden,
-                        'AA' => $item->fecha_entrega,
-                        'AD' => $item->fecha_recepcion,
-                        'AN' => $item->fecha_traslado,
-                        'AL' => $item->fecha_envio,
-                        'AP' => $item->fecha_registro_obra,
-                    ];
-                    
-                    foreach ($fechas as $col => $fecha) {
-                        if (!empty($fecha)) {
-                            $objPHPExcel->getActiveSheet()
-                                ->setCellValue($col.$fila, PHPExcel_Shared_Date::PHPToExcel($fecha));
-                        }
-                    }
-                    
-                    $fila++;
-                }
-        
-                // Alineación de columnas
-                $alineacionCentro = ['B:C', 'F:K', 'O:P', 'R:S', 'Y', 'AA', 'AC', 'AE', 'AH', 'AJ:AO'];
-                
-                foreach ($alineacionCentro as $rango) {
-                    $objPHPExcel->getActiveSheet()
-                        ->getStyle($rango)
-                        ->getAlignment()
-                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                }
-        
-                // Guardar el archivo
-                $rutaArchivo = 'public/documentos/reportes/cargoplan.xlsx';
-                $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
-                $objWriter->save($rutaArchivo);
-        
-                return ["documento" => $rutaArchivo];
-        
-            } catch (PDOException $th) {
-                error_log("Error en exportExcel: " . $th->getMessage());
-                return false;
-            }
-        }
 
         public function consultaResumen($orden,$refpedido) {
             return array("orden"=>$this->ordenes($orden),
@@ -1042,6 +785,265 @@
                 return false;
             }
         }
+
+        /*public function exportExcel($registros) {
+            require_once('public/PHPExcel/PHPExcel.php');
+            
+            try {
+                $objPHPExcel = new PHPExcel();
+                
+                // Configuración básica del documento
+                $objPHPExcel->getProperties()
+                    ->setCreator("Sical")
+                    ->setLastModifiedBy("Sical")
+                    ->setTitle("Cargo Plan")
+                    ->setSubject("Template excel")
+                    ->setDescription("Cargo Plan")
+                    ->setKeywords("Template excel");
+        
+                // Configuración de estilos
+                $estiloBase = [
+                    'font' => [
+                        'bold' => false,
+                        'size' => 7
+                    ],
+                    'alignment' => [
+                        'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+                        'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
+                        'wrapText' => true
+                    ]
+                ];
+        
+                // Configurar hoja principal
+                $objPHPExcel->setActiveSheetIndex(0);
+                $objPHPExcel->getActiveSheet()->setTitle("Cargo Plan");
+                
+                // Encabezado principal
+                $objPHPExcel->getActiveSheet()->mergeCells('A1:AZ1');
+                $objPHPExcel->getActiveSheet()->setCellValue('A1', 'CARGO PLAN');
+                $objPHPExcel->getActiveSheet()->getStyle('A1:AZ2')->applyFromArray($estiloBase);
+                $objPHPExcel->getActiveSheet()->getRowDimension('2')->setRowHeight(60);
+        
+                // Configuración de columnas (optimizado)
+                $columnas = [
+                    'A' => 8, 'B' => 10, 'C' => 15, 'D' => 15, 'E' => 50, 
+                    'F' => 12, 'G' => 10, 'H' => 10, 'I' => 10, 'J' => 12,
+                    'K' => 12, 'L' => 15, 'M' => 15, 'N' => 15, 'O' => 24,
+                    'P' => 12, 'Q' => 100, 'R' => 12, 'S' => 10, 'T' => 10,
+                    'U' => 12, 'V' => 15, 'W' => 12, 'X' => 12, 'Y' => 12,
+                    'Z' => 100, 'AA' => 12, 'AB' => 12, 'AC' => 13, 'AD' => 15,
+                    'AE' => 12, 'AF' => 10, 'AG' => 10, 'AH' => 12, 'AI' => 12,
+                    'AJ' => 14, 'AK' => 12, 'AL' => 12, 'AM' => 15, 'AN' => 15,
+                    'AO' => 15, 'AP' => 15, 'AQ' => 15, 'AR' => 12, 'AS' => 15,
+                    'AT' => 20, 'AU' => 15, 'AV' => 20, 'AW' => 20, 'AX' => 20,
+                    'AY' => 20, 'AZ' => 20
+                ];
+                
+                foreach ($columnas as $col => $width) {
+                    $objPHPExcel->getActiveSheet()->getColumnDimension($col)->setWidth($width);
+                }
+        
+                // Configuración de formatos de número
+                $formatos = [
+                    'J' => 'dd/mm/yyyy','K' => 'dd/mm/yyyy',
+                    'L' => '#,##0.00', 'M' => '#,##0.00', 'N' => '#,##0.00',
+                    'U' => 'dd/mm/yyyy','V' => '#,##0.00', 'X' => 'dd/mm/yyyy',
+                    'Y' => '#,##0.00', 'AA' => 'dd/mm/yyyy', 'AB' => '#,##0.00','AD' => 'dd/mm/yyyy',
+                    'AE' =>'#,##0.00','AI' => '#,##0.00', 'AL' => 'dd/mm/yyyy', 'AN' => 'dd/mm/yyyy',
+                    'AL' => 'dd/mm/yyyy', 'AQ' => '#,##0.00'
+                ];
+                
+                foreach ($formatos as $col => $format) {
+                    $objPHPExcel->getActiveSheet()->getStyle($col)->getNumberFormat()->setFormatCode($format);
+                }
+        
+                // Encabezados de columnas
+                $encabezados = [
+                    'A' => 'Items', 'B' => 'Estado Actual', 'C' => 'Codigo Proyecto', 
+                    'D' => 'Area', 'E' => 'Partida', 'F' => 'Atención','G' => 'Tipo',
+                    'H' => 'Año Pedido','I' => 'N° Pedido','J' => 'Creación Pedido','K' => 'Aprobación del Pedido',
+                    'L' => 'Cantidad Pedida','M' => 'Cantidad Aprobada','N' => 'Cantidad Compra','O' => 'Codigo del Bien/Servicio',
+                    'P' => 'Unidad Medida', 'Q' => 'Descripcion del Bien/Servicio','R' => 'Tipo Orden','S' => 'Año Orden',
+                    'T' => 'Nro Orden','U' => 'Fecha Orden','V' => 'Cantidad Orden','W' => 'Item Orden',
+                    'X' => 'Fecha Autorizacion','Y' => 'Atencion Almacen','Z' => 'Descripcion del proveedor','AA' => 'Fecha Entrega Proveedor',
+                    'AB' => 'Cant. Recibida','AC' => 'Nota de Ingreso','AD' => 'Fecha Recepcion Proveedor','AE' => 'Saldo por Recibir',
+                    'AF' => 'Dias Entrega','AG' => 'Días Atrazo','AH' => 'Semáforo','AI' => 'Cantidad Enviada',
+                    'AJ' => 'Nro. Guia','AK' => 'Nro. Guia Sunat','AL' => 'Fecha Envio','AM' => 'Nro. Guia Transferencia',
+                    'AN' => 'Fecha Traslado','AO' => 'Registro Almacen','AP' => 'Fecha Ingreso Almacen','AQ' => 'Cantidad en Obra',
+                    'AR' => 'Estado Pedido','AS' => 'Estado Item','AT' => 'N° Parte','AU' => 'Codigo Activo',
+                    'AV' => 'Operador Logístico','AW' => 'Tipo Transporte','AX' => 'Observaciones/Concepto','AY' => 'Solicitante',
+                    'AZ' => 'Operador Asignado',
+                ];
+                
+                foreach ($encabezados as $col => $texto) {
+                    $objPHPExcel->getActiveSheet()->setCellValue($col.'2', $texto);
+                }
+        
+                // Colores de fondo para secciones
+                $coloresSecciones = [
+                    'A2:K2' => 'BFCDDB',
+                    'L2:N2' => 'FC4236',
+                    'O2:P2' => 'BFCDDB',
+                    'Q2:V2' => '00FFFF',
+                    'W2:AD2' => 'BFCDDB',
+                    'AE2:AM2' => 'FFFF00',
+                    'AN2:AZ2' => '127BDD'
+                ];
+                
+                foreach ($coloresSecciones as $rango => $color) {
+                    $objPHPExcel->getActiveSheet()
+                        ->getStyle($rango)
+                        ->getFill()
+                        ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
+                        ->getStartColor()
+                        ->setRGB($color);
+                }
+        
+                // Procesamiento de datos
+                $datos = json_decode($registros);
+                $fila = 3;
+                $items = 1;
+                
+                // Mapeo de colores para estados
+                $coloresEstado = [
+                    '0%' => 'C8C8C8', '10%' => 'F8CAAD', '15%' => 'FF0000',
+                    '20%' => 'B3C5E6', '25%' => 'FFFF00', '30%' => 'C0DCC0',
+                    '40%' => 'FFFFE1', '50%' => 'A9D08F', '60%' => 'FF00FF',
+                    '70%' => 'FFC000', '75%' => '00FFFF', '100%' => '00FF00'
+                ];
+                
+                // Mapeo de colores para semáforo
+                $coloresSemaforo = [
+                    'Verde' => '90EE90', 'Entregado' => '90EE90',
+                    'Naranja' => 'FFD700', 'Rojo' => 'FF0000'
+                ];
+        
+                foreach ($datos as $item) {
+                    // Aplicar color según estado
+                    $colorEstado = $coloresEstado[$item->estado] ?? 'FFFFFF';
+                    $objPHPExcel->getActiveSheet()
+                        ->getStyle('B'.$fila)
+                        ->getFill()
+                        ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
+                        ->getStartColor()
+                        ->setRGB($colorEstado);
+                    
+                    // Aplicar color según semáforo
+                    $colorSemaforo = $coloresSemaforo[$item->semaforo] ?? 'FFFFFF';
+                    $objPHPExcel->getActiveSheet()
+                        ->getStyle('AH'.$fila)
+                        ->getFill()
+                        ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
+                        ->getStartColor()
+                        ->setRGB($colorSemaforo);
+                    
+                    // Llenar datos
+                    $objPHPExcel->getActiveSheet()->setCellValue('A'.$fila, $items++);
+                    $objPHPExcel->getActiveSheet()->setCellValue('B'.$fila, $item->estado);
+                    // ... completar con el resto de celdas ...
+                    $objPHPExcel->getActiveSheet()->setCellValue('C'.$fila, $item->proyecto);
+                    $objPHPExcel->getActiveSheet()->setCellValue('D'.$fila, $item->area);
+                    $objPHPExcel->getActiveSheet()->setCellValue('E'.$fila, $item->partida);
+                    $objPHPExcel->getActiveSheet()->setCellValue('F'.$fila, $item->atencion);
+                    $objPHPExcel->getActiveSheet()->setCellValue('G'.$fila, $item->tipo);
+
+                    $objPHPExcel->getActiveSheet()->setCellValue('H'.$fila, $item->anio_pedido);
+                    $objPHPExcel->getActiveSheet()->setCellValue('I'.$fila, $item->num_pedido);
+                    $objPHPExcel->getActiveSheet()->setCellValue('J'.$fila, $item->crea_pedido);
+                    $objPHPExcel->getActiveSheet()->setCellValue('K'.$fila, $item->apro_pedido);
+                    $objPHPExcel->getActiveSheet()->setCellValue('L'.$fila, $item->cantidad);
+                    $objPHPExcel->getActiveSheet()->setCellValue('M'.$fila, $item->aprobado);
+                    $objPHPExcel->getActiveSheet()->setCellValue('N'.$fila, $item->compra);
+                    $objPHPExcel->getActiveSheet()->setCellValue('O'.$fila, $item->codigo);
+                    $objPHPExcel->getActiveSheet()->setCellValue('P'.$fila, $item->unidad);
+                    $objPHPExcel->getActiveSheet()->setCellValue('Q'.$fila, $item->descripcion);
+                    $objPHPExcel->getActiveSheet()->setCellValue('R'.$fila, $item->tipo_orden);
+                    $objPHPExcel->getActiveSheet()->setCellValue('S'.$fila, $item->anio_orden);
+                    $objPHPExcel->getActiveSheet()->setCellValue('T'.$fila, $item->nro_orden);
+                    $objPHPExcel->getActiveSheet()->setCellValue('U'.$fila, $item->fecha_orden);
+                    $objPHPExcel->getActiveSheet()->setCellValue('V'.$fila, $item->cantidad_orden);
+                    $objPHPExcel->getActiveSheet()->setCellValue('W'.$fila, $item->item_orden);
+                    $objPHPExcel->getActiveSheet()->setCellValue('X'.$fila, $item->autoriza_orden);
+                    $objPHPExcel->getActiveSheet()->setCellValue('Y'.$fila, $item->cantidad_almacen);
+                    $objPHPExcel->getActiveSheet()->setCellValue('Z'.$fila, $item->proveedor);
+
+                    $objPHPExcel->getActiveSheet()->setCellValue('AA'.$fila, $item->fecha_entrega);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AB'.$fila, $item->cantidad_recibida);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AC'.$fila, $item->nota_ingreso);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AD'.$fila, $item->fecha_recepcion);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AE'.$fila, $item->saldo_recibir);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AF'.$fila, $item->dias_entrega);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AG'.$fila, $item->dias_atraso);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AH'.$fila, $item->semaforo);
+                    
+                    $objPHPExcel->getActiveSheet()->setCellValue('AI'.$fila, $item->despacho);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AJ'.$fila, $item->numero_guia);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AK'.$fila, $item->guia_sunat);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AL'.$fila, $item->fecha_envio);
+
+                    $objPHPExcel->getActiveSheet()->setCellValue('AM'.$fila, $item->guia_transfer);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AN'.$fila, $item->fecha_traslado);
+                    
+                    $objPHPExcel->getActiveSheet()->setCellValue('AO'.$fila, $item->registro_almacen);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AP'.$fila, $item->fecha_registro_obra);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AQ'.$fila, $item->cantidad_obra);
+                    
+                    $objPHPExcel->getActiveSheet()->setCellValue('AR'.$fila, $item->estado_pedido);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AS'.$fila, $item->estado_item);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AT'.$fila, $item->numero_parte);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AU'.$fila, $item->codigo_activo);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AV'.$fila, $item->operador);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AW'.$fila, $item->transporte);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AX'.$fila, $item->observaciones);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AY'.$fila, $item->solicitante);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AZ'.$fila, $item->operador);
+
+                    
+                    // Formatear fechas
+                    $fechas = [
+                        'J' => $item->crea_pedido,
+                        'K' => $item->apro_pedido,
+                        'U' => $item->fecha_orden,
+                        'X' => $item->autoriza_orden,
+                        'AA' => $item->fecha_entrega,
+                        'AD' => $item->fecha_recepcion,
+                        'AN' => $item->fecha_traslado,
+                        'AL' => $item->fecha_envio,
+                        'AP' => $item->fecha_registro_obra,
+                    ];
+                    
+                    foreach ($fechas as $col => $fecha) {
+                        if (!empty($fecha)) {
+                            $objPHPExcel->getActiveSheet()
+                                ->setCellValue($col.$fila, PHPExcel_Shared_Date::PHPToExcel($fecha));
+                        }
+                    }
+                    
+                    $fila++;
+                }
+        
+                // Alineación de columnas
+                $alineacionCentro = ['B:C', 'F:K', 'O:P', 'R:S', 'Y', 'AA', 'AC', 'AE', 'AH', 'AJ:AO'];
+                
+                foreach ($alineacionCentro as $rango) {
+                    $objPHPExcel->getActiveSheet()
+                        ->getStyle($rango)
+                        ->getAlignment()
+                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                }
+        
+                // Guardar el archivo
+                $rutaArchivo = 'public/documentos/reportes/cargoplan.xlsx';
+                $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+                $objWriter->save($rutaArchivo);
+        
+                return ["documento" => $rutaArchivo];
+        
+            } catch (PDOException $th) {
+                error_log("Error en exportExcel: " . $th->getMessage());
+                return false;
+            }
+        }*/
 
         public function contarItemsCargoPlan(){
             try{
@@ -1546,40 +1548,48 @@
                                                         tb_pedidodet.nroparte,
                                                         tb_pedidodet.nregistro,
                                                         tb_pedidodet.cant_pedida AS cantidad_pedido,
-                                                        tb_pedidodet.cant_aprob AS cantidad_aprobada,
                                                         tb_pedidodet.cant_atend AS cantidad_atendida,
-                                                        LPAD( tb_pedidocab.nrodoc, 6, 0 ) AS pedido,
-                                                        lg_ordendet.id_orden AS orden,
-                                                        lg_ordendet.item AS item_orden,
-                                                        cm_producto.ccodprod,
-                                                        UPPER( CONCAT_WS( ' ', cm_producto.cdesprod, tb_pedidodet.observaciones ) ) AS descripcion,
+                                                        tb_pedidodet.cant_aprob AS cantidad_aprobada,
                                                         tb_pedidodet.estadoItem,
-                                                        tb_proyectos.ccodproy,
-                                                        tb_proyectos.nidreg AS idproyecto,
-                                                        UPPER( tb_area.cdesarea ) AS area,
-                                                        UPPER( tb_partidas.cdescripcion ) AS partida,
+                                                        LPAD( tb_pedidocab.nrodoc, 6, 0 ) AS pedido,
                                                         DATE_FORMAT( tb_pedidocab.emision, '%d/%m/%Y' ) AS crea_pedido,
                                                         DATE_FORMAT( tb_pedidocab.faprueba, '%d/%m/%Y' ) AS aprobacion_pedido,
-                                                        DATE_FORMAT( lg_ordencab.ffechades, '%d/%m/%Y' ) AS fecha_descarga,
                                                         tb_pedidocab.anio AS anio_pedido,
                                                         tb_pedidocab.mes AS pedido_mes,
                                                         tb_pedidocab.nivelAten AS atencion,
                                                         tb_pedidocab.idtipomov,
+                                                        UPPER( tb_pedidocab.concepto ) AS concepto,
+                                                        lg_ordendet.id_orden AS orden,
+                                                        lg_ordendet.item AS item_orden,
+                                                        cm_producto.ccodprod,
+                                                        UPPER( CONCAT_WS( ' ', cm_producto.cdesprod, tb_pedidodet.observaciones ) ) AS descripcion,
+                                                        tb_proyectos.ccodproy,
+                                                        tb_proyectos.nidreg AS idproyecto,
+                                                        UPPER( tb_area.cdesarea ) AS area,
+                                                        UPPER( tb_partidas.cdescripcion ) AS partida,
                                                         tb_unimed.cabrevia AS unidad,
                                                         lg_ordencab.cper AS anio_orden,
                                                         lg_ordencab.ntipmov,
-                                                        lg_ordencab.FechaFin,
-                                                        lg_ordencab.cnumero,
+                                                        FORMAT( lg_ordencab.nplazo, 0 ) AS plazo,
+                                                        DATE_FORMAT( lg_ordencab.ffechadoc, '%d/%m/%Y' ) AS fecha_orden,
+                                                        DATE_FORMAT( lg_ordencab.ffechaent, '%d/%m/%Y' ) AS fecha_entrega,
+                                                        DATE_FORMAT( lg_ordencab.ffechades, '%d/%m/%Y' ) AS fecha_descarga,
+                                                        DATE_FORMAT( lg_ordencab.fechafin, '%d/%m/%Y' ) AS fecha_autorizacion_orden,
                                                         lg_ordencab.ffechades,
                                                         lg_ordencab.fechaLog,
                                                         lg_ordencab.fechaOpe,
+                                                        lg_ordencab.FechaFin,
                                                         lg_ordencab.ffechaent,
                                                         lg_ordencab.nEstadoDoc,
                                                         lg_ordencab.nNivAten,
-                                                        DATE_FORMAT( lg_ordencab.ffechadoc, '%d/%m/%Y' ) AS fecha_orden,
+                                                        LPAD( lg_ordencab.cnumero, 4, 0 ) AS cnumero,
                                                         UPPER( cm_entidad.crazonsoc ) AS proveedor,
-                                                        UPPER( tb_user.cnameuser ) AS operador,
-                                                        UPPER( tb_pedidocab.concepto ) AS concepto,
+                                                        ( SELECT SUM( lg_ordendet.ncanti ) FROM lg_ordendet WHERE lg_ordendet.niddeta = tb_pedidodet.iditem AND lg_ordendet.id_orden != 0 ) AS cantidad_orden,
+                                                        ( SELECT SUM( alm_recepdet.ncantidad ) FROM alm_recepdet WHERE alm_recepdet.niddetaPed = tb_pedidodet.iditem AND alm_recepdet.nflgactivo = 1 ) AS ingreso,
+                                                        ( SELECT SUM( alm_despachodet.ndespacho ) FROM alm_despachodet WHERE alm_despachodet.niddetaPed = lg_ordendet.niddeta AND alm_despachodet.nflgactivo = 1 ) AS despachos,
+                                                        ( SELECT SUM( alm_existencia.cant_ingr ) FROM alm_existencia WHERE alm_existencia.idpedido = tb_pedidodet.iditem AND alm_existencia.nflgActivo = 1 ) AS ingreso_obra,
+                                                        ( SELECT SUM( alm_existencia.cant_ingr ) FROM alm_existencia WHERE alm_existencia.idpedido = tb_pedidodet.iditem AND alm_existencia.nflgActivo = 1 ) AS atencion_almacen,
+                                                        UPPER( asignacion.cnameuser ) AS operador,
                                                         DATEDIFF( lg_ordencab.ffechaent, NOW() ) AS dias_atraso,
                                                         transporte.cdescripcion AS transporte,
                                                         transporte.nidreg,
@@ -1587,17 +1597,13 @@
                                                         alm_despachocab.cnumguia,
                                                         LPAD( alm_recepcab.nnronota, 6, 0 ) AS nota_ingreso,
                                                         LPAD( alm_cabexist.idreg, 6, 0 ) AS nota_obra,
-                                                        tb_equipmtto.cregistro,
-                                                        o.cantidad_orden,
-                                                        i.ingreso,
-                                                        d.despachos,
-                                                        a.ingreso_obra,
-                                                        usuarios.cnombres AS nombre_elabora,
+                                                        DATE_FORMAT( alm_cabexist.ffechadoc, '%d/%m/%Y' ) AS fecha_ingreso_almacen_obra,
                                                         DATE_FORMAT( alm_recepcab.ffecdoc, '%d/%m/%Y' ) AS fecha_recepcion_proveedor,
-                                                        DATE_FORMAT( alm_cabexist.ffechadoc, '%d/%m/%Y' ) AS fecha_registro_almacen,
-                                                        alm_transfercab.cnumguia AS guia_transferencia,
-                                                        LPAD(alm_transfercab.idreg,6,0) AS nota_transferencia,
-                                                        DATE_FORMAT( alm_transfercab.ftraslado, '%d/%m/%Y' ) AS fecha_traslado,
+                                                        tb_equipmtto.cregistro,
+                                                        usuarios.cnombres AS usuario,
+                                                        DATE_ADD( lg_ordencab.ffechades, INTERVAL lg_ordencab.nplazo DAY ) AS fecha_entrega_final_anterior,
+                                                        alm_despachodet.id_regalm,
+                                                        DATE_FORMAT( alm_despachocab.ffecenvio, '%d/%m/%Y' ) AS salida_lurin,
                                                         DATE_FORMAT(
                                                             GREATEST( COALESCE ( lg_ordencab.fechaLog, '' ), COALESCE ( lg_ordencab.fechaOpe, '' ), COALESCE ( lg_ordencab.FechaFin, '' ) ),
                                                             '%d/%m/%Y' 
@@ -1609,20 +1615,23 @@
                                                             ),
                                                             '%d/%m/%Y' 
                                                         ) AS fecha_entrega_final,
-                                                        FORMAT( lg_ordencab.nplazo, 0 ) AS plazo,
-                                                        asignacion.cnombres AS asigna
+                                                        alm_transfercab.cnumguia AS guia_transferencia,
+                                                        LPAD( alm_transfercab.idreg, 6, 0 ) AS nota_transferencia,
+                                                        DATE_FORMAT( alm_transfercab.ftraslado, '%d/%m/%Y' ) AS fecha_traslado,
+                                                        UPPER( asignacion.cnameuser ) AS asigna,
+                                                        sunat.guiasunat 
                                                     FROM
                                                         tb_pedidodet
                                                         LEFT JOIN tb_pedidocab ON tb_pedidodet.idpedido = tb_pedidocab.idreg
-                                                        LEFT JOIN lg_ordendet ON lg_ordendet.niddeta = tb_pedidodet.iditem
+                                                        LEFT JOIN tb_costusu ON tb_costusu.ncodproy = tb_pedidodet.idcostos
                                                         LEFT JOIN cm_producto ON tb_pedidodet.idprod = cm_producto.id_cprod
+                                                        LEFT JOIN lg_ordendet ON lg_ordendet.niddeta = tb_pedidodet.iditem
+                                                        LEFT JOIN lg_ordencab ON lg_ordendet.id_orden = lg_ordencab.id_regmov
                                                         LEFT JOIN tb_proyectos ON tb_pedidodet.idcostos = tb_proyectos.nidreg
                                                         LEFT JOIN tb_area ON tb_pedidodet.idarea = tb_area.ncodarea
                                                         LEFT JOIN tb_partidas ON tb_pedidocab.idpartida = tb_partidas.idreg
                                                         LEFT JOIN tb_unimed ON tb_pedidodet.unid = tb_unimed.ncodmed
-                                                        LEFT JOIN lg_ordencab ON lg_ordendet.id_orden = lg_ordencab.id_regmov
                                                         LEFT JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
-                                                        LEFT JOIN tb_user ON lg_ordencab.id_cuser = tb_user.iduser
                                                         LEFT JOIN tb_parametros AS transporte ON lg_ordencab.ctiptransp = transporte.nidreg
                                                         LEFT JOIN tb_user AS user_aprueba ON tb_pedidocab.aprueba = user_aprueba.iduser
                                                         LEFT JOIN alm_despachodet ON tb_pedidodet.iditem = alm_despachodet.niddetaPed
@@ -1632,14 +1641,11 @@
                                                         LEFT JOIN alm_existencia ON tb_pedidodet.iditem = alm_existencia.idpedido
                                                         LEFT JOIN alm_cabexist ON alm_existencia.idregistro = alm_cabexist.idreg
                                                         LEFT JOIN tb_equipmtto ON tb_pedidodet.nregistro = tb_equipmtto.idreg
-                                                        LEFT JOIN ( SELECT SUM( lg_ordendet.ncanti ) AS cantidad_orden, lg_ordendet.niddeta FROM lg_ordendet WHERE lg_ordendet.id_orden != 0 GROUP BY lg_ordendet.niddeta ) AS o ON o.niddeta = tb_pedidodet.iditem
-                                                        LEFT JOIN ( SELECT SUM( alm_recepdet.ncantidad ) AS ingreso, alm_recepdet.niddetaPed FROM alm_recepdet WHERE alm_recepdet.nflgactivo = 1 GROUP BY alm_recepdet.niddetaPed ) AS i ON i.niddetaPed = tb_pedidodet.iditem
-                                                        LEFT JOIN ( SELECT SUM( alm_despachodet.ndespacho ) AS despachos, alm_despachodet.niddetaPed FROM alm_despachodet WHERE alm_despachodet.nflgactivo = 1 GROUP BY alm_despachodet.niddetaPed ) AS d ON d.niddetaPed = tb_pedidodet.iditem
-                                                        LEFT JOIN ( SELECT SUM( alm_existencia.cant_ingr ) AS ingreso_obra, alm_existencia.idpedido FROM alm_existencia WHERE alm_existencia.nflgActivo = 1 GROUP BY alm_existencia.idpedido ) AS a ON a.idpedido = tb_pedidodet.iditem
                                                         LEFT JOIN tb_user AS usuarios ON tb_pedidocab.usuario = usuarios.iduser
                                                         LEFT JOIN alm_transferdet ON alm_transferdet.iddetped = tb_pedidodet.iditem
                                                         LEFT JOIN alm_transfercab ON alm_transfercab.idreg = alm_transferdet.idtransfer
                                                         LEFT JOIN tb_user AS asignacion ON tb_pedidodet.idasigna = asignacion.iduser
+                                                        LEFT JOIN lg_guias AS sunat ON sunat.id_regalm = alm_despachocab.id_regalm 
                                                     WHERE
                                                         tb_pedidodet.nflgActivo 
                                                         AND ISNULL( lg_ordendet.nflgactivo )
@@ -2127,7 +2133,7 @@
                     'U' => 'dd/mm/yyyy','V' => '#,##0.00', 'X' => 'dd/mm/yyyy',
                     'Y' => '#,##0.00', 'AA' => 'dd/mm/yyyy', 'AB' => '#,##0.00','AD' => 'dd/mm/yyyy',
                     'AE' =>'#,##0.00','AI' => '#,##0.00', 'AL' => 'dd/mm/yyyy', 'AN' => 'dd/mm/yyyy',
-                    'AL' => 'dd/mm/yyyy', 'AQ' => '#,##0.00'
+                    'AL' => 'dd/mm/yyyy', 'AQ' => '#,##0.00', 'AP' => 'dd/mm/yyyy'
                 ];
                 
                 foreach ($formatos as $col => $format) {

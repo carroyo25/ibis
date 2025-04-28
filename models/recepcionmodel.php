@@ -337,11 +337,11 @@
                                                             INNER JOIN tb_parametros AS estados ON lg_ordencab.nEstadoDoc = estados.nidreg
                                                             INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
                                                             INNER JOIN tb_parametros AS transportes ON lg_ordencab.ctiptransp = transportes.nidreg
-                                                            INNER JOIN tb_almacen ON lg_ordencab.ncodalm = tb_almacen.ncodalm
+                                                            LEFT JOIN tb_almacen ON lg_ordencab.ncodalm = tb_almacen.ncodalm
                                                             INNER JOIN rrhh.tabla_aquarius ON tb_pedidocab.idsolicita = rrhh.tabla_aquarius.internal 
                                                             WHERE
-                                                        lg_ordencab.id_regmov =:id 
-                                                        AND lg_ordencab.nflgactivo = 1");
+                                                                lg_ordencab.id_regmov =:id 
+                                                                AND lg_ordencab.nflgactivo = 1");
                 $sql->execute(["id"=>$id]);
                 $docData = array();
                 while($row=$sql->fetch(PDO::FETCH_ASSOC)){

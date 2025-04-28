@@ -6,8 +6,12 @@
         }
 
         function render(){
-            $this->view->listaGuias = $this->model->listarGuias();
+            //$this->view->listaGuias = 
             $this->view->render('reporteguias/index');
+        }
+
+        function listaGuias(){
+            echo json_encode($this->model->listarGuias($_POST));
         }
         
     }

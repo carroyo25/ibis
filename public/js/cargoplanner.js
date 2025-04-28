@@ -388,7 +388,7 @@ $(function() {
             return response.json();
         })
         .then((json)=> {
-            //$("#esperarCargo").css("opacity","0").fadeOut();
+            $("#esperarCargo").css("opacity","0").fadeOut();
             resetTimer();
             window.location.href = json.documento;
         })

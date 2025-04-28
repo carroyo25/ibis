@@ -181,31 +181,17 @@
             <div class="variasConsultas">
                     <div>
                         <label for="tipo">Nro. Guia</label>
-                        <input type="text" id="guiaSearch" name="guiaSearch">
+                        <input type="text" id="guiaSearch" name="">
                     </div>
                     <div>
                         <label for="costosSearch">Centro de Costos: </label>
-                        <select name="costosSearch" id="costosSearch" class="item4">
+                        <select name="costosSearch" id="costosSearch" class="item4" disabled>
                             <?php echo $this->listaCostosSelect ?>
                         </select>
                     </div>
                     <div>
-                        <label for="mes">Mes</label>
-                        <select name="mesSearch" id="mesSearch">
-                            <option value="-1">Mes</option>
-                            <option value="1">Enero</option>
-                            <option value="2">Febrero</option>
-                            <option value="3">Marzo</option>
-                            <option value="4">Abril</option>
-                            <option value="5">Mayo</option>
-                            <option value="6">Junio</option>
-                            <option value="7">Julio</option>
-                            <option value="8">Agosto</option>
-                            <option value="9">Setiembre</option>
-                            <option value="10">Octubre</option>
-                            <option value="11">Noviembre</option>
-                            <option value="12">Diciembre</option>
-                        </select>
+                        <label for="mes">Guia Sunat</label>
+                        <input type="text" id="guiaSunat" name="">
                     </div>
                     <div>
                         <label for="anio">Año :</label>
@@ -223,14 +209,14 @@
                     <th>F. Envio</th>
                     <th>Almacen Origen</th>
                     <th>Almacen Destino</th>
-                    <th>Centro de Costos</th>
                     <th>Año</th>
-                    <th>Guia</br>Remision</th>
                     <th>Guia</br>Sunat</th>
+                    <th>Tipo Transporte</th>
+                    <th width="45%">Observaciones</th>
                 </tr>
             </thead>
-            <tbody>
-                <?php echo $this->listaGuias;?>
+            <tbody id="tablaPrincipalCuerpo">
+
             </tbody>
         </table>
     </div>
