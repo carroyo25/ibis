@@ -3,18 +3,20 @@ $(function(){
 })
 
 document.addEventListener("click",(e)=>{
+    //console.log(e.target);
     if (e.target.id == 'btnConsulta'){
         e.preventDefault();
 
         llenarListado();
 
         return false;
-    }else if (e.target.matches(".pointer")){
-        console.log(e.target);
+    }else if (e.target.matches(".pointer *")){
+        const parentPointer = e.target.closest('.pointer');
+        console.log(parentPointer.dataset.guiaid);
     }
 })
 
-const llenarListado = async () => {
+llenarListado = async () => {
     try {
         let formData = new FormData();
         formData.append("anio", document.getElementById("anioSearch").value);

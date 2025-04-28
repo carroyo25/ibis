@@ -183,10 +183,10 @@
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()) {
                         
-                        $cant   = floatval($rs['cant_aprob']) -  floatval($rs['stock_almacen']);
+                        $cant   = floatval($rs['cantidad_pedida']) -  floatval($rs['stock_almacen']);
                         $aten   = $rs['stock_almacen'] == NULL ? 0 : $rs['stock_almacen'];
 
-                        $compra = ( floatval($rs['cantidad']) - floatval($rs['cant_aprob'])) - floatval($rs['stock_almacen']);
+                        $compra = ( floatval($rs['cant_aprob']) /*- floatval($rs['cant_aprob'])*/) - floatval($rs['stock_almacen']);
 
                         //validar para las compras parciales
                        if ( $compra >= 0 ) {
