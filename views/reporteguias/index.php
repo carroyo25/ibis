@@ -164,7 +164,7 @@
         <div class="ventanaVistaPrevia">
             <div class="tituloVista">
                 <h3>Vista Previa</h3>
-                <a href="#" id="closePreview" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
+                <a href="#" id="closePreview" title="Cerrar Ventana"><i class="fas fa-window-close cerrar_vista"></i></a>
             </div>
             <iframe src="" id="pdfPreview"></iframe>
         </div>
@@ -207,8 +207,6 @@
                 <tr>
                     <th>Num. Guia</th>
                     <th>F. Envio</th>
-                    <th>Almacen Origen</th>
-                    <th>Almacen Destino</th>
                     <th>Año</th>
                     <th>Guia</br>Sunat</th>
                     <th>Tipo Transporte</th>

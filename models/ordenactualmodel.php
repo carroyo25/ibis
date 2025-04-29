@@ -57,6 +57,7 @@
                                                         tb_costusu.id_cuser = :user 
                                                         AND tb_costusu.nflgactivo = 1
                                                         AND (lg_ordencab.nEstadoDoc = 60 OR lg_ordencab.nEstadoDoc = 62)
+                                                        AND lg_ordencab.cper = YEAR(NOW())
                                                     ORDER BY lg_ordencab.id_regmov DESC
                                                     LIMIT $inicio,$cantidad");
                 
