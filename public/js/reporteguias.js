@@ -3,8 +3,8 @@ $(function(){
 })
 
 document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape' && vistaguia.style.display === 'block') {
-        fadeOut(modal);
+    if (e.key === 'Escape' && document.getElementById("vistaprevia").style.display === 'block') {
+        fadeOut(document.getElementById("vistaprevia"));
     }
 });
 
@@ -22,9 +22,9 @@ document.addEventListener("click",(e)=>{
         const parentSunat = e.target.closest('.pointer').dataset.guiasunatnro;
 
         if ( parentSunat === "null" || parentSunat === null ){
-            document.getElementById("pdfPreview").setAttribute('src','http://localhost/ibis/public/documentos/guias_remision/' + parentPointer +'.pdf');
+            document.getElementById("pdfPreview").setAttribute('src','http://sicalsepcon.net/ibis/public/documentos/guias_remision/' + parentPointer +'.pdf');
         }else{
-            document.getElementById("pdfPreview").setAttribute('src','http://localhost/ibis/public/documentos/guias_remision/20504898173-09-T001-' + parentSunat +'.pdf');
+            document.getElementById("pdfPreview").setAttribute('src','http://sicalsepcon.net/ibis/public/documentos/guias_remision/20504898173-09-T001-' + parentSunat +'.pdf');
         }
 
         fadeIn(document.getElementById("vistaprevia"));
@@ -45,6 +45,9 @@ llenarListado = async () => {
         formData.append("anio", document.getElementById("anioSearch").value);
         formData.append("guia", document.getElementById("guiaSearch").value);
         formData.append("sunat", document.getElementById("guiaSunat").value);
+
+        $("#esperar").css({"display":"block","opacity":"1"});
+        
 
         const response = await fetch(RUTA + "reporteguias/listaGuias", {
             method: 'POST',

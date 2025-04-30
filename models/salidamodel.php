@@ -13,39 +13,32 @@
 
             try {
                 $sql = $this->db->connect()->query("SELECT
-                                                    alm_despachocab.cmes,
-                                                    DATE_FORMAT( alm_despachocab.ffecdoc, '%d/%m/%Y' ) AS ffecdoc,
-                                                    YEAR ( alm_despachocab.ffecdoc ) AS anio,
-                                                    alm_despachocab.id_regalm,
-                                                    alm_despachocab.cnumguia,
-                                                    alm_despachocab.nEstadoDoc,
-                                                    UPPER( origen.cdesalm ) AS origen,
-                                                    UPPER( origen.ctipovia ) AS direccion_origen,
-                                                    UPPER( destino.cdesalm ) AS destino,
-                                                    UPPER( destino.ctipovia ) AS direccion_destino,
-                                                    UPPER( CONCAT_WS( ' ', tb_proyectos.ccodproy, tb_proyectos.cdesproy ) ) AS costos,
-                                                    lg_guias.ticketsunat,
-                                                    lg_guias.guiasunat,
-                                                    lg_guias.estadoSunat,
-                                                    i.nroorden AS pedido,
-                                                    i.nropedido AS orden 
+                                                    dc.cmes,
+                                                    DATE_FORMAT(dc.ffecdoc, '%d/%m/%Y') AS ffecdoc,
+                                                    YEAR(dc.ffecdoc) AS anio,
+                                                    dc.id_regalm,
+                                                    dc.cnumguia,
+                                                    dc.nEstadoDoc,
+                                                    UPPER(o.cdesalm) AS origen,
+                                                    UPPER(o.ctipovia) AS direccion_origen,
+                                                    UPPER(d.cdesalm) AS destino,
+                                                    UPPER(d.ctipovia) AS direccion_destino,
+                                                    UPPER(CONCAT_WS(' ', p.ccodproy, p.cdesproy)) AS costos,
+                                                    lg.ticketsunat,
+                                                    lg.guiasunat,
+                                                    lg.estadoSunat
                                                 FROM
-                                                    alm_despachocab
-                                                    LEFT JOIN tb_almacen AS origen ON alm_despachocab.ncodalm1 = origen.ncodalm
-                                                    LEFT JOIN tb_almacen AS destino ON alm_despachocab.ncodalm2 = destino.ncodalm
-                                                    LEFT JOIN tb_proyectos ON alm_despachocab.ncodpry = tb_proyectos.nidreg
-                                                    LEFT JOIN tb_parametros ON alm_despachocab.nEstadoDoc = tb_parametros.nidreg
-                                                    LEFT JOIN lg_guias ON alm_despachocab.id_regalm = lg_guias.id_regalm
-                                                    LEFT JOIN ( 
-                                                        SELECT alm_despachodet.id_regalm, alm_despachodet.nropedido, alm_despachodet.nroorden 
-                                                            FROM alm_despachodet 
-                                                            GROUP BY alm_despachodet.id_regalm ) 
-                                                    AS i ON i.id_regalm = alm_despachocab.id_regalm 
+                                                    alm_despachocab dc
+                                                    INNER JOIN tb_almacen o ON dc.ncodalm1 = o.ncodalm
+                                                    INNER JOIN tb_almacen d ON dc.ncodalm2 = d.ncodalm
+                                                    LEFT JOIN tb_proyectos p ON dc.ncodpry = p.nidreg
+                                                    LEFT JOIN lg_guias lg ON dc.id_regalm = lg.id_regalm
                                                 WHERE
-                                                    alm_despachocab.nEstadoDoc = 62 
-                                                    AND alm_despachocab.cper = YEAR (NOW()) 
-                                                    AND (alm_despachocab.cmes = MONTH (NOW()) OR alm_despachocab.cmes = MONTH (NOW())-2 )
-                                                ORDER BY alm_despachocab.ffecdoc DESC");
+                                                    dc.nEstadoDoc = 62 
+                                                    AND dc.cper = YEAR(CURRENT_DATE) 
+                                                    AND dc.cmes BETWEEN MONTH(CURRENT_DATE)-2 AND MONTH(CURRENT_DATE)
+                                                ORDER BY 
+                                                    dc.ffecdoc DESC;");
                 $sql->execute();
                 $rowCount = $sql->rowCount();
 
@@ -74,8 +67,6 @@
                                         <td class="textoCentro">'.$rs['anio'].'</td>
                                         <td class="textoCentro">'.$rs['cnumguia'].'</td>
                                         <td class="textoCentro">'.$rs['guiasunat'].'</td>
-                                        <td class="textoCentro ">'.str_pad($rs['orden'],6,0,STR_PAD_LEFT).'</td>
-                                        <td class="textoCentro ">'.str_pad($rs['pedido'],6,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro" style="color:'.$color.';font-weight: bolder;font-size: 1.2rem;vertical-align: middle;">'.$icono.'</td>
                                     </tr>';
                     }
@@ -951,42 +942,38 @@
                                                         alm_despachocab.cmes,
                                                         DATE_FORMAT( alm_despachocab.ffecdoc, '%d/%m/%Y' ) AS ffecdoc,
                                                         YEAR ( ffecdoc ) AS anio,
-                                                        alm_despachodet.nropedido AS orden,
-                                                        alm_despachodet.nroorden AS pedido,
                                                         UPPER( origen.cdesalm ) AS origen,
                                                         UPPER( origen.ctipovia ) AS direccion_origen,
                                                         UPPER( destino.cdesalm ) AS destino,
                                                         UPPER( destino.ctipovia ) AS direccion_destino,
                                                         alm_despachocab.cnumguia,
+                                                        alm_despachocab.id_regalm,
                                                         alm_despachocab.nEstadoDoc,
                                                         UPPER( CONCAT_WS( ' ', tb_proyectos.ccodproy, tb_proyectos.cdesproy ) ) AS costos,
-                                                        tb_costusu.nflgactivo,
                                                         tb_parametros.cdescripcion,
                                                         tb_parametros.cabrevia,
-                                                        alm_despachocab.id_regalm,
-                                                        lg_ordencab.cnumero
+                                                        lg_ordencab.cnumero,
+                                                        lg_guias.guiasunat,
+	                                                    lg_guias.estadoSunat 
                                                     FROM
                                                         alm_despachodet
                                                         LEFT JOIN alm_despachocab ON alm_despachocab.id_regalm = alm_despachodet.id_regalm
                                                         LEFT JOIN tb_almacen AS origen ON alm_despachocab.ncodalm1 = origen.ncodalm
                                                         LEFT JOIN tb_almacen AS destino ON alm_despachocab.ncodalm2 = destino.ncodalm
                                                         LEFT JOIN tb_proyectos ON alm_despachocab.ncodpry = tb_proyectos.nidreg
-                                                        LEFT JOIN tb_costusu ON alm_despachocab.ncodpry = alm_despachocab.ncodpry
                                                         LEFT JOIN tb_parametros ON alm_despachocab.nEstadoDoc = tb_parametros.nidreg 
                                                         LEFT JOIN lg_ordencab ON lg_ordencab.cnumero = alm_despachodet.nropedido
+                                                        LEFT JOIN lg_guias ON alm_despachocab.id_regalm = lg_guias.id_regalm
                                                     WHERE
-                                                        tb_costusu.nflgactivo = 1 
-                                                        AND alm_despachocab.nEstadoDoc = 62
-                                                        AND tb_costusu.id_cuser = :usr 
+                                                        alm_despachocab.nEstadoDoc = 62
                                                         AND lg_ordencab.cnumero = :orden 
                                                         AND alm_despachocab.ncodpry LIKE :costos 
                                                         AND alm_despachocab.cper LIKE :anio 
                                                         AND alm_despachocab.cmes LIKE :mes 
-                                                        AND alm_despachodet.nflgactivo = 1
-                                                    GROUP BY alm_despachocab.id_regalm");
+                                                    GROUP BY alm_despachocab.id_regalm
+                                                    LIMIT 1");
                 
-                $sql->execute(["usr"=>$_SESSION['iduser'],
-                                "orden"=>$orden,
+                $sql->execute(["orden"=>$orden,
                                 "costos"=>$costos,
                                 "mes"=>$mes,
                                 "anio"=>$anio]);
@@ -994,6 +981,20 @@
                 $rowCount = $sql->rowcount();
                 if ($rowCount > 0){
                     while($rs = $sql->fetch()){
+                        $icono = '';
+                        $color = '';
+
+                        if ( $rs['estadoSunat'] === 0 ) {
+                            $icono = '<i class="fas fa-check-circle"></i>';
+                            $color = 'green';
+                        }else if ($rs['estadoSunat'] === 98){
+                            $icono = '<i class="far fa-clock"></i>';
+                            $color = 'gold';
+                        }else if ($rs['estadoSunat'] === 99) {
+                            $icono = '<i class="fas fa-wrench"></i>';
+                            $color = 'red';
+                        }
+
                         $salida .='<tr data-indice="'.$rs['id_regalm'].'" class="pointer">
                                         <td class="textoCentro">'.str_pad($rs['id_regalm'],6,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$rs['ffecdoc'].'</td>
@@ -1002,9 +1003,8 @@
                                         <td class="pl20px">'.$rs['costos'].'</td>
                                         <td class="textoCentro">'.$rs['anio'].'</td>
                                         <td class="textoCentro">'.$rs['cnumguia'].'</td>
-                                        <td class="textoCentro ">'.str_pad($rs['cnumero'],6,0,STR_PAD_LEFT).'</td>
-                                        <td class="textoCentro ">'.str_pad($rs['pedido'],6,0,STR_PAD_LEFT).'</td>
-                                        <td class="textoCentro "></td>
+                                        <td class="textoCentro">'.$rs['guiasunat'].'</td>
+                                       <td class="textoCentro" style="color:'.$color.';font-weight: bolder;font-size: 1.2rem;vertical-align: middle;">'.$icono.'</td>
                                     </tr>';
                     }
                 }

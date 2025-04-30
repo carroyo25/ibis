@@ -40,10 +40,6 @@ $(function() {
 
     $("#vistaAdjuntos").on("click","a", function (e) {
         e.preventDefault();
-        
-        /*$(".ventanaAdjuntos iframe")
-            .attr("src","")
-            .attr("src","public/documentos/ordenes/adjuntos/"+$(this).attr("href"));*/
 
         $(".ventanaAdjuntos iframe")
             .attr("src","")

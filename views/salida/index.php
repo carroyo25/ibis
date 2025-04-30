@@ -553,8 +553,6 @@
                     <th>Año</th>
                     <th>Guia</br>Remision</th>
                     <th>Guia</br>Sunat</th>
-                    <th>Orden</th>
-                    <th>Pedido</th>
                     <th>Envio Sunat</th>
                 </tr>
             </thead>

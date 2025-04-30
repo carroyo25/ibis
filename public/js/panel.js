@@ -9,7 +9,7 @@ $(function(){
         $(".opcion").removeClass("visitado");
         $(this).addClass("visitado");
 		
-		$("#esperar").fadeIn();
+		$("#esperar").css({"display":"block"});
         
 		$(".cargaModulo").load($(this).attr("href"),function(){
 			
