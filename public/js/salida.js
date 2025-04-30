@@ -168,16 +168,19 @@ $(function() {
         e.preventDefault();
 
         try {
-            $.post(RUTA+"salida/ordenes",
+
+            $("#busqueda").fadeIn();
+
+            /*$.post(RUTA+"salida/ordenes",
             function (data, textStatus, jqXHR) {
                 $("#ordenes tbody")
                     .empty()
                     .append(data);
 
-                $("#busqueda").fadeIn();
+                
             },
             "text"
-            );
+            );*/
             
         } catch (error) {
             mostrarMensaje(error,'mensaje_error');

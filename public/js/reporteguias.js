@@ -46,9 +46,8 @@ llenarListado = async () => {
         formData.append("guia", document.getElementById("guiaSearch").value);
         formData.append("sunat", document.getElementById("guiaSunat").value);
 
-        $("#esperar").css({"display":"block","opacity":"1"});
+        $("#esperar").css({"display":"block"});
         
-
         const response = await fetch(RUTA + "reporteguias/listaGuias", {
             method: 'POST',
             body: formData
@@ -87,6 +86,7 @@ llenarListado = async () => {
         });
 
         tablaCuerpo.appendChild(fragment);
+        $("#esperar").css({"display":"none"});
 
     } catch (error) {
         console.error("Error in llenarListado:", error);

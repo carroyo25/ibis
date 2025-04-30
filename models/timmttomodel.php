@@ -42,9 +42,9 @@
                                                         ibis.ti_mmttos
                                                         LEFT JOIN ibis.cm_producto ON ti_mmttos.idprod = cm_producto.id_cprod
                                                         LEFT JOIN ibis.tb_proyectos ON ibis.ti_mmttos.idcostos = ibis.tb_proyectos.nidreg
-                                                        LEFT JOIN ( SELECT ti_mmttos.fmtto, ti_mmttos.flgestado, ti_mmttos.cserie FROM ti_mmttos WHERE ti_mmttos.nmtto = 2 ) AS m2 ON m2.cserie = ti_mmttos.cserie
-                                                        LEFT JOIN ( SELECT ti_mmttos.fmtto, ti_mmttos.flgestado, ti_mmttos.cserie FROM ti_mmttos WHERE ti_mmttos.nmtto = 3 ) AS m3 ON m3.cserie = ti_mmttos.cserie
-                                                        LEFT JOIN ( SELECT ti_mmttos.fmtto, ti_mmttos.flgestado, ti_mmttos.cserie FROM ti_mmttos WHERE ti_mmttos.nmtto = 4 ) AS m4 ON m4.cserie = ti_mmttos.cserie
+                                                        LEFT JOIN ( SELECT ti_mmttos.fmtto, ti_mmttos.flgestado, ti_mmttos.cserie FROM ti_mmttos WHERE ti_mmttos.nmtto = 2 AND ti_mmttos.flgactivo = 1) AS m2 ON m2.cserie = ti_mmttos.cserie
+                                                        LEFT JOIN ( SELECT ti_mmttos.fmtto, ti_mmttos.flgestado, ti_mmttos.cserie FROM ti_mmttos WHERE ti_mmttos.nmtto = 3 AND ti_mmttos.flgactivo = 1) AS m3 ON m3.cserie = ti_mmttos.cserie
+                                                        LEFT JOIN ( SELECT ti_mmttos.fmtto, ti_mmttos.flgestado, ti_mmttos.cserie FROM ti_mmttos WHERE ti_mmttos.nmtto = 4 AND ti_mmttos.flgactivo = 1) AS m4 ON m4.cserie = ti_mmttos.cserie
                                                         LEFT JOIN ibis.tb_tiespec ON ibis.tb_tiespec.cserie = ibis.ti_mmttos.cserie COLLATE utf8_unicode_ci
                                                     WHERE
                                                         ibis.ti_mmttos.flgactivo = 1 
