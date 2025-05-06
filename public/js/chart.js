@@ -245,7 +245,7 @@ $(function () {
             })
         })
     }else if ( $("#rol_user").val() == 4 ) {
-        $.ajax({
+        /*$.ajax({
             type: "POST",
             url: RUTA+"panel/resumenAlmacenSedes",
             dataType: "JSON",
@@ -262,7 +262,7 @@ $(function () {
                   .empty()
                   .append(response.asignados);
             }
-        });
+        });*/
     }
 
     $("#tablaPanelPedidos tbody").on("click","tr", function (e) {

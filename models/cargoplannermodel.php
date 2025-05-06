@@ -149,7 +149,8 @@
                                                     AND tb_pedidocab.concepto LIKE :concepto
                                                     AND tb_pedidodet.estadoItem LIKE :estado
                                                     AND CONCAT_WS( ' ', cm_producto.cdesprod, tb_pedidodet.observaciones ) LIKE :descripcion 
-                                                    AND tb_pedidocab.anio >= YEAR (NOW()) - 2 
+                                                    AND tb_pedidocab.anio >= YEAR (NOW()) - 2
+                                                    AND alm_transferdet.ncanti > 0
                                                 GROUP BY
                                                     tb_pedidodet.iditem 
                                                 ORDER BY
