@@ -119,6 +119,8 @@ $(function(){
 
         autorizado = $(this).data('finanzas')+$(this).data('logistica')+$(this).data('operaciones');
 
+        $("#esperar").css({"display":"block"});
+
         $.post(RUTA+"ordenedit/ordenId", {id:$(this).data("indice")},
             function (data, textStatus, jqXHR) {
 
@@ -174,13 +176,12 @@ $(function(){
                 //$("#total_adicional").val(data.total_adicionales);
                 
                 $("#user_modifica").val(data.cabecera[0].userModifica);
+                $("#user_genera").val(data.cabecera[0].usuario);
 
                 $("#nivel_autorizacion").val(data.cabecera[0].autorizado);
                 $("#procura").val(data.cabecera[0].nfirmaLog);
                 $("#finanzas").val(data.cabecera[0].nfirmaFin);
                 $("#operaciones").val(data.cabecera[0].nfirmaOpe);
-
-               
 
                 $("#estado")
                     .removeClass()
@@ -208,13 +209,17 @@ $(function(){
                     $("#no").prop("checked", true);
                };
 
+                accion = "u";
+                grabado = true;
+                $("#proceso").fadeIn();
+
+               $("#esperar").css({"display":"none"});
+
             },
             "json"
         );
     
-        accion = "u";
-        grabado = true;
-        $("#proceso").fadeIn();
+        
     
         return false;
     });
@@ -355,8 +360,7 @@ $(function(){
             $("#tablaDetalles tbody").empty();
         });
 
-
-        query();
+        //query();
 
         return false;
     });
@@ -368,7 +372,6 @@ $(function(){
             mostrarMensaje("La orden no se puede modificar","mensaje_error");
             return false;
         }
-            
         
         $("#esperar").fadeIn();
 

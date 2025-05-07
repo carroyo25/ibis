@@ -150,7 +150,6 @@
                                                     AND tb_pedidodet.estadoItem LIKE :estado
                                                     AND CONCAT_WS( ' ', cm_producto.cdesprod, tb_pedidodet.observaciones ) LIKE :descripcion 
                                                     AND tb_pedidocab.anio >= YEAR (NOW()) - 2
-                                                    AND alm_transferdet.ncanti > 0
                                                 GROUP BY
                                                     tb_pedidodet.iditem 
                                                 ORDER BY
@@ -184,6 +183,9 @@
                 $nro_orden = 0;
 
                 if ($rowCount > 0) {
+
+                    $counter = 1;
+
                     while ($rs = $sql->fetch()){
 
                         $porcentaje = "100%";
@@ -399,7 +401,7 @@
                                         data-aprueba="'.$rs['cnombres'].'"
                                         data-despacho="'.$rs['id_regalm'].'"
                                         data-porcentaje="'.$rs['ingreso_obra'].'">
-                                        <td class="textoCentro">'.$equal.'</td>
+                                        <td class="textoCentro">'.$counter++.'</td>
                                         <td class="textoCentro '.$estadofila.'">'.$porcentaje.'</td>
                                         <td class="textoDerecha pr15px">'.$rs['ccodproy'].'</td>
                                         <td class="pl20px">'.$rs['area'].'</td>

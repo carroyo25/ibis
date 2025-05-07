@@ -1,9 +1,3 @@
-let hours = 0;
-    let minutes = 0;
-    let seconds = 0;
-    let timer;
-    let isRunning = false;
-
 $(function() {
     let idpedido = "",progreso = 0;
 
@@ -1087,6 +1081,12 @@ function updateDisplay() {
 }
 
 function startTimer() {
+    let hours = 0;
+    let minutes = 0;
+    let seconds = 0;
+    let timer;
+    let isRunning = false;
+    
     if (!isRunning) {
         isRunning = true;
         timer = setInterval(() => {
