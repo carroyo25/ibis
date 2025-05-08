@@ -503,6 +503,7 @@
                     <th>Almacen Origen</th>
                     <th>Almacen Destino</th>
                     <th>N° Guia</th>
+                    <th>N° Guia Sunat</th>
                     <th>Estado Sunat</th>
                 </tr>
             </thead>

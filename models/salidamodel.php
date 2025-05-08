@@ -102,34 +102,42 @@
                 $salida ="";
 
                 $sql = $this->db->connect()->prepare("SELECT
-                                                        lg_ordendet.nitemord,
-                                                        lg_ordendet.id_regmov,
-                                                        lg_ordendet.niddeta,
-                                                        lg_ordendet.nidpedi,
-                                                        lg_ordendet.id_cprod,
-                                                        lg_ordendet.id_orden,
-                                                        cm_producto.ccodprod,
-                                                        LPAD( tb_pedidocab.nrodoc, 6, 0 ) AS pedido,
-                                                        UPPER( CONCAT_WS( ' ', cm_producto.cdesprod ) ) AS cdesprod,
-                                                        cm_producto.nund,
-                                                        tb_unimed.cabrevia,
-                                                        tb_pedidodet.idpedido,
-                                                        tb_pedidodet.nroparte,
-                                                        REPLACE ( FORMAT( lg_ordendet.ncanti, 2 ), ',', '' ) AS cantidad,
-                                                        ( SELECT SUM( alm_recepdet.ncantidad ) FROM alm_recepdet WHERE alm_recepdet.niddetaOrd = lg_ordendet.nitemord 
-                                                            AND alm_recepdet.nflgActivo = 1) AS ingresos,
-                                                        ( SELECT SUM( alm_despachodet.ndespacho ) FROM alm_despachodet WHERE alm_despachodet.niddetaOrd = lg_ordendet.nitemord 
-                                                        AND alm_despachodet.nflgActivo = 1) AS despachos,
-                                                        LPAD(lg_ordencab.cnumero,6,0) AS cnumero
+                                                        od.nitemord,
+                                                        od.id_regmov,
+                                                        od.niddeta,
+                                                        od.nidpedi,
+                                                        od.id_cprod,
+                                                        od.id_orden,
+                                                        p.ccodprod,
+                                                        LPAD(pc.nrodoc, 6, '0') AS pedido,
+                                                        UPPER(p.cdesprod) AS cdesprod,
+                                                        p.nund,
+                                                        u.cabrevia,
+                                                        pd.idpedido,
+                                                        pd.nroparte,
+                                                        REPLACE(FORMAT(od.ncanti, 2), ',', '') AS cantidad,
+                                                        COALESCE((
+                                                            SELECT SUM(ard.ncantidad) 
+                                                            FROM alm_recepdet ard 
+                                                            WHERE ard.niddetaOrd = od.nitemord 
+                                                            AND ard.nflgActivo = 1
+                                                        ), 0) AS ingresos,
+                                                        COALESCE((
+                                                            SELECT SUM(adt.ndespacho) 
+                                                            FROM alm_despachodet adt 
+                                                            WHERE adt.niddetaOrd = od.nitemord 
+                                                            AND adt.nflgActivo = 1
+                                                        ), 0) AS despachos,
+                                                        LPAD(oc.cnumero, 6, '0') AS cnumero
                                                     FROM
-                                                        lg_ordendet
-                                                        INNER JOIN cm_producto ON lg_ordendet.id_cprod = cm_producto.id_cprod
-                                                        INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
-                                                        INNER JOIN tb_pedidodet ON lg_ordendet.niddeta = tb_pedidodet.iditem
-                                                        INNER JOIN tb_pedidocab ON tb_pedidocab.idreg = tb_pedidodet.idpedido
-                                                        INNER JOIN lg_ordencab ON lg_ordendet.id_regmov = lg_ordencab.id_regmov
+                                                        lg_ordendet od
+                                                        INNER JOIN cm_producto p ON od.id_cprod = p.id_cprod
+                                                        INNER JOIN tb_unimed u ON p.nund = u.ncodmed
+                                                        INNER JOIN tb_pedidodet pd ON od.niddeta = pd.iditem
+                                                        INNER JOIN tb_pedidocab pc ON pc.idreg = pd.idpedido
+                                                        INNER JOIN lg_ordencab oc ON od.id_regmov = oc.id_regmov
                                                     WHERE
-                                                        lg_ordendet.id_orden = :id");
+                                                        od.id_orden = :id");
                 $sql->execute(["id"=>$id]);
                 
                 $rowCount = $sql->rowCount();

@@ -294,26 +294,24 @@
 
                 $salida = "";
                 $sql = $this->db->connect()->prepare("SELECT
-                                                        alm_madrescab.id_regalm,
-                                                        alm_madrescab.cnumguia,
-                                                        alm_madrescab.ncodcos,
-                                                        UPPER( origenes.crazonsoc ) AS nombre_origen,
-                                                        UPPER( origenes.cviadireccion ) AS direccion_origen,
-                                                        UPPER( destinos.crazonsoc ) AS nombre_destino,
-                                                        UPPER( destinos.cviadireccion ) AS direccion_destino,
-                                                        DATE_FORMAT( alm_madrescab.ffecdoc, '%d/%m/%Y' ) AS emitido,
-                                                        DATE_FORMAT( lg_guias.ftraslado, '%d/%m/%Y' ) AS traslado,
-                                                        lg_guias.ticketsunat,
-                                                        lg_guias.guiasunat,
-                                                        lg_guias.estadoSunat  
+                                                        am.id_regalm,
+                                                        am.cnumguia,
+                                                        am.ncodcos,
+                                                        DATE_FORMAT(am.ffecdoc, '%d/%m/%Y') AS emitido,
+                                                        DATE_FORMAT(lg.ftraslado, '%d/%m/%Y') AS traslado,
+                                                        lg.ticketsunat,
+                                                        lg.guiasunat,
+                                                        lg.estadoSunat,
+                                                        lg.corigen, 
+                                                        lg.cdestino  
                                                     FROM
-                                                        alm_madrescab
-                                                        INNER JOIN cm_entidad AS origenes ON alm_madrescab.ncodalm1 = origenes.id_centi
-                                                        INNER JOIN cm_entidad AS destinos ON alm_madrescab.ncodalm2 = destinos.id_centi
-                                                        INNER JOIN lg_guias ON alm_madrescab.cnumguia = lg_guias.cnumguia 
+                                                        alm_madrescab am
+                                                        LEFT JOIN lg_guias lg ON am.cnumguia = lg.cnumguia 
                                                     WHERE
-                                                        alm_madrescab.nflgactivo = 1
-                                                    ORDER BY alm_madrescab.ffecdoc DESC");
+                                                        am.nflgactivo = 1
+                                                        AND YEAR(am.ffecdoc) = YEAR(CURRENT_DATE)
+                                                    ORDER BY 
+                                                        am.ffecdoc DESC");
 
                 $sql->execute();
                 $item = 1;
@@ -339,9 +337,10 @@
                                         <td class="textoCentro">'.str_pad($item++,4,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$rs['emitido'].'</td>
                                         <td class="textoCentro">'.$rs['traslado'].'</td>
-                                        <td class="pl20px">'.$rs['nombre_origen'].'</td>
-                                        <td class="pl20px">'.$rs['nombre_destino'].'</td>
+                                        <td class="pl20px">'.$rs['corigen'].'</td>
+                                        <td class="pl20px">'.$rs['cdestino'].'</td>
                                         <td class="textoCentro">'.$rs['cnumguia'].'</td>
+                                        <td class="textoCentro">'.$rs['guiasunat'].'</td>
                                         <td class="textoCentro" style="color:'.$color.';font-weight: bolder;font-size: 1rem;vertical-align: middle;">'.$icono.'</td>
                                     </tr>';
                     }
@@ -355,7 +354,7 @@
             }
         }
 
-        public function listarGuiasScroll($pagina,$cantidad){
+        /*public function listarGuiasScroll($pagina,$cantidad){
             try {
                 $inicio = ($pagina - 1) * $cantidad;
                 $limite = $this->contarItems();
@@ -409,7 +408,7 @@
                 echo "Error: ".$th->getMessage();
                 return false;
             }
-        }
+        }*/
 
         private function contarItems(){
             try {

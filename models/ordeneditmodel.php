@@ -839,7 +839,7 @@
                 return array("cabecera"=>$docData,
                             "detalles"=>$this->consultarDetallesOrden($id),
                             "comentarios"=>$comentarios,
-                            "total"=>$total,
+                            "total"=>$this->calculaTotalOrden($id),
                             "bocadillo"=>$ncomentarios,
                             "adjuntos"=>$adjuntos,
                             "adicionales"=>$adicionales,
