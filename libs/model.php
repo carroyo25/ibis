@@ -4266,7 +4266,7 @@
                                                                 LIMIT 1
                                                             ) AS contacto ON contacto.id_centi = cm_entidad.id_centi
                                                             INNER JOIN tb_parametros AS transportes ON lg_ordencab.ctiptransp = transportes.nidreg
-                                                            INNER JOIN tb_almacen ON lg_ordencab.ncodalm = tb_almacen.ncodalm
+                                                            LEFT JOIN tb_almacen ON lg_ordencab.ncodalm = tb_almacen.ncodalm
                                                             INNER JOIN tb_user ON lg_ordencab.id_cuser = tb_user.iduser
                                                             WHERE
                                                                 lg_ordencab.id_regmov = :id
