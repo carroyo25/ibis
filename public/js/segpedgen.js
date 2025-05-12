@@ -112,11 +112,11 @@ $(function(){
                     .addClass(estado);
                 
                 grabado = true;
+
+                $("#proceso").fadeIn();
             },
             "json"
         );
-
-        $("#proceso").fadeIn();
 
         return false;
     });
@@ -173,7 +173,9 @@ $(function(){
     $("#verDetalles").click(function(e){
         e.preventDefault();
 
-        $.post(RUTA+"pedidoseg/infoPedido", {id:$("#codigo_pedido").val()},
+        $("#detalles").fadeIn();
+
+        /*$.post(RUTA+"pedidoseg/infoPedido", {id:$("#codigo_pedido").val()},
             function (data, textStatus, jqXHR) {
                 $("#tableInfo tbody").find('tr').eq(1).find('td').eq(1).children().text(data.pedido);
                 $("#tableInfo tbody").find('tr').eq(1).find('td').eq(3).children().text(data.emision);
@@ -215,7 +217,7 @@ $(function(){
                 $("#tabla_registros").append(data.registros);
             },
             "json"
-        );
+        );*/
 
         return false;
     });

@@ -1524,7 +1524,8 @@
 .ventanaFiltros,
 .ventanaConsumo,
 .ventanaCarpetas,
-.ventanaInformes {
+.ventanaInformes,
+.ventanaResumenPedidos {
   background: #fff;
   position: absolute;
   top: 50%;
@@ -2181,6 +2182,17 @@
   padding: 1rem;
 }
 
+.ventanaResumenPedidos {
+  border-radius: 8px;
+  width: -webkit-max-content;
+  width: -moz-max-content;
+  width: max-content;
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: (3)[1fr];
+  grid-template-columns: repeat(1fr, 3);
+      grid-template-areas: "header header header" "section1 section2 section3" "section5 section5 section6";
+}
 .ventanaProceso {
   border-radius: 8px;
   position: relative;

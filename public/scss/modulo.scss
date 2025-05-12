@@ -1271,7 +1271,8 @@ $almacen:#27798F;
 .ventanaFiltros,
 .ventanaConsumo,
 .ventanaCarpetas,
-.ventanaInformes{
+.ventanaInformes,
+.ventanaResumenPedidos{
     background:$blanco;
     position: absolute;
     top: 50%;
@@ -1895,6 +1896,24 @@ $almacen:#27798F;
     .detalleTablaResumen {
         padding: 1rem;
     }
+}
+
+.ventanaResumenPedidos{
+    border-radius: 8px;
+    width: max-content;
+    display: grid;
+    grid-template-columns: repeat(1fr, 3);
+    grid-template-areas: "header header header"
+                        "section1 section2 section3"
+                        "section5 section5 section6";
+
+                        
+    .resumen_header{}
+    .resumen_data{}
+    .resumen_odometer{}
+    .resumen_state{}
+    .resumen_docs{}
+    .resumen_atachs{}
 }
 
 .ventanaProceso {
