@@ -1983,10 +1983,100 @@ $almacen:#27798F;
 
     .resumen_state{
         grid-area: section4;
+        width: 80%;
+        margin: 40px auto;
+        position: relative;
+        display: flex;
+        justify-content: space-around;
+
+        .steps {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+
+            .circulo_exterior {
+                width: 30px;
+                height: 30px;
+                border-radius: 50%;
+                background-color: #e0e0e0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #999;
+                font-weight: bold;
+                z-index: 3;
+            }
+
+            .avance_activo_externo {
+                background-color: #4CAF50;
+                color: white !important;
+                box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.2);
+            }
+            
+            .avance_inactivo {
+                background: #c2c2c2;
+            }
+
+            span{
+                font-size: 0.9rem;
+                font-weight: normal;
+                color: #000;
+            }
+        }
+
+        .progress-line {
+            height: 6px;
+            background-color: #e0e0e0;
+            position: absolute;
+            top: 25%;
+            left: 30px;
+            right: 30px;
+            transform: translateY(-50%);
+            z-index: 1;
+        }
+
+        .progress-line-active {
+            height: 6px;
+            background-color: #4CAF50;
+            position: absolute;
+            top: 25%;
+            left: 30px;
+            width: 0%; /* Ajusta este valor para cambiar el progreso */
+            transform: translateY(-50%);
+            z-index: 2;
+            transition: width 0.5s ease;
+        }
     }
 
     .resumen_atachs{
         grid-area: section5;
+        padding: 0.5rem;
+        
+        #document_list{
+            padding: .5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+
+            a {
+                display: flex;
+                flex-direction: column;
+                gap: .5rem;
+                align-items: center;
+
+                i {
+                    font-size: 2rem;
+                    color: #FC4236;
+                }
+
+                p {
+                    font-size: 0.8rem;
+                }
+            }
+        }
+
     }
 }
 

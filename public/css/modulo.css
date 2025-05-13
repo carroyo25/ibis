@@ -2274,11 +2274,121 @@
   -ms-grid-column: 1;
   -ms-grid-column-span: 2;
   grid-area: section4;
+  width: 80%;
+  margin: 40px auto;
+  position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-pack: distribute;
+      justify-content: space-around;
+}
+.ventanaResumenPedidos .resumen_state .steps {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  gap: 1rem;
+}
+.ventanaResumenPedidos .resumen_state .steps .circulo_exterior {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #e0e0e0;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  color: #999;
+  font-weight: bold;
+  z-index: 3;
+}
+.ventanaResumenPedidos .resumen_state .steps .avance_activo_externo {
+  background-color: #4CAF50;
+  color: white !important;
+  -webkit-box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.2);
+          box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.2);
+}
+.ventanaResumenPedidos .resumen_state .steps .avance_inactivo {
+  background: #c2c2c2;
+}
+.ventanaResumenPedidos .resumen_state .steps span {
+  font-size: 0.9rem;
+  font-weight: normal;
+  color: #000;
+}
+.ventanaResumenPedidos .resumen_state .progress-line {
+  height: 6px;
+  background-color: #e0e0e0;
+  position: absolute;
+  top: 25%;
+  left: 30px;
+  right: 30px;
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
+  z-index: 1;
+}
+.ventanaResumenPedidos .resumen_state .progress-line-active {
+  height: 6px;
+  background-color: #4CAF50;
+  position: absolute;
+  top: 25%;
+  left: 30px;
+  width: 0%; /* Ajusta este valor para cambiar el progreso */
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
+  z-index: 2;
+  -webkit-transition: width 0.5s ease;
+  transition: width 0.5s ease;
 }
 .ventanaResumenPedidos .resumen_atachs {
   -ms-grid-row: 3;
   -ms-grid-column: 3;
   grid-area: section5;
+  padding: 0.5rem;
+}
+.ventanaResumenPedidos .resumen_atachs #document_list {
+  padding: 0.5rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  gap: 1rem;
+}
+.ventanaResumenPedidos .resumen_atachs #document_list a {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  gap: 0.5rem;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+.ventanaResumenPedidos .resumen_atachs #document_list a i {
+  font-size: 2rem;
+  color: #FC4236;
+}
+.ventanaResumenPedidos .resumen_atachs #document_list a p {
+  font-size: 0.8rem;
 }
 
 .ventanaProceso {

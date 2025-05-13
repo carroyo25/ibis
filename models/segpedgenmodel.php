@@ -144,7 +144,8 @@
                                     aprueba.cnombres AS aprobador,
                                     tb_parametros.cdescripcion,
                                     FORMAT( tb_parametros.cobservacion, 0 ) AS avance,
-                                    tb_pedidocab.idreg 
+                                    tb_pedidocab.idreg,
+                                    tb_pedidocab.idcostos
                                 FROM
                                     tb_pedidocab
                                     INNER JOIN tb_proyectos ON tb_pedidocab.idcostos = tb_proyectos.nidreg
@@ -156,13 +157,15 @@
                 $sql->execute(["id"=>$id]);
                 $result = $sql->fetchAll();
 
+                $avance = 49;
+
                 $json_result = array("pedido"   =>$result[0]['pedido'],
                                     "emision"   =>$result[0]['emision'],
                                     "costos"    =>$result[0]['proyecto'],
                                     "elaborado" =>$result[0]['elaborado'],
                                     "aprobador" =>$result[0]['aprobador'],
                                     "aprobacion"=>$result[0]['aprobacion'],
-                                    "avance"    =>$result[0]['avance'],
+                                    "avance"    =>$avance,
                                     "ordenes"   =>$this->ordenesPedidoAdmin($id),
                                     "ingresos"  =>$this->ingresosPedido($id),
                                     "despachos" =>$this->salidasPedido($id),
