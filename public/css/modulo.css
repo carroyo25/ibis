@@ -2184,15 +2184,103 @@
 
 .ventanaResumenPedidos {
   border-radius: 8px;
-  width: -webkit-max-content;
-  width: -moz-max-content;
-  width: max-content;
+  width: 50%;
   display: -ms-grid;
   display: grid;
-  -ms-grid-columns: (3)[1fr];
-  grid-template-columns: repeat(1fr, 3);
-      grid-template-areas: "header header header" "section1 section2 section3" "section5 section5 section6";
+      grid-template-areas: "header header header" "section1 section2 section3" "section4 section4 section5";
 }
+.ventanaResumenPedidos .resumen_header {
+  -ms-grid-row: 1;
+  -ms-grid-column: 1;
+  -ms-grid-column-span: 3;
+  grid-area: header;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  background-color: #000;
+  color: #fff;
+  padding: 0.5rem;
+}
+.ventanaResumenPedidos .resumen_header a {
+  color: #fff;
+}
+.ventanaResumenPedidos .resumen_data {
+  -ms-grid-row: 2;
+  -ms-grid-column: 1;
+  grid-area: section1;
+}
+.ventanaResumenPedidos .resumen_data table {
+  border-collapse: separate;
+  width: 100%;
+  font-size: 0.8rem;
+  padding: 0.5rem;
+}
+.ventanaResumenPedidos .resumen_data table tr {
+  line-height: 1.5rem;
+}
+.ventanaResumenPedidos .resumen_data table .tr__title {
+  font-weight: bold;
+  font-size: 1.2rem;
+  border-bottom: 1px solid #c2c2c2;
+}
+.ventanaResumenPedidos .resumen_odometer {
+  -ms-grid-row: 2;
+  -ms-grid-column: 2;
+  grid-area: section2;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+.ventanaResumenPedidos .resumen_odometer .highcharts-figure .chart-container {
+  width: 500px;
+  height: 315px;
+  float: left;
+}
+.ventanaResumenPedidos .resumen_docs {
+  -ms-grid-row: 2;
+  -ms-grid-column: 3;
+  grid-area: section3;
+  padding: 0.5rem;
+}
+.ventanaResumenPedidos .resumen_docs .titulo_documento {
+  font-weight: bold;
+  font-size: 0.8rem;
+}
+.ventanaResumenPedidos .resumen_docs table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.8rem;
+}
+.ventanaResumenPedidos .resumen_docs table thead {
+  background-color: #000;
+  color: #fff;
+}
+.ventanaResumenPedidos .resumen_docs table .titulo_documento {
+  font-weight: bold;
+  font-size: 1.2rem;
+  border-bottom: 1px solid #c2c2c2;
+}
+.ventanaResumenPedidos .resumen_state {
+  -ms-grid-row: 3;
+  -ms-grid-column: 1;
+  -ms-grid-column-span: 2;
+  grid-area: section4;
+}
+.ventanaResumenPedidos .resumen_atachs {
+  -ms-grid-row: 3;
+  -ms-grid-column: 3;
+  grid-area: section5;
+}
+
 .ventanaProceso {
   border-radius: 8px;
   position: relative;

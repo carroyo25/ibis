@@ -15,10 +15,10 @@
     else if ($url === "127.0.0.1")
         define('URL','http://127.0.0.1/ibis/');
     
-    //define('HOST','localhost');
-    //define('HOST1','localhost');
-    define('HOST','192.168.1.30');
-    define('HOST1','192.168.1.30');
+    define('HOST','localhost');
+    define('HOST1','localhost');
+    /*define('HOST','192.168.1.30');
+    define('HOST1','192.168.1.30');*/
     
     define('DB','rrhh');
     define('DB2','ibis');

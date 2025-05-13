@@ -1,6 +1,3 @@
-//let valor_avance = document.getElementById("codigo_estado");
-//let avance = parseInt(valor_avance);
-
 var gaugeOptions = {
 
     chart: {
@@ -68,13 +65,17 @@ var chartSpeed = Highcharts.chart('container-speed', Highcharts.merge(gaugeOptio
         }
     },
 
+    pane:{
+        size: '80%',
+    },
+
     credits: {
         enabled: false
     },
 
     series: [{
         name: 'Speed',
-        data: [50],
+        data: [0],
         dataLabels: {
             format:
                 '<div style="text-align:center">' +
@@ -88,8 +89,3 @@ var chartSpeed = Highcharts.chart('container-speed', Highcharts.merge(gaugeOptio
     }]
 
 }));
-
-
-(function() {
-
-})();
