@@ -166,8 +166,9 @@
                                     "ordenes"       =>$this->ordenesPedidoAdmin($id),
                                     "ingresos"      =>$this->ingresosPedido($id),
                                     "despachos"     =>$this->salidasPedido($id,$result[0]['anio']),
-                                    "registros"     =>$this->registrosPedido($id),
-                                    "ingreso_obra"  => $this->ingresosAlmacen($result[0]['nrodoc'],$result[0]['idcostos']),
+                                    "registros"     =>$this->registrosPedido($result[0]['nrodoc'],$result[0]['idcostos']),
+                                    "ingreso_obra"  =>$this->ingresosAlmacen($result[0]['nrodoc'],$result[0]['idcostos']),
+                                    "adjuntos"      =>$this->adjuntosPedido($id),
                                     "idpedido"      =>$result[0]['idreg']);
 
                 return $json_result;
@@ -246,7 +247,8 @@
                                                         o.id_refpedi,
                                                         dc.nnronota,
                                                         dc.cnumguia,
-                                                        dd.id_regalm
+                                                        dd.id_regalm,
+                                                        dc.ffecdoc AS emision
                                                     FROM
                                                         lg_ordencab AS o
                                                         LEFT JOIN alm_despachodet AS dd ON o.cnumero = dd.nropedido
@@ -261,9 +263,9 @@
                     $salida = "";
                     while ($rs = $sql->fetch()) {
                         $salida .= '<tr>
-                                        <td class="textoCentro">'.$rs['nroorden'].'</td>
-                                        <td class="textoCentro">'.$rs['fechaOrden'].'</td>
-                                        <td class="textoCentro"><a href="'.$rs['nroorden'].'"><i class="fas fa-file-pdf"></i></a></td>
+                                        <td class="textoCentro">'.$rs['cnumguia'].'</td>
+                                        <td class="textoCentro">'.$rs['emision'].'</td>
+                                        <td class="textoCentro"><a href="'.$rs['id_regalm'].'"><i class="fas fa-file-pdf"></i></a></td>
                                     </tr>';
                     }
                 }
@@ -271,29 +273,29 @@
                 return $salida;
         }
 
-        private function registrosPedido($pedido) {
+        private function registrosPedido($pedido,$costo) {
             $salida =  '<tr><td colspan="3" class="textoCentro">No hay registro</td></tr>';
                 $sql = $this->db->connect()->prepare("SELECT
-                                                        LPAD(alm_cabexist.idreg, 6, 0) AS registro,
-                                                        DATE_FORMAT(
-                                                            alm_cabexist.ffechadoc,
-                                                            '%d/%m/&Y)'
-                                                        ) AS fechaRegistro,
-                                                        alm_cabexist.idreg
+                                                        ae.idregistro,
+                                                        ac.idcostos,
+                                                        DATE_FORMAT( ac.ffechadoc, '%d/%m/%Y' ) AS emision 
                                                     FROM
-                                                        alm_cabexist
+                                                        alm_existencia AS ae
+                                                        INNER JOIN alm_cabexist AS ac ON ae.idregistro = ac.idreg 
                                                     WHERE
-                                                        alm_cabexist.idped = :pedido");
-                $sql->execute(["pedido"=>$pedido]);
+                                                        ae.nflgActivo = 1 
+                                                        AND ae.nropedido = :pedido 
+                                                        AND ac.idcostos = :costos");
+                $sql->execute(["pedido"=>$pedido,"costos"=>$costo]);
                 $rowCount = $sql->rowcount();
 
                 if ($rowCount > 0) {
                     $salida = "";
                     while ($rs = $sql->fetch()) {
                         $salida .= '<tr>
-                                        <td class="textoCentro">'.$rs['idreg'].'</td>
-                                        <td class="textoCentro">'.$rs['fechaRegistro'].'</td>
-                                        <td class="textoCentro"><a href="'.$rs['idreg'].'"><i class="fas fa-file-pdf"></i></a></td>
+                                        <td class="textoCentro">'.$rs['idregistro'].'</td>
+                                        <td class="textoCentro">'.$rs['emision'].'</td>
+                                        <td class="textoCentro"><a href="'.$rs['idregistro'].'"><i class="fas fa-file-pdf"></i></a></td>
                                     </tr>';
                     }
                 }
@@ -630,6 +632,36 @@
                 $result = $sql->fetchAll();
 
                 return $result[0]['ingresos'];
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function adjuntosPedido($pedido){
+            try {
+                $docData = [];
+
+                $sql = $this->db->connect()->prepare("SELECT
+                                                    lg_regdocumento.id_regmov,
+                                                    lg_regdocumento.nidrefer,
+                                                    lg_regdocumento.cmodulo,
+                                                    lg_regdocumento.creferencia,
+                                                    lg_regdocumento.cdocumento 
+                                                FROM
+                                                    lg_regdocumento 
+                                                WHERE
+                                                    lg_regdocumento.nflgactivo = 1 
+                                                    AND lg_regdocumento.nidrefer = :pedido 
+                                                    AND lg_regdocumento.cmodulo = 'PED'");
+                $sql->execute(["pedido"=>$pedido]);
+
+                while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+                    $docData[] = $row;
+                }
+
+                return $docData;
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();

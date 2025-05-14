@@ -2252,7 +2252,7 @@
   padding: 0.5rem;
 }
 .ventanaResumenPedidos .resumen_docs div {
-  max-height: 5vh;
+  max-height: 8vh;
   overflow: auto;
 }
 .ventanaResumenPedidos .resumen_docs .titulo_documento {

@@ -1922,7 +1922,6 @@ $almacen:#27798F;
     .resumen_data{
         grid-area: section1;
 
-
         table {
             border-collapse: separate;
             width: 100%;
@@ -1960,7 +1959,7 @@ $almacen:#27798F;
         padding: 0.5rem;
 
         div{
-            max-height: 5vh;
+            max-height: 8vh;
             overflow: auto;
         }
 

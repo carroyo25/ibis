@@ -240,7 +240,7 @@
                     </div>
                     <br>
                     <div>
-                        <p class="titulo_documento">Notas Despacho</p>
+                        <p class="titulo_documento">Guias de Remisión</p>
                         <table class="table_detalle" id="tabla_despachos">
                             <thead>
                                 <tr>

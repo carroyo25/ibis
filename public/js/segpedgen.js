@@ -173,6 +173,8 @@ $(function(){
     $("#verDetalles").click(function(e){
         e.preventDefault();
 
+        $("#esperar").css("display","block");
+
         $("#document_list").empty();
         $(".resumen_docs table tbody").empty();
         $(".circulo_exterior").removeClass('avance_activo');
@@ -235,9 +237,27 @@ $(function(){
                 $("#tabla_despachos").append(data.despachos);
                 $("#tabla_registros").append(data.registros);
 
+                console.log(data.adjuntos);
+
+                const fragment = document.createDocumentFragment();
+
+                data.adjuntos.forEach(e =>{
+                    const li = document.createElement("li");
+                    const link = document.createElement("a");
+
+                    link.href = `#${e.creferencia}`; // Using # for href if it's not a real URL
+                    link.innerHTML = `<p><i class="far fa-file"></i></p><span>${e.cdocumento}</span>`;
+
+                    li.appendChild(link);
+                    fragment.appendChild(li);
+                });
+
+                document.getElementById("document_list").appendChild(fragment);
+
                 $(".progress-line-active").css('width',porcentaje_barra+'%');
 
                 $("#detalles").fadeIn();
+                $("#esperar").css("display","none");
             },
             "json"
         );
