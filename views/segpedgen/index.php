@@ -186,16 +186,14 @@
                 <div class="progress-line-active"></div>
 
                 <?php 
-                    $avance = 0;
                     $procesos = ["Proceso","Emitido","Almacen","Aprobacion","Aprobado","Orden","Firmas","Recepcion","Despacho","Destino"];
+                    
                     for ($i=0; $i < 10 ; $i++) {
-                        $mostrar_activo_externo = $avance >= $i ? "avance_activo_externo" : "avance_inactivo";
-                        $mostrar_activo_interno = $avance >= $i ? "avance_activo_interno" : "avance_inactivo";
                         $etiqueta = $procesos[$i];
                 ?>
                 <div class="steps">
-                    <div class="circulo_exterior <?php echo $mostrar_activo_externo?>" id="ce<?php echo $i?>">
-                            <span><?php echo $i ?></span>
+                    <div class="circulo_exterior" id="ce<?php echo $i?>">
+                        <span><?php echo $i ?></span>
                     </div>
                     <span><?php echo $etiqueta ?></span>
                 </div>
@@ -221,7 +219,7 @@
                             </tr>
                         </tbody>
                     </table>
-                    </div>
+                </div>
                     <br>
                     <div>
                         <p class="titulo_documento">Nota Ingreso</p>

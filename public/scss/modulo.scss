@@ -1903,8 +1903,8 @@ $almacen:#27798F;
     width: 50%;
     display: grid;
     grid-template-areas: "header header header"
-                        "section1 section2 section3"
-                        "section4 section4 section5";
+                         "section1 section2 section3"
+                         "section4 section4 section5";
                         
     .resumen_header{
         grid-area: header;
@@ -1921,6 +1921,7 @@ $almacen:#27798F;
 
     .resumen_data{
         grid-area: section1;
+
 
         table {
             border-collapse: separate;
@@ -1957,6 +1958,11 @@ $almacen:#27798F;
     .resumen_docs{
         grid-area: section3;
         padding: 0.5rem;
+
+        div{
+            max-height: 5vh;
+            overflow: auto;
+        }
 
         .titulo_documento{
             font-weight: bold;
@@ -2009,10 +2015,11 @@ $almacen:#27798F;
                 z-index: 3;
             }
 
-            .avance_activo_externo {
+            .avance_activo {
                 background-color: #4CAF50;
-                color: white !important;
+                color: white;
                 box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.2);
+                border: 3px solid rgb(123, 118, 118) outset;
             }
             
             .avance_inactivo {
@@ -2022,7 +2029,6 @@ $almacen:#27798F;
             span{
                 font-size: 0.9rem;
                 font-weight: normal;
-                color: #000;
             }
         }
 

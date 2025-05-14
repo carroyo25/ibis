@@ -350,7 +350,7 @@
                     $lc++;
                     $rc++;
 
-                    if ($lc == 32) {
+                    if ($lc == 27) {
                         $pdf->AddPage();
                         $lc = 0;
                     }
@@ -947,38 +947,38 @@
 
                 $salida = "";
                 $sql = $this->db->connect()->prepare("SELECT
-                                                        alm_despachocab.cmes,
-                                                        DATE_FORMAT( alm_despachocab.ffecdoc, '%d/%m/%Y' ) AS ffecdoc,
-                                                        YEAR ( ffecdoc ) AS anio,
-                                                        UPPER( origen.cdesalm ) AS origen,
-                                                        UPPER( origen.ctipovia ) AS direccion_origen,
-                                                        UPPER( destino.cdesalm ) AS destino,
-                                                        UPPER( destino.ctipovia ) AS direccion_destino,
-                                                        alm_despachocab.cnumguia,
-                                                        alm_despachocab.id_regalm,
-                                                        alm_despachocab.nEstadoDoc,
-                                                        UPPER( CONCAT_WS( ' ', tb_proyectos.ccodproy, tb_proyectos.cdesproy ) ) AS costos,
-                                                        tb_parametros.cdescripcion,
-                                                        tb_parametros.cabrevia,
-                                                        lg_ordencab.cnumero,
-                                                        lg_guias.guiasunat,
-	                                                    lg_guias.estadoSunat 
+                                                        d.cmes,
+                                                        DATE_FORMAT(d.ffecdoc, '%d/%m/%Y') AS ffecdoc,
+                                                        YEAR(d.ffecdoc) AS anio,
+                                                        UPPER(o.cdesalm) AS origen,
+                                                        UPPER(o.ctipovia) AS direccion_origen,
+                                                        UPPER(de.cdesalm) AS destino,
+                                                        UPPER(de.ctipovia) AS direccion_destino,
+                                                        d.cnumguia,
+                                                        d.id_regalm,
+                                                        d.nEstadoDoc,
+                                                        UPPER(CONCAT_WS(' ', p.ccodproy, p.cdesproy)) AS costos,
+                                                        pa.cdescripcion,
+                                                        pa.cabrevia,
+                                                        l.cnumero,
+                                                        lg.guiasunat,
+                                                        lg.estadoSunat 
                                                     FROM
-                                                        alm_despachodet
-                                                        LEFT JOIN alm_despachocab ON alm_despachocab.id_regalm = alm_despachodet.id_regalm
-                                                        LEFT JOIN tb_almacen AS origen ON alm_despachocab.ncodalm1 = origen.ncodalm
-                                                        LEFT JOIN tb_almacen AS destino ON alm_despachocab.ncodalm2 = destino.ncodalm
-                                                        LEFT JOIN tb_proyectos ON alm_despachocab.ncodpry = tb_proyectos.nidreg
-                                                        LEFT JOIN tb_parametros ON alm_despachocab.nEstadoDoc = tb_parametros.nidreg 
-                                                        LEFT JOIN lg_ordencab ON lg_ordencab.cnumero = alm_despachodet.nropedido
-                                                        LEFT JOIN lg_guias ON alm_despachocab.id_regalm = lg_guias.id_regalm
+                                                        alm_despachocab d
+                                                    INNER JOIN alm_despachodet dt ON d.id_regalm = dt.id_regalm
+                                                    INNER JOIN tb_almacen o ON d.ncodalm1 = o.ncodalm
+                                                    INNER JOIN tb_almacen de ON d.ncodalm2 = de.ncodalm
+                                                    LEFT JOIN tb_proyectos p ON d.ncodpry = p.nidreg
+                                                    LEFT JOIN tb_parametros pa ON d.nEstadoDoc = pa.nidreg 
+                                                    LEFT JOIN lg_ordencab l ON l.cnumero = dt.nropedido
+                                                    LEFT JOIN lg_guias lg ON d.id_regalm = lg.id_regalm
                                                     WHERE
-                                                        alm_despachocab.nEstadoDoc = 62
-                                                        AND lg_ordencab.cnumero = :orden 
-                                                        AND alm_despachocab.ncodpry LIKE :costos 
-                                                        AND alm_despachocab.cper LIKE :anio 
-                                                        AND alm_despachocab.cmes LIKE :mes 
-                                                    GROUP BY alm_despachocab.id_regalm
+                                                        d.nEstadoDoc = 62
+                                                        AND l.cnumero = :orden 
+                                                        AND d.ncodpry LIKE :costos 
+                                                        AND d.cper LIKE :anio 
+                                                        AND d.cmes LIKE :mes 
+                                                    GROUP BY d.id_regalm
                                                     LIMIT 1");
                 
                 $sql->execute(["orden"=>$orden,

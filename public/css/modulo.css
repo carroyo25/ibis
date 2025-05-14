@@ -2251,6 +2251,10 @@
   grid-area: section3;
   padding: 0.5rem;
 }
+.ventanaResumenPedidos .resumen_docs div {
+  max-height: 5vh;
+  overflow: auto;
+}
 .ventanaResumenPedidos .resumen_docs .titulo_documento {
   font-weight: bold;
   font-size: 0.8rem;
@@ -2317,11 +2321,12 @@
   font-weight: bold;
   z-index: 3;
 }
-.ventanaResumenPedidos .resumen_state .steps .avance_activo_externo {
+.ventanaResumenPedidos .resumen_state .steps .avance_activo {
   background-color: #4CAF50;
-  color: white !important;
+  color: white;
   -webkit-box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.2);
           box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.2);
+  border: 3px solid rgb(123, 118, 118) outset;
 }
 .ventanaResumenPedidos .resumen_state .steps .avance_inactivo {
   background: #c2c2c2;
@@ -2329,7 +2334,6 @@
 .ventanaResumenPedidos .resumen_state .steps span {
   font-size: 0.9rem;
   font-weight: normal;
-  color: #000;
 }
 .ventanaResumenPedidos .resumen_state .progress-line {
   height: 6px;

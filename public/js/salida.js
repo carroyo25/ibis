@@ -992,7 +992,7 @@ detallesVista = (sw) =>{
             item['cantdesp']     = $(this).find('td').eq(8).children().val();
             item['obser']        = $(this).find('td').eq(10).children().val();
             item['codigo']       = $(this).find('td').eq(3).text();
-            item['descripcion']  = $(this).find('td').eq(4).text();
+            item['descripcion']  = $(this).find('td').eq(4).text().replace('&','-');
             item['unidad']       = $(this).find('td').eq(5).text();
             item['destino']      = $("#codigo_almacen_destino").val();
             item['estado']       = $(this).data("estado");

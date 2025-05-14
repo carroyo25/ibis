@@ -175,8 +175,9 @@ $(function(){
 
         $("#document_list").empty();
         $(".resumen_docs table tbody").empty();
+        $(".circulo_exterior").removeClass('avance_activo');
 
-        $.post(RUTA+"pedidoseg/infoPedido", {id:$("#codigo_pedido").val()},
+        $.post(RUTA+"segpedgen/infoPedido", {id:$("#codigo_pedido").val()},
             function (data, text, requestXHR) {
                 $("#tableInfo tbody").find('tr').eq(1).find('td').eq(1).children().text(data.emision);
                 $("#tableInfo tbody").find('tr').eq(2).find('td').eq(1).children().text(data.pedido);
@@ -189,65 +190,57 @@ $(function(){
                     $("#tableInfo tbody").find('tr').eq(8).find('td').eq(1).children().text(data.aprobador);
                 }
 
-                let porcentaje_avance;
+                // Mapa de estados y sus valores correspondientes
+                const estadosMap = {
+                    49: { avance: 10, barra: 10, contador: 2},
+                    51: { avance: 20, barra: 20, contador: 3},
+                    53: { avance: 30, barra: 30, contador: 4},
+                    54: { avance: 40, barra: 43, contador: 5},
+                    58: { avance: 50, barra: 50, contador: 6},
+                    59: { avance: 60, barra: 60, contador: 7},
+                    60: { avance: 70, barra: 70, contador: 8},
+                    62: { avance: 90, barra: 80, contador: 9}
+                };
 
-                if (data.avance = 49) {
-                    porcentaje_avance = 10
+                // Inicializar variables
+                let porcentaje_avance = 0;
+                let porcentaje_barra = 0;
+                let circulos_activos = 0;
+
+                // Asignar valores según condiciones
+                if ( data.ingreso_obra > 0 ) {
+                    porcentaje_avance = 100;
+                    porcentaje_barra = 90;
+                    circulos_activos = 10;
+                } else if ( data.estado in estadosMap ) {
+                    porcentaje_avance = estadosMap[data.estado].avance;
+                    porcentaje_barra = estadosMap[data.estado].barra;
+                    circulos_activos = estadosMap[data.estado].contador;
                 }
 
                 let point = chartSpeed.series[0].points[0],
-                    avance = parseInt(porcentaje_avance),
-                    estados = (avance/10);
-                point.update(parseInt(avance));
+                    avance = parseInt(porcentaje_avance);
+                    point.update(parseInt(avance));
 
-                $("#detalles").fadeIn();
-            },
-            "json"
-        );
+                for (let index = 0; index < circulos_activos; index++) {
+                    let etapa = '#ce'+index;
 
-        /*$.post(RUTA+"pedidoseg/infoPedido", {id:$("#codigo_pedido").val()},
-            function (data, textStatus, jqXHR) {
-                $("#tableInfo tbody").find('tr').eq(1).find('td').eq(1).children().text(data.pedido);
-                $("#tableInfo tbody").find('tr').eq(1).find('td').eq(3).children().text(data.emision);
-                $("#tableInfo tbody").find('tr').eq(2).find('td').eq(1).children().text(data.costos);
-                $("#tableInfo tbody").find('tr').eq(3).find('td').eq(1).children().text(data.elaborado);
-                $("#tableInfo tbody").find('tr').eq(4).find('td').eq(1).children().text($("#tablaDetalles tbody tr").length);
-
-                if(data.aprobador != null) {
-                    $("#tableInfo tbody").find('tr').eq(6).find('td').eq(1).children().text(data.aprobacion);
-                    $("#tableInfo tbody").find('tr').eq(7).find('td').eq(1).children().text(data.aprobador);
+                    $(etapa)
+                        .removeClass('avance_inactivo')  
+                        .addClass('avance_activo')
                 }
-
-                let point = chartSpeed.series[0].points[0],
-                    avance = parseInt(data.avance),
-                    estados = (avance/10);
-                point.update(parseInt(avance));
-                
-                for (let index = 0; index < estados; index++) {
-                    let circulo_externo = "#ce"+index,
-                        circulo_interno = "#ci"+index;
-
-                    $(circulo_externo)
-                        .removeClass("avance_inactivo")
-                        .addClass("avance_activo_externo");
-
-                    $(circulo_interno)
-                        .removeClass("avance_inactivo")
-                        .addClass("avance_activo_interno");
-                }
-
-                $("#detalles").fadeIn();
-
-                $(".div4 table tbody")
-                    .empty();
 
                 $("#tabla_ordenes").append(data.ordenes);
                 $("#tabla_ingresos").append(data.ingresos);
                 $("#tabla_despachos").append(data.despachos);
                 $("#tabla_registros").append(data.registros);
+
+                $(".progress-line-active").css('width',porcentaje_barra+'%');
+
+                $("#detalles").fadeIn();
             },
             "json"
-        );*/
+        );
 
         return false;
     });
@@ -285,6 +278,24 @@ $(function(){
                 $("#vistaprevia").fadeIn();
             },"text"
         );
+
+        return false;
+    });
+
+    $("#tabla_ingresos").on('click','a', function(e) {
+        e.preventDefault();
+
+        return false;
+    });
+
+    $("#tabla_ingresos").on('click','a', function(e) {
+        e.preventDefault();
+
+        return false;
+    });
+
+     $("#tabla_registros").on('click','a', function(e) {
+        e.preventDefault();
 
         return false;
     });

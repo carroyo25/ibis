@@ -703,7 +703,7 @@ detalles = () =>{
             CANTDESP    = $(this).find('td').eq(4).children().val(),
             OBSER       = "",
             CODIGO      = $(this).find('td').eq(1).text(),//codigo
-            DESCRIPCION = $(this).find('td').eq(2).text(),//descripcion
+            DESCRIPCION = $(this).find('td').eq(2).text().replace('&','-'),//descripcion
             UNIDAD      = $(this).find('td').eq(3).text(),//unidad
             DESTINO     = $("#codigo_almacen_destino").val(),
             CANTIDAD    = $(this).find('td').eq(4).children().val();

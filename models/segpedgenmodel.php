@@ -41,8 +41,6 @@
 
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()) {
-                        //$tipo = $rs['idtipomov'] == 37 ? "B":"S";
-
                         $salida .='<tr class="pointer" data-indice="'.$rs['idreg'].'">
                                         <td class="textoCentro">'.str_pad($rs['nrodoc'],4,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.date("d/m/Y", strtotime($rs['emision'])).'</td>
@@ -137,15 +135,16 @@
                                     tb_pedidocab.idcostos,
                                     DATE_FORMAT( tb_pedidocab.emision, '%d/%m/%Y' ) AS emision,
                                     DATE_FORMAT( tb_pedidocab.faprueba, '%d/%m/%Y' ) AS aprobacion,
-                                    UPPER(
-                                    CONCAT_WS( ' ', tb_proyectos.ccodproy, tb_proyectos.cdesproy )) AS proyecto,
+                                    tb_proyectos.ccodproy AS proyecto,
                                     elbora.cnombres AS elaborado,
                                     LPAD( tb_pedidocab.nrodoc, 6, 0 ) AS pedido,
                                     aprueba.cnombres AS aprobador,
                                     tb_parametros.cdescripcion,
-                                    FORMAT( tb_parametros.cobservacion, 0 ) AS avance,
                                     tb_pedidocab.idreg,
-                                    tb_pedidocab.idcostos
+                                    tb_pedidocab.idcostos,
+                                    tb_pedidocab.estadodoc,
+                                    tb_pedidocab.nrodoc,
+                                    tb_pedidocab.anio
                                 FROM
                                     tb_pedidocab
                                     INNER JOIN tb_proyectos ON tb_pedidocab.idcostos = tb_proyectos.nidreg
@@ -157,21 +156,19 @@
                 $sql->execute(["id"=>$id]);
                 $result = $sql->fetchAll();
 
-                $avance = 49;
-
-                $json_result = array("pedido"   =>$result[0]['pedido'],
-                                    "emision"   =>$result[0]['emision'],
-                                    "costos"    =>$result[0]['proyecto'],
-                                    "elaborado" =>$result[0]['elaborado'],
-                                    "aprobador" =>$result[0]['aprobador'],
-                                    "aprobacion"=>$result[0]['aprobacion'],
-                                    "avance"    =>$avance,
-                                    "ordenes"   =>$this->ordenesPedidoAdmin($id),
-                                    "ingresos"  =>$this->ingresosPedido($id),
-                                    "despachos" =>$this->salidasPedido($id),
-                                    "registros" =>$this->registrosPedido($id),
-                                    "idpedido"  =>$result[0]['idreg']
-                                    );
+                $json_result = array("pedido"       =>$result[0]['pedido'],
+                                    "emision"       =>$result[0]['emision'],
+                                    "costos"        =>$result[0]['proyecto'],
+                                    "elaborado"     =>$result[0]['elaborado'],
+                                    "aprobador"     =>$result[0]['aprobador'],
+                                    "aprobacion"    =>$result[0]['aprobacion'],
+                                    "estado"        =>$result[0]['estadodoc'],
+                                    "ordenes"       =>$this->ordenesPedidoAdmin($id),
+                                    "ingresos"      =>$this->ingresosPedido($id),
+                                    "despachos"     =>$this->salidasPedido($id,$result[0]['anio']),
+                                    "registros"     =>$this->registrosPedido($id),
+                                    "ingreso_obra"  => $this->ingresosAlmacen($result[0]['nrodoc'],$result[0]['idcostos']),
+                                    "idpedido"      =>$result[0]['idreg']);
 
                 return $json_result;
             } catch (PDOException $th) {
@@ -217,14 +214,15 @@
         private function ingresosPedido($pedido) {
             $salida =  '<tr><td colspan="3" class="textoCentro">No hay registro</td></tr>';
                 $sql = $this->db->connect()->prepare("SELECT
-                                                            alm_despachocab.id_regalm,
-                                                            alm_despachocab.nnronota,
-                                                            alm_despachocab.ffecdoc,
-                                                            alm_despachocab.id_regalm
-                                                        FROM
-                                                            alm_despachocab
-                                                        WHERE
-                                                            alm_despachocab.idref_pedi = :pedido");
+                                                        alm_recepcab.id_regalm, 
+                                                        alm_recepcab.nnronota, 
+                                                        alm_recepcab.ffecdoc, 
+                                                        alm_recepcab.idref_pedi, 
+                                                        alm_recepcab.idref_abas
+                                                    FROM
+                                                        alm_recepcab
+                                                    WHERE
+                                                        alm_recepcab.idref_pedi = :pedido");
                 $sql->execute(["pedido"=>$pedido]);
                 $rowCount = $sql->rowcount();
 
@@ -232,8 +230,8 @@
                     $salida = "";
                     while ($rs = $sql->fetch()) {
                         $salida .= '<tr>
-                                        <td class="textoCentro">'.$rs['id_regalm'].'</td>
-                                        <td class="textoCentro">'.$rs['fechaDespacho'].'</td>
+                                        <td class="textoCentro">'.$rs['nnronota'].'</td>
+                                        <td class="textoCentro">'.$rs['ffecdoc'].'</td>
                                         <td class="textoCentro"><a href="'.$rs['id_regalm'].'"><i class="fas fa-file-pdf"></i></a></td>
                                     </tr>';
                     }
@@ -242,18 +240,21 @@
             return $salida;
         }
 
-        private function salidasPedido($pedido) {
+        private function salidasPedido($pedido,$anio) {
             $salida =  '<tr><td colspan="3" class="textoCentro">No hay registro</td></tr>';
-                $sql = $this->db->connect()->prepare("SELECT
-                                                        LPAD(alm_despachocab.id_regalm,0,6) AS depacho,
-                                                        alm_despachocab.nnronota,
-                                                        DATE_FORMAT(alm_despachocab.ffecdoc,'%d/%m/%Y') AS fechaDespacho,
-                                                        alm_despachocab.id_regalm
+                $sql = $this->db->connect()->prepare("SELECT DISTINCT
+                                                        o.id_refpedi,
+                                                        dc.nnronota,
+                                                        dc.cnumguia,
+                                                        dd.id_regalm
                                                     FROM
-                                                        alm_despachocab
+                                                        lg_ordencab AS o
+                                                        LEFT JOIN alm_despachodet AS dd ON o.cnumero = dd.nropedido
+                                                        LEFT JOIN alm_despachocab AS dc ON dd.id_regalm = dc.id_regalm
                                                     WHERE
-                                                        alm_despachocab.idref_pedi = :pedido");
-                $sql->execute(["pedido"=>$pedido]);
+                                                        o.id_refpedi = :pedido 
+                                                        AND YEAR ( dd.fregsys ) = :anio");
+                $sql->execute(["pedido"=>$pedido,"anio"=>$anio]);
                 $rowCount = $sql->rowcount();
 
                 if ($rowCount > 0) {
@@ -605,6 +606,31 @@
                 }
 
                 return $detalles;
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+        private function ingresosAlmacen($pedido,$costos){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        alm_existencia.nropedido,
+                                                        alm_existencia.codprod,
+                                                        alm_cabexist.idcostos,
+                                                        sum( alm_existencia.cant_ingr ) AS ingresos 
+                                                    FROM
+                                                        alm_existencia
+                                                        INNER JOIN alm_cabexist ON alm_existencia.idregistro = alm_cabexist.idreg 
+                                                    WHERE
+                                                        alm_existencia.nropedido = :pedido 
+                                                        AND alm_cabexist.idcostos = :costo");
+
+                $sql->execute(["pedido"=>$pedido,"costo"=>$costos]);
+                $result = $sql->fetchAll();
+
+                return $result[0]['ingresos'];
+
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;
