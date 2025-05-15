@@ -120,6 +120,7 @@
                                     <th width="6%">Cant.</th>
                                     <th width="30%">Especificaciones</th>
                                     <th>Nro. Parte</th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -134,70 +135,94 @@
     <div class="modal" id="esperar">
     </div>
     <div class="modal" id="detalles">
-        <div class="ventanaResumen w75por">
-            <div class="resumen__wrap">
-                <div class="div1">
-                    <p>Detalles del Pedido</p>
-                    <a href="#" id="cerrarDetalles"><i class="far fa-window-close"></i></a>
+        <div class="ventanaResumenPedidos">
+            <div class="resumen_header">
+                <p>Detalles del Pedido</p>
+                <a href="#" id="cerrarDetalles"><i class="far fa-window-close"></i></a>
+            </div>
+            <div class="resumen_data">
+                <table id="tableInfo">
+                    <tbody>
+                        <tr><td colspan="4"><p class="tr__title">Emision</p></td> </tr>
+                        <tr>
+                            <td><strong>Fecha Emision</strong></td>
+                            <td><p></p></td>
+                        </tr>
+                        <tr>
+                            <td><strong>N° Pedido</strong></td>
+                            <td><p></p></td>
+                        </tr>
+                        <tr>
+                            <td><strong>C.Costos</strong></td>
+                            <td colspan="3"><p></p> </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Elaborado :</strong></td>
+                            <td colspan="3"> <p></p> </td>
+                        </tr>
+                        <tr>
+                            <td><strong>N° Items</strong></td>
+                            <td><p></p></td>
+                        </tr>
+                        <tr><td colspan="4"><p class="tr__title">Aprobación</p></td> </tr>
+                        <tr>
+                            <td><strong>Fecha Aprobado :</strong></td>
+                            <td><p>-</p></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Aprobado por :</strong></td>
+                            <td><p>-</p></td>
+                        </tr>	
+                    </tbody>
+                </table>
+            </div>
+            <div class="resumen_odometer">
+                <figure class="highcharts-figure">
+        		    <div id="container-speed" class="chart-container"></div>  
+    		    </figure>
+            </div>
+            <div class="resumen_state">
+                <div class="progress-line"></div>
+                <div class="progress-line-active"></div>
+
+                <?php 
+                    $procesos = ["Proceso","Emitido","Almacen","Aprobacion","Aprobado","Orden","Firmas","Recepcion","Despacho","Destino"];
+                    
+                    for ($i=0; $i < 10 ; $i++) {
+                        $etiqueta = $procesos[$i];
+                ?>
+                <div class="steps">
+                    <div class="circulo_exterior" id="ce<?php echo $i?>">
+                        <span><?php echo $i ?></span>
+                    </div>
+                    <span><?php echo $etiqueta ?></span>
                 </div>
-                <div class="div2">
-                    <table id="tableInfo">
-                            <tbody>
-                                <tr><td colspan="4"><p class="tr__title">Emision</p></td> </tr>
-                                <tr>
-                                    <td width="20%"><strong>N° Pedido</strong></td>
-                                    <td><p></p></td>
-                                    <td width="20%"><strong>Fecha Emision</strong></td>
-                                    <td><p></p></td>
-                                </tr>
-                                <tr>
-                                    <td><strong>C.Costos</strong></td>
-                                    <td colspan="3"><p></p> </td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Elaborado :</strong></td>
-                                    <td colspan="3"> <p></p> </td>
-                                </tr>
-                                <tr>
-                                    <td><strong>N° Items</strong></td>
-                                    <td><p></p></td>
-                                </tr>
-                                <tr><td colspan="4"><p class="tr__title">Aprobación</p></td> </tr>
-                                <tr>
-                                    <td><strong>Fecha Aprobado :</strong></td>
-                                    <td><p>-</p></td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Aprobado por :</strong></td>
-                                    <td><p>-</p></td>
-                                </tr>	
-                            </tbody>
+                <?php 
+                    }
+                ?>
+
+            </div>
+            <div class="resumen_docs">
+                <div>
+                    <p class="titulo_documento">Orden OC/OS</p>
+                    <table class="table_detalle" id="tabla_ordenes">
+                        <thead>
+                            <tr>
+                                <th>N°.</th>
+                                <th>Emisión</th>
+                                <th>Documento</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="3" class="textoCentro">No hay registros</td>
+                            </tr>
+                        </tbody>
                     </table>
                 </div>
-                <div class="div3">
-                    <figure class="highcharts-figure">
-        		        <div id="container-speed" class="chart-container"></div>  
-    		        </figure>
-                </div>
-                <div class="div4">
-                    <div>
-                        <p id="titulo_documento">Orden OC/OS</p>
-                        <table class="table_detalle" id="tabla_ordenes">
-                            <thead>
-                                <tr>
-                                    <th>N°.</th>
-                                    <th>Emisión</th>
-                                    <th>Documento</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                               
-                            </tbody>
-                        </table>
-                    </div>
                     <br>
                     <div>
-                        <p id="titulo_documento">Nota Ingreso</p>
+                        <p class="titulo_documento">Nota Ingreso</p>
                         <table class="table_detalle" id="tabla_ingresos">
                             <thead>
                                 <tr>
@@ -215,7 +240,7 @@
                     </div>
                     <br>
                     <div>
-                        <p id="titulo_documento">Notas Despacho</p>
+                        <p class="titulo_documento">Guias de Remisión</p>
                         <table class="table_detalle" id="tabla_despachos">
                             <thead>
                                 <tr>
@@ -233,7 +258,7 @@
                     </div>
                     <br>
                     <div>
-                        <p id="titulo_documento">Registro Almacen</p>
+                        <p class="titulo_documento">Registro Almacen</p>
                         <table class="table_detalle" id="tabla_registros">
                             <thead>
                                 <tr>
@@ -250,34 +275,12 @@
                         </table>
                     </div>
                 </div>
-                <div class="div5">
-                    <div class="circulos">
-                        <p>Estado del Pedido</p>
-                        <div class="avances">
-                            <?php 
-                                $avance = 0;
-
-                                $procesos = ["Proceso","Emitido","Consulta Almacen","Aprobacion","Aprobado","Orden","Firmas","Recepcion","Despacho","Destino"];
-
-                                for ($i=0; $i < 10 ; $i++) {
-                                    $mostrar_activo_externo = $avance >= $i ? "avance_activo_externo" : "avance_inactivo";
-                                    $mostrar_activo_interno = $avance >= $i ? "avance_activo_interno" : "avance_inactivo";
-                                    $etiqueta = $procesos[$i];
-                            ?>
-                                <div class="circulo_exterior <?php echo $mostrar_activo_externo?>" id="ce<?php echo $i?>">
-                                    <div class="circulo_interior <?php echo $mostrar_activo_interno;?>" id="ci<?php echo $i?>">
-                                        <span><?php echo $etiqueta ?></span>
-                                    </div>
-                                </div>
-                            <?php 
-                                }
-                            ?>
-                            <div class="barra">
-                                
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="resumen_atachs">
+                <ul id="document_list">
+                    <li><a href="#"><i class="far fa-file-pdf"></i><p>Archivo PDF</p></a></li>
+                    <li><a href="#"><i class="far fa-file-pdf"></i><p>Archivo PDF</p></a></li>
+                    <li><a href="#"><i class="far fa-file-pdf"></i><p>Archivo PDF</p></a></li>
+                </ul>
             </div>
         </div>
     </div>

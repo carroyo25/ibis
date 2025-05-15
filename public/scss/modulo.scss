@@ -2060,24 +2060,33 @@ $almacen:#27798F;
         padding: 0.5rem;
         
         #document_list{
-            padding: .5rem;
+            padding: .3rem;
             display: flex;
             flex-wrap: wrap;
-            gap: 1rem;
+            gap: .5rem;
+            max-height: 5rem;
+            overflow: auto;
 
-            a {
-                display: flex;
-                flex-direction: column;
-                gap: .5rem;
-                align-items: center;
+            li {
+                max-width: 120px;
+                border: 1px solid transparent;
 
-                i {
-                    font-size: 2rem;
-                    color: #FC4236;
+                a{
+                    text-align: center;
+
+                    i {
+                        font-size: 1.5rem;
+                    }
+
+                    span {
+                        font-size: .6rem;
+                        display: block;
+                        text-align: center;
+                    }
                 }
 
-                p {
-                    font-size: 0.8rem;
+                &:hover{
+                    border: 1px solid #c2c2c2;
                 }
             }
         }

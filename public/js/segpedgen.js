@@ -237,15 +237,13 @@ $(function(){
                 $("#tabla_despachos").append(data.despachos);
                 $("#tabla_registros").append(data.registros);
 
-                console.log(data.adjuntos);
-
                 const fragment = document.createDocumentFragment();
 
                 data.adjuntos.forEach(e =>{
                     const li = document.createElement("li");
                     const link = document.createElement("a");
 
-                    link.href = `#${e.creferencia}`; // Using # for href if it's not a real URL
+                    link.href = `${e.creferencia}`; // Using # for href if it's not a real URL
                     link.innerHTML = `<p><i class="far fa-file"></i></p><span>${e.cdocumento}</span>`;
 
                     li.appendChild(link);
@@ -308,14 +306,28 @@ $(function(){
         return false;
     });
 
-    $("#tabla_ingresos").on('click','a', function(e) {
+    $("#tabla_despachos").on('click','a', function(e) {
         e.preventDefault();
 
         return false;
     });
 
-     $("#tabla_registros").on('click','a', function(e) {
+    $("#tabla_registros").on('click','a', function(e) {
         e.preventDefault();
+
+        return false;
+    });
+
+    $("#document_list ").on('click','a', function (e) {
+        e.preventDefault();
+
+        let archivo = $(this).attr('href');
+
+        $(".ventanaVistaPrevia iframe")
+            .attr("src","")
+            .attr("src","http://sicalsepcon.net/ibis/public/documentos/pedidos/adjuntos/"+archivo);
+
+        $("#vistaprevia").fadeIn();
 
         return false;
     });
