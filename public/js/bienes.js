@@ -1,6 +1,7 @@
 $(function() {
-    var accion = "";
-    var index = 0;
+    let accion = "";
+    let index = 0;
+    let accionItem = "";
 
     $("#esperar").fadeOut();
 
@@ -341,16 +342,22 @@ $(function() {
         e.preventDefault();
 
         index = $(this).attr("href");
+        accionItem = $(this).attr('data','accion');
 
-        $("#pregunta").fadeIn();
+        if (accionItem == "delete"){
+            $("#preguntaEliminar").fadeIn();
+        }else{
+            $("#preguntaRestaurar").fadeIn();
+        }
+        
         
         return false;
     });
 
-    $("#btnCancelarPregunta").click(function (e) { 
+    $("#btnCancelarPregunta,#btnCancelarActivar").click(function (e) { 
         e.preventDefault();
         
-        $("#pregunta").fadeOut();
+        $("#preguntaEliminar,#preguntaRestaurar").fadeOut();
 
         return false;
     });
@@ -365,6 +372,23 @@ $(function() {
                     .append(data);
 
                 $("#pregunta").fadeOut();
+            },
+            "text"
+        );
+        
+        return false;
+    });
+
+    $("#btnAceptarActivar").click(function (e) { 
+        e.preventDefault();
+
+        $.post(RUTA+"bienes/activaItem", {id:index},
+            function (data, textStatus, jqXHR) {
+                $("#tablaPrincipal tbody")
+                    .empty()
+                    .append(data);
+
+                $("#preguntaRestaurar").fadeOut();
             },
             "text"
         );

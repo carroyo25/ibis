@@ -54,6 +54,10 @@
             echo $this->model->eliminaItem($_POST['id']);
         }
 
+        function activaItem(){
+            echo $this->model->activarItem($_POST['id']);
+        }
+
         function actualizaTabla(){
             echo  $this->model->listarItems();
         }

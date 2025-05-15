@@ -2187,7 +2187,7 @@
   width: 50%;
   display: -ms-grid;
   display: grid;
-      grid-template-areas: "header header header" "section1 section2 section3" "section4 section4 section5";
+      grid-template-areas: "header header header" "section1 section2 section4" "section3 section3 section4";
 }
 .ventanaResumenPedidos .resumen_header {
   -ms-grid-row: 1;
@@ -2226,6 +2226,13 @@
   font-size: 1.2rem;
   border-bottom: 1px solid #c2c2c2;
 }
+.ventanaResumenPedidos .resumen_data .options {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-pack: distribute;
+      justify-content: space-around;
+}
 .ventanaResumenPedidos .resumen_odometer {
   -ms-grid-row: 2;
   -ms-grid-column: 2;
@@ -2245,39 +2252,11 @@
   height: 315px;
   float: left;
 }
-.ventanaResumenPedidos .resumen_docs {
-  -ms-grid-row: 2;
-  -ms-grid-column: 3;
-  grid-area: section3;
-  padding: 0.5rem;
-}
-.ventanaResumenPedidos .resumen_docs div {
-  max-height: 8vh;
-  overflow: auto;
-}
-.ventanaResumenPedidos .resumen_docs .titulo_documento {
-  font-weight: bold;
-  font-size: 0.8rem;
-}
-.ventanaResumenPedidos .resumen_docs table {
-  border-collapse: collapse;
-  width: 100%;
-  font-size: 0.8rem;
-}
-.ventanaResumenPedidos .resumen_docs table thead {
-  background-color: #000;
-  color: #fff;
-}
-.ventanaResumenPedidos .resumen_docs table .titulo_documento {
-  font-weight: bold;
-  font-size: 1.2rem;
-  border-bottom: 1px solid #c2c2c2;
-}
 .ventanaResumenPedidos .resumen_state {
   -ms-grid-row: 3;
   -ms-grid-column: 1;
   -ms-grid-column-span: 2;
-  grid-area: section4;
+  grid-area: section3;
   width: 80%;
   margin: 40px auto;
   position: relative;
@@ -2360,9 +2339,10 @@
   transition: width 0.5s ease;
 }
 .ventanaResumenPedidos .resumen_atachs {
-  -ms-grid-row: 3;
+  -ms-grid-row: 2;
+  -ms-grid-row-span: 2;
   -ms-grid-column: 3;
-  grid-area: section5;
+  grid-area: section4;
   padding: 0.5rem;
 }
 .ventanaResumenPedidos .resumen_atachs #document_list {
@@ -2375,6 +2355,8 @@
   gap: 0.5rem;
   max-height: 5rem;
   overflow: auto;
+  margin-top: 0.9rem;
+  border: 1px dotted #000;
 }
 .ventanaResumenPedidos .resumen_atachs #document_list li {
   max-width: 120px;

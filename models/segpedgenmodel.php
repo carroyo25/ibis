@@ -163,11 +163,11 @@
                                     "aprobador"     =>$result[0]['aprobador'],
                                     "aprobacion"    =>$result[0]['aprobacion'],
                                     "estado"        =>$result[0]['estadodoc'],
-                                    "ordenes"       =>$this->ordenesPedidoAdmin($id),
+                                    /*"ordenes"       =>$this->ordenesPedidoAdmin($id),
                                     "ingresos"      =>$this->ingresosPedido($id),
                                     "despachos"     =>$this->salidasPedido($id,$result[0]['anio']),
                                     "registros"     =>$this->registrosPedido($result[0]['nrodoc'],$result[0]['idcostos']),
-                                    "ingreso_obra"  =>$this->ingresosAlmacen($result[0]['nrodoc'],$result[0]['idcostos']),
+                                    "ingreso_obra"  =>$this->ingresosAlmacen($result[0]['nrodoc'],$result[0]['idcostos']),*/
                                     "adjuntos"      =>$this->adjuntosPedido($id),
                                     "idpedido"      =>$result[0]['idreg']);
 
@@ -217,7 +217,7 @@
                 $sql = $this->db->connect()->prepare("SELECT
                                                         alm_recepcab.id_regalm, 
                                                         alm_recepcab.nnronota, 
-                                                        alm_recepcab.ffecdoc, 
+                                                        DATE_FORMAT(alm_recepcab.ffecdoc,'%d/%m/%Y') AS ffedoc, 
                                                         alm_recepcab.idref_pedi, 
                                                         alm_recepcab.idref_abas
                                                     FROM
@@ -248,7 +248,7 @@
                                                         dc.nnronota,
                                                         dc.cnumguia,
                                                         dd.id_regalm,
-                                                        dc.ffecdoc AS emision
+                                                        DATE_FORMAT(dc.ffecdoc,'%d/%m/%Y') AS emision
                                                     FROM
                                                         lg_ordencab AS o
                                                         LEFT JOIN alm_despachodet AS dd ON o.cnumero = dd.nropedido

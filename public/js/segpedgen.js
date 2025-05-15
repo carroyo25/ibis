@@ -232,10 +232,10 @@ $(function(){
                         .addClass('avance_activo')
                 }
 
-                $("#tabla_ordenes").append(data.ordenes);
+                /*$("#tabla_ordenes").append(data.ordenes);
                 $("#tabla_ingresos").append(data.ingresos);
                 $("#tabla_despachos").append(data.despachos);
-                $("#tabla_registros").append(data.registros);
+                $("#tabla_registros").append(data.registros);*/
 
                 const fragment = document.createDocumentFragment();
 

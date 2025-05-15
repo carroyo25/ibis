@@ -174,7 +174,14 @@
                             <td><p>-</p></td>
                         </tr>	
                     </tbody>
+                    
                 </table>
+                <div class="options">
+                    <button>Orden OC/OS</button>
+                    <button>Nota de Ingreso</button>
+                    <button>Guia de Remisión</button>
+                    <button>Registro de Almacen</button>
+                </div>    
             </div>
             <div class="resumen_odometer">
                 <figure class="highcharts-figure">
@@ -202,80 +209,8 @@
                 ?>
 
             </div>
-            <div class="resumen_docs">
-                <div>
-                    <p class="titulo_documento">Orden OC/OS</p>
-                    <table class="table_detalle" id="tabla_ordenes">
-                        <thead>
-                            <tr>
-                                <th>N°.</th>
-                                <th>Emisión</th>
-                                <th>Documento</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td colspan="3" class="textoCentro">No hay registros</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                    <br>
-                    <div>
-                        <p class="titulo_documento">Nota Ingreso</p>
-                        <table class="table_detalle" id="tabla_ingresos">
-                            <thead>
-                                <tr>
-                                    <th>N°.</th>
-                                    <th>Emisión</th>
-                                    <th>Documento</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td colspan="3" class="textoCentro">No hay registros</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <br>
-                    <div>
-                        <p class="titulo_documento">Guias de Remisión</p>
-                        <table class="table_detalle" id="tabla_despachos">
-                            <thead>
-                                <tr>
-                                    <th>N°.</th>
-                                    <th>Emisión</th>
-                                    <th>Documento</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td colspan="3" class="textoCentro">No hay registro</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <br>
-                    <div>
-                        <p class="titulo_documento">Registro Almacen</p>
-                        <table class="table_detalle" id="tabla_registros">
-                            <thead>
-                                <tr>
-                                    <th>N°.</th>
-                                    <th>Emisión</th>
-                                    <th>Documento</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td colspan="3" class="textoCentro">No hay registro</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
             <div class="resumen_atachs">
+                <p>Documentos Adjuntos</p>
                 <ul id="document_list">
                     <li><a href="#"><i class="far fa-file-pdf"></i><p>Archivo PDF</p></a></li>
                     <li><a href="#"><i class="far fa-file-pdf"></i><p>Archivo PDF</p></a></li>
