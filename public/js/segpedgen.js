@@ -38,7 +38,6 @@ $(function(){
         j[0].pedidos.forEach(i => {
             const tr = document.createElement('tr');
             
-            
             tr.innerHTML = `<td class="textoCentro">${i.nrodoc}</td>
                             <td class="textoCentro">${i.emision}</td>
                             <td class="textoCentro">${i.idtipomov}</td>
@@ -291,15 +290,7 @@ $(function(){
     $("#tabla_ordenes").on('click','a', function(e) {
         e.preventDefault();
 
-        $.post(RUTA+"pedidoseg/datosOrden", {id: $(this).attr("href")},
-            function (data, text, requestXHR) {
-                $(".ventanaVistaPrevia iframe")
-                .attr("src","")
-                .attr("src",data);
-
-                $("#vistaprevia").fadeIn();
-            },"text"
-        );
+        
 
         return false;
     });
@@ -363,10 +354,23 @@ $(function(){
             listarOrdenes();
         }
 
-        $("#vistaDocumentos").fadeIn();
-
         return false
     });
+
+    $("#listaAdjuntos").on('click','a', function(e) {
+        e.preventDefault();
+
+        let documento = e.target.closest("a").dataset.tipo,
+            indice = e.target.closest("a").getAttribute('href');
+
+        if (documento == 'orden') {
+            vistaOrden(indice);
+        }
+
+        return false;
+    });
+
+
 })
 
 itemsPreview = () =>{
@@ -405,7 +409,7 @@ itemsPreview = () =>{
     return DATA;
 }
 
-const listarOrdenes = async () => {
+listarOrdenes = async () => {
     try {
         let formData = new FormData();
         formData.append('id', document.getElementById("codigo_pedido").value);
@@ -433,6 +437,7 @@ const listarOrdenes = async () => {
                 const li = document.createElement("li");
                 const link = document.createElement("a");
 
+                link.dataset.tipo  = "orden";
                 link.href = `${element.id_regmov}`;
                 link.innerHTML = `<p><i class="fas fa-file-pdf"></i></p><span>${element.numero}</span>`;
 
@@ -441,9 +446,22 @@ const listarOrdenes = async () => {
             });
 
             document.getElementById("listaAdjuntos").appendChild(ordenfragment);
+
+            $("#vistaDocumentos").fadeIn();
         }
         
     } catch (error) {
         console.error('Error:', error);
     }
+}
+
+vistaOrden = async (indice) => {
+    $.post(RUTA+"pedidoseg/datosOrden", {id: indice},
+            function (data, text, requestXHR) {
+                $(".ventanaAdjuntos iframe")
+                .attr("src","")
+                .attr("src",data);
+
+            },"text"
+        );
 }

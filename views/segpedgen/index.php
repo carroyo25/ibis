@@ -212,9 +212,6 @@
             <div class="resumen_atachs">
                 <p>Documentos Adjuntos</p>
                 <ul id="document_list">
-                    <li><a href="#"><i class="far fa-file-pdf"></i><p>Archivo PDF</p></a></li>
-                    <li><a href="#"><i class="far fa-file-pdf"></i><p>Archivo PDF</p></a></li>
-                    <li><a href="#"><i class="far fa-file-pdf"></i><p>Archivo PDF</p></a></li>
                 </ul>
             </div>
         </div>
@@ -231,7 +228,7 @@
     <div class="modal" id="vistaDocumentos">
         <div class="ventanaAdjuntos">
             <div class="tituloAdjuntos">
-                <h3>Documentos del Pedio</h3>
+                <h3>Documentos Relacionados</h3>
                 <a href="#" id="closeAtach" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
             </div>
             <ul id="listaAdjuntos">
