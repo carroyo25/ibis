@@ -144,6 +144,15 @@ $(function(){
         return false;
     });
 
+    $("#closeAtach").click(function (e) { 
+        e.preventDefault();
+
+        $(".ventanaAdjuntos iframe").attr("src","");
+        $("#vistaDocumentos").fadeOut();
+        
+        return false;
+    });
+
     $("#preview").click(function (e) { 
         e.preventDefault();
     
@@ -231,11 +240,6 @@ $(function(){
                         .removeClass('avance_inactivo')  
                         .addClass('avance_activo')
                 }
-
-                /*$("#tabla_ordenes").append(data.ordenes);
-                $("#tabla_ingresos").append(data.ingresos);
-                $("#tabla_despachos").append(data.despachos);
-                $("#tabla_registros").append(data.registros);*/
 
                 const fragment = document.createDocumentFragment();
 
@@ -348,6 +352,21 @@ $(function(){
         
         return false
     });
+
+    $(".button_options").click(function (e) { 
+        e.preventDefault();
+        
+        let option = e.target.id,
+            consulta = "";
+
+        if(option == "orden"){
+            listarOrdenes();
+        }
+
+        $("#vistaDocumentos").fadeIn();
+
+        return false
+    });
 })
 
 itemsPreview = () =>{
@@ -384,4 +403,47 @@ itemsPreview = () =>{
     })
 
     return DATA;
+}
+
+const listarOrdenes = async () => {
+    try {
+        let formData = new FormData();
+        formData.append('id', document.getElementById("codigo_pedido").value);
+
+        const response = await fetch(RUTA+"segpedgen/ordenes",{
+            method:'POST',
+            body:formData
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        document.getElementById('listaAdjuntos').innerHTML = "";
+
+        // Create document fragment for better performance
+        const ordenfragment = document.createDocumentFragment();
+
+        if (data.ordenes.length == 0){
+            mostrarMensaje("El pedido no tiene orden.","mensaje_error");
+        }else{
+            data.ordenes.forEach(element =>{
+                const li = document.createElement("li");
+                const link = document.createElement("a");
+
+                link.href = `${element.id_regmov}`;
+                link.innerHTML = `<p><i class="fas fa-file-pdf"></i></p><span>${element.numero}</span>`;
+
+                li.appendChild(link);
+                ordenfragment.appendChild(li);
+            });
+
+            document.getElementById("listaAdjuntos").appendChild(ordenfragment);
+        }
+        
+    } catch (error) {
+        console.error('Error:', error);
+    }
 }

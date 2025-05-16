@@ -33,6 +33,10 @@
 
             echo json_encode([$this->model->listarPedidosConsultaScroll($pagina,$cantidad)]);
         }
+
+        function ordenes(){
+            echo json_encode($this->model->ordenesPedidoAdmin($_POST['id']));
+        }
         
     }
 ?>

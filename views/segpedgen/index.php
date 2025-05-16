@@ -177,10 +177,10 @@
                     
                 </table>
                 <div class="options">
-                    <button>Orden OC/OS</button>
-                    <button>Nota de Ingreso</button>
-                    <button>Guia de Remisión</button>
-                    <button>Registro de Almacen</button>
+                    <button class="button_options" id="orden">Orden OC/OS</button>
+                    <button class="button_options" id="ingreso">Nota de Ingreso</button>
+                    <button class="button_options" id="remision">Guia de Remisión</button>
+                    <button class="button_options" id="almacen">Registro de Almacen</button>
                 </div>    
             </div>
             <div class="resumen_odometer">
@@ -225,6 +225,17 @@
                 <h3>Vista Previa</h3>
                 <a href="#" id="closePreview" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
             </div>
+            <iframe src=""></iframe>
+        </div>
+    </div>
+    <div class="modal" id="vistaDocumentos">
+        <div class="ventanaAdjuntos">
+            <div class="tituloAdjuntos">
+                <h3>Documentos del Pedio</h3>
+                <a href="#" id="closeAtach" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
+            </div>
+            <ul id="listaAdjuntos">
+            </ul>
             <iframe src=""></iframe>
         </div>
     </div>

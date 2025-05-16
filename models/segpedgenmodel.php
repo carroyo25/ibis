@@ -163,11 +163,6 @@
                                     "aprobador"     =>$result[0]['aprobador'],
                                     "aprobacion"    =>$result[0]['aprobacion'],
                                     "estado"        =>$result[0]['estadodoc'],
-                                    /*"ordenes"       =>$this->ordenesPedidoAdmin($id),
-                                    "ingresos"      =>$this->ingresosPedido($id),
-                                    "despachos"     =>$this->salidasPedido($id,$result[0]['anio']),
-                                    "registros"     =>$this->registrosPedido($result[0]['nrodoc'],$result[0]['idcostos']),
-                                    "ingreso_obra"  =>$this->ingresosAlmacen($result[0]['nrodoc'],$result[0]['idcostos']),*/
                                     "adjuntos"      =>$this->adjuntosPedido($id),
                                     "idpedido"      =>$result[0]['idreg']);
 
@@ -178,9 +173,11 @@
             }
         }
 
-        private function ordenesPedidoAdmin($pedido) {
+        public function ordenesPedidoAdmin($pedido) {
             try {
-                $salida =  '<tr><td colspan="3" class="textoCentro">No hay registro</td></tr>';
+                 
+                $docData = [];
+
                 $sql = $this->db->connect()->prepare("SELECT
                                 LPAD(lg_ordencab.id_regmov,6,0) AS nroorden,
                                 LPAD(lg_ordencab.cnumero,6,0) AS numero,
@@ -190,21 +187,17 @@
                             lg_ordencab
                         WHERE
                             lg_ordencab.id_refpedi =:pedido");
+                
                 $sql->execute(["pedido"=>$pedido]);
                 $rowCount = $sql->rowcount();
 
                 if ($rowCount > 0) {
-                    $salida = "";
-                    while ($rs = $sql->fetch()) {
-                        $salida .= '<tr>
-                                        <td class="textoCentro">'.$rs['numero'].'</td>
-                                        <td class="textoCentro">'.$rs['fechaOrden'].'</td>
-                                        <td class="textoCentro"><a href="'.$rs['id_regmov'].'"><i class="fas fa-file-pdf"></i></a></td>
-                                    </tr>';
+                    while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+                        $docData[] = $row;
                     }
                 }
 
-                return $salida;
+                return array("ordenes"=>$docData);
 
             } catch (PDOException $th) {
                 echo $th->getMessage();
