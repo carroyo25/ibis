@@ -37,6 +37,10 @@
         function ordenes(){
             echo json_encode($this->model->ordenesPedidoAdmin($_POST['id']));
         }
+
+        function ingresos(){
+            echo json_encode($this->model->notasIngresoPedidoAdmin($_POST['id']));
+        }
         
     }
 ?>

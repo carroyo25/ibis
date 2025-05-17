@@ -205,8 +205,10 @@
             }
         }
 
-        private function ingresosPedido($pedido) {
-            $salida =  '<tr><td colspan="3" class="textoCentro">No hay registro</td></tr>';
+        public function notasIngresoPedidoAdmin($pedido) {
+            try {
+                $docData = [];
+                
                 $sql = $this->db->connect()->prepare("SELECT
                                                         alm_recepcab.id_regalm, 
                                                         alm_recepcab.nnronota, 
@@ -221,17 +223,17 @@
                 $rowCount = $sql->rowcount();
 
                 if ($rowCount > 0) {
-                    $salida = "";
-                    while ($rs = $sql->fetch()) {
-                        $salida .= '<tr>
-                                        <td class="textoCentro">'.$rs['nnronota'].'</td>
-                                        <td class="textoCentro">'.$rs['ffecdoc'].'</td>
-                                        <td class="textoCentro"><a href="'.$rs['id_regalm'].'"><i class="fas fa-file-pdf"></i></a></td>
-                                    </tr>';
+                    while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+                        $docData[] = $row;
                     }
                 }
 
-            return $salida;
+                return array("notasingreso"=>$docData);
+
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
         }
 
         private function salidasPedido($pedido,$anio) {

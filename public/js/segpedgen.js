@@ -287,32 +287,6 @@ $(function(){
         return false;
     });
 
-    $("#tabla_ordenes").on('click','a', function(e) {
-        e.preventDefault();
-
-        
-
-        return false;
-    });
-
-    $("#tabla_ingresos").on('click','a', function(e) {
-        e.preventDefault();
-
-        return false;
-    });
-
-    $("#tabla_despachos").on('click','a', function(e) {
-        e.preventDefault();
-
-        return false;
-    });
-
-    $("#tabla_registros").on('click','a', function(e) {
-        e.preventDefault();
-
-        return false;
-    });
-
     $("#document_list ").on('click','a', function (e) {
         e.preventDefault();
 
@@ -352,6 +326,8 @@ $(function(){
 
         if(option == "orden"){
             listarOrdenes();
+        }else if (option == "ingreso") {
+            listarIngresosProveedor();
         }
 
         return false
@@ -365,12 +341,16 @@ $(function(){
 
         if (documento == 'orden') {
             vistaOrden(indice);
+        }else if(documento == 'nota_ingreso'){
+            vistaNotaIngreso(indice);
+        }else if(documento == 'guia_remision'){
+
+        }else if(documento == 'ingreso_almacen'){
+
         }
 
         return false;
     });
-
-
 })
 
 itemsPreview = () =>{
@@ -455,8 +435,65 @@ listarOrdenes = async () => {
     }
 }
 
+listarIngresosProveedor = async () => {
+    try {
+        let formData = new FormData();
+        formData.append('id', document.getElementById("codigo_pedido").value);
+
+        const response = await fetch(RUTA+"segpedgen/ingresos",{
+            method:'POST',
+            body:formData
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        document.getElementById('listaAdjuntos').innerHTML = "";
+
+        // Create document fragment for better performance
+        const ordenfragment = document.createDocumentFragment();
+
+        if (data.notasingreso.length == 0){
+            mostrarMensaje("No se ha generado notas de ingreso para este pedido","mensaje_error");
+        }else{
+            data.notasingreso.forEach(element =>{
+                const li = document.createElement("li");
+                const link = document.createElement("a");
+
+                link.dataset.tipo  = "nota_ingreso";
+                link.href = `${element.id_regalm}`;
+                link.innerHTML = `<p><i class="fas fa-file-pdf"></i></p><span>${element.nnronota}</span>`;
+
+                li.appendChild(link);
+                ordenfragment.appendChild(li);
+            });
+
+            document.getElementById("listaAdjuntos").appendChild(ordenfragment);
+
+            $("#vistaDocumentos").fadeIn();
+        }
+
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
 vistaOrden = async (indice) => {
     $.post(RUTA+"pedidoseg/datosOrden", {id: indice},
+            function (data, text, requestXHR) {
+                $(".ventanaAdjuntos iframe")
+                .attr("src","")
+                .attr("src",data);
+
+            },"text"
+        );
+}
+
+vistaNotaIngreso = async (indice) => {
+    $.post(RUTA+"cargoplanner/vistaIngreso", {id: indice},
             function (data, text, requestXHR) {
                 $(".ventanaAdjuntos iframe")
                 .attr("src","")
