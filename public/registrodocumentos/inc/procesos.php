@@ -8,6 +8,8 @@
             echo json_encode(login($pdo, $_POST));
         }else if($_POST['funcion'] == "listarOrdenesEntidad"){
             echo json_encode(listarOrdenesEntidad($pdo, $_POST));
+        }else if($_POST['funcion'] == "registrarDocumentos"){
+            echo json_encode(registrarDocumentos($pdo, $_POST));
         }
     }
 
@@ -81,6 +83,21 @@
 
             return $result;
 
+        } catch(PDOException $e){
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
+
+    function registrarDocumentos($pdo,$datos){
+        try {
+            $files = json_decode($datos['files']);
+            $nreg = count($data);
+
+            foreach($files as $file){
+                echo $file['files'];
+            }
+
+            return array("archivos"=>$nreg);
         } catch(PDOException $e){
             return ['status' => 'error', 'message' => $e->getMessage()];
         }

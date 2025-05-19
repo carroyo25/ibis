@@ -67,6 +67,7 @@ const listarOrdenes = async (id) =>{
             li.classList.add("orden_class");
             
             const link = document.createElement("a");
+            link.classList.add("orden");
             link.style.color=colorsIcons[bkgIcon];
 
             let tipodoc = element.ntipmov == 37 ? 'OC':'OS';
@@ -104,12 +105,42 @@ $.addEventListener('click',(e)=>{
  
         if (e.target.closest('a').getAttribute('href') == 'click_upload'){
             try {
-                if (indexOrden == 0) throw new Error ('Seleccione una orden de compra o servicio');
+                if ( indexOrden == 0 ) throw new Error ('Seleccione una orden de compra o servicio');
                 
                 notifier.info("Se procesara la orden Nro : "+ textOrden);
 
                 inputUpload.click();
 
+            } catch (error) {
+                notifier.alert(error.message);
+            }
+        }else if(e.target.closest('a').getAttribute('href') == 'click_send'){
+            try {
+                const ul = document.getElementById("list_files_atachs");
+                const elementoLi = ul.querySelectorAll('li');
+                const numeroDeElementos = elementoLi.length;
+
+                if ( numeroDeElementos == 0 ) new Error ('No se ha registrado ningun archivo para procesar');
+
+                let filesToSend = JSON.stringify(fileListArray()),
+                    idorden     = document.getElementById("id_ord").value,
+                    idproveedor = document.getElementById("id_ent").value,
+                    formData    = new FormData();
+
+                formData.append("files",filesToSend);
+                formData.append("funcion","registrarDocumentos");
+                formData.append("ordenId",idorden);
+                formData.append("entidad",idproveedor);
+
+                fetch('../inc/procesos.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                })
+                
             } catch (error) {
                 notifier.alert(error.message);
             }
@@ -119,6 +150,12 @@ $.addEventListener('click',(e)=>{
         e.preventDefault();
 
         $.getElementById("nombre_archivo").innerHTML = e.target.lastChild.textContent;
+
+        return false;
+   }else if(e.target.matches('.lista_ul *')){
+        e.preventDefault();
+
+        document.getElementById("id_ord").value = e.target.dataset.ordenid;
 
         return false;
    }
@@ -180,5 +217,15 @@ const fechaActual = () => {
     const fecha_actual = new Date();
     return Array(fecha_actual.getDate() + "/" + (fecha_actual.getMonth() + 1) + "/" + fecha_actual.getFullYear(),
                 fecha_actual.getHours() + ":" + fecha_actual.getMinutes() + ":" + fecha_actual.getSeconds())
+}
+
+const fileListArray = () => {
+    const items = [];
+
+    document.querySelectorAll('.atach_list_documents li').forEach(li => {
+        items.push(li.textContent.trim()); // o li.getAttribute('data-value')
+    });
+
+    return items;
 }
 

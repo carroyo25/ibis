@@ -351,6 +351,8 @@ $(function(){
 
         return false;
     });
+
+
 })
 
 itemsPreview = () =>{
@@ -476,6 +478,14 @@ listarIngresosProveedor = async () => {
             $("#vistaDocumentos").fadeIn();
         }
 
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+listarGuias = () => {
+    try {
+        
     } catch (error) {
         console.error('Error:', error);
     }

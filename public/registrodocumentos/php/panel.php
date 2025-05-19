@@ -38,6 +38,7 @@
         <div class="wrap_orders">
             <h2>Registro de Ordenes</h2>
             <input type="hidden" name="id_ent" id="id_ent">
+            <input type="hidden" name="id_ord" id="id_ord">
             <input type="search" placeholder="buscar n° de Orden">
             <div class="contenedor_ordenes">
                 <ul id="listaOrdenes" class="lista_ul">
