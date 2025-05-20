@@ -372,7 +372,7 @@ $(function() {
         formData.append('estado', estado);
 
         $("#esperarCargo").css("opacity","1").fadeIn();
-        startTimer();
+        //startTimer();
         
         fetch(RUTA+"cargoplanner/dataExcelTotalCargoPlan",{
             method:'POST',
@@ -383,7 +383,7 @@ $(function() {
         })
         .then((json)=> {
             $("#esperarCargo").css("opacity","0").fadeOut();
-            resetTimer();
+            //resetTimer();
             window.location.href = json.documento;
         })
         .catch((err)=> {
@@ -1073,7 +1073,7 @@ function applyBackgroundColor(worksheet, startRow, endRow, startCol, endCol, col
     }
 }
 
-function updateDisplay() {
+/*function updateDisplay() {
     const h = hours.toString().padStart(2, '0');
     const m = minutes.toString().padStart(2, '0');
     const s = seconds.toString().padStart(2, '0');
@@ -1111,4 +1111,4 @@ function resetTimer() {
     minutes = 0;
     seconds = 0;
     updateDisplay();
-}
+}*/
