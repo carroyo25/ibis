@@ -151,7 +151,7 @@ $(function(){
     
         accion      = "u";
         grabado     = true;
-        ingresos    = 0
+        ingresos    = 0;
         swcoment    = false;
 
         return false;
