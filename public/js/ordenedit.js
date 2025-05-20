@@ -108,7 +108,7 @@ $(function(){
         }
     }
 
-    query();
+    //query();
 
     /* end scroll */
     

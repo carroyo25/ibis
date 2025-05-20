@@ -52,7 +52,7 @@
                 <div class="contenedor_adjuntos">
                     <div class="atach_list_empty">
                         <h1 class="empty_documents">No se registraron documentos</h1>
-                        <p>Seleccione el Nro de Orden y presione el icono de subir Doumentos o Arrastre los archivos Aqui</p>
+                        <p>Seleccione el Nro de Orden y presione el icono de subir Documentos o Arrastre los archivos Aqui</p>
                     </div>
                     <div class="atach_list_documents">
                         <ul id="list_files_atachs">
@@ -69,11 +69,10 @@
 
                     <h4>Ordenes de Servicio se deberán presentar,los siguientes documentos:</h4>
                     <p><i class="fas fa-pen-alt"></i>  <span>Factura</span></p>
-                    <p><i class="fas fa-pen-alt"></i>  <span>Guia de Remisión</span></p>
-                    <p><i class="fas fa-pen-alt"></i>  <span>Nota de Ingreso</span></p>
+                    <p><i class="fas fa-pen-alt"></i>  <span>Guia de Remisión (en caso aplique)</span></p>
                     <p><i class="fas fa-pen-alt"></i>  <span>Valorización</span></p>
 
-                    <h4 class="parrafo_importante">Los documentos seran ingresados par su aprobacion de pago los días <strong>MARTES y JUEVES</strong></h4>
+                    <h4 class="parrafo_importante">Los documentos seran ingresados para dar inicio a su proceso de pago y la presentación sera los dias <strong>MARTES y JUEVES</strong></h4>
                 </div>
             </div>
         </div>

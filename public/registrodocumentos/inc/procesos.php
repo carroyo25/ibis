@@ -10,6 +10,8 @@
             echo json_encode(listarOrdenesEntidad($pdo, $_POST));
         }else if($_POST['funcion'] == "registrarDocumentos"){
             echo json_encode(registrarDocumentos($pdo, $_POST));
+        }else if($_POST['funcion'] == "consultarDocumentos"){
+            echo json_encode(consultarDocumentos($pdo, $_POST));
         }
     }
 
@@ -91,13 +93,59 @@
     function registrarDocumentos($pdo,$datos){
         try {
             $files = json_decode($datos['files']);
-            $nreg = count($data);
+            $nreg = count($files);
 
             foreach($files as $file){
-                echo $file['files'];
+                try {
+                    $sql = "INSERT INTO adm_docsenti 
+                                SET adm_docsenti.idcenti =:enti,
+                                    adm_docsenti.idorden =:orden,
+                                    adm_docsenti.namefile =:namefile,
+                                    adm_docsenti.statusfile = 1";
+                    
+                    $stmt = $pdo->prepare($sql);
+                    $stmt->execute([":enti"     => $datos['entidad'],
+                                    ":orden"    => $datos['ordenId'],
+                                    ":namefile" => $file]);
+
+                } catch(PDOException $e){
+                    return ['status' => 'error', 'message' => $e->getMessage()];
+                }
             }
 
             return array("archivos"=>$nreg);
+        } catch(PDOException $e){
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
+
+    function consultarDocumentos($pdo,$datos){
+        try {
+            $archivos = 0;
+            $result = [];
+
+            $sql = "SELECT adm_docsenti.idreg,
+                            adm_docsenti.idcenti,
+                            adm_docsenti.statusfile,
+                            adm_docsenti.namefile,
+                            adm_docsenti.fecrecep
+                    FROM adm_docsenti
+                    WHERE adm_docsenti.flgActivo = 1
+                        AND adm_docsenti.idorden =:orden
+                        AND adm_docsenti.idcenti =:centi";
+            
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([':orden' => $datos['orden'],
+                            ':centi' => $datos['centi']]);
+
+            $count = $stmt->rowCount();
+
+            if ($count > 0){
+                $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            }
+
+            return ["archivos"=>$count,"resultado"=>$result];
+            
         } catch(PDOException $e){
             return ['status' => 'error', 'message' => $e->getMessage()];
         }

@@ -106,7 +106,7 @@ $(function(){
 
         $("#proceso").fadeOut();
 
-        $.post(RUTA+"recepcion/actualizaNotas",
+        /*$.post(RUTA+"recepcion/actualizaNotas",
             function (data, textStatus, jqXHR) {
                 $(".itemsTabla table tbody")
                     .empty()
@@ -120,7 +120,7 @@ $(function(){
                 });
             },
             "text"
-        );
+        );*/
 
         return false;
     });
@@ -180,7 +180,9 @@ $(function(){
         try {
             if (accion == "u") throw "No se puede añadir mas registros al ingreso";
 
-            $.post(RUTA+"recepcion/ordenes",
+            $("#busqueda").fadeIn();
+
+            /*$.post(RUTA+"recepcion/ordenes",
                 function (data, textStatus, jqXHR) {
                     $("#ordenes tbody")
                         .empty()
@@ -188,7 +190,7 @@ $(function(){
                     $("#busqueda").fadeIn();
                 },
                 "text"
-            );
+            );*/
         } catch (error) {
             mostrarMensaje(error,"mensaje_error");
         }

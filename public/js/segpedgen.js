@@ -195,6 +195,9 @@ $(function(){
                 $("#tableInfo tbody").find('tr').eq(4).find('td').eq(1).children().text(data.elaborado);
                 $("#tableInfo tbody").find('tr').eq(5).find('td').eq(1).children().text($("#tablaDetalles tbody tr").length);
 
+                $("#tableInfo tbody").find('tr').eq(7).find('td').eq(1).children().text('');
+                $("#tableInfo tbody").find('tr').eq(8).find('td').eq(1).children().text('');
+
                 if(data.aprobador != null) {
                     $("#tableInfo tbody").find('tr').eq(7).find('td').eq(1).children().text(data.aprobacion);
                     $("#tableInfo tbody").find('tr').eq(8).find('td').eq(1).children().text(data.aprobador);

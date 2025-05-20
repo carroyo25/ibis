@@ -138,8 +138,29 @@ $.addEventListener('click',(e)=>{
                 })
                 .then(response => response.json())
                 .then(data => {
-                    console.log(data);
-                })
+                    if (data.archivos > 0){
+                        listaAdjuntoVacia.style.zIndex = "1";
+                        contenedorAdjuntos.style.zIndex = "2";
+                        listaAdjuntos.innerHTML = "";
+
+                        data.resultado.forEach(e =>{
+                            const li = $.createElement("li");
+                            li.classList.add("atach_class");
+
+                            const link = $.createElement("a");
+                            link.classList.add("atach_file");
+                            link.dataset.file_estatus = 0;
+                            link.href = `#${indexOrden}-${i}`; // Using # for href if it's not a real URL
+                            link.innerHTML = `<p><i class="fas fa-file-pdf" style="color: #a61111;"></i></p><span>${e.namefile}</span>`;
+                            
+                            li.appendChild(link);
+
+                            atach_fragment.appendChild(li);
+                        });
+
+                        listaAdjuntos.appendChild(atach_fragment);
+                    }
+                });
                 
             } catch (error) {
                 notifier.alert(error.message);
@@ -156,6 +177,21 @@ $.addEventListener('click',(e)=>{
         e.preventDefault();
 
         document.getElementById("id_ord").value = e.target.dataset.ordenid;
+
+        let formData = new FormData();
+
+        formData.append("orden",e.target.dataset.ordenid);
+        formData.append("centi",document.getElementById("id_ent").value);
+        formData.append("funcion","consultarDocumentos");
+
+        fetch('../inc/procesos.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                })
 
         return false;
    }
