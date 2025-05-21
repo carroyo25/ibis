@@ -469,7 +469,272 @@
             }
         }
 
+        public function exportExcel($registros){
+            require_once('public/PHPExcel/PHPExcel.php');
+            try {
+                $objPHPExcel = new PHPExcel();
+                
+                // Configuración básica del documento
+                $objPHPExcel->getProperties()
+                    ->setCreator("Sical")
+                    ->setLastModifiedBy("Sical")
+                    ->setTitle("Cargo Plan")
+                    ->setSubject("Template excel")
+                    ->setDescription("Cargo Plan")
+                    ->setKeywords("Template excel");
         
+                // Configuración de estilos
+                $estiloBase = [
+                    'font' => [
+                        'bold' => false,
+                        'size' => 7
+                    ],
+                    'alignment' => [
+                        'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+                        'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
+                        'wrapText' => true
+                    ]
+                ];
+        
+                // Configurar hoja principal
+                $objPHPExcel->setActiveSheetIndex(0);
+                $objPHPExcel->getActiveSheet()->setTitle("Cargo Plan");
+                
+                // Encabezado principal
+                $objPHPExcel->getActiveSheet()->mergeCells('A1:AZ1');
+                $objPHPExcel->getActiveSheet()->setCellValue('A1', 'CARGO PLAN');
+                $objPHPExcel->getActiveSheet()->getStyle('A1:AZ2')->applyFromArray($estiloBase);
+                $objPHPExcel->getActiveSheet()->getRowDimension('2')->setRowHeight(60);
+
+                // Configuración de columnas (optimizado)
+                $columnas = [
+                    'A' => 8, 'B' => 10, 'C' => 15, 'D' => 15, 'E' => 50, 
+                    'F' => 12, 'G' => 10, 'H' => 10, 'I' => 10, 'J' => 12,
+                    'K' => 12, 'L' => 15, 'M' => 15, 'N' => 15, 'O' => 24,
+                    'P' => 12, 'Q' => 100, 'R' => 12, 'S' => 10, 'T' => 10,
+                    'U' => 12, 'V' => 15, 'W' => 12, 'X' => 12, 'Y' => 12,
+                    'Z' => 100, 'AA' => 12, 'AB' => 12, 'AC' => 13, 'AD' => 15,
+                    'AE' => 12, 'AF' => 10, 'AG' => 10, 'AH' => 12, 'AI' => 12,
+                    'AJ' => 14, 'AK' => 12, 'AL' => 12, 'AM' => 15, 'AN' => 15,
+                    'AO' => 15, 'AP' => 15, 'AQ' => 15, 'AR' => 12, 'AS' => 15,
+                    'AT' => 20, 'AU' => 15, 'AV' => 20, 'AW' => 20, 'AX' => 20,
+                    'AY' => 20, 'AZ' => 20
+                ];
+                
+                foreach ($columnas as $col => $width) {
+                    $objPHPExcel->getActiveSheet()->getColumnDimension($col)->setWidth($width);
+                }
+        
+                // Configuración de formatos de número
+                $formatos = [
+                    'J' => 'dd/mm/yyyy','K' => 'dd/mm/yyyy',
+                    'L' => '#,##0.00', 'M' => '#,##0.00', 'N' => '#,##0.00',
+                    'U' => 'dd/mm/yyyy','V' => '#,##0.00', 'X' => 'dd/mm/yyyy',
+                    'Y' => '#,##0.00', 'AA' => 'dd/mm/yyyy', 'AB' => '#,##0.00','AD' => 'dd/mm/yyyy',
+                    'AE' =>'#,##0.00','AI' => '#,##0.00', 'AL' => 'dd/mm/yyyy', 'AN' => 'dd/mm/yyyy',
+                    'AL' => 'dd/mm/yyyy', 'AQ' => '#,##0.00', 'AP' => 'dd/mm/yyyy'
+                ];
+                
+                foreach ($formatos as $col => $format) {
+                    $objPHPExcel->getActiveSheet()->getStyle($col)->getNumberFormat()->setFormatCode($format);
+                }
+        
+                // Encabezados de columnas
+                $encabezados = [
+                    'A' => 'Items', 'B' => 'Estado Actual', 'C' => 'Codigo Proyecto', 
+                    'D' => 'Area', 'E' => 'Partida', 'F' => 'Atención','G' => 'Tipo',
+                    'H' => 'Año Pedido','I' => 'N° Pedido','J' => 'Creación Pedido','K' => 'Aprobación del Pedido',
+                    'L' => 'Cantidad Pedida','M' => 'Cantidad Aprobada','N' => 'Cantidad Compra','O' => 'Codigo del Bien/Servicio',
+                    'P' => 'Unidad Medida', 'Q' => 'Descripcion del Bien/Servicio','R' => 'Tipo Orden','S' => 'Año Orden',
+                    'T' => 'Nro Orden','U' => 'Fecha Orden','V' => 'Cantidad Orden','W' => 'Item Orden',
+                    'X' => 'Fecha Autorizacion','Y' => 'Atencion Almacen','Z' => 'Descripcion del proveedor','AA' => 'Fecha Entrega Proveedor',
+                    'AB' => 'Cant. Recibida','AC' => 'Nota de Ingreso','AD' => 'Fecha Recepcion Proveedor','AE' => 'Saldo por Recibir',
+                    'AF' => 'Dias Entrega','AG' => 'Días Atrazo','AH' => 'Semáforo','AI' => 'Cantidad Enviada',
+                    'AJ' => 'Nro. Guia','AK' => 'Nro. Guia Sunat','AL' => 'Fecha Envio','AM' => 'Nro. Guia Transferencia',
+                    'AN' => 'Fecha Traslado','AO' => 'Registro Almacen','AP' => 'Fecha Ingreso Almacen','AQ' => 'Cantidad en Obra',
+                    'AR' => 'Estado Pedido','AS' => 'Estado Item','AT' => 'N° Parte','AU' => 'Codigo Activo',
+                    'AV' => 'Operador Logístico','AW' => 'Tipo Transporte','AX' => 'Observaciones/Concepto','AY' => 'Solicitante',
+                    'AZ' => 'Operador Asignado',
+                ];
+                
+                foreach ($encabezados as $col => $texto) {
+                    $objPHPExcel->getActiveSheet()->setCellValue($col.'2', $texto);
+                }
+        
+                // Colores de fondo para secciones
+                $coloresSecciones = [
+                    'A2:K2' => 'BFCDDB',
+                    'L2:N2' => 'FC4236',
+                    'O2:P2' => 'BFCDDB',
+                    'Q2:V2' => '00FFFF',
+                    'W2:AD2' => 'BFCDDB',
+                    'AE2:AM2' => 'FFFF00',
+                    'AN2:AZ2' => '127BDD'
+                ];
+                
+                foreach ($coloresSecciones as $rango => $color) {
+                    $objPHPExcel->getActiveSheet()
+                        ->getStyle($rango)
+                        ->getFill()
+                        ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
+                        ->getStartColor()
+                        ->setRGB($color);
+                }
+        
+                // Procesamiento de datos
+                $fila = 3;
+                $items = 1;
+
+                $datos = json_decode($registros, true);
+                $nreg = count($datos);
+
+                // Mapeo de colores para estados
+                $coloresEstado = [
+                    '0%' => 'C8C8C8', '10%' => 'F8CAAD', '15%' => 'FF0000',
+                    '20%' => 'B3C5E6', '25%' => 'FFFF00', '30%' => 'C0DCC0',
+                    '40%' => 'FFFFE1', '50%' => 'A9D08F', '60%' => 'FF00FF',
+                    '70%' => 'FFC000', '75%' => '00FFFF', '100%' => '00FF00'
+                ];
+                
+                // Mapeo de colores para semáforo
+                $coloresSemaforo = [
+                    'Verde'   => '90EE90', 'Entregado'  => '90EE90',
+                    'Naranja' => 'FFD700', 'Rojo'       => 'FF0000',
+                    'Stock'   => '90EE90'
+                ];
+
+                // Alineación de columnas
+                $alineacionCentro = ['B:C', 'F:K', 'O:P', 'R:S', 'Y', 'AA', 'AC', 'AE', 'AH', 'AJ:AO'];
+
+                // Formatear fechas
+                
+                
+                foreach ($alineacionCentro as $rango) {
+                    $objPHPExcel->getActiveSheet()
+                        ->getStyle($rango)
+                        ->getAlignment()
+                        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                }
+
+                foreach ($datos as $item) {
+
+                    $colorEstado = $coloresEstado[$item['estado']] ?? 'FFFFFF';
+
+                    $objPHPExcel->getActiveSheet()
+                        ->getStyle('B'.$fila)
+                        ->getFill()
+                        ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
+                        ->getStartColor()
+                        ->setRGB($colorEstado);
+                    
+                    // Aplicar color según semáforo
+                    $colorSemaforo = $coloresSemaforo[$item['semaforo']] ?? 'FFFFFF';
+                    $objPHPExcel->getActiveSheet()
+                        ->getStyle('AH'.$fila)
+                        ->getFill()
+                        ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
+                        ->getStartColor()
+                        ->setRGB($colorSemaforo);
+
+                    $objPHPExcel->getActiveSheet()->setCellValue('A'.$fila, $items++);
+                    $objPHPExcel->getActiveSheet()->setCellValue('B'.$fila, $item['estado']);
+                    // ... completar con el resto de celdas ...
+                    $objPHPExcel->getActiveSheet()->setCellValue('C'.$fila, $item['proyecto']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('D'.$fila, $item['area']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('E'.$fila, $item['partida']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('F'.$fila, $item['atencion']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('G'.$fila, $item['tipo']);
+
+                    $objPHPExcel->getActiveSheet()->setCellValue('H'.$fila, $item['anio_pedido']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('I'.$fila, $item['num_pedido']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('J'.$fila, $item['crea_pedido']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('K'.$fila, $item['apro_pedido']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('L'.$fila, $item['cantidad']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('M'.$fila, $item['aprobado']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('N'.$fila, $item['compra']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('O'.$fila, $item['codigo']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('P'.$fila, $item['unidad']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('Q'.$fila, $item['descripcion']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('R'.$fila, $item['tipo']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('S'.$fila, $item['anio_orden']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('T'.$fila, $item['nro_orden']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('U'.$fila, $item['fecha_orden']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('V'.$fila, $item['cantidad_orden']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('W'.$fila, $item['item_orden']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('X'.$fila, $item['autoriza_orden']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('Y'.$fila, $item['cantidad_almacen']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('Z'.$fila, $item['proveedor']);
+
+                    $objPHPExcel->getActiveSheet()->setCellValue('AA'.$fila, $item['fecha_entrega']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AB'.$fila, $item['cantidad_recibida']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AC'.$fila, $item['nota_ingreso']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AD'.$fila, $item['fecha_recepcion']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AE'.$fila, $item['saldo_recibir']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AF'.$fila, $item['dias_entrega']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AG'.$fila, $item['dias_atraso']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AH'.$fila, $item['semaforo']);
+                    
+                    $objPHPExcel->getActiveSheet()->setCellValue('AI'.$fila, $item['despacho']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AJ'.$fila, $item['numero_guia']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AK'.$fila, $item['guia_sunat']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AL'.$fila, $item['fecha_envio']);
+                    
+                    $objPHPExcel->getActiveSheet()->setCellValue('AM'.$fila, $item['guia_transfer']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AN'.$fila, $item['fecha_traslado']);
+                    
+                    $objPHPExcel->getActiveSheet()->setCellValue('AO'.$fila, $item['registro_almacen']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AP'.$fila, $item['fecha_registro_obra']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AQ'.$fila, $item['cantidad_obra']);
+                    
+                    $objPHPExcel->getActiveSheet()->setCellValue('AR'.$fila, $item['estado_pedido']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AS'.$fila, $item['estado_item']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AT'.$fila, $item['numero_parte']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AU'.$fila, $item['codigo_activo']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AV'.$fila, $item['operador']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AW'.$fila, $item['transporte']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AX'.$fila, $item['observaciones']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AY'.$fila, $item['solicitante']);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AZ'.$fila, $item['operador']);
+
+
+                    $fechas = [
+                        'J'     => $item['crea_pedido'],
+                        'K'     => $item['apro_pedido'],
+                        'U'     => $item['fecha_orden'],
+                        'X'     => $item['autoriza_orden'],
+                        'AA'    => $item['fecha_entrega'],
+                        'AD'    => $item['fecha_recepcion'],
+                        'AN'    => $item['fecha_traslado'],
+                        'AL'    => $item['fecha_envio'],
+                        'AP'    => $item['fecha_registro_obra'],
+                    ];
+                        
+                    foreach ($fechas as $col => $fecha) {
+                        if (!empty($fecha)) {
+                            $objPHPExcel->getActiveSheet()
+                                ->setCellValue($col.$fila, PHPExcel_Shared_Date::PHPToExcel($fecha));
+                        }
+                    }
+                    
+                    $fila++;
+                    
+                }
+
+                
+
+
+                $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel,'Excel2007');
+                $objWriter->save('public/documentos/reportes/cargoplan.xlsx');
+
+                return array("documento"=>'public/documentos/reportes/cargoplan.xlsx');
+
+                exit();
+
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
 
         public function consultaResumen($orden,$refpedido) {
             return array("orden"=>$this->ordenes($orden),

@@ -174,7 +174,14 @@
                             <td><p>-</p></td>
                         </tr>	
                     </tbody>
+                    
                 </table>
+                <div class="options">
+                    <button class="button_options" id="orden">Orden OC/OS</button>
+                    <button class="button_options" id="ingreso">Nota de Ingreso</button>
+                    <button class="button_options" id="remision">Guia de Remisión</button>
+                    <button class="button_options" id="almacen">Registro de Almacen</button>
+                </div>    
             </div>
             <div class="resumen_odometer">
                 <figure class="highcharts-figure">
@@ -202,84 +209,9 @@
                 ?>
 
             </div>
-            <div class="resumen_docs">
-                <div>
-                    <p class="titulo_documento">Orden OC/OS</p>
-                    <table class="table_detalle" id="tabla_ordenes">
-                        <thead>
-                            <tr>
-                                <th>N°.</th>
-                                <th>Emisión</th>
-                                <th>Documento</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td colspan="3" class="textoCentro">No hay registros</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                    <br>
-                    <div>
-                        <p class="titulo_documento">Nota Ingreso</p>
-                        <table class="table_detalle" id="tabla_ingresos">
-                            <thead>
-                                <tr>
-                                    <th>N°.</th>
-                                    <th>Emisión</th>
-                                    <th>Documento</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td colspan="3" class="textoCentro">No hay registros</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <br>
-                    <div>
-                        <p class="titulo_documento">Guias de Remisión</p>
-                        <table class="table_detalle" id="tabla_despachos">
-                            <thead>
-                                <tr>
-                                    <th>N°.</th>
-                                    <th>Emisión</th>
-                                    <th>Documento</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td colspan="3" class="textoCentro">No hay registro</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <br>
-                    <div>
-                        <p class="titulo_documento">Registro Almacen</p>
-                        <table class="table_detalle" id="tabla_registros">
-                            <thead>
-                                <tr>
-                                    <th>N°.</th>
-                                    <th>Emisión</th>
-                                    <th>Documento</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td colspan="3" class="textoCentro">No hay registro</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
             <div class="resumen_atachs">
+                <p>Documentos Adjuntos</p>
                 <ul id="document_list">
-                    <li><a href="#"><i class="far fa-file-pdf"></i><p>Archivo PDF</p></a></li>
-                    <li><a href="#"><i class="far fa-file-pdf"></i><p>Archivo PDF</p></a></li>
-                    <li><a href="#"><i class="far fa-file-pdf"></i><p>Archivo PDF</p></a></li>
                 </ul>
             </div>
         </div>
@@ -290,6 +222,17 @@
                 <h3>Vista Previa</h3>
                 <a href="#" id="closePreview" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
             </div>
+            <iframe src=""></iframe>
+        </div>
+    </div>
+    <div class="modal" id="vistaDocumentos">
+        <div class="ventanaAdjuntos">
+            <div class="tituloAdjuntos">
+                <h3>Documentos Relacionados</h3>
+                <a href="#" id="closeAtach" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
+            </div>
+            <ul id="listaAdjuntos">
+            </ul>
             <iframe src=""></iframe>
         </div>
     </div>

@@ -111,7 +111,6 @@ $(function(){
         
         return false;
     });
-
     
     $("#verDetalles").click(function(e){
         e.preventDefault();
@@ -129,6 +128,9 @@ $(function(){
                 $("#tableInfo tbody").find('tr').eq(3).find('td').eq(1).children().text(data.costos);
                 $("#tableInfo tbody").find('tr').eq(4).find('td').eq(1).children().text(data.elaborado);
                 $("#tableInfo tbody").find('tr').eq(5).find('td').eq(1).children().text($("#tablaDetalles tbody tr").length);
+
+                $("#tableInfo tbody").find('tr').eq(7).find('td').eq(1).children().text('');
+                $("#tableInfo tbody").find('tr').eq(8).find('td').eq(1).children().text('');
 
                 if(data.aprobador != null) {
                     $("#tableInfo tbody").find('tr').eq(7).find('td').eq(1).children().text(data.aprobacion);
@@ -174,11 +176,6 @@ $(function(){
                         .removeClass('avance_inactivo')  
                         .addClass('avance_activo')
                 }
-
-                $("#tabla_ordenes").append(data.ordenes);
-                $("#tabla_ingresos").append(data.ingresos);
-                $("#tabla_despachos").append(data.despachos);
-                $("#tabla_registros").append(data.registros);
 
                 const fragment = document.createDocumentFragment();
 
@@ -249,7 +246,7 @@ $(function(){
         return false;
     });
 
-   $("#tabla_despachos").on('click','a', function(e) {
+    $("#tabla_despachos").on('click','a', function(e) {
         e.preventDefault();
 
         return false;
@@ -291,6 +288,50 @@ $(function(){
         
         return false
     });
+
+    $(".button_options").click(function (e) { 
+        e.preventDefault();
+        
+        let option = e.target.id,
+            consulta = "";
+
+        if(option == "orden"){
+            listarOrdenes();
+        }else if (option == "ingreso") {
+            listarIngresosProveedor();
+        }
+
+        return false
+    });
+
+    $("#listaAdjuntos").on('click','a', function(e) {
+        e.preventDefault();
+
+        let documento = e.target.closest("a").dataset.tipo,
+            indice = e.target.closest("a").getAttribute('href');
+
+        if (documento == 'orden') {
+            vistaOrden(indice);
+        }else if(documento == 'nota_ingreso'){
+            vistaNotaIngreso(indice);
+        }else if(documento == 'guia_remision'){
+
+        }else if(documento == 'ingreso_almacen'){
+
+        }
+
+        return false;
+    });
+
+    $("#closeAtach").click(function (e) { 
+        e.preventDefault();
+
+        $(".ventanaAdjuntos iframe").attr("src","");
+        $("#vistaDocumentos").fadeOut();
+        
+        return false;
+    });
+
 })
 
 itemsPreview = () =>{
@@ -325,4 +366,126 @@ itemsPreview = () =>{
     })
 
     return DATA;
+}
+
+listarOrdenes = async () => {
+    try {
+        let formData = new FormData();
+        formData.append('id', document.getElementById("codigo_pedido").value);
+
+        const response = await fetch(RUTA+"segpedgen/ordenes",{
+            method:'POST',
+            body:formData
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        document.getElementById('listaAdjuntos').innerHTML = "";
+
+        // Create document fragment for better performance
+        const ordenfragment = document.createDocumentFragment();
+
+        if (data.ordenes.length == 0){
+            mostrarMensaje("El pedido no tiene orden.","mensaje_error");
+        }else{
+            data.ordenes.forEach(element =>{
+                const li = document.createElement("li");
+                const link = document.createElement("a");
+
+                link.dataset.tipo  = "orden";
+                link.href = `${element.id_regmov}`;
+                link.innerHTML = `<p><i class="fas fa-file-pdf"></i></p><span>${element.numero}</span>`;
+
+                li.appendChild(link);
+                ordenfragment.appendChild(li);
+            });
+
+            document.getElementById("listaAdjuntos").appendChild(ordenfragment);
+
+            $("#vistaDocumentos").fadeIn();
+        }
+        
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+listarIngresosProveedor = async () => {
+    try {
+        let formData = new FormData();
+        formData.append('id', document.getElementById("codigo_pedido").value);
+
+        const response = await fetch(RUTA+"segpedgen/ingresos",{
+            method:'POST',
+            body:formData
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        document.getElementById('listaAdjuntos').innerHTML = "";
+
+        // Create document fragment for better performance
+        const ordenfragment = document.createDocumentFragment();
+
+        if (data.notasingreso.length == 0){
+            mostrarMensaje("No se ha generado notas de ingreso para este pedido","mensaje_error");
+        }else{
+            data.notasingreso.forEach(element =>{
+                const li = document.createElement("li");
+                const link = document.createElement("a");
+
+                link.dataset.tipo  = "nota_ingreso";
+                link.href = `${element.id_regalm}`;
+                link.innerHTML = `<p><i class="fas fa-file-pdf"></i></p><span>${element.nnronota}</span>`;
+
+                li.appendChild(link);
+                ordenfragment.appendChild(li);
+            });
+
+            document.getElementById("listaAdjuntos").appendChild(ordenfragment);
+
+            $("#vistaDocumentos").fadeIn();
+        }
+
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+listarGuias = () => {
+    try {
+        
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+vistaOrden = async (indice) => {
+    $.post(RUTA+"pedidoseg/datosOrden", {id: indice},
+            function (data, text, requestXHR) {
+                $(".ventanaAdjuntos iframe")
+                .attr("src","")
+                .attr("src",data);
+
+            },"text"
+        );
+}
+
+vistaNotaIngreso = async (indice) => {
+    $.post(RUTA+"cargoplanner/vistaIngreso", {id: indice},
+            function (data, text, requestXHR) {
+                $(".ventanaAdjuntos iframe")
+                .attr("src","")
+                .attr("src",data);
+
+            },"text"
+        );
 }
