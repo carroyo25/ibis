@@ -2326,7 +2326,13 @@
             try {
                 $serie  = 'T001';
 
-                $partida = $header->ubig_origen == "250102" ? 10:$header->ubig_origen; 
+                $partida = $header->ubig_origen;
+                //$partida = $header->ubig_origen == "250102" ? 10:$header->ubig_origen;
+                if ( $header->ubig_origen == "250102" ) {
+                    $partida = 10;
+                }else if ( $header->ubig_origen == "150119" ) {
+                    $partida = 9;
+                }
 
                 $xml =  '<?xml version="1.0" encoding="UTF-8"?>';
                 $xml .= '<DespatchAdvice xmlns="urn:oasis:names:specification:ubl:schema:xsd:DespatchAdvice-2" 
