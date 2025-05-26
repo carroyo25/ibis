@@ -176,8 +176,14 @@ $.addEventListener('click',(e)=>{
    }else if(e.target.matches('.lista_ul *')){
         e.preventDefault();
 
-        document.getElementById("id_ord").value = e.target.dataset.ordenid;
+        const items = document.querySelectorAll('.lista_ul li');
 
+        items.forEach(li => {
+            li.classList.remove('activo'); // Reemplaza 'clase-a-quitar' con tu clase
+        });
+
+        document.getElementById("id_ord").value = e.target.dataset.ordenid;
+       
         let formData = new FormData();
 
         formData.append("orden",e.target.dataset.ordenid);
@@ -190,7 +196,39 @@ $.addEventListener('click',(e)=>{
                 })
                 .then(response => response.json())
                 .then(data => {
-                    console.log(data);
+                    e.target.classList.add("activo");
+                    
+                    if ( data.archivos > 0) {
+                        listaAdjuntoVacia.style.zIndex = "1";
+                        contenedorAdjuntos.style.zIndex = "2";
+                        listaAdjuntos.innerHTML = "";
+                        const atach_fragment = $.createDocumentFragment();
+
+                        console.log(data.resultado);
+
+                        data.resultado.forEach(element =>{
+                            const li = $.createElement("li");
+                            li.classList.add("atach_class");
+                            
+                            const link = $.createElement("a");
+                            link.classList.add("atach_file");
+                            link.dataset.file_estatus = 1;
+                            
+                            link.href = `#${element.idreg}`; // Using # for href if it's not a real URL
+                            link.innerHTML = `<p><i class="fas fa-file-pdf" style="color: #a61111;"></i></p><span>${element.namefile}</span>`;
+                            
+                            li.appendChild(link);
+
+                            atach_fragment.appendChild(li);
+                        });
+
+                        listaAdjuntos.appendChild(atach_fragment);
+
+                    }else{
+                        listaAdjuntoVacia.style.zIndex = "2";
+                        contenedorAdjuntos.style.zIndex = "1";
+                        listaAdjuntos.innerHTML = "";
+                    }
                 })
 
         return false;

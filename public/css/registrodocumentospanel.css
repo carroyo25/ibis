@@ -40,7 +40,6 @@ h2{
 
 .enviado {
     background-color: var(--fondoboton);
-
 }
 
 .lista_ul{
@@ -59,6 +58,11 @@ h2{
 
         color: var(--color-boton-desactivado);
     }
+}
+
+.activo{
+    border: 1px solid var(--color-boton-desactivado) !important;
+    border-radius: 8px;
 }
 
 .modal{
@@ -80,7 +84,7 @@ h2{
     height: 100vh;
     display: grid;
     grid-template-columns: .5fr 2.1fr 0.1fr 1fr 1fr 1fr 1fr 1fr 1fr; 
-    grid-template-rows: auto auto 1fr 1fr auto;
+    grid-template-rows: auto auto 2fr 1fr auto;
     grid-auto-columns: 1fr;
     grid-auto-flow: row;
     gap: 5px;
@@ -137,10 +141,15 @@ h2{
             padding: 0.5rem;
             border: 1px solid transparent;
             transition: all 0.5s cubic-bezier(0.075, 0.82, 0.165, 1);
+            pointer-events: none;
 
             &:hover{
                 border: 1px solid var(--color-boton-desactivado);
                 color: var(--colortexto);
+            }
+
+            *{
+                pointer-events: none;
             }
 
             i{
@@ -160,7 +169,6 @@ h2{
         flex-direction: column;
        
         margin-left: 1rem;
-        
 
         input{
             height: 3rem;
@@ -190,6 +198,7 @@ h2{
 
                     a{
                         display: block;
+                        pointer-events: none;
             
                         i{
                             font-size: 2.5rem;
