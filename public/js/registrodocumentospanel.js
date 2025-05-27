@@ -90,20 +90,10 @@ listarOrdenes(id)
 
 $.addEventListener('click',(e)=>{
     //console.log(e.target);
-
-   if (e.target.matches('.orden_class *')){
-        e.preventDefault();
-
-        toggleBorder(e.target.closest('li'));
-
-        indexOrden = e.target.closest('li').dataset.ordenid;
-        textOrden = e.target.closest('li').dataset.cnumero;
-
-        return false;
-   }else if(e.target.matches('.botones__click_accion *')){
+    if(e.target.matches('.botones__click_accion')){
         e.preventDefault();
  
-        if (e.target.closest('a').getAttribute('href') == 'click_upload'){
+        if (e.target.getAttribute('href') == 'click_upload'){
             try {
                 if ( indexOrden == 0 ) throw new Error ('Seleccione una orden de compra o servicio');
                 
@@ -114,7 +104,7 @@ $.addEventListener('click',(e)=>{
             } catch (error) {
                 notifier.alert(error.message);
             }
-        }else if(e.target.closest('a').getAttribute('href') == 'click_send'){
+        }else if(e.target.getAttribute('href') == 'click_send'){
             try {
                 const ul = document.getElementById("list_files_atachs");
                 const elementoLi = ul.querySelectorAll('li');
@@ -138,28 +128,7 @@ $.addEventListener('click',(e)=>{
                 })
                 .then(response => response.json())
                 .then(data => {
-                    if (data.archivos > 0){
-                        listaAdjuntoVacia.style.zIndex = "1";
-                        contenedorAdjuntos.style.zIndex = "2";
-                        listaAdjuntos.innerHTML = "";
-
-                        data.resultado.forEach(e =>{
-                            const li = $.createElement("li");
-                            li.classList.add("atach_class");
-
-                            const link = $.createElement("a");
-                            link.classList.add("atach_file");
-                            link.dataset.file_estatus = 0;
-                            link.href = `#${indexOrden}-${i}`; // Using # for href if it's not a real URL
-                            link.innerHTML = `<p><i class="fas fa-file-pdf" style="color: #a61111;"></i></p><span>${e.namefile}</span>`;
-                            
-                            li.appendChild(link);
-
-                            atach_fragment.appendChild(li);
-                        });
-
-                        listaAdjuntos.appendChild(atach_fragment);
-                    }
+                    
                 });
                 
             } catch (error) {
@@ -190,6 +159,9 @@ $.addEventListener('click',(e)=>{
         formData.append("centi",document.getElementById("id_ent").value);
         formData.append("funcion","consultarDocumentos");
 
+        indexOrden = e.target.closest('li').dataset.ordenid;
+        textOrden = e.target.closest('li').dataset.cnumero;
+
         fetch('../inc/procesos.php', {
                     method: 'POST',
                     body: formData
@@ -203,8 +175,6 @@ $.addEventListener('click',(e)=>{
                         contenedorAdjuntos.style.zIndex = "2";
                         listaAdjuntos.innerHTML = "";
                         const atach_fragment = $.createDocumentFragment();
-
-                        console.log(data.resultado);
 
                         data.resultado.forEach(element =>{
                             const li = $.createElement("li");

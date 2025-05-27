@@ -500,9 +500,7 @@
                 echo "Error: ".$th->getMessage();
                 return false;
             }
-        }
-
-        
+        } 
 
         public function pedidosFiltrados($parametros){
             try {

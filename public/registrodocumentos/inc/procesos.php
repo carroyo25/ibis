@@ -95,7 +95,9 @@
             $files = json_decode($datos['files']);
             $nreg = count($files);
 
-            foreach($files as $file){
+            var_dump($datos);
+
+            /*foreach($files as $file){
                 try {
                     $sql = "INSERT INTO adm_docsenti 
                                 SET adm_docsenti.idcenti =:enti,
@@ -111,7 +113,7 @@
                 } catch(PDOException $e){
                     return ['status' => 'error', 'message' => $e->getMessage()];
                 }
-            }
+            }*/
 
             return array("archivos"=>$nreg);
         } catch(PDOException $e){
