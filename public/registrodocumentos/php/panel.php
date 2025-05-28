@@ -14,6 +14,7 @@
             <div class="loader"></div>
         </div>
     </div>
+    
     <div class="wrap">
         <form action="#" id="fileAtachs" enctype='multipart/form-data'>
             <input type="file" name="uploadAtach" id="uploadAtach" multiple class="oculto">
@@ -180,6 +181,15 @@
             <h5>Sepcon - Derechos Reservados</h5>
         </div>
     </div>
+    <dialog id="question-dialog">
+        <p>
+           <i class="far fa-question-circle"></i>
+           ¿Desea subir los archivos, para su revisión?
+        </p>
+        <p>
+            <button id="accept-question">Aceptar</button>
+        </p>
+    </dialog>
     <script src="../../js/index.var.js"></script>
     <script src="../../js/date-fns.js"></script>
     <script src="../../js/registrodocumentospanel.js?<?php echo $version = rand(0, 9999); ?>"" type="module"></script>

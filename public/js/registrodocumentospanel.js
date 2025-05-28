@@ -105,10 +105,18 @@ $.addEventListener('click',(e)=>{
                 notifier.alert(error.message);
             }
         }else if(e.target.getAttribute('href') == 'click_send'){
-            try {
+            const alertDialog = document.querySelector("#question-dialog");
+            //document.getElementById("accept-question").style.display = 'block';
+            
+            alertDialog.showModal();
+
+            /*try {
                 const ul = document.getElementById("list_files_atachs");
                 const elementoLi = ul.querySelectorAll('li');
                 const numeroDeElementos = elementoLi.length;
+
+                const fileInput = document.getElementById('uploadAtach');
+                const files = fileInput.files;
 
                 if ( numeroDeElementos == 0 ) new Error ('No se ha registrado ningun archivo para procesar');
 
@@ -122,18 +130,22 @@ $.addEventListener('click',(e)=>{
                 formData.append("ordenId",idorden);
                 formData.append("entidad",idproveedor);
 
+                for (let i = 0; i < files.length; i++) {
+                    formData.append('filesToUpload[]', files[i]);
+                }
+
                 fetch('../inc/procesos.php', {
                     method: 'POST',
                     body: formData
                 })
                 .then(response => response.json())
                 .then(data => {
-                    
+                    console.log(data);
                 });
                 
             } catch (error) {
                 notifier.alert(error.message);
-            }
+            }*/
         }
         return false;
    }else if(e.target.matches('.atach_file')){

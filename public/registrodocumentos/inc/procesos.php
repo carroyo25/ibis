@@ -1,7 +1,16 @@
 <?php
-    require('connect.php');
+    header('Content-Type: application/json');
 
+    require('connect.php');
+    
     session_start();
+
+    $response = [
+        'success' => false,
+        'message' => '',
+        'uploadedFiles' => []
+    ];
+
 
     if(isset($_POST['funcion'])){
         if($_POST['funcion'] == "login"){
@@ -95,10 +104,55 @@
             $files = json_decode($datos['files']);
             $nreg = count($files);
 
-            var_dump($datos);
+            // Check if files were uploaded
+            if (!isset($_FILES['filesToUpload']) || $_FILES['filesToUpload']['error'][0] === UPLOAD_ERR_NO_FILE) {
+                $response['message'] = 'No files were uploaded.';
+                echo json_encode($response);
+                exit;
+            }
 
-            /*foreach($files as $file){
-                try {
+            // Allowed file types
+            $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'pdf', 'doc', 'docx', 'txt'];
+            $maxFileSize = 5 * 1024 * 1024; // 5MB
+
+            $uploadDir = $_SERVER["DOCUMENT_ROOT"].'/ibis/public/documentos/proveedores/';
+
+            $fileCount = count($_FILES['filesToUpload']['name']);
+
+            for ($i = 0; $i < $fileCount; $i++){
+                $fileName = $_FILES['filesToUpload']['name'][$i];
+                $fileTmp = $_FILES['filesToUpload']['tmp_name'][$i];
+                $fileSize = $_FILES['filesToUpload']['size'][$i];
+                $fileType = $_FILES['filesToUpload']['type'][$i];
+
+
+                // Get file extension
+                $fileExt = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+
+                // Generate unique filename
+                $newFileName = uniqid('', true) . '.' . $fileExt;
+                $uploadPath = $uploadDir . $newFileName;
+
+                // Move file to upload directory
+                if (move_uploaded_file($fileTmp, $uploadPath)) {
+                    $response['uploadedFiles'][] = [
+                        'originalName' => $fileName,
+                        'name' => $newFileName,
+                        'path' => $uploadPath,
+                        'size' => $fileSize,
+                        'type' => $fileType,
+                        'success' => true
+                    ];
+                } else {
+                    $response['uploadedFiles'][] = [
+                        'originalName' => $fileName,
+                        'success' => false,
+                        'error' => 'Failed to move uploaded file'
+                    ];
+                }
+
+
+                /*try {
                     $sql = "INSERT INTO adm_docsenti 
                                 SET adm_docsenti.idcenti =:enti,
                                     adm_docsenti.idorden =:orden,
@@ -112,10 +166,12 @@
 
                 } catch(PDOException $e){
                     return ['status' => 'error', 'message' => $e->getMessage()];
-                }
-            }*/
+                }*/
 
-            return array("archivos"=>$nreg);
+            }
+
+
+            return array("archivos"=>$nreg,"status"=>$response);
         } catch(PDOException $e){
             return ['status' => 'error', 'message' => $e->getMessage()];
         }
