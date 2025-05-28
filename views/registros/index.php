@@ -250,6 +250,15 @@
             <iframe src=""></iframe>
         </div>
     </div>
+    <div class="modal" id="pregunta">
+        <div class="ventanaPregunta">
+            <h3>¿ Registrar los items ?</h3>
+            <div>
+                <button type="button" id="btnAceptarPregunta">Si</button>
+                <button type="button" id="btnCancelarPregunta">Cancelar</button>
+            </div>
+        </div>
+    </div>
     <div class="cabezaModulo">
         <h1>Registro Almacen</h1>
         <div>

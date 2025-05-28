@@ -1,8 +1,9 @@
 $(function(){
+
+    $("#esperar").fadeIn()
+
     let accion = "";
     let tipoMovimiento = 0;  //guia remision  = 1, transferencias = 2
-
-    $("#esperar").css({"display":"block","opacity":"1"});
 
     let str = $("#formConsulta").serialize();
 
@@ -135,37 +136,9 @@ $(function(){
 
     $("#updateDocument").click(function(e){
         e.preventDefault();
-        
-        let result = {};
 
-        $.each($("#formProceso").serializeArray(),function(){
-            result[this.name] = this.value;
-        });
-
-        try {
-            if (result['codigo_autoriza'] == '') throw "Elija el responsable de la recepcion";
-            if (result['cnumguia'] == '') throw "Seleccione un numero de guia";
-            if (result['codigo_costos'] == "") throw "Seleccione el centro de costos";
-            if ( accion != "n" ) throw "No se puede grabar";
-        
-            $.post(RUTA+"registros/nuevoRegistro", {cabecera:result,detalles:JSON.stringify(detalles()),tipo:tipoMovimiento},
-                function (data, textStatus, jqXHR) {
-                    if (data.estado){
-                        mostrarMensaje("Ingreso correcto","mensaje_correcto");
-                        
-                        $(".primeraBarra").css("background","#819830");
-                        $(".primeraBarra span").text('Datos Generales ... Grabado');
-
-                    }else {
-                        mostrarMensaje("Hubo un problema con el registro","mensaje_error");
-                    }
-                },
-                "json"
-            );
-        } catch (error) {
-            mostrarMensaje(error,'mensaje_error');
-        }
-
+        $("#pregunta").fadeIn();
+    
         return false;
     });
 
@@ -512,6 +485,56 @@ $(function(){
 
         return false;
     });
+
+    $("#btnAceptarPregunta").click(function(e){
+        e.preventDefault();
+
+        $("#esperar").css({"display":"block"});
+
+        let result = {};
+
+        $.each($("#formProceso").serializeArray(),function(){
+            result[this.name] = this.value;
+        });
+
+        try {
+            if (result['codigo_autoriza'] == '') throw "Elija el responsable de la recepcion";
+            if (result['cnumguia'] == '') throw "Seleccione un numero de guia";
+            if (result['codigo_costos'] == "") throw "Seleccione el centro de costos";
+            if ( accion != "n" ) throw "No se puede grabar";
+        
+            $.post(RUTA+"registros/nuevoRegistro", {cabecera:result,detalles:JSON.stringify(detalles()),tipo:tipoMovimiento},
+                function (data, textStatus, jqXHR) {
+                    if (data.estado){
+                        mostrarMensaje("Ingreso correcto","mensaje_correcto");
+                        
+                        $(".primeraBarra").css("background","#819830");
+                        $(".primeraBarra span").text('Datos Generales ... Grabado');
+
+                        $("#esperar,#pregunta,#proceso").css({"display":"none"});
+
+                    }else {
+                        mostrarMensaje("Hubo un problema con el registro","mensaje_error");
+                    }
+                },
+                "json"
+            );
+        } catch (error) {
+            mostrarMensaje(error,'mensaje_error');
+        }
+
+        return false;
+    });
+
+    $("#btnCancelarPregunta").click(function(e){
+        e.preventDefault();
+
+        $("#pregunta").fadeOut();
+
+        return false;
+    });
+    
+
 })
 
 detalles = () =>{

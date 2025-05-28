@@ -154,7 +154,10 @@
                                                             ntcambio=:tcambio,
                                                             ncodpago=:pago,
                                                             userModifica=:modifica,
-                                                            nigv=:igv
+                                                            nigv=:igv,
+                                                            cReferencia=:referencia,
+                                                            id_centi=:entidad,
+                                                            cObservacion=:concepto
                                                         WHERE id_regmov = :id");
                 $sql->execute(['entrega'=>$cab->fentrega,
                                 "total"=>$cab->total_numero,
@@ -166,6 +169,9 @@
                                 "pago"=>$cab->codigo_pago,
                                 "modifica"=>$_SESSION['iduser'],
                                 "igv"=>$cab->radioIgv,
+                                "referencia"=>$cab->referencia,
+                                "entidad"=>$cab->codigo_entidad,
+                                "concepto"=>$cab->concepto,
                                 "id"=>$cab->codigo_orden]);
                 
                 $this->actualizarDetallesOrden($detalles);
@@ -249,11 +255,10 @@
                     }
 
                     $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet SET 
-                                                        estadoItem=:est, 
-                                                        cant_orden=:pendiente WHERE iditem=:item");
+                                                        cant_orden=:pendiente 
+                                                        WHERE iditem=:item");
                     $sql->execute(["item"=>$datos[$i]->itped,
-                                    "est"=>$estado,
-                                    "pendiente"=>$datos[$i]->saldo]); 
+                                   "pendiente"=>$datos[$i]->saldo]); 
                 }
                 
             } catch (PDOException $th) {
@@ -356,7 +361,7 @@
         }
 
         private function actualizarDetallePedido($itemPedido) {
-            $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet SET nflgactivo = 0,idorden = null,estadoItem = 54 WHERE iditem = :item");
+            $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet SET nflgactivo = 0,idorden = null WHERE iditem = :item");
             $sql->execute(["item"=>$itemPedido]);
         }
 
@@ -1011,12 +1016,11 @@
             try {
                 $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet 
                                                         SET tb_pedidodet.idorden = null,
-                                                            tb_pedidodet.estadoItem =:estado,
                                                             tb_pedidodet.nflgOrden = 0,
                                                             tb_pedidodet.cant_orden = 0
                                                         WHERE tb_pedidodet.iditem = :indice
                                                         LIMIT 1");
-                $sql->execute(["estado"=>$estado,"indice"=>$indice]);
+                $sql->execute(["indice"=>$indice]);
 
             } catch (PDOException $th) {
                     echo "Error: ".$th->getMessage();
