@@ -163,19 +163,19 @@
             $this->SetXY(10,67);
             $this->Cell(16,3,utf8_decode(""),"L",0);
             $this->Cell(10,3,utf8_decode("Contacto :"),"0",0);
-            $this->Cell(40,3,utf8_decode($this->contacto),0,0); //envia de parametro
-            $this->Cell(20,3,utf8_decode("Teléfono :"),0,0);
+            $this->Cell(50,3,utf8_decode($this->contacto),0,0); //envia de parametro
+            $this->Cell(10,3,utf8_decode("Teléfono :"),0,0);
             $this->Cell(27,3,utf8_decode($this->tel_contacto),0,0); //envia de parametro
             $this->Cell(77,3,utf8_decode("Observ :"),"LR",0);
 
             $this->SetFillColor(255, 255, 0);
-            $this->SetFont('Arial','',5);
+            $this->SetFont('Arial','',4.5);
             $this->SetXY(133,67.5);
             $this ->MultiCell(64,2,utf8_decode($this->detalle), 0, 'L', 1);
             $this->SetY(69);
             $this->SetFont('Arial','',6);
             $this->Cell(16,3,utf8_decode(""),"L",0);
-            $this->Cell(13,3,utf8_decode("E-mail :"),0,0);
+            $this->Cell(10,3,utf8_decode("E-mail :"),0,0);
             $this->Cell(84,3,utf8_decode($this->cor_contacto),0,0); //envia de parametro
             //$this->Cell(77,3,utf8_decode(""),"LR",1);
 
