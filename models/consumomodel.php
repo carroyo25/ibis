@@ -9,7 +9,7 @@
 
         public function buscarDatos($doc,$cc) {
             $registrado = false;
-            $url = "http://sicalsepcon.net/api/activesapi.php?documento=".$doc;
+            $url = "http://179.49.67.42/api/activesapi.php?documento=".$doc;
             $img = "http://sicalsepcon.net/api/firmasapi.php?doc=".$doc;
             
             

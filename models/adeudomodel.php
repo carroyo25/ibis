@@ -9,7 +9,7 @@
 
         public function buscarDatosAdeudo($doc,$cc) {
             $registrado = false;
-            $url = "http://sicalsepcon.net/api/activesapi.php?documento=".$doc;
+            $url = "http://179.49.67.42/api/activesapi.php?documento=".$doc;
             $api = file_get_contents($url);
             
             $datos =  json_decode($api);
