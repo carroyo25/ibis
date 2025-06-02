@@ -59,24 +59,38 @@ const listarOrdenes = async (id) =>{
         data.forEach(element => {
             let bkgIcon = element.nEstadoReg == null ? 0 : element.nEstadoReg;
 
-            const li = document.createElement("li");
-            li.dataset.enti = element.id_centi;
-            li.dataset.ordenid = element.id_regmov;
-            li.dataset.estado  = element.nEstadoReg;
-            li.dataset.cnumero = element.cnumero;
-            li.classList.add("orden_class");
-            
-            const link = document.createElement("a");
-            link.classList.add("orden");
-            link.style.color=colorsIcons[bkgIcon];
+            const tr = document.createElement("tr");
+            tr.dataset.enti = element.id_centi;
+            tr.dataset.ordenid = element.id_regmov;
+            tr.dataset.estado  = element.nEstadoReg;
+            tr.dataset.cnumero = element.cnumero;
+
+            tr.classList.add("table_cell_select");
 
             let tipodoc = element.ntipmov == 37 ? 'OC':'OS';
-
-            link.href = `#${element.id_regmov}`; // Using # for href if it's not a real URL
-            link.innerHTML = `<p><i class="far fa-file"></i></p><span>${tipodoc}-${element.cnumero}-${element.cper}</span>`;
             
-            li.appendChild(link);
-            fragment.appendChild(li);
+
+            tr.innerHTML = `<td>${element.cper}</td>
+                            <td>${tipodoc}</td>
+                            <td>${element.cnumero}</td>`
+
+            
+            fragment.appendChild(tr);
+
+            tr.addEventListener('click', function() {
+                // Quitar highlight de la fila anterior
+                /*if (filaSeleccionada) {
+                    filaSeleccionada.classList.remove('highlight');
+                }
+                
+                // Añadir highlight a la nueva fila seleccionada
+                this.classList.add('highlight');
+                filaSeleccionada = this;*/
+                
+                // Mostrar detalles
+                //document.getElementById("id_ord").value = this.dataset.ordenid;
+                documentosAdjuntos(this.dataset.ordenid,this.dataset.cnumero);
+            });
         });
         
         ordenes.appendChild(fragment);
@@ -87,6 +101,7 @@ const listarOrdenes = async (id) =>{
 }
 
 listarOrdenes(id)
+
 
 $.addEventListener('click',(e)=>{
     //console.log(e.target);
@@ -106,11 +121,11 @@ $.addEventListener('click',(e)=>{
             }
         }else if(e.target.getAttribute('href') == 'click_send'){
             const alertDialog = document.querySelector("#question-dialog");
-            //document.getElementById("accept-question").style.display = 'block';
+            document.getElementById("accept-question").style.display = 'block';
             
             alertDialog.showModal();
 
-            /*try {
+            try {
                 const ul = document.getElementById("list_files_atachs");
                 const elementoLi = ul.querySelectorAll('li');
                 const numeroDeElementos = elementoLi.length;
@@ -145,73 +160,13 @@ $.addEventListener('click',(e)=>{
                 
             } catch (error) {
                 notifier.alert(error.message);
-            }*/
+            }
         }
         return false;
    }else if(e.target.matches('.atach_file')){
         e.preventDefault();
 
         $.getElementById("nombre_archivo").innerHTML = e.target.lastChild.textContent;
-
-        return false;
-   }else if(e.target.matches('.lista_ul *')){
-        e.preventDefault();
-
-        const items = document.querySelectorAll('.lista_ul li');
-
-        items.forEach(li => {
-            li.classList.remove('activo'); // Reemplaza 'clase-a-quitar' con tu clase
-        });
-
-        document.getElementById("id_ord").value = e.target.dataset.ordenid;
-       
-        let formData = new FormData();
-
-        formData.append("orden",e.target.dataset.ordenid);
-        formData.append("centi",document.getElementById("id_ent").value);
-        formData.append("funcion","consultarDocumentos");
-
-        indexOrden = e.target.closest('li').dataset.ordenid;
-        textOrden = e.target.closest('li').dataset.cnumero;
-
-        fetch('../inc/procesos.php', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    e.target.classList.add("activo");
-                    
-                    if ( data.archivos > 0) {
-                        listaAdjuntoVacia.style.zIndex = "1";
-                        contenedorAdjuntos.style.zIndex = "2";
-                        listaAdjuntos.innerHTML = "";
-                        const atach_fragment = $.createDocumentFragment();
-
-                        data.resultado.forEach(element =>{
-                            const li = $.createElement("li");
-                            li.classList.add("atach_class");
-                            
-                            const link = $.createElement("a");
-                            link.classList.add("atach_file");
-                            link.dataset.file_estatus = 1;
-                            
-                            link.href = `#${element.idreg}`; // Using # for href if it's not a real URL
-                            link.innerHTML = `<p><i class="fas fa-file-pdf" style="color: #a61111;"></i></p><span>${element.namefile}</span>`;
-                            
-                            li.appendChild(link);
-
-                            atach_fragment.appendChild(li);
-                        });
-
-                        listaAdjuntos.appendChild(atach_fragment);
-
-                    }else{
-                        listaAdjuntoVacia.style.zIndex = "2";
-                        contenedorAdjuntos.style.zIndex = "1";
-                        listaAdjuntos.innerHTML = "";
-                    }
-                })
 
         return false;
    }
@@ -283,5 +238,55 @@ const fileListArray = () => {
     });
 
     return items;
+}
+
+const documentosAdjuntos = (id,numero) => {
+    let formData = new FormData();
+
+        formData.append("orden",id);
+        formData.append("centi",document.getElementById("id_ent").value);
+        formData.append("funcion","consultarDocumentos");
+
+        indexOrden = id;
+        textOrden = numero;
+
+        fetch('../inc/procesos.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    //e.target.classList.add("activo");
+                    
+                    if ( data.archivos > 0) {
+                        listaAdjuntoVacia.style.zIndex = "1";
+                        contenedorAdjuntos.style.zIndex = "2";
+                        listaAdjuntos.innerHTML = "";
+                        const atach_fragment = $.createDocumentFragment();
+
+                        data.resultado.forEach(element =>{
+                            const li = $.createElement("li");
+                            li.classList.add("atach_class");
+                            
+                            const link = $.createElement("a");
+                            link.classList.add("atach_file");
+                            link.dataset.file_estatus = 1;
+                            
+                            link.href = `#${element.idreg}`; // Using # for href if it's not a real URL
+                            link.innerHTML = `<p><i class="fas fa-file-pdf" style="color: #a61111;"></i></p><span>${element.namefile}</span>`;
+                            
+                            li.appendChild(link);
+
+                            atach_fragment.appendChild(li);
+                        });
+
+                        listaAdjuntos.appendChild(atach_fragment);
+
+                    }else{
+                        listaAdjuntoVacia.style.zIndex = "2";
+                        contenedorAdjuntos.style.zIndex = "1";
+                        listaAdjuntos.innerHTML = "";
+                    }
+                })
 }
 

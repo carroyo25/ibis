@@ -223,36 +223,48 @@ h2{
 
         .contenedor_ordenes{
             height: 100%;
-            padding: 1rem;
             border-radius: 8px;
             overflow: auto;
             margin: 1rem;
 
-            .lista_ul {
-                gap:10px;
+            table{
+                border-collapse: collapse;
+                width: 100%;
+                min-width: 400px;
 
-                li{
-                    &:hover{
-                        border: 1px solid var(--color-boton-desactivado);
-                        color: var(--colortexto);
-                        border-radius: 8px;
-                    }
+                thead{
+                    background: #4a90e2;
+                    position: sticky;
+                    top: 0px;
+                }
 
-                    a{
-                        display: block;
-                        pointer-events: none;
-            
-                        i{
-                            font-size: 2.5rem;
-                            margin-bottom: 5px;
+                th,td {
+                    padding: 13px;
+                    text-align: left;
+                }
+
+                th {
+                    font-weight: 600;
+                }
+
+                tbody {
+                    tr {
+                        border-bottom: 1px solid #e0e0e0;
+                        transition: all 0.2s;
+
+                        *{
+                            cursor: pointer;
                         }
-            
-                        p{
-                            font-size: .8rem;
+
+                        &:nth-child(even){
+                            background: #f9f9f9;
+                        }
+
+                        &:hover{
+                            background: #eaf3ff;
                         }
                     }
                 }
-                
             }
             
         }

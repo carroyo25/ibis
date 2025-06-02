@@ -42,9 +42,18 @@
             <input type="hidden" name="id_ord" id="id_ord">
             <input type="search" placeholder="buscar n° de Orden">
             <div class="contenedor_ordenes">
-                <ul id="listaOrdenes" class="lista_ul">
-                    
-                </ul>
+                <table id="tablaOrdenes">
+                    <thead>
+                        <tr>
+                            <th>N°</th>
+                            <th>Tipo</th>
+                            <th>Descripcion</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listaOrdenes">
+
+                    </tbody>
+                </table>
             </div>
         </div>
         <div class="wrap_atachs">
