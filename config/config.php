@@ -14,6 +14,8 @@
         define('URL','http://200.115.23.164/ibis/');
     else if ($url === "127.0.0.1")
         define('URL','http://127.0.0.1/ibis/');
+    else if ($url === "179.49.67.42")
+        define('URL','http://179.49.67.42/ibis/');
     
     define('HOST','localhost');
     define('HOST1','localhost');

@@ -10,7 +10,7 @@
         public function buscarDatos($doc,$cc) {
             $registrado = false;
             $url = "http://179.49.67.42/api/activesapi.php?documento=".$doc;
-            $img = "http://sicalsepcon.net/api/firmasapi.php?doc=".$doc;
+            //$img = "http://sicalsepcon.net/api/firmasapi.php?doc=".$doc;
             
             
             $api = file_get_contents($url);
@@ -25,7 +25,7 @@
             return array("datos" => $datos,
                         "registrado"=>$registrado,
                         "anteriores"=>$this->kardexAnterior($doc,$cc),
-                        "ruta"=>'https://rrhhperu.sepcon.net/postulante/documentos/pdf/'.$ap2);
+                        "ruta"=>'');
         }
 
         public function buscarProductos($codigo){

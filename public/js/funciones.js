@@ -14,6 +14,8 @@ if (HOST ==  "localhost") {
     var RUTA = "http://200.115.23.164/ibis/";
 }else if (HOST ==  "127.0.0.1"){
     var RUTA = "http://127.0.0.1/ibis/";
+}else if (HOST ==  "179.49.67.42"){
+    var RUTA = "http://179.49.67.42/ibis/";
 }
 
 var emailreg = /^[a-zA-Z0-9_\.\-]+@[a-zA-Z0-9\-]+\.[a-zA-Z0-9\-\.]+$/;
