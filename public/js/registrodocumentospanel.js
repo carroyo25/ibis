@@ -1,5 +1,6 @@
 
 let logon = localStorage.getItem("logon");
+let filaSeleccionada = null;
 
 const $ = document;
 const entidad = $.getElementById('entidad');
@@ -49,6 +50,12 @@ const listarOrdenes = async (id) =>{
         }
 
         const data = await response.json();
+        
+        const estado = {0:'',
+                        1:'<i class="fas fa-inbox"></i>',
+                        2:'<i class="fas fa-microscope"></i>',
+                        3:'<i class="fas fa-microscope"></i>',
+                        4:'<i class="fas fa-unlink"></i>'}
 
         // Clear existing orders
         ordenes.innerHTML = '';
@@ -72,24 +79,24 @@ const listarOrdenes = async (id) =>{
 
             tr.innerHTML = `<td>${element.cper}</td>
                             <td>${tipodoc}</td>
-                            <td>${element.cnumero}</td>`
+                            <td>${element.cnumero}</td>
+                            <td>${estado[element.estado]}</td>`
 
             
             fragment.appendChild(tr);
 
             tr.addEventListener('click', function() {
+                $.getElementById("id_ord").value = this.dataset.ordenid;
+                documentosAdjuntos(this.dataset.ordenid,this.dataset.cnumero);
+
                 // Quitar highlight de la fila anterior
-                /*if (filaSeleccionada) {
+                if (filaSeleccionada) {
                     filaSeleccionada.classList.remove('highlight');
                 }
                 
                 // Añadir highlight a la nueva fila seleccionada
                 this.classList.add('highlight');
-                filaSeleccionada = this;*/
-                
-                // Mostrar detalles
-                //document.getElementById("id_ord").value = this.dataset.ordenid;
-                documentosAdjuntos(this.dataset.ordenid,this.dataset.cnumero);
+                filaSeleccionada = this;                
             });
         });
         
@@ -121,44 +128,20 @@ $.addEventListener('click',(e)=>{
             }
         }else if(e.target.getAttribute('href') == 'click_send'){
             const alertDialog = document.querySelector("#question-dialog");
-            document.getElementById("accept-question").style.display = 'block';
+            document.getElementById("question-dialog").style.display = 'block';
             
-            alertDialog.showModal();
+            const ul = document.getElementById("list_files_atachs");
+            const elementoLi = ul.querySelectorAll('li');
+            const numeroDeElementos = elementoLi.length;
 
             try {
-                const ul = document.getElementById("list_files_atachs");
-                const elementoLi = ul.querySelectorAll('li');
-                const numeroDeElementos = elementoLi.length;
-
-                const fileInput = document.getElementById('uploadAtach');
-                const files = fileInput.files;
-
                 if ( numeroDeElementos == 0 ) new Error ('No se ha registrado ningun archivo para procesar');
+                if ( indexOrden == 0 ) throw new Error ('Seleccione una orden de compra o servicio');
 
-                let filesToSend = JSON.stringify(fileListArray()),
-                    idorden     = document.getElementById("id_ord").value,
-                    idproveedor = document.getElementById("id_ent").value,
-                    formData    = new FormData();
-
-                formData.append("files",filesToSend);
-                formData.append("funcion","registrarDocumentos");
-                formData.append("ordenId",idorden);
-                formData.append("entidad",idproveedor);
-
-                for (let i = 0; i < files.length; i++) {
-                    formData.append('filesToUpload[]', files[i]);
-                }
-
-                fetch('../inc/procesos.php', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log(data);
-                });
+                alertDialog.showModal();
                 
             } catch (error) {
+
                 notifier.alert(error.message);
             }
         }
@@ -167,6 +150,39 @@ $.addEventListener('click',(e)=>{
         e.preventDefault();
 
         $.getElementById("nombre_archivo").innerHTML = e.target.lastChild.textContent;
+
+        return false;
+   }else if(e.target.matches(".button_click_dialog")){
+        e.preventDefault();
+
+        $.getElementById("question-dialog").style.display = 'none';
+        $.getElementById("question-dialog").close();
+
+        const fileInput = document.getElementById('uploadAtach');
+        const files = fileInput.files;
+
+        let filesToSend = JSON.stringify(fileListArray()),
+            idorden     = document.getElementById("id_ord").value,
+            idproveedor = document.getElementById("id_ent").value,
+            formData    = new FormData();
+
+        formData.append("files",filesToSend);
+        formData.append("funcion","registrarDocumentos");
+        formData.append("ordenId",idorden);
+        formData.append("entidad",idproveedor);
+
+        for (let i = 0; i < files.length; i++) {
+            formData.append('filesToUpload[]', files[i]);
+        }
+
+        fetch('../inc/procesos.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+        });
 
         return false;
    }
@@ -212,6 +228,12 @@ $.addEventListener('change',(e) => {
         }
 
         return false;
+    }
+})
+
+$.addEventListener('keydown',(e) => {
+    if(e.key === "Escape"){
+        $.getElementById("question-dialog").style.display = 'none';
     }
 })
 

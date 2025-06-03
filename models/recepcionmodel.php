@@ -51,19 +51,8 @@
                                                         AND alm_recepcab.nflgactivo = 1 
                                                         AND tb_costusu.nflgactivo = 1
                                                         AND alm_recepcab.nEstadoDoc = 60
-                                                        AND ((alm_recepcab.cper = YEAR (NOW()) 
-                                                                AND alm_recepcab.cmes =
-                                                            IF
-                                                                (
-                                                                    MONTH (
-                                                                    NOW()) = 1,
-                                                                    12,
-                                                                    MONTH (
-                                                                    NOW())) 
-                                                                ) 
-                                                        OR ( alm_recepcab.cper = YEAR ( NOW()) AND alm_recepcab.cmes = MONTH ( NOW()) ))
                                                     ORDER BY alm_recepcab.ffecdoc   DESC
-                                                    LIMIT 250");
+                                                    LIMIT 100");
                 $sql->execute(["usr"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowcount();
                 if ($rowCount > 0){

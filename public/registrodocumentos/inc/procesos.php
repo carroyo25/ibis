@@ -1,4 +1,7 @@
 <?php
+    // Establecer zona horaria de Lima
+    date_default_timezone_set('America/Lima');
+        
     header('Content-Type: application/json');
 
     require('connect.php');
@@ -71,21 +74,25 @@
     function listarOrdenesEntidad($pdo, $datos){
         try {
             $sql = "SELECT
-                        LPAD( lg_ordencab.cnumero,7, 0 ) AS cnumero,
-                        lg_ordencab.cper,
-                        lg_ordencab.cmes,
-                        lg_ordencab.id_centi,
-                        lg_ordencab.ntipmov,
-                        lg_ordencab.nEstadoDoc,
-                        lg_ordencab.id_regmov,
-                        lg_ordencab.nEstadoReg
-                    FROM
-                        lg_ordencab 
-                    WHERE
-                        lg_ordencab.id_centi = :enti 
-                        AND lg_ordencab.nEstadoDoc = 60
-                        AND lg_ordencab.cper = YEAR(NOW())
-                    ORDER BY lg_ordencab.cper DESC";
+                    LPAD( lg_ordencab.cnumero, 7, 0 ) AS cnumero,
+                    lg_ordencab.cper,
+                    lg_ordencab.cmes,
+                    lg_ordencab.id_centi,
+                    lg_ordencab.ntipmov,
+                    lg_ordencab.nEstadoDoc,
+                    lg_ordencab.id_regmov,
+                    lg_ordencab.nEstadoReg,
+                    adm_ordstatus.fechapresenta,
+                    IF (ISNULL(adm_ordstatus.estadorden),0,adm_ordstatus.estadorden) AS estado 
+                FROM
+                    lg_ordencab
+                    LEFT JOIN adm_ordstatus ON lg_ordencab.id_regmov = adm_ordstatus.idorden 
+                WHERE
+                    lg_ordencab.id_centi = :enti 
+                    AND lg_ordencab.nEstadoDoc = 60
+                    AND lg_ordencab.cper = YEAR(NOW()) 
+                ORDER BY
+                    lg_ordencab.cnumero DESC";
             
             $stmt = $pdo->prepare($sql);
             $stmt->execute([':enti' => $datos['id']]);
@@ -103,6 +110,7 @@
         try {
             $files = json_decode($datos['files']);
             $nreg = count($files);
+            $filesProcess = 0;
 
             // Check if files were uploaded
             if (!isset($_FILES['filesToUpload']) || $_FILES['filesToUpload']['error'][0] === UPLOAD_ERR_NO_FILE) {
@@ -115,7 +123,7 @@
             $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'pdf', 'doc', 'docx', 'txt'];
             $maxFileSize = 5 * 1024 * 1024; // 5MB
 
-            $uploadDir = $_SERVER["DOCUMENT_ROOT"].'/ibis/public/documentos/proveedores/';
+            $uploadDir = $_SERVER["DOCUMENT_ROOT"].'/ibis/public/documentos/proveedores/presentados/';
 
             $fileCount = count($_FILES['filesToUpload']['name']);
 
@@ -133,16 +141,26 @@
                 $newFileName = uniqid('', true) . '.' . $fileExt;
                 $uploadPath = $uploadDir . $newFileName;
 
+                //preparar la consulta
+                $sql = "INSERT INTO adm_docsenti 
+                                SET adm_docsenti.idcenti        =:enti,
+                                    adm_docsenti.idorden        =:orden,
+                                    adm_docsenti.namefile       =:namefile,
+                                    adm_docsenti.internalname   =:internal,
+                                    adm_docsenti.statusfile     = 1";
+
                 // Move file to upload directory
                 if (move_uploaded_file($fileTmp, $uploadPath)) {
                     $response['uploadedFiles'][] = [
-                        'originalName' => $fileName,
-                        'name' => $newFileName,
-                        'path' => $uploadPath,
-                        'size' => $fileSize,
-                        'type' => $fileType,
-                        'success' => true
+                        'originalName'  => $fileName,
+                        'name'          => $newFileName,
+                        'path'          => $uploadPath,
+                        'size'          => $fileSize,
+                        'type'          => $fileType,
+                        'success'       => true
                     ];
+
+                    $filesProcess++;
                 } else {
                     $response['uploadedFiles'][] = [
                         'originalName' => $fileName,
@@ -151,24 +169,36 @@
                     ];
                 }
 
-
-                /*try {
-                    $sql = "INSERT INTO adm_docsenti 
-                                SET adm_docsenti.idcenti =:enti,
-                                    adm_docsenti.idorden =:orden,
-                                    adm_docsenti.namefile =:namefile,
-                                    adm_docsenti.statusfile = 1";
-                    
+                try {
                     $stmt = $pdo->prepare($sql);
                     $stmt->execute([":enti"     => $datos['entidad'],
                                     ":orden"    => $datos['ordenId'],
-                                    ":namefile" => $file]);
+                                    ":internal" => $newFileName,
+                                    ":namefile" => $fileName]);
 
                 } catch(PDOException $e){
                     return ['status' => 'error', 'message' => $e->getMessage()];
-                }*/
-
+                }
             }
+
+            //if ($filesProcess > 0) {
+                try {
+                    
+                    $fecha = date('Y-m-d H:i:s');
+                    $sql = "INSERT INTO adm_ordstatus
+                            SET adm_ordstatus.idcenti =:enti,
+                                adm_ordstatus.idorden =:orden,
+                                adm_ordstatus.fechapresenta =:presenta,
+                                adm_ordstatus.estadorden = 1";
+                    $stmt = $pdo->prepare($sql); 
+                    $stmt->execute([":enti"     => $datos['entidad'],
+                                    ":orden"    => $datos['ordenId'],
+                                    ":presenta" => $fecha]);
+
+                } catch(PDOException $e){
+                    return ['status' => 'error', 'message' => $e->getMessage()];
+                }
+           // }
 
 
             return array("archivos"=>$nreg,"status"=>$response);

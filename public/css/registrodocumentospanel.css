@@ -31,11 +31,11 @@ a{
 
 dialog{
     top: 45%;
-    left: 50%;
+    left: 45%;
     padding: 2rem;
     border-radius: .8rem;
     border: 1px solid var(--color-texto);
-    display: flex;
+    display: none;
     flex-direction: column;
     gap: 2rem;
     z-index: -1;
@@ -58,7 +58,6 @@ dialog{
 
     button{
         padding: 1rem;
-        /*display: none;*/
         background: var(--color-boton-desactivado);
         color: var(--color-fondo);
         width: 60%;
@@ -104,9 +103,10 @@ h2{
 }
 
 .activo{
-    border: 1px solid var(--color-boton-desactivado) !important;
-    border-radius: 8px;
+    background: var(--color-boton-desactivado);
 }
+
+.highlight { background-color: #a8d8ea !important; }
 
 .modal{
     position:fixed;
@@ -278,15 +278,13 @@ h2{
         position: relative;
 
         .body_atachs {
-            padding: 1rem;
             display: flex;
             gap: 1rem ;
-            height: 90%;
             overflow: auto;
-            
+            padding: .4rem;
+              
             .contenedor_adjuntos{
-                padding: 1rem;
-                width: 65%;
+                width: 70%;
                 position: relative;
                 gap: 10px;
                 margin-right: 20px;
@@ -308,9 +306,10 @@ h2{
 
                         li {
                             padding: .5rem;
-                            width: 15%;
+                            width: 32%;
                             text-align: center;
                             border: 1px solid transparent;
+                            overflow: hidden;
                             
                             &:hover{
                                 border: 1px solid var(--color-boton-desactivado);
@@ -354,27 +353,29 @@ h2{
                     position: absolute;
                     background: #fff;
                     z-index: 2;
+                    text-align: center;
 
                     h1{
-                        font-size: 3rem;
+                        font-size: 2rem;
                         opacity: .4;
+                        
                     }
 
                     p{
                         opacity: .4;
+                        margin-top: 1rem;
                     }
                 }
             }
 
             .mensaje_adjuntos{
-                line-height: 1rem;
 
                 h3{
                     line-height: 2rem;
                 }
 
                 h4{
-                    margin: 1rem 0;
+                    margin: .5rem 0;
                 }
 
                 .parrafo_importante {
@@ -386,7 +387,7 @@ h2{
                 }
                 
                 p{
-                    line-height: 2rem;
+                    line-height: 1rem;
                     margin-left: 20px;
 
                     span {

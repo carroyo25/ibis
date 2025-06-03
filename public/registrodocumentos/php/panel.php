@@ -14,7 +14,6 @@
             <div class="loader"></div>
         </div>
     </div>
-    
     <div class="wrap">
         <form action="#" id="fileAtachs" enctype='multipart/form-data'>
             <input type="file" name="uploadAtach" id="uploadAtach" multiple class="oculto">
@@ -48,6 +47,7 @@
                             <th>N°</th>
                             <th>Tipo</th>
                             <th>Descripcion</th>
+                            <th>...</th>
                         </tr>
                     </thead>
                     <tbody id="listaOrdenes">
@@ -196,7 +196,7 @@
            ¿Desea subir los archivos, para su revisión?
         </p>
         <p>
-            <button id="accept-question">Aceptar</button>
+            <button id="accept-question" class="button_click_dialog">Aceptar</button>
         </p>
     </dialog>
     <script src="../../js/index.var.js"></script>
