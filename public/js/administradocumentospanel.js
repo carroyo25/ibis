@@ -13,6 +13,7 @@ const inputUpload = $.getElementById("uploadAtach");
 const listaAdjuntoVacia = $.querySelector(".atach_list_empty");
 const contenedorAdjuntos = $.querySelector(".atach_list_documents");
 const listaAdjuntos = $.getElementById("list_files_atachs");
+const preview = $.getElementById("document_check");
 
 let colorsIcons = ['gray','brown','blueviolet','cornflowerblue','#cb2025'],
     indexOrden = 0,
@@ -38,7 +39,7 @@ const listarOrdenes = async (id) =>{
     try {
         let formData = new FormData();
         formData.append('id', id.value);
-        formData.append('funcion','listarOrdenesEntidad');
+        formData.append('funcion','listarOrdenesEntidadRevision');
 
         const response = await fetch('../inc/procesos.php', {
             method: 'POST',
@@ -54,7 +55,7 @@ const listarOrdenes = async (id) =>{
         const estado = {0:'',
                         1:'<i class="fas fa-inbox"></i>',
                         2:'<i class="fas fa-microscope"></i>',
-                        3:'<i class="fas fa-check-circle"></i>',
+                        3:'<i class="fas fa-microscope"></i>',
                         4:'<i class="fas fa-unlink"></i>'}
 
         // Clear existing orders
@@ -115,20 +116,32 @@ $.addEventListener('click',(e)=>{
     if(e.target.matches('.botones__click_accion')){
         e.preventDefault();
  
-        if (e.target.getAttribute('href') == 'click_upload'){
+        if (e.target.getAttribute('href') == 'click_verify'){
             try {
                 if ( indexOrden == 0 ) throw new Error ('Seleccione una orden de compra o servicio');
                 
                 notifier.info("Se procesara la orden Nro : "+ textOrden);
 
-                inputUpload.click();
+                let formData = new FormData();
+                formData.append('id',indexOrden);
+                formData.append('funcion','validarTotal');
+
+                fetch('../inc/procesos.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                });
+
 
             } catch (error) {
                 notifier.alert(error.message);
             }
         }else if(e.target.getAttribute('href') == 'click_send'){
             const alertDialog = document.querySelector("#question-dialog");
-            document.getElementById("question-dialog").style.display = 'block';
+            $.getElementById("question-dialog").style.display = 'block';
             
             const ul = document.getElementById("list_files_atachs");
             const elementoLi = ul.querySelectorAll('li');
@@ -185,6 +198,18 @@ $.addEventListener('click',(e)=>{
         });
 
         return false;
+   }else if(e.target.matches(".atach_class")){
+        //console.log(e.target.dataset.internal);
+        
+        const fileShow = "http://localhost/ibis/public/documentos/proveedores/presentados/"+e.target.dataset.internal;
+        const framePreview = $.getElementById("framePreview");
+
+        framePreview.setAttribute('src',fileShow);
+
+        preview.style.display = "block";
+   }else if(e.target.matches(".modal_children_close")){
+        e.target.closest(".modal").style.display = "none";
+        framePreview.setAttribute('src','');
    }
 })
 
@@ -289,9 +314,11 @@ const documentosAdjuntos = (id,numero) => {
                         data.resultado.forEach(element =>{
                             const li = $.createElement("li");
                             li.classList.add("atach_class");
+                            li.dataset.internal = element.internalname;
                             
                             const link = $.createElement("a");
                             link.classList.add("atach_file");
+                            
                             link.dataset.file_estatus = 1;
                             
                             link.href = `#${element.idreg}`; // Using # for href if it's not a real URL

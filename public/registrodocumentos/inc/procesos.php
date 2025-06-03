@@ -24,6 +24,10 @@
             echo json_encode(registrarDocumentos($pdo, $_POST));
         }else if($_POST['funcion'] == "consultarDocumentos"){
             echo json_encode(consultarDocumentos($pdo, $_POST));
+        }else if($_POST['funcion'] == "listarOrdenesEntidadRevision"){
+            echo json_encode(listarOrdenesEntidadRevision($pdo, $_POST));
+        }else if($_POST['funcion'] == "validarTotal"){
+            echo json_encode(validarTotal($pdo, $_POST));
         }
     }
 
@@ -216,7 +220,8 @@
                             adm_docsenti.idcenti,
                             adm_docsenti.statusfile,
                             adm_docsenti.namefile,
-                            adm_docsenti.fecrecep
+                            adm_docsenti.fecrecep,
+                            adm_docsenti.internalname
                     FROM adm_docsenti
                     WHERE adm_docsenti.flgActivo = 1
                         AND adm_docsenti.idorden =:orden
@@ -234,6 +239,67 @@
 
             return ["archivos"=>$count,"resultado"=>$result];
             
+        } catch(PDOException $e){
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
+
+
+    /**** Procesos Administrativos */
+    function listarOrdenesEntidadRevision($pdo, $datos){
+        try {
+            $sql = "SELECT
+                    LPAD( lg_ordencab.cnumero, 7, 0 ) AS cnumero,
+                    lg_ordencab.cper,
+                    lg_ordencab.cmes,
+                    lg_ordencab.id_centi,
+                    lg_ordencab.ntipmov,
+                    lg_ordencab.nEstadoDoc,
+                    lg_ordencab.id_regmov,
+                    lg_ordencab.nEstadoReg,
+                    adm_ordstatus.fechapresenta,
+                    IF (ISNULL(adm_ordstatus.estadorden),0,adm_ordstatus.estadorden) AS estado 
+                FROM
+                    lg_ordencab
+                    LEFT JOIN adm_ordstatus ON lg_ordencab.id_regmov = adm_ordstatus.idorden 
+                WHERE
+                    adm_ordstatus.estadorden = 1
+                    OR adm_ordstatus.estadorden = 2
+                ORDER BY
+                    lg_ordencab.cnumero DESC";
+            
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([':enti' => $datos['id']]);
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $count = $stmt->rowCount();
+
+            return $result;
+
+        } catch(PDOException $e){
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
+
+    function validarTotal($pdo,$datos){
+        try {
+            $mensaje = "Error al procesar el envio";
+
+            $sql = "UPDATE adm_ordstatus 
+                    SET adm_ordstatus.estadorden = 3
+                    WHERE adm_ordstatus.idorden =:orden";
+
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([':orden' => $datos['id']]);
+
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $rowCount = $stmt->rowCount();
+
+            if ($rowCount > 0){
+                $mensaje = "Registro actualizado";
+            }
+
+            return array("mensaje"=>$mensaje);
+
         } catch(PDOException $e){
             return ['status' => 'error', 'message' => $e->getMessage()];
         }
