@@ -10,41 +10,45 @@
             try {
                 $salida = "";
                 $sql = $this->db->connect()->prepare("SELECT
-                                                        ibis.tb_costusu.id_cuser,
-                                                        ibis.tb_costusu.ncodproy,
-                                                        ibis.tb_pedidocab.nrodoc,
-                                                        UPPER( ibis.tb_pedidocab.concepto ) AS concepto,
-                                                        ibis.tb_pedidocab.idreg,
-                                                        ibis.tb_pedidocab.estadodoc,
-                                                        ibis.tb_pedidocab.emision,
-                                                        ibis.tb_pedidocab.vence,
-                                                        UPPER(
-                                                        CONCAT_WS( ' ', ibis.tb_proyectos.ccodproy, ibis.tb_proyectos.cdesproy )) AS costos,
-                                                        ibis.tb_pedidocab.nivelAten,
-                                                        CONCAT_WS(' ',rrhh.tabla_aquarius.apellidos,rrhh.tabla_aquarius.nombres) AS nombres,
-                                                        estados.cdescripcion AS estado,
-                                                        atencion.cdescripcion AS atencion,
-                                                        estados.cabrevia 
+                                                        cu.id_cuser,
+                                                        cu.ncodproy,
+                                                        pc.nrodoc,
+                                                        UPPER(pc.concepto) AS concepto,
+                                                        pc.idreg,
+                                                        pc.estadodoc,
+                                                        pc.emision,
+                                                        CASE 
+                                                            WHEN pc.fentregaPedido IS NULL OR pc.fentregaPedido = '0000-00-00' THEN '-'
+                                                            ELSE DATE_FORMAT(pc.fentregaPedido, '%d/%m/%Y') 
+                                                        END AS entrega,
+                                                        UPPER(CONCAT_WS(' ', p.ccodproy, p.cdesproy)) AS costos,
+                                                        pc.nivelAten,
+                                                        CONCAT_WS(' ', a.apellidos, a.nombres) AS nombres,
+                                                        est.cdescripcion AS estado,
+                                                        aten.cdescripcion AS atencion,
+                                                        est.cabrevia
                                                     FROM
-                                                        ibis.tb_costusu
-                                                        INNER JOIN ibis.tb_pedidocab ON tb_costusu.ncodproy = tb_pedidocab.idcostos
-                                                        INNER JOIN ibis.tb_proyectos ON tb_costusu.ncodproy = tb_proyectos.nidreg
-                                                        INNER JOIN rrhh.tabla_aquarius ON ibis.tb_pedidocab.idsolicita = rrhh.tabla_aquarius.internal
-                                                        INNER JOIN ibis.tb_parametros AS estados ON ibis.tb_pedidocab.estadodoc = estados.nidreg
-                                                        INNER JOIN ibis.tb_parametros AS atencion ON ibis.tb_pedidocab.nivelAten = atencion.nidreg 
+                                                        ibis.tb_costusu cu
+                                                        INNER JOIN ibis.tb_pedidocab pc ON cu.ncodproy = pc.idcostos
+                                                        INNER JOIN ibis.tb_proyectos p ON cu.ncodproy = p.nidreg
+                                                        INNER JOIN rrhh.tabla_aquarius a ON pc.idsolicita = a.internal
+                                                        INNER JOIN ibis.tb_parametros est ON pc.estadodoc = est.nidreg
+                                                        INNER JOIN ibis.tb_parametros aten ON pc.nivelAten = aten.nidreg
                                                     WHERE
-                                                        tb_costusu.id_cuser = :user 
-                                                        AND tb_pedidocab.estadodoc = 51
-                                                        AND tb_costusu.nflgactivo = 1");
+                                                        cu.id_cuser = :user 
+                                                        AND pc.estadodoc = 51
+                                                        AND cu.nflgactivo = 1");
                 $sql->execute(["user"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()) {
+                        $fecha_entrega = $rs['entrega'] == "0000-00-00" ? "" : $rs['entrega'];
+
                         $salida .='<tr class="pointer" data-indice="'.$rs['idreg'].'">
                                         <td class="textoCentro">'.str_pad($rs['nrodoc'],4,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.date("d/m/Y", strtotime($rs['emision'])).'</td>
-                                        <td class="textoCentro">'.date("d/m/Y", strtotime($rs['vence'])).'</td>
+                                        <td class="textoCentro">'.$fecha_entrega.'</td>
                                         <td class="pl20px">'.$rs['concepto'].'</td>
                                         <td class="pl20px">'.$rs['costos'].'</td>
                                         <td class="pl20px">'.$rs['nombres'].'</td>

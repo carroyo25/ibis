@@ -16,14 +16,14 @@ $(function() {
 
         $.post(RUTA+"main/accesoUsuario", str,
             function (data, textStatus, jqXHR) {
-                if (data){
-                    //mostrarMensaje("Vamos que si se puede...","mensaje_correcto");
+                if ( data.respuesta ){
                     window.location = RUTA + "panel";
                 }else{
                     mostrarMensaje("Usario o clave erroneos","mensaje_error");
+                    session_destroy();
                 }
             },
-            "text"
+            "json"
         );
 
         return false;

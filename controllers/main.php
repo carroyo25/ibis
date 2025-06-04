@@ -9,12 +9,7 @@
         }
 
         function accesoUsuario(){
-            $user = $_POST['usuario'];
-            $clave = $_POST['clave'];
-
-            $result = $this->model->ingresarSistema($user,$clave);
-
-            echo $result;
+            echo json_encode($this->model->ingresarSistema($_POST['usuario'],$_POST['clave']));
         }
     }
 ?>

@@ -10,18 +10,21 @@
                 $respuesta = false;
                 $pass = $this->encryptPass($clave);
 
-                $sql = $this->db->connect()->prepare("SELECT iduser,
-                                                            cnameuser,
-                                                            cnombres,
-                                                            ccorreo,
-                                                            ccargo,
-                                                            cinicial,
-                                                            nrol,
-                                                            fusrmmtto,
-                                                            fusrmedica,
-                                                            fusralmacen
+                $sql = $this->db->connect()->prepare("SELECT tb_user.iduser,
+                                                             tb_user.cnameuser,
+                                                             tb_user.cnombres,
+                                                             tb_user.ccorreo,
+                                                             tb_user.ccargo,
+                                                             tb_user.cinicial,
+                                                             tb_user.nrol,
+                                                             tb_user.fusrmmtto,
+                                                             tb_user.fusrmedica,
+                                                             tb_user.fusralmacen
                                                         FROM tb_user 
-                                                        WHERE cnameuser=:user AND cclave=:pass");
+                                                        WHERE 
+                                                           tb_user.cnameuser=:user 
+                                                            AND tb_user.cclave=:pass
+                                                            AND tb_user.nestado=7");
                 $sql->execute(["user"=>$user,"pass"=>$pass]);
                 $rc = $sql->rowcount();
                 $rq = $sql->fetchAll();
@@ -39,9 +42,12 @@
                     $_SESSION['medicos']    = $rq[0]['fusrmedica'];
                     $_SESSION['mmtto']      = $rq[0]['fusrmmtto'];
                     $_SESSION['password']   = "aK8izG1WEQwwB1X";
+                }else{
+                    $respuesta = false;
+                    session_destroy();
                 }
 
-                return $respuesta;
+                return array("respuesta"=>$respuesta);
 
             } catch (PDOException $th) {
                 echo $th->getMessage();
