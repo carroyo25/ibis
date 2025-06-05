@@ -3576,6 +3576,19 @@
   -ms-grid-row: 3;
   grid-row: 3;
 }
+.ventanaProceso .seccion_derecha_grid label[data-etiqueta=estado_consulta] {
+  -ms-grid-column: 1;
+  grid-column: 1;
+  -ms-grid-row: 2;
+  grid-row: 2;
+}
+.ventanaProceso .seccion_derecha_grid input[name=estado_consulta] {
+  -ms-grid-column: 2;
+  -ms-grid-column-span: 5;
+  grid-column: 2/span 5;
+  -ms-grid-row: 2;
+  grid-row: 2;
+}
 .ventanaProceso .seccion_izquierda_4_grid label[data-etiqueta=numero] {
   -ms-grid-column: 1;
   grid-column: 1;

@@ -39,6 +39,10 @@
         function culminaPedido(){
             echo $this->model->cerrarPedido($_POST['id'],$_POST['estado'],$_POST['detalles']);
         }
+
+        function existenciaItem(){
+            echo json_encode($this->model->centroCostosUsuario($_POST['codigoProducto']));
+        }
         
     }
 ?>

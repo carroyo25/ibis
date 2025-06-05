@@ -31,7 +31,7 @@ $(function(){
                 $("#solicitante").val(data.cabecera[0].nombres);
                 $("#tipo").val(data.cabecera[0].tipo);
                 $("#vence").val(data.cabecera[0].vence);
-                $("#estado").val(data.cabecera[0].estado);
+                $("#estado_consulta").val(data.cabecera[0].estado);
                 $("#espec_items").val(data.cabecera[0].detalle);
                 $("#partida").val(data.cabecera[0].cdescripcion );
 
@@ -40,7 +40,7 @@ $(function(){
                     .empty()
                     .append(data.detalles);
 
-                $("#estado")
+                $("#estado_consulta")
                     .removeClass()
                     .addClass(estado);
                 
@@ -129,20 +129,30 @@ $(function(){
     $("#tablaDetalles tbody").on("click","a", function (e) {
         e.preventDefault();
 
-        $.post(RUTA+"atencion/existenciaProducto",{id:$(this).attr("href")},
-            function (data, textStatus, jqXHR) {
-                $("#tablaExistencias tbody")
-                    .empty()
-                    .append(data);
+        const body_table = document.getElementById("tablaExistencias_body");
+
+        let formdata = new FormData();
+
+        formdata.append("codigoProducto",$(this).attr("href"));
         
-                    $("#archivos").fadeIn();
-                
-            },
-            "text"
-        );
+        fetch(RUTA+"atencion/existenciaItem",{
+            method:'POST',
+            body:formdata
+        })
+        .then(response => response.json())
+        .then(data => {
+            data.forEach(element => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td class="pl20px">${element.codigo_costos} +' '+ ${element.descripcion_costos}</td>
+                                <td>${element.existencia}</td>`;
 
+                body_table.appendChild(tr);
+            });
 
-        return false;s
+            $("#archivos").fadeIn();
+        })
+
+        return false;
     });
 
     $("#btnConfirmAtach").click(function (e) { 

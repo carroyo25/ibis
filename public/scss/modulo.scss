@@ -2977,6 +2977,17 @@ $almacen:#27798F;
             grid-column: 2 / span 3;
             grid-row: 3;
         }
+
+        label[data-etiqueta="estado_consulta"]{
+            grid-column: 1;
+            grid-row: 2;
+        }
+
+        input[name="estado_consulta"]{
+            grid-column: 2 / span 5;
+            grid-row: 2;
+        }
+
     }
 
     /************************************************/

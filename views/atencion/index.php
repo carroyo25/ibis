@@ -43,55 +43,42 @@
                         </div>
                     </div>
                     <div class="dataProceso_2">
-                        <div class="seccion_izquierda">
-                            <div class="column4_55">
-                                <div class="column2_3957">
-                                    <label for="numero">Número:</label>
-                                    <input type="text" name="numero" id="numero" readonly>
-                                </div>
-                                <div class="column2_46">
-                                    <label for="emision">Emisión:</label>
-                                    <input type="date" name="emision" id="emision" readonly>
-                                </div>
+                        <div class="seccion_izquierda_grid">
+                            <label for="numero" data-etiqueta="numero">Número:</label>
+                            <input type="text" name="numero" id="numero" class="cerrarLista" readonly>
+                            <label for="emision" data-etiqueta="emision">Emisión:</label>
+                            <input type="date" name="emision" id="emision" class="cerrarLista" readonly>
+                            <label for="costos" data-etiqueta="costos">CCostos:</label>
+                            <div data-box="lista_costos">
+                                <input type="text" name="costos" id="costos" data-box="lista_costos"  readonly>
                             </div>
-                            <div class="column2">
-                                <label for="costos">CCostos:</label>
-                                <input type="text" name="costos" id="costos" readonly>
-                            </div>
-                            <div class="column2">
-                                <label for="area">Partida:</label>
-                                <input type="text" name="partida" id="partida" readonly>
+                            <label for="area" data-etiqueta="partida">Partida:</label>
+                            <div data-box="lista_partidas">
+                                <input type="text" name="partida" id="partida" data-box="lista_partidas"  readonly>
                             </div>
                         </div>
-                        <div class="seccion_medio">
-                            <div class="column2">
-                                <label for="area">Area:</label>
+                        <div class="seccion_medio_grid">
+                            <label for="area" data-etiqueta="area">Area:</label>
+                            <div data-box="lista_areas">
                                 <input type="text" name="area" id="area" readonly>
                             </div>
-                            <div class="column2">
-                                <label for="concepto">Concepto:</label>
-                                <input type="text" name="concepto" id="concepto">
-                            </div>
-                            <div class="column2">
-                                <label for="solicitante">Solicitante:</label>
-                                <input type="text" name="solicitante" id="solicitante">
+                            <label for="concepto" data-etiqueta="concepto">Concepto:</label>
+                            <input type="text" name="concepto" id="concepto" readonly>
+                            <label for="solicitante" data-etiqueta="solicitante">Solicitante:</label>
+                            <div data-box="lista_solicitante">
+                                <input type="text" name="solicitante" id="solicitante" readonly>
                             </div>
                         </div>
-                        <div class="seccion_derecha">
-                            <div class="column4_55">
-                                <div class="column2_3957">
-                                    <label for="tipo">Tipo :</label>
-                                    <input type="text" name="tipo" id="tipo">
-                                </div>
-                                <div class="column2_46">
-                                    <label for="vence">Vence :</label>
-                                    <input type="date" name="vence" id="vence">
-                                </div>
+                        <div class="seccion_derecha_grid">
+                            <label for="tipo" data-etiqueta="tipo">Tipo Pedido:</label>
+                            <div data-box="lista_tipo">
+                                <input type="text" name="tipo" id="tipo" readonly>
                             </div>
-                            <div class="column2">
-                                <label for="estado">Estado:</label>
-                                <input type="text" name="estado" id="estado" class="textoCentro w35por estado" readonly>
-                            </div>
+                            <label for="fecha_entrega" data-etiqueta="fecha_entrega">Fecha<br/>Entrega :</label>
+                            <input type="date" name="fecha_entrega" id="fecha_entrega" class="cerrarLista">
+                            
+                            <label for="estado_consulta" data-etiqueta="label_estado_consulta">Estado:</label>
+                            <input type="text" name="estado_consulta" id="estado_consulta" class="textoCentro estado procesando" data-etiqueta="estado_consulta" readonly>
                         </div>
                     </div>
                     <div class="barraOpciones">
@@ -130,7 +117,7 @@
                         <th>Cantidad</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="tablaExistencias_body">
                     
                 </tbody>
             </table>

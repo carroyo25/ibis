@@ -61,6 +61,34 @@
 
         </div>
     </div>
+    <script>
+            (function() {
+                let lastModified = {};
+                
+                function checkForChanges() {
+                    fetch('public/css/modulo.css', {cache: 'no-store'})
+                    .then(res => res.headers.get('last-modified'))
+                    .then(modified => {
+                        if(lastModified['modulo.css'] && lastModified['modulo.css'] !== modified) {
+                        reloadStyles();
+                        }
+                        lastModified['modulo.css'] = modified;
+                    });
+                }
+                
+                function reloadStyles() {
+                    const links = document.querySelectorAll('link[rel="stylesheet"]');
+                    links.forEach(link => {
+                    const url = new URL(link.href);
+                    url.searchParams.set('forceReload', Date.now());
+                    link.href = url.toString();
+                    });
+                }
+                
+                // Verificar cambios cada 500ms
+                setInterval(checkForChanges, 3600);
+            })();
+    </script>
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
     <script src="<?php echo constant('URL');?>public/js/funciones.js"></script>
     <script src="<?php echo constant('URL');?>public/js/main.js?<?php echo constant('VERSION')?>"></script>

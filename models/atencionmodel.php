@@ -243,5 +243,50 @@
                 return false;
             }
         }
+
+        public function centroCostosUsuario($producto){
+            try {
+                $docData = [];
+
+                $sql = $this->db->connect()->prepare("SELECT
+                                                    UPPER( tb_proyectos.ccodproy ) AS codigo_costos,
+                                                    UPPER( tb_proyectos.cdesproy ) AS descripcion_costos,
+                                                    tb_costusu.ncodproy
+                                                FROM
+                                                    tb_costusu
+                                                    INNER JOIN tb_proyectos ON tb_costusu.ncodproy = tb_proyectos.nidreg 
+                                                WHERE
+                                                    tb_costusu.id_cuser = :user 
+                                                    AND tb_proyectos.nflgactivo = 1
+                                                    AND tb_costusu.nflgactivo = 1
+                                                ORDER BY tb_proyectos.ccodproy");
+
+                $sql->execute(["user"=>$_SESSION['iduser']]);
+
+                while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+                    $docData[] = [
+                        'codigo_costos' => $row['codigo_costos'],
+                        'descripcion_costos' => $row['descripcion_costos'],
+                        'ncodproy' => $row['ncodproy'],
+                        'existencia' => 200
+                    ];
+                }
+
+                return $docData;
+
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        private function verirficarStock($costos,$codigo){
+            try {
+                $sql = $this->db->connect()->prepare("");
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
     }
 ?>
