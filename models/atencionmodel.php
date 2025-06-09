@@ -251,7 +251,8 @@
                 $sql = $this->db->connect()->prepare("SELECT
                                                     UPPER( tb_proyectos.ccodproy ) AS codigo_costos,
                                                     UPPER( tb_proyectos.cdesproy ) AS descripcion_costos,
-                                                    tb_costusu.ncodproy
+                                                    tb_proyectos.nidreg,
+                                                    tb_proyectos.ccodproy
                                                 FROM
                                                     tb_costusu
                                                     INNER JOIN tb_proyectos ON tb_costusu.ncodproy = tb_proyectos.nidreg 
@@ -259,16 +260,21 @@
                                                     tb_costusu.id_cuser = :user 
                                                     AND tb_proyectos.nflgactivo = 1
                                                     AND tb_costusu.nflgactivo = 1
+                                                    AND tb_proyectos.nflgactivo = 1
+                                                    AND tb_proyectos.veralm = 1
                                                 ORDER BY tb_proyectos.ccodproy");
 
                 $sql->execute(["user"=>$_SESSION['iduser']]);
 
                 while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+
+                    $ingresos = $this->verirficarStock($row['nidreg'],$producto);
+
                     $docData[] = [
                         'codigo_costos' => $row['codigo_costos'],
                         'descripcion_costos' => $row['descripcion_costos'],
-                        'ncodproy' => $row['ncodproy'],
-                        'existencia' => 200
+                        'ncodproy' => $row['nidreg'],
+                        'existencia' =>$ingresos["ingresos"]  
                     ];
                 }
 
@@ -282,7 +288,22 @@
 
         private function verirficarStock($costos,$codigo){
             try {
-                $sql = $this->db->connect()->prepare("");
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        COALESCE(SUM(alm_existencia.cant_ingr), 0) AS ingresos,
+                                                        COALESCE(SUM(alm_existencia.cant_sal), 0) AS salidas,
+                                                        alm_existencia.codprod,
+                                                        alm_cabexist.idcostos 
+                                                    FROM
+                                                        alm_existencia
+                                                        INNER JOIN alm_cabexist ON alm_existencia.idalm = alm_cabexist.idreg 
+                                                    WHERE
+                                                        alm_existencia.codprod = :codigo
+                                                        AND alm_cabexist.idcostos = :costos");
+
+                $sql->execute(["codigo"=>$codigo,"costos"=>$costos]);
+                $result = $sql->fetchAll();
+
+                return array("ingresos"=>$result['0']['ingresos'],"salidas"=>$result['0']['salidas']);
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;

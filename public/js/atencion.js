@@ -143,7 +143,7 @@ $(function(){
         .then(data => {
             data.forEach(element => {
                 const tr = document.createElement('tr');
-                tr.innerHTML = `<td class="pl20px">${element.codigo_costos} +' '+ ${element.descripcion_costos}</td>
+                tr.innerHTML = `<td class="pl20px">${element.codigo_costos} - ${element.descripcion_costos}</td>
                                 <td>${element.existencia}</td>`;
 
                 body_table.appendChild(tr);
