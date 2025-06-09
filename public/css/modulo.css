@@ -4340,6 +4340,8 @@
   color: #fff;
   height: 30px;
   font-size: 0.8rem;
+  position: sticky;
+  top: 0;
 }
 .tabla thead a, .tablaWrap thead a {
   color: #fff;

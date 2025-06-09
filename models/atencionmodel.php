@@ -66,7 +66,7 @@
             }
         }
 
-        public function almacenUsuario($codprod){
+        /*public function almacenUsuario($codprod){
             try {
                 $salida = "";
 
@@ -116,7 +116,7 @@
                                                     alm_existencia 
                                                 WHERE
                                                     alm_existencia.idalm = :alm 
-                                                    AND alm_existencia.idprod = :prod");
+                                                    AND alm_existencia.codprod = :prod");
                 $sql->execute(["prod"=>$id,
                                 "alm"=>$alm]);
                 
@@ -129,7 +129,7 @@
                 echo $th->getMessage();
                 return false;
             }
-        }
+        }*/
 
         public function enviarMensajeAprobacion($asunto,$mensaje,$correos,$pedido,$detalles,$estado,$emitido){
             require_once("public/PHPMailer/PHPMailerAutoload.php");
@@ -294,8 +294,9 @@
                                                         alm_existencia.codprod,
                                                         alm_cabexist.idcostos 
                                                     FROM
-                                                        alm_existencia
-                                                        INNER JOIN alm_cabexist ON alm_existencia.idalm = alm_cabexist.idreg 
+                                                       alm_existencia
+                                                    LEFT JOIN alm_cabexist ON alm_existencia.idregistro = alm_cabexist.idreg
+                                                    LEFT JOIN tb_proyectos ON alm_cabexist.idcostos = tb_proyectos.nidreg  
                                                     WHERE
                                                         alm_existencia.codprod = :codigo
                                                         AND alm_cabexist.idcostos = :costos");
