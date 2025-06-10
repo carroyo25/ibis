@@ -111,7 +111,6 @@ $(function(){
         }
     });
 
-
     $("#tablaDetalles tbody").on("focusout",".valorAtendido", function (e) {
         e.preventDefault();
 
@@ -142,11 +141,13 @@ $(function(){
         .then(response => response.json())
         .then(data => {
             data.forEach(element => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `<td class="pl20px">${element.codigo_costos} - ${element.descripcion_costos}</td>
-                                <td>${element.existencia}</td>`;
+                if (element.total > 0){
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `<td class="pl20px">${element.codigo_costos} - ${element.descripcion_costos}</td>
+                                    <td class="textoDerecha">${element.total.toFixed(2)}</td>`;
 
-                body_table.appendChild(tr);
+                    body_table.appendChild(tr);
+                }
             });
 
             $("#archivos").fadeIn();
@@ -256,6 +257,14 @@ $(function(){
         e.preventDefault();
 
         $("#pregunta").fadeOut();
+
+        return false;
+    });
+
+    $("document").on('keydown', function (e) {
+        if (e.keyCode === 27 || e.which === 27) {
+            console-log("Presionaste la tecla ESC");
+        }
 
         return false;
     });

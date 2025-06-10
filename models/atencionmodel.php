@@ -268,13 +268,13 @@
 
                 while($row = $sql->fetch(PDO::FETCH_ASSOC)){
 
-                    $ingresos = $this->verirficarStock($row['nidreg'],$producto);
+                    $existencias = $this->verirficarStock($row['nidreg'],$producto);
 
                     $docData[] = [
                         'codigo_costos' => $row['codigo_costos'],
                         'descripcion_costos' => $row['descripcion_costos'],
                         'ncodproy' => $row['nidreg'],
-                        'existencia' =>$ingresos["ingresos"]  
+                        'total' => $existencias["total"],  
                     ];
                 }
 
@@ -304,7 +304,9 @@
                 $sql->execute(["codigo"=>$codigo,"costos"=>$costos]);
                 $result = $sql->fetchAll();
 
-                return array("ingresos"=>$result['0']['ingresos'],"salidas"=>$result['0']['salidas']);
+                $total = $result['0']['ingresos'] - $result['0']['salidas'];
+
+                return array("total"=>$total);
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
