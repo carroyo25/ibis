@@ -130,6 +130,8 @@ $(function(){
 
         const body_table = document.getElementById("tablaExistencias_body");
 
+        body_table.innerHTML = "";
+
         let formdata = new FormData();
 
         formdata.append("codigoProducto",$(this).attr("href"));
@@ -141,13 +143,14 @@ $(function(){
         .then(response => response.json())
         .then(data => {
             data.forEach(element => {
-                if (element.total > 0){
+                //if (element.total > 0){
                     const tr = document.createElement('tr');
+                    tr.dataset.cc = element.ncodproy;
                     tr.innerHTML = `<td class="pl20px">${element.codigo_costos} - ${element.descripcion_costos}</td>
                                     <td class="textoDerecha">${element.total.toFixed(2)}</td>`;
 
                     body_table.appendChild(tr);
-                }
+                //}
             });
 
             $("#archivos").fadeIn();

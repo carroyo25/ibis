@@ -66,71 +66,6 @@
             }
         }
 
-        /*public function almacenUsuario($codprod){
-            try {
-                $salida = "";
-
-                $sql = $this->db->connect()->prepare("SELECT
-                                                        tb_almausu.ncodalm, 
-                                                        tb_almausu.nalmacen, 
-                                                        tb_almausu.id_cuser, 
-                                                        tb_almacen.ccodalm, 
-                                                        UPPER(tb_almacen.cdesalm) AS almacen
-                                                    FROM
-                                                        tb_almausu
-                                                        INNER JOIN
-                                                        tb_almacen
-                                                        ON 
-                                                        tb_almausu.nalmacen = tb_almacen.ncodalm
-                                                    WHERE
-                                                        tb_almausu.nflgactivo = 1 AND
-                                                        tb_almausu.id_cuser = :user");
-                $sql->execute(["user"=>$_SESSION['iduser']]);
-                $rowCount = $sql->rowCount();
-                if($rowCount > 0) {
-                    while ($rs = $sql->fetch()) {
-                        $cant = $this->existenciasAlmacen($codprod,$rs['nalmacen']);
-                        $salida .='<tr>
-                                        <td class="pl20px">'.$rs['almacen'].'</td>
-                                        <td class="textoDerecha pr20px">'.number_format($cant, 2, '.', ',').'</td>
-                                    </tr>';
-                    }
-                }
-
-                return $salida;
-            } catch (PDOException $th) {
-                echo $th->getMessage();
-                return false;
-            }
-        }
-
-        private function existenciasAlmacen($id,$alm){
-            try {
-                $existencias = 0;
-                $sql = $this->db->connect()->prepare("SELECT
-                                                    alm_existencia.codprod,
-                                                    alm_existencia.idprod,
-                                                    SUM( alm_existencia.cant_ingr ) AS ingresos,
-                                                    SUM( alm_existencia.cant_sal ) AS salidas 
-                                                FROM
-                                                    alm_existencia 
-                                                WHERE
-                                                    alm_existencia.idalm = :alm 
-                                                    AND alm_existencia.codprod = :prod");
-                $sql->execute(["prod"=>$id,
-                                "alm"=>$alm]);
-                
-                $result = $sql->fetchAll();
-
-                $existencias = $result[0]['ingresos'] - $result[0]['salidas'];
-
-                return $existencias;
-            } catch (PDOException $th) {
-                echo $th->getMessage();
-                return false;
-            }
-        }*/
-
         public function enviarMensajeAprobacion($asunto,$mensaje,$correos,$pedido,$detalles,$estado,$emitido){
             require_once("public/PHPMailer/PHPMailerAutoload.php");
 
@@ -288,23 +223,53 @@
 
         private function verirficarStock($costos,$codigo){
             try {
-                $sql = $this->db->connect()->prepare("SELECT
-                                                        COALESCE(SUM(alm_existencia.cant_ingr), 0) AS ingresos,
-                                                        COALESCE(SUM(alm_existencia.cant_sal), 0) AS salidas,
-                                                        alm_existencia.codprod,
-                                                        alm_cabexist.idcostos 
+                $sql = $this->db->connect()->prepare("SELECT 
+                                                        COALESCE(SUM(e.cant_ingr), 0) AS ingresos,
+                                                        COALESCE(SUM(e.codprod), 0) AS salidas,
+                                                        e.codprod,
+                                                        c.idcostos,
+                                                        COALESCE(t.transferencias, 0) AS transferencias,
+                                                        COALESCE(con.consumos, 0) AS consumos,
+                                                        COALESCE(con.devolucion, 0) AS devolucion
                                                     FROM
-                                                       alm_existencia
-                                                    LEFT JOIN alm_cabexist ON alm_existencia.idregistro = alm_cabexist.idreg
-                                                    LEFT JOIN tb_proyectos ON alm_cabexist.idcostos = tb_proyectos.nidreg  
+                                                        alm_existencia e
+                                                        LEFT JOIN alm_cabexist c ON e.idregistro = c.idreg
+                                                        LEFT JOIN tb_proyectos p ON c.idcostos = p.nidreg
+                                                        LEFT JOIN (
+                                                            SELECT 
+                                                                idcprod, 
+                                                                idcostos, 
+                                                                COALESCE(SUM(ncanti), 0) AS transferencias
+                                                            FROM alm_transferdet
+                                                            GROUP BY idcprod, idcostos
+                                                        ) t ON t.idcprod = e.codprod AND t.idcostos = c.idcostos
+                                                        LEFT JOIN (
+                                                            SELECT 
+                                                                idprod, 
+                                                                ncostos, 
+                                                                COALESCE(SUM(cantsalida), 0) AS consumos,
+                                                                COALESCE(SUM(cantdevolucion), 0) AS devolucion
+                                                            FROM alm_consumo
+                                                            GROUP BY idprod, ncostos
+                                                        ) con ON con.idprod = e.codprod AND con.ncostos = c.idcostos
                                                     WHERE
-                                                        alm_existencia.codprod = :codigo
-                                                        AND alm_cabexist.idcostos = :costos");
+                                                        e.codprod = :codigo
+                                                        AND c.idcostos = :costos
+                                                    GROUP BY
+                                                        e.codprod,
+                                                        c.idcostos,
+                                                        t.transferencias,
+                                                        con.consumos,
+                                                        con.devolucion");
+
+                $costos = 82;
+                $codigo = 18885;
 
                 $sql->execute(["codigo"=>$codigo,"costos"=>$costos]);
                 $result = $sql->fetchAll();
 
-                $total = $result['0']['ingresos'] - $result['0']['salidas'];
+                $total = ( $result['0']['ingresos'] + $result['0']['devolucion']) - 
+                        ( $result['0']['salidas'] + $result['0']['transferencias'] + $result['0']['consumos']);
 
                 return array("total"=>$total);
             } catch (PDOException $th) {
