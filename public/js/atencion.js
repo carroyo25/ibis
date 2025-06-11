@@ -146,12 +146,15 @@ $(function(){
                 if ( element.total > 0){
                     let total = element.total - element.transferencias;
 
-                    const tr = document.createElement('tr');
-                    tr.dataset.cc = element.ncodproy;
-                    tr.innerHTML = `<td class="pl20px">${element.codigo_costos} - ${element.descripcion_costos}</td>
-                                    <td class="textoDerecha">${total.toFixed(2)}</td>`;
+                    if (total > 0) {
+                        const tr = document.createElement('tr');
+                        tr.dataset.cc = element.ncodproy;
+                        tr.innerHTML = `<td class="pl20px">${element.codigo_costos} - ${element.descripcion_costos}</td>
+                                        <td class="textoDerecha">${total.toFixed(2)}</td>`;
 
-                    body_table.appendChild(tr);
+                        body_table.appendChild(tr);
+                    }
+                    
                 }
             });
 
