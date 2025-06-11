@@ -199,6 +199,41 @@
                                                     AND tb_proyectos.veralm = 1
                                                 ORDER BY tb_proyectos.ccodproy");
 
+                /*SELECT SQL_NO_CACHE
+                    e.codprod,
+                    c.idcostos,
+                    COALESCE ( SUM( e.cant_ingr ), 0 ) AS ingresos,
+                    COALESCE ( t.transferencias, 0 ) AS transferencias,
+                    COALESCE ( con.consumos, 0 ) AS consumos,
+                    COALESCE ( con.devolucion, 0 ) AS devolucion 
+                FROM
+                    alm_existencia e
+                    LEFT JOIN alm_cabexist c ON e.idregistro = c.idreg
+                    LEFT JOIN tb_proyectos p ON c.idcostos = p.nidreg
+                    LEFT JOIN ( SELECT idcprod, idcostos, COALESCE ( SUM( ncanti ), 0 ) AS transferencias FROM alm_transferdet GROUP BY idcprod, idcostos ) t ON t.idcprod = e.codprod 
+                    AND t.idcostos = c.idcostos
+                    LEFT JOIN (
+                    SELECT
+                        idprod,
+                        ncostos,
+                        COALESCE ( SUM( cantsalida ), 0 ) AS consumos,
+                        COALESCE ( SUM( cantdevolucion ), 0 ) AS devolucion 
+                    FROM
+                        alm_consumo 
+                    GROUP BY
+                        idprod,
+                        ncostos 
+                    ) con ON con.idprod = e.codprod 
+                    AND con.ncostos = c.idcostos 
+                WHERE
+                    e.codprod = 4876 
+                GROUP BY
+                    e.codprod,
+                    c.idcostos,
+                    t.transferencias,
+                    con.consumos,
+                    con.devolucion*/
+
                 $sql->execute(["user"=>$_SESSION['iduser']]);
 
                 while($row = $sql->fetch(PDO::FETCH_ASSOC)){
