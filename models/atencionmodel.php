@@ -203,13 +203,17 @@
 
                 while($row = $sql->fetch(PDO::FETCH_ASSOC)){
 
-                    $existencias = $this->verirficarStock($row['nidreg'],$producto);
+                    $existencias = $this->verificarStock($row['nidreg'],$producto);
+                    $transferencias = $this->verificarTransferencias($row['nidreg'],$producto);
+                    $consumos = $this->verificarConsumos($row['nidreg'],$producto);
 
                     $docData[] = [
                         'codigo_costos' => $row['codigo_costos'],
                         'descripcion_costos' => $row['descripcion_costos'],
                         'ncodproy' => $row['nidreg'],
-                        'total' => $existencias["total"],  
+                        'total' => $existencias["stocks"],
+                        'transferencias' => $transferencias['transferencias'],
+                        'consumos' =>  $consumos['consumos']
                     ];
                 }
 
@@ -221,57 +225,70 @@
             }
         }
 
-        private function verirficarStock($costos,$codigo){
+        private function verificarTransferencias($costos,$codigo){
             try {
                 $sql = $this->db->connect()->prepare("SELECT 
-                                                        COALESCE(SUM(e.cant_ingr), 0) AS ingresos,
-                                                        COALESCE(SUM(e.codprod), 0) AS salidas,
-                                                        e.codprod,
-                                                        c.idcostos,
-                                                        COALESCE(t.transferencias, 0) AS transferencias,
-                                                        COALESCE(con.consumos, 0) AS consumos,
-                                                        COALESCE(con.devolucion, 0) AS devolucion
+                                                        COALESCE(SUM(t.ncanti), 0) AS transferencias
                                                     FROM
-                                                        alm_existencia e
-                                                        LEFT JOIN alm_cabexist c ON e.idregistro = c.idreg
-                                                        LEFT JOIN tb_proyectos p ON c.idcostos = p.nidreg
-                                                        LEFT JOIN (
-                                                            SELECT 
-                                                                idcprod, 
-                                                                idcostos, 
-                                                                COALESCE(SUM(ncanti), 0) AS transferencias
-                                                            FROM alm_transferdet
-                                                            GROUP BY idcprod, idcostos
-                                                        ) t ON t.idcprod = e.codprod AND t.idcostos = c.idcostos
-                                                        LEFT JOIN (
-                                                            SELECT 
-                                                                idprod, 
-                                                                ncostos, 
-                                                                COALESCE(SUM(cantsalida), 0) AS consumos,
-                                                                COALESCE(SUM(cantdevolucion), 0) AS devolucion
-                                                            FROM alm_consumo
-                                                            GROUP BY idprod, ncostos
-                                                        ) con ON con.idprod = e.codprod AND con.ncostos = c.idcostos
+                                                        alm_transferdet t
                                                     WHERE
-                                                        e.codprod = :codigo
-                                                        AND c.idcostos = :costos
-                                                    GROUP BY
-                                                        e.codprod,
-                                                        c.idcostos,
-                                                        t.transferencias,
-                                                        con.consumos,
-                                                        con.devolucion");
-
-                $costos = 82;
-                $codigo = 18885;
+                                                        t.idcprod = :codigo
+                                                        AND t.idcostos = :costos");
 
                 $sql->execute(["codigo"=>$codigo,"costos"=>$costos]);
                 $result = $sql->fetchAll();
 
-                $total = ( $result['0']['ingresos'] + $result['0']['devolucion']) - 
-                        ( $result['0']['salidas'] + $result['0']['transferencias'] + $result['0']['consumos']);
+                return array("transferencias"=>$result['0']['transferencias']);
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
 
-                return array("total"=>$total);
+        private function verificarStock($costos,$codigo){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT 
+                                                        COALESCE(SUM(e.cant_ingr), 0) AS ingresos,
+                                                        COALESCE(SUM(e.cant_sal), 0) AS salidas,
+                                                        e.codprod,
+                                                        c.idcostos
+                                                    FROM
+                                                        alm_existencia e
+                                                    LEFT JOIN alm_cabexist c ON e.idregistro = c.idreg
+                                                    LEFT JOIN tb_proyectos p ON c.idcostos = p.nidreg
+                                                    WHERE
+                                                        e.codprod = :codigo
+                                                        AND c.idcostos = :costos");
+
+                $sql->execute(["codigo"=>$codigo,"costos"=>$costos]);
+                $result = $sql->fetchAll();
+
+                $total = $result['0']['ingresos'] -  $result['0']['salidas'] ;
+
+                return array("stocks"=>$total);
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        private function verificarConsumos($costos,$codigo){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT 
+                                                        COALESCE(SUM(c.cantsalida), 0) AS salidas,
+                                                        COALESCE(SUM(c.cantdevolucion), 0) AS devoluciones
+                                                    FROM
+                                                        alm_consumo c
+                                                    WHERE
+                                                        c.idprod = :codigo
+                                                        AND c.ncostos = :costos");
+
+                $sql->execute(["codigo"=>$codigo,"costos"=>$costos]);
+                $result = $sql->fetchAll();
+
+                $consumos = $result['0']['salidas'] -  $result['0']['devoluciones'] ;
+
+                return array("consumos"=>$consumos);
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
