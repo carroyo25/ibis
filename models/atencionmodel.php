@@ -179,126 +179,6 @@
             }
         }
 
-        /*public function centroCostosUsuario($producto){
-            try {
-                $docData = [];
-
-                $sql = $this->db->connect()->prepare("SELECT
-                                                    UPPER( tb_proyectos.ccodproy ) AS codigo_costos,
-                                                    UPPER( tb_proyectos.cdesproy ) AS descripcion_costos,
-                                                    tb_proyectos.nidreg,
-                                                    tb_proyectos.ccodproy
-                                                FROM
-                                                    tb_costusu
-                                                    INNER JOIN tb_proyectos ON tb_costusu.ncodproy = tb_proyectos.nidreg 
-                                                WHERE
-                                                    tb_costusu.id_cuser = :user 
-                                                    AND tb_proyectos.nflgactivo = 1
-                                                    AND tb_costusu.nflgactivo = 1
-                                                    AND tb_proyectos.veralm = 1
-                                                ORDER BY tb_proyectos.ccodproy");
-
-                
-
-                $sql->execute(["user"=>$_SESSION['iduser']]);
-
-                while($row = $sql->fetch(PDO::FETCH_ASSOC)){
-
-                    $existencias = $this->verificarStock($row['nidreg'],$producto);
-                    $transferencias = $this->verificarTransferencias($row['nidreg'],$producto);
-                    $consumos = $this->verificarConsumos($row['nidreg'],$producto);
-
-                    $docData[] = [
-                        'codigo_costos' => $row['codigo_costos'],
-                        'descripcion_costos' => $row['descripcion_costos'],
-                        'ncodproy' => $row['nidreg'],
-                        'total' => $existencias["stocks"],
-                        'transferencias' => $transferencias['transferencias'],
-                        'consumos' =>  $consumos['consumos']
-                    ];
-                }
-
-                return $docData;
-
-            } catch (PDOException $th) {
-                echo $th->getMessage();
-                return false;
-            }
-        }
-
-        private function verificarTransferencias($costos,$codigo){
-            try {
-                $sql = $this->db->connect()->prepare("SELECT 
-                                                        COALESCE(SUM(t.ncanti), 0) AS transferencias
-                                                    FROM
-                                                        alm_transferdet t
-                                                    WHERE
-                                                        t.idcprod = :codigo
-                                                        AND t.idcostos = :costos
-                                                    LIMIT 1");
-
-                $sql->execute(["codigo"=>$codigo,"costos"=>$costos]);
-                $result = $sql->fetchAll();
-
-                return array("transferencias"=>$result['0']['transferencias']);
-            } catch (PDOException $th) {
-                echo $th->getMessage();
-                return false;
-            }
-        }
-
-        private function verificarStock($costos,$codigo){
-            try {
-                $sql = $this->db->connect()->prepare("SELECT 
-                                                        COALESCE(SUM(e.cant_ingr), 0) AS ingresos,
-                                                        COALESCE(SUM(e.cant_sal), 0) AS salidas,
-                                                        e.codprod,
-                                                        c.idcostos
-                                                    FROM
-                                                        alm_existencia e
-                                                    LEFT JOIN alm_cabexist c ON e.idregistro = c.idreg
-                                                    LEFT JOIN tb_proyectos p ON c.idcostos = p.nidreg
-                                                    WHERE
-                                                        e.codprod = :codigo
-                                                        AND c.idcostos = :costos
-                                                    LIMIT 1");
-
-                $sql->execute(["codigo"=>$codigo,"costos"=>$costos]);
-                $result = $sql->fetchAll();
-
-                $total = $result['0']['ingresos'] -  $result['0']['salidas'] ;
-
-                return array("stocks"=>$total);
-            } catch (PDOException $th) {
-                echo $th->getMessage();
-                return false;
-            }
-        }
-
-        private function verificarConsumos($costos,$codigo){
-            try {
-                $sql = $this->db->connect()->prepare("SELECT 
-                                                        COALESCE(SUM(c.cantsalida), 0) AS salidas,
-                                                        COALESCE(SUM(c.cantdevolucion), 0) AS devoluciones
-                                                    FROM
-                                                        alm_consumo c
-                                                    WHERE
-                                                        c.idprod = :codigo
-                                                        AND c.ncostos = :costos
-                                                    LIMIT 1");
-
-                $sql->execute(["codigo"=>$codigo,"costos"=>$costos]);
-                $result = $sql->fetchAll();
-
-                $consumos = $result['0']['salidas'] -  $result['0']['devoluciones'] ;
-
-                return array("consumos"=>$consumos);
-            } catch (PDOException $th) {
-                echo $th->getMessage();
-                return false;
-            }
-        }*/
-
         public function centroCostosUsuario($producto) {
         try {
             $sql = $this->db->connect()->prepare("SELECT
@@ -308,8 +188,10 @@
                                                     COALESCE(SUM(e.cant_ingr), 0) AS ingresos,
                                                     COALESCE((
                                                         SELECT SUM(td.ncanti)
-                                                        FROM alm_transferdet td
-                                                        WHERE td.idcprod = :codigo1 AND td.idcostos = p.nidreg
+                                                        FROM  alm_transferdet td
+                                                        INNER JOIN alm_transfercab tc ON td.idtransfer = tc.idreg
+                                                        WHERE 
+                                                            td.idcprod = :codigo1 AND tc.idcc = p.nidreg 
                                                     ), 0) AS transferencias,
                                                     COALESCE((
                                                         SELECT SUM(ac.cantsalida)
@@ -320,12 +202,17 @@
                                                         SELECT SUM(ac.cantdevolucion)
                                                         FROM alm_consumo ac
                                                         WHERE ac.idprod = :codigo3 AND ac.ncostos = p.nidreg
-                                                    ), 0) AS devolucion
+                                                    ), 0) AS devolucion,
+                                                    COALESCE((
+                                                        SELECT SUM(aid.cant_ingr) 
+                                                        FROM alm_inventariodet aid
+                                                        INNER JOIN alm_inventariocab ai ON aid.idregistro = ai.idreg 
+                                                        WHERE ai.idcostos = p.nidreg AND aid.codprod = :codigo4),0) AS inventarios
                                                 FROM
                                                     tb_costusu cu
                                                     INNER JOIN tb_proyectos p ON cu.ncodproy = p.nidreg
                                                     LEFT JOIN alm_cabexist c ON c.idcostos = p.nidreg
-                                                    LEFT JOIN alm_existencia e ON e.idregistro = c.idreg AND e.codprod = :codigo4
+                                                    LEFT JOIN alm_existencia e ON e.idregistro = c.idreg AND e.codprod = :codigo5
                                                 WHERE
                                                     cu.id_cuser = :user 
                                                     AND p.nflgactivo = 1
@@ -343,19 +230,25 @@
                     "codigo1" => $producto,
                     "codigo2" => $producto,
                     "codigo3" => $producto,
-                    "codigo4" => $producto // Se repite porque se usa en múltiples subconsultas
+                    "codigo4" => $producto,
+                    "codigo5" => $producto
                 ]);
 
                 $docData = [];
 
                 while($row = $sql->fetch(PDO::FETCH_ASSOC)) {
-                    $total = $row['ingresos'] - ($row['transferencias'] + $row['consumos'] - $row['devolucion']);
+                    $total = ( $row['ingresos'] + $row['inventarios'] + $row['devolucion'] ) - ( $row['transferencias'] + $row['consumos'] );
                     
                     $docData[] = [
                         'codigo_costos' => $row['codigo_costos'],
                         'descripcion_costos' => $row['descripcion_costos'],
                         'ncodproy' => $row['ncodproy'],
-                        'total' => $total
+                        'total' => $total,
+                        'zingresos' => $row['ingresos'],
+                        'zinventarios' => $row['inventarios'],
+                        'zdevolucion' => $row['devolucion'],
+                        'ztransferencias' => $row['transferencias'],
+                        'zsalidas' => $row['consumos']
                     ];
                 }
 
