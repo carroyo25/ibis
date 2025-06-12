@@ -179,7 +179,7 @@
             }
         }
 
-        public function centroCostosUsuario($producto){
+        /*public function centroCostosUsuario($producto){
             try {
                 $docData = [];
 
@@ -195,44 +195,10 @@
                                                     tb_costusu.id_cuser = :user 
                                                     AND tb_proyectos.nflgactivo = 1
                                                     AND tb_costusu.nflgactivo = 1
-                                                    AND tb_proyectos.nflgactivo = 1
                                                     AND tb_proyectos.veralm = 1
                                                 ORDER BY tb_proyectos.ccodproy");
 
-                /*SELECT SQL_NO_CACHE
-                    e.codprod,
-                    c.idcostos,
-                    COALESCE ( SUM( e.cant_ingr ), 0 ) AS ingresos,
-                    COALESCE ( t.transferencias, 0 ) AS transferencias,
-                    COALESCE ( con.consumos, 0 ) AS consumos,
-                    COALESCE ( con.devolucion, 0 ) AS devolucion 
-                FROM
-                    alm_existencia e
-                    LEFT JOIN alm_cabexist c ON e.idregistro = c.idreg
-                    LEFT JOIN tb_proyectos p ON c.idcostos = p.nidreg
-                    LEFT JOIN ( SELECT idcprod, idcostos, COALESCE ( SUM( ncanti ), 0 ) AS transferencias FROM alm_transferdet GROUP BY idcprod, idcostos ) t ON t.idcprod = e.codprod 
-                    AND t.idcostos = c.idcostos
-                    LEFT JOIN (
-                    SELECT
-                        idprod,
-                        ncostos,
-                        COALESCE ( SUM( cantsalida ), 0 ) AS consumos,
-                        COALESCE ( SUM( cantdevolucion ), 0 ) AS devolucion 
-                    FROM
-                        alm_consumo 
-                    GROUP BY
-                        idprod,
-                        ncostos 
-                    ) con ON con.idprod = e.codprod 
-                    AND con.ncostos = c.idcostos 
-                WHERE
-                    e.codprod = 4876 
-                GROUP BY
-                    e.codprod,
-                    c.idcostos,
-                    t.transferencias,
-                    con.consumos,
-                    con.devolucion*/
+                
 
                 $sql->execute(["user"=>$_SESSION['iduser']]);
 
@@ -268,7 +234,8 @@
                                                         alm_transferdet t
                                                     WHERE
                                                         t.idcprod = :codigo
-                                                        AND t.idcostos = :costos");
+                                                        AND t.idcostos = :costos
+                                                    LIMIT 1");
 
                 $sql->execute(["codigo"=>$codigo,"costos"=>$costos]);
                 $result = $sql->fetchAll();
@@ -293,7 +260,8 @@
                                                     LEFT JOIN tb_proyectos p ON c.idcostos = p.nidreg
                                                     WHERE
                                                         e.codprod = :codigo
-                                                        AND c.idcostos = :costos");
+                                                        AND c.idcostos = :costos
+                                                    LIMIT 1");
 
                 $sql->execute(["codigo"=>$codigo,"costos"=>$costos]);
                 $result = $sql->fetchAll();
@@ -316,7 +284,8 @@
                                                         alm_consumo c
                                                     WHERE
                                                         c.idprod = :codigo
-                                                        AND c.ncostos = :costos");
+                                                        AND c.ncostos = :costos
+                                                    LIMIT 1");
 
                 $sql->execute(["codigo"=>$codigo,"costos"=>$costos]);
                 $result = $sql->fetchAll();
@@ -326,6 +295,74 @@
                 return array("consumos"=>$consumos);
             } catch (PDOException $th) {
                 echo $th->getMessage();
+                return false;
+            }
+        }*/
+
+        public function centroCostosUsuario($producto) {
+        try {
+            $sql = $this->db->connect()->prepare("SELECT
+                                                    UPPER(p.ccodproy) AS codigo_costos,
+                                                    UPPER(p.cdesproy) AS descripcion_costos,
+                                                    p.nidreg AS ncodproy,
+                                                    COALESCE(SUM(e.cant_ingr), 0) AS ingresos,
+                                                    COALESCE((
+                                                        SELECT SUM(td.ncanti)
+                                                        FROM alm_transferdet td
+                                                        WHERE td.idcprod = :codigo1 AND td.idcostos = p.nidreg
+                                                    ), 0) AS transferencias,
+                                                    COALESCE((
+                                                        SELECT SUM(ac.cantsalida)
+                                                        FROM alm_consumo ac
+                                                        WHERE ac.idprod = :codigo2 AND ac.ncostos = p.nidreg
+                                                    ), 0) AS consumos,
+                                                    COALESCE((
+                                                        SELECT SUM(ac.cantdevolucion)
+                                                        FROM alm_consumo ac
+                                                        WHERE ac.idprod = :codigo3 AND ac.ncostos = p.nidreg
+                                                    ), 0) AS devolucion
+                                                FROM
+                                                    tb_costusu cu
+                                                    INNER JOIN tb_proyectos p ON cu.ncodproy = p.nidreg
+                                                    LEFT JOIN alm_cabexist c ON c.idcostos = p.nidreg
+                                                    LEFT JOIN alm_existencia e ON e.idregistro = c.idreg AND e.codprod = :codigo4
+                                                WHERE
+                                                    cu.id_cuser = :user 
+                                                    AND p.nflgactivo = 1
+                                                    AND cu.nflgactivo = 1
+                                                    AND p.veralm = 1
+                                                GROUP BY
+                                                    p.ccodproy, p.cdesproy, p.nidreg
+                                                HAVING
+                                                    COALESCE(SUM(e.cant_ingr), 0) > 0
+                                                ORDER BY
+                                                    p.ccodproy");
+
+                $sql->execute([
+                    "user" => $_SESSION['iduser'],
+                    "codigo1" => $producto,
+                    "codigo2" => $producto,
+                    "codigo3" => $producto,
+                    "codigo4" => $producto // Se repite porque se usa en múltiples subconsultas
+                ]);
+
+                $docData = [];
+
+                while($row = $sql->fetch(PDO::FETCH_ASSOC)) {
+                    $total = $row['ingresos'] - ($row['transferencias'] + $row['consumos'] - $row['devolucion']);
+                    
+                    $docData[] = [
+                        'codigo_costos' => $row['codigo_costos'],
+                        'descripcion_costos' => $row['descripcion_costos'],
+                        'ncodproy' => $row['ncodproy'],
+                        'total' => $total
+                    ];
+                }
+
+                return $docData;
+            } catch (PDOException $th) {
+                echo($th->getMessage());
+                
                 return false;
             }
         }

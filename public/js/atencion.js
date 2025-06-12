@@ -1,331 +1,332 @@
-$(function(){
-    accion = "";
+$(function () {
+  accion = "";
 
-    $("#esperar").fadeOut();
+  $("#esperar").fadeOut();
 
-    $("#tablaPrincipal tbody").on("click","tr", function (e) {
-        e.preventDefault();
+  $("#tablaPrincipal tbody").on("click", "tr", function (e) {
+    e.preventDefault();
 
-        $.post(RUTA+"atencion/consultaId", {id:$(this).data("indice")},
-            function (data, textStatus, jqXHR) {
-                
-                let numero = $.strPad(data.cabecera[0].nrodoc,6);
-                let estado = "textoCentro w50por estado " + data.cabecera[0].cabrevia;
-                
-                $("#codigo_costos").val(data.cabecera[0].idcostos);
-                $("#codigo_area").val(data.cabecera[0].idarea);
-                $("#codigo_transporte").val(data.cabecera[0].idtrans);
-                $("#codigo_solicitante").val(data.cabecera[0].idsolicita);
-                $("#codigo_tipo").val(data.cabecera[0].idtipomov);
-                $("#codigo_pedido").val(data.cabecera[0].idreg);
-                $("#codigo_estado").val(data.cabecera[0].estadodoc);
-                $("#codigo_verificacion").val(data.cabecera[0].verificacion);
-                $("#codigo_atencion").val(data.cabecera[0].nivelAten);
-                $("#emitido").val(data.cabecera[0].docPdfEmit);
-                $("#numero").val(numero);
-                $("#emision").val(data.cabecera[0].emision);
-                $("#costos").val(data.cabecera[0].proyecto);
-                $("#area").val(data.cabecera[0].area);
-                $("#transporte").val(data.cabecera[0].transporte);
-                $("#concepto").val(data.cabecera[0].concepto);
-                $("#solicitante").val(data.cabecera[0].nombres);
-                $("#tipo").val(data.cabecera[0].tipo);
-                $("#vence").val(data.cabecera[0].vence);
-                $("#estado_consulta").val(data.cabecera[0].estado);
-                $("#espec_items").val(data.cabecera[0].detalle);
-                $("#partida").val(data.cabecera[0].cdescripcion );
+    $.post(
+      RUTA + "atencion/consultaId",
+      { id: $(this).data("indice") },
+      function (data, textStatus, jqXHR) {
+        let numero = $.strPad(data.cabecera[0].nrodoc, 6);
+        let estado = "textoCentro w50por estado " + data.cabecera[0].cabrevia;
 
-                
-                $("#tablaDetalles tbody")
-                    .empty()
-                    .append(data.detalles);
+        $("#codigo_costos").val(data.cabecera[0].idcostos);
+        $("#codigo_area").val(data.cabecera[0].idarea);
+        $("#codigo_transporte").val(data.cabecera[0].idtrans);
+        $("#codigo_solicitante").val(data.cabecera[0].idsolicita);
+        $("#codigo_tipo").val(data.cabecera[0].idtipomov);
+        $("#codigo_pedido").val(data.cabecera[0].idreg);
+        $("#codigo_estado").val(data.cabecera[0].estadodoc);
+        $("#codigo_verificacion").val(data.cabecera[0].verificacion);
+        $("#codigo_atencion").val(data.cabecera[0].nivelAten);
+        $("#emitido").val(data.cabecera[0].docPdfEmit);
+        $("#numero").val(numero);
+        $("#emision").val(data.cabecera[0].emision);
+        $("#costos").val(data.cabecera[0].proyecto);
+        $("#area").val(data.cabecera[0].area);
+        $("#transporte").val(data.cabecera[0].transporte);
+        $("#concepto").val(data.cabecera[0].concepto);
+        $("#solicitante").val(data.cabecera[0].nombres);
+        $("#tipo").val(data.cabecera[0].tipo);
+        $("#vence").val(data.cabecera[0].vence);
+        $("#estado_consulta").val(data.cabecera[0].estado);
+        $("#espec_items").val(data.cabecera[0].detalle);
+        $("#partida").val(data.cabecera[0].cdescripcion);
 
-                $("#estado_consulta")
-                    .removeClass()
-                    .addClass(estado);
-                
-                grabado = true;
-            },
-            "json"
+        $("#tablaDetalles tbody").empty().append(data.detalles);
+
+        $("#estado_consulta").removeClass().addClass(estado);
+
+        grabado = true;
+      },
+      "json"
+    );
+
+    $("#proceso").fadeIn();
+
+    return false;
+  });
+
+  $("#closeProcess").click(function (e) {
+    e.preventDefault();
+
+    $.post(
+      RUTA + "atencion/actualizaListado",
+      function (data, textStatus, jqXHR) {
+        $(".itemsTabla table tbody").empty().append(data);
+
+        $("#proceso").fadeOut(function () {
+          $("form")[0].reset();
+          $("form")[1].reset();
+          $("#tablaDetalles tbody").empty();
+        });
+      },
+      "text"
+    );
+
+    $("#proceso").fadeOut();
+
+    return false;
+  });
+
+  $("#preview").click(function (e) {
+    e.preventDefault();
+
+    $(".ventanaVistaPrevia iframe")
+      .attr("src", "")
+      .attr("src", "public/documentos/pedidos/emitidos/" + $("#emitido").val());
+
+    $("#vistaprevia").fadeIn();
+
+    return false;
+  });
+
+  $("#closePreview").click(function (e) {
+    e.preventDefault();
+
+    $(".ventanaVistaPrevia iframe").attr("src", "");
+    $("#vistaprevia").fadeOut();
+
+    return false;
+  });
+
+  $("#tablaDetalles tbody").on("keypress", "input", function (e) {
+    if (e.which == 13) {
+      //para cambiar el foco con el enter
+
+      cb = parseInt($(this).attr("tabindex"));
+
+      if ($(":input[tabindex='" + (cb + 1) + "']") != null) {
+        $(":input[tabindex='" + (cb + 1) + "']").focus();
+        $(":input[tabindex='" + (cb + 1) + "']").select();
+      }
+    }
+  });
+
+  $("#tablaDetalles tbody").on("focusout", ".valorAtendido", function (e) {
+    e.preventDefault();
+
+    let cant_pedida = $(this).parent().parent().find("td").eq(5).text();
+    let cant_atendida = $(this).val();
+    let resultado = cant_pedida - cant_atendida;
+
+    if (resultado < 0) {
+      mostrarMensaje("Verifique la cantidad ingresada", "mensaje_error");
+    }
+
+    return false;
+  });
+
+  $("#tablaDetalles tbody").on("click", "a", function (e) {
+    e.preventDefault();
+
+    const body_table = document.getElementById("tablaExistencias_body");
+
+    body_table.innerHTML = "";
+
+    let formdata = new FormData();
+
+    formdata.append("codigoProducto", $(this).attr("href"));
+
+    fetch(RUTA + "atencion/existenciaItem", {
+      method: "POST",
+      body: formdata,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        data.forEach((element) => {
+          let total = element.total - element.transferencias;
+
+          if (element.total > 0) {
+            const tr = document.createElement("tr");
+            tr.dataset.cc = element.ncodproy;
+            tr.innerHTML = `<td class="pl20px">${element.codigo_costos} - ${element.descripcion_costos}</td>
+                            <td class="textoDerecha">${element.total.toFixed(2)}</td>`;
+
+            body_table.appendChild(tr);
+          }
+        });
+
+        $("#archivos").fadeIn();
+      });
+
+    return false;
+  });
+
+  $("#btnConfirmAtach").click(function (e) {
+    e.preventDefault();
+
+    $("#archivos").fadeOut();
+
+    return false;
+  });
+
+  $("#requestAprob").click(function (e) {
+    e.preventDefault();
+
+    $.post(
+      RUTA + "atencion/buscaRol",
+      { rol: 3, cc: $("#codigo_costos").val() },
+      function (data, textStatus, jqXHR) {
+        $("#subject").val(
+          "Pedido : " + $("#numero").val() + " - " + $("#costos").val()
         );
+        $("#listaCorreos tbody").empty().append(data);
+        $("#sendMail").fadeIn();
+      },
+      "text"
+    );
 
-        $("#proceso").fadeIn();
+    return false;
+  });
 
-        return false;
-    });
+  $("#closeMail").click(function (e) {
+    e.preventDefault();
 
-    $("#closeProcess").click(function (e) { 
-        e.preventDefault();
+    $("form")[2].reset();
+    $(".atachs").empty();
+    $(".messaje div").empty();
+    $("#sendMail").fadeOut();
 
-        $.post(RUTA+"atencion/actualizaListado",
-            function (data, textStatus, jqXHR) {
-                $(".itemsTabla table tbody")
-                    .empty()
-                    .append(data);
+    return false;
+  });
 
-                $("#proceso").fadeOut(function(){
-                    $("form")[0].reset();
-                    $("form")[1].reset();
-                    $("#tablaDetalles tbody").empty();
-                });
-            },
-            "text"
-        );
+  $("#btnConfirmSend").click(function (e) {
+    e.preventDefault();
 
-        $("#proceso").fadeOut();
-        
-        return false;  
-    });
+    try {
+      if ($("#subject").val() == "") throw "Escriba el asunto";
+      if ($("messaje div").html() == "") throw "Escriba el asunto";
 
-    $("#preview").click(function (e) { 
-        e.preventDefault();
-    
-        $(".ventanaVistaPrevia iframe")
-            .attr("src","")
-            .attr("src","public/documentos/pedidos/emitidos/"+$("#emitido").val());
+      $("#esperar").css({ display: "block", opacity: "1" });
 
-            $("#vistaprevia").fadeIn();
-        
-        return false;
-    });
+      $.post(
+        RUTA + "atencion/correos",
+        {
+          pedido: $("#codigo_pedido").val(),
+          detalles: JSON.stringify(itemsSave()),
+          correos: JSON.stringify(mailsList()),
+          adjunto: $("#emitido").val(),
+          asunto: $("#subject").val(),
+          mensaje: $(".messaje div").html(),
+          estado: 53,
+        },
 
-    $("#closePreview").click(function (e) { 
-        e.preventDefault();
+        function (data, textStatus, jqXHR) {
+          mostrarMensaje(data.mensaje, data.clase);
 
-        $(".ventanaVistaPrevia iframe").attr("src","");
-        $("#vistaprevia").fadeOut();
+          $("#sendMail").fadeOut();
 
-        return false;
-    });
+          $("#esperar").css({ display: "none", opacity: "0" });
+        },
+        "json"
+      );
+    } catch (error) {
+      mostrarMensaje(error, "mensaje_error");
+    }
 
-    $("#tablaDetalles tbody").on('keypress','input', function (e) {
-        if (e.which == 13) {
-            //para cambiar el foco con el enter
+    return false;
+  });
 
-            cb = parseInt($(this).attr('tabindex'));
+  $("#closeReq").click(function (e) {
+    e.preventDefault();
 
-            if ($(':input[tabindex=\'' + (cb + 1) + '\']') != null) {
-                $(':input[tabindex=\'' + (cb + 1) + '\']').focus();
-                $(':input[tabindex=\'' + (cb + 1) + '\']').select();
-            }
+    $("#pregunta").fadeIn();
+
+    return false;
+  });
+
+  $("#btnAceptarPregunta").click(function (e) {
+    e.preventDefault();
+
+    $.post(
+      RUTA + "atencion/culminaPedido",
+      {
+        id: $("#codigo_pedido").val(),
+        estado: 52,
+        detalles: JSON.stringify(itemsSave()),
+      },
+      function (data, textStatus, jqXHR) {
+        if (data) {
+          mostrarMensaje("Pedido Culminado", "mensaje_correcto");
+        } else {
+          mostrarMensaje("Error,no se realizo la acción", "mensaje_error");
         }
-    });
-
-    $("#tablaDetalles tbody").on("focusout",".valorAtendido", function (e) {
-        e.preventDefault();
-
-        let cant_pedida = $(this).parent().parent().find('td').eq(5).text()
-        let cant_atendida = $(this).val();
-        let resultado = cant_pedida - cant_atendida;
-
-        if (resultado < 0){
-            mostrarMensaje("Verifique la cantidad ingresada","mensaje_error");
-        }
-
-        return false;
-    });
-
-    $("#tablaDetalles tbody").on("click","a", function (e) {
-        e.preventDefault();
-
-        const body_table = document.getElementById("tablaExistencias_body");
-
-        body_table.innerHTML = "";
-
-        let formdata = new FormData();
-
-        formdata.append("codigoProducto",$(this).attr("href"));
-        
-        fetch(RUTA+"atencion/existenciaItem",{
-            method:'POST',
-            body:formdata
-        })
-        .then(response => response.json())
-        .then(data => {
-            data.forEach(element => {
-                if ( element.total > 0){
-                    let total = element.total - element.transferencias;
-
-                    if (total > 0) {
-                        const tr = document.createElement('tr');
-                        tr.dataset.cc = element.ncodproy;
-                        tr.innerHTML = `<td class="pl20px">${element.codigo_costos} - ${element.descripcion_costos}</td>
-                                        <td class="textoDerecha">${total.toFixed(2)}</td>`;
-
-                        body_table.appendChild(tr);
-                    }
-                    
-                }
-            });
-
-            $("#archivos").fadeIn();
-        })
-
-        return false;
-    });
-
-    $("#btnConfirmAtach").click(function (e) { 
-        e.preventDefault();
-        
-        $("#archivos").fadeOut();
-
-        return false;
-    });
-
-    $("#requestAprob").click(function (e) { 
-        e.preventDefault();
-
-        $.post(RUTA+"atencion/buscaRol", {rol:3,cc:$("#codigo_costos").val()},
-            function (data, textStatus, jqXHR) {
-                $("#subject").val("Pedido : "+$("#numero").val()+ " - " + $("#costos").val());
-                $("#listaCorreos tbody").empty().append(data);
-                $("#sendMail").fadeIn();
-            },
-            "text"
-        );
-        
-        return false;
-    });
-
-    $("#closeMail").click(function (e) { 
-        e.preventDefault();
-
-        $("form")[2].reset();
-        $(".atachs").empty();
-        $(".messaje div").empty();
-        $("#sendMail").fadeOut();
-
-        return false;
-    });
-
-    $("#btnConfirmSend").click(function (e) { 
-        e.preventDefault();
-
-        try {
-            if ($("#subject").val() =="") throw "Escriba el asunto";
-            if ($("messaje div").html() =="") throw "Escriba el asunto";
-
-            $("#esperar").css({"display":"block","opacity":"1"});
-
-            $.post(RUTA+"atencion/correos", {pedido:$("#codigo_pedido").val(),
-                                            detalles:JSON.stringify(itemsSave()),
-                                            correos:JSON.stringify(mailsList()),
-                                            adjunto:$("#emitido").val(),
-                                            asunto:$("#subject").val(),
-                                            mensaje:$(".messaje div").html(),
-                                            estado:53},
-                                                
-             function (data, textStatus, jqXHR) {
-                mostrarMensaje(data.mensaje,data.clase);
-                
-                $("#sendMail").fadeOut();
-
-                $("#esperar").css({"display":"none","opacity":"0"});
-             },
-             "json"
-         );
-        } catch (error) {
-            mostrarMensaje(error,'mensaje_error');
-        }
-        
-        return false;
-    });
-
-    $("#closeReq").click(function (e) { 
-        e.preventDefault();
-    
-        $("#pregunta").fadeIn();
-
-        return false;
-    });
-
-
-    $("#btnAceptarPregunta").click(function (e) { 
-        e.preventDefault();
-
-        $.post(RUTA+"atencion/culminaPedido", {id:$('#codigo_pedido').val(),
-                                                estado:52,
-                                                detalles:JSON.stringify(itemsSave())},
-            function (data, textStatus, jqXHR) {
-                if (data){
-                    mostrarMensaje("Pedido Culminado","mensaje_correcto");
-                }else{
-                    mostrarMensaje("Error,no se realizo la acción","mensaje_error");
-                }
-
-                $("#pregunta").fadeOut();
-            },
-            "text"
-        );
-
-        return false;
-    });
-
-    $("#btnCancelarPregunta").click(function (e) { 
-        e.preventDefault();
 
         $("#pregunta").fadeOut();
+      },
+      "text"
+    );
 
-        return false;
-    });
+    return false;
+  });
 
-    $("document").on('keydown', function (e) {
-        if (e.keyCode === 27 || e.which === 27) {
-            console-log("Presionaste la tecla ESC");
-        }
+  $("#btnCancelarPregunta").click(function (e) {
+    e.preventDefault();
 
-        return false;
-    });
-})
+    $("#pregunta").fadeOut();
 
-itemsSave = () =>{
-    DATA = [];
-    let TABLA = $("#tablaDetalles tbody >tr");
+    return false;
+  });
 
-    TABLA.each(function(){
-        let IDPROD      = $(this).data('idprod'),
-            CANTIDAD    = $(this).find('td').eq(5).text(),
-            ITEMPEDIDO  = $(this).data('idx'),
-            ATENDIDA    = $(this).find('td').eq(6).children().val(),
-            OBSERVAC    = $(this).find('td').eq(8).children().val(),
-            ESTADO      = $(this).data('grabado');
+  $("document").on("keydown", function (e) {
+    if (e.keyCode === 27 || e.which === 27) {
+      console - log("Presionaste la tecla ESC");
+    }
 
-        item= {};
-        
-        if (ESTADO == 1) {
-            item['idprod']      = IDPROD;
-            item['cantidad']    = CANTIDAD;
-            item['itempedido']  = ITEMPEDIDO;
-            item['atendida']    = ATENDIDA;
-            item['observac']    = OBSERVAC;
+    return false;
+  });
+});
 
-            DATA.push(item);
-        } 
-    })
+itemsSave = () => {
+  DATA = [];
+  let TABLA = $("#tablaDetalles tbody >tr");
 
-    return DATA;
-}
+  TABLA.each(function () {
+    let IDPROD = $(this).data("idprod"),
+      CANTIDAD = $(this).find("td").eq(5).text(),
+      ITEMPEDIDO = $(this).data("idx"),
+      ATENDIDA = $(this).find("td").eq(6).children().val(),
+      OBSERVAC = $(this).find("td").eq(8).children().val(),
+      ESTADO = $(this).data("grabado");
+
+    item = {};
+
+    if (ESTADO == 1) {
+      item["idprod"] = IDPROD;
+      item["cantidad"] = CANTIDAD;
+      item["itempedido"] = ITEMPEDIDO;
+      item["atendida"] = ATENDIDA;
+      item["observac"] = OBSERVAC;
+
+      DATA.push(item);
+    }
+  });
+
+  return DATA;
+};
 
 mailsList = () => {
-    CORREOS = [];
+  CORREOS = [];
 
-    let TABLA =  $("#listaCorreos tbody >tr");
+  let TABLA = $("#listaCorreos tbody >tr");
 
-    TABLA.each(function(){
-        let CORREO      = $(this).find('td').eq(1).text(),
-            NOMBRE      = $(this).find('td').eq(0).text(),
-            ENVIAR      = $(this).find('td').eq(2).children().prop("checked"),
+  TABLA.each(function () {
+    let CORREO = $(this).find("td").eq(1).text(),
+      NOMBRE = $(this).find("td").eq(0).text(),
+      ENVIAR = $(this).find("td").eq(2).children().prop("checked"),
+      item = {};
 
-        item= {};
-        
-        if (ENVIAR) {
-            item['nombre']= NOMBRE;
-            item['correo']= CORREO;
+    if (ENVIAR) {
+      item["nombre"] = NOMBRE;
+      item["correo"] = CORREO;
 
-            CORREOS.push(item);
-        }
-        
-    })
+      CORREOS.push(item);
+    }
+  });
 
-    return CORREOS;
-}
+  return CORREOS;
+};
