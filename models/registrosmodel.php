@@ -54,7 +54,7 @@
                         //$resto  = $rs['despachos'] - $rs['ingresos'];
                         
                         //if ( $resto != 0 ) {
-                            $salida .='<tr data-indice="'.$rs['id_regalm'].'" class="pointer" data-guia="'.$rs['cnumguia'].'">                                        
+                            $salida .='<tr data-indice="'.$rs['id_regalm'].'" class="pointer" data-guia="'.$rs['cnumguia'].'" data-salida="'.$rs['id_regalm'].'" data-madre="null">                                        
                                     <td class="textoCentro">'.str_pad($rs['id_regalm'],6,0,STR_PAD_LEFT).'</td>
                                     <td class="pl20px">'.$rs['ffecdoc'].'</td>
                                     <td class="pl20px">'.$rs['origen'].'</td>
@@ -205,6 +205,8 @@
         /*importa desde las guias madre */
         public function importarDespachoMadres($indice){
             try {
+                $docData = [];
+
                 $sql = $this->db->connect()->prepare("SELECT
                                                         alm_madrescab.id_regalm,
                                                         alm_madrescab.ncodcos,
@@ -227,7 +229,7 @@
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0) {
-                    $docData = array();
+                    
                     while($row=$sql->fetch(PDO::FETCH_ASSOC)){
                         $docData[] = $row;
                     }
@@ -236,9 +238,11 @@
                 }
                 
                 $indice = $this->ultimoIndice() + 1;
+
                 return array("cabecera"=>$docData,
                              "numero"=>str_pad($indice,6,0,STR_PAD_LEFT),
                              "detalles"=>$detalles);
+
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;

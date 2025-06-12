@@ -13,24 +13,27 @@
                 $g = $guia == "" ? "%": "%".$guia."%";
                 $cc = '%';
 
-                $sql = $this->db->connect()->prepare("SELECT
-                                                lg_guias.cnumguia,
-                                                alm_despachocab.ncodpry,
-                                                tb_proyectos.ccodproy,
-                                                UPPER(tb_proyectos.cdesproy) AS cdesproy,
-	                                            lg_guias.id_regalm,
-                                                DATE_FORMAT(alm_despachocab.ffecdoc,'%d/%m/%Y') AS ffecdoc  
-                                            FROM
-                                                lg_guias
-                                                LEFT JOIN alm_despachocab ON lg_guias.id_regalm = alm_despachocab.id_regalm
-                                                INNER JOIN tb_proyectos ON alm_despachocab.ncodpry = tb_proyectos.nidreg 
-                                            WHERE
-                                                lg_guias.cnumguia <> ''
-                                                AND alm_despachocab.nflgactivo = 1 
-                                                AND lg_guias.cnumguia LIKE :guia 
-                                                AND alm_despachocab.ncodpry LIKE :costos 
-                                                AND lg_guias.flgmadre = 0
-                                            ORDER BY alm_despachocab.ffecdoc DESC");
+                $sql = $this->db->connect()->prepare("SELECT /*+ MAX_EXECUTION_TIME(3000) */
+                                                        lg.cnumguia,
+                                                        ad.ncodpry,
+                                                        p.ccodproy,
+                                                        UPPER(p.cdesproy) AS cdesproy,
+                                                        lg.id_regalm,
+                                                        DATE_FORMAT(ad.ffecdoc, '%d/%m/%Y') AS ffecdoc  
+                                                    FROM
+                                                        lg_guias lg
+                                                        INNER JOIN alm_despachocab ad ON lg.id_regalm = ad.id_regalm
+                                                        INNER JOIN tb_proyectos p ON ad.ncodpry = p.nidreg 
+                                                    WHERE
+                                                        lg.cnumguia <> ''
+                                                        AND ad.nflgactivo = 1 
+                                                        AND lg.cnumguia LIKE :guia 
+                                                        AND ad.ncodpry LIKE :costos 
+                                                        AND lg.flgmadre = 0
+                                                        AND ad.ffecdoc >= DATE_SUB(CURRENT_DATE, INTERVAL 1 YEAR)
+                                                    ORDER BY 
+                                                        ad.ffecdoc DESC
+                                                    LIMIT 35");
                 
                 $sql->execute(["guia"=>$g,"costos"=>$cc]);
                 $rowCount = $sql->rowCount();
@@ -309,7 +312,8 @@
                                                         LEFT JOIN lg_guias lg ON am.cnumguia = lg.cnumguia 
                                                     WHERE
                                                         am.nflgactivo = 1
-                                                        AND YEAR(am.ffecdoc) = YEAR(CURRENT_DATE)
+                                                        AND am.ffecdoc >= DATE_FORMAT(DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH), '%Y-%m-01')
+                                                        AND am.ffecdoc < DATE_FORMAT(DATE_ADD(CURRENT_DATE, INTERVAL 1 MONTH), '%Y-%m-01')
                                                     ORDER BY 
                                                         am.ffecdoc DESC");
 
