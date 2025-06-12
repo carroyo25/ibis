@@ -11,12 +11,19 @@ $(function(){
 		
 		$("#esperar").css({"display":"block"});
         
-		$(".cargaModulo").load($(this).attr("href"),function(){
-			
+		fetch($(this).attr("href"), {
+			headers: {
+				'Cache-Control': 'no-cache',
+				'Pragma': 'no-cache'
+			}
+		})
+		.then(response => response.text())
+		.then(data => {
+			$(".cargaModulo").html(data);
 		});
 
-        return false;
-    });
+		return false;
+	});
 
     $(".acordeon").on("click",".link", function (e) {
 		e.preventDefault();
