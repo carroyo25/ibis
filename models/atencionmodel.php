@@ -180,84 +180,84 @@
         }
 
         public function centroCostosUsuario($producto) {
-        try {
-            $sql = $this->db->connect()->prepare("SELECT
-                                                    UPPER(p.ccodproy) AS codigo_costos,
-                                                    UPPER(p.cdesproy) AS descripcion_costos,
-                                                    p.nidreg AS ncodproy,
-                                                    COALESCE(SUM(e.cant_ingr), 0) AS ingresos,
-                                                    COALESCE((
-                                                        SELECT SUM(td.ncanti)
-                                                        FROM  alm_transferdet td
-                                                        INNER JOIN alm_transfercab tc ON td.idtransfer = tc.idreg
-                                                        WHERE 
-                                                            td.idcprod = :codigo1 AND tc.idcc = p.nidreg 
-                                                    ), 0) AS transferencias,
-                                                    COALESCE((
-                                                        SELECT SUM(ac.cantsalida)
-                                                        FROM alm_consumo ac
-                                                        WHERE ac.idprod = :codigo2 AND ac.ncostos = p.nidreg
-                                                    ), 0) AS consumos,
-                                                    COALESCE((
-                                                        SELECT SUM(ac.cantdevolucion)
-                                                        FROM alm_consumo ac
-                                                        WHERE ac.idprod = :codigo3 AND ac.ncostos = p.nidreg
-                                                    ), 0) AS devolucion,
-                                                    COALESCE((
-                                                        SELECT SUM(aid.cant_ingr) 
-                                                        FROM alm_inventariodet aid
-                                                        INNER JOIN alm_inventariocab ai ON aid.idregistro = ai.idreg 
-                                                        WHERE ai.idcostos = p.nidreg AND aid.codprod = :codigo4),0) AS inventarios
-                                                FROM
-                                                    tb_costusu cu
-                                                    INNER JOIN tb_proyectos p ON cu.ncodproy = p.nidreg
-                                                    LEFT JOIN alm_cabexist c ON c.idcostos = p.nidreg
-                                                    LEFT JOIN alm_existencia e ON e.idregistro = c.idreg AND e.codprod = :codigo5
-                                                WHERE
-                                                    cu.id_cuser = :user 
-                                                    AND p.nflgactivo = 1
-                                                    AND cu.nflgactivo = 1
-                                                    AND p.veralm = 1
-                                                GROUP BY
-                                                    p.ccodproy, p.cdesproy, p.nidreg
-                                                HAVING
-                                                    COALESCE(SUM(e.cant_ingr), 0) > 0
-                                                ORDER BY
-                                                    p.ccodproy");
+            try {
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        UPPER(p.ccodproy) AS codigo_costos,
+                                                        UPPER(p.cdesproy) AS descripcion_costos,
+                                                        p.nidreg AS ncodproy,
+                                                        COALESCE(SUM(e.cant_ingr), 0) AS ingresos,
+                                                        COALESCE((
+                                                            SELECT SUM(td.ncanti)
+                                                            FROM  alm_transferdet td
+                                                            INNER JOIN alm_transfercab tc ON td.idtransfer = tc.idreg
+                                                            WHERE 
+                                                                td.idcprod = :codigo1 AND tc.idcc = p.nidreg 
+                                                        ), 0) AS transferencias,
+                                                        COALESCE((
+                                                            SELECT SUM(ac.cantsalida)
+                                                            FROM alm_consumo ac
+                                                            WHERE ac.idprod = :codigo2 AND ac.ncostos = p.nidreg
+                                                        ), 0) AS consumos,
+                                                        COALESCE((
+                                                            SELECT SUM(ac.cantdevolucion)
+                                                            FROM alm_consumo ac
+                                                            WHERE ac.idprod = :codigo3 AND ac.ncostos = p.nidreg
+                                                        ), 0) AS devolucion,
+                                                        COALESCE((
+                                                            SELECT SUM(aid.cant_ingr) 
+                                                            FROM alm_inventariodet aid
+                                                            INNER JOIN alm_inventariocab ai ON aid.idregistro = ai.idreg 
+                                                            WHERE ai.idcostos = p.nidreg AND aid.codprod = :codigo4),0) AS inventarios
+                                                    FROM
+                                                        tb_costusu cu
+                                                        INNER JOIN tb_proyectos p ON cu.ncodproy = p.nidreg
+                                                        LEFT JOIN alm_cabexist c ON c.idcostos = p.nidreg
+                                                        LEFT JOIN alm_existencia e ON e.idregistro = c.idreg AND e.codprod = :codigo5
+                                                    WHERE
+                                                        cu.id_cuser = :user 
+                                                        AND p.nflgactivo = 1
+                                                        AND cu.nflgactivo = 1
+                                                        AND p.veralm = 1
+                                                    GROUP BY
+                                                        p.ccodproy, p.cdesproy, p.nidreg
+                                                    HAVING
+                                                        COALESCE(SUM(e.cant_ingr), 0) > 0
+                                                    ORDER BY
+                                                        p.ccodproy");
 
-                $sql->execute([
-                    "user" => $_SESSION['iduser'],
-                    "codigo1" => $producto,
-                    "codigo2" => $producto,
-                    "codigo3" => $producto,
-                    "codigo4" => $producto,
-                    "codigo5" => $producto
-                ]);
+                    $sql->execute([
+                        "user" => $_SESSION['iduser'],
+                        "codigo1" => $producto,
+                        "codigo2" => $producto,
+                        "codigo3" => $producto,
+                        "codigo4" => $producto,
+                        "codigo5" => $producto
+                    ]);
 
-                $docData = [];
+                    $docData = [];
 
-                while($row = $sql->fetch(PDO::FETCH_ASSOC)) {
-                    $total = ( $row['ingresos'] + $row['inventarios'] + $row['devolucion'] ) - ( $row['transferencias'] + $row['consumos'] );
+                    while($row = $sql->fetch(PDO::FETCH_ASSOC)) {
+                        $total = ( $row['ingresos'] + $row['inventarios'] + $row['devolucion'] ) - ( $row['transferencias'] + $row['consumos'] );
+                        
+                        $docData[] = [
+                            'codigo_costos' => $row['codigo_costos'],
+                            'descripcion_costos' => $row['descripcion_costos'],
+                            'ncodproy' => $row['ncodproy'],
+                            'total' => $total,
+                            'zingresos' => $row['ingresos'],
+                            'zinventarios' => $row['inventarios'],
+                            'zdevolucion' => $row['devolucion'],
+                            'ztransferencias' => $row['transferencias'],
+                            'zsalidas' => $row['consumos']
+                        ];
+                    }
+
+                    return $docData;
+                } catch (PDOException $th) {
+                    echo($th->getMessage());
                     
-                    $docData[] = [
-                        'codigo_costos' => $row['codigo_costos'],
-                        'descripcion_costos' => $row['descripcion_costos'],
-                        'ncodproy' => $row['ncodproy'],
-                        'total' => $total,
-                        'zingresos' => $row['ingresos'],
-                        'zinventarios' => $row['inventarios'],
-                        'zdevolucion' => $row['devolucion'],
-                        'ztransferencias' => $row['transferencias'],
-                        'zsalidas' => $row['consumos']
-                    ];
+                    return false;
                 }
-
-                return $docData;
-            } catch (PDOException $th) {
-                echo($th->getMessage());
-                
-                return false;
             }
-        }
     }
 ?>
