@@ -498,7 +498,7 @@
                     <div>
                         <label for="costosSearch">Centro de Costos: </label>
                         <select name="costosSearch" id="costosSearch" class="item4">
-                            <?php echo $this->listaCostosSelect ?>
+                            <?php //echo $this->listaCostosSelect ?>
                         </select>
                     </div>
                     <div>
