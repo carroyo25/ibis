@@ -13,7 +13,7 @@
                 $g = $guia == "" ? "%": "%".$guia."%";
                 $cc = '%';
 
-                $sql = $this->db->connect()->prepare("SELECT /*+ MAX_EXECUTION_TIME(3000) */
+                $sql = $this->db->connect()->prepare("SELECT
                                                         lg.cnumguia,
                                                         ad.ncodpry,
                                                         p.ccodproy,
@@ -33,7 +33,7 @@
                                                         AND ad.ffecdoc >= DATE_SUB(CURRENT_DATE, INTERVAL 1 YEAR)
                                                     ORDER BY 
                                                         ad.ffecdoc DESC
-                                                    LIMIT 35");
+                                                    LIMIT 100");
                 
                 $sql->execute(["guia"=>$g,"costos"=>$cc]);
                 $rowCount = $sql->rowCount();
@@ -100,6 +100,8 @@
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                         <td class="textoDerecha"><input type="number" value="'.$rs['ndespacho'].'"></td>
                                         <td class="textoDerecha">'.$rs['cnumguia'].'</td>
+                                        <td class="textoDerecha"><input type="text"></td>
+                                        <td class="textoDerecha"><input type="text"></td>
                                         <td class="textoCentro"><a href="#"><i class="fas fa-trash-alt"></i></a></td>
                                     </tr>';
                     }
@@ -254,7 +256,9 @@
                                                                                             nGuiaMadre=:guiaMadre,
                                                                                             ncantidad=:cantidad,
                                                                                             niddetaPed=:pedido,
-                                                                                            niddetaOrd=:orden");
+                                                                                            niddetaOrd=:orden,
+                                                                                            tracking=:pucallpa,
+                                                                                            trackinglurin=:lurin");
                          $sql->execute(["cod"=>$indice,
                                         "ori"=>$almacen,
                                         "cpro"=>$datos[$i]->idprod,
@@ -265,7 +269,9 @@
                                         "guiaMadre"=>$guia,
                                         "cantidad"=>$datos[$i]->cantdesp,
                                         "pedido"=>$datos[$i]->pedido,
-                                        "orden"=>$datos[$i]->orden]);
+                                        "orden"=>$datos[$i]->orden,
+                                        "pucallpa"=>$datos[$i]->pucallpa,
+                                        "lurin"=>$datos[$i]->lurin]);
                     } catch (PDOException $th) {
                         echo $th->getMessage();
                         return false;
@@ -357,62 +363,6 @@
                 return false;
             }
         }
-
-        /*public function listarGuiasScroll($pagina,$cantidad){
-            try {
-                $inicio = ($pagina - 1) * $cantidad;
-                $limite = $this->contarItems();
-                $guias = [];
-
-                if ($limite < 1) {
-                    $cantidad = $limite;
-                }
-
-                $sql = $this->db->connect()->prepare("SELECT
-                                                            lg_guiamadre.idreg,
-                                                            lg_guiamadre.cnroguia,
-                                                            lg_guiamadre.nflgSunat,
-                                                            DATE_FORMAT( lg_guiamadre.ffecdoc, '%d/%m/%Y' ) AS emision,
-                                                            DATE_FORMAT( lg_guiamadre.ffectraslado, '%d/%m/%Y' ) AS traslado,
-                                                            UPPER( origen.cdesalm ) AS almacen_origen,
-                                                            UPPER( destino.cdesalm ) AS almacen_destino,
-                                                            lg_guias.ticketsunat,
-                                                            lg_guias.guiasunat,
-                                                            lg_guias.estadoSunat  
-                                                        FROM
-                                                            lg_guiamadre
-                                                            LEFT JOIN tb_almacen AS origen ON lg_guiamadre.nlamorigen = origen.ncodalm
-                                                            LEFT JOIN tb_almacen AS destino ON lg_guiamadre.nalmdestino = destino.ncodalm
-                                                            LEFT JOIN lg_guias ON lg_guiamadre.cnumguia = lg_guias.cnumguia 
-                                                        WHERE lg_guiamadre.nflgActivo = 1
-                                                        LIMIT 1,1");
-                
-                $sql->execute();
-
-                $rc = $sql->rowcount();
-
-                if ($rc > 0){
-                    while( $rs = $sql->fetch()) {
-                        $guias[] = $rs;
-                    }
-                }
-
-                if ($limite  > 30) {
-                    if ( ($inicio + $cantidad) < $limite ){
-                        $quedan = true;
-                    }
-                }else {
-                    $quedan = false;
-                }
-
-                return array("guias"=>$guias,
-                            'quedan'=> $quedan);
-
-            } catch (PDOException $th) {
-                echo "Error: ".$th->getMessage();
-                return false;
-            }
-        }*/
 
         private function contarItems(){
             try {

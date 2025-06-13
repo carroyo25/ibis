@@ -125,6 +125,8 @@
                                     <th class="">Unidad</th>
                                     <th width="7%">Cantidad</th>
                                     <th width="7%">Nro.Guia</th>
+                                    <th width="7%">Nro. Paquete<br/>Lurin</th>
+                                    <th width="7%">PUCP</th>
                                     <th width="7%">...</th>
                                 </tr>
                             </thead>

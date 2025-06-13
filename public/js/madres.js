@@ -1,10 +1,8 @@
 $(() =>{
     const body = document.querySelector("#tablaPrincipal tbody");
 
-    let listItemFinal = null,estoyPidiendo = false,accion = "",
+    /*let listItemFinal = null,estoyPidiendo = false,accion = "",
         fila="";
-
-    //animateprogress("#php",72);
 
     //LISTA PARA EL SCROLL
 
@@ -72,7 +70,7 @@ $(() =>{
 
     //query();
 
-    ///FIN DEL SCROLL
+    ///FIN DEL SCROLL*/
 
 
     $("#esperar").fadeOut();
@@ -199,7 +197,6 @@ $(() =>{
 
         try {
             if ($("#codigo_aprueba").val() == 0) throw "Elija la persona que aprueba";
-            //if ($("#codigo_costos_origen").val() == 0) throw "Indique el centro de costos"; 
 
             $("#esperar").fadeIn();
 
@@ -706,8 +703,10 @@ detalles = () =>{
             DESCRIPCION = $(this).find('td').eq(2).text().replace('&','-'),//descripcion
             UNIDAD      = $(this).find('td').eq(3).text(),//unidad
             DESTINO     = $("#codigo_almacen_destino").val(),
-            CANTIDAD    = $(this).find('td').eq(4).children().val();
-            GUIA        = $(this).find('td').eq(5).text();
+            CANTIDAD    = $(this).find('td').eq(4).children().val(),
+            GUIA        = $(this).find('td').eq(5).text(),
+            PUCALLPA    = $(this).find('td').eq(6).children().val(),
+            LURIN       = $(this).find('td').eq(7).children().val();
     
         let item = {};
 
@@ -731,6 +730,8 @@ detalles = () =>{
             item['unidad']       = UNIDAD;
             item['destino']      = DESTINO;
             item['guia']         = GUIA;
+            item['pucallpa']     = PUCALLPA;
+            item['lurin']        = LURIN;
 
             
             DETALLES.push(item);

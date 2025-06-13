@@ -14,7 +14,7 @@
             
             
             $api = file_get_contents($url);
-            $ap2 = file_get_contents($img);
+            $ap2 = '';
 
 
             $datos =  json_decode($api);
