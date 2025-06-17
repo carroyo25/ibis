@@ -297,12 +297,7 @@
                         </div>
                     </div>
                     <div class="columna_derecha">
-                        <label id="mensaje_sunat" style="width: 100%;
-                                    display: block;
-                                    height: 1rem;
-                                    text-align: right;
-                                    padding: .5rem;"></label>
-                        <br/>
+                        
                         <p><strong>Motivo</strong></p>
                         <div class="tres_columnas_interna">
                             <label for="tipo_transporte" class="uno">Tipo Transporte :</label>
@@ -382,8 +377,11 @@
                             <label for="marca">Peso :</label>
                             <input type="text" name="peso" id="peso">
                             <span></span>
-                            <label for="bultos" class="oculto">Nro. Bultos :</label>
-                            <input type="text" name="bultos" id="bultos" class="oculto">
+                            <label for="fecha_embarque">Fecha de Embarque :</label>
+                            <input type="date" name="fecha_embarque" id="fecha_embarque">
+                            <span></span>
+                            <label for="nombre_embarque">Nombre Embarcación :</label>
+                            <input type="text" name="nombre_embarque" id="nombre_embarque">
                         </div>
                     </div>
                 </div>

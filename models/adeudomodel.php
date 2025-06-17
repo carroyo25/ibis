@@ -346,7 +346,7 @@
             for ($i=0; $i < $nreg; $i++) { 
                 $estado = "PENDIENTE";
                 
-                if ( $detalle[$i]['ncondicion'] === 1) {
+                if ( $detalle[$i]['ncondicion'] === 1 ) {
                     $estado = "DEVUELTO";
                     $items_devueltos++;
                 }
