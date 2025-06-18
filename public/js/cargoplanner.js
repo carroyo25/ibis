@@ -947,7 +947,8 @@ detalles = () =>{
             OPERADOR            = $(this).find('td').eq(47).text(),
             TRANSPORTE          = $(this).find('td').eq(48).text(),
             OBSERVACIONES       = $(this).find('td').eq(49).text(),
-            SOLICITANTE         = $(this).find('td').eq(50).text();
+            SOLICITANTE         = $(this).find('td').eq(50).text(),
+            DESCARGA            = $(this).find('td').eq(52).text();
 
         item = {};
 
@@ -1011,6 +1012,7 @@ detalles = () =>{
         item['transporte']          = TRANSPORTE;
         item['observaciones']       = OBSERVACIONES;
         item['solicitante']         = SOLICITANTE;
+        item['fecha_descarga']      = DESCARGA;
         
         
         DATA.push(item);

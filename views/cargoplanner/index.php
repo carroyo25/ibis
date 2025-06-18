@@ -300,6 +300,10 @@
                             <label for="conceptoSearch">Concepto : </label>
                             <input type="text" name="conceptoSearch" id="conceptoSearch">
                         </div>
+                         <div>
+                            <label for="anioSearch">Año : </label>
+                            <input type="text" name="anioSearch" id="anioSearch">
+                        </div>
                     </div>
                     <div class="procesos">
                         <div class="item_anulado"><a href="105" title="Anulado">0%<p>Anulado</p></a></div>
@@ -379,7 +383,8 @@
                     <th>Tipo</br>Transporte</th>
                     <th data-idcol="42" class="datafiltro">Observaciones/Concepto</th>
                     <th data-idcol="43" class="datafiltro">Solicitante</th>
-                    <th data-idcol="44" class="datafiltro">Pedido Asignado</th>
+                    <th data-idcol="44" class="datafiltro" style="background:#819830; color:#000">Pedido Asignado</th>
+                    <th data-idcol="45" style="background:#819830; color:#000">Fecha Descarga</br>Orden</th>
                 </tr>
             </thead>
             <tbody>

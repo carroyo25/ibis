@@ -197,7 +197,8 @@
                                                                                 cautoriza=:autoriza,cdestinatario=:destinatario,cobserva=:observaciones,
                                                                                 cnombre=:nombres,cmarca=:marca,clicencia=:licencia,cplaca=:placa,
                                                                                 ftraslado=:fecha_traslado,fguia=:fecha_guia,cserie=:serie,
-                                                                                cmotivo=:tipo,nPeso=:peso,nBultos=:bultos");
+                                                                                cmotivo=:tipo,nPeso=:peso,nBultos=:bultos,
+                                                                                fechaEmbarca=:fembarca,nombreEmbarca=:nembarca");
 
                 $sql->execute([ "despacho"=>null,
                                 "guia"=>$nroguia,
@@ -222,7 +223,9 @@
                                 "peso"=>$guiaCab['peso'],
                                 "bultos"=>$guiaCab['bultos'],
                                 "serie"=>'F001',
-                                "tipo"=>248]);
+                                "tipo"=>248,
+                                "fembarca"=>$guiaCab['fecha_embarque'],
+                                "nembarca"=>$guiaCab['nombre_embarque']]);
                 
                 $rowCount = $sql->rowcount();
 
@@ -272,6 +275,9 @@
                                         "orden"=>$datos[$i]->orden,
                                         "pucallpa"=>$datos[$i]->pucallpa,
                                         "lurin"=>$datos[$i]->lurin]);
+
+                        $this->actualizarItemsPedido($datos[$i]->pedido);
+
                     } catch (PDOException $th) {
                         echo $th->getMessage();
                         return false;
@@ -467,7 +473,9 @@
                                                         alm_madresdet.nGuia,
                                                         tb_unimed.cabrevia,
                                                         tb_pedidocab.nrodoc,
-	                                                    lg_ordencab.cnumero 
+	                                                    lg_ordencab.cnumero,
+                                                        alm_madresdet.tracking,
+                                                        alm_madresdet.trackinglurin
                                                         FROM
                                                             alm_madresdet
                                                             LEFT JOIN cm_producto ON alm_madresdet.id_cprod = cm_producto.id_cprod
@@ -492,6 +500,8 @@
                                     <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                     <td><input type="num" value="'.$rs['ncantidad'].'" class="textoDerecha" readonly></td>
                                     <td class="textoCentro">'.$rs['nGuia'].'</td>
+                                    <td class="textoCentro">'.$rs['tracking'].'</td>
+                                    <td class="textoCentro">'.$rs['trackinglurin'].'</td>
                                     <td></td>
                                 </tr>';
                     }
@@ -1166,6 +1176,23 @@
             $xml.=  '</DespatchAdvice>';
 
             return $xml;
+        }
+
+        private function actualizarItemsPedido($id){
+            try {
+                $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet 
+                                                        SET estadoItem=:est
+                                                        WHERE iditem=:item");
+
+                for ($i=0; $i <$nreg ; $i++) { 
+                    $sql->execute(["item"       =>$id,
+                                    "est"       =>99]);              
+                }
+                
+            } catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
         }
     }
 ?>
