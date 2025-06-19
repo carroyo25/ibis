@@ -93,7 +93,8 @@
                                         data-itemdespacho="'.$rs['niddeta'].'" 
                                         data-idprod="'.$rs['id_cprod'].'"
                                         data-orden="'.$rs['nropedido'].'"
-                                        data-pedido="'.$rs['nroorden'].'">
+                                        data-pedido="'.$rs['nroorden'].'"
+                                        data-itempedido="'.$rs['niddetaPed'].'">
                                         <td class="textoCentro">'.str_pad($item++,3,0,STR_PAD_LEFT).'</td>
                                         <td class="textoCentro">'.$rs['cccodprod'].'</td>
                                         <td class="pl10px">'.$rs['cdesprod'].'</td>
@@ -247,9 +248,7 @@
                 $datos = json_decode($detalles);
                 $nreg = count($datos);
 
-                for ($i=0; $i < $nreg; $i++) { 
-                    try {
-                        $sql=$this->db->connect()->prepare("INSERT INTO alm_madresdet SET id_regalm=:cod,
+                $sql=$this->db->connect()->prepare("INSERT INTO alm_madresdet SET id_regalm=:cod,
                                                                                             ncodalm1=:ori,
                                                                                             id_cprod=:cpro,
                                                                                             nflgactivo=:flag,
@@ -261,7 +260,11 @@
                                                                                             niddetaPed=:pedido,
                                                                                             niddetaOrd=:orden,
                                                                                             tracking=:pucallpa,
-                                                                                            trackinglurin=:lurin");
+                                                                                            trackinglurin=:lurin,
+                                                                                            nropedido=:idpedido");
+                for ($i=0; $i < $nreg; $i++) { 
+                    try {
+                        
                          $sql->execute(["cod"=>$indice,
                                         "ori"=>$almacen,
                                         "cpro"=>$datos[$i]->idprod,
@@ -274,9 +277,10 @@
                                         "pedido"=>$datos[$i]->pedido,
                                         "orden"=>$datos[$i]->orden,
                                         "pucallpa"=>$datos[$i]->pucallpa,
-                                        "lurin"=>$datos[$i]->lurin]);
+                                        "lurin"=>$datos[$i]->lurin,
+                                        "idpedido"=>$datos[$i]->iddetped]);
 
-                        $this->actualizarItemsPedido($datos[$i]->pedido);
+                        $this->actualizarItemsPedido($datos[$i]->iddetped);
 
                     } catch (PDOException $th) {
                         echo $th->getMessage();

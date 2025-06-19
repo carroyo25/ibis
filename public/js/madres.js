@@ -689,7 +689,7 @@ detalles = () =>{
     TABLA.each(function(){
         let ITEM        = $(this).find('td').eq(0).text(),
             IDDETORDEN  = "",
-            IDDETPED    = "",
+            IDDETPED    = $(this).data('itempedido'),
             IDPROD      = $(this).data('idprod'),
             IDDESPACHO  = $(this).data('itemdespacho'),
             DESPACHO    = $(this).data('despacho'),
