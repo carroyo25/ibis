@@ -74,6 +74,7 @@
                         <div class="item_registro_gerencia" title="Pedido Gerencia"><a href="#">70%<p>P.Gerencia</p></a></div>
                         <div class="item_transito" title="En transito"><a href="#">75%<p>Transito</p></a></div>
                         <div class="item_ingreso_parcial" title="Parcial Obra"><a href="#">85%<p>Rec.Parcial</p></a></div>
+                        <div class="item_en_embarque" title="Item Embarcado"><a href="#">95%<p>Embarcacion</p></a></div>
                         <div class="item_obra" title="En Obra"><a href="#">100%<p>Obra</p></a></div>
                     </div>
                 </div>
@@ -131,8 +132,10 @@
                     <th style="background:#DA500B; color:#000">Registro</br>Almacen</th>
                     <th style="background:#DA500B; color:#000">Fecha</br>Ingreso Almacen</th>
                     <th style="background:#DA500B; color:#000">Cantidad</br>Recibida</br>Obra</th>
-                    <th data-idcol="41" class="datafiltro">N°</br>Fecha Embarque</th>
-                    <th width="150px" data-idcol="37" class="datafiltro">Nombre Embarcacion</th>
+                    <th >N°</br>Fecha Embarque</th>
+                    <th >Nombre Embarcacion</th>
+                    <th >LURIN</th>
+                    <th >PCL</th>
                     <th>Operador</br>Logístico</th>
                     <th>Tipo</br>Transporte</th>
                     <th data-idcol="44" class="datafiltro" style="background:#819830; color:#000">Pedido Asignado</th>

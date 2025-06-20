@@ -18,6 +18,7 @@
                                                         lg_ordencab.id_regmov,
                                                         LPAD(lg_ordencab.cnumero,6,0) AS cnumero,
                                                         DATE_FORMAT(lg_ordencab.ffechadoc,'%d/%m/%Y') AS emision,
+                                                        DATE_FORMAT(lg_ordencab.ffechades,'%d/%m/%Y') AS descarga,
                                                         lg_ordencab.nNivAten,
                                                         lg_ordencab.nEstadoDoc,
                                                         lg_ordencab.ncodpago,

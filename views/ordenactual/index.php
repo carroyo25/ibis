@@ -307,6 +307,8 @@
                     <th rowspan="2" width="5%">Precio Dólares</th>
                     <th rowspan="2" data-idcol="8" class="datafiltro">Atencion</th>
                     <th rowspan="2">Estado</th>
+                    <th rowspan="2">Operador</th>
+                    <th rowspan="2">Descarga</th>
                     <th colspan="3" width="16%">Firmas</th>
                     <tr>
                         <th>Procura</th>

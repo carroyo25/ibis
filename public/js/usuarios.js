@@ -264,18 +264,9 @@ $(function(){
     $("#closeProcess").click(function (e) { 
         e.preventDefault();
 
-        $.post(RUTA+"usuarios/actualizaListado",
-            function (data, textStatus, jqXHR) {
-                $(".itemsTabla  table tbody")
-                    .empty()
-                    .append(data);
-                
-                $("#proceso").fadeOut();
+        $("#proceso").fadeOut();
+        $(".lista").slideUp();
 
-                $(".lista").slideUp();
-            },
-            "text"
-        );
         return false;
     });
 
@@ -349,7 +340,7 @@ $(function(){
         if (parent.data("grabado") == 1){
             $.post(RUTA+"usuarios/desactivaItem", {id:$(this).attr("href"),modulo:1,user:$("#cod_user").val()},
                 function (data, textStatus, jqXHR) {
-                    fillTables($("#modulos tbody > tr"),1);
+                    //fillTables($("#modulos tbody > tr"),1);
                 },
                 "text"
             );
@@ -367,7 +358,7 @@ $(function(){
         if (parent.data("grabado") == 1){
             $.post(RUTA+"usuarios/desactivaItem", {id:$(this).attr("href"),modulo:2,user:$("#cod_user").val()},
                 function (data, textStatus, jqXHR) {
-                    fillTables($("#costos tbody > tr"),1);
+                    //fillTables($("#costos tbody > tr"),1);
                 },
                 "text"
             );

@@ -112,7 +112,10 @@
         public function listarCostos() {
             try {
                 $salida = "";
-                $sql= $this->db->connect()->query("SELECT nidreg,ccodproy,cdesproy FROM tb_proyectos WHERE nflgactivo = 1");
+                $sql= $this->db->connect()->query("SELECT nidreg,ccodproy,cdesproy 
+                                                    FROM tb_proyectos 
+                                                    WHERE nflgactivo = 1
+                                                    ORDER BY ccodproy");
                 $sql->execute();
 
                 if ($sql->rowcount() > 0){
