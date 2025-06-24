@@ -101,8 +101,8 @@
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
                                         <td class="textoDerecha"><input type="number" value="'.$rs['ndespacho'].'"></td>
                                         <td class="textoDerecha">'.$rs['cnumguia'].'</td>
-                                        <td class="textoDerecha"><input type="text"></td>
-                                        <td class="textoDerecha"><input type="text"></td>
+                                        <td class="textoDerecha"><input type="text" class="input-tabla" name="track1"></td>
+                                        <td class="textoDerecha"><input type="text" class="input-tabla" name="track2"></td>
                                         <td class="textoCentro"><a href="#"><i class="fas fa-trash-alt"></i></a></td>
                                     </tr>';
                     }

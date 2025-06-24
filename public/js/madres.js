@@ -1,77 +1,21 @@
 $(() =>{
     const body = document.querySelector("#tablaPrincipal tbody");
-
-    /*let listItemFinal = null,estoyPidiendo = false,accion = "",
-        fila="";
-
-    //LISTA PARA EL SCROLL
-
-    const observandoListItem = listItem => {
-        if ( listItem[0].isIntersecting ) {
-            query();
+    
+    //para hacer cmabiar el foco de los inputs en las tablas
+     // Delegación de eventos para inputs dinámicos
+    $('#tablaDetalles').on('keydown', 'td:nth-child(6) input, td:nth-child(7) input', function(e) {
+        if (e.which === 13) { // Tecla Enter
+        e.preventDefault();
+        const $td = $(this).closest('td');
+        const columnIndex = $td.index();
+        const $nextRow = $td.closest('tr').next();
+        
+        if ($nextRow.length) {
+            $nextRow.find('td').eq(columnIndex).find('input').focus().select();
         }
-    }
-
-    const settings = {
-        threshold: 1
-    }
-
-    let observador = new IntersectionObserver(
-        observandoListItem,
-        settings
-    );
-
-    const query = async () => {
-        if (estoyPidiendo) return;
-        estoyPidiendo = true;
-        let pagina = parseInt(body.dataset.p) || 1;
-        const FD = new FormData();
-        FD.append('pagina',pagina);
-
-        const r = await fetch(RUTA+'madres/listaScroll',{
-            method: 'POST',
-            body:FD
-        });
-
-        let estado = "No enviado",indicador = "urgente";
-
-        const j  = await r.json();
-        j[0].guias.forEach(i => {
-            const tr = document.createElement('tr');
-
-            if (i.nflgSunat == 1) {
-                estado = "Enviado";
-                indicador = "normal";
-            }
-            
-            tr.innerHTML = `<td class="textoCentro">${i.cnroguia}</td>
-                            <td class="textoCentro">${i.emision}</td>
-                            <td class="textoCentro">${i.traslado}</td>
-                            <td class="textoCentro">${i.almacen_origen}</td>
-                            <td class="pl20px">${i.almacen_destino}</td>
-                            <td class="textoCentro ${indicador}">${estado}</td>;
-                            <td class="textoCentro>${estado}</td>`;
-            tr.classList.add("pointer");
-            tr.dataset.indice = i.idreg;
-            body.appendChild(tr);
-        })
-
-        if (listItemFinal){
-            observador.unobserve(listItemFinal);
         }
-
-        if (j[0].quedan) { //devuelve falso si ya no quedan mas registros
-            listItemFinal = body.lastElementChild.previousElementSibling;
-            observador.observe( listItemFinal);
-            estoyPidiendo = false;
-            body.dataset.p = ++pagina;
-        }
-    }
-
-    //query();
-
-    ///FIN DEL SCROLL*/
-
+    });
+        
 
     $("#esperar").fadeOut();
 
