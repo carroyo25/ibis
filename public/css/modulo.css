@@ -3975,6 +3975,41 @@
 .ventanaProceso .dataProceso .igv label, .ventanaProceso .dataProceso_2 .igv label, .ventanaProceso .dataProceso_flex .igv label, .ventanaProceso .dataProceso_flex_columna .igv label {
   margin-top: 0 !important;
 }
+.ventanaProceso .dataProceso_3 {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: nowrap;
+      flex-wrap: nowrap;
+  gap: 20px; /* Espacio entre los divs */
+  width: 100%;
+  padding: 10px;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  font-size: 0.9rem;
+}
+.ventanaProceso .dataProceso_3 .seccion_s4 {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 1fr 10px auto 10px 1fr 10px auto;
+  grid-template-columns: 1fr auto 1fr auto;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  gap: 10px;
+}
+.ventanaProceso .dataProceso_3 label {
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+.ventanaProceso .dataProceso_3 input[type=text], .ventanaProceso .dataProceso_3 input[type=date], .ventanaProceso .dataProceso_3 input[type=number], .ventanaProceso .dataProceso_3 input[type=password], .ventanaProceso .dataProceso_3 input[type=mail] {
+  height: 35px;
+  border: none;
+  border: 1px solid #c2c2c2;
+  margin-top: 3px;
+  font-size: 0.7rem;
+  border-radius: 8px;
+}
 .ventanaProceso table tbody tr {
   height: 30px;
   font-size: 0.7rem;

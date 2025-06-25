@@ -3,16 +3,16 @@ $(() =>{
     
     //para hacer cmabiar el foco de los inputs en las tablas
      // Delegación de eventos para inputs dinámicos
-    $('#tablaDetalles').on('keydown', 'td:nth-child(6) input, td:nth-child(7) input', function(e) {
+    $('#tablaDetalles').on('keydown', '.input-tabla', function(e) {
         if (e.which === 13) { // Tecla Enter
         e.preventDefault();
         const $td = $(this).closest('td');
         const columnIndex = $td.index();
         const $nextRow = $td.closest('tr').next();
         
-        if ($nextRow.length) {
-            $nextRow.find('td').eq(columnIndex).find('input').focus().select();
-        }
+            if ($nextRow.length) {
+                $nextRow.find('td').eq(columnIndex).find('input').focus().select();
+            }
         }
     });
         

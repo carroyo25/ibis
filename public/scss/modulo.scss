@@ -3331,6 +3331,38 @@ $almacen:#27798F;
         }
     }
 
+    .dataProceso_3{
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 20px; /* Espacio entre los divs */
+        width: 100%;
+        padding: 10px;
+        box-sizing: border-box;
+        font-size: 0.9rem;
+
+        .seccion_s4 {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr auto;
+            align-items: center;
+            gap: 10px;
+        }
+
+        label {
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        input[type=text], input[type=date], input[type=number],input[type=password],input[type=mail] {
+            height: 35px;
+            border:none;
+            border:1px solid $sobreElemento;
+            margin-top: 3px;
+            font-size: .7rem;
+            border-radius: 8px;
+        }
+        
+    }
+
     table {
         tbody{
             tr{
