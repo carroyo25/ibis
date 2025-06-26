@@ -43,26 +43,20 @@
                         </div>
                     </div>
                     <div class="dataProceso_3">
-                        <div class="seccion_izquierda_grid-3">
-                            <div class="seccion_s4">
-                                <label for="Fecha Emite">Fecha :</label>
-                                <input type="date" name="fecha" id="fecha" class="cerrarLista" value="<?php echo date("Y-m-d");?>" readonly>
-
-                                <label for="numero" data-etiqueta="numero">Numero :</label>
-                                <input type="text" name="numero" id="numero" class="cerrarLista textoDerecha pr20px" readonly>
-
-                                <label for="aprueba">Aprueba:</label>
-                                <div class="lista_container">
-                                    <input type="text" name="aprueba" id="aprueba" class="mostrarLista busqueda" placeholder="Elija opción"
-                                                readonly>
-                                    <div class="lista" id="listaAprueba">
-                                        <ul>
-                                            <?php echo $this->listaAprueba?>
-                                        </ul> 
-                                    </div>
-                                </div>    
+                        <div class="seccion_izquierda_grid-4">
+                            <label for="Fecha Emite">Fecha :</label>
+                            <input type="date" name="fecha" id="fecha" class="cerrarLista" value="<?php echo date("Y-m-d");?>" readonly>
+                            <label for="numero" data-etiqueta="numero">Numero :</label>
+                            <input type="text" name="numero" id="numero" class="cerrarLista textoDerecha pr20px" readonly>
+                            <label for="aprueba">Aprueba:</label>
+                            <div class="lista_container">
+                                <input type="text" name="aprueba" id="aprueba" class="mostrarLista busqueda" placeholder="Elija opción" readonly>
+                                <div class="lista" id="listaAprueba">
+                                    <ul>
+                                        <?php echo $this->listaAprueba?>
+                                    </ul> 
+                                </div>
                             </div>
-                            
                         </div>
                         <div class="seccion_medio_grid-3">
                              <label for="almacen_origen_despacho">Origen:</label>

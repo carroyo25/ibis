@@ -16,7 +16,6 @@ $(() =>{
         }
     });
         
-
     $("#esperar").fadeOut();
 
     $("#nuevoRegistro").click(function (e) { 
@@ -58,7 +57,6 @@ $(() =>{
 
         return false;
     });
-
 
     $(".lista").on("click",'a', function (e) {
         e.preventDefault();
@@ -609,7 +607,6 @@ $(() =>{
 
         return false;
     });
-
 
     //filtrado en la lista de solicitante
     $(".busqueda").on("keyup", function() {
