@@ -4703,6 +4703,11 @@
   background: #F8CAAD;
 }
 
+.embarque {
+  background: #0078D4;
+  color: #fff;
+}
+
 .tab_inactivo {
   background: #8d8c8c !important;
   color: #5c4c4c;

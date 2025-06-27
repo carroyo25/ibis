@@ -267,6 +267,11 @@
                                 $estadofila = "comprado";
                                 $estado_item = "Compra Local";
                                 $estado_pedido = "Compra Local";
+                            }else if( $rs['estadoItem'] == 299 ) {
+                                $porcentaje = "95%";
+                                $estadofila = "embarque";
+                                $estado_item = "embarque";
+                                $estado_pedido = "embarque";
                             }else if( $rs['estadoItem'] == 54) {
                                 if ($rs['cantidad_pedido'] == $rs['cantidad_atendida']){
                                     $porcentaje = "12%";

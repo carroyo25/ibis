@@ -1187,7 +1187,7 @@
                 $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet 
                                                         SET estadoItem=:est
                                                         WHERE iditem=:item");
-                $sql->execute(["item"=>$id,"est" => 99]);              
+                $sql->execute(["item"=>$id,"est" => 299]);              
                 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
