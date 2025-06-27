@@ -3987,8 +3987,7 @@
           box-sizing: border-box;
 }
 .ventanaProceso .dataProceso_3 label {
-  font-weight: 0.7rem;
-  color: #01015f;
+  font-size: 0.7rem;
 }
 .ventanaProceso .dataProceso_3 input {
   width: 100%;
@@ -3998,7 +3997,13 @@
   font-size: 0.7rem;
   border-radius: 8px;
 }
-.ventanaProceso .dataProceso_3 .seccion_izquierda_grid-4 {
+.ventanaProceso .dataProceso_3 .lista {
+  position: absolute;
+  display: none;
+  left: 0;
+  width: 100%;
+}
+.ventanaProceso .dataProceso_3 .seccion-4 {
   display: -ms-grid;
   display: grid;
   -ms-grid-columns: auto 10px auto 10px auto 10px auto;
@@ -4008,7 +4013,7 @@
           align-items: center;
   gap: 10px;
 }
-.ventanaProceso .dataProceso_3 .seccion_izquierda_grid-4 .lista_container {
+.ventanaProceso .dataProceso_3 .seccion-4 .lista_container {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -4016,12 +4021,6 @@
   -ms-grid-column-span: 3;
   grid-column: 2/5;
   position: relative;
-}
-.ventanaProceso .dataProceso_3 .seccion_izquierda_grid-4 .lista_container #listaAprueba {
-  position: absolute;
-  display: none;
-  left: 0;
-  width: 100%;
 }
 .ventanaProceso table tbody tr {
   height: 30px;

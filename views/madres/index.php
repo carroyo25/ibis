@@ -8,7 +8,7 @@
 </head>
 <body>
     <div class="modal" id="proceso">
-        <div class="ventanaProceso tamanioProceso">
+        <div class="ventanaProceso">
             <div class="cabezaProceso">
                 <form action="#" id="formProceso" autocomplete="off">
                     <input type="hidden" name="codigo_costos_origen" id="codigo_costos_origen">
@@ -43,55 +43,69 @@
                         </div>
                     </div>
                     <div class="dataProceso_3">
-                        <div class="seccion_izquierda_grid-4">
-                            <label for="Fecha Emite">Fecha :</label>
-                            <input type="date" name="fecha" id="fecha" class="cerrarLista" value="<?php echo date("Y-m-d");?>" readonly>
-                            <label for="numero" data-etiqueta="numero">Numero :</label>
-                            <input type="text" name="numero" id="numero" class="cerrarLista textoDerecha pr20px" readonly>
-                            <label for="aprueba">Aprueba:</label>
-                            <div class="lista_container">
-                                <input type="text" name="aprueba" id="aprueba" class="mostrarLista busqueda" placeholder="Elija opción" readonly>
-                                <div class="lista" id="listaAprueba">
-                                    <ul>
-                                        <?php echo $this->listaAprueba?>
-                                    </ul> 
+                        <div class="seccion_izquierda">
+                            <div class="seccion-4">
+                                <label for="fecha">Fecha :</label>
+                                <input type="date" name="fecha" id="fecha" class="cerrarLista" value="<?php echo date("Y-m-d");?>" readonly>
+                                <label for="numero" data-etiqueta="numero">Numero :</label>
+                                <input type="text" name="numero" id="numero" class="cerrarLista textoDerecha pr20px" readonly>
+                                <label for="aprueba">Aprueba:</label>
+                                <div class="lista_container">
+                                    <input type="text" name="aprueba" id="aprueba" class="mostrarLista busqueda" placeholder="Elija opción" readonly>
+                                    <div class="lista" id="listaAprueba">
+                                        <ul>
+                                            <?php echo $this->listaAprueba?>
+                                        </ul> 
+                                    </div>
                                 </div>
+
                             </div>
                         </div>
-                        <div class="seccion_medio_grid-3">
-                             <label for="almacen_origen_despacho">Origen:</label>
-                                <input type="text" name="almacen_origen_despacho" id="almacen_origen_despacho" class="mostrarLista busqueda" 
-                                        value="SERVICIOS PETROLEROS Y CONSTRUCCIONES SEPCON SAC">
-                                <div class="lista" id="listaOrigenCabecera">
-                                   <ul>
-                                       <?php echo $this->listaEntidad?>
-                                   </ul> 
+                        <div class="seccion_medio">
+                            <div class="seccion-4">
+                                <label for="almacen_origen_despacho">Origen:</label>
+                                <div class="lista_container">
+                                    <input type="text" name="almacen_origen_despacho" id="almacen_origen_despacho" class="mostrarLista busqueda" value="SERVICIOS PETROLEROS Y CONSTRUCCIONES SEPCON SAC">
+                                    <div class="lista" id="listaOrigenCabecera">
+                                        <ul>
+                                            <?php echo $this->listaEntidad?>
+                                        </ul> 
+                                    </div>
                                 </div>
                                 <label for="almacen_destino_despacho">Destino:</label>
-                                <input type="text" name="almacen_destino_despacho" id="almacen_destino_despacho" class="mostrarLista busqueda"
-                                        value="SERVICIOS PETROLEROS Y CONSTRUCCIONES SEPCON SAC">
-                                <div class="lista" id="listaDestinoCabecera">
-                                   <ul>
-                                       <?php echo $this->listaEntidad?>
-                                   </ul> 
+                                <div class="lista_container">
+                                    <input type="text" name="almacen_destino_despacho" id="almacen_destino_despacho" class="mostrarLista busqueda" value="SERVICIOS PETROLEROS Y CONSTRUCCIONES SEPCON SAC">
+                                    <div class="lista" id="listaDestinoCabecera">
+                                        <ul>
+                                            <?php echo $this->listaEntidad?>
+                                        </ul> 
+                                    </div>
                                 </div>
+                            </div>
+                                
                         </div>
-                        <div class="seccion_derecha_grid-3">
-                            <label for="tipo">Tipo Mov.:</label>
-                                <input type="text" name="tipo" id="tipo" class="mostrarLista busqueda" placeholder="Elija opción"
-                                    readonly>
-                                <div class="lista" id="listaMovimiento">
-                                   <ul>
-                                       <?php echo $this->listaMovimiento?>
-                                   </ul> 
+                        <div class="seccion_derecha">
+                            <div class="seccion-4">
+                                <label for="tipo">Tipo Mov.:</label>
+                                <div class="lista_container">
+                                    <input type="text" name="tipo" id="tipo" class="mostrarLista busqueda" placeholder="Elija opción" readonly>
+                                    <div class="lista" id="listaMovimiento">
+                                        <ul>
+                                            <?php echo $this->listaMovimiento?>
+                                        </ul> 
+                                    </div>
                                 </div>
-                            <label for="corigen">CCostos Origen:</label>
-                                <input type="text" name="corigen" id="corigen" class="mostrarLista busqueda" placeholder="Elija una opcion">
-                                <div class="lista" id="listaCostosDestinoCabecera">
-                                   <ul>
-                                       <?php echo $this->listaCostos?>
-                                   </ul> 
+                                
+                                <label for="corigen">CCostos Origen:</label>
+                                <div class="lista_container">
+                                    <input type="text" name="corigen" id="corigen" class="mostrarLista busqueda" placeholder="Elija una opcion">
+                                    <div class="lista" id="listaCostosDestinoCabecera">
+                                    <ul>
+                                        <?php echo $this->listaCostos?>
+                                    </ul> 
+                                    </div>
                                 </div>
+                            </div>
                         </div>
                     </div>
                     <div class="barraOpciones">

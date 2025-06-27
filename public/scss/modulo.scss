@@ -3340,8 +3340,7 @@ $almacen:#27798F;
         box-sizing: border-box;
 
         label{
-            font-weight: 0.7rem;
-            color: #01015f;
+            font-size: 0.7rem;
         }
 
         input{
@@ -3353,26 +3352,25 @@ $almacen:#27798F;
             border-radius: 8px;
 	    }
 
-        .seccion_izquierda_grid-4 {
+        .lista{
+            position: absolute;
+            display: none;
+            left: 0;
+            width: 100%;
+        }
+
+        .seccion-4 {
             display: grid;
-	        grid-template-columns: repeat(4, auto);
+	        grid-template-columns: repeat(4,auto);
 	        align-items: center;
 	        gap: 10px;
-            
+
             .lista_container{
                 display: flex;
-	            grid-column: 2/5;
+                grid-column: 2/5;
                 position: relative;
-
-	            
-                #listaAprueba{
-                    position: absolute;
-                    display: none;
-                    left: 0;
-                    width: 100%;
-                }
             }
-        }
+        }        
     }
 
     table {
