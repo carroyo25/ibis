@@ -13,6 +13,10 @@
         function filtroCargoPlanLogistica(){
             echo $this->model->listarCargoPlanLogistica($_POST);
         }
+
+        function exceljs(){
+            echo json_encode($this->model->exportarExcel($_POST));
+        }
         
     }
 ?>

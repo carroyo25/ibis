@@ -478,6 +478,27 @@
                 echo "Error: ".$th->getMessage();
                 return false;
             }
-        } 
+        }
+
+        public function exportarExcel($parametros){
+
+            //$parametros = json_decode($parametros,true);
+
+            /*$tipo       = $parametros['tipoSearch']     == -1 ? "%" : $parametros['tipoSearch'];
+            $costo      = $parametros['costosSearch']   == -1 ? "%" : $parametros['costosSearch'];
+            $descrip    = $parametros['descripSearch']  == "" ? "%" : "%".$parametros['descripSearch']."%";
+            $codigo     = $parametros['codigoSearch']   == "" ? "%" : "%".$parametros['codigoSearch']."%";
+            $orden      = $parametros['ordenSearch']    == "" ? "%" : $parametros['ordenSearch'];
+            $pedido     = $parametros['pedidoSearch']   == "" ? "%" : $parametros['pedidoSearch'];
+            $concepto   = $parametros['conceptoSearch'] == "" ? "%" : "%".$parametros['conceptoSearch']."%";
+            $estadoItem = $parametros['estado_item']    == "" ? "%" : $parametros['estado_item'];
+            $anio       = $parametros['anioSearch']     == "" ? "%" : $parametros['anioSearch'];*/
+            $userID     = $_SESSION['iduser'];
+
+            var_dump($parametros);
+
+            //return array("tipo"=>$tipo);
+
+        }
     }
 ?>

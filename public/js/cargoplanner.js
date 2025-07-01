@@ -404,8 +404,6 @@ $(function() {
             document.getElementById("waitMessage").innerHTML = "Exportado a hoja de calculo...";
             document.getElementById("excelProcces").value = 50;
 
-            console.log(json.datos);
-
             return false;
 
             await excelJson(json.datos);

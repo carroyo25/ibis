@@ -10,9 +10,7 @@
         <h1>Cargo Plan Logística</h1>
         <div>
             <a href="#" id="filtrosAvanzados"><i class="fab fa-searchengin"></i><p>Filtros</p></a>
-            <a href="1" id="excelFile" class="exportReport"><i class="fas fa-file-excel"></i><p>Exportar Excel</p></a>
-            <a href="2" id="csvFile" class="exportReport oculto"><i class="fas fa-file-csv"></i><p>Exportar CSV</p></a>
-            <a href="3" id="excelJS" class="exportFast oculto"><i class="fas fa-file-excel"></i><p>Exportar Total Rapido</p></a>
+            <a href="3" id="excelJS"><i class="fas fa-file-excel"></i><p>Exportar</p></a>
             <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
         </div>
     </div>
