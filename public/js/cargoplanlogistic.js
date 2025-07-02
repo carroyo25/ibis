@@ -35,17 +35,17 @@ $(function() {
 
         $.post(RUTA+"cargoplanlogistic/exceljs",str,
             function (data, text, requestXHR) {
-                $(".itemsCargoPlanner table tbody")
-                    .empty()
-                    .append(data);
 
-                    $("#esperar").fadeOut().promise().done(function(){
-                        iniciarPaginador();
-                    });
+                crearReporteExcel(data.datos);               
+                $("#esperar").css({"display":"none","opacity":"0"})
 
-            "text"
+            "json"
         });
 
         return false;
     });
 })
+
+function crearReporteExcel(datos){
+    console.log(datos);
+}
