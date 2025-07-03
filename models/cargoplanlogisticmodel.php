@@ -645,7 +645,7 @@
                     $docData[] = $row;
                 }
                 
-                return array("datos"=>$docData);
+                return $docData;
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
