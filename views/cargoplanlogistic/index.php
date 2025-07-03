@@ -40,7 +40,7 @@
                         </div>
                         <div>
                             <label for="ordenSearch">N° Orden :</label>
-                            <input type="text" name="ordenSearch" id="ordenSearch">
+                            <input type="text" name="ordenSearch" id="ordenSearch" value="5850">
                         </div>
                         <div>
                             <label for="ordenSearch">N° Pedido :</label>
@@ -56,7 +56,7 @@
                         </div>
                          <div>
                             <label for="anioSearch">Año : </label>
-                            <input type="text" name="anioSearch" id="anioSearch">
+                            <input type="text" name="anioSearch" id="anioSearch" value="2025">
                         </div>
                     </div>
                     <div class="procesos">

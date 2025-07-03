@@ -53,7 +53,7 @@ $(function() {
             }
 
             // Depuración: Ver primer elemento
-            console.log("Primer elemento de los datos:", datosParaExcel[0]);
+            //console.log("Primer elemento de los datos:", datosParaExcel[0]);
 
             // Llamar a la función para crear el Excel
             crearReporteExcel(datosParaExcel);
@@ -83,7 +83,6 @@ async function crearReporteExcel(datos) {
         if (datos.length === 0) {
             throw new Error("No hay datos para generar el reporte");
         }
-
 
         //document.getElementById("waitMessage").innerHTML = "Generando archivo Excel...";
 
@@ -152,6 +151,22 @@ async function crearReporteExcel(datos) {
             { header: 'Fecha Descarga', key: 'fecha_descarga', width: 50 }
         ];
 
+         /*if (datos && datos.length > 0) {
+            datos.forEach((item, rowIndex) => {
+                 //console.log(item.iditem);
+                 columnConfigs.forEach(col => {
+                    const rowData = {};
+
+                    rowData[col.key] = '';
+
+                    rowData[col.key] = String(item[col.key]).trim();
+
+                    console.log(rowData);
+                 })
+            })
+        }
+        return false*/
+
         // Configurar columnas con headers
         worksheet.columns = columnConfigs;
 
@@ -208,18 +223,21 @@ async function crearReporteExcel(datos) {
                 // Determinar semáforo según días de atraso
                 if (item.semaforo === undefined) {
                     item.semaforo = item.dias_atraso > 0 ? 'Rojo' : 
-                                   item.dias_atraso === 0 ? 'Amarillo' : 'Verde';
+                                    item.dias_atraso === 0 ? 'Amarillo' : 'Verde';
                 }
 
                 const rowData = {};
                 
-               columnConfigs.forEach(col => {
-                   /* // Valor por defecto
+                columnConfigs.forEach(col => {
+                    // Valor por defecto
                     rowData[col.key] = '';
                     
-                    // Si la propiedad no existe o es null/undefined
-                    if (item[col.key] == null) return;
+                    //console.log(col.key);
                     
+                    // Si la propiedad no existe o es null/undefined
+                    //if (item[col.key] == null) return;
+                    
+                    /*
                     // Formateo básico de fechas (sin librerías externas)
                     if (col.key.toLowerCase().includes('fecha')) {
                         try {
@@ -231,10 +249,10 @@ async function crearReporteExcel(datos) {
                         } catch (e) {
                             console.warn(`Error formateando fecha ${col.key}:`, e);
                         }
-                    }
+                    }*/
                     
                     // Convertir a string y limpiar espacios
-                    rowData[col.key] = String(item[col.key]).trim();*/
+                    //rowData[col.key] = String(item[col.key]).trim();
                 });
 
                 const row = worksheet.addRow(rowData);
