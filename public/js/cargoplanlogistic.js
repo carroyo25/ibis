@@ -73,7 +73,7 @@ async function crearReporteExcel(datos) {
     try {
 
         // Mostrar mensaje de espera
-        $("#esperarCargo").css("opacity", "1").fadeIn();
+        //$("#esperarCargo").css("opacity", "1").fadeIn();
 
         // Validación básica de datos
         if (!Array.isArray(datos)) {
@@ -106,7 +106,7 @@ async function crearReporteExcel(datos) {
             { header: 'Area', key: 'area', width: 50 },
             { header: 'Partida', key: 'partida', width: 30 },
             { header: 'Atención', key: 'nNivAten', width: 12 },
-            { header: 'Tipo', key: 'ntipmov', width: 15 },
+            { header: 'Tipo', key: 'idtipomov', width: 15 },
             { header: 'Año Pedido', key: 'anio_pedido', width: 12 },
             { header: 'N° Pedido', key: 'pedido', width: 15 },
             { header: 'Creación Pedido', key: 'crea_pedido', width: 20 },
@@ -150,22 +150,6 @@ async function crearReporteExcel(datos) {
             { header: 'Pedido Asignado', key: 'asigna', width: 70 },
             { header: 'Fecha Descarga', key: 'fecha_descarga', width: 50 }
         ];
-
-         /*if (datos && datos.length > 0) {
-            datos.forEach((item, rowIndex) => {
-                 //console.log(item.iditem);
-                 columnConfigs.forEach(col => {
-                    const rowData = {};
-
-                    rowData[col.key] = '';
-
-                    rowData[col.key] = String(item[col.key]).trim();
-
-                    console.log(rowData);
-                 })
-            })
-        }
-        return false*/
 
         // Configurar columnas con headers
         worksheet.columns = columnConfigs;
@@ -215,83 +199,38 @@ async function crearReporteExcel(datos) {
         // Agregar datos dinámicos si existen
         if (datos && datos.length > 0) {
             datos.forEach((item, rowIndex) => {
-                // Calcular saldo por recibir si no existe
-                if (item.saldoPorRecibir === undefined) {
-                    item.saldoPorRecibir = item.cantidad_orden - (item.ingreso || 0);
-                }
-                
-                // Determinar semáforo según días de atraso
-                if (item.semaforo === undefined) {
-                    item.semaforo = item.dias_atraso > 0 ? 'Rojo' : 
-                                    item.dias_atraso === 0 ? 'Amarillo' : 'Verde';
-                }
-
                 const rowData = {};
+
+                let clase_operacion_pedido = item.idtipomov === 37 ? 'B' : 'S';
+                let atencion = item.atencion === 47 ? "NORMAL" : "URGENTE";
                 
-                columnConfigs.forEach(col => {
-                    // Valor por defecto
-                    rowData[col.key] = '';
-                    
-                    //console.log(col.key);
-                    
-                    // Si la propiedad no existe o es null/undefined
-                    //if (item[col.key] == null) return;
-                    
-                    /*
-                    // Formateo básico de fechas (sin librerías externas)
-                    if (col.key.toLowerCase().includes('fecha')) {
-                        try {
-                            const date = new Date(item[col.key]);
-                            if (!isNaN(date)) {
-                                rowData[col.key] = date.toLocaleDateString('es-PE');
-                                return;
-                            }
-                        } catch (e) {
-                            console.warn(`Error formateando fecha ${col.key}:`, e);
+                // Mapeo seguro de columnas
+                columnConfigs.forEach(columnDefinition => {
+                    try {
+                        const value = item[columnDefinition.key];
+
+                        // Si la propiedad no existe o es null/undefined
+                        if ( value == null) return;
+                        
+                        if ( columnDefinition.key == 'iditem' )
+                            rowData[columnDefinition.key] = rowIndex+1;
+                        else if ( columnDefinition.key == 'idtipomov' )
+                            rowData[columnDefinition.key] = clase_operacion_pedido;
+                        else if ( columnDefinition.key == 'nNivAten')
+                            rowData[columnDefinition.key] = atencion;
+                        else {
+                            rowData[columnDefinition.key] = String(value).trim()
                         }
-                    }*/
-                    
-                    // Convertir a string y limpiar espacios
-                    //rowData[col.key] = String(item[col.key]).trim();
-                });
 
-                const row = worksheet.addRow(rowData);
-
-                // Aplicar estilos alternados a las filas
-                const fillColor = rowIndex % 2 === 0 ? 'FFF2F2F2' : 'FFFFFFFF';
-                row.eachCell((cell) => {
-                    cell.fill = {
-                        type: 'pattern',
-                        pattern: 'solid',
-                        fgColor: { argb: fillColor }
-                    };
-                    cell.border = {
-                        top: { style: 'thin' },
-                        left: { style: 'thin' },
-                        bottom: { style: 'thin' },
-                        right: { style: 'thin' }
-                    };
-                    
-                    // Alineación específica para columnas numéricas
-                    if (['cantidad_pedido', 'cantidad_aprobada', 'cantidad_orden', 
-                         'ingreso', 'despachos', 'ingreso_obra', 'dias_atraso'].includes(col.key)) {
-                        cell.alignment = { horizontal: 'right' };
-                    }
-                    
-                    // Formato de fechas
-                    if (cell.value && typeof cell.value === 'string' && 
-                        cell.value.match(/\d{2}\/\d{2}\/\d{4}/)) {
-                        cell.numFmt = 'dd/mm/yyyy';
+                    } catch (error) {
+                        console.error(`Error en fila ${rowIndex}, columna ${columnDefinition.key}:`, error);
+                        rowData[columnDefinition.key] = 'N/D';
                     }
                 });
                 
-                // Resaltar filas con atraso
-                if (item.dias_atraso > 0) {
-                    row.eachCell((cell) => {
-                        cell.font = { color: { argb: 'FFFF0000' } }; // Rojo para atrasos
-                    });
-                }
+                worksheet.addRow(rowData);
             });
+
         }
 
         // Ajustar automáticamente el ancho de las columnas según contenido
@@ -324,12 +263,12 @@ async function crearReporteExcel(datos) {
         setTimeout(() => {
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-            $("#esperarCargo").css("opacity", "0").fadeOut();
+            $("#esperar").css({"display": "none", "opacity": "0"});
         }, 100);
 
     } catch (error) {
         console.error('Error al generar el Excel:', error);
-        $("#esperarCargo").css("opacity", "0").fadeOut();
+        $("#esperar").css({"display": "none", "opacity": "0"});
         alert('Ocurrió un error al generar el archivo. Por favor intente nuevamente.');
     }
 }
