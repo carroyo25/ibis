@@ -84,8 +84,6 @@ async function crearReporteExcel(datos) {
             throw new Error("No hay datos para generar el reporte");
         }
 
-        //document.getElementById("waitMessage").innerHTML = "Generando archivo Excel...";
-
         // Crear instancia del workbook
         const workbook = new ExcelJS.Workbook();
         
@@ -143,8 +141,8 @@ async function crearReporteExcel(datos) {
             { header: 'Cantidad en Obra', key: 'ingreso_obra', width: 15 },
             { header: 'Fecha Embarque', key: 'fechaEmbarca', width: 15 },
             { header: 'Embarcación', key: 'nombreEmbarca', width: 15 },
-            { header: 'N° Bulto', key: 'nroBulto', width: 15 },
-            { header: 'PCL', key: 'pcl', width: 15 },
+            { header: 'N° Bulto', key: 'tracking', width: 15 },
+            { header: 'PCL', key: 'trackinglurin', width: 15 },
             { header: 'Operador Logístico', key: 'operador', width: 15 },
             { header: 'Tipo Transporte', key: 'transporte', width: 15 },
             { header: 'Pedido Asignado', key: 'asigna', width: 70 },
@@ -200,6 +198,7 @@ async function crearReporteExcel(datos) {
         if (datos && datos.length > 0) {
             datos.forEach((item, rowIndex) => {
                 const rowData = {};
+                const rowNumber = rowIndex + 3;
 
                 let clase_operacion_pedido = item.idtipomov === 37 ? 'B' : 'S';
                 let atencion = item.atencion === 47 ? "NORMAL" : "URGENTE";
@@ -214,6 +213,14 @@ async function crearReporteExcel(datos) {
                         
                         if ( columnDefinition.key == 'iditem' )
                             rowData[columnDefinition.key] = rowIndex+1;
+                        else if (columnDefinition.key == 'estadoItem'){
+                            const estadoCell = worksheet.getCell(`B${rowNumber}`);
+                            estadoCell.fill = {
+                                type: 'pattern',
+                                pattern: 'solid',
+                                fgColor: { argb: getColorForPercentage(100) }
+                            };
+                        }
                         else if ( columnDefinition.key == 'idtipomov' )
                             rowData[columnDefinition.key] = clase_operacion_pedido;
                         else if ( columnDefinition.key == 'nNivAten')
@@ -273,8 +280,16 @@ async function crearReporteExcel(datos) {
     }
 }
 
-// Ejemplo de cómo llamar a la función con tus datos
-// crearReporteExcel(tusDatos);
+function getColorForPercentage(percentage) {
+    const num = parseFloat(percentage);
+    
+    if (num == 100) return '00FF00'; // Verde
+    if (num >= 80) return 'FF92D050';  // Verde claro
+    if (num >= 50) return 'FFFFFF00';  // Amarillo
+    if (num >= 20) return 'FFFFC000';  // Naranja
+    
+    return 'FFFF0000';                 // Rojo
+}
 
 
 

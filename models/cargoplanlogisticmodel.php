@@ -25,7 +25,6 @@
                 $salida = "No hay registros";
                 $item = 1;
 
-
                 $sql = $this->db->connect()->prepare("SELECT
                                                     tb_pedidodet.iditem,
                                                     tb_pedidodet.idpedido,
