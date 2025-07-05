@@ -199,9 +199,19 @@ async function crearReporteExcel(datos) {
             datos.forEach((item, rowIndex) => {
                 const rowData = {};
                 const rowNumber = rowIndex + 3;
+                const rowItem = rowIndex;
 
                 let clase_operacion_pedido = item.idtipomov === 37 ? 'B' : 'S';
                 let atencion = item.atencion === 47 ? "NORMAL" : "URGENTE";
+                let porcentaje = 100;
+
+                if (item.atencion == 105) {
+                    porcentaje = 105
+                }else{
+                    if ( item.atencion == 49 ) {
+                        porcentaje == 49
+                    }
+                }
                 
                 // Mapeo seguro de columnas
                 columnConfigs.forEach(columnDefinition => {
@@ -212,13 +222,14 @@ async function crearReporteExcel(datos) {
                         if ( value == null) return;
                         
                         if ( columnDefinition.key == 'iditem' )
-                            rowData[columnDefinition.key] = rowIndex+1;
+                            rowData[columnDefinition.key] = rowItem+1;
                         else if (columnDefinition.key == 'estadoItem'){
+                            rowData[columnDefinition.key] = porcentaje+'%';
                             const estadoCell = worksheet.getCell(`B${rowNumber}`);
                             estadoCell.fill = {
                                 type: 'pattern',
                                 pattern: 'solid',
-                                fgColor: { argb: getColorForPercentage(100) }
+                                fgColor: { argb: getColorForPercentage(porcentaje) }
                             };
                         }
                         else if ( columnDefinition.key == 'idtipomov' )
@@ -283,10 +294,12 @@ async function crearReporteExcel(datos) {
 function getColorForPercentage(percentage) {
     const num = parseFloat(percentage);
     
-    if (num == 100) return '00FF00'; // Verde
-    if (num >= 80) return 'FF92D050';  // Verde claro
-    if (num >= 50) return 'FFFFFF00';  // Amarillo
-    if (num >= 20) return 'FFFFC000';  // Naranja
+    if (num == 100) return '00FF00'; // completo
+    if (num == 49 ) return 'FFCA28';  // Verde claro
+    if (num == 51 ) return 'F8CAAD';  // Amarillo
+    if (num >= 53 ) return 'C9E2F4';
+    if (num >= 54 ) return 'F8CAAD';
+    if (num >= 230) return 'FFFFC000';
     
     return 'FFFF0000';                 // Rojo
 }
