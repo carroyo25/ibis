@@ -225,14 +225,7 @@ async function crearReporteExcel(datos) {
                             rowData[columnDefinition.key] = rowItem+1;
                         else if (columnDefinition.key == 'estadoItem'){
                             rowData[columnDefinition.key] = porcentaje+'%';
-                            const estadoCell = worksheet.getCell(`B${rowNumber}`);
-                            estadoCell.fill = {
-                                type: 'pattern',
-                                pattern: 'solid',
-                                fgColor: { argb: getColorForPercentage(porcentaje) }
-                            };
-                        }
-                        else if ( columnDefinition.key == 'idtipomov' )
+                        }else if ( columnDefinition.key == 'idtipomov' )
                             rowData[columnDefinition.key] = clase_operacion_pedido;
                         else if ( columnDefinition.key == 'nNivAten')
                             rowData[columnDefinition.key] = atencion;
