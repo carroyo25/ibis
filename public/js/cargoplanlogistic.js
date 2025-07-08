@@ -240,6 +240,13 @@ async function crearReporteExcel(datos) {
                 });
                 
                 worksheet.addRow(rowData);
+
+                const estadoCell = worksheet.getCell(`B${rowNumber}`); // Usar referencia de la fila nueva
+                estadoCell.fill = {
+                    type: 'pattern',
+                    pattern: 'solid',
+                    fgColor: { argb: getColorForPercentage(porcentaje) }
+                };
             });
 
         }
