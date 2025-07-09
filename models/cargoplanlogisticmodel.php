@@ -430,7 +430,7 @@
                                         <td class="textoCentro">'.number_format($aprobado_final,2,'.', '').'</td>
                                         <td class="textoCentro">'.$rs['ccodprod'].'</td>
                                         <td class="textoCentro">'.$rs['unidad'].'</td>
-                                        <td class="pl10px">'.$rs['descripcion'].'</td>
+                                        <td class="pl10px sticky-column">'.$rs['descripcion'].'</td>
                                         <td class="textoCentro '.$clase_operacion.'">'.$tipo_orden.'</td>
                                         <td class="textoCentro">'.$rs['anio_orden'].'</td>
                                         <td class="textoCentro">'.$rs['cnumero'].'</td>

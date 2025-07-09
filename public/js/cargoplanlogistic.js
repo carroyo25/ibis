@@ -1,6 +1,8 @@
 $(function() {
     $("#esperar").fadeOut();
 
+    // Con jQuery
+
     $("#btnProcesa").click(function(e){
         e.preventDefault();
 
@@ -203,15 +205,17 @@ async function crearReporteExcel(datos) {
 
                 let clase_operacion_pedido = item.idtipomov === 37 ? 'B' : 'S';
                 let atencion = item.atencion === 47 ? "NORMAL" : "URGENTE";
-                let porcentaje = 100;
+                //let porcentaje = 100;
 
-                if (item.atencion == 105) {
-                    porcentaje = 105
-                }else{
-                    if ( item.atencion == 49 ) {
-                        porcentaje == 49
-                    }
-                }
+                const porcentajes = [{valor:105 , rotulo:"0%",color:"#c8c8c8"},
+                                     {valor:49 , rotulo:"10%",color:"#F8CAAD"},
+                                     {valor:51 , rotulo:"12%",color:"#00FF00"},
+                                     {valor:52 , rotulo:"20%",color:"#B3C5E6"},
+                                     {valor:54 , rotulo:"15%",color:"#FF0000"},
+                                     {valor:299 , rotulo:"95%",color:"#0078D4"},
+                                     {valor:100 , rotulo:"100%",color:"#00FF00"}];
+
+                const etiqueta = porcentajes.find(item => item.valor === item.estadoItem);
                 
                 // Mapeo seguro de columnas
                 columnConfigs.forEach(columnDefinition => {
@@ -224,7 +228,7 @@ async function crearReporteExcel(datos) {
                         if ( columnDefinition.key == 'iditem' )
                             rowData[columnDefinition.key] = rowItem+1;
                         else if (columnDefinition.key == 'estadoItem'){
-                            rowData[columnDefinition.key] = porcentaje+'%';
+                            rowData[columnDefinition.key] = etiqueta.rotulo;
                         }else if ( columnDefinition.key == 'idtipomov' )
                             rowData[columnDefinition.key] = clase_operacion_pedido;
                         else if ( columnDefinition.key == 'nNivAten')
@@ -245,7 +249,7 @@ async function crearReporteExcel(datos) {
                 estadoCell.fill = {
                     type: 'pattern',
                     pattern: 'solid',
-                    fgColor: { argb: getColorForPercentage(porcentaje) }
+                    fgColor: { argb: getColorForPercentage(etiqueta.valor) }
                 };
             });
 
@@ -299,7 +303,8 @@ function getColorForPercentage(percentage) {
     if (num == 51 ) return 'F8CAAD';  // Amarillo
     if (num >= 53 ) return 'C9E2F4';
     if (num >= 54 ) return 'F8CAAD';
-    if (num >= 230) return 'FFFFC000';
+    if (num >= 230) return 'FF00FF';
+    if (num >= 299) return '0078D4';
     
     return 'FFFF0000';                 // Rojo
 }

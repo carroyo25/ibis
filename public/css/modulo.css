@@ -281,6 +281,20 @@
   padding-right: 5px;
 }
 
+.sticky-column {
+  position: sticky !important;
+  left: 0;
+  background-color: white; /* o el color de fondo que corresponda */
+  z-index: 1;
+}
+
+thead .sticky-column {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  background: #000;
+}
+
 .dashBoard {
   display: -ms-grid;
   display: grid;

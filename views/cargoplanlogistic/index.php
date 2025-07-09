@@ -89,7 +89,7 @@
                 <tr class="stickytop">
                     <th width="30px">Items</th>
                     <th style="background:#40D1FB; color:#000; position:relative" data-idcol="1" class="datafiltro">Estado</br>Actual</th>
-                    <th style="background:#40D1FB; color:#000">Codigo</br>Proyecto</th>
+                    <th style="background:#40D1FB; color:#000" >Codigo</br>Proyecto</th>
                     <th style="background:#40D1FB; color:#000" data-idcol="3" class="datafiltro">Area</th>
                     <th style="background:#40D1FB; color:#000" data-idcol="4" class="datafiltro">Partida</th>
                     <th style="background:#40D1FB; color:#000">Atencion</th>
@@ -101,9 +101,9 @@
                     <th style="background:#FBD341; color:#000">Cantidad</br>Pedida</th>
                     <th style="background:#FBD341; color:#000">Cantidad</br>Aprobada</th>
                     <th style="background:#FBD341; color:#000">Cantidad</br>para compra</th>
-                    <th style="background:#A6CAF0; color:#000" data-idcol="12" class="datafiltro">Codigo del</br>Bien/Servicio</th>
+                    <th style="background:#A6CAF0; color:#000" data-idcol="12">Codigo del</br>Bien/Servicio</th>
                     <th style="background:#A6CAF0; color:#000">Unidad</br>Medida</th>
-                    <th style="background:#A6CAF0; color:#000" width="10%" data-idcol="14" class="datafiltro">Descripcion del Bien/Servicio</th>
+                    <th style="background:#A6CAF0; color:#000" width="10%" data-idcol="14" class="sticky-column">Descripcion del Bien/Servicio</th>
                     <th style="background:#AAFFAA; color:#000" width="40px">Tipo</br>Orden</th>
                     <th style="background:#AAFFAA; color:#000" width="50px">Año</br>Orden</th>
                     <th style="background:#AAFFAA; color:#000" data-idcol="17" class="datafiltro">N°</br>Orden</th>
