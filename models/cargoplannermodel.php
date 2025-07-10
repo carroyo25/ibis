@@ -351,7 +351,7 @@
 
                             if( $rs['fechaLog'] !== "" && $rs['fechaOpe'] !== "" && $rs['FechaFin'] !== "") {
                                 $fecha_autoriza = $rs['fecha_autorizacion'];
-                                $fecha_entrega = $rs['fecha_entrega_final'];
+                                $fecha_entrega = $rs['fecha_entrega'];
                             }
 
                             if ( $rs['estadoItem'] !== 105 ) {
@@ -436,7 +436,7 @@
 
                                         <td class="textoDerecha pr15px">'.$rs['ingreso'].'</td>
                                         <td class="textoCentro">'.$rs['nota_ingreso'].'</td>
-                                        <td class="textoCentro">'.$rs['fecha_recepcion_proveedor'].'</td>
+                                        <td class="textoCentro">'.$rs['fecha_entrega'].'</td>
 
                                         <td class="textoDerecha pr15px">'.$saldoRecibir.'</td>
                                         <td class="textoDerecha pr15px">'.$rs['plazo'].'</td>
@@ -2227,8 +2227,7 @@
                     $suma_atendido = number_format($item['cantidad_orden'] + $item['cantidad_atendida'],2);
                     $fecha_entrega = null;
                     $fecha_autoriza = null;
-
-
+                    
                     if ( $item['estadoItem'] == 105 ) {
                         $porcentaje = "0%";
                         $estadofila = "anulado";

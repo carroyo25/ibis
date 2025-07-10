@@ -370,7 +370,7 @@ $(function(){
 
             $.post(RUTA+"recepcion/documentopdf",{cabecera:result,
                                                     detalles:JSON.stringify(detalles(tipoVista)),
-                                                    condicion:0},
+                                                    condicion:1},
                 function (data, textStatus, jqXHR) {
                     $(".ventanaVistaPrevia iframe")
                     .attr("src","")
