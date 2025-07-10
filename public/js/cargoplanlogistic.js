@@ -205,17 +205,23 @@ async function crearReporteExcel(datos) {
 
                 let clase_operacion_pedido = item.idtipomov === 37 ? 'B' : 'S';
                 let atencion = item.atencion === 47 ? "NORMAL" : "URGENTE";
-                //let porcentaje = 100;
+                
+                const estadoItemValue = item.estadoItem;
 
-                const porcentajes = [{valor:105 , rotulo:"0%",color:"#c8c8c8"},
-                                     {valor:49 , rotulo:"10%",color:"#F8CAAD"},
-                                     {valor:51 , rotulo:"12%",color:"#00FF00"},
-                                     {valor:52 , rotulo:"20%",color:"#B3C5E6"},
-                                     {valor:54 , rotulo:"15%",color:"#FF0000"},
-                                     {valor:299 , rotulo:"95%",color:"#0078D4"},
-                                     {valor:100 , rotulo:"100%",color:"#00FF00"}];
+                const porcentajes = [{valor:105 , rotulo:"0%"   ,color:"#C8C8C8"},
+                                     {valor:49  , rotulo:"10%"  ,color:"#F8CAAD"},
+                                     {valor:51  , rotulo:"12%"  ,color:"#00FF00"},
+                                     {valor:52  , rotulo:"20%"  ,color:"#B3C5E6"},
+                                     {valor:54  , rotulo:"15%"  ,color:"#FF0000"},
+                                     {valor:60  , rotulo:"40%"  ,color:"#fff"},
+                                     {valor:62  , rotulo:"50%"  ,color:"#fff"},
+                                     {valor:299 , rotulo:"95%"  ,color:"#0078D4"},
+                                     {valor:100 , rotulo:"100%" ,color:"#00FF00"},
+                                     {valor:230 , rotulo:"100%" ,color:"#FF00FF"}];
 
-                const etiqueta = porcentajes.find(item => item.valor === item.estadoItem);
+                
+
+                const etiqueta = porcentajes.find(p => p.valor == estadoItemValue);
                 
                 // Mapeo seguro de columnas
                 columnConfigs.forEach(columnDefinition => {
@@ -249,7 +255,7 @@ async function crearReporteExcel(datos) {
                 estadoCell.fill = {
                     type: 'pattern',
                     pattern: 'solid',
-                    fgColor: { argb: getColorForPercentage(etiqueta.valor) }
+                    fgColor: { argb: etiqueta.color }
                 };
             });
 
