@@ -208,20 +208,29 @@ async function crearReporteExcel(datos) {
                 
                 const estadoItemValue = item.estadoItem;
 
-                const porcentajes = [{valor:105 , rotulo:"0%"   ,color:"#C8C8C8"},
-                                     {valor:49  , rotulo:"10%"  ,color:"#F8CAAD"},
-                                     {valor:51  , rotulo:"12%"  ,color:"#00FF00"},
-                                     {valor:52  , rotulo:"20%"  ,color:"#B3C5E6"},
-                                     {valor:54  , rotulo:"15%"  ,color:"#FF0000"},
-                                     {valor:60  , rotulo:"40%"  ,color:"#fff"},
-                                     {valor:62  , rotulo:"50%"  ,color:"#fff"},
-                                     {valor:299 , rotulo:"95%"  ,color:"#0078D4"},
-                                     {valor:100 , rotulo:"100%" ,color:"#00FF00"},
-                                     {valor:230 , rotulo:"100%" ,color:"#FF00FF"}];
+                const porcentajes = [{valor:105, rotulo:"0%"  , color:"#C8C8C8", semaforo:"#c8c8c8", estado:'anulado'},
+                                     {valor:49 , rotulo:"10%" , color:"#F8CAAD", semaforo:"#FFFF00", estado:'procesando'},
+                                     {valor:51 , rotulo:"12%" , color:"#00FF00", semaforo:"#FFFF00", estado:'almacen'},
+                                     {valor:52 , rotulo:"20%" , color:"#B3C5E6", semaforo:"#FFFF00", estado:'stock'},
+                                     {valor:53 , rotulo:"25%" , color:"#B3C5E6", semaforo:"#FFFF00", estado:'aprobacion'},
+                                     {valor:54 , rotulo:"15%" , color:"#FF0000", semaforo:"#FFFF00", estado:'aprobado'},
+                                     {valor:54 , rotulo:"22%" , color:"#E2D5CA", semaforo:"#FFFF00", estado:'elaboración orden'},
+                                     {valor:59 , rotulo:"30%" , color:"#FFFF00", semaforo:"#FFFF00", estado:'firma orden'},
+                                     {valor:60 , rotulo:"40%" , color:"#A9D08F", semaforo:"#B3C5E6", estado:'enviado proveeddor'},
+                                     {valor:62 , rotulo:"50%" , color:"#A9D08F", semaforo:"#B3C5E6", estado:'recepcion parcial'},
+                                     {valor:62 , rotulo:"60%" , color:"#A9D08F", semaforo:"#B3C5E6", estado:'recepcion total'},
+                                     {valor:62 , rotulo:"70%" , color:"#A9D08F", semaforo:"#00FFFF", estado:'enviado parcial'},
+                                     {valor:62 , rotulo:"75%" , color:"#A9D08F", semaforo:"#00FFFF", estado:'enviado total'},
+                                     {valor:62 , rotulo:"80%" , color:"#A9D08F", semaforo:"#F67C2B", estado:'recepcion pucallpa'},
+                                     {valor:62 , rotulo:"85%" , color:"#A9D08F", semaforo:"#F67C2B", estado:'enviado parcial'},
+                                     {valor:62 , rotulo:"90%" , color:"#A9D08F", semaforo:"#F67C2B", estado:'enviado total'},
+                                     {valor:299, rotulo:"95%" , color:"#0078D4", semaforo:"#0078D4", estado:'embarcado'},
+                                     {valor:100, rotulo:"100%", color:"#00FF00", semaforo:"#00FF00", estado:'entregado'},
+                                     {valor:230, rotulo:"100%", color:"#FF00FF", semaforo:"#FF00FF", estado:'compra local'}];
 
-                
 
                 const etiqueta = porcentajes.find(p => p.valor == estadoItemValue);
+
                 
                 // Mapeo seguro de columnas
                 columnConfigs.forEach(columnDefinition => {
