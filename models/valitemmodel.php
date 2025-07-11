@@ -17,7 +17,7 @@
                 $sql = $this->db->connect()->prepare("SELECT
                                                         lg_ordendet.nunitario,
                                                         lg_ordendet.ncanti,
-                                                        lg_ordencab.ffechadoc,
+                                                        DATE_FORMAT(lg_ordencab.ffechadoc,'%d/%m/%Y') AS ffechadoc,
                                                         LPAD( lg_ordencab.cnumero, 6, 0 ) AS orden,
                                                         lg_ordencab.ntcambio,
                                                         cm_producto.ccodprod,
@@ -25,22 +25,27 @@
                                                         tb_unimed.cabrevia AS unidad,
                                                         tb_parametros.cabrevia AS moneda,
                                                         lg_ordendet.ncodcos,
-                                                        lg_ordencab.ncodmon 
+                                                        lg_ordencab.ncodmon,
+                                                        cm_entidad.crazonsoc
                                                     FROM
                                                         lg_ordendet
-                                                        INNER JOIN lg_ordencab ON lg_ordendet.id_regmov = lg_ordencab.id_regmov
-                                                        INNER JOIN cm_producto ON lg_ordendet.id_cprod = cm_producto.id_cprod
-                                                        INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
-                                                        INNER JOIN tb_pedidodet ON lg_ordendet.niddeta = tb_pedidodet.iditem
-                                                        INNER JOIN tb_parametros ON lg_ordencab.ncodmon = tb_parametros.nidreg 
+                                                        LEFT JOIN lg_ordencab ON lg_ordendet.id_regmov = lg_ordencab.id_regmov
+                                                        LEFT JOIN cm_producto ON lg_ordendet.id_cprod = cm_producto.id_cprod
+                                                        LEFT JOIN cm_entidad ON cm_entidad.id_centi = lg_ordencab.id_centi
+                                                        LEFT JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                        LEFT JOIN tb_pedidodet ON lg_ordendet.niddeta = tb_pedidodet.iditem
+                                                        LEFT JOIN tb_parametros ON lg_ordencab.ncodmon = tb_parametros.nidreg 
                                                     WHERE
                                                         lg_ordencab.ntipmov = 37 
                                                         AND lg_ordendet.ncodcos LIKE :costos 
                                                         AND cm_producto.ccodprod LIKE :codigo
+                                                        AND CONCAT_WS( ' ', cm_producto.cdesprod, tb_pedidodet.observaciones ) LIKE :concepto
                                                         AND lg_ordendet.nestado = 1
                                                     ORDER BY
-                                                        lg_ordencab.id_regmov ASC");
-                $sql->execute(["costos"=>$costos,"codigo"=>$codigo]);
+                                                        lg_ordencab.ffechadoc DESC");
+
+                $sql->execute(["costos"=>$costos,"codigo"=>$codigo,"concepto"=>$concepto]);
+
                 $rowCount = $sql->rowcount();
                 $item = 1;
 
@@ -68,6 +73,7 @@
                                         <td class="textoDerecha">'.$rs['ntcambio'].'</td>
                                         <td class="textoCentro">'.$rs['ffechadoc'].'</td>
                                         <td class="textoCentro">'.$rs['orden'].'</td>
+                                        <td class="pl20px">'.$rs['crazonsoc'].'</td>
                                         <td class="textoDerecha">'.$rs['ncanti'].'</td>
                                         <td class="textoDerecha">'.number_format($precio_soles,2).'</td>
                                         <td class="textoDerecha">'.number_format($precio_dolares,2).'</td>

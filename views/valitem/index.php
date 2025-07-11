@@ -148,9 +148,10 @@
                     <th data-titulo="cambio">Tipo<br>Cambio</th>
                     <th data-titulo="fecha">Fecha Orden</th>
                     <th data-titulo="orden">Nro. Orden</th>
+                    <th data-titulo="proveedor">Proveedor</th>
                     <th data-titulo="cantidad">Cantidad</th>
-                    <th data-titulo="soles">Precio Soles</th>
-                    <th data-titulo="dolares">Precio Dólares</th>
+                    <th data-titulo="soles">Precio<br/>Unitario S/.</th>
+                    <th data-titulo="dolares">Precio<br/>Unitario $</th>
                 </tr>
             </thead>
             <tbody>
