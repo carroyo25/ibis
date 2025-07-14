@@ -95,10 +95,14 @@
                         </div>
                         <div class="barraOpciones">
                             <span>Partidas</span>
-
-                            <button type="button" id="addSubItem" title="Agregar Partidas">
-                                <p><i class="fas fa-plus"></i> Añadir</p> 
-                            </button>
+                            <div>
+                                <button type="button" id="addSubItem" title="Agregar Partidas">
+                                    <p><i class="fas fa-plus"></i> Añadir</p> 
+                                </button>
+                                <button type="button" id="addSubItemBlock" title="Agregar Partidas">
+                                    <p><i class="fas fa-plus"></i> Añadir Lista</p> 
+                                </button>
+                            </div>
                         </div>
                         <div class="ccostos__partidas">
                             <table id="partidas" class="tabla">
@@ -109,7 +113,7 @@
                                         <th width="3%">...</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="partidas_body">
 
                                 </tbody>
                             </table>

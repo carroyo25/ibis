@@ -46,6 +46,10 @@
 
             echo $this->model->borrarCostos($id);
         }
+
+        function listarPartidas() {
+            echo json_encode($this->model->llamarPartidasGenerales());
+        }
         
     }
 ?>

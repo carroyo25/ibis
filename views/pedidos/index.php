@@ -88,7 +88,7 @@
                                     </ul> 
                                 </div>
                             </div>
-                            <label for="area" data-etiqueta="partida">Partida:</label>
+                            <label for="partida" data-etiqueta="partida">Partida:</label>
                             <div data-box="lista_partidas">
                                 <input type="text" name="partida" id="partida" class="mostrarLista busqueda" placeholder="Elija una opcion">
                                 <div class="lista_grid" id="listaPartidas">

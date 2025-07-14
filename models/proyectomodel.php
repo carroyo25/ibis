@@ -186,6 +186,28 @@
             }
         }
 
+        public function llamarPartidasGenerales(){
+            try {
+                $docData = [];
+                $sql = $this->db->connect()->query("SELECT tb_partidasgeneral.idreg,
+                                                            tb_partidasgeneral.ccodigo,
+                                                            tb_partidasgeneral.cdescripcion,
+                                                            tb_partidasgeneral.nflgactivo
+                                                    FROM tb_partidasgeneral
+                                                    WHERE tb_partidasgeneral.nflgactivo = 1");
+                $sql->execute();
+
+                while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+                    $docData[] = $row;
+                }
+                
+                return $docData;
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
         private function obtenerIdRegistro($nombre){
             try {
                 $sql = $this->db->connect()->prepare("SELECT nidreg FROM tb_proyectos WHERE cdesproy=:proyecto");

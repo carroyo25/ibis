@@ -234,6 +234,38 @@ $(function(){
 
         return false;
     });
+
+    $("#addSubItemBlock").click(function(e){
+        e.preventDefault();
+
+        const body = document.getElementById("partidas_body");
+
+        try {
+            
+            if ($("#codproy").val() == "") throw new Error("Debe seleccionar un Centro de Costos");
+
+            fetch(RUTA+"proyecto/listarPartidas",{
+            })
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(e => {
+                        const tr = document.createElement('tr');
+                        tr.dataset.estado = 0;
+                        tr.innerHTML = `<td class="pl5px"><input type="text" value="${e.ccodigo}"></td>
+                                        <td class="pl5px"><input type="text" value="${e.cdescripcion}"></td>
+                                        <td class="textoCentro"><a href="#"><i class="far fa-trash-alt"></i></a></td>`;
+
+                        body.appendChild(tr);
+                });
+            })
+        } catch (error) {
+            mostrarMensaje(error.mensaje,"mensaje_error");
+        }
+
+       
+
+        return false;
+    });
 })
 
 getItems = () =>{
