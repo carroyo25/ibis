@@ -346,7 +346,7 @@
                     $pdf->Row(array(str_pad($i,3,"0",STR_PAD_LEFT),
                                     $datos[$rc]->cantdesp,
                                     $datos[$rc]->unidad,
-                                    utf8_decode($datos[$rc]->codigo .' '. $datos[$rc]->descripcion  .' '.'P : '.$datos[$rc]->pedido.' O : '.$datos[$rc]->orden)));
+                                    utf8_decode($datos[$rc]->codigo .' '. $datos[$rc]->descripcion  .' '.$datos[$rc]->obser.' '.'P : '.$datos[$rc]->pedido.' O : '.$datos[$rc]->orden)));
                     $lc++;
                     $rc++;
 
