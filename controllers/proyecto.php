@@ -50,6 +50,5 @@
         function listarPartidas() {
             echo json_encode($this->model->llamarPartidasGenerales());
         }
-        
     }
 ?>
