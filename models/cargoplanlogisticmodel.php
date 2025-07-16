@@ -26,146 +26,111 @@
                 $item = 1;
 
                 $sql = $this->db->connect()->prepare("SELECT
-                                                        pd.iditem,
-                                                        pd.idpedido,
-                                                        pd.idprod,
-                                                        pd.nroparte,
-                                                        pd.nregistro,
-                                                        pd.cant_pedida AS cantidad_pedido,
-                                                        pd.cant_atend AS cantidad_atendida,
-                                                        pd.cant_aprob AS cantidad_aprobada,
-                                                        pd.estadoItem,
-                                                        LPAD(pc.nrodoc, 6, '0') AS pedido,
-                                                        DATE_FORMAT(pc.emision, '%d/%m/%Y') AS crea_pedido,
-                                                        DATE_FORMAT(pc.faprueba, '%d/%m/%Y') AS aprobacion_pedido,
-                                                        pc.anio AS anio_pedido,
-                                                        pc.mes AS pedido_mes,
-                                                        pc.nivelAten AS atencion,
-                                                        pc.idtipomov,
-                                                        UPPER(pc.concepto) AS concepto,
-                                                        lod.id_orden AS orden,
-                                                        lod.item AS item_orden,
-                                                        loc.ffechades,
-                                                        loc.fechaLog,
-                                                        loc.fechaOpe,
-                                                        loc.FechaFin,
-                                                        loc.ffechaent,
-                                                        LPAD( loc.cnumero, 4, 0 ) AS cnumero,
-                                                        cp.ccodprod,
-                                                        UPPER(CONCAT_WS(' ', cp.cdesprod, pd.observaciones)) AS descripcion,
-                                                        pj.ccodproy,
-                                                        pj.nidreg,
-                                                        UPPER(a.cdesarea) AS area,
-                                                        UPPER(part.cdescripcion) AS partida,
-                                                        um.cabrevia AS unidad,
-                                                        loc.cper AS anio_orden,
-                                                        loc.ntipmov,
-                                                        FORMAT(loc.nplazo, 0) AS plazo,
-                                                        DATE_FORMAT(loc.ffechadoc, '%d/%m/%Y') AS fecha_orden,
-                                                        DATE_FORMAT(loc.ffechaent, '%d/%m/%Y') AS fecha_entrega,
-                                                        DATE_FORMAT(loc.ffechades, '%d/%m/%Y') AS fecha_descarga,
-                                                        DATE_FORMAT(loc.fechafin, '%d/%m/%Y') AS fecha_autorizacion_orden,
-                                                        ce.crazonsoc AS proveedor,
-                                                        COALESCE(lod.cantidad_orden, 0) AS cantidad_orden,
-                                                        COALESCE(rd_sums.ingreso, 0) AS ingreso,
-                                                        COALESCE(dd_sums.despachos, 0) AS despachos,
-                                                        COALESCE(ae_sums.ingreso_obra, 0) AS ingreso_obra,
-                                                        UPPER(asig.cnameuser) AS operador,
-                                                        DATEDIFF(loc.ffechaent, NOW()) AS dias_atraso,
-                                                        transp.cdescripcion AS transporte,
-                                                        uap.cnombres AS user_aprueba,
-                                                        adc.cnumguia,
-                                                        LPAD(arc.nnronota, 6, '0') AS nota_ingreso,
-                                                        LPAD( ae_sums.idregistro, 6, '0' ) AS nota_obra,
-	                                                    DATE_FORMAT( ae_sums.freg, '%d/%m/%Y' ) AS fecha_ingreso_almacen_obra,
-                                                        DATE_FORMAT(arc.ffecdoc, '%d/%m/%Y') AS fecha_recepcion_proveedor,
-                                                        teq.cregistro,
-                                                        usr.cnombres AS usuario,
-                                                        DATE_ADD(loc.ffechades, INTERVAL loc.nplazo DAY) AS fecha_entrega_final_anterior,
-                                                        addet.id_regalm,
-                                                        DATE_FORMAT(adc.ffecenvio, '%d/%m/%Y') AS salida_lurin,
-                                                        DATE_FORMAT(
-                                                            GREATEST(
-                                                                COALESCE(loc.fechaLog, '0000-00-00'),
-                                                                COALESCE(loc.fechaOpe, '0000-00-00'),
-                                                                COALESCE(loc.FechaFin, '0000-00-00')
-                                                            ),
-                                                            '%d/%m/%Y'
-                                                        ) AS fecha_autorizacion,
-                                                        atc.cnumguia AS guia_transferencia,
-                                                        LPAD(atc.idreg, 6, '0') AS nota_transferencia,
-                                                        DATE_FORMAT(atc.ftraslado, '%d/%m/%Y') AS fecha_traslado,
-                                                        sunat.guiasunat,
-                                                        emb.nombreEmbarca,
-                                                        emb.fechaEmbarca,
-                                                        amd.tracking,
-                                                        amd.trackinglurin,
-                                                        UPPER(asignacion.cnameuser) AS asigna,
-                                                        user_aprueba.cnombres
-                                                    FROM tb_pedidodet pd
-                                                    INNER JOIN tb_pedidocab pc ON pd.idpedido = pc.idreg
-                                                    INNER JOIN tb_costusu cu ON cu.ncodproy = pd.idcostos AND cu.nflgactivo = 1 AND cu.id_cuser = :usr
-                                                    LEFT JOIN cm_producto cp ON pd.idprod = cp.id_cprod
-                                                    LEFT JOIN (
-                                                        SELECT niddeta, id_orden, item, SUM(ncanti) AS cantidad_orden
-                                                        FROM lg_ordendet
-                                                        WHERE id_orden != 0
-                                                        GROUP BY niddeta, id_orden, item
-                                                    ) lod ON lod.niddeta = pd.iditem
-                                                    LEFT JOIN lg_ordencab loc ON lod.id_orden = loc.id_regmov
-                                                    LEFT JOIN tb_proyectos pj ON pd.idcostos = pj.nidreg
-                                                    LEFT JOIN tb_area a ON pd.idarea = a.ncodarea
-                                                    LEFT JOIN tb_partidas part ON pc.idpartida = part.idreg
-                                                    LEFT JOIN tb_unimed um ON pd.unid = um.ncodmed
-                                                    LEFT JOIN cm_entidad ce ON loc.id_centi = ce.id_centi
-                                                    LEFT JOIN tb_parametros transp ON loc.ctiptransp = transp.nidreg
-                                                    LEFT JOIN tb_user uap ON pc.aprueba = uap.iduser
-                                                    LEFT JOIN (
-                                                        SELECT niddetaPed, SUM(ncantidad) AS ingreso
-                                                        FROM alm_recepdet
-                                                        WHERE nflgactivo = 1
-                                                        GROUP BY niddetaPed
-                                                    ) rd_sums ON rd_sums.niddetaPed = pd.iditem
-                                                    LEFT JOIN (
-                                                        SELECT niddeta, niddetaPed, SUM(ndespacho) AS despachos
-                                                        FROM alm_despachodet
-                                                        WHERE nflgactivo = 1
-                                                        GROUP BY niddeta
-                                                    ) dd_sums ON dd_sums.niddetaPed = pd.iditem
-                                                    LEFT JOIN (
-                                                        SELECT idpedido,freg,idregistro, SUM(cant_ingr) AS ingreso_obra
-                                                        FROM alm_existencia
-                                                        WHERE nflgActivo = 1
-                                                        GROUP BY idpedido
-                                                    ) ae_sums ON ae_sums.idpedido = pd.iditem
-                                                    LEFT JOIN tb_pedidocab ON pd.idpedido = tb_pedidocab.idreg
-                                                    LEFT JOIN alm_despachodet addet ON pd.iditem = addet.niddetaPed
-                                                    LEFT JOIN alm_despachocab adc ON addet.id_regalm = adc.id_regalm
-                                                    LEFT JOIN alm_recepcab arc ON arc.id_regalm = adc.id_regalm
-                                                    LEFT JOIN tb_equipmtto teq ON pd.nregistro = teq.idreg
-                                                    LEFT JOIN tb_user usr ON pc.usuario = usr.iduser
-                                                    LEFT JOIN alm_transferdet atd ON atd.iddetped = pd.iditem
-                                                    LEFT JOIN alm_transfercab atc ON atc.idreg = atd.idtransfer
-                                                    LEFT JOIN tb_user asig ON pd.idasigna = asig.iduser
-                                                    LEFT JOIN lg_guias sunat ON sunat.id_regalm = adc.id_regalm
-                                                    LEFT JOIN alm_madresdet amd ON amd.nropedido = pd.iditem
-                                                    LEFT JOIN lg_guias emb ON emb.cnumguia = amd.id_regalm
-                                                    LEFT JOIN tb_user AS asignacion ON pd.idasigna = asignacion.iduser
-                                                    LEFT JOIN tb_user AS user_aprueba ON tb_pedidocab.aprueba = user_aprueba.iduser
-                                                    WHERE pc.nrodoc IS NOT NULL
-                                                        AND pc.nrodoc LIKE :pedido
-                                                        AND (lod.id_orden IS NULL OR lod.id_orden = 0 OR loc.cnumero LIKE :orden)
-                                                        AND pj.nidreg LIKE :costo
-                                                        AND pc.idtipomov LIKE :tipo
-                                                        AND cp.ccodprod LIKE :codigo
-                                                        AND pc.concepto LIKE :concepto
-                                                        AND pd.estadoItem LIKE :estado
-                                                        AND CONCAT_WS(' ', cp.cdesprod, pd.observaciones) LIKE :descripcion
-                                                        AND pc.anio >= YEAR(NOW()) - 2
-                                                        AND (loc.cper IS NULL OR loc.cper LIKE :anioOrden)
-                                                        AND pc.anio LIKE :anioPedido
-                                                        GROUP BY pd.iditem
-                                                        ORDER BY pc.emision DESC");
+                                pd.iditem,
+                                pd.idpedido,
+                                pd.idprod,
+                                pd.nroparte,
+                                pd.nregistro,
+                                pd.cant_pedida AS cantidad_pedido,
+                                pd.cant_atend AS cantidad_atendida,
+                                pd.cant_aprob AS cantidad_aprobada,
+                                pd.estadoItem,
+                                LPAD( pc.nrodoc, 6, '0' ) AS pedido,
+                                DATE_FORMAT( pc.emision, '%d/%m/%Y' ) AS crea_pedido,
+                                DATE_FORMAT( pc.faprueba, '%d/%m/%Y' ) AS aprobacion_pedido,
+                                pc.anio AS anio_pedido,
+                                pc.mes AS pedido_mes,
+                                pc.nivelAten AS atencion,
+                                pc.idtipomov,
+                                UPPER( pc.concepto ) AS concepto,
+                                cp.ccodprod,
+                                UPPER(
+                                CONCAT_WS( ' ', cp.cdesprod, pd.observaciones )) AS descripcion,
+                                pj.ccodproy,
+                                pj.nidreg,
+                                lod.id_orden AS orden,
+                                lod.item AS item_orden,
+                                loc.ffechades,
+                                loc.fechaLog,
+                                loc.fechaOpe,
+                                loc.FechaFin,
+                                loc.ffechaent,
+                                LPAD( loc.cnumero, 4, 0 ) AS cnumero,
+                                UPPER( a.cdesarea ) AS area,
+                                UPPER( part.cdescripcion ) AS partida,
+                                um.cabrevia AS unidad,
+                                loc.cper AS anio_orden,
+                                loc.ntipmov,
+                                FORMAT( loc.nplazo, 0 ) AS plazo,
+                                DATE_FORMAT( loc.ffechadoc, '%d/%m/%Y' ) AS fecha_orden,
+                                DATE_FORMAT( loc.ffechaent, '%d/%m/%Y' ) AS fecha_entrega,
+                                DATE_FORMAT( loc.ffechades, '%d/%m/%Y' ) AS fecha_descarga,
+                                DATE_FORMAT( loc.fechafin, '%d/%m/%Y' ) AS fecha_autorizacion_orden,
+                                UPPER( ce.crazonsoc ) AS proveedor,
+                                COALESCE ( lod.cantidad_orden, 0 ) AS cantidad_orden,
+                                COALESCE ( rd_sums.ingreso, 0 ) AS ingreso,
+                                COALESCE ( dd_sums.despachos, 0 ) AS despachos,
+                                COALESCE ( ae_sums.ingreso_obra, 0 ) AS ingreso_obra,
+                                UPPER( asig.cnameuser ) AS operador,
+                                DATEDIFF(
+                                    loc.ffechaent,
+                                NOW()) AS dias_atraso,
+                                transp.cdescripcion AS transporte,
+                                uap.cnombres AS user_aprueba,
+                                adc.cnumguia,
+                            LPAD( arc.nnronota, 6, '0' ) AS nota_ingreso,
+                                LPAD( ae_sums.idregistro, 6, '0' ) AS nota_obra,
+                                DATE_FORMAT( ae_sums.freg, '%d/%m/%Y' ) AS fecha_ingreso_almacen_obra,
+                                DATE_FORMAT( arc.ffecdoc, '%d/%m/%Y' ) AS fecha_recepcion_proveedor,
+                                teq.cregistro,
+                                usr.cnombres AS usuario
+                            FROM
+                                tb_pedidodet pd
+                                INNER JOIN tb_costusu cu ON cu.ncodproy = pd.idcostos 
+                                AND cu.nflgactivo = 1 
+                                AND cu.id_cuser = :usr
+                                INNER JOIN tb_pedidocab pc ON pd.idpedido = pc.idreg
+                                LEFT JOIN cm_producto cp ON pd.idprod = cp.id_cprod
+                                LEFT JOIN tb_proyectos pj ON pd.idcostos = pj.nidreg
+                                LEFT JOIN ( SELECT niddeta, id_orden, item, SUM( ncanti ) AS cantidad_orden FROM lg_ordendet WHERE id_orden != 0 GROUP BY niddeta, id_orden, item ) lod ON lod.niddeta = pd.iditem
+                                LEFT JOIN lg_ordencab loc ON lod.id_orden = loc.id_regmov
+                                LEFT JOIN tb_area a ON pd.idarea = a.ncodarea
+                                LEFT JOIN tb_partidas part ON pc.idpartida = part.idreg
+                                LEFT JOIN tb_unimed um ON pd.unid = um.ncodmed
+                                LEFT JOIN cm_entidad ce ON loc.id_centi = ce.id_centi
+                                LEFT JOIN tb_parametros transp ON loc.ctiptransp = transp.nidreg
+                                LEFT JOIN tb_user uap ON pc.aprueba = uap.iduser
+                                LEFT JOIN ( SELECT niddetaPed, SUM( ncantidad ) AS ingreso FROM alm_recepdet WHERE nflgactivo = 1 GROUP BY niddetaPed ) rd_sums ON rd_sums.niddetaPed = pd.iditem
+                                LEFT JOIN ( SELECT niddeta, niddetaPed, SUM( ndespacho ) AS despachos FROM alm_despachodet WHERE nflgactivo = 1 GROUP BY niddeta ) dd_sums ON dd_sums.niddetaPed = pd.iditem
+                                LEFT JOIN ( SELECT idpedido, freg, idregistro, SUM( cant_ingr ) AS ingreso_obra FROM alm_existencia WHERE nflgActivo = 1 GROUP BY idpedido ) ae_sums ON ae_sums.idpedido = pd.iditem
+                                LEFT JOIN alm_despachodet addet ON pd.iditem = addet.niddetaPed
+                                LEFT JOIN alm_despachocab adc ON addet.id_regalm = adc.id_regalm
+                                LEFT JOIN alm_recepcab arc ON arc.id_regalm = adc.id_regalm
+                                LEFT JOIN tb_equipmtto teq ON pd.nregistro = teq.idreg
+                                LEFT JOIN tb_user usr ON pc.usuario = usr.iduser
+                                LEFT JOIN alm_transferdet atd ON atd.iddetped = pd.iditem
+                                LEFT JOIN alm_transfercab atc ON atc.idreg = atd.idtransfer
+                                LEFT JOIN tb_user asig ON pd.idasigna = asig.iduser
+                                LEFT JOIN lg_guias sunat ON sunat.id_regalm = adc.id_regalm
+                                LEFT JOIN tb_user AS uasi ON pd.idasigna = uasi.iduser
+                                LEFT JOIN tb_user AS uapr ON pc.aprueba = uapr.iduser
+                                LEFT JOIN alm_madresdet amd ON amd.niddetaPed = pd.iditem 
+                            WHERE
+                                pd.nflgActivo = 1 
+                                AND (pc.nrodoc IS NOT NULL OR pc.nrodoc LIKE :pedido) 
+                                AND ( loc.cper IS NULL OR loc.cper LIKE :anioOrden )
+                                AND ( lod.id_orden IS NULL OR lod.id_orden = 0 OR loc.cnumero LIKE :orden ) 
+                                AND pj.nidreg LIKE :costo
+                                AND pc.idtipomov LIKE :tipo
+                                AND cp.ccodprod LIKE :codigo
+                                AND pc.concepto LIKE :concepto
+                                AND pd.estadoItem LIKE :estado
+                                AND CONCAT_WS( ' ', cp.cdesprod, pd.observaciones ) LIKE :descripcion
+                                AND pc.anio LIKE :anioPedido
+                            GROUP BY
+                                pd.iditem 
+                            ORDER BY
+                                pc.emision DESC");
                                                                                                     
                 $sql->execute(["orden"          =>$orden,
                                "pedido"         =>$pedido,
@@ -178,8 +143,6 @@
                                "usr"            =>$userID,
                                "anioOrden"      =>$anio,
                                "anioPedido"     =>$anio]);
-                
-                
                 
                 $rowCount = $sql->rowCount();
 
@@ -198,7 +161,11 @@
                 $itemOrden = 1;
                 $nro_orden = 0;
 
-                if ($rowCount > 0) {
+                while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+                    $docData[] = $row;
+                }
+
+                /*if ($rowCount > 0) {
 
                     $counter = 1;
 
@@ -481,7 +448,7 @@
                     }
                 }else {
                     $salida = "Buscar el pedido";
-                }
+                }*/
                 return $salida;
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
@@ -611,7 +578,7 @@
                                                     LEFT JOIN alm_transfercab ON alm_transfercab.idreg = alm_transferdet.idtransfer
                                                     LEFT JOIN tb_user AS asignacion ON tb_pedidodet.idasigna = asignacion.iduser
                                                     LEFT JOIN lg_guias AS sunat ON sunat.id_regalm = alm_despachocab.id_regalm
-                                                    LEFT JOIN alm_madresdet ON alm_madresdet.nropedido = tb_pedidodet.iditem
+                                                    LEFT JOIN alm_madresdet ON alm_madresdet.niddetaPed = tb_pedidodet.iditem
                                                     LEFT JOIN alm_madrescab ON alm_madrescab.id_regalm = alm_madresdet.id_regalm
                                                     LEFT JOIN lg_guias AS embarca ON alm_madrescab.cnumguia = embarca.cnumguia
                                                 WHERE

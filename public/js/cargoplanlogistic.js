@@ -12,14 +12,18 @@ $(function() {
 
         $.post(RUTA+"cargoplanlogistic/filtroCargoPlanLogistica",str,
             function (data, text, requestXHR) {
-                $(".itemsCargoPlanner table tbody")
+                /*$(".itemsCargoPlanner table tbody")
                     .empty()
                     .append(data);
 
                     $("#esperar").fadeOut().promise().done(function(){
-                        iniciarPaginadorLogistica();
-                    });
-            "text"
+                        //iniciarPaginadorLogistica();
+                    });*/
+                $("#esperar").fadeOut().promise().done(function(){
+                    //iniciarPaginadorLogistica();
+                });
+                console.log(data);
+            "json"
         });
 
         return false;

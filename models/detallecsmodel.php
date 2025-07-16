@@ -28,7 +28,9 @@
                                                         ibis.alm_consumo.idreg,
                                                         ibis.cm_producto.ngrupo,
                                                         ibis.cm_producto.nclase,
-                                                        ibis.cm_producto.nfam 
+                                                        ibis.cm_producto.nfam,
+                                                        ibis.alm_consumo.cserie,
+                                                        DATE_FORMAT( ibis.alm_consumo.fechadevolucion, '%d/%m/%Y' ) AS fechadevolucion
                                                     FROM
                                                         ibis.alm_consumo
                                                         LEFT JOIN ibis.cm_producto ON alm_consumo.idprod = cm_producto.id_cprod
@@ -61,6 +63,8 @@
                                         <td class="textoDerecha">'.$rs['nrodoc'].'</td>
                                         <td class="pl20px">'.$rs['usuario'].'</td>
                                         <td class="textoCentro">'.$rs['fechasalida'].'</td>
+                                        <td class="textoCentro">'.$rs['fechadevolucion'].'</td>
+                                        <td class="textoCentro">'.$rs['cserie'].'</td>
                                         <td class="textoDerecha">'.number_format($rs['salida'],2,'.','').'</td>
                                     </tr>';
                      }

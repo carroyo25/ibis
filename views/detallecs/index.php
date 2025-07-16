@@ -52,6 +52,8 @@
                     <th width="5%">N° Documento</th>
                     <th >Nombre</th>
                     <th >Fecha Salida</th>
+                    <th >Fecha Devolucion</th>
+                    <th >Serie</th>
                     <th width="15%">Total Salida</th>   
                 </tr>
             </thead>
