@@ -181,7 +181,6 @@
                                 "mensaje"=>"Registro modificado",
                                 "clase"=>"mensaje_correcto",
                                 "user_modifica"=>$_SESSION['iduser']);
-
                 
                 return $salida;
 
@@ -974,23 +973,23 @@
            $idpedido = $parametros['idpedido'];
            $orden = $parametros['orden'];
            $suma = $parametros['suma'];
-           $accion = $parametros['accion'];
+           $estado = $parametros['accion'] == "d" ? 105:54;
            $usuario = $parametros['usuario'];
 
            $respuesta = "Error al actualizar"; 
 
-           if ( $accion === "d" || $accion === "f" ){
+           if ( $accion != "c" ){
                 try {
                     $sql = $this->db->connect()->prepare("UPDATE lg_ordendet 
                                                         SET lg_ordendet.id_regmov = null, 
                                                             lg_ordendet.niddeta = null, 
                                                             lg_ordendet.ncanti = 0, 
                                                             lg_ordendet.nestado = 0,
-                                                            lg_ordendet.nEstadoReg = 105
+                                                            lg_ordendet.nEstadoReg =:accion
                                                         WHERE lg_ordendet.nitemord =:indice
                                                         LIMIT 1");
 
-                    $sql->execute(["indice"=>$idorden]);
+                    $sql->execute(["indice"=>$idorden,"accion"=>$accion]);
 
                     if ( $sql->rowCount() > 0 ){
                         $this->actualizarPedido($accion,$idpedido);
@@ -1000,10 +999,8 @@
                 } catch (PDOException $th) {
                     echo "Error: ".$th->getMessage();
                     return false;
-                }
-
-                
-           }elseif ($accion === "c"){
+                }    
+           }else{
                 $respuesta = "Cambiar Item"; 
            }
 
@@ -1011,16 +1008,15 @@
         }
 
         private function actualizarPedido($accion,$indice){
-            $estado = $accion == "d" ? 105:54;
-
             try {
                 $sql = $this->db->connect()->prepare("UPDATE tb_pedidodet 
                                                         SET tb_pedidodet.idorden = null,
                                                             tb_pedidodet.nflgOrden = 0,
-                                                            tb_pedidodet.cant_orden = 0
+                                                            tb_pedidodet.cant_orden = 0,
+                                                            tb_pedidodet.estadoItem =:estado
                                                         WHERE tb_pedidodet.iditem = :indice
                                                         LIMIT 1");
-                $sql->execute(["indice"=>$indice]);
+                $sql->execute(["indice"=>$indice,"estado"=>$accion]);
 
             } catch (PDOException $th) {
                     echo "Error: ".$th->getMessage();
