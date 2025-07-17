@@ -179,7 +179,7 @@ $(function() {
     $("#foto").on("click", function (e) {
         e.preventDefault();
 
-        $("#image_product").trigger('click');
+        //$("#image_product").trigger('click');
 
         return false;
     });
@@ -341,15 +341,16 @@ $(function() {
     $("#tablaPrincipal tbody").on("click",".pointer a", function (e) {
         e.preventDefault();
 
+        $("#preguntaEliminar").fadeIn();
+
         index = $(this).attr("href");
-        accionItem = $(this).attr('data','accion');
+        /*accionItem = $(this).attr('data','accion');
 
         if (accionItem == "delete"){
             $("#preguntaEliminar").fadeIn();
         }else{
             $("#preguntaRestaurar").fadeIn();
-        }
-        
+        }*/
         
         return false;
     });
@@ -371,7 +372,7 @@ $(function() {
                     .empty()
                     .append(data);
 
-                $("#pregunta").fadeOut();
+                $("#preguntaEliminar").fadeOut();
             },
             "text"
         );

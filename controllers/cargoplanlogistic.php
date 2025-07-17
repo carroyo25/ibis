@@ -11,7 +11,7 @@
         }
 
         function filtroCargoPlanLogistica(){
-            echo $this->model->listarCargoPlanLogistica($_POST);
+            echo json_encode($this->model->listarCargoPlanLogistica($_POST));
         }
 
         function exceljs(){

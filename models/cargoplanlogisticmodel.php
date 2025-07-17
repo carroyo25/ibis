@@ -92,7 +92,7 @@
                                 INNER JOIN tb_pedidocab pc ON pd.idpedido = pc.idreg
                                 LEFT JOIN cm_producto cp ON pd.idprod = cp.id_cprod
                                 LEFT JOIN tb_proyectos pj ON pd.idcostos = pj.nidreg
-                                LEFT JOIN ( SELECT niddeta, id_orden, item, SUM( ncanti ) AS cantidad_orden FROM lg_ordendet WHERE id_orden != 0 GROUP BY niddeta, id_orden, item ) lod ON lod.niddeta = pd.iditem
+                                LEFT JOIN ( SELECT niddeta, id_orden, item, nflgactivo, SUM( ncanti ) AS cantidad_orden FROM lg_ordendet WHERE id_orden != 0 GROUP BY niddeta, id_orden, item ) lod ON lod.niddeta = pd.iditem
                                 LEFT JOIN lg_ordencab loc ON lod.id_orden = loc.id_regmov
                                 LEFT JOIN tb_area a ON pd.idarea = a.ncodarea
                                 LEFT JOIN tb_partidas part ON pc.idpartida = part.idreg
@@ -116,17 +116,20 @@
                                 LEFT JOIN tb_user AS uapr ON pc.aprueba = uapr.iduser
                                 LEFT JOIN alm_madresdet amd ON amd.niddetaPed = pd.iditem 
                             WHERE
-                                pd.nflgActivo = 1 
-                                AND (pc.nrodoc IS NOT NULL OR pc.nrodoc LIKE :pedido) 
-                                AND ( loc.cper IS NULL OR loc.cper LIKE :anioOrden )
-                                AND ( lod.id_orden IS NULL OR lod.id_orden = 0 OR loc.cnumero LIKE :orden ) 
-                                AND pj.nidreg LIKE :costo
-                                AND pc.idtipomov LIKE :tipo
+                                pd.nflgActivo 
+                                AND cu.nflgactivo = 1 
+                                AND NOT ISNULL( pc.nrodoc ) 
+                                AND pc.nrodoc LIKE :pedido 
+                                AND ISNULL( lod.nflgactivo ) 
+                                AND IFNULL( loc.cnumero, '' ) LIKE :orden 
+                                AND pj.nidreg LIKE :costo 
+                                AND pc.idtipomov LIKE :tipo 
                                 AND cp.ccodprod LIKE :codigo
                                 AND pc.concepto LIKE :concepto
                                 AND pd.estadoItem LIKE :estado
-                                AND CONCAT_WS( ' ', cp.cdesprod, pd.observaciones ) LIKE :descripcion
-                                AND pc.anio LIKE :anioPedido
+                                AND CONCAT_WS( ' ', cp.cdesprod, pd.observaciones ) LIKE :descripcion 
+                                AND IFNULL( loc.cper, '' ) LIKE :anioOrden 
+                                AND pc.anio LIKE :anioPedido 
                             GROUP BY
                                 pd.iditem 
                             ORDER BY
@@ -449,7 +452,8 @@
                 }else {
                     $salida = "Buscar el pedido";
                 }*/
-                return $salida;
+
+                return $docData;
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;

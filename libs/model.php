@@ -5294,7 +5294,7 @@
                                                     INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
                                                     INNER JOIN tb_parametros ON cm_producto.ntipo = tb_parametros.nidreg 
                                                 WHERE
-                                                    cm_producto.flgActivo = 1 AND
+                                                    cm_producto.flgVisible = 1 AND
                                                     cm_producto.cdesprod LIKE :descripcion AND
                                                     cm_producto.ccodprod LIKE :codigo AND
                                                     cm_producto.ntipo=:tipo
@@ -5347,7 +5347,7 @@
                                                     INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
                                                     INNER JOIN tb_parametros ON cm_producto.ntipo = tb_parametros.nidreg 
                                                 WHERE
-                                                    cm_producto.flgActivo = 1 AND
+                                                    cm_producto.flgVisible = 1 AND
                                                     cm_producto.cdesprod LIKE :descripcion AND
                                                     cm_producto.ccodprod LIKE :codigo AND
                                                     cm_producto.ntipo=:tipo

@@ -20,6 +20,8 @@
                                                     cm_producto
                                                     INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
                                                     INNER JOIN tb_parametros ON cm_producto.ntipo = tb_parametros.nidreg 
+                                                WHERE 
+                                                    cm_producto.flgVisible = 1
                                                 ORDER BY id_cprod ASC
                                                 LIMIT 1000");
                 $sql->execute();
@@ -30,7 +32,7 @@
                     while( $rs  = $sql->fetch()) {
                         $icono  = $rs['flgActivo'] == 1 ? '<i class="fas fa-trash-alt"></i>':'<i class="fas fa-exchange-alt"></i>';
                         $accion = $rs['flgActivo'] == 1 ? 'delete':'restore';
-                        $fondo   = $rs['flgActivo'] == 1 ? '#fff':'#c2c2c2';
+                        $fondo   = $rs['flgActivo'] == 1 ? '#fff':'#fff';
 
                         $salida .='<tr data-id="'.$rs['id_cprod'].'" class="pointer" style="background:'.$fondo.'">
                                         <td class="textoCentro">'.str_pad($item,5,0,STR_PAD_LEFT).'</td>
@@ -38,7 +40,7 @@
                                         <td class="textoCentro '.strtolower($rs['tipo']).'">'.$rs['tipo'].'</td>
                                         <td class="pl20px">'.$rs['cdesprod'].'</td>
                                         <td class="textoCentro">'.$rs['cabrevia'].'</td>
-                                        <td class="textoCentro"><a href="'.$rs['id_cprod'].'" data-accion = "'.$accion.'">'.$icono.'</a></td>
+                                        <td class="textoCentro"><a href="'.$rs['id_cprod'].'" data-accion = "delete"><i class="fas fa-trash-alt"></i></a></td>
                                     </tr>';
                         $item++;
                     }
@@ -70,6 +72,7 @@
                                                     INNER JOIN tb_parametros ON cm_producto.ntipo = tb_parametros.nidreg 
                                                 WHERE
                                                     cm_producto.cdesprod LIKE :criterio
+                                                    AND cm_producto.flgVisible = 1
                                                     LIMIT 1000");
                 $sql->execute(["criterio"=>$palabra]);
                 $rc = $sql->rowcount();
@@ -360,7 +363,7 @@
 
         public function eliminaItem($id){
             try {
-                $sql = $this->db->connect()->prepare("UPDATE cm_producto SET flgActivo = 0 WHERE id_cprod=:id");
+                $sql = $this->db->connect()->prepare("UPDATE cm_producto SET flgVisible = 0 WHERE id_cprod=:id");
                 $sql->execute([$id]);
 
                 return $this->listarItems();
