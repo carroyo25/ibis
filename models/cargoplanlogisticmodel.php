@@ -167,6 +167,8 @@
                 while($row = $sql->fetch(PDO::FETCH_ASSOC)){
                     $docData[] = $row;
                 }
+                
+                return $docData;
 
                 /*if ($rowCount > 0) {
 
@@ -453,7 +455,7 @@
                     $salida = "Buscar el pedido";
                 }*/
 
-                return $docData;
+                //return array("datos"=>$docData);
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;

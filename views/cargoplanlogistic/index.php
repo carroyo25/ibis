@@ -140,7 +140,7 @@
                     <th data-idcol="45" style="background:#819830; color:#000">Fecha Descarga</br>Orden</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="cargoPlanDescripBody">
                 
             </tbody>
         </table>

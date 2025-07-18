@@ -6,25 +6,41 @@ $(function() {
     $("#btnProcesa").click(function(e){
         e.preventDefault();
 
-        let str = $("#formConsulta").serialize();
-
         $("#esperar").css({"display":"block","opacity":"1"});
 
-        $.post(RUTA+"cargoplanlogistic/filtroCargoPlanLogistica",str,
-            function (data, text, requestXHR) {
-                /*$(".itemsCargoPlanner table tbody")
-                    .empty()
-                    .append(data);
+        const formdata = new FormData();
+        formdata.append('tipoSearch',$("#tipoSearch").val());
+        formdata.append('costosSearch',$("#costosSearch").val());
+        formdata.append('descripSearch',$("#descripSearch").val());
+        formdata.append('codigoSearch',$("#codigoSearch").val());
+        formdata.append('ordenSearch',$("#ordenSearch").val());
+        formdata.append('pedidoSearch',$("#pedidoSearch").val());
+        formdata.append('conceptoSearch',$("#conceptoSearch").val());
+        formdata.append('estado_item',$("#estado_item").val());
+        formdata.append('anioSearch',$("#anioSearch").val());
 
-                    $("#esperar").fadeOut().promise().done(function(){
-                        //iniciarPaginadorLogistica();
-                    });*/
-                $("#esperar").fadeOut().promise().done(function(){
-                    //iniciarPaginadorLogistica();
-                });
-                console.log(data);
-            "json"
-        });
+        let contador_item = 1;
+
+        const body = document.getElementById("cargoPlanDescripBody");
+
+
+        fetch(RUTA+"cargoplanlogistic/filtroCargoPlanLogistica",{
+            method:'POST',
+            body:formdata
+        })
+        .then(response => response.json())
+        .then(data=>{
+            $("#esperar").css({"display": "none", "opacity": "0"});
+        
+            data.forEach(e=>{
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td class="textoCentro">${contador_item++}</td>`;
+
+                body.appendChild(tr);
+            });
+
+           
+        })
 
         return false;
     });
