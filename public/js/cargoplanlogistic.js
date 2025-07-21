@@ -23,7 +23,6 @@ $(function() {
 
         const body = document.getElementById("cargoPlanDescripBody");
 
-
         fetch(RUTA+"cargoplanlogistic/filtroCargoPlanLogistica",{
             method:'POST',
             body:formdata
@@ -34,7 +33,65 @@ $(function() {
         
             data.forEach(e=>{
                 const tr = document.createElement('tr');
-                tr.innerHTML = `<td class="textoCentro">${contador_item++}</td>`;
+                tr.classList.add('pointer');
+                
+                let atencion = e.atencion == 47 ? 'NORMAL':'URGENTE';
+                let tipo = e.idtipomov == 37 ? 'B' : 'S';
+
+                tr.innerHTML = `<td class="textoCentro">${contador_item++}</td>
+                                <td class="textoCentro">${e.estadoItem}</td>
+                                <td class="textoCentro">${e.ccodproy}</td>
+                                <td class="pl20px">${e.area}</td>
+                                <td class="pl20px">${e.partida}</td>
+                                <td class="textoCentro">${atencion}</td>
+                                <td class="textoCentro">${tipo}</td>
+                                <td class="textoCentro"></td>
+                                <td class="textoCentro"></td>
+                                <td class="textoCentro"></td>
+                                <td class="textoCentro"></td>
+                                <td class="textoCentro"></td>
+                                <td class="textoDerecha"></td>
+                                <td class="textoDerecha"></td>
+                                <td class="textoCentro"></td>
+                                <td class="textoCentro"></td>
+                                <td class="textoCentro"></td>
+                                <td class="pl10px sticky-column"></td>
+                                <td class="textoCentro"></td>
+                                <td class="textoCentro"></td>
+                                <td class="textoCentro"></td>
+                                <td class="textoCentro"></td>
+                                <td class="textoDerecha pr15px" style="background:#e8e8e8;font-weight: bold"></td>
+                                <td class="pl10px"></td>
+                                <td class="pl10px"></td>
+                                <td class="textoDerecha pr15px"></td>
+                                <td class="pl10px"></td>
+                                <td class="textoCentro"></td>
+
+                                <td class="textoDerecha pr15px"></td>
+                                <td class="textoCentro"></td>
+                                <td class="textoCentro"></td>
+
+                                <td class="textoDerecha pr15px"></td>
+                                <td class="textoDerecha pr15px"></td>
+                                <td class="textoDerecha pr15px"></td>
+                                <td class="textoCentro "></td>
+                                <td class="textoDerecha"></td>
+                                <td class="textoCentro"></td>
+                                <td class="textoCentro"></td>
+                                <td class="textoCentro"></td>
+                                <td class="textoCentro"></td>
+                                <td class="textoCentro"></td>
+                                <td class="textoCentro"></td>
+                                <td class="textoCentro"></td>
+                                <td class="textoDerecha"></td>
+                                <td class="pl10px"></td>
+                                <td class="pl10px"></td>
+                                <td class="pl10px"></td>
+                                <td class="pl10px"></td>
+                                <td class="textoCentro"></td>
+                                <td class="textoCentro"></td>
+                                <td class="pl10px"></td>
+                                <td class="pl10px"></td>`;
 
                 body.appendChild(tr);
             });

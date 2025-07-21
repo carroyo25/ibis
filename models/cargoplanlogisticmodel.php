@@ -57,7 +57,7 @@
                                 loc.ffechaent,
                                 LPAD( loc.cnumero, 4, 0 ) AS cnumero,
                                 UPPER( a.cdesarea ) AS area,
-                                UPPER( part.cdescripcion ) AS partida,
+                                COALESCE (UPPER( part.cdescripcion ),'') AS partida,
                                 um.cabrevia AS unidad,
                                 loc.cper AS anio_orden,
                                 loc.ntipmov,

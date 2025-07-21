@@ -344,13 +344,6 @@ $(function() {
         $("#preguntaEliminar").fadeIn();
 
         index = $(this).attr("href");
-        /*accionItem = $(this).attr('data','accion');
-
-        if (accionItem == "delete"){
-            $("#preguntaEliminar").fadeIn();
-        }else{
-            $("#preguntaRestaurar").fadeIn();
-        }*/
         
         return false;
     });
