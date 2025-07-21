@@ -37,6 +37,8 @@ $(function() {
                 
                 let atencion = e.atencion == 47 ? 'NORMAL':'URGENTE';
                 let tipo = e.idtipomov == 37 ? 'B' : 'S';
+                let compra = e.cantidad_pedido - e.cantidad_aprobada;
+                let saldo = e.cantidad_orden - e.ingreso > 0 ? e.cantidad_orden - e.ingreso : "-";
 
                 tr.innerHTML = `<td class="textoCentro">${contador_item++}</td>
                                 <td class="textoCentro">${e.estadoItem}</td>
@@ -45,53 +47,49 @@ $(function() {
                                 <td class="pl20px">${e.partida}</td>
                                 <td class="textoCentro">${atencion}</td>
                                 <td class="textoCentro">${tipo}</td>
-                                <td class="textoCentro"></td>
-                                <td class="textoCentro"></td>
-                                <td class="textoCentro"></td>
-                                <td class="textoCentro"></td>
-                                <td class="textoCentro"></td>
-                                <td class="textoDerecha"></td>
-                                <td class="textoDerecha"></td>
-                                <td class="textoCentro"></td>
-                                <td class="textoCentro"></td>
-                                <td class="textoCentro"></td>
-                                <td class="pl10px sticky-column"></td>
-                                <td class="textoCentro"></td>
-                                <td class="textoCentro"></td>
-                                <td class="textoCentro"></td>
-                                <td class="textoCentro"></td>
-                                <td class="textoDerecha pr15px" style="background:#e8e8e8;font-weight: bold"></td>
-                                <td class="pl10px"></td>
-                                <td class="pl10px"></td>
-                                <td class="textoDerecha pr15px"></td>
-                                <td class="pl10px"></td>
-                                <td class="textoCentro"></td>
-
-                                <td class="textoDerecha pr15px"></td>
-                                <td class="textoCentro"></td>
-                                <td class="textoCentro"></td>
-
-                                <td class="textoDerecha pr15px"></td>
-                                <td class="textoDerecha pr15px"></td>
-                                <td class="textoDerecha pr15px"></td>
-                                <td class="textoCentro "></td>
-                                <td class="textoDerecha"></td>
-                                <td class="textoCentro"></td>
-                                <td class="textoCentro"></td>
-                                <td class="textoCentro"></td>
-                                <td class="textoCentro"></td>
-                                <td class="textoCentro"></td>
-                                <td class="textoCentro"></td>
-                                <td class="textoCentro"></td>
-                                <td class="textoDerecha"></td>
-                                <td class="pl10px"></td>
-                                <td class="pl10px"></td>
-                                <td class="pl10px"></td>
-                                <td class="pl10px"></td>
-                                <td class="textoCentro"></td>
-                                <td class="textoCentro"></td>
-                                <td class="pl10px"></td>
-                                <td class="pl10px"></td>`;
+                                <td class="textoCentro">${e.anio_pedido}</td>
+                                <td class="textoDerecha">${e.pedido}</td>
+                                <td class="textoCentro">${e.crea_pedido}</td>
+                                <td class="textoCentro">${e.aprobacion_pedido}</td>
+                                <td class="textoCentro">${e.cantidad_pedido}</td>
+                                <td class="textoCentro">${e.cantidad_aprobada}</td>
+                                <td class="textoDerecha">${compra}</td>
+                                <td class="textoCentro">${e.ccodprod}</td>
+                                <td class="textoCentro">${e.unidad}</td>
+                                <td class="pl20px sticky-column">${e.descripcion}</td>
+                                <td class="textoCentro">${tipo}</td>
+                                <td class="textoCentro">${e.anio_orden}</td>
+                                <td class="textoCentro">${e.cnumero}</td>
+                                <td class="textoCentro">${e.fecha_orden}</td>
+                                <td class="textoCentro">${e.cantidad_orden}</td>
+                                <td class="pl10px">${e.item_orden}</td>
+                                <td class="textoDerecha pr15px" style="background:#e8e8e8;font-weight: bold">${e.fecha_autorizacion_orden}</td>
+                                <td class="pl10px">${e.cantidad_atendida}</td>
+                                <td class="textoDerecha pr15px">${e.proveedor}</td>
+                                <td class="pl10px">${e.fecha_entrega}</td>
+                                <td class="textoCentro">${e.nota_ingreso}</td>
+                                <td class="textoDerecha pr15px">${e.fecha_recepcion_proveedor}</td>
+                                <td class="textoCentro">${saldo}</td>
+                                <td class="textoCentro">${e.plazo}</td>
+                                <td class="textoDerecha pr15px">${e.dias_atraso}</td>
+                                <td class="textoDerecha pr15px">${e.partida}</td>
+                                <td class="textoCentro ">${e.partida}</td>
+                                <td class="textoDerecha">${e.partida}</td>
+                                <td class="textoCentro">${e.partida}</td>
+                                <td class="textoCentro">${e.partida}</td>
+                                <td class="textoCentro">${e.partida}</td>
+                                <td class="textoCentro">${e.partida}</td>
+                                <td class="textoCentro">${e.partida}</td>
+                                <td class="textoCentro">${e.partida}</td>
+                                <td class="textoCentro">${e.partida}</td>
+                                <td class="textoDerecha">${e.partida}</td>
+                                <td class="pl10px">${e.partida}</td>
+                                <td class="pl10px">${e.partida}</td>
+                                <td class="pl10px">${e.partida}</td>
+                                <td class="pl10px">${e.partida}</td>
+                                <td class="textoCentro">${e.partida}</td>
+                                <td class="textoCentro">${e.partida}</td>
+                                <td class="pl10px">${e.fecha_descarga}</td>`;
 
                 body.appendChild(tr);
             });
