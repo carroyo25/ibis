@@ -8,9 +8,11 @@ $(function(){
     $("#btnConsulta").click(function(e){
         e.preventDefault();
 
-        $.post(RUTA+"detallecs/consulta", {cc:$("#costosSearch").val(),codigo:$("#codigoBusqueda").val(),descripcion:$("#descripcionSearch").val()},
+        $.post(RUTA+"detallecs/consulta", {cc:$("#costosSearch").val(),
+                                            codigo:$("#codigoBusqueda").val(),
+                                            descripcion:$("#descripcionSearch").val(),
+                                            isometrico:$("#isometricoSearch").val()},
             function (data, text, requestXHR) {
-                console.log(data);
                 $("#tablaPrincipal tbody").empty().append(data);
             },
             "text"
@@ -49,7 +51,12 @@ detalles = () =>{
             DOCUMENTO       = $(this).find('td').eq(5).text(),
             NOMBRE          = $(this).find('td').eq(6).text(),
             FECHA           = $(this).find('td').eq(7).text(),
-            TOTAL           = $(this).find('td').eq(8).text();
+            DEVOLUCION      = $(this).find('td').eq(8).text(),
+            SERIE           = $(this).find('td').eq(9).text(),
+            HOJA            = $(this).find('td').eq(10).text(),
+            ISOMETRICO      = $(this).find('td').eq(11).text(),
+            OBSERVACIONES   = $(this).find('td').eq(12).text(),
+            TOTAL           = $(this).find('td').eq(13).text();
 
            
         item= {};
@@ -62,6 +69,11 @@ detalles = () =>{
         item['documento']       = DOCUMENTO;
         item['nombre']          = NOMBRE;
         item['fecha']           = FECHA;
+        item['devolucion']      = DEVOLUCION;
+        item['serie']           = SERIE;
+        item['hoja']            = HOJA;
+        item['isometrico']      = ISOMETRICO;
+        item['observaciones']   = OBSERVACIONES;
         item['total']           = TOTAL;
             
         DATA.push(item);

@@ -11,7 +11,7 @@
         }
 
         function consulta(){
-            echo $this->model->listarReporteConsumos($_POST['cc'],$_POST['codigo'],$_POST['descripcion']);
+            echo $this->model->listarReporteConsumos($_POST['cc'],$_POST['codigo'],$_POST['descripcion'],$_POST['isometrico']);
         }
 
         function consultaItem(){

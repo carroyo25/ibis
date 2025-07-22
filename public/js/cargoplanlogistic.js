@@ -67,13 +67,13 @@ $(function() {
                                 <td class="pl10px">${e.cantidad_atendida}</td>
                                 <td class="textoDerecha pr15px">${e.proveedor}</td>
                                 <td class="pl10px">${e.fecha_entrega}</td>
+                                <td class="textoCentro ">${e.ingreso}</td>
                                 <td class="textoCentro">${e.nota_ingreso}</td>
                                 <td class="textoDerecha pr15px">${e.fecha_recepcion_proveedor}</td>
                                 <td class="textoCentro">${saldo}</td>
                                 <td class="textoCentro">${e.plazo}</td>
                                 <td class="textoDerecha pr15px">${e.dias_atraso}</td>
                                 <td class="textoDerecha pr15px">${e.partida}</td>
-                                <td class="textoCentro ">${e.partida}</td>
                                 <td class="textoDerecha">${e.partida}</td>
                                 <td class="textoCentro">${e.partida}</td>
                                 <td class="textoCentro">${e.partida}</td>

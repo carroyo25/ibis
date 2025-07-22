@@ -35,6 +35,8 @@
                         <input type="text" name="descripcionSearch" id="descripcionSearch">
                     </div>
                     <div>
+                        <label for="isometricoSearch">Isometrico: </label>
+                        <input type="text" name="isometricoSearch" id="isometricoSearch">
                     </div>
                     <button type="button" id="btnConsulta" class="boton3">Consultar</button> 
             </div>
@@ -44,7 +46,7 @@
         <table id="tablaPrincipal">
             <thead class="stickytop">
                 <tr>
-                    <th width="7%">Item</th>
+                    <th width="5%">Item</th>
                     <th width="5%">Costos</th>
                     <th>Codigo</th>
                     <th>Descripcion</th>
@@ -53,8 +55,11 @@
                     <th >Nombre</th>
                     <th >Fecha Salida</th>
                     <th >Fecha Devolucion</th>
-                    <th >Serie</th>
-                    <th width="15%">Total Salida</th>   
+                    <th width="5%">Serie</th>
+                    <th >Nro. Hoja</th>
+                    <th >Isometrico</th>
+                    <th >Observaciones</th>
+                    <th width="5%">Total Salida</th>   
                 </tr>
             </thead>
             <tbody>

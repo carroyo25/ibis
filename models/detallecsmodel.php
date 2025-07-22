@@ -6,11 +6,13 @@
             parent::__construct();
         }
 
-        public function listarReporteConsumos($costo,$codigo,$descripcion) {
+        public function listarReporteConsumos($costo,$codigo,$descripcion,$isometrico) {
             
-            $cc = $costo == "-1" ? "%" : "%".$costo."%";
-            $cod = $codigo == "" ? "%" : "%".$codigo."%";
-            $descrip = $descripcion == "" ? "%" : "%".$descripcion."%";
+            $cc         = $costo        == "-1" ? "%" : "%".$costo."%";
+            $cod        = $codigo       == "" ? "%" : "%".$codigo."%";
+            $descrip    = $descripcion  == "" ? "%" : "%".$descripcion."%";
+            $isomet     = $isometrico   == "" ? "%" : "%".$isometrico."%";
+
 
             $salida = "";
 
@@ -30,6 +32,9 @@
                                                         ibis.cm_producto.nclase,
                                                         ibis.cm_producto.nfam,
                                                         ibis.alm_consumo.cserie,
+                                                        ibis.alm_consumo.nhoja,
+                                                        ibis.alm_consumo.cisometrico,
+                                                        ibis.alm_consumo.cobserentrega,
                                                         DATE_FORMAT( ibis.alm_consumo.fechadevolucion, '%d/%m/%Y' ) AS fechadevolucion
                                                     FROM
                                                         ibis.alm_consumo
@@ -41,11 +46,12 @@
                                                         alm_consumo.flgactivo = 1 
                                                         AND cm_producto.cdesprod LIKE :descripcion  
                                                         AND cm_producto.ccodprod LIKE :codigo 
-                                                        AND alm_consumo.ncostos LIKE :cc 
+                                                        AND alm_consumo.ncostos LIKE :cc
+                                                        AND alm_consumo.cisometrico LIKE :isometrico
                                                     ORDER BY
                                                         ibis.tb_proyectos.ccodproy ASC");
 
-                $sql->execute(["cc" => $cc,"codigo"=>$cod,"descripcion"=>$descrip]);
+                $sql->execute(["cc" => $cc,"codigo"=>$cod,"descripcion"=>$descrip,"isometrico"=>$isomet]);
 
                 $rowcount = $sql->rowcount();
                 $item = 1;
@@ -65,6 +71,9 @@
                                         <td class="textoCentro">'.$rs['fechasalida'].'</td>
                                         <td class="textoCentro">'.$rs['fechadevolucion'].'</td>
                                         <td class="textoCentro">'.$rs['cserie'].'</td>
+                                        <td class="textoCentro">'.$rs['nhoja'].'</td>
+                                        <td class="textoCentro">'.$rs['cisometrico'].'</td>
+                                        <td class="textoCentro">'.$rs['cobserentrega'].'</td>
                                         <td class="textoDerecha">'.number_format($rs['salida'],2,'.','').'</td>
                                     </tr>';
                      }
@@ -96,7 +105,7 @@
     
     
                     $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel,'Excel2007');
-                    $objPHPExcel->getActiveSheet()->mergeCells('A1:AP1');
+                    $objPHPExcel->getActiveSheet()->mergeCells('A1:N1');
                     $objPHPExcel->getActiveSheet()->setCellValue('A1','RESGISTRO DE CONSUMOS DETALLADOS');
     
                     $objPHPExcel->getActiveSheet()->getStyle('A1:AP2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
@@ -113,6 +122,12 @@
                     $objPHPExcel->getActiveSheet()->getColumnDimension("G")->setAutoSize(true);
                     $objPHPExcel->getActiveSheet()->getColumnDimension("H")->setAutoSize(true);
                     $objPHPExcel->getActiveSheet()->getColumnDimension("I")->setAutoSize(true);
+                    $objPHPExcel->getActiveSheet()->getColumnDimension("J")->setAutoSize(true);
+                    $objPHPExcel->getActiveSheet()->getColumnDimension("K")->setAutoSize(true);
+                    $objPHPExcel->getActiveSheet()->getColumnDimension("L")->setAutoSize(true);
+                    $objPHPExcel->getActiveSheet()->getColumnDimension("M")->setAutoSize(true);
+                    $objPHPExcel->getActiveSheet()->getColumnDimension("N")->setAutoSize(true);
+
 
                     $objPHPExcel->getActiveSheet()->setCellValue('A2','Items'); // esto cambia
                     $objPHPExcel->getActiveSheet()->setCellValue('B2','Centro de Costos'); // esto cambia
@@ -122,10 +137,15 @@
                     $objPHPExcel->getActiveSheet()->setCellValue('F2','N° Documento'); // esto cambia
                     $objPHPExcel->getActiveSheet()->setCellValue('G2','Nombre'); // esto cambia
                     $objPHPExcel->getActiveSheet()->setCellValue('H2','Fecha Salida'); // esto cambia
-                    $objPHPExcel->getActiveSheet()->setCellValue('I2','Total Consumo'); // esto cambia
+                    $objPHPExcel->getActiveSheet()->setCellValue('I2','Fecha Devolucion'); // esto cambia
+                    $objPHPExcel->getActiveSheet()->setCellValue('J2','Serie'); // esto cambia
+                    $objPHPExcel->getActiveSheet()->setCellValue('K2','Nro. Hoja'); // esto cambia
+                    $objPHPExcel->getActiveSheet()->setCellValue('L2','Isometrico'); // esto cambia
+                    $objPHPExcel->getActiveSheet()->setCellValue('M2','Observaciones'); // esto cambia
+                    $objPHPExcel->getActiveSheet()->setCellValue('N2','Total Salida'); // esto cambia
 
                     $objPHPExcel->getActiveSheet()
-                            ->getStyle('A2:I2')
+                            ->getStyle('A2:N2')
                             ->getFill()
                             ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
                             ->getStartColor()
@@ -144,11 +164,15 @@
                         $objPHPExcel->getActiveSheet()->setCellValue('F'.$fila,$datos[$i]->documento);
                         $objPHPExcel->getActiveSheet()->setCellValue('G'.$fila,$datos[$i]->nombre);
                         $objPHPExcel->getActiveSheet()->setCellValue('H'.$fila,$datos[$i]->fecha);
-                        $objPHPExcel->getActiveSheet()->setCellValue('I'.$fila,$datos[$i]->total);
+                        $objPHPExcel->getActiveSheet()->setCellValue('I'.$fila,$datos[$i]->devolucion);
+                        $objPHPExcel->getActiveSheet()->setCellValue('J'.$fila,$datos[$i]->serie);
+                        $objPHPExcel->getActiveSheet()->setCellValue('K'.$fila,$datos[$i]->hoja);
+                        $objPHPExcel->getActiveSheet()->setCellValue('L'.$fila,$datos[$i]->isometrico);
+                        $objPHPExcel->getActiveSheet()->setCellValue('M'.$fila,$datos[$i]->observaciones);
+                        $objPHPExcel->getActiveSheet()->setCellValue('N'.$fila,$datos[$i]->total);
 
                         $fila++;
                     }
-
 
                     $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel,'Excel2007');
                     $objWriter->save('public/documentos/reportes/consumos.xlsx');
