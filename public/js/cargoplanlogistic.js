@@ -22,7 +22,11 @@ $(function() {
         let contador_item = 1;
 
         const body = document.getElementById("cargoPlanDescripBody");
-        const semaforo = [{}]
+        
+        const semaforoEstadoArray = [{valor:0,color:"#c2c2c2",etiqueta:"anulado"},
+                                     {valor:1,color:"#ffff00",etiqueta:"procesando"},
+                                     {valor:2,color:"#ff0000",etiqueta:"pendiente"},
+                                     {valor:3,color:"#00ff00",etiqueta:"entregado"}];
 
         fetch(RUTA+"cargoplanlogistic/filtroCargoPlanLogistica",{
             method:'POST',
@@ -41,6 +45,16 @@ $(function() {
                 let compra      = e.cantidad_pedido - e.cantidad_aprobada;
                 let saldo       = e.cantidad_orden - e.ingreso > 0 ? e.cantidad_orden - e.ingreso : 0;
                 let atrazo      = saldo > 0 ? e.dias_atraso * -1 : 0;
+
+                if ( e.estadoItem == 105 ){
+                    estadoSemaforo = 0;
+                }else{
+                    if ( e.cantidad_orden == e.ingreso_obra ){
+                       estadoSemaforo = 3; 
+                    };
+                }
+
+                const semaforo = semaforoEstadoArray.find(p => p.valor == estadoSemaforo);
 
 
                 tr.innerHTML = `<td class="textoCentro">${contador_item++}</td>
@@ -66,7 +80,7 @@ $(function() {
                                 <td class="textoCentro">${e.fecha_orden}</td>
                                 <td class="textoCentro">${e.cantidad_orden}</td>
                                 <td class="pl10px">${e.item_orden}</td>
-                                <td class="textoDerecha pr15px" style="background:#e8e8e8;font-weight: bold">${e.fecha_autorizacion_orden}</td>
+                                <td class="textoDerecha pr15px">${e.fecha_autorizacion_orden}</td>
                                 <td class="pl10px">${e.cantidad_atendida ?? 0}</td>
                                 <td class="pl10px">${e.proveedor}</td>
                                 <td class="pl10px">${e.fecha_entrega}</td>
@@ -76,7 +90,7 @@ $(function() {
                                 <td class="textoCentro">${saldo}</td>
                                 <td class="textoCentro">${e.plazo}</td>
                                 <td class="textoDerecha pr15px">${atrazo}</td>
-                                <td class="textoDerecha pr15px"></td>
+                                <td class="textoCentro" style="background:${semaforo.color};">${semaforo.etiqueta}</td>
                                 <td class="textoDerecha pr15px">${e.despachos ?? ''}</td>
                                 <td class="textoDerecha">${e.cnumguia ?? ''}</td>
                                 <td class="textoCentro">${e.guiasunat ?? ''}</td>
@@ -85,7 +99,7 @@ $(function() {
                                 <td class="textoCentro">${e.fecha_traslado ?? ''}</td>
                                 <td class="textoCentro">${e.nota_obra ?? ''}</td>
                                 <td class="textoCentro">${e.fecha_ingreso_almacen_obra ?? ''}</td>
-                                <td class="textoCentro">${e.ingreso_obra ?? ''}</td>
+                                <td class="textoDerecha pr15px">${e.ingreso_obra ?? ''}</td>
                                 <td class="textoDerecha">${e.fechaEmbarca ?? ''}</td>
                                 <td class="pl10px">${e.nombreEmbarca ?? ''}</td>
                                 <td class="pl10px">${e.tracking ?? ''}</td>
