@@ -22,6 +22,7 @@ $(function() {
         let contador_item = 1;
 
         const body = document.getElementById("cargoPlanDescripBody");
+        const semaforo = [{}]
 
         fetch(RUTA+"cargoplanlogistic/filtroCargoPlanLogistica",{
             method:'POST',
@@ -35,10 +36,12 @@ $(function() {
                 const tr = document.createElement('tr');
                 tr.classList.add('pointer');
                 
-                let atencion = e.atencion == 47 ? 'NORMAL':'URGENTE';
-                let tipo = e.idtipomov == 37 ? 'B' : 'S';
-                let compra = e.cantidad_pedido - e.cantidad_aprobada;
-                let saldo = e.cantidad_orden - e.ingreso > 0 ? e.cantidad_orden - e.ingreso : "-";
+                let atencion    = e.atencion == 47 ? 'NORMAL':'URGENTE';
+                let tipo        = e.idtipomov == 37 ? 'B' : 'S';
+                let compra      = e.cantidad_pedido - e.cantidad_aprobada;
+                let saldo       = e.cantidad_orden - e.ingreso > 0 ? e.cantidad_orden - e.ingreso : 0;
+                let atrazo      = saldo > 0 ? e.dias_atraso * -1 : 0;
+
 
                 tr.innerHTML = `<td class="textoCentro">${contador_item++}</td>
                                 <td class="textoCentro">${e.estadoItem}</td>
@@ -64,32 +67,33 @@ $(function() {
                                 <td class="textoCentro">${e.cantidad_orden}</td>
                                 <td class="pl10px">${e.item_orden}</td>
                                 <td class="textoDerecha pr15px" style="background:#e8e8e8;font-weight: bold">${e.fecha_autorizacion_orden}</td>
-                                <td class="pl10px">${e.cantidad_atendida}</td>
-                                <td class="textoDerecha pr15px">${e.proveedor}</td>
+                                <td class="pl10px">${e.cantidad_atendida ?? 0}</td>
+                                <td class="pl10px">${e.proveedor}</td>
                                 <td class="pl10px">${e.fecha_entrega}</td>
                                 <td class="textoCentro ">${e.ingreso}</td>
-                                <td class="textoCentro">${e.nota_ingreso}</td>
-                                <td class="textoDerecha pr15px">${e.fecha_recepcion_proveedor}</td>
+                                <td class="textoCentro">${e.nota_ingreso ?? ''}</td>
+                                <td class="textoDerecha pr15px">${e.fecha_recepcion_proveedor ?? ''}</td>
                                 <td class="textoCentro">${saldo}</td>
                                 <td class="textoCentro">${e.plazo}</td>
-                                <td class="textoDerecha pr15px">${e.dias_atraso}</td>
-                                <td class="textoDerecha pr15px">${e.partida}</td>
-                                <td class="textoDerecha">${e.partida}</td>
-                                <td class="textoCentro">${e.partida}</td>
-                                <td class="textoCentro">${e.partida}</td>
-                                <td class="textoCentro">${e.partida}</td>
-                                <td class="textoCentro">${e.partida}</td>
-                                <td class="textoCentro">${e.partida}</td>
-                                <td class="textoCentro">${e.partida}</td>
-                                <td class="textoCentro">${e.partida}</td>
-                                <td class="textoDerecha">${e.partida}</td>
-                                <td class="pl10px">${e.partida}</td>
-                                <td class="pl10px">${e.partida}</td>
-                                <td class="pl10px">${e.partida}</td>
-                                <td class="pl10px">${e.partida}</td>
-                                <td class="textoCentro">${e.partida}</td>
-                                <td class="textoCentro">${e.partida}</td>
-                                <td class="pl10px">${e.fecha_descarga}</td>`;
+                                <td class="textoDerecha pr15px">${atrazo}</td>
+                                <td class="textoDerecha pr15px"></td>
+                                <td class="textoDerecha pr15px">${e.despachos ?? ''}</td>
+                                <td class="textoDerecha">${e.cnumguia ?? ''}</td>
+                                <td class="textoCentro">${e.guiasunat ?? ''}</td>
+                                <td class="textoCentro">${e.salida_lurin ?? ''}</td>
+                                <td class="textoCentro">${e.nota_transferencia ?? ''}</td>
+                                <td class="textoCentro">${e.fecha_traslado ?? ''}</td>
+                                <td class="textoCentro">${e.nota_obra ?? ''}</td>
+                                <td class="textoCentro">${e.fecha_ingreso_almacen_obra ?? ''}</td>
+                                <td class="textoCentro">${e.ingreso_obra ?? ''}</td>
+                                <td class="textoDerecha">${e.fechaEmbarca ?? ''}</td>
+                                <td class="pl10px">${e.nombreEmbarca ?? ''}</td>
+                                <td class="pl10px">${e.tracking ?? ''}</td>
+                                <td class="pl10px">${e.trackinglurin ?? ''}</td>
+                                <td class="pl10px">${e.operador ?? ''}</td>
+                                <td class="textoCentro">${e.transporte ?? ''}</td>
+                                <td class="textoCentro">${e.operador ?? ''}</td>
+                                <td class="pl10px">${e.fecha_descarga ?? ''}</td>`;
 
                 body.appendChild(tr);
             });
@@ -111,20 +115,20 @@ $(function() {
         
             // Verificar si la respuesta es válida
             if (!data) {
-                console.error("No se recibieron datos");
+                //console.error("No se recibieron datos");
                 $("#esperar").css({"display": "none", "opacity": "0"});
                 return;
             }
 
             // Depuración: Ver estructura completa de la respuesta
-            console.log("Respuesta completa del servidor:", data);
+            //console.log("Respuesta completa del servidor:", data);
 
             // Verificar si es un array o un objeto con propiedad items
             let datosParaExcel = Array.isArray(data) ? data : (data || []);
 
             // Verificar si hay datos para procesar
             if ( !datosParaExcel.length ) {
-                console.warn("No hay datos para generar el Excel");
+                //console.warn("No hay datos para generar el Excel");
                 $("#esperar").css({"display": "none", "opacity": "0"});
                 return;
             }
@@ -137,7 +141,7 @@ $(function() {
         
         }, "json").
             fail(function(jqXHR, textStatus, errorThrown) {
-                console.error("Error en la petición:", textStatus, errorThrown);
+                //console.error("Error en la petición:", textStatus, errorThrown);
                 $("#esperar").css({"display": "none", "opacity": "0"});
                 alert("Error al obtener los datos: " + textStatus);
         });

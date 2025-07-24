@@ -83,7 +83,13 @@
                                 DATE_FORMAT( ae_sums.freg, '%d/%m/%Y' ) AS fecha_ingreso_almacen_obra,
                                 DATE_FORMAT( arc.ffecdoc, '%d/%m/%Y' ) AS fecha_recepcion_proveedor,
                                 teq.cregistro,
-                                usr.cnombres AS usuario
+                                usr.cnombres AS usuario,
+                                sunat.guiasunat,
+                                embarca.nombreEmbarca,
+                                embarca.fechaEmbarca,
+                                amd.tracking,
+                                amd.trackinglurin,
+                                DATE_FORMAT(adc.ffecenvio, '%d/%m/%Y' ) AS salida_lurin
                             FROM
                                 tb_pedidodet pd
                                 INNER JOIN tb_costusu cu ON cu.ncodproy = pd.idcostos 
@@ -114,7 +120,9 @@
                                 LEFT JOIN lg_guias sunat ON sunat.id_regalm = adc.id_regalm
                                 LEFT JOIN tb_user AS uasi ON pd.idasigna = uasi.iduser
                                 LEFT JOIN tb_user AS uapr ON pc.aprueba = uapr.iduser
-                                LEFT JOIN alm_madresdet amd ON amd.niddetaPed = pd.iditem 
+                                LEFT JOIN alm_madresdet amd ON amd.nropedido = pd.iditem
+                                LEFT JOIN alm_madrescab amc ON amc.id_regalm = amd.id_regalm
+                                LEFT JOIN lg_guias AS embarca ON amc.cnumguia = embarca.cnumguia 
                             WHERE
                                 pd.nflgActivo 
                                 AND cu.nflgactivo = 1 
@@ -133,7 +141,7 @@
                             GROUP BY
                                 pd.iditem 
                             ORDER BY
-                                pc.emision DESC");
+                                pd.iditem ASC");
                                                                                                     
                 $sql->execute(["orden"          =>$orden,
                                "pedido"         =>$pedido,
@@ -584,9 +592,9 @@
                                                     LEFT JOIN alm_transfercab ON alm_transfercab.idreg = alm_transferdet.idtransfer
                                                     LEFT JOIN tb_user AS asignacion ON tb_pedidodet.idasigna = asignacion.iduser
                                                     LEFT JOIN lg_guias AS sunat ON sunat.id_regalm = alm_despachocab.id_regalm
-                                                    LEFT JOIN alm_madresdet ON alm_madresdet.niddetaPed = tb_pedidodet.iditem
-                                                    LEFT JOIN alm_madrescab ON alm_madrescab.id_regalm = alm_madresdet.id_regalm
-                                                    LEFT JOIN lg_guias AS embarca ON alm_madrescab.cnumguia = embarca.cnumguia
+                                                    LEFT JOIN alm_madresdet amd ON amd.nropedido = pd.iditem
+                                                    LEFT JOIN alm_madrescab amc ON amc.id_regalm = amd.id_regalm
+                                                    LEFT JOIN lg_guias AS embarca ON amc.cnumguia = embarca.cnumguia     
                                                 WHERE
                                                     tb_pedidodet.nflgActivo 
                                                     AND tb_costusu.nflgactivo = 1 

@@ -40,7 +40,7 @@
                         </div>
                         <div>
                             <label for="ordenSearch">N° Orden :</label>
-                            <input type="text" name="ordenSearch" id="ordenSearch" value="5850">
+                            <input type="text" name="ordenSearch" id="ordenSearch" value="6848">
                         </div>
                         <div>
                             <label for="ordenSearch">N° Pedido :</label>
