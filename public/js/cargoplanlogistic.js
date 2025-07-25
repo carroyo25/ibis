@@ -36,7 +36,12 @@ $(function() {
         })
         .then(response => response.json())
         .then(data=>{
-            $("#esperar").css({"display": "none", "opacity": "0"});
+
+            $("#esperar").fadeOut().promise().done(function(){
+                iniciarPaginadorLogistica();
+            });
+
+            //$("#esperar").css({"display": "none", "opacity": "0"});
         
             data.forEach(e=>{
                 const tr = document.createElement('tr');
@@ -51,6 +56,8 @@ $(function() {
 
                 if ( e.estadoItem == 105 ){
                     estadoSemaforo = 0;
+                }else if( e.estadoItem >= 54 ){
+                    estadoSemaforo = 1;
                 }
 
                 const semaforo = semaforoEstadoArray.find(p => p.valor == estadoSemaforo);
@@ -73,20 +80,20 @@ $(function() {
                                 <td class="textoCentro">${e.unidad}</td>
                                 <td class="pl20px sticky-column">${e.descripcion}</td>
                                 <td class="textoCentro">${tipo}</td>
-                                <td class="textoCentro">${e.anio_orden}</td>
-                                <td class="textoCentro">${e.cnumero}</td>
-                                <td class="textoCentro">${e.fecha_orden}</td>
-                                <td class="textoDerecha pr15px">${e.cantidad_orden}</td>
-                                <td class="pl10px">${e.item_orden}</td>
-                                <td class="textoDerecha pr15px">${e.fecha_autorizacion_orden}</td>
+                                <td class="textoCentro">${e.anio_orden ?? ''}</td>
+                                <td class="textoCentro">${e.cnumero ?? ''}</td>
+                                <td class="textoCentro">${e.fecha_orden ?? ''}</td>
+                                <td class="textoDerecha pr15px">${e.cantidad_orden ?? ''}</td>
+                                <td class="pl10px">${e.item_orden ?? ''}</td>
+                                <td class="textoDerecha pr15px">${e.fecha_autorizacion_orden ?? ''}</td>
                                 <td class="pl10px">${e.cantidad_atendida ?? 0}</td>
-                                <td class="pl10px">${e.proveedor}</td>
-                                <td class="pl10px">${e.fecha_entrega}</td>
+                                <td class="pl10px">${e.proveedor ?? ''}</td>
+                                <td class="pl10px">${e.fecha_entrega ?? ''}</td>
                                 <td class="textoDerecha pr15px">${e.ingreso}</td>
                                 <td class="textoCentro">${e.nota_ingreso ?? ''}</td>
                                 <td class="textoDerecha pr15px">${e.fecha_recepcion_proveedor ?? ''}</td>
                                 <td class="textoCentro">${saldo}</td>
-                                <td class="textoCentro">${e.plazo}</td>
+                                <td class="textoCentro">${e.plazo ?? ''}</td>
                                 <td class="textoDerecha pr15px">${atrazo}</td>
                                 <td class="textoCentro" style="background:${semaforo.color};">${semaforo.etiqueta}</td>
                                 <td class="textoDerecha pr15px">${e.despachos ?? ''}</td>
