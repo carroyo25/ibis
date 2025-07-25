@@ -2,6 +2,30 @@ $(function() {
     $("#esperar").fadeOut();
 
     // Con jQuery
+    const semaforoEstadoArray = [{valor:0,color:"#c2c2c2",etiqueta:"anulado"},
+                                 {valor:1,color:"#ffff00",etiqueta:"procesando"},
+                                 {valor:2,color:"#ff0000",etiqueta:"pendiente"},
+                                 {valor:3,color:"#00ff00",etiqueta:"entregado"}];
+
+    const porcentajes = [{valor:105, rotulo:"0%"  , color:"#C8C8C8", semaforo:"#c8c8c8", estado:'anulado'},
+                         {valor:49 , rotulo:"10%" , color:"#F8CAAD", semaforo:"#FFFF00", estado:'procesando'},
+                         {valor:51 , rotulo:"12%" , color:"#00FF00", semaforo:"#FFFF00", estado:'almacen'},
+                         {valor:52 , rotulo:"20%" , color:"#B3C5E6", semaforo:"#FFFF00", estado:'stock'},
+                         {valor:53 , rotulo:"25%" , color:"#B3C5E6", semaforo:"#FFFF00", estado:'aprobacion'},
+                         {valor:54 , rotulo:"15%" , color:"#FF0000", semaforo:"#FFFF00", estado:'aprobado'},
+                         {valor:54 , rotulo:"22%" , color:"#E2D5CA", semaforo:"#FFFF00", estado:'elaboración orden'},
+                         {valor:59 , rotulo:"30%" , color:"#FFFF00", semaforo:"#FFFF00", estado:'firma orden'},
+                         {valor:60 , rotulo:"40%" , color:"#A9D08F", semaforo:"#B3C5E6", estado:'enviado proveeddor'},
+                         {valor:62 , rotulo:"50%" , color:"#A9D08F", semaforo:"#B3C5E6", estado:'recepcion parcial'},
+                         {valor:62 , rotulo:"60%" , color:"#A9D08F", semaforo:"#B3C5E6", estado:'recepcion total'},
+                         {valor:62 , rotulo:"70%" , color:"#A9D08F", semaforo:"#00FFFF", estado:'enviado parcial'},
+                         {valor:62 , rotulo:"75%" , color:"#A9D08F", semaforo:"#00FFFF", estado:'enviado total'},
+                         {valor:62 , rotulo:"80%" , color:"#A9D08F", semaforo:"#F67C2B", estado:'recepcion pucallpa'},
+                         {valor:62 , rotulo:"85%" , color:"#A9D08F", semaforo:"#F67C2B", estado:'enviado parcial'},
+                         {valor:62 , rotulo:"90%" , color:"#A9D08F", semaforo:"#F67C2B", estado:'enviado total'},
+                         {valor:299, rotulo:"95%" , color:"#0078D4", semaforo:"#0078D4", estado:'embarcado'},
+                         {valor:100, rotulo:"100%", color:"#00FF00", semaforo:"#00FF00", estado:'entregado'},
+                         {valor:230, rotulo:"100%", color:"#FF00FF", semaforo:"#FF00FF", estado:'compra local'}];
 
     $("#btnProcesa").click(function(e){
         e.preventDefault();
@@ -25,11 +49,6 @@ $(function() {
 
         body.innerHTML = "";
         
-        const semaforoEstadoArray = [{valor:0,color:"#c2c2c2",etiqueta:"anulado"},
-                                     {valor:1,color:"#ffff00",etiqueta:"procesando"},
-                                     {valor:2,color:"#ff0000",etiqueta:"pendiente"},
-                                     {valor:3,color:"#00ff00",etiqueta:"entregado"}];
-
         fetch(RUTA+"cargoplanlogistic/filtroCargoPlanLogistica",{
             method:'POST',
             body:formdata
@@ -37,30 +56,37 @@ $(function() {
         .then(response => response.json())
         .then(data=>{
 
-            $("#esperar").fadeOut().promise().done(function(){
-                iniciarPaginadorLogistica();
-            });
-
-            //$("#esperar").css({"display": "none", "opacity": "0"});
+            if (data.length == 0) {
+                mostrarMensaje("No hay datos para mostrar","mensaje_error");
+                $("#esperar").css({"display": "none", "opacity": "0"});
+                return;
+            }else {
+                $("#esperar").fadeOut().promise().done(function(){
+                    iniciarPaginadorLogistica();
+                });
+            }
         
             data.forEach(e=>{
                 const tr = document.createElement('tr');
                 tr.classList.add('pointer');
                 
-                let atencion        = e.atencion == 47 ? 'NORMAL':'URGENTE';
-                let tipo            = e.idtipomov == 37 ? 'B' : 'S';
-                let compra          = e.cantidad_pedido - e.cantidad_aprobada;
-                let saldo           = e.cantidad_orden - e.ingreso > 0 ? e.cantidad_orden - e.ingreso : 0;
-                let atrazo          = saldo > 0 ? e.dias_atraso * -1 : 0;
-                let estadoSemaforo  = 0;
+                let atencion            = e.atencion == 47 ? 'NORMAL':'URGENTE';
+                let tipo                = e.idtipomov == 37 ? 'B' : 'S';
+                let compra              = e.cantidad_aprobada - e.cantidad_atendida;
+                let saldo               = e.cantidad_orden - e.ingreso > 0 ? e.cantidad_orden - e.ingreso : 0;
+                let atrazo              = saldo > 0 ? e.dias_atraso * -1 : 0;
+                let estadoSemaforo      = 0;
+                let estadoItemPedido    = 0;
 
                 if ( e.estadoItem == 105 ){
                     estadoSemaforo = 0;
                 }else if( e.estadoItem >= 54 ){
                     estadoSemaforo = 1;
+                    estadoItemPedido = 54; 
                 }
 
-                const semaforo = semaforoEstadoArray.find(p => p.valor == estadoSemaforo);
+                const semaforo      = semaforoEstadoArray.find(p => p.valor == estadoSemaforo);
+                const estadoPedido  = porcentajes.find(p => p.valor == estadoItemPedido);
 
                 tr.innerHTML = `<td class="textoCentro">${contador_item++}</td>
                                 <td class="textoCentro">${e.estadoItem}</td>
@@ -72,7 +98,7 @@ $(function() {
                                 <td class="textoCentro">${e.anio_pedido}</td>
                                 <td class="textoDerecha">${e.pedido}</td>
                                 <td class="textoCentro">${e.crea_pedido}</td>
-                                <td class="textoCentro">${e.aprobacion_pedido}</td>
+                                <td class="textoCentro">${e.aprobacion_pedido ?? ''}</td>
                                 <td class="textoDerecha pr15px">${e.cantidad_pedido}</td>
                                 <td class="textoDerecha pr15px">${e.cantidad_aprobada}</td>
                                 <td class="textoDerecha pr15px">${compra}</td>
@@ -116,8 +142,6 @@ $(function() {
 
                 body.appendChild(tr);
             });
-
-           
         })
 
         return false;
@@ -305,27 +329,6 @@ async function crearReporteExcel(datos) {
                 let atencion = item.atencion === 47 ? "NORMAL" : "URGENTE";
                 
                 const estadoItemValue = item.estadoItem;
-
-                const porcentajes = [{valor:105, rotulo:"0%"  , color:"#C8C8C8", semaforo:"#c8c8c8", estado:'anulado'},
-                                     {valor:49 , rotulo:"10%" , color:"#F8CAAD", semaforo:"#FFFF00", estado:'procesando'},
-                                     {valor:51 , rotulo:"12%" , color:"#00FF00", semaforo:"#FFFF00", estado:'almacen'},
-                                     {valor:52 , rotulo:"20%" , color:"#B3C5E6", semaforo:"#FFFF00", estado:'stock'},
-                                     {valor:53 , rotulo:"25%" , color:"#B3C5E6", semaforo:"#FFFF00", estado:'aprobacion'},
-                                     {valor:54 , rotulo:"15%" , color:"#FF0000", semaforo:"#FFFF00", estado:'aprobado'},
-                                     {valor:54 , rotulo:"22%" , color:"#E2D5CA", semaforo:"#FFFF00", estado:'elaboración orden'},
-                                     {valor:59 , rotulo:"30%" , color:"#FFFF00", semaforo:"#FFFF00", estado:'firma orden'},
-                                     {valor:60 , rotulo:"40%" , color:"#A9D08F", semaforo:"#B3C5E6", estado:'enviado proveeddor'},
-                                     {valor:62 , rotulo:"50%" , color:"#A9D08F", semaforo:"#B3C5E6", estado:'recepcion parcial'},
-                                     {valor:62 , rotulo:"60%" , color:"#A9D08F", semaforo:"#B3C5E6", estado:'recepcion total'},
-                                     {valor:62 , rotulo:"70%" , color:"#A9D08F", semaforo:"#00FFFF", estado:'enviado parcial'},
-                                     {valor:62 , rotulo:"75%" , color:"#A9D08F", semaforo:"#00FFFF", estado:'enviado total'},
-                                     {valor:62 , rotulo:"80%" , color:"#A9D08F", semaforo:"#F67C2B", estado:'recepcion pucallpa'},
-                                     {valor:62 , rotulo:"85%" , color:"#A9D08F", semaforo:"#F67C2B", estado:'enviado parcial'},
-                                     {valor:62 , rotulo:"90%" , color:"#A9D08F", semaforo:"#F67C2B", estado:'enviado total'},
-                                     {valor:299, rotulo:"95%" , color:"#0078D4", semaforo:"#0078D4", estado:'embarcado'},
-                                     {valor:100, rotulo:"100%", color:"#00FF00", semaforo:"#00FF00", estado:'entregado'},
-                                     {valor:230, rotulo:"100%", color:"#FF00FF", semaforo:"#FF00FF", estado:'compra local'}];
-
 
                 const etiqueta = porcentajes.find(p => p.valor == estadoItemValue);
 

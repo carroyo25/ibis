@@ -10,6 +10,7 @@
             try {
 
                 $salida = "";
+                $docData = [];
 
                 $tipo       = $parametros['tipoSearch']     == -1 ? "%" : $parametros['tipoSearch'];
                 $costo      = $parametros['costosSearch']   == -1 ? "%" : $parametros['costosSearch'];
@@ -19,7 +20,10 @@
                 $pedido     = $parametros['pedidoSearch']   == "" ? "%" : $parametros['pedidoSearch'];
                 $concepto   = $parametros['conceptoSearch'] == "" ? "%" : "%".$parametros['conceptoSearch']."%";
                 $estadoItem = $parametros['estado_item']    == "" ? "%" : $parametros['estado_item'];
-                $anio       = $parametros['anioSearch']     == "" ? "%" : $parametros['anioSearch'];
+                
+                $anioPedido = $parametros['pedidoSearch']   == "" ? "%" : $parametros['anioSearch'];
+                $anioOrden  = $parametros['ordenSearch']    == "" ? "%" : $parametros['anioSearch'];
+
                 $userID     = $_SESSION['iduser'];
                 
                 $salida = "No hay registros";
@@ -152,8 +156,8 @@
                                "estado"         =>$estadoItem,
                                "descripcion"    =>$descrip,
                                "usr"            =>$userID,
-                               "anioOrden"      =>$anio,
-                               "anioPedido"     =>$anio]);
+                               "anioOrden"      =>$anioOrden,
+                               "anioPedido"     =>$anioPedido]);
                 
                 $rowCount = $sql->rowCount();
 
