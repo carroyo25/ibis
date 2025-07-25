@@ -22,6 +22,8 @@ $(function() {
         let contador_item = 1;
 
         const body = document.getElementById("cargoPlanDescripBody");
+
+        body.innerHTML = "";
         
         const semaforoEstadoArray = [{valor:0,color:"#c2c2c2",etiqueta:"anulado"},
                                      {valor:1,color:"#ffff00",etiqueta:"procesando"},
@@ -40,22 +42,18 @@ $(function() {
                 const tr = document.createElement('tr');
                 tr.classList.add('pointer');
                 
-                let atencion    = e.atencion == 47 ? 'NORMAL':'URGENTE';
-                let tipo        = e.idtipomov == 37 ? 'B' : 'S';
-                let compra      = e.cantidad_pedido - e.cantidad_aprobada;
-                let saldo       = e.cantidad_orden - e.ingreso > 0 ? e.cantidad_orden - e.ingreso : 0;
-                let atrazo      = saldo > 0 ? e.dias_atraso * -1 : 0;
+                let atencion        = e.atencion == 47 ? 'NORMAL':'URGENTE';
+                let tipo            = e.idtipomov == 37 ? 'B' : 'S';
+                let compra          = e.cantidad_pedido - e.cantidad_aprobada;
+                let saldo           = e.cantidad_orden - e.ingreso > 0 ? e.cantidad_orden - e.ingreso : 0;
+                let atrazo          = saldo > 0 ? e.dias_atraso * -1 : 0;
+                let estadoSemaforo  = 0;
 
                 if ( e.estadoItem == 105 ){
                     estadoSemaforo = 0;
-                }else{
-                    if ( e.cantidad_orden == e.ingreso_obra ){
-                       estadoSemaforo = 3; 
-                    };
                 }
 
                 const semaforo = semaforoEstadoArray.find(p => p.valor == estadoSemaforo);
-
 
                 tr.innerHTML = `<td class="textoCentro">${contador_item++}</td>
                                 <td class="textoCentro">${e.estadoItem}</td>
@@ -68,9 +66,9 @@ $(function() {
                                 <td class="textoDerecha">${e.pedido}</td>
                                 <td class="textoCentro">${e.crea_pedido}</td>
                                 <td class="textoCentro">${e.aprobacion_pedido}</td>
-                                <td class="textoCentro">${e.cantidad_pedido}</td>
-                                <td class="textoCentro">${e.cantidad_aprobada}</td>
-                                <td class="textoDerecha">${compra}</td>
+                                <td class="textoDerecha pr15px">${e.cantidad_pedido}</td>
+                                <td class="textoDerecha pr15px">${e.cantidad_aprobada}</td>
+                                <td class="textoDerecha pr15px">${compra}</td>
                                 <td class="textoCentro">${e.ccodprod}</td>
                                 <td class="textoCentro">${e.unidad}</td>
                                 <td class="pl20px sticky-column">${e.descripcion}</td>
@@ -78,13 +76,13 @@ $(function() {
                                 <td class="textoCentro">${e.anio_orden}</td>
                                 <td class="textoCentro">${e.cnumero}</td>
                                 <td class="textoCentro">${e.fecha_orden}</td>
-                                <td class="textoCentro">${e.cantidad_orden}</td>
+                                <td class="textoDerecha pr15px">${e.cantidad_orden}</td>
                                 <td class="pl10px">${e.item_orden}</td>
                                 <td class="textoDerecha pr15px">${e.fecha_autorizacion_orden}</td>
                                 <td class="pl10px">${e.cantidad_atendida ?? 0}</td>
                                 <td class="pl10px">${e.proveedor}</td>
                                 <td class="pl10px">${e.fecha_entrega}</td>
-                                <td class="textoCentro ">${e.ingreso}</td>
+                                <td class="textoDerecha pr15px">${e.ingreso}</td>
                                 <td class="textoCentro">${e.nota_ingreso ?? ''}</td>
                                 <td class="textoDerecha pr15px">${e.fecha_recepcion_proveedor ?? ''}</td>
                                 <td class="textoCentro">${saldo}</td>

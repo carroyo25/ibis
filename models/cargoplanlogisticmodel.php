@@ -31,9 +31,9 @@
                                 pd.idprod,
                                 pd.nroparte,
                                 pd.nregistro,
-                                pd.cant_pedida AS cantidad_pedido,
-                                pd.cant_atend AS cantidad_atendida,
-                                pd.cant_aprob AS cantidad_aprobada,
+                                FORMAT(pd.cant_pedida,2) AS cantidad_pedido,
+                                FORMAT(pd.cant_atend,2) AS cantidad_atendida,
+                                FORMAT(pd.cant_aprob,2) AS cantidad_aprobada,
                                 pd.estadoItem,
                                 LPAD( pc.nrodoc, 6, '0' ) AS pedido,
                                 DATE_FORMAT( pc.emision, '%d/%m/%Y' ) AS crea_pedido,
@@ -106,12 +106,12 @@
                                 LEFT JOIN cm_entidad ce ON loc.id_centi = ce.id_centi
                                 LEFT JOIN tb_parametros transp ON loc.ctiptransp = transp.nidreg
                                 LEFT JOIN tb_user uap ON pc.aprueba = uap.iduser
-                                LEFT JOIN ( SELECT niddetaPed, SUM( ncantidad ) AS ingreso FROM alm_recepdet WHERE nflgactivo = 1 GROUP BY niddetaPed ) rd_sums ON rd_sums.niddetaPed = pd.iditem
+                                LEFT JOIN ( SELECT niddetaPed,id_regalm, SUM( ncantidad ) AS ingreso FROM alm_recepdet WHERE nflgactivo = 1 GROUP BY niddetaPed ) rd_sums ON rd_sums.niddetaPed = pd.iditem
                                 LEFT JOIN ( SELECT niddeta, niddetaPed, SUM( ndespacho ) AS despachos FROM alm_despachodet WHERE nflgactivo = 1 GROUP BY niddeta ) dd_sums ON dd_sums.niddetaPed = pd.iditem
                                 LEFT JOIN ( SELECT idpedido, freg, idregistro, SUM( cant_ingr ) AS ingreso_obra FROM alm_existencia WHERE nflgActivo = 1 GROUP BY idpedido ) ae_sums ON ae_sums.idpedido = pd.iditem
-                                LEFT JOIN alm_despachodet addet ON pd.iditem = addet.niddetaPed
+                                LEFT JOIN alm_despachodet addet ON addet.niddetaPed = pd.iditem 
                                 LEFT JOIN alm_despachocab adc ON addet.id_regalm = adc.id_regalm
-                                LEFT JOIN alm_recepcab arc ON arc.id_regalm = adc.id_regalm
+                                LEFT JOIN alm_recepcab arc ON arc.id_regalm = rd_sums.id_regalm
                                 LEFT JOIN tb_equipmtto teq ON pd.nregistro = teq.idreg
                                 LEFT JOIN tb_user usr ON pc.usuario = usr.iduser
                                 LEFT JOIN alm_transferdet atd ON atd.iddetped = pd.iditem
