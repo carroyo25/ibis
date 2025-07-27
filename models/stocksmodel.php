@@ -436,10 +436,10 @@
                 $numeros = 0;
                 $cantidad = 0;
 
-                if ($numeros >= 0){
+                //if ($numeros >= 0){
                     $numeros = $result[0]['numero'];
                     $cantidad = $result[0]['cantidad'];
-                }
+                //}
 
                 return array("numeros"=>$numeros,
                             "cantidad"=>$cantidad);
@@ -1131,7 +1131,7 @@
                 $docData = [];
                 
                 $sql = $this->db->connect()->prepare("SELECT
-                                                        alm_inventariodet.idreg,
+                                                        alm_inventariocab.idreg,
                                                         alm_inventariocab.idcostos,
                                                         DATE_FORMAT(alm_inventariocab.ffechadoc,'%d/%m/%Y') AS ffechadoc,
                                                         alm_inventariocab.idautoriza,
@@ -1142,8 +1142,7 @@
                                                         LEFT JOIN alm_inventariocab ON alm_inventariodet.idregistro = alm_inventariocab.idreg
                                                         INNER JOIN tb_user ON alm_inventariocab.idautoriza = tb_user.iduser 
                                                     WHERE
-                                                        alm_inventariodet.cant_ingr > 0 
-                                                        AND alm_inventariodet.nflgActivo !=0
+                                                        alm_inventariodet.nflgActivo !=0
                                                         AND alm_inventariodet.codprod = :id 
                                                         AND alm_inventariocab.idcostos = :costo");
                 
