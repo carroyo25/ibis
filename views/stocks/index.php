@@ -151,6 +151,14 @@
             </div>   
         </div>
     </div>
+    <div class="modal" id="windowUpdate">
+        <div class="ventanaPregunta">
+            <h1>Actualizar Registro</h1>
+            <div class="windowUpdateBody">
+                
+            </div>
+        </div>
+    </div>
     <div class="modal" id="esperar">
         <div class="loadingio-spinner-spinner-5ulcsi06hlf">
             <div class="ldio-fifgg00y5y">
