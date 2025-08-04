@@ -72,7 +72,7 @@ $(function(){
             if ( $("#costosSearch").val() == -1 ) throw "Elija el centro de costos";
             if ( $("#docident").val() == "" ) throw "Indique el N° de documento";
             if ( $("#tablaPrincipal tbody tr").length == 0 ) throw "No relleno productos";
-            if ( verificarCantidadesInput() ) throw "Verifique las cantidades";
+            //if ( verificarCantidadesInput() ) throw "Verifique las cantidades";
 
             $("#pregunta").fadeIn();
 
