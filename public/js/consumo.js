@@ -71,7 +71,7 @@ $(function(){
                                             </select></td>
                                 <td class=""></td>
                                 <td class=""><input type="text" class="entrada"></td>
-                                <td class="textoCentro"><a href=""><i class="far fa-trash-alt"></i></a></td>
+                                <td class="textoCentro"><a href=""><i class="fas fa-pencil"></i></a></td>
                         </tr>`;
 
                     if (data.registrado) {
@@ -314,29 +314,33 @@ $(function(){
     $("#tablaPrincipal tbody").on("click","a", function (e) {
         e.preventDefault();
 
+        $("#cambiarFila").fadeIn();
+
+        /*alert('Modificar registro');
+
         fila = $(this).parent().parent();
         sw = fila.data("registrado");
         registro = $(this).attr("href");
 
-        if (!sw )
-            $("#borrarFila").fadeIn();
+        if (!sw )*/
+            
 
         return false;
     });
 
-    $("#btnAceptarBorrar").click(function (e) { 
+    $("#btnAceptarModificar").click(function (e) { 
         e.preventDefault();
 
-        fila.remove();
-        $("#borrarFila").fadeOut();
+        //fila.remove();
+        $("#cambiarFila").fadeOut();
  
         return false;
     });
 
-    $("#btnCancelarBorrar").click(function (e) { 
+    $("#btnCancelarModificar").click(function (e) { 
         e.preventDefault();
 
-        $("#borrarFila").fadeOut();
+        $("#cambiarFila").fadeOut();
         
         return false;
     });

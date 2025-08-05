@@ -303,7 +303,7 @@
                                                 <img src = '.$firma.' style ="width:100% !important">
                                             </div>
                                         </td>
-                                        <td class="textoCentro"><a href="'.$rs['idreg'].'"><i class="far fa-trash-alt"></i></a></td>
+                                        <td class="textoCentro"><a href="'.$rs['idreg'].'"><i class="fas fa-wrench"></i></a></td>
                                     </tr>';
                     }
                 }

@@ -31,12 +31,12 @@
             </div>
         </div>
     </div>
-    <div class="modal" id="borrarFila">
+    <div class="modal" id="cambiarFila">
         <div class="ventanaPregunta">
             <h3>¿Borrar la fila?</h3>
             <div>
-                <button type="button" id="btnAceptarBorrar">Aceptar</button>
-                <button type="button" id="btnCancelarBorrar">Cancelar</button>
+                <button type="button" id="btnAceptarModificar">Aceptar</button>
+                <button type="button" id="btnCancelarModirficar">Cancelar</button>
             </div>
         </div>
     </div>
