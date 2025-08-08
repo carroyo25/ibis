@@ -23,6 +23,8 @@ let notifier = new AWN(),
 
 
 $.addEventListener("click",(e)=>{
+ 
+
   if (e.target.matches(".btnSave *")){
     let contador = 0;
 
@@ -70,6 +72,15 @@ $.addEventListener("click",(e)=>{
       }
 
       return false;
+  }else if(e.target.matches(".btn_upload")){
+     //console.log();
+     if (e.target.dataset.file == 'ficha'){
+        $.getElementById('uploadruc').click();
+     }else if(e.target.dataset.file == 'ficha'){
+
+     }else if(e.target.dataset.file == 'ficha'){
+
+     }
   }
 })
 

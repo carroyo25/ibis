@@ -35,6 +35,7 @@
         <form id="datos_entidad" method="POST" enctype="multipart/form-data">
             <input type="file" class="oculto" name="uploadruc" id="uploadruc">
             <input type="file" class="oculto" name="uploadcatalogo" id="uploadcatalogo">
+            <input type="file" class="oculto" name="uploadeclaracion" id="uploadeclaracion">
 
             <input type="hidden" name="actualiza" id="actualiza" value="<?php echo $proveedor[0]["nflgactualizado"]?>">
             <input type="hidden" name="id" id="id" value="<?php echo $proveedor[0]["id_centi"]?>">
@@ -158,21 +159,39 @@
             <section class="seccion_pagina">
                 <div class="contenedor_detalles">
                     <p class="detalle">SECCION 4: Adjuntos</p>
+                    
                 </div>
                 <div class="opciones">
-                    <div class="container-input">
-                        <input type="file" name="file_ruc" id="file_ruc" class="inputfile">
-                        <label for="file_ruc" class="btn btn-1">
-                            FICHA R.U.C
-                        </label>
-                    </div>
-
-                    <div class="container-input">
-                        <input type="file" name="file_catalogo" id="file_catalogo" class="inputfile">
-                        <label for="file_catalogo" class="btn btn-1">
-                            Catálogo Productos
-                        </label>
-                    </div>
+                    <table id="adjuntos">
+                        <thead>
+                            <tr>
+                                <th width="50%">Nombre Adjunto</th>
+                                <th width="15%">Descargar</th>
+                                <th width="15%">Subir</th>
+                                <th>Archivo Adjunto</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>FICHA RUC</td>
+                                <td></td>
+                                <td style="text-align: center;line-height: 3rem;"><a href="#" ><i class="fas fa-upload btn_upload" data-file="ficha"></i></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>CATÁLOGO</td>
+                                <td></td>
+                                <td style="text-align: center;line-height: 3rem;"><a href="#" ><i class="fas fa-upload btn_upload" data-file="catalogo"></i></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>DECLARACIÓN JURADA DE CUMPLIMIENTO DEL SISTEMA DE GESTIÓN DE SEGURIDAD Y SALUD EN EL TRABAJO</td>
+                                <td style="text-align: center;"><a href="../documentos/proveedores/formatos/declaracionjurada.docx" download><i class="fas fa-download"></i></a></td>
+                                <td style="text-align: center;line-height: 3rem;"><a href="#" ><i class="fas fa-upload btn_upload" data-file="declaracion"></i></td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </section>
         </form>
