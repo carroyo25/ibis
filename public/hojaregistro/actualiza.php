@@ -171,24 +171,24 @@
                                 <th>Archivo Adjunto</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="cuerpo_adjunto">
                             <tr>
                                 <td>FICHA RUC</td>
                                 <td></td>
                                 <td style="text-align: center;line-height: 3rem;"><a href="#" ><i class="fas fa-upload btn_upload" data-file="ficha"></i></td>
-                                <td></td>
+                                <td id="adjunto_ficha"></td>
                             </tr>
                             <tr>
                                 <td>CATÁLOGO</td>
                                 <td></td>
                                 <td style="text-align: center;line-height: 3rem;"><a href="#" ><i class="fas fa-upload btn_upload" data-file="catalogo"></i></td>
-                                <td></td>
+                                <td id="adjunto_catalogo"></td>
                             </tr>
                             <tr>
                                 <td>DECLARACIÓN JURADA DE CUMPLIMIENTO DEL SISTEMA DE GESTIÓN DE SEGURIDAD Y SALUD EN EL TRABAJO</td>
                                 <td style="text-align: center;"><a href="../documentos/proveedores/formatos/declaracionjurada.docx" download><i class="fas fa-download"></i></a></td>
                                 <td style="text-align: center;line-height: 3rem;"><a href="#" ><i class="fas fa-upload btn_upload" data-file="declaracion"></i></td>
-                                <td></td>
+                                <td id="adjunto_declaracion"></td>
                             </tr>
                         </tbody>
                     </table>

@@ -5,7 +5,7 @@ const tabla_bancos = $.getElementById("tabla_bancos");
 const tabla_bancos_body = $.getElementById("tabla_bancos_body");
 const btn_guardar = $.getElementById("btn_guardar");
 const requerido = $.querySelectorAll(".requerido");
-const enlaceBancos = tabla_bancos_body.getElementsByTagName("a")
+const enlaceBancos = tabla_bancos_body.getElementsByTagName("a");
 
 const upFloat = $.getElementById("floatUp");
 const saveFloat = $.getElementById("floatSave");
@@ -23,8 +23,6 @@ let notifier = new AWN(),
 
 
 $.addEventListener("click",(e)=>{
- 
-
   if (e.target.matches(".btnSave *")){
     let contador = 0;
 
@@ -73,14 +71,15 @@ $.addEventListener("click",(e)=>{
 
       return false;
   }else if(e.target.matches(".btn_upload")){
-     //console.log();
-     if (e.target.dataset.file == 'ficha'){
-        $.getElementById('uploadruc').click();
-     }else if(e.target.dataset.file == 'ficha'){
+      console.log(e.target.dataset.file);
 
-     }else if(e.target.dataset.file == 'ficha'){
-
-     }
+      if (e.target.dataset.file == 'ficha'){
+          //$.getElementById('uploadruc').click();
+      }else if(e.target.dataset.file == 'catalogo'){
+          //$.getElementById('uploadcatalogo').click();
+      }else if(e.target.dataset.file == 'declaracion'){
+          $.getElementById('uploadeclaracion').click();
+      }
   }
 })
 
@@ -98,6 +97,12 @@ $.addEventListener("change", (e)=>{
       }else{
         e.target.classList.add("valido")
       }
+  }else if(e.target.id = "uploadruc"){
+    $.getElementById('adjunto_ficha').innerHTML  = e.target.files[0].name;
+  }else if(e.target.id = "uploadcatalogo"){
+    $.getElementById('adjunto_catalogo').innerHTML  = e.target.files[0].name;
+  }else if(e.target.id = "uploadeclaracion"){
+    $.getElementById('adjunto_declaracion').innerHTML  = e.target.files[0].name;
   }
 })
    
@@ -199,7 +204,6 @@ tabla_bancos_body.addEventListener("click",(e)=>{
     }
     
   }
-  
   return false;
 });
 
