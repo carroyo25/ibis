@@ -33,10 +33,23 @@
     </div>
     <div class="modal" id="cambiarFila">
         <div class="ventanaPregunta">
-            <h3>¿Borrar la fila?</h3>
-            <div>
+            <h3>Actualizar Registros</h3>
+            <form class="ventana__actualizar" id="form_actualizar">
+                <label for="codigo__cambio">Codigo</label>
+                <input type="text" name="codigo__cambio" id="codigo__cambio" class="input__change">
+                <label for="cantidad__cambio">Cantidad</label>
+                <input type="text" name="cantidad__cambio" id="cantidad__cambio" class="input__change">
+                <label for="patrimonio__cambio">Patrimonio</label>
+                <input type="checkbox" name="patrimonio__cambio" id="patrimonio__cambio">
+                <label for="hoja__cambio">Nro. Hoja</label>
+                <input type="text" name="hoja__cambio" id="hoja__cambio" class="input__change">
+                <label for="serie__cambio">Serie</label>
+                <input type="text" name="serie_cambio" id="serie__cambio" class="input__change">
+            </form>
+            <div class="opciones__modifica__kardex">
                 <button type="button" id="btnAceptarModificar">Aceptar</button>
-                <button type="button" id="btnCancelarModirficar">Cancelar</button>
+                <button type="button" id="btnCancelarModificar">Cancelar</button>
+                <button type="button" id="btnEliminarRegistro">Eliminar</button>
             </div>
         </div>
     </div>

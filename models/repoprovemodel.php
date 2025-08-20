@@ -51,7 +51,6 @@
                                                         INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi 
                                                     WHERE
                                                         tb_costusu.id_cuser = :user 
-                                                        AND tb_costusu.nflgactivo = 1 
                                                         AND lg_ordencab.cper LIKE :anio
                                                         AND lg_ordencab.cnumero LIKE :orden
                                                         AND tb_costusu.ncodproy LIKE :costos
@@ -273,11 +272,9 @@
                                                         INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi 
                                                     WHERE
                                                         tb_costusu.id_cuser = :user 
-                                                        AND tb_costusu.nflgactivo = 1 
                                                         AND lg_ordencab.cper $fecha
                                                         AND tb_costusu.ncodproy $costo
                                                         AND cm_entidad.id_centi $entidad
-                                                        AND ISNULL(lg_ordencab.ntipdoc)
                                                     ORDER BY
                                                         id_regmov DESC");
 
@@ -320,7 +317,6 @@
                                                         INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi 
                                                     WHERE
                                                         tb_costusu.id_cuser = :user 
-                                                        AND tb_costusu.nflgactivo = 1 
                                                         AND lg_ordencab.cper $fecha
                                                         AND tb_costusu.ncodproy $costo
                                                         AND cm_entidad.id_centi $entidad
@@ -352,7 +348,6 @@
                                                         INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi 
                                                     WHERE
                                                         tb_costusu.id_cuser = :user 
-                                                        AND tb_costusu.nflgactivo = 1 
                                                         AND lg_ordencab.cper $fecha
                                                         AND tb_costusu.ncodproy $costo
                                                         AND cm_entidad.id_centi $entidad
@@ -385,7 +380,6 @@
                                                         INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi 
                                                     WHERE
                                                         tb_costusu.id_cuser = :user 
-                                                        AND tb_costusu.nflgactivo = 1
                                                         AND lg_ordencab.nflgactivo = 1  
                                                         AND lg_ordencab.cper $fecha
                                                         AND tb_costusu.ncodproy $costo
@@ -566,7 +560,6 @@
                                                         LEFT JOIN lg_ordencab ON tb_costusu.ncodproy = lg_ordencab.ncodpry 
                                                     WHERE
                                                         tb_costusu.id_cuser = :user 
-                                                        AND lg_ordencab.nflgactivo = 1 
                                                         AND tb_costusu.nflgactivo = 1 
                                                         AND ISNULL( lg_ordencab.ntipdoc ) 
                                                         AND lg_ordencab.cper $fecha 

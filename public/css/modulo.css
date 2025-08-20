@@ -4265,6 +4265,36 @@ thead .sticky-column {
   height: 2rem;
   padding-left: 10px;
 }
+.ventanaPregunta .ventana__actualizar {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: auto 0.5rem 1fr;
+  grid-template-columns: auto 1fr;
+  -ms-grid-rows: 5fr;
+  grid-template-rows: 5fr;
+  gap: 0.5rem;
+  justify-items: left;
+}
+.ventanaPregunta .ventana__actualizar > *:nth-child(1) {
+  -ms-grid-row: 1;
+  -ms-grid-column: 1;
+}
+.ventanaPregunta .ventana__actualizar > *:nth-child(2) {
+  -ms-grid-row: 1;
+  -ms-grid-column: 3;
+}
+.ventanaPregunta .ventana__actualizar label {
+  text-align: left;
+}
+.ventanaPregunta .ventana__actualizar .input__change {
+  height: 2rem;
+}
+.ventanaPregunta .opciones__modifica__kardex {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  gap: 1rem;
+}
 
 .ventanaCambio {
   padding: 15px;

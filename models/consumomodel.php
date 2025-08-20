@@ -266,10 +266,9 @@
                                                     ORDER BY alm_consumo.freg DESC" );
                 $sql->execute(["documento"=>$d,"cc"=>$c]);
                 $rowCount = $sql->rowCount();
-                $item = 1;
+                $item = $rowCount; //para dar el id a la columna
                 $salida ="";
                 $numero_item = $this->cantidadItems($d,$c);
-
 
                 if ($rowCount > 0) {
                     while ($rs = $sql->fetch()){
@@ -277,7 +276,8 @@
                         $marcado = $rs['flgdevolver'] == 1 ? "checked" : "";
                         $firma = "public/documentos/firmas/".$rs['cfirma'].".png";
 
-                        $salida .= '<tr class="pointer" data-grabado="1" 
+                        $salida .= '<tr class="pointer" id="'.$item--.'"
+                                                        data-grabado="1" 
                                                         data-registrado="1" 
                                                         data-kardex = "'.$rs['nkardex'].'"
                                                         data-firma = "'.$rs['cfirma'].'"
@@ -303,7 +303,13 @@
                                                 <img src = '.$firma.' style ="width:100% !important">
                                             </div>
                                         </td>
-                                        <td class="textoCentro"><a href="'.$rs['idreg'].'"><i class="fas fa-wrench"></i></a></td>
+                                        <td class="textoCentro"><a href="'.$rs['idreg'].'" 
+                                                        data-codigo     = "'.$rs['ccodprod'].'"
+                                                        data-cantidad   = "'.$rs['cantsalida'].'"
+                                                        data-patrimonio = "'.$rs['flgdevolver'].'"
+                                                        data-hoja       = "'.$rs['nhoja'].'"
+                                                        data-serie      = "'.$rs['cserie'].'">
+                                                        <i class="fas fa-wrench"></i></a></td>
                                     </tr>';
                     }
                 }
@@ -406,13 +412,16 @@
 
             try {
                 $sql = $this->db->connect()->prepare("UPDATE alm_consumo 
-                                                        SET alm_consumo.flgactivo = 0 
+                                                        SET alm_consumo.flgactivo = 0,
+                                                            alm_consumo.nrodoc =  '-'
                                                         WHERE alm_consumo.idreg =:id");
                 $sql->execute(["id"=>$id]);
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount) {
                     $mensaje = "Fila eliminada...";
+                }else{
+                    $mensaje = "Error al eliminar la fila";
                 }
                 
                 return array("mensaje"=>$mensaje);
@@ -420,6 +429,50 @@
                 echo $th->getMessage();
                 return false;
             } 
+        }
+
+        public function actualizar($parametros) {
+            $mensaje = "Error al actualizar";
+            $respuestaOk = false;
+
+            $patrimonio = $parametros['patrimonio'] == true ? 1:0;
+
+            try {
+                $producto = $this->buscarCodigoCambio($parametros['codigo']);
+
+                if(count($producto) == 1){
+                    $sql = $this->db->connect()->prepare("UPDATE alm_consumo 
+                                                        SET alm_consumo.idprod = :codigo,
+                                                            alm_consumo.cantsalida = :cantidad,
+                                                            alm_consumo.nhoja = :hoja,
+                                                            alm_consumo.flgdevolver = :patrimonio,
+                                                            alm_consumo.cserie = :serie
+                                                        WHERE alm_consumo.idreg =:id");
+                    $sql->execute(["id"=>$parametros['id'],
+                                    "codigo" =>$producto[0]['id_cprod'],
+                                    "cantidad"=>$parametros['cantidad'],
+                                    "hoja"=>$parametros['hoja'],
+                                    "patrimonio"=>$patrimonio,
+                                    "serie"=>$parametros['serie']]);
+                    $rowCount = $sql->rowCount();
+
+                    if ($rowCount) {
+                        $mensaje = "Fila actualizada...";
+                        $respuestaOk = true;
+                    }
+                }else{
+                    $mensaje = "El codigo ingresado no existe";
+                    $respuestaOk = false;
+                }
+
+                return array("mensaje"=>$mensaje,
+                                "cantidad" =>count($producto), 
+                                "datos"=>$producto[0], 
+                                "respuesta" => $respuestaOk);
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
         }
         
         public function generarReporte($cc) {
@@ -831,7 +884,7 @@
                                                         AND cm_producto.cdesprod LIKE :descripcion
                                                     ORDER BY
                                                         cm_producto.cdesprod ASC");
-               $sql->execute(["existencias" =>$cc,
+                $sql->execute(["existencias" =>$cc,
                                 "inventario" =>$cc,
                                 "salidas"=>$cc,
                                 "ctransfsalida"=>$cc, 
@@ -861,6 +914,27 @@
                 echo $th->getMessage();
                 return false;
             } 
+        }
+
+        private function buscarCodigoCambio($codigo){
+            try {
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        cm_producto.id_cprod, 
+                                                        cm_producto.ccodprod, 
+                                                        UPPER(cm_producto.cdesprod) AS cdesprod, 
+                                                        tb_unimed.cabrevia
+                                                    FROM
+                                                        cm_producto
+                                                        INNER JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                    WHERE cm_producto.ccodprod = :codigo");
+                $sql->execute(["codigo"=>$codigo]);
+                $result = $sql->fetchAll(PDO::FETCH_ASSOC);
+
+                return $result;
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
         }
     }
 ?>

@@ -5,7 +5,8 @@ $(function(){
         codigo="",
         idprod="",
         descripcion="",
-        und = "";
+        und = "",
+        index__fila = 0;
 
     $("#espera").fadeOut();
 
@@ -25,11 +26,6 @@ $(function(){
                             .empty()
                             .append(data.anteriores);
 
-                        pdfjsLib.getDocument(data.ruta).promise.then(doc => {
-                            pdf = doc;
-                            render();
-                        });
-    
                         $("#codeRead").focus();
                     }else{
                         mostrarMensaje("Trabajador no registrado","mensaje_error");
@@ -316,24 +312,97 @@ $(function(){
 
         $("#cambiarFila").fadeIn();
 
-        /*alert('Modificar registro');
-
         fila = $(this).parent().parent();
+        index__fila = $(this).parent().parent().attr("id");
         sw = fila.data("registrado");
         registro = $(this).attr("href");
 
-        if (!sw )*/
-            
+        $("#codigo__cambio").val($(this).data('codigo'));
+        $("#cantidad__cambio").val($(this).data('cantidad'));
+        $("#patrimonio__cambio").prop("checked",$(this).data('patrimonio'));
+        $("#hoja__cambio").val($(this).data('hoja'));
+        $("#serie__cambio").val($(this).data('serie'));
 
         return false;
     });
 
     $("#btnAceptarModificar").click(function (e) { 
         e.preventDefault();
+        
+        try {
+            if ( $("#rol_user").val() === 2 ) throw new Error('No puede realizar esta acción');
 
-        //fila.remove();
+            let formData = new FormData();
+            formData.append('id',registro);
+            formData.append('codigo',$("#codigo__cambio").val());
+            formData.append('cantidad',$("#cantidad__cambio").val());   
+            formData.append('patrimonio',$("#patrimonio__cambio").prop('checked') ? 1:0);   
+            formData.append('hoja',$("#hoja__cambio").val());   
+            formData.append('serie',$("#serie__cambio").val());
+            
+            fetch(RUTA+'consumo/actualiza',{
+                method:'POST',
+                body:formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.respuesta) {
+
+                    mostrarMensaje(data.mensaje,'mensaje_correcto');
+                    $('#'+index__fila).find('td').eq('1').text($("#codigo__cambio").val());
+                    $('#'+index__fila).find('td').eq('2').text(data.datos['cdesprod']);
+                    $('#'+index__fila).find('td').eq('3').text(data.datos['cabrevia']);
+                    $('#'+index__fila).find('td').eq('4').text($("#cantidad__cambio").val());
+                    $('#'+index__fila).find('td').eq('6').text($("#hoja__cambio").val());
+                    $('#'+index__fila).find('td').eq('9').text($("#serie__cambio").val());
+                    $('#'+index__fila).find('td').eq('10').children().prop('checked',$("#patrimonio__cambio").prop('checked'));
+                }else{
+                    mostrarMensaje(data.mensaje,'mensaje_error');
+                }
+                
+            })
+
+        } catch (error) {
+            mostrarMensaje(error.message,'mensaje_error')
+        }
+        
         $("#cambiarFila").fadeOut();
  
+        return false;
+    });
+
+    $("#btnEliminarRegistro").click(function(e){
+        e.preventDefault();
+
+        if(sw == 1){
+            try {
+                if ($("#rol_user").val() !== "2") throw new Error('No puede realizar esta acción');
+
+                let formData = new FormData();
+                formData.append('id',registro);
+
+                fetch(RUTA+'consumo/borraFila',{
+                    method:'POST',
+                    body:formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    mostrarMensaje('Registro Eliminado','mensaje_correcto');
+                    fila.remove();
+                    $("#cambiarFila").fadeOut();
+                })
+
+                fila.remove();
+                $("#cambiarFila").fadeOut();
+
+            } catch (error) {
+                mostrarMensaje(error.message,'mensaje_error');
+            }
+        }else{
+            fila.remove();
+            $("#cambiarFila").fadeOut();
+        }
+
         return false;
     });
 
@@ -355,6 +424,8 @@ $(function(){
 
     $("#btnCancelarExport").click(function (e) { 
         e.preventDefault();
+
+        console.log($("#form_actualizar").serialize());
 
         $("#exporta").fadeOut();
 

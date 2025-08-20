@@ -3634,6 +3634,27 @@ thead .sticky-column {
             padding-left: 10px;
         }
     }
+
+    .ventana__actualizar{
+        display: grid;
+        grid-template-columns: auto 1fr;
+        grid-template-rows: 5fr;
+        gap:.5rem;
+        justify-items: left;
+
+        label{
+            text-align: left;
+        }
+
+        .input__change {
+            height: 2rem;
+        }
+    }
+
+    .opciones__modifica__kardex{
+        display: flex;
+        gap: 1rem;
+    }
 }
 
 .ventanaCambio{
