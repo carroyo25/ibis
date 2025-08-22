@@ -722,6 +722,35 @@ thead .sticky-column {
         }
     }
 
+    .variasConsultas5items {
+        color: $blanco;
+        padding: 5px 15px;
+        display:grid;
+        grid-template-columns: 7% 34% 34% 7% 7% 7%;
+        column-gap: 15px;
+        position: relative;
+
+        label{
+            line-height: 2rem;
+        }
+
+        input,select{
+            height: 2rem;
+            outline: none;
+            border:none;
+            padding-left: 20px;
+            border-radius: 8px;
+            width: 100%;
+        }
+
+        #vistafirma {
+            position: absolute;
+            border: 1px solid #000;
+            width: 8%;
+            top: 0;
+        }
+    }
+
     .variasConsultas6campos {
         color: $blanco;
         padding: 5px 15px;
@@ -2189,7 +2218,8 @@ thead .sticky-column {
         margin-right: 1rem;
         padding: 1rem;
         overflow:auto;
-        max-height: 100%;
+        height: 150px;
+        max-height: 150px;
 
         li {
             border: 1px solid $blanco;

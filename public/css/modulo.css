@@ -758,6 +758,35 @@ thead .sticky-column {
   width: 8%;
   top: 0;
 }
+.barraTrabajo .variasConsultas5items {
+  color: #fff;
+  padding: 5px 15px;
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 7% 15px 34% 15px 34% 15px 7% 15px 7% 15px 7%;
+  grid-template-columns: 7% 34% 34% 7% 7% 7%;
+  -webkit-column-gap: 15px;
+     -moz-column-gap: 15px;
+          column-gap: 15px;
+  position: relative;
+}
+.barraTrabajo .variasConsultas5items label {
+  line-height: 2rem;
+}
+.barraTrabajo .variasConsultas5items input, .barraTrabajo .variasConsultas5items select {
+  height: 2rem;
+  outline: none;
+  border: none;
+  padding-left: 20px;
+  border-radius: 8px;
+  width: 100%;
+}
+.barraTrabajo .variasConsultas5items #vistafirma {
+  position: absolute;
+  border: 1px solid #000;
+  width: 8%;
+  top: 0;
+}
 .barraTrabajo .variasConsultas6campos {
   color: #fff;
   padding: 5px 15px;
@@ -2510,7 +2539,8 @@ thead .sticky-column {
   margin-right: 1rem;
   padding: 1rem;
   overflow: auto;
-  max-height: 100%;
+  height: 150px;
+  max-height: 150px;
 }
 .ventanaAdjuntos ul li {
   border: 1px solid #fff;
@@ -2535,8 +2565,7 @@ thead .sticky-column {
 }
 .ventanaAdjuntos ul li a:hover {
   background: rgba(0, 120, 212, 0.4);
-  -webkit-backdrop-filter: saturate(180%) blur(20px);
-          backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
 }
 .ventanaAdjuntos ul li i {
   font-size: 2rem;
@@ -2619,8 +2648,7 @@ thead .sticky-column {
 }
 .ventanaCarpetas ul li a:hover {
   background: rgba(0, 120, 212, 0.4);
-  -webkit-backdrop-filter: saturate(180%) blur(20px);
-          backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
 }
 .ventanaCarpetas ul li i {
   font-size: 2rem;

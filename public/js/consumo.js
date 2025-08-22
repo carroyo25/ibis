@@ -310,20 +310,24 @@ $(function(){
     $("#tablaPrincipal tbody").on("click","a", function (e) {
         e.preventDefault();
 
-        $("#cambiarFila").fadeIn();
+        if ( $("#rol_user").val() == 2 || $("#rol_user").val() == 4) {
+            $("#cambiarFila").fadeIn();
 
-        fila = $(this).parent().parent();
-        index__fila = $(this).parent().parent().attr("id");
-        sw = fila.data("registrado");
-        registro = $(this).attr("href");
+            fila = $(this).parent().parent();
+            index__fila = $(this).parent().parent().attr("id");
+            sw = fila.data("registrado");
+            registro = $(this).attr("href");
 
-        $("#codigo__cambio").val($(this).data('codigo'));
-        $("#cantidad__cambio").val($(this).data('cantidad'));
-        $("#patrimonio__cambio").prop("checked",$(this).data('patrimonio'));
-        $("#hoja__cambio").val($(this).data('hoja'));
-        $("#serie__cambio").val($(this).data('serie'));
-
-        return false;
+            $("#codigo__cambio").val($(this).data('codigo'));
+            $("#cantidad__cambio").val($(this).data('cantidad'));
+            $("#patrimonio__cambio").prop("checked",$(this).data('patrimonio'));
+            $("#hoja__cambio").val($(this).data('hoja'));
+            $("#serie__cambio").val($(this).data('serie'));
+            return false;
+        }else{
+            mostrarMensaje('No se puede realizar esta acción','mensaje_error');
+            return false;
+        }
     });
 
     $("#btnAceptarModificar").click(function (e) { 

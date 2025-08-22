@@ -89,7 +89,7 @@ llenarListado = async () => {
         $("#esperar").css({"display":"none"});
 
     } catch (error) {
-        console.error("Error in llenarListado:", error);
+        console.error("Error en llenarListado:", error);
         // You might want to show an error message to the user here
     }
 };
