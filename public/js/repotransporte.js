@@ -143,13 +143,13 @@ function verAdjuntos(orden){
     }
 }
 
-/*reporteExcel = async() = () => {
+reporteExcel = async() = () => {
     try {
         
     } catch (error) {
         
     }
-}*/
+}
 
 // Función para fade in
 function fadeIn(element) {
@@ -167,4 +167,13 @@ function fadeOut(element) {
     setTimeout(() => {
         element.style.display = 'none';
     }, 300); // Debe coincidir con la duración de la transición en CSS (0.3s = 300ms)
+}
+
+
+async function getElements(){
+    try {
+        $("#esperar").fadeIn();
+    } catch (error) {
+        
+    }
 }

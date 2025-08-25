@@ -2978,6 +2978,19 @@ thead .sticky-column {
             }
         }
 
+        label[data-etiqueta="entidad"]{
+            grid-column: 1;
+        }
+
+        div[data-box="lista_entidad"] {
+            position: relative;
+            grid-column: 2 / span 7;
+
+            * {
+                width: 100%;
+            }
+        }
+
         label[data-etiqueta="fecha_entrega"]{
             grid-column: 5;
         }
@@ -2992,6 +3005,16 @@ thead .sticky-column {
         }
 
         input[name="pedidommto"]{
+            grid-column: 2 / span 3;
+            grid-row: 2;
+        }
+
+        label[data-etiqueta="total"]{
+            grid-column: 1;
+            grid-row: 2;
+        }
+
+        input[name="total"]{
             grid-column: 2 / span 3;
             grid-row: 2;
         }

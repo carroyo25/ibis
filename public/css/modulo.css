@@ -3566,6 +3566,19 @@ thead .sticky-column {
 .ventanaProceso .seccion_derecha_grid div[data-box=lista_tipo] * {
   width: 100%;
 }
+.ventanaProceso .seccion_derecha_grid label[data-etiqueta=entidad] {
+  -ms-grid-column: 1;
+  grid-column: 1;
+}
+.ventanaProceso .seccion_derecha_grid div[data-box=lista_entidad] {
+  position: relative;
+  -ms-grid-column: 2;
+  -ms-grid-column-span: 7;
+  grid-column: 2/span 7;
+}
+.ventanaProceso .seccion_derecha_grid div[data-box=lista_entidad] * {
+  width: 100%;
+}
 .ventanaProceso .seccion_derecha_grid label[data-etiqueta=fecha_entrega] {
   -ms-grid-column: 5;
   grid-column: 5;
@@ -3582,6 +3595,19 @@ thead .sticky-column {
   grid-row: 2;
 }
 .ventanaProceso .seccion_derecha_grid input[name=pedidommto] {
+  -ms-grid-column: 2;
+  -ms-grid-column-span: 3;
+  grid-column: 2/span 3;
+  -ms-grid-row: 2;
+  grid-row: 2;
+}
+.ventanaProceso .seccion_derecha_grid label[data-etiqueta=total] {
+  -ms-grid-column: 1;
+  grid-column: 1;
+  -ms-grid-row: 2;
+  grid-row: 2;
+}
+.ventanaProceso .seccion_derecha_grid input[name=total] {
   -ms-grid-column: 2;
   -ms-grid-column-span: 3;
   grid-column: 2/span 3;

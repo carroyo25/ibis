@@ -351,12 +351,10 @@
 
                             if( $rs['fechaLog'] !== "" && $rs['fechaOpe'] !== "" && $rs['FechaFin'] !== "") {
                                 $fecha_autoriza = $rs['fecha_autorizacion'];
-                                $fecha_entrega = $rs['fecha_entrega'];
+                                $fecha_entrega = $rs['fecha_entrega_final'];
                             }
 
                             if ( $rs['estadoItem'] !== 105 ) {
-                                
-
                                 if  ($fecha_entrega !== null){
                                     $dias_atraso  =  $rs['dias_atraso'];
 
@@ -436,7 +434,7 @@
 
                                         <td class="textoDerecha pr15px">'.$rs['ingreso'].'</td>
                                         <td class="textoCentro">'.$rs['nota_ingreso'].'</td>
-                                        <td class="textoCentro">'.$rs['fecha_entrega'].'</td>
+                                        <td class="textoCentro">'.$rs['fecha_recepcion_proveedor'].'</td>
 
                                         <td class="textoDerecha pr15px">'.$saldoRecibir.'</td>
                                         <td class="textoDerecha pr15px">'.$rs['plazo'].'</td>
@@ -753,7 +751,7 @@
                                                     AND tb_costusu.id_cuser = :usr
                                                     AND ISNULL( lg_ordendet.nflgactivo ) 
                                                     AND tb_proyectos.nflgactivo = 1 
-                                                    AND tb_pedidocab.anio >= YEAR (NOW()) - 1 
+                                                    AND tb_pedidocab.anio >= YEAR (NOW()) - 1
                                                 GROUP BY
                                                     tb_pedidodet.iditem 
                                                 ORDER BY
@@ -2043,7 +2041,7 @@
 
                     $sheet->setCellValue('AB'.$fila,$dato['ingreso']);
                     $sheet->setCellValue('AC'.$fila,$dato['nota_ingreso']);
-                    $sheet->setCellValue('AD'.$fila,$dato['fecha_recepcion_proveedor']);
+                    $sheet->setCellValue('AD'.$fila,$dato['fecha_entrega_final']);
                     $sheet->setCellValue('AE'.$fila,$saldoRecibir);
                         
                     $sheet->setCellValue('AF'.$fila,$dato['plazo']);
@@ -2084,6 +2082,7 @@
             }
         }
 
+        /*** EXPORTAR TOTAL */
         private function crearExcel($datos){
             require_once('public/PHPExcel/PHPExcel.php');
 
@@ -2434,7 +2433,7 @@
                     $objPHPExcel->getActiveSheet()->setCellValue('Y'.$fila, $item['cantidad_atendida']);
                     $objPHPExcel->getActiveSheet()->setCellValue('Z'.$fila, $item['proveedor']);
 
-                    $objPHPExcel->getActiveSheet()->setCellValue('AA'.$fila, $fecha_entrega);
+                    $objPHPExcel->getActiveSheet()->setCellValue('AA'.$fila, $item['fecha_entrega_final']);
                     $objPHPExcel->getActiveSheet()->setCellValue('AB'.$fila, $item['ingreso']);
                     $objPHPExcel->getActiveSheet()->setCellValue('AC'.$fila, $item['nota_ingreso']);
                     $objPHPExcel->getActiveSheet()->setCellValue('AD'.$fila, $item['fecha_recepcion_proveedor']);
@@ -2472,7 +2471,7 @@
                         'K'     => $item['aprobacion_pedido'],
                         'U'     => $item['fecha_orden'],
                         'X'     => $item['fecha_autorizacion_orden'],
-                        'AA'    => $item['fecha_entrega'],
+                        'AA'    => $item['fecha_entrega_final'],
                         'AD'    => $item['fecha_recepcion_proveedor'],
                         'AN'    => $item['fecha_traslado'],
                         'AL'    => $item['salida_lurin'],
