@@ -50,6 +50,7 @@
                     <input type="hidden" name="codigo_usuario" id="codigo_usuario">
                     <input type="hidden" name="codigo_entidad" id="codigo_entidad">
                     <input type="hidden" name="total_numero" id="total_numero">
+                    <input type="hidden" name="fecha_entrega" id="fecha_entrega">
 
 
                     <div class="barraOpciones primeraBarra">
@@ -122,7 +123,7 @@
                         <div class="seccion_derecha_grid">
                             <label for="entidad" data-etiqueta="entidad">Entidad:</label>
                             <div data-box="lista_entidad">
-                                <input type="text" name="tipo" id="tipo" class="mostrarLista" placeholder="Elija una opcion">
+                                <input type="text" name="entidad" id="entidad" class="mostrarLista" placeholder="Elija una opcion">
                                 <div class="lista_grid" id="lista_entidad">
                                     <ul>
                                         <?php echo $this->listaEntidades?>
@@ -131,7 +132,7 @@
                             </div>
                                                     
                             <label for="total" data-etiqueta="total">Total</label>
-                            <input type="number" name="total" id="total" class="cerrarLista">
+                            <input type="text" name="total" id="total" class="cerrarLista">
                             
                             <label for="estado" data-etiqueta="estado">Estado:</label>
                             <input type="text" name="estado" id="estado" class="textoCentro estado procesando" readonly value="EN PROCESO">

@@ -143,7 +143,7 @@ $(function(){
     $("#closeProcess").click(function (e) { 
         e.preventDefault();
 
-        $.post(RUTA+"pedidos/actualizaListado",
+        $.post(RUTA+"cajachica/actualizaListado",
             function (data, textStatus, jqXHR) {
                 $(".itemsTabla table tbody")
                     .empty()
@@ -311,7 +311,7 @@ $(function(){
     $("#tablaPrincipal tbody").on("click","tr", function (e) {
         e.preventDefault();
 
-        $.post(RUTA+"pedidos/consultaId", {id:$(this).data("indice")},
+        $.post(RUTA+"cajachica/consultaIdCompras", {id:$(this).data("indice")},
             function (data, textStatus, jqXHR) {
                 
                 let numero = $.strPad(data.cabecera[0].nrodoc,6);
@@ -339,22 +339,10 @@ $(function(){
                 $("#estado").val(data.cabecera[0].estado);
                 $("#espec_items").val(data.cabecera[0].detalle);
                 $("#partida").val(data.cabecera[0].cdescripcion);
-                $("#fecha_entrega").val(data.cabecera[0].entrega)
-
+                $("#fecha_entrega").val(data.cabecera[0].entrega);
+                $("#entidad").val(data.cabecera[0].entidad);
+                $("#total").val(data.cabecera[0].ntotal);
                
-                if (data.cabecera[0].idtipomov == 38) {
-                    $("#requestAprob").removeClass("desactivado");
-                    $("#sendItem").addClass("desactivado");
-                }else {
-                    if ( data.cabecera[0].veralm == 0 ){
-                        $("#requestAprob").removeClass("desactivado");
-                        $("#sendItem").addClass("desactivado");
-                    }else {
-                        $("#requestAprob").addClass("desactivado");
-                        $("#sendItem").removeClass("desactivado");
-                    }                    
-                }
-
                 $("#tablaDetalles tbody")
                     .empty()
                     .append(data.detalles);
@@ -797,6 +785,24 @@ $(function(){
         return false;
     });
 
+    $("#btnConsulta").on('click', function(e) {
+        e.preventDefault();
+
+        let str = $("#formConsulta").serialize();
+
+        $.post(RUTA+"cajachica/filtroPedidos", str,
+            function (data, text, requestXHR) {
+                $("#tablaPrincipal tbody")
+                    .empty()
+                    .append(data);
+            },
+            "text"
+        );
+        
+        return false
+    });
+
+
     $("#tablaDetalles tbody").on('keypress','input', function(e) {
         if (e.which == 13) {
             try {
@@ -817,8 +823,6 @@ $(function(){
 
                     $("#total").val(numberWithCommas(suma.toFixed(2)));
                     $("#total_numero").val(suma.toFixed(2));
-
-                    calcularTotales();
                 }
             } catch (error) {
                 console.log(error)
@@ -877,9 +881,10 @@ itemsSave = () =>{
             IDX         = $(this).data('idx'),
             CALIDAD     = 0,
             ESTADO      = $(this).attr('data-grabado'),
-            ESPECIFICA  = $(this).find('td').eq(6).children().val();
+            ESPECIFICA  = $(this).find('td').eq(6).children().val(),
+            OBSERVAC    = "";
 
-        item= {};
+        let item= {};
         
         if ( ESTADO == 0 ) {
             item['idprod']      = IDPROD;
@@ -922,7 +927,7 @@ itemsModify = () =>{
             OBSERVAC    = "";
             
 
-        item= {};
+        let item= {};
         
         if ( ESTADO == 1 ) {
             item['idprod']      = IDPROD;
