@@ -10,9 +10,9 @@
             try {
                 $anio        = !isset($datos['anio']) || empty($datos['anio']) ? 2025 : $datos['anio'];
                 $pedido      = !empty($datos['pedido']) ? '%' . $datos['pedido'] . '%' : '%';
-                $orden       = !empty($datos['orden']) ? '%' . $datos['orden'] . '%' : '%';
+                $orden       = !empty($datos['orden']) ? $datos['orden'] : '%';
                 $descripcion = !empty($datos['descripcion']) ? '%' . $datos['descripcion'] . '%' : '%';
-                $proyecto      = $datos['proyecto'] == -1 ? '%' : '%' . $datos['proyecto'] . '%';
+                $proyecto    = $datos['proyecto'] == -1 ? '%' : $datos['proyecto'];
 
                 $sql = $this->db->connect()->prepare("SELECT
                                                             lg_ordendet.id_cprod,
@@ -36,7 +36,7 @@
                                                         WHERE
                                                             lg_ordendet.id_cprod = 3162 
                                                             AND lg_ordencab.nEstadoDoc <> 105 
-                                                            AND tb_proyectos.ccodproy LIKE :proyecto
+                                                            AND tb_proyectos.nidreg LIKE :proyecto
                                                             AND lg_ordencab.cnumero LIKE :orden
                                                             AND tb_pedidocab.nrodoc LIKE :pedido
                                                             AND lg_ordendet.cobserva LIKE :descripcion

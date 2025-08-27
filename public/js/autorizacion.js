@@ -188,7 +188,7 @@ $(function(){
             $("#observaciones").val(data.datos[0].observac);
             $("#codigo_traslado").val(data.datos[0].indice);
             $("#tipo").val(data.datos[0].tipo);
-            $("#estado_autorizacion").val();
+            $("#estado_autorizacion").val(data.datos[0].nflgautoriza);
             $("#firma_logistica").val(data.datos[0].firma_logistica);
             $("#firma_recepcion").val(data.datos[0].firma_cliente);
 

@@ -24,8 +24,8 @@
     <div class="cabezaModulo">
         <h1>Reporte Guias de Transporte</h1>
         <div>
-            <a href="#" id="nuevoRegistro"><i class="fas fa-file-excel"></i><p>Reporte</p></a>
-            <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
+            <a href="#" id="reporteExcel"><i class="fas fa-file-excel" style="pointer-events:none"></i><p style="pointer-events:none">Reporte</p></a>
+            <a href="#" id="irInicio"><i class="fas fa-home" style="pointer-events:none"></i><p>Inicio</p style="pointer-events:none"></a>
         </div>
     </div>
     <div class="barraTrabajo">
@@ -75,6 +75,7 @@
         </table>
     </div>
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
+    <script src="<?php echo constant('URL');?>public/js/exceljs.min.js"></script>
     <script src="<?php echo constant('URL');?>public/js/funciones.js?<?php echo constant('VERSION')?>"></script>
     <script src="<?php echo constant('URL');?>public/js/repotransporte.js?<?php echo constant('VERSION')?>"></script>
 </body>

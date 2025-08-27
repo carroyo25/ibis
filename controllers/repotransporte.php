@@ -15,7 +15,6 @@
         }
 
         function adjuntos(){
-        
             echo json_encode($this->model->listarAdjuntos($_POST['orden']));
         }
         
