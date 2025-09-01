@@ -102,7 +102,7 @@
                         "mov"=>$datos['codigo_tipo'],
                         "emis"=>$datos['emision'],
                         "entrega"=>$datos['fecha_entrega'],
-                        "estdoc"=>$datos['codigo_estado'],
+                        "estdoc"=>230,
                         "user"=>$datos['codigo_usuario'],
                         "nro"=>$numero['numero'],
                         "ano"=>$cper,
