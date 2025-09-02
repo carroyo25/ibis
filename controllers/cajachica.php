@@ -37,5 +37,9 @@
         function filtroPedidos(){
             echo $this->model->listarPedidosUsuario($_POST);
         }
+
+        function vistaPrevia(){
+            echo $this->model->generarPedidoCaja($_POST['cabecera'],$_POST['detalles']);
+        }
     }
 ?>

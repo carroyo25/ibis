@@ -490,5 +490,69 @@
                 return false;
             }
         }
+
+        public function generarPedidoCaja($datos,$detalles){
+            require_once('public/formatos/cajachica.php');
+            
+            $details = json_decode($detalles);
+            $filename =  $datos['numero'].$datos['costos'].".pdf";
+
+            $num = $datos['numero'];
+            $fec = $datos['emision'];
+            $usr = $_SESSION['iduser'];
+            $pry = $datos['costos'];
+            $are = $datos['area'];
+            $cos = $datos['costos'];
+            $tra = null;
+            $con = $datos['concepto'];
+            $sol = $datos['solicitante'];
+            $esp = $datos['espec_items'];
+            $tot = $datos['total'];
+            
+            $reg = ''; 
+            $dti = "PEDIDO DE CAJA CHICA";
+            $mmt = "";
+            $cla = "NORMAL";
+            $msj = "EMITIDO";
+            $ruta = "public/documentos/pedidos/emitidos/";
+
+            $pdf = new PDF($num,$fec,$pry,$cos,$are,$con,$mmt,$cla,$tra,$usr,$sol,$reg,$esp,$dti,$msj,"");
+		    $pdf->AddPage();
+            $pdf->AliasNbPages();
+            $pdf->SetWidths(array(10,15,70,8,10,17,15,15,15,15));
+            $pdf->SetFont('Arial','',5);
+            $lc = 0;
+            $rc = 0; 
+
+            $nreg = count($details);
+
+            for($i=1;$i<=$nreg;$i++){
+                $registro = isset( $details[$rc]->activo) ? $details[$rc]->activo : "";
+
+			    $pdf->SetAligns(array("L","L","L","L","R","L","L","L","L","L"));
+                $pdf->Row(array($details[$rc]->item,
+                                $details[$rc]->codigo,
+                                utf8_decode($details[$rc]->descripcion."\n".$details[$rc]->especifica),
+                                $details[$rc]->unidad,
+                                $details[$rc]->cantidad,
+                                '',
+                                '',
+                                '',
+                                $details[$rc]->precio,
+                                $registro));
+                
+                $lc++;
+                $rc++;
+
+                if ($lc == 54) {
+				    $pdf->AddPage();
+				    $lc = 0;
+			    }	
+		    }
+
+            $pdf->Output($ruta.$filename,'F');
+            
+            return $filename;
+        }
     }
 ?>

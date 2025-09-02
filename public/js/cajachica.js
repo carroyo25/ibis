@@ -196,7 +196,7 @@ $(function(){
        return false;
     });
 
-    /*$("#tablaDetalles tbody").on('keypress','input', function (e) {
+    $("#tablaDetalles tbody").on('keypress','input', function (e) {
         if (e.which == 13) {
             //para cambiar el foco con el enter
 
@@ -207,7 +207,7 @@ $(function(){
                 $(':input[tabindex=\'' + (cb + 1) + '\']').select();
             }
         }
-    });*/
+    });
 
     $("#saveItem").click(function (e) { 
         e.preventDefault();
@@ -435,11 +435,11 @@ $(function(){
                 result[this.name] = this.value;
             })
 
-            $.post(RUTA+"pedidos/vistaprevia", {cabecera:result,detalles:JSON.stringify(itemsPreview())},
+            $.post(RUTA+"cajachica/vistaprevia", {cabecera:result,detalles:JSON.stringify(itemsPreview())},
                 function (data, textStatus, jqXHR) {
                     $(".ventanaVistaPrevia iframe")
                     .attr("src","")
-                    .attr("src","public/documentos/pedidos/vistaprevia/"+data);
+                    .attr("src","public/documentos/pedidos/emitidods/"+data);
 
                     $("#vista_previa").val(data);
 
@@ -841,6 +841,8 @@ itemsPreview = () =>{
             DESCRIPCION = $(this).find('td').eq(3).text(),
             UNIDAD      = $(this).find('td').eq(4).text(),
             CANTIDAD    = $(this).find('td').eq(5).children().val(),
+            PRECIO      = $(this).find('td').eq(7).children().val(),
+            TOTAL       = $(this).find('td').eq(8).text(),
             ESPECIFICA  = $(this).find('td').eq(6).children().val(),
             ITEMPEDIDO  = $(this).data('idx'),
             OBSERVAC    = "",
@@ -860,6 +862,8 @@ itemsPreview = () =>{
         item['atendida']     = 0;
         item['nroparte']     = NROPARTE;
         item['estadoitem']   = ESTADOITEM;
+        item['precio']      = PRECIO;
+        item['total']       = TOTAL;
 
         DATA.push(item);
     })
