@@ -190,6 +190,18 @@
                                 <td style="text-align: center;line-height: 3rem;"><a href="#" ><i class="fas fa-upload btn_upload" data-file="declaracion"></i></td>
                                 <td id="adjunto_declaracion"></td>
                             </tr>
+                            <tr>
+                                <td>CARTILLA DE LINEAMIENTOS DE SEGURIDAD, SALUD Y MEDIO AMBIENTE PARA CONTRATISTAS</td>
+                                <td style="text-align: center;"><a href="../documentos/proveedores/formatos/PSPC-110-X-IN-005_1 Cartilla de lineamientos SSMA.doc" download><i class="fas fa-download"></i></a></td>
+                                <td style="text-align: center;line-height: 3rem;"><a href="#" ><i class="fas fa-upload btn_upload" data-file="declaracion"></i></td>
+                                <td id="adjunto_declaracion"></td>
+                            </tr>
+                            <tr>
+                                <td>AUTOEVALUACIÓN DE PROVEEDORES DE SERVICIOS</td>
+                                <td style="text-align: center;"><a href="../documentos/proveedores/formatos/PSPC-410-X-PR-002-FR-001_1 Autoevaluacion SSMA.xlsx" download><i class="fas fa-download"></i></a></td>
+                                <td style="text-align: center;line-height: 3rem;"><a href="#" ><i class="fas fa-upload btn_upload" data-file="declaracion"></i></td>
+                                <td id="adjunto_declaracion"></td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
