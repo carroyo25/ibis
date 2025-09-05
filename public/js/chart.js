@@ -7,6 +7,7 @@ $(function () {
     const anioActual = fecha.getFullYear();
     const mesActual = fecha.getMonth() + 1;
 
+    //console.log($("#rol_user").val());
 
     if ( $("#rol_user").val() == 9 || $("#rol_user").val() == 2 || $("#rol_user").val() == 110 || $("#rol_user").val() == 299 ) {
         $.ajax({
@@ -268,7 +269,7 @@ $(function () {
     $("#tablaPanelPedidos tbody").on("click","tr", function (e) {
         e.preventDefault();
 
-        if ($("#rol_user").val() == 68 || $("#rol_user").val() == 4) {
+        if ($("#rol_user").val() == 68 || $("#rol_user").val() == 4 || $("#rol_user").val() == 299) {
 
           $.post(RUTA+"panel/pdfPedido",{"pedido":$(this).data('id')},
             function (data, textStatus, jqXHR) {
