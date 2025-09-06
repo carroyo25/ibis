@@ -25,7 +25,9 @@
     <link rel="stylesheet" href="../css/all.css">
     <link rel="shortcut icon" type="image/png" href="../img/logo.png" />
 </head>
+
 <body>
+    <div id="barra">11</div>
     <div class="floating">
         <a href="#" id="floatUp" class="floatingOptions"><i class="fas fa-arrow-alt-circle-up"></i></a>
         <a href="#" id="cancelReg" class="floatingOptions"><i class="fas fa-ban"></i></a>
@@ -33,9 +35,14 @@
     </div>
     <div class="wrap" id="wrap">
         <form id="datos_entidad" method="POST" enctype="multipart/form-data">
-            <input type="file" class="oculto" name="uploadruc" id="uploadruc">
-            <input type="file" class="oculto" name="uploadcatalogo" id="uploadcatalogo">
-            <input type="file" class="oculto" name="uploadeclaracion" id="uploadeclaracion">
+            <input type="file" class="oculto adjuntos" name="upload_declaracion" id="upload_declaracion">
+            <input type="file" class="oculto adjuntos" name="upload_autoevaluacion" id="upload_autoevaluacion">
+            <input type="file" class="oculto adjuntos" name="upload_ruc" id="upload_ruc">
+            <input type="file" class="oculto adjuntos" name="upload_catalogo" id="upload_catalogo">
+            <input type="file" class="oculto adjuntos" name="upload_plan" id="upload_plan">
+            <input type="file" class="oculto adjuntos" name="upload_iper" id="upload_iper">
+            <input type="file" class="oculto adjuntos" name="upload_procedimientos" id="upload_procedimientos">
+            <input type="file" class="oculto adjuntos" name="upload_epp" id="upload_epp">
 
             <input type="hidden" name="actualiza" id="actualiza" value="<?php echo $proveedor[0]["nflgactualizado"]?>">
             <input type="hidden" name="id" id="id" value="<?php echo $proveedor[0]["id_centi"]?>">
@@ -127,7 +134,7 @@
                     <a href="#" class="btn btn-1" id="agregar_bancos">Agregar</a>
                 </div>
                 </br>
-                <table id="tabla_bancos">
+                <table id="tabla_bancos" class="tabla_bancos">
                     <thead>
                         <tr>
                             <th>Nombre Entidad Financieria</th>
@@ -159,48 +166,104 @@
             <section class="seccion_pagina">
                 <div class="contenedor_detalles">
                     <p class="detalle">SECCION 4: Adjuntos</p>
-                    
+                </div>
+                <br>
+                <div class="contenedor_detalles">
+                    <p class="detalle">ADJUNTOS PROPORCIONADOS POR SEPCON</p>
                 </div>
                 <div class="opciones">
-                    <table id="adjuntos">
+                    <table id="adjuntos_sepcon" class="tabla_adjuntos">
                         <thead>
                             <tr>
-                                <th width="50%">Nombre Adjunto</th>
-                                <th width="15%">Descargar</th>
-                                <th width="15%">Subir</th>
-                                <th>Archivo Adjunto</th>
+                                <th width="65%">Nombre Adjunto</th>
+                                <th width="10%">Descargar</th>
+                                <th width="10%">Subir</th>
+                                <th>Nombre Adjunto</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cuerpo_adjunto">
+                            <tr>
+                                <td>DECLARACIÓN JURADA DE CUMPLIMIENTO DEL SISTEMA DE GESTIÓN DE SEGURIDAD Y SALUD EN EL TRABAJO</td>
+                                <td class="centro"><a href="../documentos/proveedores/formatos/declaracionjurada.docx" download><i class="fas fa-download"></i></a></td>
+                                <td class="centro"><a href="" ><i class="fas fa-upload btn_upload" data-file="declaracion"></i></td>
+                                <td class="texto_adjunto" id="adjunto_declaracion"></td>
+                            </tr>
+                            <tr>
+                                <td>AUTOEVALUACIÓN DE PROVEEDORES DE SERVICIOS</td>
+                                <td class="centro"><a href="../documentos/proveedores/formatos/PSPC-410-X-PR-002-FR-001_1 Autoevaluacion SSMA.xlsx" download><i class="fas fa-download"></i></a></td>
+                                <td class="centro"><a href="#" ><i class="fas fa-upload btn_upload" data-file="evaluacion"></i></td>
+                                <td class="texto_adjunto" id="adjunto_evaluacion"></td>
+                            </tr>
+                            <tr>
+                                <td>CARTILLA DE LINEAMIENTOS DE SEGURIDAD, SALUD Y MEDIO AMBIENTE PARA CONTRATISTAS</td>
+                                <td class="centro"><a href="../documentos/proveedores/formatos/PSPC-110-X-IN-005_1 Cartilla de lineamientos SSMA.doc" download><i class="fas fa-download"></i></a></td>
+                                <td class="centro"><i class="fas fa-ban"></i></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Política SGI SEPCON</td>
+                                <td class="centro"><a href="../documentos/proveedores/formatos/PSPC-110-X-IN-005_1 Cartilla de lineamientos SSMA.doc" download><i class="fas fa-download"></i></a></td>
+                                <td class="centro"><i class="fas fa-ban"></i></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Reglamento interno de Seguridad y Salud en el Trabajo (RISST)</td>
+                                <td class="centro"><a href="../documentos/proveedores/formatos/PSPC-110-X-IN-005_1 Cartilla de lineamientos SSMA.doc" download><i class="fas fa-download"></i></a></td>
+                                <td class="centro"><i class="fas fa-ban"></i></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Procedimiento de evaluación de Proveedores</td>
+                                <td class="centro"><a href="../documentos/proveedores/formatos/PSPC-110-X-IN-005_1 Cartilla de lineamientos SSMA.doc" download><i class="fas fa-download"></i></a></td>
+                                <td class="centro"><i class="fas fa-ban"></i></td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <br>
+                <div class="contenedor_detalles">
+                    <p class="detalle">DOCUMENTOS A PRESENTAR POR EL PROVEEDOR</p>
+                </div>
+                <div class="opciones">
+                    <table id="adjuntos_proveedor" class="tabla_adjuntos">
+                        <thead>
+                            <tr>
+                                <th width="65%">Nombre Adjunto</th>
+                                <th width="10%">Subir</th>
+                                 <th>Nombre Adjunto</th>
                             </tr>
                         </thead>
                         <tbody id="cuerpo_adjunto">
                             <tr>
                                 <td>FICHA RUC</td>
-                                <td></td>
                                 <td style="text-align: center;line-height: 3rem;"><a href="#" ><i class="fas fa-upload btn_upload" data-file="ficha"></i></td>
-                                <td id="adjunto_ficha"></td>
+                                <td class="texto_adjunto" id="adjunto_ficharuc"></td>
                             </tr>
                             <tr>
-                                <td>CATÁLOGO</td>
-                                <td></td>
+                                <td>CATÁLOGO (opcional)</td>
                                 <td style="text-align: center;line-height: 3rem;"><a href="#" ><i class="fas fa-upload btn_upload" data-file="catalogo"></i></td>
-                                <td id="adjunto_catalogo"></td>
+                                <td class="texto_adjunto" id="adjunto_catalogo"></td>
                             </tr>
                             <tr>
-                                <td>DECLARACIÓN JURADA DE CUMPLIMIENTO DEL SISTEMA DE GESTIÓN DE SEGURIDAD Y SALUD EN EL TRABAJO</td>
-                                <td style="text-align: center;"><a href="../documentos/proveedores/formatos/declaracionjurada.docx" download><i class="fas fa-download"></i></a></td>
+                                <td>Plan y programa de SSMA</td>
                                 <td style="text-align: center;line-height: 3rem;"><a href="#" ><i class="fas fa-upload btn_upload" data-file="declaracion"></i></td>
-                                <td id="adjunto_declaracion"></td>
+                                <td class="texto_adjunto" id="adjunto_plan_ssma"></td>
                             </tr>
                             <tr>
-                                <td>CARTILLA DE LINEAMIENTOS DE SEGURIDAD, SALUD Y MEDIO AMBIENTE PARA CONTRATISTAS</td>
-                                <td style="text-align: center;"><a href="../documentos/proveedores/formatos/PSPC-110-X-IN-005_1 Cartilla de lineamientos SSMA.doc" download><i class="fas fa-download"></i></a></td>
+                                <td>IPERC / IAAS</td>
                                 <td style="text-align: center;line-height: 3rem;"><a href="#" ><i class="fas fa-upload btn_upload" data-file="declaracion"></i></td>
-                                <td id="adjunto_declaracion"></td>
+                                <td class="texto_adjunto" id="adjunto_iper"></td>
                             </tr>
                             <tr>
-                                <td>AUTOEVALUACIÓN DE PROVEEDORES DE SERVICIOS</td>
-                                <td style="text-align: center;"><a href="../documentos/proveedores/formatos/PSPC-410-X-PR-002-FR-001_1 Autoevaluacion SSMA.xlsx" download><i class="fas fa-download"></i></a></td>
+                                <td>Procedimientos o instructivos</td>
                                 <td style="text-align: center;line-height: 3rem;"><a href="#" ><i class="fas fa-upload btn_upload" data-file="declaracion"></i></td>
-                                <td id="adjunto_declaracion"></td>
+                                <td class="texto_adjunto" id="adjunto_procedimientos"></td>
+                            </tr>
+                            <tr>
+                                <td>Registro de entrega de EPP (si aplica)</td>
+                                <td style="text-align: center;line-height: 3rem;"><a href="#" ><i class="fas fa-upload btn_upload" data-file="declaracion"></i></td>
+                                <td class="texto_adjunto" id="adjunto_epp"></td>
                             </tr>
                         </tbody>
                     </table>

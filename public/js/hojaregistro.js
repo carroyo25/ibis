@@ -16,11 +16,21 @@ const razon_alta = $.getElementById("razon_social");
 const direccion_alta = $.getElementById("direccion");
 const ubigeo_alta = $.getElementById("ubigeo");
 
+const barra = $.getElementById("barra");
+
 //inicializar para la notificacion
 let notifier = new AWN(),
     errorCantEnti = false,
     errorMail = false;
 
+$.addEventListener('scroll',() =>{
+    const altura = wrap.scrollHeight = window.innerHeight;
+    const progreso = (window.scrollY / altura) * 100
+    barra.style.width = progreso+'%';
+    barra.innerHTML = progreso; 
+
+    console.log(progreso);
+})
 
 $.addEventListener("click",(e)=>{
   if (e.target.matches(".btnSave *")){
@@ -73,13 +83,19 @@ $.addEventListener("click",(e)=>{
   }else if(e.target.matches(".btn_upload")){
       console.log(e.target.dataset.file);
 
+      e.preventDefault();
+      
       if (e.target.dataset.file == 'ficha'){
-          //$.getElementById('uploadruc').click();
+        //$.getElementById('uploadruc').click();
       }else if(e.target.dataset.file == 'catalogo'){
-          //$.getElementById('uploadcatalogo').click();
+        //$.getElementById('uploadcatalogo').click();
       }else if(e.target.dataset.file == 'declaracion'){
-          $.getElementById('uploadeclaracion').click();
+        $.getElementById('upload_declaracion').click();
+      }else if(e.target.dataset.file == 'evaluacion'){
+        $.getElementById('upload_autoevaluacion').click();
       }
+
+      return false;
   }
 })
 
@@ -97,12 +113,12 @@ $.addEventListener("change", (e)=>{
       }else{
         e.target.classList.add("valido")
       }
-  }else if(e.target.id = "uploadruc"){
-    $.getElementById('adjunto_ficha').innerHTML  = e.target.files[0].name;
-  }else if(e.target.id = "uploadcatalogo"){
-    $.getElementById('adjunto_catalogo').innerHTML  = e.target.files[0].name;
-  }else if(e.target.id = "uploadeclaracion"){
-    $.getElementById('adjunto_declaracion').innerHTML  = e.target.files[0].name;
+  }else if (e.target.matches(".adjuntos")){
+      if (item == "upload_declaracion"){
+        $.getElementById("adjunto_declaracion").innerHTML= e.target.files[0].name;
+      }else if(item == "upload_autoevaluacion"){
+        $.getElementById("adjunto_evaluacion").innerHTML= e.target.files[0].name;
+      }
   }
 })
    
