@@ -61,6 +61,24 @@
             $nameFichaRuc = '';
             $nameCatalogo = '';
 
+            // Procesar declaracion jurada
+            if (isset($_FILES['upload_declaracion']) && $_FILES['upload_declaracion']['error'] === UPLOAD_ERR_OK) {
+                $fileRuc = $_FILES['upload_declaracion'];
+                $nameFichaRuc = 'declaracion_'.$datos['ruc'].'_'.$fechaActual.'.'.pathinfo($_FILES['upload_declaracion']['name'], PATHINFO_EXTENSION);
+                $extensionRuc = pathinfo($fileRuc['name'], PATHINFO_EXTENSION);
+                $filePathRuc = $uploadDir .'declaraciones/'. basename($nameFichaRuc);
+                move_uploaded_file($fileRuc['tmp_name'], $filePathRuc);
+            }
+
+            // Procesar AutoEvaluacion
+            if (isset($_FILES['upload_autoevaluacion']) && $_FILES['upload_autoevaluacion']['error'] === UPLOAD_ERR_OK) {
+                $fileRuc = $_FILES['upload_autoevaluacion'];
+                $nameFichaRuc = 'declaracion_'.$datos['ruc'].'_'.$fechaActual.'.'.pathinfo($_FILES['upload_autoevaluacion']['name'], PATHINFO_EXTENSION);
+                $extensionRuc = pathinfo($fileRuc['name'], PATHINFO_EXTENSION);
+                $filePathRuc = $uploadDir .'autoevaluacion/'. basename($nameFichaRuc);
+                move_uploaded_file($fileRuc['tmp_name'], $filePathRuc);
+            }
+
             // Procesar archivo RUC
             if (isset($_FILES['file_ruc']) && $_FILES['file_ruc']['error'] === UPLOAD_ERR_OK) {
                 $fileRuc = $_FILES['file_ruc'];
@@ -76,6 +94,36 @@
                 $nameCatalogo = 'catalogo_'.$datos['ruc'].'_'.$fechaActual.'.'.pathinfo($_FILES['file_ruc']['name'], PATHINFO_EXTENSION);
                 $extensionCat = pathinfo($fileCatalogo['name'], PATHINFO_EXTENSION);
                 $filePathCatalogo = $uploadDir .'catalogoproducto/'. basename($nameCatalogo);
+                
+                move_uploaded_file($fileCatalogo['tmp_name'], $filePathCatalogo);
+            }
+
+            // Procesar archivo Plan
+            if (isset($_FILES['upload_plan']) && $_FILES['file_ruc']['error'] === UPLOAD_ERR_OK) {
+                $fileCatalogo = $_FILES['upload_plan'];
+                $nameCatalogo = 'catalogo_'.$datos['ruc'].'_'.$fechaActual.'.'.pathinfo($_FILES['upload_plan']['name'], PATHINFO_EXTENSION);
+                $extensionCat = pathinfo($fileCatalogo['name'], PATHINFO_EXTENSION);
+                $filePathCatalogo = $uploadDir .'plan/'. basename($nameCatalogo);
+                
+                move_uploaded_file($fileCatalogo['tmp_name'], $filePathCatalogo);
+            }
+
+            // Procesar archivo IPER
+            if (isset($_FILES['upload_iper']) && $_FILES['file_ruc']['error'] === UPLOAD_ERR_OK) {
+                $fileCatalogo = $_FILES['upload_iper'];
+                $nameCatalogo = 'catalogo_'.$datos['ruc'].'_'.$fechaActual.'.'.pathinfo($_FILES['upload_iper']['name'], PATHINFO_EXTENSION);
+                $extensionCat = pathinfo($fileCatalogo['name'], PATHINFO_EXTENSION);
+                $filePathCatalogo = $uploadDir .'iper/'. basename($nameCatalogo);
+                
+                move_uploaded_file($fileCatalogo['tmp_name'], $filePathCatalogo);
+            }
+
+            // Procesar archivo IPER
+            if (isset($_FILES['upload_epp']) && $_FILES['file_ruc']['error'] === UPLOAD_ERR_OK) {
+                $fileCatalogo = $_FILES['upload_epp'];
+                $nameCatalogo = 'catalogo_'.$datos['ruc'].'_'.$fechaActual.'.'.pathinfo($_FILES['upload_epp']['name'], PATHINFO_EXTENSION);
+                $extensionCat = pathinfo($fileCatalogo['name'], PATHINFO_EXTENSION);
+                $filePathCatalogo = $uploadDir .'epp/'. basename($nameCatalogo);
                 
                 move_uploaded_file($fileCatalogo['tmp_name'], $filePathCatalogo);
             }

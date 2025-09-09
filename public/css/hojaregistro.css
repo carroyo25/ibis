@@ -28,20 +28,19 @@ body {
     background-image: url('../img/backnav.jpg');
     background-size: cover;
     background-repeat:no-repeat;
-    /*width: 100%;
-    height: 100vh;*/
     display: flex;
     justify-content: center;
     align-items: center;
     font-family: "Roboto", sans-serif;
+    padding: 2rem;
 }
 
 #barra{
   position: fixed;
   top: 0;
   left: 0;
-  height: 5px;
-  background-color: linear-gradient(90deg,#17a2ff,#3211FF);
+  height: 15px;
+  background: linear-gradient(90deg,#17a2ff,#3211FF);
   width: 0%;
   z-index: 9999;
 }
@@ -95,8 +94,7 @@ body {
 
 .wrap{
     background-color:#fff;
-    /*width: 50%;
-    height: 80vh;*/
+    width: 60%;
     padding: 1rem;
     overflow: auto;
     scroll-behavior: smooth;
@@ -430,10 +428,10 @@ body {
 
   /*botones flotantes */
   .floating{
-    position: absolute;
+    position: fixed;
     display: flex;
     flex-direction: column;
-    bottom: 100px;
+    bottom: 25px;
     right: 100px;
     gap: 5px;
 

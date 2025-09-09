@@ -27,7 +27,7 @@ $.addEventListener('scroll',() =>{
     const altura = wrap.scrollHeight = window.innerHeight;
     const progreso = (window.scrollY / altura) * 100
     barra.style.width = progreso+'%';
-    barra.innerHTML = progreso; 
+    //barra.innerHTML = progreso; 
 
     console.log(progreso);
 })
@@ -86,13 +86,21 @@ $.addEventListener("click",(e)=>{
       e.preventDefault();
       
       if (e.target.dataset.file == 'ficha'){
-        //$.getElementById('uploadruc').click();
+        $.getElementById('upload_ruc').click();
       }else if(e.target.dataset.file == 'catalogo'){
-        //$.getElementById('uploadcatalogo').click();
+        $.getElementById('upload_catalogo').click();
       }else if(e.target.dataset.file == 'declaracion'){
         $.getElementById('upload_declaracion').click();
       }else if(e.target.dataset.file == 'evaluacion'){
         $.getElementById('upload_autoevaluacion').click();
+      }else if(e.target.dataset.file == 'plan'){
+        $.getElementById('upload_plan').click();
+      }else if(e.target.dataset.file == 'iper'){
+        $.getElementById('upload_iper').click();
+      }else if(e.target.dataset.file == 'procedimientos'){
+        $.getElementById('upload_procedimientos').click();
+      }else if(e.target.dataset.file == 'epp'){
+        $.getElementById('upload_epp').click();
       }
 
       return false;
@@ -118,6 +126,18 @@ $.addEventListener("change", (e)=>{
         $.getElementById("adjunto_declaracion").innerHTML= e.target.files[0].name;
       }else if(item == "upload_autoevaluacion"){
         $.getElementById("adjunto_evaluacion").innerHTML= e.target.files[0].name;
+      }else if(item == "upload_ruc"){
+        $.getElementById("adjunto_ficharuc").innerHTML= e.target.files[0].name;
+      }else if(item == "upload_catalogo"){
+        $.getElementById("adjunto_catalogo").innerHTML= e.target.files[0].name;
+      }else if(item == "upload_plan"){
+        $.getElementById("adjunto_plan_ssma").innerHTML= e.target.files[0].name;
+      }else if(item == "upload_iper"){
+        $.getElementById("adjunto_iper").innerHTML= e.target.files[0].name;
+      }else if(item == "upload_procedimientos"){
+        $.getElementById("adjunto_procedimientos").innerHTML= e.target.files[0].name;
+      }else if(item == "upload_procedimientos"){
+        $.getElementById("adjunto_epp").innerHTML= e.target.files[0].name;
       }
   }
 })

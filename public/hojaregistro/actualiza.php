@@ -27,7 +27,7 @@
 </head>
 
 <body>
-    <div id="barra">11</div>
+    <div id="barra"></div>
     <div class="floating">
         <a href="#" id="floatUp" class="floatingOptions"><i class="fas fa-arrow-alt-circle-up"></i></a>
         <a href="#" id="cancelReg" class="floatingOptions"><i class="fas fa-ban"></i></a>
@@ -202,19 +202,19 @@
                             </tr>
                             <tr>
                                 <td>Política SGI SEPCON</td>
-                                <td class="centro"><a href="../documentos/proveedores/formatos/PSPC-110-X-IN-005_1 Cartilla de lineamientos SSMA.doc" download><i class="fas fa-download"></i></a></td>
+                                <td class="centro"><a href="../documentos/proveedores/formatos/Politica SGI.pdf" download><i class="fas fa-download"></i></a></td>
                                 <td class="centro"><i class="fas fa-ban"></i></td>
                                 <td></td>
                             </tr>
                             <tr>
                                 <td>Reglamento interno de Seguridad y Salud en el Trabajo (RISST)</td>
-                                <td class="centro"><a href="../documentos/proveedores/formatos/PSPC-110-X-IN-005_1 Cartilla de lineamientos SSMA.doc" download><i class="fas fa-download"></i></a></td>
+                                <td class="centro"><a href="../documentos/proveedores/formatos/PSPC-900-X-RG-001_2 RISST.pdf" download><i class="fas fa-download"></i></a></td>
                                 <td class="centro"><i class="fas fa-ban"></i></td>
                                 <td></td>
                             </tr>
                             <tr>
                                 <td>Procedimiento de evaluación de Proveedores</td>
-                                <td class="centro"><a href="../documentos/proveedores/formatos/PSPC-110-X-IN-005_1 Cartilla de lineamientos SSMA.doc" download><i class="fas fa-download"></i></a></td>
+                                <td class="centro"><a href="../documentos/proveedores/formatos/PSPC-410-X-PR-002_2 Procedimiento eval prov rev.doc" download><i class="fas fa-download"></i></a></td>
                                 <td class="centro"><i class="fas fa-ban"></i></td>
                                 <td></td>
                             </tr>
@@ -247,22 +247,22 @@
                             </tr>
                             <tr>
                                 <td>Plan y programa de SSMA</td>
-                                <td style="text-align: center;line-height: 3rem;"><a href="#" ><i class="fas fa-upload btn_upload" data-file="declaracion"></i></td>
+                                <td style="text-align: center;line-height: 3rem;"><a href="#" ><i class="fas fa-upload btn_upload" data-file="plan"></i></td>
                                 <td class="texto_adjunto" id="adjunto_plan_ssma"></td>
                             </tr>
                             <tr>
                                 <td>IPERC / IAAS</td>
-                                <td style="text-align: center;line-height: 3rem;"><a href="#" ><i class="fas fa-upload btn_upload" data-file="declaracion"></i></td>
+                                <td style="text-align: center;line-height: 3rem;"><a href="#" ><i class="fas fa-upload btn_upload" data-file="iper"></i></td>
                                 <td class="texto_adjunto" id="adjunto_iper"></td>
                             </tr>
                             <tr>
                                 <td>Procedimientos o instructivos</td>
-                                <td style="text-align: center;line-height: 3rem;"><a href="#" ><i class="fas fa-upload btn_upload" data-file="declaracion"></i></td>
+                                <td style="text-align: center;line-height: 3rem;"><a href="#" ><i class="fas fa-upload btn_upload" data-file="procedimientos"></i></td>
                                 <td class="texto_adjunto" id="adjunto_procedimientos"></td>
                             </tr>
                             <tr>
                                 <td>Registro de entrega de EPP (si aplica)</td>
-                                <td style="text-align: center;line-height: 3rem;"><a href="#" ><i class="fas fa-upload btn_upload" data-file="declaracion"></i></td>
+                                <td style="text-align: center;line-height: 3rem;"><a href="#" ><i class="fas fa-upload btn_upload" data-file="epp"></i></td>
                                 <td class="texto_adjunto" id="adjunto_epp"></td>
                             </tr>
                         </tbody>

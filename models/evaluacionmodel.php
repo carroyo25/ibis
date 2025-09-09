@@ -9,7 +9,7 @@
         public function listarOrdenesEval($orden,$cc,$mes,$anio,$tipo){
             try {
                 $o = $orden == "" ? "%" : $orden ;
-                $m = $mes   == -1 ? "%" : $mes;
+                $m = $mes   == -1 ? "%" : "%".$mes;
                 $c = $cc    == -1 ? "%" : $cc;
                 $a = $anio  == "" ? "%" : $anio;
                 $t = $tipo  == -1 ? "%" : $tipo;
