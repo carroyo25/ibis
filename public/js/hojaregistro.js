@@ -49,7 +49,7 @@ $.addEventListener("click",(e)=>{
 
       try {
         
-        if ( contador > 0 ) throw new Error('Hay campos sin rellenar');
+        //if ( contador > 0 ) throw new Error('Hay campos sin rellenar');
         /*if ( !validar(ruc) ) throw new Error("El RUC ingresado es incorrecto...");*/
 
           const form = $.querySelector('#datos_entidad')
@@ -69,7 +69,7 @@ $.addEventListener("click",(e)=>{
             .then(response => response.json())
             .then(data => {
                 limpiarFormato();
-                window.location.href = "http://localhost/ibis/public/hojaregistro";
+                //window.location.href = "http://localhost/ibis/public/hojaregistro";
             }),'',undefined,'Procesando'
           )
         .catch(error => {
@@ -136,7 +136,7 @@ $.addEventListener("change", (e)=>{
         $.getElementById("adjunto_iper").innerHTML= e.target.files[0].name;
       }else if(item == "upload_procedimientos"){
         $.getElementById("adjunto_procedimientos").innerHTML= e.target.files[0].name;
-      }else if(item == "upload_procedimientos"){
+      }else if(item == "upload_epp"){
         $.getElementById("adjunto_epp").innerHTML= e.target.files[0].name;
       }
   }
