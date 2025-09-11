@@ -51,206 +51,6 @@
         }
     }
 
-    function grabarProveedor($pdo, $datos, $files) {   
-        try{
-            $bancos = json_decode($datos['bancos'], true);
-            $retencion  = $datos['contacto_detraccion'] == "" ? 1 : 2;
-
-            $fechaActual = date('Y-m-d');
-            $uploadDir = '../documentos/'; 
-            $nameFichaRuc = '';
-            $nameCatalogo = '';
-
-            // Procesar declaracion jurada
-            if (isset($_FILES['upload_declaracion']) && $_FILES['upload_declaracion']['error'] === UPLOAD_ERR_OK) {
-                $fileRuc = $_FILES['upload_declaracion'];
-                $nameFichaRuc = 'declaracion_'.$datos['ruc'].'_'.$fechaActual.'.'.pathinfo($_FILES['upload_declaracion']['name'], PATHINFO_EXTENSION);
-                $extensionRuc = pathinfo($fileRuc['name'], PATHINFO_EXTENSION);
-                $filePathRuc = $uploadDir .'declaraciones/'. basename($nameFichaRuc);
-                move_uploaded_file($fileRuc['tmp_name'], $filePathRuc);
-            }
-
-            // Procesar AutoEvaluacion
-            if (isset($_FILES['upload_autoevaluacion']) && $_FILES['upload_autoevaluacion']['error'] === UPLOAD_ERR_OK) {
-                $fileRuc = $_FILES['upload_autoevaluacion'];
-                $nameFichaRuc = 'declaracion_'.$datos['ruc'].'_'.$fechaActual.'.'.pathinfo($_FILES['upload_autoevaluacion']['name'], PATHINFO_EXTENSION);
-                $extensionRuc = pathinfo($fileRuc['name'], PATHINFO_EXTENSION);
-                $filePathRuc = $uploadDir .'autoevaluacion/'. basename($nameFichaRuc);
-                move_uploaded_file($fileRuc['tmp_name'], $filePathRuc);
-            }
-
-            // Procesar archivo RUC
-            if (isset($_FILES['file_ruc']) && $_FILES['file_ruc']['error'] === UPLOAD_ERR_OK) {
-                $fileRuc = $_FILES['file_ruc'];
-                $nameFichaRuc = 'ficha_'.$datos['ruc'].'_'.$fechaActual.'.'.pathinfo($_FILES['file_ruc']['name'], PATHINFO_EXTENSION);
-                $extensionRuc = pathinfo($fileRuc['name'], PATHINFO_EXTENSION);
-                $filePathRuc = $uploadDir .'ficharuc/'. basename($nameFichaRuc);
-                move_uploaded_file($fileRuc['tmp_name'], $filePathRuc);
-            }
-
-            // Procesar archivo Catálogo
-            if (isset($_FILES['file_catalogo']) && $_FILES['file_ruc']['error'] === UPLOAD_ERR_OK) {
-                $fileCatalogo = $_FILES['file_catalogo'];
-                $nameCatalogo = 'catalogo_'.$datos['ruc'].'_'.$fechaActual.'.'.pathinfo($_FILES['file_ruc']['name'], PATHINFO_EXTENSION);
-                $extensionCat = pathinfo($fileCatalogo['name'], PATHINFO_EXTENSION);
-                $filePathCatalogo = $uploadDir .'catalogoproducto/'. basename($nameCatalogo);
-                
-                move_uploaded_file($fileCatalogo['tmp_name'], $filePathCatalogo);
-            }
-
-            // Procesar archivo Plan
-            if (isset($_FILES['upload_plan']) && $_FILES['file_ruc']['error'] === UPLOAD_ERR_OK) {
-                $fileCatalogo = $_FILES['upload_plan'];
-                $nameCatalogo = 'catalogo_'.$datos['ruc'].'_'.$fechaActual.'.'.pathinfo($_FILES['upload_plan']['name'], PATHINFO_EXTENSION);
-                $extensionCat = pathinfo($fileCatalogo['name'], PATHINFO_EXTENSION);
-                $filePathCatalogo = $uploadDir .'plan/'. basename($nameCatalogo);
-                
-                move_uploaded_file($fileCatalogo['tmp_name'], $filePathCatalogo);
-            }
-
-            // Procesar archivo IPER
-            if (isset($_FILES['upload_iper']) && $_FILES['file_ruc']['error'] === UPLOAD_ERR_OK) {
-                $fileCatalogo = $_FILES['upload_iper'];
-                $nameCatalogo = 'catalogo_'.$datos['ruc'].'_'.$fechaActual.'.'.pathinfo($_FILES['upload_iper']['name'], PATHINFO_EXTENSION);
-                $extensionCat = pathinfo($fileCatalogo['name'], PATHINFO_EXTENSION);
-                $filePathCatalogo = $uploadDir .'iper/'. basename($nameCatalogo);
-                
-                move_uploaded_file($fileCatalogo['tmp_name'], $filePathCatalogo);
-            }
-
-            // Procesar archivo IPER
-            if (isset($_FILES['upload_epp']) && $_FILES['file_ruc']['error'] === UPLOAD_ERR_OK) {
-                $fileCatalogo = $_FILES['upload_epp'];
-                $nameCatalogo = 'catalogo_'.$datos['ruc'].'_'.$fechaActual.'.'.pathinfo($_FILES['upload_epp']['name'], PATHINFO_EXTENSION);
-                $extensionCat = pathinfo($fileCatalogo['name'], PATHINFO_EXTENSION);
-                $filePathCatalogo = $uploadDir .'epp/'. basename($nameCatalogo);
-                
-                move_uploaded_file($fileCatalogo['tmp_name'], $filePathCatalogo);
-            }
-
-            $clave = generarClaveAleatoria(10);
-            $hashClave = sha1($clave);
-
-            $pdo->beginTransaction();
-
-            //datos principales del proveedor
-
-            $sql = "INSERT INTO cm_entidad 
-                                    SET cnumdoc=:ruc,
-                                        crazonsoc=:razon_social,
-                                        cviadireccion=:direccion,
-                                        cemail=:correo_electronico,
-                                        ctelefono=:telefono,
-                                        ncodpais=:pais, 
-                                        cficharuc=:ficha_ruc, 
-                                        ccatalogo=:catalogo_prod, 
-                                        cpassword=:pass,
-                                        nflgactivo=:activo,
-                                        nagenret=:retencion,
-                                        nrubro=:actividad,
-                                        nflgactualizado = 1";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([
-                ':ruc' => $datos['ruc'],
-                ':razon_social' => $datos['razon_social'],
-                ':direccion' => $datos['direccion'],
-                ':correo_electronico' => $datos['correo_electronico'],
-                ':telefono' => $datos['telefono'],
-                ':pais' => $datos['pais'],
-                ':ficha_ruc' => $nameFichaRuc,
-                ':catalogo_prod' => $nameCatalogo,
-                ':pass' => $hashClave,
-                ':activo' => 7,
-                ':retencion' => $retencion,
-                ':actividad' => $datos['actividad_economica']
-            ]);
-
-            $lastId = $pdo->lastInsertId();
-
-            if ( $lastId > 0 ) {
-                    //detalles del proveedor
-                    $sqlDet = "INSERT INTO cm_detallenti 
-                                    SET idcenti = :idcenti,
-                                        nomgercomer = :gerente,
-                                        telgercomer = :telefonogerente,
-                                        corgercomer = :correogerente,
-                                        nomcontacto = :nombrecontacto,
-                                        telcontacto = :telefonocontacto,
-                                        corcontacto = :correocontacto,
-                                        nomperdetra = :nombredetraccion,
-                                        telperdetra = :telefonodetraccion,
-                                        corperdetra = :correodetraccion,
-                                        nctadetrac  = :cuentadetraccion";
-            
-                    $stmt = $pdo->prepare($sqlDet);
-                    $stmt->execute([
-                        ':idcenti'              =>$lastId,
-                        ':gerente'              =>$datos['gerente_comercial'],
-                        ':telefonogerente'      =>$datos['telefono_gerente'],
-                        ':correogerente'        =>$datos['correo_gerente'],
-                        ':nombrecontacto'       =>$datos['contacto'],
-                        ':telefonocontacto'     =>$datos['telefono_contacto'],
-                        ':correocontacto'       =>$datos['correo_contacto'],
-                        ':nombredetraccion'     =>$datos['contacto_detraccion'],
-                        ':telefonodetraccion'   =>$datos['telefono_contacto_detraccion'],
-                        ':correodetraccion'     =>$datos['correo_contacto_detraccion'],
-                        ':cuentadetraccion'     =>$datos['cta_detracciones'],
-                    ]);
-
-                    $slqContacto = "INSERT INTO cm_entidadcon
-                                    SET id_centi     = :idcenti,
-                                        cnombres     = :nombres,
-                                        cdireccion  = :direccion,
-                                        cemail      = :correo,
-                                        ctelefono1  = :telefono,
-                                        nflgactivo  = :activo";
-
-                    $stmt = $pdo->prepare($slqContacto);
-                    $stmt->execute([
-                        ':idcenti'    =>$lastId,
-                        ':nombres'    =>$datos['contacto'],
-                        ':direccion'  =>$datos['telefono_contacto'],
-                        ':correo'     =>$datos['correo_contacto'],
-                        ':telefono'   =>$datos['telefono_contacto'],
-                        ':activo'     =>7
-                    ]);
-
-                    //bancos del proveedor
-                    $sqlBanco = "INSERT INTO cm_entidadbco 
-                                    SET id_centi  = :idcenti, 
-                                        ncodbco   = :codigo_banco,
-                                        cnrocta   = :nro_cuenta,
-                                        cnrocci   = :nro_cci,
-                                        ntipcta   = :tipo_cuenta,
-                                        cmoneda   = :moneda,
-                                        nflgprove = 1";
-
-                    if (count($bancos) > 0 ){
-                        foreach($bancos as $banco){
-                            $stmt = $pdo->prepare($sqlBanco);
-
-                            $stmt->execute([
-                                ':idcenti'      =>$lastId,
-                                ':codigo_banco' =>$banco['idbanco'],
-                                ':nro_cuenta'   =>$banco['nrocuenta'],
-                                ':nro_cci'      =>$banco['nroctacci'],
-                                ':tipo_cuenta'  =>$banco['idcuenta'],
-                                ':moneda'       =>$banco['idmoneda']
-                            ]);
-                        }
-                    }
-            }
-           
-            $pdo->commit();
-
-            $email  = enviarEmail($datos['correo_electronico'],$datos['razon_social'],$datos['ruc'],$clave);
-
-            return ['status' => 'success', 'id' => $lastId, 'claveGenerada' => $clave, 'email' => $email];
-        }catch(PDOException $e){
-            echo "Error al guardar los datos: " . $e->getMessage();
-            $pdo->rollBack();
-        }
-    }
 
     function buscarRuc($pdo, $datos){
         try{
@@ -324,6 +124,52 @@
         }
     }
 
+    function crearProveedor($pdo, $datos, $files, $retencion) {   
+        try{
+            $pdo->beginTransaction();
+
+            $sql = "INSERT INTO cm_entidad 
+                                    SET cnumdoc=:ruc,
+                                        crazonsoc=:razon_social,
+                                        cviadireccion=:direccion,
+                                        cemail=:correo_electronico,
+                                        ctelefono=:telefono,
+                                        ncodpais=:pais, 
+                                        cficharuc=:ficha_ruc, 
+                                        ccatalogo=:catalogo_prod, 
+                                        cpassword=:pass,
+                                        nflgactivo=:activo,
+                                        nagenret=:retencion,
+                                        nrubro=:actividad,
+                                        nflgactualizado = 1";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([
+                ':ruc' => $datos['ruc'],
+                ':razon_social' => $datos['razon_social'],
+                ':direccion' => $datos['direccion'],
+                ':correo_electronico' => $datos['correo_electronico'],
+                ':telefono' => $datos['telefono'],
+                ':pais' => $datos['pais'],
+                ':ficha_ruc' => $nameFichaRuc,
+                ':catalogo_prod' => $nameCatalogo,
+                ':pass' => $hashClave,
+                ':activo' => 7,
+                ':retencion' => $retencion,
+                ':actividad' => $datos['actividad_economica']
+            ]);
+
+            $lastId = $pdo->lastInsertId();
+           
+            $pdo->commit();
+
+            return $lastId;
+
+        }catch(PDOException $e){
+            echo "Error al guardar los datos: " . $e->getMessage();
+            $pdo->rollBack();
+        }
+    }
+
     function actualizarProveedor($pdo,$datos,$files){
         try {
             $fechaActual = date('Y-m-d');
@@ -335,82 +181,38 @@
 
             $bancos = json_decode($datos['bancos'], true);
 
-            $id = $datos['id'];
+            $adj = [];
     
+            $clave = generarClaveAleatoria(10);
+            $hashClave = sha1($clave);
+            $lastId  = "";
+
+            if ( $datos['actualiza'] !== 0 ){
+                $id = $datos['id'];
+                $proveedor = actualizarDatosProveedor($pdo,$datos,$id,$hashClave,$retencion);
+
+                if ($proveedor){
+                    bancos($pdo,$bancos,$id);
+                    contactos($pdo,$datos,$id);
+                    representantes($pdo,$datoa,$id);
+                }
+            }else{
+                $id = crearProveedor($pdo,$datos,$id,$hashClave,$retencion);
+            }
+
             // Procesar declaracion jurada
-            $rpta = subirAdjunto($pdo,$_FILES['upload_declaracion'],$id);
-            $rpta = subirAdjunto($pdo,$_FILES['upload_autoevaluacion'],$id);
-            $rpta = subirAdjunto($pdo,$_FILES['upload_ruc'],$id);
-            $rpta = subirAdjunto($pdo,$_FILES['upload_catalogo'],$id);
-            $rpta = subirAdjunto($pdo,$_FILES['upload_plan'],$id);
-            $rpta = subirAdjunto($pdo,$_FILES['upload_iper'],$id);
-            $rpta = subirAdjunto($pdo,$_FILES['upload_procedimientos'],$id);
-            $rpta = subirAdjunto($pdo,$_FILES['upload_epp'],$id);
+            $adj[1] = subirAdjunto($pdo,$_FILES['upload_declaracion'],$id);
+            $adj[2] = subirAdjunto($pdo,$_FILES['upload_autoevaluacion'],$id);
+            $adj[3] = subirAdjunto($pdo,$_FILES['upload_ruc'],$id);
+            $adj[4] = subirAdjunto($pdo,$_FILES['upload_catalogo'],$id);
+            $adj[5] = subirAdjunto($pdo,$_FILES['upload_plan'],$id);
+            $adj[6] = subirAdjunto($pdo,$_FILES['upload_iper'],$id);
+            $adj[7] = subirAdjunto($pdo,$_FILES['upload_procedimientos'],$id);
+            $adj[8] = subirAdjunto($pdo,$_FILES['upload_epp'],$id);
 
-            /*
-            // Procesar AutoEvaluacion
-            if (isset($_FILES['upload_autoevaluacion']) && $_FILES['upload_autoevaluacion']['error'] === UPLOAD_ERR_OK) {
-                $fileRuc = $_FILES['upload_autoevaluacion'];
-                $nameFichaRuc = 'declaracion_'.$datos['ruc'].'_'.$fechaActual.'.'.pathinfo($_FILES['upload_autoevaluacion']['name'], PATHINFO_EXTENSION);
-                $extensionRuc = pathinfo($fileRuc['name'], PATHINFO_EXTENSION);
-                $filePathRuc = $uploadDir . basename($nameFichaRuc);
-                move_uploaded_file($fileRuc['tmp_name'], $filePathRuc);
-            }
-
-            // Procesar archivo RUC
-            if (isset($_FILES['file_ruc']) && $_FILES['file_ruc']['error'] === UPLOAD_ERR_OK) {
-                $fileRuc = $_FILES['file_ruc'];
-                $nameFichaRuc = 'ficha_'.$datos['ruc'].'_'.$fechaActual.'.'.pathinfo($_FILES['file_ruc']['name'], PATHINFO_EXTENSION);
-                $extensionRuc = pathinfo($fileRuc['name'], PATHINFO_EXTENSION);
-                $filePathRuc = $uploadDir . basename($nameFichaRuc);
-                move_uploaded_file($fileRuc['tmp_name'], $filePathRuc);
-            }
-
-            // Procesar archivo Catálogo
-            if (isset($_FILES['file_catalogo']) && $_FILES['file_ruc']['error'] === UPLOAD_ERR_OK) {
-                $fileCatalogo = $_FILES['file_catalogo'];
-                $nameCatalogo = 'catalogo_'.$datos['ruc'].'_'.$fechaActual.'.'.pathinfo($_FILES['file_ruc']['name'], PATHINFO_EXTENSION);
-                $extensionCat = pathinfo($fileCatalogo['name'], PATHINFO_EXTENSION);
-                $filePathCatalogo = $uploadDir . basename($nameCatalogo);
-                
-                move_uploaded_file($fileCatalogo['tmp_name'], $filePathCatalogo);
-            }
-
-            // Procesar archivo Plan
-            if (isset($_FILES['upload_plan']) && $_FILES['file_ruc']['error'] === UPLOAD_ERR_OK) {
-                $fileCatalogo = $_FILES['upload_plan'];
-                $nameCatalogo = 'catalogo_'.$datos['ruc'].'_'.$fechaActual.'.'.pathinfo($_FILES['upload_plan']['name'], PATHINFO_EXTENSION);
-                $extensionCat = pathinfo($fileCatalogo['name'], PATHINFO_EXTENSION);
-                $filePathCatalogo = $uploadDir . basename($nameCatalogo);
-                
-                move_uploaded_file($fileCatalogo['tmp_name'], $filePathCatalogo);
-            }
-
-            // Procesar archivo IPER
-            if (isset($_FILES['upload_iper']) && $_FILES['file_ruc']['error'] === UPLOAD_ERR_OK) {
-                $fileCatalogo = $_FILES['upload_iper'];
-                $nameCatalogo = 'catalogo_'.$datos['ruc'].'_'.$fechaActual.'.'.pathinfo($_FILES['upload_iper']['name'], PATHINFO_EXTENSION);
-                $extensionCat = pathinfo($fileCatalogo['name'], PATHINFO_EXTENSION);
-                $filePathCatalogo = $uploadDir .'iper/'. basename($nameCatalogo);
-                
-                move_uploaded_file($fileCatalogo['tmp_name'], $filePathCatalogo);
-            }
-
-            // Procesar archivo IPER
-            if (isset($_FILES['upload_epp']) && $_FILES['file_ruc']['error'] === UPLOAD_ERR_OK) {
-                $fileCatalogo = $_FILES['upload_epp'];
-                $nameCatalogo = 'catalogo_'.$datos['ruc'].'_'.$fechaActual.'.'.pathinfo($_FILES['upload_epp']['name'], PATHINFO_EXTENSION);
-                $extensionCat = pathinfo($fileCatalogo['name'], PATHINFO_EXTENSION);
-                $filePathCatalogo = $uploadDir .'epp/'. basename($nameCatalogo);
-                
-                move_uploaded_file($fileCatalogo['tmp_name'], $filePathCatalogo);
-            }*/
-
-            $email = "";
-            $lastId = "";
-            $clave = "";
-
-            return ['status' => 'success', 'id' => $lastId, 'claveGenerada' => $clave, 'email' => $email, 'rpta' => $rpta];
+            $email  = enviarEmail($datos['correo_electronico'],$datos['razon_social'],$datos['ruc'],$clave);
+            
+            return ['status' => 'success', 'id' => $lastId, 'claveGenerada' => $clave, 'email' => $email, 'adj' => $adj];
 
         } catch(PDOException $e){
             echo "Error al guardar los datos: " . $e->getMessage();
@@ -427,7 +229,7 @@
                 mkdir($uploadDir, 0755, true);
             }
             
-            $nameFile = time(). '.' . pathinfo($archivo['name'], PATHINFO_EXTENSION);
+            $nameFile = uniqid(). '.' . pathinfo($archivo['name'], PATHINFO_EXTENSION);
             $originalName = $archivo['name'];
             $filePath = $uploadDir . basename($nameFile);
             
@@ -468,6 +270,54 @@
                             $nameDescrip]);
         } catch(PDOException $e){
             return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
+
+    function actualizarDatosProveedor($pdo,$datos,$id,$hashClave,$retencion){
+        try {
+            $respuesta = false;
+
+            $pdo->beginTransaction();
+
+            $sql = "UPDATE cm_entidad 
+                    SET crazonsoc=:razon_social,
+                        cviadireccion=:direccion,
+                        cemail=:correo_electronico,
+                        ctelefono=:telefono,
+                        ncodpais=:pais, 
+                        cpassword=:pass,
+                        nflgactivo=:activo,
+                        nagenret=:retencion,
+                        nrubro=:actividad,
+                        nflgactualizado = 1
+                    WHERE cnumdoc=:ruc";
+
+            $stmt = $pdo->prepare($sql);
+
+            $stmt->execute([
+                ':ruc' => $datos['ruc'],
+                ':razon_social' => $datos['razon_social'],
+                ':direccion' => $datos['direccion'],
+                ':correo_electronico' => $datos['correo_electronico'],
+                ':telefono' => $datos['telefono'],
+                ':pais' => $datos['pais'],
+                ':pass' => $hashClave,
+                ':activo' => 7,
+                ':retencion' => $retencion,
+                ':actividad' => $datos['actividad_economica']
+            ]);
+
+            $pdo->commit();
+
+            if ($stmt->rowCount() > 0) {
+                $respuesta = true;
+            }
+
+            return $respuesta;
+
+        } catch(PDOException $e){
+            echo "Error al guardar los datos: " . $e->getMessage();
+            $pdo->rollBack();
         }
     }
 
@@ -515,7 +365,7 @@
                                         border-left: 1px solid #c2c2c2;
                                         border-right: 1px solid #c2c2c2;
                                         border-bottom: 1px solid #c2c2c2;">
-                                <p style="padding:.5rem;line-height: 1rem;">El presente correo es para informar que se ha realizado en el padron de proveedores SEPCON.</p>
+                                <p style="padding:.5rem;line-height: 1rem;">El presente correo es para informar que se ha actualizado sus datos en el padron de proveedores SEPCON.</p>
                                 <p style="padding:.5rem">Nombre       : '. $nombre.'</p>
                                 <p style="padding:.5rem">RUC          : '. $ruc.'</p>
                                 <p style="padding:.5rem">Clave        : '. $clave .'</p>
@@ -560,4 +410,93 @@
         }
 
     }
+
+    function bancos($pdo,$bancos,$id){
+        try {
+            ///bancos del proveedor
+            $sqlBanco = "INSERT INTO cm_entidadbco 
+                            SET id_centi = :idcenti, 
+                                ncodbco  = :codigo_banco,
+                                cnrocta  = :nro_cuenta,
+                                ntipcta  = :tipo_cuenta,
+                                cmoneda  = :moneda";
+
+            if (count($bancos) > 0 ){
+                foreach($bancos as $banco){ 
+                    if ($banco['grabado'] == '0') {
+                         $stmt = $pdo->prepare($sqlBanco);
+                        $stmt->execute([
+                            ':idcenti'      =>$id,
+                            ':codigo_banco' =>$banco['idbanco'],
+                            ':nro_cuenta'   =>$banco['nrocuenta'],
+                            ':tipo_cuenta'  =>$banco['idcuenta'],
+                            ':moneda'       =>$banco['idmoneda']
+                        ]);
+                    }
+                }
+            }
+        } catch(PDOException $e){
+            echo "Error al guardar los datos: " . $e->getMessage();
+            $pdo->rollBack();
+        }
+    }
+
+    function contactos($pdo,$datos,$id){
+        try {
+            $slqContacto = "INSERT INTO cm_entidadcon
+                                    SET cnombres    = :nombres,
+                                        cemail      = :correo,
+                                        ctelefono1  = :telefono,
+                                        nflgactivo  = :activo
+                                    WHERE id_centi  = :idcenti";
+
+            $stmt = $pdo->prepare($slqContacto);
+            $stmt->execute([
+                ':idcenti'    =>$id,
+                ':nombres'    =>$datos['contacto'],
+                ':correo'     =>$datos['correo_contacto'],
+                ':telefono'   =>$datos['telefono_contacto'],
+                ':activo'     =>7
+            ]);
+        } catch(PDOException $e){
+            echo "Error al guardar los datos: " . $e->getMessage();
+            $pdo->rollBack();
+        }
+    }
+
+    function representantes($pdo,$dato,$id){
+        try {
+            $sqlDet = "INSERT INTO cm_detallenti 
+                                    SET idcenti = :idcenti,
+                                        nomgercomer = :gerente,
+                                        telgercomer = :telefonogerente,
+                                        corgercomer = :correogerente,
+                                        nomcontacto = :nombrecontacto,
+                                        telcontacto = :telefonocontacto,
+                                        corcontacto = :correocontacto,
+                                        nomperdetra = :nombredetraccion,
+                                        telperdetra = :telefonodetraccion,
+                                        corperdetra = :correodetraccion,
+                                        nctadetrac  = :cuentadetraccion";
+            
+                    $stmt = $pdo->prepare($sqlDet);
+                    $stmt->execute([
+                        ':idcenti'              =>$id,
+                        ':gerente'              =>$datos['gerente_comercial'],
+                        ':telefonogerente'      =>$datos['telefono_gerente'],
+                        ':correogerente'        =>$datos['correo_gerente'],
+                        ':nombrecontacto'       =>$datos['contacto'],
+                        ':telefonocontacto'     =>$datos['telefono_contacto'],
+                        ':correocontacto'       =>$datos['correo_contacto'],
+                        ':nombredetraccion'     =>$datos['contacto_detraccion'],
+                        ':telefonodetraccion'   =>$datos['telefono_contacto_detraccion'],
+                        ':correodetraccion'     =>$datos['correo_contacto_detraccion'],
+                        ':cuentadetraccion'     =>$datos['cta_detracciones'],
+                    ]);
+        } catch(PDOException $e){
+            echo "Error al guardar los datos: " . $e->getMessage();
+            $pdo->rollBack();
+        }
+    }
+
 ?>

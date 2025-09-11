@@ -442,6 +442,11 @@ body {
       clip-path: circle(45% at 50% 50%);
       padding: 1rem;
       transition: color .5s linear;
+      text-align: center;
+
+      p{
+        font-size: 0.4em;
+      }
 
       &:hover{
         color: #000;

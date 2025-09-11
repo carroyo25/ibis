@@ -29,9 +29,9 @@
 <body>
     <div id="barra"></div>
     <div class="floating">
-        <a href="#" id="floatUp" class="floatingOptions"><i class="fas fa-arrow-alt-circle-up"></i></a>
-        <a href="#" id="cancelReg" class="floatingOptions"><i class="fas fa-ban"></i></a>
-        <a href="#" id="floatSave" class="floatingOptions btnSave" data-accion="modify"><i class="fas fa-save"></i></a>
+        <a href="#" id="floatUp" class="floatingOptions"><i class="fas fa-arrow-alt-circle-up"></i><p>Inicio</p></a>
+        <a href="#" id="cancelReg" class="floatingOptions"><i class="fas fa-ban"></i><p>Cancelar</p></a>
+        <a href="#" id="floatSave" class="floatingOptions btnSave" data-accion="modify"><i class="fas fa-save"></i><p>Grabar</p></a>
     </div>
     <div class="wrap" id="wrap">
         <form id="datos_entidad" method="POST" enctype="multipart/form-data">

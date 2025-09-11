@@ -49,7 +49,7 @@ $.addEventListener("click",(e)=>{
 
       try {
         
-        //if ( contador > 0 ) throw new Error('Hay campos sin rellenar');
+        if ( contador > 0 ) throw new Error('Hay campos sin rellenar');
         /*if ( !validar(ruc) ) throw new Error("El RUC ingresado es incorrecto...");*/
 
           const form = $.querySelector('#datos_entidad')
