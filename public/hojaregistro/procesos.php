@@ -186,6 +186,7 @@
             $clave = generarClaveAleatoria(10);
             $hashClave = sha1($clave);
             $lastId  = "";
+            $email = "";
 
             if ( $datos['actualiza'] !== 0 ){
                 $id = $datos['id'];
@@ -194,7 +195,12 @@
                 if ($proveedor){
                     bancos($pdo,$bancos,$id);
                     contactos($pdo,$datos,$id);
-                    representantes($pdo,$datoa,$id);
+                    if (buscarRepresentante($pdo,$id) > 0){
+                        actualizarRepresentantes($pdo,$datos,$id);
+                    }else{
+                        representantes($pdo,$datos,$id);
+                    }
+                    
                 }
             }else{
                 $id = crearProveedor($pdo,$datos,$id,$hashClave,$retencion);
@@ -443,14 +449,14 @@
 
     function contactos($pdo,$datos,$id){
         try {
-            $slqContacto = "INSERT INTO cm_entidadcon
-                                    SET cnombres    = :nombres,
-                                        cemail      = :correo,
-                                        ctelefono1  = :telefono,
-                                        nflgactivo  = :activo
-                                    WHERE id_centi  = :idcenti";
+            $sql = "INSERT INTO cm_entidadcon
+                    SET cnombres    = :nombres,
+                        cemail      = :correo,
+                        ctelefono1  = :telefono,
+                        nflgactivo  = :activo,
+                        id_centi    = :idcenti";
 
-            $stmt = $pdo->prepare($slqContacto);
+            $stmt = $pdo->prepare($sql);
             $stmt->execute([
                 ':idcenti'    =>$id,
                 ':nombres'    =>$datos['contacto'],
@@ -458,13 +464,14 @@
                 ':telefono'   =>$datos['telefono_contacto'],
                 ':activo'     =>7
             ]);
+
         } catch(PDOException $e){
             echo "Error al guardar los datos: " . $e->getMessage();
             $pdo->rollBack();
         }
     }
 
-    function representantes($pdo,$dato,$id){
+    function representantes($pdo,$datos,$id){
         try {
             $sqlDet = "INSERT INTO cm_detallenti 
                                     SET idcenti = :idcenti,
@@ -493,6 +500,59 @@
                         ':correodetraccion'     =>$datos['correo_contacto_detraccion'],
                         ':cuentadetraccion'     =>$datos['cta_detracciones'],
                     ]);
+        } catch(PDOException $e){
+            echo "Error al guardar los datos: " . $e->getMessage();
+            $pdo->rollBack();
+        }
+    }
+
+    function actualizarRepresentantes($pdo,$datos,$id){
+        try {
+            $sqlDet = "UPDATE cm_detallenti 
+                        SET nomgercomer = :gerente,
+                            telgercomer = :telefonogerente,
+                            corgercomer = :correogerente,
+                            nomcontacto = :nombrecontacto,
+                            telcontacto = :telefonocontacto,
+                            corcontacto = :correocontacto,
+                            nomperdetra = :nombredetraccion,
+                            telperdetra = :telefonodetraccion,
+                            corperdetra = :correodetraccion,
+                            nctadetrac  = :cuentadetraccion
+                        WHERE idcenti = :idcenti";
+            
+                    $stmt = $pdo->prepare($sqlDet);
+                    $stmt->execute([
+                        ':idcenti'              =>$id,
+                        ':gerente'              =>$datos['gerente_comercial'],
+                        ':telefonogerente'      =>$datos['telefono_gerente'],
+                        ':correogerente'        =>$datos['correo_gerente'],
+                        ':nombrecontacto'       =>$datos['contacto'],
+                        ':telefonocontacto'     =>$datos['telefono_contacto'],
+                        ':correocontacto'       =>$datos['correo_contacto'],
+                        ':nombredetraccion'     =>$datos['contacto_detraccion'],
+                        ':telefonodetraccion'   =>$datos['telefono_contacto_detraccion'],
+                        ':correodetraccion'     =>$datos['correo_contacto_detraccion'],
+                        ':cuentadetraccion'     =>$datos['cta_detracciones'],
+                    ]);
+        } catch(PDOException $e){
+            echo "Error al guardar los datos: " . $e->getMessage();
+            $pdo->rollBack();
+        }
+    }
+
+    function buscarRepresentante($pdo,$id){
+        try {
+            $sql = "SELECT COUNT(cd.idreg) AS registros
+                    FROM cm_detallenti cd
+                    WHERE  cd.idcenti = ?";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$id]);
+
+            $result = $stmt->fetch();
+
+            return $result['registros'];
+
         } catch(PDOException $e){
             echo "Error al guardar los datos: " . $e->getMessage();
             $pdo->rollBack();
