@@ -150,9 +150,13 @@
                                 </div>
                             </div>
                             
-                            
                             <label for="estado" data-etiqueta="estado">Estado:</label>
                             <input type="text" name="estado" id="estado" class="textoCentro estado procesando" readonly value="EN PROCESO">
+
+                            <div class="personal">
+                                <input type="checkbox" name="personal_obra" id="personal_obra">
+                                <label for="personal_obra">Requiere ingreso a proyecto</label>
+                            </div>
                         </div>
                     </div>
                     <div class="textAreaEnter oculto">

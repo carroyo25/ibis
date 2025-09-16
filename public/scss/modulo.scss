@@ -3054,6 +3054,14 @@ thead .sticky-column {
             grid-row: 2;
         }
 
+        .personal{
+            grid-column: 5 / span 3;
+            grid-row: 3;
+            align-items: center;
+            display: flex;
+            align-items: flex-start;
+        }
+
     }
 
     /************************************************/

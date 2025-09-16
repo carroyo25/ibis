@@ -758,7 +758,6 @@ thead .sticky-column {
   width: 8%;
   top: 0;
 }
-
 .barraTrabajo .variasConsultas5items {
   color: #fff;
   padding: 5px 15px;
@@ -3657,6 +3656,22 @@ thead .sticky-column {
   grid-column: 2/span 5;
   -ms-grid-row: 2;
   grid-row: 2;
+}
+.ventanaProceso .seccion_derecha_grid .personal {
+  -ms-grid-column: 5;
+  -ms-grid-column-span: 3;
+  grid-column: 5/span 3;
+  -ms-grid-row: 3;
+  grid-row: 3;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: start;
+      -ms-flex-align: start;
+          align-items: flex-start;
 }
 .ventanaProceso .seccion_izquierda_4_grid label[data-etiqueta=numero] {
   -ms-grid-column: 1;
