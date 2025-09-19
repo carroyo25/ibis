@@ -20,6 +20,9 @@
     <link rel="shortcut icon" type="image/png" href="../img/logo.png" />
 </head>
 <body>
+    <div class="modal">
+        
+    </div>
     <div class="wrap">
         <div class="wrap__header">
             <section class="logo">
