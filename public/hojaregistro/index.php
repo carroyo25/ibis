@@ -20,7 +20,7 @@
     <link rel="shortcut icon" type="image/png" href="../img/logo.png" />
 </head>
 <body>
-    <div class="modal">
+    <div class="modal" id="Procesando">
         
     </div>
     <div class="wrap">
