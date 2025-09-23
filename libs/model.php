@@ -2701,7 +2701,7 @@
                                                         LPAD(p.nrodoc, 6, 0) AS nrodoc,
                                                         (SELECT SUM(d.nunitario * d.ncanti) 
                                                         FROM lg_ordendet d 
-                                                        WHERE d.id_orden = o.id_regmov) AS total_multiplicado,
+                                                        WHERE d.id_regmov = o.id_regmov AND d.ncanti > 0) AS total_multiplicado,
                                                         UPPER(ex.cdescription) AS condiciones,
                                                         UPPER(u.cnameuser) AS usuario 
                                                     FROM
