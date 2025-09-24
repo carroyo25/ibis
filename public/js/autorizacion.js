@@ -1056,6 +1056,14 @@ $(function(){
             })
         }
     });
+
+    $("#btnConsulta").click(function(e){
+        e.preventDefault();
+
+        console.log('Consulta ocn filtro');
+
+        return false;
+    });
 })
 
 itemsSave = () =>{
