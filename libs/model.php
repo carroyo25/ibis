@@ -5149,9 +5149,13 @@
         //traslados
         public function filtrarTraslados($datos){
             try {
-                $salida = "";
+                $salida = "No se encontraron registros";
 
-                $id = ISSET($datos['numberSearch']) ? $datos['numberSearch'] : '%';
+                $id     = $datos['numberSearch'] != '' ? $datos['numberSearch'] : '%';
+                $costo  = $datos['costosSearch'] != -1 ? $datos['costosSearch'] : '%';
+                $mes    = $datos['mesSearch']    != -1 ? $datos['mesSearch'] : '%';
+                $anio   = $datos['anioSearch']   != '' ? $datos['anioSearch'] : 2025;
+
 
                 $sql = $this->db->connect()->prepare("SELECT
                                                         ibis.alm_autorizacab.idreg,
@@ -5181,14 +5185,23 @@
                                                         tb_costusu.id_cuser =:user 
                                                         AND tb_costusu.nflgactivo = 1
                                                         AND alm_autorizacab.nflgactivo = 1
-                                                        AND alm_autorizacab.ntipo LIKE :tipo
-                                                        AND alm_autorizacab.idreg LIKE :id 
+                                                        AND alm_autorizacab.idreg LIKE :id
+                                                        AND tb_costusu.ncodproy LIKE :costo
+                                                        AND YEAR(alm_autorizacab.fregsys) LIKE :anio
+                                                        AND MONTH(alm_autorizacab.fregsys) LIKE :mes
                                                     ORDER BY ibis.alm_autorizacab.fregsys DESC");
 
-                $sql->execute(["user"=>$_SESSION['iduser'],"tipo"=>$tipo, "id"=>$id]);
+                $sql->execute(["user"=>$_SESSION['iduser'],
+                                "id"=>$id,
+                                "costo"=>$costo,
+                                "mes"=>$mes,
+                                "anio"=>$anio]);
+
                 $rowCount = $sql->rowCount();
 
                 if ($rowCount > 0) {
+                    $salida = "";
+                    
                     while ($rs = $sql->fetch()) {
                         $salida .='<tr class="pointer" data-indice="'.$rs['idreg'].'" 
                                                         data-transferencia="'.$rs['ctransferencia'].'"
@@ -5209,6 +5222,7 @@
                 }
 
                 return $salida;
+
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
                 return false;

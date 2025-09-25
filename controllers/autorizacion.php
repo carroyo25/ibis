@@ -87,6 +87,10 @@
         function consultaNombre(){
             echo json_encode($this->model->buscarDatosTraslado($_POST['documento']));
         }
+
+        function filtraTraslados(){
+            echo $this->model->filtrarTraslados($_POST);
+        }
         
     }
 ?>

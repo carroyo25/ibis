@@ -1060,7 +1060,16 @@ $(function(){
     $("#btnConsulta").click(function(e){
         e.preventDefault();
 
-        console.log('Consulta ocn filtro');
+        let str = $('#formConsulta').serialize();
+
+        $.post(RUTA+"autorizacion/filtraTraslados", str,
+            function (data, textStatus, jqXHR) {
+                $("#tablaPrincipal tbody")
+                 .empty()
+                 .append(data);
+            },
+            "text"
+        );
 
         return false;
     });
