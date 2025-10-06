@@ -148,7 +148,7 @@ $(() => {
         if(e.which == 13) {
             $("#esperar").fadeIn();
             
-            $.post(RUTA+"pedidos/filtraItems", {codigo:$("#txtBuscarCodigo").val(),
+            $.post(RUTA+"pedidos/filtraItemsAlmacen", {codigo:$("#txtBuscarCodigo").val(),
                                                 descripcion:$("#txtBuscarDescrip").val(),
                                                 tipo:$("#tipo").val()},
                     function (data, textStatus, jqXHR) {
