@@ -1,4 +1,4 @@
-$("#esperar").fadeOut();
+//$("#esperar").fadeOut();
 
 var HOST = $(location).attr('hostname');
 

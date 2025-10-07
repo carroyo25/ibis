@@ -1,6 +1,6 @@
 $(function(){
 
-    $("#espera").fadeOut();
+    //$("#esperar").fadeOut();
 
     const body = document.querySelector("#tablaPrincipal tbody");
 
@@ -86,6 +86,8 @@ $(function(){
             tr.dataset.operaciones = i.operaciones;
 
             body.appendChild(tr);
+
+            $("#esperar").fadeOut();
         })
 
         if (listItemFinal){
