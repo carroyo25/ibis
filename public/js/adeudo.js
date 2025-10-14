@@ -1,5 +1,5 @@
 $(function(){
-    $("#espera").fadeOut();
+   $("#esperar").fadeOut();
 
     let row = ``;
     $("#docident").focus;

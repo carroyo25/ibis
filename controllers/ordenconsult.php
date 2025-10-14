@@ -9,9 +9,9 @@
             /*$this->view->listaAlmacenes = $this->model->listarAlmacen();
             $this->view->listaTransportes = $this->model->listarParametros("08");
             $this->view->listaMonedas =  $this->model->listarParametros("03");
-            $this->view->listaPagos = $this->model->listarParametros("11");
-            //$this->view->listaOrdenes = $this->model->listarOrdenes( $_SESSION['iduser'] );*
-            $this->view->listaEntidades = $this->model->listarEntidades();*/
+            $this->view->listaPagos = $this->model->listarParametros("11");*/
+            //$this->view->listaOrdenes = $this->model->listarOrdenes( $_SESSION['iduser'] );
+            /*$this->view->listaEntidades = $this->model->listarEntidades();*/
             //$this->view->listaCostosSelect = $this->model->costosPorUsuarioSelect($_SESSION['iduser']);
             $this->view->render('ordenconsult/index');
         }
@@ -45,6 +45,10 @@
             $cantidad = 30;
         
             echo json_encode([$this->model->listarOrdenConsultScroll($pagina,$cantidad)]);
+        }
+
+        function listaOrdenesPaginador(){
+            echo $this->model->listarOrdenes( $_SESSION['iduser'] );
         }
     }
 ?>

@@ -1,5 +1,5 @@
 $(function(){
-    $("#espera").fadeOut();
+    $("#esperar").fadeOut();
 
     let valores =  [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0 ];
 

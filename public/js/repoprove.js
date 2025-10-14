@@ -4,7 +4,7 @@ $(function() {
         cCostos = [],
         cEntidad = [];
     
-    $("#espera").fadeOut();
+    $("#esperar").fadeOut();
 
 
     $(".contenedorfiltro *").click(function(e){

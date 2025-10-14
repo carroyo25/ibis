@@ -1,5 +1,7 @@
 $(() =>{
 
+    $("#esperar").fadeOut();
+    
     let fila;
 
     $("#btnConsulta").click(function (e) { 

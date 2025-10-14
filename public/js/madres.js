@@ -1,4 +1,6 @@
 $(() =>{
+    $("#esperar").fadeOut();
+    
     const body = document.querySelector("#tablaPrincipal tbody");
     
     //para hacer cmabiar el foco de los inputs en las tablas

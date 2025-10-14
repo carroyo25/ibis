@@ -1,4 +1,6 @@
 (function() {
+    $("#esperar").fadeOut();
+    
     const body = document.querySelector("#contenedor tbody");
     const txtCodigoSearch = document.getElementById('codigo');
     const txtDescripSearch = document.getElementById('descripcion');

@@ -1,10 +1,10 @@
 $(function(){
 
-    //$("#esperar").fadeOut();
+    $("#esperar").fadeOut();
 
     const body = document.querySelector("#tablaPrincipal tbody");
 
-    let listItemFinal = null,estoyPidiendo = false;
+    /*let listItemFinal = null,estoyPidiendo = false;
 
     const observandoListItem = listItem => {
         if ( listItem[0].isIntersecting ) {
@@ -102,7 +102,21 @@ $(function(){
         }
     }
 
-    query();
+    //query();*/
+
+    $.post(RUTA+'ordenconsult/listaOrdenesPaginador',
+        function (data, text, requestXHR) {
+            $("#tablaPrincipal tbody")
+                .empty()
+                .append(data);
+
+                $("#esperar").fadeOut().promise().done(function(){
+                    iniciarPaginador();
+                });
+
+        "text"
+    });
+
 
     $(".dataProceso_2, #tablaDetalles").css("pointer-events","none");
 

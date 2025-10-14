@@ -1,4 +1,6 @@
 $(function() {
+    $("#esperar").fadeOut();
+    
     let accion = "",
         tipoVista = null,
         cc = "",

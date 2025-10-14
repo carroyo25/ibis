@@ -1,4 +1,6 @@
 $(function(){
+    $("#esperar").fadeOut();
+    
     let fila = "",
         registro = 0,
         sw = 0,

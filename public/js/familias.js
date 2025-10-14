@@ -3,7 +3,7 @@ $(function () {
     var index = 0
     var codigoTexto = "";
 
-    //$("#esperar").fadeOut();
+    $("#esperar").fadeOut();
 
     $(".ventanaProceso ").click(function (e) { 
         e.preventDefault();

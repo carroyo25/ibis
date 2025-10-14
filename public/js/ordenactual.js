@@ -1,4 +1,6 @@
 $(() => {
+    $("#esperar").fadeOut();
+    
     const body = document.querySelector("#tablaPrincipal tbody");
 
     let listItemFinal = null,estoyPidiendo = false;

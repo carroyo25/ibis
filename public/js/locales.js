@@ -1,5 +1,6 @@
 $(function(){
-
+    $("#esperar").fadeOut();
+    
     let accion = "",
         tipoMovimiento = 0;  //guia remision  = 1, transferencias = 2
 
