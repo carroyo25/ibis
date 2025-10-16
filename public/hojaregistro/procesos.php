@@ -227,6 +227,7 @@
     }
 
     function subirAdjunto($pdo, $archivo , $id) {
+        
         if (isset($archivo) && $archivo['error'] === UPLOAD_ERR_OK) {
             $uploadDir = '../documentos/proveedores/presentados/';
             
@@ -240,7 +241,7 @@
             $filePath = $uploadDir . basename($nameFile);
             
             // Validate file type and size (recommended)
-            $allowedExtensions = ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png'];
+            $allowedExtensions = ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png', 'xlsx'];
             $maxFileSize = 10 * 1024 * 1024; // 5MB
             
             $extension = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
