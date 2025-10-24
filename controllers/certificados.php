@@ -15,5 +15,9 @@
         function adjuntos(){
             echo json_encode($this->model->listarAdjuntos($_POST['id']));
         }
+
+        function filtroCertificado(){
+            echo json_encode($this->view->carpetasCertificados = $this->model->listaCertificados($_POST['user'],$_POST['orden']));
+        }
     }
 ?>

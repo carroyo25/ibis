@@ -81,8 +81,6 @@ $.addEventListener("click",(e)=>{
 
       return false;
   }else if(e.target.matches(".btn_upload")){
-      console.log(e.target.dataset.file);
-
       e.preventDefault();
       
       if (e.target.dataset.file == 'ficha'){
@@ -231,7 +229,6 @@ tabla_bancos_body.addEventListener("click",(e)=>{
         })
         .then(response => response.json())
         .then(data => {
-            console.log(data);
             e.target.closest("tr").remove(); 
         }),'',undefined,'Procesando'
       )

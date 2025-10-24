@@ -1267,8 +1267,9 @@ thead .sticky-column {
       flex-wrap: wrap;
   gap: 10px;
   text-align: center;
-  -ms-flex-pack: distribute;
-      justify-content: space-around;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
 }
 .itemsTabla .carpetas a {
   display: block;

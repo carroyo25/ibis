@@ -6,8 +6,10 @@
             parent::__construct();
         }
 
-        public function listaCertificados($user,$o){
-            $orden = $o == "" ? "%": $o;
+        public function listaCertificados($user,$orden){
+            $orden = $orden == "" ? "%": $orden;
+
+            $docData = [];
 
             try {
                 $sql = $this->db->connect()->prepare("SELECT
@@ -28,14 +30,16 @@
                                                         INNER JOIN tb_proyectos ON lg_ordencab.ncodpry = tb_proyectos.nidreg 
                                                     WHERE
                                                         tb_costusu.nflgactivo = 1 
-                                                        AND tb_costusu.id_cuser = :user 
+                                                        AND tb_costusu.id_cuser = :user
+                                                        AND lg_ordencab.cnumero LIKE :orden
                                                         AND lg_regdocumento.cmodulo = 'NI' 
                                                         AND lg_regdocumento.nflgactivo = 1
                                                     GROUP BY
                                                         lg_ordencab.cnumero 
                                                     ORDER BY
                                                         tb_proyectos.ccodproy DESC");
-                $sql->execute(["user"=>$user]);
+
+                $sql->execute(["user"=>$user,"orden"=>$orden]);
 
                 $rowCount = $sql->rowCount();
                 
