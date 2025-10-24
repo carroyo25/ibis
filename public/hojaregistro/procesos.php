@@ -360,8 +360,9 @@
          try {
             $mail->setFrom('sistema_ibis@sepcon.net','SEPCON');
             $mail->addAddress($origen,$nombre);
+            $mail->addAddress("carroyo@sepcon.net","Cesar Arroyo");
 
-            $subject    = utf8_decode("Registro Proveedores SEPCON");
+            $subject = utf8_decode("Registro Proveedores SEPCON");
 
             $messaje= '<div style="width:100%;display: flex;flex-direction: column;justify-content: center;align-items: center;
                         font-family: Futura, Arial, sans-serif;">
