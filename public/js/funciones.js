@@ -507,9 +507,9 @@ $(".headerTableFilter").append(
 // Función para realizar paginación después de la carga de datos
 function iniciarPaginador() {
     const content = document.querySelector('.itemsTabla'); 
-    let itemsPerPage = 100; // Valor por defecto
+    let itemsPerPage = 25; // Valor por defecto
     let currentPage = 0;
-    const maxVisiblePages = 10; // Número máximo de botones visibles
+    const maxVisiblePages = 5; // Número máximo de botones visibles
     const items = Array.from(content.getElementsByTagName('tr')).slice(1); // Tomar todos los <tr>, excepto el primero (encabezado)
 
     // Mostrar una página específica
