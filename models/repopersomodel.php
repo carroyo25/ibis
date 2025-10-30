@@ -8,7 +8,7 @@
 
         public function consultarDatos($doc,$cc,$item) {
             $registrado = false;
-            $url = "http://sicalsepcon.net/api/consultapi.php?documento=".$doc;
+            $url = "http://sicalsepcon.net/api/workersapi.php?documento=".$doc;
             
             $api = file_get_contents($url);
 
