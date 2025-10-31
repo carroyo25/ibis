@@ -332,9 +332,9 @@
     </div>
     <div class="cabezaModulo">
         <h1>Consultar Ordenes</h1>
-        <div>
+        
+        <div style="text-align: center;">
             <a href="#" id="btnExporta"><i class="fas fa-file-excel"></i><p>Exportar</p></a>
-            <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
         </div>
     </div>
     <div class="barraTrabajo">
@@ -380,7 +380,7 @@
         <table id="tablaPrincipal">
             <thead class="stickytop">
                     <tr>
-                    <th rowspan="2" data-idcol="0" class="datafiltro">Num.</th>  
+                    <th rowspan="2" data-idcol="0" class="datafiltroOculto">Num.</th>  
                     <th rowspan="2">Emision</th>
                     <th rowspan="2" width="25%" data-idcol="2" class="datafiltro">Descripción</th>
                     <th rowspan="2" data-idcol="3" class="datafiltro">Centro Costos</th> 
@@ -402,9 +402,10 @@
                 
             </tbody>
         </table>
+        <div class="paginadorWrap">
+        </div>
     </div>
-    <div class="items_paginador">
-    </div>
+   
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
     <script src="<?php echo constant('URL');?>public/js/funciones.js?<?php echo constant('VERSION')?>"></script>
     <script src="<?php echo constant('URL');?>public/js/ordenconsult.js?<?php echo constant('VERSION')?>"></script>

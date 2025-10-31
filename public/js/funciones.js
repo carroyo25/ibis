@@ -326,7 +326,7 @@ $(".datafiltro").append(`
             <div class="opciones_filtro">
                 <button id="btn_filter_cancel">Cancelar</button>
             </div>
-        </div>`);
+</div>`);
 
 //filtrar tablas por la cabecera
 $(".listaFiltroTabla").click(function (e) { 
@@ -362,12 +362,14 @@ $(".ul_filtro").on('click','a', function(e) {
             value = $(this).text(),
             columna = $(this).parent().parent().parent().parent().data('idcol'),
             
-            tabla   = $(this).parent().parent().parent().parent().parent().parent().parent().attr("id");
+            //tabla   = $(this).parent().parent().parent().parent().parent().parent().parent().attr("id");
+            tabla = $(this).closest('table');
 
-            t = "#"+tabla+ " tbody tr";
+            t = "#"+tabla+ "tr";
 
 
-        mostrarValoresFiltrados($(t),columna,value);
+        //aplicarFiltro(columna,value);
+        //mostrarValoresFiltrados(tabla,columna,value);
 
         padre.fadeOut(function(){
             $(".ul_filtro").empty();
@@ -408,26 +410,58 @@ $(".filterSearch").keyup(function () {
 });
 
 
-//filtros en tablas
-
-capturarValoresColumnas = (tabla,columna) => {
-    DATA = [];
-
-    tabla.each(function(){
-        let VALOR = $(this).find('td').eq(columna).text();
-        DATA.push(VALOR);
-    });
-
-
-    //elimina los duplicados
-    var unique = DATA.filter((x, i) => DATA.indexOf(x) === i);
-    for (i = 0; i < unique.length; i++) {
-        $(".ul_filtro").append(`<li><a href='#'>${unique[i]}</a></li>`);
+capturarValoresColumnas = (tabla, columna, contenedorFiltro = ".ul_filtro") => {
+    const data = [];
+    
+    // Validate parameters
+    if (!tabla || !tabla.length) {
+        console.error('Tabla no válida');
+        return [];
     }
     
+    // Collect and trim values
+    tabla.each(function() {
+        const valor = $(this).find('td').eq(columna).text().trim();
+        if (valor) { // Only add non-empty values
+            data.push(valor);
+        }
+    });
+
+    // Get unique values and sort them
+    const uniqueValues = [...new Set(data)].sort();
+    
+    // Update filter UI
+    const $contenedor = $(contenedorFiltro);
+    $contenedor.empty();
+    
+    uniqueValues.forEach(valor => {
+        $contenedor.append(
+            `<li>
+                <a href="#" class="filtro-opcion" data-valor="${valor}">
+                    ${valor}
+                </a>
+            </li>`
+        );
+    });
+    
+    // Add click event for filter functionality
+    $contenedor.off('click', '.filtro-opcion') // Remove existing handlers
+              .on('click', '.filtro-opcion', function(e) {
+                  e.preventDefault();
+                  const valorFiltro = $(this).data('valor');
+                  mostrarValoresFiltrados(tabla, columna, valorFiltro);
+              });
+    
+    return uniqueValues;
 }
 
-mostrarValoresFiltrados = (tabla,columna,valor) => {
+// Example filter function
+aplicarFiltro = (tabla, columna, valor) => {
+    alert(`Filtrando columna ${columna} por valor: ${valor} tabla ${tabla}`);
+    // Add your filter logic here
+};
+
+ mostrarValoresFiltrados = (tabla, columna, valor) => {
     tabla.each(function(){
         if ($(this).find('td').eq(columna).text() == valor){
             $(this).show();
