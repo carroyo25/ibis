@@ -9,45 +9,41 @@
            try {
                 $salida = "";
                 $sql = $this->db->connect()->prepare("SELECT
-                                                        tb_costusu.ncodcos,
-                                                        tb_costusu.ncodproy,
-                                                        tb_costusu.id_cuser,
-                                                        lg_ordencab.id_regmov,
-                                                        lg_ordencab.cnumero,
-                                                        lg_ordencab.ffechadoc,
-                                                        lg_ordencab.nNivAten,
-                                                        lg_ordencab.nEstadoDoc,
-                                                        lg_ordencab.ncodpago,
-                                                        lg_ordencab.nplazo,
-                                                        lg_ordencab.cdocPDF,
-                                                        lg_ordencab.ntotal,
-                                                        lg_ordencab.ncodmon,
-                                                        UPPER( lg_ordencab.cObservacion ) AS concepto,
-                                                        UPPER( tb_pedidocab.detalle ) AS detalle,
+                                                        oc.cnumero,
+                                                        oc.ffechadoc,
+                                                        oc.nNivAten,
+                                                        oc.nEstadoDoc,
+                                                        oc.ncodpago,
+                                                        oc.nplazo,
+                                                        oc.cdocPDF,
+                                                        oc.ntotal,
+                                                        oc.ncodmon,
+                                                        UPPER( oc.cObservacion ) AS concepto,
+                                                        pr.ccodproy,
+                                                        pr.cdesproy,
+                                                        oc.id_regmov,
                                                         UPPER(
-                                                        CONCAT_WS( tb_area.ccodarea, tb_area.cdesarea )) AS area,
-                                                        UPPER(
-                                                        CONCAT_WS( tb_proyectos.ccodproy, tb_proyectos.cdesproy )) AS costos,
-                                                        tb_proyectos.ccodproy,
-                                                        lg_ordencab.nfirmaLog,
-                                                        lg_ordencab.nfirmaFin,
-                                                        lg_ordencab.nfirmaOpe,
-                                                        tb_parametros.cdescripcion AS atencion,
-                                                        UPPER(cm_entidad.crazonsoc) AS proveedor 
+                                                        CONCAT_WS( a.ccodarea, a.cdesarea )) AS area,
+                                                        oc.nfirmaLog,
+                                                        oc.nfirmaFin,
+                                                        oc.nfirmaOpe,
+                                                        param.cdescripcion AS atencion,
+                                                        UPPER( ent.crazonsoc ) AS proveedor 
                                                     FROM
-                                                        tb_costusu
-                                                        INNER JOIN lg_ordencab ON tb_costusu.ncodproy = lg_ordencab.ncodpry
-                                                        INNER JOIN tb_pedidocab ON lg_ordencab.id_refpedi = tb_pedidocab.idreg
-                                                        INNER JOIN tb_area ON lg_ordencab.ncodarea = tb_area.ncodarea
-                                                        INNER JOIN tb_proyectos ON lg_ordencab.ncodpry = tb_proyectos.nidreg
-                                                        INNER JOIN tb_parametros ON lg_ordencab.nNivAten = tb_parametros.nidreg
-                                                        INNER JOIN cm_entidad ON lg_ordencab.id_centi = cm_entidad.id_centi
-                                                        INNER JOIN tb_parametros AS estados ON lg_ordencab.nEstadoDoc = estados.nidreg 
+                                                        lg_ordencab oc
+                                                        LEFT JOIN tb_costusu cu ON cu.ncodproy = oc.ncodpry
+                                                        LEFT JOIN tb_proyectos pr ON pr.nidreg = oc.ncodpry
+                                                        LEFT JOIN tb_pedidocab pc ON oc.id_refpedi = pc.idreg
+                                                        LEFT JOIN tb_area a ON oc.ncodarea = a.ncodarea
+                                                        LEFT JOIN tb_parametros param ON oc.nNivAten = param.nidreg
+                                                        LEFT JOIN cm_entidad ent ON oc.id_centi = ent.id_centi
+                                                        LEFT JOIN tb_parametros estados ON oc.nEstadoDoc = estados.nidreg 
                                                     WHERE
-                                                        tb_costusu.id_cuser = :user 
-                                                        AND tb_costusu.nflgactivo = 1
-                                                        AND YEAR(lg_ordencab.ffechadoc) = YEAR(NOW())
-                                                        ORDER BY id_regmov DESC");
+                                                        oc.ffechadoc >= DATE_SUB( CURRENT_DATE, INTERVAL 8 MONTH ) 
+                                                        AND cu.id_cuser =:user
+                                                        AND cu.nflgactivo = 1 
+                                                        AND pr.nflgactivo = 1
+                                                    ORDER BY oc.id_regmov DESC");
                 $sql->execute(["user"=>$_SESSION['iduser']]);
                 $rowCount = $sql->rowCount();
 

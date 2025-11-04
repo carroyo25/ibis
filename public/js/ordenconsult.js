@@ -9,7 +9,7 @@ $(function(){
                 .append(data);
 
                 $("#esperar").fadeOut().promise().done(function(){
-                    iniciarPaginadorConFiltro();
+                    iniciarPaginadorConsulta();
                 });
 
         "text"
@@ -360,7 +360,7 @@ detalles = () => {
     return DATA;
 }
 
-/*
+
 function iniciarPaginadorConsulta() {
     const content = document.querySelector('.itemsTabla'); 
     const contentTarget = document.querySelector('.paginadorWrap');
@@ -496,7 +496,6 @@ function iniciarPaginadorConsulta() {
     createPageButtons();
     showPage(currentPage); // Mostrar la primera página
 }
-    */
 
 function iniciarPaginadorConFiltro() {
     const content = document.querySelector('.itemsTabla');
@@ -769,3 +768,4 @@ function iniciarPaginadorConFiltro() {
         getActiveFilters: () => ({ ...currentFilters })
     };
 }
+

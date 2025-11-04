@@ -341,7 +341,7 @@ $(".listaFiltroTabla").click(function (e) {
             t = "#"+tabla+ " tbody tr";
         
         $(this).next().toggle(function(){
-            capturarValoresColumnas($(t),idx);
+            //capturarValoresColumnas($(t),idx);
         });
 
         return false;
@@ -362,7 +362,6 @@ $(".ul_filtro").on('click','a', function(e) {
             value = $(this).text(),
             columna = $(this).parent().parent().parent().parent().data('idcol'),
             
-            //tabla   = $(this).parent().parent().parent().parent().parent().parent().parent().attr("id");
             tabla = $(this).closest('table');
 
             t = "#"+tabla+ "tr";
