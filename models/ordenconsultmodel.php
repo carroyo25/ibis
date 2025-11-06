@@ -9,14 +9,14 @@
            try {
                 $salida = "";
                 $sql = $this->db->connect()->prepare("SELECT
-                                                        oc.cnumero,
+                                                        LPAD(oc.cnumero,6,0) cnumero,
                                                         oc.ffechadoc,
                                                         oc.nNivAten,
                                                         oc.nEstadoDoc,
                                                         oc.ncodpago,
                                                         oc.nplazo,
                                                         oc.cdocPDF,
-                                                        oc.ntotal,
+                                                        FORMAT(oc.ntotal,2) ntotal,
                                                         oc.ncodmon,
                                                         UPPER( oc.cObservacion ) AS concepto,
                                                         pr.ccodproy,
@@ -45,72 +45,21 @@
                                                         AND pr.nflgactivo = 1
                                                     ORDER BY oc.id_regmov DESC");
                 $sql->execute(["user"=>$_SESSION['iduser']]);
-                $rowCount = $sql->rowCount();
 
-                
-
-                if ($rowCount > 0){
-                    while ($rs = $sql->fetch()) {
-
-                        $montoDolares = 0;
-                        $montoSoles = 0;
-                        $estado = '';
-
-                        $log = is_null($rs['nfirmaLog']) ? '<i class="far fa-square"></i>' : '<i class="far fa-check-square"></i>';
-                        $ope = is_null($rs['nfirmaOpe']) ? '<i class="far fa-square"></i>' : '<i class="far fa-check-square"></i>';
-                        $fin = is_null($rs['nfirmaFin']) ? '<i class="far fa-square"></i>' : '<i class="far fa-check-square"></i>';
-
-                        $flog = is_null($rs['nfirmaLog']) ? 0 : 1;
-                        $fope = is_null($rs['nfirmaOpe']) ? 0 : 1;
-                        $ffin = is_null($rs['nfirmaFin']) ? 0 : 1;
-
-
-                        if ( $rs['ncodmon'] == 20) {
-                            $montoSoles = "S/. ".number_format($rs['ntotal'],2);
-                            $montoDolares = "";
-                        }else{
-                            $montoSoles = "";
-                            $montoDolares =  "$ ".number_format($rs['ntotal'],2);
-                        }
-
-                        if ( $rs['nEstadoDoc'] == 49) {
-                            $estado = "procesando";
-                        }else if ( $rs['nEstadoDoc'] == 59 ) {
-                            $estado = "firmas";
-                        }else if ( $rs['nEstadoDoc'] == 60 ) {
-                            $estado = "recepcion";
-                        }else if ( $rs['nEstadoDoc'] == 62 ) {
-                            $estado = "despacho";
-                        }else if ( $rs['nEstadoDoc'] == 105 ) {
-                            $estado = "anulado";
-                            $montoDolares = "";
-                            $montoSoles = "";
-                        }
-
-
-                        $salida .='<tr class="pointer " data-indice="'.$rs['id_regmov'].'" 
-                                                        data-estado="'.$rs['nEstadoDoc'].'"
-                                                        data-finanzas="'.$ffin.'"
-                                                        data-logistica="'.$flog.'"
-                                                        data-operaciones="'.$fope.'">
-                                    <td class="textoCentro">'.str_pad($rs['cnumero'],4,0,STR_PAD_LEFT).'</td>
-                                    <td class="textoCentro">'.date("d/m/Y", strtotime($rs['ffechadoc'])).'</td>
-                                    <td class="pl20px">'.$rs['concepto'].'</td>
-                                    <td class="pl20px">'.utf8_decode($rs['ccodproy']).'</td>
-                                    <td class="pl20px">'.$rs['area'].'</td>
-                                    <td class="pl20px">'.$rs['proveedor'].'</td>
-                                    <td class="textoDerecha">'.$montoSoles.'</td>
-                                    <td class="textoDerecha">'.$montoDolares.'</td>
-                                    <td class="textoCentro '.strtolower($rs['atencion']).'">'.$rs['atencion'].'</td>
-                                    <td class="textoCentro '.$estado.'">'.strtoupper($estado).'</td>
-                                    <td class="textoCentro">'.$log.'</td>
-                                    <td class="textoCentro">'.$fin.'</td>
-                                    <td class="textoCentro">'.$ope.'</td>
-                                    </tr>';
-                    }
+                $docData = $sql->fetchAll(PDO::FETCH_ASSOC);
+        
+                if (empty($docData)) {
+                    return [
+                        "success" => false,
+                        "message" => "No se encontraron registros."
+                    ];
                 }
-
-                return $salida;                    
+        
+                return [
+                    "success" => true,
+                    "datos"   => $docData
+                ];
+                   
            } catch (PDOException $th) {
                echo "Error: " . $th->getMessage();
                return false;

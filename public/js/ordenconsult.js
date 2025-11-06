@@ -2,19 +2,7 @@ $(function(){
 
     const body = document.querySelector("#tablaPrincipal tbody");
 
-    $.post(RUTA+'ordenconsult/listaOrdenesPaginador',
-        function (data, text, requestXHR) {
-            $("#tablaPrincipal tbody")
-                .empty()
-                .append(data);
-
-                $("#esperar").fadeOut().promise().done(function(){
-                    iniciarPaginadorConsulta();
-                });
-
-        "text"
-    });
-
+    listarOrdenes();
 
     $(".dataProceso_2, #tablaDetalles").css("pointer-events","none");
 
@@ -497,275 +485,78 @@ function iniciarPaginadorConsulta() {
     showPage(currentPage); // Mostrar la primera página
 }
 
-function iniciarPaginadorConFiltro() {
-    const content = document.querySelector('.itemsTabla');
-    const contentTarget = document.querySelector('.paginadorWrap');
-    let itemsPerPage = 50;
-    let currentPage = 0;
-    const maxVisiblePages = 15;
+
+listarOrdenes = async () => {
+    try {
+        let formData = new FormData();
+        formData.append('orden',document.getElementById('ordenSearch').value);
+        formData.append('cc',document.getElementById('costosSearch').value);
+        formData.append('mes',document.getElementById('mesSearch').value);
+        formData.append('anio',document.getElementById('anioSearch').value);
+
+        const response = await fetch(RUTA + "ordenconsult/listaOrdenesPaginador", {
+            method: 'POST',
+            body: formData
+        });
+
+        //const numerosOrden = [];
+
+        const data = await response.json();
+
+        const tablaCuerpo = document.getElementById("tablaPrincipalCuerpo");
+
+        if (!tablaCuerpo) {
+            throw new Error("Element with ID 'tablaPrincipalCuerpo' not found");
+        }
+
+        tablaCuerpo.innerHTML = "";
+
+        const estados = {
+            49: "procesando",
+            59: "firmas",
+            60: "recepcion",
+            62: "despacho",
+            105: "anulado"
+        };
+
+        data.datos.forEach(e =>{
+
+            const tr = document.createElement("tr");
+            tr.dataset.indice = e.id_regmov;
+            tr.dataset.estado = e.nEstadoDoc;
+            tr.dataset.finanzas = e.nfirmaLog;
+            tr.dataset.logistica = e.nfirmaOpe;
+            tr.dataset.operaciones = e.nfirmaFin;
+
+            tr.innerHTML = `<td class="textoCentro">${e.cnumero}</td>
+                            <td class="textoCentro">${e.ffechadoc}</td>
+                            <td class="pl20px">${e.concepto}</td>
+                            <td class="pl20px">${e.ccodproy}</td>
+                            <td class="pl20px">${e.area}</td>
+                            <td class="pl20px">${e.proveedor}</td>
+                            <td class="textoDerecha">${e.ncodmon == 20 ? "S/." + e.ntotal : " "}</td>
+                            <td class="textoDerecha">${e.ncodmon == 21 ? "$" + e.ntotal : " "}</td>
+                            <td class="textoCentro ${e.atencion.toLowerCase()}">${e.atencion}</td>
+                            <td class="textoCentro ${estados[e.nEstadoDoc].toLowerCase()}">${estados[e.nEstadoDoc].toUpperCase()}</td>
+                            <td class="textoCentro">${e.nfirmaLog == null ? '<i class="far fa-square"></i>': '<i class="far fa-check-square"></i>'}</td>
+                            <td class="textoCentro">${e.nfirmaOpe == null ? '<i class="far fa-square"></i>': '<i class="far fa-check-square"></i>'}</td>
+                            <td class="textoCentro">${e.nfirmaFin == null ? '<i class="far fa-square"></i>': '<i class="far fa-check-square"></i>'}</td>`
+                            
+
+            tr.classList.add("pointer");
+
+            tablaCuerpo.appendChild(tr);
+        });
+
+        const numerosOrden = data.datos.map(e => e.cnumero);
+        
+        $("#esperar").fadeOut().promise().done(function(){
+            iniciarPaginadorConsulta();
+        });
+    } catch (error) {
+         mostrarMensaje('No hay registros para procesar','mensaje_error');
+        $("#esperar").fadeOut();
+    }
     
-    // Almacenar todos los datos originales y filtrados
-    let allItems = [];
-    let filteredItems = [];
-    let currentFilters = {};
-    
-    // Inicializar datos
-    function initialize() {
-        const allRows = content.getElementsByTagName('tr');
-        allItems = Array.from(allRows).slice(1); // Excluir encabezado
-        filteredItems = [...allItems]; // Inicialmente, todos los items están visibles
-        applyFilters(); // Aplicar filtros existentes si los hay
-    }
-
-    // Función de filtrado que trabaja con TODOS los datos
-    function aplicarFiltro(columna, valor) {
-        if (!valor || valor === 'todos') {
-            // Eliminar filtro de esta columna
-            delete currentFilters[columna];
-        } else {
-            // Aplicar filtro
-            currentFilters[columna] = valor;
-        }
-        
-        applyFilters();
-        currentPage = 0; // Volver a la primera página después de filtrar
-        createPageButtons();
-        showPage(currentPage);
-    }
-
-    // Aplicar todos los filtros activos
-    function applyFilters() {
-        if (Object.keys(currentFilters).length === 0) {
-            // Sin filtros, mostrar todos los items
-            filteredItems = [...allItems];
-        } else {
-            // Aplicar filtros
-            filteredItems = allItems.filter(item => {
-                const celdas = item.getElementsByTagName('td');
-                let coincide = true;
-                
-                for (const [columna, valor] of Object.entries(currentFilters)) {
-                    const columnaIndex = parseInt(columna);
-                    if (celdas[columnaIndex] && celdas[columnaIndex].textContent.trim() !== valor) {
-                        coincide = false;
-                        break;
-                    }
-                }
-                
-                return coincide;
-            });
-        }
-    }
-
-    // Mostrar página actual (solo de los datos filtrados)
-    function showPage(page) {
-        const startIndex = page * itemsPerPage;
-        const endIndex = startIndex + itemsPerPage;
-        
-        // Primero ocultar todos los items originales
-        allItems.forEach(item => {
-            item.style.display = 'none';
-        });
-        
-        // Luego mostrar solo los items filtrados de la página actual
-        filteredItems.forEach((item, index) => {
-            const isVisible = index >= startIndex && index < endIndex;
-            item.style.display = isVisible ? '' : 'none';
-        });
-        
-        updatePaginationState();
-    }
-
-    // Crear botones de paginación basados en datos FILTRADOS
-    function createPageButtons() {
-        const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
-        
-        let paginationContainer = document.querySelector('.pagination');
-        if (!paginationContainer) {
-            paginationContainer = document.createElement('div');
-            paginationContainer.classList.add('pagination');
-            contentTarget.innerHTML = '';
-            contentTarget.appendChild(paginationContainer);
-        } else {
-            paginationContainer.innerHTML = '';
-        }
-
-        createItemsPerPageSelector(paginationContainer);
-        createNavigationButtons(paginationContainer, totalPages);
-        createPageNumberButtons(paginationContainer, totalPages);
-        createFilterInfo(paginationContainer);
-        
-        updatePaginationState();
-    }
-
-    // Información del filtro aplicado
-    function createFilterInfo(container) {
-        const filterInfo = document.createElement('div');
-        filterInfo.className = 'filter-info';
-        
-        if (Object.keys(currentFilters).length > 0) {
-            filterInfo.innerHTML = `
-                <span class="active-filters">Filtros activos: ${Object.keys(currentFilters).length}</span>
-                <button class="clear-filters">Limpiar filtros</button>
-            `;
-            
-            filterInfo.querySelector('.clear-filters').addEventListener('click', limpiarFiltros);
-        } else {
-            filterInfo.innerHTML = '<span>Sin filtros aplicados</span>';
-        }
-        
-        container.appendChild(filterInfo);
-    }
-
-    // Limpiar todos los filtros
-    function limpiarFiltros() {
-        currentFilters = {};
-        applyFilters();
-        currentPage = 0;
-        createPageButtons();
-        showPage(currentPage);
-    }
-
-    // Navegación
-    function goToPage(page) {
-        const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
-        if (page < 0 || page >= totalPages) return;
-        
-        currentPage = page;
-        showPage(currentPage);
-        updatePaginationState();
-    }
-
-    // Selector de items por página
-    function createItemsPerPageSelector(container) {
-        const selectorWrapper = document.createElement('div');
-        selectorWrapper.className = 'items-per-page-selector';
-        
-        const select = document.createElement('select');
-        const options = [25, 50, 100, 150, 200, 250, 300];
-        
-        options.forEach(option => {
-            const opt = document.createElement('option');
-            opt.value = option;
-            opt.textContent = option;
-            if (option === itemsPerPage) opt.selected = true;
-            select.appendChild(opt);
-        });
-
-        select.addEventListener('change', function() {
-            itemsPerPage = parseInt(this.value);
-            currentPage = 0;
-            createPageButtons();
-            showPage(currentPage);
-        });
-
-        selectorWrapper.appendChild(select);
-        container.appendChild(selectorWrapper);
-    }
-
-    // Botones de navegación
-    function createNavigationButtons(container, totalPages) {
-        const navButtons = [
-            { text: 'Primera', action: () => goToPage(0), disabled: currentPage === 0 },
-            { text: 'Anterior', action: () => goToPage(currentPage - 1), disabled: currentPage === 0 },
-            { text: 'Siguiente', action: () => goToPage(currentPage + 1), disabled: currentPage >= totalPages - 1 },
-            { text: 'Última', action: () => goToPage(totalPages - 1), disabled: currentPage >= totalPages - 1 }
-        ];
-
-        navButtons.forEach(button => {
-            const btn = document.createElement('button');
-            btn.textContent = button.text;
-            btn.disabled = button.disabled;
-            btn.addEventListener('click', button.action);
-            container.appendChild(btn);
-        });
-    }
-
-    // Botones numéricos
-    function createPageNumberButtons(container, totalPages) {
-        let startPage = Math.max(0, currentPage - Math.floor(maxVisiblePages / 2));
-        let endPage = Math.min(totalPages, startPage + maxVisiblePages);
-        
-        if (endPage - startPage < maxVisiblePages) {
-            startPage = Math.max(0, endPage - maxVisiblePages);
-        }
-
-        if (startPage > 0) {
-            const ellipsis = document.createElement('span');
-            ellipsis.textContent = '...';
-            ellipsis.className = 'page-ellipsis';
-            container.appendChild(ellipsis);
-        }
-
-        for (let i = startPage; i < endPage; i++) {
-            const pageButton = document.createElement('button');
-            pageButton.textContent = i + 1;
-            pageButton.className = 'page-button';
-            pageButton.disabled = i === currentPage;
-            pageButton.dataset.page = i;
-            pageButton.addEventListener('click', () => goToPage(i));
-            container.appendChild(pageButton);
-        }
-
-        if (endPage < totalPages) {
-            const ellipsis = document.createElement('span');
-            ellipsis.textContent = '...';
-            ellipsis.className = 'page-ellipsis';
-            container.appendChild(ellipsis);
-        }
-    }
-
-    // Actualizar estado
-    function updatePaginationState() {
-        const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
-        const buttons = document.querySelectorAll('.pagination .page-button');
-        
-        buttons.forEach(button => {
-            const pageNum = parseInt(button.dataset.page);
-            button.disabled = pageNum === currentPage;
-            button.classList.toggle('active', pageNum === currentPage);
-        });
-
-        updatePageInfo();
-    }
-
-    // Información de página
-    function updatePageInfo() {
-        let infoElement = document.querySelector('.page-info');
-        
-        if (!infoElement) {
-            infoElement = document.createElement('div');
-            infoElement.className = 'page-info';
-            document.querySelector('.pagination').appendChild(infoElement);
-        }
-        
-        const startItem = (currentPage * itemsPerPage) + 1;
-        const endItem = Math.min((currentPage + 1) * itemsPerPage, filteredItems.length);
-        const totalItems = filteredItems.length;
-        const originalTotal = allItems.length;
-        
-        let infoText = `Mostrando ${startItem}-${endItem} de ${totalItems}`;
-        if (totalItems !== originalTotal) {
-            infoText += ` (filtrado de ${originalTotal} total)`;
-        }
-        
-        infoElement.textContent = infoText;
-    }
-
-    // Inicializar
-    initialize();
-    createPageButtons();
-    showPage(currentPage);
-
-    // API pública para integración con filtros
-    return {
-        aplicarFiltro,
-        limpiarFiltros,
-        goToPage,
-        getCurrentPage: () => currentPage,
-        getTotalFilteredItems: () => filteredItems.length,
-        getTotalOriginalItems: () => allItems.length,
-        getActiveFilters: () => ({ ...currentFilters })
-    };
 }
 

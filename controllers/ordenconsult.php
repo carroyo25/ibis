@@ -48,7 +48,7 @@
         }
 
         function listaOrdenesPaginador(){
-            echo $this->model->listarOrdenes( $_SESSION['iduser'] );
+            echo json_encode($this->model->listarOrdenes( $_SESSION['iduser'] ));
         }
     }
 ?>
