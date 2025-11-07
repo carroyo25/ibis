@@ -326,7 +326,7 @@ $(".datafiltro").append(`
             <div class="opciones_filtro">
                 <button id="btn_filter_cancel">Cancelar</button>
             </div>
-</div>`);
+        </div>`);
 
 //filtrar tablas por la cabecera
 $(".listaFiltroTabla").click(function (e) { 
@@ -341,7 +341,7 @@ $(".listaFiltroTabla").click(function (e) {
             t = "#"+tabla+ " tbody tr";
         
         $(this).next().toggle(function(){
-            //capturarValoresColumnas($(t),idx);
+            capturarValoresColumnas($(t),idx);
         });
 
         return false;
@@ -362,13 +362,12 @@ $(".ul_filtro").on('click','a', function(e) {
             value = $(this).text(),
             columna = $(this).parent().parent().parent().parent().data('idcol'),
             
-            tabla = $(this).closest('table');
+            tabla   = $(this).parent().parent().parent().parent().parent().parent().parent().attr("id");
 
-            t = "#"+tabla+ "tr";
+            t = "#"+tabla+ " tbody tr";
 
 
-        //aplicarFiltro(columna,value);
-        //mostrarValoresFiltrados(tabla,columna,value);
+        mostrarValoresFiltrados($(t),columna,value);
 
         padre.fadeOut(function(){
             $(".ul_filtro").empty();
@@ -409,58 +408,26 @@ $(".filterSearch").keyup(function () {
 });
 
 
-capturarValoresColumnas = (tabla, columna, contenedorFiltro = ".ul_filtro") => {
-    const data = [];
-    
-    // Validate parameters
-    if (!tabla || !tabla.length) {
-        console.error('Tabla no válida');
-        return [];
+//filtros en tablas
+
+capturarValoresColumnas = (tabla,columna) => {
+    DATA = [];
+
+    tabla.each(function(){
+        let VALOR = $(this).find('td').eq(columna).text();
+        DATA.push(VALOR);
+    });
+
+
+    //elimina los duplicados
+    var unique = DATA.filter((x, i) => DATA.indexOf(x) === i);
+    for (i = 0; i < unique.length; i++) {
+        $(".ul_filtro").append(`<li><a href='#'>${unique[i]}</a></li>`);
     }
     
-    // Collect and trim values
-    tabla.each(function() {
-        const valor = $(this).find('td').eq(columna).text().trim();
-        if (valor) { // Only add non-empty values
-            data.push(valor);
-        }
-    });
-
-    // Get unique values and sort them
-    const uniqueValues = [...new Set(data)].sort();
-    
-    // Update filter UI
-    const $contenedor = $(contenedorFiltro);
-    $contenedor.empty();
-    
-    uniqueValues.forEach(valor => {
-        $contenedor.append(
-            `<li>
-                <a href="#" class="filtro-opcion" data-valor="${valor}">
-                    ${valor}
-                </a>
-            </li>`
-        );
-    });
-    
-    // Add click event for filter functionality
-    $contenedor.off('click', '.filtro-opcion') // Remove existing handlers
-              .on('click', '.filtro-opcion', function(e) {
-                  e.preventDefault();
-                  const valorFiltro = $(this).data('valor');
-                  mostrarValoresFiltrados(tabla, columna, valorFiltro);
-              });
-    
-    return uniqueValues;
 }
 
-// Example filter function
-aplicarFiltro = (tabla, columna, valor) => {
-    alert(`Filtrando columna ${columna} por valor: ${valor} tabla ${tabla}`);
-    // Add your filter logic here
-};
-
- mostrarValoresFiltrados = (tabla, columna, valor) => {
+mostrarValoresFiltrados = (tabla,columna,valor) => {
     tabla.each(function(){
         if ($(this).find('td').eq(columna).text() == valor){
             $(this).show();
@@ -540,9 +507,9 @@ $(".headerTableFilter").append(
 // Función para realizar paginación después de la carga de datos
 function iniciarPaginador() {
     const content = document.querySelector('.itemsTabla'); 
-    let itemsPerPage = 25; // Valor por defecto
+    let itemsPerPage = 100; // Valor por defecto
     let currentPage = 0;
-    const maxVisiblePages = 5; // Número máximo de botones visibles
+    const maxVisiblePages = 10; // Número máximo de botones visibles
     const items = Array.from(content.getElementsByTagName('tr')).slice(1); // Tomar todos los <tr>, excepto el primero (encabezado)
 
     // Mostrar una página específica

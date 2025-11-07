@@ -1,6 +1,6 @@
-$(function(){
+var orden,descripcion,costos,area,proveedor,atencion = [];
 
-    const body = document.querySelector("#tablaPrincipal tbody");
+$(function(){
 
     listarOrdenes();
 
@@ -256,6 +256,89 @@ $(function(){
 
         return false;
     });
+
+
+    $(".datafiltros").append(`<a href="#" class="listaFiltro"><i class="fas fa-angle-down"></i></a>
+                                <div class="filtro">
+                                    <div class="oculto">
+                                        <ul class="filtro_cantidad">
+                                            <li><a>Ordenar ascedentemente</a></li>
+                                            <li><a>Ordenar Descendentemente</a></li>
+                                        </ul>
+                                    </div>
+                                    <hr>
+                                    <input type="text" class="filterSearchConsult" name="filterSearch" placeholder="Buscar Elementos...">
+                                    <ul class="ul_filtro"> 
+                                    </ul>
+                                    <div class="opciones_filtro">
+                                        <button id="btn_filter_cancel">Cancelar</button>
+                                    </div>
+                            </div>`);
+
+    $(".listaFiltro").click(function (e) { 
+        e.preventDefault();
+
+        $(".ul_filtro").empty();
+        $(".filtro").fadeOut();
+
+        const id = $(this).parent().attr("data-idcol");
+
+        $(this).next().toggle(function(){
+            switch (id) {
+                case "0":
+                    capturarValoresColumnas(orden);
+                    break;
+                case "2":
+                    capturarValoresColumnas(descripcion);
+                    break;
+                case "3":
+                    capturarValoresColumnas(costos);
+                    break;
+                case "4":
+                    capturarValoresColumnas(area);
+                    break;
+                case "5":
+                    capturarValoresColumnas(proveedor);
+                    break;
+                case "8":
+                    capturarValoresColumnas(atencion);
+                    break;
+            }
+            
+        });
+
+        return false;
+    });
+
+    $(".ul_filtro").on('click','a', function(e) {
+            e.preventDefault();
+
+            const columna = $(this).closest('.datafiltros').attr("data-idcol");
+            const value = $(this).text();
+
+
+            mostrarValoresFiltradosConsulta(columna,value);
+
+            $(this).closest(".filtro").fadeOut(function(){
+                $(".ul_filtro").empty();
+            });
+
+            return false;
+    });
+
+    $(".filterSearchConsult").keyup(function () { 
+        
+        let value = $(this).val().toLowerCase();
+
+        let l = ".ul_filtro"+ " li a"
+
+        $(l).filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+
+    });
+
+
 })
 
 exports = () => {
@@ -275,7 +358,7 @@ exports = () => {
             OPERACIONES = $(this).data('operaciones'),
             FINANZAS    = $(this).data('finanzas');  
 
-        item= {};
+        let item= {};
         
         item['item']         = ITEM;
         item['emision']      = EMISION;
@@ -319,7 +402,7 @@ detalles = () => {
             SALDO       = $(this).data('cant')-$(this).find('td').eq(5).children().val(),
             DETALLES    = $(this).find('td').eq(10).children().val();
 
-        item= {};
+        let item= {};
         
         //if (GRABAR == 0) {
             item['item']        = ITEM;
@@ -352,7 +435,7 @@ detalles = () => {
 function iniciarPaginadorConsulta() {
     const content = document.querySelector('.itemsTabla'); 
     const contentTarget = document.querySelector('.paginadorWrap');
-    let itemsPerPage = 50; // Valor por defecto
+    let itemsPerPage = 25; // Valor por defecto
     let currentPage = 0;
     const maxVisiblePages = 15; // Número máximo de botones visibles
     const items = Array.from(content.getElementsByTagName('tr')).slice(1); // Tomar todos los <tr>, excepto el primero (encabezado)
@@ -499,8 +582,6 @@ listarOrdenes = async () => {
             body: formData
         });
 
-        //const numerosOrden = [];
-
         const data = await response.json();
 
         const tablaCuerpo = document.getElementById("tablaPrincipalCuerpo");
@@ -548,8 +629,13 @@ listarOrdenes = async () => {
             tablaCuerpo.appendChild(tr);
         });
 
-        const numerosOrden = data.datos.map(e => e.cnumero);
-        
+        orden = data.datos.map(e => e.cnumero);
+        descripcion = data.datos.map(e => e.concepto);
+        costos = data.datos.map(e => e.ccodproy);
+        area = data.datos.map(e => e.area);
+        proveedor = data.datos.map(e => e.proveedor);
+        atencion = data.datos.map(e => e.atencion);
+
         $("#esperar").fadeOut().promise().done(function(){
             iniciarPaginadorConsulta();
         });
@@ -559,4 +645,40 @@ listarOrdenes = async () => {
     }
     
 }
+
+capturarValoresColumnas = (datos) => {
+    const datosSinDuplicados = [...new Set(datos)];
+    datosSinDuplicados.sort();
+
+    const fragment = document.createDocumentFragment();
+
+    datosSinDuplicados.forEach(e => {
+        const li = document.createElement('li');
+        li.innerHTML = `<li><a href='#'>${e}</a></li>`;
+        fragment.appendChild(li);
+    });
+
+    $(".ul_filtro").append(fragment);
+
+}
+
+mostrarValoresFiltradosConsulta = (columna, valor) => {
+    let tabla = $("#tablaPrincipal tbody tr");
+    
+    // Si el valor es vacío o "ALL", mostrar todas las filas
+    if (!valor || valor === "ALL") {
+        tabla.show();
+        return;
+    }
+
+    tabla.each(function(){
+        let textoCelda = $(this).find('td').eq(columna).text().trim();
+        if (textoCelda === valor) {
+            $(this).show();
+        } else {
+            $(this).hide();
+        }
+    });
+}
+
 

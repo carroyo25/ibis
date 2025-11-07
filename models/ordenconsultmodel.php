@@ -10,7 +10,7 @@
                 $salida = "";
                 $sql = $this->db->connect()->prepare("SELECT
                                                         LPAD(oc.cnumero,6,0) cnumero,
-                                                        oc.ffechadoc,
+                                                        DATE_FORMAT(oc.ffechadoc,'%d/%m/%Y') ffechadoc,
                                                         oc.nNivAten,
                                                         oc.nEstadoDoc,
                                                         oc.ncodpago,
@@ -39,7 +39,7 @@
                                                         LEFT JOIN cm_entidad ent ON oc.id_centi = ent.id_centi
                                                         LEFT JOIN tb_parametros estados ON oc.nEstadoDoc = estados.nidreg 
                                                     WHERE
-                                                        oc.ffechadoc >= DATE_SUB( CURRENT_DATE, INTERVAL 8 MONTH ) 
+                                                        oc.ffechadoc >= DATE_SUB( CURRENT_DATE, INTERVAL 6 MONTH ) 
                                                         AND cu.id_cuser =:user
                                                         AND cu.nflgactivo = 1 
                                                         AND pr.nflgactivo = 1
