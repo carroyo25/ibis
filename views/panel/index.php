@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="<?php echo constant('URL')?>public/css/ibis.css?<?php echo constant('VERSION')?>">
     <link rel="stylesheet" href="<?php echo constant('URL');?>public/css/exceltable.css">
     <link rel="stylesheet" href="<?php echo constant('URL');?>public/css/pagination.css">
+    <link rel="stylesheet" href="<?php echo constant('URL');?>public/css/paginationv2.css?<?php echo constant('VERSION')?>">
     <title>Sistema Ibis -- Control de Procesos</title>
 </head>
 <body>

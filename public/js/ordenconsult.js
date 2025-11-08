@@ -1,5 +1,3 @@
-var orden,descripcion,costos,area,proveedor,atencion = [];
-
 $(function(){
 
     listarOrdenes();
@@ -256,89 +254,6 @@ $(function(){
 
         return false;
     });
-
-
-    $(".datafiltros").append(`<a href="#" class="listaFiltro"><i class="fas fa-angle-down"></i></a>
-                                <div class="filtro">
-                                    <div class="oculto">
-                                        <ul class="filtro_cantidad">
-                                            <li><a>Ordenar ascedentemente</a></li>
-                                            <li><a>Ordenar Descendentemente</a></li>
-                                        </ul>
-                                    </div>
-                                    <hr>
-                                    <input type="text" class="filterSearchConsult" name="filterSearch" placeholder="Buscar Elementos...">
-                                    <ul class="ul_filtro"> 
-                                    </ul>
-                                    <div class="opciones_filtro">
-                                        <button id="btn_filter_cancel">Cancelar</button>
-                                    </div>
-                            </div>`);
-
-    $(".listaFiltro").click(function (e) { 
-        e.preventDefault();
-
-        $(".ul_filtro").empty();
-        $(".filtro").fadeOut();
-
-        const id = $(this).parent().attr("data-idcol");
-
-        $(this).next().toggle(function(){
-            switch (id) {
-                case "0":
-                    capturarValoresColumnas(orden);
-                    break;
-                case "2":
-                    capturarValoresColumnas(descripcion);
-                    break;
-                case "3":
-                    capturarValoresColumnas(costos);
-                    break;
-                case "4":
-                    capturarValoresColumnas(area);
-                    break;
-                case "5":
-                    capturarValoresColumnas(proveedor);
-                    break;
-                case "8":
-                    capturarValoresColumnas(atencion);
-                    break;
-            }
-            
-        });
-
-        return false;
-    });
-
-    $(".ul_filtro").on('click','a', function(e) {
-            e.preventDefault();
-
-            const columna = $(this).closest('.datafiltros').attr("data-idcol");
-            const value = $(this).text();
-
-
-            mostrarValoresFiltradosConsulta(columna,value);
-
-            $(this).closest(".filtro").fadeOut(function(){
-                $(".ul_filtro").empty();
-            });
-
-            return false;
-    });
-
-    $(".filterSearchConsult").keyup(function () { 
-        
-        let value = $(this).val().toLowerCase();
-
-        let l = ".ul_filtro"+ " li a"
-
-        $(l).filter(function() {
-            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-        });
-
-    });
-
-
 })
 
 exports = () => {
@@ -431,144 +346,6 @@ detalles = () => {
     return DATA;
 }
 
-
-function iniciarPaginadorConsulta() {
-    const content = document.querySelector('.itemsTabla'); 
-    const contentTarget = document.querySelector('.paginadorWrap');
-    let itemsPerPage = 25; // Valor por defecto
-    let currentPage = 0;
-    const maxVisiblePages = 15; // Número máximo de botones visibles
-    const items = Array.from(content.getElementsByTagName('tr')).slice(1); // Tomar todos los <tr>, excepto el primero (encabezado)
-
-    // Mostrar una página específica
-    function showPage(page) {
-        const startIndex = page * itemsPerPage;
-        const endIndex = startIndex + itemsPerPage;
-        items.forEach((item, index) => {
-            item.classList.toggle('hidden', index < startIndex || index >= endIndex);
-        });
-        updateActiveButtonStates();
-        createPageButtons();
-    }
-
-    // Crear los botones de paginación y el selector de elementos por página
-    function createPageButtons() {
-        const totalPages = Math.ceil(items.length / itemsPerPage);
-        let paginationContainer = document.querySelector('.pagination');
-
-        // Si el contenedor de paginación no existe, crearlo
-        if (!paginationContainer) {
-            paginationContainer = document.createElement('div');
-            paginationContainer.classList.add('pagination');
-            contentTarget.appendChild(paginationContainer);
-        } else {
-            // Limpiar el contenedor existente
-            paginationContainer.innerHTML = '';
-        }
-
-        // Crear el selector para elementos por página
-        const itemsPerPageSelect = document.createElement('select');
-        const options = [25, 50, 100, 150, 200, 250, 300];
-
-        options.forEach(option => {
-            const opt = document.createElement('option');
-            opt.value = option;
-            opt.textContent = option;
-            if (option === itemsPerPage) opt.selected = true; // Establecer 100 como seleccionado por defecto
-            itemsPerPageSelect.appendChild(opt);
-        });
-
-        // Agregar evento al selector
-        itemsPerPageSelect.addEventListener("change", function() {
-            itemsPerPage = parseInt(this.value); // Actualizar el número de elementos por página
-            currentPage = 0; // Reiniciar a la primera página
-            createPageButtons();
-            showPage(currentPage);
-        });
-
-        paginationContainer.appendChild(itemsPerPageSelect); // Agregar el selector al contenedor de paginación
-
-        // Botón "Primera"
-        const firstButton = document.createElement('button');
-        firstButton.textContent = 'Primera';
-        firstButton.disabled = currentPage === 0;
-        firstButton.addEventListener('click', () => {
-            currentPage = 0;
-            showPage(currentPage);
-        });
-        paginationContainer.appendChild(firstButton);
-
-        // Botón "Anterior"
-        const prevButton = document.createElement('button');
-        prevButton.textContent = 'Anterior';
-        prevButton.disabled = currentPage === 0;
-        prevButton.addEventListener('click', () => {
-            if (currentPage > 0) {
-                currentPage--;
-                showPage(currentPage);
-            }
-        });
-        paginationContainer.appendChild(prevButton);
-
-        // Mostrar botones limitados
-        const startPage = Math.max(0, currentPage - Math.floor(maxVisiblePages / 2));
-        const endPage = Math.min(totalPages, startPage + maxVisiblePages);
-
-        for (let i = startPage; i < endPage; i++) {
-            const pageButton = document.createElement('button');
-            pageButton.textContent = i + 1;
-            pageButton.disabled = i === currentPage; // Deshabilitar botón si es la página actual
-            pageButton.classList.toggle('active', i === currentPage); // Agregar la clase 'active' si es la página actual
-            pageButton.addEventListener('click', () => {
-                currentPage = i;
-                showPage(currentPage);
-            });
-
-            paginationContainer.appendChild(pageButton);
-        }
-
-        // Botón "Siguiente"
-        const nextButton = document.createElement('button');
-        nextButton.textContent = 'Siguiente';
-        nextButton.disabled = currentPage === totalPages - 1;
-        nextButton.addEventListener('click', () => {
-            if (currentPage < totalPages - 1) {
-                currentPage++;
-                showPage(currentPage);
-            }
-        });
-        paginationContainer.appendChild(nextButton);
-
-        // Botón "Última"
-        const lastButton = document.createElement('button');
-        lastButton.textContent = 'Última';
-        lastButton.disabled = currentPage === totalPages - 1;
-        lastButton.addEventListener('click', () => {
-            currentPage = totalPages - 1;
-            showPage(currentPage);
-        });
-        paginationContainer.appendChild(lastButton);
-    }
-
-    // Actualizar los estados activos de los botones de paginación
-    function updateActiveButtonStates() {
-        const pageButtons = document.querySelectorAll('.pagination button');
-        pageButtons.forEach((button, index) => {
-            // Remover clase 'active' de todos los botones
-            button.classList.remove('active');
-            // Si el botón es el de la página actual, agregar la clase 'active'
-            if (parseInt(button.textContent) === currentPage + 1) {
-                button.classList.add('active');
-            }
-        });
-    }
-
-    // Inicializar la paginación
-    createPageButtons();
-    showPage(currentPage); // Mostrar la primera página
-}
-
-
 listarOrdenes = async () => {
     try {
         let formData = new FormData();
@@ -629,56 +406,436 @@ listarOrdenes = async () => {
             tablaCuerpo.appendChild(tr);
         });
 
-        orden = data.datos.map(e => e.cnumero);
-        descripcion = data.datos.map(e => e.concepto);
-        costos = data.datos.map(e => e.ccodproy);
-        area = data.datos.map(e => e.area);
-        proveedor = data.datos.map(e => e.proveedor);
-        atencion = data.datos.map(e => e.atencion);
-
         $("#esperar").fadeOut().promise().done(function(){
             iniciarPaginadorConsulta();
         });
     } catch (error) {
-         mostrarMensaje('No hay registros para procesar','mensaje_error');
+        mostrarMensaje('No hay registros para procesar','mensaje_error');
+        console.log(error);
         $("#esperar").fadeOut();
     }
     
 }
 
-capturarValoresColumnas = (datos) => {
-    const datosSinDuplicados = [...new Set(datos)];
-    datosSinDuplicados.sort();
-
-    const fragment = document.createDocumentFragment();
-
-    datosSinDuplicados.forEach(e => {
-        const li = document.createElement('li');
-        li.innerHTML = `<li><a href='#'>${e}</a></li>`;
-        fragment.appendChild(li);
-    });
-
-    $(".ul_filtro").append(fragment);
-
-}
-
-mostrarValoresFiltradosConsulta = (columna, valor) => {
-    let tabla = $("#tablaPrincipal tbody tr");
+function iniciarPaginadorConsulta() {
+    const content = document.querySelector('.tablaBusqueda'); 
+    const contentTarget = document.querySelector('.paginadorWrap');
+    let itemsPerPage = 25;
+    let currentPage = 0;
+    const maxVisiblePages = 15;
     
-    // Si el valor es vacío o "ALL", mostrar todas las filas
-    if (!valor || valor === "ALL") {
-        tabla.show();
-        return;
+    // Obtener todos los tr del tbody (tus datos ya cargados)
+    const items = Array.from(document.querySelectorAll('#tablaPrincipalCuerpo tr'));
+    let filteredItems = [...items];
+    let activeFilters = {};
+
+    // Crear filtros estilo Excel INTEGRADOS en los headers
+    function createExcelStyleFilters() {
+        const headerRows = content.querySelectorAll('thead tr');
+        
+        // Usar la PRIMERA fila del header (índice 0)
+        const firstHeaderRow = headerRows[0];
+        
+        //console.log('Filas en header:', headerRows.length);
+        //console.log('Celdas en PRIMERA fila:', firstHeaderRow.getElementsByTagName('th').length);
+        
+        // Trabajar directamente en los headers existentes (NO crear fila nueva)
+        const headerCells = firstHeaderRow.getElementsByTagName('th');
+        
+        Array.from(headerCells).forEach((headerCell, index) => {
+            //const hasFilter = headerCell.hasAttribute('data-filtro');
+            
+            if (hasFilter) {
+                //console.log(`✅ Agregando filtro a columna ${index}: ${headerCell.textContent.trim()}`);
+                
+                // Guardar el contenido original del header
+                const headerContent = headerCell.innerHTML;
+                headerCell.innerHTML = ''; // Limpiar contenido
+                
+                // Crear contenedor flexible para header + botón
+                const headerContainer = document.createElement('div');
+                headerContainer.style.display = 'flex';
+                headerContainer.style.alignItems = 'center';
+                headerContainer.style.justifyContent = 'space-between';
+                headerContainer.style.gap = '5px';
+                headerContainer.style.width = '100%';
+                headerContainer.style.minHeight = '100%';
+                
+                // Texto del header
+                const headerText = document.createElement('span');
+                headerText.innerHTML = headerContent;
+                headerText.style.flex = '1';
+                headerText.style.textAlign = 'center';
+                
+                // Botón de filtro
+                const filterButton = document.createElement('button');
+                filterButton.classList.add('excel-filter-btn');
+                filterButton.innerHTML = '▾';
+                filterButton.title = `Filtrar ${headerCell.textContent.trim()}`;
+                filterButton.style.flexShrink = '0';
+                filterButton.style.marginLeft = 'auto';
+                
+                // Panel desplegable del filtro
+                const filterPanel = document.createElement('div');
+                filterPanel.classList.add('excel-filter-panel');
+                filterPanel.style.display = 'none';
+                
+                const uniqueValues = getUniqueColumnValues(index);
+                const checkboxesContainer = document.createElement('div');
+                checkboxesContainer.classList.add('filter-checkboxes');
+                
+                uniqueValues.forEach(value => {
+                    if (value.trim() === '') return;
+                    
+                    const label = document.createElement('label');
+                    label.classList.add('filter-checkbox-label');
+                    
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.value = value;
+                    checkbox.checked = true;
+                    
+                    const span = document.createElement('span');
+                    span.textContent = value;
+                    
+                    label.appendChild(checkbox);
+                    label.appendChild(span);
+                    checkboxesContainer.appendChild(label);
+                });
+                
+                const panelControls = document.createElement('div');
+                panelControls.classList.add('filter-panel-controls');
+                
+                const searchInput = document.createElement('input');
+                searchInput.type = 'text';
+                searchInput.placeholder = 'Buscar...';
+                searchInput.classList.add('filter-search');
+                searchInput.addEventListener('input', function(e) {
+                    e.stopPropagation();
+                    filterCheckboxes(this.value, checkboxesContainer);
+                });
+                
+                const selectAllBtn = document.createElement('button');
+                selectAllBtn.textContent = 'Seleccionar Todo';
+                selectAllBtn.classList.add('filter-action-btn');
+                selectAllBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    toggleAllCheckboxes(checkboxesContainer, true);
+                });
+                
+                const clearAllBtn = document.createElement('button');
+                clearAllBtn.textContent = 'Limpiar';
+                clearAllBtn.classList.add('filter-action-btn');
+                clearAllBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    toggleAllCheckboxes(checkboxesContainer, false);
+                });
+                
+                const applyBtn = document.createElement('button');
+                applyBtn.textContent = 'Aplicar';
+                applyBtn.classList.add('filter-action-btn', 'apply-btn');
+                applyBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    applyColumnFilter(index, checkboxesContainer);
+                    filterPanel.style.display = 'none';
+                });
+                
+                const cancelBtn = document.createElement('button');
+                cancelBtn.textContent = 'Cancelar';
+                cancelBtn.classList.add('filter-action-btn', 'cancel-btn');
+                cancelBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    filterPanel.style.display = 'none';
+                });
+                
+                panelControls.appendChild(searchInput);
+                panelControls.appendChild(selectAllBtn);
+                panelControls.appendChild(clearAllBtn);
+                panelControls.appendChild(applyBtn);
+                panelControls.appendChild(cancelBtn);
+                
+                filterPanel.appendChild(checkboxesContainer);
+                filterPanel.appendChild(panelControls);
+                
+                filterPanel.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                });
+                
+                filterButton.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const isVisible = filterPanel.style.display === 'block';
+                    closeAllFilterPanels();
+                    filterPanel.style.display = isVisible ? 'none' : 'block';
+                    
+                    const rect = filterButton.getBoundingClientRect();
+                    filterPanel.style.top = `${rect.bottom + 5}px`;
+                    filterPanel.style.left = `${rect.left}px`;
+                });
+                
+                // Agregar elementos al header
+                headerContainer.appendChild(headerText);
+                headerContainer.appendChild(filterButton);
+                headerCell.appendChild(headerContainer);
+                headerCell.appendChild(filterPanel);
+                
+                // Estilos para el header
+                headerCell.style.position = 'relative';
+            } else {
+                console.log(`❌ Columna ${index} sin filtro: ${headerCell.textContent.trim()}`);
+            }
+        });
+
+        document.addEventListener('click', closeAllFilterPanels);
     }
 
-    tabla.each(function(){
-        let textoCelda = $(this).find('td').eq(columna).text().trim();
-        if (textoCelda === valor) {
-            $(this).show();
+    function getUniqueColumnValues(columnIndex) {
+        const values = items.map(item => {
+            const cells = item.getElementsByTagName('td');
+            return cells[columnIndex] ? cells[columnIndex].textContent.trim() : '';
+        });
+        return [...new Set(values)].filter(value => value !== '').sort();
+    }
+
+    function filterCheckboxes(searchTerm, container) {
+        const labels = container.getElementsByTagName('label');
+        Array.from(labels).forEach(label => {
+            const text = label.textContent.toLowerCase();
+            const matches = text.includes(searchTerm.toLowerCase());
+            label.style.display = matches ? 'flex' : 'none';
+        });
+    }
+
+    function toggleAllCheckboxes(container, select) {
+        const checkboxes = container.getElementsByTagName('input');
+        Array.from(checkboxes).forEach(checkbox => {
+            if (checkbox.parentElement.style.display !== 'none') {
+                checkbox.checked = select;
+            }
+        });
+    }
+
+    function applyColumnFilter(columnIndex, checkboxesContainer) {
+        const checkboxes = checkboxesContainer.getElementsByTagName('input');
+        const selectedValues = Array.from(checkboxes)
+            .filter(cb => cb.checked && cb.parentElement.style.display !== 'none')
+            .map(cb => cb.value);
+        
+        const allCheckboxes = Array.from(checkboxes).filter(cb => cb.parentElement.style.display !== 'none');
+        
+        if (selectedValues.length === 0 || selectedValues.length === allCheckboxes.length) {
+            delete activeFilters[columnIndex];
         } else {
-            $(this).hide();
+            activeFilters[columnIndex] = selectedValues;
         }
-    });
+        
+        applyFilters();
+        updateFilterButtonState(columnIndex, selectedValues.length !== allCheckboxes.length);
+    }
+
+    function updateFilterButtonState(columnIndex, isFiltered) {
+        const filterButtons = document.querySelectorAll('.excel-filter-btn');
+        filterButtons.forEach((button) => {
+            const filterContainer = button.closest('th');
+            const headerCells = Array.from(filterContainer.parentNode.children);
+            const cellIndex = headerCells.indexOf(filterContainer);
+            
+            if (cellIndex === columnIndex) {
+                button.classList.toggle('filter-active', isFiltered);
+            }
+        });
+    }
+
+    function closeAllFilterPanels() {
+        const panels = document.querySelectorAll('.excel-filter-panel');
+        panels.forEach(panel => {
+            panel.style.display = 'none';
+        });
+    }
+
+    function applyFilters() {
+        filteredItems = items.filter(item => {
+            const cells = item.getElementsByTagName('td');
+            
+            for (const [columnIndex, filterValues] of Object.entries(activeFilters)) {
+                const cellIndex = parseInt(columnIndex);
+                if (cells[cellIndex]) {
+                    const cellText = cells[cellIndex].textContent.trim();
+                    
+                    if (Array.isArray(filterValues)) {
+                        if (!filterValues.includes(cellText)) {
+                            return false;
+                        }
+                    }
+                }
+            }
+            return true;
+        });
+        
+        currentPage = 0;
+        createPageButtons();
+        showPage(currentPage);
+    }
+
+    function clearAllFilters() {
+        activeFilters = {};
+        filteredItems = [...items];
+        
+        const checkboxes = document.querySelectorAll('.filter-checkboxes input');
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = true;
+        });
+        
+        const filterButtons = document.querySelectorAll('.excel-filter-btn');
+        filterButtons.forEach(button => {
+            button.classList.remove('filter-active');
+        });
+        
+        const labels = document.querySelectorAll('.filter-checkbox-label');
+        labels.forEach(label => {
+            label.style.display = 'flex';
+        });
+        
+        currentPage = 0;
+        createPageButtons();
+        showPage(currentPage);
+    }
+
+    function showPage(page) {
+        const startIndex = page * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        
+        // Ocultar todos los items
+        items.forEach(item => {
+            item.style.display = 'none';
+        });
+        
+        // Mostrar solo los items de la página actual
+        filteredItems.forEach((item, index) => {
+            if (index >= startIndex && index < endIndex) {
+                item.style.display = '';
+            }
+        });
+    }
+
+    function createPageButtons() {
+        const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
+        let paginationContainer = document.querySelector('.pagination');
+
+        if (!paginationContainer) {
+            paginationContainer = document.createElement('div');
+            paginationContainer.classList.add('pagination');
+            contentTarget.appendChild(paginationContainer);
+        } else {
+            paginationContainer.innerHTML = '';
+        }
+
+        // Contador de resultados
+        const resultsCounter = document.createElement('div');
+        /*resultsCounter.classList.add('results-counter');
+        resultsCounter.textContent = `Mostrando ${filteredItems.length} de ${items.length} resultados`;
+        paginationContainer.appendChild(resultsCounter);*/
+
+        // Botón para limpiar filtros
+        if (Object.keys(activeFilters).length > 0) {
+            const clearFiltersButton = document.createElement('button');
+            clearFiltersButton.textContent = 'Limpiar Todos los Filtros';
+            clearFiltersButton.classList.add('clear-filters-btn');
+            clearFiltersButton.addEventListener('click', clearAllFilters);
+            paginationContainer.appendChild(clearFiltersButton);
+        }
+
+        // Selector de elementos por página
+        const itemsPerPageSelect = document.createElement('select');
+        const options = [25, 50, 100, 150, 200, 250, 300];
+
+        options.forEach(option => {
+            const opt = document.createElement('option');
+            opt.value = option;
+            opt.textContent = option;
+            if (option === itemsPerPage) opt.selected = true;
+            itemsPerPageSelect.appendChild(opt);
+        });
+
+        itemsPerPageSelect.addEventListener("change", function() {
+            itemsPerPage = parseInt(this.value);
+            currentPage = 0;
+            createPageButtons();
+            showPage(currentPage);
+        });
+
+        paginationContainer.appendChild(itemsPerPageSelect);
+
+        // Botones de paginación
+        const firstButton = document.createElement('button');
+        firstButton.textContent = 'Primera';
+        firstButton.disabled = currentPage === 0;
+        firstButton.addEventListener('click', () => {
+            currentPage = 0;
+            createPageButtons();
+            showPage(currentPage);
+        });
+        paginationContainer.appendChild(firstButton);
+
+        const prevButton = document.createElement('button');
+        prevButton.textContent = 'Anterior';
+        prevButton.disabled = currentPage === 0;
+        prevButton.addEventListener('click', () => {
+            if (currentPage > 0) {
+                currentPage--;
+                createPageButtons();
+                showPage(currentPage);
+            }
+        });
+        paginationContainer.appendChild(prevButton);
+
+        const startPage = Math.max(0, currentPage - Math.floor(maxVisiblePages / 2));
+        const endPage = Math.min(totalPages, startPage + maxVisiblePages);
+
+        for (let i = startPage; i < endPage; i++) {
+            const pageButton = document.createElement('button');
+            pageButton.textContent = i + 1;
+            pageButton.classList.toggle('active', i === currentPage);
+            pageButton.addEventListener('click', () => {
+                currentPage = i;
+                createPageButtons();
+                showPage(currentPage);
+            });
+            paginationContainer.appendChild(pageButton);
+        }
+
+        const nextButton = document.createElement('button');
+        nextButton.textContent = 'Siguiente';
+        nextButton.disabled = currentPage >= totalPages - 1;
+        nextButton.addEventListener('click', () => {
+            if (currentPage < totalPages - 1) {
+                currentPage++;
+                createPageButtons();
+                showPage(currentPage);
+            }
+        });
+        paginationContainer.appendChild(nextButton);
+
+        const lastButton = document.createElement('button');
+        lastButton.textContent = 'Última';
+        lastButton.disabled = currentPage >= totalPages - 1;
+        lastButton.addEventListener('click', () => {
+            currentPage = totalPages - 1;
+            createPageButtons();
+            showPage(currentPage);
+        });
+        paginationContainer.appendChild(lastButton);
+
+        // Si no hay páginas (sin datos), deshabilitar todos los botones de navegación
+        if (totalPages <= 1) {
+            firstButton.disabled = true;
+            prevButton.disabled = true;
+            nextButton.disabled = true;
+            lastButton.disabled = true;
+        }
+    }
+
+    // Inicializar el paginador
+    createExcelStyleFilters();
+    createPageButtons();
+    showPage(currentPage);
 }
-
-
