@@ -429,17 +429,65 @@ function iniciarPaginadorConsulta() {
     let filteredItems = [...items];
     let activeFilters = {};
 
-    // Crear filtros estilo Excel INTEGRADOS en los headers
+    // Función optimizada para obtener valores únicos
+    function getUniqueColumnValues(columnIndex) {
+        // Si son muchos datos, usar estrategia optimizada
+        if (items.length > 1000) {
+            return getUniqueValuesOptimized(columnIndex);
+        }
+        
+        // Método original para tablas pequeñas
+        const values = items.map(item => {
+            const cells = item.getElementsByTagName('td');
+            return cells[columnIndex] ? cells[columnIndex].textContent.trim() : '';
+        });
+        
+        const uniqueValues = [...new Set(values)].filter(value => value !== '').sort();
+        
+        // Limitar a 1000 valores máximo
+        return uniqueValues.slice(0, 1000);
+    }
+
+    function getUniqueValuesOptimized(columnIndex) {
+        console.log(`⚡ Optimizando columna ${columnIndex} con ${items.length} filas`);
+        
+        const valueSet = new Set();
+        const maxValues = 800;
+        
+        for (let i = 0; i < 500 && valueSet.size < maxValues; i++) {
+            addValueFromItem(items[i], columnIndex, valueSet);
+        }
+        
+        for (let i = Math.max(500, items.length - 300); i < items.length && valueSet.size < maxValues; i++) {
+            addValueFromItem(items[i], columnIndex, valueSet);
+        }
+        
+        for (let i = 0; i < 200 && valueSet.size < maxValues; i++) {
+            const randomIndex = Math.floor(Math.random() * items.length);
+            addValueFromItem(items[randomIndex], columnIndex, valueSet);
+        }
+        
+        const uniqueValues = Array.from(valueSet).sort();
+        console.log(`📊 Optimizado: ${uniqueValues.length} valores únicos de ${items.length} filas`);
+        
+        return uniqueValues;
+    }
+
+    function addValueFromItem(item, columnIndex, valueSet) {
+        const cells = item.getElementsByTagName('td');
+        const value = cells[columnIndex] ? cells[columnIndex].textContent.trim() : '';
+        if (value) {
+            valueSet.add(value);
+        }
+    }
+
     function createExcelStyleFilters() {
         const headerRows = content.querySelectorAll('thead tr');
-        
-        // Usar la PRIMERA fila del header (índice 0)
         const firstHeaderRow = headerRows[0];
         
         console.log('Filas en header:', headerRows.length);
         console.log('Celdas en PRIMERA fila:', firstHeaderRow.getElementsByTagName('th').length);
         
-        // Trabajar directamente en los headers existentes (NO crear fila nueva)
         const headerCells = firstHeaderRow.getElementsByTagName('th');
         
         Array.from(headerCells).forEach((headerCell, index) => {
@@ -448,11 +496,9 @@ function iniciarPaginadorConsulta() {
             if (hasFilter) {
                 console.log(`✅ Agregando filtro a columna ${index}: ${headerCell.textContent.trim()}`);
                 
-                // Guardar el contenido original del header
                 const headerContent = headerCell.innerHTML;
-                headerCell.innerHTML = ''; // Limpiar contenido
+                headerCell.innerHTML = '';
                 
-                // Crear contenedor flexible para header + botón
                 const headerContainer = document.createElement('div');
                 headerContainer.style.display = 'flex';
                 headerContainer.style.alignItems = 'center';
@@ -461,13 +507,11 @@ function iniciarPaginadorConsulta() {
                 headerContainer.style.width = '100%';
                 headerContainer.style.minHeight = '100%';
                 
-                // Texto del header
                 const headerText = document.createElement('span');
                 headerText.innerHTML = headerContent;
                 headerText.style.flex = '1';
                 headerText.style.textAlign = 'center';
                 
-                // Botón de filtro
                 const filterButton = document.createElement('button');
                 filterButton.classList.add('excel-filter-btn');
                 filterButton.innerHTML = '▾';
@@ -475,33 +519,71 @@ function iniciarPaginadorConsulta() {
                 filterButton.style.flexShrink = '0';
                 filterButton.style.marginLeft = 'auto';
                 
-                // Panel desplegable del filtro
                 const filterPanel = document.createElement('div');
                 filterPanel.classList.add('excel-filter-panel');
                 filterPanel.style.display = 'none';
                 
-                const uniqueValues = getUniqueColumnValues(index);
                 const checkboxesContainer = document.createElement('div');
                 checkboxesContainer.classList.add('filter-checkboxes');
+                checkboxesContainer.innerHTML = '<div class="loading-message">👆 Haz clic para cargar valores</div>';
                 
-                uniqueValues.forEach(value => {
-                    if (value.trim() === '') return;
+                let valuesLoaded = false;
+                let allUniqueValues = [];
+                
+                const loadFilterValues = () => {
+                    if (valuesLoaded) return;
                     
-                    const label = document.createElement('label');
-                    label.classList.add('filter-checkbox-label');
+                    checkboxesContainer.innerHTML = '<div class="loading-message">⏳ Cargando valores...</div>';
                     
-                    const checkbox = document.createElement('input');
-                    checkbox.type = 'checkbox';
-                    checkbox.value = value;
-                    checkbox.checked = true;
+                    setTimeout(() => {
+                        allUniqueValues = getUniqueColumnValues(index);
+                        valuesLoaded = true;
+                        renderFilterValues(allUniqueValues);
+                    }, 50);
+                };
+                
+                const renderFilterValues = (values) => {
+                    checkboxesContainer.innerHTML = '';
                     
-                    const span = document.createElement('span');
-                    span.textContent = value;
+                    if (values.length === 0) {
+                        checkboxesContainer.innerHTML = '<div class="no-values">No hay valores para filtrar</div>';
+                        return;
+                    }
                     
-                    label.appendChild(checkbox);
-                    label.appendChild(span);
-                    checkboxesContainer.appendChild(label);
-                });
+                    if (values.length >= 800 && items.length > 1000) {
+                        const warning = document.createElement('div');
+                        warning.style.cssText = 'font-size: 10px; color: #e74c3c; padding: 5px; background: #ffeaa7; margin-bottom: 5px; border-radius: 3px;';
+                        warning.innerHTML = `⚠️ <strong>${values.length} valores únicos</strong> - Usa la búsqueda para filtrar`;
+                        checkboxesContainer.appendChild(warning);
+                    }
+                    
+                    // ✅ AGREGADO: Debug para columnas problemáticas
+                    if (index === 2 || index === 5) { // Descripción (2) y Proveedor (5)
+                        console.log(`🔍 DEBUG Columna ${index} - Primeros 5 valores:`, values.slice(0, 5));
+                    }
+                    
+                    values.forEach(value => {
+                        if (value.trim() === '') return;
+                        
+                        const label = document.createElement('label');
+                        label.classList.add('filter-checkbox-label');
+                        
+                        const checkbox = document.createElement('input');
+                        checkbox.type = 'checkbox';
+                        checkbox.value = value;
+                        checkbox.checked = false;
+                        
+                        const span = document.createElement('span');
+                        span.textContent = value;
+                        span.title = value;
+                        
+                        label.appendChild(checkbox);
+                        label.appendChild(span);
+                        checkboxesContainer.appendChild(label);
+                    });
+                    
+                    console.log(`✅ Filtro columna ${index} cargado: ${values.length} valores`);
+                };
                 
                 const panelControls = document.createElement('div');
                 panelControls.classList.add('filter-panel-controls');
@@ -512,7 +594,9 @@ function iniciarPaginadorConsulta() {
                 searchInput.classList.add('filter-search');
                 searchInput.addEventListener('input', function(e) {
                     e.stopPropagation();
-                    filterCheckboxes(this.value, checkboxesContainer);
+                    if (valuesLoaded) {
+                        filterCheckboxes(this.value, checkboxesContainer);
+                    }
                 });
                 
                 const selectAllBtn = document.createElement('button');
@@ -520,7 +604,9 @@ function iniciarPaginadorConsulta() {
                 selectAllBtn.classList.add('filter-action-btn');
                 selectAllBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    toggleAllCheckboxes(checkboxesContainer, true);
+                    if (valuesLoaded) {
+                        toggleAllCheckboxes(checkboxesContainer, true);
+                    }
                 });
                 
                 const clearAllBtn = document.createElement('button');
@@ -528,7 +614,9 @@ function iniciarPaginadorConsulta() {
                 clearAllBtn.classList.add('filter-action-btn');
                 clearAllBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    toggleAllCheckboxes(checkboxesContainer, false);
+                    if (valuesLoaded) {
+                        toggleAllCheckboxes(checkboxesContainer, false);
+                    }
                 });
                 
                 const applyBtn = document.createElement('button');
@@ -536,8 +624,10 @@ function iniciarPaginadorConsulta() {
                 applyBtn.classList.add('filter-action-btn', 'apply-btn');
                 applyBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    applyColumnFilter(index, checkboxesContainer);
-                    filterPanel.style.display = 'none';
+                    if (valuesLoaded) {
+                        applyColumnFilter(index, checkboxesContainer);
+                        filterPanel.style.display = 'none';
+                    }
                 });
                 
                 const cancelBtn = document.createElement('button');
@@ -567,51 +657,60 @@ function iniciarPaginadorConsulta() {
                     closeAllFilterPanels();
                     filterPanel.style.display = isVisible ? 'none' : 'block';
                     
+                    if (!isVisible && !valuesLoaded) {
+                        loadFilterValues();
+                    }
+                    
                     const rect = filterButton.getBoundingClientRect();
                     filterPanel.style.top = `${rect.bottom + 5}px`;
                     filterPanel.style.left = `${rect.left}px`;
                 });
                 
-                // Agregar elementos al header
                 headerContainer.appendChild(headerText);
                 headerContainer.appendChild(filterButton);
                 headerCell.appendChild(headerContainer);
                 headerCell.appendChild(filterPanel);
                 
-                // Estilos para el header
                 headerCell.style.position = 'relative';
-            } else {
-                console.log(`❌ Columna ${index} sin filtro: ${headerCell.textContent.trim()}`);
             }
         });
 
         document.addEventListener('click', closeAllFilterPanels);
     }
 
-    function getUniqueColumnValues(columnIndex) {
-        const values = items.map(item => {
-            const cells = item.getElementsByTagName('td');
-            const cellValue = cells[columnIndex] ? cells[columnIndex].textContent.trim() : '';
-            return cellValue;
-        });
-        
-        const uniqueValues = [...new Set(values)].filter(value => value !== '').sort();
-        console.log(`🔍 Valores únicos columna ${columnIndex}:`, uniqueValues);
-        
-        return uniqueValues;
-    }
-
     function filterCheckboxes(searchTerm, container) {
         const labels = container.getElementsByTagName('label');
+        let visibleCount = 0;
+        
         Array.from(labels).forEach(label => {
+            if (!label.querySelector('input[type="checkbox"]')) {
+                label.style.display = 'flex';
+                return;
+            }
+            
             const text = label.textContent.toLowerCase();
             const matches = text.includes(searchTerm.toLowerCase());
             label.style.display = matches ? 'flex' : 'none';
+            
+            if (matches) visibleCount++;
         });
+        
+        const existingMessage = container.querySelector('.no-results-message');
+        if (visibleCount === 0 && searchTerm.trim() !== '') {
+            if (!existingMessage) {
+                const message = document.createElement('div');
+                message.classList.add('no-results-message');
+                message.style.cssText = 'padding: 10px; text-align: center; color: #666; font-size: 12px;';
+                message.textContent = 'No se encontraron resultados';
+                container.appendChild(message);
+            }
+        } else if (existingMessage) {
+            existingMessage.remove();
+        }
     }
 
     function toggleAllCheckboxes(container, select) {
-        const checkboxes = container.getElementsByTagName('input');
+        const checkboxes = container.querySelectorAll('input[type="checkbox"]');
         Array.from(checkboxes).forEach(checkbox => {
             if (checkbox.parentElement.style.display !== 'none') {
                 checkbox.checked = select;
@@ -620,22 +719,39 @@ function iniciarPaginadorConsulta() {
     }
 
     function applyColumnFilter(columnIndex, checkboxesContainer) {
-        const checkboxes = checkboxesContainer.getElementsByTagName('input');
+        const checkboxes = checkboxesContainer.querySelectorAll('input[type="checkbox"]');
         const selectedValues = Array.from(checkboxes)
             .filter(cb => cb.checked)
             .map(cb => cb.value);
         
-        const allCheckboxes = Array.from(checkboxesContainer.getElementsByTagName('input'));
-        const availableCheckboxes = allCheckboxes.filter(cb => 
-            cb.parentElement.style.display !== 'none' || cb.checked
+        const allCheckboxes = Array.from(checkboxesContainer.querySelectorAll('input[type="checkbox"]'));
+        const visibleCheckboxes = allCheckboxes.filter(cb => 
+            cb.parentElement.style.display !== 'none'
         );
         
         console.log(`🎯 Aplicando filtro columna ${columnIndex}:`);
-        console.log('   - Valores seleccionados:', selectedValues);
-        console.log('   - Checkboxes disponibles:', availableCheckboxes.length);
+        console.log('   - Valores seleccionados:', selectedValues.length);
+        console.log('   - Checkboxes VISIBLES:', visibleCheckboxes.length);
         
-        if (selectedValues.length === 0 || selectedValues.length === availableCheckboxes.length) {
-            console.log('   🗑️ Eliminando filtro (todos seleccionados o ninguno)');
+        // ✅ AGREGADO: Debug específico para columnas problemáticas
+        if (columnIndex === 2 || columnIndex === 5) {
+            console.log('   - Primeros 3 valores seleccionados:', selectedValues.slice(0, 3));
+            
+            // Verificar coincidencia con datos reales
+            if (selectedValues.length > 0) {
+                const sampleItem = items[0];
+                const cells = sampleItem.getElementsByTagName('td');
+                const sampleValue = cells[columnIndex] ? cells[columnIndex].textContent.trim() : '';
+                console.log('   - Valor de muestra en tabla:', sampleValue);
+                console.log('   - Coincide con seleccionados?', selectedValues.includes(sampleValue));
+            }
+        }
+        
+        if (selectedValues.length === 0) {
+            console.log('   🗑️ Eliminando filtro (ningún valor seleccionado)');
+            delete activeFilters[columnIndex];
+        } else if (selectedValues.length === visibleCheckboxes.length) {
+            console.log('   🗑️ Eliminando filtro (todos los valores visibles seleccionados)');
             delete activeFilters[columnIndex];
         } else {
             console.log('   ✅ Guardando filtro activo');
@@ -643,7 +759,7 @@ function iniciarPaginadorConsulta() {
         }
         
         applyFilters();
-        updateFilterButtonState(columnIndex, selectedValues.length !== availableCheckboxes.length);
+        updateFilterButtonState(columnIndex, selectedValues.length > 0 && selectedValues.length !== visibleCheckboxes.length);
     }
 
     function updateFilterButtonState(columnIndex, isFiltered) {
@@ -670,23 +786,32 @@ function iniciarPaginadorConsulta() {
     function applyFilters() {
         console.log('🔧 APLICANDO FILTROS:', activeFilters);
         
+        // ✅ MODIFICADO: Función de filtrado mejorada para columnas problemáticas
         filteredItems = items.filter(item => {
             const cells = item.getElementsByTagName('td');
             let pasaTodosLosFiltros = true;
             
-            // Verificar cada filtro activo
             for (const [columnIndex, filterValues] of Object.entries(activeFilters)) {
                 const cellIndex = parseInt(columnIndex);
                 if (cells[cellIndex]) {
                     const cellText = cells[cellIndex].textContent.trim();
                     
                     if (Array.isArray(filterValues)) {
-                        if (!filterValues.includes(cellText)) {
-                            console.log(`   ❌ Fila NO pasa - "${cellText}" no está en`, filterValues);
-                            pasaTodosLosFiltros = false;
-                            break;
+                        // ✅ AGREGADO: Debug para columnas problemáticas
+                        if (cellIndex === 2 || cellIndex === 5) {
+                            const coincide = filterValues.includes(cellText);
+                            if (!coincide) {
+                                console.log(`❌ Fila NO pasa filtro columna ${cellIndex}:`);
+                                console.log('   - Valor en tabla:', cellText);
+                                console.log('   - Valores permitidos:', filterValues.slice(0, 3));
+                                pasaTodosLosFiltros = false;
+                                break;
+                            }
                         } else {
-                            console.log(`   ✅ Fila pasa - "${cellText}" está en`, filterValues);
+                            if (!filterValues.includes(cellText)) {
+                                pasaTodosLosFiltros = false;
+                                break;
+                            }
                         }
                     }
                 }
@@ -706,9 +831,9 @@ function iniciarPaginadorConsulta() {
         activeFilters = {};
         filteredItems = [...items];
         
-        const checkboxes = document.querySelectorAll('.filter-checkboxes input');
+        const checkboxes = document.querySelectorAll('.filter-checkboxes input[type="checkbox"]');
         checkboxes.forEach(checkbox => {
-            checkbox.checked = true;
+            checkbox.checked = false;
         });
         
         const filterButtons = document.querySelectorAll('.excel-filter-btn');
@@ -732,12 +857,10 @@ function iniciarPaginadorConsulta() {
         
         console.log(`📄 Mostrando página ${page + 1}: items ${startIndex} a ${endIndex - 1}`);
         
-        // Ocultar todos los items
         items.forEach(item => {
             item.style.display = 'none';
         });
         
-        // Mostrar solo los items de la página actual
         filteredItems.forEach((item, index) => {
             if (index >= startIndex && index < endIndex) {
                 item.style.display = '';
@@ -757,13 +880,11 @@ function iniciarPaginadorConsulta() {
             paginationContainer.innerHTML = '';
         }
 
-        // Contador de resultados
         const resultsCounter = document.createElement('div');
         resultsCounter.classList.add('results-counter');
         resultsCounter.textContent = `Mostrando ${filteredItems.length} de ${items.length} resultados`;
         paginationContainer.appendChild(resultsCounter);
 
-        // Botón para limpiar filtros
         if (Object.keys(activeFilters).length > 0) {
             const clearFiltersButton = document.createElement('button');
             clearFiltersButton.textContent = 'Limpiar Todos los Filtros';
@@ -772,7 +893,6 @@ function iniciarPaginadorConsulta() {
             paginationContainer.appendChild(clearFiltersButton);
         }
 
-        // Selector de elementos por página
         const itemsPerPageSelect = document.createElement('select');
         const options = [25, 50, 100, 150, 200, 250, 300];
 
@@ -793,7 +913,6 @@ function iniciarPaginadorConsulta() {
 
         paginationContainer.appendChild(itemsPerPageSelect);
 
-        // Botones de paginación
         const firstButton = document.createElement('button');
         firstButton.textContent = 'Primera';
         firstButton.disabled = currentPage === 0;
@@ -853,7 +972,6 @@ function iniciarPaginadorConsulta() {
         });
         paginationContainer.appendChild(lastButton);
 
-        // Si no hay páginas (sin datos), deshabilitar todos los botones de navegación
         if (totalPages <= 1) {
             firstButton.disabled = true;
             prevButton.disabled = true;

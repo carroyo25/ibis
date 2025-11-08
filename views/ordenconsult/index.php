@@ -381,7 +381,7 @@
         <table id="tablaPrincipal" class="tablaBusqueda">
     <thead class="stickytop">
         <tr>
-            <th rowspan="2">Num.</th>  
+            <th rowspan="2" data-filtro="filtro">Num.</th>  
             <th rowspan="2">Emision</th>
             <th rowspan="2" width="25%" data-filtro="filtro">Descripción</th>
             <th rowspan="2" data-filtro="filtro">Centro Costos</th> 
