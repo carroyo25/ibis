@@ -436,17 +436,17 @@ function iniciarPaginadorConsulta() {
         // Usar la PRIMERA fila del header (índice 0)
         const firstHeaderRow = headerRows[0];
         
-        //console.log('Filas en header:', headerRows.length);
-        //console.log('Celdas en PRIMERA fila:', firstHeaderRow.getElementsByTagName('th').length);
+        console.log('Filas en header:', headerRows.length);
+        console.log('Celdas en PRIMERA fila:', firstHeaderRow.getElementsByTagName('th').length);
         
         // Trabajar directamente en los headers existentes (NO crear fila nueva)
         const headerCells = firstHeaderRow.getElementsByTagName('th');
         
         Array.from(headerCells).forEach((headerCell, index) => {
-            //const hasFilter = headerCell.hasAttribute('data-filtro');
+            const hasFilter = headerCell.hasAttribute('data-filtro');
             
             if (hasFilter) {
-                //console.log(`✅ Agregando filtro a columna ${index}: ${headerCell.textContent.trim()}`);
+                console.log(`✅ Agregando filtro a columna ${index}: ${headerCell.textContent.trim()}`);
                 
                 // Guardar el contenido original del header
                 const headerContent = headerCell.innerHTML;
@@ -591,9 +591,14 @@ function iniciarPaginadorConsulta() {
     function getUniqueColumnValues(columnIndex) {
         const values = items.map(item => {
             const cells = item.getElementsByTagName('td');
-            return cells[columnIndex] ? cells[columnIndex].textContent.trim() : '';
+            const cellValue = cells[columnIndex] ? cells[columnIndex].textContent.trim() : '';
+            return cellValue;
         });
-        return [...new Set(values)].filter(value => value !== '').sort();
+        
+        const uniqueValues = [...new Set(values)].filter(value => value !== '').sort();
+        console.log(`🔍 Valores únicos columna ${columnIndex}:`, uniqueValues);
+        
+        return uniqueValues;
     }
 
     function filterCheckboxes(searchTerm, container) {
@@ -617,19 +622,28 @@ function iniciarPaginadorConsulta() {
     function applyColumnFilter(columnIndex, checkboxesContainer) {
         const checkboxes = checkboxesContainer.getElementsByTagName('input');
         const selectedValues = Array.from(checkboxes)
-            .filter(cb => cb.checked && cb.parentElement.style.display !== 'none')
+            .filter(cb => cb.checked)
             .map(cb => cb.value);
         
-        const allCheckboxes = Array.from(checkboxes).filter(cb => cb.parentElement.style.display !== 'none');
+        const allCheckboxes = Array.from(checkboxesContainer.getElementsByTagName('input'));
+        const availableCheckboxes = allCheckboxes.filter(cb => 
+            cb.parentElement.style.display !== 'none' || cb.checked
+        );
         
-        if (selectedValues.length === 0 || selectedValues.length === allCheckboxes.length) {
+        console.log(`🎯 Aplicando filtro columna ${columnIndex}:`);
+        console.log('   - Valores seleccionados:', selectedValues);
+        console.log('   - Checkboxes disponibles:', availableCheckboxes.length);
+        
+        if (selectedValues.length === 0 || selectedValues.length === availableCheckboxes.length) {
+            console.log('   🗑️ Eliminando filtro (todos seleccionados o ninguno)');
             delete activeFilters[columnIndex];
         } else {
+            console.log('   ✅ Guardando filtro activo');
             activeFilters[columnIndex] = selectedValues;
         }
         
         applyFilters();
-        updateFilterButtonState(columnIndex, selectedValues.length !== allCheckboxes.length);
+        updateFilterButtonState(columnIndex, selectedValues.length !== availableCheckboxes.length);
     }
 
     function updateFilterButtonState(columnIndex, isFiltered) {
@@ -641,6 +655,7 @@ function iniciarPaginadorConsulta() {
             
             if (cellIndex === columnIndex) {
                 button.classList.toggle('filter-active', isFiltered);
+                console.log(`🎨 Botón filtro columna ${columnIndex}: ${isFiltered ? 'ACTIVO' : 'inactivo'}`);
             }
         });
     }
@@ -653,9 +668,13 @@ function iniciarPaginadorConsulta() {
     }
 
     function applyFilters() {
+        console.log('🔧 APLICANDO FILTROS:', activeFilters);
+        
         filteredItems = items.filter(item => {
             const cells = item.getElementsByTagName('td');
+            let pasaTodosLosFiltros = true;
             
+            // Verificar cada filtro activo
             for (const [columnIndex, filterValues] of Object.entries(activeFilters)) {
                 const cellIndex = parseInt(columnIndex);
                 if (cells[cellIndex]) {
@@ -663,13 +682,19 @@ function iniciarPaginadorConsulta() {
                     
                     if (Array.isArray(filterValues)) {
                         if (!filterValues.includes(cellText)) {
-                            return false;
+                            console.log(`   ❌ Fila NO pasa - "${cellText}" no está en`, filterValues);
+                            pasaTodosLosFiltros = false;
+                            break;
+                        } else {
+                            console.log(`   ✅ Fila pasa - "${cellText}" está en`, filterValues);
                         }
                     }
                 }
             }
-            return true;
+            return pasaTodosLosFiltros;
         });
+        
+        console.log(`📊 RESULTADOS: ${filteredItems.length} de ${items.length} filas después de filtrar`);
         
         currentPage = 0;
         createPageButtons();
@@ -677,6 +702,7 @@ function iniciarPaginadorConsulta() {
     }
 
     function clearAllFilters() {
+        console.log('🧹 LIMPIANDO TODOS LOS FILTROS');
         activeFilters = {};
         filteredItems = [...items];
         
@@ -703,6 +729,8 @@ function iniciarPaginadorConsulta() {
     function showPage(page) {
         const startIndex = page * itemsPerPage;
         const endIndex = startIndex + itemsPerPage;
+        
+        console.log(`📄 Mostrando página ${page + 1}: items ${startIndex} a ${endIndex - 1}`);
         
         // Ocultar todos los items
         items.forEach(item => {
@@ -731,9 +759,9 @@ function iniciarPaginadorConsulta() {
 
         // Contador de resultados
         const resultsCounter = document.createElement('div');
-        /*resultsCounter.classList.add('results-counter');
+        resultsCounter.classList.add('results-counter');
         resultsCounter.textContent = `Mostrando ${filteredItems.length} de ${items.length} resultados`;
-        paginationContainer.appendChild(resultsCounter);*/
+        paginationContainer.appendChild(resultsCounter);
 
         // Botón para limpiar filtros
         if (Object.keys(activeFilters).length > 0) {
