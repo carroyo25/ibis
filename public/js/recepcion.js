@@ -222,7 +222,6 @@ $(function(){
                     $("#codigo_pedido").val(data.cabecera[0].id_refpedi);
                     $("#codigo_estado").val(data.cabecera[0].nEstadoDoc);
                     $("#codigo_entidad").val(data.cabecera[0].id_centi);
-                    $("#codigo_entidad").val(data.cabecera[0].id_centi);
                     $("#proyecto").val(data.cabecera[0].costos);
                     $("#area").val(data.cabecera[0].area);
                     $("#solicita").val(data.cabecera[0].solicita);
