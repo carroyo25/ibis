@@ -794,7 +794,8 @@
                                 $cabecera["observaciones"],
                                 $cabecera["destinatario"],
                                 $cabecera["tipo_documento"],
-                                'A4');
+                                '',
+                                '');
                 $pdf->AliasNbPages();
                 $pdf->AddPage();
                 $pdf->SetWidths(array(10,15,15,147));

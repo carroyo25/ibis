@@ -310,8 +310,7 @@
                                 $cabecera["destinatario"],
                                 $cabecera["tipo_documento"],
                                 $cabecera['numero_guia'],
-                                'A4',
-                                );
+                                $cabecera['peso'],'');
                 $pdf->AliasNbPages();
                 $pdf->AddPage();
                 $pdf->SetWidths(array(10,15,15,147));

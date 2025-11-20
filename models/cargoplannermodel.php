@@ -1304,7 +1304,8 @@
                                     $cabecera[0]["cobserva"],
                                     $cabecera[0]["cdestinatario"],
                                     1,
-                                    'A4');
+                                    $cabecera[0]['cnumguia'],
+                                    $cabecera[0]["nPeso"]);
 
                 $pdf->AliasNbPages();
                 $pdf->AddPage();
@@ -1372,6 +1373,7 @@
                                                         lg_guias.cnombre,
                                                         lg_guias.flgmadre,
                                                         lg_guias.clicencia,
+                                                        lg_guias.nPeso,
                                                         lg_guias.ftraslado,
                                                         lg_guias.fguia,
                                                         lg_guias.cobserva,

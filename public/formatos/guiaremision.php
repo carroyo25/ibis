@@ -6,7 +6,7 @@
             public function __construct($nguia,$fecha_emision,$ruc,$razondest,$direccdest,$raztransp,$ructransp,$dirtransp,
                                         $vianomorg,$nroorg,$distorg,$zonaorg,$feenttrans,$modtras,$vianomodest,$nrodest,$zondest,$depdest,
                                         $marca,$placa,$detcond,$licencia,$tipoEnvio,$referido,$origen,$anio,$observaciones,$atencion,$tipo,
-                                        $interna){
+                                        $interna,$peso){
                 parent::__construct();
                 $this->nguia = $nguia;
                 $this->fecha_emision = $fecha_emision;
@@ -39,6 +39,7 @@
                 $this->tipo = $tipo;
                 $this->tipo_guia = ["","DESTINATARIO","REMITENTE","TRANSPORTISTA","SUNAT"];
                 $this->interna = $interna;
+                $this->peso = $peso;
             }
 
             function Header(){
@@ -179,8 +180,10 @@
                     $this->Image($qrprint,165,210,35);
                 }
 
-                $this->SetXY(167,237);
-                $this->Cell(6,20,'NRO.GUIA INTERNA: '.$this->interna,0,1);
+                $this->SetFont('Arial','',7.5);
+                $this->SetXY(140,237);
+                $this->Cell(25,20,'PESO: '.$this->peso. ' Kg.' ,0,0);
+                $this->Cell(6,20,utf8_decode('N°.GUIA INTERNA: ').$this->interna,0,1);
 
                 $this->SetY(-65);
                 $this->SetX(20);
