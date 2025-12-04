@@ -9,7 +9,7 @@ $(function(){
 
         autorizado = $(this).data('finanzas')+$(this).data('logistica')+$(this).data('operaciones');
 
-        $.post(RUTA+"ordenedit/ordenId", {id:$(this).data("indice")},
+        $.post(RUTA+"firmas/ordenId", {id:$(this).data("indice")},
             function (data, textStatus, jqXHR) {
 
                 let estado = "textoCentro " + data.cabecera[0].estado;
@@ -855,8 +855,6 @@ function iniciarPaginadorConsulta() {
         const startIndex = page * itemsPerPage;
         const endIndex = startIndex + itemsPerPage;
         
-        console.log(`📄 Mostrando página ${page + 1}: items ${startIndex} a ${endIndex - 1}`);
-        
         items.forEach(item => {
             item.style.display = 'none';
         });
@@ -882,7 +880,7 @@ function iniciarPaginadorConsulta() {
 
         const resultsCounter = document.createElement('div');
         resultsCounter.classList.add('results-counter');
-        resultsCounter.textContent = `Mostrando ${filteredItems.length} de ${items.length} resultados`;
+        //resultsCounter.textContent = `Mostrando ${filteredItems.length} de ${items.length} resultados`;
         paginationContainer.appendChild(resultsCounter);
 
         if (Object.keys(activeFilters).length > 0) {
