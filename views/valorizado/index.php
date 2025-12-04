@@ -100,7 +100,7 @@
                 <tr class="stickytop">
                     <th width="30px" data-titulo="item">Item</th>
                     <th style="background:#40D1FB; color:#000" data-titulo="codigoproyecto">Codigo</br>Proyecto</th>
-                    <th style="background:#40D1FB; color:#000" data-titulo="descripcionproyecto" with="10%">Descripcion Proyecto/Obra</th>
+                    <th style="background:#40D1FB; color:#000" data-titulo="descripcionproyecto" width="3%">Descripcion Proyecto/Obra</th>
                     <th style="background:#40D1FB; color:#000" data-titulo="area">Area</th>
                     <th style="background:#40D1FB; color:#000" data-titulo="fecharegistro">Fecha</br>Registro</th>
                     <th style="background:#40D1FB; color:#000" data-titulo="anioorden">Año</br>Orden</th>
@@ -109,7 +109,7 @@
                     <th style="background:#FBD341; color:#000" data-titulo="nroorden">N°</br>Pedido</th>
                     <th style="background:#FBD341; color:#000" data-titulo="nropedido">N°</br>Orden</th>
                     <th style="background:#A6CAF0; color:#000" data-titulo="codigo_producto">Codigo del</br>Bien/Servicio</th>
-                    <th style="background:#A6CAF0; color:#000" data-titulo="descripcion" with="15%">Descripcion del Bien/Servicio</th>
+                    <th style="background:#A6CAF0; color:#000" data-titulo="descripcion" width="350px">Descripcion del Bien/Servicio</th>
                     <th style="background:#A6CAF0; color:#000" data-titulo="unidad">Unidad</br>Medida</th>
                     <th style="background:#AAFFAA; color:#000" data-titulo="proveedor">Proveedor</th>
                     <th style="background:#AAFFAA; color:#000" data-titulo="cantidad">Cantidad</th>

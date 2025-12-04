@@ -95,7 +95,7 @@
                                                     lg_ordendet.nunitario,
                                                     LPAD(lg_ordendet.id_orden,6,0) AS orden,
                                                     UPPER(
-                                                    CONCAT_WS( '', cm_producto.cdesprod, tb_pedidodet.observaciones )) AS descripcion,
+                                                    CONCAT_WS( '', cm_producto.cdesprod, lg_ordendet.cobserva )) AS descripcion,
                                                     tb_unimed.cabrevia AS unidad,
                                                     cm_producto.ccodprod,
                                                     tb_proyectos.ccodproy,
@@ -116,14 +116,14 @@
                                                     tb_pedidodet.nregistro,
                                                     fpagos.cdescripcion AS tipo_pago,
                                                     cm_entidad.cnumdoc,
-                                                    tb_grupo.cdescrip AS grupo,
+                                                    UPPER(tb_grupo.cdescrip) AS grupo,
                                                     UPPER(cm_entidad.cviadireccion) as cviadireccion,
                                                     lg_ordencab.nfirmaOpe,
                                                     lg_ordencab.nfirmaFin,
                                                     LPAD(lg_ordencab.cnumero,6,0) AS cnumero,
                                                     lg_ordencab.nfirmaLog,
                                                     alm_recepdet.ncantidad,
-                                                    tb_clase.cdescrip AS clase,
+                                                    UPPER(tb_clase.cdescrip) AS clase,
                                                     lg_ordencab.id_regmov,
                                                     tb_pedidocab.anio,
                                                     lg_ordendet.ntotal,
@@ -146,7 +146,7 @@
                                                     INNER JOIN tb_grupo ON cm_producto.ngrupo = tb_grupo.ncodgrupo
                                                     LEFT JOIN alm_recepdet ON lg_ordendet.niddeta = alm_recepdet.niddeta
                                                     INNER JOIN tb_clase ON cm_producto.nclase = tb_clase.ncodclase
-                                                    LEFT JOIN tb_equipmtto ON tb_pedidodet.nroparte = tb_equipmtto.idreg
+                                                    LEFT JOIN tb_equipmtto ON tb_pedidodet.nregistro = tb_equipmtto.idreg
                                                 WHERE lg_ordendet.id_orden = :id
                                                 AND lg_ordendet.nestado = 1");
 

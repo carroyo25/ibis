@@ -303,7 +303,9 @@
                     $cabecera["observaciones"],
                     $cabecera["destinatario"],
                     $cabecera["tipo_documento"],
-                    'A4');
+                    '',
+                    $cabecera['peso'],
+                    '');
                 
                 $pdf->AliasNbPages();
                 $pdf->AddPage();
