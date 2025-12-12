@@ -77,7 +77,7 @@ $(function(){
     $("#excelFile").click(function(e){
         e.preventDefault();
 
-        console.log(itemsKardex());
+        //console.log(itemsKardex());
 
         return false;
     });
