@@ -181,6 +181,7 @@
     <!--Ventana Princpal-->
     <div class="cabezaModulo">
         <h2>Reporte de Documento de Proveedores</h2>
+        <div class="paginadorWrap"></div>
         <div>
             <a href="#" id="reporteExcel"><i class="far fa-file"></i><p>Nuevo</p></a>
             <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
@@ -188,23 +189,23 @@
     </div>
     <div class="barraTrabajo">
         <div class="unaConsulta">
-            <label for="consulta">Nombre : </label>
-            <input type="text" name="consulta" id="consulta">
+            <label for="nameSearch">Nombre : </label>
+            <input type="text" name="nameSearch" id="nameSearch">
         </div>
     </div>
     <div class="itemsTabla">
         <table id="tablaPrincipal">
-            <thead>
+            <thead class="stickytop">
                 <tr>
                     <th>Item</th>
-                    <th width="10%">Nro. Documento/RUC</th>
-                    <th>Razón Social</th>
+                    <th width="10%" data-filtro="filtro">Nro. Documento/RUC</th>
+                    <th data-filtro="filtro">Razón Social</th>
                     <th width="10%">Teléfono</th>
                     <th>Correo</th>
                 </tr>
             </thead>
-            <tbody>
-                <?php //echo $this->listaProveedores;?>
+            <tbody id="tablaPrincipalCuerpo">
+                
             </tbody>
         </table>
     </div>

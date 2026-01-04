@@ -332,8 +332,7 @@
     </div>
     <div class="cabezaModulo">
         <h1>Consultar Ordenes</h1>
-        <div class="paginadorWrap">
-        </div>
+        <div class="paginadorWrap"></div>
         <div style="text-align: center;">
             <a href="#" id="btnExporta"><i class="fas fa-file-excel"></i><p>Exportar</p></a>
         </div>
@@ -379,29 +378,29 @@
     </div>
     <div class="itemsTabla">
         <table id="tablaPrincipal" class="tablaBusqueda">
-    <thead class="stickytop">
-        <tr>
-            <th rowspan="2" data-filtro="filtro">Num.</th>  
-            <th rowspan="2">Emision</th>
-            <th rowspan="2" width="25%" data-filtro="filtro">Descripción</th>
-            <th rowspan="2" data-filtro="filtro">Centro Costos</th> 
-            <th rowspan="2" data-filtro="filtro">Area</th>
-            <th rowspan="2" data-filtro="filtro">Proveedor</th>
-            <th rowspan="2" width="7%">Precio <br/> Soles</th>
-            <th rowspan="2" width="7%">Precio <br/> Dólares</th>
-            <th rowspan="2" data-filtro="filtro">Atencion</th>
-            <th rowspan="2" data-filtro="filtro">Estado</th>
-            <th colspan="3" width="10%">Firmas</th>
-        </tr>
-        <tr>
-            <th>Procura</th>
-            <th>Finanzas</th>
-            <th>Operaciones</th>
-        </tr>
-        <!-- La fila de filtros se insertará automáticamente aquí -->
-    </thead>
-    <tbody id="tablaPrincipalCuerpo"></tbody>
-</table>
+            <thead class="stickytop">
+                <tr>
+                    <th rowspan="2" data-filtro="filtro">Num.</th>  
+                    <th rowspan="2">Emision</th>
+                    <th rowspan="2" width="25%" data-filtro="filtro">Descripción</th>
+                    <th rowspan="2" data-filtro="filtro">Centro Costos</th> 
+                    <th rowspan="2" data-filtro="filtro">Area</th>
+                    <th rowspan="2" data-filtro="filtro">Proveedor</th>
+                    <th rowspan="2" width="7%">Precio <br/> Soles</th>
+                    <th rowspan="2" width="7%">Precio <br/> Dólares</th>
+                    <th rowspan="2" data-filtro="filtro">Atencion</th>
+                    <th rowspan="2" data-filtro="filtro">Estado</th>
+                    <th colspan="3" width="10%">Firmas</th>
+                </tr>
+                <tr>
+                    <th>Procura</th>
+                    <th>Finanzas</th>
+                    <th>Operaciones</th>
+                </tr>
+                <!-- La fila de filtros se insertará automáticamente aquí -->
+            </thead>
+            <tbody id="tablaPrincipalCuerpo"></tbody>
+        </table>
     </div>
    
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>

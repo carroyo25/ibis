@@ -8,6 +8,7 @@
         public function listarOrdenes($user){
            try {
                 $salida = "";
+                
                 $sql = $this->db->connect()->prepare("SELECT
                                                         LPAD(oc.cnumero,6,0) cnumero,
                                                         DATE_FORMAT(oc.ffechadoc,'%d/%m/%Y') ffechadoc,

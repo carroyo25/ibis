@@ -411,7 +411,6 @@ listarOrdenes = async () => {
         });
     } catch (error) {
         mostrarMensaje('No hay registros para procesar','mensaje_error');
-        console.log(error);
         $("#esperar").fadeOut();
     }
     
