@@ -9,6 +9,10 @@
             $this->view->listaCostos = "";
             $this->view->render('adjuntoproveedor/index');
         }
+
+        function listaAdjuntos(){
+            echo json_encode($this->model->archivosAdjuntos($_POST));
+        }
         
     }
 ?>
