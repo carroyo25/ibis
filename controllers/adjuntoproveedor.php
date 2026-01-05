@@ -13,6 +13,10 @@
         function listaAdjuntos(){
             echo json_encode($this->model->archivosAdjuntos($_POST));
         }
+
+        function archivosAdjuntos() {
+            echo json_encode($this->model->llamarAdjuntos($_POST));
+        }
         
     }
 ?>
