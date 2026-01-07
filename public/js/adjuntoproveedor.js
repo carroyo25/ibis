@@ -8,8 +8,6 @@ $(function(){
 
         verArchivosAdjuntos(id);
 
-        //$("#vistaAdjuntos").fadeIn();
-    
         return false;
     });
 
@@ -19,6 +17,17 @@ $(function(){
         $("#vistaAdjuntos").fadeOut();
         $(".ventanaAdjuntos iframe").attr("src","");
 
+        return false;
+    });
+
+    $("#vistaAdjuntos").on("click","a", function (e) {
+        e.preventDefault();
+        console.log("http://sicalsepcon.net/ibis/public/documentos/proveedores/presentados/"+$(this).attr("href"))
+        
+        $(".ventanaAdjuntos iframe")
+            .attr("src","")
+            .attr("src","http://sicalsepcon.net/ibis/public/documentos/proveedores/presentados/"+$(this).attr("href"));
+        
         return false;
     });
 })

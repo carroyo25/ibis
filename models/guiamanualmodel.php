@@ -12,7 +12,7 @@
 
                 $guia = $g == null ? "%" : "%".$g."%";
                 $costo = $c == -1  ? "%" : "%".$g."%";
-                $anio = $a == "" ? 2025 : $a;
+                $anio = $a == "" ? 2026 : $a;
 
                 $sql = $this->db->connect()->prepare("SELECT
                                                         alm_desplibrescab.id_regalm,
