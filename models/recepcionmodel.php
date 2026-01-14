@@ -665,7 +665,7 @@
                                                         tb_costusu.id_cuser = :usr 
                                                         AND alm_recepcab.nflgactivo = 1
                                                         AND tb_costusu.nflgactivo = 1
-                                                        AND alm_recepcab.nEstadoDoc BETWEEN  60 AND 62
+                                                        AND alm_recepcab.nEstadoDoc BETWEEN  59 AND 62
                                                         AND alm_recepcab.ncodpry LIKE :costos 
                                                         AND lg_ordencab.cnumero LIKE :orden 
                                                         AND YEAR ( alm_recepcab.ffecdoc ) = :anio
