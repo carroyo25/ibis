@@ -22,7 +22,7 @@ $(function(){
 
     $("#vistaAdjuntos").on("click","a", function (e) {
         e.preventDefault();
-        console.log("http://sicalsepcon.net/ibis/public/documentos/proveedores/presentados/"+$(this).attr("href"))
+        //console.log("http://sicalsepcon.net/ibis/public/documentos/proveedores/presentados/"+$(this).attr("href"))
         
         $(".ventanaAdjuntos iframe")
             .attr("src","")
