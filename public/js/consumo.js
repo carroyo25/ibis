@@ -512,7 +512,6 @@ $(function(){
             mostrarMensaje(e.message,"mensaje_error");
         }
 
-        
         return false;
     });
 

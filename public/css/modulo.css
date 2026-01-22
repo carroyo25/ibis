@@ -4344,8 +4344,14 @@ thead .sticky-column {
   -ms-grid-rows: 5fr;
   grid-template-rows: 5fr;
   gap: 0.5rem;
-  justify-items: left;
+  justify-items: left;  
 }
+
+.opciones__modifica__kardex{
+    display: flex;
+    gap: 6px;
+}
+
 .ventanaPregunta .ventana__actualizar > *:nth-child(1) {
   -ms-grid-row: 1;
   -ms-grid-column: 1;

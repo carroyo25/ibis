@@ -25,6 +25,10 @@
         function firma(){
             echo $this->model->subirFirmaTerceros($_POST['detalles']);
         }
+
+        function kardex() {
+            echo $this->model->generarKardexTerceros($_POST);
+        }
         
     }
 ?>

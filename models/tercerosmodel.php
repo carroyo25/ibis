@@ -8,7 +8,8 @@
 
         public function buscarDatosTerceros($doc,$cc) {
             $registrado = false;
-            $url = "http://sicalsepcon.net/api/tercerosapi.php?doc=".$doc;
+            //$url = "http://sicalsepcon.net/api/tercerosapi.php?doc=".$doc;
+            $url = "https://rrhhperu.sepcon.net/api/tercerosApi.php?doc=".$doc;
             
             $api = file_get_contents($url);
 
@@ -48,7 +49,7 @@
                                                         LEFT JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
                                                         LEFT JOIN tb_parametros ON alm_consumo.ncambioepp = tb_parametros.nidreg  
                                                     WHERE
-                                                        alm_consumo.nrodoc = :documento 
+                                                        alm_consumo.nrodoc LIKE :documento 
                                                         AND ncostos = :cc
                                                         AND alm_consumo.flgactivo = 1
                                                     ORDER BY alm_consumo.freg DESC" );
@@ -141,6 +142,74 @@
                 return false;
             }
         }
+
+        public function generarKardexTerceros($parametros){
+            require_once("public/formatos/kardex.php");
+
+            $costo  = $parametros['cc'];
+            $doc    = $parametros['doc'];
+            $nombre = $parametros['nombre'];
+            $cargo  = $parametros['empresa'];
+            $almacen= "";
+            $fecha = "";
+            $existe = "NO";
+
+            $detalle  = json_decode($parametros['detalles']);
+            $nreg     = count($detalle);
+            $item     = 1;
+
+            $file = $doc.".pdf";
+
+            $pdf = new PDF($doc,$nombre,$almacen,$costo,$fecha,$cargo);
+
+            $pdf->AddPage();
+            $pdf->AliasNbPages();
+            $pdf->SetWidths(array(5,10,85,15,15,15,15,15,15));
+            $pdf->SetFont('Arial','',4);
+
+            $lc = 0;
+
+            for ($i=0; $i < $nreg; $i++) {
+                $y=$pdf->GetY();
+
+                
+                $pdf->SetXY(10,$y);
+                $pdf->Multicell(5,5,$detalle[$i]->item,"LRB","R");
+                $pdf->SetXY(15,$y);
+                $pdf->Multicell(10,5,$detalle[$i]->cantidad,"LRB","R");
+                $pdf->SetXY(25,$y);
+                $pdf->Multicell(85,5,substr($detalle[$i]->descripcion,0,100),"LRB","L");
+                $pdf->SetXY(110,$y);
+                $pdf->Multicell(15,5,"","LRB","C");
+                $pdf->SetXY(125,$y);
+                $pdf->Multicell(15,5,$detalle[$i]->fecha,"LRB","C");
+                $pdf->SetXY(140,$y);
+                $pdf->Multicell(15,5,"","LRB","C");
+                if ( file_exists("public/documentos/firmas/".$detalle[$i]->firma.".png") )
+                    $pdf->Image("public/documentos/firmas/".$detalle[$i]->firma.".png",142,$y+2,13);
+                $pdf->SetXY(155,$y);
+                $pdf->Multicell(15,5,$detalle[$i]->devolucion,"LRB","C");
+                $pdf->SetXY(170,$y);
+                $pdf->Multicell(15,5,"","LRB","C");
+                //$pdf->Multicell(15,6,$detalle[$i]->fdevolucion,"LRB","C");
+                $pdf->SetXY(185,$y);
+                $pdf->Multicell(15,5,$detalle[$i]->kardex,"LRB","C");
+                
+                $lc++;
+
+                if ($pdf->getY() >= 250) {
+                    $pdf->AddPage();
+                    $lc = 0;
+                }
+            }
+
+            $filename = "public/documentos/kardex/".$file;
+
+            $pdf->Output($filename,'F');
+
+            return $file;
+        }
+
 
         public function createExcelReport($nombre,$documento,$empresa,$detalles){
             try {

@@ -47,9 +47,9 @@
                 <input type="text" name="serie_cambio" id="serie__cambio" class="input__change">
             </form>
             <div class="opciones__modifica__kardex">
-                <button type="button" id="btnAceptarModificar">Aceptar</button>
-                <button type="button" id="btnCancelarModificar">Cancelar</button>
-                <button type="button" id="btnEliminarRegistro">Eliminar</button>
+                <button type="button" id="btnAceptarModificar" class="boton4">Aceptar</button>
+                <button type="button" id="btnCancelarModificar" class="boton4">Cancelar</button>
+                <button type="button" id="btnEliminarRegistro" class="boton4">Eliminar</button>
             </div>
         </div>
     </div>

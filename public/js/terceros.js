@@ -328,6 +328,45 @@ $(function(){
         return false;
     });
 
+    $("#btnKardex").click(function (e) { 
+        e.preventDefault();
+
+        try {
+            if ( $("#costosSearch").val() == -1 ) throw new Error("Elija centro de costos");
+            if ($("#docident").val() == "") throw new Error("Elija centro de costos");
+
+            $.post(RUTA+"terceros/kardex",{nombre:$("#nombre").val(),
+                                           doc:$("#docident").val(),
+                                           empresa:$("#empresa").val(),
+                                           cc:$("#costosSearch option:selected").text(),
+                                           detalles:JSON.stringify(detallesHoja())},
+                function (data, textStatus, jqXHR) {
+                    $(".ventanaVistaPrevia iframe")
+                    .attr("src","")
+                    .attr("src","public/documentos/kardex/"+data);
+                
+                    $("#hojakardex").fadeIn();
+                },
+                "text"
+            );
+        } catch (error) {
+            mostrarMensaje(error,"mensaje_error");
+        }
+
+        return false;
+    });
+
+    $("#closePreview").click(function (e) { 
+        e.preventDefault();
+        
+        $("#hojakardex").fadeOut();
+
+        $(".ventanaVistaPrevia iframe").attr("src","");
+
+        return false;
+    });
+
+
 })
 
 detalles = () => {

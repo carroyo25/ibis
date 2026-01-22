@@ -2209,7 +2209,8 @@
                     '0%' => 'C8C8C8', '10%' => 'F8CAAD', '15%' => 'FF0000',
                     '20%' => 'B3C5E6', '25%' => 'FFFF00', '30%' => 'C0DCC0',
                     '40%' => 'FFFFE1', '50%' => 'A9D08F', '60%' => 'FF00FF',
-                    '70%' => 'FFC000', '75%' => '00FFFF', '100%' => '00FF00'
+                    '70%' => 'FFC000', '75%' => '00FFFF', '100%' => '00FF00',
+                    '12%' => 'F8CAAD'
                 ];
                 
                 // Mapeo de colores para semáforo
@@ -2239,6 +2240,11 @@
                         $estadofila = "Procesando";
                         $estado_item = "item_stock";
                         $estado_pedido = "Procesando";
+                    }else if( $item['estadoItem'] == 51 ) {
+                        $porcentaje = "12%";
+                        $estadofila = "emitido";
+                        $estado_item = "Emitido";
+                        $estado_pedido = "Pedido Emitido";
                     }else if( $item['estadoItem'] == 53 ) {
                         $porcentaje = "10%";
                         $estadofila = "emitido";
