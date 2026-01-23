@@ -1,9 +1,11 @@
 $(() => {
-    $("#esperar").fadeOut();
+    /*$("#esperar").fadeOut();
     
     let accion = "u",flag=false;
 
-    let seriesData = [1,2,3,4,5,6,7,8,9,10,11,12];
+    let seriesData = [1,2,3,4,5,6,7,8,9,10,11,12];*/
+
+    listarRegistrosCombustible();
 
 
     $("#esperar").fadeOut();
@@ -272,4 +274,65 @@ detalles = () => {
     })
 
     return DATA;
+}
+
+
+listarRegistrosCombustible = async () => {
+    try {
+        let formData = new FormData();
+        formData.append('nota',document.getElementById('notaSearch').value);
+        formData.append('cc',document.getElementById('costosSearch').value);
+        formData.append('mes',document.getElementById('mesSearch').value);
+        formData.append('anio',document.getElementById('anioSearch').value);
+
+        const response = await fetch(RUTA + "combustible/listaCombustibles", {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await response.json();
+
+        const tablaCuerpo = document.getElementById("tablaPrincipalCuerpo");
+
+        if (!tablaCuerpo) {
+            throw new Error("Element with ID 'tablaPrincipalCuerpo' not found");
+        }
+
+        tablaCuerpo.innerHTML = "";
+
+        let item = 1;
+
+        data.datos.forEach ( e =>{
+            const tr = document.createElement("tr");
+            tr.classList.add("pointer");
+            tr.dataset.id_consumo = e.idreg
+            tr.innerHTML = `<td>${item++}</td>
+                            <td>${e.fregistro}</td>
+                            <td>${e.cdesalm}</td>
+                            <td>${e.idtipo == 1 ?'INGRESO':'SALIDA'}</td>
+                            <td>${e.ccodprod}</td>
+                            <td>${e.cdesprod}</td>
+                            <td>${e.cabrevia}</td>
+                            <td>${e.ncantidad}</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>`;
+
+
+            tablaCuerpo.appendChild(tr);
+        });
+
+        $("#esperar").fadeOut().promise().done(function(){
+           //iniciarPaginadorConsulta();
+        });
+
+    } catch (error) {
+        mostrarMensaje('No hay registros para procesar','mensaje_error');
+        $("#esperar").fadeOut();
+    }
 }

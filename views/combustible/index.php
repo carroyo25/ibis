@@ -186,12 +186,8 @@
         <form action="#" id="formConsulta">
             <div class="variasConsultas">
                     <div>
-                        <label for="tipo">Tipo</label>
-                        <select name="tipo" id="tipo">
-                            <option value="-1">Tipo</option>
-                            <option value="1">Ingreso</option>
-                            <option value="2">Salida</option>
-                        </select>
+                        <label for="notaSearch">Nro. Guia</label>
+                        <input type="text" name="notaSearch" id="notaSearch" value="">
                     </div>
                     <div>
                         <label for="costosSearch">Centro de Costos: </label>
@@ -238,44 +234,23 @@
                     <th>Unidad</th>
                     <th>Cantidad</th>
                     <th>Trabajador</th>
+                    <th>Nota de Ingreso</th>
                     <th>Usuario</th>
                     <th>Proyecto</th>
                     <th>Observaciones</th>
-                    <th>Observacion<br> del documento<br> de almacen</th>
+                    <th data-filtro="filtro">Observacion<br> del documento<br> de almacen</th>
                     <th>Area</th>
                     <th>Referencia<br>Adicional</th>
                     <th>Mes</th>
                 </tr>
             </thead>
-            <tbody>
-                <?php
-                    $item = 1; 
-                    $mes = ['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO','SETIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE'];
-
-                    foreach($this->listaItemsCombustible['datos'] as $registro){
-                        $tipo = $registro['idtipo'] == 1 ? 'INGRESO POR COMPRA':'SALIDA POR CONSUMO';?>
-                        <tr class="pointer click_tr" data-id="<?php echo $registro['idreg']; ?>">
-                            <td class="textoCentro"><?php echo str_pad($item++,3,0,STR_PAD_LEFT); ?></td>
-                            <td class="textoCentro"><?php echo $registro['fregistro']; ?></td>
-                            <td class="pl20px"><?php echo $registro['cdesalm']; ?></td>
-                            <td class="pl20px"><?php echo $tipo; ?></td>
-                            <td class="textoCentro"><?php echo $registro['ccodprod']; ?></td>
-                            <td class="pl20px"><?php echo $registro['cdesprod']; ?></td>
-                            <td class="textoCentro"><?php echo $registro['cabrevia']; ?></td>
-                            <td class="textoDerecha"><?php echo $registro['ncantidad']; ?></td>
-                            <td class="pl20px"><?php foreach($this->listaItemsCombustible['usuarios'] as $usuario ){if ( $usuario['dni'] == $registro['cdocumento'] ){ echo $usuario['usuario'];}}?></td>
-                            <td class="textoCentro"><?php echo $registro['idusuario']; ?></td>
-                            <td class="textoCentro"><?php echo $registro['ccodproy']; ?></td>
-                            <td class="pl20px"><?php echo $registro['tobseritem']; ?></td>
-                            <td class="pl20px"><?php echo $registro['tobserdocum']; ?></td>
-                            <td class="pl20px"><?php echo $registro['cdesarea']; ?></td>
-                            <td class="textoCentro"><?php echo $registro['cregistro']; ?></td>
-                            <td class="textoCentro"><?php echo $mes[$registro['mes']-1]; ?></td>
-                        </tr>
-                    <?php } ?>
+            <tbody id="tablaPrincipalCuerpo">
+                
             </tbody>
         </table>
     </div>
+    <div class="paginadorWrap"></div>
+
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
     <script src="<?php echo constant('URL');?>public/js/funciones.js?<?php echo constant('VERSION')?>"></script>
     <script src="<?php echo constant('URL');?>public/js/combustible.js?<?php echo constant('VERSION')?>"></script>

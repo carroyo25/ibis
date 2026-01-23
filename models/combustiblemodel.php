@@ -6,13 +6,15 @@
             parent::__construct();
         }
 
-        public function listaConsumosCombustibles($t,$c,$a){
+        public function listaConsumosCombustibles($parametros){
             try {
 
                 $docData = [];
 
-                $costo = $c != -1 ? $c : "%";
-                $tipo  = $t != -1 ? $t : "%";
+                $costo  = $parametros['cc'] != -1 ? $parametros['cc'] : "%";
+                $nota   = $parametros['nota'] != "" ? "%".$parametros['nota']."%" : "%";
+                $mes    = $parametros['mes'] != "" ? $parametros['mes'] : "%";
+                $anio   = $parametros['anio'] != -1 ?$parametros['anio'] : "%";
 
                 $sql = $this->db->connect()->prepare("SELECT
                                                     alm_combustible.idreg,
@@ -20,6 +22,7 @@
                                                     alm_combustible.idalm,
                                                     alm_combustible.idtipo,
                                                     alm_combustible.idprod,
+                                                    alm_combustible.notaingreso,
                                                     FORMAT(alm_combustible.ncantidad,2) AS ncantidad,
                                                     UPPER(alm_combustible.tobseritem) AS tobseritem,
                                                     UPPER(alm_combustible.cdocumento) AS cdocumento,
@@ -29,7 +32,7 @@
                                                     UPPER(alm_combustible.tobserdocum) AS tobserdocum,
                                                     alm_combustible.nidref,
                                                     alm_combustible.idarea,
-                                                    UPPER( tb_almacen.cdesalm ) AS cdesalm,
+                                                    IFNULL(UPPER( tb_almacen.cdesalm ),'') AS cdesalm,
                                                     cm_producto.ccodprod,
                                                     cm_producto.cdesprod,
                                                     tb_unimed.cabrevia,
@@ -49,11 +52,12 @@
                                                     LEFT JOIN tb_area ON alm_combustible.idarea = tb_area.ncodarea 
                                                 WHERE
                                                     alm_combustible.nflgactivo = 1
-                                                    AND YEAR(alm_combustible.fregistro) = :anio
-                                                    AND alm_combustible.idtipo LIKE :tipo
+                                                    AND YEAR(alm_combustible.fregistro) LIKE :anio
+                                                    AND MONTH(alm_combustible.fregistro) LIKE  :mes
+                                                    AND IFNULL(alm_combustible.notaingreso,'') LIKE :nota
                                                     AND alm_combustible.idproyecto LIKE :costo");
 
-                $sql->execute(["costo" =>$costo,"tipo" =>$tipo,"anio"=>$a]);
+                $sql->execute(["costo" =>$costo,"nota" =>$nota,"anio"=>'%',"mes"=>'%']);
                 $rowCount = $sql->rowCount();
                 
                 if ($rowCount) {
