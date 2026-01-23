@@ -7,6 +7,7 @@
         }
 
         public function listaConsumosCombustibles($parametros){
+            //header('Content-Type: application/json');
             try {
 
                 $docData = [];
@@ -22,7 +23,7 @@
                                                     alm_combustible.idalm,
                                                     alm_combustible.idtipo,
                                                     alm_combustible.idprod,
-                                                    alm_combustible.notaingreso,
+                                                    IFNULL(alm_combustible.notaingreso,'') AS notaingreso,
                                                     FORMAT(alm_combustible.ncantidad,2) AS ncantidad,
                                                     UPPER(alm_combustible.tobseritem) AS tobseritem,
                                                     UPPER(alm_combustible.cdocumento) AS cdocumento,
@@ -38,7 +39,7 @@
                                                     tb_unimed.cabrevia,
                                                     tb_proyectos.ccodproy,
                                                     UPPER( tb_proyectos.cdesproy ) AS desproy,
-                                                    UPPER(tb_equipmtto.cregistro) AS cregistro,
+                                                    IFNULL(UPPER(tb_equipmtto.cregistro),'') AS cregistro,
                                                     tb_equipmtto.cdescripcion,
                                                     UPPER(tb_area.cdesarea) AS cdesarea,
                                                     MONTH(alm_combustible.fregistro) AS mes
@@ -55,7 +56,8 @@
                                                     AND YEAR(alm_combustible.fregistro) LIKE :anio
                                                     AND MONTH(alm_combustible.fregistro) LIKE  :mes
                                                     AND IFNULL(alm_combustible.notaingreso,'') LIKE :nota
-                                                    AND alm_combustible.idproyecto LIKE :costo");
+                                                    AND alm_combustible.idproyecto LIKE :costo
+                                                ORDER BY alm_combustible.notaingreso, alm_combustible.systime");
 
                 $sql->execute(["costo" =>$costo,"nota" =>$nota,"anio"=>'%',"mes"=>'%']);
                 $rowCount = $sql->rowCount();
@@ -136,10 +138,10 @@
                                                         alm_combustible.cdocumento=:nrodoc,
                                                         alm_combustible.idusuario=:usuario,
                                                         alm_combustible.idproyecto=:proyecto,
-                                                        alm_combustible.cguia=:guia,
                                                         alm_combustible.tobserdocum=:obserdoc,
                                                         alm_combustible.nidref=:referencia,
-                                                        alm_combustible.idarea=:area");
+                                                        alm_combustible.idarea=:area,
+                                                        alm_combustible.notaingreso=:guia");
                 $sql->execute([
                     "fecha"=>$datos['fechaRegistro'],
                     "idalmacen"=>$datos['almacen'],
@@ -150,10 +152,10 @@
                     "nrodoc"=>$datos['documento'],
                     "usuario"=>$datos['usuario'],
                     "proyecto"=>$datos['proyecto'],
-                    "guia"=>null,
                     "obserdoc"=>strtoupper($datos['observacionesDocumento']),
                     "referencia"=>$datos['referencia'],
-                    "area"=>$datos['area']]);
+                    "area"=>$datos['area'],
+                    "guia"=>$datos['guia']]);
 
                 return array("mensaje"=>'Consumo registrado');
 

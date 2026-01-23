@@ -39,7 +39,7 @@
                                 <label for="item">Tipo</label>
                                 <select name="tipo" id="tipo">
                                     <option value="-1">Elija opcion</option>
-                                    <option value="1" class="oculto">Ingreso</option>
+                                    <option value="1" >Ingreso</option>
                                     <option value="2" selected>Salida</option>
                                 </select>
                             </div>
@@ -97,7 +97,7 @@
                             <label for="observacionesDocumento">Observaciones del Documento :</label>
                             <input type="text" id="observacionesDocumento" name="observacionesDocumento">
                         </div>
-                        <div class="grid2col">
+                        <div class="grid3col">
                             <div>
                                 <label for="referencia">Referencia Adicional</label>
                                 <select name="referencia" id="referencia">
@@ -109,6 +109,10 @@
                                 <select name="area" id="area">
                                     <?php echo $this->listaAreas?>
                                 </select>
+                            </div>
+                            <div>
+                                <label for="guia">Guia Proveedor</label>
+                                <input type="text" id="guia" name="guia">
                             </div>
                         </div>
                     </form>
@@ -222,19 +226,19 @@
         </form>
     </div>
     <div class="itemsTabla">
-        <table id="tablaPrincipal">
+        <table id="tablaPrincipal" class="itemstabla">
             <thead class="stickytop">
                 <tr>
                     <th>Item</th>
                     <th>Fecha<br>Registro</th>
                     <th>Almacen</th>
-                    <th>Tipo de <br> Movimiento</th>
+                    <th data-filtro="filtro">Tipo de <br> Movimiento</th>
                     <th>Codigo</th>
                     <th>Descripción</th>
                     <th>Unidad</th>
                     <th>Cantidad</th>
                     <th>Trabajador</th>
-                    <th>Nota de Ingreso</th>
+                    <th data-filtro="filtro">Nota de Ingreso</th>
                     <th>Usuario</th>
                     <th>Proyecto</th>
                     <th>Observaciones</th>

@@ -36,7 +36,7 @@
         }
 
         function listaCombustibles(){
-            echo json_encode($this->model->listaConsumosCombustibles($_POST));
+            echo json_encode($this->model->listaConsumosCombustibles($_POST),true);
         }
         
     }
