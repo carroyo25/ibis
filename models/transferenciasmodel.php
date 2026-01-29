@@ -811,7 +811,7 @@
 
                 for($i=1;$i<=$nreg;$i++){
 
-                    $cantidad = intval($datos[$rc]->cantidad);
+                    $cantidad = floatval($datos[$rc]->cantidad);
 
                     
                     $pdf->SetX(13);
