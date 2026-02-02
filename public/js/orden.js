@@ -1449,8 +1449,6 @@ sumardias = () => {
 
 }
 
-
-
 function DownloadFromUrl(fileURL, fileName) {
     var link = document.createElement('a');
     link.href = fileURL;

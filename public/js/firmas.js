@@ -389,7 +389,19 @@ $(function() {
 
         return false;
     });
-     
+    
+    $("#btnExporta").click(function(e){
+        e.preventDefault();
+
+        $.post(RUTA+"ordenconsult/exporta", {detalles:JSON.stringify(exports())},
+            function (data, textStatus, jqXHR) {
+                window.location.href = data.documento;
+            },
+            "json"
+        );
+
+        return false;
+    });
 })
 
 comentarios = () => {
@@ -464,6 +476,43 @@ detalles = () => {
 
             DATA.push(item);
         //}
+    });
+
+    return DATA;
+}
+
+exports = () => {
+    DATA = [];
+    let TABLA = $("#tablaPrincipal tbody >tr");
+
+    TABLA.each(function(){
+        let ITEM        = $(this).find('td').eq(0).text(),
+            EMISION     = $(this).find('td').eq(1).text(),
+            DESCRIPCION = $(this).find('td').eq(2).text(),
+            COSTO       = $(this).find('td').eq(3).text(),
+            AREA        = $(this).find('td').eq(4).text(),
+            PROVEEDOR   = $(this).find('td').eq(5).text(),
+            SOLES       = $(this).find('td').eq(6).text(),
+            DOLARES     = $(this).find('td').eq(7).text(),
+            LOGISTICA   = $(this).data('logistica'),
+            OPERACIONES = $(this).data('operaciones'),
+            FINANZAS    = $(this).data('finanzas');  
+
+        let item= {};
+        
+        item['item']         = ITEM;
+        item['emision']      = EMISION;
+        item['descripcion']  = DESCRIPCION;
+        item['costo']        = COSTO;
+        item['area']         = AREA;
+        item['proveedor']    = PROVEEDOR;
+        item['soles']        = SOLES;
+        item['dolares']      = DOLARES;
+        item['logistica']    = LOGISTICA;
+        item['operaciones']  = OPERACIONES;
+        item['finanzas']     = FINANZAS;
+        
+        DATA.push(item);
     });
 
     return DATA;

@@ -292,7 +292,8 @@
     </div>
     <div class="cabezaModulo">
         <h1>Aprobacion de Ordenes</h1>
-        <div>
+        <div> 
+            <a href="#" id="btnExporta"><i class="fas fa-file-excel"></i><p>Exportar</p></a>
             <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
         </div>
     </div>
