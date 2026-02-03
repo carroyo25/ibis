@@ -827,7 +827,7 @@
                     $lc++;
                     $rc++;
 
-                    if ($lc > 17) {
+                    if ($lc >= 16) {
                         $pdf->AddPage();
                         $lc = 0;
                     }
