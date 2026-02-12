@@ -13,6 +13,10 @@ $(() => {
         $.post(RUTA+"inventario/nuevoRegistro",
             function (data, textStatus, jqXHR) {
                 $("#numero").val(data.numero);
+
+                $(".primeraBarra").css("background","#0078D4");
+                $(".primeraBarra span").text("Datos Generales");
+
                 $("#proceso").fadeIn(); 
             },
             "json"
@@ -189,15 +193,18 @@ $(() => {
                         <td class="textoCentro">${codigo}</td>
                         <td class="pl20px">${descrip}</td>
                         <td class="textoCentro">${unidad}</td>
+                        <td class="textoCentro"><input type="text"></td>
                         <td><input type="number" step="any" placeholder="0.00" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)"></td>
                         <td class="textoCentro"><input type="text"></td>
                         <td class="textoCentro"><input type="text"></td>
                         <td class="textoCentro"><input type="text"></td>
                         <td class="textoCentro"><input type="text"></td>
                         <td class="textoCentro"><input type="text"></td>
+                        <td class="textoCentro"><input type="date"></td>
+                        <td class="textoCentro"><input type="date"></td>
                         <td class="textoCentro"><input type="text"></td>
-                        <td class="textoCentro"><input type="date"></td>
-                        <td class="textoCentro"><input type="date"></td>
+                        <td class="textoCentro"><input type="text"></td>
+                        <td class="textoCentro"><input type="text"></td>
                         <td class="textoCentro"><input type="text"></td>
                         <td class="textoCentro"><input type="text"></td>
                         <td class="textoCentro"><input type="text"></td>
@@ -214,7 +221,7 @@ $(() => {
 
     $("#saveDocument").click(function (e) { 
         e.preventDefault();
-        
+
         try {
             let result = {};
 
@@ -228,13 +235,20 @@ $(() => {
             if ($("#tablaDetalles tbody tr").length <= 0) throw "El pedido no tienes items";
             if (checkCantTables($("#tablaDetalles tbody > tr"),5)) throw "No ingreso cantidad en un item";
 
-            $("#proceso").fadeIn();
+            $("#esperar").css({"display":"block"});
+            //$("#proceso").fadeIn();
 
             if (accion == 0) {
                 $.post(RUTA+"inventario/grabaRegistro", {cabecera:result,detalles:JSON.stringify(itemsSave())},
                     function (data, textStatus, jqXHR) {
+
+                        $(".primeraBarra").css("background","#819830");
+                        $(".primeraBarra span").text('Datos Generales ... Grabado');
+
                         mostrarMensaje(data.mensaje,'mensaje_correcto');
-                        $("#proceso").fadeOut();
+
+                        //$("#proceso").fadeOut();
+                        $("#esperar").css({"display":"none"});
                     },
                     "json"
                 );
@@ -244,6 +258,8 @@ $(() => {
                         mostrarMensaje('Items actualizados','mensaje_correcto');
 
                         $("#proceso").fadeOut();
+
+                        $("#esperar").css({"display":"none"});
                     },
                     "json"
                 );
@@ -267,14 +283,19 @@ $(() => {
                 $("#fecha").val(data.cabecera[0].ffechadoc);
                 $("#numero").val($.strPad(data.cabecera[0].idreg,6));
                 $("#costos").val(data.cabecera[0].cdesproy);
-                $("#almacen").val(data.cabecera[0].almacen);
+                $("#almacen_inventario").val(data.cabecera[0].almacen);
                 $("#registra").val(data.cabecera[0].cnombres);
                 $("#tipoMovimiento").val(data.cabecera[0].cdescripcion);
                 $("#fechaIngreso").val(data.cabecera[0].ffechaInv);
 
+
                 $("#tablaDetalles tbody")
                     .empty()
                     .append(data.detalles);
+
+                
+                $(".primeraBarra").css("background","#0078D4");
+                $(".primeraBarra span").text("Datos Generales");
             },
             "json"
         );

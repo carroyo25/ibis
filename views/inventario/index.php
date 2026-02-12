@@ -60,8 +60,8 @@
                         </div>
                         <div class="seccion_medio">
                             <div class="column2">
-                                <label for="almacen">Almacen:</label>
-                                <input type="text" name="almacen" id="almacen" class="mostrarLista busqueda" placeholder="Elija opción" readonly>
+                                <label for="almacen_inventario">Almacen:</label>
+                                <input type="text" name="almacen_inventario" id="almacen_inventario" class="mostrarLista busqueda" placeholder="Elija opción">
                                 <div class="lista" id="listaAlmacen">
                                     <ul>
                                         <?php echo $this->listaAlmacen?>
