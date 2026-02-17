@@ -1,4 +1,6 @@
 $(() => {
+    $("#esperar").css({"display":"none","opacity":"0"});
+
     let id,cc,docidetuser,serie;
 
     const tabla_principal = document.getElementById('tablaPrincipal');

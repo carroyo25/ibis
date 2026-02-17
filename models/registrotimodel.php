@@ -32,7 +32,8 @@
                                                     cm_producto.ntipo=:tipo
                                                     AND ( cm_producto.ccodprod LIKE '%B05010002%' 
                                                           OR cm_producto.ccodprod LIKE '%B05010006%'
-                                                          OR cm_producto.ccodprod LIKE '%B05010005%')
+                                                          OR cm_producto.ccodprod LIKE '%B05010005%'
+                                                          OR cm_producto.ccodprod LIKE '%B05010003%')
                                                 LIMIT 100");
                 $sql->execute(["descripcion"=>$descripcion,
                                 "tipo"=>$tipo,

@@ -180,11 +180,12 @@
                 <input type="cargo" id="cargo" name="cargo" class="ingreso">
             </div>
             <div>
-                <img src="" id="vistafirma">
+                <img src="" id="vistafirma" class="oculto">
             </div> 
             <!--no te olvides cambiar esto-->
-            <button id="btnGrabarKardex oculto" class="boton3">Aceptar</button>
-            <button type="button" class="boton3"id="btnFirmar" onclick="StartSign()">Firmar</button>
+            
+            <button type="button" class="boton3 oculto" id="btnFirmar" onclick="StartSign()">Firmar</button>
+            <button id="btnGrabarKardex" class="boton3">Aceptar</button>
             <!--<div>
                 <label for="codeRead">Codigo: </label>
                 <input type="text" name="codeRead" id="codeRead" style="opacity:1;position:relative" value=""> 

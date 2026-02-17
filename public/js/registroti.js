@@ -1,4 +1,7 @@
 $(function(){
+    
+    $("#esperar").css({"display":"none","opacity":"0"});
+
     let fila = "",
         registro = 0,
         sw = 0,

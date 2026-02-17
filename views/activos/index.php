@@ -177,162 +177,55 @@
             </div>
         </div>
     </div>
-    <div class="modal" id="vistraTrazable">
-        <div class="ventanaBusqueda w50por">
-            <div class="tituloVentana">
-                    <span id="tituloBusqueda">Seguimiento</span>
-                    <div>
-                        <a href="#" id="closeTrazable">
-                            <i class="fas fa-window-close"></i>
-                        <span>Cerrar</span>
-                    </a>
+    <div class="modal" id="dialogo_registro">
+        <div class="ventanaConsumo">
+            <h3>Registrar Activos/Equipos</h3>
+            <div class="contenedor">
+                <div class="cabecera_dialogo">
+                    <label for="codigoSearch">Codigo</label>
+                    <input type="text" name="codigoSearch" id="codigoSearch" placeholder="Ingrese codigo">
+                    <label for="descripSearch">Descripcion</label>
+                    <input type="text" name="descripSearch" id="descripSearch" placeholder="Ingrese Descripcion">
                 </div>
-            </div>
-            <div class="datosResumen">
-                <table id="tbl_pedidos" class="tabla oculto">
-                    <thead>
-                        <tr>
-                            <th>Nro.</th>
-                            <th>Cant.Aprobada</th>
-                            <th>Cant.Pedida</th>
-                            <th>Elaborado</th>
-                            <th>Aprobado</th>
-                            <th>Area</th>
-                            <th>Fecha Emision</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+                <div class="tabla_dialogo">
+                    <table id="tabla_detalles_productos" class="tabla">
+                        <thead class="stickytop">
+                            <tr>
+                                <th>Codigo</th>
+                                <th>Descripcion</th>
+                                <th>Und</th>
+                            </tr>
+                        </thead>
+                        <tbody>
 
-                    </tbody>
-                </table>
-                <table id="tbl_ordenes" class="tabla oculto">
-                    <thead>
-                        <tr>
-                            <th>Numero</th>
-                            <th>Fecha Emisión</th>
-                            <th>Cantidad</th>
-                            <th>Area</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-                <table id="tbl_ingresos" class="tabla oculto">
-                    <thead>
-                        <tr>
-                            <th>Nro.Nota</th>
-                            <th>Guia. Proveedor</th>
-                            <th>Proveedor</th>
-                            <th>Cantidad</th>
-                            <th>Emisión</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-
-                    </tbody>
-                </table>
-                <table id="tbl_despachos" class="tabla oculto">
-                    <thead>
-                        <tr>
-                            <th>Nro.Nota</th>
-                            <th>Emisión</th>
-                            <th>Envio</th>
-                            <th>Guia.Interna</th>
-                            <th>Guia.Sunat</th>
-                            <th>Cantidad</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-
-                    </tbody>
-                </table>
-                <table id="tbl_almacen" class="tabla oculto">
-                    <thead>
-                        <tr>
-                            <th>Nro.Nota</th>
-                            <th>Emisión</th>
-                            <th>Guia.Interna/Nota Transferencia</th>
-                            <th>Recepciona</th>
-                            <th>Cantidad</th>
-                            <th>Guia.Sunat</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-
-                    </tbody>
-                </table>
-                <table id="tbl_consumos" class="tabla oculto">
-                    <thead>
-                        <tr class="stickytop">
-                            <th>Nro.Kardex</th>
-                            <th>Emitido</th>
-                            <th>Cantidad</th>
-                            <th>Despacho</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-
-                    </tbody>
-                </table>
-                <table id="tbl_devolucion" class="tabla oculto">
-                    <thead>
-                        <tr>
-                            <th>Nro.Kardex</th>
-                            <th>Emitido</th>
-                            <th>Cantidad</th>
-                            <th>Despacho</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-
-                    </tbody>
-                </table>
-                <table id="tbl_inventario" class="tabla oculto">
-                    <thead>
-                        <tr>
-                            <th>Nro. Operacion</th>
-                            <th>Emitido</th>
-                            <th>Cantidad</th>
-                            <th>Registrado</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-
-                    </tbody>
-                </table>
-                <table id="tbl_transferencias" class="tabla oculto">
-                    <thead>
-                        <tr>
-                            <th>Nota Transferencia</th>
-                            <th>Guia Interna</th>
-                            <th>Origen</th>
-                            <th>Destino</th>
-                            <th>Cantidad</th>
-                            <th>...</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-    <div class="modal" id="registroStock">
-        <div class="ventanaPregunta">
-            <h3>Registrar Stock Minimo</h3>
-            <div> 
-                <input type="number" id="stockMin">
-                <hr>
-            </div>
-            <div>
-                <button type="button" id="btnAceptarStock">Aceptar</button>
-                <button type="button" id="btnCancelarStock">Cancelar</button>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="cuerpo_dialogo">
+                    <div class="datos_cuerpo">
+                        <label for="patrimonio">Patrimonio</label>
+                        <input type="checkbox" name="patrimonio" id="patrimonio">
+                        <label for="cantidad_dialogo">Cantidad</label>
+                        <input type="number" name="cantidad_dialogo" id="cantidad_dialogo" placeholder="Cantidad">
+                        <label for="serie_dialogo">N° Serie</label>
+                        <input type="text" name="serie_dialogo" id="serie_dialogo" placeholder="Serie">
+                    </div>
+                    <div class="datos_cuerpo_observaciones">
+                        <label for="observaciones_dialogo">Observaciones</label>
+                        <textarea name="observaciones_dialogo" id="observaciones_dialogo" placeholder="Observaciones"></textarea>
+                    </div>
+                </div>
+                <div class="opciones_dialogo">
+                    <button type="button" id="btnAceptarDialogoKardex">Aceptar</button>
+                    <button type="button" id="btnCancelarDialogoKardex">Cancelar</button>
+                </div>
             </div>
         </div>
     </div>
     <div class="cabezaModulo">
         <h1>Control de Activos</h1>
         <div>
+            <a href="#" id="nuevoRegistro"><i class="far fa-file"></i><p>Nuevo</p></a>
             <a href="#" id="excelFile"><i class="fas fa-file-excel"></i><p>Exportar</p></a>
             <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
         </div>
