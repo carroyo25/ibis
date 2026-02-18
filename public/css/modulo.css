@@ -1569,7 +1569,8 @@ thead .sticky-column {
 .ventanaConsumo,
 .ventanaCarpetas,
 .ventanaInformes,
-.ventanaResumenPedidos {
+.ventanaResumenPedidos,
+.ventanaActivos {
   background: #fff;
   position: absolute;
   top: 50%;
@@ -4399,6 +4400,82 @@ thead .sticky-column {
   color: #000;
   background: #005D84;
 }
+
+/********VENTANA ACTIVOS*******************/
+.ventanaActivos{
+  width: 70%;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+
+  label {
+    font-weight: bold;
+  }
+
+  select{
+    height: 2.5rem;
+    border: 1px dotted #c2c2c2;
+    border-radius: 8px;
+  }
+
+  input{
+    height: 2.5rem;
+    border: 1px dotted #c2c2c2;
+    border-radius: 8px;
+  }
+
+  .contenedor {
+      display: inherit;
+      flex-direction: inherit;
+      row-gap: 1rem;
+      border: 1px solid #aeaeae;
+      padding: 0.5rem;
+
+      .cabecera_activo{
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 1rem;
+        row-gap: 1rem;
+
+        .container_flex{
+          display: flex;
+          flex-direction: column;
+          row-gap: 1rem;
+        }
+
+        .container_grid{
+          width: 100%;
+          display: grid;
+          grid-template-columns: max-content 1fr max-content 1fr;
+          gap: 1rem;
+          align-items: center;
+        }
+      }
+
+      .opciones_dialogo{
+          height: 2rem;
+          display: flex;
+          gap: 1rem;
+          justify-content: flex-end;
+          
+          button{
+            padding: 0 1rem;
+            width: 15%;
+            border-radius: 8px;
+            border: 2px solid transparent;
+            transition: border .5s ease;
+
+            &:hover{
+              border: 2px solid #000;
+            }
+          }
+      }
+  }
+
+  
+}
+
+/******** FIN DE VENTANA ACTIVOS **********/
 
 .pestanasUsuario {
   height: 20rem;

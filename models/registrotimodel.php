@@ -134,6 +134,32 @@
             return  $respuesta;
         }
 
+        public function buscarDatosNombre($parametros){
+            try {
+                $nombre = $parametros['nombre'];
+                $costos = $parametros['costos'];
+
+                $registrado = false;
+
+                $url = "http://179.49.67.42/api/activesapinombres.php?nombres=".urlencode($nombre);    
+                $api = file_get_contents($url);
+                $datos =  json_decode($api);
+
+                $nreg = count($datos);
+
+                $registrado = $nreg > 0 ? true: false;
+
+                return array("datos" => $datos,
+                            "registrado"=>$registrado,
+                            "anteriores"=>$this->kardexAnterior($datos[0]->dni,$costos),
+                            "ruta"=>'');
+
+            }catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
         private function correoMovimientoTi($detalles,$nombre,$correo,$kardex,$cc){
             require_once("public/PHPMailer/PHPMailerAutoload.php");
 

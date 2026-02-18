@@ -37,6 +37,37 @@ $(function(){
             }
         });
 
+        $("#nombre").keypress((e)=>{
+            if(e.which == 13){
+                let formData = new FormData();
+
+                formData.append('nombre',$("#nombre").val());
+                formData.append('costos',$("#costosSearch").val());
+
+                fetch(RUTA+'registroti/datosNombre',{
+                    method:'POST',
+                    body:formData
+                })
+                .then(response => response.json())
+                .then(data =>{
+                    if (data.registrado) {
+                        $("#nombre").val(data.datos[0].paterno+' '+data.datos[0].materno+' '+data.datos[0].nombres);
+                        $("#cargo").val(data.datos[0].cargo.toUpperCase());
+                        $("#cut").val(data.datos[0].cut);
+                        $("#correo").val(data.datos[0].correo);
+                        $("#docident").val(data.datos[0].dni);
+    
+                        $("#tablaPrincipal tbody")
+                            .empty()
+                            .append(data.anteriores);
+                    }else{
+                        mostrarMensaje("Trabajador no registrado","mensaje_error");
+                        $("#nombre, #cargo, #cut, #correo, #docident").val("");
+                    }
+                })
+            }
+        })
+
         $("#btnAceptarDialogoKardex").click(function (e) { 
             e.preventDefault();
     

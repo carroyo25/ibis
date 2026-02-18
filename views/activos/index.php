@@ -178,22 +178,41 @@
         </div>
     </div>
     <div class="modal" id="dialogo_registro">
-        <div class="ventanaConsumo">
+        <div class="ventanaActivos">
             <h3>Registrar Activos/Equipos</h3>
             <div class="contenedor">
-                <div class="cabecera_dialogo">
-                    <label for="codigoSearch">Codigo</label>
-                    <input type="text" name="codigoSearch" id="codigoSearch" placeholder="Ingrese codigo">
-                    <label for="descripSearch">Descripcion</label>
-                    <input type="text" name="descripSearch" id="descripSearch" placeholder="Ingrese Descripcion">
+                <div class="cabecera_activo">
+                    <div class="container_flex">
+                        <label for="centro_costos">Centro de Costos</label>
+                        <select name="centro_costos" id="centro_costos" placeholder="Seleccione un centro de costos">
+                        </select>
+                    </div>
+                    <div class="container_grid">
+                        <label for="codigoSearch">Codigo</label>
+                        <input type="text" name="codigoSearch" id="codigoSearch" placeholder="Ingrese codigo">
+                        <label for="descripSearch">Descripcion</label>
+                        <input type="text" name="descripSearch" id="descripSearch" placeholder="Ingrese Descripcion">
+                    </div>
+                </div>
+                <div class="opciones_dialogo">
+                    <button type="button" id="btnAddItem"><i class="fas fa-tasks"></i> Agregar Item</button>
+                    <button type="button" id="btnSearchIn"><i class="fas fa-stream"></i> Buscar Inventario</button>
                 </div>
                 <div class="tabla_dialogo">
-                    <table id="tabla_detalles_productos" class="tabla">
+                    <table id="tabla_detalles_activos" class="tabla">
                         <thead class="stickytop">
                             <tr>
                                 <th>Codigo</th>
                                 <th>Descripcion</th>
-                                <th>Und</th>
+                                <th>Und.</th>
+                                <th>Cant.</th>
+                                <th>Registro/Inventario</th>
+                                <th>Estado</th>
+                                <th>Asignado</th>
+                                <th>Fecha Calibracion</th>
+                                <th>Vencimiento</th>
+                                <th>Observaciones</th>
+                                <th>...</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -201,23 +220,9 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="cuerpo_dialogo">
-                    <div class="datos_cuerpo">
-                        <label for="patrimonio">Patrimonio</label>
-                        <input type="checkbox" name="patrimonio" id="patrimonio">
-                        <label for="cantidad_dialogo">Cantidad</label>
-                        <input type="number" name="cantidad_dialogo" id="cantidad_dialogo" placeholder="Cantidad">
-                        <label for="serie_dialogo">N° Serie</label>
-                        <input type="text" name="serie_dialogo" id="serie_dialogo" placeholder="Serie">
-                    </div>
-                    <div class="datos_cuerpo_observaciones">
-                        <label for="observaciones_dialogo">Observaciones</label>
-                        <textarea name="observaciones_dialogo" id="observaciones_dialogo" placeholder="Observaciones"></textarea>
-                    </div>
-                </div>
-                <div class="opciones_dialogo">
-                    <button type="button" id="btnAceptarDialogoKardex">Aceptar</button>
-                    <button type="button" id="btnCancelarDialogoKardex">Cancelar</button>
+                <div class="opciones_dialogo botones_derecha">
+                    <button type="button" id="btnGrabarDialogoActivos"><i class="fas fa-save"></i> Grabar</button>
+                    <button type="button" id="btnCancelarDialogoKardex"><i class="fas fa-window-close"></i> Cancelar</button>
                 </div>
             </div>
         </div>

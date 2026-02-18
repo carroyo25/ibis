@@ -25,5 +25,9 @@
         function firmaTi(){
             echo $this->model->subirFirmaTi($_POST['detalles'],$_POST['correo'],$_POST['nombre'],$_POST['cc']);
         }
+
+        function datosNombre(){
+            echo json_encode($this->model->buscarDatosNombre($_POST));
+        }
     }
 ?>
