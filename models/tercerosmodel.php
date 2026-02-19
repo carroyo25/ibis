@@ -16,10 +16,10 @@
             $datos = json_decode($api);
 
             return array("datos" => $datos,
-                        "anteriores"=>$this->kardexAnterior($doc,$cc));
+                        "anteriores"=>$this->kardexAnteriorTerceros($doc,$cc));
         }
 
-        private function kardexAnterior($d,$c){
+        private function kardexAnteriorTerceros($d,$c){
             try {
                 $salida = "";
                 $sql = $this->db->connect()->prepare("SELECT
