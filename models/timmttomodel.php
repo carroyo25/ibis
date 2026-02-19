@@ -49,7 +49,10 @@
                                                     WHERE
                                                         ibis.ti_mmttos.flgactivo = 1 
                                                         AND ibis.tb_proyectos.nidreg LIKE :costos 
-                                                        AND ibis.ti_mmttos.cserie LIKE :serie 
+                                                        AND ibis.ti_mmttos.cserie LIKE :serie
+                                                        AND (cm_producto.ccodprod LIKE '%B05010002%' 
+                                                          OR cm_producto.ccodprod LIKE '%B05010006%'
+                                                          OR cm_producto.ccodprod LIKE '%B05010005%') 
                                                     GROUP BY
                                                         ibis.ti_mmttos.nrodoc,
                                                         ibis.ti_mmttos.cserie");
