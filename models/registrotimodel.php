@@ -138,10 +138,15 @@
             try {
                 $nombre = $parametros['nombre'];
                 $costos = $parametros['costos'];
+                $dni = $parametros['dni'];
 
                 $registrado = false;
 
-                $url = "http://179.49.67.42/api/activesapinombres.php?nombres=".urlencode($nombre);    
+                if ($nombre !== "") 
+                    $url = "http://179.49.67.42/api/activesapinombres.php?nombres=".urlencode($nombre);
+                elseif($dni !== "")
+                    $url = "http://179.49.67.42/api/activesapi.php?documento=".$dni;
+
                 $api = file_get_contents($url);
                 $datos =  json_decode($api);
 
@@ -151,7 +156,7 @@
 
                 return array("datos" => $datos,
                             "registrado"=>$registrado,
-                            "anteriores"=>$this->kardexAnterior($datos[0]->dni,$costos),
+                            "anteriores"=>$this->kardexEquipos($datos[0]->dni,$costos),
                             "ruta"=>'');
 
             }catch (PDOException $th) {
@@ -249,6 +254,102 @@
                 echo $th->getMessage();
                 return false;
             } 
+        }
+
+        private function kardexEquipos($d,$c){
+            try {
+                $salida = "";
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        alm_consumo.idreg,
+                                                        alm_consumo.reguser,
+                                                        alm_consumo.idprod,
+                                                        alm_consumo.cantsalida,
+                                                        DATE_FORMAT(alm_consumo.fechasalida,'%d/%m/%Y') AS fechasalida,
+                                                        DATE_FORMAT(alm_consumo.fechadevolucion,'%d/%m/%Y') AS fechadevolucion,
+                                                        alm_consumo.nhoja,
+                                                        alm_consumo.cisometrico,
+                                                        alm_consumo.cobserentrega,
+                                                        alm_consumo.cobserdevuelto,
+                                                        alm_consumo.cestado,
+                                                        alm_consumo.cserie,
+                                                        alm_consumo.flgdevolver,
+                                                        alm_consumo.cfirma,
+                                                        cm_producto.ccodprod,
+                                                        alm_consumo.nkardex,
+                                                        alm_consumo.calmacen,
+                                                        UPPER(cm_producto.cdesprod) AS cdesprod,
+                                                        tb_unimed.cabrevia,
+                                                        tb_parametros.cdescripcion  AS motivo_epp
+                                                    FROM
+                                                        alm_consumo
+                                                        LEFT JOIN cm_producto ON alm_consumo.idprod = cm_producto.id_cprod
+                                                        LEFT JOIN tb_unimed ON cm_producto.nund = tb_unimed.ncodmed
+                                                        LEFT JOIN tb_parametros ON alm_consumo.ncambioepp = tb_parametros.nidreg  
+                                                    WHERE
+                                                        alm_consumo.nrodoc = :documento 
+                                                        AND ncostos = :cc
+                                                        AND alm_consumo.flgactivo = 1
+                                                        AND (cm_producto.ccodprod LIKE '%B05010002%' 
+                                                          OR cm_producto.ccodprod LIKE '%B05010006%'
+                                                          OR cm_producto.ccodprod LIKE '%B05010005%'
+                                                          OR cm_producto.ccodprod LIKE '%B05010003%')
+                                                    ORDER BY alm_consumo.freg DESC" );
+                $sql->execute(["documento"=>$d,"cc"=>$c]);
+                $rowCount = $sql->rowCount();
+                $item = 1;
+                $salida ="";
+                $numero_item = $this->cantidadItems($d,$c);
+
+
+                if ($rowCount > 0) {
+                    while ($rs = $sql->fetch()){
+
+                        $marcado = $rs['flgdevolver'] == 1 ? "checked" : "";
+                        $firma = "public/documentos/firmas/".$rs['cfirma'].".png";
+
+                        $salida .= '<tr class="pointer" data-grabado="1" 
+                                                        data-registrado="1" 
+                                                        data-kardex = "'.$rs['nkardex'].'"
+                                                        data-firma = "'.$rs['cfirma'].'"
+                                                        data-devolucion = "'.$rs['fechadevolucion'].'"
+                                                        data-firmadevolucion ="'.$rs['calmacen'].'"
+                                                        data-registro="'.$rs['idreg'].'"
+                                                        id="'.$item--.'">
+                                        <td class="textoDerecha">'.$rowCount--.'</td>
+                                        <td class="textoCentro">'.$rs['ccodprod'].'</td>
+                                        <td class="pl5px">'.$rs['cdesprod'].'</td>
+                                        <td class="textoCentro">'.$rs['cabrevia'].'</td>
+                                        <td class="textoDerecha">'.$rs['cantsalida'].'</td>
+                                        <td class="textoCentro">'.$rs['fechasalida'].'</td>
+                                        <td class="textoCentro">'.$rs['nhoja'].'</td>
+                                        <td class="pl5px">'.$rs['cisometrico'].'</td>
+                                        <td class="pl5px">'.$rs['cobserentrega'].'</td>
+                                        <td class="pl5px">'.$rs['cserie'].'</td>
+                                        <td class="textoCentro"><input type="checkbox" '.$marcado.'></td>
+                                        <td class="pl5px">'.$rs['motivo_epp'].'</td>
+                                        <td class="pl5px">'.$rs['cestado'].'</td>
+                                        <td class="textoCentro">
+                                            <div style ="width:110px !important; text-align:center">
+                                                <img src = '.$firma.' style ="width:100% !important">
+                                            </div>
+                                        </td>
+                                        <td class="textoCentro"><a href="'.$rs['idreg'].'" 
+                                                        data-codigo     = "'.$rs['ccodprod'].'"
+                                                        data-cantidad   = "'.$rs['cantsalida'].'"
+                                                        data-patrimonio = "'.$rs['flgdevolver'].'"
+                                                        data-hoja       = "'.$rs['nhoja'].'"
+                                                        data-serie      = "'.$rs['cserie'].'">
+                                                        <i class="fas fa-wrench"></i></a></td>
+                                    </tr>';
+                    }
+                }
+
+                return $salida;
+
+            }catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }  
         }
     }
 ?>

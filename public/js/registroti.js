@@ -14,7 +14,7 @@ $(function(){
 
         $("#docident").focus;
 
-        $("#docident").keypress(function (e) { 
+        /*$("#docident").keypress(function (e) { 
             if(e.which == 13) { 
                 $.post(RUTA+"consumo/datosapi",{documento:$(this).val(),costos:$("#costosSearch").val()},
                     function (data, textStatus, jqXHR) {
@@ -35,14 +35,15 @@ $(function(){
                     "json"
                 );
             }
-        });
+        });*/
 
-        $("#nombre").keypress((e)=>{
+        $("#nombre,#docident").keypress((e)=>{
             if(e.which == 13){
                 let formData = new FormData();
 
                 formData.append('nombre',$("#nombre").val());
                 formData.append('costos',$("#costosSearch").val());
+                formData.append('dni',$("#docident").val());
 
                 fetch(RUTA+'registroti/datosNombre',{
                     method:'POST',

@@ -109,9 +109,11 @@
     </div>
     <div class="modal" id="cambio_fecha">
         <div class="ventanaPregunta">
-            <h3>Fecha de Entrega</h3>
             <div>
+                <p>Nueva fecha de entrega :</p>
                 <input type="date" name="fecha_nueva" id="fecha_nueva">
+                <p>Nueva serie :</p>
+                <input type="text" name="serie_nueva" id="serie_nueva">
             </div>
             <div>
                 <button type="button" id="btnAceptarGrabar">Aceptar</button>
