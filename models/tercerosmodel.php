@@ -210,7 +210,6 @@
             return $file;
         }
 
-
         public function createExcelReport($nombre,$documento,$empresa,$detalles){
             try {
                 require_once "public/PHPExcel/PHPExcel/IOFactory.php";
