@@ -62,37 +62,13 @@
         }
 
         public function subirFirmaTi($detalles,$correo,$nombre,$cc) {
-            if (array_key_exists('img',$_REQUEST)) {
-                // convierte la imagen recibida en base64
-                // Eliminamos los 22 primeros caracteres, que 
-                // contienen el substring "data:image/png;base64,"
-                $imgData = base64_decode(substr($_REQUEST['img'],22));
-                
-                $fechaActual = date('Y-m-d');
-                $respuesta = false;
-        
-                $namefile = uniqid();
+            $datos = json_decode($detalles);
+            $nreg = count($datos);
+            $kardex = time();
+            $respuesta = true;
 
-                // Path en donde se va a guardar la imagen
-                $file = 'public/documentos/firmas/'.$namefile.'.png';
-            
-                // borrar primero la imagen si existía previamente
-                if (file_exists($file)) { unlink($file); }
-            
-                // guarda en el fichero la imagen contenida en $imgData
-                $fp = fopen($file, 'w');
-                fwrite($fp, $imgData);
-                fclose($fp);
-                
-                if ( file_exists($file) ){
-                    $respuesta = true;
-
-                    $datos = json_decode($detalles);
-                    $nreg = count($datos);
-                    $kardex = time();
-
-                    for ($i=0; $i<$nreg; $i++){
-                        $sql = $this->db->connect()->prepare("INSERT INTO alm_consumo 
+            for ($i=0; $i<$nreg; $i++){
+                $sql = $this->db->connect()->prepare("INSERT INTO alm_consumo 
                                                                     SET reguser=:user,
                                                                         nrodoc=:documento,
                                                                         idprod=:producto,
@@ -109,27 +85,23 @@
                                                                         ncostos=:cc,
                                                                         ncambioepp=:cambio,
                                                                         cempresa=:area");
-                        $sql->execute(["user"=>$_SESSION['iduser'],
+                $sql->execute(["user"=>$_SESSION['iduser'],
                                         "documento"=>$datos[$i]->nrodoc,
                                         "producto"=>$datos[$i]->idprod,
                                         "cantidad"=>$datos[$i]->cantidad,
                                         "salida"=>$datos[$i]->fecha,
-                                        "hoja"=>$datos[$i]->hoja,
-                                        "isometrico"=>$datos[$i]->isometrico,
+                                        "hoja"=>null,
+                                        "isometrico"=>null,
                                         "observaciones"=>$datos[$i]->observac,
                                         "patrimonio"=>$datos[$i]->patrimonio,
-                                        "estado"=>$datos[$i]->estado,
+                                        "estado"=>null,
                                         "kardex"=>$kardex,
-                                        "firma"=>$namefile,
+                                        "firma"=>null,
                                         "serie"=>$datos[$i]->serie,
                                         "cc"=>$datos[$i]->costos,
                                         "cambio"=>$datos[$i]->cambio,
                                         "area"=>'TI']);
                     }
-                }            
-            }
-
-            //$this->correoMovimientoTi($detalles,$nombre,$correo,$kardex,$cc);
         
             return  $respuesta;
         }
