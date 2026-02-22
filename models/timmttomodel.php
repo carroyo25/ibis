@@ -48,7 +48,8 @@
                                                         LEFT JOIN ibis.tb_tiespec ON ibis.tb_tiespec.cserie = ibis.ti_mmttos.cserie COLLATE utf8_unicode_ci
                                                     WHERE
                                                         ibis.ti_mmttos.flgactivo = 1 
-                                                        AND ibis.tb_proyectos.nidreg LIKE :costos 
+                                                        AND ibis.tb_proyectos.nidreg LIKE :costos
+                                                        AND ibis.tb_proyectos.nflgactivo = 1
                                                         AND ibis.ti_mmttos.cserie LIKE :serie
                                                         AND (cm_producto.ccodprod LIKE '%B05010002%' 
                                                           OR cm_producto.ccodprod LIKE '%B05010006%'
@@ -635,6 +636,52 @@
                             "id"=>$return[0]['idreg'],
                             "fecha_proxima"=>$return[0]['fecha_proxima']);
 
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function actualizarSeries($parametros){
+            try {
+                $serie = $parametros['serie_anterior'];
+                $nueva = $parametros['serie_nueva'];
+                $documento = $parametros['documento'];
+
+                try {
+                    $sql = $this->db->connect()->prepare("UPDATE alm_consumo
+                                                        SET alm_consumo.cserie =:serie_nueva
+                                                        WHERE alm_consumo.nrodoc =:documento
+                                                            AND alm_consumo.cserie =:serie
+                                                        LIMIT 1");
+                    
+                    $sql->execute(["serie_nueva"=>$nueva,
+                                    "serie"=>$serie,
+                                    "documento"=>$documento]);
+                    
+                    $respuesta = false;
+
+                    if ($sql->rowCount() > 0){
+                        $respuesta = true;
+
+                        $sql = $this->db->connect()->prepare("UPDATE ti_mmttos
+                                                        SET ti_mmttos.cserie =:serie_nueva
+                                                        WHERE ti_mmttos.nrodoc =:documento
+                                                            AND ti_mmttos.cserie =:serie");
+                    
+                        $sql->execute(["serie_nueva"=>$nueva,
+                                        "serie"=>$serie,
+                                        "documento"=>$documento]);
+                    }
+
+                    return array("respuesta"=>$respuesta);
+                } catch (PDOException $th) {
+                    echo $th->getMessage();
+                    return false;
+                }
+
+
+                
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;

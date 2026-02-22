@@ -112,12 +112,22 @@
             <div>
                 <p>Nueva fecha de entrega :</p>
                 <input type="date" name="fecha_nueva" id="fecha_nueva">
-                <p>Nueva serie :</p>
-                <input type="text" name="serie_nueva" id="serie_nueva">
             </div>
             <div>
                 <button type="button" id="btnAceptarGrabar">Aceptar</button>
                 <button type="button" id="btnCancelarGrabar">Cancelar</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="cambio_serie">
+        <div class="ventanaPregunta">
+            <div>
+                <p>Nueva Serie :</p>
+                <input type="text" name="serie_nueva" id="serie_nueva">
+            </div>
+            <div>
+                <button type="button" id="btnAceptarSerie">Aceptar</button>
+                <button type="button" id="btnCancelarSerie">Cancelar</button>
             </div>
         </div>
     </div>
@@ -170,6 +180,7 @@
                     <th>4to MMTTO</th>
                     <th>Estado</th>
                     <th>...</th>
+                    <th>...</th>
                 </tr>
             </thead>
             <tbody>
@@ -214,7 +225,7 @@
                                 }
                 ?> 
 
-                                <tr class="pointer click_tr" data-id="<?php echo $registro['idreg']; ?>" 
+                                <tr class="pointer click_tr" data-id="<?php echo $registro['idreg']; ?>" id="<?php echo $registro['idreg']; ?>" 
                                                     data-correo="<?php foreach($this->listaMantenimientos['usuarios'] as $usuario ){if ( $usuario['dni'] == $registro['nrodoc'] ){ echo $usuario['correo'];}}?>"
                                                     data-documento="<?php echo $registro['nrodoc']; ?>"
                                                     data-costos="<?php echo $registro['nidreg']; ?>"
@@ -237,9 +248,14 @@
                                     <td class="textoCentro <?php echo $semaforo3; ?>"><?php echo $estado3; ?></td>
                                     <td class="textoCentro"><?php echo $registro['fmtto4']; ?></td>
                                     <td class="textoCentro <?php echo $semaforo4; ?>"><?php echo $estado4; ?></td>
-                                    <td class="textoCentro click_link">
-                                        <a href="<?php echo $registro['cserie'];?>" data-fecha ="<?php echo $registro['entrega']; ?>" data-documento ="<?php echo $registro['nrodoc']; ?>">
+                                    <td class="textoCentro click_link_date">
+                                        <a href="<?php echo $registro['cserie'];?>" data-fecha ="<?php echo $registro['entrega']; ?>" data-documento ="<?php echo $registro['nrodoc']; ?>" title="Cambiar Fecha de Registro">
                                             <i class="fas fa-calendar-alt"></i>
+                                        </a>
+                                    </td>
+                                     <td class="textoCentro click_link_serie">
+                                        <a href="<?php echo $registro['cserie'];?>" data-documento ="<?php echo $registro['nrodoc'];?>" title="Cambiar Serie">
+                                            <i class="fas fa-exchange-alt"></i>
                                         </a>
                                     </td>
                                 </tr>

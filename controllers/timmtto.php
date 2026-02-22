@@ -31,6 +31,11 @@
             echo json_encode($this->model->actualizarFechas($_POST));
         }
 
+        function cambioSeries(){
+            echo json_encode($this->model->actualizarSeries($_POST));
+        }
+
+
         function mmttospendientes() {
             echo json_encode($this->model->mmttoUltimoPendiente($serie,$documento));
         }
