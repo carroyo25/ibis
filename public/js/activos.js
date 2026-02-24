@@ -1,6 +1,8 @@
 $("#esperar").css({"display":"none","opacity":"0"});
 
 const modal_registro = document.getElementById("dialogo_registro");
+const modal_items_registrados = document.getElementById('registros');
+const modal_items_inventario = document.getElementById('inventarios');
 
 const btnRegister = document.getElementById("nuevoRegistro");
 const btnExport = document.getElementById("excelFile");
@@ -9,7 +11,6 @@ const btnCancelDialog = document.getElementById("btnCancelarDialogoKardex");
 const btnAddItem = document.getElementById("btnAddItem");
 const btnSearchReg = document.getElementById("btnSearchReg");
 const btnSearchInv = document.getElementById("btnSearchInv");
-
 
 const inpCodSearch = document.getElementById("codigoSearch");
 const inpDescSearch = document.getElementById("descripSearch");
@@ -20,6 +21,10 @@ const slcCostos = document.getElementById("centro_costos");
 
 const tblActivos = document.getElementById("tabla_detalles_activos");
 const bdyActivos = document.getElementById("table_body");
+const bdyIngresos = document.getElementById("cuerpo_ingresos");
+const bdyInventarios = document.getElementById("cuerpo_inventarios");
+
+const lnkClose = document.getElementById("closeSearch");
 
 
 btnRegister.addEventListener('click',(e) =>{
@@ -29,6 +34,18 @@ btnRegister.addEventListener('click',(e) =>{
 
     return false;
 });
+
+document.addEventListener('click',(e)=>{
+    //console.log(e.target);
+
+    if (e.target.matches(".closeModal *")){
+        e.preventDefault();
+
+        e.target.closest('.modal').style.display = "none";
+
+        return false;
+    }
+})
 
 
 btnCancelDialog.addEventListener('click',(e)=>{
@@ -79,6 +96,7 @@ btnAddItem.addEventListener('click',(e)=>{
                     <td><input type="text" name="estado"></td>
                     <td><input type="text" name="serie"></td>
                     <td><input type="text" name="asignado"></td>
+                    <td><input type="text" name="ubicacion"></td>
                     <td><input type="date" name="calibracion"></td>
                     <td><input type="date" name="vencimiento"></td>
                     <td><input type="text" name="observaciones"></td>
@@ -89,4 +107,120 @@ btnAddItem.addEventListener('click',(e)=>{
     return false;
 })
 
+
+btnSearchReg.addEventListener('click',(e)=>{
+    e.preventDefault();
+
+    let formData = new FormData();
+    formData.append('codigo',inpInternal.value);
+    formData.append('costos',slcCostos.value);
+
+    bdyIngresos.innerHTML = "";
+
+    fetch(RUTA+"activos/registros",{
+        method:'POST',
+        body:formData
+    })
+    .then(response => response.json())
+    .then(data =>{
+        if (data.datos.length > 0) {
+            data.datos.forEach(el => {
+                const tr = document.createElement('tr');
+                tr.classList.add("pointer");
+                tr.dataset.id = el.idreg;
+                tr.dataset.cant = el.cantidad;
+                
+                tr.innerHTML = `<td class="textoCentro">${el.idreg}</td>
+                                <td class="textoCentro">${el.ccodproy}</td>
+                                <td class="textoDerecha">${el.cantidad}</td>
+                                <td class="textoCentro">${el.pedido}</td>`;
+
+                bdyIngresos.appendChild(tr);                
+            });
+
+            modal_items_registrados.style.display = 'block';
+        }else{
+            mostrarMensaje("No se encontraron registros","mensaje_error");
+        }
+    })
+
+    return false;
+})
+
+btnSearchInv.addEventListener('click',(e)=>{
+    e.preventDefault();
+
+    let formData = new FormData();
+    formData.append('codigo',inpInternal.value);
+    formData.append('costos',slcCostos.value);
+
+    bdyInventarios.innerHTML = "";
+
+    fetch(RUTA+"activos/inventarios",{
+        method:'POST',
+        body:formData
+    })
+    .then(response => response.json())
+    .then(data =>{
+        if (data.datos.length > 0) {
+            data.datos.forEach(el => {
+                const tr = document.createElement('tr');
+                tr.classList.add("pointer");
+                tr.dataset.id = el.idreg;
+                tr.dataset.cant = el.cantidad;
+                
+                tr.innerHTML = `<td class="textoCentro">${el.idreg}</td>
+                                <td class="textoCentro">${el.fecha_inventario}</td>
+                                <td class="textoDerecha">${el.ccodproy}</td>
+                                <td class="textoCentro">${el.cant_ingr}</td>
+                                <td class="textoCentro">${el.cserie}</td>
+                                <td class="textoCentro">${el.ubicacion}</td>`;
+
+                bdyInventarios.appendChild(tr);                
+            });
+
+            modal_items_inventario.style.display = 'block';
+        }else{
+            mostrarMensaje("No se encontraron registros","mensaje_error");
+        }
+    })
+
+    
+
+    return false;
+})
+
+// Usar event delegation - un solo event listener en el contenedor
+bdyIngresos.addEventListener('click', (e) => {
+    const tr = e.target.closest('tr'); // Encuentra el TR más cercano
+    const registro = e.target.closest('tr').dataset.id
+    
+    if (tr) { // Si se hizo clic en un TR o dentro de él
+        e.preventDefault();
+
+        for (let index = 0; index < parseInt(tr.dataset.cant); index++) {
+            const tr = document.createElement('tr');
+            tr.dataset.grabado = 0
+            tr.classList.add("pointer");
+
+            tr.innerHTML = `<td class="textoCentro">${inpCodSearch.value}</td>
+                            <td clas="pl20px">${descripSearch.value}</td>
+                            <td>${inpUnidad.value}</td>
+                            <td>1</td>
+                            <td><input type="text" name="registro" value="${registro}" readonly></td>
+                            <td><input type="text" name="estado"></td>
+                            <td><input type="text" name="serie"></td>
+                            <td><input type="text" name="asignado"></td>
+                            <td><input type="text" name="ubicacion"></td>
+                            <td><input type="date" name="calibracion"></td>
+                            <td><input type="date" name="vencimiento"></td>
+                            <td><input type="text" name="observaciones"></td>
+                            <td class="textoCentro"><a href=""><i class="fas fa-ban"></i></a></td>`;
+
+            bdyActivos.appendChild(tr);
+        }
+
+        return false;
+    }
+});
 

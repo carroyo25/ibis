@@ -17,6 +17,13 @@
         function buscaCodigo(){
             echo json_encode($this->model->buscarCodigos($_POST));
         }
+
+        function registros(){
+            echo json_encode($this->model->buscarIngresos($_POST));
+        }
         
+        function inventarios(){
+            echo json_encode($this->model->buscarInventarios($_POST));
+        }
     }
 ?>

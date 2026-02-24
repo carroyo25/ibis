@@ -192,9 +192,9 @@
                     </div>
                     <div class="container_grid">
                         <label for="codigoSearch">Codigo</label>
-                        <input type="text" name="codigoSearch" id="codigoSearch" placeholder="Ingrese codigo">
+                        <input type="text" name="codigoSearch" id="codigoSearch" placeholder="Ingrese codigo" value="B030100060025">
                         <label for="descripSearch">Descripcion</label>
-                        <input type="text" name="descripSearch" id="descripSearch" placeholder="Ingrese Descripcion">
+                        <input type="text" name="descripSearch" id="descripSearch" readonly>
                     </div>
                 </div>
                 <div class="opciones_dialogo">
@@ -208,12 +208,13 @@
                             <tr>
                                 <th>Codigo</th>
                                 <th>Descripcion</th>
-                                <th>Und.</th>
+                                <th width="3%">Und.</th>
                                 <th>Cant.</th>
-                                <th>Registro/Inventario</th>
+                                <th width="3%">Registro/Inventario</th>
                                 <th>Estado</th>
-                                <th>Serie</th>
+                                <th width="8%">Serie</th>
                                 <th>Asignado</th>
+                                <th width="3%">Ubicacion</th>
                                 <th>Fecha Calibracion</th>
                                 <th>Vencimiento</th>
                                 <th>Observaciones</th>
@@ -229,6 +230,66 @@
                     <button type="button" id="btnGrabarDialogoActivos"><i class="fas fa-save"></i> Grabar</button>
                     <button type="button" id="btnCancelarDialogoKardex"><i class="fas fa-window-close"></i> Cancelar</button>
                 </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="registros">
+        <div class="ventanaBusqueda w50por">
+            <div class="tituloVentana">
+                <span id="tituloBusqueda">Ingreso de Productos(Registros)</span>
+                <div>
+                    <a href="#" id="closeSearch" class="closeModal"><i class="fas fa-window-close"></i></a>
+                </div>
+            </div>
+            <div class="textoBusqueda">
+                <input type="text" name="txtBuscar" id="txtBuscar" placeholder="Buscar" class="w90por">
+                <button type="button" class="boton3" id="btnAceptItems">Aceptar</button>
+            </div>
+            <div class="tablaBusqueda">
+                <table class="tablaWrap" id="ingresos">
+                    <thead>
+                        <tr class="stickytop" >
+                            <th>Nro. Ingreso</th>
+                            <th>Costos/Proyecto</th>
+                            <th>Cantidad</th>
+                            <th>Pedido</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cuerpo_ingresos">
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="inventarios">
+        <div class="ventanaBusqueda w50por">
+            <div class="tituloVentana">
+                <span id="tituloBusqueda">Ingreso de Productos(Inventarios)</span>
+                <div>
+                    <a href="#" id="closeSearch" class="closeModal"><i class="fas fa-window-close"></i></a>
+                </div>
+            </div>
+            <div class="textoBusqueda">
+                <input type="text" name="txtBuscar" id="txtBuscar" placeholder="Buscar" class="w90por">
+                <button type="button" class="boton3" id="btnAceptItems">Aceptar</button>
+            </div>
+            <div class="tablaBusqueda">
+                <table class="tablaWrap" id="ingresos">
+                    <thead>
+                        <tr class="stickytop" >
+                            <th>Nro. Inventario</th>
+                            <th>Fecha Inventario</th>
+                            <th>Costos/Proyecto</th>
+                            <th>Cantidad</th>
+                            <th>Serie</th>
+                            <th>Ubicacion</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cuerpo_inventarios">
+
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
