@@ -181,10 +181,13 @@
         <div class="ventanaActivos">
             <h3>Registrar Activos/Equipos</h3>
             <div class="contenedor">
+                <input type="hidden" name="interno" id="interno">
+                <input type="hidden" name="unidad" id="unidad">
                 <div class="cabecera_activo">
                     <div class="container_flex">
                         <label for="centro_costos">Centro de Costos</label>
                         <select name="centro_costos" id="centro_costos" placeholder="Seleccione un centro de costos">
+                             <?php echo $this->listaCostosSelect ?>
                         </select>
                     </div>
                     <div class="container_grid">
@@ -196,9 +199,10 @@
                 </div>
                 <div class="opciones_dialogo">
                     <button type="button" id="btnAddItem"><i class="fas fa-tasks"></i> Agregar Item</button>
-                    <button type="button" id="btnSearchIn"><i class="fas fa-stream"></i> Buscar Inventario</button>
+                    <button type="button" id="btnSearchReg"><i class="fas fa-sort-amount-down"></i> Buscar Ingresos</button>
+                    <button type="button" id="btnSearchInv"><i class="fas fa-stream"></i> Buscar Inventario</button>
                 </div>
-                <div class="tabla_dialogo">
+                <div class="tabla_activos">
                     <table id="tabla_detalles_activos" class="tabla">
                         <thead class="stickytop">
                             <tr>
@@ -208,6 +212,7 @@
                                 <th>Cant.</th>
                                 <th>Registro/Inventario</th>
                                 <th>Estado</th>
+                                <th>Serie</th>
                                 <th>Asignado</th>
                                 <th>Fecha Calibracion</th>
                                 <th>Vencimiento</th>
@@ -215,7 +220,7 @@
                                 <th>...</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="table_body">
 
                         </tbody>
                     </table>

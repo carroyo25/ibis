@@ -4470,6 +4470,12 @@ thead .sticky-column {
             }
           }
       }
+
+      .tabla_activos{
+        height: 200px;
+        max-height: 40%;
+        overflow: auto;
+      }
   }
 
   
