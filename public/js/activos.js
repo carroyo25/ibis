@@ -265,3 +265,32 @@ bdyInventarios.addEventListener('click', (e) => {
         return false;
     }
 });
+
+bdyActivos.addEventListener('keypress', (e) => {
+    if (e.key == "Enter") {
+        // Verificar que el evento viene de un input
+        if (e.target.tagName === 'INPUT') {
+            // Obtener la celda padre (td) del input
+            const celda = e.target.closest('td');
+            
+            if (celda) {
+                // Obtener el índice de la columna
+                const indiceColumna = celda.cellIndex;
+                
+                // Si es la columna 3 (índice 2 en JavaScript)
+                if (indiceColumna === 6) {
+                    const valorInput = e.target.value;
+                    console.log('Valor del input en columna 3:', valorInput);
+                    
+                    // Aquí puedes usar el valor para lo que necesites
+                    if (valorInput.trim() !== '') {
+                        //console.log('Buscando serie:', valorInput);
+                        //llamarFuncionBusqueda(valorInput);
+
+                        
+                    }
+                }
+            }
+        }
+    }
+});
