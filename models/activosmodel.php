@@ -90,9 +90,10 @@
                                                         i.cant_ingr,
                                                         i.cserie,
                                                         i.condicion,
+                                                        IFNULL(i.cestado,'') estado,
                                                         DATE_FORMAT(ic.ffechaInv, '%d/%m/%Y') AS fecha_inventario,
                                                         i.nflgActivo,
-                                                        IFNULL(i.ubicacion, '') AS ubicacion,
+                                                        IFNULL(i.ubicacion, '') ubicacion,
                                                         p.ccodproy 
                                                     FROM
                                                         alm_inventariodet AS i

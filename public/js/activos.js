@@ -167,7 +167,10 @@ btnSearchInv.addEventListener('click',(e)=>{
                 const tr = document.createElement('tr');
                 tr.classList.add("pointer");
                 tr.dataset.id = el.idreg;
-                tr.dataset.cant = el.cantidad;
+                tr.dataset.cant = el.cant_ingr;
+                tr.dataset.serie = el.cserie,
+                tr.dataset.ubicacion = el.ubicacion,
+                tr.dataset.estado = el.estado
                 
                 tr.innerHTML = `<td class="textoCentro">${el.idreg}</td>
                                 <td class="textoCentro">${el.fecha_inventario}</td>
@@ -184,8 +187,6 @@ btnSearchInv.addEventListener('click',(e)=>{
             mostrarMensaje("No se encontraron registros","mensaje_error");
         }
     })
-
-    
 
     return false;
 })
@@ -224,3 +225,43 @@ bdyIngresos.addEventListener('click', (e) => {
     }
 });
 
+
+// Usar event delegation - un solo event listener en el contenedor
+bdyInventarios.addEventListener('click', (e) => {
+    const tr = e.target.closest('tr'); // Encuentra el TR más cercano
+    const registro = e.target.closest('tr').dataset.id;
+    const serie = e.target.closest('tr').dataset.serie;
+    const estado = e.target.closest('tr').dataset.estado;
+    const ubicacion = e.target.closest('tr').dataset.ubicacion;
+
+
+
+    
+    if (tr) { // Si se hizo clic en un TR o dentro de él
+        e.preventDefault();
+
+        for (let index = 0; index < parseInt(tr.dataset.cant); index++) {
+            const tr = document.createElement('tr');
+            tr.dataset.grabado = 0
+            tr.classList.add("pointer");
+
+            tr.innerHTML = `<td class="textoCentro">${inpCodSearch.value}</td>
+                            <td clas="pl20px">${descripSearch.value}</td>
+                            <td>${inpUnidad.value}</td>
+                            <td>1</td>
+                            <td><input type="text" name="registro" value="${registro}" readonly></td>
+                            <td><input type="text" name="estado"></td>
+                            <td><input type="text" name="serie"></td>
+                            <td><input type="text" name="asignado"></td>
+                            <td><input type="text" name="ubicacion"></td>
+                            <td><input type="date" name="calibracion"></td>
+                            <td><input type="date" name="vencimiento"></td>
+                            <td><input type="text" name="observaciones"></td>
+                            <td class="textoCentro"><a href=""><i class="fas fa-ban"></i></a></td>`;
+
+            bdyActivos.appendChild(tr);
+        }
+
+        return false;
+    }
+});
