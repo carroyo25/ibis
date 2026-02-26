@@ -120,5 +120,26 @@
                 return false;
             }
         }
+
+        public function buscarAsignados($parametros){
+            try {
+                $docData = [];
+                $serie = $parametros['serie'];
+
+                $sql = $this->db->connect()->prepare("SELECT c.nrodoc
+                                                        FROM alm_consumo c
+                                                        WHERE c.serie =:serie");
+                $sql->execute(["serie"=>$serie]);
+
+                while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+                    $docData[] = $row;
+                }
+
+                return array("datos"=>$docData);
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
     }
 ?>

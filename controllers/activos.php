@@ -25,5 +25,9 @@
         function inventarios(){
             echo json_encode($this->model->buscarInventarios($_POST));
         }
+
+        function asignados(){
+            echo json_encode($this->model->buscarAsignado($_POST));
+        }
     }
 ?>

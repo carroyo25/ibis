@@ -286,7 +286,18 @@ bdyActivos.addEventListener('keypress', (e) => {
                     if (valorInput.trim() !== '') {
                         //console.log('Buscando serie:', valorInput);
                         //llamarFuncionBusqueda(valorInput);
+                        let formData = new FormData();
 
+                        formData.append("serie",valorInput);
+
+                        fecth(RUTA+'activos/asignado',{
+                            method:'POST',
+                            body:formData
+                        })
+                        .then(response =>response.json())
+                        .then(data=>{
+                            console.log(data);
+                        })
                         
                     }
                 }
