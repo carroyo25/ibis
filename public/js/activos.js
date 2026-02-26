@@ -233,9 +233,6 @@ bdyInventarios.addEventListener('click', (e) => {
     const serie = e.target.closest('tr').dataset.serie;
     const estado = e.target.closest('tr').dataset.estado;
     const ubicacion = e.target.closest('tr').dataset.ubicacion;
-
-
-
     
     if (tr) { // Si se hizo clic en un TR o dentro de él
         e.preventDefault();
@@ -280,23 +277,43 @@ bdyActivos.addEventListener('keypress', (e) => {
                 // Si es la columna 3 (índice 2 en JavaScript)
                 if (indiceColumna === 6) {
                     const valorInput = e.target.value;
-                    console.log('Valor del input en columna 3:', valorInput);
                     
                     // Aquí puedes usar el valor para lo que necesites
                     if (valorInput.trim() !== '') {
-                        //console.log('Buscando serie:', valorInput);
-                        //llamarFuncionBusqueda(valorInput);
                         let formData = new FormData();
 
                         formData.append("serie",valorInput);
+                        formData.append('costos',slcCostos.value);
 
-                        fecth(RUTA+'activos/asignado',{
+                        fetch(RUTA+'activos/asignados',{
                             method:'POST',
                             body:formData
                         })
                         .then(response =>response.json())
                         .then(data=>{
-                            console.log(data);
+                            const filaActual = e.target.closest('tr');
+
+                            if (filaActual){
+                                if (data.asignado){
+                                    const celdaColumna8 = filaActual.cells[7]; // Índice 7 = columna 8
+                                    if (celdaColumna8)  {
+                                        const inputColumna8 = celdaColumna8.querySelector('input');
+                                        if (inputColumna8) {
+                                            inputColumna8.value = data.datos[0]['paterno']+' '+data.datos[0]['materno']+' '+data.datos[0]['nombres'];
+                                        }
+                                    }
+                                }else{
+                                    const celdaColumna9 = filaActual.cells[8]; // Índice 8 = columna 9
+                                    if (celdaColumna9){
+                                        const inputColumna9 = celdaColumna9.querySelector('input');
+                                        if (inputColumna9) {
+                                            inputColumna9.value = 'ALMACEN';
+                                        }
+                                    }
+                                    
+                                }
+                                
+                            }
                         })
                         
                     }

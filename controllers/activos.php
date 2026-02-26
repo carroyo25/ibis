@@ -27,7 +27,7 @@
         }
 
         function asignados(){
-            echo json_encode($this->model->buscarAsignado($_POST));
+            echo json_encode($this->model->buscarAsignados($_POST));
         }
     }
 ?>

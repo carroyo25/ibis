@@ -14,7 +14,26 @@
         <div class="ventanaCarpetas">
             <div class="tituloAdjuntos">
                 <h3>Ordenes de Compra</h3>
-                <a href="#" id="closeAtach" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
+                <div>
+                    <a href="#" id="downloadFiles" title="Descargar Adjuntos"><i class="fas fa-cloud-download-alt"></i></a>
+                    <a href="#" id="closeAtach" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
+                </div>
+            </div>
+            <div class="container">
+                <h2>📍 Seleccionar Carpeta</h2>
+                <p>Primero, selecciona una carpeta con la que quieras trabajar:</p>
+                <button onclick="seleccionarCarpeta()" class="secondary">📂 Seleccionar Carpeta</button>
+                <div id="ruta-carpeta" class="status">Ninguna carpeta seleccionada</div>
+            </div>
+
+            <div class="container">
+                <h2>ℹ️ Información</h2>
+                <div id="status-message" class="status">Listo para trabajar</div>
+            </div>
+
+            <div class="input-group">
+                <input type="text" id="nombre-carpeta" placeholder="Nombre de la carpeta (ej: Mis Documentos)">
+                <button onclick="crearCarpeta()">📁 Crear Carpeta</button>
             </div>
             
             <div class="listaCarpetas">

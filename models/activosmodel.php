@@ -124,18 +124,43 @@
         public function buscarAsignados($parametros){
             try {
                 $docData = [];
-                $serie = $parametros['serie'];
+                $datos = "";
+                $serie  = $parametros['serie'];
+                $costos = $parametros['costos'];
 
-                $sql = $this->db->connect()->prepare("SELECT c.nrodoc
-                                                        FROM alm_consumo c
-                                                        WHERE c.serie =:serie");
-                $sql->execute(["serie"=>$serie]);
+                $ubicacion = "ALM";
+                $nombre = "";
+                $documento = "";
+                $asignado = false;
+
+                $sql = $this->db->connect()->prepare("SELECT
+                                                            c.nrodoc 
+                                                        FROM
+                                                            alm_consumo c 
+                                                        WHERE
+                                                            c.cserie = :serie
+                                                            AND c.ncostos = :costos 
+                                                            AND ISNULL(	c.cantdevolucion)");
+                
+
+                $sql->execute(["serie"=>$serie,"costos"=>$costos]);
 
                 while($row = $sql->fetch(PDO::FETCH_ASSOC)){
                     $docData[] = $row;
                 }
 
-                return array("datos"=>$docData);
+                //return array($docData[0]['nrodoc']);
+                if (count($docData) > 0 ){
+                    $url = "http://179.49.67.42/api/activesapi.php?documento=".$docData[0]['nrodoc'];
+                    $api = file_get_contents($url);
+
+                    $datos =  json_decode($api);
+                    $ubicacion = "";
+                    $documento = $docData[0]['nrodoc'];
+                    $asignado = true;
+                }
+
+                return array("datos"=>$datos,"ubicacion"=>$ubicacion,"documento"=>$documento,"asignado"=>$asignado);
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
