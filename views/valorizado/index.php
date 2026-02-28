@@ -27,12 +27,11 @@
             </div>
 
             <div class="container">
-                <h2>ℹ️ Información</h2>
+                <h5>ℹ️ Información</h5>
                 <div id="status-message" class="status">Listo para trabajar</div>
             </div>
 
             <div class="input-group">
-                <input type="text" id="nombre-carpeta" placeholder="Nombre de la carpeta (ej: Mis Documentos)">
                 <button onclick="crearCarpeta()">📁 Crear Carpeta</button>
             </div>
             
