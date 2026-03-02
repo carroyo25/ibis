@@ -24,6 +24,12 @@ var fecha = /^([0-9]{4}\-[0-9]{2}\-[0-9]{2})$/;
 var ruc = /^[0-9]{11}$/;
 var url = encodeURI('http://192.168.1.30/postulante/documentos/pdf/62a4da4d7a120.pdf');
 
+// La forma más segura - usar window directamente
+var directorioRaiz = null;
+var archivosHandle = new Map();
+var permisoSolicitado = false;
+
+
 $.strPad = function(i,l,s) {
     var o = i.toString();
     if (!s) { s = '0'; }

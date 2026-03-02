@@ -2624,8 +2624,7 @@ thead .sticky-column {
   border: 1px solid #E0E0E0;
   padding: 1rem;
   overflow: auto;
-  max-height: 55vh;
-  height: 55vh;
+  height: 32vh;
 }
 .ventanaCarpetas ul li {
   border: 1px solid #fff;
@@ -2671,6 +2670,31 @@ thead .sticky-column {
 .ventanaCarpetas .searchContainer input {
   outline: none;
   width: 100%;
+}
+
+.ventanaCarpetas {
+  .container {
+      border: 1px solid #c2c2c2;
+      padding: .5rem;
+      line-height: 1.5rem;
+      margin-bottom: 20px;
+
+      .msj_importante{
+        color: red;
+        font-size: .8rem;
+      }
+
+      button{
+        padding: .5rem;
+        width: 200px;
+        border-radius: 8px;
+        border: 2px solid transparent;
+
+        &:hover {
+          border: 2px solid #000;
+        }
+      }
+  } 
 }
 
 .ventanaPrecios {
