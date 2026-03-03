@@ -29,5 +29,9 @@
         function asignados(){
             echo json_encode($this->model->buscarAsignados($_POST));
         }
+
+        function registro(){
+            echo json_encode($this->model->registrarActivos($_POST));
+        }
     }
 ?>

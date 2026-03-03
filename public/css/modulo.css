@@ -4427,10 +4427,11 @@ thead .sticky-column {
 
 /********VENTANA ACTIVOS*******************/
 .ventanaActivos{
-  width: 70%;
   padding: 1rem;
   display: flex;
   flex-direction: column;
+  width: auto;
+  gap: 1rem;
 
   label {
     font-weight: bold;
@@ -4448,61 +4449,23 @@ thead .sticky-column {
     border-radius: 8px;
   }
 
-  .contenedor {
-      display: inherit;
-      flex-direction: inherit;
-      row-gap: 1rem;
-      border: 1px solid #aeaeae;
-      padding: 0.5rem;
+  fieldset{
+    padding: 1rem;
+    border: 1px solid #c2c2c2;
 
-      .cabecera_activo{
-        display: flex;
-        flex-direction: column;
-        margin-bottom: 1rem;
-        row-gap: 1rem;
+    legend{
+      background: #009933;
+      color: #fff;
+      padding: .5rem;
+      border-radius: 10px;
+    }
 
-        .container_flex{
-          display: flex;
-          flex-direction: column;
-          row-gap: 1rem;
-        }
-
-        .container_grid{
-          width: 100%;
-          display: grid;
-          grid-template-columns: max-content 1fr max-content 1fr;
-          gap: 1rem;
-          align-items: center;
-        }
-      }
-
-      .opciones_dialogo{
-          height: 2rem;
-          display: flex;
-          gap: 1rem;
-          justify-content: flex-end;
-          
-          button{
-            padding: 0 1rem;
-            width: 15%;
-            border-radius: 8px;
-            border: 2px solid transparent;
-            transition: border .5s ease;
-
-            &:hover{
-              border: 2px solid #000;
-            }
-          }
-      }
-
-      .tabla_activos{
-        height: 200px;
-        max-height: 40%;
-        overflow: auto;
-      }
+    .container_flex_column{
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
   }
-
-  
 }
 
 /******** FIN DE VENTANA ACTIVOS **********/

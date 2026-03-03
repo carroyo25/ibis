@@ -535,6 +535,7 @@ async function crearCarpeta() {
         async function procesarArchivoIndividual(archivo, carpetaOrden) {
             const nombreUrl = archivo.creferencia;
             const nombreGuardar = archivo.documento;
+            const rutaDocumento = archivo.cmodulo;
             
             if (!nombreUrl) {
                 return { success: false, error: "Sin creferencia" };
@@ -557,7 +558,12 @@ async function crearCarpeta() {
             const nombreValido = (nombreBase || 'archivo') + extensionOriginal;
 
             // Construir URL
-            const url = "http://localhost/ibis/public/documentos/ordenes/adjuntos/" + encodeURIComponent(nombreUrl);
+            if (rutaDocumento == "ORD"){
+              const url = "http://localhost/ibis/public/documentos/ordenes/adjuntos/" + encodeURIComponent(nombreUrl);
+            }else{
+              const url = "http://localhost/ibis/ibis/public/documentos/almacen/adjuntos/" + encodeURIComponent(nombreUrl);
+            }
+            
 
             // Verificar si ya existe
             try {

@@ -180,57 +180,39 @@
     <div class="modal" id="dialogo_registro">
         <div class="ventanaActivos">
             <h3>Registrar Activos/Equipos</h3>
-            <div class="contenedor">
+            <form id="activos_form">
                 <input type="hidden" name="interno" id="interno">
                 <input type="hidden" name="unidad" id="unidad">
-                <div class="cabecera_activo">
-                    <div class="container_flex">
+
+                <fieldset class="container">
+                    <legend>  Datos Generales  </legend>
+                    <div class="container_flex_column">
                         <label for="centro_costos">Centro de Costos</label>
                         <select name="centro_costos" id="centro_costos" placeholder="Seleccione un centro de costos">
                              <?php echo $this->listaCostosSelect ?>
                         </select>
-                    </div>
-                    <div class="container_grid">
                         <label for="codigoSearch">Codigo</label>
                         <input type="text" name="codigoSearch" id="codigoSearch" placeholder="Ingrese codigo" value="B030100060025">
                         <label for="descripSearch">Descripcion</label>
                         <input type="text" name="descripSearch" id="descripSearch" readonly>
                     </div>
-                </div>
-                <div class="opciones_dialogo">
-                    <button type="button" id="btnAddItem"><i class="fas fa-tasks"></i> Agregar Item</button>
-                    <button type="button" id="btnSearchReg"><i class="fas fa-sort-amount-down"></i> Buscar Ingresos</button>
-                    <button type="button" id="btnSearchInv"><i class="fas fa-stream"></i> Buscar Inventario</button>
-                </div>
-                <div class="tabla_activos">
-                    <table id="tabla_detalles_activos" class="tabla">
-                        <thead class="stickytop">
-                            <tr>
-                                <th>Codigo</th>
-                                <th>Descripcion</th>
-                                <th width="3%">Und.</th>
-                                <th>Cant.</th>
-                                <th width="3%">Registro/Inventario</th>
-                                <th>Estado</th>
-                                <th width="8%">Serie</th>
-                                <th>Asignado</th>
-                                <th width="3%">Ubicacion</th>
-                                <th>Fecha Calibracion</th>
-                                <th>Vencimiento</th>
-                                <th>Observaciones</th>
-                                <th>...</th>
-                            </tr>
-                        </thead>
-                        <tbody id="table_body">
+                </fieldset>
 
-                        </tbody>
-                    </table>
-                </div>
+                <fieldset>
+                    <legend>Datos de Registro</legend>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Ubicacion</legend>
+                    <div class="container_flex_row">
+
+                    </div>
+                </fieldset>
                 <div class="opciones_dialogo botones_derecha">
                     <button type="button" id="btnGrabarDialogoActivos"><i class="fas fa-save"></i> Grabar</button>
                     <button type="button" id="btnCancelarDialogoKardex"><i class="fas fa-window-close"></i> Cancelar</button>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
     <div class="modal" id="registros">
@@ -243,7 +225,7 @@
             </div>
             <div class="textoBusqueda">
                 <input type="text" name="txtBuscar" id="txtBuscar" placeholder="Buscar" class="w90por">
-                <button type="button" class="boton3" id="btnAceptItems">Aceptar</button>
+                <button type="button" class="boton3 closeModal" id="btnAceptItems">Aceptar</button>
             </div>
             <div class="tablaBusqueda">
                 <table class="tablaWrap" id="ingresos">
@@ -272,7 +254,7 @@
             </div>
             <div class="textoBusqueda">
                 <input type="text" name="txtBuscar" id="txtBuscar" placeholder="Buscar" class="w90por">
-                <button type="button" class="boton3" id="btnAceptItems">Aceptar</button>
+                <button type="button" class="boton3 closeModal" id="btnAceptItems">Aceptar</button>
             </div>
             <div class="tablaBusqueda">
                 <table class="tablaWrap" id="ingresos">
