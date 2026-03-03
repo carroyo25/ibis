@@ -390,7 +390,7 @@
         }
 
         private function adjuntosOrden($orden) {
-            $docData = array();
+            $docData = [];
 
             try{
                 $sql = $this->db->connect()->prepare("SELECT
@@ -433,7 +433,7 @@
         }
 
         private function adjuntosIngreso($ingreso) {
-            $docData = array();
+            $docData = [];
 
             try{
 

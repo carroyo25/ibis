@@ -20,7 +20,7 @@
             </div>
             <div class="container">
                 <h5>🔔 Seleccionar Carpeta</h5>
-                <p class="msj_importante">* Primero, selecciona una carpeta con la que quieras trabajar:</p>
+                <p class="msj_importante">** Primero, selecciona una carpeta con la que quieras trabajar:</p>
                 <button onclick="seleccionarCarpeta()" class="secondary">📂 Seleccionar Carpeta</button>
                 <div id="ruta-carpeta" class="status">Ninguna carpeta seleccionada</div>
                 
