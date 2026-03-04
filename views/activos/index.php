@@ -181,8 +181,8 @@
         <div class="ventanaActivos">
             <h3>Registrar Activos/Equipos</h3>
             <form id="activos_form">
-                <input type="hidden" name="interno" id="interno">
-                <input type="hidden" name="unidad" id="unidad">
+                <input type="hidden" name="codigo_interno" id="codigo_interno">
+                <input type="hidden" name="codigo_unidad" id="codigo_unidad">
 
                 <fieldset class="container">
                     <legend>  Datos Generales  </legend>
@@ -191,26 +191,143 @@
                         <select name="centro_costos" id="centro_costos" placeholder="Seleccione un centro de costos">
                              <?php echo $this->listaCostosSelect ?>
                         </select>
-                        <label for="codigoSearch">Codigo</label>
-                        <input type="text" name="codigoSearch" id="codigoSearch" placeholder="Ingrese codigo" value="B030100060025">
-                        <label for="descripSearch">Descripcion</label>
-                        <input type="text" name="descripSearch" id="descripSearch" readonly>
+                        <div class="item_information">
+                            <label for="codigoSearch">Codigo</label>
+                            <input type="text" name="codigoSearch" id="codigoSearch" placeholder="Ingrese codigo" value="B030600020003">
+                            <label for="descripSearch">Descripcion</label>
+                            <input type="text" name="descripSearch" id="descripSearch" readonly>
+                        </div>
                     </div>
                 </fieldset>
 
                 <fieldset>
                     <legend>Datos de Registro</legend>
-                </fieldset>
-
-                <fieldset>
-                    <legend>Ubicacion</legend>
-                    <div class="container_flex_row">
-
+                    <div class="container_grid">
+                        <div class="form_group">
+                            <label for="unidad">Unidad:</label>
+                            <input type="text" name="unidad" id="unidad" readonly >
+                        </div>
+                        <div class="form_group">
+                            <label for="cantidad">Cantidad:</label>
+                            <input type="text" name="cantidad" id="cantidad" readonly value ="1">
+                        </div>
+                        <div class="form_group">
+                            <label for="serie">Serie:</label>
+                            <input type="text" name="serie" id="serie">
+                        </div>
+                        <div class="form_group">
+                            <label for="marca">Marca:</label>
+                            <input type="text" name="marca" id="marca">
+                        </div>
+                        <div class="form_group">
+                            <label for="modelo">Modelo:</label>
+                            <input type="text" name="modelo" id="modelo">
+                        </div>
                     </div>
                 </fieldset>
+                <fieldset>
+                    <legend>Asignación</legend>
+                    <div class="container_grid">
+                        <div class="form_group">
+                            <label for="dni">DNI:</label>
+                            <input type="text" name="dni" id="dni" readonly >
+                        </div>
+                        <div class="form_group">
+                            <label for="nombres">Nombres:</label>
+                            <input type="text" name="nombres" id="nombres" readonly >
+                        </div>
+                        <div class="form_group">
+                            <label for="cargo">Cargo:</label>
+                            <input type="text" name="cargo" id="cargo" readonly >
+                        </div>
+                        <div class="form_group">
+                            <label for="area">area:</label>
+                            <input type="text" name="area" id="area" readonly >
+                        </div>
+                        <div class="form_group">
+                            <label for="fecha_asigna">Fecha Asignacion:</label>
+                            <input type="date" name="fecha_asigna" id="fecha_asigna" readonly >
+                        </div>
+                    </div> 
+                </fieldset>
+                 <fieldset>
+                    <legend>Calibracion</legend>
+                    <div class="container_grid">
+                        <div class="form_group">
+                            <label for="frecuencia">Frecuencia:</label>
+                            <select name="frecuencia" id="frecuencia">
+                                <option value="365">Anual</option>
+                                <option value="180">Semestral</option>
+                            </select>
+                        </div>
+                        <div class="form_group">
+                            <label for="fecha_calibra">Fecha Calibracion:</label>
+                            <input type="date" name="vence_calibra" id="vence_calibra">
+                        </div>
+                        <div class="form_group">
+                            <label for="vence_calibra">Vmto. Calibracion:</label>
+                            <input type="date" name="vence_calibra" id="vence_calibra">
+                        </div>
+                        <div class="form_group">
+                            <label for="estado_actual">Estado Actual:</label>
+                            <input type="text" name="estado_actual" id="estado_actual" readonly >
+                        </div>
+                        <div class="form_group">
+                            <label for="observa_estado">Observaciones:</label>
+                            <input type="text" name="observa_estado" id="observa_estado" readonly >
+                        </div>
+                    </div>
+                </fieldset>
+                 <fieldset>
+                    <legend>Envio/Recepción</legend>
+                     <div class="container_grid">
+                        <div class="form_group">
+                            <label for="guia_envio">Guia Envio:</label>
+                            <input type="text" name="guia_envio" id="guia_envio">
+                        </div>
+                        <div class="form_group">
+                            <label for="fecha_envio">Fecha Envio:</label>
+                            <input type="date" name="fecha_envio" id="fecha_envio">
+                        </div>
+                        <div class="form_group">
+                            <label for="guia_recepcion">Guia Recepción:</label>
+                            <input type="text" name="guia_recepcion" id="guia_recepcion">
+                        </div>
+                        <div class="form_group">
+                            <label for="fecha_recepcion">Fecha Recepción:</label>
+                            <input type="date" name="fecha_recepcion" id="fecha_recepcion">
+                        </div>
+                        <div class="form_group">
+                            <label for="ubicacion">Ubicación Actual:</label>
+                            <input type="text" name="ubicacion" id="ubicacion">
+                        </div>
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <legend>Ubicacion</legend>
+                    <div class="container_grid">
+                        <div class="form_group">
+                            <label for="contenedor">Contenedor:</label>
+                            <input type="text" name="contenedor" id="contenedor">
+                        </div>
+                        <div class="form_group">
+                            <label for="estante">Estante:</label>
+                            <input type="text" name="estante" id="estante">
+                        </div>
+                        <div class="form_group">
+                            <label for="letra">Letra :</label>
+                            <input type="text" name="letra" id="letra">
+                        </div>
+                        <div class="form_group">
+                            <label for="columna">Columna:</label>
+                            <input type="text" name="columna" id="columna">
+                        </div>
+                    </div>
+                </fieldset>
+
                 <div class="opciones_dialogo botones_derecha">
                     <button type="button" id="btnGrabarDialogoActivos"><i class="fas fa-save"></i> Grabar</button>
-                    <button type="button" id="btnCancelarDialogoKardex"><i class="fas fa-window-close"></i> Cancelar</button>
+                    <button type="button" id="btnCancelarDialogoActivos"><i class="fas fa-window-close"></i> Cancelar</button>
                 </div>
             </form>
         </div>

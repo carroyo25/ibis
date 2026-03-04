@@ -19,7 +19,8 @@
                 $sql = $this->db->connect()->prepare("SELECT p.ccodprod,
                                                              p.id_cprod,
                                                              UPPER(p.cdesprod) descripcion,
-                                                             u.cabrevia
+                                                             u.cabrevia,
+                                                             u.ncodmed
                                                         FROM cm_producto p
                                                         INNER JOIN tb_unimed u ON u.ncodmed = p.nund
                                                         WHERE p.ccodprod = :codigo");
@@ -126,6 +127,7 @@
                 $docData = [];
                 $datos = "";
                 $serie  = $parametros['serie'];
+                $codigo = $parametros['codigo'];
                 $costos = $parametros['costos'];
 
                 $ubicacion = "ALM";
@@ -140,10 +142,11 @@
                                                         WHERE
                                                             c.cserie = :serie
                                                             AND c.ncostos = :costos 
+                                                            AND c.idprod = :codigo
                                                             AND ISNULL(	c.cantdevolucion)");
                 
 
-                $sql->execute(["serie"=>$serie,"costos"=>$costos]);
+                $sql->execute(["serie"=>$serie,"costos"=>$costos,"codigo"=>$codigo]);
 
                 while($row = $sql->fetch(PDO::FETCH_ASSOC)){
                     $docData[] = $row;

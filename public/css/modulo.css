@@ -4437,33 +4437,73 @@ thead .sticky-column {
     font-weight: bold;
   }
 
+  .item_information{
+    display: grid;
+    grid-template-columns: repeat(3, max-content) 1fr;
+    gap: 10px;
+    align-items: center;
+  }
+
   select{
-    height: 2.5rem;
-    border: 1px dotted #c2c2c2;
+    height: 2rem;
+    border: 1px dotted #a2a2a2;
     border-radius: 8px;
   }
 
   input{
-    height: 2.5rem;
-    border: 1px dotted #c2c2c2;
+    height: 2rem;
+    border: 1px dotted #a2a2a2;
     border-radius: 8px;
   }
 
   fieldset{
-    padding: 1rem;
-    border: 1px solid #c2c2c2;
+    padding: .5rem;
+    border: 1px solid #a2a2a2;
+    margin-top: 5px;
+    border-radius: 8px;
+    
 
     legend{
-      background: #009933;
+      background: linear-gradient(210deg, #7BABC1,#2B7899);
       color: #fff;
       padding: .5rem;
-      border-radius: 10px;
+      border-radius: 4px;
+      width: 150px;
+      font-size: 0.8em;
     }
 
     .container_flex_column{
       display: flex;
       flex-direction: column;
       gap: 5px;
+    }
+
+    .container_grid{
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 5px;
+
+        .form_group{
+          display: flex;
+          flex-direction: column;
+        }
+    }
+  }
+
+  .opciones_dialogo{
+    display: flex;
+    justify-content: end;
+    gap: 1rem;
+    margin-top: 10px;
+
+    button{
+      padding: .5rem;
+      border: 4px solid transparent;
+      transition: all .5s;
+
+      &:hover{
+        border: 4px solid #000;
+      }
     }
   }
 }
