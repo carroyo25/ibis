@@ -136,7 +136,8 @@
                 $asignado = false;
 
                 $sql = $this->db->connect()->prepare("SELECT
-                                                            c.nrodoc 
+                                                            c.nrodoc,
+                                                            c.fechasalida
                                                         FROM
                                                             alm_consumo c 
                                                         WHERE
@@ -152,18 +153,24 @@
                     $docData[] = $row;
                 }
 
-                //return array($docData[0]['nrodoc']);
-                if (count($docData) > 0 ){
+                if ( count($docData) > 0 ){
                     $url = "http://179.49.67.42/api/activesapi.php?documento=".$docData[0]['nrodoc'];
                     $api = file_get_contents($url);
 
-                    $datos =  json_decode($api);
-                    $ubicacion = "";
-                    $documento = $docData[0]['nrodoc'];
-                    $asignado = true;
+                    $datos      =  json_decode($api,true);
+
+                    $ubicacion  = "";
+                    $documento  = $docData[0]['nrodoc'];
+                    $cargo      = $datos['cargo'] ?? null;
+                    $salida     = $docData[0]['fechasalida'] ?? null;
+                    $asignado   = true;
+
+                    return array("datos"=>$datos,"ubicacion"=>$ubicacion,"documento"=>$documento,"asignado"=>$asignado,"salida"=>$salida);
+                }else{
+                    return array("asignado"=>$asignado);
                 }
 
-                return array("datos"=>$datos,"ubicacion"=>$ubicacion,"documento"=>$documento,"asignado"=>$asignado);
+               
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
@@ -172,71 +179,11 @@
 
         public function registrarActivos($items) {
             try {
-                // Si está vacío, verificar si hay datos en php://input
-                if (empty($items)) {
-                    $input = file_get_contents('php://input');
-                    if (!empty($input)) {
-                        $items = json_decode($input, true);
-                    }
-                }
-                
-                // Verificar si llegaron datos
-                if (empty($items)) {
-                    throw new Exception('No se recibieron datos');
-                }
-                
-                // Si $items tiene clave 'items', extraer
-                if (isset($items['items'])) {
-                    if (is_string($items['items'])) {
-                        $items = json_decode($items['items'], true);
-                    } else {
-                        $items = $items['items'];
-                    }
-                }
-                
-                $insertados = 0;
-                $actualizados = 0;
-                
-                foreach ($items as $item) {
-                    if ( $item['id'] == '-' && $item['grabado'] == 1 ) {
-                         
-                         $sql = $this->db->connect()->prepare("INSERT INTO alm_activos 
-                                                             SET alm_activos.idprod =:codigo,
-                                                                alm_activos.ncant =:cantidad,
-                                                                alm_activos.nreg =:registro,
-                                                                alm_activos.cestado=:estado,
-                                                                alm_activos.cserie=:serie,
-                                                                alm_activos.cubicacion=:ubicacion,
-                                                                alm_activos.ffcalibra=:calibra,
-                                                                alm_activos.ffvence=:vence,
-                                                                alm_activos.fobservaciones=:observaciones");
-                        
-                        $sql->execute(['codigo'=>$item['idprod'],
-                                    'cantidad'=>$item['cant'],
-                                    'registro'=>$item['registro'],
-                                    'estado'=>$item['estado'],
-                                    'serie'=>$item['serie'],
-                                    'ubicacion'=>$item['ubicacion'],
-                                    'calibra'=>$item['calibra'],
-                                    'vence'=>$item['vence'],
-                                    'observaciones'=>$item['observa']]);
-                        
-                        $insertados++;
+                //return array($items['codigo_interno']);
 
-                    }
-                }
-                
-                return [
-                    'success' => true,
-                    'message' => "Procesados: $insertados insertados, $actualizados actualizados",
-                    'data' => $items
-                ];
-                
-            } catch (Exception $e) {
-                return [
-                    'success' => false,
-                    'message' => $e->getMessage()
-                ];
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
             }
         }
              

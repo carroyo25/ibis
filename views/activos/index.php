@@ -183,6 +183,7 @@
             <form id="activos_form">
                 <input type="hidden" name="codigo_interno" id="codigo_interno">
                 <input type="hidden" name="codigo_unidad" id="codigo_unidad">
+                <input type="hidden" name="codigo_usuario" id="codigo_usuario">
 
                 <fieldset class="container">
                     <legend>  Datos Generales  </legend>
@@ -241,12 +242,12 @@
                             <input type="text" name="cargo" id="cargo" readonly >
                         </div>
                         <div class="form_group">
-                            <label for="area">area:</label>
-                            <input type="text" name="area" id="area" readonly >
+                            <label for="area">Area:</label>
+                            <input type="text" name="area" id="area">
                         </div>
                         <div class="form_group">
                             <label for="fecha_asigna">Fecha Asignacion:</label>
-                            <input type="date" name="fecha_asigna" id="fecha_asigna" readonly >
+                            <input type="date" name="fecha_asigna" id="fecha_asigna">
                         </div>
                     </div> 
                 </fieldset>
@@ -256,13 +257,13 @@
                         <div class="form_group">
                             <label for="frecuencia">Frecuencia:</label>
                             <select name="frecuencia" id="frecuencia">
-                                <option value="365">Anual</option>
-                                <option value="180">Semestral</option>
+                                <option value="anual">Anual</option>
+                                <option value="semestral">Semestral</option>
                             </select>
                         </div>
                         <div class="form_group">
                             <label for="fecha_calibra">Fecha Calibracion:</label>
-                            <input type="date" name="vence_calibra" id="vence_calibra">
+                            <input type="date" name="fecha_calibra" id="fecha_calibra">
                         </div>
                         <div class="form_group">
                             <label for="vence_calibra">Vmto. Calibracion:</label>
@@ -326,6 +327,8 @@
                 </fieldset>
 
                 <div class="opciones_dialogo botones_derecha">
+                    <button type="button" id="btQrDialogoActivos"><i class="fas fa-qrcode"></i> Crear QR</button>
+                    <button type="button" id="btnAtachDialogoActivos"><i class="far fa-images"></i> Adjuntar Fotos</button>
                     <button type="button" id="btnGrabarDialogoActivos"><i class="fas fa-save"></i> Grabar</button>
                     <button type="button" id="btnCancelarDialogoActivos"><i class="fas fa-window-close"></i> Cancelar</button>
                 </div>
@@ -396,6 +399,7 @@
         <h1>Control de Activos</h1>
         <div>
             <a href="#" id="nuevoRegistro"><i class="far fa-file"></i><p>Nuevo</p></a>
+            <a href="#" id="importXls"><i class="fas fa-file-import"></i><p>Importar</p></a>
             <a href="#" id="excelFile"><i class="fas fa-file-excel"></i><p>Exportar</p></a>
             <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
         </div>
