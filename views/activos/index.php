@@ -257,8 +257,8 @@
                         <div class="form_group">
                             <label for="frecuencia">Frecuencia:</label>
                             <select name="frecuencia" id="frecuencia">
-                                <option value="anual">Anual</option>
-                                <option value="semestral">Semestral</option>
+                                <option value="303">Anual</option>
+                                <option value="304">Semestral</option>
                             </select>
                         </div>
                         <div class="form_group">
@@ -271,11 +271,11 @@
                         </div>
                         <div class="form_group">
                             <label for="estado_actual">Estado Actual:</label>
-                            <input type="text" name="estado_actual" id="estado_actual" readonly >
+                            <input type="text" name="estado_actual" id="estado_actual">
                         </div>
                         <div class="form_group">
                             <label for="observa_estado">Observaciones:</label>
-                            <input type="text" name="observa_estado" id="observa_estado" readonly >
+                            <input type="text" name="observa_estado" id="observa_estado">
                         </div>
                     </div>
                 </fieldset>
