@@ -335,66 +335,6 @@
             </form>
         </div>
     </div>
-    <div class="modal" id="registros">
-        <div class="ventanaBusqueda w50por">
-            <div class="tituloVentana">
-                <span id="tituloBusqueda">Ingreso de Productos(Registros)</span>
-                <div>
-                    <a href="#" id="closeSearch" class="closeModal"><i class="fas fa-window-close"></i></a>
-                </div>
-            </div>
-            <div class="textoBusqueda">
-                <input type="text" name="txtBuscar" id="txtBuscar" placeholder="Buscar" class="w90por">
-                <button type="button" class="boton3 closeModal" id="btnAceptItems">Aceptar</button>
-            </div>
-            <div class="tablaBusqueda">
-                <table class="tablaWrap" id="ingresos">
-                    <thead>
-                        <tr class="stickytop" >
-                            <th>Nro. Ingreso</th>
-                            <th>Costos/Proyecto</th>
-                            <th>Cantidad</th>
-                            <th>Pedido</th>
-                        </tr>
-                    </thead>
-                    <tbody id="cuerpo_ingresos">
-
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-    <div class="modal" id="inventarios">
-        <div class="ventanaBusqueda w50por">
-            <div class="tituloVentana">
-                <span id="tituloBusqueda">Ingreso de Productos(Inventarios)</span>
-                <div>
-                    <a href="#" id="closeSearch" class="closeModal"><i class="fas fa-window-close"></i></a>
-                </div>
-            </div>
-            <div class="textoBusqueda">
-                <input type="text" name="txtBuscar" id="txtBuscar" placeholder="Buscar" class="w90por">
-                <button type="button" class="boton3 closeModal" id="btnAceptItems">Aceptar</button>
-            </div>
-            <div class="tablaBusqueda">
-                <table class="tablaWrap" id="ingresos">
-                    <thead>
-                        <tr class="stickytop" >
-                            <th>Nro. Inventario</th>
-                            <th>Fecha Inventario</th>
-                            <th>Costos/Proyecto</th>
-                            <th>Cantidad</th>
-                            <th>Serie</th>
-                            <th>Ubicacion</th>
-                        </tr>
-                    </thead>
-                    <tbody id="cuerpo_inventarios">
-
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
     <div class="cabezaModulo">
         <h1>Control de Activos</h1>
         <div>
@@ -431,29 +371,34 @@
         <table id="tablaPrincipal">
             <thead class="stickytop">
                 <tr>
-                    <th rowspan="2">Item</th>
-                    <th rowspan="2">Codigo</th>
-                    <th rowspan="2" width="50%">Descripcion</th>
-                    <th rowspan="2">Unidad</th>
-                    <th rowspan="2">Cantidad<br>Ingreso</th>
-                    <th rowspan="2">Ingreso<br>Inventario</th>
-                    <th rowspan="2">Cantidad<br>Salida</th>
-                    <th rowspan="2">Cantidad<br>Devolucion</th>
-                    <th rowspan="2">Salida Transfer.</th>
-                    <th rowspan="2">Ajuste</th>
-                    
-                    <th rowspan="2">Cantidad<br>Minima</th>
-                    <th rowspan="2">Saldo</th>
-                    <th colspan="9">Condicion</th>
-                </tr>
-                <tr>
-                    <th>1A</th>
-                    <th>1B</th>
-                    <th>2A</th>
-                    <th>2B</th>
-                    <th>3A</th>
-                    <th>3B</th>
-                    <th>3C</th>
+                    <td>ITEM</td>
+                    <td>CODIGO</td>
+                    <td>DESCRiPCION</td>
+                    <td>BIENES</td>
+                    <td>UND</td>
+                    <td>CANT.</td>
+                    <td>SERIE</td>
+                    <td>MARCA</td>
+                    <td>MODELO</td>
+                    <td>FRECUENCIA DE <br>CALIBRACION</td>
+                    <td>FECHA CALIBRACION</td>
+                    <td>VECIMIENTO DE <br>CALIBRACION</td>
+                    <td>ESTADO <br>ACTUAL</td>
+                    <td>OBSERVACIONES</td>
+                    <td>GR. ENVIO</td>
+                    <td>FECHA <br>ENVIO </td>
+                    <td>GR. RECEPCION</td>
+                    <td>FECHA <br> RECEPCION</td>
+                    <td>UBICACION <br>ACTUAL</td>
+                    <td>DNI</td>
+                    <td>NOMBRE</td>
+                    <td>CARGO</td>
+                    <td>AREA</td>
+                    <td>FECHA <br>ASIGNACION</td>
+                    <td>CONTENEDOR</td>
+                    <td>ESTANTE</td>
+                    <td>LETRA</td>
+                    <td>COLUMNA</td>
                 </tr>
             </thead>
             <tbody>

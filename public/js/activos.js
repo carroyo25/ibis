@@ -13,7 +13,7 @@ $(function () {
   const inputItemCode = document.getElementById("codigo_interno");
   const inputCalibra = document.getElementById("fecha_calibra");
   const inputEstado = document.getElementById("estado_actual");
-  const inputUbicacion = document.getElementByI('ubicacion');
+  const inputUbicacion = document.getElementById('ubicacion');
 
   const sltCostos = document.getElementById("centro_costos");
   const sltFrecuencia = document.getElementById("frecuencia");
@@ -26,7 +26,7 @@ $(function () {
     //llama el codigo del usuario que registra
     document.getElementById("codigo_usuario").value = document.getElementById("id_user").value;
 
-    limpiarFormulario(true);
+    //limpiarFormulario(true);
     
     modal_registro.style.display = "block";
 
