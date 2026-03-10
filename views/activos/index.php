@@ -337,11 +337,13 @@
     </div>
     <div class="cabezaModulo">
         <h1>Control de Activos</h1>
+    
         <div>
             <a href="#" id="nuevoRegistro"><i class="far fa-file"></i><p>Nuevo</p></a>
             <a href="#" id="importXls"><i class="fas fa-file-import"></i><p>Importar</p></a>
             <a href="#" id="excelFile"><i class="fas fa-file-excel"></i><p>Exportar</p></a>
             <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
+            <input type="file" id="fileInput" accept=".xlsx, .xls, .csv" style="display:none">
         </div>
     </div>
     <div class="barraTrabajo">
@@ -401,7 +403,7 @@
                     <td>COLUMNA</td>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="cuerpoTablaPrincipal">
                 
             </tbody>
         </table>
@@ -409,5 +411,6 @@
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
     <script src="<?php echo constant('URL');?>public/js/funciones.js?<?php echo constant('VERSION')?>"></script>
     <script src="<?php echo constant('URL');?>public/js/activos.js?<?php echo constant('VERSION')?>"></script>
+    <script src="<?php echo constant('URL');?>public/js/xlsx.mini.min.js"></script>
 </body>
 </html>

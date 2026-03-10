@@ -1,0 +1,10 @@
+.group-header {
+  background: linear-gradient(135deg, #6e8efb, #a777e3);
+  color: white;
+  cursor: pointer;
+  padding: 12px 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background 0.3s;
+}

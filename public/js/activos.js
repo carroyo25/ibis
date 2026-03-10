@@ -7,13 +7,15 @@ $(function () {
   const btnExport = document.getElementById("excelFile");
   const btnCancelDialog = document.getElementById("btnCancelarDialogoActivos");
   const btnSave = document.getElementById("btnGrabarDialogoActivos");
+  const btnImport = document.getElementById("importXls");
 
   const inputSearchCode = document.getElementById("codigoSearch");
   const inputSerie = document.getElementById("serie");
   const inputItemCode = document.getElementById("codigo_interno");
   const inputCalibra = document.getElementById("fecha_calibra");
   const inputEstado = document.getElementById("estado_actual");
-  const inputUbicacion = document.getElementById('ubicacion');
+  const inputUbicacion = document.getElementById("ubicacion");
+  const inputImport = document.getElementById("fileInput");
 
   const sltCostos = document.getElementById("centro_costos");
   const sltFrecuencia = document.getElementById("frecuencia");
@@ -24,10 +26,11 @@ $(function () {
     e.preventDefault();
 
     //llama el codigo del usuario que registra
-    document.getElementById("codigo_usuario").value = document.getElementById("id_user").value;
+    document.getElementById("codigo_usuario").value =
+      document.getElementById("id_user").value;
 
-    //limpiarFormulario(true);
-    
+    limpiarFormulario(true);
+
     modal_registro.style.display = "block";
 
     return false;
@@ -103,9 +106,9 @@ $(function () {
         })
           .then((response) => response.json())
           .then((data) => {
-            if ( data.existe ){
+            if (data.existe) {
               mostrarMensaje("La serie ya se encuentra registrada..");
-              
+
               return false;
             }
             if (data.asignado) {
@@ -164,7 +167,6 @@ $(function () {
     })
       .then((response) => response.json())
       .then((data) => {
-        
         limpiarFormulario(false);
 
         mostrarMensaje(data.mensaje, data.clase);
@@ -175,25 +177,68 @@ $(function () {
     return false;
   });
 
-  inputEstado.addEventListener('change', (e) =>{
+  inputEstado.addEventListener("change", (e) => {
     e.preventDefault();
 
     e.target.style.color = "#000";
-    e.target.style.backgroundColor  = "#fff";
+    e.target.style.backgroundColor = "#fff";
 
     document.getElementById("observa_estado").value = "";
 
     return false;
   });
 
-   inputUbicacion.addEventListener('change', (e) =>{
+  inputUbicacion.addEventListener("change", (e) => {
     e.preventDefault();
 
     e.target.style.color = "#000";
-    e.target.style.backgroundColor  = "#fff";
+    e.target.style.backgroundColor = "#fff";
 
     return false;
-  })
+  });
+
+  btnImport.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    inputImport.click();
+
+    return false;
+  });
+
+  inputImport.addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    mostrarMensaje("📄 Archivo seleccionado:" + file.name, "mensaje_correcto");
+
+    const tableContainer = document.getElementById("tablaPrincipal");
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      try {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: "array" });
+
+        const firstSheet = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[firstSheet];
+
+        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+        if (jsonData.length > 0) {
+          processData(jsonData);
+        } else {
+          tableContainer.innerHTML =
+            '<div class="error-message">El archivo está vacío</div>';
+        }
+      } catch (error) {
+        tableContainer.innerHTML = `<div class="error-message">Error al procesar el archivo: ${error.message}</div>`;
+      }
+    };
+
+    reader.readAsArrayBuffer(file);
+
+    return false;
+  });
 });
 
 // Función para calcular la fecha de vencimiento
@@ -282,13 +327,13 @@ function calcularVencimiento() {
 }
 
 function limpiarFormulario(sw) {
-  if ( sw ) {
+  if (sw) {
     document.getElementById("codigo_interno").value = "";
     document.getElementById("centro_costos").value = "-1";
     document.getElementById("codigoSearch").value = "";
     document.getElementById("descripSearch").value = "";
-  } 
-  
+  }
+
   document.getElementById("unidad").value = "";
   document.getElementById("cantidad").value = "1";
   document.getElementById("serie").value = "";
@@ -315,10 +360,73 @@ function limpiarFormulario(sw) {
   document.getElementById("columna").value = "";
 
   document.getElementById("estado_actual").style.color = "#000";
-  document.getElementById("estado_actual").style.backgroundColor  = "#fff";
+  document.getElementById("estado_actual").style.backgroundColor = "#fff";
 
   document.getElementById("ubicacion").style.color = "#000";
-  document.getElementById("ubicacion").style.backgroundColor  = "#fff";
+  document.getElementById("ubicacion").style.backgroundColor = "#fff";
+}
 
+function processData(data) {
+  let allGroups = [];
 
+  const rows = data
+    .slice(1)
+    .filter((row) => row.some((cell) => cell !== null && cell !== ""));
+
+  // El código SICAL está en el índice 1 (segunda columna)
+  const CODIGO_INDEX = 1;
+
+  // Agrupar por código SICAL
+  const groups = {};
+
+  rows.forEach((row) => {
+    const codigo = row[CODIGO_INDEX] || "SIN CÓDIGO";
+    if (!groups[codigo]) {
+      groups[codigo] = [];
+    }
+    groups[codigo].push(row);
+  });
+
+  // Convertir a array y ordenar
+  allGroups = Object.entries(groups).sort((a, b) => String(a[0]).localeCompare(String(b[0])),);
+
+  // Mostrar grupos
+  displayGroups(allGroups);
+}
+
+function displayGroups(groups){
+  const COLUMNAS = [
+            "ITEM", "CODIGO SICAL", "DESCRIPCION DEL EQUIPO", "TIPO", "UND/MED", 
+            "CANTIDAD", "SERIE", "MARCA", "MODELO", "FRECUENCIA DE CALIBRACION",
+            "FECHA DE CALIBRACION", "VENCIMIENTO DE CALIBRACION", "ESTADO ACTUAL",
+            "OBSERVACIONES", "Gr de envio", "Fecha de envio", "Gr de recepcion",
+            "Fecha de recepcion", "UBICACIÓN ACTUAL", "DNI", "NOMBRES",
+            "CARGO", "AREA", "ASIGNACION","CONTENEDOR", "ESTANTE", "LETRA", "COLUMNA"
+        ];
+
+  const container = document.getElementById('cuerpoTablaPrincipal');
+  let html = '';
+
+  groups.forEach(([codigo, items], groupIndex) => {
+    // La descripción está en el índice 2
+    const descripcion = items[0][2] || 'Sin descripción';
+
+    html += `
+                    <tr class="group-row" id="group-${groupIndex}">
+                        <td colspan="${COLUMNAS.length}">
+                            <div class="group-header" onclick="">
+                                <div class="group-title">
+                                    <span class="expand-icon">▶</span>
+                                    <span class="group-code">${codigo}</span>
+                                    <span class="group-description">${descripcion}</span>
+                                </div>
+                                <span class="group-count">${items.length} equipo${items.length !== 1 ? 's' : ''}</span>
+                            </div>
+                        </td>
+                    </tr>
+                   
+                `;
+    
+    container.innerHTML = html;
+  })
 }
