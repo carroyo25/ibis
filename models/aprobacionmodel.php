@@ -312,9 +312,8 @@
                 $mes  = date("m");
 
                 $tipo   = $parametros['tipoSearch'] == -1 ? "%" : "%".$parametros['tipoSearch']."%";
-                $costos = $parametros['costosSearch'] == -1 ? "" : $parametros['costosSearch'];
-                $mes    = $parametros['mesSearch'] == -1 ? "%".$mes :  $parametros['mesSearch'];
-                
+                $costos = $parametros['costosSearch'] == -1 ? "%" : "%".$parametros['costosSearch']."%";
+                $mes    = $parametros['mesSearch'] == -1 ? "%" :  $parametros['mesSearch'];
                 $anio   = "%".$parametros['anioSearch'];
 
                 $sql = $this->db->connect()->prepare("SELECT
@@ -346,7 +345,7 @@
                                                         AND tb_pedidocab.estadodoc = 53 
                                                         AND tb_costusu.nflgactivo = 1 
                                                         AND ibis.tb_pedidocab.idtipomov LIKE :tipomov 
-                                                        AND ibis.tb_pedidocab.idcostos = :costos 
+                                                        AND ibis.tb_pedidocab.idcostos LIKE :costos 
                                                         AND MONTH ( ibis.tb_pedidocab.emision ) LIKE :mes 
                                                         AND YEAR ( ibis.tb_pedidocab.emision ) LIKE :anio 
                                                     ORDER BY
