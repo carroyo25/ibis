@@ -37,5 +37,9 @@
         function registrosXls(){
             echo json_encode($this->model->registrarDeArchivo($_POST));
         }
+
+        function consultaEquipos(){
+            echo json_encode($this->model->consultarEquipos($_POST));
+        }
     }
 ?>

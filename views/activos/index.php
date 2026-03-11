@@ -271,7 +271,13 @@
                         </div>
                         <div class="form_group">
                             <label for="estado_actual">Estado Actual:</label>
-                            <input type="text" name="estado_actual" id="estado_actual">
+                            <select name="estado_actual" id="estado_actual">
+                                <option value="306">CALIBRADO</option>
+                                <option value="307">VENCIDO</option>
+                                <option value="308">POR CALIBRAR</option>
+                                <option value="309">OPERATIVO</option>
+                                <option value="310">OTROS</option>
+                            </select>
                         </div>
                         <div class="form_group">
                             <label for="observa_estado">Observaciones:</label>

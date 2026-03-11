@@ -13,6 +13,7 @@ $(function () {
   const btnImport = document.getElementById("importXls");
   const btnAcceptLoad = document.getElementById("btnAceptarCargar");
   const btnCancelLoad = document.getElementById("btnCancelarCargar");
+  const btnConsult = document.getElementById("btnConsulta");
 
   const inputSearchCode = document.getElementById("codigoSearch");
   const inputSerie = document.getElementById("serie");
@@ -25,6 +26,7 @@ $(function () {
   const sltCostos = document.getElementById("centro_costos");
   const sltCostosLoad = document.getElementById("loadProyect");
   const sltFrecuencia = document.getElementById("frecuencia");
+  const sltCostosSearch = document.getElementById("costosSearch");
 
   const fmrActivos = document.getElementById("activos_form");
 
@@ -34,8 +36,7 @@ $(function () {
     e.preventDefault();
 
     //llama el codigo del usuario que registra
-    document.getElementById("codigo_usuario").value =
-      document.getElementById("id_user").value;
+    document.getElementById("codigo_usuario").value = document.getElementById("id_user").value;
 
     limpiarFormulario(true);
 
@@ -263,15 +264,17 @@ $(function () {
         let formData = new FormData();
         formData.append('proyecto',sltCostosLoad.value);
         formData.append('filas',JSON.stringify(allrows));
+        formData.append('registra',document.getElementById("codigo_usuario").value);
 
-        
+        $("#esperar").css({ display: "block", opacity: "1" });
+
         fetch(RUTA+'activos/registrosXls',{
             method:'POST',
             body:formData,
         })
         .then(response => response.json())
         .then(data => {
-          console.log(data);
+          $("#esperar").css({ display: "none", opacity: "0" });
         })
         .catch(error => {
           mostrarMensaje(error.message,'mensaje_error');
@@ -287,6 +290,61 @@ $(function () {
     e.preventDefault();
 
     modal_carga.style.display = "none";
+
+    return false;
+  })
+
+  btnConsult.addEventListener('click',(e)=>{
+    e.preventDefault();
+
+    let formData = new FormData();
+    let item = 1;
+
+    formData.append("costos",sltCostosSearch.value);
+
+    fetch(RUTA+'activos/consultaEquipos',{
+      method:'POST',
+      body:formData
+    })
+    .then(response => response.json())
+    .then(data=>{
+      data.datos.forEach(e => {
+        const tr = document.createElement('tr');
+
+        tr.innerHTML = `<td>${item++}</td>
+                        <td>${e.ccodprod}</td>
+                        <td>${e.descripcion}</td>
+                        <td>B</td>
+                        <td>${e.cabrevia}</td>
+                        <td>1</td>
+                        <td>${e.cserie}</td>
+                        <td>${e.cmodelo}</td>
+                        <td>${e.cmarca}</td>
+                        <td>${e.nfrecuencia}</td>
+                        <td>${e.ffcalibra}</td>
+                        <td>${e.ffvence}</td>
+                        <td>${e.cestado}</td>
+                        <td>${e.cobservaciones}</td>
+                        <td>${e.cgrenvio || ''}</td>
+                        <td>${e.ffenvio || ''}</td>
+                        <td>${e.cgrrecepcion || ''}</td>
+                        <td>${e.ffrecepcion || ''}</td>
+                        <td>${e.cubica}</td>
+                        <td>${e.casigna || ''}</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>${e.carea || ''}</td>
+                        <td>-</td>
+                        <td>${e.ccontenedor}</td>
+                        <td>${e.cestante}</td>
+                        <td>${e.cletra}</td>
+                        <td>${e.ccolumna}</td>`
+
+
+                        
+        document.getElementById("cuerpoTablaPrincipal").appendChild(tr);
+      });
+    })
 
     return false;
   })
