@@ -335,37 +335,57 @@
             </form>
         </div>
     </div>
+    <div class="modal" id="cargarArchivo">
+        <div class="ventanaPregunta">
+            <h3>Importar Equipos</h3>
+            <label for="loadProyect">Centro de Costos :</label>
+            <select name="loadProyect" id="loadProyect">
+                <?php echo $this->listaCostosSelect ?>
+            </select>
+            <div class="upload-section">
+                <div class="file-input-wrapper">
+                    <input type="file" id="fileInput" accept=".xlsx, .xls, .csv">
+                    <div class="file-input-label">
+                        <a href="#" id="lnkLoad"><i>📁</i> Seleccionar archivo Excel </a>
+                    </div>
+                </div>
+                <div class="file-name" id="fileName">Ningún archivo seleccionado</div>
+            </div>
+            <div class="opciones">
+                <button type="button" id="btnAceptarCargar" class="boton4">Aceptar</button>
+                <button type="button" id="btnCancelarCargar" class="boton4">Cancelar</button>
+            </div>
+        </div>
+    </div>
     <div class="cabezaModulo">
         <h1>Control de Activos</h1>
-    
         <div>
             <a href="#" id="nuevoRegistro"><i class="far fa-file"></i><p>Nuevo</p></a>
             <a href="#" id="importXls"><i class="fas fa-file-import"></i><p>Importar</p></a>
             <a href="#" id="excelFile"><i class="fas fa-file-excel"></i><p>Exportar</p></a>
             <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
-            <input type="file" id="fileInput" accept=".xlsx, .xls, .csv" style="display:none">
         </div>
     </div>
     <div class="barraTrabajo">
         <form action="#" id="formConsulta">
             <div class="variasConsultas4campos">
-                    <div>
-                        <label for="costosSearch">Centro Costos: </label>
-                        <select name="costosSearch" id="costosSearch">
-                            <?php echo $this->listaCostosSelect ?>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="codigoBusqueda">Codigo : </label>
-                        <input type="text" name="codigoBusqueda" id="codigoBusqueda">
-                    </div>
-                    <div>
-                        <label for="descripcionSearch">Descripcion: </label>
-                        <input type="text" name="descripcionSearch" id="descripcionSearch">
-                    </div>
-                    <div>
-                    </div>
-                    <button type="button" id="btnConsulta" class="boton3">Consultar</button> 
+                <div>
+                    <label for="costosSearch">Centro Costos: </label>
+                    <select name="costosSearch" id="costosSearch">
+                        <?php echo $this->listaCostosSelect ?>
+                    </select>
+                </div>
+                <div>
+                    <label for="codigoBusqueda">Codigo : </label>
+                    <input type="text" name="codigoBusqueda" id="codigoBusqueda">
+                </div>
+                <div>
+                    <label for="descripcionSearch">Descripcion: </label>
+                    <input type="text" name="descripcionSearch" id="descripcionSearch">
+                </div>
+                <div>
+                </div>
+                <button type="button" id="btnConsulta" class="boton3">Consultar</button> 
             </div>
         </form>
     </div>

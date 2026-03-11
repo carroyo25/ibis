@@ -33,5 +33,9 @@
         function registro(){
             echo json_encode($this->model->registrarActivos($_POST));
         }
+
+        function registrosXls(){
+            echo json_encode($this->model->registrarDeArchivo($_POST));
+        }
     }
 ?>

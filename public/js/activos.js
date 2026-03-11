@@ -1,13 +1,18 @@
 $(function () {
+  let allrows = [];
+
   $("#esperar").css({ display: "none", opacity: "0" });
 
   const modal_registro = document.getElementById("dialogo_registro");
+  const modal_carga = document.getElementById("cargarArchivo");
 
   const btnRegister = document.getElementById("nuevoRegistro");
   const btnExport = document.getElementById("excelFile");
   const btnCancelDialog = document.getElementById("btnCancelarDialogoActivos");
   const btnSave = document.getElementById("btnGrabarDialogoActivos");
   const btnImport = document.getElementById("importXls");
+  const btnAcceptLoad = document.getElementById("btnAceptarCargar");
+  const btnCancelLoad = document.getElementById("btnCancelarCargar");
 
   const inputSearchCode = document.getElementById("codigoSearch");
   const inputSerie = document.getElementById("serie");
@@ -18,9 +23,12 @@ $(function () {
   const inputImport = document.getElementById("fileInput");
 
   const sltCostos = document.getElementById("centro_costos");
+  const sltCostosLoad = document.getElementById("loadProyect");
   const sltFrecuencia = document.getElementById("frecuencia");
 
   const fmrActivos = document.getElementById("activos_form");
+
+  const lnkLoad = document.getElementById("lnkLoad");
 
   btnRegister.addEventListener("click", (e) => {
     e.preventDefault();
@@ -200,7 +208,7 @@ $(function () {
   btnImport.addEventListener("click", (e) => {
     e.preventDefault();
 
-    inputImport.click();
+    modal_carga.style.display = "block";
 
     return false;
   });
@@ -209,7 +217,8 @@ $(function () {
     const file = e.target.files[0];
     if (!file) return;
 
-    mostrarMensaje("📄 Archivo seleccionado:" + file.name, "mensaje_correcto");
+    document.getElementById("fileName").textContent =
+      `📄 Archivo seleccionado: ${file.name}`;
 
     const tableContainer = document.getElementById("tablaPrincipal");
 
@@ -225,7 +234,7 @@ $(function () {
         const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
         if (jsonData.length > 0) {
-          processData(jsonData);
+          allrows = jsonData.slice(1).filter((row) => row.some((cell) => cell !== null && cell !== ""));
         } else {
           tableContainer.innerHTML =
             '<div class="error-message">El archivo está vacío</div>';
@@ -239,6 +248,48 @@ $(function () {
 
     return false;
   });
+
+  lnkLoad.addEventListener("click", (e) => {
+    inputImport.click();
+  });
+
+  btnAcceptLoad.addEventListener("click",(e) => {
+    e.preventDefault();
+
+    try {
+        if (allrows.length === 0 ) throw new Error('No hay datos para guardar');
+        if (sltCostosLoad.value === '-1' ) throw new Error('Seleccione un centro de costos');
+
+        let formData = new FormData();
+        formData.append('proyecto',sltCostosLoad.value);
+        formData.append('filas',JSON.stringify(allrows));
+
+        
+        fetch(RUTA+'activos/registrosXls',{
+            method:'POST',
+            body:formData,
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log(data);
+        })
+        .catch(error => {
+          mostrarMensaje(error.message,'mensaje_error');
+        })  
+    } catch (error) {
+      mostrarMensaje(error.message,'mensaje_error');
+    }
+
+    return false;
+  })
+
+  btnCancelLoad.addEventListener("click",(e)=>{
+    e.preventDefault();
+
+    modal_carga.style.display = "none";
+
+    return false;
+  })
 });
 
 // Función para calcular la fecha de vencimiento
@@ -366,67 +417,3 @@ function limpiarFormulario(sw) {
   document.getElementById("ubicacion").style.backgroundColor = "#fff";
 }
 
-function processData(data) {
-  let allGroups = [];
-
-  const rows = data
-    .slice(1)
-    .filter((row) => row.some((cell) => cell !== null && cell !== ""));
-
-  // El código SICAL está en el índice 1 (segunda columna)
-  const CODIGO_INDEX = 1;
-
-  // Agrupar por código SICAL
-  const groups = {};
-
-  rows.forEach((row) => {
-    const codigo = row[CODIGO_INDEX] || "SIN CÓDIGO";
-    if (!groups[codigo]) {
-      groups[codigo] = [];
-    }
-    groups[codigo].push(row);
-  });
-
-  // Convertir a array y ordenar
-  allGroups = Object.entries(groups).sort((a, b) => String(a[0]).localeCompare(String(b[0])),);
-
-  // Mostrar grupos
-  displayGroups(allGroups);
-}
-
-function displayGroups(groups){
-  const COLUMNAS = [
-            "ITEM", "CODIGO SICAL", "DESCRIPCION DEL EQUIPO", "TIPO", "UND/MED", 
-            "CANTIDAD", "SERIE", "MARCA", "MODELO", "FRECUENCIA DE CALIBRACION",
-            "FECHA DE CALIBRACION", "VENCIMIENTO DE CALIBRACION", "ESTADO ACTUAL",
-            "OBSERVACIONES", "Gr de envio", "Fecha de envio", "Gr de recepcion",
-            "Fecha de recepcion", "UBICACIÓN ACTUAL", "DNI", "NOMBRES",
-            "CARGO", "AREA", "ASIGNACION","CONTENEDOR", "ESTANTE", "LETRA", "COLUMNA"
-        ];
-
-  const container = document.getElementById('cuerpoTablaPrincipal');
-  let html = '';
-
-  groups.forEach(([codigo, items], groupIndex) => {
-    // La descripción está en el índice 2
-    const descripcion = items[0][2] || 'Sin descripción';
-
-    html += `
-                    <tr class="group-row" id="group-${groupIndex}">
-                        <td colspan="${COLUMNAS.length}">
-                            <div class="group-header" onclick="">
-                                <div class="group-title">
-                                    <span class="expand-icon">▶</span>
-                                    <span class="group-code">${codigo}</span>
-                                    <span class="group-description">${descripcion}</span>
-                                </div>
-                                <span class="group-count">${items.length} equipo${items.length !== 1 ? 's' : ''}</span>
-                            </div>
-                        </td>
-                    </tr>
-                   
-                `;
-    
-    container.innerHTML = html;
-  })
-}

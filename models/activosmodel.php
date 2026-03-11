@@ -1,4 +1,5 @@
 <?php
+    
     class ActivosModel extends Model{
 
         public function __construct()
@@ -190,6 +191,18 @@
 
                 return $docData[0]['existe'];
 
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
+        public function registrarDeArchivo($parametros){
+            try {
+                $proyecto = $parametros['proyecto'];
+                $filas = json_decode($parametros['filas'],true);
+
+                return array("proyecto"=>$proyecto,"filas"=>$filas[0]);
             } catch (PDOException $th) {
                 echo $th->getMessage();
                 return false;
