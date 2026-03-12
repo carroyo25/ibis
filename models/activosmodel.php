@@ -203,9 +203,19 @@
                 $registra = $parametros['registra'];
                 $filas = json_decode($parametros['filas'],true);
 
+                $estados = [
+                    'CALIBRADO' => 306,
+                    'VENCIDO' => 307,
+                    'POR CALIBRAR' => 308,
+                    'OPERATIVO' => 309,
+                    'OTROS' => 310
+                ];
+
+                
                 foreach($filas as $fila){
 
                     $interno = $this->buscarCodigoInterno($fila[1]);
+                    
 
                     $sql = $this->db->connect()->prepare("INSERT INTO alm_activos SET 
                                                     idcostos = :costos,
@@ -234,11 +244,14 @@
 
                     // Validar que $fila tenga suficientes elementos
                     $indices_requeridos = [6,7,8,9,10,11,12,13,14,15,16,17,18,19,22,26,27,28,29];
+
                     foreach ($indices_requeridos as $indice) {
                         if (!isset($fila[$indice])) {
                             $fila[$indice] = null; // o valor por defecto
                         }
                     }
+
+                    $estado  = $estados[$fila[12]] ?? null;
 
                     // Ejecutar con los datos
                     $resultado = $sql->execute([
@@ -247,13 +260,13 @@
                         "registra" => $registra,
                         "cantidad" => 1,  // Movido al principio
                         "asigna" => $fila[19],
-                        "estado" => $fila[12],
+                        "estado" => $estado,
                         "serie" => $fila[6],
                         "modelo" => $fila[8],
                         "marca" => $fila[7],
                         "frecuencia" => $fila[9] == 'ANUAL' ? 303: 304,
-                        "calibra" => $fila[10],
-                        "vence" => $fila[11],
+                        "calibra" => $this->excelDateToMySQL($fila[10]),
+                        "vence" => $this->excelDateToMySQL($fila[11]),
                         "grenvio" => $fila[14],
                         "envio" => $fila[15],
                         "grrecepcion" => $fila[16],
@@ -309,6 +322,7 @@
             
                 // PASO 3: Verificar la consulta completa
                 $sql = $conexion->prepare("SELECT
+                                                a.idreg,
                                                 a.idprod,
                                                 p.ccodprod,
                                                 UPPER(p.cdesprod) as descripcion,
@@ -351,5 +365,18 @@
                 return false;
             }
         }
+
+        private function excelDateToMySQL($excelDate) {
+            if (empty($excelDate) || !is_numeric($excelDate)) {
+                return null;
+            }
+                
+            // Excel cuenta desde 1900-01-01
+            // 25569 es el número de días entre 1900-01-01 y 1970-01-01 (Unix epoch)
+            $unixTimestamp = ($excelDate - 25569) * 86400;
+                
+            return date('Y-m-d', $unixTimestamp);
+        }
+
     }
 ?>

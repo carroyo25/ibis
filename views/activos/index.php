@@ -396,43 +396,24 @@
         </form>
     </div>
     <div class="itemsTabla">
-        <table id="tablaPrincipal">
-            <thead class="stickytop">
-                <tr>
-                    <td>ITEM</td>
-                    <td>CODIGO</td>
-                    <td>DESCRiPCION</td>
-                    <td>BIENES</td>
-                    <td>UND</td>
-                    <td>CANT.</td>
-                    <td>SERIE</td>
-                    <td>MARCA</td>
-                    <td>MODELO</td>
-                    <td>FRECUENCIA DE <br>CALIBRACION</td>
-                    <td>FECHA CALIBRACION</td>
-                    <td>VECIMIENTO DE <br>CALIBRACION</td>
-                    <td>ESTADO <br>ACTUAL</td>
-                    <td>OBSERVACIONES</td>
-                    <td>GR. ENVIO</td>
-                    <td>FECHA <br>ENVIO </td>
-                    <td>GR. RECEPCION</td>
-                    <td>FECHA <br> RECEPCION</td>
-                    <td>UBICACION <br>ACTUAL</td>
-                    <td>DNI</td>
-                    <td>NOMBRE</td>
-                    <td>CARGO</td>
-                    <td>AREA</td>
-                    <td>FECHA <br>ASIGNACION</td>
-                    <td>CONTENEDOR</td>
-                    <td>ESTANTE</td>
-                    <td>LETRA</td>
-                    <td>COLUMNA</td>
-                </tr>
-            </thead>
-            <tbody id="cuerpoTablaPrincipal">
-                
-            </tbody>
-        </table>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Descripción</th>
+                        <th>Total</th>
+                        <th>Estados</th>
+                        <th>Vigentes</th>
+                        <th>Por vencer</th>
+                        <th>Vencidos</th>
+                        <th>Ubicaciones</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
     </div>
     <script src="<?php echo constant('URL');?>public/js/jquery.js"></script>
     <script src="<?php echo constant('URL');?>public/js/funciones.js?<?php echo constant('VERSION')?>"></script>

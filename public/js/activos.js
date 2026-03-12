@@ -36,7 +36,8 @@ $(function () {
     e.preventDefault();
 
     //llama el codigo del usuario que registra
-    document.getElementById("codigo_usuario").value = document.getElementById("id_user").value;
+    document.getElementById("codigo_usuario").value =
+      document.getElementById("id_user").value;
 
     limpiarFormulario(true);
 
@@ -235,7 +236,9 @@ $(function () {
         const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
         if (jsonData.length > 0) {
-          allrows = jsonData.slice(1).filter((row) => row.some((cell) => cell !== null && cell !== ""));
+          allrows = jsonData
+            .slice(1)
+            .filter((row) => row.some((cell) => cell !== null && cell !== ""));
         } else {
           tableContainer.innerHTML =
             '<div class="error-message">El archivo está vacío</div>';
@@ -254,100 +257,89 @@ $(function () {
     inputImport.click();
   });
 
-  btnAcceptLoad.addEventListener("click",(e) => {
+  btnAcceptLoad.addEventListener("click", (e) => {
     e.preventDefault();
 
     try {
-        if (allrows.length === 0 ) throw new Error('No hay datos para guardar');
-        if (sltCostosLoad.value === '-1' ) throw new Error('Seleccione un centro de costos');
+      if (allrows.length === 0) throw new Error("No hay datos para guardar");
+      if (sltCostosLoad.value === "-1")
+        throw new Error("Seleccione un centro de costos");
 
-        let formData = new FormData();
-        formData.append('proyecto',sltCostosLoad.value);
-        formData.append('filas',JSON.stringify(allrows));
-        formData.append('registra',document.getElementById("codigo_usuario").value);
+      let formData = new FormData();
+      formData.append("proyecto", sltCostosLoad.value);
+      formData.append("filas", JSON.stringify(allrows));
+      formData.append(
+        "registra",
+        document.getElementById("codigo_usuario").value,
+      );
 
-        $("#esperar").css({ display: "block", opacity: "1" });
+      $("#esperar").css({ display: "block", opacity: "1" });
 
-        fetch(RUTA+'activos/registrosXls',{
-            method:'POST',
-            body:formData,
-        })
-        .then(response => response.json())
-        .then(data => {
+      fetch(RUTA + "activos/registrosXls", {
+        method: "POST",
+        body: formData,
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          modal_carga.style.display = "block";
           $("#esperar").css({ display: "none", opacity: "0" });
         })
-        .catch(error => {
-          mostrarMensaje(error.message,'mensaje_error');
-        })  
+        .catch((error) => {
+          mostrarMensaje(error.message, "mensaje_error");
+        });
     } catch (error) {
-      mostrarMensaje(error.message,'mensaje_error');
+      mostrarMensaje(error.message, "mensaje_error");
     }
 
     return false;
-  })
+  });
 
-  btnCancelLoad.addEventListener("click",(e)=>{
+  btnCancelLoad.addEventListener("click", (e) => {
     e.preventDefault();
 
     modal_carga.style.display = "none";
 
     return false;
-  })
+  });
 
-  btnConsult.addEventListener('click',(e)=>{
+  btnConsult.addEventListener("click", (e) => {
     e.preventDefault();
 
     let formData = new FormData();
     let item = 1;
 
-    formData.append("costos",sltCostosSearch.value);
+    formData.append("costos", sltCostosSearch.value);
 
-    fetch(RUTA+'activos/consultaEquipos',{
-      method:'POST',
-      body:formData
+    const grupos = {};
+
+    fetch(RUTA + "activos/consultaEquipos", {
+      method: "POST",
+      body: formData,
     })
-    .then(response => response.json())
-    .then(data=>{
-      data.datos.forEach(e => {
-        const tr = document.createElement('tr');
+      .then((response) => response.json())
+      .then((data) => {
+        data.datos.forEach((equipo) => {
+          const codigo = equipo.ccodprod;
 
-        tr.innerHTML = `<td>${item++}</td>
-                        <td>${e.ccodprod}</td>
-                        <td>${e.descripcion}</td>
-                        <td>B</td>
-                        <td>${e.cabrevia}</td>
-                        <td>1</td>
-                        <td>${e.cserie}</td>
-                        <td>${e.cmodelo}</td>
-                        <td>${e.cmarca}</td>
-                        <td>${e.nfrecuencia}</td>
-                        <td>${e.ffcalibra}</td>
-                        <td>${e.ffvence}</td>
-                        <td>${e.cestado}</td>
-                        <td>${e.cobservaciones}</td>
-                        <td>${e.cgrenvio || ''}</td>
-                        <td>${e.ffenvio || ''}</td>
-                        <td>${e.cgrrecepcion || ''}</td>
-                        <td>${e.ffrecepcion || ''}</td>
-                        <td>${e.cubica}</td>
-                        <td>${e.casigna || ''}</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>${e.carea || ''}</td>
-                        <td>-</td>
-                        <td>${e.ccontenedor}</td>
-                        <td>${e.cestante}</td>
-                        <td>${e.cletra}</td>
-                        <td>${e.ccolumna}</td>`
+          if (!grupos[codigo]) {
+            grupos[codigo] = {
+              codigo: codigo,
+              descripcion: equipo.descripcion,
+              idreg:equipo.idreg,
+              equipos: [],
+              ubicaciones: new Set(),
+            };
+          }
 
+          grupos[codigo].equipos.push(equipo);
+          if (equipo.cubica) grupos[codigo].ubicaciones.add(equipo.cubica);
+        });
 
-                        
-        document.getElementById("cuerpoTablaPrincipal").appendChild(tr);
+        renderizarTabla(grupos);
       });
-    })
 
     return false;
-  })
+  });
 });
 
 // Función para calcular la fecha de vencimiento
@@ -475,3 +467,224 @@ function limpiarFormulario(sw) {
   document.getElementById("ubicacion").style.backgroundColor = "#fff";
 }
 
+function renderizarTabla(grupos) {
+  const tbody = document.getElementById("tableBody");
+  
+  let html = "";
+
+  Object.values(grupos).forEach((grupo) => {
+    const counts = contarEstados(grupo.equipos);
+    const total = grupo.equipos.length;
+    const ubicaciones = Array.from(grupo.ubicaciones).slice(0, 3);
+
+    html += `
+                    <tr class="group-row" onclick="toggleDetalles(this)" data-id="${grupo.idreg}">
+                        <td>
+                            <span class="badge badge-purple" style="font-family: monospace;">
+                                ${grupo.codigo}
+                            </span>
+                        </td>
+                        <td>
+                            <strong>${grupo.descripcion}</strong>
+                        </td>
+                        <td><span class="badge badge-primary">${total} unid.</span></td>
+                        <td>
+                            <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                                ${counts.vigentes > 0 ? `<span class="badge badge-success">${counts.vigentes} vig.</span>` : ""}
+                                ${counts.porVencer > 0 ? `<span class="badge badge-warning">${counts.porVencer} prox.</span>` : ""}
+                                ${counts.vencidos > 0 ? `<span class="badge badge-danger">${counts.vencidos} venc.</span>` : ""}
+                            </div>
+                        </td>
+                        <td>${counts.vigentes}</td>
+                        <td>${counts.porVencer}</td>
+                        <td>${counts.vencidos}</td>
+                        <td>
+                            <div class="location-tags">
+                                ${ubicaciones.map((ub) => `<span class="location-tag">${ub}</span>`).join("")}
+                                ${grupo.ubicaciones.size > 3 ? `<span class="location-tag">+${grupo.ubicaciones.size - 3}</span>` : ""}
+                            </div>
+                        </td>
+                        <td>
+                            <button class="expand-btn" onclick="event.stopPropagation(); toggleDetalles(this.closest('tr'))">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="9 18 15 12 9 6"></polyline>
+                                </svg>
+                                Ver detalles
+                            </button>
+                        </td>
+                    </tr>
+                    <tr class="detalles-row" style="display: none;">
+                        <td colspan="9" style="padding: 0; border: none; background: transparent;">
+                            ${crearTablaDetalles(grupo.equipos)}
+                        </td>
+                    </tr>
+                `;
+  });
+
+  tbody.innerHTML = html;
+}
+
+// Función para calcular días hasta vencimiento
+function calcularDiasVencimiento(fechaVence) {
+  if (!fechaVence) return null;
+
+  const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0);
+
+  const vence = new Date(fechaVence);
+  vence.setHours(0, 0, 0, 0);
+
+  return Math.round((vence - hoy) / (1000 * 60 * 60 * 24));
+}
+
+// Función para determinar estado
+function getEstadoEquipo(dias) {
+  if (dias === null) return { texto: "SIN FECHA", clase: "badge-info" };
+  if (dias < 0) return { texto: "VENCIDO", clase: "badge-danger" };
+  if (dias <= 15) return { texto: "POR VENCER", clase: "badge-warning" };
+  return { texto: "VIGENTE", clase: "badge-success" };
+}
+
+// Función para agrupar equipos por código
+function agruparEquipos() {
+  const grupos = {};
+
+  equiposData.forEach((equipo) => {
+    const codigo = equipo.ccodprod;
+
+    if (!grupos[codigo]) {
+      grupos[codigo] = {
+        codigo: codigo,
+        descripcion: equipo.descripcion,
+        equipos: [],
+        ubicaciones: new Set(),
+      };
+    }
+
+    grupos[codigo].equipos.push(equipo);
+    if (equipo.cubica) grupos[codigo].ubicaciones.add(equipo.cubica);
+  });
+
+  return grupos;
+}
+
+// Función para contar equipos por estado en un grupo
+function contarEstados(equipos) {
+  let vigentes = 0,
+    porVencer = 0,
+    vencidos = 0;
+
+  equipos.forEach((e) => {
+    const dias = calcularDiasVencimiento(e.ffvence);
+    if (dias === null) return;
+    if (dias < 0) vencidos++;
+    else if (dias <= 15) porVencer++;
+    else vigentes++;
+  });
+
+  return { vigentes, porVencer, vencidos };
+}
+
+// Función para formatear fecha
+function formatearFecha(fecha) {
+  if (!fecha) return "—";
+  return new Date(fecha).toLocaleDateString("es-PE");
+}
+
+// Función para crear tabla de detalles
+function crearTablaDetalles(equipos) {
+  let html = `
+                <div class="details-subtable">
+                    <div class="details-header">
+                        <span>📋 Detalle de equipos (${equipos.length} unidades)</span>
+                    </div>
+                    <table class="details-table">
+                        <thead>
+                            <tr>
+                                <th>Serie</th>
+                                <th>Marca/Modelo</th>
+                                <th>F. Vencimiento</th>
+                                <th>Estado</th>
+                                <th>Ubicación</th>
+                                <th>Asignado</th>
+                                <th>Obs.</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+  equipos.forEach((e) => {
+    const dias = calcularDiasVencimiento(e.ffvence);
+    const estado = getEstadoEquipo(dias);
+    const claseDias =
+      dias < 0 ? "vencido" : dias <= 15 ? "por-vencer" : "vigente";
+
+    html += `
+                    <tr>
+                        <td><strong>${e.cserie || "—"}</strong></td>
+                        <td>${e.cmarca || "—"} ${e.cmodelo || ""}</td>
+                        <td>
+                            ${formatearFecha(e.ffvence)}
+                            ${dias !== null ? `<br><small class="${claseDias}">${dias > 0 ? "+" : ""}${dias} días</small>` : ""}
+                        </td>
+                        <td>
+                            <span class="badge ${estado.clase}">${estado.texto}</span>
+                            <br>
+                            <small>
+                                <span class="estado-fisico ${e.cestado === "307" ? "estado-bueno" : e.cestado === "308" ? "estado-regular" : "estado-malo"}"></span>
+                                ${e.cestado === "307" ? "Bueno" : e.cestado === "308" ? "Regular" : e.cestado === "309" ? "Malo" : e.cestado || "N/A"}
+                            </small>
+                        </td>
+                        <td>
+                            ${e.cubica || "—"}
+                            <br>
+                            ${e.ccontenedor || ''} - ${e.cestante || ''} - ${e.cletra || ''} - ${e.ccolumna || ''}
+                        </td>
+                        <td>
+                            ${
+                              e.casigna
+                                ? `<span class="badge badge-info" data-tooltip="DNI: ${e.casigna}">Asignado</span>`
+                                : '<span class="badge badge-primary">Almacén</span>'
+                            }
+                        </td>
+                        <td>
+                            <span data-tooltip="${e.cobservaciones || ""}" style="cursor: help;">
+                                ${e.cobservaciones ? e.cobservaciones.substring(0, 20) + "..." : "—"}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+  });
+
+  html += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+  return html;
+}
+
+// Función para toggle detalles
+window.toggleDetalles = function (row) {
+  const detallesRow = row.nextElementSibling;
+  const btn = row.querySelector(".expand-btn");
+
+  if (detallesRow.style.display === "none") {
+    detallesRow.style.display = "table-row";
+    btn.innerHTML = `
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="18 15 12 9 6 15"></polyline>
+                    </svg>
+                    Ocultar
+                `;
+  } else {
+    detallesRow.style.display = "none";
+    btn.innerHTML = `
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                    Ver detalles
+                `;
+  }
+};

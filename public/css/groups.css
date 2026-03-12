@@ -1,3 +1,246 @@
-#fileInput{
+#fileInput {
   display: none;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  min-width: 1000px;
+}
+
+th {
+  text-align: left;
+  padding: 16px;
+  background: #f8fafc;
+  color: #475569;
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid #e2e8f0;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+td {
+  padding: 16px;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+
+/* Grupo rows */
+.group-row {
+  background: linear-gradient(90deg, #f8fafc 0%, #ffffff 100%);
+  cursor: pointer;
+  transition: background 0.2s;
+  border-left: 4px solid transparent;
+}
+
+.group-row:hover {
+  background: linear-gradient(90deg, #f1f5f9 0%, #ffffff 100%);
+  border-left-color: #3b82f6;
+}
+
+.group-row td:first-child {
+  font-weight: 600;
+}
+
+/* Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.badge-primary {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.badge-success {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.badge-warning {
+  background: #fef9c3;
+  color: #854d0e;
+}
+
+.badge-danger {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.badge-info {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.badge-purple {
+  background: #f3e8ff;
+  color: #6b21a8;
+}
+
+/* Estados de vencimiento */
+.vencido {
+  color: #dc2626;
+  font-weight: 600;
+}
+
+.por-vencer {
+  color: #d97706;
+  font-weight: 600;
+}
+
+.vigente {
+  color: #059669;
+  font-weight: 600;
+}
+
+/* Subtabla de detalles */
+.details-subtable {
+  background: #f8fafc;
+  border-radius: 16px;
+  margin: 10px 0;
+  overflow: hidden;
+  box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.details-header {
+  padding: 12px 16px;
+  background: #e2e8f0;
+  font-weight: 600;
+  color: #334155;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.details-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.details-table th {
+  background: #f1f5f9;
+  padding: 10px;
+  font-size: 11px;
+  color: #475569;
+  border-bottom: 1px solid #cbd5e1;
+  position: static;
+}
+
+.details-table td {
+  padding: 10px;
+  background: white;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+/* Expand button */
+.expand-btn {
+  background: none;
+  border: 1px solid #cbd5e1;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.expand-btn:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+}
+
+/* Tooltips */
+[data-tooltip] {
+  position: relative;
+  cursor: help;
+}
+
+[data-tooltip]:before {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 8px;
+  background: #1e293b;
+  color: white;
+  font-size: 12px;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s;
+  z-index: 1000;
+}
+
+[data-tooltip]:hover:before {
+  opacity: 1;
+  visibility: visible;
+  bottom: calc(100% + 5px);
+}
+
+/* Ubicación tags */
+.location-tag {
+  background: #f1f5f9;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  color: #475569;
+  display: inline-block;
+  margin: 2px;
+}
+
+/* Estado físico */
+.estado-fisico {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 4px;
+}
+
+.estado-bueno {
+  background: #10b981;
+}
+.estado-regular {
+  background: #f59e0b;
+}
+.estado-malo {
+  background: #ef4444;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  body {
+    padding: 12px;
+  }
+  .dashboard-header {
+    padding: 24px;
+  }
 }
