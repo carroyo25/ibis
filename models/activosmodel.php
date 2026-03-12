@@ -172,6 +172,67 @@
             }
         }
 
+        public function modificarActivos($items) {
+            try {
+                $registrado = false;
+                $mensaje = "Error al registrar el equipo";
+                $clase = "mensaje_error"; 
+
+                $sql = $this->db->connect()->prepare("UPDATE alm_activos
+                                                    SET alm_activos.iduser =:usuario,
+                                                        alm_activos.ncant =:cantidad,
+                                                        alm_activos.cestado =:estado,
+                                                        alm_activos.ffcalibra =:calibra,
+                                                        alm_activos.ffvence =:vecimiento,
+                                                        alm_activos.cgrenvio =:guiaenvio,
+                                                        alm_activos.ffenvio =:fechaenvio,
+                                                        alm_activos.ffasignacion =:fechaasigna,
+                                                        alm_activos.cgrrecepcion =:guiarecepcion,
+                                                        alm_activos.ffrecepcion =:fecharecepcion,
+                                                        alm_activos.cobservaciones =:observaciones,
+                                                        alm_activos.ccontenedor =:contenedor,
+                                                        alm_activos.cestante =:estante,
+                                                        alm_activos.cletra =:letra,
+                                                        alm_activos.ccolumna =:columna,
+                                                        alm_activos.carea =:area,
+                                                        alm_activos.casigna =:asignado,
+                                                        alm_activos.cubica=:ubicacion
+                                                    WHERE alm_activos.idreg =:interno");
+                $sql->execute([ "usuario"=>$items['codigo_usuario'],
+                                "cantidad"=>$items['cantidad'],
+                                "estado"=>$items['estado_actual'],
+                                "frecuencia"=>$items['frecuencia'],
+                                "calibra"=>$items['fecha_calibra'],
+                                "vecimiento"=>$items['vence_calibra'],
+                                "guiaenvio"=>$items['guia_envio'],
+                                "fechaenvio"=>$items['fecha_envio'],
+                                "fechaasigna"=>$items['fecha_asigna'],
+                                "guiarecepcion"=>$items['guia_recepcion'],
+                                "fecharecepcion"=>$items['fecha_recepcion'],
+                                "observaciones"=>$items['observa_estado'],
+                                "contenedor"=>$items['contenedor'],
+                                "estante"=>$items['estante'],
+                                "letra"=>$items['letra'],
+                                "columna"=>$items['columna'],
+                                "area"=>$items['area'],
+                                "asignado"=>$items['dni'],
+                                "ubicacion"=>$items['ubicacion'],
+                                "interno"=>$items['codigo_registro']]);
+
+                if ($sql->rowCount() > 0){
+                    $registrado = true;
+                    $mensaje = "Registrado Correctamente";
+                    $clase = "mensaje_correcto";
+                };
+
+                return array("registrado"=>$registrado,"mensaje"=>$mensaje,"clase"=>$clase);
+
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
         public function activoRegistrado($serie,$codigo,$costos){
             try {
                 $sql = $this->db->connect()->prepare("SELECT
@@ -346,11 +407,15 @@
                                                 a.carea,
                                                 a.cubica,
                                                 a.cestado,
-                                                a.casigna
+                                                a.casigna,
+                                                f.cdescripcion frecuencia,
+												e.cdescripcion estado
                                             FROM
                                                 alm_activos a
                                                 LEFT JOIN cm_producto p ON p.id_cprod = a.idprod
                                                 LEFT JOIN tb_unimed u ON u.ncodmed = p.nund
+                                                LEFT JOIN tb_parametros f ON a.nfrecuencia = f.nidreg
+												LEFT JOIN tb_parametros e ON a.cestado = e.nidreg
                                             WHERE
                                                 a.idcostos = :costos");
                 $sql->execute(["costos"=>98]);

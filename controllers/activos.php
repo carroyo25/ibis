@@ -34,6 +34,10 @@
             echo json_encode($this->model->registrarActivos($_POST));
         }
 
+        function modifica(){
+            echo json_encode($this->model->modificarActivos($_POST));
+        }
+
         function registrosXls(){
             echo json_encode($this->model->registrarDeArchivo($_POST));
         }

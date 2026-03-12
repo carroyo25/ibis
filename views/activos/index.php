@@ -184,6 +184,7 @@
                 <input type="hidden" name="codigo_interno" id="codigo_interno">
                 <input type="hidden" name="codigo_unidad" id="codigo_unidad">
                 <input type="hidden" name="codigo_usuario" id="codigo_usuario">
+                <input type="hidden" name="codigo_registro" id="codigo_registro">
 
                 <fieldset class="container">
                     <legend>  Datos Generales  </legend>

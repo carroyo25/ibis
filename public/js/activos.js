@@ -1,5 +1,6 @@
 $(function () {
   let allrows = [];
+  let consulta = "";
 
   $("#esperar").css({ display: "none", opacity: "0" });
 
@@ -170,8 +171,14 @@ $(function () {
     $("#esperar").css({ display: "block", opacity: "1" });
 
     const formData = new FormData(fmrActivos);
-
-    fetch(RUTA + "activos/registro", {
+  
+    if (document.getElementById().value == ""){
+      consulta = RUTA + "activos/registro";
+    }else{
+      consulta = RUTA + "activos/modifica";
+    }
+    
+    fetch(consulta, {
       method: "POST",
       body: formData,
     })
@@ -342,37 +349,6 @@ $(function () {
   });
 });
 
-// Función para calcular la fecha de vencimiento
-function calcularVencimiento_old() {
-  const fechaRevision = document.getElementById("fecha_calibra").value;
-  const periodo = document.getElementById("frecuencia").value;
-  const fechaVencimiento = document.getElementById("vence_calibra");
-
-  if (fechaRevision) {
-    // Crear objeto fecha
-    const fecha = new Date(fechaRevision);
-
-    // Determinar días a sumar según el período
-    let diasASumar;
-    if (periodo === "anual") {
-      diasASumar = 365; // Año
-    } else {
-      diasASumar = 180; // Semestre (aproximadamente 6 meses)
-    }
-
-    // Sumar los días
-    fecha.setDate(fecha.getDate() + diasASumar);
-
-    // Formatear la fecha para el input (YYYY-MM-DD)
-    const año = fecha.getFullYear();
-    const mes = String(fecha.getMonth() + 1).padStart(2, "0");
-    const dia = String(fecha.getDate()).padStart(2, "0");
-
-    fechaVencimiento.value = `${año}-${mes}-${dia}`;
-  } else {
-    fechaVencimiento.value = "";
-  }
-}
 
 function actualizarEstado(fechaVenc) {
   const estadoInput = document.getElementById("estado_actual");
@@ -608,6 +584,7 @@ function crearTablaDetalles(equipos) {
                                 <th>Ubicación</th>
                                 <th>Asignado</th>
                                 <th>Obs.</th>
+                                <th>Documentos:</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -621,18 +598,23 @@ function crearTablaDetalles(equipos) {
 
     html += `
                     <tr>
-                        <td><strong>${e.cserie || "—"}</strong></td>
+                        <td>
+                          <span class="serie-link" data-tooltip="Click para ver detalles" onclick="mostrarDetalleEquipo(${e.idreg})">
+                            <strong>${e.cserie || "—"}</strong>
+                          </span>
+                        </td>
                         <td>${e.cmarca || "—"} ${e.cmodelo || ""}</td>
                         <td>
                             ${formatearFecha(e.ffvence)}
-                            ${dias !== null ? `<br><small class="${claseDias}">${dias > 0 ? "+" : ""}${dias} días</small>` : ""}
+                            <br>
+                            ${e.frecuencia}
                         </td>
                         <td>
                             <span class="badge ${estado.clase}">${estado.texto}</span>
                             <br>
                             <small>
                                 <span class="estado-fisico ${e.cestado === "307" ? "estado-bueno" : e.cestado === "308" ? "estado-regular" : "estado-malo"}"></span>
-                                ${e.cestado === "307" ? "Bueno" : e.cestado === "308" ? "Regular" : e.cestado === "309" ? "Malo" : e.cestado || "N/A"}
+                                ${e.estado}
                             </small>
                         </td>
                         <td>
@@ -652,6 +634,12 @@ function crearTablaDetalles(equipos) {
                                 ${e.cobservaciones ? e.cobservaciones.substring(0, 20) + "..." : "—"}
                             </span>
                         </td>
+                        <td>
+                          <p>Nr.Guia Envio : ${e.cgrenvio || ""}</p>
+                          <p>Fecha Envio : ${e.ffenvio || ""}</p>
+                          <p>Nr.Guia Recepcion : ${e.cgrrecepcion || ""}</p>
+                          <p>Fecha Recepcion : ${e.ffrecepcion || ""}</p>
+                        </td>
                     </tr>
                 `;
   });
@@ -664,6 +652,9 @@ function crearTablaDetalles(equipos) {
 
   return html;
 }
+
+// Hacer la función disponible globalmente
+window.mostrarDetalleEquipo = mostrarDetalleEquipo;
 
 // Función para toggle detalles
 window.toggleDetalles = function (row) {
@@ -688,3 +679,7 @@ window.toggleDetalles = function (row) {
                 `;
   }
 };
+
+function mostrarDetalleEquipo(id){
+  document.getElementById("dialogo_registro").style.display = 'block';
+}
