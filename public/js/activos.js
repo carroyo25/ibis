@@ -117,11 +117,11 @@ $(function () {
         })
           .then((response) => response.json())
           .then((data) => {
-            if (data.existe) {
-              mostrarMensaje("La serie ya se encuentra registrada..");
-
-              return false;
+            if ( data.existe && document.getElementById("codigo_registro").value == "") {
+                mostrarMensaje("💡 La serie ya se encuentra registrada..","mensaje_error");
+                return false;
             }
+            
             if (data.asignado) {
               document.getElementById("dni").value = data.datos[0]["dni"];
               document.getElementById("cargo").value =
@@ -172,7 +172,7 @@ $(function () {
 
     const formData = new FormData(fmrActivos);
   
-    if (document.getElementById().value == ""){
+    if (document.getElementById('codigo_registro').value == ""){
       consulta = RUTA + "activos/registro";
     }else{
       consulta = RUTA + "activos/modifica";
@@ -349,15 +349,14 @@ $(function () {
   });
 });
 
-
 function actualizarEstado(fechaVenc) {
-  const estadoInput = document.getElementById("estado_actual");
+  const estadoSelect = document.getElementById("estado_actual");
   const observaciones = document.getElementById("observa_estado");
 
   if (!fechaVenc) {
-    estadoInput.value = "";
-    estadoInput.style.color = "#555";
-    estadoInput.style.backgroundColor = "#f0f0f0";
+    estadoSelect.value = "";
+    estadoSelect.style.color = "#555";
+    estadoSelect.style.backgroundColor = "#f0f0f0";
     observaciones.value = "";
     return;
   }
@@ -369,15 +368,15 @@ function actualizarEstado(fechaVenc) {
   const diffDias = Math.abs(Math.round(diffMs / (1000 * 60 * 60 * 24)));
 
   if (hoy < vencimiento) {
-    estadoInput.value = "CALIBRADO";
-    estadoInput.style.color = "#2e7d32";
-    estadoInput.style.backgroundColor = "#e8f5e9";
-    observaciones.value = `Faltan ${diffDias} día(s) para vencer.`;
+    estadoSelect.value = "306";
+    estadoSelect.style.color = "#2e7d32";
+    estadoSelect.style.backgroundColor = "#e8f5e9";
+    observaciones.value = `Faltan ${diffDias} DIA(s) PARA VENCER.`;
   } else {
-    estadoInput.value = "VENCIDO";
-    estadoInput.style.color = "#c62828";
-    estadoInput.style.backgroundColor = "#ffebee";
-    observaciones.value = `Venció hace ${diffDias} día(s).`;
+    estadoSelect.value = "307";
+    estadoSelect.style.color = "#c62828";
+    estadoSelect.style.backgroundColor = "#ffebee";
+    observaciones.value = `VENCIO HACE ${diffDias} DIA(S).`;
   }
 }
 
@@ -593,8 +592,7 @@ function crearTablaDetalles(equipos) {
   equipos.forEach((e) => {
     const dias = calcularDiasVencimiento(e.ffvence);
     const estado = getEstadoEquipo(dias);
-    const claseDias =
-      dias < 0 ? "vencido" : dias <= 15 ? "por-vencer" : "vigente";
+    const claseDias = dias < 0 ? "vencido" : dias <= 15 ? "por-vencer" : "vigente";
 
     html += `
                     <tr>
@@ -680,6 +678,7 @@ window.toggleDetalles = function (row) {
   }
 };
 
+//para llamar a los detalles del equipo
 function mostrarDetalleEquipo(id){
   document.getElementById("dialogo_registro").style.display = 'block';
 
@@ -692,6 +691,43 @@ function mostrarDetalleEquipo(id){
   })
   .then(response => response.json())
   .then(data => {
-    console.log(data);
+    //console.log(data);
+    document.getElementById('codigo_interno').value = data.datos[0]['idprod'];
+    document.getElementById('codigo_unidad').value = data.datos[0]['ncodmed'];
+    document.getElementById('codigo_usuario').value = "";
+    document.getElementById('codigo_registro').value = data.datos[0]['idreg'];
+    document.getElementById('centro_costos').value = data.datos[0]['idcostos'];
+    document.getElementById('codigoSearch').value = data.datos[0]['ccodprod'];
+    document.getElementById('descripSearch').value = data.datos[0]['cdesprod'];
+    document.getElementById('unidad').value = data.datos[0]['cabrevia'];
+    document.getElementById('cantidad').value = data.datos[0]['ncant'];
+    document.getElementById('serie').value = data.datos[0]['cserie'];;
+    document.getElementById('marca').value = data.datos[0]['cmarca'];
+    document.getElementById('modelo').value = data.datos[0]['cmodelo'];
+    document.getElementById('dni').value = data.datos[0]['casigna'];
+   
+    document.getElementById('area').value = data.datos[0]['carea'] || '';
+    document.getElementById('fecha_asigna').value = data.datos[0]['fechasalida'];
+    document.getElementById('frecuencia').value = data.datos[0]['nfrecuencia'];
+    document.getElementById('fecha_calibra').value = data.datos[0]['ffcalibra'];
+    document.getElementById('vence_calibra').value = data.datos[0]['ffvence'];
+    document.getElementById('estado_actual').value = data.datos[0]['cestado'];
+    document.getElementById('observa_estado').value = data.datos[0]['cobservaciones'];
+    document.getElementById('guia_envio').value = data.datos[0]['cgrenvio'];
+    document.getElementById('fecha_envio').value = data.datos[0]['cgrenvio'];
+    document.getElementById('guia_recepcion').value = data.datos[0]['cgrrecepcion'];
+    document.getElementById('fecha_recepcion').value = data.datos[0]['ffrecepcion'];
+    document.getElementById('ubicacion').value = data.datos[0]['cubica'];
+    document.getElementById('contenedor').value = data.datos[0]['ccontenedor'];
+    document.getElementById('estante').value = data.datos[0]['cestante'];
+    document.getElementById('letra').value = data.datos[0]['cletra'];
+    document.getElementById('columna').value = data.datos[0]['ccolumna'];
+
+    if (data.datos[0]['casigna']){
+      document.getElementById('nombres').value = data.personal[0]['paterno'] || '' +' '+data.personal[0]['materno'] || '' + ' '+data.personal[0]['nombres'] || '';
+      document.getElementById('cargo').value = data.personal[0]['cargo'].toUpperCase();
+    }
+
+    calcularVencimiento();
   })
 }

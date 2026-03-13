@@ -7,7 +7,6 @@
             parent::__construct();
         }
 
-
         public function buscarCodigos($parametros){
             try {
                 $codigo = $parametros['codigo'];
@@ -40,7 +39,6 @@
             }
         }
 
-
         public function buscarAsignados($parametros){
             try {
                 $docData = [];
@@ -66,13 +64,13 @@
                                                         FROM
                                                             alm_consumo c 
                                                         WHERE
-                                                            c.cserie = :serie
+                                                            c.cserie LIKE :serie
                                                             AND c.ncostos = :costos 
                                                             AND c.idprod = :codigo
-                                                            AND ISNULL(	c.cantdevolucion)");
+                                                            AND c.ncondicion = 1");
                 
 
-                $sql->execute(["serie"=>$serie,"costos"=>$costos,"codigo"=>$codigo]);
+                $sql->execute(["serie"=>'%'.$serie,"costos"=>$costos,"codigo"=>$codigo]);
 
                 while($row = $sql->fetch(PDO::FETCH_ASSOC)){
                     $docData[] = $row;
@@ -182,6 +180,7 @@
                                                     SET alm_activos.iduser =:usuario,
                                                         alm_activos.ncant =:cantidad,
                                                         alm_activos.cestado =:estado,
+                                                        alm_activos.nfrecuencia =:frecuencia,
                                                         alm_activos.ffcalibra =:calibra,
                                                         alm_activos.ffvence =:vecimiento,
                                                         alm_activos.cgrenvio =:guiaenvio,
@@ -446,41 +445,68 @@
         public function consultarIDEquipo($parametros){
             try {
                 $docData = [];
+                $personal = "";
 
-                $sql = $this->db->connect()->prepare("SELECT a.idreg,
-                                                            a.idprod,
-                                                            a.idcostos,
-                                                            a.ncant,
-                                                            a.casigna,
-                                                            a.cestado,
-                                                            a.cserie,
-                                                            a.cmodelo,
-                                                            a.cmarca,
-                                                            a.nfrecuencia,
-                                                            a.ffcalibra,
-                                                            a.ffvence,
-                                                            a.cgrenvio,
-                                                            a.ffenvio,
-                                                            a.ffrecepcion,
-                                                            a.ffasignacion,
-                                                            a.cgrrecepcion,
-                                                            a.cobservaciones,
-                                                            a.ccontenedor,
-                                                            a.cestante,
-                                                            a.cletra,
-                                                            a.ccolumna,
-                                                            a.cubica
-                                                        FROM alm_activos a
-                                                        WHERE a.idreg =:codigo");
+                $sql = $this->db->connect()->prepare("SELECT
+                                                        a.idreg,
+                                                        a.idprod,
+                                                        a.idcostos,
+                                                        a.ncant,
+                                                        a.casigna,
+                                                        a.cestado,
+                                                        a.cserie,
+                                                        a.cmodelo,
+                                                        a.cmarca,
+                                                        a.nfrecuencia,
+                                                        a.ffcalibra,
+                                                        a.ffvence,
+                                                        a.cgrenvio,
+                                                        a.ffenvio,
+                                                        a.ffrecepcion,
+                                                        a.ffasignacion,
+                                                        a.cgrrecepcion,
+                                                        a.cobservaciones,
+                                                        a.ccontenedor,
+                                                        a.cestante,
+                                                        a.cletra,
+                                                        a.ccolumna,
+                                                        a.cubica,
+                                                        a.carea,
+                                                        p.ccodprod,
+                                                        p.cdesprod,
+                                                        p.nund,
+                                                        u.cabrevia,
+                                                        u.ncodmed,
+                                                        o.fechasalida,
+                                                        o.ncondicion 
+                                                    FROM
+                                                        alm_activos a
+                                                        LEFT JOIN cm_producto p ON p.id_cprod = a.idprod
+                                                        LEFT JOIN tb_unimed u ON p.nund = u.ncodmed
+                                                        LEFT JOIN ( SELECT ac.cserie, ac.fechasalida, ac.ncondicion, ac.ncostos 
+                                                                                FROM alm_consumo ac 
+                                                                                WHERE ncondicion = 0 ) 
+                                                                    AS o ON o.cserie LIKE CONCAT( a.cserie, '%' ) 
+                                                        AND o.ncostos = a.idcostos 
+                                                    WHERE
+                                                        a.idreg = :codigo");
 
         
                 $sql->execute(["codigo"=>$parametros['codigo']]);
+
+
 
                 while($row = $sql->fetch(PDO::FETCH_ASSOC)){
                     $docData[] = $row;
                 }
 
-                return array("datos"=>$docData);
+                if ( $docData[0]['casigna'] !== null ){
+                    $url        = "http://179.49.67.42/api/activesapi.php?documento=".$docData[0]['casigna'];
+                    $api        = file_get_contents($url);
+                    $personal   =  json_decode($api,true);
+                }
+
+                return array("datos"=>$docData,'personal'=>$personal);
 
             }catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
