@@ -682,4 +682,16 @@ window.toggleDetalles = function (row) {
 
 function mostrarDetalleEquipo(id){
   document.getElementById("dialogo_registro").style.display = 'block';
+
+  let formData = new FormData();
+  formData.append('codigo',id);
+
+  fetch(RUTA+'activos/editaEquipo',{
+    method:'POST',
+    body:formData
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log(data);
+  })
 }

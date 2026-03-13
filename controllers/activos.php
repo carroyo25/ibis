@@ -45,5 +45,9 @@
         function consultaEquipos(){
             echo json_encode($this->model->consultarEquipos($_POST));
         }
+
+        function editaEquipo(){
+            echo json_encode($this->model->consultarIDEquipo($_POST));
+        }
     }
 ?>

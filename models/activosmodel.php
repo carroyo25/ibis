@@ -443,5 +443,50 @@
             return date('Y-m-d', $unixTimestamp);
         }
 
+        public function consultarIDEquipo($parametros){
+            try {
+                $docData = [];
+
+                $sql = $this->db->connect()->prepare("SELECT a.idreg,
+                                                            a.idprod,
+                                                            a.idcostos,
+                                                            a.ncant,
+                                                            a.casigna,
+                                                            a.cestado,
+                                                            a.cserie,
+                                                            a.cmodelo,
+                                                            a.cmarca,
+                                                            a.nfrecuencia,
+                                                            a.ffcalibra,
+                                                            a.ffvence,
+                                                            a.cgrenvio,
+                                                            a.ffenvio,
+                                                            a.ffrecepcion,
+                                                            a.ffasignacion,
+                                                            a.cgrrecepcion,
+                                                            a.cobservaciones,
+                                                            a.ccontenedor,
+                                                            a.cestante,
+                                                            a.cletra,
+                                                            a.ccolumna,
+                                                            a.cubica
+                                                        FROM alm_activos a
+                                                        WHERE a.idreg =:codigo");
+
+        
+                $sql->execute(["codigo"=>$parametros['codigo']]);
+
+                while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+                    $docData[] = $row;
+                }
+
+                return array("datos"=>$docData);
+
+            }catch (PDOException $th) {
+                echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
     }
 ?>

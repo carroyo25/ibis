@@ -384,114 +384,6 @@ async function verificarPermisos() {
     }
 }
 
-// Variables globales
-/*let directorioRaiz = null;
-let archivosHandle = new Map();
-let permisoSolicitado = false;*/
-
-// Función para actualizar estado en la interfaz
-function actualizarEstado(mensaje, esError = false) {
-    //console.log(mensaje);
-    const elementoEstado = document.getElementById('estadoProceso');
-    if (elementoEstado) {
-        elementoEstado.textContent = mensaje;
-        elementoEstado.style.color = esError ? 'red' : 'green';
-    }
-}
-
-// Función para seleccionar carpeta (llamada por botón)
-async function seleccionarCarpeta() {
-    try {
-        actualizarEstado("Seleccionando carpeta...");
-        directorioRaiz = await window.showDirectoryPicker();
-        
-        // Solicitar permisos de lectura/escritura
-        const permiso = await directorioRaiz.requestPermission({ mode: 'readwrite' });
-        
-        if (permiso === 'granted') {
-            document.getElementById("ruta-carpeta").textContent= "✅ Carpeta seleccionada y permisos concedidos -->:"+directorioRaiz.name;
-            // Habilitar botón de procesar
-            const btnProcesar = document.getElementById('btnProcesar');
-            if (btnProcesar) btnProcesar.disabled = false;
-            return true;
-        } else {
-            document.getElementById("ruta-carpeta").textContent= "❌ No se concedieron permisos para la carpeta";
-            return false;
-        }
-    } catch (error) {
-        console.error("Error al seleccionar carpeta:", error);
-        document.getElementById("ruta-carpeta").textContent= "❌ Error al seleccionar carpeta: " + error.message;
-        return false;
-    }
-}
-
-// Función para verificar permisos antes de procesar
-async function verificarPermisos() {
-    if (!directorioRaiz) {
-        actualizarEstado("❌ Primero debes seleccionar una carpeta", true);
-        return false;
-    }
-
-    try {
-        const estadoPermiso = await directorioRaiz.queryPermission({ mode: 'readwrite' });
-        
-        if (estadoPermiso === 'granted') {
-            return true;
-        }
-        
-        // Si no tenemos permiso, intentamos solicitarlo
-        actualizarEstado("⚠️ Se necesita permiso adicional. Haz clic en 'Conceder permiso'");
-        
-        // Crear botón para conceder permiso
-        const botonPermiso = document.createElement('button');
-        botonPermiso.id = 'btnConcederPermiso';
-        botonPermiso.textContent = "🔑 Conceder permiso para guardar archivos";
-        botonPermiso.style.margin = "10px";
-        botonPermiso.style.padding = "10px 20px";
-        botonPermiso.style.backgroundColor = "#007bff";
-        botonPermiso.style.color = "white";
-        botonPermiso.style.border = "none";
-        botonPermiso.style.borderRadius = "5px";
-        botonPermiso.style.cursor = "pointer";
-        
-        // Remover botón anterior si existe
-        const botonAnterior = document.getElementById('btnConcederPermiso');
-        if (botonAnterior) botonAnterior.remove();
-        
-        // Agregar al DOM
-        const contenedor = document.getElementById('controles') || document.body;
-        contenedor.appendChild(botonPermiso);
-        
-        // Esperar clic en el botón
-        return new Promise((resolve) => {
-            botonPermiso.onclick = async () => {
-                try {
-                    const nuevoPermiso = await directorioRaiz.requestPermission({ mode: 'readwrite' });
-                    botonPermiso.remove();
-                    
-                    if (nuevoPermiso === 'granted') {
-                        actualizarEstado("✅ Permiso concedido");
-                        resolve(true);
-                    } else {
-                        actualizarEstado("❌ Permiso denegado", true);
-                        resolve(false);
-                    }
-                } catch (error) {
-                    console.error("Error al solicitar permiso:", error);
-                    actualizarEstado("❌ Error al solicitar permiso", true);
-                    botonPermiso.remove();
-                    resolve(false);
-                }
-            };
-        });
-        
-    } catch (error) {
-        console.error("Error verificando permisos:", error);
-        actualizarEstado("❌ Error al verificar permisos", true);
-        return false;
-    }
-}
-
 // Función principal optimizada para crear carpeta
 async function crearCarpeta() {
     // Verificar permisos primero
@@ -513,29 +405,31 @@ async function crearCarpeta() {
         
         const data = await response.json();
         
-        if (!data.ordenes || !Array.isArray(data.ordenes)) {
+        if ((!data.ordenes || !Array.isArray(data.ordenes))) {
             throw new Error("Formato de respuesta inválido: no se encontraron órdenes");
         }
 
         // Configuración de optimización
         const CONFIG = {
-            BATCH_SIZE: 5,           // Número de archivos a descargar en paralelo
-            MAX_CONCURRENT: 3,       // Número de carpetas a procesar simultáneamente
-            RETRY_ATTEMPTS: 2,       // Intentos para archivos fallidos
-            TIMEOUT: 30000,          // Timeout por archivo (30 segundos)
-            MIN_SIZE: 1024,          // Tamaño mínimo (1KB)
+            BATCH_SIZE: 5,                    // Archivos por lote
+            ORDENES_BATCH_SIZE: 20,            // Órdenes a procesar simultáneamente (nuevo)
+            MAX_CONCURRENT_ORDENES: 3,         // Máximo de órdenes en paralelo
+            RETRY_ATTEMPTS: 2,
+            TIMEOUT: 30000,
+            MIN_SIZE: 1024,
         };
 
         let archivosCreados = 0;
         let archivosOmitidos = 0;
         let archivosFallidos = [];
+        let totalArchivosGlobal = 0;
         let tiempoInicio = Date.now();
 
-        // Función para procesar archivo individual
+        // Función para procesar archivo individual (se mantiene igual)
         async function procesarArchivoIndividual(archivo, carpetaOrden) {
             const nombreUrl = archivo.creferencia;
             const nombreGuardar = archivo.documento;
-            const rutaDocumento = archivo.cmodulo;
+            const tipoModulo = archivo.cmodulo;
             
             if (!nombreUrl) {
                 return { success: false, error: "Sin creferencia" };
@@ -557,13 +451,16 @@ async function crearCarpeta() {
 
             const nombreValido = (nombreBase || 'archivo') + extensionOriginal;
 
-            // Construir URL
-            if (rutaDocumento == "ORD"){
-              const url = "http://localhost/ibis/public/documentos/ordenes/adjuntos/" + encodeURIComponent(nombreUrl);
-            }else{
-              const url = "http://localhost/ibis/ibis/public/documentos/almacen/adjuntos/" + encodeURIComponent(nombreUrl);
-            }
+            // Construir URL según el tipo de módulo
+            let url = "";
             
+            if (tipoModulo === "ORD") {
+                url = "http://localhost/ibis/public/documentos/ordenes/adjuntos/" + encodeURIComponent(nombreUrl);
+            } else if (tipoModulo === "GA") {
+                url = "http://localhost/ibis/public/documentos/almacen/adjuntos/" + encodeURIComponent(nombreUrl);
+            } else {
+                return { success: false, error: `Tipo desconocido: ${tipoModulo}`, requiereReintento: false };
+            }
 
             // Verificar si ya existe
             try {
@@ -604,9 +501,6 @@ async function crearCarpeta() {
                 await writable.write(blob);
                 await writable.close();
 
-                // Guardar referencia
-                archivosHandle.set(nombreValido, archivoHandle);
-
                 return { success: true, nombre: nombreValido, size: blob.size };
 
             } catch (fetchError) {
@@ -619,7 +513,7 @@ async function crearCarpeta() {
             }
         }
 
-        // Función para procesar archivo con reintento
+        // Función para procesar archivo con reintento (se mantiene igual)
         async function procesarArchivoConReintento(archivo, carpetaOrden, intento = 0) {
             try {
                 return await procesarArchivoIndividual(archivo, carpetaOrden);
@@ -633,119 +527,213 @@ async function crearCarpeta() {
             }
         }
 
-        // Función para procesar lote de archivos
-        async function procesarLoteArchivos(archivos, carpetaOrden, batchNumber) {
-            const promesas = archivos.map(async (archivo) => {
-                try {
-                    const resultado = await procesarArchivoConReintento(archivo, carpetaOrden);
-                    if (resultado.success) {
-                        archivosCreados++;
-                    } else {
-                        archivosOmitidos++;
-                        if (resultado.requiereReintento) {
-                            archivosFallidos.push(archivo);
-                        }
-                    }
-                    
-                    // Actualizar progreso
-                    if ((archivosCreados + archivosOmitidos) % 10 === 0) {
-                        const porcentaje = ((archivosCreados + archivosOmitidos) / totalArchivosEsperados * 100).toFixed(1);
-                        const tiempoTranscurrido = ((Date.now() - tiempoInicio) / 1000).toFixed(1);
-                        actualizarEstado(
-                            `Progreso: ${porcentaje}% (${archivosCreados + archivosOmitidos}/${totalArchivosEsperados}) ` +
-                            `- Creados: ${archivosCreados} - Tiempo: ${tiempoTranscurrido}s`
-                        );
-                    }
-                } catch (error) {
-                    console.error(`Error en lote ${batchNumber}:`, error);
-                    archivosOmitidos++;
-                }
-            });
-
-            await Promise.allSettled(promesas);
-        }
-
-        // Contar total de archivos primero
-        let totalArchivosEsperados = 0;
-        const ordenesConArchivos = [];
-
-        for (const orden of data.ordenes) {
-            const archivosFormData = new FormData();
-            archivosFormData.append('orden', orden.id_regmov);
-            
-            const archivosResponse = await fetch(RUTA + "valorizado/adjuntosArchivos", {
-                method: "POST",
-                body: archivosFormData,
-            });
-            
-            const archivosData = await archivosResponse.json();
-            if (archivosData.ordenes && Array.isArray(archivosData.ordenes)) {
-                totalArchivosEsperados += archivosData.ordenes.length;
-                ordenesConArchivos.push({
-                    ...orden,
-                    archivos: archivosData.ordenes
-                });
-            }
-        }
-
-        actualizarEstado(`Procesando ${totalArchivosEsperados} archivos en paralelo...`);
-        console.log(`🚀 Iniciando procesamiento optimizado de ${totalArchivosEsperados} archivos`);
-
-        // Procesar carpetas en paralelo con límite de concurrencia
-        for (let i = 0; i < ordenesConArchivos.length; i += CONFIG.MAX_CONCURRENT) {
-            const loteCarpetas = ordenesConArchivos.slice(i, i + CONFIG.MAX_CONCURRENT);
-            
-            await Promise.all(loteCarpetas.map(async (orden) => {
-                const nombreCarpeta = orden.ntipmov == 37 ? 'OC' + orden.cnumero : 'OS' + orden.cnumero;
+        // Función para procesar una orden completa
+        async function procesarOrden(orden, esReintento = false) {
+            try {
+                const archivosFormData = new FormData();
+                archivosFormData.append('orden', orden.id_regmov);
                 
-                console.log(`\n📁 Procesando carpeta: ${nombreCarpeta} (${orden.archivos.length} archivos)`);
+                const archivosResponse = await fetch(RUTA + "valorizado/adjuntosArchivos", {
+                    method: "POST",
+                    body: archivosFormData,
+                });
+                
+                const archivosData = await archivosResponse.json();
+
+                // Recolectar todos los archivos de la orden (órdenes y guías)
+                let archivosOrden = [];
+                
+                if (archivosData.ordenes && Array.isArray(archivosData.ordenes)) {
+                    archivosOrden = archivosOrden.concat(
+                        archivosData.ordenes.map(archivo => ({
+                            ...archivo,
+                            cmodulo: 'ORD'
+                        }))
+                    );
+                }
+                
+                if (archivosData.guiasalmacen && Array.isArray(archivosData.guiasalmacen)) {
+                    archivosOrden = archivosOrden.concat(
+                        archivosData.guiasalmacen.map(archivo => ({
+                            ...archivo,
+                            cmodulo: 'GA'
+                        }))
+                    );
+                }
+
+                if (archivosOrden.length === 0) {
+                    console.log(`📁 Orden ${orden.id_regmov} no tiene archivos`);
+                    return { orden, archivosProcesados: 0, archivosFallidos: [] };
+                }
+
+                // Actualizar contador global si no es reintento
+                if (!esReintento) {
+                    totalArchivosGlobal += archivosOrden.length;
+                }
+
+                const nombreCarpeta = orden.ntipmov == 37 ? 'OC' + orden.cnumero : 'OS' + orden.cnumero;
+                console.log(`\n📁 Procesando carpeta: ${nombreCarpeta} (${archivosOrden.length} archivos)`);
                 
                 const carpetaOrden = await directorioRaiz.getDirectoryHandle(nombreCarpeta, { create: true });
 
-                // Dividir archivos en lotes
-                for (let j = 0; j < orden.archivos.length; j += CONFIG.BATCH_SIZE) {
-                    const loteArchivos = orden.archivos.slice(j, j + CONFIG.BATCH_SIZE);
+                let ordenArchivosCreados = 0;
+                let ordenArchivosOmitidos = 0;
+                let ordenArchivosFallidos = [];
+
+                // Procesar archivos en lotes
+                for (let j = 0; j < archivosOrden.length; j += CONFIG.BATCH_SIZE) {
+                    const loteArchivos = archivosOrden.slice(j, j + CONFIG.BATCH_SIZE);
                     const batchNumber = Math.floor(j / CONFIG.BATCH_SIZE) + 1;
                     
-                    console.log(`   Procesando lote ${batchNumber} de ${Math.ceil(orden.archivos.length / CONFIG.BATCH_SIZE)}`);
-                    await procesarLoteArchivos(loteArchivos, carpetaOrden, batchNumber);
+                    console.log(`  Procesando lote ${batchNumber} de ${Math.ceil(archivosOrden.length / CONFIG.BATCH_SIZE)}`);
                     
-                    // Pequeña pausa entre lotes
+                    const promesas = loteArchivos.map(async (archivo) => {
+                        const resultado = await procesarArchivoConReintento(archivo, carpetaOrden);
+                        if (resultado.success) {
+                            ordenArchivosCreados++;
+                            archivosCreados++;
+                        } else {
+                            ordenArchivosOmitidos++;
+                            archivosOmitidos++;
+                            if (resultado.requiereReintento) {
+                                ordenArchivosFallidos.push(archivo);
+                                archivosFallidos.push(archivo);
+                            }
+                        }
+                        
+                        // Actualizar progreso global
+                        if ((archivosCreados + archivosOmitidos) % 10 === 0) {
+                            const porcentaje = totalArchivosGlobal > 0 
+                                ? ((archivosCreados + archivosOmitidos) / totalArchivosGlobal * 100).toFixed(1)
+                                : "0.0";
+                            const tiempoTranscurrido = ((Date.now() - tiempoInicio) / 1000).toFixed(1);
+                            actualizarEstado(
+                                `Progreso: ${porcentaje}% (${archivosCreados + archivosOmitidos}/${totalArchivosGlobal}) ` +
+                                `- Creados: ${archivosCreados} - Tiempo: ${tiempoTranscurrido}s`
+                            );
+                        }
+                    });
+
+                    await Promise.allSettled(promesas);
+                    
+                    // Pequeña pausa entre lotes de archivos
+                    await new Promise(resolve => setTimeout(resolve, 300));
+                }
+
+                console.log(`  ✅ ${nombreCarpeta}: ${ordenArchivosCreados} creados, ${ordenArchivosOmitidos} omitidos`);
+                
+                return { 
+                    orden, 
+                    archivosProcesados: ordenArchivosCreados,
+                    archivosFallidos: ordenArchivosFallidos 
+                };
+
+            } catch (error) {
+                console.error(`Error procesando orden ${orden.id_regmov}:`, error);
+                return { orden, archivosProcesados: 0, archivosFallidos: [], error: error.message };
+            }
+        }
+
+        // Función para procesar órdenes en lotes
+        async function procesarOrdenesEnLotes(ordenes, tamanoLote) {
+            const resultados = [];
+            
+            for (let i = 0; i < ordenes.length; i += tamanoLote) {
+                const lote = ordenes.slice(i, i + tamanoLote);
+                const numeroLote = Math.floor(i / tamanoLote) + 1;
+                const totalLotes = Math.ceil(ordenes.length / tamanoLote);
+                
+                console.log(`\n🔵 LOTE ${numeroLote} de ${totalLotes} (${lote.length} órdenes)`);
+                actualizarEstado(`Procesando lote ${numeroLote}/${totalLotes} de órdenes...`);
+                
+                // Procesar las órdenes del lote en paralelo (con límite)
+                for (let j = 0; j < lote.length; j += CONFIG.MAX_CONCURRENT_ORDENES) {
+                    const subLote = lote.slice(j, j + CONFIG.MAX_CONCURRENT_ORDENES);
+                    
+                    const resultadosSubLote = await Promise.all(
+                        subLote.map(orden => procesarOrden(orden, false))
+                    );
+                    
+                    resultados.push(...resultadosSubLote);
+                    
+                    // Pequeña pausa entre sub-lotes de órdenes
                     await new Promise(resolve => setTimeout(resolve, 500));
                 }
-            }));
-
-            // Pausa entre lotes de carpetas
-            await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                // Actualizar estado después de cada lote de órdenes
+                const porcentaje = totalArchivosGlobal > 0 
+                    ? ((archivosCreados + archivosOmitidos) / totalArchivosGlobal * 100).toFixed(1)
+                    : "0.0";
+                const tiempoTranscurrido = ((Date.now() - tiempoInicio) / 1000).toFixed(1);
+                actualizarEstado(
+                    `Lote ${numeroLote}/${totalLotes} completado. ` +
+                    `Progreso global: ${porcentaje}% (${archivosCreados + archivosOmitidos}/${totalArchivosGlobal}) - Tiempo: ${tiempoTranscurrido}s`
+                );
+                
+                // Pausa entre lotes de órdenes
+                if (i + tamanoLote < ordenes.length) {
+                    console.log(`\n⏳ Pausa de 2 segundos antes del siguiente lote...`);
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                }
+            }
+            
+            return resultados;
         }
+
+        // Iniciar procesamiento
+        actualizarEstado(`Iniciando procesamiento de ${data.ordenes.length} órdenes...`);
+        console.log(`🚀 Iniciando procesamiento de ${data.ordenes.length} órdenes en lotes de ${CONFIG.ORDENES_BATCH_SIZE}`);
+
+        // Procesar órdenes en lotes
+        const resultados = await procesarOrdenesEnLotes(data.ordenes, CONFIG.ORDENES_BATCH_SIZE);
 
         // Reintentar archivos fallidos
         if (archivosFallidos.length > 0) {
             console.log(`\n🔄 Reintentando ${archivosFallidos.length} archivos fallidos...`);
             actualizarEstado(`Reintentando ${archivosFallidos.length} archivos fallidos...`);
             
-            for (let i = 0; i < archivosFallidos.length; i += CONFIG.BATCH_SIZE) {
-                const loteFallidos = archivosFallidos.slice(i, i + CONFIG.BATCH_SIZE);
-                
-                await Promise.all(loteFallidos.map(async (archivo) => {
-                    for (const orden of ordenesConArchivos) {
-                        if (orden.archivos.includes(archivo)) {
-                            const nombreCarpeta = orden.ntipmov == 37 ? 'OC' + orden.cnumero : 'OS' + orden.cnumero;
-                            const carpetaOrden = await directorioRaiz.getDirectoryHandle(nombreCarpeta, { create: true });
-                            
-                            const resultado = await procesarArchivoConReintento(archivo, carpetaOrden, 2);
-                            if (resultado.success) {
-                                archivosCreados++;
-                            }
-                            break;
+            // Agrupar archivos fallidos por orden
+            const archivosPorOrden = {};
+            archivosFallidos.forEach(archivo => {
+                for (const resultado of resultados) {
+                    if (resultado.archivosFallidos && resultado.archivosFallidos.includes(archivo)) {
+                        if (!archivosPorOrden[resultado.orden.id_regmov]) {
+                            archivosPorOrden[resultado.orden.id_regmov] = {
+                                orden: resultado.orden,
+                                archivos: []
+                            };
                         }
+                        archivosPorOrden[resultado.orden.id_regmov].archivos.push(archivo);
+                        break;
                     }
-                }));
+                }
+            });
+
+            // Reintentar por orden
+            for (const ordenId in archivosPorOrden) {
+                const { orden, archivos } = archivosPorOrden[ordenId];
+                console.log(`Reintentando ${archivos.length} archivos de la orden ${orden.id_regmov}`);
+                
+                const nombreCarpeta = orden.ntipmov == 37 ? 'OC' + orden.cnumero : 'OS' + orden.cnumero;
+                const carpetaOrden = await directorioRaiz.getDirectoryHandle(nombreCarpeta, { create: true });
+                
+                for (let i = 0; i < archivos.length; i += CONFIG.BATCH_SIZE) {
+                    const loteFallidos = archivos.slice(i, i + CONFIG.BATCH_SIZE);
+                    
+                    const promesas = loteFallidos.map(async (archivo) => {
+                        const resultado = await procesarArchivoConReintento(archivo, carpetaOrden, 2);
+                        if (resultado.success) {
+                            archivosCreados++;
+                        }
+                    });
+                    
+                    await Promise.allSettled(promesas);
+                }
             }
         }
 
         const tiempoTotal = ((Date.now() - tiempoInicio) / 1000).toFixed(1);
-        const mensaje = `✅ COMPLETADO en ${tiempoTotal}s: ${archivosCreados} creados, ${archivosOmitidos} omitidos de ${totalArchivosEsperados}`;
+        const mensaje = `✅ COMPLETADO en ${tiempoTotal}s: ${archivosCreados} creados, ${archivosOmitidos} omitidos de ${totalArchivosGlobal}`;
         
         console.log('\n' + mensaje);
         if (archivosFallidos.length > 0) {
@@ -759,4 +747,3 @@ async function crearCarpeta() {
         actualizarEstado("❌ Error: " + error.message, true);
     }
 }
-

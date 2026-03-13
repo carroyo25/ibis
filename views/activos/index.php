@@ -195,7 +195,7 @@
                         </select>
                         <div class="item_information">
                             <label for="codigoSearch">Codigo</label>
-                            <input type="text" name="codigoSearch" id="codigoSearch" placeholder="Ingrese codigo" value="B030600020003">
+                            <input type="text" name="codigoSearch" id="codigoSearch" placeholder="Ingrese codigo" value="">
                             <label for="descripSearch">Descripcion</label>
                             <input type="text" name="descripSearch" id="descripSearch" readonly>
                         </div>
