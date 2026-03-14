@@ -1,10 +1,4 @@
 $(() => {
-    /*$("#esperar").fadeOut();
-    
-    let accion = "u",flag=false;
-
-    let seriesData = [1,2,3,4,5,6,7,8,9,10,11,12];*/
-
     listarRegistrosCombustible();
 
 
@@ -306,7 +300,6 @@ listarRegistrosCombustible = async () => {
 
         data.datos.forEach ( e =>{
             const tr = document.createElement("tr");
-            const trabajador = data.usuarios.find(user => user.dni == e.cdocumento);
 
             tr.classList.add("pointer");
             if ( e.idtipo == 1 ){
@@ -322,7 +315,7 @@ listarRegistrosCombustible = async () => {
                             <td class="pl20px">${e.cdesprod}</td>
                             <td class="textoCentro">${e.cabrevia}</td>
                             <td class="textoDerecha">${e.ncantidad}</td>
-                            <td class="pl20px">${trabajador.usuario}</td>
+                            <td class="pl20px">${e.cdocumento}</td>
                             <td class="pl20px">${e.notaingreso}</td>
                             <td class="textoCentro">${e.idusuario}</td>
                             <td class="textoCentro">${e.ccodproy}</td>

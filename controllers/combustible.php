@@ -11,7 +11,6 @@
             $this->view->listaAreas = $this->model->listaAreas();
             $this->view->listaCombustible = $this->model->tipoCombustible();
             $this->view->listaEquipos = $this->model->listaEquiposMmtto();
-            //$this->view->listaItemsCombustible = $this->model->listaConsumosCombustibles('%','%','%');
             $this->view->render('combustible/index');
         }
 

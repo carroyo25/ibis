@@ -93,10 +93,21 @@
                                 </select>
                             </div>
                         </div>
-                        <div>
-                            <label for="observacionesDocumento">Observaciones del Documento :</label>
-                            <input type="text" id="observacionesDocumento" name="observacionesDocumento">
+                        <div class="grid3col">
+                            <div>
+                                <label for="orden">Orden :</label>
+                                <input type="text" id="orden" name="orden">
+                            </div>
+                            <div>
+                                <label for="observacionesDocumento">Observaciones del Documento :</label>
+                                <input type="text" id="observacionesDocumento" name="observacionesDocumento">
+                            </div>
+                            <div>
+                                <label for="anio_orden">Año Orden :</label>
+                                <input type="text" id="anio_orden" name="anio_orden" value="<?php echo date('Y') ?>">
+                            </div>
                         </div>
+                       
                         <div class="grid3col">
                             <div>
                                 <label for="referencia">Referencia Adicional</label>
