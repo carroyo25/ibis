@@ -16,13 +16,16 @@
             </div>
                 <div class="ingreso_combustible">
                     <form id="form__combustible" class="form__combustible">
-                    <input type="hidden" name="codigo_producto" id="codigo_producto">
-                    <input type="hidden" name="codigo_almacen" id="codigo_almacen">
-                    <input type="hidden" name="codigo_area" id="codigo_area">
-                    <input type="hidden" name="codigo_proyecto" id="codigo_proyecto">
-                    <input type="hidden" name="codigo_tipo" id="codigo_tipo">
-                    <input type="hidden" name="codigo_unidad" id="codigo_unidad">
-                    <input type="hidden" name="codigo_equipo" id="codigo_equipo">
+                        <input type="hidden" name="numero_registro" id="numero_registro">    
+                        <input type="hidden" name="codigo_producto" id="codigo_producto">
+                        <input type="hidden" name="codigo_almacen" id="codigo_almacen">
+                        <input type="hidden" name="codigo_area" id="codigo_area">
+                        <input type="hidden" name="codigo_proyecto" id="codigo_proyecto">
+                        <input type="hidden" name="codigo_tipo" id="codigo_tipo">
+                        <input type="hidden" name="codigo_unidad" id="codigo_unidad">
+                        <input type="hidden" name="codigo_equipo" id="codigo_equipo">
+                        <input type="hidden" name="codigoItemOrden" id="codigoItemOrden">
+                        <input type="hidden" name="codigoItenPedido" id="codigoItenPedido">
 
                         <div class="grid3col">
                             <div>
@@ -83,7 +86,7 @@
                         </div>
                         <div class="grid2col">
                             <div>
-                                <label for="usuario">Usuario</label>
+                                <label for="usuario">Usuario Registra:</label>
                                 <input type="text" id="usuario" name="usuario" value ="<?php echo strtoupper($_SESSION['user']); ?>" readonly >
                             </div>
                             <div>
@@ -248,12 +251,12 @@
                     <th>Descripción</th>
                     <th>Unidad</th>
                     <th>Cantidad</th>
-                    <th>Trabajador</th>
-                    <th data-filtro="filtro">Nota de Ingreso</th>
-                    <th>Usuario</th>
+                    <th>DNI. Trabajador</th>
+                    <th data-filtro="filtro">Nro. Orden</th>
+                    <th>Usuario <br> Registra</th>
                     <th>Proyecto</th>
                     <th>Observaciones</th>
-                    <th data-filtro="filtro">Observacion<br> del documento<br> de almacen</th>
+                    <th data-filtro="filtro">Observaciones de  <br>Almacen</th>
                     <th>Area</th>
                     <th>Referencia<br>Adicional</th>
                     <th>Mes</th>

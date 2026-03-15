@@ -7,7 +7,6 @@
         }
 
         public function listaConsumosCombustibles($parametros){
-            //header('Content-Type: application/json');
             try {
 
                 $docData = [];
@@ -30,6 +29,7 @@
                                                     alm_combustible.idusuario,
                                                     alm_combustible.idproyecto,
                                                     alm_combustible.cguia,
+                                                    LPAD(alm_combustible.numeroorden,6,0) orden,
                                                     UPPER(alm_combustible.tobserdocum) AS tobserdocum,
                                                     alm_combustible.nidref,
                                                     alm_combustible.idarea,
@@ -127,6 +127,7 @@
         }
 
         public function registrarCombustible($datos){
+
             try {
                 $sql=$this->db->connect()->prepare("INSERT INTO alm_combustible 
                                                     SET alm_combustible.fregistro=:fecha,
@@ -141,7 +142,11 @@
                                                         alm_combustible.tobserdocum=:obserdoc,
                                                         alm_combustible.nidref=:referencia,
                                                         alm_combustible.idarea=:area,
-                                                        alm_combustible.notaingreso=:guia");
+                                                        alm_combustible.notaingreso=:guia,
+                                                        alm_combustible.numeroorden=:orden,
+                                                        alm_combustible.iddetapedido=:itempedido,
+                                                        alm_combustible.iddetaorden=:iditemorden,
+                                                        alm_combustible.anioorden=:anio");
                 $sql->execute([
                     "fecha"=>$datos['fechaRegistro'],
                     "idalmacen"=>$datos['almacen'],
@@ -155,7 +160,11 @@
                     "obserdoc"=>strtoupper($datos['observacionesDocumento']),
                     "referencia"=>$datos['referencia'],
                     "area"=>$datos['area'],
-                    "guia"=>$datos['guia']]);
+                    "guia"=>$datos['guia'],
+                    "orden"=>$datos['orden'],
+                    "itempedido"=>$datos['codigoItenPedido'],
+                    "iditemorden"=>$datos['codigoItemOrden'],
+                    "anio"=>$datos['anio_orden']]);
 
                 return array("mensaje"=>'Consumo registrado');
 
@@ -227,7 +236,7 @@
                 $objPHPExcel->getActiveSheet()->setTitle("Combustible");
 
                 //combinar celdas
-                $objPHPExcel->getActiveSheet()->mergeCells('A1:P1');
+                $objPHPExcel->getActiveSheet()->mergeCells('A1:Q1');
 
                 //alineacion
                 $objPHPExcel->getActiveSheet()->getStyle('A1:R4')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
@@ -236,7 +245,7 @@
                 $objPHPExcel->getActiveSheet()->setCellValue('A1','Kardex de Movimientos de Combustible');
 
                 $objPHPExcel->getActiveSheet()
-                    ->getStyle('A1:P3')
+                    ->getStyle('A1:Q3')
                     ->getFill()
                     ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
                     ->getStartColor()
@@ -271,14 +280,16 @@
                 $objPHPExcel->getActiveSheet()->setCellValue('F3','DESCRIPCION'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('G3','UNIDAD'); // esto cambia
                 $objPHPExcel->getActiveSheet()->setCellValue('H3','CANTIDAD'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('I3','TRABAJADOR'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('J3','USUARIO REGISTRA');
-                $objPHPExcel->getActiveSheet()->setCellValue('K3','PROYECTO'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('L3','OBSERVACIONES DEL ITEM'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('M3','OBSERVACION DEL DOCUMENTO'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('N3','AREA'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('O3','REFERENCIA ADICIONAL'); // esto cambia
-                $objPHPExcel->getActiveSheet()->setCellValue('P3','MES'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('I3','DNI.TRABAJADOR'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('J3','N° ORDEN'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('K3','USUARIO REGISTRA');
+                $objPHPExcel->getActiveSheet()->setCellValue('L3','PROYECTO'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('M3','OBSERVACIONES DEL ITEM'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('N3','OBSERVACION DEL DOCUMENTO'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('O3','AREA'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('P3','REFERENCIA ADICIONAL'); // esto cambia
+                $objPHPExcel->getActiveSheet()->setCellValue('Q3','MES'); // esto cambia
+
 
                 $objPHPExcel->getActiveSheet()->getStyle('A3:T3')->getAlignment()->setWrapText(true);
 
@@ -300,13 +311,14 @@
                     $objPHPExcel->getActiveSheet()->setCellValue('G'.$fila,$datos[$i]->unidad);
                     $objPHPExcel->getActiveSheet()->setCellValue('H'.$fila,$datos[$i]->cantidad);
                     $objPHPExcel->getActiveSheet()->setCellValue('I'.$fila,$datos[$i]->trabajador);
-                    $objPHPExcel->getActiveSheet()->setCellValue('J'.$fila,$datos[$i]->usuario);
-                    $objPHPExcel->getActiveSheet()->setCellValue('K'.$fila,$datos[$i]->proyecto);
-                    $objPHPExcel->getActiveSheet()->setCellValue('L'.$fila,$datos[$i]->observaciones);
-                    $objPHPExcel->getActiveSheet()->setCellValue('M'.$fila,$datos[$i]->documento);
-                    $objPHPExcel->getActiveSheet()->setCellValue('N'.$fila,$datos[$i]->area);
-                    $objPHPExcel->getActiveSheet()->setCellValue('O'.$fila,$datos[$i]->referencia);
-                    $objPHPExcel->getActiveSheet()->setCellValue('P'.$fila,$datos[$i]->mes);
+                    $objPHPExcel->getActiveSheet()->setCellValue('J'.$fila,$datos[$i]->orden);
+                    $objPHPExcel->getActiveSheet()->setCellValue('K'.$fila,$datos[$i]->usuario);
+                    $objPHPExcel->getActiveSheet()->setCellValue('L'.$fila,$datos[$i]->proyecto);
+                    $objPHPExcel->getActiveSheet()->setCellValue('M'.$fila,$datos[$i]->observaciones);
+                    $objPHPExcel->getActiveSheet()->setCellValue('N'.$fila,$datos[$i]->documento);
+                    $objPHPExcel->getActiveSheet()->setCellValue('O'.$fila,$datos[$i]->area);
+                    $objPHPExcel->getActiveSheet()->setCellValue('P'.$fila,$datos[$i]->referencia);
+                    $objPHPExcel->getActiveSheet()->setCellValue('Q'.$fila,$datos[$i]->mes);
 
                     
                     $fila++;
@@ -515,6 +527,75 @@
 
             } catch (PDOException $th) {
                 echo "Error: ".$th->getMessage();
+                return false;
+            }
+        }
+
+
+        /***********************codigo modificado */
+        public function buscarCodigoItemOrden($parametros){
+            try {
+                $docData = [];
+                $result = [];
+
+                $mensaje = "El producto no se registro en la OC ingresada";
+                $rspuesta = false;
+                $interno_oc = "";
+                $interno_pedido = "";
+                $id_item_orden = "";
+                $id_item_pedido = "";
+
+                $anio = $parametros['anio'];
+                $oc =  $parametros['oc'];
+                $id = $parametros['codigo'];
+
+                $sql = $this->db->connect()->prepare("SELECT 
+                                                        o.id_regmov,
+                                                        o.id_refpedi 
+                                                    FROM lg_ordencab o
+                                                    WHERE o.cnumero =:orden
+                                                        AND o.cper =:anio
+                                                    LIMIT 1");
+                $sql->execute(["anio"=>$anio,"orden"=>$oc]);
+
+
+                while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+                    $docData[] = $row;
+                    $interno_oc = $docData[0]['id_regmov'];
+                    $interno_pedido = $docData[0]['id_refpedi'];
+
+                    if ( count($docData) == 1){
+
+                        $sql = $this->db->connect()->prepare("SELECT d.niddeta,d.nitemord
+                                                                FROM lg_ordendet d
+                                                                WHERE d.id_regmov =:oc
+                                                                AND d.id_cprod =:codigo
+                                                                LIMIT 1");
+
+                        $sql->execute(["oc"=>$interno_oc,"codigo"=>$id]);
+
+                        while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+                            $result = $row;
+                        }
+
+                        $id_item_orden = $result['nitemord'];
+                        $id_item_pedido = $result['niddeta'];
+
+                        $respuesta = true;
+                        $mensaje = "Se encontro refrerencia del producto en la orden";
+
+                    }
+                }
+
+                return array("idOrden"=>$interno_oc,
+                            'idPedido'=>$interno_pedido,
+                            "respuesta"=>$respuesta,
+                            "codigoItemOrden"=>$id_item_orden,
+                            "codigoItemPedido"=>$id_item_pedido,
+                            "mensaje"=>$mensaje);
+
+            } catch (PDOException $th) {
+                echo $th->getMessage();
                 return false;
             }
         }

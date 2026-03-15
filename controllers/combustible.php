@@ -6,7 +6,7 @@
         }
 
         function render(){
-            $this->view->listaAlmacen = $this->model->selectAlmacen();
+            $this->view->listaAlmacen = $this->model->selectAlmacenCombustible();
             $this->view->listaCostosSelect = $this->model->costosPorUsuarioSelect($_SESSION['iduser']);
             $this->view->listaAreas = $this->model->listaAreas();
             $this->view->listaCombustible = $this->model->tipoCombustible();
@@ -38,5 +38,8 @@
             echo json_encode($this->model->listaConsumosCombustibles($_POST),true);
         }
         
+        function idoc(){
+            echo json_encode($this->model->buscarCodigoItemOrden($_POST));
+        }
     }
 ?>

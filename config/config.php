@@ -3,7 +3,7 @@
     $url = $_SERVER['HTTP_HOST'];
 
     if ($url === "localhost")
-        define('URL','http://localhost/ibis/');
+        define('URL','https://localhost/ibis/');
     else if ($url === "192.168.110.121")
         define('URL','http://192.168.110.121/ibis/');
     else if ($url === "200.41.86.58")

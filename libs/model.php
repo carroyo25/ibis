@@ -673,6 +673,26 @@
             }
         }
 
+        public function selectAlmacenCombustible(){
+            try {
+                $salida = '<option value="-1" class="oculto">Elija una opción</option>';
+                $sql = $this->db->connect()->query("SELECT ncodalm,UPPER(cdesalm) AS almacen FROM tb_almacen WHERE nflgactivo = 1 AND nflgCombustible = 1");
+                $sql->execute();
+                $rowCount = $sql->rowCount();
+
+                if ($rowCount > 0){
+                    while ($rs = $sql->fetch()){
+                        $salida .= '<option value="'.$rs['ncodalm'].'" data-abrevia="">'.$rs['almacen'].'</option>';
+                    }
+
+                    return $salida;
+                } 
+            } catch (PDOException $th) {
+                echo $th->getMessage();
+                return false;
+            }
+        }
+
         public function selectCostos(){
             try {
                 $salida = "";

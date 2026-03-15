@@ -1,6 +1,9 @@
 $(() => {
     listarRegistrosCombustible();
 
+    const inpAnioOrden = document.getElementById("orden");
+    const inpOrden = document.getElementById("anio_orden");
+
 
     $("#esperar").fadeOut();
 
@@ -8,6 +11,7 @@ $(() => {
         e.preventDefault();
         
         accion = "n";
+        limpiarFormulario();
         $("#dialogo_registro").fadeIn();
 
     });
@@ -23,6 +27,9 @@ $(() => {
             if ($("#proyecto").val() == -1) throw new Error("Seleccion el proyecto");
             if ($("#area").val() == -1) throw new Error("Seleccione una área");
             if ($("#guia").val() == -1) throw new Error("Indique el número de guia del proveedor");
+            if ($("#orden").val() == -1) throw new Error("Indique el número orden de compra");
+            if ($("#anio_orden").val() == -1) throw new Error("Indique el año de registro de la orden de compra");
+
 
             //serializar los formulario en javascript
             const datos = new URLSearchParams(new FormData(document.getElementById("form__combustible")));
@@ -34,7 +41,7 @@ $(() => {
             .then(response => response.json())
             .then(data => {
                 $("#dialogo_registro").fadeOut();
-                accion = "u";
+                mostrarMensaje("Consumo registrado",'mensaje_correcto');
             });
             
         } catch (error) {
@@ -48,6 +55,8 @@ $(() => {
 
         $("#dialogo_registro").fadeOut();
 
+        limpiarFormulario();
+
         return false;
     });
 
@@ -59,7 +68,7 @@ $(() => {
 
                 if ( codigo == "" ) throw new Error("Ingrese el codigo a registrar");
 
-                formdata.append('codigo',codigo);
+                formdata.append('codigo',codigo.trim());
 
                 $("#esperarCargo").css("opacity","1").fadeIn();
 
@@ -174,13 +183,13 @@ $(() => {
                     });
                 })*/
 
-                data.valores_ingreso[0].forEach(valor => {
+                /*data.valores_ingreso[0].forEach(valor => {
                     seriesIngreso.push({
                         
                     })
                 });
 
-                barras(seriesIngreso);
+                barras(seriesIngreso);*/
             })
         };
         
@@ -203,6 +212,22 @@ $(() => {
         return false;
         
     });
+
+    inpOrden.addEventListener('keydown',(e)=>{
+        if (e.key == "Enter") {
+            comprobarCodigoOrden();
+        }
+        
+        return false;
+    })
+
+    inpAnioOrden.addEventListener('keydown',(e)=>{
+        if (e.key == "Enter") {
+            comprobarCodigoOrden();
+        }
+        
+        return false;
+    })
 })
 
 barras = (seriesData) => {
@@ -256,13 +281,14 @@ detalles = () => {
         item['unidad']          = $(this).find('td').eq(6).text(),
         item['cantidad']        = $(this).find('td').eq(7).text(),
         item['trabajador']      = $(this).find('td').eq(8).text(),
-        item['usuario']         = $(this).find('td').eq(9).text(),
-        item['proyecto']        = $(this).find('td').eq(10).text(),
-        item['observaciones']   = $(this).find('td').eq(11).text(),
-        item['documento']       = $(this).find('td').eq(12).text(),
-        item['area']            = $(this).find('td').eq(13).text(),
-        item['referencia']      = $(this).find('td').eq(14).text(),
-        item['mes']             = $(this).find('td').eq(15).text()
+        item['orden']           = $(this).find('td').eq(9).text(),
+        item['usuario']         = $(this).find('td').eq(10).text(),
+        item['proyecto']        = $(this).find('td').eq(11).text(),
+        item['observaciones']   = $(this).find('td').eq(12).text(),
+        item['documento']       = $(this).find('td').eq(13).text(),
+        item['area']            = $(this).find('td').eq(14).text(),
+        item['referencia']      = $(this).find('td').eq(15).text(),
+        item['mes']             = $(this).find('td').eq(16).text()
 
         DATA.push(item);
     })
@@ -305,18 +331,32 @@ listarRegistrosCombustible = async () => {
             if ( e.idtipo == 1 ){
                 tr.classList.add("recepcion_combustible");
             }
+
+            let background = "";
+            let color = "";
+
+            if (e.idprod = 755){
+                background = "#dbeafe";
+                color = "#1e40af";
+            }else if (e.idprod = 746){
+                background = "#dcfce7";
+                color = "#166534";
+            }else{
+                background = "#c2c2c2";
+                color = "#000";
+            }
             
             tr.dataset.id_consumo = e.idreg
             tr.innerHTML = `<td class="textoDerecha">${item++}</td>
                             <td class="textoCentro">${e.fregistro}</td>
                             <td class="pl20px">${e.cdesalm}</td>
                             <td class="pl20px">${e.idtipo == 1 ?'INGRESO':'SALIDA'}</td>
-                            <td class="textoCentro">${e.ccodprod}</td>
+                            <td class="textoCentro"><div style="background:${background}; color:${color}; margin: 5px 0; border-radius:8px; padding:.3rem">${e.ccodprod}</div></td>
                             <td class="pl20px">${e.cdesprod}</td>
                             <td class="textoCentro">${e.cabrevia}</td>
                             <td class="textoDerecha">${e.ncantidad}</td>
                             <td class="pl20px">${e.cdocumento}</td>
-                            <td class="pl20px">${e.notaingreso}</td>
+                            <td class="pl20px">${e.orden}</td>
                             <td class="textoCentro">${e.idusuario}</td>
                             <td class="textoCentro">${e.ccodproy}</td>
                             <td class="pl20px">${e.tobseritem}</td>
@@ -905,4 +945,42 @@ function iniciarPaginadorConsulta() {
     createExcelStyleFilters();
     createPageButtons();
     showPage(currentPage);
+}
+
+function comprobarCodigoOrden(){
+    let formData = new FormData();
+        formData.append('anio',document.getElementById('anio_orden').value);
+        formData.append('oc',document.getElementById("orden").value);
+        formData.append('codigo',document.getElementById('codigo_producto').value);
+    try {
+
+        fetch( RUTA+'combustible/idoc',{
+            method:'POST',
+            body:formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.respuesta){
+                document.getElementById("codigoItemOrden").value = data.codigoItemOrden;
+                document.getElementById("codigoItenPedido").value = data.codigoItemPedido;
+                mostrarMensaje(data.mensaje,'mensaje_correcto');
+            }else{
+                document.getElementById("codigoItemOrden").value = "";
+                document.getElementById("codigoItenPedido").value = "";
+                mostrarMensaje(data.message,'mensaje_error');
+            }
+        })
+                
+    } catch (error) {
+        mostrarMensaje(error.message,'mensaje_error');
+    }
+}
+
+function limpiarFormulario(){
+    const form = document.getElementById('form__combustible');
+    if (form) {
+        form.reset();
+    } else {
+        console.error('No se encontró el formulario');
+    }
 }

@@ -3,7 +3,7 @@
 var HOST = $(location).attr('hostname');
 
 if (HOST ==  "localhost") {
-    var RUTA = "http://localhost/ibis/";
+    var RUTA = "https://localhost/ibis/";
 }else if (HOST ==  "192.168.110.121"){
     var RUTA = "http://192.168.110.121/ibis/";
 }else if (HOST ==  "200.41.86.58"){
@@ -16,6 +16,8 @@ if (HOST ==  "localhost") {
     var RUTA = "http://127.0.0.1/ibis/";
 }else if (HOST ==  "179.49.67.42"){
     var RUTA = "http://179.49.67.42/ibis/";
+}else if(HOST ==  "localhost/ibis/") {
+    var RUTA = "https://localhost/ibis/";
 }
 
 var emailreg = /^[a-zA-Z0-9_\.\-]+@[a-zA-Z0-9\-]+\.[a-zA-Z0-9\-\.]+$/;
