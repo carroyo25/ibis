@@ -195,7 +195,7 @@
         <h1>Control de Combustible</h1>
         <div>
             <a href="#" id="nuevoRegistro"><i class="far fa-file"></i><p>Nuevo</p></a>
-            <a href="#" id="reportExport"><i class="fas fa-file-excel"></i><p>Exportar</p></a>
+            <a href="#" id="reportExport" onclick="exportarTodosLosDatos()"><i class="fas fa-file-excel"></i><p>Exportar</p></a>
             <a href="#" id="kardexDetails"><i class="fas fa-window-restore"></i><p>Detalles</p></a>
             <a href="#" id="irInicio"><i class="fas fa-home"></i><p>Inicio</p></a>
         </div>

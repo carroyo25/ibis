@@ -117,11 +117,17 @@ $(function () {
         })
           .then((response) => response.json())
           .then((data) => {
-            if ( data.existe && document.getElementById("codigo_registro").value == "") {
-                mostrarMensaje("💡 La serie ya se encuentra registrada..","mensaje_error");
-                return false;
+            if (
+              data.existe &&
+              document.getElementById("codigo_registro").value == ""
+            ) {
+              mostrarMensaje(
+                "💡 La serie ya se encuentra registrada..",
+                "mensaje_error",
+              );
+              return false;
             }
-            
+
             if (data.asignado) {
               document.getElementById("dni").value = data.datos[0]["dni"];
               document.getElementById("cargo").value =
@@ -171,13 +177,13 @@ $(function () {
     $("#esperar").css({ display: "block", opacity: "1" });
 
     const formData = new FormData(fmrActivos);
-  
-    if (document.getElementById('codigo_registro').value == ""){
+
+    if (document.getElementById("codigo_registro").value == "") {
       consulta = RUTA + "activos/registro";
-    }else{
+    } else {
       consulta = RUTA + "activos/modifica";
     }
-    
+
     fetch(consulta, {
       method: "POST",
       body: formData,
@@ -313,7 +319,6 @@ $(function () {
     e.preventDefault();
 
     let formData = new FormData();
-    let item = 1;
 
     formData.append("costos", sltCostosSearch.value);
 
@@ -332,7 +337,7 @@ $(function () {
             grupos[codigo] = {
               codigo: codigo,
               descripcion: equipo.descripcion,
-              idreg:equipo.idreg,
+              idreg: equipo.idreg,
               equipos: [],
               ubicaciones: new Set(),
             };
@@ -347,6 +352,28 @@ $(function () {
 
     return false;
   });
+
+  btnExport.addEventListener('click',(e)=>{
+    e.preventDefault();
+    
+    let formData = new FormData();
+
+    formData.append("costos", sltCostosSearch.value);
+
+    const grupos = {};
+
+    fetch(RUTA + "activos/consultaEquipos", {
+      method: "POST",
+      body: formData,
+    })
+    .then(response => response.json())
+    .then(async (json) =>{
+      $("#esperar").css({ display: "block", opacity: "1" });
+      await excelJson(json.datos);
+    })
+    
+    return false;
+  })
 });
 
 function actualizarEstado(fechaVenc) {
@@ -444,7 +471,7 @@ function limpiarFormulario(sw) {
 
 function renderizarTabla(grupos) {
   const tbody = document.getElementById("tableBody");
-  
+
   let html = "";
 
   Object.values(grupos).forEach((grupo) => {
@@ -592,7 +619,8 @@ function crearTablaDetalles(equipos) {
   equipos.forEach((e) => {
     const dias = calcularDiasVencimiento(e.ffvence);
     const estado = getEstadoEquipo(dias);
-    const claseDias = dias < 0 ? "vencido" : dias <= 15 ? "por-vencer" : "vigente";
+    const claseDias =
+      dias < 0 ? "vencido" : dias <= 15 ? "por-vencer" : "vigente";
 
     html += `
                     <tr>
@@ -618,7 +646,7 @@ function crearTablaDetalles(equipos) {
                         <td>
                             ${e.cubica || "—"}
                             <br>
-                            ${e.ccontenedor || ''} - ${e.cestante || ''} - ${e.cletra || ''} - ${e.ccolumna || ''}
+                            ${e.ccontenedor || ""} - ${e.cestante || ""} - ${e.cletra || ""} - ${e.ccolumna || ""}
                         </td>
                         <td>
                             ${
@@ -679,55 +707,217 @@ window.toggleDetalles = function (row) {
 };
 
 //para llamar a los detalles del equipo
-function mostrarDetalleEquipo(id){
-  document.getElementById("dialogo_registro").style.display = 'block';
+function mostrarDetalleEquipo(id) {
+  document.getElementById("dialogo_registro").style.display = "block";
 
   let formData = new FormData();
-  formData.append('codigo',id);
+  formData.append("codigo", id);
 
-  fetch(RUTA+'activos/editaEquipo',{
-    method:'POST',
-    body:formData
+  fetch(RUTA + "activos/editaEquipo", {
+    method: "POST",
+    body: formData,
   })
-  .then(response => response.json())
-  .then(data => {
-    //console.log(data);
-    document.getElementById('codigo_interno').value = data.datos[0]['idprod'];
-    document.getElementById('codigo_unidad').value = data.datos[0]['ncodmed'];
-    document.getElementById('codigo_usuario').value = "";
-    document.getElementById('codigo_registro').value = data.datos[0]['idreg'];
-    document.getElementById('centro_costos').value = data.datos[0]['idcostos'];
-    document.getElementById('codigoSearch').value = data.datos[0]['ccodprod'];
-    document.getElementById('descripSearch').value = data.datos[0]['cdesprod'];
-    document.getElementById('unidad').value = data.datos[0]['cabrevia'];
-    document.getElementById('cantidad').value = data.datos[0]['ncant'];
-    document.getElementById('serie').value = data.datos[0]['cserie'];;
-    document.getElementById('marca').value = data.datos[0]['cmarca'];
-    document.getElementById('modelo').value = data.datos[0]['cmodelo'];
-    document.getElementById('dni').value = data.datos[0]['casigna'];
-   
-    document.getElementById('area').value = data.datos[0]['carea'] || '';
-    document.getElementById('fecha_asigna').value = data.datos[0]['fechasalida'];
-    document.getElementById('frecuencia').value = data.datos[0]['nfrecuencia'];
-    document.getElementById('fecha_calibra').value = data.datos[0]['ffcalibra'];
-    document.getElementById('vence_calibra').value = data.datos[0]['ffvence'];
-    document.getElementById('estado_actual').value = data.datos[0]['cestado'];
-    document.getElementById('observa_estado').value = data.datos[0]['cobservaciones'];
-    document.getElementById('guia_envio').value = data.datos[0]['cgrenvio'];
-    document.getElementById('fecha_envio').value = data.datos[0]['cgrenvio'];
-    document.getElementById('guia_recepcion').value = data.datos[0]['cgrrecepcion'];
-    document.getElementById('fecha_recepcion').value = data.datos[0]['ffrecepcion'];
-    document.getElementById('ubicacion').value = data.datos[0]['cubica'];
-    document.getElementById('contenedor').value = data.datos[0]['ccontenedor'];
-    document.getElementById('estante').value = data.datos[0]['cestante'];
-    document.getElementById('letra').value = data.datos[0]['cletra'];
-    document.getElementById('columna').value = data.datos[0]['ccolumna'];
+    .then((response) => response.json())
+    .then((data) => {
+      //console.log(data);
+      document.getElementById("codigo_interno").value = data.datos[0]["idprod"];
+      document.getElementById("codigo_unidad").value = data.datos[0]["ncodmed"];
+      document.getElementById("codigo_usuario").value = "";
+      document.getElementById("codigo_registro").value = data.datos[0]["idreg"];
+      document.getElementById("centro_costos").value =
+        data.datos[0]["idcostos"];
+      document.getElementById("codigoSearch").value = data.datos[0]["ccodprod"];
+      document.getElementById("descripSearch").value =
+        data.datos[0]["cdesprod"];
+      document.getElementById("unidad").value = data.datos[0]["cabrevia"];
+      document.getElementById("cantidad").value = data.datos[0]["ncant"];
+      document.getElementById("serie").value = data.datos[0]["cserie"];
+      document.getElementById("marca").value = data.datos[0]["cmarca"];
+      document.getElementById("modelo").value = data.datos[0]["cmodelo"];
+      document.getElementById("dni").value = data.datos[0]["casigna"];
 
-    if (data.datos[0]['casigna']){
-      document.getElementById('nombres').value = data.personal[0]['paterno'] || '' +' '+data.personal[0]['materno'] || '' + ' '+data.personal[0]['nombres'] || '';
-      document.getElementById('cargo').value = data.personal[0]['cargo'].toUpperCase();
+      document.getElementById("area").value = data.datos[0]["carea"] || "";
+      document.getElementById("fecha_asigna").value =
+        data.datos[0]["fechasalida"];
+      document.getElementById("frecuencia").value =
+        data.datos[0]["nfrecuencia"];
+      document.getElementById("fecha_calibra").value =
+        data.datos[0]["ffcalibra"];
+      document.getElementById("vence_calibra").value = data.datos[0]["ffvence"];
+      document.getElementById("estado_actual").value = data.datos[0]["cestado"];
+      document.getElementById("observa_estado").value =
+        data.datos[0]["cobservaciones"];
+      document.getElementById("guia_envio").value = data.datos[0]["cgrenvio"];
+      document.getElementById("fecha_envio").value = data.datos[0]["cgrenvio"];
+      document.getElementById("guia_recepcion").value =
+        data.datos[0]["cgrrecepcion"];
+      document.getElementById("fecha_recepcion").value =
+        data.datos[0]["ffrecepcion"];
+      document.getElementById("ubicacion").value = data.datos[0]["cubica"];
+      document.getElementById("contenedor").value =
+        data.datos[0]["ccontenedor"];
+      document.getElementById("estante").value = data.datos[0]["cestante"];
+      document.getElementById("letra").value = data.datos[0]["cletra"];
+      document.getElementById("columna").value = data.datos[0]["ccolumna"];
+
+      if (data.datos[0]["casigna"]) {
+        document.getElementById("nombres").value =
+          data.personal[0]["paterno"] ||
+          "" + " " + data.personal[0]["materno"] ||
+          "" + " " + data.personal[0]["nombres"] ||
+          "";
+        document.getElementById("cargo").value =
+          data.personal[0]["cargo"].toUpperCase();
+      }
+
+      calcularVencimiento();
+    });
+
+  // Función para exportar a Excel
+  function exportarAExcel(datos, nombreArchivo, hojas = null) {
+    try {
+      let wb;
+
+      if (hojas) {
+        // Múltiples hojas
+        wb = XLSX.utils.book_new();
+        hojas.forEach((hoja) => {
+          const ws = XLSX.utils.json_to_sheet(hoja.datos);
+          XLSX.utils.book_append_sheet(wb, ws, hoja.nombre);
+        });
+      } else {
+        // Una sola hoja
+        const ws = XLSX.utils.json_to_sheet(datos);
+        wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Equipos");
+      }
+
+      // Generar archivo
+      XLSX.writeFile(
+        wb,
+        `${nombreArchivo}_${new Date().toISOString().split("T")[0]}.xlsx`,
+      );
+      mostrarNotificacion(`✅ Archivo exportado: ${nombreArchivo}`);
+    } catch (error) {
+      console.error("Error al exportar:", error);
+      mostrarNotificacion("❌ Error al exportar el archivo", "error");
     }
+  }
+}
 
-    calcularVencimiento();
-  })
+async function excelJson(datos){
+    const workbook = new ExcelJS.Workbook();
+    
+    workbook.creator = 'Sical';
+    workbook.lastModifiedBy = 'Sical';
+    workbook.created = new Date();
+    workbook.modified = new Date();
+
+    const worksheet = workbook.addWorksheet('Cargo Plan');
+
+    const columns = [
+            { width: 10 },
+            { width: 10 },
+            { width: 15 },
+            { width: 50 },
+            { width: 30 },
+            { width: 12 },
+            { width: 15 },
+            { width: 12 },
+            { width: 15 },
+            { width: 20 },
+            { width: 20 },
+            { width: 15 },
+            { width: 15 },
+            { width: 15 },
+            { width: 20 },
+            { width: 15 },
+            { width: 70 },
+            { width: 15 },
+            { width: 12 },
+            { width: 15 },
+            { width: 15 },
+            { width: 15 },
+            { width: 15 },
+            { width: 15 },
+            { width: 15 },
+            { width: 15 },
+            { width: 15 },
+            { width: 15 },
+  ];
+
+  // Establecer propiedades del título
+  worksheet.mergeCells('A1:AW1');
+  worksheet.getCell('A1').value = 'CARGO PLAN';
+  worksheet.getCell('A1').alignment = { horizontal: 'center', vertical: 'center' };
+  worksheet.getRow(2).height = 60;
+
+  worksheet.columns = columns;
+     
+         // Establecer valores de cabecera
+         const headers = [
+             'Item', 'CODIGO SICAL', 'DESCRIPCION DEL EQUIPO', 'TIPO', 'UND/MED', 'CANTIDAD', 'SERIE', 'MARCA', 'MODELO', 
+             'FRECUENCIA DE CALIBRACION', 'FECHA DE CALIBRACION', 'VENCIMIENTO DE CALIBRACION', 'ESTADO ACTUAL', 'ESTADO ACTUAL 1',
+             'GR.ENVIO', 'FECHA ENVIO', 'GR. RECEPCION', 'FECHA RECEPCION', 'UBICACION ACTUAL',
+             'DNI', 'NOBRES Y APELLIDOS', 'CARGO', 'AREA', 'FECHA DE ASIGANCION', 'CONTENEDOR',
+             'ESTANTE', 'LETRA', 'COLUNNA'];
+ 
+         /* worksheet.addRow(headers); */
+         worksheet.getRow(2).values=headers;
+        
+ 
+         // Configurar wrapText para cada columna
+         headers.forEach((header, index) => {
+             const columnIndex = index + 1; // Las columnas en ExcelJS comienzan en 1
+             worksheet.getColumn(columnIndex).alignment = { wrapText: true };  // Aplicar wrapText a toda la columna
+         });
+     
+        let fila = 3;
+
+         datos.forEach((dato, index) => {
+             worksheet.addRow([
+              index++,
+              dato.ccodprod,
+              dato.descripcion,
+              'BIENES',
+              'UND',
+              '1',
+              dato.cserie,
+              dato.cmarca,
+              dato.cmodelo,
+              dato.frecuencia,
+              dato.ffcalibra,
+              dato.ffvence,
+              dato.estado,
+              dato.cobservaciones,
+              dato.cgrenvio,
+              dato.ffenvio,
+              dato.cgrrecepcion,
+              dato.cubica,
+              dato.casigna,
+              '',
+              '',
+              dato.carea,
+              dato.ccontenedor,
+              dato.cestante,
+              dato.cletra,
+              dato.ccolumna
+             ]);
+         })
+
+
+        // Exportar como archivo Blob
+        const buffer = await workbook.xlsx.writeBuffer();
+        const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+  
+        // Descargar archivo
+
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'control_de_activos.xlsx';
+        a.click();
+        URL.revokeObjectURL(url);
+
+        $("#esperar").css({ display: "none", opacity: "0" });
 }

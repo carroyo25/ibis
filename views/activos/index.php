@@ -420,5 +420,6 @@
     <script src="<?php echo constant('URL');?>public/js/funciones.js?<?php echo constant('VERSION')?>"></script>
     <script src="<?php echo constant('URL');?>public/js/activos.js?<?php echo constant('VERSION')?>"></script>
     <script src="<?php echo constant('URL');?>public/js/xlsx.mini.min.js"></script>
+    <script src="<?php echo constant('URL');?>public/js/exceljs.min.js"></script>
 </body>
 </html>
