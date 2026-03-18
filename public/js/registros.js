@@ -350,8 +350,8 @@ $(function(){
         let fragment = "";
  
         if (lg > 0) {
-             for (var i = 0; i < lg; i++) {
-                 var fileName = items[i].name; // get file name
+             for (let i = 0; i < lg; i++) {
+                 let fileName = items[i].name; // get file name
  
                  // append li to UL tag to display File info
                  fragment +=`<li>

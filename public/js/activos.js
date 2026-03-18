@@ -6,6 +6,8 @@ $(function () {
 
   const modal_registro = document.getElementById("dialogo_registro");
   const modal_carga = document.getElementById("cargarArchivo");
+  const modal_cargar_certificados =
+    document.getElementById("cargarCertificados");
 
   const btnRegister = document.getElementById("nuevoRegistro");
   const btnExport = document.getElementById("excelFile");
@@ -15,6 +17,9 @@ $(function () {
   const btnAcceptLoad = document.getElementById("btnAceptarCargar");
   const btnCancelLoad = document.getElementById("btnCancelarCargar");
   const btnConsult = document.getElementById("btnConsulta");
+  const btnAtach = document.getElementById("btnAtachDialogoActivos");
+  const btnQr = document.getElementById("btnbtQrDialogoActivos");
+  const btnLoadAtach = document.getElementById("openArch");
 
   const inputSearchCode = document.getElementById("codigoSearch");
   const inputSerie = document.getElementById("serie");
@@ -23,6 +28,7 @@ $(function () {
   const inputEstado = document.getElementById("estado_actual");
   const inputUbicacion = document.getElementById("ubicacion");
   const inputImport = document.getElementById("fileInput");
+  const inputAtach = document.getElementById("uploadAtach");
 
   const sltCostos = document.getElementById("centro_costos");
   const sltCostosLoad = document.getElementById("loadProyect");
@@ -353,9 +359,9 @@ $(function () {
     return false;
   });
 
-  btnExport.addEventListener('click',(e)=>{
+  btnExport.addEventListener("click", (e) => {
     e.preventDefault();
-    
+
     let formData = new FormData();
 
     formData.append("costos", sltCostosSearch.value);
@@ -366,14 +372,52 @@ $(function () {
       method: "POST",
       body: formData,
     })
-    .then(response => response.json())
-    .then(async (json) =>{
-      $("#esperar").css({ display: "block", opacity: "1" });
-      await excelJson(json.datos);
-    })
-    
+      .then((response) => response.json())
+      .then(async (json) => {
+        $("#esperar").css({ display: "block", opacity: "1" });
+        await excelJson(json.datos);
+      });
+
     return false;
-  })
+  });
+
+  btnAtach.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    modal_cargar_certificados.style.display = "block";
+
+    return false;
+  });
+
+  btnLoadAtach.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    inputAtach.click();
+
+    return false;
+  });
+
+  $("#uploadAtach").on("change", function (e) {
+    e.preventDefault();
+
+    let fp = $(this);
+    let lg = fp[0].files.length;
+    let items = fp[0].files;
+    let fragment = "";
+
+    if (lg > 0) {
+      for (let i = 0; i < lg; i++) {
+        let fileName = items[i].name; // get file name
+
+        // append li to UL tag to display File info
+        fragment += `<li><a class="icono_archivo"><i class="far fa-file"></i><p>${fileName}</p></a></li>`;
+      }
+
+      $(".listaArchivos").append(fragment);
+    }
+
+    return false;
+  });
 });
 
 function actualizarEstado(fechaVenc) {
@@ -805,119 +849,146 @@ function mostrarDetalleEquipo(id) {
   }
 }
 
-async function excelJson(datos){
-    const workbook = new ExcelJS.Workbook();
-    
-    workbook.creator = 'Sical';
-    workbook.lastModifiedBy = 'Sical';
-    workbook.created = new Date();
-    workbook.modified = new Date();
+async function excelJson(datos) {
+  const workbook = new ExcelJS.Workbook();
 
-    const worksheet = workbook.addWorksheet('Cargo Plan');
+  workbook.creator = "Sical";
+  workbook.lastModifiedBy = "Sical";
+  workbook.created = new Date();
+  workbook.modified = new Date();
 
-    const columns = [
-            { width: 10 },
-            { width: 10 },
-            { width: 15 },
-            { width: 50 },
-            { width: 30 },
-            { width: 12 },
-            { width: 15 },
-            { width: 12 },
-            { width: 15 },
-            { width: 20 },
-            { width: 20 },
-            { width: 15 },
-            { width: 15 },
-            { width: 15 },
-            { width: 20 },
-            { width: 15 },
-            { width: 70 },
-            { width: 15 },
-            { width: 12 },
-            { width: 15 },
-            { width: 15 },
-            { width: 15 },
-            { width: 15 },
-            { width: 15 },
-            { width: 15 },
-            { width: 15 },
-            { width: 15 },
-            { width: 15 },
+  const worksheet = workbook.addWorksheet("Cargo Plan");
+
+  const columns = [
+    { width: 10 },
+    { width: 10 },
+    { width: 15 },
+    { width: 50 },
+    { width: 30 },
+    { width: 12 },
+    { width: 15 },
+    { width: 12 },
+    { width: 15 },
+    { width: 20 },
+    { width: 20 },
+    { width: 15 },
+    { width: 15 },
+    { width: 15 },
+    { width: 20 },
+    { width: 15 },
+    { width: 70 },
+    { width: 15 },
+    { width: 12 },
+    { width: 15 },
+    { width: 15 },
+    { width: 15 },
+    { width: 15 },
+    { width: 15 },
+    { width: 15 },
+    { width: 15 },
+    { width: 15 },
+    { width: 15 },
   ];
 
   // Establecer propiedades del título
-  worksheet.mergeCells('A1:AW1');
-  worksheet.getCell('A1').value = 'CARGO PLAN';
-  worksheet.getCell('A1').alignment = { horizontal: 'center', vertical: 'center' };
+  worksheet.mergeCells("A1:AW1");
+  worksheet.getCell("A1").value = "CARGO PLAN";
+  worksheet.getCell("A1").alignment = {
+    horizontal: "center",
+    vertical: "center",
+  };
   worksheet.getRow(2).height = 60;
 
   worksheet.columns = columns;
-     
-         // Establecer valores de cabecera
-         const headers = [
-             'Item', 'CODIGO SICAL', 'DESCRIPCION DEL EQUIPO', 'TIPO', 'UND/MED', 'CANTIDAD', 'SERIE', 'MARCA', 'MODELO', 
-             'FRECUENCIA DE CALIBRACION', 'FECHA DE CALIBRACION', 'VENCIMIENTO DE CALIBRACION', 'ESTADO ACTUAL', 'ESTADO ACTUAL 1',
-             'GR.ENVIO', 'FECHA ENVIO', 'GR. RECEPCION', 'FECHA RECEPCION', 'UBICACION ACTUAL',
-             'DNI', 'NOBRES Y APELLIDOS', 'CARGO', 'AREA', 'FECHA DE ASIGANCION', 'CONTENEDOR',
-             'ESTANTE', 'LETRA', 'COLUNNA'];
- 
-         /* worksheet.addRow(headers); */
-         worksheet.getRow(2).values=headers;
-        
- 
-         // Configurar wrapText para cada columna
-         headers.forEach((header, index) => {
-             const columnIndex = index + 1; // Las columnas en ExcelJS comienzan en 1
-             worksheet.getColumn(columnIndex).alignment = { wrapText: true };  // Aplicar wrapText a toda la columna
-         });
-     
-        let fila = 3;
 
-         datos.forEach((dato, index) => {
-             worksheet.addRow([
-              index++,
-              dato.ccodprod,
-              dato.descripcion,
-              'BIENES',
-              'UND',
-              '1',
-              dato.cserie,
-              dato.cmarca,
-              dato.cmodelo,
-              dato.frecuencia,
-              dato.ffcalibra,
-              dato.ffvence,
-              dato.estado,
-              dato.cobservaciones,
-              dato.cgrenvio,
-              dato.ffenvio,
-              dato.cgrrecepcion,
-              dato.cubica,
-              dato.casigna,
-              '',
-              '',
-              dato.carea,
-              dato.ccontenedor,
-              dato.cestante,
-              dato.cletra,
-              dato.ccolumna
-             ]);
-         })
+  // Establecer valores de cabecera
+  const headers = [
+    "Item",
+    "CODIGO SICAL",
+    "DESCRIPCION DEL EQUIPO",
+    "TIPO",
+    "UND/MED",
+    "CANTIDAD",
+    "SERIE",
+    "MARCA",
+    "MODELO",
+    "FRECUENCIA DE CALIBRACION",
+    "FECHA DE CALIBRACION",
+    "VENCIMIENTO DE CALIBRACION",
+    "ESTADO ACTUAL",
+    "ESTADO ACTUAL 1",
+    "GR.ENVIO",
+    "FECHA ENVIO",
+    "GR. RECEPCION",
+    "FECHA RECEPCION",
+    "UBICACION ACTUAL",
+    "DNI",
+    "NOBRES Y APELLIDOS",
+    "CARGO",
+    "AREA",
+    "FECHA DE ASIGANCION",
+    "CONTENEDOR",
+    "ESTANTE",
+    "LETRA",
+    "COLUNNA",
+  ];
 
+  /* worksheet.addRow(headers); */
+  worksheet.getRow(2).values = headers;
 
-        // Exportar como archivo Blob
-        const buffer = await workbook.xlsx.writeBuffer();
-        const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
-  
-        // Descargar archivo
+  // Configurar wrapText para cada columna
+  headers.forEach((header, index) => {
+    const columnIndex = index + 1; // Las columnas en ExcelJS comienzan en 1
+    worksheet.getColumn(columnIndex).alignment = { wrapText: true }; // Aplicar wrapText a toda la columna
+  });
 
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'control_de_activos.xlsx';
-        a.click();
-        URL.revokeObjectURL(url);
+  let fila = 3;
 
-        $("#esperar").css({ display: "none", opacity: "0" });
+  datos.forEach((dato, index) => {
+    worksheet.addRow([
+      index++,
+      dato.ccodprod,
+      dato.descripcion,
+      "BIENES",
+      "UND",
+      "1",
+      dato.cserie,
+      dato.cmarca,
+      dato.cmodelo,
+      dato.frecuencia,
+      dato.ffcalibra,
+      dato.ffvence,
+      dato.estado,
+      dato.cobservaciones,
+      dato.cgrenvio,
+      dato.ffenvio,
+      dato.cgrrecepcion,
+      dato.cubica,
+      dato.casigna,
+      "",
+      "",
+      dato.carea,
+      dato.ccontenedor,
+      dato.cestante,
+      dato.cletra,
+      dato.ccolumna,
+    ]);
+  });
+
+  // Exportar como archivo Blob
+  const buffer = await workbook.xlsx.writeBuffer();
+  const blob = new Blob([buffer], {
+    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  });
+
+  // Descargar archivo
+
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "control_de_activos.xlsx";
+  a.click();
+  URL.revokeObjectURL(url);
+
+  $("#esperar").css({ display: "none", opacity: "0" });
 }

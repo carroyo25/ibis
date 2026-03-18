@@ -7,150 +7,6 @@
     <title>Document</title>
 </head>
 <body>
-    <div class="modal" id="vistadocumento">
-        <div class="ventanaResumen">
-            <div class="resumen">
-                <div class="tituloResumen">
-                    <div>
-                        <p class="titulo_seccion"><strong> Detalle Almacen : </strong></p>
-                    </div>
-                    <div>
-                        <a href="#" id="closeDocument" title="Cerrar Ventana"><i class="fas fa-window-close"></i><span> Cerrar</span></a>
-                    </div>
-                </div>
-                <hr>
-                <div class="cuerpoResumen">
-                   <div class="area1">
-                        <label>Codigo</label>
-                        <label>:</label>
-                        <label id="codigo_item"></label>
-                        <label>Descripción</label>
-                        <label>:</label>
-                        <label id="descripcion_item"></label>
-                   </div>
-                   <div class="action_tab">
-                        <button type="button" class="tab_button" data-tab="tab1">Detalles</button>
-                        <button type="button" class="tab_button tab_inactivo" data-tab="tab2">Stocks Minimos</button>
-                        <button type="button" class="tab_button tab_inactivo" data-tab="tab3">Precios</button>
-                        <button type="button" class="tab_button tab_inactivo" data-tab="tab4">Kardex</button>
-                   </div>
-                   <div class="body_tab">
-                        <div class="tab" id="tab1">
-                            <div class="info_tab1">
-                                <table id="tabla1_tab1">
-                                    <thead>
-                                        <tr>
-                                            <th></th>
-                                            <th>N°</th>
-                                            <th>Cantidad</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr data-categoria="pedidos" class="report_process">
-                                            <td>Pedidos</td>
-                                            <td class="textoDerecha"></td>
-                                            <td class="textoDerecha"></td>
-                                        </tr>
-                                        <tr data-categoria="ordenes" class="report_process">
-                                            <td>Ordenes</td>
-                                            <td class="textoDerecha">0</td>
-                                            <td class="textoDerecha">0</td>
-                                        </tr>
-                                        <tr data-categoria="ingresos" class="report_process">
-                                            <td>Ingresos</td>
-                                            <td class="textoDerecha">0</td>
-                                            <td class="textoDerecha">0</td>
-                                        </tr>
-                                        <tr data-categoria="despachos" class="report_process">
-                                            <td>Despachos</td>
-                                            <td class="textoDerecha">0</td>
-                                            <td class="textoDerecha">0</td>
-                                        </tr>
-                                        <tr data-categoria="registros" class="report_process">
-                                            <td>Registro Obra</td>
-                                            <td class="textoDerecha">0</td>
-                                            <td class="textoDerecha">0</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="info_tab1">
-                                <table id="tabla2_tab1">
-                                    <thead>
-                                        <tr>
-                                            <th></th>
-                                            <th>N°</th>
-                                            <th>Cantidad</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr data-categoria="consumos" class="report_process">
-                                            <td>Consumos</td>
-                                            <td class="textoDerecha"></td>
-                                            <td class="textoDerecha"></td>
-                                        </tr>
-                                        <tr data-categoria="devoluciones" class="report_process">
-                                            <td>Devoluciones</td>
-                                            <td class="textoDerecha"></td>
-                                            <td class="textoDerecha"></td>
-                                        </tr>
-                                        <tr data-categoria="inventarios" class="report_process">
-                                            <td>Registro Inventario</td>
-                                            <td class="textoDerecha"></td>
-                                            <td class="textoDerecha"></td>
-                                        </tr>
-                                        <tr data-categoria="transferencias" class="report_process">
-                                            <td>Transferencias</td>
-                                            <td class="textoDerecha"></td>
-                                            <td class="textoDerecha"></td>
-                                        </tr>
-                                        <tr>
-                                            <!--<td colspan="2"><strong>Saldo</strong></td>
-                                            <td class="textoDerecha"></td>-->
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <div class="tab oculto" id="tab2">
-                            <table id="tabla1_tab2">
-                                <thead>
-                                    <tr class="stickytop">
-                                        <th>Fecha</th>
-                                        <th>Cantidad</th>
-                                        <th>Usuario</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="tab oculto" id="tab3">
-                            <table id="tabla1_tab3">
-                                <thead>
-                                    <tr class="stickytop">
-                                        <th>Fecha</th>
-                                        <th>Moneda</th>
-                                        <th>Tipo Cambio</th>
-                                        <th>Precio</th>
-                                        <th>Orden</th>
-                                        <th>CC</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="tab oculto" id="tab4">
-
-                        </div>
-                   </div>
-                </div>
-            </div>   
-        </div>
-    </div>
     <div class="modal" id="windowUpdate">
         <div class="ventanaPregunta">
             <h1>Actualizar Registro</h1>
@@ -335,7 +191,7 @@
 
                 <div class="opciones_dialogo botones_derecha">
                     <button type="button" id="btQrDialogoActivos"><i class="fas fa-qrcode"></i> Crear QR</button>
-                    <button type="button" id="btnAtachDialogoActivos"><i class="far fa-images"></i> Adjuntar Fotos</button>
+                    <button type="button" id="btnAtachDialogoActivos"><i class="far fa-images"></i> Adjuntar Certificados</button>
                     <button type="button" id="btnGrabarDialogoActivos"><i class="fas fa-save"></i> Grabar</button>
                     <button type="button" id="btnCancelarDialogoActivos"><i class="fas fa-window-close"></i> Cancelar</button>
                 </div>
@@ -362,6 +218,36 @@
                 <button type="button" id="btnAceptarCargar" class="boton4">Aceptar</button>
                 <button type="button" id="btnCancelarCargar" class="boton4">Cancelar</button>
             </div>
+        </div>
+    </div>
+     <div class="modal" id="cargarCertificados">
+        <div class="ventanaArchivos">
+            <form action="#" id="fileAtachs" enctype='multipart/form-data'>
+                <input type="hidden" name="certificadoAtach" id="certificadoAtach">
+                <input type="file" name="uploadAtach" id="uploadAtach" multiple class="oculto">
+                <div class="tituloArchivos">
+                    <h3>Adjuntar Archivos</h3>
+                    <a href="#" id="openArch" title="Adjuntar Archivos"><i class="fas fa-file-medical"></i><p>Añadir</p></a>
+                </div>            
+                <ul class="listaArchivos" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
+                </ul>
+                <div class="opcionesArchivos">
+                    <button type="button" class="boton3" id="btnConfirmAtach">Aceptar</button>
+                    <button type="button" class="boton3" id="btnCancelAtach">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="modal" id="vistaAdjuntos">
+        <div class="ventanaAdjuntos">
+            <div class="tituloAdjuntos">
+                <h3>Adjuntos</h3>
+                <a href="#" id="closeAtach" title="Cerrar Ventana"><i class="fas fa-window-close"></i></a>
+            </div>
+            <ul id="listaAdjuntos">
+
+            </ul>
+            <iframe src=""></iframe>
         </div>
     </div>
     <div class="cabezaModulo">
