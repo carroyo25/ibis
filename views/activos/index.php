@@ -238,7 +238,7 @@
             </form>
         </div>
     </div>
-    <div class="modal" id="vistaAdjuntos">
+    <div class="modal" id="vistaCertificados">
         <div class="ventanaAdjuntos">
             <div class="tituloAdjuntos">
                 <h3>Adjuntos</h3>
@@ -248,6 +248,18 @@
 
             </ul>
             <iframe src=""></iframe>
+        </div>
+    </div>
+    <div class="modal" id="vistaQR">
+        <div class="ventanaPregunta">
+            <h3>Codigo QR</h3>
+            <div>
+                <canvas id="qrCodeModal" width="300" height="300" style="margin: 20px auto; display: block;"></canvas>
+            </div>
+            <div class="opciones__modifica__kardex">
+                <button type="button" id="btnImprimiQr" class="boton4">Imprimir</button>
+                <button type="button" id="btnCancelarQr" class="boton4">Cancelar</button>
+            </div>
         </div>
     </div>
     <div class="cabezaModulo">
@@ -307,5 +319,6 @@
     <script src="<?php echo constant('URL');?>public/js/activos.js?<?php echo constant('VERSION')?>"></script>
     <script src="<?php echo constant('URL');?>public/js/xlsx.mini.min.js"></script>
     <script src="<?php echo constant('URL');?>public/js/exceljs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
 </body>
 </html>

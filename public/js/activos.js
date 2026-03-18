@@ -6,8 +6,8 @@ $(function () {
 
   const modal_registro = document.getElementById("dialogo_registro");
   const modal_carga = document.getElementById("cargarArchivo");
-  const modal_cargar_certificados =
-    document.getElementById("cargarCertificados");
+  const modal_cargar_certificados = document.getElementById("cargarCertificados");
+  const modal_qr = document.getElementById("vistaQR");
 
   const btnRegister = document.getElementById("nuevoRegistro");
   const btnExport = document.getElementById("excelFile");
@@ -18,7 +18,7 @@ $(function () {
   const btnCancelLoad = document.getElementById("btnCancelarCargar");
   const btnConsult = document.getElementById("btnConsulta");
   const btnAtach = document.getElementById("btnAtachDialogoActivos");
-  const btnQr = document.getElementById("btnbtQrDialogoActivos");
+  const btnQr = document.getElementById("btQrDialogoActivos");
   const btnLoadAtach = document.getElementById("openArch");
 
   const inputSearchCode = document.getElementById("codigoSearch");
@@ -38,6 +38,8 @@ $(function () {
   const fmrActivos = document.getElementById("activos_form");
 
   const lnkLoad = document.getElementById("lnkLoad");
+
+  const canvas = document.getElementById('qrCodeModal');
 
   btnRegister.addEventListener("click", (e) => {
     e.preventDefault();
@@ -397,6 +399,29 @@ $(function () {
     return false;
   });
 
+  btnQr.addEventListener('click',(e)=>{
+    e.preventDefault();
+
+    modal_qr.style.display = "block";
+
+    const textoQR = `
+      EQUIPO: B030600010011
+      SERIE: 11080535
+      DESCRIPCIÓN: LUXOMETRO EXTECH LT300N}
+      MARCA: EXTEXH
+      MODELO: LT300
+      F.VENC: ${formatearFecha(equipo.ffvence)}
+      DIAS: ${dias !== null ? dias : 'N/A'}
+      UBICACIÓN: ${equipo.cubica || 'N/A'}
+      ESTADO FÍSICO: ${estadoFisico}
+      ASIGNADO: ${equipo.casigna || 'No asignado'}
+      OBS: ${equipo.cobservaciones || 'N/A'}
+      HASH: ${btoa(equipo.idprod + (equipo.cserie || '')).substring(0, 8)}
+          `.trim();
+
+    return false;
+  })
+
   $("#uploadAtach").on("change", function (e) {
     e.preventDefault();
 
@@ -415,6 +440,74 @@ $(function () {
 
       $(".listaArchivos").append(fragment);
     }
+
+    return false;
+  });
+
+  $("#btnConfirmAtach").on("click", function (e) {
+    e.preventDefault();
+
+    let formData = new FormData();
+
+    formData.append("codigo", $("#codigo_registro").val());
+
+    $.each($("#uploadAtach")[0].files, function (i, file) {
+      formData.append("file-" + i, file);
+    });
+
+    $.ajax({
+      type: "POST",
+      url: RUTA + "activos/certificados",
+      data: formData,
+      data: formData,
+      contentType: false,
+      processData: false,
+      dataType: "json",
+      success: function (response) {
+        $("#archivos").fadeOut();
+        $("#fileAtachs")[0].reset();
+        $(".listaArchivos").empty();
+
+        modal_cargar_certificados.style.display = "none";
+
+        mostrarMensaje(
+          "Archivos copiados : " + response.total_adjuntos,
+          "mensaje_correcto",
+        );
+      },
+    });
+
+    return false;
+  });
+
+  $("#btnCancelAtach").on("click", function (e) {
+    e.preventDefault();
+
+    modal_cargar_certificados.style.display = "none";
+
+    $("#archivos").fadeOut();
+    $("#fileAtachs")[0].reset();
+    $(".listaArchivos").empty();
+  });
+
+  $("#closeAtach").click(function (e) {
+    e.preventDefault();
+
+    $(".ventanaAdjuntos iframe").attr("src", "");
+    $("#vistaCertificados").fadeOut();
+
+    return false;
+  });
+
+  $("#vistaCertificados").on("click", "a", function (e) {
+    e.preventDefault();
+
+    $(".ventanaAdjuntos iframe")
+      .attr("src", "")
+      .attr(
+        "src",
+        "http://localhost/ibis/public/documentos/certificados/activos/" + $(this).attr("href"),
+      );
 
     return false;
   });
@@ -655,6 +748,7 @@ function crearTablaDetalles(equipos) {
                                 <th>Asignado</th>
                                 <th>Obs.</th>
                                 <th>Documentos:</th>
+                                <th>Certificados:</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -665,6 +759,7 @@ function crearTablaDetalles(equipos) {
     const estado = getEstadoEquipo(dias);
     const claseDias =
       dias < 0 ? "vencido" : dias <= 15 ? "por-vencer" : "vigente";
+    const archivos = e.archivos > 0 ? "📰" : "";
 
     html += `
                     <tr>
@@ -710,6 +805,11 @@ function crearTablaDetalles(equipos) {
                           <p>Nr.Guia Recepcion : ${e.cgrrecepcion || ""}</p>
                           <p>Fecha Recepcion : ${e.ffrecepcion || ""}</p>
                         </td>
+                        <td>
+                          <span class="serie-link" data-tooltip="Click para ver certificados" onclick="mostrarCertificados(${e.idreg})">
+                            <strong>${archivos}</strong>
+                          </span>
+                        </td>
                     </tr>
                 `;
   });
@@ -725,6 +825,7 @@ function crearTablaDetalles(equipos) {
 
 // Hacer la función disponible globalmente
 window.mostrarDetalleEquipo = mostrarDetalleEquipo;
+window.mostrarCertificados = mostrarCertificados;
 
 // Función para toggle detalles
 window.toggleDetalles = function (row) {
@@ -846,6 +947,27 @@ function mostrarDetalleEquipo(id) {
       console.error("Error al exportar:", error);
       mostrarNotificacion("❌ Error al exportar el archivo", "error");
     }
+  }
+}
+
+function mostrarCertificados(codigo_equipo) {
+  try {
+    const modal_vista_certificados =
+      document.getElementById("vistaCertificados");
+
+    $.post(
+      RUTA + "ingresoedit/verAdjuntos",
+      { id: codigo_equipo, tipo: "CER" },
+      function (data, textStatus, jqXHR) {
+        $("#listaAdjuntos").empty().append(data.adjuntos);
+        $("#listaAdjuntos li a:nth-child(2)").hide();
+
+        modal_vista_certificados.style.display = "block";
+      },
+      "json",
+    );
+  } catch (error) {
+    console.log(error);
   }
 }
 

@@ -385,7 +385,7 @@
                                                 a.idreg,
                                                 a.idprod,
                                                 p.ccodprod,
-                                                UPPER(p.cdesprod) as descripcion,
+                                                UPPER(p.cdesprod) AS descripcion,
                                                 u.cabrevia,
                                                 a.cserie,
                                                 a.cmodelo,
@@ -407,16 +407,24 @@
                                                 a.cubica,
                                                 a.cestado,
                                                 a.casigna,
-                                                f.cdescripcion frecuencia,
-												e.cdescripcion estado
+                                                f.cdescripcion AS frecuencia,
+                                                e.cdescripcion AS estado,
+                                                COUNT(d.nidrefer) AS archivos 
                                             FROM
                                                 alm_activos a
                                                 LEFT JOIN cm_producto p ON p.id_cprod = a.idprod
                                                 LEFT JOIN tb_unimed u ON u.ncodmed = p.nund
                                                 LEFT JOIN tb_parametros f ON a.nfrecuencia = f.nidreg
-												LEFT JOIN tb_parametros e ON a.cestado = e.nidreg
+                                                LEFT JOIN lg_regdocumento d ON d.nidrefer = a.idreg AND d.cmodulo = 'CER'
+                                                LEFT JOIN tb_parametros e ON a.cestado = e.nidreg 
                                             WHERE
-                                                a.idcostos = :costos");
+                                                a.idcostos = :costos
+                                            GROUP BY
+                                                a.idreg, a.idprod, p.ccodprod, p.cdesprod, u.cabrevia, a.cserie, 
+                                                a.cmodelo, a.cmarca, a.nfrecuencia, a.ffcalibra, a.ffvence, a.cgrenvio,
+                                                a.ffenvio, a.ffrecepcion, a.ffasignacion, a.cgrrecepcion, a.cobservaciones,
+                                                a.ccontenedor, a.cestante, a.cletra, a.ccolumna, a.carea, a.cubica,
+                                                a.cestado, a.casigna, f.cdescripcion, e.cdescripcion");
                 $sql->execute(["costos"=>98]);
                 
                 while($row = $sql->fetch(PDO::FETCH_ASSOC)){
@@ -512,6 +520,40 @@
                 echo "Error: ".$th->getMessage();
                 return false;
             }
+        }
+
+        public function subirCertificados($codigo,$adjuntos){
+            $countfiles = count( $adjuntos );
+            $filesUpload = 0;
+
+            for($i=0;$i<$countfiles;$i++){
+                try {
+                    $file = "file-".$i;
+                    $ext = explode('.',$adjuntos[$file]['name']);
+                    $filename = uniqid().".".end($ext);
+                    // Upload file
+                    if (move_uploaded_file($adjuntos[$file]['tmp_name'],'public/documentos/certificados/activos/'.$filename)){
+                        $sql= $this->db->connect()->prepare("INSERT INTO lg_regdocumento 
+                                                                    SET nidrefer=:cod,cmodulo=:mod,cdocumento=:doc,
+                                                                        creferencia=:ref,nflgactivo=:est");
+                        $sql->execute(["cod"=>$codigo,
+                                        "mod"=>"CER",
+                                        "ref"=>$filename,
+                                        "doc"=>$adjuntos[$file]['name'],
+                                        "est"=>1]);
+
+                        $filesUpload++;
+                    }
+
+                    
+
+                } catch (PDOException $th) {
+                    echo "Error: ".$th->getMessage();
+                    return false;
+                }
+            }
+
+            return array("total_adjuntos"=>$filesUpload);
         }
 
     }
