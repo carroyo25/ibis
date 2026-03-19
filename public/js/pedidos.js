@@ -109,9 +109,11 @@ $(function(){
 
         if (contenedor_padre == "listaCostos"){
             $("#codigo_costos").val(codigo);
-            aprobacion = $(this).data("aprobacion");
+            let aprobacion = $(this).data("aprobacion");
 
-            if ( aprobacion == 0 ) {
+            console.log(aprobacion,$("codigo_tipo").val());
+
+            /*if ( aprobacion == 0 && $("codigo_tipo").val() == 37) {
                 $("#requestAprob").removeClass("desactivado");
                 $("#sendItem").addClass("desactivado");
             }else {
@@ -128,7 +130,7 @@ $(function(){
                         .append(data.partidas);
                 },
                 "json"
-            );
+            );*/
         }else if(contenedor_padre == "listaCostos"){
             $("#codigo_costos").val(codigo);
         }else if(contenedor_padre == "listaAreas"){
@@ -140,7 +142,7 @@ $(function(){
         }else if(contenedor_padre == "listaTipo"){
             $("#codigo_tipo").val(codigo);
 
-            if (codigo == 38) {
+            /*if (codigo == 38) {
                 $("#requestAprob").removeClass("desactivado");
                 $("#sendItem").addClass("desactivado");
             }else if ( codigo == 37) {
@@ -151,7 +153,9 @@ $(function(){
                     $("#sendItem").removeClass("desactivado");
                     $("#requestAprob").addClass("desactivado");
                 }
-            }
+            }*/
+
+
         }else if(contenedor_padre == "listaPartidas"){
             $("#codigo_partida").val(codigo);
         }

@@ -66,8 +66,9 @@
                     while ($rs = $sql->fetch()){
 
                         $marcado = $rs['flgdevolver'] == 1 ? "checked" : "";
-                        $firma =   "public/documentos/firmas/".$rs['cfirma'].".png";
-                        $almacen = "public/documentos/almacen/".$rs['calmacen'].".png";
+                        $firma =   $rs['cfirma'] === null ? 0 : "public/documentos/firmas/".$rs['cfirma'].".png";
+                        $almacen = $rs['calmacen'] === null ? '':"public/documentos/almacen/".$rs['calmacen'].".png";
+                        
                         $fecha = date("Y-m-d");
 
                         if ($rs['ncondicion'] == 1) {
@@ -115,12 +116,12 @@
                                         <td class="pl5px"><input type="text" value="'.$rs['cestado'].'"></td>
                                         <td class="textoCentro">
                                             <div style ="width:110px !important; text-align:center">
-                                                <img src = '.$firma.' style ="width:100% !important">
+                                                <img src = '.$firma.' style ="width:100% !important" >
                                             </div>
                                         </td>
                                         <td class="textoCentro">
                                             <div style ="width:110px !important; text-align:center">
-                                                <img src = '.$almacen.' style ="width:100% !important">
+                                                <img src = "'.$almacen.'"  style ="width:100% !important">
                                             </div>
                                         </td>
                                     </tr>';
