@@ -425,7 +425,7 @@
                                                 a.ffenvio, a.ffrecepcion, a.ffasignacion, a.cgrrecepcion, a.cobservaciones,
                                                 a.ccontenedor, a.cestante, a.cletra, a.ccolumna, a.carea, a.cubica,
                                                 a.cestado, a.casigna, f.cdescripcion, e.cdescripcion");
-                $sql->execute(["costos"=>98]);
+                $sql->execute(["costos"=>$parametros['costos']]);
                 
                 while($row = $sql->fetch(PDO::FETCH_ASSOC)){
                     $docData[] = $row;

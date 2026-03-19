@@ -6,7 +6,8 @@ $(function () {
 
   const modal_registro = document.getElementById("dialogo_registro");
   const modal_carga = document.getElementById("cargarArchivo");
-  const modal_cargar_certificados = document.getElementById("cargarCertificados");
+  const modal_cargar_certificados =
+    document.getElementById("cargarCertificados");
   const modal_qr = document.getElementById("vistaQR");
 
   const btnRegister = document.getElementById("nuevoRegistro");
@@ -19,6 +20,7 @@ $(function () {
   const btnConsult = document.getElementById("btnConsulta");
   const btnAtach = document.getElementById("btnAtachDialogoActivos");
   const btnQr = document.getElementById("btQrDialogoActivos");
+  const btnCancelQr = document.getElementById("btnCancelarQr");
   const btnLoadAtach = document.getElementById("openArch");
 
   const inputSearchCode = document.getElementById("codigoSearch");
@@ -39,7 +41,7 @@ $(function () {
 
   const lnkLoad = document.getElementById("lnkLoad");
 
-  const canvas = document.getElementById('qrCodeModal');
+  const canvas = document.getElementById("qrCodeModal");
 
   btnRegister.addEventListener("click", (e) => {
     e.preventDefault();
@@ -399,25 +401,91 @@ $(function () {
     return false;
   });
 
-  btnQr.addEventListener('click',(e)=>{
+  btnQr.addEventListener("click", (e) => {
     e.preventDefault();
 
     modal_qr.style.display = "block";
 
-    const textoQR = `
-      EQUIPO: B030600010011
-      SERIE: 11080535
-      DESCRIPCIÓN: LUXOMETRO EXTECH LT300N}
-      MARCA: EXTEXH
-      MODELO: LT300
-      F.VENC: ${formatearFecha(equipo.ffvence)}
-      DIAS: ${dias !== null ? dias : 'N/A'}
-      UBICACIÓN: ${equipo.cubica || 'N/A'}
-      ESTADO FÍSICO: ${estadoFisico}
-      ASIGNADO: ${equipo.casigna || 'No asignado'}
-      OBS: ${equipo.cobservaciones || 'N/A'}
-      HASH: ${btoa(equipo.idprod + (equipo.cserie || '')).substring(0, 8)}
-          `.trim();
+    const estadoFisico =
+      document.getElementById("estado_actual").value === "306"
+        ? "CALIBRADO"
+        : document.getElementById("estado_actual").value === "307"
+          ? "VENCIDOP"
+          : document.getElementById("estado_actual").value === "308"
+            ? "POR CAILIBRAR"
+            : document.getElementById("estado_actual").value === "309"
+              ? "OPERATIVO"
+              : document.getElementById("estado_actual").value === "310"
+                ? "OTRO"
+                : "N/A";
+
+    const equipoData = {
+      codigo: document.getElementById("codigoSearch").value,
+      serie: document.getElementById("serie").value,
+      descripcion: document.getElementById("descripSearch").value,
+      marca: document.getElementById("marca").value,
+      modelo: document.getElementById("modelo").value,
+      vence: document.getElementById("vence_calibra").value,
+      ubicacion: document.getElementById("ubicacion").value,
+      estado: estadoFisico,
+      asignado: document.getElementById("nombres").value,
+      observaciones: document.getElementById("observa_estado").value,
+    };
+
+    // Crear la URL base de sepcon.net
+    const baseUrl = "http://sicalsepcon.net/ibis";
+
+    // Codificar los parámetros
+    const params = new URLSearchParams({
+        codigo: equipoData.codigo || '',
+        serie: equipoData.serie || '',
+        descripcion: (equipoData.descripcion || '').substring(0, 100),
+        marca: equipoData.marca || '',
+        modelo: equipoData.modelo || '',
+        fecha_vencimiento: equipoData.vence || '',
+        ubicacion: equipoData.ubicacion || '',
+        estado: equipoData.estado || '',
+        asignado: equipoData.asignado || '',
+        observaciones: equipoData.observaciones || ''
+    });
+
+     // Generar hash de verificación
+    const hashInput = `${equipoData.idprod}_${equipoData.serie}`;
+    const hash = btoa(hashInput).substring(0, 10).replace(/=/g, '');
+
+    // URL completa
+    const urlCompleta = `${baseUrl}?${params.toString()}&v=${hash}`;
+
+    // AQUÍ SE GENERA EL QR USANDO LA LIBRERÍA
+    setTimeout(() => {
+      // Obtener el elemento canvas por su ID
+      const canvas = document.getElementById("qrCodeModal");
+
+      // Usar la librería QRCode para generar el QR en el canvas
+      QRCode.toCanvas(
+        canvas,
+        urlCompleta,
+        {
+          width: 300, // Ancho del QR en píxeles
+          margin: 2, // Margen alrededor del QR
+          errorCorrectionLevel: "M", // Nivel de corrección de errores
+        },
+        function (error) {
+          if (error) {
+            console.error("Error al generar QR:", error);
+          }
+        },
+      );
+    }, 100);
+
+    return false;
+  });
+
+
+  btnCancelQr.addEventListener("click",(e)=>{
+    e.preventDefault();
+
+    modal_qr.style.display = "none";
 
     return false;
   })
