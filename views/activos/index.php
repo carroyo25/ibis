@@ -281,13 +281,14 @@
                     </select>
                 </div>
                 <div>
+                    <label for="descripcionSearch">Serie: </label>
+                    <input type="text" name="serieSearch" id="serieSearch">
+                </div>
+                <div>
                     <label for="codigoBusqueda">Codigo : </label>
                     <input type="text" name="codigoBusqueda" id="codigoBusqueda">
                 </div>
-                <div>
-                    <label for="descripcionSearch">Descripcion: </label>
-                    <input type="text" name="descripcionSearch" id="descripcionSearch">
-                </div>
+                
                 <div>
                 </div>
                 <button type="button" id="btnConsulta" class="boton3">Consultar</button> 

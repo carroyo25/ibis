@@ -379,6 +379,9 @@
             try {
                 $docData = [];
                 $conexion = $this->db->connect();
+
+                $serie = $parametros['serie'] == '' ? '%' : '%'.$parametros['serie'].'%';
+                $codigo = $parametros['codigo'] == '' ? '%' : '%'.$parametros['codigo'].'%';
             
                 // PASO 3: Verificar la consulta completa
                 $sql = $conexion->prepare("SELECT
@@ -419,13 +422,15 @@
                                                 LEFT JOIN tb_parametros e ON a.cestado = e.nidreg 
                                             WHERE
                                                 a.idcostos = :costos
+                                                AND p.ccodprod LIKE :codigo
+                                                AND a.cserie LIKE :serie
                                             GROUP BY
                                                 a.idreg, a.idprod, p.ccodprod, p.cdesprod, u.cabrevia, a.cserie, 
                                                 a.cmodelo, a.cmarca, a.nfrecuencia, a.ffcalibra, a.ffvence, a.cgrenvio,
                                                 a.ffenvio, a.ffrecepcion, a.ffasignacion, a.cgrrecepcion, a.cobservaciones,
                                                 a.ccontenedor, a.cestante, a.cletra, a.ccolumna, a.carea, a.cubica,
                                                 a.cestado, a.casigna, f.cdescripcion, e.cdescripcion");
-                $sql->execute(["costos"=>$parametros['costos']]);
+                $sql->execute(["costos"=>$parametros['costos'],"codigo"=>$codigo,"serie"=>$serie]);
                 
                 while($row = $sql->fetch(PDO::FETCH_ASSOC)){
                     $docData[] = $row;

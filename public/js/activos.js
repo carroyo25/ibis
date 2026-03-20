@@ -331,6 +331,14 @@ $(function () {
     let formData = new FormData();
 
     formData.append("costos", sltCostosSearch.value);
+    formData.append("codigo",document.getElementById("codigoBusqueda").value);
+    formData.append("serie",document.getElementById("serieSearch").value);
+
+    if (sltCostosSearch.value == '-1'){
+      mostrarMensaje("Elija un centro de costos","mensaje_error");
+      return false;
+    }
+
 
     const grupos = {};
 
