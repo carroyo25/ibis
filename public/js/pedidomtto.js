@@ -86,13 +86,7 @@ $(function() {
             $("#codigo_costos").val(codigo);
             aprobacion = $(this).data("aprobacion");
 
-            if ( aprobacion == 0 ) {
-                $("#requestAprob").removeClass("desactivado");
-                $("#sendItem").addClass("desactivado");
-            }else {
-                $("#requestAprob").addClass("desactivado");
-                $("#sendItem").removeClass("desactivado");
-            }
+            changeStatus( aprobacion,$("#codigo_tipo").val() ); 
 
             $.post(RUTA+"pedidos/numeroDocumento", {cc:codigo},
                 function (data, textStatus, jqXHR) {
@@ -114,19 +108,7 @@ $(function() {
             $("#codigo_solicitante").val(codigo);
         }else if(contenedor_padre == "listaTipo"){
             $("#codigo_tipo").val(codigo);
-
-            if (codigo == 38) {
-                $("#requestAprob").removeClass("desactivado");
-                $("#sendItem").addClass("desactivado");
-            }else if ( codigo == 37) {
-                if (aprobacion == 0) {
-                    $("#sendItem").addClass("desactivado");
-                    $("#requestAprob").removeClass("desactivado");
-                }else {
-                    $("#sendItem").removeClass("desactivado");
-                    $("#requestAprob").addClass("desactivado");
-                }
-            }
+            changeStatus( aprobacion,$("#codigo_tipo").val() );
         }else if(contenedor_padre == "listaPartidas"){
             $("#codigo_partida").val(codigo);
         }
@@ -741,5 +723,41 @@ mailsList = () => {
     })
 
     return CORREOS;
+}
+
+function changeStatus(aprobacion, tipo) {
+    // Validaciones mejoradas
+    aprobacion = parseInt(aprobacion);
+    tipo = parseInt(tipo);
+    
+    // Si no hay tipo válido, desactivar ambos botones?
+    if (isNaN(tipo) || tipo === 0) {
+        $("#sendItem, #requestAprob").addClass("desactivado");
+        return;
+    }
+    
+    // Resetear estados primero (opcional)
+    // $("#sendItem, #requestAprob").removeClass("desactivado");
+    
+    switch(tipo) {
+        case 38:
+            $("#requestAprob").removeClass("desactivado");
+            $("#sendItem").addClass("desactivado");
+            break;
+            
+        case 37:
+            if (aprobacion === 1) {
+                $("#sendItem").removeClass("desactivado");
+                $("#requestAprob").addClass("desactivado");
+            } else {
+                $("#sendItem").addClass("desactivado");
+                $("#requestAprob").removeClass("desactivado");
+            }
+            break;
+            
+        default:
+            console.log('🎯 Otro tipo:', tipo);
+            // Aquí puedes manejar otros tipos si es necesario
+    }
 }
 
