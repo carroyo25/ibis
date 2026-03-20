@@ -339,7 +339,6 @@ $(function () {
       return false;
     }
 
-
     const grupos = {};
 
     fetch(RUTA + "activos/consultaEquipos", {
