@@ -530,36 +530,54 @@
         public function subirCertificados($codigo,$adjuntos){
             $countfiles = count( $adjuntos );
             $filesUpload = 0;
+            $errors = [];
 
             for($i=0;$i<$countfiles;$i++){
                 try {
                     $file = "file-".$i;
-                    $ext = explode('.',$adjuntos[$file]['name']);
+                    $originalName = $adjuntos[$file]['name'];
+                    $ext = explode('.', $originalName);
                     $filename = uniqid().".".end($ext);
+                    
+                    // Verificar si el nombre del archivo ya existe en la base de datos
+                    $checkSql = $this->db->connect()->prepare("SELECT COUNT(*) as total FROM lg_regdocumento WHERE cdocumento = :doc AND nflgactivo = 1");
+                    $checkSql->execute(["doc"=>$originalName]);
+                    $result = $checkSql->fetch(PDO::FETCH_ASSOC);
+                    
+                    if($result['total'] > 0){
+                        // El nombre del archivo ya existe, no se sube
+                        $errors[] = "El archivo '{$originalName}' ya existe en el sistema y no se puede subir.";
+                        continue; // Saltar este archivo y continuar con el siguiente
+                    }
+                    
                     // Upload file
-                    if (move_uploaded_file($adjuntos[$file]['tmp_name'],'public/documentos/certificados/activos/'.$filename)){
-                        $sql= $this->db->connect()->prepare("INSERT INTO lg_regdocumento 
-                                                                    SET nidrefer=:cod,cmodulo=:mod,cdocumento=:doc,
-                                                                        creferencia=:ref,nflgactivo=:est");
+                    if (move_uploaded_file($adjuntos[$file]['tmp_name'], 'public/documentos/certificados/activos/'.$filename)){
+                        $sql = $this->db->connect()->prepare("INSERT INTO lg_regdocumento 
+                                                                    SET nidrefer=:cod, cmodulo=:mod, cdocumento=:doc,
+                                                                        creferencia=:ref, nflgactivo=:est");
                         $sql->execute(["cod"=>$codigo,
                                         "mod"=>"CER",
                                         "ref"=>$filename,
-                                        "doc"=>$adjuntos[$file]['name'],
+                                        "doc"=>$originalName,
                                         "est"=>1]);
 
                         $filesUpload++;
+                    } else {
+                        $errors[] = "Error al subir el archivo '{$originalName}'";
                     }
-
                     
-
                 } catch (PDOException $th) {
                     echo "Error: ".$th->getMessage();
                     return false;
                 }
             }
-
-            return array("total_adjuntos"=>$filesUpload);
+            
+            // Devolver resultados
+            return [
+                "total_adjuntos" => $filesUpload,
+                "errores" => $errors,
+                "mensaje" => count($errors) > 0 ? "Algunos archivos no se pudieron subir" : "Todos los archivos se subieron correctamente"
+            ];
         }
-
     }
 ?>

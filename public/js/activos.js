@@ -581,7 +581,7 @@ $(function () {
       .attr("src", "")
       .attr(
         "src",
-        "http://localhost/ibis/public/documentos/certificados/activos/" + $(this).attr("href"),
+        "public/documentos/certificados/activos/" + $(this).attr("href"),
       );
 
     return false;
@@ -845,7 +845,7 @@ function crearTablaDetalles(equipos) {
                         </td>
                         <td>${e.cmarca || "—"} ${e.cmodelo || ""}</td>
                         <td>
-                            ${formatearFecha(e.ffvence)}
+                            ${formatearFecha(e.ffvence) }
                             <br>
                             ${e.frecuencia}
                         </td>
