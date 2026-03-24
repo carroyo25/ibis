@@ -976,9 +976,9 @@
                                                         AND l.cnumero = :orden 
                                                         AND d.ncodpry LIKE :costos 
                                                         AND d.cper LIKE :anio 
-                                                        AND d.cmes LIKE :mes 
-                                                    GROUP BY d.id_regalm
-                                                    LIMIT 1");
+                                                        AND d.cmes LIKE :mes
+                                                        AND d.nflgactivo = 1
+                                                    GROUP BY d.id_regalm");
                 
                 $sql->execute(["orden"=>$orden,
                                 "costos"=>$costos,
